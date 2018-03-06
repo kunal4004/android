@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -21,12 +22,14 @@ import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import za.co.woolworths.financial.services.android.models.dto.CartItemGroup;
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.AnimationUtils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_CALL;
@@ -51,7 +54,9 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 	public interface OnItemClick {
 		void onItemDeleteClick(CommerceItem commerceId);
 
-		void onChangeQuantity(String commerceId);
+		void onChangeQuantity(CommerceItem commerceId);
+
+		void totalItemInBasket(int total);
 	}
 
 	private OnItemClick onItemClick;
@@ -114,25 +119,37 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 					@Override
 					public void onClose(SwipeLayout layout) {
 						//when the SurfaceView totally cover the BottomView.
+						Log.e("SwipeLayout", "onClose ");
 					}
 
 					@Override
 					public void onUpdate(SwipeLayout layout, int leftOffset, int topOffset) {
 						//you are swiping.
+						Log.e("SwipeLayout", "onUpdate ");
+
 					}
 
 					@Override
 					public void onStartOpen(SwipeLayout layout) {
+						Log.e("SwipeLayout", "onStartOpen ");
 
 					}
 
 					@Override
 					public void onOpen(SwipeLayout layout) {
 						//when the BottomView totally show.
+						Log.e("SwipeLayout", "onOpen " + layout);
+//						mItemManger.removeShownLayouts(layout);
+//						cartItems.remove(dataItem);
+//						int itemPosition = getItemId(dataItem);
+//						notifyItemRemoved(itemPosition);
+//						notifyItemRangeChanged(itemPosition, data.size());
+//						mItemManger.closeAllItems();
 					}
 
 					@Override
 					public void onStartClose(SwipeLayout layout) {
+						Log.e("SwipeLayout", "onStartClose " + layout);
 
 					}
 
@@ -166,13 +183,43 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 					@Override
 					public void onClick(View view) {
 						try {
-//								mItemManger.removeShownLayouts(productHolder.swipeLayout);
-//								cartItems.remove(position);
-//								notifyItemRemoved(position);
-//								int previousSize = cartItems.size();
-//								notifyItemRangeChanged(previousSize, cartItems.size() - previousSize);
-//								mItemManger.closeAllItems();
-							//onItemClick.onItemDeleteClick(commerceItem);
+							Animation animation = android.view.animation.AnimationUtils.loadAnimation(view.getContext(), R.anim.shake);
+							animation.setAnimationListener(new Animation.AnimationListener() {
+								@Override
+								public void onAnimationStart(Animation animation) {
+								}
+
+								@Override
+								public void onAnimationEnd(Animation animation) {
+									Iterator<CartItemGroup> cartItemGroupIterator = cartItems.iterator();
+									while (cartItemGroupIterator.hasNext()) {
+										CartItemGroup cartItemGroup = cartItemGroupIterator.next();
+										ArrayList<CommerceItem> commerceItemList = cartItemGroup.commerceItems;
+										Iterator<CommerceItem> commerceItemIterator = commerceItemList.iterator();
+										while (commerceItemIterator.hasNext()) {
+											CommerceItem cm = commerceItemIterator.next();
+											if (commerceItem.commerceId.equalsIgnoreCase(cm.commerceId)) {
+												orderSummary.basketTotal = orderSummary.basketTotal - cm.getPriceInfo().amount;
+												orderSummary.totalItemsCount = orderSummary.totalItemsCount - cm.getQuantity();
+												orderSummary.total = orderSummary.basketTotal - orderSummary.estimatedDelivery;
+												onItemClick.totalItemInBasket(orderSummary.totalItemsCount);
+												mItemManger.removeShownLayouts(productHolder.swipeLayout);
+												commerceItemIterator.remove();
+												mItemManger.closeAllItems();
+												notifyDataSetChanged();
+												break;
+											}
+										}
+									}
+								}
+
+								@Override
+								public void onAnimationRepeat(Animation animation) {
+
+								}
+							});
+							productHolder.llDeleteContainer.startAnimation(animation);
+							//	onItemClick.onItemDeleteClick(commerceItem);
 						} catch (Exception ex) {
 							Log.e("cartItems", ex.toString());
 						}
@@ -190,7 +237,8 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 					@Override
 					public void onClick(View view) {
 						commerceItem.setQuantityUploading(true);
-						onItemClick.onChangeQuantity(itemRow.productItem.getCommerceId());
+						setFirstLoadCompleted(false);
+						onItemClick.onChangeQuantity(commerceItem);
 					}
 				});
 
@@ -398,21 +446,31 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 							   OrderSummary orderSummary) {
 		this.cartItems = cartItems;
 		this.orderSummary = orderSummary;
+		resetQuantityState(false);
 		notifyDataSetChanged();
 	}
 
 	public void onChangeQuantityComplete() {
-		if (cartItems != null) {
-			if (cartItems.size() > 0) {
-				for (CartItemGroup item : cartItems) {
-					ArrayList<CommerceItem> commerceItem = item.getCommerceItems();
-					for (CommerceItem product : commerceItem) {
-						product.setQuantityUploading(false);
-						notifyDataSetChanged();
+		resetQuantityState(false);
+		notifyDataSetChanged();
+	}
+
+	public void onChangeQuantityLoad(CommerceItem mCommerceItem) {
+		for (CartItemGroup cartItemGroup : this.cartItems) {
+			ArrayList<CommerceItem> commerceItemList = cartItemGroup.commerceItems;
+			if (commerceItemList != null) {
+				for (CommerceItem cm : commerceItemList) {
+					if (cm == mCommerceItem) {
+						cm.setQuantityUploading(true);
 					}
 				}
 			}
 		}
+		notifyDataSetChanged();
+	}
+
+	public void onChangeQuantityError() {
+		resetQuantityState(true);
 		notifyDataSetChanged();
 	}
 
@@ -440,30 +498,33 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 	public void onPopUpCancel(String status) {
 		switch (status) {
 			case CANCEL_CALL:
-				for (CartItemGroup cartItemGroup : this.cartItems) {
-					ArrayList<CommerceItem> commerceItemList = cartItemGroup.commerceItems;
-					if (commerceItemList != null) {
-						for (CommerceItem cm : commerceItemList) {
-							cm.setQuantityUploading(false);
-							setFirstLoadCompleted(false);
-						}
-					}
-				}
+				resetQuantityState(true);
 				notifyDataSetChanged();
 				break;
 
 			default:
 				break;
-
 		}
-
 	}
 
-	public void setFirstLoadCompleted(boolean firstLoadCompleted) {
+	private void resetQuantityState(boolean refreshQuantity) {
+		for (CartItemGroup cartItemGroup : this.cartItems) {
+			ArrayList<CommerceItem> commerceItemList = cartItemGroup.commerceItems;
+			if (commerceItemList != null) {
+				for (CommerceItem cm : commerceItemList) {
+					if (refreshQuantity)
+						cm.setQuantityUploading(false);
+					setFirstLoadCompleted(false);
+				}
+			}
+		}
+	}
+
+	private void setFirstLoadCompleted(boolean firstLoadCompleted) {
 		this.firstLoadCompleted = firstLoadCompleted;
 	}
 
-	public boolean firstLoadWasCompleted() {
+	private boolean firstLoadWasCompleted() {
 		return firstLoadCompleted;
 	}
 }

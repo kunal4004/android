@@ -1069,7 +1069,7 @@ public class Utils {
 				public void onClick(View view) {
 					if (viewState) {
 						// do anything when popupWindow was clicked
-						if (getSessionToken(activity) != null) {
+						if (getSessionToken(activity) == null) {
 							ScreenManager.presentSSOSignin(activity);
 						} else {
 							Intent openCartActivity = new Intent(activity, CartActivity.class);

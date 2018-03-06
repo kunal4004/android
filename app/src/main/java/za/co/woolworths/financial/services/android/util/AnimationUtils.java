@@ -51,4 +51,25 @@ public class AnimationUtils {
 		Animation startAnimation = android.view.animation.AnimationUtils.loadAnimation(context, R.anim.fade_out);
 		view.startAnimation(startAnimation);
 	}
+
+	public static void shakeAnimation(View view) {
+		view.startAnimation(android.view.animation.AnimationUtils.loadAnimation(view.getContext(), R.anim.shake));
+		Animation animation = android.view.animation.AnimationUtils.loadAnimation(view.getContext(), R.anim.shake);
+		animation.setAnimationListener(new Animation.AnimationListener() {
+			@Override
+			public void onAnimationStart(Animation animation) {
+
+			}
+
+			@Override
+			public void onAnimationEnd(Animation animation) {
+
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+
+			}
+		});
+	}
 }

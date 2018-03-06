@@ -44,7 +44,6 @@ import za.co.woolworths.financial.services.android.models.dto.ChangeQuantity;
 import za.co.woolworths.financial.services.android.models.dto.Data;
 import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
-import za.co.woolworths.financial.services.android.models.dto.Product;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
@@ -70,6 +69,8 @@ import static za.co.woolworths.financial.services.android.models.service.event.C
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_CALL;
 
 public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick, View.OnClickListener, NetworkChangeListener {
+
+	private int mQuantity;
 
 	public interface ToggleRemoveItem {
 		void onRemoveItem(boolean visibility);
@@ -97,9 +98,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	private BroadcastReceiver mConnectionBroadcast;
 	private ErrorHandlerView mErrorHandlerView;
 	private CommerceItem mCommerceItem;
-	private boolean mRemoveItemFailed = false;
 	private RelativeLayout rlNoConnectionLayout;
 	private WButton mBtnRetry;
+	private boolean changeQuantityWasClicked = false;
+	private boolean mRemoveItemFailed = false;
 
 	public CartFragment() {
 		// Required empty public constructor
@@ -172,8 +174,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 									loadShoppingCart().execute();
 									tvDeliveryLocation.setText(cartState.getState());
 								} else if (cartState.getIndexState() == CHANGE_QUANTITY) {
-									int quantity = cartState.getQuantity();
-									executeChangeQuantity(new ChangeQuantity(quantity, mChangeQuantity.getCommerceId())).execute();
+									mQuantity = cartState.getQuantity();
+									changeQuantityAPI(new ChangeQuantity(mQuantity, mChangeQuantity.getCommerceId())).execute();
 								}
 							} else if (object instanceof ProductState) {
 								ProductState productState = (ProductState) object;
@@ -193,7 +195,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	private void emptyCartUI(View view) {
-		ImageView imgEmpyStateIcon = view.findViewById(R.id.imgEmpyStateIcon);
+		ImageView imEmptyCart = view.findViewById(R.id.imgEmpyStateIcon);
+		imEmptyCart.setImageResource(R.drawable.cart_empty_vector);
 		WTextView txtEmptyStateTitle = view.findViewById(R.id.txtEmptyStateTitle);
 		WTextView txtEmptyStateDesc = view.findViewById(R.id.txtEmptyStateDesc);
 		WButton btnGoToProduct = view.findViewById(R.id.btnGoToProduct);
@@ -243,8 +246,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	@Override
-	public void onChangeQuantity(String commerceId) {
-		mChangeQuantity.setCommerceId(commerceId);
+	public void onChangeQuantity(CommerceItem commerceId) {
+		mCommerceItem = commerceId;
+		mChangeQuantity.setCommerceId(commerceId.getCommerceId());
 		if (mWoolWorthsApplication != null) {
 			WGlobalState wGlobalState = mWoolWorthsApplication.getWGlobalState();
 			if (wGlobalState != null) {
@@ -257,6 +261,14 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			editQuantityIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, ConfirmColorSizeActivity.QUANTITY);
 			activity.startActivity(editQuantityIntent);
 			activity.overridePendingTransition(0, 0);
+		}
+	}
+
+	@Override
+	public void totalItemInBasket(int count) {
+		if (count == 0) {
+			rlCheckOut.setVisibility(View.GONE);
+			relEmptyStateHandler.setVisibility(View.VISIBLE);
 		}
 	}
 
@@ -327,7 +339,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			mDisposables.dispose();
 		}
 	}
-
 
 	public void changeQuantity(CartResponse cartResponse) {
 		if (cartResponse.cartItems.size() > 0 && cartProductAdapter != null) {
@@ -441,7 +452,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		};
 	}
 
-	private HttpAsyncTask<String, String, ShoppingCartResponse> executeChangeQuantity(final ChangeQuantity changeQuantity) {
+	private HttpAsyncTask<String, String, ShoppingCartResponse> changeQuantityAPI(final ChangeQuantity changeQuantity) {
+		mChangeQuantity = changeQuantity;
 		return new HttpAsyncTask<String, String, ShoppingCartResponse>() {
 
 			@Override
@@ -467,8 +479,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 						@Override
 						public void run() {
 							mErrorHandlerView.showToast();
+							changeQuantityWasClicked = true;
 							if (cartProductAdapter != null)
-								cartProductAdapter.onChangeQuantityComplete();
+								cartProductAdapter.onChangeQuantityError();
 
 						}
 					});
@@ -547,10 +560,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					int httpCode = shoppingCartResponse.httpCode;
 					switch (httpCode) {
 						case 200:
-							CartResponse cartResponse = convertResponseToCartResponseObject(shoppingCartResponse);
-							updateCart(cartResponse);
-							removeItemProgressBar(commerceItem, false);
 							if (commerceItem == null) {
+								CartResponse cartResponse = convertResponseToCartResponseObject(shoppingCartResponse);
+								updateCart(cartResponse);
+								removeItemProgressBar(commerceItem, false);
 								toggleRemoveItem.onRemoveSuccess();
 							}
 							break;
@@ -666,13 +679,19 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	public void onConnectionChanged() {
 		if (mRemoveItemFailed) {
 			if (mCommerceItem != null) {
-				if (cartProductAdapter != null)
-					cartProductAdapter.toggleDeleteSingleItem(mCommerceItem);
 				removeItemAPI(mCommerceItem);
 			} else {
 				removeItemAPI(null);
 			}
 			mRemoveItemFailed = false;
+		}
+
+		if (changeQuantityWasClicked) {
+			if (cartProductAdapter != null) {
+				cartProductAdapter.onChangeQuantityLoad(mCommerceItem);
+			}
+			changeQuantityAPI(new ChangeQuantity(mQuantity, mChangeQuantity.getCommerceId())).execute();
+			changeQuantityWasClicked = false;
 		}
 	}
 
