@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="18dp"
+        >
+        <ImageView
+            android:id="@+id/listImage"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/appicon"
+            />
+        <LinearLayout
+            android:id="@+id/detailsContainer"
+            android:layout_toRightOf="@id/listImage"
+            android:layout_toLeftOf="@+id/listItemSize"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginLeft="24dp"
+            android:layout_centerVertical="true"
+            >
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/listItemName"
+                android:letterSpacing="1sp"
+                android:textSize="12sp"
+                android:textColor="@color/black"
+                app:WTextView_font="bold"
+                android:textAllCaps="true"
+                android:text="general Fashion"
+                />
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/listItemLastModified"
+                android:letterSpacing="1sp"
+                android:textSize="12sp"
+                android:textColor="@color/mask_opacity"
+                app:WTextView_font="myriadpro_regular"
+                android:text="5 hours ago"
+                />
+        </LinearLayout>
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/listItemSize"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            app:WTextView_font="light"
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            android:text="22"
+            android:layout_marginLeft="16dp"
+            />
+    </RelativeLayout>
+
+</LinearLayout>

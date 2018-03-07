@@ -163,12 +163,20 @@
                                     android:drawableLeft="@drawable/signout_24_copy"
                                     android:text="@string/my_lists"/>
 
-                                <ImageView
+                                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                                    android:id="@+id/listsCounter"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
+                                    android:layout_height="match_parent"
                                     android:layout_alignParentRight="true"
                                     android:layout_centerVertical="true"
-                                    android:background="@drawable/ic_caret_black"/>
+                                    android:background="@drawable/message_counter_background"
+                                    android:gravity="center"
+                                    android:paddingLeft="8dp"
+                                    android:paddingRight="8dp"
+                                    android:textColor="@color/white"
+                                    android:textSize="10sp"
+                                    android:visibility="gone"
+                                    app:WTextView_font="medium_bold"/>
                             </RelativeLayout>
 
                             <RelativeLayout
