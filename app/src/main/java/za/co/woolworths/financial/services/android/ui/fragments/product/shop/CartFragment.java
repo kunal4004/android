@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.shop;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -89,7 +88,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	private RelativeLayout relEmptyStateHandler;
 	private ArrayList<CartItemGroup> cartItems;
 	private OrderSummary orderSummary;
-	private ProgressDialog progressDialog;
 	private WTextView tvDeliveryLocation;
 	private WTextView tvFreeDeliveryFirstOrder;
 	private CompositeDisposable mDisposables = new CompositeDisposable();
@@ -140,11 +138,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		mConnectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
 		view.findViewById(R.id.locationSelectedLayout).setOnClickListener(this);
 		mBtnRetry.setOnClickListener(this);
-
 		btnCheckOut.setOnClickListener(this);
 		tvFreeDeliveryFirstOrder = view.findViewById(R.id.tvFreeDeliveryFirstOrder);
 		tvDeliveryLocation = view.findViewById(R.id.tvDeliveryLocation);
-		progressDialog = new ProgressDialog(getActivity());
 		emptyCartUI(view);
 		Activity activity = getActivity();
 		if (activity != null) {
@@ -269,6 +265,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		if (count == 0) {
 			rlCheckOut.setVisibility(View.GONE);
 			relEmptyStateHandler.setVisibility(View.VISIBLE);
+			rvCartList.setVisibility(View.GONE);
 		}
 	}
 
@@ -560,9 +557,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					int httpCode = shoppingCartResponse.httpCode;
 					switch (httpCode) {
 						case 200:
+							CartResponse cartResponse = convertResponseToCartResponseObject(shoppingCartResponse);
+							updateCart(cartResponse);
 							if (commerceItem == null) {
-								CartResponse cartResponse = convertResponseToCartResponseObject(shoppingCartResponse);
-								updateCart(cartResponse);
 								removeItemProgressBar(commerceItem, false);
 								toggleRemoveItem.onRemoveSuccess();
 							}

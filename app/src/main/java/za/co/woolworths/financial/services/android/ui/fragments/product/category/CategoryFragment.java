@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.categor
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
@@ -293,38 +294,41 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 	@Override
 	public void bindViewWithUI(final List<RootCategory> rootCategories, LinearLayout llAddView) {
 		mRootCategories = rootCategories;
-		LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		int position = 0;
-		while (position < mRootCategories.size()) {
-			RootCategory rootCategory = rootCategories.get(position);
-			assert inflater != null;
-			@SuppressLint("InflateParams")
-			View view = inflater.inflate(R.layout.product_search_root_category_row, null, false);
-			LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-			Resources r = getActivity().getResources();
-			int sixteenDp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, r.getDisplayMetrics());
-			layoutParams.setMargins(sixteenDp, 0, sixteenDp, sixteenDp);
-			view.setLayoutParams(layoutParams);
-			view.setId(position);
-			view.setTag(position);
-			WTextView tv = view.findViewById(R.id.textProduct);
-			tv.setText(rootCategory.categoryName);
-			WrapContentDraweeView mImageProductCategory = view.findViewById(R.id.imProductCategory);
-			mImageProductCategory.setId(position);
-			mImageProductCategory.setTag(position);
-			mImageProductCategory.setImageURI(rootCategory.imgUrl, getActivity());
-			view.setOnClickListener(new View.OnClickListener() {
-				public void onClick(View v) {
-					onCategoryItemClicked(mRootCategories.get(v.getId()));
-				}
-			});
-			mImageProductCategory.setOnClickListener(new View.OnClickListener() {
-				public void onClick(View v) {
-					onCategoryItemClicked(mRootCategories.get(v.getId()));
-				}
-			});
-			position++;
-			llAddView.addView(view);
+		Activity activity = getActivity();
+		if (activity != null) {
+			LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			int position = 0;
+			while (position < mRootCategories.size()) {
+				RootCategory rootCategory = rootCategories.get(position);
+				assert inflater != null;
+				@SuppressLint("InflateParams")
+				View view = inflater.inflate(R.layout.product_search_root_category_row, null, false);
+				LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+				Resources r = getActivity().getResources();
+				int sixteenDp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, r.getDisplayMetrics());
+				layoutParams.setMargins(sixteenDp, 0, sixteenDp, sixteenDp);
+				view.setLayoutParams(layoutParams);
+				view.setId(position);
+				view.setTag(position);
+				WTextView tv = view.findViewById(R.id.textProduct);
+				tv.setText(rootCategory.categoryName);
+				WrapContentDraweeView mImageProductCategory = view.findViewById(R.id.imProductCategory);
+				mImageProductCategory.setId(position);
+				mImageProductCategory.setTag(position);
+				mImageProductCategory.setImageURI(rootCategory.imgUrl, getActivity());
+				view.setOnClickListener(new View.OnClickListener() {
+					public void onClick(View v) {
+						onCategoryItemClicked(mRootCategories.get(v.getId()));
+					}
+				});
+				mImageProductCategory.setOnClickListener(new View.OnClickListener() {
+					public void onClick(View v) {
+						onCategoryItemClicked(mRootCategories.get(v.getId()));
+					}
+				});
+				position++;
+				llAddView.addView(view);
+			}
 		}
 	}
 

@@ -11,44 +11,29 @@
 
     <!--Bottom View For Right to Left-->
 
-    <RelativeLayout
-        android:id="@+id/bottom_wrapper"
+    <FrameLayout
+        android:id="@+id/flDeleteRoot"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:background="@color/delete_red_bg"
         android:gravity="center"
         android:orientation="horizontal">
 
-        <ProgressBar
-            android:id="@+id/pbDeleteIndicator"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginEnd="@dimen/eighty_two_dp"
-            android:layout_marginStart="@dimen/seventy_eight_dp"
-            android:indeterminateTint="@color/white"
-            android:visibility="gone"/>
-
-        <LinearLayout
-            android:id="@+id/llDeleteContainer"
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/tvDelete"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:layout_gravity="center|end"
+            android:layout_marginEnd="@dimen/sixteen_dp"
+            android:layout_marginStart="@dimen/sixteen_dp"
+            android:gravity="center|end"
+            android:text="@string/delete"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sixteen_sp"
+            swipe:WTextView_font="medium"/>
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/tvDelete"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginEnd="@dimen/eighty_two_dp"
-                android:layout_marginStart="@dimen/seventy_eight_dp"
-                android:gravity="center"
-                android:text="@string/delete"
-                android:textAllCaps="true"
-                android:textColor="@color/white"
-                android:textSize="@dimen/twenty_sp"
-                swipe:WTextView_font="medium"/>
-
-        </LinearLayout>
-    </RelativeLayout>
+    </FrameLayout>
 
 
     <!-- Another Bottom View For Left to Right -->
