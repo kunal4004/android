@@ -12,13 +12,20 @@ import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 
 import com.awfs.coordination.R;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.models.WfsApi;
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
-import za.co.woolworths.financial.services.android.ui.activities.WSplashScreenActivity;
+import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice;
+import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDeviceResponse;
+import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.ui.activities.splash.WSplashScreenActivity;
 
 public class NotificationUtils {
 
@@ -32,6 +39,15 @@ public class NotificationUtils {
     private static final int SUMMARY_ID = 0;
     private final NotificationManagerCompat notificationManager;
     private final PendingIntent contentIntent;
+
+    private static NotificationUtils instance;//singleton
+
+    public static NotificationUtils getInstance() {
+        if (instance == null)
+            instance = NotificationUtils.newInstance(WoolworthsApplication.getInstance().getApplicationContext());
+
+        return instance;
+    }
 
     public static NotificationUtils newInstance(Context context) {
         Context appContext = context.getApplicationContext();
@@ -48,7 +64,8 @@ public class NotificationUtils {
         myIntent.putExtra(PUSH_NOTIFICATION_INTENT, PUSH_NOTIFICATION_INTENT);
         PendingIntent contentIntent = PendingIntent.getActivity(safeContext, 0, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        return new NotificationUtils(safeContext, notificationManager, contentIntent);
+        NotificationUtils.instance = new NotificationUtils(safeContext, notificationManager, contentIntent);
+        return NotificationUtils.instance;
     }
 
     private NotificationUtils(Context context,
@@ -89,7 +106,7 @@ public class NotificationUtils {
     }
 
     private Notification buildNotification(String title, String body, String groupKey) {
-        return new NotificationCompat.Builder(mContext)
+        Notification notification = new NotificationCompat.Builder(mContext)
                 .setContentTitle(title)
                 .setContentText(body)
                 .setWhen(System.currentTimeMillis())
@@ -102,6 +119,8 @@ public class NotificationUtils {
                 .setPriority(Notification.PRIORITY_HIGH)
                 .setDefaults(NotificationCompat.DEFAULT_VIBRATE)
                 .build();
+
+        return notification;
     }
 
     private Notification buildSummary(String groupKey) {
@@ -161,4 +180,69 @@ public class NotificationUtils {
         notificationManager.cancelAll();
     }
 
+    public void sendRegistrationToServer(){
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+
+				if (refreshedToken == null){
+					sendRegistrationToServer();
+				}else{
+					sendRegistrationToServer(refreshedToken);
+				}
+			}
+		}).start();
+	}
+
+    public void sendRegistrationToServer(String token) {
+
+        // sending gcm token to server
+        final CreateUpdateDevice device = new CreateUpdateDevice();
+        device.appInstanceId = Utils.getUniqueDeviceID(WoolworthsApplication.getInstance().getApplicationContext());
+        device.pushNotificationToken = token;
+
+        //Don't update token if pushNotificationToken or appInstanceID NULL
+        if(device.appInstanceId == null || device.pushNotificationToken==null)
+            return;
+
+
+        //Sending Token and app instance Id to App server
+        //Need to be done after Login
+
+        new HttpAsyncTask<String, String, CreateUpdateDeviceResponse>() {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+
+            @Override
+            protected CreateUpdateDeviceResponse httpDoInBackground(String... params) {
+                WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
+                WfsApi api = woolworthsApplication.getApi();
+                return api.getResponseOnCreateUpdateDevice(device);
+            }
+
+            @Override
+            protected Class<CreateUpdateDeviceResponse> httpDoInBackgroundReturnType() {
+                return CreateUpdateDeviceResponse.class;
+            }
+
+            @Override
+            protected CreateUpdateDeviceResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+                CreateUpdateDeviceResponse createUpdateResponse = new CreateUpdateDeviceResponse();
+                createUpdateResponse.response = new Response();
+
+                Log.d("PushNotificationHandler", "Error: " + createUpdateResponse.response.desc);
+
+
+                return createUpdateResponse;
+            }
+
+            @Override
+            protected void onPostExecute(CreateUpdateDeviceResponse createUpdateResponse) {
+                super.onPostExecute(createUpdateResponse);
+            }
+        }.execute();
+    }
 }

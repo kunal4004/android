@@ -104,7 +104,7 @@ public class WFragmentDrawer extends Fragment {
     }
     public void notifyNavigationDrawer(int voucherCount)
     {
-        mMenuList.get(3).setCount(voucherCount);
+        mMenuList.get(2).setCount(voucherCount);
         adapter.notifyDataSetChanged();
     }
     public void setUp(int fragmentId, final DrawerLayout drawerLayout, final Toolbar toolbar) {

@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -18,29 +17,45 @@ import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.dto.OtherSku;
+import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.models.service.event.CartState;
+import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.adapters.StockFinderFragmentAdapter;
-import za.co.woolworths.financial.services.android.ui.fragments.ColorFragmentDialog;
-import za.co.woolworths.financial.services.android.ui.fragments.SizeFragmentDialog;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ColorFragmentList;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.SizeFragmentList;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DetailFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.EditQuantityFragmentList;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ColorInterface;
 import za.co.woolworths.financial.services.android.util.NonSwipeableViewPager;
 import za.co.woolworths.financial.services.android.util.Utils;
 
+import static za.co.woolworths.financial.services.android.models.service.event.CartState.CHANGE_QUANTITY;
+import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_CALL;
+import static za.co.woolworths.financial.services.android.models.service.event.ProductState.POST_ADD_ITEM_TO_CART;
+
 public class ConfirmColorSizeActivity extends AppCompatActivity implements View.OnClickListener, WStockFinderActivity.RecyclerItemSelected {
+
+	public static final String SELECT_PAGE = "SELECT_PAGE";
+	public static final String QUANTITY = "quantity";
+	public final String SELECTED_COLOUR = "SELECTED_COLOUR";
+	public final String COLOR_LIST = "COLOR_LIST";
+	public final String OTHERSKU = "OTHERSKU";
+	public final String PRODUCT_HAS_COLOR = "PRODUCT_HAS_COLOR";
+	public final String PRODUCT_HAS_SIZE = "PRODUCT_HAS_SIZE";
 
 	private LinearLayout mRelRootContainer, mRelPopContainer;
 	private ImageView mImCloseIcon, mImBackIcon;
-	private String mColorList, mOtherSKU, mProductName;
+	private String mColorList, mOtherSKU;
 	private static final int ANIM_DOWN_DURATION = 700;
 	private NonSwipeableViewPager mViewPager;
 	private WTextView tvTitle;
 	private String mSelectedColour;
-	private ArrayList<OtherSku> mOtherSizeSKU;
 	private boolean mProductHasColor, mProductHasSize, viewWasClicked;
 	private StockFinderFragmentAdapter mPagerAdapter;
 	private WGlobalState mGlobalState;
+	private String mSelectPage;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -52,23 +67,29 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 		mGlobalState = ((WoolworthsApplication) ConfirmColorSizeActivity.this.getApplication()).getWGlobalState();
 		Bundle mBundle = getIntent().getExtras();
 		if (mBundle != null) {
-			mSelectedColour = mBundle.getString("SELECTED_COLOUR");
-			mColorList = mBundle.getString("COLOR_LIST");
-			mOtherSKU = mBundle.getString("OTHERSKU");
-			mProductName = mBundle.getString("PRODUCT_NAME");
-			mProductHasColor = mBundle.getBoolean("PRODUCT_HAS_COLOR");
-			mProductHasSize = mBundle.getBoolean("PRODUCT_HAS_SIZE");
+			mSelectPage = mBundle.getString(SELECT_PAGE);
+			mSelectedColour = mBundle.getString(SELECTED_COLOUR);
+			mColorList = mBundle.getString(COLOR_LIST);
+			mOtherSKU = mBundle.getString(OTHERSKU);
+			mProductHasColor = mBundle.getBoolean(PRODUCT_HAS_COLOR);
+			mProductHasSize = mBundle.getBoolean(PRODUCT_HAS_SIZE);
 		}
-
 		init();
 		addListener();
 		hideBackIcon();
 		setAnimation();
-		if (mProductHasColor) {
-			selectCurrentPage(0);
-		} else {
-			selectCurrentPage(1);
-			hideBackIcon();
+		switch (mSelectPage) {
+			case QUANTITY:
+				selectCurrentPage(2);
+				break;
+			default:
+				if (mProductHasColor) {
+					selectCurrentPage(0);
+				} else {
+					selectCurrentPage(1);
+					hideBackIcon();
+				}
+				break;
 		}
 	}
 
@@ -79,18 +100,18 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 	}
 
 	private void init() {
-		mRelRootContainer = (LinearLayout) findViewById(R.id.relContainerRootMessage);
-		mRelPopContainer = (LinearLayout) findViewById(R.id.relPopContainer);
-		tvTitle = (WTextView) findViewById(R.id.title);
-		mViewPager = (NonSwipeableViewPager) findViewById(R.id.viewPager);
+		mRelRootContainer = findViewById(R.id.relContainerRootMessage);
+		mRelPopContainer = findViewById(R.id.relPopContainer);
+		tvTitle = findViewById(R.id.title);
+		mViewPager = findViewById(R.id.viewPager);
 		mPagerAdapter = new StockFinderFragmentAdapter(getSupportFragmentManager());
-		mPagerAdapter.addFrag(new ColorFragmentDialog(), getString(R.string.color));
-		mPagerAdapter.addFrag(new SizeFragmentDialog(), getString(R.string.size));
+		mPagerAdapter.addFrag(new ColorFragmentList(), getString(R.string.color));
+		mPagerAdapter.addFrag(new SizeFragmentList(), getString(R.string.size));
+		mPagerAdapter.addFrag(new EditQuantityFragmentList(), getString(R.string.edit_quantity));
 		mViewPager.setAdapter(mPagerAdapter);
 		mViewPager.addOnPageChangeListener(pageChangeListener);
-
-		mImCloseIcon = (ImageView) findViewById(R.id.imCloseIcon);
-		mImBackIcon = (ImageView) findViewById(R.id.imBackIcon);
+		mImCloseIcon = findViewById(R.id.imCloseIcon);
+		mImBackIcon = findViewById(R.id.imBackIcon);
 	}
 
 	private void setAnimation() {
@@ -134,6 +155,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 
 				@Override
 				public void onAnimationEnd(Animation animation) {
+					Utils.sendBus(new ProductState(CANCEL_CALL));
 					dismissLayout();
 				}
 			});
@@ -141,7 +163,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 		}
 	}
 
-	private void dismissSizeColorActivity() {
+	private void dismissQuantityView(final int quantity) {
 		if (!viewWasClicked) { // prevent more than one click
 			viewWasClicked = true;
 			TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
@@ -159,11 +181,53 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 
 				@Override
 				public void onAnimationEnd(Animation animation) {
-					callInStoreFinder();
+					if (mGlobalState != null) {
+						switch (mGlobalState.getNavigateFromQuantity()) {
+							case 1: //cart
+								Utils.sendBus(new CartState(CHANGE_QUANTITY, quantity));
+								mGlobalState.navigateFromQuantity(0);
+								break;
+
+							default:
+								Utils.sendBus(new ProductState(POST_ADD_ITEM_TO_CART, quantity));
+								break;
+
+						}
+					}
 					dismissLayout();
 				}
 			});
 			mRelRootContainer.startAnimation(animation);
+		}
+	}
+
+	private void dismissSizeColorActivity() {
+		if (mGlobalState.getSaveButtonClick() == DetailFragment.INDEX_STORE_FINDER) {
+			if (!viewWasClicked) { // prevent more than one click
+				viewWasClicked = true;
+				TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
+				animation.setFillAfter(true);
+				animation.setDuration(ANIM_DOWN_DURATION);
+				animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
+
+					@Override
+					public void onAnimationStart(Animation animation) {
+					}
+
+					@Override
+					public void onAnimationRepeat(Animation animation) {
+					}
+
+					@Override
+					public void onAnimationEnd(Animation animation) {
+						callInStoreFinder();
+						dismissLayout();
+					}
+				});
+				mRelRootContainer.startAnimation(animation);
+			}
+		} else {
+			dismissQuantityView(1);
 		}
 	}
 
@@ -186,7 +250,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 		if (filterType.equalsIgnoreCase(getString(R.string.color))) {
 			if (mProductHasSize) {
 				mSelectedColour = getOtherSKUList(mColorList).get(position).colour;
-				ArrayList<OtherSku> otherSkuList = Utils.commonSizeList(mSelectedColour, mProductHasColor, getOtherSKUList(mOtherSKU));
+				ArrayList<OtherSkus> otherSkuList = Utils.commonSizeList(mSelectedColour, mProductHasColor, getOtherSKUList(mOtherSKU));
 				if (otherSkuList.size() > 0) {
 					if (otherSkuList.size() == 1) {
 						String selectedSKU = otherSkuList.get(0).sku;
@@ -208,35 +272,35 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 				dismissSizeColorActivity();
 			}
 		} else {
-			ArrayList<OtherSku> mOtherSizeSKU = Utils.commonSizeList(mSelectedColour, mProductHasColor, getOtherSKUList(mOtherSKU));
+			ArrayList<OtherSkus> mOtherSizeSKU = Utils.commonSizeList(mSelectedColour, mProductHasColor, getOtherSKUList(mOtherSKU));
 			String selectedSKU = mOtherSizeSKU.get(position).sku;
 			mGlobalState.setSelectedSKUId(selectedSKU);
 			inStoreFinderUpdate();
 		}
 	}
 
+	@Override
+	public void onQuantitySelected(int quantity) {
+		dismissQuantityView(quantity);
+	}
+
 	private void inStoreFinderUpdate() {
-		callInStoreFinder();
-		closeViewAnimation();
+		if (mGlobalState.getSaveButtonClick() == DetailFragment.INDEX_STORE_FINDER) {
+			callInStoreFinder();
+			closeViewAnimation();
+		} else {
+			dismissQuantityView(1);
+		}
 	}
 
 	private void callInStoreFinder() {
-		Intent result = new Intent();
-		setResult(RESULT_OK, result);
+		WoolworthsApplication.getInstance().bus().send(new ConfirmColorSizeActivity());
 	}
 
-	private boolean sizeValueExist(ArrayList<OtherSku> list, String name) {
-		for (OtherSku item : list) {
-			if (item.size.equals(name)) {
-				return true;
-			}
-		}
-		return false;
-	}
 
-	private ArrayList<OtherSku> getOtherSKUList(String item) {
+	private ArrayList<OtherSkus> getOtherSKUList(String item) {
 		return new Gson().fromJson(item,
-				new TypeToken<ArrayList<OtherSku>>() {
+				new TypeToken<ArrayList<OtherSkus>>() {
 				}.getType());
 	}
 
@@ -262,20 +326,30 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 		ColorInterface fragmentToShow = (ColorInterface) mPagerAdapter.getItem(position);
 		switch (position) {
 			case 0:
-				ArrayList<OtherSku> mOtherSKUList = getOtherSKUList(mColorList);
+				ArrayList<OtherSkus> mOtherSKUList = getOtherSKUList(mColorList);
 				hideBackIcon();
 				tvTitle.setText(getString(R.string.confirm_color_desc));
 				if (fragmentToShow != null) {
 					fragmentToShow.onUpdate(mOtherSKUList, getString(R.string.color));
 				}
 				break;
-
 			case 1:
 				showBackIcon();
 				tvTitle.setText(getString(R.string.confirm_size_desc));
-				mOtherSizeSKU = Utils.commonSizeList(mSelectedColour, mProductHasColor, getOtherSKUList(mOtherSKU));
+				ArrayList<OtherSkus> mOtherSizeSKU = Utils.commonSizeList(mSelectedColour,
+						mProductHasColor, getOtherSKUList(mOtherSKU));
 				if (fragmentToShow != null) {
 					fragmentToShow.onUpdate(mOtherSizeSKU, getString(R.string.size));
+				}
+				break;
+			case 2:
+				tvTitle.setText(getString(R.string.edit_quantity));
+				if (fragmentToShow != null) {
+					ArrayList list = new ArrayList();
+					for (int number = 0; number < 10; number++) {
+						list.add(number + 1);
+					}
+					fragmentToShow.onUpdate(list);
 				}
 				break;
 		}

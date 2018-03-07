@@ -30,7 +30,7 @@ import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.statement.EmailStatementResponse;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementResponse;
-import za.co.woolworths.financial.services.android.models.rest.SendUserStatement;
+import za.co.woolworths.financial.services.android.models.rest.statement.SendUserStatement;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;

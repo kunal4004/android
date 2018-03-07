@@ -105,7 +105,8 @@ public class PersistenceLayer extends SQLiteOpenHelper {
 
         if(cursor.getCount() == 0){//consider this as a failure as no rows were updated
             db.close();
-            throw new SQLiteException("Updated row count was 0. This is considered as a failed 'SQL UPDATE' transaction.");
+            return result;
+            //throw new SQLiteException("Updated row count was 0. This is considered as a failed 'SQL UPDATE' transaction.");
         }
 
         Log.d(TAG, "" + cursor.getCount());

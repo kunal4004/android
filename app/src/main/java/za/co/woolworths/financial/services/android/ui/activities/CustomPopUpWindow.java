@@ -1,17 +1,22 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -30,13 +35,18 @@ import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CLIOfferDecision;
+import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
 import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.models.service.event.AuthenticationState;
+import za.co.woolworths.financial.services.android.models.service.event.ProductState;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.models.dto.statement.EmailStatementResponse;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementResponse;
 import za.co.woolworths.financial.services.android.models.dto.statement.USDocuments;
-import za.co.woolworths.financial.services.android.models.rest.SendUserStatement;
+import za.co.woolworths.financial.services.android.models.rest.statement.SendUserStatement;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.ui.fragments.statement.EmailStatementFragment;
@@ -54,6 +64,8 @@ import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.StatementUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
+
+import static za.co.woolworths.financial.services.android.util.SessionExpiredUtilities.REWARD;
 
 public class CustomPopUpWindow extends AppCompatActivity implements View.OnClickListener, NetworkChangeListener {
 
@@ -73,13 +85,15 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 	private LoadState loadState;
 	private SendUserStatementRequest mSendUserStatementRequest;
 	protected WTextView mTvStatementSendTo;
+	private WButton mBtnSignOutCancel;
+	private WButton mBtnSignOut;
 
 	public enum MODAL_LAYOUT {
 		CONFIDENTIAL, INSOLVENCY, INFO, EMAIL, ERROR, MANDATORY_FIELD,
 		HIGH_LOAN_AMOUNT, LOW_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION, SIGN_OUT, BARCODE_ERROR,
 		SHOPPING_LIST_INFO, SESSION_EXPIRED, INSTORE_AVAILABILITY, NO_STOCK, LOCATION_OFF, SUPPLY_DETAIL_INFO,
 		CLI_DANGER_ACTION_MESSAGE_VALIDATION, SELECT_FROM_DRIVE, AMOUNT_STOCK, UPLOAD_DOCUMENT_MODAL, PROOF_OF_INCOME,
-		STATEMENT_SENT_TO, CLI_DECLINE, CLI_ERROR, STATEMENT_ERROR
+		STATEMENT_SENT_TO, CLI_DECLINE, CLI_ERROR, DETERMINE_LOCATION_POPUP, STATEMENT_ERROR
 	}
 
 	MODAL_LAYOUT current_view;
@@ -117,48 +131,34 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 	}
 
 	@Override
-	protected void onStart() {
-		super.onStart();
-		runningActivityState(true);
-	}
-
-	@Override
-	protected void onStop() {
-		super.onStop();
-		runningActivityState(false);
-	}
-
-	@Override
 	protected void onDestroy() {
 		super.onDestroy();
 		if (mStatementUtils != null) {
 			mStatementUtils.cancelRequest(sendUserStatement);
 		}
-		runningActivityState(false);
-
 	}
 
 	private void displayView(MODAL_LAYOUT current_view) {
 		switch (current_view) {
 			case BARCODE_ERROR:
 				setContentView(R.layout.transparent_activity);
-				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
-				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
-				WButton wButton = (WButton) findViewById(R.id.btnBarcodeOk);
+				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = findViewById(R.id.relPopContainer);
+				WButton wButton = findViewById(R.id.btnBarcodeOk);
 				wButton.setOnClickListener(this);
 				mRelPopContainer.setOnClickListener(this);
 				break;
 
 			case SHOPPING_LIST_INFO:
 				setContentView(R.layout.shopping_list_info);
-				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
-				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
+				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = findViewById(R.id.relPopContainer);
 				if (description.equalsIgnoreCase("viewShoppingList")) {
 					findViewById(R.id.shoppingListDivider).setVisibility(View.VISIBLE);
 					findViewById(R.id.btnViewShoppingList).setVisibility(View.VISIBLE);
 				}
-				WButton wButtonOk = (WButton) findViewById(R.id.btnShopOk);
-				WButton wBtnViewShoppingList = (WButton) findViewById(R.id.btnViewShoppingList);
+				WButton wButtonOk = findViewById(R.id.btnShopOk);
+				WButton wBtnViewShoppingList = findViewById(R.id.btnViewShoppingList);
 				wButtonOk.setOnClickListener(this);
 				wBtnViewShoppingList.setOnClickListener(this);
 				mRelPopContainer.setOnClickListener(this);
@@ -166,10 +166,10 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 			case SIGN_OUT:
 				setContentView(R.layout.sign_out);
-				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
-				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
-				WButton mBtnSignOutCancel = (WButton) findViewById(R.id.btnSignOutCancel);
-				WButton mBtnSignOut = (WButton) findViewById(R.id.btnSignOut);
+				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = findViewById(R.id.relPopContainer);
+				mBtnSignOutCancel = findViewById(R.id.btnSignOutCancel);
+				mBtnSignOut = findViewById(R.id.btnSignOut);
 				mBtnSignOutCancel.setOnClickListener(this);
 				mBtnSignOut.setOnClickListener(this);
 				mRelPopContainer.setOnClickListener(this);
@@ -177,12 +177,12 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 			case INFO:
 				setContentView(R.layout.open_overlay_got_it);
-				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
-				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
-				WTextView mOverlayTitle = (WTextView) findViewById(R.id.textApplicationNotProceed);
-				WTextView mOverlayDescription = (WTextView) findViewById(R.id.overlayDescription);
-				WButton mOverlayBtn = (WButton) findViewById(R.id.btnOverlay);
-				LinearLayout mLinEmail = (LinearLayout) findViewById(R.id.linEmail);
+				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = findViewById(R.id.relPopContainer);
+				WTextView mOverlayTitle = findViewById(R.id.textApplicationNotProceed);
+				WTextView mOverlayDescription = findViewById(R.id.overlayDescription);
+				WButton mOverlayBtn = findViewById(R.id.btnOverlay);
+				LinearLayout mLinEmail = findViewById(R.id.linEmail);
 				mLinEmail.setVisibility(View.GONE);
 				mOverlayTitle.setVisibility(View.GONE);
 				mOverlayDescription.setText(description);
@@ -193,10 +193,10 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 			case ERROR:
 				setContentView(R.layout.error_popup);
-				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
-				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
-				WButton mBtnOverlay = (WButton) findViewById(R.id.btnOverlay);
-				WTextView mDescriptionOverlay = (WTextView) findViewById(R.id.overlayDescription);
+				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = findViewById(R.id.relPopContainer);
+				WButton mBtnOverlay = findViewById(R.id.btnOverlay);
+				WTextView mDescriptionOverlay = findViewById(R.id.overlayDescription);
 				if (description != null)
 					mDescriptionOverlay.setText(description);
 				mBtnOverlay.setOnClickListener(this);
@@ -205,10 +205,10 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 			case CLI_ERROR:
 				setContentView(R.layout.error_popup);
-				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
-				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
-				WButton btnOverlay = (WButton) findViewById(R.id.btnOverlay);
-				WTextView descriptionOverlay = (WTextView) findViewById(R.id.overlayDescription);
+				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = findViewById(R.id.relPopContainer);
+				WButton btnOverlay = findViewById(R.id.btnOverlay);
+				WTextView descriptionOverlay = findViewById(R.id.overlayDescription);
 				if (description != null)
 					descriptionOverlay.setText(description);
 				btnOverlay.setOnClickListener(new View.OnClickListener() {
@@ -221,10 +221,10 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 			case STATEMENT_ERROR:
 				setContentView(R.layout.statement_error);
-				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
-				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
-				WButton btnStatement = (WButton) findViewById(R.id.btnCloseStatement);
-				WTextView statementOverlay = (WTextView) findViewById(R.id.overlayDescription);
+				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = findViewById(R.id.relPopContainer);
+				WButton btnStatement = findViewById(R.id.btnCloseStatement);
+				WTextView statementOverlay = findViewById(R.id.overlayDescription);
 				if (description != null)
 					statementOverlay.setText(description);
 				btnStatement.setOnClickListener(new View.OnClickListener() {
@@ -244,22 +244,22 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 			case EMAIL:
 				setContentView(R.layout.cli_email_layout);
-				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
-				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
-				WButton mBtnEmailOk = (WButton) findViewById(R.id.btnEmailOk);
+				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = findViewById(R.id.relPopContainer);
+				WButton mBtnEmailOk = findViewById(R.id.btnEmailOk);
 				mBtnEmailOk.setOnClickListener(this);
-				WTextView mTextEmailAddress = (WTextView) findViewById(R.id.textEmailAddress);
+				WTextView mTextEmailAddress = findViewById(R.id.textEmailAddress);
 				if (description != null)
 					mTextEmailAddress.setText(description);
 				break;
 
 			case HIGH_LOAN_AMOUNT:
 				setContentView(R.layout.lw_too_high_error);
-				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
-				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
-				WButton mHighLoanAmount = (WButton) findViewById(R.id.btnLoanHighOk);
-				WTextView wTextTitle = (WTextView) findViewById(R.id.title);
-				WTextView wTextProofIncome = (WTextView) findViewById(R.id.textProofIncome);
+				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = findViewById(R.id.relPopContainer);
+				WButton mHighLoanAmount = findViewById(R.id.btnLoanHighOk);
+				WTextView wTextTitle = findViewById(R.id.title);
+				WTextView wTextProofIncome = findViewById(R.id.textProofIncome);
 				wTextTitle.setText(getString(R.string.loan_request_high));
 				wTextProofIncome.setText(getString(R.string.loan_request_high_desc));
 				mHighLoanAmount.setOnClickListener(this);
@@ -268,10 +268,10 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 			case MANDATORY_FIELD:
 				setContentView(R.layout.cli_mandatory_error);
-				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
-				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
-				WButton btnMandatoryOK = (WButton) findViewById(R.id.btnMandatoryOK);
-				WTextView mTextProceed = (WTextView) findViewById(R.id.textApplicationNotProceed);
+				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = findViewById(R.id.relPopContainer);
+				WButton btnMandatoryOK = findViewById(R.id.btnMandatoryOK);
+				WTextView mTextProceed = findViewById(R.id.textApplicationNotProceed);
 				mTextProceed.setText(description);
 				btnMandatoryOK.setOnClickListener(this);
 				mRelPopContainer.setOnClickListener(this);
@@ -279,11 +279,11 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 			case LOW_LOAN_AMOUNT:
 				setContentView(R.layout.lw_too_high_error);
-				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
-				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
-				WButton mLowLoanAmount = (WButton) findViewById(R.id.btnLoanHighOk);
-				WTextView mTextTitle = (WTextView) findViewById(R.id.title);
-				WTextView mTextProofIncome = (WTextView) findViewById(R.id.textProofIncome);
+				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = findViewById(R.id.relPopContainer);
+				WButton mLowLoanAmount = findViewById(R.id.btnLoanHighOk);
+				WTextView mTextTitle = findViewById(R.id.title);
+				WTextView mTextProofIncome = findViewById(R.id.textProofIncome);
 				mTextTitle.setText(getString(R.string.loan_withdrawal_popup_low_error));
 				mTextProofIncome.setText(getString(R.string.loan_request_low_desc));
 				if (description != null && TextUtils.isEmpty(description)) {
@@ -296,56 +296,55 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 			case INSOLVENCY:
 				setContentView(R.layout.cli_insolvency_popup);
-				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
-				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
-				WButton btnInsolvencyOK = (WButton) findViewById(R.id.btnInsolvencyOK);
+				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = findViewById(R.id.relPopContainer);
+				WButton btnInsolvencyOK = findViewById(R.id.btnInsolvencyOK);
 				btnInsolvencyOK.setOnClickListener(this);
 				//mRelPopContainer.setOnClickListener(this);
 				break;
 
 			case CONFIDENTIAL:
 				setContentView(R.layout.cli_confidential_popup);
-				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
-				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
-				WButton btnConfidentialOk = (WButton) findViewById(R.id.btnConfidentialOk);
+				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = findViewById(R.id.relPopContainer);
+				WButton btnConfidentialOk = findViewById(R.id.btnConfidentialOk);
 				btnConfidentialOk.setOnClickListener(this);
 				break;
 
 			case SESSION_EXPIRED:
 				mWGlobalState.setOnBackPressed(true);
 				setContentView(R.layout.session_expired);
-				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
-				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
-				WTextView tvSessionExpiredDesc = (WTextView) findViewById(R.id.tvSessionExpiredDesc);
-				if (mWGlobalState.fragmentIsReward()) {
+				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = findViewById(R.id.relPopContainer);
+				WTextView tvSessionExpiredDesc = findViewById(R.id.tvSessionExpiredDesc);
+				if (mWGlobalState.getSection().equalsIgnoreCase(REWARD)) {
 					tvSessionExpiredDesc.setText(getString(R.string.session_expired_reward_desc));
 				} else {
-					mWGlobalState.setAccountSignInState(false);
 					tvSessionExpiredDesc.setText(getString(R.string.session_expired_account_desc));
 				}
-				WButton mBtnSessionExpiredCancel = (WButton) findViewById(R.id.btnSECancel);
-				WButton mBtnSignIn = (WButton) findViewById(R.id.btnSESignIn);
+				WButton mBtnSessionExpiredCancel = findViewById(R.id.btnSECancel);
+				WButton mBtnSignIn = findViewById(R.id.btnSESignIn);
 				mBtnSessionExpiredCancel.setOnClickListener(this);
 				mBtnSignIn.setOnClickListener(this);
 				break;
 
 			case INSTORE_AVAILABILITY:
 				setContentView(R.layout.instore_availability);
-				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
-				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
-				mLowLoanAmount = (WButton) findViewById(R.id.btnLoanHighOk);
+				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = findViewById(R.id.relPopContainer);
+				mLowLoanAmount = findViewById(R.id.btnLoanHighOk);
 				mLowLoanAmount.setOnClickListener(this);
 				mRelPopContainer.setOnClickListener(this);
 				break;
 
 			case NO_STOCK:
 				setContentView(R.layout.lw_too_high_error);
-				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
-				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
-				mLowLoanAmount = (WButton) findViewById(R.id.btnLoanHighOk);
-				mTextTitle = (WTextView) findViewById(R.id.title);
+				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = findViewById(R.id.relPopContainer);
+				mLowLoanAmount = findViewById(R.id.btnLoanHighOk);
+				mTextTitle = findViewById(R.id.title);
 				mTextTitle.setText(getString(R.string.no_stock_title));
-				mTextProofIncome = (WTextView) findViewById(R.id.textProofIncome);
+				mTextProofIncome = findViewById(R.id.textProofIncome);
 				mTextProofIncome.setText(getString(R.string.stock_available_product));
 				mLowLoanAmount.setOnClickListener(this);
 				mRelPopContainer.setOnClickListener(this);
@@ -353,12 +352,12 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 			case LOCATION_OFF:
 				setContentView(R.layout.lw_too_high_error);
-				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
-				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
-				mLowLoanAmount = (WButton) findViewById(R.id.btnLoanHighOk);
-				mTextTitle = (WTextView) findViewById(R.id.title);
+				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = findViewById(R.id.relPopContainer);
+				mLowLoanAmount = findViewById(R.id.btnLoanHighOk);
+				mTextTitle = findViewById(R.id.title);
 				mTextTitle.setText(getString(R.string.location_disable_title));
-				mTextProofIncome = (WTextView) findViewById(R.id.textProofIncome);
+				mTextProofIncome = findViewById(R.id.textProofIncome);
 				mTextProofIncome.setText(getString(R.string.location_disable_desc));
 				mLowLoanAmount.setOnClickListener(this);
 				mRelPopContainer.setOnClickListener(this);
@@ -366,9 +365,9 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 			case SUPPLY_DETAIL_INFO:
 				setContentView(R.layout.supply_detail_info);
-				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
-				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
-				LinearLayout llSupplyDetailContainer = (LinearLayout) findViewById(R.id.llSupplyDetailContainer);
+				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = findViewById(R.id.relPopContainer);
+				LinearLayout llSupplyDetailContainer = findViewById(R.id.llSupplyDetailContainer);
 				LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 				// convert JSON string to Map
@@ -380,32 +379,34 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
+				assert supplyDetailMap != null;
 				for (Map.Entry<String, String> entry : supplyDetailMap.entrySet()) {
 					assert inflater != null;
+					@SuppressLint("InflateParams")
 					View view = inflater.inflate(R.layout.supply_detail_row, null, false);
 					LinearLayout.LayoutParams layoutParams =
 							new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
 									LinearLayout.LayoutParams.WRAP_CONTENT);
 					view.setLayoutParams(layoutParams);
-					WTextView tvTitle = (WTextView) view.findViewById(R.id.title);
-					WTextView tvDescription = (WTextView) view.findViewById(R.id.description);
+					WTextView tvTitle = view.findViewById(R.id.title);
+					WTextView tvDescription = view.findViewById(R.id.description);
 					tvTitle.setText(String.valueOf(entry.getKey()));
 					tvDescription.setText(String.valueOf(entry.getValue()));
 					llSupplyDetailContainer.addView(view);
 				}
-				mLowLoanAmount = (WButton) findViewById(R.id.btnLoanHighOk);
+				mLowLoanAmount = findViewById(R.id.btnLoanHighOk);
 				mLowLoanAmount.setOnClickListener(this);
 				mRelPopContainer.setOnClickListener(this);
 				break;
 
 			case CLI_DANGER_ACTION_MESSAGE_VALIDATION:
 				setContentView(R.layout.cli_dangerous_message_validation);
-				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
-				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
-				WTextView tvDeclineOffer = (WTextView) findViewById(R.id.tvDeclineOffer);
-				WTextView tvDeclineOfferDesc = (WTextView) findViewById(R.id.tvDeclineOfferDesc);
-				WButton btnCancelDecline = (WButton) findViewById(R.id.btnCancelDecline);
-				WButton btnConfirmDecline = (WButton) findViewById(R.id.btnConfirmDecline);
+				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = findViewById(R.id.relPopContainer);
+				WTextView tvDeclineOffer = findViewById(R.id.tvDeclineOffer);
+				WTextView tvDeclineOfferDesc = findViewById(R.id.tvDeclineOfferDesc);
+				WButton btnCancelDecline = findViewById(R.id.btnCancelDecline);
+				WButton btnConfirmDecline = findViewById(R.id.btnConfirmDecline);
 				btnConfirmDecline.setText(getString(R.string.cli_yes));
 				btnCancelDecline.setText(getString(R.string.cli_no));
 				tvDeclineOffer.setText(getString(R.string.decline_title));
@@ -421,11 +422,11 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 			case AMOUNT_STOCK:
 				setContentView(R.layout.lw_too_high_error);
-				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
-				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
-				WButton mBtnOk = (WButton) findViewById(R.id.btnLoanHighOk);
-				WTextView mAmountTitle = (WTextView) findViewById(R.id.title);
-				WTextView mAmountDesc = (WTextView) findViewById(R.id.textProofIncome);
+				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = findViewById(R.id.relPopContainer);
+				WButton mBtnOk = findViewById(R.id.btnLoanHighOk);
+				WTextView mAmountTitle = findViewById(R.id.title);
+				WTextView mAmountDesc = findViewById(R.id.textProofIncome);
 				mAmountTitle.setText(title);
 				mAmountDesc.setText(description);
 				mBtnOk.setOnClickListener(this);
@@ -434,30 +435,30 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 			case UPLOAD_DOCUMENT_MODAL:
 				setContentView(R.layout.document_modal_layout);
-				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
-				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
-				WButton btnUploadDocuments = (WButton) findViewById(R.id.btnUploadDocuments);
+				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = findViewById(R.id.relPopContainer);
+				WButton btnUploadDocuments = findViewById(R.id.btnUploadDocuments);
 				mRelPopContainer.setOnClickListener(this);
 				btnUploadDocuments.setOnClickListener(this);
 				break;
 
 			case PROOF_OF_INCOME:
 				setContentView(R.layout.proof_of_income_modal);
-				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
-				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
-				WButton btnOk = (WButton) findViewById(R.id.btnOk);
+				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = findViewById(R.id.relPopContainer);
+				WButton btnOk = findViewById(R.id.btnOk);
 				mRelPopContainer.setOnClickListener(this);
 				btnOk.setOnClickListener(this);
 				break;
 			case STATEMENT_SENT_TO:
 				setContentView(R.layout.statement_popup_layout);
-				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
-				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
-				mBtnConfirmEmail = (WButton) findViewById(R.id.btnConfirmEmail);
-				tvAlternativeEmail = (WTextView) findViewById(R.id.tvAlternativeEmail);
-				mTvStatementSendTo = (WTextView) findViewById(R.id.tvStatementSendTo);
-				WTextView tvSendEmail = (WTextView) findViewById(R.id.tvSendEmail);
-				mWoolworthsProgressBar = (ProgressBar) findViewById(R.id.mWoolworthsProgressBar);
+				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = findViewById(R.id.relPopContainer);
+				mBtnConfirmEmail = findViewById(R.id.btnConfirmEmail);
+				tvAlternativeEmail = findViewById(R.id.tvAlternativeEmail);
+				mTvStatementSendTo = findViewById(R.id.tvStatementSendTo);
+				WTextView tvSendEmail = findViewById(R.id.tvSendEmail);
+				mWoolworthsProgressBar = findViewById(R.id.mWoolworthsProgressBar);
 				populateDocument(tvSendEmail);
 				mSendUserStatementRequest = new Gson().fromJson(userStatement, SendUserStatementRequest.class);
 				mSendUserStatementRequest.to = userEmailAddress();
@@ -468,11 +469,11 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				break;
 			case CLI_DECLINE:
 				setContentView(R.layout.lw_too_high_error);
-				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
-				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
-				WButton mCLIDeclineOk = (WButton) findViewById(R.id.btnLoanHighOk);
-				WTextView mCLIDeclineTitle = (WTextView) findViewById(R.id.title);
-				WTextView mCLIDeclineDesc = (WTextView) findViewById(R.id.textProofIncome);
+				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = findViewById(R.id.relPopContainer);
+				WButton mCLIDeclineOk = findViewById(R.id.btnLoanHighOk);
+				WTextView mCLIDeclineTitle = findViewById(R.id.title);
+				WTextView mCLIDeclineDesc = findViewById(R.id.textProofIncome);
 				if (description != null)
 					mCLIDeclineDesc.setText(description);
 				if (title != null)
@@ -489,6 +490,48 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 						cliExitAnimation();
 					}
 				});
+				break;
+
+			case DETERMINE_LOCATION_POPUP:
+				setContentView(R.layout.determine_popup_location_view);
+				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = findViewById(R.id.relPopContainer);
+
+				ImageView imCloseIcon = findViewById(R.id.imCloseIcon);
+				Button btnDefaultLocation = findViewById(R.id.btnDefaultLocation);
+				Button btnSetNewLocation = findViewById(R.id.btnSetNewLocation);
+				btnDefaultLocation.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View view) {
+						dismissSetMyLocation(ProductState.SET_SUBURB_API);
+					}
+				});
+
+				imCloseIcon.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View view) {
+						startExitAnimation();
+					}
+				});
+
+				btnSetNewLocation.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View view) {
+						dismissSetMyLocation(ProductState.SET_SUBURB);
+					}
+				});
+
+				WTextView tvLocation = findViewById(R.id.tvLocation);
+				List<DeliveryLocationHistory> deliveryLocationHistories = Utils.getDeliveryLocationHistory(CustomPopUpWindow.this);
+				if (deliveryLocationHistories != null) {
+					DeliveryLocationHistory deliveryLocationHistory = deliveryLocationHistories.get(0);
+					if (deliveryLocationHistory != null) {
+						Suburb suburb = deliveryLocationHistory.suburb;
+						if (suburb != null) {
+							tvLocation.setText(suburb.name + ", " + deliveryLocationHistory.province.name);
+						}
+					}
+				}
 				break;
 			default:
 				break;
@@ -557,6 +600,31 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 		}
 	}
 
+	private void dismissSetMyLocation(final String setMyLocationType) {
+		if (!viewWasClicked) { // prevent more than one click
+			viewWasClicked = true;
+			TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
+			animation.setFillAfter(true);
+			animation.setDuration(ANIM_DOWN_DURATION);
+			animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
+
+				@Override
+				public void onAnimationStart(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationRepeat(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationEnd(Animation animation) {
+					Utils.sendBus(new ProductState(setMyLocationType));
+					dismissLayout();
+				}
+			});
+			mRelRootContainer.startAnimation(animation);
+		}
+	}
 
 	private void cliExitAnimation() {
 		if (!viewWasClicked) { // prevent more than one click
@@ -662,8 +730,9 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 				@Override
 				public void onAnimationEnd(Animation animation) {
-					Intent intent = new Intent("logOutReceiver");
-					sendBroadcast(intent);
+					WoolworthsApplication.getInstance()
+							.bus()
+							.send(new AuthenticationState(AuthenticationState.SIGN_OUT));
 					dismissLayout();
 				}
 			});
@@ -782,6 +851,9 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 			case R.id.btnShopOk:
 			case R.id.btnMandatoryOK:
 			case R.id.btnOk:
+				if (v != mRelPopContainer) {
+					whiteEffectClick(mBtnSignOutCancel);
+				}
 				startExitAnimation();
 				break;
 
@@ -793,6 +865,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				break;
 
 			case R.id.btnSignOut:
+				whiteEffectClick(mBtnSignOut);
 				exitAnimation();
 				break;
 
@@ -817,7 +890,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				break;
 
 			case R.id.btnSESignIn:
-				mWGlobalState.setPressState(WGlobalState.ON_SIGN_IN);
 				String mSTSParams = description;
 				if (TextUtils.isEmpty(mSTSParams)) {
 					mSTSParams = "";
@@ -874,7 +946,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 	private void clearHistory() {
 		mWGlobalState.setOnBackPressed(false);
-		Intent i = new Intent(CustomPopUpWindow.this, WOneAppBaseActivity.class);
+		Intent i = new Intent(CustomPopUpWindow.this, BottomNavigationActivity.class);
 		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -906,19 +978,12 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				@Override
 				public void onAnimationEnd(Animation animation) {
 					mWGlobalState.setNewSTSParams(WGlobalState.EMPTY_FIELD);
-					mWGlobalState.setPressState(WGlobalState.ON_CANCEL);
 					mWGlobalState.setOnBackPressed(false);
 					mWGlobalState.setNewSTSParams("");
 					dismissLayout();
 				}
 			});
 			mRelRootContainer.startAnimation(animation);
-		}
-	}
-
-	private void runningActivityState(boolean state) {
-		if (mWGlobalState != null) {
-			mWGlobalState.setDefaultPopupState(state);
 		}
 	}
 
@@ -1071,5 +1136,18 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 	public void onPause() {
 		super.onPause();
 		unregisterReceiver(mConnectionBroadcast);
+	}
+
+	private void whiteEffectClick(WButton button) {
+		//TODO:: TEST FOR DIFFERENT POPUP
+
+		try {
+			if (button != null) {
+				button.setBackgroundColor(Color.BLACK);
+				button.setTextColor(Color.WHITE);
+			}
+		} catch (Exception ex) {
+			Log.e("whiteEffectClick", ex.toString());
+		}
 	}
 }

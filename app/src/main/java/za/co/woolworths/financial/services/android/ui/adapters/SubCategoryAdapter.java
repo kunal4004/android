@@ -12,22 +12,19 @@ import com.awfs.coordination.R;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.SubCategory;
+import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryNavigator;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
 public class SubCategoryAdapter extends RecyclerView.Adapter<SubCategoryAdapter.MyViewHolder> {
 
 	private int row_index = -1;
-
-	public interface SubCategoryNavigator {
-		void onClick(View v, int position);
-	}
-
-	private SubCategoryNavigator mOnClickListener;
+	private SubCategoryNavigator mSubCategoryNavigator;
 	private List<SubCategory> mSubCategories;
 
-	public SubCategoryAdapter(List<SubCategory> subCategoryList, SubCategoryNavigator onClickListener) {
+	public SubCategoryAdapter(List<SubCategory> subCategoryList, SubCategoryFragment mSubCategoryNavigator) {
 		this.mSubCategories = subCategoryList;
-		this.mOnClickListener = onClickListener;
+		this.mSubCategoryNavigator = mSubCategoryNavigator;
 	}
 
 	public class MyViewHolder extends RecyclerView.ViewHolder {
@@ -35,7 +32,7 @@ public class SubCategoryAdapter extends RecyclerView.Adapter<SubCategoryAdapter.
 
 		public MyViewHolder(View view) {
 			super(view);
-			mSubCategoryName = (WTextView) view.findViewById(R.id.subCategoryName);
+			mSubCategoryName = view.findViewById(R.id.subCategoryName);
 		}
 	}
 
@@ -54,7 +51,7 @@ public class SubCategoryAdapter extends RecyclerView.Adapter<SubCategoryAdapter.
 			@Override
 			public void onClick(View v) {
 				row_index = position;
-				mOnClickListener.onClick(v, position);
+				mSubCategoryNavigator.onItemClick(mSubCategories.get(position));
 				notifyDataSetChanged();
 			}
 		});
