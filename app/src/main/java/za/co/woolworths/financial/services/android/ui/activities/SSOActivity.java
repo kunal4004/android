@@ -32,7 +32,6 @@ import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -47,15 +46,12 @@ import java.util.UUID;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
-import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice;
-import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDeviceResponse;
-import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
-import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.SSORequiredParameter;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -405,9 +401,10 @@ public class SSOActivity extends WebViewActivity {
 							//Trigger Firebase Tag.
 							JWTDecodedModel jwtDecodedModel = Utils.getJWTDecoded(getApplicationContext());
 							Map<String, String> arguments = new HashMap<>();
-							arguments.put("c2_id", (jwtDecodedModel.C2Id != null) ? jwtDecodedModel.C2Id : "");
-							Utils.triggerFireBaseEvents(getApplicationContext(), FirebaseAnalytics.Event.LOGIN, arguments);
-							sendRegistrationToServer();//TODO: this should be handled by a listener
+							arguments.put("c2_id", (jwtDecodedModel.C2Id != null)? jwtDecodedModel.C2Id : "");
+							Utils.triggerFireBaseEvents(getApplicationContext(),FirebaseAnalytics.Event.LOGIN,arguments);
+
+							NotificationUtils.getInstance().sendRegistrationToServer();
 							setResult(SSOActivityResult.SUCCESS.rawValue(), intent);
 						} else {
 							setResult(SSOActivityResult.STATE_MISMATCH.rawValue(), intent);
@@ -521,53 +518,6 @@ public class SSOActivity extends WebViewActivity {
 
 	public void showProgressBar() {
 		toggleLoading(true);
-	}
-
-
-	//1. sendRegistrationToServer is created twice: SSOActivity and WFirebaseInstanceIDSService
-	//
-	private void sendRegistrationToServer() {
-		// sending gcm token to server
-		final CreateUpdateDevice device = new CreateUpdateDevice();
-		device.appInstanceId = Utils.getUniqueDeviceID(getApplicationContext());
-		device.pushNotificationToken = FirebaseInstanceId.getInstance().getToken();
-
-		//Don't update token if pushNotificationToken or appInstanceID NULL
-		if (device.appInstanceId == null || device.pushNotificationToken == null)
-			return;
-
-		//Sending Token and app instance Id to App server
-		//Need to be done after Login
-
-		new HttpAsyncTask<String, String, CreateUpdateDeviceResponse>() {
-			@Override
-			protected void onPreExecute() {
-				super.onPreExecute();
-			}
-
-			@Override
-			protected CreateUpdateDeviceResponse httpDoInBackground(String... params) {
-				return ((WoolworthsApplication) SSOActivity.this.getApplication()).getApi()
-						.getResponseOnCreateUpdateDevice(device);
-			}
-
-			@Override
-			protected Class<CreateUpdateDeviceResponse> httpDoInBackgroundReturnType() {
-				return CreateUpdateDeviceResponse.class;
-			}
-
-			@Override
-			protected CreateUpdateDeviceResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-				CreateUpdateDeviceResponse createUpdateResponse = new CreateUpdateDeviceResponse();
-				createUpdateResponse.response = new Response();
-				return createUpdateResponse;
-			}
-
-			@Override
-			protected void onPostExecute(CreateUpdateDeviceResponse createUpdateResponse) {
-				super.onPostExecute(createUpdateResponse);
-			}
-		}.execute();
 	}
 
 	@Override

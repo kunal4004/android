@@ -783,7 +783,7 @@ public class Utils {
 		if (deviceID == null) {
 			deviceID = getSessionDaoValue(context, SessionDao.KEY.DEVICE_ID);
 			if (deviceID == null) {
-				deviceID = FirebaseInstanceId.getInstance().getToken();
+				deviceID = FirebaseInstanceId.getInstance().getId();
 				sessionDaoSave(context, SessionDao.KEY.DEVICE_ID, deviceID);
 			}
 		}
