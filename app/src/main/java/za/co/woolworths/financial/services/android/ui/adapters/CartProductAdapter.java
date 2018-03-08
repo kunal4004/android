@@ -15,6 +15,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 import com.daimajia.swipe.SwipeLayout;
@@ -30,6 +31,7 @@ import za.co.woolworths.financial.services.android.models.dto.CommerceItem;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_CALL;
@@ -106,53 +108,14 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 				productImage(productHolder.productImage, commerceItem.externalImageURL);
 				productHolder.btnDeleteRow.setVisibility(this.editMode ? View.VISIBLE : View.GONE);
 
+				//productHolder.llQuantity.setVisibility(this.editMode ? View.VISIBLE : View.GONE);
+				//enable/disable change quantity click
+				productHolder.llQuantity.setEnabled(!this.editMode);
+				Utils.fadeInFadeOutAnimation(productHolder.llQuantity, this.editMode);
+
 				// prevent triggering animation on first load
 				if (firstLoadWasCompleted())
 					animateOnDeleteButtonVisibility(productHolder.llCartItems, this.editMode);
-
-				productHolder.swipeLayout.setShowMode(SwipeLayout.ShowMode.PullOut);
-
-				// Drag From Right
-				productHolder.swipeLayout.addDrag(SwipeLayout.DragEdge.Right, productHolder.flDeleteRoot);
-
-				// Handling different events when swiping
-				productHolder.swipeLayout.addSwipeListener(new SwipeLayout.SwipeListener() {
-
-					@Override
-					public void onClose(SwipeLayout layout) {
-						//when the SurfaceView totally cover the BottomView.
-						Log.e("swipe", "--onClose--");
-					}
-
-					@Override
-					public void onUpdate(SwipeLayout layout, int leftOffset, int topOffset) {
-						Log.e("swipe", "--onUpdate--");
-					}
-
-					@Override
-					public void onStartOpen(SwipeLayout layout) {
-						//you are swiping.
-						Log.e("swipe", "onStartOpen");
-					}
-
-					@Override
-					public void onOpen(SwipeLayout layout) {
-						//when the BottomView totally show.
-						Log.e("swipe", "--onOpen--");
-					}
-
-					@Override
-					public void onStartClose(SwipeLayout layout) {
-						Log.e("swipe", "--onStartClose--");
-
-					}
-
-					@Override
-					public void onHandRelease(SwipeLayout layout, float xvel, float yvel) {
-						//when user's hand released.
-						Log.e("swipe", "onHandRelease");
-					}
-				});
 
 				if (commerceItem.getQuantityUploading()) {
 					productHolder.pbQuantity.setVisibility(View.VISIBLE);
@@ -167,7 +130,6 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 					productHolder.btnDeleteRow.setOnClickListener(new View.OnClickListener() {
 						@Override
 						public void onClick(View v) {
-							productHolder.swipeLayout.open(true, false);
 						}
 					});
 
@@ -178,20 +140,13 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 					@Override
 					public void onClick(View view) {
 						try {
-							onSingleItemDeletion(productHolder, commerceItem);
-							onItemClick.onItemDeleteClick(commerceItem);
+							//	onSingleItemDeletion(productHolder, commerceItem);
+							//onItemClick.onItemDeleteClick(commerceItem);
 						} catch (NullPointerException ex) {
 							Log.e("cartItems", ex.toString());
 						}
 					}
 				});
-
-				// close swipeLayout panel
-				if (!commerceItem.deleteSingleItem()) {
-					productHolder.swipeLayout.close(true, true);
-				} else {
-					productHolder.swipeLayout.open(true, true);
-				}
 
 				productHolder.llQuantity.setOnClickListener(new View.OnClickListener() {
 					@Override
@@ -201,10 +156,6 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 						onItemClick.onChangeQuantity(commerceItem);
 					}
 				});
-
-				// mItemManger is member in RecyclerSwipeAdapter Class
-				mItemManger.bindView(productHolder.itemView, position);
-
 				break;
 
 			case PRICES:
@@ -234,8 +185,6 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 	}
 
 	private void onSingleItemDeletion(final CartItemViewHolder productHolder, final CommerceItem commerceItem) {
-		expandDeleteRow(productHolder, false);
-		productHolder.swipeLayout.open(true);
 		new Handler().postDelayed(new Runnable() {
 			@Override
 			public void run() {
@@ -246,7 +195,6 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 					while (commerceItemIterator.hasNext()) {
 						CommerceItem cm = commerceItemIterator.next();
 						if (commerceItem.commerceId.equalsIgnoreCase(cm.commerceId)) {
-							mItemManger.removeShownLayouts(productHolder.swipeLayout);
 							orderSummary.basketTotal = orderSummary.basketTotal - cm.getPriceInfo().amount;
 							orderSummary.totalItemsCount = orderSummary.totalItemsCount - cm.getQuantity();
 							orderSummary.total = orderSummary.basketTotal - orderSummary.estimatedDelivery;
@@ -262,27 +210,27 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 			}
 		}, DELAY);
 	}
+//
+//	private void expandDeleteRow(CartItemViewHolder productHolder, boolean wasPressed) {
+//		try {
+//			Context context = productHolder.flDeleteRoot.getContext();
+//			if (context != null) {
+//				int width = getWidth(context);
+//				if (wasPressed) {
+//					width = width / 8;
+//				}
+//				FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(width, ViewGroup.LayoutParams.MATCH_PARENT);
+//				productHolder.flDeleteRoot.setLayoutParams(params);
+//			}
+//		} catch (NullPointerException ex) {
+//			Log.e("rlDeleteContainer", ex.getMessage());
+//		}
+//	}
 
-	private void expandDeleteRow(CartItemViewHolder productHolder, boolean wasPressed) {
-		try {
-			Context context = productHolder.flDeleteRoot.getContext();
-			if (context != null) {
-				int width = getWidth(context);
-				if (wasPressed) {
-					width = width / 8;
-				}
-				FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(width, ViewGroup.LayoutParams.MATCH_PARENT);
-				productHolder.flDeleteRoot.setLayoutParams(params);
-			}
-		} catch (NullPointerException ex) {
-			Log.e("rlDeleteContainer", ex.getMessage());
-		}
-	}
-
-	private int getWidth(Context context) {
-		DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-		return displayMetrics.widthPixels;
-	}
+//	private int getWidth(Context context) {
+//		DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+//		return displayMetrics.widthPixels;
+//	}
 
 	private void setPriceValue(WTextView textView, double value) {
 		textView.setText(WFormatter.formatAmount(value));
@@ -379,8 +327,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 		}
 	}
 
-	private class CartItemViewHolder extends RecyclerView.ViewHolder {
-		private SwipeLayout swipeLayout;
+	public class CartItemViewHolder extends RecyclerView.ViewHolder {
 		private WTextView tvTitle, tvDescription, quantity, price;
 		private ImageView btnDeleteRow;
 		private ImageView imPrice;
@@ -389,7 +336,8 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 		private LinearLayout llCartItems;
 		private WTextView tvDelete;
 		private ProgressBar pbQuantity;
-		private FrameLayout flDeleteRoot;
+		public RelativeLayout viewForeground, viewBackground;
+
 
 		public CartItemViewHolder(View view) {
 			super(view);
@@ -402,10 +350,10 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 			llQuantity = view.findViewById(R.id.llQuantity);
 			pbQuantity = view.findViewById(R.id.pbQuantity);
 			imPrice = view.findViewById(R.id.imPrice);
-			swipeLayout = view.findViewById(R.id.swipe);
-			flDeleteRoot = view.findViewById(R.id.flDeleteRoot);
 			llCartItems = view.findViewById(R.id.llCartItems);
 			tvDelete = view.findViewById(R.id.tvDelete);
+			viewBackground = view.findViewById(R.id.view_background);
+			viewForeground = view.findViewById(R.id.view_foreground);
 		}
 	}
 

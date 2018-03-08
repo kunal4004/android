@@ -4,11 +4,14 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Canvas;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -54,6 +57,7 @@ import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSiz
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CartProductAdapter;
+import za.co.woolworths.financial.services.android.ui.views.RecyclerItemTouchHelper;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
@@ -67,9 +71,14 @@ import static za.co.woolworths.financial.services.android.models.service.event.B
 import static za.co.woolworths.financial.services.android.models.service.event.CartState.CHANGE_QUANTITY;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_CALL;
 
-public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick, View.OnClickListener, NetworkChangeListener {
+public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick, View.OnClickListener, NetworkChangeListener, RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
 
 	private int mQuantity;
+
+	@Override
+	public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
+
+	}
 
 	public interface ToggleRemoveItem {
 		void onRemoveItem(boolean visibility);
@@ -153,6 +162,37 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				tvDeliveryLocation.setText(getString(R.string.set_your_delivery_location));
 			}
 		}
+
+		/************* swipe to delete implementation ***************/
+
+		// adding item touch helper
+		// only ItemTouchHelper.LEFT added to detect Right to Left swipe
+		// if you want both Right -> Left and Left -> Right
+		// add pass ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT as param
+		ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
+		new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(rvCartList);
+
+		rvCartList.setItemAnimator(new DefaultItemAnimator());
+		ItemTouchHelper.SimpleCallback itemTouchHelperCallback1 = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+			@Override
+			public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+				return false;
+			}
+
+			@Override
+			public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+				// Row is swiped from recycler view
+				// remove it from adapter
+			}
+
+			@Override
+			public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+				super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+			}
+		};
+
+		// attaching the touch helper to recycler view
+		new ItemTouchHelper(itemTouchHelperCallback1).attachToRecyclerView(rvCartList);
 
 		loadShoppingCart().execute();
 		mDisposables.add(WoolworthsApplication.getInstance()
@@ -271,8 +311,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 	public boolean toggleEditMode() {
 		boolean isEditMode = cartProductAdapter.toggleEditMode();
-		btnCheckOut.setEnabled(isEditMode ? false : true);
-		rlCheckOut.setEnabled(isEditMode ? false : true);
+		//btnCheckOut.setEnabled(!isEditMode);
+		Utils.fadeInFadeOutAnimation(btnCheckOut, isEditMode);
+		//rlCheckOut.setEnabled(!isEditMode);
 		return isEditMode;
 	}
 
@@ -377,7 +418,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				pBar.setVisibility(View.VISIBLE);
 				rlCheckOut.setVisibility(View.GONE);
 				//parentLayout.setVisibility(View.GONE);
-				Utils.showOneTimePopup(getActivity(), SessionDao.KEY.CART_FIRST_ORDER_FREE_DELIVERY, tvFreeDeliveryFirstOrder);
+				//Utils.showOneTimePopup(getActivity(), SessionDao.KEY.CART_FIRST_ORDER_FREE_DELIVERY, tvFreeDeliveryFirstOrder);
 
 			}
 
