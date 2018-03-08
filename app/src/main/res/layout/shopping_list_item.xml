@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:paddingLeft="16dp"
         android:paddingRight="18dp"
+        android:background="@drawable/bottom_divider_list"
         >
         <ImageView
             android:id="@+id/listImage"
@@ -31,7 +32,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/listItemName"
-                android:letterSpacing="1sp"
+                android:letterSpacing="0.1"
                 android:textSize="12sp"
                 android:textColor="@color/black"
                 app:WTextView_font="bold"
@@ -42,7 +43,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/listItemLastModified"
-                android:letterSpacing="1sp"
                 android:textSize="12sp"
                 android:textColor="@color/mask_opacity"
                 app:WTextView_font="myriadpro_regular"

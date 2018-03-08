@@ -5,4 +5,5 @@ package za.co.woolworths.financial.services.android.ui.fragments.shoppinglist;
  */
 
 public interface ShoppingListNavigator {
+	void onListItemSelected();
 }

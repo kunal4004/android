@@ -47,6 +47,7 @@ import za.co.woolworths.financial.services.android.ui.activities.ShoppingListAct
 import za.co.woolworths.financial.services.android.ui.activities.UserDetailActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountOverViewPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.ShoppingListFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.main_list.ContactUsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.faq.FAQFragment;
@@ -113,6 +114,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	private LinearLayout loginUserOptionsLayout;
 	private SessionManager mSessionManager;
 	private GetMessage mGessageResponse;
+	private RelativeLayout shoppingList;
 
 	public MyAccountsFragment() {
 		// Required empty public constructor
@@ -216,6 +218,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			view.findViewById(R.id.loginAccount).setOnClickListener(this.btnSignin_onClick);
 			view.findViewById(R.id.registerAccount).setOnClickListener(this.btnRegister_onClick);
 			view.findViewById(R.id.llUnlinkedAccount).setOnClickListener(this.btnLinkAccounts_onClick);
+			view.findViewById(R.id.myLists).setOnClickListener(this);
 
 			view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
 				@Override
@@ -556,6 +559,9 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 				break;
 			case R.id.storeLocator:
 				pushFragment(new StoresNearbyFragment1());
+				break;
+			case R.id.myLists:
+				pushFragment(new ShoppingListFragment());
 				break;
 			default:
 				break;
