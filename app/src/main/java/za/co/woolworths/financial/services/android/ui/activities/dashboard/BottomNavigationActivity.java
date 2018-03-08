@@ -338,7 +338,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		bundle.putString("strProductCategory", productName);
 		detailFragment.setArguments(bundle);
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-		transaction.replace(R.id.fragment_bottom_container, detailFragment).commit();
+		transaction.replace(R.id.fragment_bottom_container, detailFragment).commitAllowingStateLoss();
 	}
 
 	@Override

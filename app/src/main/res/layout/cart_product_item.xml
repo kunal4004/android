@@ -51,6 +51,15 @@
                 android:paddingStart="21dp"
                 android:paddingTop="32dp">
 
+                <ProgressBar
+                    android:id="@+id/pbDeleteProgress"
+                    style="?android:attr/progressBarStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:indeterminateTint="@color/black"
+                    android:paddingRight="21dp"
+                    android:visibility="gone"/>
 
                 <ImageView
                     android:id="@+id/btnDeleteRow"
@@ -58,7 +67,8 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
                     android:paddingRight="21dp"
-                    android:src="@drawable/delete"/>
+                    android:src="@drawable/delete"
+                    />
 
                 <LinearLayout
                     android:id="@+id/llCartItems"
@@ -68,8 +78,8 @@
 
                     <com.facebook.drawee.view.SimpleDraweeView
                         android:id="@+id/cartProductImage"
-                        android:layout_width="84dp"
-                        android:layout_height="84dp"
+                        android:layout_width="@dimen/eighty_four_dp"
+                        android:layout_height="@dimen/eighty_dp"
                         android:layout_gravity="center"
                         android:contentDescription="@string/app_name"
                         fresco:fadeDuration="50"
