@@ -4,7 +4,7 @@ apply plugin: 'kotlin-android'
 android {
 
     def major = "5"
-    def minor = "5"
+    def minor = "6"
     def fix = "1"
     def env = System.getenv()
     def job = env['BUILD_NUMBER']
@@ -81,7 +81,7 @@ android {
         qa {
             applicationId "com.awfs.coordination.qa"
             signingConfig signingConfigs.woneappQa
-            versionCode 145
+            versionCode 146
         }
 
         staging {
