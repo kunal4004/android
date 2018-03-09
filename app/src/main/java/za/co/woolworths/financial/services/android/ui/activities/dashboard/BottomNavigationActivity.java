@@ -693,10 +693,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			case 2:
 				break;
 			default:
-				if (wRewardsFragment != null)
+				if (wRewardsFragment != null) {
 					wRewardsFragment.onActivityResult(requestCode, resultCode, data);
-				if (myAccountsFragment != null)
+				}
+				if (myAccountsFragment != null) {
 					myAccountsFragment.onActivityResult(requestCode, resultCode, data);
+				}
 				break;
 		}
 	}
