@@ -106,17 +106,51 @@
                     android:paddingRight="16dp">
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        android:id="@+id/voucherValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="30dp"
+                        android:gravity="center"
+                        android:textAllCaps="true"
+                        android:textColor="@color/black"
+                        android:textSize="70sp"
+                        app:WTextView_font="medium_bold"
+                        />
+
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:gravity="center"
+                        android:textAllCaps="true"
+                        android:textColor="@color/green"
+                        android:textSize="20sp"
+                        android:text="@string/off_instantly"
+                        app:WTextView_font="medium_bold"
+                        />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginLeft="@dimen/voucher_barcode_margin"
+                        android:layout_marginRight="@dimen/voucher_barcode_margin"
+                        android:layout_marginTop="@dimen/voucher_barcode_number_margintop"
+                        android:background="#0a000000"
+                        />
+
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
                         android:id="@+id/message"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:minHeight="50dp"
                         android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="10dp"
+                        android:layout_marginTop="36dp"
                         android:gravity="center"
                         android:textAllCaps="true"
                         android:textColor="@color/black"
                         android:textSize="20sp"
-                        app:WTextView_font="medium_bold"
+                        app:WTextView_font="medium"
                         />
                 </LinearLayout>
 
@@ -126,7 +160,7 @@
                     android:layout_height="57dp"
                     android:layout_marginLeft="@dimen/voucher_barcode_margin"
                     android:layout_marginRight="@dimen/voucher_barcode_margin"
-                    android:layout_marginTop="5dp"
+                    android:layout_marginTop="36dp"
                     android:adjustViewBounds="true"
                     android:scaleType="fitXY"
                     />
@@ -155,6 +189,8 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
+                        android:layout_marginLeft="@dimen/voucher_barcode_margin"
+                        android:layout_marginRight="@dimen/voucher_barcode_margin"
                         android:background="#0a000000"
                         />
 
@@ -173,9 +209,9 @@
                             android:layout_alignParentLeft="true"
                             android:layout_centerVertical="true"
                             android:text="@string/minimum_spend"
-                            android:textColor="@color/black"
                             android:textSize="15sp"
                             android:letterSpacing="-0.01"
+                            android:textColor="#4d000000"
                             app:WTextView_font="myriadpro_regular"
                             />
 
@@ -186,23 +222,18 @@
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
                             android:textAllCaps="true"
-                            android:textColor="#4d000000"
                             android:textSize="15sp"
+                            android:textColor="@color/black"
                             app:WTextView_font="myriadpro_regular"
                             />
                     </RelativeLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="#0a000000"
-                        />
                 </LinearLayout>
             </LinearLayout>
 
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingTop="10dp"
                 android:background="@drawable/vouchertearoff"
                 />
 
