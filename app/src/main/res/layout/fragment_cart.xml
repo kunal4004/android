@@ -26,10 +26,10 @@
                 <RelativeLayout
                     android:id="@+id/locationSelectedLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:background="@color/white"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="9dp">
+                    android:layout_height="@dimen/fifty_dp"
+                    android:background="@drawable/white_bg_pressed"
+                    android:paddingLeft="@dimen/sixteen_dp"
+                    android:paddingRight="@dimen/nineteen_dp">
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         android:id="@+id/tvDeliveryLocation"
@@ -54,26 +54,31 @@
 
                 </RelativeLayout>
 
-                <include
-                    layout="@layout/empty_state_template"/>
-
-                <include
-                    layout="@layout/no_connection_handler"/>
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     android:id="@+id/tvFreeDeliveryFirstOrder"
                     style="@style/style_cart_delivery_info"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/cart_free_delivery_first_order"/>
+                    android:lineSpacingMultiplier="1.27"
+                    android:padding="@dimen/fifteen_sp"
+                    android:text="@string/cart_free_delivery_first_order"
+                    app:WTextView_font="myriadpro_regular"/>
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/cartList"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginBottom="@dimen/fifty_two_dp"
                     android:nestedScrollingEnabled="false"
                     android:scrollbars="none"
                     android:visibility="visible"/>
+
+                <include
+                    layout="@layout/empty_state_template"/>
+
+                <include
+                    layout="@layout/no_connection_handler"/>
 
             </LinearLayout>
         </android.support.v4.widget.NestedScrollView>
@@ -94,7 +99,7 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_weight="1"
-                android:background="@drawable/black_button_drawable_state"
+                android:background="@color/black"
                 android:letterSpacing="0.2"
                 android:text="@string/checkout"
                 android:visibility="visible"

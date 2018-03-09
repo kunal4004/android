@@ -338,7 +338,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		bundle.putString("strProductCategory", productName);
 		detailFragment.setArguments(bundle);
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-		transaction.replace(R.id.fragment_bottom_container, detailFragment).commit();
+		transaction.replace(R.id.fragment_bottom_container, detailFragment).commitAllowingStateLoss();
 	}
 
 	@Override
@@ -492,8 +492,16 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	@SuppressLint("RestrictedApi")
 	@Override
 	public void onBackPressed() {
+		if (getSlidingLayout() != null) {
+			if (getSlidingLayout().getPanelState().equals(SlidingUpPanelLayout.PanelState.EXPANDED)) {
+				closeSlideUpPanel();
+				return;
+			}
+		}
 		if (!mNavController.isRootFragment()) {
 			mNavController.popFragment(new FragNavTransactionOptions.Builder().customAnimations(R.anim.slide_in_from_left, R.anim.slide_out_to_right).build());
+		} else {
+			super.onBackPressed();
 		}
 	}
 
@@ -685,10 +693,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			case 2:
 				break;
 			default:
-				if (wRewardsFragment != null)
+				if (wRewardsFragment != null) {
 					wRewardsFragment.onActivityResult(requestCode, resultCode, data);
-				if (myAccountsFragment != null)
+				}
+				if (myAccountsFragment != null) {
 					myAccountsFragment.onActivityResult(requestCode, resultCode, data);
+				}
 				break;
 		}
 	}
