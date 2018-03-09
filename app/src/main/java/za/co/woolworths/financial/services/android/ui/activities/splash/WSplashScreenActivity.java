@@ -158,6 +158,12 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 			protected void onPostExecute(ConfigResponse configResponse) {
 				try {
 					WSplashScreenActivity.this.mVideoPlayerShouldPlay = false;
+
+					if(configResponse.enviroment.stsURI == null || configResponse.enviroment.stsURI.isEmpty()) {
+						showNonVideoViewWithErrorLayout();
+						return;
+					}
+
 					WoolworthsApplication.setBaseURL(configResponse.enviroment.getBase_url());
 					WoolworthsApplication.setApiKey(configResponse.enviroment.getApiId());
 					WoolworthsApplication.setSha1Password(configResponse.enviroment.getApiPassword());
