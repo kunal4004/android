@@ -66,9 +66,8 @@ public class ProductSearchActivity extends AppCompatActivity
 
 		Bundle bundle = getIntent().getExtras();
 		if (bundle != null) {
-			if (TextUtils.isEmpty(bundle.getString("SEARCH_TEXT_HINT"))) {
-				mSearchTextHint = bundle.getString("SEARCH_TEXT_HINT");
-				mEditSearchProduct.setHint(mSearchTextHint);
+			if (!TextUtils.isEmpty(bundle.getString("SEARCH_TEXT_HINT"))) {
+				mEditSearchProduct.setHint(getString(R.string.shopping_search_hint));
 			}
 		}
 	}

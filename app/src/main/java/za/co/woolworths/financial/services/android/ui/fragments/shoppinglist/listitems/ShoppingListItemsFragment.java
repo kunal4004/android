@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.awfs.coordination.R;
 import com.awfs.coordination.BR;
@@ -18,7 +17,7 @@ import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
 
-public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFragmentBinding, ShoppingListItemsViewModel> implements ShoppingListItemsNavigator {
+public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFragmentBinding, ShoppingListItemsViewModel> implements ShoppingListItemsNavigator, View.OnClickListener {
 	private ShoppingListItemsViewModel shoppingListItemsViewModel;
 	private ShoppingListItemsAdapter shoppingListItemsAdapter;
 
@@ -34,7 +33,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		super.onViewCreated(view, savedInstanceState);
 		showToolbar(R.string.general_fashion);
 		loadShoppingListItems();
-		getViewDataBinding().setHandler(this);
+		getViewDataBinding().textProductSearch.setOnClickListener(this);
 	}
 
 	@Override
@@ -69,28 +68,18 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		}
 	}
 
-	public View openProductSearchActivity(View view) {
-		Toast.makeText(getActivity(), "タップされたよ", Toast.LENGTH_SHORT).show();
-		return view;
-	}
-
-	public View.OnClickListener getButtonClickListener() {
-		return new View.OnClickListener() {
-			@Override
-			public void onClick(final View view) {
-				Toast.makeText(getActivity(), "タップされたよ", Toast.LENGTH_SHORT).show();
-				switch (view.getId()) {
-					case R.id.rlShoppingListSearch:
-						Log.e("getId", "rlShoppingListSearch");
-						Intent openProductSearchActivity = new Intent(getActivity(), ProductSearchActivity.class);
-						openProductSearchActivity.putExtra("SEARCH_TEXT_HINT", getString(R.string.shopping_search_hint));
-						startActivity(openProductSearchActivity);
-						getActivity().overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
-						break;
-					default:
-						break;
-				}
-			}
-		};
+	@Override
+	public void onClick(View view) {
+		switch (view.getId()) {
+			case R.id.textProductSearch:
+				Log.e("getId", "rlShoppingListSearch");
+				Intent openProductSearchActivity = new Intent(getActivity(), ProductSearchActivity.class);
+				openProductSearchActivity.putExtra("SEARCH_TEXT_HINT", getString(R.string.shopping_search_hint));
+				startActivity(openProductSearchActivity);
+				getActivity().overridePendingTransition(R.anim.stay, R.anim.stay);
+				break;
+			default:
+				break;
+		}
 	}
 }
