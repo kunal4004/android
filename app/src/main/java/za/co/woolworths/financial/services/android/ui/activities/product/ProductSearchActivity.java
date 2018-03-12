@@ -27,10 +27,10 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.SearchHistory;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
+import za.co.woolworths.financial.services.android.models.service.event.ShopState;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -67,7 +67,8 @@ public class ProductSearchActivity extends AppCompatActivity
 		Bundle bundle = getIntent().getExtras();
 		if (bundle != null) {
 			if (!TextUtils.isEmpty(bundle.getString("SEARCH_TEXT_HINT"))) {
-				mEditSearchProduct.setHint(getString(R.string.shopping_search_hint));
+				mSearchTextHint = getString(R.string.shopping_search_hint);
+				mEditSearchProduct.setHint(mSearchTextHint);
 			}
 		}
 	}
@@ -121,17 +122,15 @@ public class ProductSearchActivity extends AppCompatActivity
 		if (searchProductBrand.length() > 2) {
 			SearchHistory search = new SearchHistory();
 			search.searchedValue = searchProductBrand;
+			saveRecentSearch(search);
 			if (TextUtils.isEmpty(mSearchTextHint)) {
 				LoadState loadState = new LoadState();
-				saveRecentSearch(search);
 				loadState.setSearchProduct(searchProductBrand);
-				(WoolworthsApplication.getInstance())
-						.bus()
-						.send(loadState);
-				mEditSearchProduct.setText("");
+				Utils.sendBus(loadState);
 			} else {
-				Log.e("ShoppingLogic", "Logic");
+				Utils.sendBus(new ShopState(search.searchedValue));
 			}
+			mEditSearchProduct.setText("");
 			finish();
 			overridePendingTransition(0, 0);
 		}
@@ -170,7 +169,6 @@ public class ProductSearchActivity extends AppCompatActivity
 				histories.add(0, searchHistory);
 				if (histories.size() > 5)
 					histories.remove(5);
-
 				sessionDao.value = gson.toJson(histories);
 				try {
 					sessionDao.save();

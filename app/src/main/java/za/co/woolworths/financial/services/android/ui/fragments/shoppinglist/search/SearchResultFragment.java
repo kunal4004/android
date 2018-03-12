@@ -2,14 +2,10 @@ package za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.se
 
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.NestedScrollView;
-import android.support.v7.widget.GridLayoutManager;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -22,8 +18,7 @@ import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.Response;
-import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
-import za.co.woolworths.financial.services.android.ui.adapters.ProductSearchAdapter;
+import za.co.woolworths.financial.services.android.ui.adapters.ShoppingListSearchResultAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -32,13 +27,12 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 
 	private SearchResultViewModel mGridViewModel;
 	private ErrorHandlerView mErrorHandlerView;
-	private String mSubCategoryName;
-	private String mSearchProduct;
-	private ProductSearchAdapter mProductAdapter;
+	private ShoppingListSearchResultAdapter mProductAdapter;
 	private List<ProductList> mProductList;
 	private ProgressBar mProgressLimitStart;
 	private RelativeLayout mRelLoadMoreProduct;
-	private GridLayoutManager mRecyclerViewLayoutManager;
+	private LinearLayoutManager mRecyclerViewLayoutManager;
+	private String mSearchText;
 
 	@Override
 	public SearchResultViewModel getViewModel() {
@@ -64,8 +58,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 
 		Bundle bundle = this.getArguments();
 		if (bundle != null) {
-			mSubCategoryName = bundle.getString("sub_category_name");
-			mSearchProduct = bundle.getString("str_search_product");
+			mSearchText = bundle.getString("search_text");
 		}
 		setProductBody();
 	}
@@ -89,25 +82,23 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 	}
 
 	private void setTitle() {
-		if (isEmpty(mSearchProduct)) {
-			setTitle(mSubCategoryName);
-		} else {
-			setTitle(mSearchProduct);
-		}
+		if (mSearchText != null)
+			setTitle(mSearchText);
 	}
 
 	@Override
 	public void onLoadProductSuccess(List<ProductList> productLists, boolean loadMoreData) {
-		if (productLists.isEmpty()) {
-		} else if (productLists.size() == 1) {
-			onGridItemSelected(productLists.get(0));
-			popFragment();
-		} else {
-			setTotalNumberOfItem();
-			if (!loadMoreData) {
-				bindRecyclerViewWithUI(productLists);
+		if (productLists != null) {
+			if (productLists.size() == 1) {
+				onGridItemSelected(productLists.get(0));
+				popFragment();
 			} else {
-				loadMoreData(productLists);
+				setTotalNumberOfItem();
+				if (!loadMoreData) {
+					bindRecyclerViewWithUI(productLists);
+				} else {
+					loadMoreData(productLists);
+				}
 			}
 		}
 	}
@@ -144,8 +135,8 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 	@Override
 	public void bindRecyclerViewWithUI(List<ProductList> productList) {
 		this.mProductList = productList;
-		mProductAdapter = new ProductSearchAdapter(getActivity(), mProductList, this);
-		mRecyclerViewLayoutManager = new GridLayoutManager(getActivity(), 2);
+		mProductAdapter = new ShoppingListSearchResultAdapter(getActivity(), mProductList, this);
+		mRecyclerViewLayoutManager = new LinearLayoutManager(getActivity());
 		getViewDataBinding().productList.setLayoutManager(mRecyclerViewLayoutManager);
 		getViewDataBinding().productList.setNestedScrollingEnabled(false);
 		getViewDataBinding().productList.setAdapter(mProductAdapter);
@@ -159,10 +150,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 
 	@Override
 	public void onGridItemSelected(ProductList productList) {
-		if (!isEmpty(mSearchProduct)) {
-			mSubCategoryName = mSearchProduct;
-		}
-		getBottomNavigator().openProductDetailFragment(mSubCategoryName, productList);
+		getBottomNavigator().openProductDetailFragment(mSearchText, productList);
 	}
 
 	@Override
@@ -220,7 +208,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 
 	@Override
 	public void setProductBody() {
-		getViewModel().setProductRequestBody(mSearchProduct, false);
+		getViewModel().setProductRequestBody(mSearchText, false);
 	}
 
 	@Override
@@ -242,27 +230,6 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 		} else {
 			hideView(mProgressLimitStart);
 		}
-	}
-
-	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		super.onCreateOptionsMenu(menu, inflater);
-		menu.clear();
-		inflater.inflate(R.menu.drill_down_category_menu, menu);
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-			case R.id.action_drill_search:
-				Intent openSearchActivity = new Intent(getBaseActivity(), ProductSearchActivity.class);
-				startActivity(openSearchActivity);
-				getBaseActivity().overridePendingTransition(0, 0);
-				return true;
-			default:
-				break;
-		}
-		return false;
 	}
 
 	@Override

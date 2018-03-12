@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -223,20 +222,6 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 
 	public void fadeOutToolbar(int color) {
 		getBottomNavigator().fadeOutToolbar(color);
-	}
-
-	/**
-	 * Overrides the pending Activity transition by performing the "Enter" animation.
-	 */
-	protected void overridePendingTransitionEnter() {
-		getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
-	}
-
-	/**
-	 * Overrides the pending Activity transition by performing the "Exit" animation.
-	 */
-	protected void overridePendingTransitionExit() {
-		getActivity().overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
 	}
 
 	public void cancelRequest(HttpAsyncTask httpAsyncTask) {

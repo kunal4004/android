@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 
@@ -12,14 +13,16 @@ import com.awfs.coordination.R;
 import com.awfs.coordination.BR;
 import com.awfs.coordination.databinding.ShoppingListItemsFragmentBinding;
 
+import io.reactivex.functions.Consumer;
+import za.co.woolworths.financial.services.android.models.service.event.ShopState;
 import za.co.woolworths.financial.services.android.ui.adapters.ShoppingListItemsAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
+import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment;
 
 public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFragmentBinding, ShoppingListItemsViewModel> implements ShoppingListItemsNavigator, View.OnClickListener {
 	private ShoppingListItemsViewModel shoppingListItemsViewModel;
-	private ShoppingListItemsAdapter shoppingListItemsAdapter;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -34,6 +37,23 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		showToolbar(R.string.general_fashion);
 		loadShoppingListItems();
 		getViewDataBinding().textProductSearch.setOnClickListener(this);
+		getViewModel().consumeObservable(new Consumer() {
+			@Override
+			public void accept(Object object) throws Exception {
+				if (object != null) {
+					if (object instanceof ShopState) {
+						ShopState shopState = (ShopState) object;
+						if (!TextUtils.isEmpty(shopState.getState())) {
+							SearchResultFragment searchResultFragment = new SearchResultFragment();
+							Bundle bundle = new Bundle();
+							bundle.putString("search_text", shopState.getState());
+							searchResultFragment.setArguments(bundle);
+							pushFragment(searchResultFragment);
+						}
+					}
+				}
+			}
+		});
 	}
 
 	@Override
@@ -53,7 +73,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	}
 
 	public void loadShoppingListItems() {
-		shoppingListItemsAdapter = new ShoppingListItemsAdapter();
+		ShoppingListItemsAdapter shoppingListItemsAdapter = new ShoppingListItemsAdapter();
 		LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
 		mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 		getViewDataBinding().rcvShoppingListItems.setLayoutManager(mLayoutManager);

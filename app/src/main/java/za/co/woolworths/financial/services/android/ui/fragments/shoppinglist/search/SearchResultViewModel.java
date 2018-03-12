@@ -9,7 +9,6 @@ import za.co.woolworths.financial.services.android.models.dto.LoadProduct;
 import za.co.woolworths.financial.services.android.models.dto.PagingResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
-import za.co.woolworths.financial.services.android.models.rest.product.LoadProductRequest;
 import za.co.woolworths.financial.services.android.models.rest.product.SearchProductRequest;
 import za.co.woolworths.financial.services.android.ui.base.BaseViewModel;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
@@ -19,7 +18,6 @@ import za.co.woolworths.financial.services.android.util.rx.SchedulerProvider;
 public class SearchResultViewModel extends BaseViewModel<SearchResultNavigator> {
 
 	private LoadProduct mLoadProduct;
-	private LoadProductRequest mProductRequest;
 	private SearchProductRequest mSearchProductRequest;
 	private int mNumItemsInTotal;
 	private boolean loadMoreData = false;
