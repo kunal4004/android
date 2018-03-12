@@ -1,19 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_marginTop="?attr/actionBarSize"
-    tools:context="za.co.woolworths.financial.services.android.ui.fragments.ShoppingListItemsFragment">
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
 
     <data>
 
         <import type="android.view.View"/>
 
+        <variable
+            name="handler"
+            type="za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsFragment"/>
     </data>
+
     <LinearLayout
+
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize"
         android:background="@color/default_background"
-        >
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/rlShoppingListSearch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:background="@color/white"
+            android:clickable="true"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/imProductSearch"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignBottom="@+id/textProductSearch"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_margin="18dp"
+                android:src="@drawable/ic_search"/>
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/textProductSearch"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_alignParentTop="true"
+                android:background="@android:color/transparent"
+                android:gravity="start|center"
+                android:hint="@string/shopping_search_hint"
+                android:inputType="textNoSuggestions"
+                android:maxLines="1"
+                android:paddingLeft="@dimen/fifty_dp"
+                android:paddingRight="@dimen/default_margin"
+                android:textColor="@color/black"
+                android:textColorHint="@color/product_search_hint"
+                android:textSize="16sp"
+                app:WTextView_font="myriadpro_regular"/>
+
+        </RelativeLayout>
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rcvShoppingListItems"
             android:layout_width="match_parent"

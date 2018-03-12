@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.models;
 
 import android.content.Context;
 import android.location.Location;
-import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -17,7 +16,6 @@ import retrofit.Callback;
 import retrofit.RestAdapter;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
-import za.co.woolworths.financial.services.android.models.dto.AccountResponse;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
@@ -28,7 +26,6 @@ import za.co.woolworths.financial.services.android.models.dto.CLIEmailResponse;
 import za.co.woolworths.financial.services.android.models.dto.CardDetailsResponse;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.ChangeQuantity;
-import za.co.woolworths.financial.services.android.models.dto.ContactUsConfigResponse;
 import za.co.woolworths.financial.services.android.models.dto.CLIOfferDecision;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferRequest;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice;
@@ -45,6 +42,7 @@ import za.co.woolworths.financial.services.android.models.dto.LoginResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageReadRequest;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
+import za.co.woolworths.financial.services.android.models.dto.ProductDetail;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.PromotionsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProvincesResponse;
@@ -63,10 +61,7 @@ import za.co.woolworths.financial.services.android.models.dto.TransactionHistory
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
-import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.util.Utils;
-
-import static za.co.wigroup.androidutils.Util.getDeviceManufacturer;
 
 public class WfsApi {
 
@@ -93,10 +88,6 @@ public class WfsApi {
 		return mApiInterface.login(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", loginRequest);
 	}
 
-	public AccountResponse getAccount(String productOfferingId) {
-		return mApiInterface.getAccount(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), productOfferingId);
-	}
-
 	public AccountsResponse getAccounts() {
 		return mApiInterface.getAccounts(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken());
 	}
@@ -111,11 +102,6 @@ public class WfsApi {
 
 	public VoucherResponse getVouchers() {
 		return mApiInterface.getVouchers(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken());
-	}
-
-
-	public ContactUsConfigResponse getContactUsConfig() {
-		return mApiInterface.getContactUsConfig(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "");
 	}
 
 	public LocationResponse getLocations(String lat, String lon, String searchString, String radius) {
@@ -220,16 +206,6 @@ public class WfsApi {
 		return mApiInterface.setDeliveryLocationSuburb(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), request);
 	}
 
-	public ProductView productViewRequest(boolean isBarcode, int pageSize, int pageNumber, String product_id) {
-		getMyLocation();
-		if (Utils.isLocationEnabled(mContext)) {
-			return mApiInterface.getProduct(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLatitude(), loc.getLongitude(), pageSize, pageNumber, product_id);
-		} else {
-			return mApiInterface.getProduct(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), pageSize, pageNumber, product_id);
-		}
-	}
-
-
 	public ProductView productViewRequest(LoadProduct lp) {
 		getMyLocation();
 		if (Utils.isLocationEnabled(mContext)) {
@@ -274,13 +250,6 @@ public class WfsApi {
 		return mApiInterface.getFAQ(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "");
 	}
 
-
-	public WProduct getProductDetailView(String productId, String skuId) {
-		return mApiInterface.getProductDetail(getOsVersion(), getDeviceModel(), getOsVersion(),
-				getOS(), getNetworkCarrier(), getApiId(), "", "",
-				getSha1Password(), productId, skuId);
-	}
-
 	public CardDetailsResponse getCardDetails() {
 		return mApiInterface.getCardDetails(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken());
 	}
@@ -293,17 +262,6 @@ public class WfsApi {
 		return mApiInterface.sendUserStatement(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), statement);
 	}
 
-	/*
-	@Header("apiId") String apiId,
-			@Header("sha1Password") String sha1Password,
-			@Header("deviceVersion") String deviceVersion,
-			@Header("deviceModel") String deviceModel,
-			@Header("network") String network,
-			@Header("os") String os,
-			@Header("osVersion") String osVersion,
-			@Header("sessionToken") String sessionToken,
-			@Body AddItemToCart addItemToCart);
-	 */
 	public AddItemToCartResponse addItemToCart(AddItemToCart addToCart) {
 		return mApiInterface.addItemToCart(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), addToCart);
 	}
@@ -326,11 +284,22 @@ public class WfsApi {
 		return mApiInterface.removeAllCartItems(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken());
 	}
 
+	public ProductDetail productDetail(String productId, String skuId) {
+		getMyLocation();
+		if (Utils.isLocationEnabled(mContext)) {
+			return mApiInterface.productDetail(getOsVersion(), getDeviceModel(), getOsVersion(),
+					getOS(), getNetworkCarrier(), getApiId(), "", "",
+					getSha1Password(), loc.getLongitude(), loc.getLatitude(), productId, skuId);
+		} else {
+			return mApiInterface.productDetail(getOsVersion(), getDeviceModel(), getOsVersion(),
+					getOS(), getNetworkCarrier(), getApiId(), "", "",
+					getSha1Password(), productId, skuId);
+		}
+	}
 
-	public String getOsVersion() {
+	private String getOsVersion() {
 		String osVersion = Util.getOsVersion();
 		if (TextUtils.isEmpty(osVersion)) {
-			String myVersion = android.os.Build.VERSION.RELEASE; // e.g. myVersion := "1.6"
 			int sdkVersion = android.os.Build.VERSION.SDK_INT; // e.g. sdkVersion := 8;
 			osVersion = String.valueOf(sdkVersion);
 		}
@@ -341,36 +310,28 @@ public class WfsApi {
 		return "Android";
 	}
 
-	public String getNetworkCarrier() {
+	private String getNetworkCarrier() {
 		String networkCarrier = Util.getNetworkCarrier(mContext);
 		return networkCarrier.isEmpty() ? "Unavailable" : Utils.removeUnicodesFromString(networkCarrier);
 	}
 
-	public String getDeviceModel() {
+	private String getDeviceModel() {
 		return Util.getDeviceModel();
 	}
 
-	public String getDeviceManufacturer() {
+	private String getDeviceManufacturer() {
 		return Util.getDeviceManufacturer();
 	}
 
-	public String getSha1Password() {
+	private String getSha1Password() {
 		return WoolworthsApplication.getSha1Password();
 	}
 
-	public String getApiId() {
+	private String getApiId() {
 		return WoolworthsApplication.getApiKey();
 	}
 
-	private String getDeviceID() {
-		try {
-			return Settings.Secure.getString(mContext.getContentResolver(), Settings.Secure.ANDROID_ID);
-		} catch (Exception e) {
-			return null;
-		}
-	}
-
-	public String getSessionToken() {
+	private String getSessionToken() {
 		try {
 			SessionDao sessionDao = new SessionDao(mContext, SessionDao.KEY.USER_TOKEN).get();
 			if (sessionDao.value != null && !sessionDao.value.equals("")) {
@@ -397,9 +358,5 @@ public class WfsApi {
 				loc.setLongitude(0);
 
 		}
-	}
-
-	public String setInvalidToken() {
-		return "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6ImEzck1VZ01Gdjl0UGNsTGE2eUYzekFrZnF1RSIsImtpZCI6ImEzck1VZ01Gdjl0UGNsTGE2eUYzekFrZnF1RSJ9.eyJpc3MiOiJodHRwczovL3N0c3FhLndvb2x3b3J0aHMuY28uemEvY3VzdG9tZXJpZCIsImF1ZCI6IldXT25lQXBwIiwiZXhwIjoxNTE3NjQ4OTU1LCJuYmYiOjE1MTcyMTY5NTUsIm5vbmNlIjoiMDJFMjZDRTctQzNBNC00ODFFLUE5NUItNUVDM0IxNjI5N0FFIiwiaWF0IjoxNTE3MjE2OTU1LCJzaWQiOiIzN2JlNzAxM2EwNTM0NGIzNGQ0MDA5MmYzNzc4YzgyMSIsInN1YiI6Ijg3MTgyMmJiLThjZTEtNDk4OS1iMWI4LTFiYmY1NGE5MTk1ZiIsImF1dGhfdGltZSI6MTUxNzIxNjk1NCwiaWRwIjoiaWRzcnYiLCJ1cGRhdGVkX2F0IjoiMTUxNzIwOTc1NCIsInRlbmFudCI6ImRlZmF1bHQiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiIzMTM1ZWU3MjQ3NWM0YWFlOTFhNzZkMDQzOGY4MjJjZiIsImVtYWlsIjoidGVzdDIzQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjoiZmFsc2UiLCJuYW1lIjoiTUZJU0hBTkUgTUFSSUEiLCJmYW1pbHlfbmFtZSI6Ik1BSExBTkdVIiwiQXRnSWQiOiIyNjMwMDAwMzMiLCJBdGdTZXNzaW9uIjoie1wiSlNFU1NJT05JRFwiOlwiZGxWQkxWZFZhV2F5ZnNCWEdlRUtrTEFmZmZCRU53V1NzRGlqcWI0MkxUalZfV2hhYlFwcSEtMjA5NjcyOTI1NFwiLFwiX2R5blNlc3NDb25mXCI6XCItNDY4NTQ0NjU5OTcyMDE5MTg5NFwifSIsIkMySWQiOiIyMDg2NzE";
 	}
 }

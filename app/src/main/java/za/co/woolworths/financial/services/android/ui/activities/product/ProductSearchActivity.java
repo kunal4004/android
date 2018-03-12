@@ -1,11 +1,13 @@
 package za.co.woolworths.financial.services.android.ui.activities.product;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -31,7 +33,6 @@ import za.co.woolworths.financial.services.android.models.dto.SearchHistory;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class ProductSearchActivity extends AppCompatActivity
@@ -42,8 +43,7 @@ public class ProductSearchActivity extends AppCompatActivity
 	private WEditTextView mEditSearchProduct;
 	private LinearLayout recentSearchLayout;
 	private LinearLayout recentSearchList;
-
-	PopWindowValidationMessage mPopWindowValidationMessage;
+	private String mSearchTextHint = "";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +53,6 @@ public class ProductSearchActivity extends AppCompatActivity
 		setActionBar();
 		initUI();
 		showRecentSearchHistoryView(true);
-
 		mEditSearchProduct.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 			@Override
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -64,25 +63,35 @@ public class ProductSearchActivity extends AppCompatActivity
 				return false;
 			}
 		});
+
+		Bundle bundle = getIntent().getExtras();
+		if (bundle != null) {
+			if (TextUtils.isEmpty(bundle.getString("SEARCH_TEXT_HINT"))) {
+				mSearchTextHint = bundle.getString("SEARCH_TEXT_HINT");
+				mEditSearchProduct.setHint(mSearchTextHint);
+			}
+		}
 	}
 
 	private void initUI() {
 		mLayoutManager = new LinearLayoutManager(ProductSearchActivity.this);
-		productListview = (RecyclerView) findViewById(R.id.productSearchList);
-		mEditSearchProduct = (WEditTextView) findViewById(R.id.toolbarText);
-		recentSearchLayout = (LinearLayout) findViewById(R.id.recentSearchLayout);
-		recentSearchList = (LinearLayout) findViewById(R.id.recentSearchList);
-		mPopWindowValidationMessage = new PopWindowValidationMessage(this);
+		productListview = findViewById(R.id.productSearchList);
+		mEditSearchProduct = findViewById(R.id.toolbarText);
+		recentSearchLayout = findViewById(R.id.recentSearchLayout);
+		recentSearchList = findViewById(R.id.recentSearchList);
 	}
 
 	private void setActionBar() {
-		toolbar = (Toolbar) findViewById(R.id.toolbar);
+		toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSupportActionBar().setTitle(null);
-		getSupportActionBar().setDisplayShowTitleEnabled(false);
-		getSupportActionBar().setDisplayOptions(0, ActionBar.DISPLAY_SHOW_TITLE);
-		getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_search);
+		ActionBar actionBar = getSupportActionBar();
+		if (actionBar != null) {
+			actionBar.setDisplayHomeAsUpEnabled(true);
+			actionBar.setTitle(null);
+			actionBar.setDisplayShowTitleEnabled(false);
+			actionBar.setDisplayOptions(0, ActionBar.DISPLAY_SHOW_TITLE);
+			actionBar.setHomeAsUpIndicator(R.drawable.ic_search);
+		}
 	}
 
 	@Override
@@ -113,13 +122,17 @@ public class ProductSearchActivity extends AppCompatActivity
 		if (searchProductBrand.length() > 2) {
 			SearchHistory search = new SearchHistory();
 			search.searchedValue = searchProductBrand;
-			LoadState loadState = new LoadState();
-			saveRecentSearch(search);
-			loadState.setSearchProduct(searchProductBrand);
-			(WoolworthsApplication.getInstance())
-					.bus()
-					.send(loadState);
-			mEditSearchProduct.setText("");
+			if (TextUtils.isEmpty(mSearchTextHint)) {
+				LoadState loadState = new LoadState();
+				saveRecentSearch(search);
+				loadState.setSearchProduct(searchProductBrand);
+				(WoolworthsApplication.getInstance())
+						.bus()
+						.send(loadState);
+				mEditSearchProduct.setText("");
+			} else {
+				Log.e("ShoppingLogic", "Logic");
+			}
 			finish();
 			overridePendingTransition(0, 0);
 		}
@@ -133,8 +146,7 @@ public class ProductSearchActivity extends AppCompatActivity
 	}
 
 	public void saveRecentSearch(SearchHistory searchHistory) {
-		List<SearchHistory> histories = null;
-		histories = new ArrayList<>();
+		List<SearchHistory> histories;
 		histories = getRecentSearch();
 		SessionDao sessionDao = new SessionDao(ProductSearchActivity.this);
 		sessionDao.key = SessionDao.KEY.STORES_PRODUCT_SEARCH;
@@ -143,8 +155,7 @@ public class ProductSearchActivity extends AppCompatActivity
 		if (histories == null) {
 			histories = new ArrayList<>();
 			histories.add(0, searchHistory);
-			String json = gson.toJson(histories);
-			sessionDao.value = json;
+			sessionDao.value = gson.toJson(histories);
 			try {
 				sessionDao.save();
 			} catch (Exception e) {
@@ -192,10 +203,12 @@ public class ProductSearchActivity extends AppCompatActivity
 	public void hideSoftKeyboard() {
 		if (getCurrentFocus() != null) {
 			InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+			assert inputMethodManager != null;
 			inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
 		}
 	}
 
+	@SuppressLint("InflateParams")
 	public void showRecentSearchHistoryView(boolean status) {
 		recentSearchList.removeAllViews();
 		View storeItem = getLayoutInflater().inflate(R.layout.stores_recent_search_header_row, null);
@@ -204,7 +217,7 @@ public class ProductSearchActivity extends AppCompatActivity
 		if (status && searchHistories != null) {
 			for (int i = 0; i < searchHistories.size(); i++) {
 				View v = getLayoutInflater().inflate(R.layout.recent_search_list_item, null);
-				WTextView recentSearchListitem = (WTextView) v.findViewById(R.id.recentSerachListItem);
+				WTextView recentSearchListitem = v.findViewById(R.id.recentSerachListItem);
 				recentSearchListitem.setText(searchHistories.get(i).searchedValue);
 				recentSearchList.addView(v);
 				int position = recentSearchList.indexOfChild(v) - 1;

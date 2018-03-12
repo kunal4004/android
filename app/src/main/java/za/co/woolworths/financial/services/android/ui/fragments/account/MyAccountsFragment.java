@@ -114,7 +114,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	private LinearLayout loginUserOptionsLayout;
 	private SessionManager mSessionManager;
 	private GetMessage mGessageResponse;
-	private RelativeLayout shoppingList;
 
 	public MyAccountsFragment() {
 		// Required empty public constructor
@@ -718,7 +717,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			public void run() {
 				try {
 					hideProgressBar();
-				} catch (Exception ex) {
+				} catch (Exception ignored) {
 				}
 			}
 		});

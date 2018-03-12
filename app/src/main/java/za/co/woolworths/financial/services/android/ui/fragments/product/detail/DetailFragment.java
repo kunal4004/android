@@ -67,6 +67,7 @@ import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.models.rest.product.GetCartSummary;
 import za.co.woolworths.financial.services.android.models.rest.product.PostAddItemToCart;
+import za.co.woolworths.financial.services.android.models.rest.product.ProductRequest;
 import za.co.woolworths.financial.services.android.models.rest.shop.SetDeliveryLocationSuburb;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
@@ -330,7 +331,8 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 			onSuccessResponse(Utils.stringToJson(getActivity(), mDefaultProductResponse));
 			onLoadComplete();
 		} else {
-			getViewModel().getProductDetail(getBaseActivity(), mDefaultProduct.productId, mDefaultProduct.sku);
+			getViewModel().productDetail(new ProductRequest(mDefaultProduct.productId, mDefaultProduct.sku)).execute();
+			//getViewModel().getProductDetail(getBaseActivity(), mDefaultProduct.productId, mDefaultProduct.sku);
 		}
 	}
 
@@ -1248,7 +1250,7 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 					if (isNetworkConnected()) {
 						if (productLoadFail) {
 							ProductList defaultProduct = getViewModel().getDefaultProduct();
-							getViewModel().getProductDetail(getBaseActivity(), defaultProduct.productId, defaultProduct.sku);
+							getViewModel().productDetail(new ProductRequest(defaultProduct.productId, defaultProduct.sku));
 							return;
 						}
 						if ((getGlobalState().getSaveButtonClick() == INDEX_STORE_FINDER) &&

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View"/>
+
+        <variable
+            name="presenter"
+            type="za.co.woolworths.financial.services.android.ui.fragments.product.shop.list.NewListFragment"/>
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView
+            android:id="@+id/etNewList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/btnCreateList"
+            android:background="@android:color/transparent"
+            android:ems="10"
+            android:gravity="center"
+            android:hint="@string/list_name"
+            android:imeOptions="actionDone"
+            android:maxLines="1"
+            android:textColor="@color/black"
+            android:textColorHint="@color/recent_search_bg"
+            android:textCursorDrawable="@drawable/colorcursor"
+            android:textSize="@dimen/eighteen_sp"
+            app:WEditTextView_font="myriadpro_regular">
+
+            <requestFocus/>
+        </za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView>
+
+
+        <za.co.woolworths.financial.services.android.ui.views.WButton
+            android:id="@+id/btnCreateList"
+            style="@style/blackButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="@dimen/eight_dp"
+            android:layout_marginEnd="@dimen/eight_dp"
+            android:layout_marginStart="@dimen/eight_dp"
+            android:text="@string/create_list"
+            />
+
+    </RelativeLayout>
+</layout>

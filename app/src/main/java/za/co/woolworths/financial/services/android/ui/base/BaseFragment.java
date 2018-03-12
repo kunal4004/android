@@ -12,17 +12,20 @@ import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 
 import com.awfs.coordination.R;
 
-import io.reactivex.disposables.CompositeDisposable;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator;
+import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
+import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
@@ -124,12 +127,6 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 	public void showToolbar() {
 		Utils.updateStatusBarBackground(getActivity());
 		mActivity.showToolbar();
-	}
-
-	public void hideKeyboard() {
-		if (mActivity != null) {
-			//mActivity.hideKeyboard();
-		}
 	}
 
 	public interface Callback {
@@ -270,4 +267,35 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 		return getBottomNavigator().getCurrentStackIndex();
 	}
 
+
+	public void showToolbar(int id) {
+		showBackNavigationIcon(true);
+		setToolbarBackgroundDrawable(R.drawable.appbar_background);
+		setTitle(getString(id));
+		showToolbar();
+	}
+
+	public void showSoftKeyboard(WEditTextView editTextView) {
+		Activity activity = getActivity();
+		if (activity != null) {
+			InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+			imm.showSoftInput(editTextView, InputMethodManager.SHOW_IMPLICIT);
+		}
+	}
+
+	public void showSoftKeyboard(WLoanEditTextView editTextView) {
+		Activity activity = getActivity();
+		if (activity != null) {
+			InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+			imm.showSoftInput(editTextView, InputMethodManager.SHOW_IMPLICIT);
+		}
+	}
+
+	public void closeSoftKeyboard() {
+		Activity activity = getActivity();
+		if (activity != null) {
+			InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+			imm.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+		}
+	}
 }

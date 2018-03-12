@@ -134,5 +134,6 @@
     <dimen name="twenty_sp">20sp</dimen>
     <dimen name="seventy_eight_dp">78dp</dimen>
     <dimen name="eighty_two_dp">82dp</dimen>
+    <dimen name="eighteen_sp">18sp</dimen>
 </resources>
 

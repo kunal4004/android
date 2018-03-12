@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments.product.grid;
+package za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search;
 
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
@@ -23,26 +23,25 @@ import java.util.List;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
-import za.co.woolworths.financial.services.android.ui.adapters.ProductViewListAdapter;
+import za.co.woolworths.financial.services.android.ui.adapters.ProductSearchAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel> implements GridNavigator, View.OnClickListener {
+public class SearchResultFragment extends BaseFragment<GridLayoutBinding, SearchResultViewModel> implements SearchResultNavigator, View.OnClickListener {
 
-	private GridViewModel mGridViewModel;
+	private SearchResultViewModel mGridViewModel;
 	private ErrorHandlerView mErrorHandlerView;
-	private String mSubCategoryId;
 	private String mSubCategoryName;
 	private String mSearchProduct;
-	private ProductViewListAdapter mProductAdapter;
+	private ProductSearchAdapter mProductAdapter;
 	private List<ProductList> mProductList;
 	private ProgressBar mProgressLimitStart;
 	private RelativeLayout mRelLoadMoreProduct;
 	private GridLayoutManager mRecyclerViewLayoutManager;
 
 	@Override
-	public GridViewModel getViewModel() {
+	public SearchResultViewModel getViewModel() {
 		return mGridViewModel;
 	}
 
@@ -60,12 +59,11 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 	public void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(true);
-		mGridViewModel = ViewModelProviders.of(this).get(GridViewModel.class);
+		mGridViewModel = ViewModelProviders.of(this).get(SearchResultViewModel.class);
 		mGridViewModel.setNavigator(this);
 
 		Bundle bundle = this.getArguments();
 		if (bundle != null) {
-			mSubCategoryId = bundle.getString("sub_category_id");
 			mSubCategoryName = bundle.getString("sub_category_name");
 			mSearchProduct = bundle.getString("str_search_product");
 		}
@@ -101,7 +99,6 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 	@Override
 	public void onLoadProductSuccess(List<ProductList> productLists, boolean loadMoreData) {
 		if (productLists.isEmpty()) {
-
 		} else if (productLists.size() == 1) {
 			onGridItemSelected(productLists.get(0));
 			popFragment();
@@ -135,7 +132,6 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 	@Override
 	public void cancelAPIRequest() {
 		if (mGridViewModel != null) {
-			mGridViewModel.cancelRequest(mGridViewModel.getLoadProductRequest());
 			mGridViewModel.cancelRequest(mGridViewModel.getSearchProductRequest());
 		}
 	}
@@ -148,7 +144,7 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 	@Override
 	public void bindRecyclerViewWithUI(List<ProductList> productList) {
 		this.mProductList = productList;
-		mProductAdapter = new ProductViewListAdapter(getActivity(), mProductList, this);
+		mProductAdapter = new ProductSearchAdapter(getActivity(), mProductList, this);
 		mRecyclerViewLayoutManager = new GridLayoutManager(getActivity(), 2);
 		getViewDataBinding().productList.setLayoutManager(mRecyclerViewLayoutManager);
 		getViewDataBinding().productList.setNestedScrollingEnabled(false);
@@ -172,6 +168,7 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 	@Override
 	public void onBottomReached() {
 		final NestedScrollView scroll = getViewDataBinding().scrollProduct;
+
 		scroll.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
 			@Override
 			public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
@@ -209,11 +206,7 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 
 	@Override
 	public void startProductRequest() {
-		if (isEmpty(mSearchProduct)) {
-			getViewModel().executeLoadProduct(getActivity(), getViewModel().getProductRequestBody());
-		} else {
-			getViewModel().executeSearchProduct(getActivity(), getViewModel().getProductRequestBody());
-		}
+		getViewModel().executeSearchProduct(getActivity(), getViewModel().getProductRequestBody());
 	}
 
 	@Override
@@ -227,11 +220,7 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 
 	@Override
 	public void setProductBody() {
-		if (isEmpty(mSearchProduct)) {
-			getViewModel().setProductRequestBody(false, mSubCategoryId);
-		} else {
-			getViewModel().setProductRequestBody(mSearchProduct, false);
-		}
+		getViewModel().setProductRequestBody(mSearchProduct, false);
 	}
 
 	@Override

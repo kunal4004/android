@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.dto.Ingredient;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
@@ -65,13 +64,13 @@ public class WebAppInterface {
 	public void addToShoppingList(String ingredients) {
 		if (!TextUtils.isEmpty(ingredients)) {
 			Gson gson = new Gson();
-			Ingredient ingredient[] = gson.fromJson(ingredients, Ingredient[].class);
-			if (ingredient.length > 0) {
-				for (Ingredient i : ingredient) {
-					Utils.addToShoppingCart(mContext, new ShoppingList(
-							i.id, i.displayName, false));
-				}
-			}
+//			Ingredient ingredient[] = gson.fromJson(ingredients, Ingredient[].class);
+//			if (ingredient.length > 0) {
+//				for (Ingredient i : ingredient) {
+//					Utils.addToShoppingCart(mContext, new ShoppingList(
+//							i.id, i.displayName, false));
+//				}
+//			}
 
 			((AppCompatActivity) mContext).runOnUiThread(new Runnable() {
 				public void run() {

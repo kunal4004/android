@@ -15,4 +15,5 @@ public class ShoppingListItemsViewModel extends BaseViewModel<ShoppingListItemsN
 	public ShoppingListItemsViewModel(SchedulerProvider schedulerProvider) {
 		super(schedulerProvider);
 	}
+
 }

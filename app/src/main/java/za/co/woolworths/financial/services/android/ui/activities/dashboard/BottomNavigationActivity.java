@@ -401,6 +401,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		}
 	}
 
+
 	@Override
 	public SlidingUpPanelLayout getSlidingLayout() {
 		return getViewDataBinding().slideUpPanel;

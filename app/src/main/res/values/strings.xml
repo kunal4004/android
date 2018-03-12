@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-
     <string name="app_name">WOOLWORTHS</string>
     <string name="drawer_faq">FAQ</string>
     <string name="log_in">Sign in</string>
@@ -621,4 +620,12 @@
     <string name="start_shopping">start shopping</string>
     <string name="delete">delete</string>
     <string name="title_my_list">My Lists</string>
+
+    <!-- new list item-->
+    <string name="list_name">List Name</string>
+    <string name="create_list">create list</string>
+    <string name="new_list">new list</string>
+    <string name="general_fashion">General Fashion</string>
+    <string name="shopping_search_hint">Search products to add to your list</string>
+
 </resources>
