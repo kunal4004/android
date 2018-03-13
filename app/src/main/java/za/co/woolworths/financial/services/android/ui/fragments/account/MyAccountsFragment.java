@@ -43,7 +43,6 @@ import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWind
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
-import za.co.woolworths.financial.services.android.ui.activities.ShoppingListActivity;
 import za.co.woolworths.financial.services.android.ui.activities.UserDetailActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountOverViewPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;

@@ -23,7 +23,6 @@ import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
-import za.co.woolworths.financial.services.android.ui.activities.ShoppingListActivity;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
