@@ -314,6 +314,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			rlCheckOut.setVisibility(View.GONE);
 			mToggleItemRemoved.onRemoveSuccess();
 			relEmptyStateHandler.setVisibility(View.VISIBLE);
+			deliveryLocationEnabled(true);
 			Activity activity = getActivity();
 			if (activity != null) {
 				CartActivity cartActivity = (CartActivity) activity;
@@ -321,7 +322,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				cartActivity.hideEditCart();
 			}
 		}
-		deliveryLocationEnabled(true);
 	}
 
 	public void updateCart(CartResponse cartResponse, CommerceItem commerceItem) {
@@ -441,7 +441,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 								cartProductAdapter.setEditMode(true);
 							}
 							onChangeQuantityComplete();
-
 							deliveryLocationEnabled(true);
 							break;
 						case 440:
