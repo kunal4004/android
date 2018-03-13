@@ -312,6 +312,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			Utils.sendBus(new BadgeState(CART_COUNT_TEMP, 0));
 			rvCartList.setVisibility(View.GONE);
 			rlCheckOut.setVisibility(View.GONE);
+			mToggleItemRemoved.onRemoveSuccess();
 			relEmptyStateHandler.setVisibility(View.VISIBLE);
 			Activity activity = getActivity();
 			if (activity != null) {
