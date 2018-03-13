@@ -148,7 +148,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			cartActivity.hideEditCart();
 		}
 
-		loadShoppingCart().execute();
+		loadShoppingCart(false).execute();
 		mDisposables.add(WoolworthsApplication.getInstance()
 				.bus()
 				.toObservable()
@@ -161,7 +161,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 							if (object instanceof CartState) {
 								CartState cartState = (CartState) object;
 								if (!TextUtils.isEmpty(cartState.getState())) {
-									loadShoppingCart().execute();
+									loadShoppingCart(false).execute();
 									tvDeliveryLocation.setText(cartState.getState());
 								} else if (cartState.getIndexState() == CHANGE_QUANTITY) {
 									mQuantity = cartState.getQuantity();
@@ -214,7 +214,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			case R.id.btnRetry:
 				if (new ConnectionDetector().isOnline(getActivity())) {
 					rvCartList.setVisibility(View.VISIBLE);
-					loadShoppingCart().execute();
+					loadShoppingCart(false).execute();
 				}
 				break;
 			case R.id.btnCheckOut:
@@ -301,12 +301,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				CartActivity cartActivity = (CartActivity) activity;
 				cartActivity.showEditCart();
 			}
-
 			cartItems = cartResponse.cartItems;
 			orderSummary = cartResponse.orderSummary;
-
 			cartProductAdapter = new CartProductAdapter(cartItems, this, orderSummary, getActivity());
-
 			LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
 			mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 			rvCartList.setLayoutManager(mLayoutManager);
@@ -316,6 +313,12 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			rvCartList.setVisibility(View.GONE);
 			rlCheckOut.setVisibility(View.GONE);
 			relEmptyStateHandler.setVisibility(View.VISIBLE);
+			Activity activity = getActivity();
+			if (activity != null) {
+				CartActivity cartActivity = (CartActivity) activity;
+				cartActivity.toggleCartMode();
+				cartActivity.hideEditCart();
+			}
 		}
 		deliveryLocationEnabled(true);
 	}
@@ -379,18 +382,16 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		cartProductAdapter.onChangeQuantityLoad();
 	}
 
-	private HttpAsyncTask<String, String, ShoppingCartResponse> loadShoppingCart() {
+	private HttpAsyncTask<String, String, ShoppingCartResponse> loadShoppingCart(final boolean onItemRemove) {
 		mErrorHandlerView.hideErrorHandler();
 		return new HttpAsyncTask<String, String, ShoppingCartResponse>() {
 
 			@Override
 			protected void onPreExecute() {
 				deliveryLocationEnabled(false);
+				rlCheckOut.setEnabled(onItemRemove ? false : true);
+				rlCheckOut.setVisibility(onItemRemove ? View.VISIBLE : View.GONE);
 				pBar.setVisibility(View.VISIBLE);
-				rlCheckOut.setVisibility(View.GONE);
-				//parentLayout.setVisibility(View.GONE);
-				//Utils.showOneTimePopup(getActivity(), SessionDao.KEY.CART_FIRST_ORDER_FREE_DELIVERY, tvFreeDeliveryFirstOrder);
-
 			}
 
 			@Override
@@ -410,7 +411,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					activity.runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
-							if (!onRemoveItemFailed) {
+							if (!onItemRemove) {
 								deliveryLocationEnabled(true);
 								rvCartList.setVisibility(View.GONE);
 								rlCheckOut.setVisibility(View.GONE);
@@ -430,10 +431,17 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					switch (httpCode) {
 
 						case 200:
+							onRemoveItemFailed = false;
 							rlCheckOut.setVisibility(View.VISIBLE);
+							rlCheckOut.setEnabled(true);
 							CartResponse cartResponse = convertResponseToCartResponseObject(shoppingCartResponse);
 							bindCartData(cartResponse);
+							if (onItemRemove) {
+								cartProductAdapter.setEditMode(true);
+							}
 							onChangeQuantityComplete();
+
+							deliveryLocationEnabled(true);
 							break;
 						case 440:
 							final Activity activity = getActivity();
@@ -458,7 +466,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 								Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, shoppingCartResponse.response.desc);
 							break;
 					}
-
 					deliveryLocationEnabled(true);
 				} catch (Exception ex) {
 					ex.printStackTrace();
@@ -743,7 +750,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			cartResponse.cartItems = cartItemGroups;
 
 			cartResponse.orderSummary = data.orderSummary;
-
 			// set delivery location
 			if (!TextUtils.isEmpty(data.suburbName) && !TextUtils.isEmpty(data.provinceName)) {
 				mSuburbName = data.suburbName;
@@ -783,8 +789,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 		if (onRemoveItemFailed) {
 			mErrorHandlerView.hideErrorHandler();
-			loadShoppingCart().execute();
-			onRemoveItemFailed = false;
+			loadShoppingCart(true).execute();
 			return;
 		}
 

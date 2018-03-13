@@ -467,4 +467,9 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 		return firstLoadCompleted;
 	}
 
+	public void setEditMode(boolean editMode) {
+		this.editMode = editMode;
+		if (cartItems != null)
+			notifyItemRangeChanged(0, cartItems.size());
+	}
 }

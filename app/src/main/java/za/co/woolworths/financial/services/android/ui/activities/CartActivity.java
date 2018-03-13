@@ -72,7 +72,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 		pbRemoveAllItem.setVisibility(View.GONE);
 	}
 
-	private void toggleCartMode() {
+	public void toggleCartMode() {
 		boolean isEditMode = cartFragment.toggleEditMode();
 		btnEditCart.setText(isEditMode ? R.string.done : R.string.edit);
 		btnCloseCart.setVisibility(isEditMode ? View.GONE : View.VISIBLE);
