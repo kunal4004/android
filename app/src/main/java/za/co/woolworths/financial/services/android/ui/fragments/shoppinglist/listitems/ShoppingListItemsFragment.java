@@ -14,6 +14,8 @@ import com.awfs.coordination.BR;
 import com.awfs.coordination.databinding.ShoppingListItemsFragmentBinding;
 
 import io.reactivex.functions.Consumer;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
+import za.co.woolworths.financial.services.android.models.rest.shoppinglist.GetShoppingListItems;
 import za.co.woolworths.financial.services.android.models.service.event.ShopState;
 import za.co.woolworths.financial.services.android.ui.adapters.ShoppingListItemsAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
@@ -23,6 +25,9 @@ import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.sea
 
 public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFragmentBinding, ShoppingListItemsViewModel> implements ShoppingListItemsNavigator, View.OnClickListener {
 	private ShoppingListItemsViewModel shoppingListItemsViewModel;
+	private String listName;
+	private String listId;
+	private GetShoppingListItems getShoppingListItems;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -34,8 +39,9 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		showToolbar(R.string.general_fashion);
-		loadShoppingListItems();
+		listName=getArguments().getString("listName");
+		listId=getArguments().getString("listId");
+		showToolbar(Integer.parseInt(listName));
 		getViewDataBinding().textProductSearch.setOnClickListener(this);
 		getViewModel().consumeObservable(new Consumer() {
 			@Override
@@ -54,6 +60,10 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				}
 			}
 		});
+
+		getShoppingListItems=getViewModel().getShoppingListItems(listId);
+		getShoppingListItems.execute();
+
 	}
 
 	@Override
@@ -72,7 +82,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		return R.layout.shopping_list_items_fragment;
 	}
 
-	public void loadShoppingListItems() {
+	public void loadShoppingListItems(ShoppingListItemsResponse shoppingListItemsResponse) {
 		ShoppingListItemsAdapter shoppingListItemsAdapter = new ShoppingListItemsAdapter();
 		LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
 		mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -101,5 +111,10 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 			default:
 				break;
 		}
+	}
+
+	@Override
+	public void onShoppingListItemsResponse(ShoppingListItemsResponse shoppingListItemsResponse) {
+		loadShoppingListItems(shoppingListItemsResponse);
 	}
 }

@@ -8,8 +8,12 @@ import android.view.ViewGroup;
 
 import com.awfs.coordination.R;
 
+import java.util.List;
+
+import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.ShoppingListNavigator;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsNavigator;
+import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
 /**
  * Created by W7099877 on 2018/03/08.
@@ -18,8 +22,10 @@ import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.lis
 public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapter.ViewHolder> {
 
 	private ShoppingListNavigator shoppingListNavigator;
-	public ShoppingListAdapter(ShoppingListNavigator shoppingListNavigator) {
+	private List<ShoppingList> lists;
+	public ShoppingListAdapter(ShoppingListNavigator shoppingListNavigator, List<ShoppingList> lists) {
 		this.shoppingListNavigator= shoppingListNavigator;
+		this.lists=lists;
 	}
 
 	@Override
@@ -29,11 +35,13 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
 	}
 
 	@Override
-	public void onBindViewHolder(ViewHolder holder, int position) {
+	public void onBindViewHolder(ViewHolder holder, final int position) {
+		holder.listName.setText(lists.get(position).listName);
+		holder.listCount.setText(lists.get(position).listCount);
 		holder.itemView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				shoppingListNavigator.onListItemSelected();
+				shoppingListNavigator.onListItemSelected(lists.get(position).listName,lists.get(position).listId);
 			}
 		});
 
@@ -42,13 +50,18 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
 
 	@Override
 	public int getItemCount() {
-		return 5;
+		return lists.size();
 	}
 
 	public class ViewHolder extends RecyclerView.ViewHolder{
-
+		public WTextView listName;
+		public WTextView listCount;
+		public WTextView lastModified;
 		public ViewHolder(View itemView) {
 			super(itemView);
+			listName=itemView.findViewById(R.id.listName);
+			listCount=itemView.findViewById(R.id.listItemCount);
+			lastModified=itemView.findViewById(R.id.listLastModified);
 		}
 	}
 }

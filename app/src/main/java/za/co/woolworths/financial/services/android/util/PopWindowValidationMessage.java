@@ -256,43 +256,6 @@ public class PopWindowValidationMessage {
 						});
 				break;
 
-			case SHOPPING_LIST_INFO:
-				mView = mLayoutInflater.inflate(R.layout.shopping_list_info, null);
-				popupWindowSetting(mView);
-				setAnimation();
-				if (description.equalsIgnoreCase("viewShoppingList")) {
-					mView.findViewById(R.id.shoppingListDivider).setVisibility(View.VISIBLE);
-					mView.findViewById(R.id.btnViewShoppingList).setVisibility(View.VISIBLE);
-				}
-
-				mView.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						startExitAnimation(overlay_type);
-					}
-				});
-//                touchToDismiss(overlay_type);
-				mRelPopContainer.setAnimation(mFadeInAnimation);
-				mRelRootContainer.setAnimation(mPopEnterAnimation);
-				mView.findViewById(R.id.btnViewShoppingList).setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						Intent shoppingList = new Intent(mContext, ShoppingListActivity.class);
-						mContext.startActivity(shoppingList);
-						AppCompatActivity activity = (AppCompatActivity) mContext;
-						activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
-
-						dismissLayout();
-					}
-				});
-				mView.findViewById(R.id.btnOk)
-						.setOnClickListener(new View.OnClickListener() {
-							@Override
-							public void onClick(View v) {
-								startExitAnimation(overlay_type);
-							}
-						});
-				break;
 		}
 
 		return mDarkenScreen;

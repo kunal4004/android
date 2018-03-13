@@ -857,13 +857,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				startExitAnimation();
 				break;
 
-			case R.id.btnViewShoppingList:
-				Intent shoppingList = new Intent(this, ShoppingListActivity.class);
-				startActivity(shoppingList);
-				overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
-				dismissLayout();
-				break;
-
 			case R.id.btnSignOut:
 				whiteEffectClick(mBtnSignOut);
 				exitAnimation();

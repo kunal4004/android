@@ -50,6 +50,8 @@ import za.co.woolworths.financial.services.android.models.dto.ReadMessagesRespon
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbRequest;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.dto.SuburbsResponse;
 import za.co.woolworths.financial.services.android.models.dto.RootCategories;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
@@ -295,6 +297,14 @@ public class WfsApi {
 					getOS(), getNetworkCarrier(), getApiId(), "", "",
 					getSha1Password(), productId, skuId);
 		}
+	}
+
+	public ShoppingListsResponse getShoppingLists() {
+		return mApiInterface.getShoppingLists(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken());
+	}
+
+	public ShoppingListItemsResponse getShoppingListItems(String listId) {
+		return mApiInterface.getShoppingListItems(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(),listId);
 	}
 
 	private String getOsVersion() {
