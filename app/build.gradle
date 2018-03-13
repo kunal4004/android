@@ -4,11 +4,11 @@ android {
 
     def major = "5"
     def minor = "5"
-    def fix = "1"
+    def fix = "2"
     def env = System.getenv()
     def job = env['BUILD_NUMBER']
     if (job == null) {
-        job = "64";
+        job = "65";
     }
 
     flavorDimensions "default"
@@ -85,7 +85,7 @@ android {
         production {
             applicationId "com.awfs.coordination"
             signingConfig signingConfigs.woolworths
-            versionCode 64
+            versionCode 65
         }
         dexOptions {
             javaMaxHeapSize "2560M"
