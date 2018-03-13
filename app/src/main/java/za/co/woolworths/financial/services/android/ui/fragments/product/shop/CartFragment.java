@@ -70,7 +70,6 @@ import static za.co.woolworths.financial.services.android.models.service.event.P
 public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick, View.OnClickListener, NetworkChangeListener {
 
 	private int mQuantity;
-	private WTextView tvFreeDeliveryFirstOrder;
 	private String mSuburbName, mProvinceName;
 	private RelativeLayout rlLocationSelectedLayout;
 	private boolean onRemoveItemFailed = false;
@@ -101,7 +100,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	private ErrorHandlerView mErrorHandlerView;
 	private CommerceItem mCommerceItem;
 	private boolean changeQuantityWasClicked = false;
-	private boolean mRemoveItemFailed = false;
 
 	public CartFragment() {
 		// Required empty public constructor
@@ -134,7 +132,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		pBar = view.findViewById(R.id.loadingBar);
 		relEmptyStateHandler = view.findViewById(R.id.relEmptyStateHandler);
 		WButton mBtnRetry = view.findViewById(R.id.btnRetry);
-		tvFreeDeliveryFirstOrder = view.findViewById(R.id.tvFreeDeliveryFirstOrder);
 		mWoolWorthsApplication = ((WoolworthsApplication) getActivity().getApplication());
 		mErrorHandlerView = new ErrorHandlerView(getActivity(), rlNoConnectionLayout);
 		mErrorHandlerView.setMargin(rlNoConnectionLayout, 0, 0, 0, 0);
@@ -748,7 +745,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			cartResponse.orderSummary = data.orderSummary;
 
 			// set delivery location
-			if (data.suburbName != null && data.provinceName != null) {
+			if (!TextUtils.isEmpty(data.suburbName) && !TextUtils.isEmpty(data.provinceName)) {
 				mSuburbName = data.suburbName;
 				mProvinceName = data.provinceName;
 				tvDeliveryLocation.setText(data.suburbName + ", " + data.provinceName);

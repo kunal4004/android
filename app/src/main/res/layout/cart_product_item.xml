@@ -97,6 +97,8 @@
                             style="@style/style_cart_item_title"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:singleLine="true"
                             android:text="Product Name"/>
 
                         <za.co.woolworths.financial.services.android.ui.views.WTextView
