@@ -34,6 +34,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.*;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -91,6 +93,8 @@ import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
+import za.co.woolworths.financial.services.android.ui.views.WButton;
+import za.co.woolworths.financial.services.android.ui.views.WTabIndicator;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.badgeview.Badge;
 import za.co.woolworths.financial.services.android.ui.views.badgeview.QBadgeView;
@@ -1016,7 +1020,7 @@ public class Utils {
 				public void onClick(View view) {
 					if (viewState) {
 						// do anything when popupWindow was clicked
-						if (getSessionToken(activity) != null) {
+						if (getSessionToken(activity) == null) {
 							ScreenManager.presentSSOSignin(activity);
 						} else {
 							Intent openCartActivity = new Intent(activity, CartActivity.class);
@@ -1040,4 +1044,34 @@ public class Utils {
 
 		return null;
 	}
+
+	public static void fadeInFadeOutAnimation(final View view, final boolean editMode) {
+		Animation animation;
+		if (!editMode) {
+			animation = android.view.animation.AnimationUtils.loadAnimation(view.getContext(), R.anim.edit_mode_fade_in);
+		} else {
+			animation = android.view.animation.AnimationUtils.loadAnimation(view.getContext(), R.anim.edit_mode_fade_out);
+		}
+
+		if (view instanceof WButton) {
+			animation.setAnimationListener(new Animation.AnimationListener() {
+				@Override
+				public void onAnimationStart(Animation animation) {
+
+				}
+
+				@Override
+				public void onAnimationEnd(Animation animation) {
+					view.setEnabled(!editMode);
+				}
+
+				@Override
+				public void onAnimationRepeat(Animation animation) {
+
+				}
+			});
+		}
+		view.startAnimation(animation);
+	}
+
 }

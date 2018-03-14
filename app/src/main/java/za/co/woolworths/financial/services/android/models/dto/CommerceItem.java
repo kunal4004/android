@@ -20,6 +20,8 @@ public class CommerceItem {
 	//local values to show ProgressBar on load
 	private boolean quantityUploading = false;
 	private boolean deleteSingleItem = false;
+	private boolean deleteRowPressed = false;
+	private CommerceItem deletedCommerceItemId;
 
 	public int getQuantity() {
 		return quantity;
@@ -99,5 +101,21 @@ public class CommerceItem {
 
 	public boolean deleteSingleItem() {
 		return deleteSingleItem;
+	}
+
+	public void setDeleteIconWasPressed(boolean deleteRowPressed) {
+		this.deleteRowPressed = deleteRowPressed;
+	}
+
+	public boolean deleteIconWasPressed() {
+		return deleteRowPressed;
+	}
+
+	public void commerceItemDeletedId(CommerceItem commerceItem) {
+		this.deletedCommerceItemId = commerceItem;
+	}
+
+	public CommerceItem getDeletedCommerceItemId() {
+		return deletedCommerceItemId;
 	}
 }

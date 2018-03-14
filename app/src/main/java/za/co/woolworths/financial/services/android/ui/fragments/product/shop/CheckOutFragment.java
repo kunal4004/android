@@ -1,11 +1,13 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.shop;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -19,10 +21,13 @@ import android.webkit.JsPromptResult;
 import android.webkit.JsResult;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
@@ -31,6 +36,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.communicator.MyJavaScriptInterface;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class CheckOutFragment extends Fragment implements View.OnTouchListener {
@@ -38,6 +45,7 @@ public class CheckOutFragment extends Fragment implements View.OnTouchListener {
 	private WebView mWebCheckOut;
 	private String TAG = this.getClass().getSimpleName();
 	private ProgressBar mProgressLayout;
+	private ErrorHandlerView mErrorHandlerView;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -50,17 +58,23 @@ public class CheckOutFragment extends Fragment implements View.OnTouchListener {
 		super.onViewCreated(view, savedInstanceState);
 		mWebCheckOut = view.findViewById(R.id.webCheckout);
 		mProgressLayout = view.findViewById(R.id.progressCreditLimit);
+		mErrorHandlerView = new ErrorHandlerView(getActivity(), (RelativeLayout) view.findViewById(R.id.no_connection_layout));
+		mErrorHandlerView.setMargin(view.findViewById(R.id.no_connection_layout), 0, 0, 0, 0);
 		setWebSetting(mWebCheckOut);
-		Map<String, String> extraHeaders = new HashMap<>();
 		Activity activity = getActivity();
 		if (activity != null) {
-			extraHeaders.put("token", Utils.getSessionToken(activity));
 			setWebViewClient();
 			setWebChromeClient();
 			mWebCheckOut.setOnTouchListener(this);
 			mWebCheckOut.addJavascriptInterface(new MyJavaScriptInterface(activity), "JSInterface");
-			mWebCheckOut.loadUrl("http://www-win-qa.woolworths.co.za/mcommerce/jsp/checkout-summary.jsp", extraHeaders);
+			mWebCheckOut.loadUrl(getUrl(), getExtraHeader());
+			retryConnect(view);
 		}
+	}
+
+	@NonNull
+	private String getUrl() {
+		return "http://www-win-qa.woolworths.co.za/mcommerce/jsp/checkout-summary.jsp";
 	}
 
 	@SuppressLint("SetJavaScriptEnabled")
@@ -94,6 +108,21 @@ public class CheckOutFragment extends Fragment implements View.OnTouchListener {
 	private void setWebViewClient() {
 		mProgressLayout.setVisibility(View.VISIBLE);
 		mWebCheckOut.setWebViewClient(new WebViewClient() {
+
+			@TargetApi(android.os.Build.VERSION_CODES.M)
+			@Override
+			public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+				super.onReceivedError(view, request, error);
+				mErrorHandlerView.webViewBlankPage(view);
+				mErrorHandlerView.networkFailureHandler(error.toString());
+			}
+
+			@SuppressWarnings("deprecation")
+			@Override
+			public void onReceivedError(WebView webView, int errorCode, String description, String failingUrl) {
+				mErrorHandlerView.webViewBlankPage(webView);
+				mErrorHandlerView.networkFailureHandler(description);
+			}
 
 			@Override
 			public void onLoadResource(WebView view, String url) {
@@ -202,4 +231,25 @@ public class CheckOutFragment extends Fragment implements View.OnTouchListener {
 		return false;
 	}
 
+	private void retryConnect(View view) {
+		view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (new ConnectionDetector().isOnline(getActivity())) {
+					mErrorHandlerView.hideErrorHandler();
+					mProgressLayout.setVisibility(View.VISIBLE);
+					mWebCheckOut.loadUrl(getUrl(), getExtraHeader());
+				}
+			}
+		});
+	}
+
+	private Map<String, String> getExtraHeader() {
+		Map<String, String> extraHeaders = new HashMap<>();
+		Activity activity = getActivity();
+		if (activity != null) {
+			extraHeaders.put("token", Utils.getSessionToken(activity));
+		}
+		return extraHeaders;
+	}
 }
