@@ -36,4 +36,7 @@ public class ProductList {
 	@SerializedName("saveText")
 	@Expose
 	public String saveText;
+	public boolean viewTypeHeader;
+	public boolean viewTypeFooter;
+	public Integer numberOfItems;
 }

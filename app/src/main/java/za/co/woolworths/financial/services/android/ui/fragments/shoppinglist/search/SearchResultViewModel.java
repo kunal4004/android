@@ -96,7 +96,7 @@ public class SearchResultViewModel extends BaseViewModel<SearchResultNavigator> 
 		PagingResponse pagingResponse = productView.pagingResponse;
 		if (pagingResponse.numItemsInTotal != null) {
 			mNumItemsInTotal = pagingResponse.numItemsInTotal;
-			if (productView.pagingResponse.pageOffset > mNumItemsInTotal) {
+			if (productView.pagingResponse.numItemsOnPage > mNumItemsInTotal) {
 				setIsLastPage(true);
 			}
 			return mNumItemsInTotal;

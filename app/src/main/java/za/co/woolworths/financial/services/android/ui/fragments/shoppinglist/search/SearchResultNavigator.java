@@ -14,8 +14,6 @@ public interface SearchResultNavigator {
 
 	void cancelAPIRequest();
 
-	void setTotalNumberOfItem();
-
 	void bindRecyclerViewWithUI(List<ProductList> productList);
 
 	void onGridItemSelected(ProductList productList);

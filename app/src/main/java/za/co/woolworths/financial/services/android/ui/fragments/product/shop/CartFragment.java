@@ -85,7 +85,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	private RelativeLayout relEmptyStateHandler;
 	private ArrayList<CartItemGroup> cartItems;
 	private OrderSummary orderSummary;
-	private ProgressDialog progressDialog;
 	private WTextView tvDeliveryLocation;
 	private WTextView tvFreeDeliveryFirstOrder;
 	private CompositeDisposable mDisposables = new CompositeDisposable();
@@ -139,7 +138,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		btnCheckOut.setOnClickListener(this);
 		tvFreeDeliveryFirstOrder = view.findViewById(R.id.tvFreeDeliveryFirstOrder);
 		tvDeliveryLocation = view.findViewById(R.id.tvDeliveryLocation);
-		progressDialog = new ProgressDialog(getActivity());
 		emptyCartUI(view);
 		Activity activity = getActivity();
 		if (activity != null) {
@@ -273,7 +271,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 			cartProductAdapter = new CartProductAdapter(cartItems, this, orderSummary, getActivity());
 
-
 			// Setting Mode to Single to reveal bottom View for one item in List
 			// Setting Mode to Mutliple to reveal bottom Views for multile items in List
 			((CartProductAdapter) cartProductAdapter).setMode(Attributes.Mode.Single);
@@ -314,7 +311,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			mDisposables.dispose();
 		}
 	}
-
 
 	public void changeQuantity(CartResponse cartResponse) {
 		if (cartResponse.cartItems.size() > 0 && cartProductAdapter != null) {
