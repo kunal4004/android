@@ -212,8 +212,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			case R.id.btnCheckOut:
 				Activity checkOutActivity = getActivity();
 				if (checkOutActivity != null) {
-					Intent openCheckOutActivity = new Intent(checkOutActivity, CartCheckoutActivity.class);
-					checkOutActivity.startActivity(openCheckOutActivity);
+					Intent openCheckOutActivity = new Intent(getContext(), CartCheckoutActivity.class);
+					startActivityForResult(openCheckOutActivity, CheckOutFragment.REQUESTCODE_CHECKOUT);
 					checkOutActivity.overridePendingTransition(0, 0);
 				}
 				break;
@@ -358,6 +358,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				//parentLayout.setVisibility(View.GONE);
 				Utils.showOneTimePopup(getActivity(), SessionDao.KEY.CART_FIRST_ORDER_FREE_DELIVERY, tvFreeDeliveryFirstOrder);
 
+				if(cartProductAdapter != null) {
+					cartProductAdapter.clear();
+				}
 			}
 
 			@Override
@@ -638,6 +641,17 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		Activity activity = getActivity();
 		if (activity != null) {
 			activity.unregisterReceiver(mConnectionBroadcast);
+		}
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if(requestCode == CheckOutFragment.REQUESTCODE_CHECKOUT) {
+			if(resultCode == Activity.RESULT_OK) {
+				// TODO: Confirm what message to show, if any
+				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.INFO, "Your payment was a success.");
+				loadShoppingCart().execute();
+			}
 		}
 	}
 
