@@ -41,7 +41,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		super.onViewCreated(view, savedInstanceState);
 		listName=getArguments().getString("listName");
 		listId=getArguments().getString("listId");
-		showToolbar(Integer.parseInt(listName));
+		showToolbar(listName);
 		getViewDataBinding().textProductSearch.setOnClickListener(this);
 		getViewModel().consumeObservable(new Consumer() {
 			@Override
@@ -61,9 +61,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 			}
 		});
 
-		getShoppingListItems=getViewModel().getShoppingListItems(listId);
-		getShoppingListItems.execute();
-
+		initGetShoppingListItems();
 	}
 
 	@Override
@@ -83,7 +81,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	}
 
 	public void loadShoppingListItems(ShoppingListItemsResponse shoppingListItemsResponse) {
-		ShoppingListItemsAdapter shoppingListItemsAdapter = new ShoppingListItemsAdapter();
+		ShoppingListItemsAdapter shoppingListItemsAdapter = new ShoppingListItemsAdapter(shoppingListItemsResponse.listItems);
 		LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
 		mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 		getViewDataBinding().rcvShoppingListItems.setLayoutManager(mLayoutManager);
@@ -116,5 +114,10 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	@Override
 	public void onShoppingListItemsResponse(ShoppingListItemsResponse shoppingListItemsResponse) {
 		loadShoppingListItems(shoppingListItemsResponse);
+	}
+
+	public void initGetShoppingListItems(){
+		getShoppingListItems=getViewModel().getShoppingListItems(listId);
+		getShoppingListItems.execute();
 	}
 }

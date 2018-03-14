@@ -260,6 +260,13 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 		showToolbar();
 	}
 
+	public void showToolbar(String title) {
+		showBackNavigationIcon(true);
+		setToolbarBackgroundDrawable(R.drawable.appbar_background);
+		setTitle(title);
+		showToolbar();
+	}
+
 	public void showSoftKeyboard(WEditTextView editTextView) {
 		Activity activity = getActivity();
 		if (activity != null) {
