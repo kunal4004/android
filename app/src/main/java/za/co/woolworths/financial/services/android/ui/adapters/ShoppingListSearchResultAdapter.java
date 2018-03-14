@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -127,7 +128,7 @@ public class ShoppingListSearchResultAdapter extends RecyclerView.Adapter<Recycl
 		SimpleViewHolder(View view) {
 			super(view);
 			tvTitle = view.findViewById(R.id.tvTitle);
-			tvPrice = view.findViewById(R.id.price);
+			tvPrice = view.findViewById(R.id.tvPrice);
 			tvWasPrice = view.findViewById(R.id.tvWasPrice);
 			tvSaveText = view.findViewById(R.id.tvSaveText);
 			cartProductImage = view.findViewById(R.id.cartProductImage);
