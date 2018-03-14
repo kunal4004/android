@@ -104,7 +104,7 @@
                     android:layout_height="match_parent"
                     android:orientation="horizontal">
 
-                    <com.facebook.drawee.view.SimpleDraweeView
+                    <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
                         android:id="@+id/cartProductImage"
                         android:layout_width="84dp"
                         android:layout_height="84dp"
