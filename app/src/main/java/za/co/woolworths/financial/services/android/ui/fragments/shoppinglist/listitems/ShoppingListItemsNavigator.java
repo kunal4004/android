@@ -9,4 +9,5 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsR
 public interface ShoppingListItemsNavigator {
 
 	void onShoppingListItemsResponse(ShoppingListItemsResponse shoppingListItemsResponse);
+	void onItemSelectionChange(boolean addToCartButtonAvailableStatus);
 }

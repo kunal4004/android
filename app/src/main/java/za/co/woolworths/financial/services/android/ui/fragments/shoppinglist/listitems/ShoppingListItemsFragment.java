@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -22,6 +23,7 @@ import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment;
+import za.co.woolworths.financial.services.android.ui.views.WButton;
 
 public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFragmentBinding, ShoppingListItemsViewModel> implements ShoppingListItemsNavigator, View.OnClickListener {
 	private ShoppingListItemsViewModel shoppingListItemsViewModel;
@@ -39,6 +41,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
+		getBottomNavigator().hideBottomNavigationMenu();
 		listName=getArguments().getString("listName");
 		listId=getArguments().getString("listId");
 		showToolbar(listName);
@@ -81,7 +84,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	}
 
 	public void loadShoppingListItems(ShoppingListItemsResponse shoppingListItemsResponse) {
-		ShoppingListItemsAdapter shoppingListItemsAdapter = new ShoppingListItemsAdapter(shoppingListItemsResponse.listItems);
+		ShoppingListItemsAdapter shoppingListItemsAdapter = new ShoppingListItemsAdapter(shoppingListItemsResponse.listItems,this);
 		LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
 		mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 		getViewDataBinding().rcvShoppingListItems.setLayoutManager(mLayoutManager);
@@ -116,8 +119,19 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		loadShoppingListItems(shoppingListItemsResponse);
 	}
 
+	@Override
+	public void onItemSelectionChange(boolean addToCartButtonAvailableStatus) {
+		getViewDataBinding().btnAddToCart.setVisibility(addToCartButtonAvailableStatus ? View.VISIBLE : View.GONE);
+	}
+
 	public void initGetShoppingListItems(){
 		getShoppingListItems=getViewModel().getShoppingListItems(listId);
 		getShoppingListItems.execute();
+	}
+
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		getBottomNavigator().showBottomNavigationMenu();
 	}
 }
