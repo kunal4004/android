@@ -6,15 +6,22 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.ContextMenu;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.ShoppinglistFragmentBinding;
+import com.google.gson.Gson;
 
+import java.util.List;
+
+import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.ui.adapters.ShoppingListAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.list.NewListFragment;
@@ -27,7 +34,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.lis
 public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBinding, ShoppingListViewModel> implements ShoppingListNavigator {
 	private ShoppingListViewModel shoppingListViewModel;
 	private ShoppingListAdapter shoppingListAdapter;
-
+	private ShoppingListsResponse shoppingListsResponse;
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -55,11 +62,19 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		showToolbar(R.string.title_my_list);
-		loadShoppingList();
+		if(getArguments().containsKey("ShoppingList")) {
+			shoppingListsResponse=new Gson().fromJson(getArguments().getString("ShoppingList"),ShoppingListsResponse.class);
+			loadShoppingList(shoppingListsResponse.lists);
+		}
 	}
 
-	public void loadShoppingList() {
-		shoppingListAdapter = new ShoppingListAdapter(this);
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		return super.onCreateView(inflater, container, savedInstanceState);
+	}
+
+	public void loadShoppingList(List<ShoppingList> lists) {
+		shoppingListAdapter = new ShoppingListAdapter(this,lists);
 		LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
 		mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 		getViewDataBinding().rcvShoppingLists.setLayoutManager(mLayoutManager);
@@ -90,8 +105,13 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 	}
 
 	@Override
-	public void onListItemSelected() {
-		pushFragment(new ShoppingListItemsFragment());
+	public void onListItemSelected(String listName, String listID) {
+		Bundle bundle=new Bundle();
+		bundle.putString("listName",listName);
+		bundle.putString("listId",listID);
+		ShoppingListItemsFragment shoppingListItemsFragment = new ShoppingListItemsFragment();
+		shoppingListItemsFragment.setArguments(bundle);
+		pushFragment(shoppingListItemsFragment);
 	}
 
 	@Override

@@ -174,10 +174,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/StoreSearch"/>
         <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.ShoppingListActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/ShoppingList"/>
-        <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.LoanWithdrawalActivity"
             android:screenOrientation="portrait"
             android:theme="@style/LoanWithdrawal"

@@ -59,7 +59,6 @@ import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
 import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
@@ -454,12 +453,6 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 
 	@Override
 	public void addToShoppingList() {
-		Utils.addToShoppingCart(getActivity(), new ShoppingList(
-				getViewModel().getDefaultProduct().productId,
-				getViewModel().getDefaultProduct().productName, false));
-		Utils.displayValidationMessage(getActivity(),
-				CustomPopUpWindow.MODAL_LAYOUT.SHOPPING_LIST_INFO,
-				"viewShoppingList");
 	}
 
 	@Override

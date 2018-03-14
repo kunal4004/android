@@ -21,7 +21,7 @@
         <LinearLayout
             android:id="@+id/detailsContainer"
             android:layout_toRightOf="@id/listImage"
-            android:layout_toLeftOf="@+id/listItemSize"
+            android:layout_toLeftOf="@+id/listItemCount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -31,7 +31,7 @@
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/listItemName"
+                android:id="@+id/listName"
                 android:letterSpacing="0.1"
                 android:textSize="12sp"
                 android:textColor="@color/black"
@@ -42,7 +42,7 @@
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/listItemLastModified"
+                android:id="@+id/listLastModified"
                 android:textSize="12sp"
                 android:textColor="@color/mask_opacity"
                 app:WTextView_font="myriadpro_regular"
@@ -50,7 +50,7 @@
                 />
         </LinearLayout>
         <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:id="@+id/listItemSize"
+            android:id="@+id/listItemCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
