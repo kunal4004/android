@@ -16,6 +16,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.Sho
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsNavigator;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
+import za.co.woolworths.financial.services.android.util.WFormatter;
 
 /**
  * Created by W7099877 on 2018/03/09.
@@ -44,7 +45,7 @@ public class ShoppingListItemsAdapter extends RecyclerView.Adapter<ShoppingListI
 		holder.productName.setText(listItems.get(position).displayName);
 		holder.productDesc.setText(listItems.get(position).description);
 		holder.quantity.setText(listItems.get(position).quantityDesired);
-		//holder.productName.setText(listItems.get(position).displayName);
+		holder.price.setText(WFormatter.formatAmount(listItems.get(position).price));
 		holder.select.setChecked(listItems.get(position).isSelected);
 
 
@@ -71,7 +72,6 @@ public class ShoppingListItemsAdapter extends RecyclerView.Adapter<ShoppingListI
 		private WTextView productDesc;
 		private WTextView quantity;
 		private WTextView price;
-		private WTextView offerPrice;
 		private CheckBox select;
 		private WrapContentDraweeView cartProductImage;
 
@@ -81,8 +81,7 @@ public class ShoppingListItemsAdapter extends RecyclerView.Adapter<ShoppingListI
 			productName=itemView.findViewById(R.id.tvTitle);
 			productDesc=itemView.findViewById(R.id.tvDetails);
 			quantity=itemView.findViewById(R.id.tvQuantity);
-			price=itemView.findViewById(R.id.tvWasPrice);
-			offerPrice=itemView.findViewById(R.id.tvPrice);
+			price=itemView.findViewById(R.id.tvPrice);
 			select=itemView.findViewById(R.id.btnDeleteRow);
 			cartProductImage = itemView.findViewById(R.id.cartProductImage);
 		}

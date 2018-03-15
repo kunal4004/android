@@ -26,4 +26,6 @@ public class ShoppingListItem {
 	public String productId;
 
 	public boolean isSelected = true;
+
+	public double price;
 }
