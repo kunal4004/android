@@ -648,8 +648,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode == CheckOutFragment.REQUESTCODE_CHECKOUT) {
 			if(resultCode == Activity.RESULT_OK) {
-				// TODO: Confirm what message to show, if any
-				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.INFO, "Your payment was a success.");
+				// TODO: Confirm what message to show
+				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.INFO, "Thank you for shopping with us. Your payment has been received.");
 				loadShoppingCart().execute();
 			}
 		}
