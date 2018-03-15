@@ -630,4 +630,5 @@
     <string name="delivery_confirmation_desc">* Delivery cost to be confirmed before payment</string>
     <string name="total_item">Total*</string>
     <string name="rlOtherDiscounts"><![CDATA[WRewards Savings & Other Discounts]]></string>
+    <string name="delete_list">DELETE LIST</string>
 </resources>

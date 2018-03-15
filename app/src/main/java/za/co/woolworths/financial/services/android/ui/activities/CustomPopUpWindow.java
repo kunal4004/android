@@ -41,6 +41,7 @@ import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.service.event.AuthenticationState;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
+import za.co.woolworths.financial.services.android.models.service.event.ShopState;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.models.dto.statement.EmailStatementResponse;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
@@ -93,7 +94,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 		HIGH_LOAN_AMOUNT, LOW_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION, SIGN_OUT, BARCODE_ERROR,
 		SHOPPING_LIST_INFO, SESSION_EXPIRED, INSTORE_AVAILABILITY, NO_STOCK, LOCATION_OFF, SUPPLY_DETAIL_INFO,
 		CLI_DANGER_ACTION_MESSAGE_VALIDATION, AMOUNT_STOCK, UPLOAD_DOCUMENT_MODAL, PROOF_OF_INCOME,
-		STATEMENT_SENT_TO, CLI_DECLINE, CLI_ERROR, DETERMINE_LOCATION_POPUP, STATEMENT_ERROR
+		STATEMENT_SENT_TO, CLI_DECLINE, CLI_ERROR, DETERMINE_LOCATION_POPUP, STATEMENT_ERROR, EDIT_SHOPPING_LIST
 	}
 
 	MODAL_LAYOUT current_view;
@@ -533,6 +534,14 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 					}
 				}
 				break;
+			case EDIT_SHOPPING_LIST:
+				setContentView(R.layout.shopping_list_rename_delete_popup);
+				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
+				WTextView tvDelete = findViewById(R.id.deleteList);
+				WTextView tvCancel = findViewById(R.id.cancel);
+				tvCancel.setOnClickListener(this);
+				tvDelete.setOnClickListener(this);
+				break;
 			default:
 				break;
 		}
@@ -901,6 +910,12 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 			case R.id.btnConfirmEmail:
 				sendStatement();
 				break;
+			case R.id.cancel:
+				startExitAnimation();
+				break;
+			case R.id.deleteList:
+				exitDeleteListAnimation("DELETE_LIST");
+				break;
 		}
 	}
 
@@ -973,6 +988,32 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 					mWGlobalState.setNewSTSParams(WGlobalState.EMPTY_FIELD);
 					mWGlobalState.setOnBackPressed(false);
 					mWGlobalState.setNewSTSParams("");
+					dismissLayout();
+				}
+			});
+			mRelRootContainer.startAnimation(animation);
+		}
+	}
+
+	private void exitDeleteListAnimation(final String type) {
+		if (!viewWasClicked) { // prevent more than one click
+			viewWasClicked = true;
+			TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
+			animation.setFillAfter(true);
+			animation.setDuration(ANIM_DOWN_DURATION);
+			animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
+
+				@Override
+				public void onAnimationStart(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationRepeat(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationEnd(Animation animation) {
+					Utils.sendBus(new ShopState(type));
 					dismissLayout();
 				}
 			});

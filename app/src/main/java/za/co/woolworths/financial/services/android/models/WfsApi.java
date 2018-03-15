@@ -312,6 +312,10 @@ public class WfsApi {
 		return mApiInterface.getShoppingListItems(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), listId);
 	}
 
+	public ShoppingListsResponse deleteShoppingList(String listId) {
+		return mApiInterface.deleteShoppingList(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(),listId);
+	}
+
 	private String getOsVersion() {
 		String osVersion = Util.getOsVersion();
 		if (TextUtils.isEmpty(osVersion)) {

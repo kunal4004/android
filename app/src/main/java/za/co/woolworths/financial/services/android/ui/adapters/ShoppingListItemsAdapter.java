@@ -4,6 +4,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 
 import com.awfs.coordination.R;
 
@@ -11,7 +13,9 @@ import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.ShoppingListNavigator;
+import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsNavigator;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
 
 /**
  * Created by W7099877 on 2018/03/09.
@@ -20,9 +24,12 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 public class ShoppingListItemsAdapter extends RecyclerView.Adapter<ShoppingListItemsAdapter.ViewHolder> {
 
 	private List<ShoppingListItem> listItems;
+	private ShoppingListItemsNavigator navigator;
 
-	public ShoppingListItemsAdapter(List<ShoppingListItem> listItems) {
+	public ShoppingListItemsAdapter(List<ShoppingListItem> listItems,ShoppingListItemsNavigator navigator) {
 		this.listItems=listItems;
+		this.navigator=navigator;
+		this.navigator.onItemSelectionChange(listItems);
 	}
 
 	@Override
@@ -32,11 +39,22 @@ public class ShoppingListItemsAdapter extends RecyclerView.Adapter<ShoppingListI
 	}
 
 	@Override
-	public void onBindViewHolder(ShoppingListItemsAdapter.ViewHolder holder, int position) {
+	public void onBindViewHolder(final ShoppingListItemsAdapter.ViewHolder holder, final int position) {
+		holder.cartProductImage.setImageURI("https://images.woolworthsstatic.co.za/"+listItems.get(position).externalImageURL+ "?w=" + 85 + "&q=" + 85);
 		holder.productName.setText(listItems.get(position).displayName);
 		holder.productDesc.setText(listItems.get(position).description);
 		holder.quantity.setText(listItems.get(position).quantityDesired);
 		//holder.productName.setText(listItems.get(position).displayName);
+		holder.select.setChecked(listItems.get(position).isSelected);
+
+		holder.select.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+				listItems.get(position).isSelected=b;
+				notifyDataSetChanged();
+				navigator.onItemSelectionChange(listItems);
+			}
+		});
 
 	}
 
@@ -52,6 +70,8 @@ public class ShoppingListItemsAdapter extends RecyclerView.Adapter<ShoppingListI
 		private WTextView quantity;
 		private WTextView price;
 		private WTextView offerPrice;
+		private CheckBox select;
+		private WrapContentDraweeView cartProductImage;
 
 
 		public ViewHolder(View itemView) {
@@ -61,6 +81,10 @@ public class ShoppingListItemsAdapter extends RecyclerView.Adapter<ShoppingListI
 			quantity=itemView.findViewById(R.id.tvQuantity);
 			price=itemView.findViewById(R.id.tvWasPrice);
 			offerPrice=itemView.findViewById(R.id.tvPrice);
+			select=itemView.findViewById(R.id.btnDeleteRow);
+			cartProductImage = itemView.findViewById(R.id.cartProductImage);
 		}
 	}
+
+
 }
