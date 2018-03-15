@@ -39,15 +39,6 @@
                 android:textAllCaps="true"
                 android:text="general Fashion"
                 />
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/listLastModified"
-                android:textSize="12sp"
-                android:textColor="@color/mask_opacity"
-                app:WTextView_font="myriadpro_regular"
-                android:text="5 hours ago"
-                />
         </LinearLayout>
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:id="@+id/listItemCount"

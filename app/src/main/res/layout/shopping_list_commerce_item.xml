@@ -116,7 +116,6 @@
                         android:contentDescription="@string/app_name"
                         fresco:fadeDuration="50"
                         fresco:failureImage="@drawable/placeholder_logo"
-                        fresco:placeholderImage="@drawable/placeholder_logo"
                         fresco:viewAspectRatio="0.5"/>
 
                     <LinearLayout
