@@ -35,4 +35,8 @@ public interface SearchResultNavigator {
 	void minOneItemSelected(List<ProductList> prodList);
 
 	void onAddToListFailure(String e);
+
+	void onAddToListLoad();
+
+	void onAddToListLoadComplete();
 }

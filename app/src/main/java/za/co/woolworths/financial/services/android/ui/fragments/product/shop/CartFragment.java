@@ -376,7 +376,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	private void onChangeQuantityComplete() {
-		cartProductAdapter.onChangeQuantityComplete();
+		if (cartProductAdapter != null)
+			cartProductAdapter.onChangeQuantityComplete();
 	}
 
 	private void onChangeQuantityLoad() {
@@ -461,9 +462,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 							break;
 						default:
-							onChangeQuantityComplete();
+							deliveryLocationEnabled(true);
 							if (shoppingCartResponse.response != null)
 								Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, shoppingCartResponse.response.desc);
+							onChangeQuantityComplete();
 							break;
 					}
 					deliveryLocationEnabled(true);

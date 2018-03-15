@@ -168,9 +168,11 @@ public class SearchResultViewModel extends BaseViewModel<SearchResultNavigator> 
 	}
 
 	public PostAddToList addToList(List<AddToListRequest> addToListRequest, String listId) {
+		getNavigator().onAddToListLoad();
 		return new PostAddToList(new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
+				getNavigator().onAddToListLoadComplete();
 			}
 
 			@Override

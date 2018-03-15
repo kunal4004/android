@@ -290,7 +290,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 						addToListRequests.add(addToList);
 					}
 				}
-				getViewModel().addToList(addToListRequests,mListId).execute();
+				getViewModel().addToList(addToListRequests, mListId).execute();
 				break;
 		}
 	}
@@ -334,6 +334,22 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 	@Override
 	public void onAddToListFailure(String e) {
 		Log.e("onAddToListFailure", e);
+	}
+
+	@Override
+	public void onAddToListLoad() {
+		ProgressBar progressBar = getViewDataBinding().incConfirmButtonLayout.pbLoadingIndicator;
+		WButton btnCheck0ut = getViewDataBinding().incConfirmButtonLayout.btnCheckOut;
+		progressBar.setVisibility(View.VISIBLE);
+		btnCheck0ut.setVisibility(View.GONE);
+	}
+
+	@Override
+	public void onAddToListLoadComplete() {
+		ProgressBar progressBar = getViewDataBinding().incConfirmButtonLayout.pbLoadingIndicator;
+		WButton btnCheck0ut = getViewDataBinding().incConfirmButtonLayout.btnCheckOut;
+		progressBar.setVisibility(View.GONE);
+		btnCheck0ut.setVisibility(View.VISIBLE);
 	}
 
 	public void toggleAddToListBtn(boolean enable, boolean clothingProductType) {
