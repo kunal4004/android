@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -14,12 +15,15 @@ import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.GridLayoutBinding;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.ui.adapters.ShoppingListSearchResultAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
+import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -35,8 +39,8 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 	private String mSearchText;
 	private int totalItemCount;
 	private int lastVisibleItem;
-	private int visibleThreshold = 5;
 	private boolean isLoading;
+	private String mListId;
 
 	@Override
 	public SearchResultViewModel getViewModel() {
@@ -62,7 +66,8 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 
 		Bundle bundle = this.getArguments();
 		if (bundle != null) {
-			mSearchText = bundle.getString("search_text");
+			mSearchText = bundle.getString("searchTEXT");
+			mListId = bundle.getString("listID");
 		}
 		setProductBody();
 	}
@@ -82,6 +87,13 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 		startProductRequest();
 		onBottomReached();
 		getViewDataBinding().incNoConnectionHandler.btnRetry.setOnClickListener(this);
+		setUpAddToListButton();
+	}
+
+	private void setUpAddToListButton() {
+		getViewDataBinding().incConfirmButtonLayout.btnCheckOut.setOnClickListener(this);
+		setText(getViewDataBinding().incConfirmButtonLayout.btnCheckOut, getString(R.string.add_to_list));
+		toggleAddToListBtn(false, true);
 	}
 
 	private void setTitle() {
@@ -93,7 +105,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 	public void onLoadProductSuccess(List<ProductList> productLists, boolean loadMoreData) {
 		if (productLists != null) {
 			if (productLists.size() == 1) {
-				onGridItemSelected(productLists.get(0));
+				onClothingTypeSelect(productLists.get(0));
 				popFragment();
 			} else {
 				if (!loadMoreData) {
@@ -157,6 +169,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 	}
 
 	private void loadData() {
+		int visibleThreshold = 5;
 		if (!isLoading && totalItemCount <= (lastVisibleItem + visibleThreshold)) {
 			int Total = getViewModel().getNumItemsInTotal() + Utils.PAGE_SIZE;
 			int start = mProductList.size();
@@ -212,11 +225,6 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 	}
 
 	@Override
-	public void onGridItemSelected(ProductList productList) {
-		getBottomNavigator().openProductDetailFragment(mSearchText, productList);
-	}
-
-	@Override
 	public void onBottomReached() {
 	}
 
@@ -268,6 +276,22 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 					startProductRequest();
 				}
 				break;
+
+			case R.id.btnCheckOut:
+				List<AddToListRequest> addToListRequests = new ArrayList<>();
+				for (ProductList list : mProductList) {
+					if (list.productWasChecked) {
+
+						AddToListRequest addToList = new AddToListRequest();
+						addToList.setSkuID(list.sku);
+						addToList.setCatalogRefId(list.sku);
+						addToList.setQuantity("1");
+						addToList.setGiftListId(list.productId);
+						addToListRequests.add(addToList);
+					}
+				}
+				getViewModel().addToList(addToListRequests,mListId).execute();
+				break;
 		}
 	}
 
@@ -279,6 +303,47 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 			showBackNavigationIcon(true);
 			setToolbarBackgroundDrawable(R.drawable.appbar_background);
 			setTitle();
+		}
+	}
+
+	@Override
+	public void onFoodTypeSelect(ProductList productList) {
+		toggleAddToListBtn(true, false);
+	}
+
+	@Override
+	public void onClothingTypeSelect(ProductList productList) {
+		toggleAddToListBtn(false, true);
+		getBottomNavigator().openProductDetailFragment(mSearchText, productList);
+	}
+
+	@Override
+	public void minOneItemSelected(List<ProductList> prodList) {
+		boolean productWasChecked = false;
+		for (ProductList productList : prodList) {
+			if (productList.productWasChecked) {
+				productWasChecked = true;
+			}
+		}
+		// hide checkbox when no item selected
+		if (!productWasChecked) {
+			toggleAddToListBtn(false, true);
+		}
+	}
+
+	@Override
+	public void onAddToListFailure(String e) {
+		Log.e("onAddToListFailure", e);
+	}
+
+	public void toggleAddToListBtn(boolean enable, boolean clothingProductType) {
+		RelativeLayout rlAddToList = getViewDataBinding().incConfirmButtonLayout.rlCheckOut;
+		WButton btnAddToList = getViewDataBinding().incConfirmButtonLayout.btnCheckOut;
+		if (clothingProductType) { // true = clothingType product
+			rlAddToList.setVisibility(View.GONE);
+		} else {
+			rlAddToList.setVisibility(enable ? View.VISIBLE : View.GONE);
+			btnAddToList.setEnabled(enable);
 		}
 	}
 }

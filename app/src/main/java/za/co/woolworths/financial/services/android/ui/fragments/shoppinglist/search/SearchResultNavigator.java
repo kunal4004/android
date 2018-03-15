@@ -16,8 +16,6 @@ public interface SearchResultNavigator {
 
 	void bindRecyclerViewWithUI(List<ProductList> productList);
 
-	void onGridItemSelected(ProductList productList);
-
 	void onBottomReached();
 
 	void startProductRequest();
@@ -29,4 +27,12 @@ public interface SearchResultNavigator {
 	void onLoadStart(boolean isLoadMore);
 
 	void onLoadComplete(boolean isLoadMore);
+
+	void onFoodTypeSelect(ProductList productList);
+
+	void onClothingTypeSelect(ProductList productList);
+
+	void minOneItemSelected(List<ProductList> prodList);
+
+	void onAddToListFailure(String e);
 }

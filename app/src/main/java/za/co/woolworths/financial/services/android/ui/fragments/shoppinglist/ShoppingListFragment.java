@@ -35,6 +35,7 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 	private ShoppingListViewModel shoppingListViewModel;
 	private ShoppingListAdapter shoppingListAdapter;
 	private ShoppingListsResponse shoppingListsResponse;
+
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -62,8 +63,8 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		showToolbar(R.string.title_my_list);
-		if(getArguments().containsKey("ShoppingList")) {
-			shoppingListsResponse=new Gson().fromJson(getArguments().getString("ShoppingList"),ShoppingListsResponse.class);
+		if (getArguments().containsKey("ShoppingList")) {
+			shoppingListsResponse = new Gson().fromJson(getArguments().getString("ShoppingList"), ShoppingListsResponse.class);
 			loadShoppingList(shoppingListsResponse.lists);
 		}
 	}
@@ -74,7 +75,7 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 	}
 
 	public void loadShoppingList(List<ShoppingList> lists) {
-		shoppingListAdapter = new ShoppingListAdapter(this,lists);
+		shoppingListAdapter = new ShoppingListAdapter(this, lists);
 		LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
 		mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 		getViewDataBinding().rcvShoppingLists.setLayoutManager(mLayoutManager);
@@ -106,9 +107,9 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 
 	@Override
 	public void onListItemSelected(String listName, String listID) {
-		Bundle bundle=new Bundle();
-		bundle.putString("listName",listName);
-		bundle.putString("listId",listID);
+		Bundle bundle = new Bundle();
+		bundle.putString("listName", listName);
+		bundle.putString("listId", listID);
 		ShoppingListItemsFragment shoppingListItemsFragment = new ShoppingListItemsFragment();
 		shoppingListItemsFragment.setArguments(bundle);
 		pushFragment(shoppingListItemsFragment);

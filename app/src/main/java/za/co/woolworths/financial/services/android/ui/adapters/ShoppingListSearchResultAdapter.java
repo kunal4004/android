@@ -5,10 +5,11 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.awfs.coordination.R;
@@ -24,6 +25,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.sea
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
 
+import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.DetailViewModel.CLOTHING_PRODUCT;
+
 public class ShoppingListSearchResultAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 	private final int ITEM_VIEW_TYPE_HEADER = 0;
@@ -33,12 +36,12 @@ public class ShoppingListSearchResultAdapter extends RecyclerView.Adapter<Recycl
 
 	private List<ProductList> mProductList;
 
-	private SearchResultNavigator mGridNavigator;
+	private SearchResultNavigator mSearchResultNavigator;
 
 	public ShoppingListSearchResultAdapter(List<ProductList> mProductList,
-										   SearchResultNavigator gridNavigator) {
+										   SearchResultNavigator searchResultNavigator) {
 		this.mProductList = mProductList;
-		this.mGridNavigator = gridNavigator;
+		this.mSearchResultNavigator = searchResultNavigator;
 	}
 
 	@Override
@@ -84,7 +87,7 @@ public class ShoppingListSearchResultAdapter extends RecyclerView.Adapter<Recycl
 
 	@Override
 	public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-		ProductList productList = mProductList.get(position);
+		final ProductList productList = mProductList.get(position);
 		if (productList.viewTypeHeader) {
 			HeaderViewHolder hvh = (HeaderViewHolder) holder;
 			hvh.setTotalItem(productList);
@@ -96,25 +99,38 @@ public class ShoppingListSearchResultAdapter extends RecyclerView.Adapter<Recycl
 			} else pvh.pbFooterProgress.setVisibility(View.GONE);
 		} else {
 			final SimpleViewHolder vh = (SimpleViewHolder) holder;
-			if (productList != null) {
-				vh.setPrice(productList);
-				vh.setProductName(productList);
-				vh.setCartImage(productList);
-			}
-			holder.itemView.setOnClickListener(new View.OnClickListener() {
+			vh.setPrice(productList);
+			vh.setProductName(productList);
+			vh.setCartImage(productList);
+			vh.setChecked(productList);
+			//in some cases, it will prevent unwanted situations
+
+			vh.llItemContainer.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					mGridNavigator.onGridItemSelected(mProductList.get(vh.getAdapterPosition()));
-				}
-			});
-			holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-				@Override
-				public boolean onLongClick(View v) {
-					//mSelectedProductView.onLongPressState(v, position);
-					return false;
+					int position = vh.getAdapterPosition();
+					ProductList selectedProduct = mProductList.get(position);
+					List<OtherSkus> otherSkuList = selectedProduct.otherSkus;
+					int otherSkuSize = 0;
+					if (otherSkuList != null) {
+						otherSkuSize = otherSkuList.size();
+					}
+					// Product of type clothing or OtherSkus > 0
+					if (selectedProduct.productType.equalsIgnoreCase(CLOTHING_PRODUCT) || otherSkuSize > 1) {
+						mSearchResultNavigator.onClothingTypeSelect(selectedProduct);
+					} else {
+						selectedProduct.productWasChecked = productWasChecked(selectedProduct);
+						mSearchResultNavigator.onFoodTypeSelect(selectedProduct);
+						mSearchResultNavigator.minOneItemSelected(mProductList);
+						notifyItemChanged(position);
+					}
 				}
 			});
 		}
+	}
+
+	private boolean productWasChecked(ProductList prodList) {
+		return !prodList.productWasChecked;
 	}
 
 	private class SimpleViewHolder extends RecyclerView.ViewHolder {
@@ -124,17 +140,21 @@ public class ShoppingListSearchResultAdapter extends RecyclerView.Adapter<Recycl
 		private WTextView tvWasPrice;
 		private WTextView tvSaveText;
 		private WrapContentDraweeView cartProductImage;
+		private LinearLayout llItemContainer;
+		private CheckBox btnDeleteRow;
 
-		SimpleViewHolder(View view) {
+		private SimpleViewHolder(View view) {
 			super(view);
 			tvTitle = view.findViewById(R.id.tvTitle);
 			tvPrice = view.findViewById(R.id.tvPrice);
 			tvWasPrice = view.findViewById(R.id.tvWasPrice);
 			tvSaveText = view.findViewById(R.id.tvSaveText);
 			cartProductImage = view.findViewById(R.id.cartProductImage);
+			llItemContainer = view.findViewById(R.id.llItemContainer);
+			btnDeleteRow = view.findViewById(R.id.btnDeleteRow);
 		}
 
-		public void setCartImage(ProductList productItem) {
+		private void setCartImage(ProductList productItem) {
 			cartProductImage.setImageURI(productItem.externalImageRef + "?w=" + 85 + "&q=" + 85);
 		}
 
@@ -142,7 +162,7 @@ public class ShoppingListSearchResultAdapter extends RecyclerView.Adapter<Recycl
 			tvTitle.setText(Html.fromHtml(productItem.productName));
 		}
 
-		public void setPrice(ProductList productItem) {
+		private void setPrice(ProductList productItem) {
 			ArrayList<Double> priceList = new ArrayList<>();
 			for (OtherSkus os : productItem.otherSkus) {
 				if (!TextUtils.isEmpty(os.wasPrice)) {
@@ -164,10 +184,14 @@ public class ShoppingListSearchResultAdapter extends RecyclerView.Adapter<Recycl
 			tvSaveText.setVisibility(TextUtils.isEmpty(productItem.saveText) ? View.GONE : View.VISIBLE);
 			tvSaveText.setText(!TextUtils.isEmpty(productItem.saveText) ? productItem.saveText : "");
 		}
+
+		public void setChecked(ProductList checked) {
+			btnDeleteRow.setChecked(checked.productWasChecked);
+		}
 	}
 
 	private class ProgressViewHolder extends RecyclerView.ViewHolder {
-		public ProgressBar pbFooterProgress;
+		private ProgressBar pbFooterProgress;
 
 		private ProgressViewHolder(View v) {
 			super(v);
@@ -183,7 +207,7 @@ public class ShoppingListSearchResultAdapter extends RecyclerView.Adapter<Recycl
 			tvNumberOfItem = v.findViewById(R.id.tvNumberOfItem);
 		}
 
-		public void setTotalItem(ProductList productList) {
+		private void setTotalItem(ProductList productList) {
 			if (productList.numberOfItems != null)
 				tvNumberOfItem.setText(String.valueOf(productList.numberOfItems));
 		}
@@ -212,5 +236,4 @@ public class ShoppingListSearchResultAdapter extends RecyclerView.Adapter<Recycl
 	public int getItemCount() {
 		return mProductList == null ? 0 : mProductList.size();
 	}
-
 }

@@ -39,8 +39,9 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		listName=getArguments().getString("listName");
-		listId=getArguments().getString("listId");
+		getBottomNavigator().hideBottomNavigationMenu();
+		listName = getArguments().getString("listName");
+		listId = getArguments().getString("listId");
 		showToolbar(listName);
 		getViewDataBinding().textProductSearch.setOnClickListener(this);
 		getViewModel().consumeObservable(new Consumer() {
@@ -52,7 +53,8 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 						if (!TextUtils.isEmpty(shopState.getState())) {
 							SearchResultFragment searchResultFragment = new SearchResultFragment();
 							Bundle bundle = new Bundle();
-							bundle.putString("search_text", shopState.getState());
+							bundle.putString("searchTEXT", shopState.getState());
+							bundle.putString("listID", shopState.getListId());
 							searchResultFragment.setArguments(bundle);
 							pushFragment(searchResultFragment);
 						}
@@ -92,7 +94,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	public void onHiddenChanged(boolean hidden) {
 		super.onHiddenChanged(hidden);
 		if (!hidden) {
-			showToolbar(R.string.general_fashion);
+			showToolbar(listName);
 		}
 	}
 
@@ -102,7 +104,10 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 			case R.id.textProductSearch:
 				Log.e("getId", "rlShoppingListSearch");
 				Intent openProductSearchActivity = new Intent(getActivity(), ProductSearchActivity.class);
+				Bundle bundle = new Bundle();
+				bundle.putString("listName", listName);
 				openProductSearchActivity.putExtra("SEARCH_TEXT_HINT", getString(R.string.shopping_search_hint));
+				openProductSearchActivity.putExtra("listID", listId);
 				startActivity(openProductSearchActivity);
 				getActivity().overridePendingTransition(R.anim.stay, R.anim.stay);
 				break;
@@ -116,8 +121,14 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		loadShoppingListItems(shoppingListItemsResponse);
 	}
 
-	public void initGetShoppingListItems(){
-		getShoppingListItems=getViewModel().getShoppingListItems(listId);
+	public void initGetShoppingListItems() {
+		getShoppingListItems = getViewModel().getShoppingListItems(listId);
 		getShoppingListItems.execute();
+	}
+
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		getBottomNavigator().showBottomNavigationMenu();
 	}
 }

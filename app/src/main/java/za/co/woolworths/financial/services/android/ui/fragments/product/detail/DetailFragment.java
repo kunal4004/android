@@ -588,7 +588,13 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 
 	@Override
 	public void setProductCode(String productCode) {
-		setText(getViewDataBinding().productCode, getString(R.string.product_code) + ": " + productCode);
+		if (getViewDataBinding().productCode != null) {
+			try {
+				setText(getViewDataBinding().productCode, getString(R.string.product_code) + ": " + productCode);
+			} catch (IllegalStateException ex) {
+				Log.d("setProductCode", ex.getMessage());
+			}
+		}
 	}
 
 	@Override
@@ -702,7 +708,11 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 			if (!isEmpty(otherSkus.colour)) {
 				setText(tvColour, otherSkus.colour);
 			} else {
-				setText(tvColour, getString(R.string.product_colour));
+				try {
+					setText(tvColour, getString(R.string.product_colour));
+				}catch (IllegalStateException ex){
+					Log.e("product_colour",ex.getMessage());
+				}
 			}
 		}
 	}

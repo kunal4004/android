@@ -5,11 +5,14 @@ import android.content.Context;
 
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
 import za.co.woolworths.financial.services.android.models.dto.LoadProduct;
 import za.co.woolworths.financial.services.android.models.dto.PagingResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
+import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.rest.product.SearchProductRequest;
+import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostAddToList;
 import za.co.woolworths.financial.services.android.ui.base.BaseViewModel;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -162,5 +165,18 @@ public class SearchResultViewModel extends BaseViewModel<SearchResultNavigator> 
 				}
 			}
 		});
+	}
+
+	public PostAddToList addToList(List<AddToListRequest> addToListRequest, String listId) {
+		return new PostAddToList(new OnEventListener() {
+			@Override
+			public void onSuccess(Object object) {
+			}
+
+			@Override
+			public void onFailure(String e) {
+				getNavigator().onAddToListFailure(e);
+			}
+		}, addToListRequest, listId);
 	}
 }

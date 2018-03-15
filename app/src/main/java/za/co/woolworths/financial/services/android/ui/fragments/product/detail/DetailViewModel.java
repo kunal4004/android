@@ -226,6 +226,9 @@ public class DetailViewModel extends BaseViewModel<DetailNavigator> {
 
 	public String getProductDescription(Context context) {
 
+		if (context == null)
+			return "";
+
 		String head = "<head>" +
 				"<meta charset=\"UTF-8\">" +
 				"<style>" +

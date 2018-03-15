@@ -44,6 +44,7 @@ public class ProductSearchActivity extends AppCompatActivity
 	private LinearLayout recentSearchLayout;
 	private LinearLayout recentSearchList;
 	private String mSearchTextHint = "";
+	private String mListID;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +68,7 @@ public class ProductSearchActivity extends AppCompatActivity
 		Bundle bundle = getIntent().getExtras();
 		if (bundle != null) {
 			if (!TextUtils.isEmpty(bundle.getString("SEARCH_TEXT_HINT"))) {
+				mListID = bundle.getString("listID");
 				mSearchTextHint = getString(R.string.shopping_search_hint);
 				mEditSearchProduct.setHint(mSearchTextHint);
 			}
@@ -128,7 +130,7 @@ public class ProductSearchActivity extends AppCompatActivity
 				loadState.setSearchProduct(searchProductBrand);
 				Utils.sendBus(loadState);
 			} else {
-				Utils.sendBus(new ShopState(search.searchedValue));
+				Utils.sendBus(new ShopState(search.searchedValue, mListID));
 			}
 			mEditSearchProduct.setText("");
 			finish();

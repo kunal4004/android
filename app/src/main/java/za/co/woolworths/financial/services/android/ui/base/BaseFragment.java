@@ -13,6 +13,7 @@ import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import com.awfs.coordination.R;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator;
+import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -208,10 +210,31 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 	}
 
 	public void setText(WTextView tv, String text) {
-		tv.setText(text);
+		try {
+			tv.setText(text);
+		} catch (IllegalStateException ex) {
+			Log.d("setTextExc", ex.getMessage());
+		}
 	}
 
 	public void setText(String text, WTextView tv) {
+		if (isEmpty(text)) {
+			hideView(tv);
+		} else {
+			tv.setText(text);
+			showView(tv);
+		}
+	}
+
+	public void setText(WButton tv, String text) {
+		try {
+			tv.setText(text);
+		} catch (IllegalStateException ex) {
+			Log.d("setTextExc", ex.getMessage());
+		}
+	}
+
+	public void setText(String text, WButton tv) {
 		if (isEmpty(text)) {
 			hideView(tv);
 		} else {

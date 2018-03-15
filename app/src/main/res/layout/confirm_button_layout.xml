@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data></data>
+
+    <RelativeLayout
+        android:id="@+id/rlCheckOut"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        android:gravity="center"
+        tools:showIn="@layout/fragment_cart">
+
+        <za.co.woolworths.financial.services.android.ui.views.WButton
+            android:id="@+id/btnCheckOut"
+            style="@style/blackButtonStyle"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:background="@color/black"
+            android:letterSpacing="0.2"
+            android:text="@string/checkout"
+            android:visibility="visible"
+            app:WButton_font="medium_bold"
+            />
+
+    </RelativeLayout>
+</layout>

@@ -39,4 +39,5 @@ public class ProductList {
 	public boolean viewTypeHeader;
 	public boolean viewTypeFooter;
 	public Integer numberOfItems;
+	public boolean productWasChecked;
 }
