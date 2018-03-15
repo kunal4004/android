@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.shoppinglist;
 
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
@@ -27,6 +29,8 @@ import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.list.NewListFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsFragment;
 
+import static android.app.Activity.RESULT_OK;
+
 /**
  * Created by W7099877 on 2018/03/07.
  */
@@ -35,6 +39,7 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 	private ShoppingListViewModel shoppingListViewModel;
 	private ShoppingListAdapter shoppingListAdapter;
 	private ShoppingListsResponse shoppingListsResponse;
+	public static final int DELETE_REQUEST_CODE = 111;
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -111,6 +116,7 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 		bundle.putString("listId",listID);
 		ShoppingListItemsFragment shoppingListItemsFragment = new ShoppingListItemsFragment();
 		shoppingListItemsFragment.setArguments(bundle);
+		shoppingListItemsFragment.setTargetFragment(this,111);
 		pushFragment(shoppingListItemsFragment);
 	}
 
@@ -119,6 +125,17 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 		super.onHiddenChanged(hidden);
 		if (!hidden) {
 			showToolbar(R.string.title_my_list);
+		}
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (resultCode == RESULT_OK) {
+			if (requestCode==DELETE_REQUEST_CODE){
+				shoppingListsResponse=new Gson().fromJson(data.getStringExtra("ShoppingList"),ShoppingListsResponse.class);
+				loadShoppingList(shoppingListsResponse.lists);
+			}
 		}
 	}
 }

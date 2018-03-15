@@ -29,7 +29,7 @@ public class ShoppingListItemsAdapter extends RecyclerView.Adapter<ShoppingListI
 	public ShoppingListItemsAdapter(List<ShoppingListItem> listItems,ShoppingListItemsNavigator navigator) {
 		this.listItems=listItems;
 		this.navigator=navigator;
-		this.navigator.onItemSelectionChange(getButtonStatus());
+		this.navigator.onItemSelectionChange(listItems);
 	}
 
 	@Override
@@ -52,7 +52,7 @@ public class ShoppingListItemsAdapter extends RecyclerView.Adapter<ShoppingListI
 			public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
 				listItems.get(position).isSelected=b;
 				notifyDataSetChanged();
-				navigator.onItemSelectionChange(getButtonStatus());
+				navigator.onItemSelectionChange(listItems);
 			}
 		});
 
@@ -86,12 +86,5 @@ public class ShoppingListItemsAdapter extends RecyclerView.Adapter<ShoppingListI
 		}
 	}
 
-	public boolean getButtonStatus(){
-		for (ShoppingListItem shoppingListItem: listItems) {
-			if(shoppingListItem.isSelected)
-				return true;
-		}
-		return false;
-	}
 
 }
