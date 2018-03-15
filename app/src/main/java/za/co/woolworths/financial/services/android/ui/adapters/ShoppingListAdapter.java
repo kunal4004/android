@@ -56,12 +56,10 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
 	public class ViewHolder extends RecyclerView.ViewHolder{
 		public WTextView listName;
 		public WTextView listCount;
-		public WTextView lastModified;
 		public ViewHolder(View itemView) {
 			super(itemView);
 			listName=itemView.findViewById(R.id.listName);
 			listCount=itemView.findViewById(R.id.listItemCount);
-			lastModified=itemView.findViewById(R.id.listLastModified);
 		}
 	}
 }
