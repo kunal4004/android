@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.StrictMode;
 import android.support.multidex.MultiDex;
+import android.support.v7.app.AppCompatDelegate;
 
 import com.awfs.coordination.R;
 import com.facebook.FacebookSdk;
@@ -208,6 +209,7 @@ public class WoolworthsApplication extends Application {
 		StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
 		StrictMode.setVmPolicy(builder.build());
 		Fresco.initialize(this);
+		AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 		FirebaseApp.initializeApp(WoolworthsApplication.this);
 		FacebookSdk.sdkInitialize(WoolworthsApplication.this);
 		AppEventsLogger.activateApp(WoolworthsApplication.this);

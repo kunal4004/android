@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+        android:width="55dp"
+        android:height="55dp"
+        android:viewportHeight="55"
+        android:viewportWidth="55">
+    <group
+        android:name="Woolworthslogo"
+        android:translateX="0"
+        android:translateY="0">
+        <path
+            android:name="Fill-2"
+            android:fillColor="#80000000"
+            android:fillType="evenOdd"
+            android:pathData="M 0,55 L 55,55 L 55,0 L 0,0 z"
+            android:strokeColor="#80000000"
+            android:strokeWidth="0.1"/>
+        <path
+            android:name="Fill-4"
+            android:fillColor="#FFFFFE"
+            android:fillType="evenOdd"
+            android:pathData="M 27.59,25.95 L 23.86,38.05 L 18.24,38.05 L 10.94,16.84 L 17.01,16.84 L 21.31,29.74 L 25.34,16.84 L 30.02,16.84 L 34.07,29.74 L 38.19,16.84 L 44.2,16.84 L 37.02,38.05 L 31.46,38.05 z"
+            android:strokeColor="#00000000"
+            android:strokeWidth="0.1"/>
+    </group>
+</vector>
