@@ -1424,6 +1424,11 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 					if (formException != null) {
 						Activity activity = getBaseActivity();
 						if (activity != null) {
+							String out_of_stock = getString(R.string.out_of_stock);
+							if (formException.message.contains(out_of_stock)) {
+								Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC, out_of_stock, getString(R.string.out_of_stock_desc));
+								return;
+							}
 							Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, formException.message);
 							return;
 						}
