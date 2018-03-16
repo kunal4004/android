@@ -453,10 +453,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				try {
 					pBar.setVisibility(View.GONE);
 					int httpCode = shoppingCartResponse.httpCode;
-					httpCode = 500;
-					shoppingCartResponse.response = new Response();
-					shoppingCartResponse.response.message = "abcdefghti";
-					shoppingCartResponse.response.desc = "500 occured";
 					switch (httpCode) {
 
 						case 200:
