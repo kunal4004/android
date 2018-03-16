@@ -649,7 +649,7 @@ class FragNavController internal constructor(builder: Builder, savedInstanceStat
         if (transactionOptions?.allowStateLoss == true) {
             fragmentTransaction.commitAllowingStateLoss()
         } else {
-            fragmentTransaction.commit()
+            fragmentTransaction.commitAllowingStateLoss()
         }
     }
 

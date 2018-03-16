@@ -246,10 +246,19 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 
 	private void initialize() {
 		changeDefaultView();
-		if (mSessionManager.loadSignInView()) {
-			this.loadAccounts();
+		if (mSessionManager != null) {
+			if (mSessionManager.loadSignInView()) {
+				this.loadAccounts();
+			} else {
+				this.configureSignInNoC2ID();
+			}
 		} else {
-			this.configureSignInNoC2ID();
+			Activity activity = getActivity();
+			if (activity != null) {
+				mSessionManager = new SessionManager(activity);
+				changeDefaultView();
+				configureView();
+			}
 		}
 	}
 
@@ -797,8 +806,10 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
-			mSessionManager.setAccountHasExpired(false);
-			mSessionManager.setRewardSignInState(true);
+			if (mSessionManager != null) {
+				mSessionManager.setAccountHasExpired(false);
+				mSessionManager.setRewardSignInState(true);
+			}
 			getBottomNavigator().badgeCount();
 			if (loadMessageCounter) {
 				messageCounterRequest();
@@ -817,8 +828,10 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	}
 
 	private void onAccSessionExpired(Activity activity) {
-		mSessionManager.setAccountHasExpired(true);
-		mSessionManager.setRewardSignInState(false);
+		if (mSessionManager != null) {
+			mSessionManager.setAccountHasExpired(true);
+			mSessionManager.setRewardSignInState(false);
+		}
 		Utils.setBadgeCounter(getActivity(), 0);
 		initialize();
 		loadMessageCounter = false;

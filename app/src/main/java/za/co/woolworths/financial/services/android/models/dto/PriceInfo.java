@@ -54,7 +54,10 @@ public class PriceInfo {
 	}
 
 	public double getDiscountedAmount() {
-		return discountedAmount;
+		if(discountedAmount==0 && amount != rawTotalPrice)
+			return rawTotalPrice-amount;
+		else
+		    return discountedAmount;
 	}
 
 	public void setDiscountedAmount(double discountedAmount) {

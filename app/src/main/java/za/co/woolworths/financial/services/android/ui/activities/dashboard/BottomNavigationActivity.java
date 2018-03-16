@@ -17,9 +17,12 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.PopupWindow;
 
 import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
@@ -88,7 +91,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	private FragNavController mNavController;
 	private WRewardsFragment wRewardsFragment;
 	private MyAccountsFragment myAccountsFragment;
-	private String TAG = this.getClass().getSimpleName();
 	private Bundle mBundle;
 	private int currentSection;
 
@@ -116,7 +118,11 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
-		super.onRestoreInstanceState(SavedInstanceFragment.getInstance(getFragmentManager()).popData());
+		try {
+			super.onRestoreInstanceState(SavedInstanceFragment.getInstance(getFragmentManager()).popData());
+		} catch (NullPointerException ex) {
+			Log.d("onRestoreInstanceState", ex.getMessage());
+		}
 	}
 
 	@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -170,7 +176,11 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 								// product item successfully added to cart
 								cartSummaryAPI();
 								closeSlideUpPanel();
-								Utils.customToastMessage(BottomNavigationActivity.this);
+								try {
+									PopupWindow popupWindow = Utils.showToast(BottomNavigationActivity.this, getString(R.string.added_to), true);
+									popupWindow.showAtLocation(getBottomNavigationById(), Gravity.BOTTOM, 0, getBottomNavigationById().getHeight() + Utils.dp2px(BottomNavigationActivity.this, 45));
+								} catch (NullPointerException ex) {
+								}
 							}
 
 							// call observer to update independent count
@@ -328,7 +338,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		bundle.putString("strProductCategory", productName);
 		detailFragment.setArguments(bundle);
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-		transaction.replace(R.id.fragment_bottom_container, detailFragment).commit();
+		transaction.replace(R.id.fragment_bottom_container, detailFragment).commitAllowingStateLoss();
 	}
 
 	@Override
@@ -482,8 +492,16 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	@SuppressLint("RestrictedApi")
 	@Override
 	public void onBackPressed() {
+		if (getSlidingLayout() != null) {
+			if (getSlidingLayout().getPanelState().equals(SlidingUpPanelLayout.PanelState.EXPANDED)) {
+				closeSlideUpPanel();
+				return;
+			}
+		}
 		if (!mNavController.isRootFragment()) {
 			mNavController.popFragment(new FragNavTransactionOptions.Builder().customAnimations(R.anim.slide_in_from_left, R.anim.slide_out_to_right).build());
+		} else {
+			super.onBackPressed();
 		}
 	}
 
@@ -675,10 +693,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			case 2:
 				break;
 			default:
-				if (wRewardsFragment != null)
+				if (wRewardsFragment != null) {
 					wRewardsFragment.onActivityResult(requestCode, resultCode, data);
-				if (myAccountsFragment != null)
+				}
+				if (myAccountsFragment != null) {
 					myAccountsFragment.onActivityResult(requestCode, resultCode, data);
+				}
 				break;
 		}
 	}

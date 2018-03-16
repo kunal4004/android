@@ -17,15 +17,15 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.support.design.internal.BottomNavigationItemView;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
 import android.text.TextUtils;
-
-
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -34,9 +34,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.view.animation.*;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -76,20 +77,25 @@ import me.leolin.shortcutbadger.ShortcutBadger;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
-import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
-import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
+import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
+import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.Transaction;
 import za.co.woolworths.financial.services.android.models.dto.TransactionParentObj;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
+import za.co.woolworths.financial.services.android.models.service.event.CartState;
+import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
+import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
+import za.co.woolworths.financial.services.android.ui.views.WButton;
+import za.co.woolworths.financial.services.android.ui.views.WTabIndicator;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.badgeview.Badge;
 import za.co.woolworths.financial.services.android.ui.views.badgeview.QBadgeView;
@@ -128,6 +134,7 @@ public class Utils {
 	public static final String GOLD_CARD = "410374";
 	public static final String BLACK_CARD = "410375";
 	public static final int ACCOUNTS_PROGRESS_BAR_MAX_VALUE = 10000;
+	private static final int POPUP_DELAY_MILLIS = 3000;
 
 	public static final String[] CLI_POI_ACCEPT_MIME_TYPES = {
 			"application/pdf",
@@ -982,18 +989,6 @@ public class Utils {
 		if (woolworthsApplication != null) woolworthsApplication.bus().send(object);
 	}
 
-	public static void customToastMessage(Activity activity) {
-		LayoutInflater inflater = activity.getLayoutInflater();
-		View layout = inflater.inflate(R.layout.add_to_cart_success, null);
-//		TextView text = (TextView) layout.findViewById(R.id.tvAddToCart);
-//		text.setText("Hello! This is a custom toast!");
-		Toast toast = new Toast(activity);
-		toast.setGravity(Gravity.BOTTOM | Gravity.FILL_HORIZONTAL, dp2px(activity, 10), dp2px(activity, 45));
-		toast.setDuration(Toast.LENGTH_LONG);
-		toast.setView(layout);
-		toast.show();
-	}
-
 	public static int dp2px(Context context, float dpValue) {
 		final float scale = context.getResources().getDisplayMetrics().density;
 		return (int) (dpValue * scale + 0.5f);
@@ -1052,6 +1047,84 @@ public class Utils {
 			Log.e("TAG", e.getMessage());
 		}
 		return history;
+	}
+
+	public static PopupWindow showToast(final Activity activity, String message, final boolean viewState) {
+
+		// inflate your xml layout
+		if (activity != null) {
+			LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			View layout = inflater.inflate(R.layout.add_to_cart_success, null);
+			// set the custom display
+			WTextView tvView = layout.findViewById(R.id.tvView);
+			WTextView tvCart = layout.findViewById(R.id.tvCart);
+			WTextView tvAddToCart = layout.findViewById(R.id.tvAddToCart);
+			// initialize your popupWindow and use your custom layout as the view
+			final PopupWindow pw = new PopupWindow(layout,
+					LinearLayout.LayoutParams.MATCH_PARENT,
+					LinearLayout.LayoutParams.WRAP_CONTENT, true);
+
+			tvView.setVisibility(viewState ? View.VISIBLE : View.GONE);
+			tvAddToCart.setText(message);
+
+			// handle popupWindow click event
+			tvView.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					if (viewState) {
+						// do anything when popupWindow was clicked
+						if (getSessionToken(activity) == null) {
+							ScreenManager.presentSSOSignin(activity);
+						} else {
+							Intent openCartActivity = new Intent(activity, CartActivity.class);
+							activity.startActivity(openCartActivity);
+							activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+						}
+						pw.dismiss(); // dismiss the window
+					}
+				}
+			});
+
+			// dismiss the popup window after 3sec
+			new Handler().postDelayed(new Runnable() {
+				public void run() {
+					if (pw != null)
+						pw.dismiss();
+				}
+			}, POPUP_DELAY_MILLIS);
+			return pw;
+		}
+
+		return null;
+	}
+
+	public static void fadeInFadeOutAnimation(final View view, final boolean editMode) {
+		Animation animation;
+		if (!editMode) {
+			animation = android.view.animation.AnimationUtils.loadAnimation(view.getContext(), R.anim.edit_mode_fade_in);
+		} else {
+			animation = android.view.animation.AnimationUtils.loadAnimation(view.getContext(), R.anim.edit_mode_fade_out);
+		}
+
+		if (view instanceof WButton) {
+			animation.setAnimationListener(new Animation.AnimationListener() {
+				@Override
+				public void onAnimationStart(Animation animation) {
+
+				}
+
+				@Override
+				public void onAnimationEnd(Animation animation) {
+					view.setEnabled(!editMode);
+				}
+
+				@Override
+				public void onAnimationRepeat(Animation animation) {
+
+				}
+			});
+		}
+		view.startAnimation(animation);
 	}
 
 }
