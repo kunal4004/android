@@ -35,13 +35,13 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CartItemGroup;
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem;
 import za.co.woolworths.financial.services.android.models.dto.CartResponse;
 import za.co.woolworths.financial.services.android.models.dto.ChangeQuantity;
 import za.co.woolworths.financial.services.android.models.dto.Data;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
+import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
@@ -66,6 +66,7 @@ import static za.co.woolworths.financial.services.android.models.service.event.B
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT_TEMP;
 import static za.co.woolworths.financial.services.android.models.service.event.CartState.CHANGE_QUANTITY;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_CALL;
+import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CLOSE_VIEW;
 
 public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick, View.OnClickListener, NetworkChangeListener {
 
@@ -142,7 +143,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		btnCheckOut.setOnClickListener(this);
 		tvDeliveryLocation = view.findViewById(R.id.tvDeliveryLocation);
 		emptyCartUI(view);
-		Activity activity = getActivity();
+		final Activity activity = getActivity();
 		if (activity != null) {
 			CartActivity cartActivity = (CartActivity) activity;
 			cartActivity.hideEditCart();
@@ -175,6 +176,11 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 											cartProductAdapter.onPopUpCancel(CANCEL_CALL);
 										break;
 
+									case CLOSE_VIEW:
+										closeActivity(activity);
+
+										break;
+
 									default:
 										break;
 								}
@@ -182,6 +188,18 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 						}
 					}
 				}));
+	}
+
+	private void closeActivity(final Activity activity) {
+		getView().postDelayed(new Runnable() {
+
+			@Override
+			public void run() {
+				activity.finish();
+				activity.overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
+			}
+
+		}, 10);
 	}
 
 	private void emptyCartUI(View view) {
@@ -376,7 +394,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	private void onChangeQuantityComplete() {
-		cartProductAdapter.onChangeQuantityComplete();
+		if (cartProductAdapter != null)
+			cartProductAdapter.onChangeQuantityComplete();
 	}
 
 	private void onChangeQuantityLoad() {
@@ -434,6 +453,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				try {
 					pBar.setVisibility(View.GONE);
 					int httpCode = shoppingCartResponse.httpCode;
+					httpCode = 500;
+					shoppingCartResponse.response = new Response();
+					shoppingCartResponse.response.message = "abcdefghti";
+					shoppingCartResponse.response.desc = "500 occured";
 					switch (httpCode) {
 
 						case 200:
@@ -455,7 +478,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 									@Override
 									public void run() {
 										//TODO:: improve error handling
-										Utils.sessionDaoSave(activity, SessionDao.KEY.CART_FIRST_ORDER_FREE_DELIVERY, null);
 										ScreenManager.presentSSOSignin(activity);
 										activity.finish();
 										activity.overridePendingTransition(0, 0);
@@ -463,12 +485,11 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 								});
 							}
 							onChangeQuantityComplete();
-
 							break;
 						default:
 							onChangeQuantityComplete();
 							if (shoppingCartResponse.response != null)
-								Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, shoppingCartResponse.response.desc);
+								Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, shoppingCartResponse.response.desc, true);
 							break;
 					}
 					deliveryLocationEnabled(true);
