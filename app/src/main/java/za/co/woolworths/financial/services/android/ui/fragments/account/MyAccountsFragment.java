@@ -725,13 +725,15 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 				@Override
 				protected Void httpDoInBackground(Void... params) {
 					try {
-						SessionDao sessionDao = new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN).get();
-						sessionDao.value = "";
-						sessionDao.save();
-						new SessionDao(getActivity(), SessionDao.KEY.STORES_USER_SEARCH).delete();
-						new SessionDao(getActivity(), SessionDao.KEY.STORES_USER_LAST_LOCATION).delete();
+						Activity activity = getActivity();
+						if (activity != null) {
+							Utils.removeToken(SessionDao.KEY.USER_TOKEN, activity);
+							Utils.removeFromDb(SessionDao.KEY.DELIVERY_LOCATION_HISTORY, getContext());
+							Utils.removeFromDb(SessionDao.KEY.STORES_USER_SEARCH, getContext());
+							Utils.removeFromDb(SessionDao.KEY.STORES_USER_LAST_LOCATION, getContext());
+						}
 					} catch (Exception pE) {
-						pE.printStackTrace();
+						Log.d(TAG, pE.getMessage());
 					}
 					return null;
 				}
