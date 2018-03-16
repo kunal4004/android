@@ -10,6 +10,9 @@ public class OrderSummary {
 	public double total;
 	public double estimatedDelivery;
 	public double basketTotal;
+	public boolean shippingAdjusted;
+	public double savedAmount;
+	public double staffDiscount;
 
 	public int getTotalItemsCount() {
 		return totalItemsCount;
@@ -41,5 +44,21 @@ public class OrderSummary {
 
 	public void setBasketTotal(double basketTotal) {
 		this.basketTotal = basketTotal;
+	}
+
+	public double getSavedAmount() {
+		return savedAmount;
+	}
+
+	public void setSavedAmount(double savedAmount) {
+		this.savedAmount = savedAmount;
+	}
+
+	public double getStaffDiscount() {
+		return staffDiscount;
+	}
+
+	public void setStaffDiscount(double staffDiscount) {
+		this.staffDiscount = staffDiscount;
 	}
 }

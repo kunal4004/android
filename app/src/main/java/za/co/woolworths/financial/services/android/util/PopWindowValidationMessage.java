@@ -192,7 +192,7 @@ public class PopWindowValidationMessage {
 				});
 				break;
 			case HIGH_LOAN_AMOUNT:
-				mView = mLayoutInflater.inflate(R.layout.lw_too_high_error, null);
+				mView = mLayoutInflater.inflate(R.layout.error_title_desc_layout, null);
 				popupWindowSetting(mView);
 				setAnimation();
 				touchToDismiss(overlay_type);

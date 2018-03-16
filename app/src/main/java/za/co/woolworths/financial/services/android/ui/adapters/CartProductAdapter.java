@@ -171,10 +171,18 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 				if (orderSummary != null) {
 					priceHolder.orderSummeryLayout.setVisibility(View.VISIBLE);
 					setPriceValue(priceHolder.txtPriceEstimatedDelivery, orderSummary.getEstimatedDelivery());
-			/*setPriceValue(cartPricesViewHolder.txtPriceDiscounts, cartPriceValues.discounts);
-			setPriceValue(cartPricesViewHolder.txtPriceCompanyDiscount, cartPriceValues.companyDiscounts);
-			setPriceValue(cartPricesViewHolder.txtPriceWRewardsSavings, cartPriceValues.wRewardsSavings);
-			setPriceValue(cartPricesViewHolder.txtPriceOtherDiscount, cartPriceValues.otherDiscount);*/
+					if(orderSummary.getStaffDiscount() > 0) {
+						setPriceValue(priceHolder.txtPriceCompanyDiscount, orderSummary.getStaffDiscount());
+						priceHolder.rlCompanyDiscount.setVisibility(View.VISIBLE);
+					} else {
+						priceHolder.rlCompanyDiscount.setVisibility(View.GONE);
+					}
+					if(orderSummary.getSavedAmount() > 0) {
+						setPriceValue(priceHolder.txtPriceWRewardsSavings, orderSummary.getSavedAmount());
+						priceHolder.rlOtherDiscount.setVisibility(View.VISIBLE);
+					} else {
+						priceHolder.rlOtherDiscount.setVisibility(View.GONE);
+					}
 					setPriceValue(priceHolder.txtPriceTotal, orderSummary.getTotal());
 				} else {
 					priceHolder.orderSummeryLayout.setVisibility(View.GONE);
@@ -371,20 +379,21 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
 	private class CartPricesViewHolder extends RecyclerView.ViewHolder {
 		private WTextView
-				txtPriceEstimatedDelivery, txtPriceDiscounts,
-				txtPriceCompanyDiscount, txtPriceWRewardsSavings,
-				txtPriceOtherDiscount, txtPriceTotal;
+				txtPriceEstimatedDelivery, txtPriceCompanyDiscount,
+				txtPriceWRewardsSavings, txtPriceTotal;
 		private LinearLayout orderSummeryLayout;
+		private RelativeLayout rlOtherDiscount, rlCompanyDiscount;
+
 
 		public CartPricesViewHolder(View view) {
 			super(view);
 			txtPriceEstimatedDelivery = view.findViewById(R.id.txtPriceEstimatedDelivery);
-			/*txtPriceDiscounts = view.findViewById(R.id.txtPriceDiscounts);
 			txtPriceCompanyDiscount = view.findViewById(R.id.txtPriceCompanyDiscount);
 			txtPriceWRewardsSavings = view.findViewById(R.id.txtPriceWRewardsSavings);
-			txtPriceOtherDiscount = view.findViewById(R.id.txtPriceOtherDiscount);*/
 			txtPriceTotal = view.findViewById(R.id.txtPriceTotal);
 			orderSummeryLayout = view.findViewById(R.id.orderSummeryLayout);
+			rlOtherDiscount = view.findViewById(R.id.rlOtherDiscount);
+			rlCompanyDiscount = view.findViewById(R.id.rlCompanyDiscount);
 		}
 	}
 
