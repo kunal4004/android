@@ -454,7 +454,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					pBar.setVisibility(View.GONE);
 					int httpCode = shoppingCartResponse.httpCode;
 					switch (httpCode) {
-
 						case 200:
 							onRemoveItemFailed = false;
 							rlCheckOut.setVisibility(View.VISIBLE);
@@ -639,7 +638,12 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 						case 200:
 							CartResponse cartResponse = convertResponseToCartResponseObject(shoppingCartResponse);
 							updateCart(cartResponse, commerceItem);
-							mToggleItemRemoved.onRemoveSuccess();
+							if (cartResponse.cartItems != null) {
+								if (cartResponse.cartItems.size() == 0)
+									mToggleItemRemoved.onRemoveSuccess();
+							} else {
+								mToggleItemRemoved.onRemoveSuccess();
+							}
 							break;
 						default:
 							if (cartProductAdapter != null)
