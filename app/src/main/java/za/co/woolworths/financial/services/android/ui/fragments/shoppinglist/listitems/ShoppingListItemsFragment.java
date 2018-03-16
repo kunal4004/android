@@ -23,6 +23,7 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.DeleteShoppingList;
+import za.co.woolworths.financial.services.android.models.rest.shoppinglist.DeleteShoppingListItem;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.GetShoppingListItems;
 import za.co.woolworths.financial.services.android.models.service.event.ShopState;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
@@ -42,6 +43,8 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	private GetShoppingListItems getShoppingListItems;
 	private List<ShoppingListItem> listItems;
 	private DeleteShoppingList deleteShoppingList;
+	private DeleteShoppingListItem deleteShoppingListItem;
+	private ShoppingListItemsAdapter shoppingListItemsAdapter;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -104,7 +107,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	public void loadShoppingListItems(ShoppingListItemsResponse shoppingListItemsResponse) {
 		getViewDataBinding().loadingBar.setVisibility(View.GONE);
 		listItems = shoppingListItemsResponse.listItems;
-		ShoppingListItemsAdapter shoppingListItemsAdapter = new ShoppingListItemsAdapter(listItems, this);
+		shoppingListItemsAdapter = new ShoppingListItemsAdapter(listItems, this);
 		LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
 		mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 		getViewDataBinding().rcvShoppingListItems.setLayoutManager(mLayoutManager);
@@ -153,6 +156,19 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		intent.putExtra("ShoppingList", Utils.objectToJson(shoppingListsResponse));
 		getTargetFragment().onActivityResult(getTargetRequestCode(), RESULT_OK, intent);
 		getActivity().onBackPressed();
+	}
+
+	@Override
+	public void onShoppingListItemDelete(ShoppingListItemsResponse shoppingListItemsResponse) {
+		listItems=shoppingListItemsResponse.listItems;
+		shoppingListItemsAdapter.updateList(listItems);
+
+	}
+
+	@Override
+	public void onItemDeleteClick(String id, String productId, String catalogRefId) {
+		deleteShoppingListItem = getViewModel().deleteShoppingListItem(listId, id, productId, catalogRefId);
+		deleteShoppingListItem.execute();
 	}
 
 	public void initGetShoppingListItems() {

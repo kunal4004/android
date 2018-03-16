@@ -316,6 +316,10 @@ public class WfsApi {
 		return mApiInterface.deleteShoppingList(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(),listId);
 	}
 
+	public ShoppingListItemsResponse deleteShoppingListItem(String listId,String id,String productId,String catalogRefId) {
+		return mApiInterface.deleteShoppingListItem(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), listId, id, productId, catalogRefId);
+	}
+
 	private String getOsVersion() {
 		String osVersion = Util.getOsVersion();
 		if (TextUtils.isEmpty(osVersion)) {

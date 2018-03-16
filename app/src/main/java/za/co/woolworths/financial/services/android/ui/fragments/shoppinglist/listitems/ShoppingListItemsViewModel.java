@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.li
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.DeleteShoppingList;
+import za.co.woolworths.financial.services.android.models.rest.shoppinglist.DeleteShoppingListItem;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.GetShoppingListItems;
 import za.co.woolworths.financial.services.android.ui.base.BaseViewModel;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
@@ -51,6 +52,22 @@ public class ShoppingListItemsViewModel extends BaseViewModel<ShoppingListItemsN
 
 			}
 		},listId);
+	}
+
+	public DeleteShoppingListItem deleteShoppingListItem(String listId, String id, String productId, String catalogRefId)
+	{
+		return new DeleteShoppingListItem(new OnEventListener() {
+			@Override
+			public void onSuccess(Object object) {
+				ShoppingListItemsResponse shoppingListItemsResponse = (ShoppingListItemsResponse) object;
+				getNavigator().onShoppingListItemDelete(shoppingListItemsResponse);
+			}
+
+			@Override
+			public void onFailure(String e) {
+
+			}
+		},listId,id,productId,catalogRefId);
 	}
 
 }
