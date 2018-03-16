@@ -56,5 +56,6 @@
     <color name="offer_active_desc">#7f030303</color>
     <color name="account_amount_color">#030303</color>
     <color name="view_statement_black">#1F1F1F</color>
+    <color name="promotional_text_red">#FFD0021B</color>
 
 </resources>

@@ -98,6 +98,34 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 			cartItemViewHolder.price.setText(WFormatter.formatAmount(productItem.getPriceInfo().getAmount()));
 			productImage(cartItemViewHolder.productImage, productItem.externalImageURL);
 			cartItemViewHolder.btnDeleteRow.setVisibility(this.editMode ? View.VISIBLE : View.GONE);
+			//Set Promotion Text START
+				if(productItem.getPriceInfo().getDiscountedAmount()>0){
+					cartItemViewHolder.promotionalText.setText("You saved "+WFormatter.formatAmount(productItem.getPriceInfo().getDiscountedAmount()));
+					cartItemViewHolder.promotionalText.setVisibility(View.VISIBLE);
+				}else {
+					cartItemViewHolder.promotionalText.setVisibility(View.GONE);
+				}
+			//Set Promotion Text END
+
+			// Set Color and Size START
+			if(itemRow.category.equalsIgnoreCase("FOOD"))
+			{
+				cartItemViewHolder.tvColorSize.setVisibility(View.INVISIBLE);
+			}
+			else {
+				String sizeColor=productItem.getColor();
+				if(sizeColor == null)
+					sizeColor = "";
+				if(sizeColor.isEmpty()&& !productItem.getSize().isEmpty() && !productItem.getSize().equalsIgnoreCase("NO SZ") )
+					sizeColor=productItem.getSize();
+				else if(!sizeColor.isEmpty()&& !productItem.getSize().isEmpty() && !productItem.getSize().equalsIgnoreCase("NO SZ"))
+					sizeColor=sizeColor+", "+productItem.getSize();
+
+				cartItemViewHolder.tvColorSize.setText(sizeColor);
+				cartItemViewHolder.tvColorSize.setVisibility(View.VISIBLE);
+			}
+			// Set Color and Size END
+
 			if (productItem.getQuantityUploading()) {
 				cartItemViewHolder.pbQuantity.setVisibility(View.VISIBLE);
 				cartItemViewHolder.quantity.setVisibility(View.GONE);
@@ -235,7 +263,7 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 	}
 
 	private class CartItemViewHolder extends RecyclerView.ViewHolder {
-		private WTextView tvTitle, tvDescription, quantity, price;
+		private WTextView tvTitle, tvColorSize, quantity, price, promotionalText;
 		private ImageView btnDeleteRow;
 		private ImageView imPrice;
 		private SimpleDraweeView productImage;
@@ -245,7 +273,7 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 		public CartItemViewHolder(View view) {
 			super(view);
 			tvTitle = view.findViewById(R.id.tvTitle);
-			tvDescription = view.findViewById(R.id.tvDetails);
+			tvColorSize = view.findViewById(R.id.tvSize);
 			quantity = view.findViewById(R.id.quantity);
 			price = view.findViewById(R.id.price);
 			btnDeleteRow = view.findViewById(R.id.btnDeleteRow);
@@ -253,6 +281,7 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 			llQuantity = view.findViewById(R.id.llQuantity);
 			pbQuantity = view.findViewById(R.id.pbQuantity);
 			imPrice = view.findViewById(R.id.imPrice);
+			promotionalText = view.findViewById(R.id.promotionalText);
 		}
 	}
 
