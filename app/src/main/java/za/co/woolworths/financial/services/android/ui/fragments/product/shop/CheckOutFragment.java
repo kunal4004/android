@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.shop;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
@@ -30,10 +31,13 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.communicator.MyJavaScriptInterface;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class CheckOutFragment extends Fragment implements View.OnTouchListener {
+
+	public static int REQUESTCODE_CHECKOUT = 9;
 
 	private WebView mWebCheckOut;
 	private String TAG = this.getClass().getSimpleName();
@@ -102,12 +106,21 @@ public class CheckOutFragment extends Fragment implements View.OnTouchListener {
 
 			@Override
 			public boolean shouldOverrideUrlLoading(WebView view, String url) {
-				return true;
+				return super.shouldOverrideUrlLoading(view, url);
 			}
 
 			@Override
 			public void onPageStarted(WebView view, String url,
 									  Bitmap favicon) {
+				if(url.contains("goto=complete")) {
+					Intent returnIntent = new Intent();
+					getActivity().setResult(Activity.RESULT_OK, returnIntent);
+					getActivity().finish();
+				} else if(url.contains("goto=abandon")) {
+					Intent returnIntent = new Intent();
+					getActivity().setResult(Activity.RESULT_CANCELED, returnIntent);
+					getActivity().finish();
+				}
 			}
 
 			public void onPageFinished(WebView view, String url) {
