@@ -9,6 +9,7 @@ import android.view.View;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.DeliveryLocationSelectionFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.ProvinceSelectionFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -22,6 +23,8 @@ public class DeliveryLocationSelectionActivity extends AppCompatActivity impleme
 	private Toolbar toolbar;
 	private WTextView toolbarText;
 	private View btnBack, btnClose;
+	private String mSuburbName;
+	private String mProvinceName;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +35,13 @@ public class DeliveryLocationSelectionActivity extends AppCompatActivity impleme
 		if (getIntent().hasExtra(LOAD_PROVINCE)) {
 			province = getIntent().getStringExtra(LOAD_PROVINCE);
 		}
+
+		Bundle bundle = getIntent().getExtras();
+		if (bundle != null) {
+			mSuburbName = bundle.getString("suburbName");
+			mProvinceName = bundle.getString("provinceName");
+		}
+
 		toolbar = findViewById(R.id.toolbar);
 		toolbarText = findViewById(R.id.toolbarText);
 
@@ -46,13 +56,18 @@ public class DeliveryLocationSelectionActivity extends AppCompatActivity impleme
 		getSupportActionBar().setTitle(null);
 
 		if (TextUtils.isEmpty(province)) {
+			DeliveryLocationSelectionFragment deliveryLocationSelectionFragment = new DeliveryLocationSelectionFragment();
+			Bundle deliveryBundle = new Bundle();
+			deliveryBundle.putString("suburbName", mSuburbName);
+			deliveryBundle.putString("provinceName", mProvinceName);
+			deliveryLocationSelectionFragment.setArguments(deliveryBundle);
 			FragmentManager fragmentManager = getSupportFragmentManager();
 			fragmentManager.beginTransaction()
-					.replace(R.id.content_frame, new DeliveryLocationSelectionFragment()).commit();
+					.replace(R.id.content_frame, deliveryLocationSelectionFragment).commitAllowingStateLoss();
 		} else {
 			FragmentManager fragmentManager = getSupportFragmentManager();
 			fragmentManager.beginTransaction()
-					.replace(R.id.content_frame, new ProvinceSelectionFragment()).commit();
+					.replace(R.id.content_frame, new ProvinceSelectionFragment()).commitAllowingStateLoss();
 		}
 	}
 

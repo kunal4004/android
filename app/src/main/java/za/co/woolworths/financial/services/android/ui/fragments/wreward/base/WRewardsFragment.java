@@ -125,7 +125,7 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 		FragmentTransaction childFragTrans = childFragMan.beginTransaction();
 		WRewardsLoggedinAndLinkedFragment fragmentChild = new WRewardsLoggedinAndLinkedFragment();
 		childFragTrans.add(R.id.content_frame, fragmentChild);
-		childFragTrans.commit();
+		childFragTrans.commitAllowingStateLoss();
 	}
 
 	private void notLinkSignIn() {
@@ -134,7 +134,7 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 		FragmentTransaction childFragTrans = childFragMan.beginTransaction();
 		WRewardsLoggedinAndNotLinkedFragment fragmentChild = new WRewardsLoggedinAndNotLinkedFragment();
 		childFragTrans.add(R.id.content_frame, fragmentChild);
-		childFragTrans.commit();
+		childFragTrans.commitAllowingStateLoss();
 	}
 
 	private void signOut() {
@@ -143,12 +143,12 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 		FragmentTransaction childFragTrans = childFragMan.beginTransaction();
 		WRewardsLoggedOutFragment fragmentChild = new WRewardsLoggedOutFragment();
 		childFragTrans.add(R.id.content_frame, fragmentChild);
-		childFragTrans.commit();
+		childFragTrans.commitAllowingStateLoss();
 	}
 
 	private void replaceFragment() {
-		if (mSessionManager.authenticationState() && mRewardSignInState) {
-			if (mSessionManager.loadSignInView() && mRewardSignInState) {
+		if (mSessionManager.authenticationState()) {
+			if (mSessionManager.isC2IdEnabled() && mRewardSignInState) {
 				//user is linked and signed in
 				linkSignIn();
 			} else {

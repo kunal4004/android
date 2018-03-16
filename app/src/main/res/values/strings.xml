@@ -55,7 +55,7 @@
     <string name="why_we_need_location_services">Location Services</string>
     <string name="location_off_message">Location services allow us to provide store information like opening hours, contact details and directions.</string>
     <string name="go_to_settings">ENABLE LOCATION SERVICES</string>
-
+    <string name="off_instantly">OFF INSTANTLY</string>
 
     <string name="nav_item_today">TODAY</string>
     <string name="nw_today_title">W TODAY</string>
@@ -593,7 +593,7 @@
     <string name="messages">Messages</string>
     <string name="order_history">Order History</string>
     <string name="link_your_woolies_card_today">Link Your Woolies Card Today</string>
-    <string name="cart_free_delivery_first_order">You\'ll Receive <b>Free Delivery</b> For Your First Order</string>
+    <string name="cart_free_delivery_first_order">WRewards members get instant savings on selected items. Pay with your Woolies Store or Credit Card and get an extra 5% off</string>
 
     <!-- Bottom navigation activity -->
 
@@ -615,8 +615,12 @@
     <string name="your_delivery_location_is_set_to">Your delivery location is set to:</string>
     <string name="confirm_your_location">Confirm location</string>
     <string name="edit_delivery_location"><u>edit delivery location</u></string>
-    <string name="added_to">added to</string>
+    <string name="added_to">added to </string>
     <string name="empty_cart">EMPTY CART</string>
     <string name="empty_cart_desc">You currently have no items\nin your cart.</string>
     <string name="start_shopping">start shopping</string>
+    <string name="delete">delete</string>
+    <string name="delivery_confirmation_desc">* Delivery cost to be confirmed before payment</string>
+    <string name="total_item">Total*</string>
+    <string name="rlOtherDiscounts"><![CDATA[WRewards Savings & Other Discounts]]></string>
 </resources>
