@@ -42,7 +42,7 @@ import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.rx.SchedulerProvider;
 
-public class DetailViewModel extends BaseViewModel<DetailNavigator> {
+public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator> {
 
 	private String TAG = this.getClass().getSimpleName();
 	private final String EMPTY = " ";
@@ -59,11 +59,11 @@ public class DetailViewModel extends BaseViewModel<DetailNavigator> {
 	private boolean findInStoreLoadFail = false;
 	private boolean addedToCart = true;
 
-	public DetailViewModel() {
+	public ProductDetailViewModel() {
 		super();
 	}
 
-	public DetailViewModel(SchedulerProvider schedulerProvider) {
+	public ProductDetailViewModel(SchedulerProvider schedulerProvider) {
 		super(schedulerProvider);
 	}
 

@@ -15,7 +15,7 @@ import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 
-public interface DetailNavigator {
+public interface ProductDetailNavigator {
 
 	void renderView();
 

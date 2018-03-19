@@ -41,10 +41,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
@@ -99,16 +96,17 @@ import static za.co.woolworths.financial.services.android.models.service.event.P
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SET_SUBURB;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SET_SUBURB_API;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.USE_MY_LOCATION;
-import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.DetailViewModel.CLOTHING_PRODUCT;
-import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.DetailViewModel.FOOD_PRODUCT;
+import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.ADD_TO_SHOPPING_LIST;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailViewModel.CLOTHING_PRODUCT;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailViewModel.FOOD_PRODUCT;
 
-public class DetailFragment extends BaseFragment<ProductDetailViewBinding, DetailViewModel> implements DetailNavigator, ProductViewPagerAdapter.MultipleImageInterface, View.OnClickListener, NetworkChangeListener {
+public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding, ProductDetailViewModel> implements ProductDetailNavigator, ProductViewPagerAdapter.MultipleImageInterface, View.OnClickListener, NetworkChangeListener {
 
 	public static final int INDEX_ADD_TO_CART = 2;
 	public static final int INDEX_STORE_FINDER = 1;
+	public static final int INDEX_ADD_TO_SHOPPING_LIST = 3;
 
-	private CompositeDisposable mDisposables = new CompositeDisposable();
-	private DetailViewModel detailViewModel;
+	private ProductDetailViewModel productDetailViewModel;
 	private List<String> mAuxiliaryImage = new ArrayList<>();
 	private String mSubCategoryTitle;
 	private String TAG = this.getClass().getSimpleName();
@@ -137,8 +135,8 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 	private boolean activate_location_popup = false;
 
 	@Override
-	public DetailViewModel getViewModel() {
-		return detailViewModel;
+	public ProductDetailViewModel getViewModel() {
+		return productDetailViewModel;
 	}
 
 	@Override
@@ -154,7 +152,7 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		detailViewModel = ViewModelProviders.of(this).get(DetailViewModel.class);
+		productDetailViewModel = ViewModelProviders.of(this).get(ProductDetailViewModel.class);
 		getViewModel().setNavigator(this);
 		mConnectionBroadcast = Utils.connectionBroadCast(getBaseActivity(), this);
 		final Bundle bundle = this.getArguments();
@@ -165,67 +163,66 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 			mFetchFromJson = bundle.getBoolean("fetchFromJson");
 		}
 
-		mDisposables.add(WoolworthsApplication.getInstance()
-				.bus()
-				.toObservable()
-				.subscribeOn(Schedulers.io())
-				.observeOn(AndroidSchedulers.mainThread())
-				.subscribe(new Consumer<Object>() {
-					@Override
-					public void accept(Object object) throws Exception {
-						Activity activity = getActivity();
-						if (activity != null) {
-							List<DeliveryLocationHistory> deliveryLocationHistories = Utils.getDeliveryLocationHistory(activity);
-							if (object instanceof DetailFragment) {
-								onPermissionGranted();
-							} else if (object instanceof ConfirmColorSizeActivity) {
-								startLocationUpdates();
-							} else if (object instanceof ProductState) {
-								ProductState productState = (ProductState) object;
-								switch (productState.getState()) {
-									case POST_ADD_ITEM_TO_CART:
-										String productId = getViewModel().getProductId();
-										String catalogRefId = productId;
-										//Parse skuId to catalogRefId if productType is of type CLOTHING_PRODUCT
-										if (getViewModel().getProductType().equalsIgnoreCase(CLOTHING_PRODUCT)) {
-											catalogRefId = getGlobalState().getSelectedSKUId();
-										}
-										int quantity = productState.getQuantity();
-										mApiAddItemToCart = new AddItemToCart(productId, catalogRefId, quantity);
-										apiAddItemToCart();
-										break;
-
-									case DETERMINE_LOCATION_POPUP:
-										activate_location_popup = true;
-										cartSummaryAPI();
-										break;
-
-									case SET_SUBURB:
-										deliverySelectionIntent(activity);
-										break;
-
-									case USE_MY_LOCATION:
-										apiIdentifyTokenValidation();
-										break;
-
-									case SET_SUBURB_API:
-										if (deliveryLocationHistories != null) {
-											DeliveryLocationHistory deliveryLocationHistory = deliveryLocationHistories.get(0);
-											setSuburbAPI(deliveryLocationHistory);
-										}
-										break;
-
-									case CANCEL_CALL:
-										onAddToCartLoadComplete();
-										break;
-
-									default:
-										break;
+		observableOn(new Consumer<Object>() {
+			@Override
+			public void accept(Object object) throws Exception {
+				Activity activity = getActivity();
+				if (activity != null) {
+					List<DeliveryLocationHistory> deliveryLocationHistories = Utils.getDeliveryLocationHistory(activity);
+					if (object instanceof ProductDetailFragment) {
+						onPermissionGranted();
+					} else if (object instanceof ConfirmColorSizeActivity) {
+						startLocationUpdates();
+					} else if (object instanceof ProductState) {
+						ProductState productState = (ProductState) object;
+						switch (productState.getState()) {
+							case POST_ADD_ITEM_TO_CART:
+								String productId = getViewModel().getProductId();
+								String catalogRefId = productId;
+								//Parse skuId to catalogRefId if productType is of type CLOTHING_PRODUCT
+								if (getViewModel().getProductType().equalsIgnoreCase(CLOTHING_PRODUCT)) {
+									catalogRefId = getGlobalState().getSelectedSKUId();
 								}
-							}
+								int quantity = productState.getQuantity();
+								mApiAddItemToCart = new AddItemToCart(productId, catalogRefId, quantity);
+								apiAddItemToCart();
+								break;
+
+							case ADD_TO_SHOPPING_LIST:
+
+								break;
+
+							case DETERMINE_LOCATION_POPUP:
+								activate_location_popup = true;
+								cartSummaryAPI();
+								break;
+
+							case SET_SUBURB:
+								deliverySelectionIntent(activity);
+								break;
+
+							case USE_MY_LOCATION:
+								apiIdentifyTokenValidation();
+								break;
+
+							case SET_SUBURB_API:
+								if (deliveryLocationHistories != null) {
+									DeliveryLocationHistory deliveryLocationHistory = deliveryLocationHistories.get(0);
+									setSuburbAPI(deliveryLocationHistory);
+								}
+								break;
+
+							case CANCEL_CALL:
+								onAddToCartLoadComplete();
+								break;
+
+							default:
+								break;
 						}
 					}
-				}));
+				}
+			}
+		});
 	}
 
 	@Override
@@ -453,6 +450,15 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 
 	@Override
 	public void addToShoppingList() {
+		Activity activity = getActivity();
+		if (activity != null) {
+			getGlobalState().saveButtonClicked(INDEX_ADD_TO_SHOPPING_LIST);
+			if (TextUtils.isEmpty(Utils.getSessionToken(null))) {
+				ScreenManager.presentSSOSignin(activity);
+				return;
+			}
+			onPermissionGranted();
+		}
 	}
 
 	@Override
@@ -710,8 +716,8 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 			} else {
 				try {
 					setText(tvColour, getString(R.string.product_colour));
-				}catch (IllegalStateException ex){
-					Log.e("product_colour",ex.getMessage());
+				} catch (IllegalStateException ex) {
+					Log.e("product_colour", ex.getMessage());
 				}
 			}
 		}
@@ -835,8 +841,6 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 	}
 
 	private void cancelBackgroundTask() {
-		if (mDisposables != null && !mDisposables.isDisposed())
-			mDisposables.clear();
 		getGlobalState().setColorWasPopup(false);
 		getGlobalState().setColorPickerSku(null);
 		getGlobalState().setSizeWasPopup(false);
@@ -1092,10 +1096,7 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 		if (getGlobalState().getSaveButtonClick() == INDEX_STORE_FINDER) {
 			startLocationUpdates();
 		} else {
-			WoolworthsApplication
-					.getInstance()
-					.bus()
-					.send(new ProductState(POST_ADD_ITEM_TO_CART, 1));
+			sendBus(new ProductState(POST_ADD_ITEM_TO_CART, 1));
 		}
 	}
 
@@ -1439,7 +1440,7 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 
 		if (addToCartList != null) {
 			cancelPopUpMenu();
-			Utils.sendBus(new CartSummaryResponse(addItemToCartResponse));
+			sendBus(new CartSummaryResponse(addItemToCartResponse));
 		}
 	}
 
