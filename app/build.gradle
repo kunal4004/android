@@ -9,7 +9,7 @@ android {
     def env = System.getenv()
     def job = env['BUILD_NUMBER']
     if (job == null) {
-        job = "64";
+        job = "65";
     }
 
     flavorDimensions "default"
@@ -81,7 +81,7 @@ android {
         qa {
             applicationId "com.awfs.coordination.qa"
             signingConfig signingConfigs.woneappQa
-            versionCode 147
+            versionCode 149
         }
 
         staging {
@@ -93,7 +93,7 @@ android {
         production {
             applicationId "com.awfs.coordination"
             signingConfig signingConfigs.woolworths
-            versionCode 64
+            versionCode 65
         }
         dexOptions {
             javaMaxHeapSize "2560M"

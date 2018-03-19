@@ -96,7 +96,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 		HIGH_LOAN_AMOUNT, LOW_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION, SIGN_OUT, BARCODE_ERROR,
 		SHOPPING_LIST_INFO, SESSION_EXPIRED, INSTORE_AVAILABILITY, NO_STOCK, LOCATION_OFF, SUPPLY_DETAIL_INFO,
 		CLI_DANGER_ACTION_MESSAGE_VALIDATION, AMOUNT_STOCK, UPLOAD_DOCUMENT_MODAL, PROOF_OF_INCOME,
-		STATEMENT_SENT_TO, CLI_DECLINE, CLI_ERROR, DETERMINE_LOCATION_POPUP, STATEMENT_ERROR, EDIT_SHOPPING_LIST
+		STATEMENT_SENT_TO, CLI_DECLINE, CLI_ERROR, DETERMINE_LOCATION_POPUP, STATEMENT_ERROR, EDIT_SHOPPING_LIST,ERROR_TITLE_DESC
 	}
 
 	MODAL_LAYOUT current_view;
@@ -257,7 +257,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				break;
 
 			case HIGH_LOAN_AMOUNT:
-				setContentView(R.layout.lw_too_high_error);
+				setContentView(R.layout.error_title_desc_layout);
 				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
 				mRelPopContainer = findViewById(R.id.relPopContainer);
 				WButton mHighLoanAmount = findViewById(R.id.btnLoanHighOk);
@@ -281,16 +281,16 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				break;
 
 			case LOW_LOAN_AMOUNT:
-				setContentView(R.layout.lw_too_high_error);
+				setContentView(R.layout.error_title_desc_layout);
 				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
 				mRelPopContainer = findViewById(R.id.relPopContainer);
 				WButton mLowLoanAmount = findViewById(R.id.btnLoanHighOk);
 				WTextView mTextTitle = findViewById(R.id.title);
-				WTextView mTextProofIncome = findViewById(R.id.textProofIncome);
+				WTextView mTextDesc = findViewById(R.id.textProofIncome);
 				mTextTitle.setText(getString(R.string.loan_withdrawal_popup_low_error));
-				mTextProofIncome.setText(getString(R.string.loan_request_low_desc));
+				mTextDesc.setText(getString(R.string.loan_request_low_desc));
 				if (description != null && TextUtils.isEmpty(description)) {
-					mTextProofIncome.setText(getString(R.string.loan_request_low_desc).replace
+					mTextDesc.setText(getString(R.string.loan_request_low_desc).replace
 							("R1 500.00", WFormatter.formatAmount(description)));
 				}
 				mLowLoanAmount.setOnClickListener(this);
@@ -341,27 +341,40 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				break;
 
 			case NO_STOCK:
-				setContentView(R.layout.lw_too_high_error);
+				setContentView(R.layout.error_title_desc_layout);
 				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
 				mRelPopContainer = findViewById(R.id.relPopContainer);
 				mLowLoanAmount = findViewById(R.id.btnLoanHighOk);
 				mTextTitle = findViewById(R.id.title);
 				mTextTitle.setText(getString(R.string.no_stock_title));
-				mTextProofIncome = findViewById(R.id.textProofIncome);
-				mTextProofIncome.setText(getString(R.string.stock_available_product));
+				mTextDesc = findViewById(R.id.textProofIncome);
+				mTextDesc.setText(getString(R.string.stock_available_product));
+				mLowLoanAmount.setOnClickListener(this);
+				mRelPopContainer.setOnClickListener(this);
+				break;
+
+			case ERROR_TITLE_DESC:
+				setContentView(R.layout.error_title_desc_layout);
+				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = findViewById(R.id.relPopContainer);
+				mLowLoanAmount = findViewById(R.id.btnLoanHighOk);
+				mTextTitle = findViewById(R.id.title);
+				mTextDesc = findViewById(R.id.textProofIncome);
+				mTextTitle.setText(title);
+				mTextDesc.setText(description);
 				mLowLoanAmount.setOnClickListener(this);
 				mRelPopContainer.setOnClickListener(this);
 				break;
 
 			case LOCATION_OFF:
-				setContentView(R.layout.lw_too_high_error);
+				setContentView(R.layout.error_title_desc_layout);
 				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
 				mRelPopContainer = findViewById(R.id.relPopContainer);
 				mLowLoanAmount = findViewById(R.id.btnLoanHighOk);
 				mTextTitle = findViewById(R.id.title);
 				mTextTitle.setText(getString(R.string.location_disable_title));
-				mTextProofIncome = findViewById(R.id.textProofIncome);
-				mTextProofIncome.setText(getString(R.string.location_disable_desc));
+				mTextDesc = findViewById(R.id.textProofIncome);
+				mTextDesc.setText(getString(R.string.location_disable_desc));
 				mLowLoanAmount.setOnClickListener(this);
 				mRelPopContainer.setOnClickListener(this);
 				break;
@@ -424,7 +437,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 
 			case AMOUNT_STOCK:
-				setContentView(R.layout.lw_too_high_error);
+				setContentView(R.layout.error_title_desc_layout);
 				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
 				mRelPopContainer = findViewById(R.id.relPopContainer);
 				WButton mBtnOk = findViewById(R.id.btnLoanHighOk);
@@ -471,7 +484,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				mRelPopContainer.setOnClickListener(this);
 				break;
 			case CLI_DECLINE:
-				setContentView(R.layout.lw_too_high_error);
+				setContentView(R.layout.error_title_desc_layout);
 				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
 				mRelPopContainer = findViewById(R.id.relPopContainer);
 				WButton mCLIDeclineOk = findViewById(R.id.btnLoanHighOk);

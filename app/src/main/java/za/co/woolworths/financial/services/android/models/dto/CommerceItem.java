@@ -19,6 +19,8 @@ public class CommerceItem {
 
 	//local values to show ProgressBar on load
 	private boolean quantityUploading = false;
+	private String size;
+	private String color;
 	private boolean deleteSingleItem = false;
 	private boolean deleteRowPressed = false;
 	private CommerceItem deletedCommerceItemId;
@@ -95,6 +97,21 @@ public class CommerceItem {
 		return quantityUploading;
 	}
 
+	public String getSize() {
+		return size;
+	}
+
+	public void setSize(String size) {
+		this.size = size;
+	}
+
+	public String getColor() {
+		return color;
+	}
+
+	public void setColor(String color) {
+		this.color = color;
+	}
 	public void setDeleteSingleItem(boolean deleteSingleItem) {
 		this.deleteSingleItem = deleteSingleItem;
 	}

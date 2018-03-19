@@ -631,4 +631,8 @@
     <string name="total_item">Total*</string>
     <string name="rlOtherDiscounts"><![CDATA[WRewards Savings & Other Discounts]]></string>
     <string name="delete_list">DELETE LIST</string>
+    <string name="out_of_stock">out of stock</string>
+    <string name="out_of_stock_desc">Unfortunately this item is currently out of stock online, please try to find in-store or consider an alternative item.</string>
+    <string name="out_of_stock_err">some of the products chosen are out of stock, please come back later!!</string>
+    <string name="promotional_text">You saved </string>
 </resources>
