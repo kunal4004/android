@@ -1074,4 +1074,33 @@ public class Utils {
 		view.startAnimation(animation);
 	}
 
+
+	public static void fadeView(final View view, final boolean editMode) {
+		Animation animation;
+		if (editMode) {
+			animation = android.view.animation.AnimationUtils.loadAnimation(view.getContext(), R.anim.edit_mode_fade_in);
+		} else {
+			animation = android.view.animation.AnimationUtils.loadAnimation(view.getContext(), R.anim.edit_mode_fade_out);
+		}
+
+		if (view instanceof WButton) {
+			animation.setAnimationListener(new Animation.AnimationListener() {
+				@Override
+				public void onAnimationStart(Animation animation) {
+
+				}
+
+				@Override
+				public void onAnimationEnd(Animation animation) {
+					view.setEnabled(editMode);
+				}
+
+				@Override
+				public void onAnimationRepeat(Animation animation) {
+
+				}
+			});
+		}
+		view.startAnimation(animation);
+	}
 }
