@@ -2,4 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.shop.li
 
 
 public interface NewListNavigator {
+	void onFailure(String e);
+
+	void onSuccess();
 }
