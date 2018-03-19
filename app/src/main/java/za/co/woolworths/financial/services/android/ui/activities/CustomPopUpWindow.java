@@ -88,6 +88,8 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 	protected WTextView mTvStatementSendTo;
 	private WButton mBtnSignOutCancel;
 	private WButton mBtnSignOut;
+	private WButton mBtnSessionExpiredCancel;
+	private WButton mBtnSignIn;
 
 	public enum MODAL_LAYOUT {
 		CONFIDENTIAL, INSOLVENCY, INFO, EMAIL, ERROR, MANDATORY_FIELD,
@@ -323,8 +325,8 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				} else {
 					tvSessionExpiredDesc.setText(getString(R.string.session_expired_account_desc));
 				}
-				WButton mBtnSessionExpiredCancel = findViewById(R.id.btnSECancel);
-				WButton mBtnSignIn = findViewById(R.id.btnSESignIn);
+				mBtnSessionExpiredCancel = findViewById(R.id.btnSECancel);
+				mBtnSignIn = findViewById(R.id.btnSESignIn);
 				mBtnSessionExpiredCancel.setOnClickListener(this);
 				mBtnSignIn.setOnClickListener(this);
 				break;
@@ -884,6 +886,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				break;
 
 			case R.id.btnSECancel:
+				whiteEffectClick(mBtnSessionExpiredCancel);
 				exitSessionAnimation();
 				break;
 
@@ -892,6 +895,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				break;
 
 			case R.id.btnSESignIn:
+				whiteEffectClick(mBtnSignIn);
 				String mSTSParams = description;
 				if (TextUtils.isEmpty(mSTSParams)) {
 					mSTSParams = "";
