@@ -29,7 +29,6 @@ import za.co.woolworths.financial.services.android.util.Utils;
 
 public class SearchResultFragment extends BaseFragment<GridLayoutBinding, SearchResultViewModel> implements SearchResultNavigator, View.OnClickListener {
 
-
 	private SearchResultViewModel mGridViewModel;
 	private ErrorHandlerView mErrorHandlerView;
 	private ShoppingListSearchResultAdapter mProductAdapter;
@@ -281,7 +280,6 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 				List<AddToListRequest> addToListRequests = new ArrayList<>();
 				for (ProductList list : mProductList) {
 					if (list.productWasChecked) {
-
 						AddToListRequest addToList = new AddToListRequest();
 						addToList.setSkuID(list.sku);
 						addToList.setCatalogRefId(list.sku);
@@ -350,6 +348,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 		WButton btnCheck0ut = getViewDataBinding().incConfirmButtonLayout.btnCheckOut;
 		progressBar.setVisibility(View.GONE);
 		btnCheck0ut.setVisibility(View.VISIBLE);
+		popFragmentNoAnim();
 	}
 
 	public void toggleAddToListBtn(boolean enable, boolean clothingProductType) {

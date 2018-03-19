@@ -5,14 +5,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 
 import com.awfs.coordination.R;
 
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem;
-import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.ShoppingListNavigator;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsNavigator;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
@@ -27,9 +25,9 @@ public class ShoppingListItemsAdapter extends RecyclerView.Adapter<ShoppingListI
 	private List<ShoppingListItem> listItems;
 	private ShoppingListItemsNavigator navigator;
 
-	public ShoppingListItemsAdapter(List<ShoppingListItem> listItems,ShoppingListItemsNavigator navigator) {
-		this.listItems=listItems;
-		this.navigator=navigator;
+	public ShoppingListItemsAdapter(List<ShoppingListItem> listItems, ShoppingListItemsNavigator navigator) {
+		this.listItems = listItems;
+		this.navigator = navigator;
 		this.navigator.onItemSelectionChange(listItems);
 	}
 
@@ -41,18 +39,17 @@ public class ShoppingListItemsAdapter extends RecyclerView.Adapter<ShoppingListI
 
 	@Override
 	public void onBindViewHolder(final ShoppingListItemsAdapter.ViewHolder holder, final int position) {
-		holder.cartProductImage.setImageURI("https://images.woolworthsstatic.co.za/"+listItems.get(position).externalImageURL+ "?w=" + 85 + "&q=" + 85);
+		holder.cartProductImage.setImageURI("https://images.woolworthsstatic.co.za/" + listItems.get(position).externalImageURL + "?w=" + 85 + "&q=" + 85);
 		holder.productName.setText(listItems.get(position).displayName);
 		holder.productDesc.setText(listItems.get(position).description);
 		holder.quantity.setText(listItems.get(position).quantityDesired);
 		holder.price.setText(WFormatter.formatAmount(listItems.get(position).price));
 		holder.select.setChecked(listItems.get(position).isSelected);
 
-
 		holder.select.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				listItems.get(position).isSelected=listItems.get(position).isSelected ? false :true;
+				listItems.get(position).isSelected = listItems.get(position).isSelected ? false : true;
 				notifyDataSetChanged();
 				navigator.onItemSelectionChange(listItems);
 			}
@@ -67,7 +64,7 @@ public class ShoppingListItemsAdapter extends RecyclerView.Adapter<ShoppingListI
 		return listItems.size();
 	}
 
-	public class ViewHolder extends RecyclerView.ViewHolder{
+	public class ViewHolder extends RecyclerView.ViewHolder {
 		private WTextView productName;
 		private WTextView productDesc;
 		private WTextView quantity;
@@ -78,11 +75,11 @@ public class ShoppingListItemsAdapter extends RecyclerView.Adapter<ShoppingListI
 
 		public ViewHolder(View itemView) {
 			super(itemView);
-			productName=itemView.findViewById(R.id.tvTitle);
-			productDesc=itemView.findViewById(R.id.tvDetails);
-			quantity=itemView.findViewById(R.id.tvQuantity);
-			price=itemView.findViewById(R.id.tvPrice);
-			select=itemView.findViewById(R.id.btnDeleteRow);
+			productName = itemView.findViewById(R.id.tvTitle);
+			productDesc = itemView.findViewById(R.id.tvDetails);
+			quantity = itemView.findViewById(R.id.tvQuantity);
+			price = itemView.findViewById(R.id.tvPrice);
+			select = itemView.findViewById(R.id.btnDeleteRow);
 			cartProductImage = itemView.findViewById(R.id.cartProductImage);
 		}
 	}

@@ -21,15 +21,18 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.awfs.coordination.R;
 
+import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator;
+import za.co.woolworths.financial.services.android.ui.fragments.contact_us.ContactUsCustomerServiceFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseViewModel> extends Fragment {
@@ -259,6 +262,11 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 		getBottomNavigator().popFragment();
 	}
 
+
+	public void popFragmentNoAnim() {
+		getBottomNavigator().popFragmentNoAnim();
+	}
+
 	public WGlobalState getGlobalState() {
 		return WoolworthsApplication.getInstance().getWGlobalState();
 	}
@@ -307,10 +315,26 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 	}
 
 	public void closeSoftKeyboard() {
-		Activity activity = getActivity();
-		if (activity != null) {
-			InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-			imm.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+		Activity act = getActivity();
+		if (act != null && act.getCurrentFocus() != null) {
+			InputMethodManager inputMethodManager = (InputMethodManager) act.getSystemService(Activity.INPUT_METHOD_SERVICE);
+			inputMethodManager.hideSoftInputFromWindow(act.getCurrentFocus().getWindowToken(), 0);
+			inputMethodManager.showSoftInputFromInputMethod(act.getCurrentFocus().getWindowToken(), 0);
 		}
+	}
+
+	public void showKeyboard(View view) {
+		Activity act = getActivity();
+		if (act != null) {
+			new KeyboardUtil(act, view, getBottomNavigator().getBottomNavigationById().getHeight());
+		}
+	}
+
+	public void sendBus(Object obj) {
+		Utils.sendBus(obj);
+	}
+
+	public void observableOn(Consumer consumer){
+		getViewModel().consumeObservable(consumer);
 	}
 }

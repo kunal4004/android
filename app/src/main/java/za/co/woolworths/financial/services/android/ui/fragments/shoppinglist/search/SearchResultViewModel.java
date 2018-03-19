@@ -10,7 +10,6 @@ import za.co.woolworths.financial.services.android.models.dto.LoadProduct;
 import za.co.woolworths.financial.services.android.models.dto.PagingResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
-import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.rest.product.SearchProductRequest;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostAddToList;
 import za.co.woolworths.financial.services.android.ui.base.BaseViewModel;
@@ -153,15 +152,13 @@ public class SearchResultViewModel extends BaseViewModel<SearchResultNavigator> 
 			public void onFailure(final String e) {
 				if (context != null) {
 					Activity activity = (Activity) context;
-					if (activity != null) {
-						activity.runOnUiThread(new Runnable() {
-							@Override
-							public void run() {
-								getNavigator().failureResponseHandler(e);
-								getNavigator().onLoadComplete(getLoadMoreData());
-							}
-						});
-					}
+					activity.runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							getNavigator().failureResponseHandler(e);
+							getNavigator().onLoadComplete(getLoadMoreData());
+						}
+					});
 				}
 			}
 		});
