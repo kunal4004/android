@@ -5,7 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-
+import android.widget.CompoundButton;
+import android.widget.ProgressBar;
 import com.awfs.coordination.R;
 
 import java.util.List;
@@ -25,7 +26,8 @@ public class ShoppingListItemsAdapter extends RecyclerView.Adapter<ShoppingListI
 	private List<ShoppingListItem> listItems;
 	private ShoppingListItemsNavigator navigator;
 
-	public ShoppingListItemsAdapter(List<ShoppingListItem> listItems, ShoppingListItemsNavigator navigator) {
+
+	public ShoppingListItemsAdapter(List<ShoppingListItem> listItems,ShoppingListItemsNavigator navigator) {
 		this.listItems = listItems;
 		this.navigator = navigator;
 		this.navigator.onItemSelectionChange(listItems);
@@ -39,19 +41,30 @@ public class ShoppingListItemsAdapter extends RecyclerView.Adapter<ShoppingListI
 
 	@Override
 	public void onBindViewHolder(final ShoppingListItemsAdapter.ViewHolder holder, final int position) {
-		holder.cartProductImage.setImageURI("https://images.woolworthsstatic.co.za/" + listItems.get(position).externalImageURL + "?w=" + 85 + "&q=" + 85);
+		holder.cartProductImage.setImageURI("https://images.woolworthsstatic.co.za/"+listItems.get(position).externalImageURL+ "?w = " + 85 + "&q = " + 85);
 		holder.productName.setText(listItems.get(position).displayName);
 		holder.productDesc.setText(listItems.get(position).description);
 		holder.quantity.setText(listItems.get(position).quantityDesired);
 		holder.price.setText(WFormatter.formatAmount(listItems.get(position).price));
 		holder.select.setChecked(listItems.get(position).isSelected);
+		holder.delete.setVisibility(View.VISIBLE);
+		holder.progressBar.setVisibility(View.GONE);
 
 		holder.select.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				listItems.get(position).isSelected = listItems.get(position).isSelected ? false : true;
+				listItems.get(position).isSelected = listItems.get(position).isSelected ? false :true;
 				notifyDataSetChanged();
 				navigator.onItemSelectionChange(listItems);
+			}
+		});
+
+		holder.delete.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				holder.delete.setVisibility(View.GONE);
+				holder.progressBar.setVisibility(View.VISIBLE);
+				navigator.onItemDeleteClick(listItems.get(position).Id, listItems.get(position).productId, listItems.get(position).catalogRefId);
 			}
 		});
 
@@ -71,6 +84,8 @@ public class ShoppingListItemsAdapter extends RecyclerView.Adapter<ShoppingListI
 		private WTextView price;
 		private CheckBox select;
 		private WrapContentDraweeView cartProductImage;
+		private WTextView delete;
+		private ProgressBar progressBar;
 
 
 		public ViewHolder(View itemView) {
@@ -81,7 +96,15 @@ public class ShoppingListItemsAdapter extends RecyclerView.Adapter<ShoppingListI
 			price = itemView.findViewById(R.id.tvPrice);
 			select = itemView.findViewById(R.id.btnDeleteRow);
 			cartProductImage = itemView.findViewById(R.id.cartProductImage);
+			cartProductImage  =  itemView.findViewById(R.id.cartProductImage);
+			delete = itemView.findViewById(R.id.tvDelete);
+			progressBar = itemView.findViewById(R.id.pbDeleteIndicator);
 		}
+	}
+
+	public void updateList(List<ShoppingListItem> updatedListItems){
+		this.listItems=updatedListItems;
+		notifyDataSetChanged();
 	}
 
 

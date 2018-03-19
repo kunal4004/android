@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <com.daimajia.swipe.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                xmlns:app="http://schemas.android.com/apk/res-auto"
                                 xmlns:fresco="http://schemas.android.com/apk/res-auto"
                                 xmlns:swipe="http://schemas.android.com/apk/res-auto"
                                 android:id="@+id/swipe"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:background="@drawable/bottom_divider_list"
-                                swipe:leftEdgeSwipeOffset="0dp"
-                                swipe:rightEdgeSwipeOffset="0dp">
+    >
 
     <!--Bottom View For Right to Left-->
 
@@ -16,6 +14,8 @@
         android:id="@+id/bottom_wrapper"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:paddingLeft="@dimen/eighty_two_dp"
+        android:paddingRight="@dimen/seventy_eight_dp"
         android:background="@color/delete_red_bg"
         android:gravity="center"
         android:orientation="horizontal">
@@ -24,38 +24,22 @@
             android:id="@+id/pbDeleteIndicator"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:layout_marginEnd="@dimen/eighty_two_dp"
-            android:layout_marginStart="@dimen/seventy_eight_dp"
             android:indeterminateTint="@color/white"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
-        <LinearLayout
-            android:id="@+id/llDeleteContainer"
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/tvDelete"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/tvDelete"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginEnd="@dimen/four_dp"
-                android:layout_marginStart="@dimen/seventy_eight_dp"
-                android:gravity="center"
-                android:text="@string/delete"
-                android:textAllCaps="true"
-                android:textColor="@color/white"
-                android:textSize="@dimen/twenty_sp"
-                swipe:WTextView_font="medium"/>
-
-            <ImageView
-                android:id="@+id/imDelete"
-                android:layout_width="@dimen/twenty_four_dp"
-                android:layout_height="@dimen/twenty_four_dp"
-                android:layout_marginEnd="@dimen/eighty_two_dp"
-                android:contentDescription="@string/app_label"
-                android:src="@drawable/close_white"/>
-        </LinearLayout>
+            android:layout_height="match_parent"
+            android:drawablePadding="@dimen/four_dp"
+            android:drawableRight="@drawable/close_white"
+            android:layout_centerInParent="true"
+            android:gravity="center_horizontal|center_vertical"
+            android:text="@string/delete"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="@dimen/twenty_sp"
+            swipe:WTextView_font="medium" />
     </RelativeLayout>
 
 
@@ -90,24 +74,17 @@
                 android:paddingStart="21dp"
                 android:paddingTop="32dp">
 
-                <RelativeLayout
+                <CheckBox
+                    android:id="@+id/btnDeleteRow"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:gravity="center">
-
-                    <CheckBox
-                        android:id="@+id/btnDeleteRow"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center_vertical"
-                        android:button="@drawable/shopping_list_item_selector"
-                        android:checked="false"
-                        android:clickable="false"
-                        android:focusable="false"
-                        android:focusableInTouchMode="false"
-                        android:paddingRight="21dp"/>
-
-                </RelativeLayout>
+                    android:layout_gravity="center_vertical"
+                    android:button="@drawable/shopping_list_item_selector"
+                    android:checked="false"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:paddingRight="21dp" />
 
                 <LinearLayout
                     android:id="@+id/llCartItems"
@@ -123,7 +100,7 @@
                         android:contentDescription="@string/app_name"
                         fresco:fadeDuration="50"
                         fresco:failureImage="@drawable/placeholder_logo"
-                        fresco:viewAspectRatio="0.5"/>
+                        fresco:viewAspectRatio="0.5" />
 
                     <LinearLayout
                         android:id="@+id/llProductInfo"
@@ -136,13 +113,13 @@
                             android:id="@+id/tvTitle"
                             style="@style/style_cart_item_title"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"/>
+                            android:layout_height="wrap_content" />
 
                         <za.co.woolworths.financial.services.android.ui.views.WTextView
                             android:id="@+id/tvDetails"
                             style="@style/style_cart_item_details"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"/>
+                            android:layout_height="wrap_content" />
 
                         <RelativeLayout
                             android:layout_width="match_parent"
@@ -162,7 +139,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_centerInParent="true"
-                                    android:text="1"/>
+                                    android:text="1" />
 
 
                             </RelativeLayout>
@@ -174,7 +151,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentBottom="true"
                                 android:layout_marginEnd="@dimen/four_dp"
-                                android:layout_toStartOf="@+id/tvPrice"/>
+                                android:layout_toStartOf="@+id/tvPrice" />
 
                             <za.co.woolworths.financial.services.android.ui.views.WTextView
                                 android:id="@+id/tvPrice"
@@ -182,8 +159,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentBottom="true"
-                                android:layout_alignParentEnd="true"
-                                android:text="800"/>
+                                android:layout_alignParentEnd="true" />
 
                         </RelativeLayout>
 
@@ -194,7 +170,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.2dp"
-                android:background="@color/outside_border"/>
+                android:background="@color/outside_border" />
         </LinearLayout>
 
     </LinearLayout>

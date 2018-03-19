@@ -924,4 +924,20 @@ public interface ApiInterface {
 			@Header("osVersion") String osVersion,
 			@Header("sessionToken") String sessionToken,
 			@Path("id") String id);
+
+	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+	@DELETE("/list/{listId}/item/{id}")
+	ShoppingListItemsResponse deleteShoppingListItem(
+			@Header("apiId") String apiId,
+			@Header("sha1Password") String sha1Password,
+			@Header("deviceVersion") String deviceVersion,
+			@Header("deviceModel") String deviceModel,
+			@Header("network") String network,
+			@Header("os") String os,
+			@Header("osVersion") String osVersion,
+			@Header("sessionToken") String sessionToken,
+			@Path("listId") String listId,
+			@Path("id") String id,
+			@Query("productId") String productId,
+			@Query("catalogRefId") String catalogRefId);
 }
