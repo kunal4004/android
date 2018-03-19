@@ -3,7 +3,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:clickable="true"
         android:focusable="true"
-        tools:context="za.co.woolworths.financial.services.android.ui.fragments.product.detail.DetailFragment">
+        tools:context="za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment">
 
     <data>
 

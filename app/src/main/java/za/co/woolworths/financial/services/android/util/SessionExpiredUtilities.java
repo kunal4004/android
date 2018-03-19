@@ -18,9 +18,13 @@ public enum SessionExpiredUtilities {
 
 
 	public void setAccountSessionExpired(Activity activity, String token) {
-		getGlobalState().setSection(ACCOUNT);
-		Utils.sendBus(new SessionManager(SessionManager.ACCOUNT_SESSION_EXPIRED));
 		onSessionExpired(activity, token);
+		getGlobalState().setSection(ACCOUNT);
+		openBottomNavigation(activity);
+		Utils.sendBus(new SessionManager(SessionManager.ACCOUNT_SESSION_EXPIRED));
+	}
+
+	private void openBottomNavigation(Activity activity) {
 		Intent i = new Intent(activity, BottomNavigationActivity.class);
 		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -32,25 +36,15 @@ public enum SessionExpiredUtilities {
 	public void setWRewardSessionExpired(Activity activity, String token) {
 		onSessionExpired(activity, token);
 		getGlobalState().setSection(REWARD);
-		Intent i = new Intent(activity, BottomNavigationActivity.class);
-		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-		activity.startActivity(i);
-		activity.overridePendingTransition(0, 0);
+		openBottomNavigation(activity);
 		Utils.sendBus(new SessionManager(SessionManager.REWARD_SESSION_EXPIRED));
 	}
 
 	public void setProductExpired(Activity activity, String token) {
 		onSessionExpired(activity, token);
 		getGlobalState().setSection(PRODUCT);
+		openBottomNavigation(activity);
 		Utils.sendBus(new SessionManager(SessionManager.PRODUCT_SESSION_EXPIRED));
-		Intent i = new Intent(activity, BottomNavigationActivity.class);
-		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-		activity.startActivity(i);
-		activity.overridePendingTransition(0, 0);
 	}
 
 	public void showSessionExpireDialog(Activity activity) {

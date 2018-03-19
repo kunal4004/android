@@ -12,17 +12,17 @@ import com.awfs.coordination.R;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DetailNavigator;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailNavigator;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
 public class ProductSizeAdapter extends RecyclerView.Adapter<ProductSizeAdapter.SimpleViewHolder> {
 	private List<OtherSkus> mProductSizeList;
-	private DetailNavigator mDetailNavigator;
+	private ProductDetailNavigator mProductDetailNavigator;
 
 	public ProductSizeAdapter(List<OtherSkus> mProductSizeList,
-							  DetailNavigator detailNavigator) {
+							  ProductDetailNavigator productDetailNavigator) {
 		this.mProductSizeList = mProductSizeList;
-		this.mDetailNavigator = detailNavigator;
+		this.mProductDetailNavigator = productDetailNavigator;
 	}
 
 
@@ -46,7 +46,7 @@ public class ProductSizeAdapter extends RecyclerView.Adapter<ProductSizeAdapter.
 		holder.llSize.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				mDetailNavigator.onSizeItemClicked(mProductSizeList.get(position));
+				mProductDetailNavigator.onSizeItemClicked(mProductSizeList.get(position));
 			}
 		});
 	}

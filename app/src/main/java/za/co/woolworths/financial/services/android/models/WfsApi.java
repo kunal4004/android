@@ -28,6 +28,7 @@ import za.co.woolworths.financial.services.android.models.dto.CardDetailsRespons
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.ChangeQuantity;
 import za.co.woolworths.financial.services.android.models.dto.CLIOfferDecision;
+import za.co.woolworths.financial.services.android.models.dto.CreateList;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferRequest;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDeviceResponse;
@@ -308,12 +309,17 @@ public class WfsApi {
 		return mApiInterface.getShoppingLists(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken());
 	}
 
+	public Response createList(CreateList listName) {
+		return mApiInterface.createList(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), listName);
+	}
+
+
 	public ShoppingListItemsResponse getShoppingListItems(String listId) {
 		return mApiInterface.getShoppingListItems(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), listId);
 	}
 
 	public ShoppingListsResponse deleteShoppingList(String listId) {
-		return mApiInterface.deleteShoppingList(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(),listId);
+		return mApiInterface.deleteShoppingList(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), listId);
 	}
 
 	private String getOsVersion() {

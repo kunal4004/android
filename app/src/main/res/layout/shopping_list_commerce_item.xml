@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <com.daimajia.swipe.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                xmlns:app="http://schemas.android.com/apk/res-auto"
                                 xmlns:fresco="http://schemas.android.com/apk/res-auto"
                                 xmlns:swipe="http://schemas.android.com/apk/res-auto"
                                 android:id="@+id/swipe"
@@ -89,18 +90,24 @@
                 android:paddingStart="21dp"
                 android:paddingTop="32dp">
 
-
-                <CheckBox
-                    android:id="@+id/btnDeleteRow"
+                <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_gravity="center_vertical"
-                    android:button="@drawable/shopping_list_item_selector"
-                    android:checked="false"
-                    android:clickable="false"
-                    android:focusable="false"
-                    android:focusableInTouchMode="false"
-                    android:paddingRight="21dp"/>
+                    android:gravity="center">
+
+                    <CheckBox
+                        android:id="@+id/btnDeleteRow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:button="@drawable/shopping_list_item_selector"
+                        android:checked="false"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:paddingRight="21dp"/>
+
+                </RelativeLayout>
 
                 <LinearLayout
                     android:id="@+id/llCartItems"

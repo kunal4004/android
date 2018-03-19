@@ -21,7 +21,7 @@ import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator;
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DetailFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
 import za.co.woolworths.financial.services.android.ui.views.ProductProgressDialogFrag;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
@@ -149,16 +149,16 @@ public class WebAppInterface {
 												if (mProductList.size() > 0 && mProductList.get(0).productId != null) {
 													GsonBuilder builder = new GsonBuilder();
 													Gson gson = builder.create();
-													DetailFragment detailFragment = new DetailFragment();
+													ProductDetailFragment productDetailFragment = new ProductDetailFragment();
 													String strProductList = gson.toJson(mProductList.get(0));
 													Bundle bundle = new Bundle();
 													bundle.putString("strProductList", strProductList);
 													bundle.putString("strProductCategory", mProductList.get(0).productName);
 													bundle.putString("productResponse", strProduct);
 													bundle.putBoolean("fetchFromJson", true);
-													detailFragment.setArguments(bundle);
+													productDetailFragment.setArguments(bundle);
 													FragmentTransaction transaction = ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction();
-													transaction.replace(R.id.fragment_bottom_container, detailFragment).commit();
+													transaction.replace(R.id.fragment_bottom_container, productDetailFragment).commit();
 													mBottomNavigator.slideUpBottomView();
 												}
 											} catch (Exception ex) {

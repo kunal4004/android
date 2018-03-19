@@ -49,7 +49,7 @@ import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.category.CategoryFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DetailFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.base.WRewardsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wtoday.WTodayFragment;
@@ -82,7 +82,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	public static final int INDEX_REWARD = FragNavController.TAB4;
 	public static final int INDEX_ACCOUNT = FragNavController.TAB5;
 	public static final int OPEN_CART_REQUEST = 12346;
-	public static Toolbar mToolbar;
 
 	private final CompositeDisposable mDisposables = new CompositeDisposable();
 	private PermissionUtils permissionUtils;
@@ -226,7 +225,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void renderUI() {
-		mToolbar = getToolbar();
+		getToolbar();
 		setActionBar();
 		bottomNavigationViewModel = ViewModelProviders.of(this).get(BottomNavigationViewModel.class);
 		bottomNavigationViewModel.setNavigator(this);
@@ -308,9 +307,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 							FragmentManager fm = getSupportFragmentManager();
 							Fragment fragmentById = fm.findFragmentById(R.id.fragment_bottom_container);
 							//detach detail fragment
-							if (fragmentById instanceof DetailFragment) {
-								DetailFragment detailFragment = (DetailFragment) fragmentById;
-								detailFragment.onDetach();
+							if (fragmentById instanceof ProductDetailFragment) {
+								ProductDetailFragment productDetailFragment = (ProductDetailFragment) fragmentById;
+								productDetailFragment.onDetach();
 							}
 						} catch (ClassCastException e) {
 							// not that fragment
@@ -330,15 +329,15 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void openProductDetailFragment(String productName, ProductList productList) {
-		DetailFragment detailFragment = new DetailFragment();
+		ProductDetailFragment productDetailFragment = new ProductDetailFragment();
 		Gson gson = new Gson();
 		String strProductList = gson.toJson(productList);
 		Bundle bundle = new Bundle();
 		bundle.putString("strProductList", strProductList);
 		bundle.putString("strProductCategory", productName);
-		detailFragment.setArguments(bundle);
+		productDetailFragment.setArguments(bundle);
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-		transaction.replace(R.id.fragment_bottom_container, detailFragment).commitAllowingStateLoss();
+		transaction.replace(R.id.fragment_bottom_container, productDetailFragment).commitAllowingStateLoss();
 	}
 
 	@Override
@@ -610,6 +609,13 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	}
 
 	@Override
+	public void popFragmentNoAnim() {
+		if (!mNavController.isRootFragment()) {
+			mNavController.popFragment(new FragNavTransactionOptions.Builder().customAnimations(R.anim.stay, R.anim.stay).build());
+		}
+	}
+
+	@Override
 	public void setSelectedIconPosition(int position) {
 
 	}
@@ -634,7 +640,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	public void PermissionGranted(int request_code) {
 		woolworthsApplication()
 				.bus()
-				.send(new DetailFragment());
+				.send(new ProductDetailFragment());
 	}
 
 	@Override
@@ -755,5 +761,16 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		addBadge(INDEX_CART, 0);
 		addBadge(INDEX_ACCOUNT, 0);
 		addBadge(INDEX_REWARD, 0);
+	}
+
+	@Override
+	public Toolbar toolbar() {
+		return getToolbar();
+
+	}
+
+	@Override
+	public void onPointerCaptureChanged(boolean hasCapture) {
+
 	}
 }

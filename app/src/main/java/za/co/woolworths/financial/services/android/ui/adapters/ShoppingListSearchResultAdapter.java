@@ -25,7 +25,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.sea
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
 
-import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.DetailViewModel.CLOTHING_PRODUCT;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailViewModel.CLOTHING_PRODUCT;
 
 public class ShoppingListSearchResultAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
