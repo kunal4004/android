@@ -4,6 +4,7 @@ import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +25,7 @@ import java.util.HashMap;
 import za.co.woolworths.financial.services.android.models.dto.CartItemGroup;
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
+import za.co.woolworths.financial.services.android.models.dto.PriceInfo;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -91,11 +93,12 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 			case PRODUCT:
 				final CartItemViewHolder productHolder = ((CartItemViewHolder) holder);
 				final CommerceItem commerceItem = itemRow.productItem;
-				productHolder.tvTitle.setText(commerceItem.getProductDisplayName());
-				productHolder.quantity.setText(String.valueOf(commerceItem.getQuantity()));
-				productHolder.price.setText(WFormatter.formatAmount(commerceItem.getPriceInfo().getAmount()));
-				productImage(productHolder.productImage, commerceItem.externalImageURL);
-				productHolder.btnDeleteRow.setVisibility(this.editMode ? View.VISIBLE : View.GONE);
+				setText(productHolder.tvTitle, commerceItem.getProductDisplayName());
+				setText(productHolder.quantity, commerceItem.getQuantity());
+				setText(productHolder.price, commerceItem.getPriceInfo());
+				setImage(productHolder.productImage, commerceItem.externalImageURL);
+				setButtonVisibility(productHolder.btnDeleteRow, this.editMode);
+
 				onRemoveSingleItem(productHolder, commerceItem);
 				//enable/disable change quantity click
 				productHolder.llQuantity.setEnabled(!this.editMode);
@@ -155,6 +158,27 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 			default:
 				break;
 		}
+	}
+
+	private void setButtonVisibility(ImageView imageView, boolean editMode) {
+		imageView.setVisibility(editMode ? View.VISIBLE : View.GONE);
+	}
+
+	private void setImage(SimpleDraweeView productImage, String externalImageURL) {
+		externalImageURL = !TextUtils.isEmpty(externalImageURL) ? externalImageURL : "";
+		productImage(productImage, externalImageURL);
+	}
+
+	private void setText(WTextView price, PriceInfo priceInfo) {
+		price.setText(priceInfo != null ? WFormatter.formatAmount(priceInfo.getAmount()) : "");
+	}
+
+	private void setText(WTextView tvItem, String item) {
+		tvItem.setText(!TextUtils.isEmpty(item) ? item : "");
+	}
+
+	private void setText(WTextView tvItem, Integer item) {
+		tvItem.setText(item != null ? String.valueOf(item) : "");
 	}
 
 	private void onRemoveSingleItem(final CartItemViewHolder productHolder, final CommerceItem commerceItem) {
