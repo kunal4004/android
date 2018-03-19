@@ -106,7 +106,7 @@
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/ic_notification" />
+            android:resource="@drawable/ic_notification"/>
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -145,24 +145,27 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name="com.google.android.gms.analytics.CampaignTrackingReceiver"
-                  android:enabled="true"
-                  android:exported="true">
+        <receiver
+            android:name="com.google.android.gms.analytics.CampaignTrackingReceiver"
+            android:enabled="true"
+            android:exported="true">
             <intent-filter>
-                <action android:name="com.android.vending.INSTALL_REFERRER" />
+                <action android:name="com.android.vending.INSTALL_REFERRER"/>
             </intent-filter>
         </receiver>
-        <service android:name="com.google.android.gms.analytics.CampaignTrackingService" />
-        <receiver android:name="com.google.android.gms.analytics.AnalyticsReceiver"
-                  android:enabled="true">
-            <intent-filter>
-                <action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH" />
-            </intent-filter>
-        </receiver>
-        <service android:name="com.google.android.gms.analytics.AnalyticsService"
-                 android:enabled="true"
-                 android:exported="false"/>
 
+        <service android:name="com.google.android.gms.analytics.CampaignTrackingService"/>
+        <receiver
+            android:name="com.google.android.gms.analytics.AnalyticsReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH"/>
+            </intent-filter>
+        </receiver>
+        <service
+            android:name="com.google.android.gms.analytics.AnalyticsService"
+            android:enabled="true"
+            android:exported="false"/>
 
 
         <activity
@@ -299,7 +302,8 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity"
             android:label="@string/title_activity_bottom_navigation"
             android:screenOrientation="portrait"
-            android:theme="@style/bottomNavigationStyle"/>
+            android:theme="@style/bottomNavigationStyle"
+            android:windowSoftInputMode="adjustNothing"/>
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListActivity"
             android:label="@string/title_activity_main"
@@ -321,7 +325,7 @@
             android:noHistory="true"
             android:screenOrientation="portrait"
             android:theme="@style/Cart"/>
-        
+
         <!-- Firebase Notifications -->
         <service android:name="za.co.woolworths.financial.services.android.util.WFirebaseMessagingService">
             <intent-filter>
