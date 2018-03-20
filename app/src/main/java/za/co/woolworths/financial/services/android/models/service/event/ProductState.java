@@ -10,6 +10,7 @@ public class ProductState {
 	public static final String SET_SUBURB_API = "SET_SUBURB_API";
 	public static final String CANCEL_CALL = "CANCEL_CALL";
 	public static final String OPEN_ADD_TO_SHOPPING_LIST_VIEW = "OPEN_ADD_TO_SHOPPING_LIST_VIEW";
+	public static final String CLOSE_VIEW = "CLOSE_VIEW";
 
 	private String state;
 	private int quantity;

@@ -93,6 +93,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 	private WButton mBtnSignOut;
 	private WButton mBtnSessionExpiredCancel;
 	private WButton mBtnSignIn;
+	private boolean mCloseView;
 
 	public enum MODAL_LAYOUT {
 		CONFIDENTIAL, INSOLVENCY, INFO, EMAIL, ERROR, MANDATORY_FIELD,
@@ -122,6 +123,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 			current_view = (MODAL_LAYOUT) mBundle.getSerializable("key");
 			title = getText(mBundle.getString("title"));
 			description = getText(mBundle.getString("description"));
+			mCloseView = mBundle.getBoolean("closeView");
 			userStatement = mBundle.getString(StatementActivity.SEND_USER_STATEMENT);
 			displayView(current_view);
 		} else {
@@ -608,6 +610,9 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 				@Override
 				public void onAnimationEnd(Animation animation) {
+					if (mCloseView) {
+						Utils.sendBus(new ProductState(ProductState.CLOSE_VIEW));
+					}
 					dismissLayout();
 				}
 			});
@@ -899,6 +904,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				if (v != mRelPopContainer) {
 					whiteEffectClick(mBtnSignOutCancel);
 				}
+
 				startExitAnimation();
 				break;
 

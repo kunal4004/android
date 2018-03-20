@@ -86,15 +86,13 @@ import za.co.woolworths.financial.services.android.models.dto.Transaction;
 import za.co.woolworths.financial.services.android.models.dto.TransactionParentObj;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
-import za.co.woolworths.financial.services.android.models.service.event.CartState;
+import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
-import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
-import za.co.woolworths.financial.services.android.ui.views.WTabIndicator;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.badgeview.Badge;
 import za.co.woolworths.financial.services.android.ui.views.badgeview.QBadgeView;
@@ -104,6 +102,7 @@ import za.co.woolworths.financial.services.android.util.tooltip.ViewTooltip;
 import static android.Manifest.permission_group.STORAGE;
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.WHITE;
+import static za.co.woolworths.financial.services.android.models.service.event.ProductState.USE_MY_LOCATION;
 
 public class Utils {
 
@@ -440,6 +439,18 @@ public class Utils {
 		Bundle args = new Bundle();
 		args.putSerializable("key", key);
 		args.putString("description", description);
+		openMsg.putExtras(args);
+		context.startActivity(openMsg);
+		((AppCompatActivity) context).overridePendingTransition(0, 0);
+	}
+
+
+	public static void displayValidationMessage(Context context, CustomPopUpWindow.MODAL_LAYOUT key, String description, boolean closeView) {
+		Intent openMsg = new Intent(context, CustomPopUpWindow.class);
+		Bundle args = new Bundle();
+		args.putSerializable("key", key);
+		args.putString("description", description);
+		args.putBoolean("closeView", closeView);
 		openMsg.putExtras(args);
 		context.startActivity(openMsg);
 		((AppCompatActivity) context).overridePendingTransition(0, 0);
@@ -1115,5 +1126,15 @@ public class Utils {
 		} catch (Exception ex) {
 			Log.e("whiteEffectClick", ex.toString());
 		}
+	}
+
+	public static void removeFromDb(SessionDao.KEY key, Context context) throws Exception {
+		new SessionDao(context, key).delete();
+	}
+
+	public static void removeToken(SessionDao.KEY key, Context context) throws Exception {
+		SessionDao sessionDao = new SessionDao(context, key).get();
+		sessionDao.value = "";
+		sessionDao.save();
 	}
 }
