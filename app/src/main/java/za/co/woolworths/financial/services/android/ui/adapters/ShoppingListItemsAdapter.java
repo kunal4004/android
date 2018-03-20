@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.adapters;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ProgressBar;
 import com.awfs.coordination.R;
+import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
 
 import java.util.List;
 
@@ -21,7 +23,7 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
  * Created by W7099877 on 2018/03/09.
  */
 
-public class ShoppingListItemsAdapter extends RecyclerView.Adapter<ShoppingListItemsAdapter.ViewHolder> {
+public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<ShoppingListItemsAdapter.ViewHolder> {
 
 	private List<ShoppingListItem> listItems;
 	private ShoppingListItemsNavigator navigator;
@@ -48,7 +50,7 @@ public class ShoppingListItemsAdapter extends RecyclerView.Adapter<ShoppingListI
 		holder.price.setText(WFormatter.formatAmount(listItems.get(position).price));
 		holder.select.setChecked(listItems.get(position).isSelected);
 		holder.delete.setVisibility(View.VISIBLE);
-		holder.progressBar.setVisibility(View.GONE);
+		holder.progressBar.setVisibility(View.INVISIBLE);
 
 		holder.select.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -62,12 +64,12 @@ public class ShoppingListItemsAdapter extends RecyclerView.Adapter<ShoppingListI
 		holder.delete.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				holder.delete.setVisibility(View.GONE);
+				holder.delete.setVisibility(View.INVISIBLE);
 				holder.progressBar.setVisibility(View.VISIBLE);
 				navigator.onItemDeleteClick(listItems.get(position).Id, listItems.get(position).productId, listItems.get(position).catalogRefId);
 			}
 		});
-
+		mItemManger.bindView(holder.itemView, position);
 
 	}
 
@@ -75,6 +77,11 @@ public class ShoppingListItemsAdapter extends RecyclerView.Adapter<ShoppingListI
 	@Override
 	public int getItemCount() {
 		return listItems.size();
+	}
+
+	@Override
+	public int getSwipeLayoutResourceId(int position) {
+		return R.id.swipe;
 	}
 
 	public class ViewHolder extends RecyclerView.ViewHolder {
