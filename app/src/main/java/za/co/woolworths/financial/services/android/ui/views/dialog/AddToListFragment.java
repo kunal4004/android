@@ -122,7 +122,6 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 				if (activity != null) {
 					CustomPopUpWindow customPopUpWindow = (CustomPopUpWindow) activity;
 					FragmentManager fragmentManager = customPopUpWindow.getSupportFragmentManager();
-					ConfirmColorSizeActivity
 					fragmentManager.beginTransaction()
 							.replace(R.id.flShoppingListContainer, enterNewListFragment)
 							.addToBackStack(null)
