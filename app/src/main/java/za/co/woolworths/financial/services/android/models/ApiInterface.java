@@ -767,7 +767,7 @@ public interface ApiInterface {
 			@Header("userAgent") String userAgent,
 			@Header("userAgentVersion") String userAgentVersion,
 			@Header("sessionToken") String sessionToken,
-			@Body AddItemToCart addItemToCart);
+			@Body List<AddItemToCart> addItemToCart);
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
 	@DELETE("/cart/item")

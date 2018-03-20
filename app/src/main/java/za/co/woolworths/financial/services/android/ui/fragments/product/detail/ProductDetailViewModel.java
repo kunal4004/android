@@ -537,7 +537,7 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 		});
 	}
 
-	protected PostAddItemToCart postAddItemToCart(AddItemToCart addItemToCart) {
+	protected PostAddItemToCart postAddItemToCart(List<AddItemToCart> addItemToCart) {
 		setAddedToCart(true);
 		getNavigator().onAddToCartLoad();
 		return new PostAddItemToCart(addItemToCart, new OnEventListener() {
@@ -590,11 +590,11 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 		});
 	}
 
-	protected GetShoppingLists getShoppingListsResponse(){
+	protected GetShoppingLists getShoppingListsResponse() {
 		return new GetShoppingLists(new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
-				ShoppingListsResponse shoppingListsResponse= (ShoppingListsResponse) object;
+				ShoppingListsResponse shoppingListsResponse = (ShoppingListsResponse) object;
 				getNavigator().onShoppingListsResponse(shoppingListsResponse);
 			}
 

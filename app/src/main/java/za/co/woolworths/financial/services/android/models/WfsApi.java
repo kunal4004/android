@@ -270,7 +270,7 @@ public class WfsApi {
 		return mApiInterface.sendUserStatement(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), statement);
 	}
 
-	public AddItemToCartResponse addItemToCart(AddItemToCart addToCart) {
+	public AddItemToCartResponse addItemToCart(List<AddItemToCart>  addToCart) {
 		return mApiInterface.addItemToCart(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), addToCart);
 	}
 

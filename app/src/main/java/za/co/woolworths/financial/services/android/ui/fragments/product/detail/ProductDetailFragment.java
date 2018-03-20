@@ -1423,7 +1423,9 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 	@Override
 	public void apiAddItemToCart() {
-		mPostAddItemToCart = getViewModel().postAddItemToCart(mApiAddItemToCart);
+		List<AddItemToCart> addItemToCarts = new ArrayList<>();
+		addItemToCarts.add(mApiAddItemToCart);
+		mPostAddItemToCart = getViewModel().postAddItemToCart(addItemToCarts);
 		mPostAddItemToCart.execute();
 	}
 
