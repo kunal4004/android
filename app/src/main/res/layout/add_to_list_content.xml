@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/popup_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/relAddToList"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@drawable/bottom_divider">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/tvTitle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:letterSpacing="0.2"
+            android:lineSpacingMultiplier="1.50"
+            android:text="@string/add_to_list"
+            android:textColor="@color/black"
+            android:textSize="@dimen/twelve_sp"
+            app:WTextView_font="bold"/>
+
+        <ImageView
+            android:id="@+id/imCreateList"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_centerInParent="true"
+            android:layout_marginEnd="@dimen/twenty_one_dp"
+            app:srcCompat="@drawable/add_black"/>
+
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rclAddToList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <za.co.woolworths.financial.services.android.ui.views.WButton
+            android:id="@+id/btnCancel"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/seventy_five_dp"
+            android:background="@drawable/custom_bg"
+            android:letterSpacing="0.1"
+            android:lineSpacingMultiplier="1.67"
+            android:text="@string/cancel"
+            app:WButton_font="myriadpro_regular"/>
+
+    </FrameLayout>
+
+</LinearLayout>

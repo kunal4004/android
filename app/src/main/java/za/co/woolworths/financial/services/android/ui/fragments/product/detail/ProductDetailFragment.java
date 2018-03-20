@@ -56,6 +56,7 @@ import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
 import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
@@ -65,6 +66,7 @@ import za.co.woolworths.financial.services.android.models.rest.product.GetCartSu
 import za.co.woolworths.financial.services.android.models.rest.product.PostAddItemToCart;
 import za.co.woolworths.financial.services.android.models.rest.product.ProductRequest;
 import za.co.woolworths.financial.services.android.models.rest.shop.SetDeliveryLocationSuburb;
+import za.co.woolworths.financial.services.android.models.rest.shoppinglist.GetShoppingLists;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
@@ -92,6 +94,7 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
 
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_CALL;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.DETERMINE_LOCATION_POPUP;
+import static za.co.woolworths.financial.services.android.models.service.event.ProductState.OPEN_ADD_TO_SHOPPING_LIST_VIEW;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.POST_ADD_ITEM_TO_CART;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SET_SUBURB;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SET_SUBURB_API;
@@ -133,6 +136,8 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	private List<OtherSkus> mSkuColorList;
 	private SetDeliveryLocationSuburb mSuburbLocation;
 	private boolean activate_location_popup = false;
+	private GetShoppingLists mGetShoppingLists;
+	private ShoppingListsResponse mShoppingListsResponse;
 
 	@Override
 	public ProductDetailViewModel getViewModel() {
@@ -216,6 +221,10 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 								onAddToCartLoadComplete();
 								break;
 
+							case OPEN_ADD_TO_SHOPPING_LIST_VIEW:
+								Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.SHOPPING_ADD_TO_LIST, Utils.objectToJson(mShoppingListsResponse));
+								break;
+
 							default:
 								break;
 						}
@@ -233,6 +242,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		getGlobalState().setSizeWasPopup(false);
 		getGlobalState().setSizePickerSku(null);
 		renderView();
+		shoppingListRequest();
 	}
 
 	@Override
@@ -850,6 +860,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		cancelRequest(mGetCartSummary);
 		cancelRequest(mPostAddItemToCart);
 		cancelRequest(mSuburbLocation);
+		cancelRequest(mGetShoppingLists);
 	}
 
 	private void cancelPopWindow(PopupWindow popupWindow) {
@@ -1497,8 +1508,18 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	}
 
 	@Override
+	public void onShoppingListsResponse(ShoppingListsResponse shoppingListsResponse) {
+		mShoppingListsResponse = shoppingListsResponse;
+	}
+
+	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+	private void shoppingListRequest() {
+		mGetShoppingLists = getViewModel().getShoppingListsResponse();
+		mGetShoppingLists.execute();
 	}
 
 	private void cancelPopUpMenu() {

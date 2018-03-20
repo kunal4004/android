@@ -1103,4 +1103,17 @@ public class Utils {
 		}
 		view.startAnimation(animation);
 	}
+
+	public static void whiteEffectClick(WButton button) {
+		//TODO:: TEST FOR DIFFERENT POPUP
+
+		try {
+			if (button != null) {
+				button.setBackgroundColor(Color.BLACK);
+				button.setTextColor(Color.WHITE);
+			}
+		} catch (Exception ex) {
+			Log.e("whiteEffectClick", ex.toString());
+		}
+	}
 }

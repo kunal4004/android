@@ -234,7 +234,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			});
 		}
 
-		getViewModel().consumeObservable(new Consumer<Object>() {
+		observableOn(new Consumer<Object>() {
 			@Override
 			public void accept(Object object) throws Exception {
 				Activity activity = getActivity();
@@ -559,9 +559,9 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 				pushFragment(new StoresNearbyFragment1());
 				break;
 			case R.id.myLists:
-				Bundle bundle=new Bundle();
-				if(shoppingListsResponse!=null)
-					bundle.putString("ShoppingList",Utils.objectToJson(shoppingListsResponse));
+				Bundle bundle = new Bundle();
+				if (shoppingListsResponse != null)
+					bundle.putString("ShoppingList", Utils.objectToJson(shoppingListsResponse));
 				ShoppingListFragment shoppingListFragment = new ShoppingListFragment();
 				shoppingListFragment.setArguments(bundle);
 				pushFragment(shoppingListFragment);
@@ -774,10 +774,9 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		mGessageResponse.execute();
 	}
 
-	private void shoppingListRequest(){
-		mGetShoppingLists=getViewModel().getShoppingListsResponse();
+	private void shoppingListRequest() {
+		mGetShoppingLists = getViewModel().getShoppingListsResponse();
 		mGetShoppingLists.execute();
-
 	}
 
 	@Override
@@ -799,12 +798,11 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 
 	@Override
 	public void onShoppingListsResponse(ShoppingListsResponse shoppingListsResponse) {
-		this.shoppingListsResponse=shoppingListsResponse;
-		if(shoppingListsResponse.lists!=null && shoppingListsResponse.lists.size()>0 )
-		{
+		this.shoppingListsResponse = shoppingListsResponse;
+		if (shoppingListsResponse.lists != null && shoppingListsResponse.lists.size() > 0) {
 			showView(getViewDataBinding().listsCounter);
 			getViewDataBinding().listsCounter.setText(String.valueOf(shoppingListsResponse.lists.size()));
-		}else {
+		} else {
 			hideView(getViewDataBinding().listsCounter);
 		}
 	}

@@ -139,5 +139,6 @@
     <dimen name="eighty_four_dp">84dp</dimen>
     <dimen name="nineteen_dp">19dp</dimen>
     <dimen name="line_dp">0.5dp</dimen>
+    <dimen name="seventy_five_dp">75dp</dimen>
 </resources>
 

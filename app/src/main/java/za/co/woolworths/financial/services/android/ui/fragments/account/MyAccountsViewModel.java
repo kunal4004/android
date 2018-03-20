@@ -54,8 +54,4 @@ public class MyAccountsViewModel extends BaseViewModel<MyAccountsNavigator> {
 			}
 		});
 	}
-
-	public void observableCallback(Consumer consumer) {
-		consumeObservable(consumer);
-	}
 }

@@ -82,6 +82,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	public static final int INDEX_REWARD = FragNavController.TAB4;
 	public static final int INDEX_ACCOUNT = FragNavController.TAB5;
 	public static final int OPEN_CART_REQUEST = 12346;
+	private final String TAG = this.getClass().getSimpleName();
 
 	private final CompositeDisposable mDisposables = new CompositeDisposable();
 	private PermissionUtils permissionUtils;
@@ -171,39 +172,36 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 							}
 						} else if (object instanceof CartSummaryResponse) {
 							CartSummaryResponse cartSummaryResponse = (CartSummaryResponse) object;
-							if (cartSummaryResponse != null) {
-								// product item successfully added to cart
-								cartSummaryAPI();
-								closeSlideUpPanel();
-								try {
-									PopupWindow popupWindow = Utils.showToast(BottomNavigationActivity.this, getString(R.string.added_to), true);
-									popupWindow.showAtLocation(getBottomNavigationById(), Gravity.BOTTOM, 0, getBottomNavigationById().getHeight() + Utils.dp2px(BottomNavigationActivity.this, 45));
-								} catch (NullPointerException ex) {
-								}
+							// product item successfully added to cart
+							cartSummaryAPI();
+							closeSlideUpPanel();
+							try {
+								PopupWindow popupWindow = Utils.showToast(BottomNavigationActivity.this, getString(R.string.added_to), true);
+								popupWindow.showAtLocation(getBottomNavigationById(), Gravity.BOTTOM, 0, getBottomNavigationById().getHeight() + Utils.dp2px(BottomNavigationActivity.this, 45));
+							} catch (NullPointerException ex) {
+								Log.d(TAG, ex.getMessage());
 							}
 
 							// call observer to update independent count
 						} else if (object instanceof BadgeState) {
 							BadgeState badgeState = (BadgeState) object;
-							if (badgeState != null) {
-								switch (badgeState.getPosition()) {
-									case CART_COUNT_TEMP:
-										addBadge(INDEX_CART, badgeState.getCount());
-										break;
-									case CART_COUNT:
-										cartSummaryAPI();
-										break;
+							switch (badgeState.getPosition()) {
+								case CART_COUNT_TEMP:
+									addBadge(INDEX_CART, badgeState.getCount());
+									break;
+								case CART_COUNT:
+									cartSummaryAPI();
+									break;
 
-									case REWARD_COUNT:
-										getViewModel().getVoucherCount().execute();
-										break;
+								case REWARD_COUNT:
+									getViewModel().getVoucherCount().execute();
+									break;
 
-									case MESSAGE_COUNT:
-										getViewModel().getMessageResponse().execute();
-										break;
-									default:
-										break;
-								}
+								case MESSAGE_COUNT:
+									getViewModel().getMessageResponse().execute();
+									break;
+								default:
+									break;
 							}
 						}
 					}

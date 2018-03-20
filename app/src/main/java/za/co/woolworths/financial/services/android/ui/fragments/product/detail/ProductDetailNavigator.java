@@ -11,6 +11,7 @@ import za.co.woolworths.financial.services.android.models.dto.CartSummaryRespons
 import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
@@ -120,4 +121,6 @@ public interface ProductDetailNavigator {
 	void handleSetSuburbResponse(Object object);
 
 	void setSuburbAPI(DeliveryLocationHistory deliveryLocation);
+
+	void onShoppingListsResponse(ShoppingListsResponse shoppingListsResponse);
 }
