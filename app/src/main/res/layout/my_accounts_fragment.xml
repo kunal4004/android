@@ -160,7 +160,7 @@
 
                                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                                     style="@style/accountsItem"
-                                    android:drawableLeft="@drawable/signout_24_copy"
+                                    android:drawableLeft="@drawable/shopping_list_icon"
                                     android:text="@string/my_lists"/>
 
                                 <za.co.woolworths.financial.services.android.ui.views.WTextView
