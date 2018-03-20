@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,9 +44,9 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<ShoppingListI
 
 	@Override
 	public void onBindViewHolder(final ShoppingListItemsAdapter.ViewHolder holder, final int position) {
-		holder.cartProductImage.setImageURI("https://images.woolworthsstatic.co.za/"+listItems.get(position).externalImageURL+ "?w = " + 85 + "&q = " + 85);
+		holder.cartProductImage.setImageURI("https://images.woolworthsstatic.co.za/"+listItems.get(position).externalImageURL+ "?w=" + 85 + "&q=" + 85);
 		holder.productName.setText(listItems.get(position).displayName);
-		holder.productDesc.setText(listItems.get(position).description);
+		//holder.productDesc.setText(listItems.get(position).description);
 		holder.quantity.setText(listItems.get(position).quantityDesired);
 		holder.price.setText(WFormatter.formatAmount(listItems.get(position).price));
 		holder.select.setChecked(listItems.get(position).isSelected);
