@@ -98,7 +98,8 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 					public void onClick(View view) {
 						listItems.get(position).isSelected = !listItems.get(position).isSelected;
 						notifyDataSetChanged();
-						navigator.onItemSelectionChange(listItems);
+						// 1st item is header of Recycleview
+						navigator.onItemSelectionChange(listItems.subList(1,listItems.size()));
 					}
 				});
 

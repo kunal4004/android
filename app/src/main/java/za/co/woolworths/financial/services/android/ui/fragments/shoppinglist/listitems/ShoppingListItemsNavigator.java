@@ -23,4 +23,8 @@ public interface ShoppingListItemsNavigator {
 	void onItemDeleteClick(String id, String productId, String catalogRefId);
 
 	void onShoppingSearchClick();
+
+	void onAddToCartPreExecute();
+
+	void onAddToCartPostExecute();
 }

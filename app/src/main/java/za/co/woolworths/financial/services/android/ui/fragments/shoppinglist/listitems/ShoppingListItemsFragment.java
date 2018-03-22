@@ -112,7 +112,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		initGetShoppingListItems();
 		setScrollListener(getViewDataBinding().rcvShoppingListItems);
 		getViewDataBinding().textProductSearch.setOnClickListener(this);
-
+		setUpAddToCartButton();
 	}
 
 	public void loadShoppingListItems(ShoppingListItemsResponse shoppingListItemsResponse) {
@@ -122,7 +122,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		shoppingListItemsAdapter.updateList(listItems);
 		RecyclerView rcvShoppingListItems = getViewDataBinding().rcvShoppingListItems;
 		RelativeLayout rlSoppingList = getViewDataBinding().incEmptyLayout.relEmptyStateHandler;
-		getViewDataBinding().addToCartLayout.setVisibility(listItems == null || listItems.size() <= 1 ? View.GONE : View.VISIBLE);
+		getViewDataBinding().incConfirmButtonLayout.rlCheckOut.setVisibility(listItems == null || listItems.size() <= 1 ? View.GONE : View.VISIBLE);
 		rlSoppingList.setVisibility(listItems == null || listItems.size() <= 1 ? View.VISIBLE : View.GONE); // 1 to exclude header
 		rcvShoppingListItems.setVisibility(listItems == null || listItems.size() <= 1 ? View.GONE : View.VISIBLE);
 		getViewDataBinding().rlShopSearch.setVisibility(listItems == null || listItems.size() <= 1 ? View.VISIBLE : View.GONE);
@@ -152,6 +152,8 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 			case R.id.textProductSearch:
 				openProductSearchActivity();
 				break;
+			case R.id.btnCheckOut:
+				onClickAddToCart(listItems.subList(1,listItems.size()));
 			default:
 				break;
 		}
@@ -177,7 +179,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 
 	@Override
 	public void onItemSelectionChange(List<ShoppingListItem> items) {
-		getViewDataBinding().btnAddToCart.setVisibility(getButtonStatus(items) ? View.VISIBLE : View.GONE);
+		getViewDataBinding().incConfirmButtonLayout.rlCheckOut.setVisibility(getButtonStatus(items) ? View.VISIBLE : View.GONE);
 	}
 
 	@Override
@@ -207,6 +209,16 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 
 	}
 
+	@Override
+	public void onAddToCartPreExecute() {
+
+	}
+
+	@Override
+	public void onAddToCartPostExecute() {
+
+	}
+
 	public void initGetShoppingListItems() {
 		getViewDataBinding().loadingBar.setVisibility(View.VISIBLE);
 		getShoppingListItems = getViewModel().getShoppingListItems(listId);
@@ -220,7 +232,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	}
 
 	public boolean getButtonStatus(List<ShoppingListItem> items) {
-		for (ShoppingListItem shoppingListItem : listItems) {
+		for (ShoppingListItem shoppingListItem : items) {
 			if (shoppingListItem.isSelected)
 				return true;
 		}
@@ -273,5 +285,14 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				actionSearchVisibility(dy > getViewDataBinding().rcvShoppingListItems.getHeight());
 			}
 		});
+	}
+
+	private void setUpAddToCartButton() {
+		getViewDataBinding().incConfirmButtonLayout.btnCheckOut.setOnClickListener(this);
+		setText(getViewDataBinding().incConfirmButtonLayout.btnCheckOut, getString(R.string.add_to_cart));
+	}
+
+	private void onClickAddToCart(List<ShoppingListItem> items){
+			
 	}
 }
