@@ -257,7 +257,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	@Override
 	public void onChangeQuantity(CommerceItem commerceId) {
 		mCommerceItem = commerceId;
-		mChangeQuantity.setCommerceId(commerceId.getCommerceId());
+		mChangeQuantity.setCommerceId(commerceId.commerceItemInfo.getCommerceId());
 		if (mWoolWorthsApplication != null) {
 			WGlobalState wGlobalState = mWoolWorthsApplication.getWGlobalState();
 			if (wGlobalState != null) {
@@ -609,7 +609,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 			@Override
 			protected ShoppingCartResponse httpDoInBackground(String... params) {
-				return ((WoolworthsApplication) getActivity().getApplication()).getApi().removeCartItem(commerceItem.getCommerceId());
+				return ((WoolworthsApplication) getActivity().getApplication()).getApi().removeCartItem(commerceItem.commerceItemInfo.getCommerceId());
 			}
 
 			@Override
