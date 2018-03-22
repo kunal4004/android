@@ -178,7 +178,7 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 				super.onScrolled(recyclerView, dx, dy);
 				totalItemCount = mRecyclerViewLayoutManager.getItemCount();
 				lastVisibleItem = mRecyclerViewLayoutManager.findLastVisibleItemPosition();
-				loadData(dy);
+				//loadData(dy);
 			}
 		});
 	}

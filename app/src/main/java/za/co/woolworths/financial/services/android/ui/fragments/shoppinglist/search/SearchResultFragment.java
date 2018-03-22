@@ -162,7 +162,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 				super.onScrolled(recyclerView, dx, dy);
 				totalItemCount = mRecyclerViewLayoutManager.getItemCount();
 				lastVisibleItem = mRecyclerViewLayoutManager.findLastVisibleItemPosition();
-				loadData();
+				//loadData();
 			}
 		});
 	}
