@@ -18,7 +18,7 @@
             android:layout_height="38dp"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:background="@drawable/appicon"
+            android:background="@drawable/woolworth_logo_icon"
             />
 
         <LinearLayout

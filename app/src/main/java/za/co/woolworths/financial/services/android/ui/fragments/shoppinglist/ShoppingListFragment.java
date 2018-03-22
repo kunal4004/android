@@ -1,18 +1,18 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shoppinglist;
 
-
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.ContextMenu;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
@@ -27,18 +27,15 @@ import za.co.woolworths.financial.services.android.ui.adapters.ShoppingListAdapt
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.list.NewListFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsFragment;
+import za.co.woolworths.financial.services.android.util.EmptyCartView;
 
 import static android.app.Activity.RESULT_OK;
 
-/**
- * Created by W7099877 on 2018/03/07.
- */
-
-public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBinding, ShoppingListViewModel> implements ShoppingListNavigator {
+public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBinding, ShoppingListViewModel> implements ShoppingListNavigator, EmptyCartView.EmptyCartInterface {
 	private ShoppingListViewModel shoppingListViewModel;
-	private ShoppingListAdapter shoppingListAdapter;
 	private ShoppingListsResponse shoppingListsResponse;
 	public static final int DELETE_REQUEST_CODE = 111;
+
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -66,23 +63,28 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		showToolbar(R.string.title_my_list);
+
+		EmptyCartView emptyCartView = new EmptyCartView(view, this);
+		emptyCartView.setView("title text", "description text", "button text", R.drawable.woolworth_logo_icon);
+
 		if (getArguments().containsKey("ShoppingList")) {
 			shoppingListsResponse = new Gson().fromJson(getArguments().getString("ShoppingList"), ShoppingListsResponse.class);
 			loadShoppingList(shoppingListsResponse.lists);
 		}
 	}
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return super.onCreateView(inflater, container, savedInstanceState);
-	}
-
 	public void loadShoppingList(List<ShoppingList> lists) {
-		shoppingListAdapter = new ShoppingListAdapter(this, lists);
+		RecyclerView rclShoppingList = getViewDataBinding().rcvShoppingLists;
+		RelativeLayout rlSoppingList = getViewDataBinding().incEmptyLayout.relEmptyStateHandler;
+
+		rlSoppingList.setVisibility(lists == null || lists.size() == 0 ? View.VISIBLE : View.GONE);
+		rclShoppingList.setVisibility(lists == null || lists.size() == 0 ? View.GONE : View.VISIBLE);
+
+		ShoppingListAdapter shoppingListAdapter = new ShoppingListAdapter(this, lists);
 		LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
 		mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-		getViewDataBinding().rcvShoppingLists.setLayoutManager(mLayoutManager);
-		getViewDataBinding().rcvShoppingLists.setAdapter(shoppingListAdapter);
+		rclShoppingList.setLayoutManager(mLayoutManager);
+		rclShoppingList.setAdapter(shoppingListAdapter);
 	}
 
 	@Override
@@ -115,7 +117,7 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 		bundle.putString("listId", listID);
 		ShoppingListItemsFragment shoppingListItemsFragment = new ShoppingListItemsFragment();
 		shoppingListItemsFragment.setArguments(bundle);
-		shoppingListItemsFragment.setTargetFragment(this,111);
+		shoppingListItemsFragment.setTargetFragment(this, 111);
 		pushFragment(shoppingListItemsFragment);
 	}
 
@@ -131,10 +133,15 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (resultCode == RESULT_OK) {
-			if (requestCode==DELETE_REQUEST_CODE){
-				shoppingListsResponse=new Gson().fromJson(data.getStringExtra("ShoppingList"),ShoppingListsResponse.class);
+			if (requestCode == DELETE_REQUEST_CODE) {
+				shoppingListsResponse = new Gson().fromJson(data.getStringExtra("ShoppingList"), ShoppingListsResponse.class);
 				loadShoppingList(shoppingListsResponse.lists);
 			}
 		}
+	}
+
+	@Override
+	public void onEmptyCartRetry() {
+		Log.e("onEmptyCartClicked", "emptyCartClicked");
 	}
 }

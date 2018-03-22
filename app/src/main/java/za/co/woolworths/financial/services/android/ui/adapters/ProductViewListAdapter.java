@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.awfs.coordination.R;
-import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,15 +22,14 @@ import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridNavigator;
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ProductUtils;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.DrawImage;
+import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
 
 public class ProductViewListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-	public static final int ITEM_VIEW_TYPE_HEADER = 0;
-	public static final int ITEM_VIEW_TYPE_BASIC = 1;
-	public static final int ITEM_VIEW_TYPE_FOOTER = 2;
+	private final int ITEM_VIEW_TYPE_HEADER = 0;
+	private final int ITEM_VIEW_TYPE_BASIC = 1;
+	private final int ITEM_VIEW_TYPE_FOOTER = 2;
 
-	private final DrawImage drawImage;
 	public Activity mContext;
 	private List<ProductList> mProductList;
 
@@ -43,7 +41,6 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 		this.mContext = mContext;
 		this.mProductList = mProductList;
 		this.mGridNavigator = gridNavigator;
-		drawImage = new DrawImage(mContext);
 	}
 
 	@Override
@@ -66,12 +63,12 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 			PromotionImages promo = productList.promotionImages;
 			vh.tvProductName.setText(Html.fromHtml(productName));
 
-			if (!TextUtils.isEmpty(saveText))
+			if (!isEmpty(saveText))
 				vh.tvSaveText.setText(saveText);
 
 			ArrayList<Double> priceList = new ArrayList<>();
 			for (OtherSkus os : productList.otherSkus) {
-				if (!TextUtils.isEmpty(os.wasPrice)) {
+				if (!isEmpty(os.wasPrice)) {
 					priceList.add(Double.valueOf(os.wasPrice));
 				}
 			}
@@ -152,58 +149,42 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 		return mProductList.size();
 	}
 
-	private void productImage(final SimpleDraweeView image, String imgUrl) {
-		if (imgUrl != null) {
-			try {
-				imgUrl = imgUrl + "?w=" + 300 + "&q=" + 100;
-				drawImage.displayImage(image, imgUrl);
-			} catch (IllegalArgumentException ignored) {
-			}
+	private void productImage(WrapContentDraweeView image, String imgUrl) {
+		if (!isEmpty(imgUrl)) {
+			image.setImageURI(imgUrl + "?w=" + 300 + "&q=" + 100);
 		}
 	}
 
 	private void promoImages(SimpleViewHolder holder, PromotionImages imPromo) {
+		if (imPromo == null)
+			return;
 
-		DrawImage drawImage = new DrawImage(mContext);
-		if (imPromo != null) {
-			String wSave = imPromo.save;
-			String wReward = imPromo.wRewards;
-			String wVitality = imPromo.vitality;
-			String wNewImage = imPromo.newImage;
+		String saveUrl = imPromo.save;
+		String rewardUrl = imPromo.wRewards;
+		String vitalityUrl = imPromo.vitality;
+		String newImageUrl = imPromo.newImage;
 
-			if (!TextUtils.isEmpty(wSave)) {
-				holder.imSave.setVisibility(View.VISIBLE);
-				drawImage.displaySmallImage(holder.imSave, wSave);
-			} else {
-				holder.imSave.setVisibility(View.GONE);
-			}
+		setPromotionalImage(holder.imSave, saveUrl);
+		setPromotionalImage(holder.imReward, rewardUrl);
+		setPromotionalImage(holder.imVitality, vitalityUrl);
+		setPromotionalImage(holder.imNewImage, newImageUrl);
 
-			if (!TextUtils.isEmpty(wReward)) {
-				holder.imReward.setVisibility(View.VISIBLE);
-				drawImage.displaySmallImage(holder.imReward, wReward);
-			} else {
-				holder.imReward.setVisibility(View.GONE);
-			}
+		if (!isEmpty(saveUrl)) holder.imSave.setImageURI(saveUrl);
+		if (!isEmpty(rewardUrl)) holder.imReward.setImageURI(rewardUrl);
+		if (!isEmpty(vitalityUrl)) holder.imVitality.setImageURI(vitalityUrl);
+		if (!isEmpty(newImageUrl)) holder.imNewImage.setImageURI(newImageUrl);
+	}
 
-			if (!TextUtils.isEmpty(wVitality)) {
-				holder.imVitality.setVisibility(View.VISIBLE);
-				drawImage.displaySmallImage(holder.imVitality, wVitality);
-			} else {
-				holder.imVitality.setVisibility(View.GONE);
-			}
+	private void setPromotionalImage(WrapContentDraweeView image, String url) {
+		image.setVisibility(isEmpty(url) ? View.GONE : View.VISIBLE);
+	}
 
-			if (!TextUtils.isEmpty(wNewImage)) {
-				holder.imNewImage.setVisibility(View.VISIBLE);
-				drawImage.displaySmallImage(holder.imNewImage, wNewImage);
-
-			} else {
-				holder.imNewImage.setVisibility(View.GONE);
-			}
-		}
+	private boolean isEmpty(String wSave) {
+		return TextUtils.isEmpty(wSave);
 	}
 
 	private class ProgressViewHolder extends RecyclerView.ViewHolder {
-		public ProgressBar pbFooterProgress;
+		private ProgressBar pbFooterProgress;
 
 		private ProgressViewHolder(View v) {
 			super(v);
@@ -231,11 +212,11 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 		WTextView tvProductName;
 		WTextView tvAmount;
 		WTextView tvWasPrice;
-		SimpleDraweeView imProductImage;
-		SimpleDraweeView imNewImage;
-		SimpleDraweeView imSave;
-		SimpleDraweeView imReward;
-		SimpleDraweeView imVitality;
+		WrapContentDraweeView imProductImage;
+		WrapContentDraweeView imNewImage;
+		WrapContentDraweeView imSave;
+		WrapContentDraweeView imReward;
+		WrapContentDraweeView imVitality;
 
 		SimpleViewHolder(View view) {
 			super(view);

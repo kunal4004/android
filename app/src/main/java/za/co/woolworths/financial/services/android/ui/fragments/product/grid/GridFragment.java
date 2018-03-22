@@ -213,8 +213,7 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 					return true;
 				}
 			}
-		} catch (Exception ex) {
-			Log.e("listContainFooter", ex.getMessage());
+		} catch (Exception ignored) {
 		}
 		return false;
 	}

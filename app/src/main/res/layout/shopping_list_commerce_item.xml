@@ -84,7 +84,7 @@
                         <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
                             android:id="@+id/cartProductImage"
                             android:layout_width="84dp"
-                            android:layout_height="84dp"
+                            android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:contentDescription="@string/app_name"
                             fresco:fadeDuration="50"

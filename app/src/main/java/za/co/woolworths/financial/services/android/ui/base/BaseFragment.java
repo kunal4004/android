@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 
+import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 
 import io.reactivex.functions.Consumer;
@@ -337,4 +338,5 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 	public void observableOn(Consumer consumer){
 		getViewModel().consumeObservable(consumer);
 	}
+
 }
