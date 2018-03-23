@@ -21,6 +21,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
+import com.daimajia.swipe.util.Attributes;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
@@ -41,7 +42,6 @@ import za.co.woolworths.financial.services.android.models.dto.CartResponse;
 import za.co.woolworths.financial.services.android.models.dto.ChangeQuantity;
 import za.co.woolworths.financial.services.android.models.dto.Data;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
-import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
@@ -123,7 +123,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		} catch (IllegalStateException ex) {
 			Log.d("mToggleItemRemoved", ex.toString());
 		}
-
 		mChangeQuantity = new ChangeQuantity();
 		rvCartList = view.findViewById(R.id.cartList);
 		btnCheckOut = view.findViewById(R.id.btnCheckOut);
@@ -274,12 +273,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	@Override
-	public void totalItemInBasket(int count) {
-		if (count == 0) {
-			rlCheckOut.setVisibility(View.GONE);
-			relEmptyStateHandler.setVisibility(View.VISIBLE);
-			rvCartList.setVisibility(View.GONE);
-		}
+	public void totalItemInBasket(int total) {
+
 	}
 
 	public boolean toggleEditMode() {
@@ -325,6 +320,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
 			mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 			rvCartList.setLayoutManager(mLayoutManager);
+			cartProductAdapter.setMode(Attributes.Mode.Single);
 			rvCartList.setAdapter(cartProductAdapter);
 		} else {
 			Utils.sendBus(new BadgeState(CART_COUNT_TEMP, 0));
@@ -474,6 +470,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 									public void run() {
 										//TODO:: improve error handling
 										ScreenManager.presentSSOSignin(activity);
+										Utils.removeEntry(activity);
 										activity.finish();
 										activity.overridePendingTransition(0, 0);
 									}

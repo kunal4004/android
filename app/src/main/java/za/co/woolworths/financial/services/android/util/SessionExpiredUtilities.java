@@ -11,15 +11,14 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 
 public enum SessionExpiredUtilities {
 	INSTANCE;
-
 	public static final String ACCOUNT = "ACCOUNT";
 	public static final String REWARD = "REWARD";
 	public static final String PRODUCT = "PRODUCT";
 
-
 	public void setAccountSessionExpired(Activity activity, String token) {
 		getGlobalState().setSection(ACCOUNT);
 		Utils.sendBus(new SessionManager(SessionManager.ACCOUNT_SESSION_EXPIRED));
+		Utils.removeEntry(activity);
 		onSessionExpired(activity, token);
 		Intent i = new Intent(activity, BottomNavigationActivity.class);
 		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
