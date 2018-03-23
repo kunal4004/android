@@ -91,10 +91,10 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 			case PRODUCT:
 				final productHolder productHolder = ((productHolder) holder);
 				final CommerceItem commerceItem = itemRow.commerceItem;
-				productHolder.tvTitle.setText(commerceItem.getProductDisplayName());
-				productHolder.quantity.setText(String.valueOf(commerceItem.getQuantity()));
+				productHolder.tvTitle.setText(commerceItem.commerceItemInfo.getProductDisplayName());
+				productHolder.quantity.setText(String.valueOf(commerceItem.commerceItemInfo.getQuantity()));
 				productHolder.price.setText(WFormatter.formatAmount(commerceItem.getPriceInfo().getAmount()));
-				productImage(productHolder.productImage, commerceItem.externalImageURL);
+				productImage(productHolder.productImage, commerceItem.commerceItemInfo.externalImageURL);
 				productHolder.btnDeleteRow.setVisibility(this.editMode ? View.VISIBLE : View.GONE);
 				onRemoveSingleItem(productHolder, commerceItem);
 				//enable/disable change quantity click
@@ -130,13 +130,13 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 					productHolder.tvColorSize.setVisibility(View.INVISIBLE);
 				}
 				else {
-					String sizeColor=commerceItem.getColor();
+					String sizeColor=commerceItem.commerceItemInfo.getColor();
 					if(sizeColor == null)
 						sizeColor = "";
-					if(sizeColor.isEmpty()&& !commerceItem.getSize().isEmpty() && !commerceItem.getSize().equalsIgnoreCase("NO SZ") )
-						sizeColor=commerceItem.getSize();
-					else if(!sizeColor.isEmpty()&& !commerceItem.getSize().isEmpty() && !commerceItem.getSize().equalsIgnoreCase("NO SZ"))
-						sizeColor=sizeColor+", "+commerceItem.getSize();
+					if(sizeColor.isEmpty()&& !commerceItem.commerceItemInfo.getSize().isEmpty() && !commerceItem.commerceItemInfo.getSize().equalsIgnoreCase("NO SZ") )
+						sizeColor=commerceItem.commerceItemInfo.getSize();
+					else if(!sizeColor.isEmpty()&& !commerceItem.commerceItemInfo.getSize().isEmpty() && !commerceItem.commerceItemInfo.getSize().equalsIgnoreCase("NO SZ"))
+						sizeColor=sizeColor+", "+commerceItem.commerceItemInfo.getSize();
 
 					productHolder.tvColorSize.setText(sizeColor);
 					productHolder.tvColorSize.setVisibility(View.VISIBLE);
@@ -289,7 +289,7 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 		for (CartItemGroup cartItemGroup : cartItems) {
 			ArrayList<CommerceItem> commerceItemList = cartItemGroup.commerceItems;
 			for (CommerceItem cm : commerceItemList) {
-				if (commerceItem.commerceId.equalsIgnoreCase(cm.commerceId)) {
+				if (commerceItem.commerceItemInfo.commerceId.equalsIgnoreCase(cm.commerceItemInfo.commerceId)) {
 					cartItems.remove(commerceItem);
 				} else {
 					if (cm.deleteIconWasPressed()) {
@@ -302,7 +302,7 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 			ArrayList<CommerceItem> commerceItemList = cartItemGroup.commerceItems;
 			for (CommerceItem cm : commerceItemList) {
 				for (CommerceItem oldCommerceItem : newCommerceItemList) {
-					if (cm.commerceId.equals(oldCommerceItem.commerceId)) {
+					if (cm.commerceItemInfo.commerceId.equals(oldCommerceItem.commerceItemInfo.commerceId)) {
 						cm.setDeleteIconWasPressed(true);
 					}
 				}
@@ -318,7 +318,7 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 			ArrayList<CommerceItem> commerceItemList = cartItemGroup.commerceItems;
 			if (commerceItemList != null) {
 				for (CommerceItem cm : commerceItemList) {
-					if (cm.getCommerceId().equalsIgnoreCase(commerceItem.getCommerceId())) {
+					if (cm.commerceItemInfo.getCommerceId().equalsIgnoreCase(commerceItem.commerceItemInfo.getCommerceId())) {
 						boolean deleteSingleItem = !commerceItem.deleteSingleItem();
 						commerceItem.setDeleteSingleItem(deleteSingleItem);
 						notifyDataSetChanged();
