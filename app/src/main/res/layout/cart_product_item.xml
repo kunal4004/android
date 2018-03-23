@@ -93,6 +93,7 @@
                             android:layout_gravity="center"
                             android:contentDescription="@string/app_name"
                             fresco:fadeDuration="20"
+                            app:placeholderImage="@drawable/woolworth_logo_icon"
                             fresco:failureImage="@drawable/woolworth_logo_icon"/>
 
                         <LinearLayout
