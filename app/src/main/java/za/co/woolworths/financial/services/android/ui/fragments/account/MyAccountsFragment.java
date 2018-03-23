@@ -38,6 +38,7 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
+import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.rest.message.GetMessage;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
@@ -725,13 +726,12 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 				@Override
 				protected Void httpDoInBackground(Void... params) {
 					try {
-						SessionDao sessionDao = new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN).get();
-						sessionDao.value = "";
-						sessionDao.save();
-						new SessionDao(getActivity(), SessionDao.KEY.STORES_USER_SEARCH).delete();
-						new SessionDao(getActivity(), SessionDao.KEY.STORES_USER_LAST_LOCATION).delete();
+						Activity activity = getActivity();
+						if (activity != null) {
+							Utils.removeEntry(activity);
+						}
 					} catch (Exception pE) {
-						pE.printStackTrace();
+						Log.d(TAG, pE.getMessage());
 					}
 					return null;
 				}

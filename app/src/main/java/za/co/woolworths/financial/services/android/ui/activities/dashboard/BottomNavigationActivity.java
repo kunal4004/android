@@ -61,6 +61,7 @@ import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
 import za.co.woolworths.financial.services.android.util.PermissionUtils;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
+import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.nav.FragNavController;
@@ -660,10 +661,31 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
+		// navigate to product section
 		if (requestCode == OPEN_CART_REQUEST) {
-			if (resultCode == RESULT_OK) {
-				getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
-				return;
+			switch (resultCode) {
+				case RESULT_OK:
+					getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
+					break;
+
+				case 0:
+					//load count on login success
+					badgeCount();
+					switch (currentSection) {
+						case R.id.navigation_cart:
+							SessionManager sessionManager = new SessionManager(BottomNavigationActivity.this);
+							sessionManager.setAccountHasExpired(false);
+							sessionManager.setRewardSignInState(true);
+							Intent openCartActivity = new Intent(this, CartActivity.class);
+							startActivityForResult(openCartActivity, OPEN_CART_REQUEST);
+							overridePendingTransition(0, 0);
+							break;
+						default:
+							break;
+					}
+					break;
+				default:
+					break;
 			}
 		}
 
@@ -686,6 +708,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			}
 		}
 
+		//trigger reward and account call
 		switch (getBottomNavigationById().getCurrentItem()) {
 			case 1:
 			case 0:

@@ -25,13 +25,17 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
+import android.text.Layout;
+import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.*;
@@ -87,15 +91,13 @@ import za.co.woolworths.financial.services.android.models.dto.Transaction;
 import za.co.woolworths.financial.services.android.models.dto.TransactionParentObj;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
-import za.co.woolworths.financial.services.android.models.service.event.CartState;
+import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
-import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
-import za.co.woolworths.financial.services.android.ui.views.WTabIndicator;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.badgeview.Badge;
 import za.co.woolworths.financial.services.android.ui.views.badgeview.QBadgeView;
@@ -105,6 +107,7 @@ import za.co.woolworths.financial.services.android.util.tooltip.ViewTooltip;
 import static android.Manifest.permission_group.STORAGE;
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.WHITE;
+import static za.co.woolworths.financial.services.android.models.service.event.ProductState.USE_MY_LOCATION;
 
 public class Utils {
 
@@ -493,6 +496,18 @@ public class Utils {
 		Bundle args = new Bundle();
 		args.putSerializable("key", key);
 		args.putString("description", description);
+		openMsg.putExtras(args);
+		context.startActivity(openMsg);
+		((AppCompatActivity) context).overridePendingTransition(0, 0);
+	}
+
+
+	public static void displayValidationMessage(Context context, CustomPopUpWindow.MODAL_LAYOUT key, String description, boolean closeView) {
+		Intent openMsg = new Intent(context, CustomPopUpWindow.class);
+		Bundle args = new Bundle();
+		args.putSerializable("key", key);
+		args.putString("description", description);
+		args.putBoolean("closeView", closeView);
 		openMsg.putExtras(args);
 		context.startActivity(openMsg);
 		((AppCompatActivity) context).overridePendingTransition(0, 0);
@@ -1127,4 +1142,39 @@ public class Utils {
 		view.startAnimation(animation);
 	}
 
+
+	public static void removeFromDb(SessionDao.KEY key, Context context) throws Exception {
+		new SessionDao(context, key).delete();
+	}
+
+	public static void removeEntry(Activity context) {
+		try {
+			Utils.removeToken(SessionDao.KEY.USER_TOKEN, context);
+			Utils.removeFromDb(SessionDao.KEY.DELIVERY_LOCATION_HISTORY, context);
+			Utils.removeFromDb(SessionDao.KEY.STORES_USER_SEARCH, context);
+			Utils.removeFromDb(SessionDao.KEY.STORES_USER_LAST_LOCATION, context);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void removeToken(SessionDao.KEY key, Context context) throws Exception {
+		SessionDao sessionDao = new SessionDao(context, key).get();
+		sessionDao.value = "";
+		sessionDao.save();
+	}
+
+	public static void truncateMaxLine(final TextView tv) {
+		tv.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+			@Override
+			public void onGlobalLayout() {
+				tv.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+				if (tv.getLineCount() > 2) {
+					int lineEndIndex = tv.getLayout().getLineEnd(1);
+					String text = tv.getText().subSequence(0, lineEndIndex - 6) + "..."; //TODO:: truncate 3 characters at end
+					tv.setText(text);
+				}
+			}
+		});
+	}
 }
