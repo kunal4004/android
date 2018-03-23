@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -85,12 +84,12 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 		if (getFragmentManager().getBackStackEntryCount() > 0) {
 			getFragmentManager().popBackStack();
 		} else {
-			super.onBackPressed();
+			finishActivity();
 		}
-		overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
 	}
 
 	public void finishActivity() {
+		setResult(DEFAULT_KEYS_SEARCH_GLOBAL);
 		finish();
 		overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
 	}
