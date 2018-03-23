@@ -34,8 +34,6 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 	public ShoppingListItemsAdapter(List<ShoppingListItem> listItems, ShoppingListItemsNavigator navigator) {
 		this.listItems = listItems;
 		this.navigator = navigator;
-		if(listItems.size()>1)
-			this.navigator.onItemSelectionChange(listItems.subList(1,listItems.size()));
 	}
 
 	@Override
@@ -88,7 +86,7 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 				holder.cartProductImage.setImageURI("https://images.woolworthsstatic.co.za/" + listItems.get(position).externalImageURL + "?w=" + 85 + "&q=" + 85);
 				holder.productName.setText(listItems.get(position).displayName);
 				//holder.productDesc.setText(listItems.get(position).description);
-				holder.quantity.setText(String.valueOf(listItems.get(position).quantityDesired));
+				holder.quantity.setText(String.valueOf(listItems.get(position).userQuantity));
 				holder.price.setText(WFormatter.formatAmount(listItems.get(position).price));
 				holder.select.setChecked(listItems.get(position).isSelected);
 				holder.delete.setVisibility(View.VISIBLE);
@@ -97,10 +95,20 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 				holder.select.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View view) {
+						/*
+						 1. By default quantity will be ZERO.
+						 2. On Selection it will change to ONE.
+						 */
+						if (listItems.get(position).isSelected) {
+							listItems.get(position).userQuantity = 0;
+						} else {
+							listItems.get(position).userQuantity = 1;
+						}
+
 						listItems.get(position).isSelected = !listItems.get(position).isSelected;
 						notifyDataSetChanged();
 						// 1st item is header of Recycleview
-						navigator.onItemSelectionChange(listItems.subList(1,listItems.size()));
+						navigator.onItemSelectionChange(listItems.subList(1, listItems.size()));
 					}
 				});
 
@@ -165,6 +173,7 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 
 	public void updateList(List<ShoppingListItem> updatedListItems) {
 		this.listItems = updatedListItems;
+		this.navigator.onItemSelectionChange(listItems.subList(1, listItems.size()));
 		notifyDataSetChanged();
 	}
 

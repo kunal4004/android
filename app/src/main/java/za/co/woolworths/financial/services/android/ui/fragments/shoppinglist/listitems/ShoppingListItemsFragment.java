@@ -34,6 +34,7 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingListsRespo
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.DeleteShoppingList;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.DeleteShoppingListItem;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.GetShoppingListItems;
+import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
 import za.co.woolworths.financial.services.android.models.service.event.ShopState;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.adapters.ShoppingListItemsAdapter;
@@ -46,6 +47,7 @@ import za.co.woolworths.financial.services.android.util.EmptyCartView;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 import static android.app.Activity.RESULT_OK;
+import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT_TEMP;
 
 public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFragmentBinding, ShoppingListItemsViewModel> implements ShoppingListItemsNavigator, View.OnClickListener, EmptyCartView.EmptyCartInterface {
 	private ShoppingListItemsViewModel shoppingListItemsViewModel;
@@ -128,7 +130,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		shoppingListItemsAdapter.updateList(listItems);
 		RecyclerView rcvShoppingListItems = getViewDataBinding().rcvShoppingListItems;
 		RelativeLayout rlSoppingList = getViewDataBinding().incEmptyLayout.relEmptyStateHandler;
-		getViewDataBinding().incConfirmButtonLayout.rlCheckOut.setVisibility(listItems == null || listItems.size() <= 1 ? View.GONE : View.VISIBLE);
 		rlSoppingList.setVisibility(listItems == null || listItems.size() <= 1 ? View.VISIBLE : View.GONE); // 1 to exclude header
 		rcvShoppingListItems.setVisibility(listItems == null || listItems.size() <= 1 ? View.GONE : View.VISIBLE);
 		getViewDataBinding().rlShopSearch.setVisibility(listItems == null || listItems.size() <= 1 ? View.VISIBLE : View.GONE);
@@ -222,6 +223,8 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 
 	@Override
 	public void onAddToCartSuccess(AddItemToCartResponse addItemToCartResponse) {
+		if(addItemToCartResponse.data.get(0).totalCommerceIteItemCount!=null)
+			Utils.sendBus(new BadgeState(CART_COUNT_TEMP, addItemToCartResponse.data.get(0).totalCommerceIteItemCount));
 		popFragmentNoAnim();
 	}
 
