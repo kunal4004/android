@@ -70,7 +70,7 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 			return new CartHeaderViewHolder(LayoutInflater.from(parent.getContext())
 					.inflate(R.layout.cart_product_header_item, parent, false));
 		} else if (viewType == CartRowType.PRODUCT.value) {
-			return new CartItemViewHolder(LayoutInflater.from(parent.getContext())
+			return new productHolder(LayoutInflater.from(parent.getContext())
 					.inflate(R.layout.cart_product_item, parent, false));
 		} else {
 			return new CartPricesViewHolder(LayoutInflater.from(parent.getContext())
@@ -80,17 +80,17 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
 	@Override
 	public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
-		final CartProductItemRow itemRow = getItemTypeAtPosition(position);
+		final CartcommerceItemRow itemRow = getItemTypeAtPosition(position);
 		switch (itemRow.rowType) {
 			case HEADER:
 				CartHeaderViewHolder headerHolder = ((CartHeaderViewHolder) holder);
-				ArrayList<CommerceItem> productItems = itemRow.productItems;
-				headerHolder.tvHeaderTitle.setText(productItems.size() > 1 ? productItems.size() + " " + itemRow.category.toUpperCase() + " ITEMS" : productItems.size() + " " + itemRow.category.toUpperCase() + " ITEM");
+				ArrayList<CommerceItem> commerceItems = itemRow.commerceItems;
+				headerHolder.tvHeaderTitle.setText(commerceItems.size() > 1 ? commerceItems.size() + " " + itemRow.category.toUpperCase() + " ITEMS" : commerceItems.size() + " " + itemRow.category.toUpperCase() + " ITEM");
 				break;
 
 			case PRODUCT:
-				final CartItemViewHolder productHolder = ((CartItemViewHolder) holder);
-				final CommerceItem commerceItem = itemRow.productItem;
+				final productHolder productHolder = ((productHolder) holder);
+				final CommerceItem commerceItem = itemRow.commerceItem;
 				productHolder.tvTitle.setText(commerceItem.getProductDisplayName());
 				productHolder.quantity.setText(String.valueOf(commerceItem.getQuantity()));
 				productHolder.price.setText(WFormatter.formatAmount(commerceItem.getPriceInfo().getAmount()));
@@ -114,6 +114,36 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 					productHolder.quantity.setVisibility(View.VISIBLE);
 					productHolder.imPrice.setVisibility(View.VISIBLE);
 				}
+
+				//Set Promotion Text START
+				if(commerceItem.getPriceInfo().getDiscountedAmount()>0){
+					productHolder.promotionalText.setText(" "+WFormatter.formatAmount(commerceItem.getPriceInfo().getDiscountedAmount()));
+					productHolder.llPromotionalText.setVisibility(View.VISIBLE);
+				}else {
+					productHolder.llPromotionalText.setVisibility(View.GONE);
+				}
+				//Set Promotion Text END
+
+				// Set Color and Size START
+				if(itemRow.category.equalsIgnoreCase("FOOD"))
+				{
+					productHolder.tvColorSize.setVisibility(View.INVISIBLE);
+				}
+				else {
+					String sizeColor=commerceItem.getColor();
+					if(sizeColor == null)
+						sizeColor = "";
+					if(sizeColor.isEmpty()&& !commerceItem.getSize().isEmpty() && !commerceItem.getSize().equalsIgnoreCase("NO SZ") )
+						sizeColor=commerceItem.getSize();
+					else if(!sizeColor.isEmpty()&& !commerceItem.getSize().isEmpty() && !commerceItem.getSize().equalsIgnoreCase("NO SZ"))
+						sizeColor=sizeColor+", "+commerceItem.getSize();
+
+					productHolder.tvColorSize.setText(sizeColor);
+					productHolder.tvColorSize.setVisibility(View.VISIBLE);
+				}
+				// Set Color and Size END
+
+
 
 				productHolder.btnDeleteRow.setOnClickListener(new View.OnClickListener() {
 					@Override
@@ -141,10 +171,18 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 				if (orderSummary != null) {
 					priceHolder.orderSummeryLayout.setVisibility(View.VISIBLE);
 					setPriceValue(priceHolder.txtPriceEstimatedDelivery, orderSummary.getEstimatedDelivery());
-			/*setPriceValue(cartPricesViewHolder.txtPriceDiscounts, cartPriceValues.discounts);
-			setPriceValue(cartPricesViewHolder.txtPriceCompanyDiscount, cartPriceValues.companyDiscounts);
-			setPriceValue(cartPricesViewHolder.txtPriceWRewardsSavings, cartPriceValues.wRewardsSavings);
-			setPriceValue(cartPricesViewHolder.txtPriceOtherDiscount, cartPriceValues.otherDiscount);*/
+					if(orderSummary.getStaffDiscount() > 0) {
+						setPriceValue(priceHolder.txtPriceCompanyDiscount, orderSummary.getStaffDiscount());
+						priceHolder.rlCompanyDiscount.setVisibility(View.VISIBLE);
+					} else {
+						priceHolder.rlCompanyDiscount.setVisibility(View.GONE);
+					}
+					if(orderSummary.getSavedAmount() > 0) {
+						setPriceValue(priceHolder.txtPriceWRewardsSavings, orderSummary.getSavedAmount());
+						priceHolder.rlOtherDiscount.setVisibility(View.VISIBLE);
+					} else {
+						priceHolder.rlOtherDiscount.setVisibility(View.GONE);
+					}
 					setPriceValue(priceHolder.txtPriceTotal, orderSummary.getTotal());
 				} else {
 					priceHolder.orderSummeryLayout.setVisibility(View.GONE);
@@ -157,7 +195,7 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 		}
 	}
 
-	private void onRemoveSingleItem(final CartItemViewHolder productHolder, final CommerceItem commerceItem) {
+	private void onRemoveSingleItem(final productHolder productHolder, final CommerceItem commerceItem) {
 		if (this.editMode) {
 			if (commerceItem.deleteIconWasPressed()) {
 				Animation animateRowToDelete = android.view.animation.AnimationUtils.loadAnimation(productHolder.llCartItems.getContext(), R.anim.animate_layout_delete);
@@ -211,11 +249,11 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 		return getItemTypeAtPosition(position).rowType.value;
 	}
 
-	private CartProductItemRow getItemTypeAtPosition(int position) {
+	private CartcommerceItemRow getItemTypeAtPosition(int position) {
 		int currentPosition = 0;
 		for (CartItemGroup entry : cartItems) {
 			if (currentPosition == position) {
-				return new CartProductItemRow(CartRowType.HEADER, entry.type, null, entry.getCommerceItems());
+				return new CartcommerceItemRow(CartRowType.HEADER, entry.type, null, entry.getCommerceItems());
 			}
 
 			// increment position for header
@@ -226,12 +264,12 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 			if (position > currentPosition + productCollection.size() - 1) {
 				currentPosition += productCollection.size();
 			} else {
-				return new CartProductItemRow(CartRowType.PRODUCT, entry.type, productCollection.get(position - currentPosition), null);
+				return new CartcommerceItemRow(CartRowType.PRODUCT, entry.type, productCollection.get(position - currentPosition), null);
 			}
 
 		}
 		// last row is for prices
-		return new CartProductItemRow(CartRowType.PRICES, null, null, null);
+		return new CartcommerceItemRow(CartRowType.PRICES, null, null, null);
 	}
 
 	public boolean toggleEditMode() {
@@ -305,23 +343,23 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 		}
 	}
 
-	public class CartItemViewHolder extends RecyclerView.ViewHolder {
-		private WTextView tvTitle, tvDescription, quantity, price;
+	public class productHolder extends RecyclerView.ViewHolder {
+		private WTextView tvTitle, tvColorSize, quantity, price, promotionalText;
 		private ImageView btnDeleteRow;
 		private ImageView imPrice;
 		private SimpleDraweeView productImage;
 		private LinearLayout llQuantity;
-		private LinearLayout llCartItems;
+		private LinearLayout llCartItems,llPromotionalText;
 		private WTextView tvDelete;
 		private ProgressBar pbQuantity;
 		private ProgressBar pbDeleteProgress;
 		public RelativeLayout viewForeground, viewBackground;
 
 
-		public CartItemViewHolder(View view) {
+		public productHolder(View view) {
 			super(view);
 			tvTitle = view.findViewById(R.id.tvTitle);
-			tvDescription = view.findViewById(R.id.tvDetails);
+			tvColorSize = view.findViewById(R.id.tvSize);
 			quantity = view.findViewById(R.id.quantity);
 			price = view.findViewById(R.id.price);
 			btnDeleteRow = view.findViewById(R.id.btnDeleteRow);
@@ -334,39 +372,42 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 			tvDelete = view.findViewById(R.id.tvDelete);
 			viewBackground = view.findViewById(R.id.view_background);
 			viewForeground = view.findViewById(R.id.view_foreground);
+			promotionalText = view.findViewById(R.id.promotionalText);
+			llPromotionalText = view.findViewById(R.id.promotionalTextLayout);
 		}
 	}
 
 	private class CartPricesViewHolder extends RecyclerView.ViewHolder {
 		private WTextView
-				txtPriceEstimatedDelivery, txtPriceDiscounts,
-				txtPriceCompanyDiscount, txtPriceWRewardsSavings,
-				txtPriceOtherDiscount, txtPriceTotal;
+				txtPriceEstimatedDelivery, txtPriceCompanyDiscount,
+				txtPriceWRewardsSavings, txtPriceTotal;
 		private LinearLayout orderSummeryLayout;
+		private RelativeLayout rlOtherDiscount, rlCompanyDiscount;
+
 
 		public CartPricesViewHolder(View view) {
 			super(view);
 			txtPriceEstimatedDelivery = view.findViewById(R.id.txtPriceEstimatedDelivery);
-			/*txtPriceDiscounts = view.findViewById(R.id.txtPriceDiscounts);
 			txtPriceCompanyDiscount = view.findViewById(R.id.txtPriceCompanyDiscount);
 			txtPriceWRewardsSavings = view.findViewById(R.id.txtPriceWRewardsSavings);
-			txtPriceOtherDiscount = view.findViewById(R.id.txtPriceOtherDiscount);*/
 			txtPriceTotal = view.findViewById(R.id.txtPriceTotal);
 			orderSummeryLayout = view.findViewById(R.id.orderSummeryLayout);
+			rlOtherDiscount = view.findViewById(R.id.rlOtherDiscount);
+			rlCompanyDiscount = view.findViewById(R.id.rlCompanyDiscount);
 		}
 	}
 
-	public class CartProductItemRow {
+	public class CartcommerceItemRow {
 		private CartRowType rowType;
 		private String category;
-		private CommerceItem productItem;
-		private ArrayList<CommerceItem> productItems;
+		private CommerceItem commerceItem;
+		private ArrayList<CommerceItem> commerceItems;
 
-		CartProductItemRow(CartRowType rowType, String category, CommerceItem productItem, ArrayList<CommerceItem> productItems) {
+		CartcommerceItemRow(CartRowType rowType, String category, CommerceItem commerceItem, ArrayList<CommerceItem> commerceItems) {
 			this.rowType = rowType;
 			this.category = category;
-			this.productItem = productItem;
-			this.productItems = productItems;
+			this.commerceItem = commerceItem;
+			this.commerceItems = commerceItems;
 		}
 	}
 
