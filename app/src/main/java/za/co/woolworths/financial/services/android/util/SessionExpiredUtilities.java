@@ -11,26 +11,15 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 
 public enum SessionExpiredUtilities {
 	INSTANCE;
-
 	public static final String ACCOUNT = "ACCOUNT";
 	public static final String REWARD = "REWARD";
 	public static final String PRODUCT = "PRODUCT";
-
-
 	public void setAccountSessionExpired(Activity activity, String token) {
 		onSessionExpired(activity, token);
 		getGlobalState().setSection(ACCOUNT);
 		openBottomNavigation(activity);
 		Utils.sendBus(new SessionManager(SessionManager.ACCOUNT_SESSION_EXPIRED));
-	}
-
-	private void openBottomNavigation(Activity activity) {
-		Intent i = new Intent(activity, BottomNavigationActivity.class);
-		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-		activity.startActivity(i);
-		activity.overridePendingTransition(0, 0);
+		Utils.removeEntry(activity);
 	}
 
 	public void setWRewardSessionExpired(Activity activity, String token) {
@@ -71,5 +60,14 @@ public enum SessionExpiredUtilities {
 			return woolworthsApplication.getWGlobalState();
 		}
 		return null;
+	}
+
+	private void openBottomNavigation(Activity activity) {
+		Intent i = new Intent(activity, BottomNavigationActivity.class);
+		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		activity.startActivity(i);
+		activity.overridePendingTransition(0, 0);
 	}
 }

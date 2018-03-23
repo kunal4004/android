@@ -34,7 +34,6 @@ import java.util.Map;
 import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
@@ -738,10 +737,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 					try {
 						Activity activity = getActivity();
 						if (activity != null) {
-							Utils.removeToken(SessionDao.KEY.USER_TOKEN, activity);
-							Utils.removeFromDb(SessionDao.KEY.DELIVERY_LOCATION_HISTORY, getContext());
-							Utils.removeFromDb(SessionDao.KEY.STORES_USER_SEARCH, getContext());
-							Utils.removeFromDb(SessionDao.KEY.STORES_USER_LAST_LOCATION, getContext());
+							Utils.removeEntry(activity);
 						}
 					} catch (Exception pE) {
 						Log.d(TAG, pE.getMessage());

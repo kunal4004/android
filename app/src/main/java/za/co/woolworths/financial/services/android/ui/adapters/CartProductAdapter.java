@@ -2,8 +2,8 @@ package za.co.woolworths.financial.services.android.ui.adapters;
 
 import android.animation.ObjectAnimator;
 import android.app.Activity;
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,23 +57,25 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 	private boolean firstLoadCompleted = false;
 	private ArrayList<CartItemGroup> cartItems;
 	private OrderSummary orderSummary;
+	private Activity mContext;
 
-	public CartProductAdapter(ArrayList<CartItemGroup> cartItems, OnItemClick onItemClick, OrderSummary orderSummary, Activity mContext) {
+	public CartProductAdapter(ArrayList<CartItemGroup> cartItems, OnItemClick onItemClick, OrderSummary orderSummary, Activity context) {
 		this.cartItems = cartItems;
 		this.onItemClick = onItemClick;
 		this.orderSummary = orderSummary;
+		this.mContext = context;
 	}
 
 	@Override
 	public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 		if (viewType == CartRowType.HEADER.value) {
-			return new CartHeaderViewHolder(LayoutInflater.from(parent.getContext())
+			return new CartHeaderViewHolder(LayoutInflater.from(mContext)
 					.inflate(R.layout.cart_product_header_item, parent, false));
 		} else if (viewType == CartRowType.PRODUCT.value) {
-			return new ProductHolder(LayoutInflater.from(parent.getContext())
+			return new ProductHolder(LayoutInflater.from(mContext)
 					.inflate(R.layout.cart_product_item, parent, false));
 		} else {
-			return new CartPricesViewHolder(LayoutInflater.from(parent.getContext())
+			return new CartPricesViewHolder(LayoutInflater.from(mContext)
 					.inflate(R.layout.cart_product_basket_prices, parent, false));
 		}
 	}
@@ -89,35 +91,37 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 				break;
 
 			case PRODUCT:
-				final ProductHolder ProductHolder = ((ProductHolder) holder);
+				final ProductHolder productHolder = ((ProductHolder) holder);
 				final CommerceItem commerceItem = itemRow.commerceItem;
-				ProductHolder.tvTitle.setText(commerceItem.commerceItemInfo.getProductDisplayName());
-				ProductHolder.quantity.setText(String.valueOf(commerceItem.commerceItemInfo.getQuantity()));
-				ProductHolder.price.setText(WFormatter.formatAmount(commerceItem.getPriceInfo().getAmount()));
-				productImage(ProductHolder.productImage, commerceItem.commerceItemInfo.externalImageURL);
-				ProductHolder.btnDeleteRow.setVisibility(this.editMode ? View.VISIBLE : View.GONE);
-				onRemoveSingleItem(ProductHolder, commerceItem);
+				productHolder.tvTitle.setText(commerceItem.commerceItemInfo.getProductDisplayName());
+				Utils.truncateMaxLine(productHolder.tvTitle);
+				productHolder.quantity.setText(String.valueOf(commerceItem.commerceItemInfo.getQuantity()));
+				productHolder.quantity.setText(String.valueOf(commerceItem.commerceItemInfo.getQuantity()));
+				productHolder.price.setText(WFormatter.formatAmount(commerceItem.getPriceInfo().getAmount()));
+				productImage(productHolder.productImage, commerceItem.commerceItemInfo.externalImageURL);
+				productHolder.btnDeleteRow.setVisibility(this.editMode ? View.VISIBLE : View.GONE);
+				onRemoveSingleItem(productHolder, commerceItem);
 				//enable/disable change quantity click
-				ProductHolder.llQuantity.setEnabled(!this.editMode);
-				Utils.fadeInFadeOutAnimation(ProductHolder.llQuantity, this.editMode);
+				productHolder.llQuantity.setEnabled(!this.editMode);
+				Utils.fadeInFadeOutAnimation(productHolder.llQuantity, this.editMode);
 
 				// prevent triggering animation on first load
 				if (firstLoadWasCompleted())
-					animateOnDeleteButtonVisibility(ProductHolder.llCartItems, this.editMode);
+					animateOnDeleteButtonVisibility(productHolder.llCartItems, this.editMode);
 
 				if (commerceItem.getQuantityUploading()) {
-					ProductHolder.pbQuantity.setVisibility(View.VISIBLE);
-					ProductHolder.quantity.setVisibility(View.GONE);
-					ProductHolder.imPrice.setVisibility(View.GONE);
+					productHolder.pbQuantity.setVisibility(View.VISIBLE);
+					productHolder.quantity.setVisibility(View.GONE);
+					productHolder.imPrice.setVisibility(View.GONE);
 				} else {
-					ProductHolder.pbQuantity.setVisibility(View.GONE);
-					ProductHolder.quantity.setVisibility(View.VISIBLE);
-					ProductHolder.imPrice.setVisibility(View.VISIBLE);
+					productHolder.pbQuantity.setVisibility(View.GONE);
+					productHolder.quantity.setVisibility(View.VISIBLE);
+					productHolder.imPrice.setVisibility(View.VISIBLE);
 				}
 
 				//Set Promotion Text START
 				if (commerceItem.getPriceInfo().getDiscountedAmount() > 0) {
-					ProductHolder.promotionalText.setText(" " + WFormatter.formatAmount(commerceItem.getPriceInfo().getDiscountedAmount()));
+					productHolder.promotionalText.setText(" " + WFormatter.formatAmount(commerceItem.getPriceInfo().getDiscountedAmount()));
 //					ProductHolder.llPromotionalText.setVisibility(View.VISIBLE);
 				} else {
 //					ProductHolder.llPromotionalText.setVisibility(View.GONE);
@@ -126,7 +130,7 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
 				// Set Color and Size START
 				if (itemRow.category.equalsIgnoreCase("FOOD")) {
-					ProductHolder.tvColorSize.setVisibility(View.INVISIBLE);
+					productHolder.tvColorSize.setVisibility(View.INVISIBLE);
 				} else {
 					String sizeColor = commerceItem.commerceItemInfo.getColor();
 					if (sizeColor == null)
@@ -136,24 +140,24 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 					else if (!sizeColor.isEmpty() && !commerceItem.commerceItemInfo.getSize().isEmpty() && !commerceItem.commerceItemInfo.getSize().equalsIgnoreCase("NO SZ"))
 						sizeColor = sizeColor + ", " + commerceItem.commerceItemInfo.getSize();
 
-					ProductHolder.tvColorSize.setText(sizeColor);
-					ProductHolder.tvColorSize.setVisibility(View.VISIBLE);
+					productHolder.tvColorSize.setText(sizeColor);
+					productHolder.tvColorSize.setVisibility(View.VISIBLE);
 				}
 				// Set Color and Size END
 
 
-				ProductHolder.btnDeleteRow.setOnClickListener(new View.OnClickListener() {
+				productHolder.btnDeleteRow.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
 						setFirstLoadCompleted(false);
 						commerceItem.commerceItemDeletedId(commerceItem);
 						commerceItem.setDeleteIconWasPressed(true);
-						notifyItemRangeChanged(ProductHolder.getAdapterPosition(), cartItems.size());
+						notifyItemRangeChanged(productHolder.getAdapterPosition(), cartItems.size());
 					}
 				});
 
 
-				ProductHolder.llQuantity.setOnClickListener(new View.OnClickListener() {
+				productHolder.llQuantity.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View view) {
 						commerceItem.setQuantityUploading(true);
@@ -195,7 +199,7 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 	private void onRemoveSingleItem(final ProductHolder ProductHolder, final CommerceItem commerceItem) {
 		if (this.editMode) {
 			if (commerceItem.deleteIconWasPressed()) {
-				Animation animateRowToDelete = android.view.animation.AnimationUtils.loadAnimation(ProductHolder.llCartItems.getContext(), R.anim.animate_layout_delete);
+				Animation animateRowToDelete = android.view.animation.AnimationUtils.loadAnimation(mContext, R.anim.animate_layout_delete);
 				animateRowToDelete.setAnimationListener(new Animation.AnimationListener() {
 					@Override
 					public void onAnimationStart(Animation animation) {
@@ -345,12 +349,11 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 		private ImageView btnDeleteRow;
 		private ImageView imPrice;
 		private SimpleDraweeView productImage;
-		private LinearLayout llQuantity;
+		private RelativeLayout llQuantity;
 		private LinearLayout llCartItems;//llPromotionalText
 		private WTextView tvDelete;
 		private ProgressBar pbQuantity;
 		private ProgressBar pbDeleteProgress;
-
 
 		public ProductHolder(View view) {
 			super(view);
@@ -411,7 +414,7 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 			try {
 				//TODO:: get domain name dynamically
 				imgUrl = "https://images.woolworthsstatic.co.za/" + imgUrl + "?w=" + 85 + "&q=" + 85;
-				image.setImageURI(imgUrl);
+				image.setImageURI(TextUtils.isEmpty(imgUrl) ? "" : imgUrl);
 			} catch (IllegalArgumentException ignored) {
 			}
 		}
@@ -454,9 +457,8 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 	}
 
 	private void animateOnDeleteButtonVisibility(View view, boolean animate) {
-		Context context = view.getContext();
-		if (context != null) {
-			int width = getWidthAndHeight((Activity) context);
+		if (mContext != null) {
+			int width = getWidthAndHeight(mContext);
 			ObjectAnimator animator = ObjectAnimator.ofFloat(view, "translationX", animate ? -width : width, 1f);
 			animator.setInterpolator(new DecelerateInterpolator());
 			animator.setDuration(300);

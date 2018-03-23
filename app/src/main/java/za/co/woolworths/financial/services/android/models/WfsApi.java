@@ -270,7 +270,7 @@ public class WfsApi {
 		return mApiInterface.sendUserStatement(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), statement);
 	}
 
-	public AddItemToCartResponse addItemToCart(List<AddItemToCart>  addToCart) {
+	public AddItemToCartResponse addItemToCart(List<AddItemToCart> addToCart) {
 		return mApiInterface.addItemToCart(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), addToCart);
 	}
 
@@ -322,7 +322,7 @@ public class WfsApi {
 		return mApiInterface.deleteShoppingList(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), listId);
 	}
 
-	public ShoppingListItemsResponse deleteShoppingListItem(String listId,String id,String productId,String catalogRefId) {
+	public ShoppingListItemsResponse deleteShoppingListItem(String listId, String id, String productId, String catalogRefId) {
 		return mApiInterface.deleteShoppingListItem(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), listId, id, productId, catalogRefId);
 	}
 
