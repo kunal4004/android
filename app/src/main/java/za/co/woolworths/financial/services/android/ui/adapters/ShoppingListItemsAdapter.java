@@ -34,7 +34,8 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 	public ShoppingListItemsAdapter(List<ShoppingListItem> listItems, ShoppingListItemsNavigator navigator) {
 		this.listItems = listItems;
 		this.navigator = navigator;
-		this.navigator.onItemSelectionChange(listItems);
+		if(listItems.size()>1)
+			this.navigator.onItemSelectionChange(listItems.subList(1,listItems.size()));
 	}
 
 	@Override
@@ -87,7 +88,7 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 				holder.cartProductImage.setImageURI("https://images.woolworthsstatic.co.za/" + listItems.get(position).externalImageURL + "?w=" + 85 + "&q=" + 85);
 				holder.productName.setText(listItems.get(position).displayName);
 				//holder.productDesc.setText(listItems.get(position).description);
-				holder.quantity.setText(listItems.get(position).quantityDesired);
+				holder.quantity.setText(String.valueOf(listItems.get(position).quantityDesired));
 				holder.price.setText(WFormatter.formatAmount(listItems.get(position).price));
 				holder.select.setChecked(listItems.get(position).isSelected);
 				holder.delete.setVisibility(View.VISIBLE);

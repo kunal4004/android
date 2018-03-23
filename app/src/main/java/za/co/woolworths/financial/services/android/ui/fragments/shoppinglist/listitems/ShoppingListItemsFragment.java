@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
@@ -21,8 +22,12 @@ import com.awfs.coordination.databinding.ShoppingListItemsFragmentBinding;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import io.reactivex.functions.Consumer;
+import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
+import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
+import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
@@ -36,6 +41,7 @@ import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment;
+import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.util.EmptyCartView;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -153,7 +159,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				openProductSearchActivity();
 				break;
 			case R.id.btnCheckOut:
-				onClickAddToCart(listItems.subList(1,listItems.size()));
+				executeAddToCart(listItems.subList(1, listItems.size()));
 			default:
 				break;
 		}
@@ -206,16 +212,31 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	@Override
 	public void onShoppingSearchClick() {
 		openProductSearchActivity();
-
 	}
 
 	@Override
 	public void onAddToCartPreExecute() {
+		getViewDataBinding().incConfirmButtonLayout.pbLoadingIndicator.setVisibility(View.VISIBLE);
+		getViewDataBinding().incConfirmButtonLayout.btnCheckOut.setVisibility(View.GONE);
+	}
+
+	@Override
+	public void onAddToCartSuccess(AddItemToCartResponse addItemToCartResponse) {
+		popFragmentNoAnim();
+	}
+
+	@Override
+	public void onSessionTokenExpired(Response response) {
 
 	}
 
 	@Override
-	public void onAddToCartPostExecute() {
+	public void otherHttpCode(Response response) {
+
+	}
+
+	@Override
+	public void onAddItemToCartFailure(String errorMessage) {
 
 	}
 
@@ -292,7 +313,18 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		setText(getViewDataBinding().incConfirmButtonLayout.btnCheckOut, getString(R.string.add_to_cart));
 	}
 
-	private void onClickAddToCart(List<ShoppingListItem> items){
-			
+	private void executeAddToCart(List<ShoppingListItem> items) {
+		List<AddItemToCart> selectedItems = new ArrayList<>();
+		for (ShoppingListItem item : items) {
+			if (item.isSelected)
+				selectedItems.add(new AddItemToCart(item.productId,item.catalogRefId,item.quantityDesired));
+		}
+
+		getViewModel().postAddItemToCart(selectedItems).execute();
+	}
+
+	private void resetAddToCartButton() {
+		getViewDataBinding().incConfirmButtonLayout.pbLoadingIndicator.setVisibility(View.GONE);
+		getViewDataBinding().incConfirmButtonLayout.btnCheckOut.setVisibility(View.VISIBLE);
 	}
 }

@@ -13,7 +13,7 @@ public class ShoppingListItem {
 
 	public String Id;
 
-	public String quantityDesired;
+	public int quantityDesired;
 
 	public String displayName;
 

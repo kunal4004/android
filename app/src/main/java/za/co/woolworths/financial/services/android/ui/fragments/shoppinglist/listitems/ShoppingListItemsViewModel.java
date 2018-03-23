@@ -1,7 +1,12 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems;
 
+import java.util.List;
+
+import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
+import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
+import za.co.woolworths.financial.services.android.models.rest.product.PostAddItemToCart;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.DeleteShoppingList;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.DeleteShoppingListItem;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.GetShoppingListItems;
@@ -68,6 +73,40 @@ public class ShoppingListItemsViewModel extends BaseViewModel<ShoppingListItemsN
 
 			}
 		},listId,id,productId,catalogRefId);
+	}
+
+	protected PostAddItemToCart postAddItemToCart(List<AddItemToCart> addItemToCart) {
+		getNavigator().onAddToCartPreExecute();
+		return new PostAddItemToCart(addItemToCart, new OnEventListener() {
+			@Override
+			public void onSuccess(Object object) {
+				if (object != null) {
+					AddItemToCartResponse addItemToCartResponse = (AddItemToCartResponse) object;
+					if (addItemToCartResponse != null) {
+						switch (addItemToCartResponse.httpCode) {
+							case 200:
+								getNavigator().onAddToCartSuccess(addItemToCartResponse);
+								break;
+
+							case 440:
+								if (addItemToCartResponse.response != null)
+									getNavigator().onSessionTokenExpired(addItemToCartResponse.response);
+								break;
+
+							default:
+								if (addItemToCartResponse.response != null)
+									getNavigator().otherHttpCode(addItemToCartResponse.response);
+								break;
+						}
+					}
+				}
+			}
+
+			@Override
+			public void onFailure(String e) {
+				getNavigator().onAddItemToCartFailure(e);
+			}
+		});
 	}
 
 }
