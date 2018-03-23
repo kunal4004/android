@@ -92,6 +92,21 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 				holder.delete.setVisibility(View.VISIBLE);
 				holder.progressBar.setVisibility(View.INVISIBLE);
 
+				// Set Color and Size START
+
+					String sizeColor = listItems.get(position).color;
+					if (sizeColor == null)
+						sizeColor = "";
+					if (sizeColor.isEmpty() && !listItems.get(position).size.isEmpty() && !listItems.get(position).size.equalsIgnoreCase("NO SZ"))
+						sizeColor = listItems.get(position).size;
+					else if (!sizeColor.isEmpty() && !listItems.get(position).size.isEmpty() && !listItems.get(position).size.equalsIgnoreCase("NO SZ"))
+						sizeColor = sizeColor + ", " + listItems.get(position).size;
+
+					holder.tvColorSize.setText(sizeColor);
+					holder.tvColorSize.setVisibility(View.VISIBLE);
+					
+				// Set Color and Size END
+
 				holder.select.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View view) {
@@ -139,7 +154,7 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 
 	public class ViewHolder extends RecyclerView.ViewHolder {
 		private WTextView productName;
-		private WTextView productDesc;
+		private WTextView tvColorSize;
 		private WTextView quantity;
 		private WTextView price;
 		private CheckBox select;
@@ -147,11 +162,9 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 		private WTextView delete;
 		private ProgressBar progressBar;
 
-
 		public ViewHolder(View itemView) {
 			super(itemView);
 			productName = itemView.findViewById(R.id.tvTitle);
-			productDesc = itemView.findViewById(R.id.tvDetails);
 			quantity = itemView.findViewById(R.id.tvQuantity);
 			price = itemView.findViewById(R.id.tvPrice);
 			select = itemView.findViewById(R.id.btnDeleteRow);
@@ -159,6 +172,7 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 			cartProductImage = itemView.findViewById(R.id.cartProductImage);
 			delete = itemView.findViewById(R.id.tvDelete);
 			progressBar = itemView.findViewById(R.id.pbDeleteIndicator);
+			tvColorSize=itemView.findViewById(R.id.tvColorSize);
 		}
 	}
 

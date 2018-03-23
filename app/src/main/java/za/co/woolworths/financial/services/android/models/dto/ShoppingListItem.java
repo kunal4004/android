@@ -30,4 +30,6 @@ public class ShoppingListItem {
 	public double price;
 
 	public int userQuantity = 0;
+
+	public String color;
 }

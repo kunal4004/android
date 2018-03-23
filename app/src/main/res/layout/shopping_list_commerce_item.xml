@@ -105,7 +105,7 @@
                                 android:layout_height="wrap_content" />
 
                             <za.co.woolworths.financial.services.android.ui.views.WTextView
-                                android:id="@+id/tvDetails"
+                                android:id="@+id/tvColorSize"
                                 style="@style/style_cart_item_details"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content" />
