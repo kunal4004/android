@@ -22,12 +22,16 @@ import java.util.List;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
+import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
+import za.co.woolworths.financial.services.android.models.dto.AddToListResponse;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetail;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
+import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
@@ -38,6 +42,7 @@ import za.co.woolworths.financial.services.android.models.rest.product.PostAddIt
 import za.co.woolworths.financial.services.android.models.rest.product.ProductRequest;
 import za.co.woolworths.financial.services.android.models.rest.shop.SetDeliveryLocationSuburb;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.GetShoppingLists;
+import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostAddToList;
 import za.co.woolworths.financial.services.android.ui.base.BaseViewModel;
 import za.co.woolworths.financial.services.android.util.LocationItemTask;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
@@ -137,7 +142,7 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 					if (location != null && location.size() > 0) {
 						getNavigator().onLocationItemSuccess(location);
 					} else {
-						getNavigator().noStockAvailable();
+						getNavigator().outOfStockDialog();
 					}
 				}
 				getNavigator().dismissFindInStoreProgress();
@@ -202,7 +207,7 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 		if (newProductDetail != null)
 			return newProductDetail;
 		else
-			return new WProductDetail();
+			return null;
 	}
 
 	//return check out link
@@ -605,4 +610,19 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 		});
 	}
 
+	public PostAddToList addToList(List<AddToListRequest> addToListRequest, String listId) {
+		getNavigator().onAddToShopListLoad();
+		return new PostAddToList(new OnEventListener() {
+			@Override
+			public void onSuccess(Object object) {
+				AddToListResponse response = (AddToListResponse) object;
+				getNavigator().onAddToListSuccess(response);
+			}
+
+			@Override
+			public void onFailure(String e) {
+				getNavigator().onAddToListFailure(e);
+			}
+		}, addToListRequest, listId);
+	}
 }

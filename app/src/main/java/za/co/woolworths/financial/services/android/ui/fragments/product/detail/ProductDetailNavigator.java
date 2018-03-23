@@ -7,10 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
+import za.co.woolworths.financial.services.android.models.dto.AddToListResponse;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
@@ -91,7 +93,7 @@ public interface ProductDetailNavigator {
 
 	void onLocationItemSuccess(List<StoreDetails> location);
 
-	void noStockAvailable();
+	void outOfStockDialog();
 
 	void onPermissionGranted();
 
@@ -123,4 +125,10 @@ public interface ProductDetailNavigator {
 	void setSuburbAPI(DeliveryLocationHistory deliveryLocation);
 
 	void onShoppingListsResponse(ShoppingListsResponse shoppingListsResponse);
+
+	void onAddToShopListLoad();
+
+	void onAddToListSuccess(AddToListResponse response);
+
+	void onAddToListFailure(String e);
 }

@@ -146,6 +146,7 @@ public class Utils {
 			"image/jpeg",
 			"image/tiff"
 	};
+	private static WTextView elipseEnd;
 
 	public static void saveLastLocation(Location loc, Context mContext) {
 
@@ -175,7 +176,6 @@ public class Utils {
 			}
 		} catch (JSONException e) {
 		}
-
 
 		return null;
 
@@ -1012,7 +1012,6 @@ public class Utils {
 	}
 
 	public static PopupWindow showToast(final Activity activity, String message, final boolean viewState) {
-
 		// inflate your xml layout
 		if (activity != null) {
 			LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -1027,6 +1026,7 @@ public class Utils {
 					LinearLayout.LayoutParams.WRAP_CONTENT, true);
 
 			tvView.setVisibility(viewState ? View.VISIBLE : View.GONE);
+			tvCart.setVisibility(viewState ? View.VISIBLE : View.GONE);
 			tvAddToCart.setText(message);
 
 			// handle popupWindow click event

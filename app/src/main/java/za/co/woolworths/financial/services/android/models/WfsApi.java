@@ -15,11 +15,13 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.OkHttpClient;
 import retrofit.RestAdapter;
 import za.co.wigroup.androidutils.Util;
+import za.co.woolworths.financial.services.android.CreateListResponse;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
+import za.co.woolworths.financial.services.android.models.dto.AddToListResponse;
 import za.co.woolworths.financial.services.android.models.dto.AuthoriseLoanRequest;
 import za.co.woolworths.financial.services.android.models.dto.AuthoriseLoanResponse;
 import za.co.woolworths.financial.services.android.models.dto.BankAccountTypes;
@@ -181,7 +183,7 @@ public class WfsApi {
 		return mApiInterface.issueLoan(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), issueLoanRequest);
 	}
 
-	public Response addToList(List<AddToListRequest> addToListRequest, String listId) {
+	public AddToListResponse addToList(List<AddToListRequest> addToListRequest, String listId) {
 		return mApiInterface.addToList(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), listId, addToListRequest);
 	}
 
@@ -309,7 +311,7 @@ public class WfsApi {
 		return mApiInterface.getShoppingLists(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken());
 	}
 
-	public Response createList(CreateList listName) {
+	public CreateListResponse createList(CreateList listName) {
 		return mApiInterface.createList(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), listName);
 	}
 

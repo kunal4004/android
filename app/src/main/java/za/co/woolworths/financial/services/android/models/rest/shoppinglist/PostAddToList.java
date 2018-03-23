@@ -7,10 +7,11 @@ import java.util.List;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
 import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.dto.AddToListResponse;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 
-public class PostAddToList extends HttpAsyncTask<String, String, Response> {
+public class PostAddToList extends HttpAsyncTask<String, String, AddToListResponse> {
 	public OnEventListener mCallBack;
 	private List<AddToListRequest> addToList;
 	private String mException;
@@ -23,28 +24,28 @@ public class PostAddToList extends HttpAsyncTask<String, String, Response> {
 	}
 
 	@Override
-	protected Response httpDoInBackground(String... strings) {
+	protected AddToListResponse httpDoInBackground(String... strings) {
 		return WoolworthsApplication.getInstance().getApi().addToList(addToList,listId);
 	}
 
 	@Override
-	protected Response httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+	protected AddToListResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
 		mException = errorMessage;
 		mCallBack.onFailure(errorMessage);
-		return new Response();
+		return new AddToListResponse();
 	}
 
 	@Override
-	protected Class<Response> httpDoInBackgroundReturnType() {
-		return Response.class;
+	protected Class<AddToListResponse> httpDoInBackgroundReturnType() {
+		return AddToListResponse.class;
 	}
 
 	@Override
-	protected void onPostExecute(Response Response) {
-		super.onPostExecute(Response);
+	protected void onPostExecute(AddToListResponse response) {
+		super.onPostExecute(response);
 		if (mCallBack != null) {
 			if (TextUtils.isEmpty(mException)) {
-				mCallBack.onSuccess(Response);
+				mCallBack.onSuccess(response);
 			}
 		}
 	}

@@ -52,6 +52,16 @@
                 android:textSize="12sp"
                 app:WTextView_font="medium_bold"/>
 
+
+            <ImageView
+                android:id="@+id/imCloseIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/sixteen_dp"
+                app:srcCompat="@drawable/close_24"/>
+
         </RelativeLayout>
 
 
@@ -72,7 +82,11 @@
             android:textCursorDrawable="@drawable/colorcursor"
             android:textSelectHandle="@drawable/colorcursor"
             android:textSize="@dimen/eighteen_sp"
-            app:WEditTextView_font="myriadpro_regular"/>
+            app:WEditTextView_font="myriadpro_regular">
+
+            <requestFocus/>
+
+        </za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView>
 
         <View
             android:layout_width="match_parent"
@@ -85,7 +99,7 @@
         <FrameLayout
             android:id="@+id/flCancelBtn"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/seventy_five_dp"
             android:layout_alignParentBottom="true">
 
             <za.co.woolworths.financial.services.android.ui.views.WButton
@@ -97,6 +111,12 @@
                 android:lineSpacingMultiplier="1.67"
                 android:text="@string/cancel"
                 app:WButton_font="myriadpro_regular"/>
+
+            <ProgressBar
+                android:id="@+id/pbCreateList"
+                android:layout_width="@dimen/twenty_four_dp"
+                android:layout_height="@dimen/twenty_four_dp"
+                android:indeterminateTint="@color/black"/>
         </FrameLayout>
 
     </LinearLayout>

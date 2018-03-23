@@ -15,11 +15,13 @@ import retrofit.http.Path;
 import retrofit.http.Query;
 import retrofit.http.Streaming;
 import retrofit.mime.MultipartTypedOutput;
+import za.co.woolworths.financial.services.android.CreateListResponse;
 import za.co.woolworths.financial.services.android.models.dto.AccountResponse;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
+import za.co.woolworths.financial.services.android.models.dto.AddToListResponse;
 import za.co.woolworths.financial.services.android.models.dto.AuthoriseLoanRequest;
 import za.co.woolworths.financial.services.android.models.dto.AuthoriseLoanResponse;
 import za.co.woolworths.financial.services.android.models.dto.BankAccountTypes;
@@ -874,7 +876,7 @@ public interface ApiInterface {
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
 	@POST("/list")
-	Response createList(
+	CreateListResponse createList(
 			@Header("apiId") String apiId,
 			@Header("sha1Password") String sha1Password,
 			@Header("deviceVersion") String deviceVersion,
@@ -900,7 +902,7 @@ public interface ApiInterface {
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
 	@POST("/list/{productId}/item")
-	Response addToList(
+	AddToListResponse addToList(
 			@Header("apiId") String apiId,
 			@Header("sha1Password") String sha1Password,
 			@Header("deviceVersion") String deviceVersion,

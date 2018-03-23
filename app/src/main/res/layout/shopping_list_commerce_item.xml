@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:fresco="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/bottom_divider_list">
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:fresco="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@drawable/bottom_divider_list">
 
     <com.daimajia.swipe.SwipeLayout
         android:id="@+id/swipe"
@@ -24,7 +24,7 @@
                 android:layout_height="32dp"
                 android:layout_centerInParent="true"
                 android:indeterminateTint="@color/white"
-                android:visibility="invisible" />
+                android:visibility="invisible"/>
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/tvDelete"
@@ -38,7 +38,7 @@
                 android:textAllCaps="true"
                 android:textColor="@color/white"
                 android:textSize="@dimen/twenty_sp"
-                app:WTextView_font="medium" />
+                app:WTextView_font="medium"/>
         </RelativeLayout>
 
         <LinearLayout
@@ -73,7 +73,7 @@
                         android:clickable="false"
                         android:focusable="false"
                         android:focusableInTouchMode="false"
-                        android:paddingRight="21dp" />
+                        android:paddingRight="21dp"/>
 
                     <LinearLayout
                         android:id="@+id/llCartItems"
@@ -88,8 +88,8 @@
                             android:layout_gravity="center"
                             android:contentDescription="@string/app_name"
                             fresco:fadeDuration="50"
-                            fresco:failureImage="@drawable/placeholder_logo"
-                            fresco:viewAspectRatio="0.5" />
+                            fresco:failureImage="@drawable/woolworth_logo_icon"
+                            fresco:viewAspectRatio="0.5"/>
 
                         <LinearLayout
                             android:id="@+id/llProductInfo"
@@ -102,13 +102,13 @@
                                 android:id="@+id/tvTitle"
                                 style="@style/style_cart_item_title"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content" />
+                                android:layout_height="wrap_content"/>
 
                             <za.co.woolworths.financial.services.android.ui.views.WTextView
                                 android:id="@+id/tvColorSize"
                                 style="@style/style_cart_item_details"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content" />
+                                android:layout_height="wrap_content"/>
 
                             <RelativeLayout
                                 android:layout_width="match_parent"
@@ -128,7 +128,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_centerInParent="true"
-                                        android:text="1" />
+                                        android:text="1"/>
 
 
                                 </RelativeLayout>
@@ -140,7 +140,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentBottom="true"
                                     android:layout_marginEnd="@dimen/four_dp"
-                                    android:layout_toStartOf="@+id/tvPrice" />
+                                    android:layout_toStartOf="@+id/tvPrice"/>
 
                                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                                     android:id="@+id/tvPrice"
@@ -148,7 +148,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentBottom="true"
-                                    android:layout_alignParentEnd="true" />
+                                    android:layout_alignParentEnd="true"/>
 
                             </RelativeLayout>
 
@@ -159,7 +159,7 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="0.2dp"
-                    android:background="@color/outside_border" />
+                    android:background="@color/outside_border"/>
             </LinearLayout>
 
         </LinearLayout>

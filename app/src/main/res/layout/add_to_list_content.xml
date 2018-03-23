@@ -45,17 +45,26 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="@dimen/seventy_five_dp">
 
         <za.co.woolworths.financial.services.android.ui.views.WButton
             android:id="@+id/btnCancel"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/seventy_five_dp"
+            android:layout_height="match_parent"
             android:background="@drawable/custom_bg"
             android:letterSpacing="0.1"
             android:lineSpacingMultiplier="1.67"
             android:text="@string/cancel"
             app:WButton_font="myriadpro_regular"/>
+
+        <ProgressBar
+            android:id="@+id/pbAddToList"
+            android:layout_width="@dimen/thirty_two_dp"
+            android:layout_height="@dimen/thirty_two_dp"
+            android:layout_gravity="center"
+            android:indeterminateTint="@color/black"
+            android:visibility="gone"
+            />
 
     </FrameLayout>
 

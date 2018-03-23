@@ -38,6 +38,8 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CLIOfferDecision;
 import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
 import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.service.event.AuthenticationState;
@@ -57,6 +59,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.statement.Statem
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.dialog.AddToListFragment;
+import za.co.woolworths.financial.services.android.ui.views.dialog.EnterNewListFragment;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.JWTHelper;
@@ -565,15 +568,25 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 			case SHOPPING_ADD_TO_LIST:
 				setContentView(R.layout.shopping_add_list_layout);
 				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
-
+				FragmentManager fm = getSupportFragmentManager();
 				Bundle bundle = new Bundle();
 				bundle.putString("LIST_PAYLOAD", description);
-				AddToListFragment addToListFragment = new AddToListFragment();
-				addToListFragment.setArguments(bundle);
-
-				FragmentManager fragmentManager = getSupportFragmentManager();
-				fragmentManager.beginTransaction()
-						.replace(R.id.flShoppingListContainer, addToListFragment).commitAllowingStateLoss();
+				ShoppingListsResponse shoppingListsResponse = new Gson().fromJson((TextUtils.isEmpty(description)) ? "" : description, ShoppingListsResponse.class);
+				if (shoppingListsResponse != null) {
+					List<ShoppingList> lists = shoppingListsResponse.lists;
+					if (lists == null || lists.size() == 0) {
+						EnterNewListFragment enterNewListFragment = new EnterNewListFragment();
+						bundle.putString("OPEN_FROM_POPUP", "OPEN_FROM_POPUP");
+						enterNewListFragment.setArguments(bundle);
+						fm.beginTransaction()
+								.replace(R.id.flShoppingListContainer, enterNewListFragment).commitAllowingStateLoss();
+						return;
+					}
+					AddToListFragment addToListFragment = new AddToListFragment();
+					addToListFragment.setArguments(bundle);
+					fm.beginTransaction()
+							.replace(R.id.flShoppingListContainer, addToListFragment).commitAllowingStateLoss();
+				}
 
 				break;
 			default:
@@ -720,9 +733,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 				@Override
 				public void onAnimationEnd(Animation animation) {
-					woolworthsApplication
-							.bus()
-							.send(new StatementFragment());
+					Utils.sendBus(new StatementFragment());
 					dismissLayout();
 				}
 			});

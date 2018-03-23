@@ -46,6 +46,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.AddToCartDaTum;
+import za.co.woolworths.financial.services.android.models.dto.AddToListResponse;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
@@ -222,7 +223,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 								break;
 
 							case OPEN_ADD_TO_SHOPPING_LIST_VIEW:
-								Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.SHOPPING_ADD_TO_LIST, Utils.objectToJson(mShoppingListsResponse));
+								openAddToListFragment(activity);
 								break;
 
 							default:
@@ -232,6 +233,10 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 				}
 			}
 		});
+	}
+
+	private void openAddToListFragment(Activity activity) {
+		Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.SHOPPING_ADD_TO_LIST, Utils.objectToJson(mShoppingListsResponse));
 	}
 
 	@Override
@@ -338,7 +343,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 			onLoadComplete();
 		} else {
 			getViewModel().productDetail(new ProductRequest(mDefaultProduct.productId, mDefaultProduct.sku)).execute();
-			//getViewModel().getProductDetail(getBaseActivity(), mDefaultProduct.productId, mDefaultProduct.sku);
 		}
 	}
 
@@ -436,6 +440,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	public void onLoadStart() {
 		disableStoreFinder();
 
+		enableAddToListBtn(false);
 		//disable shop online button
 		getViewDataBinding().llAddToCart.setAlpha(0.55f);
 		getViewDataBinding().llAddToCart.setEnabled(false);
@@ -452,8 +457,13 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		setText(getViewDataBinding().productCode, getString(R.string.loading_product_info));
 	}
 
+	private void enableAddToListBtn(boolean enable) {
+		getViewDataBinding().btnAddShoppingList.setEnabled(enable);
+	}
+
 	@Override
 	public void onLoadComplete() {
+		enableAddToListBtn(true);
 		showView(getViewDataBinding().llAddToCart);
 		hideView(getViewDataBinding().productLoadDot);
 	}
@@ -462,7 +472,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	public void addToShoppingList() {
 		Activity activity = getActivity();
 		if (activity != null) {
-			getGlobalState().saveButtonClicked(INDEX_ADD_TO_SHOPPING_LIST);
 			if (TextUtils.isEmpty(Utils.getSessionToken(null))) {
 				ScreenManager.presentSSOSignin(activity);
 				return;
@@ -491,7 +500,25 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 				break;
 
 			case R.id.btnAddShoppingList:
-				addToShoppingList();
+				getGlobalState().saveButtonClicked(INDEX_ADD_TO_SHOPPING_LIST);
+				scrolltoTop();
+				WProductDetail product = getViewModel().getProduct();
+				if (product == null) return;
+				switch (getViewModel().getProductType()) {
+					case CLOTHING_PRODUCT:
+						addToShoppingList();
+						break;
+
+					case FOOD_PRODUCT:
+						getGlobalState().setSelectedSKUId(product.productId);
+						Activity activity = getActivity();
+						if (activity != null) openAddToListFragment(activity);
+						break;
+
+					default:
+						if (getViewModel().otherSkuList().size() > 1) addToShoppingList();
+						break;
+				}
 				break;
 
 			case R.id.linColour:
@@ -558,7 +585,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 			case R.id.llStoreFinder:
 				getGlobalState().saveButtonClicked(INDEX_STORE_FINDER);
-				getViewDataBinding().scrollProductDetail.scrollTo(0, 0);
+				scrolltoTop();
 				Activity activity = getBaseActivity();
 				if (activity != null) {
 					if (Utils.isLocationEnabled(getActivity())) {
@@ -578,6 +605,10 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 			default:
 				break;
 		}
+	}
+
+	private void scrolltoTop() {
+		getViewDataBinding().scrollProductDetail.scrollTo(0, 0);
 	}
 
 	@Override
@@ -942,19 +973,19 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 			startActivity(intentInStoreFinder);
 			getBaseActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 		} else {
-			noStockAvailable();
+			outOfStockDialog();
 		}
 	}
 
 	@Override
-	public void noStockAvailable() {
+	public void outOfStockDialog() {
 		//no stock error message
 		Utils.displayValidationMessage(getBaseActivity(), CustomPopUpWindow.MODAL_LAYOUT.NO_STOCK, "");
 	}
 
 	@Override
 	public void onPermissionGranted() {
-		getViewDataBinding().scrollProductDetail.scrollTo(0, 0);
+		scrolltoTop();
 		if (isNetworkConnected()) {
 			mProductHasColour = productHasColour();
 			mProductHasSize = productHasSize();
@@ -1102,12 +1133,22 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	}
 
 	public void noSizeColorIntent() {
-		getViewDataBinding().scrollProductDetail.scrollTo(0, 0);
+		scrolltoTop();
 		getGlobalState().setSelectedSKUId(mSkuId);
-		if (getGlobalState().getSaveButtonClick() == INDEX_STORE_FINDER) {
-			startLocationUpdates();
-		} else {
-			sendBus(new ProductState(POST_ADD_ITEM_TO_CART, 1));
+		Activity activity = getActivity();
+		if (activity != null) {
+			switch (getGlobalState().getSaveButtonClick()) {
+				case INDEX_STORE_FINDER:
+					startLocationUpdates();
+					break;
+
+				case INDEX_ADD_TO_SHOPPING_LIST:
+					openAddToListFragment(activity);
+					break;
+				default:
+					sendBus(new ProductState(POST_ADD_ITEM_TO_CART, 1));
+					break;
+			}
 		}
 	}
 
@@ -1344,7 +1385,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 					}
 					//user has a valid sessionToken and a delivery location is set.
 					if (getViewModel().getProductType() != null) {
-						getViewDataBinding().scrollProductDetail.scrollTo(0, 0);
+						scrolltoTop();
 						switch (getViewModel().getProductType()) {
 							case FOOD_PRODUCT:
 								onAddToCartLoadComplete();
@@ -1527,6 +1568,21 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	private void cancelPopUpMenu() {
 		cancelPopWindow(mPSizeWindow);
 		cancelPopWindow(mPColourWindow);
+	}
+
+	@Override
+	public void onAddToShopListLoad() {
+
+	}
+
+	@Override
+	public void onAddToListSuccess(AddToListResponse response) {
+
+	}
+
+	@Override
+	public void onAddToListFailure(String e) {
+
 	}
 }
 

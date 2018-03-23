@@ -86,16 +86,14 @@
                         android:layout_height="match_parent"
                         android:orientation="horizontal">
 
-                        <com.facebook.drawee.view.SimpleDraweeView
+                        <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
                             android:id="@+id/cartProductImage"
                             android:layout_width="@dimen/eighty_four_dp"
-                            android:layout_height="@dimen/eighty_dp"
+                            android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:contentDescription="@string/app_name"
-                            fresco:fadeDuration="50"
-                            fresco:failureImage="@drawable/woolworth_logo_icon"
-                            fresco:placeholderImage="@drawable/woolworth_logo_icon"
-                            fresco:viewAspectRatio="0.5"/>
+                            fresco:fadeDuration="20"
+                            fresco:failureImage="@drawable/woolworth_logo_icon"/>
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -183,7 +181,6 @@
                                         <za.co.woolworths.financial.services.android.ui.views.WTextView
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
-                                            android:text="@string/promotional_text"
                                             android:textAllCaps="true"
                                             android:textColor="@color/promotional_text_red"
                                             android:textSize="14sp"
