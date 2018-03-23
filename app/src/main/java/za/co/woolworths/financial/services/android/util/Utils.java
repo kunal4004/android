@@ -1171,7 +1171,7 @@ public class Utils {
 				tv.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 				if (tv.getLineCount() > 2) {
 					int lineEndIndex = tv.getLayout().getLineEnd(1);
-					String text = tv.getText().subSequence(0, lineEndIndex - 10) + "..."; //TODO:: truncate 3 characters at end
+					String text = tv.getText().subSequence(0, lineEndIndex - 6) + "..."; //TODO:: truncate 3 characters at end
 					tv.setText(text);
 				}
 			}
