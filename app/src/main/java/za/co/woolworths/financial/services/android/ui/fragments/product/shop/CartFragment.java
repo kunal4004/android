@@ -670,6 +670,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 			@Override
 			protected ShoppingCartResponse httpDoInBackground(String... params) {
+				Utils.sendBus(new BadgeState(CART_COUNT_TEMP, 0));
 				return ((WoolworthsApplication) getActivity().getApplication()).getApi().removeAllCartItems();
 			}
 
