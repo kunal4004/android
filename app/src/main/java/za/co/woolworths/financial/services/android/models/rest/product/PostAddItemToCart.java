@@ -2,6 +2,8 @@ package za.co.woolworths.financial.services.android.models.rest.product;
 
 import android.text.TextUtils;
 
+import java.util.List;
+
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
@@ -12,9 +14,9 @@ public class PostAddItemToCart extends HttpAsyncTask<String, String, AddItemToCa
 
 	private OnEventListener<AddItemToCartResponse> mCallBack;
 	private String mException;
-	private AddItemToCart addItemToCart;
+	private List<AddItemToCart> addItemToCart;
 
-	public PostAddItemToCart(AddItemToCart addItemToCart, OnEventListener callback) {
+	public PostAddItemToCart(List<AddItemToCart> addItemToCart, OnEventListener callback) {
 		this.addItemToCart = addItemToCart;
 		this.mCallBack = callback;
 	}

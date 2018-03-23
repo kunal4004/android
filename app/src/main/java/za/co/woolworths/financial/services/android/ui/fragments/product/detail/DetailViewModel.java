@@ -539,7 +539,7 @@ public class DetailViewModel extends BaseViewModel<DetailNavigator> {
 		});
 	}
 
-	protected PostAddItemToCart postAddItemToCart(AddItemToCart addItemToCart) {
+	protected PostAddItemToCart postAddItemToCart(List<AddItemToCart> addItemToCart) {
 		setAddedToCart(true);
 		getNavigator().onAddToCartLoad();
 		return new PostAddItemToCart(addItemToCart, new OnEventListener() {

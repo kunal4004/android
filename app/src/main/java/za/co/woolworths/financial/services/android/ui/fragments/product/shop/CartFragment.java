@@ -21,6 +21,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
+import com.daimajia.swipe.util.Attributes;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
@@ -35,7 +36,6 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CartItemGroup;
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem;
 import za.co.woolworths.financial.services.android.models.dto.CartResponse;
@@ -66,6 +66,7 @@ import static za.co.woolworths.financial.services.android.models.service.event.B
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT_TEMP;
 import static za.co.woolworths.financial.services.android.models.service.event.CartState.CHANGE_QUANTITY;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_CALL;
+import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CLOSE_VIEW;
 
 public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick, View.OnClickListener, NetworkChangeListener {
 
@@ -122,7 +123,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		} catch (IllegalStateException ex) {
 			Log.d("mToggleItemRemoved", ex.toString());
 		}
-
 		mChangeQuantity = new ChangeQuantity();
 		rvCartList = view.findViewById(R.id.cartList);
 		btnCheckOut = view.findViewById(R.id.btnCheckOut);
@@ -142,7 +142,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		btnCheckOut.setOnClickListener(this);
 		tvDeliveryLocation = view.findViewById(R.id.tvDeliveryLocation);
 		emptyCartUI(view);
-		Activity activity = getActivity();
+		final Activity activity = getActivity();
 		if (activity != null) {
 			CartActivity cartActivity = (CartActivity) activity;
 			cartActivity.hideEditCart();
@@ -175,6 +175,11 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 											cartProductAdapter.onPopUpCancel(CANCEL_CALL);
 										break;
 
+									case CLOSE_VIEW:
+										closeActivity(activity);
+
+										break;
+
 									default:
 										break;
 								}
@@ -182,6 +187,18 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 						}
 					}
 				}));
+	}
+
+	private void closeActivity(final Activity activity) {
+		getView().postDelayed(new Runnable() {
+
+			@Override
+			public void run() {
+				activity.finish();
+				activity.overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
+			}
+
+		}, 10);
 	}
 
 	private void emptyCartUI(View view) {
@@ -256,12 +273,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	@Override
-	public void totalItemInBasket(int count) {
-		if (count == 0) {
-			rlCheckOut.setVisibility(View.GONE);
-			relEmptyStateHandler.setVisibility(View.VISIBLE);
-			rvCartList.setVisibility(View.GONE);
-		}
+	public void totalItemInBasket(int total) {
+
 	}
 
 	public boolean toggleEditMode() {
@@ -307,6 +320,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
 			mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 			rvCartList.setLayoutManager(mLayoutManager);
+			cartProductAdapter.setMode(Attributes.Mode.Single);
 			rvCartList.setAdapter(cartProductAdapter);
 		} else {
 			Utils.sendBus(new BadgeState(CART_COUNT_TEMP, 0));
@@ -376,7 +390,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	private void onChangeQuantityComplete() {
-		cartProductAdapter.onChangeQuantityComplete();
+		if (cartProductAdapter != null)
+			cartProductAdapter.onChangeQuantityComplete();
 	}
 
 	private void onChangeQuantityLoad() {
@@ -435,7 +450,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					pBar.setVisibility(View.GONE);
 					int httpCode = shoppingCartResponse.httpCode;
 					switch (httpCode) {
-
 						case 200:
 							onRemoveItemFailed = false;
 							rlCheckOut.setVisibility(View.VISIBLE);
@@ -455,20 +469,19 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 									@Override
 									public void run() {
 										//TODO:: improve error handling
-										Utils.sessionDaoSave(activity, SessionDao.KEY.CART_FIRST_ORDER_FREE_DELIVERY, null);
 										ScreenManager.presentSSOSignin(activity);
+										Utils.removeEntry(activity);
 										activity.finish();
 										activity.overridePendingTransition(0, 0);
 									}
 								});
 							}
 							onChangeQuantityComplete();
-
 							break;
 						default:
 							onChangeQuantityComplete();
 							if (shoppingCartResponse.response != null)
-								Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, shoppingCartResponse.response.desc);
+								Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, shoppingCartResponse.response.desc, true);
 							break;
 					}
 					deliveryLocationEnabled(true);
@@ -622,7 +635,12 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 						case 200:
 							CartResponse cartResponse = convertResponseToCartResponseObject(shoppingCartResponse);
 							updateCart(cartResponse, commerceItem);
-							mToggleItemRemoved.onRemoveSuccess();
+							if (cartResponse.cartItems != null) {
+								if (cartResponse.cartItems.size() == 0)
+									mToggleItemRemoved.onRemoveSuccess();
+							} else {
+								mToggleItemRemoved.onRemoveSuccess();
+							}
 							break;
 						default:
 							if (cartProductAdapter != null)
@@ -652,6 +670,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 			@Override
 			protected ShoppingCartResponse httpDoInBackground(String... params) {
+				Utils.sendBus(new BadgeState(CART_COUNT_TEMP, 0));
 				return ((WoolworthsApplication) getActivity().getApplication()).getApi().removeAllCartItems();
 			}
 
