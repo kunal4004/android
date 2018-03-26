@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.activities.dashboard;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v7.widget.Toolbar;
 
 import java.util.ArrayList;
 
@@ -65,6 +66,8 @@ public interface BottomNavigator {
 
 	void popFragment();
 
+	void popFragmentNoAnim();
+
 	void setSelectedIconPosition(int position);
 
 	void switchTab(int number);
@@ -86,4 +89,6 @@ public interface BottomNavigator {
 	void updateMessageCount(int unreadCount);
 
 	void badgeCount();
+
+	Toolbar toolbar();
 }

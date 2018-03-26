@@ -5,8 +5,9 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -26,7 +27,6 @@ import za.co.woolworths.financial.services.android.ui.activities.product.Product
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewListAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
-import za.co.woolworths.financial.services.android.util.Utils;
 
 public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel> implements GridNavigator, View.OnClickListener {
 
@@ -38,8 +38,12 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 	private ProductViewListAdapter mProductAdapter;
 	private List<ProductList> mProductList;
 	private ProgressBar mProgressLimitStart;
-	private RelativeLayout mRelLoadMoreProduct;
 	private GridLayoutManager mRecyclerViewLayoutManager;
+	private int lastVisibleItem;
+	private int previousTotal = 0;
+	private boolean loading = true;
+	private int visibleThreshold = 5;
+	int firstVisibleItem, visibleItemCount, totalItemCount;
 
 	@Override
 	public GridViewModel getViewModel() {
@@ -79,14 +83,12 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 		showBackNavigationIcon(true);
 		setToolbarBackgroundDrawable(R.drawable.appbar_background);
 		mProgressLimitStart = getViewDataBinding().incCenteredProgress.progressCreditLimit;
-		mRelLoadMoreProduct = getViewDataBinding().relLoadMoreProduct;
 		RelativeLayout relNoConnectionLayout = getViewDataBinding().incNoConnectionHandler.noConnectionLayout;
 		assert getViewDataBinding().incNoConnectionHandler != null;
 		mErrorHandlerView = new ErrorHandlerView(getActivity(), relNoConnectionLayout);
 		mErrorHandlerView.setMargin(relNoConnectionLayout, 0, 0, 0, 0);
 		setTitle();
 		startProductRequest();
-		onBottomReached();
 		getViewDataBinding().incNoConnectionHandler.btnRetry.setOnClickListener(this);
 	}
 
@@ -101,12 +103,20 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 	@Override
 	public void onLoadProductSuccess(List<ProductList> productLists, boolean loadMoreData) {
 		if (productLists.isEmpty()) {
-
+			if (!listContainHeader()) {
+				ProductList headerProduct = new ProductList();
+				headerProduct.viewTypeHeader = true;
+				headerProduct.numberOfItems = getViewModel().getNumItemsInTotal();
+				mProductList.add(0, headerProduct);
+			}
+			bindRecyclerViewWithUI(mProductList);
 		} else if (productLists.size() == 1) {
 			onGridItemSelected(productLists.get(0));
 			popFragment();
 		} else {
-			setTotalNumberOfItem();
+			if (listContainFooter()) {
+				removeFooter();
+			}
 			if (!loadMoreData) {
 				bindRecyclerViewWithUI(productLists);
 			} else {
@@ -141,18 +151,121 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 	}
 
 	@Override
-	public void setTotalNumberOfItem() {
-		getViewDataBinding().numberOfItem.setText(String.valueOf(getViewModel().getNumItemsInTotal()));
-	}
-
-	@Override
-	public void bindRecyclerViewWithUI(List<ProductList> productList) {
+	public void bindRecyclerViewWithUI(final List<ProductList> productList) {
 		this.mProductList = productList;
+		if (!listContainHeader()) {
+			ProductList headerProduct = new ProductList();
+			headerProduct.viewTypeHeader = true;
+			headerProduct.numberOfItems = getViewModel().getNumItemsInTotal();
+			mProductList.add(0, headerProduct);
+		}
+
 		mProductAdapter = new ProductViewListAdapter(getActivity(), mProductList, this);
 		mRecyclerViewLayoutManager = new GridLayoutManager(getActivity(), 2);
-		getViewDataBinding().productList.setLayoutManager(mRecyclerViewLayoutManager);
-		getViewDataBinding().productList.setNestedScrollingEnabled(false);
-		getViewDataBinding().productList.setAdapter(mProductAdapter);
+		// Set up a GridLayoutManager to change the SpanSize of the header and footer
+		mRecyclerViewLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+			@Override
+			public int getSpanSize(int position) {
+				//header should have span size of 2, and regular item should have span size of 1
+				return (mProductList.get(position).viewTypeHeader || mProductList.get(position).viewTypeFooter) ? 2 : 1;
+			}
+		});
+		final RecyclerView rcvProductList = getViewDataBinding().productList;
+		rcvProductList.setLayoutManager(mRecyclerViewLayoutManager);
+		rcvProductList.setAdapter(mProductAdapter);
+		rcvProductList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+			@Override
+			public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+				super.onScrolled(recyclerView, dx, dy);
+//				totalItemCount = mRecyclerViewLayoutManager.getItemCount();
+//				lastVisibleItem = mRecyclerViewLayoutManager.findLastVisibleItemPosition();
+
+				visibleItemCount = rcvProductList.getChildCount();
+				totalItemCount = mRecyclerViewLayoutManager.getItemCount();
+				firstVisibleItem = mRecyclerViewLayoutManager.findFirstVisibleItemPosition();
+
+				if (loading) {
+					if (totalItemCount > previousTotal) {
+						loading = false;
+						previousTotal = totalItemCount;
+					}
+				}
+
+				if (!loading && (totalItemCount - visibleItemCount)
+						<= (firstVisibleItem + visibleThreshold)) {
+					// End has been reached
+
+//					Log.e("isLatPage", "lastPage " + getViewModel().isLastPage());
+//					if (getViewModel().isLastPage()) return;
+//					if (!listContainFooter()) {
+//						ProductList footerItem = new ProductList();
+//						footerItem.viewTypeFooter = true;
+//						mProductList.add(footerItem);
+//						mProductAdapter.notifyItemInserted(mProductList.size() - 1);
+//					}
+					//	startProductRequest();
+					loading = true;
+				}
+
+				//loadData(dy);
+			}
+		});
+	}
+
+//	private void loadData(int dy) {
+//		if (isLoading && !getViewModel().isLastPage()) {
+//			if (dy > 0) { //check for scroll down
+//				if (totalItemCount <= (lastVisibleItem + visibleThreshold)) {
+//					int Total = getViewModel().getNumItemsInTotal() + Utils.PAGE_SIZE;
+//					int start = mProductList.size();
+//					int end = start + Utils.PAGE_SIZE;
+//					isLoading = (Total > end);
+//					if (!isLoading) {
+//						return;
+//					}
+//					if (!listContainFooter()) {
+//						ProductList footerItem = new ProductList();
+//						footerItem.viewTypeFooter = true;
+//						mProductList.add(footerItem);
+//						mProductAdapter.notifyItemInserted(mProductList.size() - 1);
+//					}
+//					startProductRequest();
+//				}
+//			}
+//		}
+//	}
+
+	private boolean listContainFooter() {
+		try {
+			for (ProductList pl : mProductList) {
+				if (pl.viewTypeFooter) {
+					return true;
+				}
+			}
+		} catch (Exception ignored) {
+		}
+		return false;
+	}
+
+	private void removeFooter() {
+		int index = 0;
+		for (ProductList pl : mProductList) {
+			if (pl.viewTypeFooter) {
+				mProductList.remove(pl);
+				mProductAdapter.notifyItemRemoved(index);
+				return;
+			}
+			index++;
+		}
+	}
+
+	private boolean listContainHeader() {
+		for (ProductList pl : mProductList) {
+			if (pl.viewTypeHeader) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
@@ -170,45 +283,6 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 	}
 
 	@Override
-	public void onBottomReached() {
-		final NestedScrollView scroll = getViewDataBinding().scrollProduct;
-
-		scroll.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
-			@Override
-			public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-				if (v.getChildAt(v.getChildCount() - 1) != null) {
-					if ((scrollY >= (v.getChildAt(v.getChildCount() - 1).getMeasuredHeight() - v.getMeasuredHeight())) &&
-							scrollY > oldScrollY) {
-						//code to fetch more data for endless scrolling
-						getActivity().runOnUiThread(new Runnable() {
-							@Override
-							public void run() {
-								try {
-									int visibleItemCount = mRecyclerViewLayoutManager.getChildCount();
-									int totalItemCount = mRecyclerViewLayoutManager.getItemCount();
-									int firstVisibleItemPosition = mRecyclerViewLayoutManager.findFirstVisibleItemPosition();
-									if (!getViewModel().isLoading() && !getViewModel().isLastPage()) {
-										if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
-												&& firstVisibleItemPosition >= 0
-												&& totalItemCount >= Utils.PAGE_SIZE) {
-											if (mProductList.size() < getViewModel().getNumItemsInTotal()) {
-												startProductRequest();
-											}
-										}
-									} else {
-										onLoadComplete(true);
-									}
-								} catch (NullPointerException ignored) {
-								}
-							}
-						});
-					}
-				}
-			}
-		});
-	}
-
-	@Override
 	public void startProductRequest() {
 		if (isEmpty(mSearchProduct)) {
 			getViewModel().executeLoadProduct(getActivity(), getViewModel().getProductRequestBody());
@@ -222,6 +296,13 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 		int actualSize = mProductList.size() + 1;
 		mProductList.addAll(productLists);
 		int sizeOfList = mProductList.size();
+		try {
+			if (listContainFooter()) {
+				removeFooter();
+			}
+		} catch (Exception ex) {
+			Log.e("containFooter", ex.getMessage());
+		}
 		mProductAdapter.notifyItemChanged(actualSize, sizeOfList);
 		getViewModel().canLoadMore(getViewModel().getNumItemsInTotal(), sizeOfList);
 	}
@@ -238,9 +319,7 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 	@Override
 	public void onLoadStart(boolean isLoadMore) {
 		getViewModel().setIsLoading(true);
-		if (isLoadMore) {
-			showView(mRelLoadMoreProduct);
-		} else {
+		if (!isLoadMore) {
 			showView(mProgressLimitStart);
 			mProgressLimitStart.bringToFront();
 		}
@@ -249,9 +328,7 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 	@Override
 	public void onLoadComplete(boolean isLoadMore) {
 		getViewModel().setIsLoading(false);
-		if (isLoadMore) {
-			hideView(mRelLoadMoreProduct);
-		} else {
+		if (!isLoadMore) {
 			hideView(mProgressLimitStart);
 		}
 	}

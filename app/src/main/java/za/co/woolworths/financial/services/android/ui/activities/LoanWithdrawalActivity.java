@@ -346,6 +346,7 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 								showSoftKeyboard();
 							}
 							break;
+
 					}
 				} catch (
 						Exception ignored)

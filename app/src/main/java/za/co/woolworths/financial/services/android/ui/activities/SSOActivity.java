@@ -401,8 +401,8 @@ public class SSOActivity extends WebViewActivity {
 							//Trigger Firebase Tag.
 							JWTDecodedModel jwtDecodedModel = Utils.getJWTDecoded(getApplicationContext());
 							Map<String, String> arguments = new HashMap<>();
-							arguments.put("c2_id", (jwtDecodedModel.C2Id != null)? jwtDecodedModel.C2Id : "");
-							Utils.triggerFireBaseEvents(getApplicationContext(),FirebaseAnalytics.Event.LOGIN,arguments);
+							arguments.put("c2_id", (jwtDecodedModel.C2Id != null) ? jwtDecodedModel.C2Id : "");
+							Utils.triggerFireBaseEvents(getApplicationContext(), FirebaseAnalytics.Event.LOGIN, arguments);
 
 							NotificationUtils.getInstance().sendRegistrationToServer();
 							setResult(SSOActivityResult.SUCCESS.rawValue(), intent);
@@ -545,7 +545,7 @@ public class SSOActivity extends WebViewActivity {
 
 	public void closeActivity() {
 		// Call the popup message to confirm user location
-		//or set new location in DetailFragment
+		//or set new location in ProductDetailFragment
 		if (mGlobalState.determineLocationPopUpEnabled()) {
 			Utils.sendBus(new ProductState(DETERMINE_LOCATION_POPUP));
 			mGlobalState.setDetermineLocationPopUpEnabled(false);

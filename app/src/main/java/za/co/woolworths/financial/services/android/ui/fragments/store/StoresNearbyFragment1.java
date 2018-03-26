@@ -32,6 +32,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.support.v7.widget.Toolbar;
 
 import com.awfs.coordination.R;
 import com.google.android.gms.maps.CameraUpdate;
@@ -55,7 +56,6 @@ import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.StoreOfferings;
 import za.co.woolworths.financial.services.android.ui.activities.SearchStoresActivity;
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator;
 import za.co.woolworths.financial.services.android.ui.adapters.CardsOnMapAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.MapWindowAdapter;
@@ -384,7 +384,8 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 	public void backToAllStoresPage(int position) {
 		googleMap.getUiSettings().setScrollGesturesEnabled(true);
 		googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(markers.get(position).getPosition(), 13), 500, null);
-		BottomNavigationActivity.mToolbar.animate().translationY(BottomNavigationActivity.mToolbar.getTop()).setInterpolator(new AccelerateInterpolator()).start();
+		Toolbar toolbar = mBottomNavigator.toolbar();
+		toolbar.animate().translationY(toolbar.getTop()).setInterpolator(new AccelerateInterpolator()).start();
 		showAllMarkers(markers);
 
 	}
@@ -400,7 +401,8 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 		googleMap.animateCamera(centerCam, CAMERA_ANIMATION_SPEED, null);
 		googleMap.getUiSettings().setScrollGesturesEnabled(false);
 		if (mLayout.getAnchorPoint() == 1.0f) {
-			BottomNavigationActivity.mToolbar.animate().translationY(-BottomNavigationActivity.mToolbar.getBottom()).setInterpolator(new AccelerateInterpolator()).start();
+			Toolbar toolbar = mBottomNavigator.toolbar();
+			toolbar.animate().translationY(-toolbar.getBottom()).setInterpolator(new AccelerateInterpolator()).start();
 			mLayout.setAnchorPoint(0.7f);
 			mLayout.setPanelState(SlidingUpPanelLayout.PanelState.ANCHORED);
 

@@ -19,29 +19,37 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import retrofit.RetrofitError;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
+import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
+import za.co.woolworths.financial.services.android.models.dto.AddToListResponse;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
+import za.co.woolworths.financial.services.android.models.dto.ProductDetail;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
+import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.models.rest.product.GetCartSummary;
+import za.co.woolworths.financial.services.android.models.rest.product.GetProductDetail;
 import za.co.woolworths.financial.services.android.models.rest.product.PostAddItemToCart;
+import za.co.woolworths.financial.services.android.models.rest.product.ProductRequest;
 import za.co.woolworths.financial.services.android.models.rest.shop.SetDeliveryLocationSuburb;
+import za.co.woolworths.financial.services.android.models.rest.shoppinglist.GetShoppingLists;
+import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostAddToList;
 import za.co.woolworths.financial.services.android.ui.base.BaseViewModel;
-import za.co.woolworths.financial.services.android.util.CancelableCallback;
 import za.co.woolworths.financial.services.android.util.LocationItemTask;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.rx.SchedulerProvider;
 
-public class DetailViewModel extends BaseViewModel<DetailNavigator> {
+public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator> {
 
 	private String TAG = this.getClass().getSimpleName();
 	private final String EMPTY = " ";
@@ -58,11 +66,11 @@ public class DetailViewModel extends BaseViewModel<DetailNavigator> {
 	private boolean findInStoreLoadFail = false;
 	private boolean addedToCart = true;
 
-	public DetailViewModel() {
+	public ProductDetailViewModel() {
 		super();
 	}
 
-	public DetailViewModel(SchedulerProvider schedulerProvider) {
+	public ProductDetailViewModel(SchedulerProvider schedulerProvider) {
 		super(schedulerProvider);
 	}
 
@@ -90,43 +98,35 @@ public class DetailViewModel extends BaseViewModel<DetailNavigator> {
 		return addedToCart;
 	}
 
-	public void getProductDetail(final Context context, String productId, String skuId) {
+	public GetProductDetail productDetail(ProductRequest productRequest) {
 		getNavigator().onLoadStart();
 		setProductLoadFail(false);
-		WoolworthsApplication.getInstance().getAsyncApi().getProductDetail(productId, skuId, new CancelableCallback<String>() {
+		return new GetProductDetail(productRequest, new OnEventListener() {
 			@Override
-			public void onSuccess(String strProduct, retrofit.client.Response response) {
-				setProduct(strProduct);
-				WProduct detailProduct = Utils.stringToJson(WoolworthsApplication.getAppContext(), strProduct);
-				if (detailProduct != null) {
-					switch (detailProduct.httpCode) {
-						case 200:
-							if (detailProduct.product != null) {
-								setProduct(detailProduct.product);
-							}
-							getNavigator().onSuccessResponse(detailProduct);
-							break;
-
-						default:
-							if (detailProduct.response != null) {
-								getNavigator().responseFailureHandler(detailProduct.response);
-							}
-							break;
-					}
+			public void onSuccess(Object object) {
+				ProductDetail productDetail = (ProductDetail) object;
+				String detailProduct = Utils.objectToJson(productDetail);
+				switch (productDetail.httpCode) {
+					case 200:
+						WProduct product = (WProduct) Utils.strToJson(detailProduct, WProduct.class);
+						setProduct(detailProduct);
+						setProduct(product.product);
+						getNavigator().onSuccessResponse(product);
+						break;
+					default:
+						if (productDetail.response != null) {
+							getNavigator().responseFailureHandler(productDetail.response);
+						}
+						break;
 				}
 				setProductLoadFail(false);
 				getNavigator().onLoadComplete();
 			}
 
 			@Override
-			public void onFailure(RetrofitError error) {
-				if (context != null) {
-					Activity activity = (Activity) context;
-					if (activity != null) {
-						setProductLoadFail(true);
-						getNavigator().onFailureResponse(error.toString());
-					}
-				}
+			public void onFailure(String e) {
+				setProductLoadFail(true);
+				getNavigator().onFailureResponse(e.toString());
 			}
 		});
 	}
@@ -142,7 +142,7 @@ public class DetailViewModel extends BaseViewModel<DetailNavigator> {
 					if (location != null && location.size() > 0) {
 						getNavigator().onLocationItemSuccess(location);
 					} else {
-						getNavigator().noStockAvailable();
+						getNavigator().outOfStockDialog();
 					}
 				}
 				getNavigator().dismissFindInStoreProgress();
@@ -207,7 +207,7 @@ public class DetailViewModel extends BaseViewModel<DetailNavigator> {
 		if (newProductDetail != null)
 			return newProductDetail;
 		else
-			return new WProductDetail();
+			return null;
 	}
 
 	//return check out link
@@ -232,6 +232,9 @@ public class DetailViewModel extends BaseViewModel<DetailNavigator> {
 	}
 
 	public String getProductDescription(Context context) {
+
+		if (context == null)
+			return "";
 
 		String head = "<head>" +
 				"<meta charset=\"UTF-8\">" +
@@ -590,5 +593,36 @@ public class DetailViewModel extends BaseViewModel<DetailNavigator> {
 				getNavigator().onTokenFailure(errorMessage);
 			}
 		});
+	}
+
+	protected GetShoppingLists getShoppingListsResponse() {
+		return new GetShoppingLists(new OnEventListener() {
+			@Override
+			public void onSuccess(Object object) {
+				ShoppingListsResponse shoppingListsResponse = (ShoppingListsResponse) object;
+				getNavigator().onShoppingListsResponse(shoppingListsResponse);
+			}
+
+			@Override
+			public void onFailure(String e) {
+
+			}
+		});
+	}
+
+	public PostAddToList addToList(List<AddToListRequest> addToListRequest, String listId) {
+		getNavigator().onAddToShopListLoad();
+		return new PostAddToList(new OnEventListener() {
+			@Override
+			public void onSuccess(Object object) {
+				AddToListResponse response = (AddToListResponse) object;
+				getNavigator().onAddToListSuccess(response);
+			}
+
+			@Override
+			public void onFailure(String e) {
+				getNavigator().onAddToListFailure(e);
+			}
+		}, addToListRequest, listId);
 	}
 }

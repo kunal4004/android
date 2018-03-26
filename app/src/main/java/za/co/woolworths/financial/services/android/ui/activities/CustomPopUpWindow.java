@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -37,10 +38,13 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CLIOfferDecision;
 import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
 import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.service.event.AuthenticationState;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
+import za.co.woolworths.financial.services.android.models.service.event.ShopState;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.models.dto.statement.EmailStatementResponse;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
@@ -49,10 +53,13 @@ import za.co.woolworths.financial.services.android.models.dto.statement.USDocume
 import za.co.woolworths.financial.services.android.models.rest.statement.SendUserStatement;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
+import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.ShoppingListNavigator;
 import za.co.woolworths.financial.services.android.ui.fragments.statement.EmailStatementFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.statement.StatementFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.ui.views.dialog.AddToListFragment;
+import za.co.woolworths.financial.services.android.ui.views.dialog.EnterNewListFragment;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.JWTHelper;
@@ -67,7 +74,7 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
 
 import static za.co.woolworths.financial.services.android.util.SessionExpiredUtilities.REWARD;
 
-public class CustomPopUpWindow extends AppCompatActivity implements View.OnClickListener, NetworkChangeListener {
+public class CustomPopUpWindow extends AppCompatActivity implements View.OnClickListener, NetworkChangeListener, ShoppingListNavigator {
 
 	public RelativeLayout mRelRootContainer;
 	public Animation mPopEnterAnimation;
@@ -87,14 +94,16 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 	protected WTextView mTvStatementSendTo;
 	private WButton mBtnSignOutCancel;
 	private WButton mBtnSignOut;
+	private WButton mBtnSessionExpiredCancel;
+	private WButton mBtnSignIn;
 	private boolean mCloseView;
 
 	public enum MODAL_LAYOUT {
 		CONFIDENTIAL, INSOLVENCY, INFO, EMAIL, ERROR, MANDATORY_FIELD,
 		HIGH_LOAN_AMOUNT, LOW_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION, SIGN_OUT, BARCODE_ERROR,
 		SHOPPING_LIST_INFO, SESSION_EXPIRED, INSTORE_AVAILABILITY, NO_STOCK, LOCATION_OFF, SUPPLY_DETAIL_INFO,
-		CLI_DANGER_ACTION_MESSAGE_VALIDATION, SELECT_FROM_DRIVE, AMOUNT_STOCK, UPLOAD_DOCUMENT_MODAL, PROOF_OF_INCOME,
-		STATEMENT_SENT_TO, CLI_DECLINE, CLI_ERROR, DETERMINE_LOCATION_POPUP, STATEMENT_ERROR, ERROR_TITLE_DESC
+		CLI_DANGER_ACTION_MESSAGE_VALIDATION, AMOUNT_STOCK, UPLOAD_DOCUMENT_MODAL, PROOF_OF_INCOME,
+		STATEMENT_SENT_TO, CLI_DECLINE, CLI_ERROR, DETERMINE_LOCATION_POPUP, STATEMENT_ERROR, SHOPPING_ADD_TO_LIST, EDIT_SHOPPING_LIST, ERROR_TITLE_DESC
 	}
 
 	MODAL_LAYOUT current_view;
@@ -324,8 +333,8 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				} else {
 					tvSessionExpiredDesc.setText(getString(R.string.session_expired_account_desc));
 				}
-				WButton mBtnSessionExpiredCancel = findViewById(R.id.btnSECancel);
-				WButton mBtnSignIn = findViewById(R.id.btnSESignIn);
+				mBtnSessionExpiredCancel = findViewById(R.id.btnSECancel);
+				mBtnSignIn = findViewById(R.id.btnSESignIn);
 				mBtnSessionExpiredCancel.setOnClickListener(this);
 				mBtnSignIn.setOnClickListener(this);
 				break;
@@ -548,11 +557,45 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 					}
 				}
 				break;
+			case EDIT_SHOPPING_LIST:
+				setContentView(R.layout.shopping_list_rename_delete_popup);
+				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
+				WTextView tvDelete = findViewById(R.id.deleteList);
+				WTextView tvCancel = findViewById(R.id.cancel);
+				tvCancel.setOnClickListener(this);
+				tvDelete.setOnClickListener(this);
+				break;
+			case SHOPPING_ADD_TO_LIST:
+				setContentView(R.layout.shopping_add_list_layout);
+				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
+				FragmentManager fm = getSupportFragmentManager();
+				Bundle bundle = new Bundle();
+				bundle.putString("LIST_PAYLOAD", description);
+				ShoppingListsResponse shoppingListsResponse = new Gson().fromJson((TextUtils.isEmpty(description)) ? "" : description, ShoppingListsResponse.class);
+				if (shoppingListsResponse != null) {
+					List<ShoppingList> lists = shoppingListsResponse.lists;
+					if (lists == null || lists.size() == 0) {
+						EnterNewListFragment enterNewListFragment = new EnterNewListFragment();
+						bundle.putString("OPEN_FROM_POPUP", "OPEN_FROM_POPUP");
+						enterNewListFragment.setArguments(bundle);
+						fm.beginTransaction()
+								.replace(R.id.flShoppingListContainer, enterNewListFragment).commitAllowingStateLoss();
+						return;
+					}
+					AddToListFragment addToListFragment = new AddToListFragment();
+					addToListFragment.setArguments(bundle);
+					fm.beginTransaction()
+							.replace(R.id.flShoppingListContainer, addToListFragment).commitAllowingStateLoss();
+				}
+
+				break;
 			default:
 				break;
+
 		}
 		setAnimation();
 	}
+
 
 	private void statementSendToTitle(WTextView tvStatementSendTo, USDocuments documents) {
 		if (documents.document.size() > 1) {
@@ -562,7 +605,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 		}
 	}
 
-	private void startExitAnimation() {
+	public void startExitAnimation() {
 		if (!viewWasClicked) { // prevent more than one click
 			viewWasClicked = true;
 			TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
@@ -690,9 +733,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 				@Override
 				public void onAnimationEnd(Animation animation) {
-					woolworthsApplication
-							.bus()
-							.send(new StatementFragment());
+					Utils.sendBus(new StatementFragment());
 					dismissLayout();
 				}
 			});
@@ -748,9 +789,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 				@Override
 				public void onAnimationEnd(Animation animation) {
-					WoolworthsApplication.getInstance()
-							.bus()
-							.send(new AuthenticationState(AuthenticationState.SIGN_OUT));
+					Utils.sendBus(new AuthenticationState(AuthenticationState.SIGN_OUT));
 					dismissLayout();
 				}
 			});
@@ -847,7 +886,11 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 	@Override
 	public void onBackPressed() {
-		finishActivity();
+		if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+			getSupportFragmentManager().popBackStack();
+		} else {
+			finishActivity();
+		}
 	}
 
 	private void setAnimation() {
@@ -876,13 +919,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				startExitAnimation();
 				break;
 
-			case R.id.btnViewShoppingList:
-				Intent shoppingList = new Intent(this, ShoppingListActivity.class);
-				startActivity(shoppingList);
-				overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
-				dismissLayout();
-				break;
-
 			case R.id.btnSignOut:
 				whiteEffectClick(mBtnSignOut);
 				exitAnimation();
@@ -901,6 +937,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				break;
 
 			case R.id.btnSECancel:
+				whiteEffectClick(mBtnSessionExpiredCancel);
 				exitSessionAnimation();
 				break;
 
@@ -909,6 +946,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				break;
 
 			case R.id.btnSESignIn:
+				whiteEffectClick(mBtnSignIn);
 				String mSTSParams = description;
 				if (TextUtils.isEmpty(mSTSParams)) {
 					mSTSParams = "";
@@ -926,6 +964,12 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 			case R.id.btnConfirmEmail:
 				sendStatement();
+				break;
+			case R.id.cancel:
+				startExitAnimation();
+				break;
+			case R.id.deleteList:
+				exitDeleteListAnimation("DELETE_LIST");
 				break;
 		}
 	}
@@ -1006,6 +1050,32 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 		}
 	}
 
+	private void exitDeleteListAnimation(final String type) {
+		if (!viewWasClicked) { // prevent more than one click
+			viewWasClicked = true;
+			TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
+			animation.setFillAfter(true);
+			animation.setDuration(ANIM_DOWN_DURATION);
+			animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
+
+				@Override
+				public void onAnimationStart(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationRepeat(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationEnd(Animation animation) {
+					Utils.sendBus(new ShopState(type));
+					dismissLayout();
+				}
+			});
+			mRelRootContainer.startAnimation(animation);
+		}
+	}
+
 	public JWTDecodedModel getJWTDecoded() {
 		JWTDecodedModel result = new JWTDecodedModel();
 		try {
@@ -1049,9 +1119,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 				@Override
 				public void onAnimationEnd(Animation animation) {
-					woolworthsApplication
-							.bus()
-							.send(new BusStation(userStatement));
+					Utils.sendBus(new BusStation(userStatement));
 					dismissLayout();
 				}
 			});
@@ -1159,7 +1227,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 	private void whiteEffectClick(WButton button) {
 		//TODO:: TEST FOR DIFFERENT POPUP
-
 		try {
 			if (button != null) {
 				button.setBackgroundColor(Color.BLACK);
@@ -1168,5 +1235,10 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 		} catch (Exception ex) {
 			Log.e("whiteEffectClick", ex.toString());
 		}
+	}
+
+	@Override
+	public void onListItemSelected(String listName, String listID) {
+
 	}
 }

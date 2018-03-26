@@ -320,7 +320,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
 			mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 			rvCartList.setLayoutManager(mLayoutManager);
-			cartProductAdapter.setMode(Attributes.Mode.Single);
 			rvCartList.setAdapter(cartProductAdapter);
 		} else {
 			Utils.sendBus(new BadgeState(CART_COUNT_TEMP, 0));
@@ -479,7 +478,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 							onChangeQuantityComplete();
 							break;
 						default:
-							onChangeQuantityComplete();
+							deliveryLocationEnabled(true);
 							if (shoppingCartResponse.response != null)
 								Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, shoppingCartResponse.response.desc, true);
 							break;

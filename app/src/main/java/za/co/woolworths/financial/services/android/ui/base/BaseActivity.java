@@ -18,6 +18,7 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.awfs.coordination.R;
 
+import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -182,6 +183,10 @@ public abstract class BaseActivity<T extends ViewDataBinding, V extends BaseView
 
 	public boolean isEmpty(String value) {
 		return TextUtils.isEmpty(value);
+	}
+
+	public void observableOn(Consumer consumer){
+		getViewModel().consumeObservable(consumer);
 	}
 }
 

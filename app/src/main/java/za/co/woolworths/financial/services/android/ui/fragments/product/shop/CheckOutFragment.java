@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -36,7 +37,6 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.communicator.MyJavaScriptInterface;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -50,6 +50,9 @@ public class CheckOutFragment extends Fragment implements View.OnTouchListener {
 	private String TAG = this.getClass().getSimpleName();
 	private ProgressBar mProgressLayout;
 	private ErrorHandlerView mErrorHandlerView;
+	private String logoutQueryString = "DPSLogout=true";
+	private String nextExpectedUrl = "";
+	private String currentUrl = "";
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -112,7 +115,6 @@ public class CheckOutFragment extends Fragment implements View.OnTouchListener {
 	private void setWebViewClient() {
 		mProgressLayout.setVisibility(View.VISIBLE);
 		mWebCheckOut.setWebViewClient(new WebViewClient() {
-
 			@TargetApi(android.os.Build.VERSION_CODES.M)
 			@Override
 			public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
@@ -141,11 +143,23 @@ public class CheckOutFragment extends Fragment implements View.OnTouchListener {
 			@Override
 			public void onPageStarted(WebView view, String url,
 									  Bitmap favicon) {
-				if(url.contains("goto=complete")) {
+				if (url.contains(logoutQueryString)) {
+					currentUrl = nextExpectedUrl;
+					nextExpectedUrl = url;
+					if (!TextUtils.isEmpty(currentUrl)
+							&& !nextExpectedUrl.equalsIgnoreCase(currentUrl)) {
+						mWebCheckOut.stopLoading();
+						Activity activity = getActivity();
+						if (activity != null) {
+							activity.finish();
+							activity.overridePendingTransition(0, 0);
+						}
+					}
+				} else if (url.contains("goto=complete")) {
 					Intent returnIntent = new Intent();
 					getActivity().setResult(Activity.RESULT_OK, returnIntent);
 					getActivity().finish();
-				} else if(url.contains("goto=abandon")) {
+				} else if (url.contains("goto=abandon")) {
 					Intent returnIntent = new Intent();
 					getActivity().setResult(Activity.RESULT_CANCELED, returnIntent);
 					getActivity().finish();
