@@ -23,6 +23,7 @@ import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
+import za.co.woolworths.financial.services.android.models.rest.shoppinglist.DeleteShoppingList;
 import za.co.woolworths.financial.services.android.ui.adapters.ShoppingListAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.list.NewListFragment;
@@ -35,6 +36,7 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 	private ShoppingListViewModel shoppingListViewModel;
 	private ShoppingListsResponse shoppingListsResponse;
 	public static final int DELETE_REQUEST_CODE = 111;
+	private DeleteShoppingList deleteShoppingList;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -117,8 +119,18 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 		bundle.putString("listId", listID);
 		ShoppingListItemsFragment shoppingListItemsFragment = new ShoppingListItemsFragment();
 		shoppingListItemsFragment.setArguments(bundle);
-		shoppingListItemsFragment.setTargetFragment(this, 111);
 		pushFragment(shoppingListItemsFragment);
+	}
+
+	@Override
+	public void onClickItemDelete(String listID) {
+		deleteShoppingList = getViewModel().deleteShoppingList(listID);
+		deleteShoppingList.execute();
+	}
+
+	@Override
+	public void onDeleteShoppingList(ShoppingListsResponse shoppingListsResponse) {
+		loadShoppingList(shoppingListsResponse.lists);
 	}
 
 	@Override
@@ -129,7 +141,7 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 		}
 	}
 
-	@Override
+	/*@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (resultCode == RESULT_OK) {
@@ -138,7 +150,7 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 				loadShoppingList(shoppingListsResponse.lists);
 			}
 		}
-	}
+	}*/
 
 	@Override
 	public void onEmptyCartRetry() {

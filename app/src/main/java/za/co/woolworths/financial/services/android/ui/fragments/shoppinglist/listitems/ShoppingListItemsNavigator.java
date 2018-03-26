@@ -18,8 +18,6 @@ public interface ShoppingListItemsNavigator {
 
 	void onItemSelectionChange(List<ShoppingListItem> items);
 
-	void onDeleteShoppingList(ShoppingListsResponse shoppingListsResponse);
-
 	void onShoppingListItemDelete(ShoppingListItemsResponse shoppingListItemsResponse);
 
 	void onItemDeleteClick(String id, String productId, String catalogRefId);

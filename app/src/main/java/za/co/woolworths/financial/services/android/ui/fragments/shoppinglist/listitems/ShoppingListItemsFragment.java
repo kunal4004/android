@@ -13,8 +13,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
 import com.awfs.coordination.BR;
@@ -28,6 +31,7 @@ import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
@@ -43,6 +47,7 @@ import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
+import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.EmptyCartView;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -58,7 +63,8 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	private DeleteShoppingList deleteShoppingList;
 	private DeleteShoppingListItem deleteShoppingListItem;
 	private ShoppingListItemsAdapter shoppingListItemsAdapter;
-	private MenuItem mMenuActionSearch;
+	private MenuItem mMenuActionSearch,mMenuActionSelectAll;
+	private boolean isMenuItemReadyToShow = false;
 
 	@Override
 	public ShoppingListItemsViewModel getViewModel() {
@@ -99,10 +105,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				if (object != null) {
 					if (object instanceof ShopState) {
 						ShopState shopState = (ShopState) object;
-						if (shopState.getState().equalsIgnoreCase("DELETE_LIST")) {
-							initDeleteShoppingList();
-							return;
-						}
 						if (!TextUtils.isEmpty(shopState.getState())) {
 							SearchResultFragment searchResultFragment = new SearchResultFragment();
 							Bundle bundle = new Bundle();
@@ -133,6 +135,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		rlSoppingList.setVisibility(listItems == null || listItems.size() <= 1 ? View.VISIBLE : View.GONE); // 1 to exclude header
 		rcvShoppingListItems.setVisibility(listItems == null || listItems.size() <= 1 ? View.GONE : View.VISIBLE);
 		getViewDataBinding().rlShopSearch.setVisibility(listItems == null || listItems.size() <= 1 ? View.VISIBLE : View.GONE);
+		manageSelectAllMenuVisibility(listItems.size());
 	}
 
 	private void initList(RecyclerView rcvShoppingListItems) {
@@ -187,14 +190,8 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	@Override
 	public void onItemSelectionChange(List<ShoppingListItem> items) {
 		getViewDataBinding().incConfirmButtonLayout.rlCheckOut.setVisibility(getButtonStatus(items) ? View.VISIBLE : View.GONE);
-	}
+		mMenuActionSelectAll.setTitle(getSelectAllMenuVisibility(items) ? R.string.deselect_all : R.string.select_all);
 
-	@Override
-	public void onDeleteShoppingList(ShoppingListsResponse shoppingListsResponse) {
-		Intent intent = new Intent(getActivity(), ShoppingListItemsFragment.class);
-		intent.putExtra("ShoppingList", Utils.objectToJson(shoppingListsResponse));
-		getTargetFragment().onActivityResult(getTargetRequestCode(), RESULT_OK, intent);
-		getActivity().onBackPressed();
 	}
 
 	@Override
@@ -263,11 +260,25 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		return false;
 	}
 
+	public boolean getSelectAllMenuVisibility(List<ShoppingListItem> items) {
+		for (ShoppingListItem shoppingListItem : items) {
+			if (!shoppingListItem.isSelected)
+				return false;
+		}
+		return true;
+	}
+
 	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+	public void onCreateOptionsMenu(final Menu menu, MenuInflater inflater) {
 		inflater.inflate(R.menu.shopping_list_more, menu);
 		mMenuActionSearch = menu.findItem(R.id.action_search);
+		mMenuActionSelectAll=menu.findItem(R.id.selectAll);
 		actionSearchVisibility(false);
+		if(isMenuItemReadyToShow)
+			mMenuActionSelectAll.setVisible(true);
+		else
+			mMenuActionSelectAll.setVisible(false);
+
 		super.onCreateOptionsMenu(menu, inflater);
 	}
 
@@ -280,19 +291,21 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case R.id.action_create_list:
-				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.EDIT_SHOPPING_LIST, "");
+			case R.id.selectAll:
+				if(item.getTitle().toString().equalsIgnoreCase("SELECT ALL")) {
+					selectAllListItems(true);
+					item.setTitle(R.string.deselect_all);
+				}
+				else{
+					selectAllListItems(false);
+					item.setTitle(R.string.select_all);
+				}
 				return super.onOptionsItemSelected(item);
 			case R.id.action_search:
 				return super.onOptionsItemSelected(item);
 			default:
 				return super.onOptionsItemSelected(item);
 		}
-	}
-
-	public void initDeleteShoppingList() {
-		deleteShoppingList = getViewModel().deleteShoppingList(listId);
-		deleteShoppingList.execute();
 	}
 
 	@Override
@@ -329,5 +342,21 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	private void resetAddToCartButton() {
 		getViewDataBinding().incConfirmButtonLayout.pbLoadingIndicator.setVisibility(View.GONE);
 		getViewDataBinding().incConfirmButtonLayout.btnCheckOut.setVisibility(View.VISIBLE);
+	}
+
+	public void manageSelectAllMenuVisibility(int listSize){
+		isMenuItemReadyToShow = listSize > 1 ? true : false ;
+		getActivity().invalidateOptionsMenu();
+	}
+
+	public void selectAllListItems(boolean setSelection){
+			if(shoppingListItemsAdapter != null && listItems != null && listItems.size() > 1){
+				for (ShoppingListItem item : listItems) {
+					item.isSelected = setSelection;
+					item.userQuantity = setSelection ? 1 : 0 ;
+				}
+				shoppingListItemsAdapter.updateList(listItems);
+			}
+
 	}
 }
