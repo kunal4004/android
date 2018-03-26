@@ -10,6 +10,7 @@ import com.jakewharton.retrofit.Ok3Client;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -304,7 +305,7 @@ public class WfsApi {
 			@Header("sessionToken") String sessionToken,
 			@Body AddItemToCart addItemToCart);
 	 */
-	public AddItemToCartResponse addItemToCart(AddItemToCart addToCart) {
+	public AddItemToCartResponse addItemToCart(List<AddItemToCart> addToCart) {
 		return mApiInterface.addItemToCart(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), addToCart);
 	}
 
