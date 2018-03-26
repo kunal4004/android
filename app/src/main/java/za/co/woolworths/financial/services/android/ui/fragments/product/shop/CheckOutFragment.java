@@ -46,13 +46,24 @@ public class CheckOutFragment extends Fragment implements View.OnTouchListener {
 
 	public static int REQUESTCODE_CHECKOUT = 9;
 
+	private enum QueryString {
+		COMPLETE("goto=complete"),
+		ABANDON("goto=abandon");
+
+		private String value;
+		QueryString(String value) {
+			this.value = value;
+		}
+		public String getValue() {
+			return value;
+		}
+	}
+
 	private WebView mWebCheckOut;
 	private String TAG = this.getClass().getSimpleName();
 	private ProgressBar mProgressLayout;
 	private ErrorHandlerView mErrorHandlerView;
-	private String completeQueryString = "goto=complete";
-	private String abandonQueryString = "goto=abandon";
-	private String closeOnNextPageAfterUrl = "";
+	private QueryString closeOnNextPage;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -143,19 +154,21 @@ public class CheckOutFragment extends Fragment implements View.OnTouchListener {
 			@Override
 			public void onPageStarted(WebView view, String url,
 									  Bitmap favicon) {
-				if (url.contains(completeQueryString) || url.contains(abandonQueryString)) {
-					closeOnNextPageAfterUrl = url;
+				if (url.contains(QueryString.COMPLETE.getValue())) {
+					closeOnNextPage = QueryString.COMPLETE;
+				} else if (url.contains(QueryString.ABANDON.getValue())) {
+					closeOnNextPage = QueryString.ABANDON;
 				}
 			}
 
 			public void onPageFinished(WebView view, String url) {
 				mProgressLayout.setVisibility(View.GONE);
 
-				if (!closeOnNextPageAfterUrl.isEmpty() && closeOnNextPageAfterUrl != url) {
+				if (closeOnNextPage != null && !url.contains(closeOnNextPage.getValue())) {
 					Intent returnIntent = new Intent();
-					if (closeOnNextPageAfterUrl.contains(completeQueryString)) {
+					if (closeOnNextPage == QueryString.COMPLETE) {
 						getActivity().setResult(Activity.RESULT_OK, returnIntent);
-					} else if (closeOnNextPageAfterUrl.contains(abandonQueryString)) {
+					} else if (closeOnNextPage == QueryString.ABANDON) {
 						getActivity().setResult(Activity.RESULT_CANCELED, returnIntent);
 					}
 					getActivity().finish();
