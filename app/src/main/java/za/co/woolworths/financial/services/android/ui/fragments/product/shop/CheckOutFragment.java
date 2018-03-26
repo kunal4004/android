@@ -50,9 +50,7 @@ public class CheckOutFragment extends Fragment implements View.OnTouchListener {
 	private String TAG = this.getClass().getSimpleName();
 	private ProgressBar mProgressLayout;
 	private ErrorHandlerView mErrorHandlerView;
-	private String logoutQueryString = "DPSLogout=true";
-	private String nextExpectedUrl = "";
-	private String currentUrl = "";
+	private String closeOnNextPageAfterUrl = "";
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -143,36 +141,25 @@ public class CheckOutFragment extends Fragment implements View.OnTouchListener {
 			@Override
 			public void onPageStarted(WebView view, String url,
 									  Bitmap favicon) {
-				if (url.contains(logoutQueryString)) {
-					currentUrl = nextExpectedUrl;
-					nextExpectedUrl = url;
-					if (!TextUtils.isEmpty(currentUrl)
-							&& !nextExpectedUrl.equalsIgnoreCase(currentUrl)) {
-						mWebCheckOut.stopLoading();
-						Activity activity = getActivity();
-						if (activity != null) {
-							activity.finish();
-							activity.overridePendingTransition(0, 0);
-						}
-					}
-				} else if (url.contains("goto=complete")) {
-					Intent returnIntent = new Intent();
-					getActivity().setResult(Activity.RESULT_OK, returnIntent);
-					getActivity().finish();
-				} else if (url.contains("goto=abandon")) {
-					Intent returnIntent = new Intent();
-					getActivity().setResult(Activity.RESULT_CANCELED, returnIntent);
-					getActivity().finish();
+				if (url.contains("goto=complete") || url.contains("goto=abandon")) {
+					closeOnNextPageAfterUrl = url;
 				}
 			}
 
 			public void onPageFinished(WebView view, String url) {
 				mProgressLayout.setVisibility(View.GONE);
-//				mWebCheckOut.loadUrl("javascript:(function() { " +
-//						"var x = document.getElementsByClassName('heading--1').length;" +
-//						"var content = document.getElementsByTagName('h1')[0].innerHTML; " +
-//						"window.JSInterface.printAddress(content, x);" +
-//						"})()");
+
+				if (!closeOnNextPageAfterUrl.isEmpty() && closeOnNextPageAfterUrl != url) {
+					if (closeOnNextPageAfterUrl.contains("goto=complete")) {
+						Intent returnIntent = new Intent();
+						getActivity().setResult(Activity.RESULT_OK, returnIntent);
+						getActivity().finish();
+					} else if (closeOnNextPageAfterUrl.contains("goto=abandon")) {
+						Intent returnIntent = new Intent();
+						getActivity().setResult(Activity.RESULT_CANCELED, returnIntent);
+						getActivity().finish();
+					}
+				}
 			}
 		});
 	}
