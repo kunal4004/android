@@ -50,6 +50,8 @@ public class CheckOutFragment extends Fragment implements View.OnTouchListener {
 	private String TAG = this.getClass().getSimpleName();
 	private ProgressBar mProgressLayout;
 	private ErrorHandlerView mErrorHandlerView;
+	private String completeQueryString = "goto=complete";
+	private String abandonQueryString = "goto=abandon";
 	private String closeOnNextPageAfterUrl = "";
 
 	@Override
@@ -141,7 +143,7 @@ public class CheckOutFragment extends Fragment implements View.OnTouchListener {
 			@Override
 			public void onPageStarted(WebView view, String url,
 									  Bitmap favicon) {
-				if (url.contains("goto=complete") || url.contains("goto=abandon")) {
+				if (url.contains(completeQueryString) || url.contains(abandonQueryString)) {
 					closeOnNextPageAfterUrl = url;
 				}
 			}
@@ -150,15 +152,13 @@ public class CheckOutFragment extends Fragment implements View.OnTouchListener {
 				mProgressLayout.setVisibility(View.GONE);
 
 				if (!closeOnNextPageAfterUrl.isEmpty() && closeOnNextPageAfterUrl != url) {
-					if (closeOnNextPageAfterUrl.contains("goto=complete")) {
-						Intent returnIntent = new Intent();
+					Intent returnIntent = new Intent();
+					if (closeOnNextPageAfterUrl.contains(completeQueryString)) {
 						getActivity().setResult(Activity.RESULT_OK, returnIntent);
-						getActivity().finish();
-					} else if (closeOnNextPageAfterUrl.contains("goto=abandon")) {
-						Intent returnIntent = new Intent();
+					} else if (closeOnNextPageAfterUrl.contains(abandonQueryString)) {
 						getActivity().setResult(Activity.RESULT_CANCELED, returnIntent);
-						getActivity().finish();
 					}
+					getActivity().finish();
 				}
 			}
 		});
