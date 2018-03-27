@@ -63,7 +63,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	private DeleteShoppingList deleteShoppingList;
 	private DeleteShoppingListItem deleteShoppingListItem;
 	private ShoppingListItemsAdapter shoppingListItemsAdapter;
-	private MenuItem mMenuActionSearch,mMenuActionSelectAll;
+	private MenuItem mMenuActionSearch, mMenuActionSelectAll;
 	private boolean isMenuItemReadyToShow = false;
 
 	@Override
@@ -220,7 +220,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 
 	@Override
 	public void onAddToCartSuccess(AddItemToCartResponse addItemToCartResponse) {
-		if(addItemToCartResponse.data.get(0).totalCommerceIteItemCount!=null)
+		if (addItemToCartResponse.data.get(0).totalCommerceIteItemCount != null)
 			Utils.sendBus(new BadgeState(CART_COUNT_TEMP, addItemToCartResponse.data.get(0).totalCommerceIteItemCount));
 		popFragmentNoAnim();
 	}
@@ -272,9 +272,9 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	public void onCreateOptionsMenu(final Menu menu, MenuInflater inflater) {
 		inflater.inflate(R.menu.shopping_list_more, menu);
 		mMenuActionSearch = menu.findItem(R.id.action_search);
-		mMenuActionSelectAll=menu.findItem(R.id.selectAll);
+		mMenuActionSelectAll = menu.findItem(R.id.selectAll);
 		actionSearchVisibility(false);
-		if(isMenuItemReadyToShow)
+		if (isMenuItemReadyToShow)
 			mMenuActionSelectAll.setVisible(true);
 		else
 			mMenuActionSelectAll.setVisible(false);
@@ -292,11 +292,10 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.selectAll:
-				if(item.getTitle().toString().equalsIgnoreCase("SELECT ALL")) {
+				if (item.getTitle().toString().equalsIgnoreCase("SELECT ALL")) {
 					selectAllListItems(true);
 					item.setTitle(R.string.deselect_all);
-				}
-				else{
+				} else {
 					selectAllListItems(false);
 					item.setTitle(R.string.select_all);
 				}
@@ -333,7 +332,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		List<AddItemToCart> selectedItems = new ArrayList<>();
 		for (ShoppingListItem item : items) {
 			if (item.isSelected)
-				selectedItems.add(new AddItemToCart(item.productId,item.catalogRefId,item.quantityDesired));
+				selectedItems.add(new AddItemToCart(item.productId, item.catalogRefId, item.quantityDesired));
 		}
 
 		getViewModel().postAddItemToCart(selectedItems).execute();
@@ -344,19 +343,21 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		getViewDataBinding().incConfirmButtonLayout.btnCheckOut.setVisibility(View.VISIBLE);
 	}
 
-	public void manageSelectAllMenuVisibility(int listSize){
-		isMenuItemReadyToShow = listSize > 1 ? true : false ;
-		getActivity().invalidateOptionsMenu();
+	public void manageSelectAllMenuVisibility(int listSize) {
+		isMenuItemReadyToShow = listSize > 1;
+		Activity activity = getActivity();
+		if (activity != null)
+			activity.invalidateOptionsMenu(); //Handle NullPointerException: Attempt to invoke virtual method 'void android.support.v4.app.FragmentActivity.invalidateOptionsMenu()'
 	}
 
-	public void selectAllListItems(boolean setSelection){
-			if(shoppingListItemsAdapter != null && listItems != null && listItems.size() > 1){
-				for (ShoppingListItem item : listItems) {
-					item.isSelected = setSelection;
-					item.userQuantity = setSelection ? 1 : 0 ;
-				}
-				shoppingListItemsAdapter.updateList(listItems);
+	public void selectAllListItems(boolean setSelection) {
+		if (shoppingListItemsAdapter != null && listItems != null && listItems.size() > 1) {
+			for (ShoppingListItem item : listItems) {
+				item.isSelected = setSelection;
+				item.userQuantity = setSelection ? 1 : 0;
 			}
+			shoppingListItemsAdapter.updateList(listItems);
+		}
 
 	}
 }
