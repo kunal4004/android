@@ -33,4 +33,6 @@ public interface ShoppingListItemsNavigator {
 	void otherHttpCode(Response response);
 
 	void onAddItemToCartFailure(String errorMessage);
+
+	void onQuantityChangeClick(int position);
 }

@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
@@ -135,6 +136,13 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 						navigator.onItemDeleteClick(listItems.get(position).Id, listItems.get(position).productId, listItems.get(position).catalogRefId);
 					}
 				});
+				holder.llQuantity.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View view) {
+						navigator.onQuantityChangeClick(position);
+					}
+				});
+
 				mItemManger.bindView(holder.itemView, position);
 				break;
 			default:
@@ -161,7 +169,7 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 		private WrapContentDraweeView cartProductImage;
 		private WTextView delete;
 		private ProgressBar progressBar;
-
+		private RelativeLayout llQuantity;
 		public ViewHolder(View itemView) {
 			super(itemView);
 			productName = itemView.findViewById(R.id.tvTitle);
@@ -173,6 +181,7 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 			delete = itemView.findViewById(R.id.tvDelete);
 			progressBar = itemView.findViewById(R.id.pbDeleteIndicator);
 			tvColorSize=itemView.findViewById(R.id.tvColorSize);
+			llQuantity = itemView.findViewById(R.id.llQuantity);
 		}
 	}
 

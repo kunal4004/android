@@ -4,6 +4,8 @@ public class ShopState {
 
 	private String listId;
 	private String state;
+	private int quantity;
+	public static final int CHANGE_QUANTITY = 1;
 
 	public ShopState(String state) {
 		this.state = state;
@@ -20,5 +22,9 @@ public class ShopState {
 
 	public String getListId() {
 		return listId;
+	}
+
+	public int getQuantity() {
+		return quantity;
 	}
 }
