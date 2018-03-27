@@ -90,6 +90,7 @@ import za.co.woolworths.financial.services.android.models.dto.Transaction;
 import za.co.woolworths.financial.services.android.models.dto.TransactionParentObj;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
+import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
@@ -106,6 +107,7 @@ import za.co.woolworths.financial.services.android.util.tooltip.ViewTooltip;
 import static android.Manifest.permission_group.STORAGE;
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.WHITE;
+import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT_TEMP;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.USE_MY_LOCATION;
 
 public class Utils {
@@ -1138,6 +1140,7 @@ public class Utils {
 
 	public static void removeEntry(Activity context) {
 		try {
+			Utils.sendBus(new BadgeState(CART_COUNT_TEMP, 0));
 			Utils.removeToken(SessionDao.KEY.USER_TOKEN, context);
 			Utils.removeFromDb(SessionDao.KEY.DELIVERY_LOCATION_HISTORY, context);
 			Utils.removeFromDb(SessionDao.KEY.STORES_USER_SEARCH, context);
