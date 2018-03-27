@@ -12,7 +12,7 @@ public class OrderSummary {
 	public double basketTotal;
 	public boolean shippingAdjusted;
 	public double savedAmount;
-	public double staffDiscount;
+	public double totalStaffDiscount;
 
 	public int getTotalItemsCount() {
 		return totalItemsCount;
@@ -55,10 +55,10 @@ public class OrderSummary {
 	}
 
 	public double getStaffDiscount() {
-		return staffDiscount;
+		return totalStaffDiscount;
 	}
 
 	public void setStaffDiscount(double staffDiscount) {
-		this.staffDiscount = staffDiscount;
+		this.totalStaffDiscount = staffDiscount;
 	}
 }
