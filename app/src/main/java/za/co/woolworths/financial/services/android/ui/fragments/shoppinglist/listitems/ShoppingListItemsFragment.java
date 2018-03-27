@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -65,6 +66,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	private ShoppingListItemsAdapter shoppingListItemsAdapter;
 	private MenuItem mMenuActionSearch, mMenuActionSelectAll;
 	private boolean isMenuItemReadyToShow = false;
+	WTextView tvMenuSelectAll;
 
 	@Override
 	public ShoppingListItemsViewModel getViewModel() {
@@ -190,7 +192,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	@Override
 	public void onItemSelectionChange(List<ShoppingListItem> items) {
 		getViewDataBinding().incConfirmButtonLayout.rlCheckOut.setVisibility(getButtonStatus(items) ? View.VISIBLE : View.GONE);
-		mMenuActionSelectAll.setTitle(getSelectAllMenuVisibility(items) ? R.string.deselect_all : R.string.select_all);
+		tvMenuSelectAll.setText(getString(getSelectAllMenuVisibility(items) ? R.string.deselect_all : R.string.select_all));
 
 	}
 
@@ -279,6 +281,8 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		else
 			mMenuActionSelectAll.setVisible(false);
 
+
+
 		super.onCreateOptionsMenu(menu, inflater);
 	}
 
@@ -292,12 +296,13 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.selectAll:
-				if (item.getTitle().toString().equalsIgnoreCase("SELECT ALL")) {
+				if(tvMenuSelectAll.getText().toString().equalsIgnoreCase("SELECT ALL")) {
 					selectAllListItems(true);
-					item.setTitle(R.string.deselect_all);
-				} else {
+					tvMenuSelectAll.setText(getString(R.string.deselect_all));
+				}
+				else{
 					selectAllListItems(false);
-					item.setTitle(R.string.select_all);
+					tvMenuSelectAll.setText(getString(R.string.select_all));
 				}
 				return super.onOptionsItemSelected(item);
 			case R.id.action_search:
@@ -305,7 +310,9 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 			default:
 				return super.onOptionsItemSelected(item);
 		}
+
 	}
+
 
 	@Override
 	public void onEmptyCartRetry() {
@@ -360,4 +367,20 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		}
 
 	}
+
+	@Override
+	public void onPrepareOptionsMenu(Menu menu) {
+		super.onPrepareOptionsMenu(menu);
+		final MenuItem menuItem = menu.findItem(R.id.selectAll);
+		LinearLayout rootView = (LinearLayout) menuItem.getActionView();
+		tvMenuSelectAll = rootView.findViewById(R.id.title);
+		tvMenuSelectAll.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				onOptionsItemSelected(menuItem);
+			}
+		});
+
+	}
+
 }

@@ -12,8 +12,10 @@
     <item
         android:id="@+id/selectAll"
         android:enabled="true"
-        android:title="@string/select_all"
+        android:title=""
         android:visible="false"
-        app:showAsAction="always" />
+        app:actionLayout="@layout/shoppinglist_custom_menu_item"
+        app:showAsAction="always"
+        />
 
 </menu>

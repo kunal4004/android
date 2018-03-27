@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<za.co.woolworths.financial.services.android.ui.views.WTextView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:button="@drawable/shopping_list_item_selector"
-    android:paddingRight="16dp"
-    android:id="@+id/title"
-    app:WTextView_font="bold"
-    android:text="@string/select_all"
-    />
+    android:paddingRight="12dp"
+    >
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/title"
+        app:WTextView_font="medium"
+        android:text="@string/select_all"
+        android:textSize="14sp"
+        android:textAllCaps="true"
+        android:textColor="@color/black"
+        />
+</LinearLayout>
