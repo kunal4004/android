@@ -11,10 +11,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.ConsoleMessage;
@@ -37,22 +35,34 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import za.co.woolworths.financial.services.android.ui.fragments.product.shop.communicator.MyJavaScriptInterface;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class CheckOutFragment extends Fragment implements View.OnTouchListener {
+public class CheckOutFragment extends Fragment {
 
 	public static int REQUESTCODE_CHECKOUT = 9;
+
+	private enum QueryString {
+		COMPLETE("goto=complete"),
+		ABANDON("goto=abandon");
+
+		private String value;
+
+		QueryString(String value) {
+			this.value = value;
+		}
+
+		public String getValue() {
+			return value;
+		}
+	}
 
 	private WebView mWebCheckOut;
 	private String TAG = this.getClass().getSimpleName();
 	private ProgressBar mProgressLayout;
 	private ErrorHandlerView mErrorHandlerView;
-	private String logoutQueryString = "DPSLogout=true";
-	private String nextExpectedUrl = "";
-	private String currentUrl = "";
+	private QueryString closeOnNextPage;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -72,8 +82,6 @@ public class CheckOutFragment extends Fragment implements View.OnTouchListener {
 		if (activity != null) {
 			setWebViewClient();
 			setWebChromeClient();
-			mWebCheckOut.setOnTouchListener(this);
-			mWebCheckOut.addJavascriptInterface(new MyJavaScriptInterface(activity), "JSInterface");
 			mWebCheckOut.loadUrl(getUrl(), getExtraHeader());
 			retryConnect(view);
 		}
@@ -143,36 +151,28 @@ public class CheckOutFragment extends Fragment implements View.OnTouchListener {
 			@Override
 			public void onPageStarted(WebView view, String url,
 									  Bitmap favicon) {
-				if (url.contains(logoutQueryString)) {
-					currentUrl = nextExpectedUrl;
-					nextExpectedUrl = url;
-					if (!TextUtils.isEmpty(currentUrl)
-							&& !nextExpectedUrl.equalsIgnoreCase(currentUrl)) {
-						mWebCheckOut.stopLoading();
-						Activity activity = getActivity();
-						if (activity != null) {
-							activity.finish();
-							activity.overridePendingTransition(0, 0);
-						}
-					}
-				} else if (url.contains("goto=complete")) {
-					Intent returnIntent = new Intent();
-					getActivity().setResult(Activity.RESULT_OK, returnIntent);
-					getActivity().finish();
-				} else if (url.contains("goto=abandon")) {
-					Intent returnIntent = new Intent();
-					getActivity().setResult(Activity.RESULT_CANCELED, returnIntent);
-					getActivity().finish();
+
+				if (url.contains(QueryString.COMPLETE.getValue())) {
+					closeOnNextPage = QueryString.COMPLETE;
+				} else if (url.contains(QueryString.ABANDON.getValue())) {
+					closeOnNextPage = QueryString.ABANDON;
 				}
 			}
 
 			public void onPageFinished(WebView view, String url) {
 				mProgressLayout.setVisibility(View.GONE);
-//				mWebCheckOut.loadUrl("javascript:(function() { " +
-//						"var x = document.getElementsByClassName('heading--1').length;" +
-//						"var content = document.getElementsByTagName('h1')[0].innerHTML; " +
-//						"window.JSInterface.printAddress(content, x);" +
-//						"})()");
+				Activity activity = getActivity();
+				if (activity != null) {
+					if (closeOnNextPage != null && !url.contains(closeOnNextPage.getValue())) {
+						Intent returnIntent = new Intent();
+						if (closeOnNextPage == QueryString.COMPLETE) {
+							activity.setResult(Activity.RESULT_OK, returnIntent);
+						} else if (closeOnNextPage == QueryString.ABANDON) {
+							activity.setResult(Activity.RESULT_CANCELED, returnIntent);
+						}
+						activity.finish();
+					}
+				}
 			}
 		});
 	}
@@ -208,32 +208,6 @@ public class CheckOutFragment extends Fragment implements View.OnTouchListener {
 		});
 	}
 
-	public WebView getWebCheckOut() {
-		return mWebCheckOut;
-	}
-
-	public void callJavaScript(WebView view, String methodName, Object... params) {
-		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append("javascript:try{");
-		stringBuilder.append(methodName);
-		stringBuilder.append("(");
-		String separator = "";
-		for (Object param : params) {
-			stringBuilder.append(separator);
-			separator = ",";
-			if (param instanceof String) {
-				stringBuilder.append("'");
-			}
-			stringBuilder.append(param);
-			if (param instanceof String) {
-				stringBuilder.append("'");
-			}
-		}
-		stringBuilder.append(")}catch(error){console.error(error.message);}");
-		final String call = stringBuilder.toString();
-		Log.i(TAG, "callJavaScript: call=" + call);
-		view.loadUrl(call);
-	}
 
 	public static void clearWebViewCachesCustom(Context context) {
 		try {
@@ -241,21 +215,7 @@ public class CheckOutFragment extends Fragment implements View.OnTouchListener {
 			new File(dataDir + "/app_webview/").delete();
 		} catch (Exception e) {
 			Log.e("clearWebViewCaches", e.getMessage());
-			e.printStackTrace();
-			e.getSuppressed();
 		}
-	}
-
-	@Override
-	public boolean onTouch(View v, MotionEvent event) {
-		if (v.getId() == R.id.webCheckout && event.getAction() == MotionEvent.ACTION_DOWN) {
-//			mWebCheckOut.loadUrl("javascript:(function() { " +
-//					"var title = document.getElementsByTagName('h1')[0];" +
-//					"var type = title.getAttribute('heading--1');" +
-//					"window.JSInterface.printAddress(title, 1);" +
-//					"})()");
-		}
-		return false;
 	}
 
 	private void retryConnect(View view) {
