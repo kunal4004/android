@@ -11,7 +11,7 @@ public class PriceInfo {
 	public double rawTotalPrice;
 	public double salePrice;
 	public boolean onSale;
-	public double discountedAmount;
+	public double totalDiscount;
 
 	public double getAmount() {
 		return amount;
@@ -54,13 +54,13 @@ public class PriceInfo {
 	}
 
 	public double getDiscountedAmount() {
-		if(discountedAmount==0 && amount != rawTotalPrice)
+		if(totalDiscount==0 && amount != rawTotalPrice)
 			return rawTotalPrice-amount;
 		else
-		    return discountedAmount;
+		    return totalDiscount;
 	}
 
 	public void setDiscountedAmount(double discountedAmount) {
-		this.discountedAmount = discountedAmount;
+		this.totalDiscount = discountedAmount;
 	}
 }
