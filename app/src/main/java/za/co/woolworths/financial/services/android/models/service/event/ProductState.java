@@ -11,6 +11,7 @@ public class ProductState {
 	public static final String CANCEL_CALL = "CANCEL_CALL";
 	public static final String OPEN_ADD_TO_SHOPPING_LIST_VIEW = "OPEN_ADD_TO_SHOPPING_LIST_VIEW";
 	public static final String CLOSE_VIEW = "CLOSE_VIEW";
+	public static final String INDEX_SEARCH_FROM_LIST = "INDEX_SEARCH_FROM_LIST";
 
 	private String state;
 	private int quantity;

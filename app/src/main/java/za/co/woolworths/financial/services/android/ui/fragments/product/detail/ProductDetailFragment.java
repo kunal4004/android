@@ -106,9 +106,10 @@ import static za.co.woolworths.financial.services.android.ui.fragments.product.d
 
 public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding, ProductDetailViewModel> implements ProductDetailNavigator, ProductViewPagerAdapter.MultipleImageInterface, View.OnClickListener, NetworkChangeListener {
 
-	public static final int INDEX_ADD_TO_CART = 2;
 	public static final int INDEX_STORE_FINDER = 1;
+	public static final int INDEX_ADD_TO_CART = 2;
 	public static final int INDEX_ADD_TO_SHOPPING_LIST = 3;
+	public static final int INDEX_SEARCH_FROM_LIST = 4;
 
 	private ProductDetailViewModel productDetailViewModel;
 	private List<String> mAuxiliaryImage = new ArrayList<>();

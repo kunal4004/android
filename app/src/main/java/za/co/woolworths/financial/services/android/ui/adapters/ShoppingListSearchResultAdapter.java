@@ -103,34 +103,67 @@ public class ShoppingListSearchResultAdapter extends RecyclerView.Adapter<Recycl
 			vh.setProductName(productList);
 			vh.setCartImage(productList);
 			vh.setChecked(productList);
+			vh.showProgressBar(productList.viewIsLoading);
+
 			//in some cases, it will prevent unwanted situations
+			vh.cbxItem.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					onCheckItemClick(vh);
+				}
+			});
 
 			vh.llItemContainer.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					int position = vh.getAdapterPosition();
-					ProductList selectedProduct = mProductList.get(position);
-					List<OtherSkus> otherSkuList = selectedProduct.otherSkus;
-					int otherSkuSize = 0;
-					if (otherSkuList != null) {
-						otherSkuSize = otherSkuList.size();
-					}
-					// Product of type clothing or OtherSkus > 0
-					if (selectedProduct.productType.equalsIgnoreCase(CLOTHING_PRODUCT) || otherSkuSize > 1) {
-						mSearchResultNavigator.onClothingTypeSelect(selectedProduct);
-					} else {
-						selectedProduct.productWasChecked = productWasChecked(selectedProduct);
-						mSearchResultNavigator.onFoodTypeSelect(selectedProduct);
-						mSearchResultNavigator.minOneItemSelected(mProductList);
-						notifyItemChanged(position);
-					}
+					onItemClick(vh);
 				}
 			});
 		}
 	}
 
+	private void onCheckItemClick(SimpleViewHolder vh) {
+		int position = vh.getAdapterPosition();
+		ProductList selectedProduct = mProductList.get(position);
+		List<OtherSkus> otherSkuList = selectedProduct.otherSkus;
+		int otherSkuSize = 0;
+		if (otherSkuList != null) {
+			otherSkuSize = otherSkuList.size();
+		}
+		// Product of type clothing or OtherSkus > 0
+		if (selectedProduct.productType.equalsIgnoreCase(CLOTHING_PRODUCT) || otherSkuSize > 1) {
+			selectedProduct.viewIsLoading = !selectedProduct.viewIsLoading;
+			selectedProduct.itemWasChecked = productWasChecked(selectedProduct);
+			mSearchResultNavigator.onCheckedItem(selectedProduct);
+			notifyItemChanged(position);
+		} else {
+			selectedProduct.itemWasChecked = productWasChecked(selectedProduct);
+			mSearchResultNavigator.onFoodTypeSelect(selectedProduct);
+			notifyItemChanged(position);
+		}
+	}
+
+	private void onItemClick(SimpleViewHolder vh) {
+		int position = vh.getAdapterPosition();
+		ProductList selectedProduct = mProductList.get(position);
+		List<OtherSkus> otherSkuList = selectedProduct.otherSkus;
+		int otherSkuSize = 0;
+		if (otherSkuList != null) {
+			otherSkuSize = otherSkuList.size();
+		}
+		// Product of type clothing or OtherSkus > 0
+		if (selectedProduct.productType.equalsIgnoreCase(CLOTHING_PRODUCT) || otherSkuSize > 1) {
+			mSearchResultNavigator.onClothingTypeSelect(selectedProduct);
+		} else {
+			selectedProduct.itemWasChecked = productWasChecked(selectedProduct);
+			mSearchResultNavigator.onFoodTypeSelect(selectedProduct);
+			mSearchResultNavigator.minOneItemSelected(mProductList);
+			notifyItemChanged(position);
+		}
+	}
+
 	private boolean productWasChecked(ProductList prodList) {
-		return !prodList.productWasChecked;
+		return !prodList.itemWasChecked;
 	}
 
 	private class SimpleViewHolder extends RecyclerView.ViewHolder {
@@ -141,7 +174,8 @@ public class ShoppingListSearchResultAdapter extends RecyclerView.Adapter<Recycl
 		private WTextView tvSaveText;
 		private WrapContentDraweeView cartProductImage;
 		private LinearLayout llItemContainer;
-		private CheckBox btnDeleteRow;
+		private CheckBox cbxItem;
+		private ProgressBar pbLoadProduct;
 
 		private SimpleViewHolder(View view) {
 			super(view);
@@ -151,7 +185,8 @@ public class ShoppingListSearchResultAdapter extends RecyclerView.Adapter<Recycl
 			tvSaveText = view.findViewById(R.id.tvSaveText);
 			cartProductImage = view.findViewById(R.id.cartProductImage);
 			llItemContainer = view.findViewById(R.id.llItemContainer);
-			btnDeleteRow = view.findViewById(R.id.btnDeleteRow);
+			cbxItem = view.findViewById(R.id.btnDeleteRow);
+			pbLoadProduct = view.findViewById(R.id.pbLoadProduct);
 		}
 
 		private void setCartImage(ProductList productItem) {
@@ -185,8 +220,13 @@ public class ShoppingListSearchResultAdapter extends RecyclerView.Adapter<Recycl
 			tvSaveText.setText(!TextUtils.isEmpty(productItem.saveText) ? productItem.saveText : "");
 		}
 
-		public void setChecked(ProductList checked) {
-			btnDeleteRow.setChecked(checked.productWasChecked);
+		public void setChecked(ProductList productList) {
+			cbxItem.setChecked(productList.itemWasChecked);
+		}
+
+		public void showProgressBar(boolean visible) {
+			pbLoadProduct.setVisibility(visible ? View.VISIBLE : View.GONE);
+			cbxItem.setVisibility(visible ? View.GONE : View.VISIBLE);
 		}
 	}
 
@@ -232,8 +272,32 @@ public class ShoppingListSearchResultAdapter extends RecyclerView.Adapter<Recycl
 		notifyDataSetChanged();
 	}
 
+	public void setCheckedProgressBar(ProductList productList) {
+		if (mProductList != null) {
+			for (ProductList pList : mProductList) {
+				if (pList == productList) {
+					pList.viewIsLoading = !pList.viewIsLoading;
+				}
+			}
+			notifyDataSetChanged();
+		}
+	}
+
+	public void setSelectedSku(ProductList productList, String selectedSku) {
+		if (mProductList != null) {
+			for (ProductList pList : mProductList) {
+				if (pList == productList) {
+					pList.sku = selectedSku;
+				}
+			}
+			notifyDataSetChanged();
+		}
+	}
+
 	@Override
 	public int getItemCount() {
 		return mProductList == null ? 0 : mProductList.size();
 	}
+
+
 }

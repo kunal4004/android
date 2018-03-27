@@ -3,13 +3,21 @@ package za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.se
 import android.app.Activity;
 import android.content.Context;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
 import za.co.woolworths.financial.services.android.models.dto.LoadProduct;
+import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.PagingResponse;
+import za.co.woolworths.financial.services.android.models.dto.ProductDetail;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
+import za.co.woolworths.financial.services.android.models.dto.WProduct;
+import za.co.woolworths.financial.services.android.models.rest.product.GetProductDetail;
+import za.co.woolworths.financial.services.android.models.rest.product.ProductRequest;
 import za.co.woolworths.financial.services.android.models.rest.product.SearchProductRequest;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostAddToList;
 import za.co.woolworths.financial.services.android.ui.base.BaseViewModel;
@@ -27,6 +35,7 @@ public class SearchResultViewModel extends BaseViewModel<SearchResultNavigator> 
 	private boolean mIsLoading = false;
 	private boolean mIsLastPage = false;
 	private int mLoadStatus;
+	private ArrayList<OtherSkus> otherSkus;
 
 	public void setLoadStatus(int status) {
 		this.mLoadStatus = status;
@@ -177,5 +186,123 @@ public class SearchResultViewModel extends BaseViewModel<SearchResultNavigator> 
 				getNavigator().onAddToListFailure(e);
 			}
 		}, addToListRequest, listId);
+	}
+
+	public GetProductDetail getProductDetail(ProductRequest productRequest) {
+		getNavigator().onLoadStart();
+		//setProductLoadFail(false);
+		return new GetProductDetail(productRequest, new OnEventListener() {
+			@Override
+			public void onSuccess(Object object) {
+				ProductDetail productDetail = (ProductDetail) object;
+				String detailProduct = Utils.objectToJson(productDetail);
+				switch (productDetail.httpCode) {
+					case 200:
+						if (productDetail.product != null) {
+							List<OtherSkus> otherSkusList = productDetail.product.otherSkus;
+							setOtherSkus(productDetail.product.otherSkus);
+						}
+						WProduct product = (WProduct) Utils.strToJson(detailProduct, WProduct.class);
+						//setProduct(detailProduct);
+						//setProduct(product.product);
+						getNavigator().onSuccessResponse(product);
+						break;
+					default:
+						if (productDetail.response != null) {
+							getNavigator().responseFailureHandler(productDetail.response);
+						}
+						break;
+				}
+				//	setProductLoadFail(false);
+				getNavigator().onLoadComplete();
+			}
+
+			@Override
+			public void onFailure(String e) {
+
+			}
+		});
+	}
+
+
+	public ArrayList<OtherSkus> getColorList() {
+		Collections.sort(getOtherSkus(), new Comparator<OtherSkus>() {
+			@Override
+			public int compare(OtherSkus lhs, OtherSkus rhs) {
+				return lhs.colour.compareToIgnoreCase(rhs.colour);
+			}
+		});
+
+		ArrayList<OtherSkus> commonColorSku = new ArrayList<>();
+		for (OtherSkus sku : getOtherSkus()) {
+			if (!colourValueExist(commonColorSku, sku.colour)) {
+				commonColorSku.add(sku);
+			}
+		}
+		return commonColorSku;
+	}
+
+	public ArrayList<OtherSkus> getSizeList() {
+		Collections.sort(getOtherSkus(), new Comparator<OtherSkus>() {
+			@Override
+			public int compare(OtherSkus lhs, OtherSkus rhs) {
+				return lhs.size.compareToIgnoreCase(rhs.size);
+			}
+		});
+
+		ArrayList<OtherSkus> commonColorSku = new ArrayList<>();
+		for (OtherSkus sku : getOtherSkus()) {
+			if (!colourValueExist(commonColorSku, sku.size)) {
+				commonColorSku.add(sku);
+			}
+		}
+		return commonColorSku;
+	}
+
+	public boolean colourValueExist(ArrayList<OtherSkus> list, String name) {
+		for (OtherSkus item : list) {
+			if (item.colour.equals(name)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public void setOtherSkus(ArrayList<OtherSkus> otherSkus) {
+		this.otherSkus = otherSkus;
+	}
+
+	public ArrayList<OtherSkus> getOtherSkus() {
+		return otherSkus;
+	}
+
+	public ArrayList<OtherSkus> commonSizeList(OtherSkus otherSku) throws NullPointerException {
+		ArrayList<OtherSkus> commonSizeList = new ArrayList<>();
+		// filter by colour
+		ArrayList<OtherSkus> sizeList = new ArrayList<>();
+		for (OtherSkus sku : getOtherSkus()) {
+			if (sku.colour != null) {
+				if (sku.colour.equalsIgnoreCase(otherSku.colour)) {
+					sizeList.add(sku);
+				}
+			}
+		}
+
+		//remove duplicates
+		for (OtherSkus os : sizeList) {
+			if (!sizeValueExist(commonSizeList, os.size)) {
+				commonSizeList.add(os);
+			}
+		}
+		return commonSizeList;
+	}
+
+	private boolean sizeValueExist(ArrayList<OtherSkus> list, String name) {
+		for (OtherSkus item : list) {
+			if (item.size.equals(name)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

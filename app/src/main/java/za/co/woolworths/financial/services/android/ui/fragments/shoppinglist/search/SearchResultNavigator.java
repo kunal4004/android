@@ -4,6 +4,7 @@ import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.dto.WProduct;
 
 public interface SearchResultNavigator {
 	void onLoadProductSuccess(List<ProductList> productLists, boolean loadMoreData);
@@ -39,4 +40,14 @@ public interface SearchResultNavigator {
 	void onAddToListLoad();
 
 	void onAddToListLoadComplete();
+
+	void onCheckedItem(ProductList selectedProduct);
+
+	void onLoadStart();
+
+	void responseFailureHandler(Response response);
+
+	void onSuccessResponse(WProduct product);
+
+	void onLoadComplete();
 }

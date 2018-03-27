@@ -63,17 +63,32 @@
                     android:paddingStart="21dp"
                     android:paddingTop="32dp">
 
-                    <CheckBox
-                        android:id="@+id/btnDeleteRow"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center_vertical"
-                        android:button="@drawable/shopping_list_item_selector"
-                        android:checked="false"
-                        android:clickable="false"
-                        android:focusable="false"
-                        android:focusableInTouchMode="false"
-                        android:paddingRight="21dp"/>
+                    <RelativeLayout
+                        android:id="@+id/llSelectedCheckBox"
+                        android:layout_width="@dimen/thirty_two_dp"
+                        android:layout_height="match_parent">
+
+                        <ProgressBar
+                            android:id="@+id/pbLoadProduct"
+                            android:layout_width="@dimen/twenty_four_dp"
+                            android:layout_height="@dimen/twenty_four_dp"
+                            android:layout_centerVertical="true"
+                            android:indeterminateTint="@color/black"
+                            android:visibility="gone"/>
+
+                        <CheckBox
+                            android:id="@+id/btnDeleteRow"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_gravity="center_vertical"
+                            android:button="@drawable/shopping_list_item_selector"
+                            android:checked="false"
+                            android:paddingRight="21dp"
+                            android:saveEnabled="false"
+                            android:visibility="visible"/>
+
+                    </RelativeLayout>
 
                     <LinearLayout
                         android:id="@+id/llCartItems"

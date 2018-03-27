@@ -1166,4 +1166,8 @@ public class Utils {
 			}
 		});
 	}
+
+	public static String toJson(Object jsonObject) {
+		return new Gson().toJson(jsonObject);
+	}
 }

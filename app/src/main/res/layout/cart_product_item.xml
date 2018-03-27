@@ -53,6 +53,7 @@
                 android:orientation="vertical">
 
                 <LinearLayout
+                    android:id="@+id/llProductView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/white"
@@ -86,15 +87,22 @@
                         android:layout_height="match_parent"
                         android:orientation="horizontal">
 
-                        <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
-                            android:id="@+id/cartProductImage"
+                        <LinearLayout
                             android:layout_width="@dimen/eighty_four_dp"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:contentDescription="@string/app_name"
-                            fresco:fadeDuration="20"
-                            app:placeholderImage="@drawable/woolworth_logo_icon"
-                            fresco:failureImage="@drawable/woolworth_logo_icon"/>
+                            android:layout_height="@dimen/eighty_dp"
+                            android:orientation="vertical">
+
+                            <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
+                                android:id="@+id/cartProductImage"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:contentDescription="@string/app_name"
+                                android:minHeight="@dimen/sixty_dp"
+                                fresco:fadeDuration="20"
+                                fresco:failureImage="@drawable/woolworth_logo_icon"
+                                fresco:placeholderImage="@drawable/woolworth_logo_icon"/>
+                        </LinearLayout>
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -129,7 +137,6 @@
                                     android:layout_alignParentStart="true"
                                     android:background="@drawable/border_quantity_dropdown"
                                     android:gravity="center"
-                                    android:orientation="horizontal"
                                     android:padding="4dp">
 
                                     <ProgressBar
@@ -153,7 +160,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_alignParentRight="true"
-                                        android:layout_centerVertical="true"
+                                        android:layout_centerInParent="true"
                                         android:src="@drawable/path_3"/>
 
                                 </RelativeLayout>
