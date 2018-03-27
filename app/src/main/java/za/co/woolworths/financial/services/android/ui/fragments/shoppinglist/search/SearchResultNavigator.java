@@ -2,8 +2,11 @@ package za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.se
 
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.models.dto.Data;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 
 public interface SearchResultNavigator {
@@ -39,7 +42,7 @@ public interface SearchResultNavigator {
 
 	void onAddToListLoad();
 
-	void onAddToListLoadComplete();
+	void onAddToListLoadComplete(List<ShoppingListItem>  shoppingLists);
 
 	void onCheckedItem(ProductList selectedProduct);
 

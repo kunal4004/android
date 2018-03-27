@@ -15,6 +15,7 @@ import za.co.woolworths.financial.services.android.models.dto.PagingResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetail;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.rest.product.GetProductDetail;
 import za.co.woolworths.financial.services.android.models.rest.product.ProductRequest;
@@ -178,7 +179,8 @@ public class SearchResultViewModel extends BaseViewModel<SearchResultNavigator> 
 		return new PostAddToList(new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
-				getNavigator().onAddToListLoadComplete();
+				ShoppingListItemsResponse shoppingCartResponse = (ShoppingListItemsResponse) object;
+				getNavigator().onAddToListLoadComplete(shoppingCartResponse.listItems);
 			}
 
 			@Override

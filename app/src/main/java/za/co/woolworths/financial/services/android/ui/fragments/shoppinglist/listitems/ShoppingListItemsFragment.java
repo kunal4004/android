@@ -13,12 +13,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.awfs.coordination.R;
 import com.awfs.coordination.BR;
@@ -26,17 +22,14 @@ import com.awfs.coordination.databinding.ShoppingListItemsFragmentBinding;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.DeleteShoppingList;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.DeleteShoppingListItem;
@@ -45,18 +38,15 @@ import za.co.woolworths.financial.services.android.models.service.event.BadgeSta
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
 import za.co.woolworths.financial.services.android.models.service.event.ShopState;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.adapters.ShoppingListItemsAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment;
-import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.EmptyCartView;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-import static android.app.Activity.RESULT_OK;
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT_TEMP;
 
 public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFragmentBinding, ShoppingListItemsViewModel> implements ShoppingListItemsNavigator, View.OnClickListener, EmptyCartView.EmptyCartInterface {
@@ -112,14 +102,13 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 			@Override
 			public void accept(Object object) throws Exception {
 				if (object != null) {
-					if(object instanceof CartState)
-					{
+					if (object instanceof CartState) {
 						CartState cartState = (CartState) object;
 						int updatedQuantity = cartState.getQuantity();
-						if(updatedQuantity > 0) {
+						if (updatedQuantity > 0) {
 							listItems.get(changeQuantityItem).userQuantity = updatedQuantity;
 							listItems.get(changeQuantityItem).isSelected = true;
-							shoppingListItemsAdapter.updateList(listItems);
+							updateList(listItems);
 						}
 						return;
 					}
@@ -132,6 +121,14 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 							bundle.putString("listID", shopState.getListId());
 							searchResultFragment.setArguments(bundle);
 							pushFragment(searchResultFragment);
+							return;
+						}
+
+						if (shopState.getUpdatedList() != null) {
+							listItems = shopState.getUpdatedList();
+							updateList(listItems);
+							setUpView();
+
 						}
 					}
 				}
@@ -145,17 +142,30 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		setUpAddToCartButton();
 	}
 
+	private void updateList(List<ShoppingListItem> listItems) {
+		setHeader();
+		if (shoppingListItemsAdapter != null)
+			shoppingListItemsAdapter.updateList(listItems);
+	}
+
 	public void loadShoppingListItems(ShoppingListItemsResponse shoppingListItemsResponse) {
 		getViewDataBinding().loadingBar.setVisibility(View.GONE);
 		listItems = shoppingListItemsResponse.listItems;
-		listItems.add(0, new ShoppingListItem());
-		shoppingListItemsAdapter.updateList(listItems);
+		updateList(listItems);
+		setUpView();
+	}
+
+	private void setUpView() {
 		RecyclerView rcvShoppingListItems = getViewDataBinding().rcvShoppingListItems;
 		RelativeLayout rlSoppingList = getViewDataBinding().incEmptyLayout.relEmptyStateHandler;
 		rlSoppingList.setVisibility(listItems == null || listItems.size() <= 1 ? View.VISIBLE : View.GONE); // 1 to exclude header
 		rcvShoppingListItems.setVisibility(listItems == null || listItems.size() <= 1 ? View.GONE : View.VISIBLE);
 		getViewDataBinding().rlShopSearch.setVisibility(listItems == null || listItems.size() <= 1 ? View.VISIBLE : View.GONE);
 		manageSelectAllMenuVisibility(listItems.size());
+	}
+
+	private void setHeader() {
+		listItems.add(0, new ShoppingListItem());
 	}
 
 	private void initList(RecyclerView rcvShoppingListItems) {
@@ -217,7 +227,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	@Override
 	public void onShoppingListItemDelete(ShoppingListItemsResponse shoppingListItemsResponse) {
 		listItems = shoppingListItemsResponse.listItems;
-		shoppingListItemsAdapter.updateList(listItems);
+		updateList(listItems);
 
 	}
 
@@ -262,7 +272,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 
 	@Override
 	public void onQuantityChangeClick(int position) {
-		this.changeQuantityItem=position;
+		this.changeQuantityItem = position;
 		if (mWoolWorthsApplication != null) {
 			WGlobalState wGlobalState = mWoolWorthsApplication.getWGlobalState();
 			if (wGlobalState != null) {
@@ -318,7 +328,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 			mMenuActionSelectAll.setVisible(false);
 
 
-
 		super.onCreateOptionsMenu(menu, inflater);
 	}
 
@@ -332,11 +341,10 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.selectAll:
-				if(tvMenuSelectAll.getText().toString().equalsIgnoreCase("SELECT ALL")) {
+				if (tvMenuSelectAll.getText().toString().equalsIgnoreCase("SELECT ALL")) {
 					selectAllListItems(true);
 					tvMenuSelectAll.setText(getString(R.string.deselect_all));
-				}
-				else{
+				} else {
 					selectAllListItems(false);
 					tvMenuSelectAll.setText(getString(R.string.select_all));
 				}

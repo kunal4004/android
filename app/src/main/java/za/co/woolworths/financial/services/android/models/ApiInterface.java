@@ -902,7 +902,7 @@ public interface ApiInterface {
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
 	@POST("/list/{productId}/item")
-	AddToListResponse addToList(
+	ShoppingListItemsResponse addToList(
 			@Header("apiId") String apiId,
 			@Header("sha1Password") String sha1Password,
 			@Header("deviceVersion") String deviceVersion,

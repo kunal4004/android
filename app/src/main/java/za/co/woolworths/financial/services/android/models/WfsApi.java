@@ -183,7 +183,7 @@ public class WfsApi {
 		return mApiInterface.issueLoan(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), issueLoanRequest);
 	}
 
-	public AddToListResponse addToList(List<AddToListRequest> addToListRequest, String listId) {
+	public ShoppingListItemsResponse addToList(List<AddToListRequest> addToListRequest, String listId) {
 		return mApiInterface.addToList(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), listId, addToListRequest);
 	}
 

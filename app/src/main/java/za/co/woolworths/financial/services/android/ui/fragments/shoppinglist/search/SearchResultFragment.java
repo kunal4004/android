@@ -26,12 +26,14 @@ import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.models.rest.product.GetProductDetail;
 import za.co.woolworths.financial.services.android.models.rest.product.ProductRequest;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
+import za.co.woolworths.financial.services.android.models.service.event.ShopState;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.ShoppingListSearchResultAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
@@ -387,11 +389,12 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 	}
 
 	@Override
-	public void onAddToListLoadComplete() {
+	public void onAddToListLoadComplete(List<ShoppingListItem> listItems) {
 		ProgressBar progressBar = getViewDataBinding().incConfirmButtonLayout.pbLoadingIndicator;
 		WButton btnCheck0ut = getViewDataBinding().incConfirmButtonLayout.btnCheckOut;
 		progressBar.setVisibility(View.GONE);
 		btnCheck0ut.setVisibility(View.VISIBLE);
+		sendBus(new ShopState(listItems));
 		popFragmentNoAnim();
 	}
 
