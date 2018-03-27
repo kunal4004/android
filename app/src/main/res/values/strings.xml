@@ -636,4 +636,6 @@
     <string name="out_of_stock_err">some of the products chosen are out of stock, please come back later!!</string>
     <string name="promotional_text">You saved </string>
     <string name="enter_list_name">Enter list name</string>
+    <string name="select_all">SELECT ALL</string>
+    <string name="deselect_all">DESELECT ALL</string>
 </resources>

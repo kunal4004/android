@@ -43,22 +43,6 @@ public class ShoppingListItemsViewModel extends BaseViewModel<ShoppingListItemsN
 		},listId);
 	}
 
-	public DeleteShoppingList deleteShoppingList(String listId)
-	{
-		return new DeleteShoppingList(new OnEventListener() {
-			@Override
-			public void onSuccess(Object object) {
-				ShoppingListsResponse shoppingListsResponse = (ShoppingListsResponse) object;
-				getNavigator().onDeleteShoppingList(shoppingListsResponse);
-			}
-
-			@Override
-			public void onFailure(String e) {
-
-			}
-		},listId);
-	}
-
 	public DeleteShoppingListItem deleteShoppingListItem(String listId, String id, String productId, String catalogRefId)
 	{
 		return new DeleteShoppingListItem(new OnEventListener() {

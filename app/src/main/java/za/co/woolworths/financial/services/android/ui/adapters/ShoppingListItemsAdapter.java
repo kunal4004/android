@@ -104,7 +104,7 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 
 					holder.tvColorSize.setText(sizeColor);
 					holder.tvColorSize.setVisibility(View.VISIBLE);
-					
+
 				// Set Color and Size END
 
 				holder.select.setOnClickListener(new View.OnClickListener() {

@@ -10,11 +10,10 @@
         app:showAsAction="always"/>
 
     <item
-        android:id="@+id/action_create_list"
+        android:id="@+id/selectAll"
         android:enabled="true"
-        android:icon="@drawable/more"
-        android:title=""
-        android:visible="true"
-        app:showAsAction="always"/>
+        android:title="@string/select_all"
+        android:visible="false"
+        app:showAsAction="always" />
 
 </menu>
