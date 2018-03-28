@@ -299,28 +299,23 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 				ArrayList<OtherSkus> otherSkuList = Utils.commonSizeList(mSelectedColour, mProductHasColor, getOtherSKUList(mOtherSKU));
 				if (otherSkuList.size() > 0) {
 					if (otherSkuList.size() == 1) {
-						String selectedSKU = otherSkuList.get(0).sku;
-						mGlobalState.setSelectedSKUId(selectedSKU);
+						mGlobalState.setSelectedSKUId(otherSkuList.get(0));
 						dismissSizeColorActivity();
 					} else {
-						String selectedSKU = getOtherSKUList(mColorList).get(position).sku;
-						mGlobalState.setSelectedSKUId(selectedSKU);
+						mGlobalState.setSelectedSKUId(getOtherSKUList(mColorList).get(position));
 						mViewPager.setCurrentItem(1);
 					}
 				} else {
-					String selectedSKU = getOtherSKUList(mColorList).get(position).sku;
-					mGlobalState.setSelectedSKUId(selectedSKU);
+					mGlobalState.setSelectedSKUId(getOtherSKUList(mColorList).get(position));
 					dismissSizeColorActivity();
 				}
 			} else {
-				String selectedSKU = getOtherSKUList(mColorList).get(position).sku;
-				mGlobalState.setSelectedSKUId(selectedSKU);
+				mGlobalState.setSelectedSKUId(getOtherSKUList(mColorList).get(position));
 				dismissSizeColorActivity();
 			}
 		} else {
 			ArrayList<OtherSkus> mOtherSizeSKU = Utils.commonSizeList(mSelectedColour, mProductHasColor, getOtherSKUList(mOtherSKU));
-			String selectedSKU = mOtherSizeSKU.get(position).sku;
-			mGlobalState.setSelectedSKUId(selectedSKU);
+			mGlobalState.setSelectedSKUId(mOtherSizeSKU.get(position));
 			inStoreFinderUpdate();
 		}
 	}

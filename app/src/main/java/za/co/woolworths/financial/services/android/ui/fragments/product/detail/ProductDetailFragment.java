@@ -12,6 +12,7 @@ import android.graphics.Point;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.LocalBroadcastManager;
@@ -125,7 +126,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	private boolean mProductHasSize;
 	private boolean mProductHasOneColour;
 	private boolean mProductHasOneSize;
-	private String mSkuId;
+	private OtherSkus mSkuId;
 
 	private BroadcastReceiver mConnectionBroadcast;
 	private ErrorHandlerView mErrorHandlerView;
@@ -188,7 +189,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 								String catalogRefId = productId;
 								//Parse skuId to catalogRefId if productType is of type CLOTHING_PRODUCT
 								if (getViewModel().getProductType().equalsIgnoreCase(CLOTHING_PRODUCT)) {
-									catalogRefId = getGlobalState().getSelectedSKUId();
+									catalogRefId = getGlobalState().getSelectedSKUId().sku;
 								}
 								int quantity = productState.getQuantity();
 								mApiAddItemToCart = new AddItemToCart(productId, catalogRefId, quantity);
@@ -511,7 +512,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 						break;
 
 					case FOOD_PRODUCT:
-						getGlobalState().setSelectedSKUId(product.productId);
+						getGlobalState().setSelectedSKUId(createOtherSkus(product.productId));
 						Activity activity = getActivity();
 						if (activity != null) openAddToListFragment(activity);
 						break;
@@ -1016,10 +1017,10 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 			} else {
 				switch (getGlobalState().getLatestSelectedPicker()) {
 					case 1:
-						mSkuId = getGlobalState().getColorPickerSku().sku;
+						mSkuId = getGlobalState().getColorPickerSku();
 						break;
 					case 2:
-						mSkuId = getGlobalState().getSizePickerSku().sku;
+						mSkuId = getGlobalState().getSizePickerSku();
 						break;
 					default:
 						break;
@@ -1102,13 +1103,13 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 					}
 					if (getSize.size() > 0) {
 						if (getSize.size() == 1) {
-							mSkuId = getSize.get(0).sku;
+							mSkuId = getSize.get(0);
 							noSizeColorIntent();
 						} else {
 							sizeIntent(skuColour);
 						}
 					} else {
-						mSkuId = getViewModel().getDefaultProduct().sku;
+						mSkuId = createOtherSkus(getViewModel().getDefaultProduct().sku);
 						noSizeColorIntent();
 					}
 				} else {
@@ -1119,18 +1120,25 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 				if (mProductHasSize) {
 					if (mProductHasOneSize) { //one size
 						ArrayList<OtherSkus> getSize = getSizeList();
-						mSkuId = getSize.get(0).sku;
+						mSkuId = getSize.get(0);
 						noSizeColorIntent();
 					} else { // more sizes
 						sizeIntent();
 					}
 				} else {
-					mSkuId = getViewModel().getDefaultProduct().sku;
+					mSkuId = createOtherSkus(getViewModel().getDefaultProduct().sku);
 					noSizeColorIntent();
 				}
 			}
 		} catch (Exception ignored) {
 		}
+	}
+
+	@NonNull
+	private OtherSkus createOtherSkus(String skuId) {
+		OtherSkus otherSkus = new OtherSkus();
+		otherSkus.sku = skuId;
+		return otherSkus;
 	}
 
 	public void noSizeColorIntent() {
@@ -1211,7 +1219,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		if (sizeListSize > 0) {
 			if (sizeListSize == 1) {
 				// one size only
-				mSkuId = sizeList.get(0).sku;
+				mSkuId = sizeList.get(0);
 				noSizeColorIntent();
 			} else {
 				// size > 1
@@ -1219,7 +1227,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 			}
 		} else {
 			// no size
-			mSkuId = otherSku.sku;
+			mSkuId = otherSku;
 			noSizeColorIntent();
 		}
 	}
@@ -1235,7 +1243,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 			if (colorListSize > 0) {
 				if (colorListSize == 1) {
 					// one color only
-					mSkuId = colorList.get(0).sku;
+					mSkuId = colorList.get(0);
 					noSizeColorIntent();
 				} else {
 					// color > 1
@@ -1244,11 +1252,11 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 				}
 			} else {
 				// no color
-				mSkuId = otherSku.sku;
+				mSkuId = otherSku;
 				noSizeColorIntent();
 			}
 		} else {
-			mSkuId = otherSku.sku;
+			mSkuId = otherSku;
 			noSizeColorIntent();
 		}
 	}

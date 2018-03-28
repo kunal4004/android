@@ -25,6 +25,7 @@ import java.util.List;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
 import za.co.woolworths.financial.services.android.models.dto.AddToListResponse;
+import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
@@ -58,8 +59,7 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.add_to_list_content, container, false);
-		return view;
+		return inflater.inflate(R.layout.add_to_list_content, container, false);
 	}
 
 	@Override
@@ -143,12 +143,12 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 					List<AddToListRequest> addToListRequests = new ArrayList<>();
 					for (ShoppingList spl : mShoppingListAdapter.getList()) {
 						if (spl.viewIsSelected) {
-							if (!TextUtils.isEmpty(getSelectedSKU())) {
+							if (!TextUtils.isEmpty(getSelectedSKU().sku)) {
 								AddToListRequest addToListRequest = new AddToListRequest();
 								addToListRequest.setGiftListId(spl.listId);
-								addToListRequest.setCatalogRefId(getSelectedSKU());
+								addToListRequest.setCatalogRefId(getSelectedSKU().sku);
 								addToListRequest.setQuantity("1");
-								addToListRequest.setSkuID(getSelectedSKU());
+								addToListRequest.setSkuID(getSelectedSKU().sku);
 								addToListRequests.add(addToListRequest);
 							}
 						}
@@ -218,7 +218,7 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 		mBtnCancel.setVisibility(isLoading ? View.GONE : View.VISIBLE);
 	}
 
-	public String getSelectedSKU() {
+	public OtherSkus getSelectedSKU() {
 		WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
 		if (woolworthsApplication != null) {
 			WGlobalState globalState = woolworthsApplication.getWGlobalState();

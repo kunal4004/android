@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.adapters;
 
-
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -177,6 +176,7 @@ public class ShoppingListSearchResultAdapter extends RecyclerSwipeAdapter<Recycl
 		return R.id.swipe;
 	}
 
+
 	private class SimpleViewHolder extends RecyclerView.ViewHolder {
 
 		private WTextView tvTitle;
@@ -306,11 +306,21 @@ public class ShoppingListSearchResultAdapter extends RecyclerSwipeAdapter<Recycl
 		}
 	}
 
-	public void setSelectedSku(ProductList productList, String selectedSku) {
+	public void setSelectedSku(ProductList selectedProduct, OtherSkus selectedSKU) {
 		if (mProductList != null) {
 			for (ProductList pList : mProductList) {
-				if (pList == productList) {
-					pList.sku = selectedSku;
+				if (pList == selectedProduct) {
+					pList.sku = selectedSKU.sku;
+				}
+			}
+			notifyDataSetChanged();
+		}
+	}
+
+	public void setColorSize(ProductList selectedProduct, OtherSkus selectedSKUId) {
+		if (mProductList != null) {
+			for (ProductList pList : mProductList) {
+				if (pList == selectedProduct) {
 				}
 			}
 			notifyDataSetChanged();

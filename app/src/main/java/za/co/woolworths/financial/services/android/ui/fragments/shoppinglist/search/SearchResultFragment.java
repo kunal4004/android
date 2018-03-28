@@ -95,10 +95,10 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 						ProductState productState = (ProductState) object;
 						switch (productState.getState()) {
 							case ProductState.INDEX_SEARCH_FROM_LIST:
-								if (mProductAdapter != null)
+								if (mProductAdapter != null) {
 									mProductAdapter.setSelectedSku(getSelectedProduct(), getGlobalState().getSelectedSKUId());
+								}
 								toggleAddToListBtn(true);
-
 								break;
 
 							default:
@@ -490,7 +490,9 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 	}
 
 	public void noSizeColorIntent(String mSkuId) {
-		getGlobalState().setSelectedSKUId(mSkuId);
+		OtherSkus otherSkus = new OtherSkus();
+		otherSkus.sku = mSkuId;
+		getGlobalState().setSelectedSKUId(otherSkus);
 		Activity activity = getActivity();
 		if (activity != null) {
 			switch (getGlobalState().getSaveButtonClick()) {
