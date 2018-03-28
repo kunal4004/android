@@ -239,8 +239,10 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	@Override
 	public void onItemSelectionChange(List<ShoppingListItem> items) {
 		getViewDataBinding().incConfirmButtonLayout.rlCheckOut.setVisibility(getButtonStatus(items) ? View.VISIBLE : View.GONE);
-		tvMenuSelectAll.setText(getString(getSelectAllMenuVisibility(items) ? R.string.deselect_all : R.string.select_all));
-
+		if(items.size()>0)
+			tvMenuSelectAll.setText(getString(getSelectAllMenuVisibility(items) ? R.string.deselect_all : R.string.select_all));
+		else
+			mMenuActionSelectAll.setVisible(false);
 	}
 
 	@Override
@@ -317,6 +319,20 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 					getViewDataBinding().loadingBar.setVisibility(View.GONE);
 					mErrorHandlerView.showErrorHandler();
 					mErrorHandlerView.networkFailureHandler(errorMessage);
+				}
+			});
+		}
+	}
+
+	@Override
+	public void onDeleteItemFailed() {
+		final Activity activity = getActivity();
+		if (activity != null) {
+			activity.runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					mErrorHandlerView.showToast();
+					shoppingListItemsAdapter.updateList(listItems);
 				}
 			});
 		}

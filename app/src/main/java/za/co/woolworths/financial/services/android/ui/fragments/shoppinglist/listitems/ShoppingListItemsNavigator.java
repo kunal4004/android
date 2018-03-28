@@ -37,4 +37,6 @@ public interface ShoppingListItemsNavigator {
 	void onQuantityChangeClick(int position);
 
 	void onGetListFailure(String errorMessage);
+
+	void onDeleteItemFailed();
 }

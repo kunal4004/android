@@ -54,7 +54,7 @@ public class ShoppingListItemsViewModel extends BaseViewModel<ShoppingListItemsN
 
 			@Override
 			public void onFailure(String e) {
-
+				getNavigator().onDeleteItemFailed();
 			}
 		},listId,id,productId,catalogRefId);
 	}
