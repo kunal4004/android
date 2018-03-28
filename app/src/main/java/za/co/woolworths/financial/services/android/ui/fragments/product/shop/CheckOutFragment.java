@@ -11,10 +11,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.ConsoleMessage;
@@ -32,29 +30,30 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.ui.fragments.product.shop.communicator.MyJavaScriptInterface;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class CheckOutFragment extends Fragment implements View.OnTouchListener {
+public class CheckOutFragment extends Fragment {
 
-	public static int REQUESTCODE_CHECKOUT = 9;
+	public static int REQUEST_CART_REFRESH_ON_DESTROY = 9;
 
 	private enum QueryString {
 		COMPLETE("goto=complete"),
 		ABANDON("goto=abandon");
 
 		private String value;
+
 		QueryString(String value) {
 			this.value = value;
 		}
+
 		public String getValue() {
 			return value;
 		}
@@ -84,8 +83,6 @@ public class CheckOutFragment extends Fragment implements View.OnTouchListener {
 		if (activity != null) {
 			setWebViewClient();
 			setWebChromeClient();
-			mWebCheckOut.setOnTouchListener(this);
-			mWebCheckOut.addJavascriptInterface(new MyJavaScriptInterface(activity), "JSInterface");
 			mWebCheckOut.loadUrl(getUrl(), getExtraHeader());
 			retryConnect(view);
 		}
@@ -155,6 +152,7 @@ public class CheckOutFragment extends Fragment implements View.OnTouchListener {
 			@Override
 			public void onPageStarted(WebView view, String url,
 									  Bitmap favicon) {
+
 				if (url.contains(QueryString.COMPLETE.getValue())) {
 					closeOnNextPage = QueryString.COMPLETE;
 				} else if (url.contains(QueryString.ABANDON.getValue())) {
@@ -164,15 +162,17 @@ public class CheckOutFragment extends Fragment implements View.OnTouchListener {
 
 			public void onPageFinished(WebView view, String url) {
 				mProgressLayout.setVisibility(View.GONE);
-
-				if (closeOnNextPage != null && !url.contains(closeOnNextPage.getValue())) {
-					Intent returnIntent = new Intent();
-					if (closeOnNextPage == QueryString.COMPLETE) {
-						getActivity().setResult(Activity.RESULT_OK, returnIntent);
-					} else if (closeOnNextPage == QueryString.ABANDON) {
-						getActivity().setResult(Activity.RESULT_CANCELED, returnIntent);
+				Activity activity = getActivity();
+				if (activity != null) {
+					if (closeOnNextPage != null && !url.contains(closeOnNextPage.getValue())) {
+						Intent returnIntent = new Intent();
+						if (closeOnNextPage == QueryString.COMPLETE) {
+							activity.setResult(Activity.RESULT_OK, returnIntent);
+						} else if (closeOnNextPage == QueryString.ABANDON) {
+							activity.setResult(Activity.RESULT_CANCELED, returnIntent);
+						}
+						activity.finish();
 					}
-					getActivity().finish();
 				}
 			}
 		});
@@ -209,32 +209,6 @@ public class CheckOutFragment extends Fragment implements View.OnTouchListener {
 		});
 	}
 
-	public WebView getWebCheckOut() {
-		return mWebCheckOut;
-	}
-
-	public void callJavaScript(WebView view, String methodName, Object... params) {
-		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append("javascript:try{");
-		stringBuilder.append(methodName);
-		stringBuilder.append("(");
-		String separator = "";
-		for (Object param : params) {
-			stringBuilder.append(separator);
-			separator = ",";
-			if (param instanceof String) {
-				stringBuilder.append("'");
-			}
-			stringBuilder.append(param);
-			if (param instanceof String) {
-				stringBuilder.append("'");
-			}
-		}
-		stringBuilder.append(")}catch(error){console.error(error.message);}");
-		final String call = stringBuilder.toString();
-		Log.i(TAG, "callJavaScript: call=" + call);
-		view.loadUrl(call);
-	}
 
 	public static void clearWebViewCachesCustom(Context context) {
 		try {
@@ -242,21 +216,7 @@ public class CheckOutFragment extends Fragment implements View.OnTouchListener {
 			new File(dataDir + "/app_webview/").delete();
 		} catch (Exception e) {
 			Log.e("clearWebViewCaches", e.getMessage());
-			e.printStackTrace();
-			e.getSuppressed();
 		}
-	}
-
-	@Override
-	public boolean onTouch(View v, MotionEvent event) {
-		if (v.getId() == R.id.webCheckout && event.getAction() == MotionEvent.ACTION_DOWN) {
-//			mWebCheckOut.loadUrl("javascript:(function() { " +
-//					"var title = document.getElementsByTagName('h1')[0];" +
-//					"var type = title.getAttribute('heading--1');" +
-//					"window.JSInterface.printAddress(title, 1);" +
-//					"})()");
-		}
-		return false;
 	}
 
 	private void retryConnect(View view) {
