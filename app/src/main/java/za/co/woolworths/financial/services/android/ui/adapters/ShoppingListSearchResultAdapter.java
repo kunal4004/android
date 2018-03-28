@@ -13,6 +13,8 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.awfs.coordination.R;
+import com.daimajia.swipe.SwipeLayout;
+import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,7 +29,7 @@ import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeVie
 
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailViewModel.CLOTHING_PRODUCT;
 
-public class ShoppingListSearchResultAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class ShoppingListSearchResultAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHolder> {
 
 	private final int ITEM_VIEW_TYPE_HEADER = 0;
 	private final int ITEM_VIEW_TYPE_BASIC = 1;
@@ -105,6 +107,7 @@ public class ShoppingListSearchResultAdapter extends RecyclerView.Adapter<Recycl
 			vh.setChecked(productList);
 			vh.setDefaultQuantity();
 			vh.showProgressBar(productList.viewIsLoading);
+			vh.disableSwipeToDelete(false);
 
 			//in some cases, it will prevent unwanted situations
 			vh.cbxItem.setOnClickListener(new View.OnClickListener() {
@@ -120,6 +123,8 @@ public class ShoppingListSearchResultAdapter extends RecyclerView.Adapter<Recycl
 					onItemClick(vh);
 				}
 			});
+
+			mItemManger.bindView(holder.itemView, position);
 		}
 	}
 
@@ -167,6 +172,11 @@ public class ShoppingListSearchResultAdapter extends RecyclerView.Adapter<Recycl
 		return !prodList.itemWasChecked;
 	}
 
+	@Override
+	public int getSwipeLayoutResourceId(int position) {
+		return R.id.swipe;
+	}
+
 	private class SimpleViewHolder extends RecyclerView.ViewHolder {
 
 		private WTextView tvTitle;
@@ -178,6 +188,7 @@ public class ShoppingListSearchResultAdapter extends RecyclerView.Adapter<Recycl
 		private LinearLayout llItemContainer;
 		private CheckBox cbxItem;
 		private ProgressBar pbLoadProduct;
+		private SwipeLayout swipeLayout;
 
 		private SimpleViewHolder(View view) {
 			super(view);
@@ -190,6 +201,7 @@ public class ShoppingListSearchResultAdapter extends RecyclerView.Adapter<Recycl
 			cbxItem = view.findViewById(R.id.btnDeleteRow);
 			pbLoadProduct = view.findViewById(R.id.pbLoadProduct);
 			tvQuantity = view.findViewById(R.id.tvQuantity);
+			swipeLayout = view.findViewById(R.id.swipe);
 		}
 
 		private void setDefaultQuantity() {
@@ -234,6 +246,10 @@ public class ShoppingListSearchResultAdapter extends RecyclerView.Adapter<Recycl
 		public void showProgressBar(boolean visible) {
 			pbLoadProduct.setVisibility(visible ? View.VISIBLE : View.GONE);
 			cbxItem.setVisibility(visible ? View.GONE : View.VISIBLE);
+		}
+
+		public void disableSwipeToDelete(boolean enable) {
+			swipeLayout.setRightSwipeEnabled(enable);
 		}
 	}
 
