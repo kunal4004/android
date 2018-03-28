@@ -30,6 +30,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 
 import java.io.File;
 import java.util.HashMap;
@@ -89,7 +90,7 @@ public class CheckOutFragment extends Fragment {
 
 	@NonNull
 	private String getUrl() {
-		return "http://www-win-qa.woolworths.co.za/mcommerce/jsp/checkout-summary.jsp";
+		return WoolworthsApplication.getCartCheckoutLink();
 	}
 
 	@SuppressLint("SetJavaScriptEnabled")
