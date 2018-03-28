@@ -96,7 +96,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		listName = getArguments().getString("listName");
 		listId = getArguments().getString("listId");
 		EmptyCartView emptyCartView = new EmptyCartView(view, this);
-		emptyCartView.setView("title text", "description text", R.drawable.vector_icon_empty_list);
+		emptyCartView.setView(getString(R.string.title_empty_shopping_list), getString(R.string.description_empty_shopping_list), getString(R.string.button_empty_shopping_list),R.drawable.vector_icon_empty_list);
 		showToolbar(listName);
 		observableOn(new Consumer() {
 			@Override
@@ -108,7 +108,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 						if (updatedQuantity > 0) {
 							listItems.get(changeQuantityItem).userQuantity = updatedQuantity;
 							listItems.get(changeQuantityItem).isSelected = true;
-							updateList(listItems);
+							shoppingListItemsAdapter.updateList(listItems);
 						}
 						return;
 					}
