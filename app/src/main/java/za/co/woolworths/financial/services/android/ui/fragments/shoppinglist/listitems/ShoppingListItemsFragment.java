@@ -96,7 +96,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		listName = getArguments().getString("listName");
 		listId = getArguments().getString("listId");
 		EmptyCartView emptyCartView = new EmptyCartView(view, this);
-		emptyCartView.setView(getString(R.string.title_empty_shopping_list), getString(R.string.description_empty_shopping_list), getString(R.string.button_empty_shopping_list),R.drawable.emptyshoppinglist);
+		emptyCartView.setView(getString(R.string.title_empty_shopping_list), getString(R.string.description_empty_shopping_list), getString(R.string.button_empty_shopping_list), R.drawable.emptyshoppinglist);
 		showToolbar(listName);
 		observableOn(new Consumer() {
 			@Override
@@ -360,6 +360,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 
 	@Override
 	public void onEmptyCartRetry() {
+		//TODO:: should navigate to product landing page???
 		openProductSearchActivity();
 	}
 

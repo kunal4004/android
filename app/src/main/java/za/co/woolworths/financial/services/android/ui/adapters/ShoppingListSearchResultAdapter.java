@@ -103,6 +103,7 @@ public class ShoppingListSearchResultAdapter extends RecyclerView.Adapter<Recycl
 			vh.setProductName(productList);
 			vh.setCartImage(productList);
 			vh.setChecked(productList);
+			vh.setDefaultQuantity();
 			vh.showProgressBar(productList.viewIsLoading);
 
 			//in some cases, it will prevent unwanted situations
@@ -172,6 +173,7 @@ public class ShoppingListSearchResultAdapter extends RecyclerView.Adapter<Recycl
 		private WTextView tvPrice;
 		private WTextView tvWasPrice;
 		private WTextView tvSaveText;
+		private WTextView tvQuantity;
 		private WrapContentDraweeView cartProductImage;
 		private LinearLayout llItemContainer;
 		private CheckBox cbxItem;
@@ -187,6 +189,11 @@ public class ShoppingListSearchResultAdapter extends RecyclerView.Adapter<Recycl
 			llItemContainer = view.findViewById(R.id.llItemContainer);
 			cbxItem = view.findViewById(R.id.btnDeleteRow);
 			pbLoadProduct = view.findViewById(R.id.pbLoadProduct);
+			tvQuantity = view.findViewById(R.id.tvQuantity);
+		}
+
+		private void setDefaultQuantity() {
+			tvQuantity.setText("1");
 		}
 
 		private void setCartImage(ProductList productItem) {
