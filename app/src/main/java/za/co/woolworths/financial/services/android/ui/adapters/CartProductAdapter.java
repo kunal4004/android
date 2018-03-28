@@ -184,7 +184,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 				CartPricesViewHolder priceHolder = ((CartPricesViewHolder) holder);
 				if (orderSummary != null) {
 					priceHolder.orderSummeryLayout.setVisibility(View.VISIBLE);
-					setPriceValue(priceHolder.txtPriceEstimatedDelivery, orderSummary.getEstimatedDelivery());
+					priceHolder.txtPriceEstimatedDelivery.setText("TBC");
 					if (orderSummary.getStaffDiscount() > 0) {
 						setPriceValue(priceHolder.txtPriceCompanyDiscount, orderSummary.getStaffDiscount());
 						priceHolder.rlCompanyDiscount.setVisibility(View.VISIBLE);
