@@ -47,13 +47,24 @@ public class CheckOutFragment extends Fragment implements View.OnTouchListener {
 
 	public static int REQUESTCODE_CHECKOUT = 9;
 
+	private enum QueryString {
+		COMPLETE("goto=complete"),
+		ABANDON("goto=abandon");
+
+		private String value;
+		QueryString(String value) {
+			this.value = value;
+		}
+		public String getValue() {
+			return value;
+		}
+	}
+
 	private WebView mWebCheckOut;
 	private String TAG = this.getClass().getSimpleName();
 	private ProgressBar mProgressLayout;
 	private ErrorHandlerView mErrorHandlerView;
-	private String logoutQueryString = "DPSLogout=true";
-	private String nextExpectedUrl = "";
-	private String currentUrl = "";
+	private QueryString closeOnNextPage;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -144,36 +155,25 @@ public class CheckOutFragment extends Fragment implements View.OnTouchListener {
 			@Override
 			public void onPageStarted(WebView view, String url,
 									  Bitmap favicon) {
-				if (url.contains(logoutQueryString)) {
-					currentUrl = nextExpectedUrl;
-					nextExpectedUrl = url;
-					if (!TextUtils.isEmpty(currentUrl)
-							&& !nextExpectedUrl.equalsIgnoreCase(currentUrl)) {
-						mWebCheckOut.stopLoading();
-						Activity activity = getActivity();
-						if (activity != null) {
-							activity.finish();
-							activity.overridePendingTransition(0, 0);
-						}
-					}
-				} else if (url.contains("goto=complete")) {
-					Intent returnIntent = new Intent();
-					getActivity().setResult(Activity.RESULT_OK, returnIntent);
-					getActivity().finish();
-				} else if (url.contains("goto=abandon")) {
-					Intent returnIntent = new Intent();
-					getActivity().setResult(Activity.RESULT_CANCELED, returnIntent);
-					getActivity().finish();
+				if (url.contains(QueryString.COMPLETE.getValue())) {
+					closeOnNextPage = QueryString.COMPLETE;
+				} else if (url.contains(QueryString.ABANDON.getValue())) {
+					closeOnNextPage = QueryString.ABANDON;
 				}
 			}
 
 			public void onPageFinished(WebView view, String url) {
 				mProgressLayout.setVisibility(View.GONE);
-//				mWebCheckOut.loadUrl("javascript:(function() { " +
-//						"var x = document.getElementsByClassName('heading--1').length;" +
-//						"var content = document.getElementsByTagName('h1')[0].innerHTML; " +
-//						"window.JSInterface.printAddress(content, x);" +
-//						"})()");
+
+				if (closeOnNextPage != null && !url.contains(closeOnNextPage.getValue())) {
+					Intent returnIntent = new Intent();
+					if (closeOnNextPage == QueryString.COMPLETE) {
+						getActivity().setResult(Activity.RESULT_OK, returnIntent);
+					} else if (closeOnNextPage == QueryString.ABANDON) {
+						getActivity().setResult(Activity.RESULT_CANCELED, returnIntent);
+					}
+					getActivity().finish();
+				}
 			}
 		});
 	}

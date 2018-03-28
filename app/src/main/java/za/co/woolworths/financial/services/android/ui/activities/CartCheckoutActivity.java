@@ -3,9 +3,7 @@ package za.co.woolworths.financial.services.android.ui.activities;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.ImageView;
 
 import com.awfs.coordination.R;
 
@@ -19,14 +17,6 @@ public class CartCheckoutActivity extends AppCompatActivity implements View.OnCl
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_cart_checkout);
 		Utils.updateStatusBarBackground(this);
-
-		Toolbar toolbar = findViewById(R.id.toolbar);
-		ImageView btnCloseCart = findViewById(R.id.btnCloseCart);
-		btnCloseCart.setOnClickListener(this);
-
-		setSupportActionBar(toolbar);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-		getSupportActionBar().setTitle(null);
 		CheckOutFragment checkOutFragment = new CheckOutFragment();
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		fragmentManager.beginTransaction()
