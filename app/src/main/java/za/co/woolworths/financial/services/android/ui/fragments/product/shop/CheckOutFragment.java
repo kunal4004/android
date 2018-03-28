@@ -37,6 +37,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.communicator.MyJavaScriptInterface;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -81,7 +82,7 @@ public class CheckOutFragment extends Fragment implements View.OnTouchListener {
 
 	@NonNull
 	private String getUrl() {
-		return "http://www-win-qa.woolworths.co.za/mcommerce/jsp/checkout-summary.jsp";
+		return WoolworthsApplication.getCartCheckoutLink();
 	}
 
 	@SuppressLint("SetJavaScriptEnabled")
