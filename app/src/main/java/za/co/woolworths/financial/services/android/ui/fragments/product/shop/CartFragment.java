@@ -810,9 +810,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == CheckOutFragment.REQUESTCODE_CHECKOUT) {
-			if (resultCode == Activity.RESULT_OK) {
 				loadShoppingCart(false).execute();
-			}
 		}
 	}
 
