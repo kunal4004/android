@@ -14,13 +14,9 @@ public interface GridNavigator {
 
 	void cancelAPIRequest();
 
-	void setTotalNumberOfItem();
-
 	void bindRecyclerViewWithUI(List<ProductList> productList);
 
 	void onGridItemSelected(ProductList productList);
-
-	void onBottomReached();
 
 	void startProductRequest();
 

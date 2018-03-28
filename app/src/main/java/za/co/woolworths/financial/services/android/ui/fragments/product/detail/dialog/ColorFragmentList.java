@@ -45,8 +45,7 @@ public class ColorFragmentList extends Fragment implements StockFinderSizeColorA
 			mRecyclerItemSelected = (WStockFinderActivity.RecyclerItemSelected) this.getActivity();
 		} catch (ClassCastException ignored) {
 		}
-
-		mRecyclerColorList = (RecyclerView) view.findViewById(R.id.recyclerColorList);
+		mRecyclerColorList = view.findViewById(R.id.recyclerColorList);
 		mRecyclerColorList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 		StockFinderSizeColorAdapter stockFinderSizeColorAdapter = new StockFinderSizeColorAdapter(colorSKUList, mContext, "color");
 		mRecyclerColorList.setAdapter(stockFinderSizeColorAdapter);

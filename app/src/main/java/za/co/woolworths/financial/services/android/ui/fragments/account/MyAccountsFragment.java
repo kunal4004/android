@@ -34,20 +34,20 @@ import java.util.Map;
 import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
-import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.rest.message.GetMessage;
+import za.co.woolworths.financial.services.android.models.rest.shoppinglist.GetShoppingLists;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
-import za.co.woolworths.financial.services.android.ui.activities.ShoppingListActivity;
 import za.co.woolworths.financial.services.android.ui.activities.UserDetailActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountOverViewPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.ShoppingListFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.main_list.ContactUsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.faq.FAQFragment;
@@ -114,6 +114,9 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	private LinearLayout loginUserOptionsLayout;
 	private SessionManager mSessionManager;
 	private GetMessage mGessageResponse;
+	private GetShoppingLists mGetShoppingLists;
+	private WTextView shoppingListCounter;
+	private ShoppingListsResponse shoppingListsResponse;
 
 	public MyAccountsFragment() {
 		// Required empty public constructor
@@ -217,6 +220,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			view.findViewById(R.id.loginAccount).setOnClickListener(this.btnSignin_onClick);
 			view.findViewById(R.id.registerAccount).setOnClickListener(this.btnRegister_onClick);
 			view.findViewById(R.id.llUnlinkedAccount).setOnClickListener(this.btnLinkAccounts_onClick);
+			view.findViewById(R.id.myLists).setOnClickListener(this);
 
 			view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
 				@Override
@@ -229,7 +233,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			});
 		}
 
-		getViewModel().consumeObservable(new Consumer<Object>() {
+		observableOn(new Consumer<Object>() {
 			@Override
 			public void accept(Object object) throws Exception {
 				Activity activity = getActivity();
@@ -541,11 +545,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			case R.id.relFAQ:
 				pushFragment(new FAQFragment());
 				break;
-			case R.id.openShoppingList:
-				Intent openShoppingList = new Intent(getActivity(), ShoppingListActivity.class);
-				startActivity(openShoppingList);
-				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
-				break;
 			case R.id.signOutBtn:
 				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.SIGN_OUT, "");
 				break;
@@ -557,6 +556,14 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 				break;
 			case R.id.storeLocator:
 				pushFragment(new StoresNearbyFragment1());
+				break;
+			case R.id.myLists:
+				Bundle bundle = new Bundle();
+				if (shoppingListsResponse != null)
+					bundle.putString("ShoppingList", Utils.objectToJson(shoppingListsResponse));
+				ShoppingListFragment shoppingListFragment = new ShoppingListFragment();
+				shoppingListFragment.setArguments(bundle);
+				pushFragment(shoppingListFragment);
 				break;
 			default:
 				break;
@@ -669,9 +676,10 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	public void onResume() {
 		super.onResume();
 		LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver, new IntentFilter("UpdateCounter"));
-/*
+
 		messageCounterRequest();
-*/
+		shoppingListRequest();
+
 	}
 
 	@Override
@@ -696,6 +704,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		super.onDestroy();
 		hideProgressBar();
 		cancelRequest(mGessageResponse);
+		cancelRequest(mGetShoppingLists);
 	}
 
 //	public int getAvailableFundsPercentage(int availableFund, int creditLimit) {
@@ -713,7 +722,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			public void run() {
 				try {
 					hideProgressBar();
-				} catch (Exception ex) {
+				} catch (Exception ignored) {
 				}
 			}
 		});
@@ -763,6 +772,11 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		mGessageResponse.execute();
 	}
 
+	private void shoppingListRequest() {
+		mGetShoppingLists = getViewModel().getShoppingListsResponse();
+		mGetShoppingLists.execute();
+	}
+
 	@Override
 	public void onMessageResponse(MessageResponse messageResponse) {
 		if (messageResponse.unreadCount > 0) {
@@ -777,6 +791,17 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			Utils.removeBadgeCounter(getActivity());
 			getBottomNavigator().addBadge(INDEX_ACCOUNT, 0);
 			hideView(messageCounter);
+		}
+	}
+
+	@Override
+	public void onShoppingListsResponse(ShoppingListsResponse shoppingListsResponse) {
+		this.shoppingListsResponse = shoppingListsResponse;
+		if (shoppingListsResponse.lists != null && shoppingListsResponse.lists.size() > 0) {
+			showView(getViewDataBinding().listsCounter);
+			getViewDataBinding().listsCounter.setText(String.valueOf(shoppingListsResponse.lists.size()));
+		} else {
+			hideView(getViewDataBinding().listsCounter);
 		}
 	}
 
@@ -813,6 +838,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			getBottomNavigator().badgeCount();
 			if (loadMessageCounter) {
 				messageCounterRequest();
+				shoppingListRequest();
 			} else {
 				initialize();
 			}

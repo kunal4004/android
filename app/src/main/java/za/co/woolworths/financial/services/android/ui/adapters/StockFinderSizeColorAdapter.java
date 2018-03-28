@@ -37,7 +37,7 @@ public class StockFinderSizeColorAdapter extends RecyclerView.Adapter<StockFinde
 
 		SimpleViewHolder(View view) {
 			super(view);
-			productName = (WTextView) view.findViewById(R.id.name);
+			productName = view.findViewById(R.id.name);
 		}
 	}
 

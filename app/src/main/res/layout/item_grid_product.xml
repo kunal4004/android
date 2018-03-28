@@ -14,15 +14,20 @@
         app:alignItems="stretch"
         app:flexWrap="wrap">
 
-        <com.facebook.drawee.view.SimpleDraweeView
-            android:id="@+id/imProduct"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/product_image_height"
-            android:layout_gravity="center"
-            android:contentDescription="@string/app_name"
-            fresco:fadeDuration="50"
-            fresco:placeholderImage="@drawable/rectangle"
-            fresco:viewAspectRatio="0.5"/>
+            android:gravity="center">
+
+            <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
+                android:id="@+id/imProduct"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:contentDescription="@string/app_name"
+                fresco:fadeDuration="50"
+                fresco:placeholderImage="@drawable/woolworth_logo_icon"/>
+        </RelativeLayout>
 
         <View
             android:layout_width="match_parent"
@@ -121,25 +126,25 @@
             android:gravity="right"
             android:orientation="vertical">
 
-            <com.facebook.drawee.view.SimpleDraweeView
+            <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
                 android:id="@+id/imNewImage"
                 android:layout_width="15dp"
                 android:layout_height="wrap_content"
                 fresco:viewAspectRatio="1.0"/>
 
-            <com.facebook.drawee.view.SimpleDraweeView
+            <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
                 android:id="@+id/imSave"
                 android:layout_width="15dp"
                 android:layout_height="wrap_content"
                 fresco:viewAspectRatio="1.0"/>
 
-            <com.facebook.drawee.view.SimpleDraweeView
+            <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
                 android:id="@+id/imReward"
                 android:layout_width="15dp"
                 android:layout_height="wrap_content"
                 fresco:viewAspectRatio="1.0"/>
 
-            <com.facebook.drawee.view.SimpleDraweeView
+            <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
                 android:id="@+id/imVitality"
                 android:layout_width="15dp"
                 android:layout_height="wrap_content"

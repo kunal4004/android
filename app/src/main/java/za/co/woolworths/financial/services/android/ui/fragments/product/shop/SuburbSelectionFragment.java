@@ -384,7 +384,7 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 			}
 		}
 
-		//Trigger api validation token in DetailFragment
+		//Trigger api validation token in ProductDetailFragment
 		Utils.sendBus(new ProductState(USE_MY_LOCATION));
 	}
 

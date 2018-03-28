@@ -5,12 +5,12 @@ import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -26,9 +26,11 @@ import java.util.HashMap;
 
 import za.co.woolworths.financial.services.android.models.dto.CartItemGroup;
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem;
+import za.co.woolworths.financial.services.android.models.dto.CommerceItemInfo;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
@@ -36,6 +38,11 @@ import static za.co.woolworths.financial.services.android.models.service.event.P
 
 public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHolder> {
 
+
+	@Override
+	public int getSwipeLayoutResourceId(int position) {
+		return R.id.swipe;
+	}
 
 	private enum CartRowType {
 		HEADER(0), PRODUCT(1), PRICES(2);
@@ -55,13 +62,13 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 		void totalItemInBasket(int total);
 	}
 
-	private Activity mContext;
 	private OnItemClick onItemClick;
 	private HashMap<String, ArrayList<ProductList>> productCategoryItems;
 	private boolean editMode = false;
 	private boolean firstLoadCompleted = false;
 	private ArrayList<CartItemGroup> cartItems;
 	private OrderSummary orderSummary;
+	private Activity mContext;
 
 	public CartProductAdapter(ArrayList<CartItemGroup> cartItems, OnItemClick onItemClick, OrderSummary orderSummary, Activity context) {
 		this.cartItems = cartItems;
@@ -76,7 +83,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 			return new CartHeaderViewHolder(LayoutInflater.from(mContext)
 					.inflate(R.layout.cart_product_header_item, parent, false));
 		} else if (viewType == CartRowType.PRODUCT.value) {
-			return new productHolder(LayoutInflater.from(mContext)
+			return new ProductHolder(LayoutInflater.from(mContext)
 					.inflate(R.layout.cart_product_item, parent, false));
 		} else {
 			return new CartPricesViewHolder(LayoutInflater.from(mContext)
@@ -93,21 +100,23 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 				ArrayList<CommerceItem> commerceItems = itemRow.commerceItems;
 				headerHolder.tvHeaderTitle.setText(commerceItems.size() > 1 ? commerceItems.size() + " " + itemRow.category.toUpperCase() + " ITEMS" : commerceItems.size() + " " + itemRow.category.toUpperCase() + " ITEM");
 				break;
-
 			case PRODUCT:
-				final productHolder productHolder = ((productHolder) holder);
+				final ProductHolder productHolder = ((ProductHolder) holder);
 				final CommerceItem commerceItem = itemRow.commerceItem;
-				productHolder.tvTitle.setText(commerceItem.commerceItemInfo.getProductDisplayName());
+				CommerceItemInfo commerceItemInfo;
+				if (commerceItem == null) return;
+				commerceItemInfo = commerceItem.commerceItemInfo;
+				productHolder.tvTitle.setText(commerceItemInfo.getProductDisplayName());
 				Utils.truncateMaxLine(productHolder.tvTitle);
-				productHolder.quantity.setText(String.valueOf(commerceItem.commerceItemInfo.getQuantity()));
+				productHolder.quantity.setText(String.valueOf(commerceItemInfo.getQuantity()));
 				productHolder.price.setText(WFormatter.formatAmount(commerceItem.getPriceInfo().getAmount()));
-				productImage(productHolder.productImage, TextUtils.isEmpty(commerceItem.commerceItemInfo.externalImageURL) ? "" : commerceItem.commerceItemInfo.externalImageURL);
+				productImage(productHolder.productImage, commerceItemInfo.externalImageURL);
 				productHolder.btnDeleteRow.setVisibility(this.editMode ? View.VISIBLE : View.GONE);
 				onRemoveSingleItem(productHolder, commerceItem);
 				//enable/disable change quantity click
 				productHolder.llQuantity.setEnabled(!this.editMode);
 				Utils.fadeInFadeOutAnimation(productHolder.llQuantity, this.editMode);
-				productHolder.swipeLayout.setRightSwipeEnabled(false);
+
 				// prevent triggering animation on first load
 				if (firstLoadWasCompleted())
 					animateOnDeleteButtonVisibility(productHolder.llCartItems, this.editMode);
@@ -122,12 +131,13 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 					productHolder.imPrice.setVisibility(View.VISIBLE);
 				}
 
+				productHolder.swipeLayout.setRightSwipeEnabled(false);
 				//Set Promotion Text START
 				if (commerceItem.getPriceInfo().getDiscountedAmount() > 0) {
 					productHolder.promotionalText.setText(" " + WFormatter.formatAmount(commerceItem.getPriceInfo().getDiscountedAmount()));
-					productHolder.llPromotionalText.setVisibility(View.VISIBLE);
+//					ProductHolder.llPromotionalText.setVisibility(View.VISIBLE);
 				} else {
-					productHolder.llPromotionalText.setVisibility(View.GONE);
+//					ProductHolder.llPromotionalText.setVisibility(View.GONE);
 				}
 				//Set Promotion Text END
 
@@ -135,18 +145,19 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 				if (itemRow.category.equalsIgnoreCase("FOOD")) {
 					productHolder.tvColorSize.setVisibility(View.INVISIBLE);
 				} else {
-					String sizeColor = commerceItem.commerceItemInfo.getColor();
+					String sizeColor = commerceItemInfo.getColor();
 					if (sizeColor == null)
 						sizeColor = "";
-					if (sizeColor.isEmpty() && !commerceItem.commerceItemInfo.getSize().isEmpty() && !commerceItem.commerceItemInfo.getSize().equalsIgnoreCase("NO SZ"))
-						sizeColor = commerceItem.commerceItemInfo.getSize();
-					else if (!sizeColor.isEmpty() && !commerceItem.commerceItemInfo.getSize().isEmpty() && !commerceItem.commerceItemInfo.getSize().equalsIgnoreCase("NO SZ"))
-						sizeColor = sizeColor + ", " + commerceItem.commerceItemInfo.getSize();
+					if (sizeColor.isEmpty() && !commerceItemInfo.getSize().isEmpty() && !commerceItemInfo.getSize().equalsIgnoreCase("NO SZ"))
+						sizeColor = commerceItemInfo.getSize();
+					else if (!sizeColor.isEmpty() && !commerceItemInfo.getSize().isEmpty() && !commerceItemInfo.getSize().equalsIgnoreCase("NO SZ"))
+						sizeColor = sizeColor + ", " + commerceItemInfo.getSize();
 
 					productHolder.tvColorSize.setText(sizeColor);
 					productHolder.tvColorSize.setVisibility(View.VISIBLE);
 				}
 				// Set Color and Size END
+
 				productHolder.btnDeleteRow.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
@@ -157,6 +168,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 					}
 				});
 
+
 				productHolder.llQuantity.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View view) {
@@ -166,7 +178,6 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 					}
 				});
 				mItemManger.bindView(productHolder.itemView, position);
-
 				break;
 
 			case PRICES:
@@ -198,7 +209,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 		}
 	}
 
-	private void onRemoveSingleItem(final productHolder productHolder, final CommerceItem commerceItem) {
+	private void onRemoveSingleItem(final ProductHolder productHolder, final CommerceItem commerceItem) {
 		if (this.editMode) {
 			if (commerceItem.deleteIconWasPressed()) {
 				Animation animateRowToDelete = android.view.animation.AnimationUtils.loadAnimation(mContext, R.anim.animate_layout_delete);
@@ -346,20 +357,19 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 		}
 	}
 
-	public class productHolder extends RecyclerView.ViewHolder {
+	public class ProductHolder extends RecyclerView.ViewHolder {
 		private WTextView tvTitle, tvColorSize, quantity, price, promotionalText;
 		private ImageView btnDeleteRow;
 		private ImageView imPrice;
-		private SimpleDraweeView productImage;
 		private RelativeLayout llQuantity;
-		private LinearLayout llCartItems, llPromotionalText;
+		private WrapContentDraweeView productImage;
+		private LinearLayout llCartItems;//llPromotionalText
 		private WTextView tvDelete;
 		private ProgressBar pbQuantity;
 		private ProgressBar pbDeleteProgress;
-		public RelativeLayout viewForeground, viewBackground;
 		private SwipeLayout swipeLayout;
 
-		public productHolder(View view) {
+		public ProductHolder(View view) {
 			super(view);
 			tvTitle = view.findViewById(R.id.tvTitle);
 			tvColorSize = view.findViewById(R.id.tvSize);
@@ -373,11 +383,10 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 			imPrice = view.findViewById(R.id.imPrice);
 			llCartItems = view.findViewById(R.id.llCartItems);
 			tvDelete = view.findViewById(R.id.tvDelete);
-			viewBackground = view.findViewById(R.id.view_background);
-			viewForeground = view.findViewById(R.id.view_foreground);
 			promotionalText = view.findViewById(R.id.promotionalText);
-			llPromotionalText = view.findViewById(R.id.promotionalTextLayout);
 			swipeLayout = view.findViewById(R.id.swipe);
+			//llPromotionalText = view.findViewById(R.id.promotionalTextLayout);
+			//TO:DO:: FIXES FOR PROMOTIONAL TEXT
 		}
 	}
 
@@ -415,14 +424,12 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 		}
 	}
 
-	private void productImage(final SimpleDraweeView image, String imgUrl) {
-		if (imgUrl != null) {
-			try {
-				//TODO:: get domain name dynamically
-				imgUrl = "https://images.woolworthsstatic.co.za/" + imgUrl + "?w=" + 85 + "&q=" + 85;
-				image.setImageURI(imgUrl);
-			} catch (IllegalArgumentException ignored) {
-			}
+	private void productImage(final WrapContentDraweeView image, String imgUrl) {
+		try {
+			String url = "https://images.woolworthsstatic.co.za/" + imgUrl + "?w=" + 85 + "&q=" + 85;
+			//TODO:: get domain name dynamically
+			image.setImageURI(TextUtils.isEmpty(imgUrl) ? "https://images.woolworthsstatic.co.za" : url);
+		} catch (IllegalArgumentException ignored) {
 		}
 	}
 
@@ -515,10 +522,5 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 		this.editMode = editMode;
 		if (cartItems != null)
 			notifyItemRangeChanged(0, cartItems.size());
-	}
-
-	@Override
-	public int getSwipeLayoutResourceId(int position) {
-		return R.id.swipe;
 	}
 }

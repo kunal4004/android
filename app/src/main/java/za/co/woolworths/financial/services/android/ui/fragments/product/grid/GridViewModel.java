@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.grid;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 
 import java.util.List;
 
@@ -152,6 +153,7 @@ public class GridViewModel extends BaseViewModel<GridNavigator> {
 		PagingResponse pagingResponse = productView.pagingResponse;
 		if (pagingResponse.numItemsInTotal != null) {
 			mNumItemsInTotal = pagingResponse.numItemsInTotal;
+			Log.e("paginationResponse", "pageOffset " + productView.pagingResponse.pageOffset + " mNumItemsInTotal " + mNumItemsInTotal);
 			if (productView.pagingResponse.pageOffset > mNumItemsInTotal) {
 				setIsLastPage(true);
 			}

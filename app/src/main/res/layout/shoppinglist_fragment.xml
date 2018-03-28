@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_marginTop="?attr/actionBarSize"
+        tools:context="za.co.woolworths.financial.services.android.ui.fragments.ShoppingListItemsFragments">
+
+    <data>
+
+        <import type="android.view.View"/>
+
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/default_background"
+        >
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rcvShoppingLists"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:paddingTop="16dp"
+            />
+
+        <include
+            android:id="@+id/incEmptyLayout"
+            layout="@layout/empty_state_template"/>
+
+    </RelativeLayout>
+</layout>
+

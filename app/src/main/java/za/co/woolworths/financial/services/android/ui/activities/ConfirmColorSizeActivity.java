@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.activities;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -24,7 +25,6 @@ import za.co.woolworths.financial.services.android.models.service.event.ProductS
 import za.co.woolworths.financial.services.android.ui.adapters.StockFinderFragmentAdapter;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ColorFragmentList;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.SizeFragmentList;
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DetailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.EditQuantityFragmentList;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ColorInterface;
@@ -33,18 +33,23 @@ import za.co.woolworths.financial.services.android.util.Utils;
 
 import static za.co.woolworths.financial.services.android.models.service.event.CartState.CHANGE_QUANTITY;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_CALL;
+import static za.co.woolworths.financial.services.android.models.service.event.ProductState.OPEN_ADD_TO_SHOPPING_LIST_VIEW;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.POST_ADD_ITEM_TO_CART;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_ADD_TO_SHOPPING_LIST;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_STORE_FINDER;
 
 public class ConfirmColorSizeActivity extends AppCompatActivity implements View.OnClickListener, WStockFinderActivity.RecyclerItemSelected {
 
 	public static final String SELECT_PAGE = "SELECT_PAGE";
 	public static final String QUANTITY = "quantity";
+	public static final String ADD_TO_SHOPPING_LIST = "ADD_TO_SHOPPING_LIST";
 	public final String SELECTED_COLOUR = "SELECTED_COLOUR";
 	public final String COLOR_LIST = "COLOR_LIST";
 	public final String OTHERSKU = "OTHERSKU";
 	public final String PRODUCT_HAS_COLOR = "PRODUCT_HAS_COLOR";
 	public final String PRODUCT_HAS_SIZE = "PRODUCT_HAS_SIZE";
-
+	private final String CLOSE = "CLOSE";
+	private final String SHOP_LIST = "SHOP_LIST";
 	private LinearLayout mRelRootContainer, mRelPopContainer;
 	private ImageView mImCloseIcon, mImBackIcon;
 	private String mColorList, mOtherSKU;
@@ -124,7 +129,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 		switch (v.getId()) {
 			case R.id.relPopContainer:
 			case R.id.imCloseIcon:
-				closeViewAnimation();
+				closeViewAnimation(CLOSE);
 				break;
 
 			case R.id.imBackIcon:
@@ -137,7 +142,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 		}
 	}
 
-	private void closeViewAnimation() {
+	private void closeViewAnimation(final String type) {
 		if (!viewWasClicked) { // prevent more than one click
 			viewWasClicked = true;
 			TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
@@ -155,7 +160,18 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 
 				@Override
 				public void onAnimationEnd(Animation animation) {
-					Utils.sendBus(new ProductState(CANCEL_CALL));
+					switch (type) {
+						case CLOSE:
+							Utils.sendBus(new ProductState(CANCEL_CALL));
+							break;
+
+						case SHOP_LIST:
+							Utils.sendBus(new ProductState(OPEN_ADD_TO_SHOPPING_LIST_VIEW));
+							break;
+
+						default:
+							break;
+					}
 					dismissLayout();
 				}
 			});
@@ -202,32 +218,62 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 	}
 
 	private void dismissSizeColorActivity() {
-		if (mGlobalState.getSaveButtonClick() == DetailFragment.INDEX_STORE_FINDER) {
-			if (!viewWasClicked) { // prevent more than one click
-				viewWasClicked = true;
-				TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
-				animation.setFillAfter(true);
-				animation.setDuration(ANIM_DOWN_DURATION);
-				animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
+		switch (mGlobalState.getSaveButtonClick()) {
+			case INDEX_STORE_FINDER:
+				if (!viewWasClicked) { // prevent more than one click
+					viewWasClicked = true;
+					TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
+					animation.setFillAfter(true);
+					animation.setDuration(ANIM_DOWN_DURATION);
+					animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
 
-					@Override
-					public void onAnimationStart(Animation animation) {
-					}
+						@Override
+						public void onAnimationStart(Animation animation) {
+						}
 
-					@Override
-					public void onAnimationRepeat(Animation animation) {
-					}
+						@Override
+						public void onAnimationRepeat(Animation animation) {
+						}
 
-					@Override
-					public void onAnimationEnd(Animation animation) {
-						callInStoreFinder();
-						dismissLayout();
-					}
-				});
-				mRelRootContainer.startAnimation(animation);
-			}
-		} else {
-			dismissQuantityView(1);
+						@Override
+						public void onAnimationEnd(Animation animation) {
+							callInStoreFinder();
+							dismissLayout();
+						}
+					});
+					mRelRootContainer.startAnimation(animation);
+				}
+				break;
+
+			case INDEX_ADD_TO_SHOPPING_LIST:
+				if (!viewWasClicked) { // prevent more than one click
+					viewWasClicked = true;
+					TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
+					animation.setFillAfter(true);
+					animation.setDuration(ANIM_DOWN_DURATION);
+					animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
+
+						@Override
+						public void onAnimationStart(Animation animation) {
+						}
+
+						@Override
+						public void onAnimationRepeat(Animation animation) {
+						}
+
+						@Override
+						public void onAnimationEnd(Animation animation) {
+							callInStoreFinder();
+							dismissLayout();
+						}
+					});
+					mRelRootContainer.startAnimation(animation);
+				}
+				break;
+
+			default:
+				dismissQuantityView(1);
+				break;
 		}
 	}
 
@@ -285,16 +331,25 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 	}
 
 	private void inStoreFinderUpdate() {
-		if (mGlobalState.getSaveButtonClick() == DetailFragment.INDEX_STORE_FINDER) {
-			callInStoreFinder();
-			closeViewAnimation();
-		} else {
-			dismissQuantityView(1);
+		if (mGlobalState != null) {
+			switch (mGlobalState.getSaveButtonClick()) {
+				case INDEX_STORE_FINDER:
+					callInStoreFinder();
+					closeViewAnimation(CLOSE);
+					break;
+				case INDEX_ADD_TO_SHOPPING_LIST:
+					closeViewAnimation(SHOP_LIST);
+					break;
+				default:
+					dismissQuantityView(1);
+					break;
+			}
 		}
 	}
 
 	private void callInStoreFinder() {
-		WoolworthsApplication.getInstance().bus().send(new ConfirmColorSizeActivity());
+		Log.e("INDEX_ADD_TO_SHOPPING", "callInStoreFinder");
+		Utils.sendBus(new ConfirmColorSizeActivity());
 	}
 
 
