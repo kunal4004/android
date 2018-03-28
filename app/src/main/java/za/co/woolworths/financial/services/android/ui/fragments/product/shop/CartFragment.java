@@ -21,7 +21,6 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
-import com.daimajia.swipe.util.Attributes;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
@@ -238,7 +237,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				Activity checkOutActivity = getActivity();
 				if (checkOutActivity != null) {
 					Intent openCheckOutActivity = new Intent(getContext(), CartCheckoutActivity.class);
-					startActivityForResult(openCheckOutActivity, CheckOutFragment.REQUESTCODE_CHECKOUT);
+					startActivityForResult(openCheckOutActivity, CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY);
 					checkOutActivity.overridePendingTransition(0, 0);
 				}
 				break;
@@ -298,11 +297,14 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	private void locationSelectionClicked() {
-		Intent openDeliveryLocationSelectionActivity = new Intent(this.getContext(), DeliveryLocationSelectionActivity.class);
-		openDeliveryLocationSelectionActivity.putExtra("suburbName", mSuburbName);
-		openDeliveryLocationSelectionActivity.putExtra("provinceName", mProvinceName);
-		startActivity(openDeliveryLocationSelectionActivity);
-		this.getActivity().overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
+		Activity activity = getActivity();
+		if (activity != null) {
+			Intent openDeliveryLocationSelectionActivity = new Intent(this.getContext(), DeliveryLocationSelectionActivity.class);
+			openDeliveryLocationSelectionActivity.putExtra("suburbName", mSuburbName);
+			openDeliveryLocationSelectionActivity.putExtra("provinceName", mProvinceName);
+			startActivityForResult(openDeliveryLocationSelectionActivity, CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY);
+			activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
+		}
 	}
 
 	public void bindCartData(CartResponse cartResponse) {
@@ -809,8 +811,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == CheckOutFragment.REQUESTCODE_CHECKOUT) {
-				loadShoppingCart(false).execute();
+		if (requestCode == CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY) {
+			loadShoppingCart(false).execute();
 		}
 	}
 

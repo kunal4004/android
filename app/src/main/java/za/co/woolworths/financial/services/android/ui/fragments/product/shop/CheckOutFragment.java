@@ -41,7 +41,7 @@ import za.co.woolworths.financial.services.android.util.Utils;
 
 public class CheckOutFragment extends Fragment {
 
-	public static int REQUESTCODE_CHECKOUT = 9;
+	public static int REQUEST_CART_REFRESH_ON_DESTROY = 9;
 
 	private enum QueryString {
 		COMPLETE("goto=complete"),
