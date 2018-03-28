@@ -41,4 +41,5 @@ public class ProductList {
 	public Integer numberOfItems;
 	public boolean itemWasChecked;
 	public boolean viewIsLoading;
+	public String displayColorSizeText;
 }
