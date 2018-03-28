@@ -49,7 +49,7 @@ import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.EnterBarcodeActivity;
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DetailFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
@@ -397,16 +397,16 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 							if (mProductList.size() > 0 && mProductList.get(0).productId != null) {
 								GsonBuilder builder = new GsonBuilder();
 								Gson gson = builder.create();
-								DetailFragment detailFragment = new DetailFragment();
+								ProductDetailFragment productDetailFragment = new ProductDetailFragment();
 								String strProductList = gson.toJson(mProductList.get(0));
 								Bundle bundle = new Bundle();
 								bundle.putString("strProductList", strProductList);
 								bundle.putString("strProductCategory", mProductList.get(0).productName);
 								bundle.putString("productResponse", strProduct);
 								bundle.putBoolean("fetchFromJson", true);
-								detailFragment.setArguments(bundle);
+								productDetailFragment.setArguments(bundle);
 								FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-								transaction.replace(R.id.barcode_fragment, detailFragment).commit();
+								transaction.replace(R.id.barcode_fragment, productDetailFragment).commit();
 								mSlideUpPanelLayout.setAnchorPoint(1.0f);
 								mSlideUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.ANCHORED);
 								mSlideUpPanelLayout.setScrollableViewHelper(new NestedScrollableViewHelper(mScrollProductDetail));

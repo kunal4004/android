@@ -86,16 +86,15 @@
                         android:layout_height="match_parent"
                         android:orientation="horizontal">
 
-                        <com.facebook.drawee.view.SimpleDraweeView
+                        <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
                             android:id="@+id/cartProductImage"
                             android:layout_width="@dimen/eighty_four_dp"
-                            android:layout_height="@dimen/eighty_dp"
+                            android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:contentDescription="@string/app_name"
-                            fresco:fadeDuration="50"
-                            fresco:failureImage="@drawable/rectangle"
-                            fresco:placeholderImage="@drawable/rectangle"
-                            fresco:viewAspectRatio="0.5"/>
+                            fresco:fadeDuration="20"
+                            app:placeholderImage="@drawable/woolworth_logo_icon"
+                            fresco:failureImage="@drawable/woolworth_logo_icon"/>
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -126,10 +125,10 @@
                                     android:id="@+id/llQuantity"
                                     android:layout_width="40dp"
                                     android:layout_height="32dp"
-                                    android:gravity="center"
                                     android:layout_alignParentBottom="true"
                                     android:layout_alignParentStart="true"
                                     android:background="@drawable/border_quantity_dropdown"
+                                    android:gravity="center"
                                     android:orientation="horizontal"
                                     android:padding="4dp">
 
@@ -137,8 +136,8 @@
                                         android:id="@+id/pbQuantity"
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
-                                        android:indeterminateTint="@color/black"
                                         android:layout_centerInParent="true"
+                                        android:indeterminateTint="@color/black"
                                         android:visibility="gone"/>
 
                                     <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -183,7 +182,6 @@
                                         <za.co.woolworths.financial.services.android.ui.views.WTextView
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
-                                            android:text="@string/promotional_text"
                                             android:textAllCaps="true"
                                             android:textColor="@color/promotional_text_red"
                                             android:textSize="14sp"

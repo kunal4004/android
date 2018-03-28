@@ -14,42 +14,26 @@ public enum SessionExpiredUtilities {
 	public static final String ACCOUNT = "ACCOUNT";
 	public static final String REWARD = "REWARD";
 	public static final String PRODUCT = "PRODUCT";
-
 	public void setAccountSessionExpired(Activity activity, String token) {
+		onSessionExpired(activity, token);
 		getGlobalState().setSection(ACCOUNT);
+		openBottomNavigation(activity);
 		Utils.sendBus(new SessionManager(SessionManager.ACCOUNT_SESSION_EXPIRED));
 		Utils.removeEntry(activity);
-		onSessionExpired(activity, token);
-		Intent i = new Intent(activity, BottomNavigationActivity.class);
-		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-		activity.startActivity(i);
-		activity.overridePendingTransition(0, 0);
 	}
 
 	public void setWRewardSessionExpired(Activity activity, String token) {
 		onSessionExpired(activity, token);
 		getGlobalState().setSection(REWARD);
-		Intent i = new Intent(activity, BottomNavigationActivity.class);
-		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-		activity.startActivity(i);
-		activity.overridePendingTransition(0, 0);
+		openBottomNavigation(activity);
 		Utils.sendBus(new SessionManager(SessionManager.REWARD_SESSION_EXPIRED));
 	}
 
 	public void setProductExpired(Activity activity, String token) {
 		onSessionExpired(activity, token);
 		getGlobalState().setSection(PRODUCT);
+		openBottomNavigation(activity);
 		Utils.sendBus(new SessionManager(SessionManager.PRODUCT_SESSION_EXPIRED));
-		Intent i = new Intent(activity, BottomNavigationActivity.class);
-		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-		activity.startActivity(i);
-		activity.overridePendingTransition(0, 0);
 	}
 
 	public void showSessionExpireDialog(Activity activity) {
@@ -76,5 +60,14 @@ public enum SessionExpiredUtilities {
 			return woolworthsApplication.getWGlobalState();
 		}
 		return null;
+	}
+
+	private void openBottomNavigation(Activity activity) {
+		Intent i = new Intent(activity, BottomNavigationActivity.class);
+		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		activity.startActivity(i);
+		activity.overridePendingTransition(0, 0);
 	}
 }

@@ -15,6 +15,8 @@ public class Defaults {
     String rewardingLink;
     String howtosaveLink;
     String wrewardsTCLink;
+    private String cartCheckoutLink;
+
 
     public String getAnalitics() {
         return analitics;
@@ -104,4 +106,11 @@ public class Defaults {
         this.wrewardsTCLink = wrewardsTCLink;
     }
 
+    public void setCartCheckoutLink(String cartCheckoutLink) {
+        this.cartCheckoutLink = cartCheckoutLink;
+    }
+
+    public String getCartCheckoutLink() {
+        return cartCheckoutLink;
+    }
 }

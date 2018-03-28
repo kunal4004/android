@@ -10,17 +10,17 @@ import com.awfs.coordination.R;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DetailNavigator;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailNavigator;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
 public class ProductColorAdapter extends RecyclerView.Adapter<ProductColorAdapter.SimpleViewHolder> {
-	private DetailNavigator mDetailNavigator;
+	private ProductDetailNavigator mProductDetailNavigator;
 	private List<OtherSkus> mProductColorList;
 
 	public ProductColorAdapter(List<OtherSkus> mProductColorList,
-							   DetailNavigator detailNavigator) {
+							   ProductDetailNavigator productDetailNavigator) {
 		this.mProductColorList = mProductColorList;
-		this.mDetailNavigator = detailNavigator;
+		this.mProductDetailNavigator = productDetailNavigator;
 	}
 
 	class SimpleViewHolder extends RecyclerView.ViewHolder {
@@ -41,7 +41,7 @@ public class ProductColorAdapter extends RecyclerView.Adapter<ProductColorAdapte
 		holder.itemView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				mDetailNavigator.onColourItemClicked(mProductColorList.get(holder.getAdapterPosition()));
+				mProductDetailNavigator.onColourItemClicked(mProductColorList.get(holder.getAdapterPosition()));
 			}
 		});
 	}

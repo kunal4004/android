@@ -85,7 +85,6 @@ import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.Transaction;
 import za.co.woolworths.financial.services.android.models.dto.TransactionParentObj;
@@ -147,6 +146,7 @@ public class Utils {
 			"image/jpeg",
 			"image/tiff"
 	};
+	private static WTextView elipseEnd;
 
 	public static void saveLastLocation(Location loc, Context mContext) {
 
@@ -176,7 +176,6 @@ public class Utils {
 			}
 		} catch (JSONException e) {
 		}
-
 
 		return null;
 
@@ -425,58 +424,6 @@ public class Utils {
 			locationProviders = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
 			return !TextUtils.isEmpty(locationProviders);
 		}
-	}
-
-	public static void addToShoppingCart(Context context, ShoppingList addtoShoppingCart) {
-		List<ShoppingList> addtoShoppingCarts = getShoppingList(context);
-		SessionDao sessionDao = new SessionDao(context);
-		sessionDao.key = SessionDao.KEY.STORE_SHOPPING_LIST;
-		Gson gson = new Gson();
-		boolean isExist = false;
-		if (addtoShoppingCarts == null) {
-			addtoShoppingCarts = new ArrayList<>();
-			addtoShoppingCarts.add(0, addtoShoppingCart);
-			sessionDao.value = gson.toJson(addtoShoppingCarts);
-			try {
-				sessionDao.save();
-			} catch (Exception e) {
-				Log.e("TAG", e.getMessage());
-			}
-		} else {
-			for (ShoppingList s : addtoShoppingCarts) {
-				if (s.getProduct_id().equalsIgnoreCase(addtoShoppingCart.getProduct_id())) {
-					isExist = true;
-				}
-			}
-			if (!isExist) {
-				addtoShoppingCarts.add(0, addtoShoppingCart);
-				sessionDao.value = gson.toJson(addtoShoppingCarts);
-				try {
-					sessionDao.save();
-				} catch (Exception e) {
-					Log.e("TAG", e.getMessage());
-				}
-			}
-		}
-	}
-
-	public static List<ShoppingList> getShoppingList(Context context) {
-		List<ShoppingList> historyList = null;
-		try {
-			SessionDao sessionDao = new SessionDao(context,
-					SessionDao.KEY.STORE_SHOPPING_LIST).get();
-			if (sessionDao.value == null) {
-				historyList = new ArrayList<>();
-			} else {
-				Gson gson = new Gson();
-				Type type = new TypeToken<List<ShoppingList>>() {
-				}.getType();
-				historyList = gson.fromJson(sessionDao.value, type);
-			}
-		} catch (Exception e) {
-			Log.e("TAG", e.getMessage());
-		}
-		return historyList;
 	}
 
 	public static void displayValidationMessage(Context context, CustomPopUpWindow.MODAL_LAYOUT key, SendUserStatementRequest susr) {
@@ -1065,7 +1012,6 @@ public class Utils {
 	}
 
 	public static PopupWindow showToast(final Activity activity, String message, final boolean viewState) {
-
 		// inflate your xml layout
 		if (activity != null) {
 			LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -1080,6 +1026,7 @@ public class Utils {
 					LinearLayout.LayoutParams.WRAP_CONTENT, true);
 
 			tvView.setVisibility(viewState ? View.VISIBLE : View.GONE);
+			tvCart.setVisibility(viewState ? View.VISIBLE : View.GONE);
 			tvAddToCart.setText(message);
 
 			// handle popupWindow click event
@@ -1142,6 +1089,48 @@ public class Utils {
 		view.startAnimation(animation);
 	}
 
+
+	public static void fadeView(final View view, final boolean editMode) {
+		Animation animation;
+		if (editMode) {
+			animation = android.view.animation.AnimationUtils.loadAnimation(view.getContext(), R.anim.edit_mode_fade_in);
+		} else {
+			animation = android.view.animation.AnimationUtils.loadAnimation(view.getContext(), R.anim.edit_mode_fade_out);
+		}
+
+		if (view instanceof WButton) {
+			animation.setAnimationListener(new Animation.AnimationListener() {
+				@Override
+				public void onAnimationStart(Animation animation) {
+
+				}
+
+				@Override
+				public void onAnimationEnd(Animation animation) {
+					view.setEnabled(editMode);
+				}
+
+				@Override
+				public void onAnimationRepeat(Animation animation) {
+
+				}
+			});
+		}
+		view.startAnimation(animation);
+	}
+
+	public static void whiteEffectClick(WButton button) {
+		//TODO:: TEST FOR DIFFERENT POPUP
+
+		try {
+			if (button != null) {
+				button.setBackgroundColor(Color.BLACK);
+				button.setTextColor(Color.WHITE);
+			}
+		} catch (Exception ex) {
+			Log.e("whiteEffectClick", ex.toString());
+		}
+	}
 
 	public static void removeFromDb(SessionDao.KEY key, Context context) throws Exception {
 		new SessionDao(context, key).delete();

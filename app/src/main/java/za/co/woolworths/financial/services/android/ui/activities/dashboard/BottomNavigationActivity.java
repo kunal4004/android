@@ -33,10 +33,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
@@ -49,7 +46,7 @@ import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.category.CategoryFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DetailFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.base.WRewardsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wtoday.WTodayFragment;
@@ -83,9 +80,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	public static final int INDEX_REWARD = FragNavController.TAB4;
 	public static final int INDEX_ACCOUNT = FragNavController.TAB5;
 	public static final int OPEN_CART_REQUEST = 12346;
-	public static Toolbar mToolbar;
+	private final String TAG = this.getClass().getSimpleName();
 
-	private final CompositeDisposable mDisposables = new CompositeDisposable();
 	private PermissionUtils permissionUtils;
 	private ArrayList<String> permissions;
 	private BottomNavigationViewModel bottomNavigationViewModel;
@@ -146,70 +142,61 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				.rootFragmentListener(this, 5)
 				.build();
 		renderUI();
-		mDisposables.add(woolworthsApplication()
-				.bus()
-				.toObservable()
-				.subscribeOn(Schedulers.io())
-				.observeOn(AndroidSchedulers.mainThread())
-				.subscribe(new Consumer<Object>() {
-					@Override
-					public void accept(Object object) throws Exception {
-						if (object instanceof LoadState) {
-							String searchProduct = ((LoadState) object).getSearchProduct();
-							if (!TextUtils.isEmpty((searchProduct))) {
-								GridFragment gridFragment = new GridFragment();
-								Bundle bundle = new Bundle();
-								bundle.putString("sub_category_id", "categoryId");
-								bundle.putString("sub_category_name", "categoryName");
-								bundle.putString("str_search_product", searchProduct);
-								gridFragment.setArguments(bundle);
-								pushFragment(gridFragment);
-							}
-						} else if (object instanceof AuthenticationState) {
-							AuthenticationState auth = ((AuthenticationState) object);
-							if (auth.getAuthStateTypeDef() == AuthenticationState.SIGN_OUT) {
-								onSignOut();
-								ScreenManager.presentSSOLogout(BottomNavigationActivity.this);
-							}
-						} else if (object instanceof CartSummaryResponse) {
-							CartSummaryResponse cartSummaryResponse = (CartSummaryResponse) object;
-							if (cartSummaryResponse != null) {
-								// product item successfully added to cart
-								cartSummaryAPI();
-								closeSlideUpPanel();
-								try {
-									PopupWindow popupWindow = Utils.showToast(BottomNavigationActivity.this, getString(R.string.added_to), true);
-									popupWindow.showAtLocation(getBottomNavigationById(), Gravity.BOTTOM, 0, getBottomNavigationById().getHeight() + Utils.dp2px(BottomNavigationActivity.this, 45));
-								} catch (NullPointerException ex) {
-								}
-							}
-
-							// call observer to update independent count
-						} else if (object instanceof BadgeState) {
-							BadgeState badgeState = (BadgeState) object;
-							if (badgeState != null) {
-								switch (badgeState.getPosition()) {
-									case CART_COUNT_TEMP:
-										addBadge(INDEX_CART, badgeState.getCount());
-										break;
-									case CART_COUNT:
-										cartSummaryAPI();
-										break;
-
-									case REWARD_COUNT:
-										getViewModel().getVoucherCount().execute();
-										break;
-
-									case MESSAGE_COUNT:
-										getViewModel().getMessageResponse().execute();
-										break;
-									default:
-										break;
-								}
-							}
-						}
+		observableOn(new Consumer<Object>() {
+			@Override
+			public void accept(Object object) throws Exception {
+				if (object instanceof LoadState) {
+					String searchProduct = ((LoadState) object).getSearchProduct();
+					if (!TextUtils.isEmpty((searchProduct))) {
+						GridFragment gridFragment = new GridFragment();
+						Bundle bundle = new Bundle();
+						bundle.putString("sub_category_id", "categoryId");
+						bundle.putString("sub_category_name", "categoryName");
+						bundle.putString("str_search_product", searchProduct);
+						gridFragment.setArguments(bundle);
+						pushFragment(gridFragment);
 					}
-				}));
+				} else if (object instanceof AuthenticationState) {
+					AuthenticationState auth = ((AuthenticationState) object);
+					if (auth.getAuthStateTypeDef() == AuthenticationState.SIGN_OUT) {
+						onSignOut();
+						ScreenManager.presentSSOLogout(BottomNavigationActivity.this);
+					}
+				} else if (object instanceof CartSummaryResponse) {
+					// product item successfully added to cart
+					cartSummaryAPI();
+					closeSlideUpPanel();
+					try {
+						PopupWindow popupWindow = Utils.showToast(BottomNavigationActivity.this, getString(R.string.added_to), true);
+						popupWindow.showAtLocation(getBottomNavigationById(), Gravity.BOTTOM, 0, getBottomNavigationById().getHeight() + Utils.dp2px(BottomNavigationActivity.this, 45));
+					} catch (NullPointerException ex) {
+						Log.d(TAG, ex.getMessage());
+					}
+
+					// call observer to update independent count
+				} else if (object instanceof BadgeState) {
+					BadgeState badgeState = (BadgeState) object;
+					switch (badgeState.getPosition()) {
+						case CART_COUNT_TEMP:
+							addBadge(INDEX_CART, badgeState.getCount());
+							break;
+						case CART_COUNT:
+							cartSummaryAPI();
+							break;
+
+						case REWARD_COUNT:
+							getViewModel().getVoucherCount().execute();
+							break;
+
+						case MESSAGE_COUNT:
+							getViewModel().getMessageResponse().execute();
+							break;
+						default:
+							break;
+					}
+				}
+			}
+		});
 
 		badgeCount();
 	}
@@ -227,7 +214,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void renderUI() {
-		mToolbar = getToolbar();
+		getToolbar();
 		setActionBar();
 		bottomNavigationViewModel = ViewModelProviders.of(this).get(BottomNavigationViewModel.class);
 		bottomNavigationViewModel.setNavigator(this);
@@ -309,9 +296,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 							FragmentManager fm = getSupportFragmentManager();
 							Fragment fragmentById = fm.findFragmentById(R.id.fragment_bottom_container);
 							//detach detail fragment
-							if (fragmentById instanceof DetailFragment) {
-								DetailFragment detailFragment = (DetailFragment) fragmentById;
-								detailFragment.onDetach();
+							if (fragmentById instanceof ProductDetailFragment) {
+								ProductDetailFragment productDetailFragment = (ProductDetailFragment) fragmentById;
+								productDetailFragment.onDetach();
 							}
 						} catch (ClassCastException e) {
 							// not that fragment
@@ -331,15 +318,15 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void openProductDetailFragment(String productName, ProductList productList) {
-		DetailFragment detailFragment = new DetailFragment();
+		ProductDetailFragment productDetailFragment = new ProductDetailFragment();
 		Gson gson = new Gson();
 		String strProductList = gson.toJson(productList);
 		Bundle bundle = new Bundle();
 		bundle.putString("strProductList", strProductList);
 		bundle.putString("strProductCategory", productName);
-		detailFragment.setArguments(bundle);
+		productDetailFragment.setArguments(bundle);
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-		transaction.replace(R.id.fragment_bottom_container, detailFragment).commitAllowingStateLoss();
+		transaction.replace(R.id.fragment_bottom_container, productDetailFragment).commitAllowingStateLoss();
 	}
 
 	@Override
@@ -401,6 +388,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			mNavController.pushFragment(fragment, ft);
 		}
 	}
+
 
 	@Override
 	public SlidingUpPanelLayout getSlidingLayout() {
@@ -556,14 +544,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	}
 
 	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		if (!mDisposables.isDisposed()) {
-			mDisposables.clear();
-		}
-	}
-
-	@Override
 	public void hideBottomNavigationMenu() {
 		hideView(getBottomNavigationById());
 		hideView(getViewDataBinding().bottomLine);
@@ -610,6 +590,13 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	}
 
 	@Override
+	public void popFragmentNoAnim() {
+		if (!mNavController.isRootFragment()) {
+			mNavController.popFragment(new FragNavTransactionOptions.Builder().customAnimations(R.anim.stay, R.anim.stay).build());
+		}
+	}
+
+	@Override
 	public void setSelectedIconPosition(int position) {
 
 	}
@@ -634,7 +621,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	public void PermissionGranted(int request_code) {
 		woolworthsApplication()
 				.bus()
-				.send(new DetailFragment());
+				.send(new ProductDetailFragment());
 	}
 
 	@Override
@@ -777,5 +764,16 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		addBadge(INDEX_CART, 0);
 		addBadge(INDEX_ACCOUNT, 0);
 		addBadge(INDEX_REWARD, 0);
+	}
+
+	@Override
+	public Toolbar toolbar() {
+		return getToolbar();
+
+	}
+
+	@Override
+	public void onPointerCaptureChanged(boolean hasCapture) {
+
 	}
 }

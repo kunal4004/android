@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-
     <string name="app_name">WOOLWORTHS</string>
     <string name="drawer_faq">FAQ</string>
     <string name="log_in">Sign in</string>
@@ -620,11 +619,21 @@
     <string name="empty_cart_desc">You currently have no items\nin your cart.</string>
     <string name="start_shopping">start shopping</string>
     <string name="delete">delete</string>
+    <string name="title_my_list">My Lists</string>
+
+    <!-- new list item-->
+    <string name="list_name">List Name</string>
+    <string name="create_list">create list</string>
+    <string name="new_list">new list</string>
+    <string name="general_fashion">General Fashion</string>
+    <string name="shopping_search_hint">Search products to add to your list</string>
     <string name="delivery_confirmation_desc">* Delivery cost to be confirmed before payment</string>
     <string name="total_item">Total*</string>
     <string name="rlOtherDiscounts"><![CDATA[WRewards Savings & Other Discounts]]></string>
+    <string name="delete_list">DELETE LIST</string>
     <string name="out_of_stock">out of stock</string>
     <string name="out_of_stock_desc">Unfortunately this item is currently out of stock online, please try to find in-store or consider an alternative item.</string>
     <string name="out_of_stock_err">some of the products chosen are out of stock, please come back later!!</string>
     <string name="promotional_text">You saved </string>
+    <string name="enter_list_name">Enter list name</string>
 </resources>
