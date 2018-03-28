@@ -107,6 +107,7 @@ public class ShoppingListSearchResultAdapter extends RecyclerSwipeAdapter<Recycl
 			vh.setDefaultQuantity();
 			vh.showProgressBar(productList.viewIsLoading);
 			vh.disableSwipeToDelete(false);
+			vh.setTvColorSize(productList);
 
 			//in some cases, it will prevent unwanted situations
 			vh.cbxItem.setOnClickListener(new View.OnClickListener() {
@@ -184,6 +185,7 @@ public class ShoppingListSearchResultAdapter extends RecyclerSwipeAdapter<Recycl
 		private WTextView tvWasPrice;
 		private WTextView tvSaveText;
 		private WTextView tvQuantity;
+		private WTextView tvColorSize;
 		private WrapContentDraweeView cartProductImage;
 		private LinearLayout llItemContainer;
 		private CheckBox cbxItem;
@@ -196,6 +198,7 @@ public class ShoppingListSearchResultAdapter extends RecyclerSwipeAdapter<Recycl
 			tvPrice = view.findViewById(R.id.tvPrice);
 			tvWasPrice = view.findViewById(R.id.tvWasPrice);
 			tvSaveText = view.findViewById(R.id.tvSaveText);
+			tvColorSize = view.findViewById(R.id.tvColorSize);
 			cartProductImage = view.findViewById(R.id.cartProductImage);
 			llItemContainer = view.findViewById(R.id.llItemContainer);
 			cbxItem = view.findViewById(R.id.btnDeleteRow);
@@ -250,6 +253,10 @@ public class ShoppingListSearchResultAdapter extends RecyclerSwipeAdapter<Recycl
 
 		public void disableSwipeToDelete(boolean enable) {
 			swipeLayout.setRightSwipeEnabled(enable);
+		}
+
+		public void setTvColorSize(ProductList productlist) {
+			tvColorSize.setText(TextUtils.isEmpty(productlist.displayColorSizeText) ? "" : productlist.displayColorSizeText);
 		}
 	}
 
@@ -311,6 +318,10 @@ public class ShoppingListSearchResultAdapter extends RecyclerSwipeAdapter<Recycl
 			for (ProductList pList : mProductList) {
 				if (pList == selectedProduct) {
 					pList.sku = selectedSKU.sku;
+					String colour = TextUtils.isEmpty(selectedSKU.colour) ? "" : selectedSKU.colour;
+					String size = TextUtils.isEmpty(selectedSKU.size) ? "" : selectedSKU.size;
+					boolean colourSize = TextUtils.isEmpty(colour) || TextUtils.isEmpty(size);
+					pList.displayColorSizeText = colourSize ? (colour + "" + size) : (colour + ", " + size);
 				}
 			}
 			notifyDataSetChanged();
