@@ -2,7 +2,9 @@ package za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.li
 
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -44,12 +46,15 @@ import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.EmptyCartView;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT_TEMP;
 
-public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFragmentBinding, ShoppingListItemsViewModel> implements ShoppingListItemsNavigator, View.OnClickListener, EmptyCartView.EmptyCartInterface {
+public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFragmentBinding, ShoppingListItemsViewModel> implements ShoppingListItemsNavigator, View.OnClickListener, EmptyCartView.EmptyCartInterface, NetworkChangeListener {
 	private ShoppingListItemsViewModel shoppingListItemsViewModel;
 	private String listName;
 	private String listId;
@@ -63,6 +68,9 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	private WTextView tvMenuSelectAll;
 	private WoolworthsApplication mWoolWorthsApplication;
 	private int changeQuantityItem;
+	private RelativeLayout rlNoConnectionLayout;
+	private ErrorHandlerView mErrorHandlerView;
+	private BroadcastReceiver mConnectionBroadcast;
 
 	@Override
 	public ShoppingListItemsViewModel getViewModel() {
@@ -95,6 +103,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		getBottomNavigator().hideBottomNavigationMenu();
 		listName = getArguments().getString("listName");
 		listId = getArguments().getString("listId");
+		view.findViewById(R.id.btnRetry).setOnClickListener(this);
 		EmptyCartView emptyCartView = new EmptyCartView(view, this);
 		emptyCartView.setView(getString(R.string.title_empty_shopping_list), getString(R.string.description_empty_shopping_list), getString(R.string.button_empty_shopping_list), R.drawable.emptyshoppinglist);
 		showToolbar(listName);
@@ -134,6 +143,11 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				}
 			}
 		});
+
+		rlNoConnectionLayout = getViewDataBinding().incConnectionLayout.noConnectionLayout;
+		mErrorHandlerView = new ErrorHandlerView(getActivity(), rlNoConnectionLayout);
+		mErrorHandlerView.setMargin(rlNoConnectionLayout, 0, 0, 0, 0);
+		mConnectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
 
 		initList(getViewDataBinding().rcvShoppingListItems);
 		initGetShoppingListItems();
@@ -191,6 +205,11 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		switch (view.getId()) {
 			case R.id.textProductSearch:
 				openProductSearchActivity();
+				break;
+			case R.id.btnRetry:
+				if (new ConnectionDetector().isOnline(getActivity())) {
+					initGetShoppingListItems();
+				}
 				break;
 			case R.id.btnCheckOut:
 				executeAddToCart(listItems.subList(1, listItems.size()));
@@ -288,7 +307,23 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		}
 	}
 
+	@Override
+	public void onGetListFailure(final String errorMessage) {
+		Activity activity = getBaseActivity();
+		if (activity != null) {
+			activity.runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					getViewDataBinding().loadingBar.setVisibility(View.GONE);
+					mErrorHandlerView.showErrorHandler();
+					mErrorHandlerView.networkFailureHandler(errorMessage);
+				}
+			});
+		}
+	}
+
 	public void initGetShoppingListItems() {
+		mErrorHandlerView.hideErrorHandler();
 		getViewDataBinding().loadingBar.setVisibility(View.VISIBLE);
 		getShoppingListItems = getViewModel().getShoppingListItems(listId);
 		getShoppingListItems.execute();
@@ -430,4 +465,26 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 
 	}
 
+	@Override
+	public void onConnectionChanged() {
+
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		Activity activity = getActivity();
+		if (activity != null) {
+			activity.registerReceiver(mConnectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+		}
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		Activity activity = getActivity();
+		if (activity != null) {
+			activity.unregisterReceiver(mConnectionBroadcast);
+		}
+	}
 }

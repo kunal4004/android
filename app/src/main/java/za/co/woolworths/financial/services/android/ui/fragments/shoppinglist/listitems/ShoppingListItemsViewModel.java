@@ -38,7 +38,7 @@ public class ShoppingListItemsViewModel extends BaseViewModel<ShoppingListItemsN
 
 			@Override
 			public void onFailure(String e) {
-
+				getNavigator().onGetListFailure(e);
 			}
 		},listId);
 	}
