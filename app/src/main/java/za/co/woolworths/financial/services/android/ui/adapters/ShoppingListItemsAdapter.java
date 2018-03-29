@@ -198,6 +198,7 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 		this.listItems = updatedListItems;
 		this.navigator.onItemSelectionChange(listItems.subList(1, listItems.size()));
 		notifyDataSetChanged();
+		closeAllItems();
 	}
 
 	@Override
