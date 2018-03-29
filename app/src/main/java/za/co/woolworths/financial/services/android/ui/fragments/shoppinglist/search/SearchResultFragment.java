@@ -35,7 +35,7 @@ import za.co.woolworths.financial.services.android.models.rest.product.ProductRe
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.models.service.event.ShopState;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
-import za.co.woolworths.financial.services.android.ui.adapters.ShoppingListSearchResultAdapter;
+import za.co.woolworths.financial.services.android.ui.adapters.SearchResultShopAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -47,7 +47,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 
 	private SearchResultViewModel mGridViewModel;
 	private ErrorHandlerView mErrorHandlerView;
-	private ShoppingListSearchResultAdapter mProductAdapter;
+	private SearchResultShopAdapter mProductAdapter;
 	private List<ProductList> mProductList;
 	private ProgressBar mProgressLimitStart;
 	private LinearLayoutManager mRecyclerViewLayoutManager;
@@ -95,8 +95,8 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 						ProductState productState = (ProductState) object;
 						switch (productState.getState()) {
 							case ProductState.INDEX_SEARCH_FROM_LIST:
-								if (mProductAdapter != null) {
-									mProductAdapter.setSelectedSku(getSelectedProduct(), getGlobalState().getSelectedSKUId());
+								if (getProductAdapter() != null) {
+									getProductAdapter().setSelectedSku(getSelectedProduct(), getGlobalState().getSelectedSKUId());
 								}
 								toggleAddToListBtn(true);
 								break;
@@ -173,6 +173,17 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 		}
 	}
 
+	private void disableSelect() {
+		OtherSkus otherSkus = new OtherSkus();
+		otherSkus.sku = getSelectedProduct().sku;
+		if (getProductAdapter() != null)
+			getProductAdapter().onDeselectSKU(getSelectedProduct(), otherSkus);
+	}
+
+	private SearchResultShopAdapter getProductAdapter() {
+		return mProductAdapter;
+	}
+
 	@Override
 	public void cancelAPIRequest() {
 		if (mGridViewModel != null) {
@@ -191,11 +202,11 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 			productList.add(0, headerProduct);
 		}
 
-		mProductAdapter = new ShoppingListSearchResultAdapter(mProductList, this);
+		mProductAdapter = new SearchResultShopAdapter(mProductList, this);
 		mRecyclerViewLayoutManager = new LinearLayoutManager(getActivity());
 		getViewDataBinding().productList.setLayoutManager(mRecyclerViewLayoutManager);
 		getViewDataBinding().productList.setNestedScrollingEnabled(false);
-		getViewDataBinding().productList.setAdapter(mProductAdapter);
+		getViewDataBinding().productList.setAdapter(getProductAdapter());
 		getViewDataBinding().productList.setItemAnimator(null);
 		getViewDataBinding().productList.addOnScrollListener(new RecyclerView.OnScrollListener() {
 			@Override
@@ -222,7 +233,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 				ProductList footerItem = new ProductList();
 				footerItem.viewTypeFooter = true;
 				mProductList.add(footerItem);
-				mProductAdapter.notifyItemInserted(mProductList.size() - 1);
+				getProductAdapter().notifyItemInserted(mProductList.size() - 1);
 			}
 			startProductRequest();
 		}
@@ -243,7 +254,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 		for (ProductList pl : mProductList) {
 			if (pl.viewTypeFooter) {
 				mProductList.remove(pl);
-				mProductAdapter.notifyItemRemoved(index);
+				getProductAdapter().notifyItemRemoved(index);
 				return;
 			}
 			index++;
@@ -279,7 +290,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 		int actualSize = mProductList.size() + 1;
 		mProductList.addAll(productLists);
 		int sizeOfList = mProductList.size();
-		mProductAdapter.notifyItemChanged(actualSize, sizeOfList);
+		getProductAdapter().notifyItemChanged(actualSize, sizeOfList);
 		getViewModel().canLoadMore(getViewModel().getNumItemsInTotal(), sizeOfList);
 	}
 
@@ -402,10 +413,13 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 	public void onCheckedItem(ProductList selectedProduct, boolean viewIsLoading) {
 		setSelectedProduct(selectedProduct);
 		if (viewIsLoading) {
-			Activity activity = getActivity();
-			if (activity != null) {
-				ProductRequest productRequest = new ProductRequest(selectedProduct.productId, selectedProduct.sku);
-				productDetailRequest(productRequest);
+			ProductRequest productRequest = new ProductRequest(selectedProduct.productId, selectedProduct.sku);
+			productDetailRequest(productRequest);
+		} else {
+			if (getProductAdapter() != null) {
+				OtherSkus otherSkus = new OtherSkus();
+				otherSkus.sku = selectedProduct.sku;
+				getProductAdapter().onDeselectSKU(getSelectedProduct(), otherSkus);
 			}
 		}
 	}
@@ -421,7 +435,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 	@Override
 	public void onSuccessResponse(WProduct product) {
 		getGlobalState().saveButtonClicked(INDEX_SEARCH_FROM_LIST);
-		mProductAdapter.setCheckedProgressBar(getSelectedProduct());
+		getProductAdapter().setCheckedProgressBar(getSelectedProduct());
 		if (isNetworkConnected()) {
 			ArrayList<OtherSkus> otherSkuList = getViewModel().getOtherSkus();
 			ArrayList<OtherSkus> colorList = getViewModel().getColorList();
@@ -533,6 +547,19 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 
 	@Override
 	public void onLoadComplete() {
+	}
+
+	@Override
+	public void onLoadDetailFailure(String e) {
+		Activity activity = getActivity();
+		if (activity != null) {
+			activity.runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					disableSelect();
+				}
+			});
+		}
 	}
 
 	private void productDetailRequest(ProductRequest productRequest) {

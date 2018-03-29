@@ -51,4 +51,6 @@ public interface SearchResultNavigator {
 	void onSuccessResponse(WProduct product);
 
 	void onLoadComplete();
+
+	void onLoadDetailFailure(String e);
 }

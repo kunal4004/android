@@ -218,7 +218,7 @@ public class SearchResultViewModel extends BaseViewModel<SearchResultNavigator> 
 
 			@Override
 			public void onFailure(String e) {
-
+				getNavigator().onLoadDetailFailure(e);
 			}
 		});
 	}
