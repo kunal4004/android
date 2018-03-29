@@ -399,12 +399,14 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 	}
 
 	@Override
-	public void onCheckedItem(ProductList selectedProduct) {
+	public void onCheckedItem(ProductList selectedProduct, boolean viewIsLoading) {
 		setSelectedProduct(selectedProduct);
-		Activity activity = getActivity();
-		if (activity != null) {
-			ProductRequest productRequest = new ProductRequest(selectedProduct.productId, selectedProduct.sku);
-			productDetailRequest(productRequest);
+		if (viewIsLoading) {
+			Activity activity = getActivity();
+			if (activity != null) {
+				ProductRequest productRequest = new ProductRequest(selectedProduct.productId, selectedProduct.sku);
+				productDetailRequest(productRequest);
+			}
 		}
 	}
 

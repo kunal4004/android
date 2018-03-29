@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -139,8 +140,9 @@ public class ShoppingListSearchResultAdapter extends RecyclerSwipeAdapter<Recycl
 		// Product of type clothing or OtherSkus > 0
 		if (selectedProduct.productType.equalsIgnoreCase(CLOTHING_PRODUCT) || otherSkuSize > 1) {
 			selectedProduct.viewIsLoading = !selectedProduct.viewIsLoading;
+			if (selectedProduct.itemWasChecked) selectedProduct.viewIsLoading = false;
 			selectedProduct.itemWasChecked = productWasChecked(selectedProduct);
-			mSearchResultNavigator.onCheckedItem(selectedProduct);
+			mSearchResultNavigator.onCheckedItem(selectedProduct, selectedProduct.viewIsLoading);
 			notifyItemChanged(position);
 		} else {
 			selectedProduct.itemWasChecked = productWasChecked(selectedProduct);
@@ -322,16 +324,6 @@ public class ShoppingListSearchResultAdapter extends RecyclerSwipeAdapter<Recycl
 					String size = TextUtils.isEmpty(selectedSKU.size) ? "" : selectedSKU.size;
 					boolean colourSize = TextUtils.isEmpty(colour) || TextUtils.isEmpty(size);
 					pList.displayColorSizeText = colourSize ? (colour + "" + size) : (colour + ", " + size);
-				}
-			}
-			notifyDataSetChanged();
-		}
-	}
-
-	public void setColorSize(ProductList selectedProduct, OtherSkus selectedSKUId) {
-		if (mProductList != null) {
-			for (ProductList pList : mProductList) {
-				if (pList == selectedProduct) {
 				}
 			}
 			notifyDataSetChanged();
