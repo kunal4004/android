@@ -63,23 +63,28 @@
                     android:paddingStart="21dp"
                     android:paddingTop="32dp">
 
-                    <ProgressBar
-                        android:id="@+id/pbDeleteProgress"
-                        style="?android:attr/progressBarStyleSmall"
-                        android:layout_width="wrap_content"
+                    <RelativeLayout
+                        android:id="@+id/rlDeleteButton"
+                        android:layout_width="@dimen/thirty_two_dp"
                         android:layout_height="match_parent"
-                        android:layout_gravity="center_vertical"
-                        android:indeterminateTint="@color/black"
-                        android:paddingRight="21dp"
-                        android:visibility="gone"/>
+                        android:gravity="center">
 
-                    <ImageView
-                        android:id="@+id/btnDeleteRow"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center_vertical"
-                        android:paddingRight="21dp"
-                        android:src="@drawable/delete"/>
+                        <ProgressBar
+                            android:id="@+id/pbDeleteProgress"
+                            style="?android:attr/progressBarStyleSmall"
+                            android:layout_width="@dimen/twenty_four_dp"
+                            android:layout_height="@dimen/twenty_four_dp"
+                            android:layout_gravity="center_vertical"
+                            android:indeterminateTint="@color/black"
+                            android:visibility="gone"/>
+
+                        <ImageView
+                            android:id="@+id/btnDeleteRow"
+                            android:layout_width="@dimen/twenty_four_dp"
+                            android:layout_height="@dimen/twenty_four_dp"
+                            android:layout_gravity="center_vertical"
+                            android:src="@drawable/delete"/>
+                    </RelativeLayout>
 
                     <LinearLayout
                         android:id="@+id/llCartItems"
@@ -87,11 +92,12 @@
                         android:layout_height="match_parent"
                         android:orientation="horizontal">
 
-                        <LinearLayout
-                            android:layout_width="@dimen/eighty_four_dp"
-                            android:layout_height="@dimen/eighty_dp"
-                            android:orientation="vertical">
 
+                        <RelativeLayout
+                            android:layout_width="@dimen/eighty_four_dp"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:minHeight="@dimen/eighty_dp">
                             <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
                                 android:id="@+id/cartProductImage"
                                 android:layout_width="match_parent"
@@ -102,7 +108,7 @@
                                 fresco:fadeDuration="20"
                                 fresco:failureImage="@drawable/woolworth_logo_icon"
                                 fresco:placeholderImage="@drawable/woolworth_logo_icon"/>
-                        </LinearLayout>
+                        </RelativeLayout>
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -137,13 +143,13 @@
                                     android:layout_alignParentStart="true"
                                     android:background="@drawable/border_quantity_dropdown"
                                     android:gravity="center"
-                                    android:padding="4dp">
+                                    android:padding="4dp"
+                                  >
 
                                     <ProgressBar
                                         android:id="@+id/pbQuantity"
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
-                                        android:layout_centerInParent="true"
                                         android:indeterminateTint="@color/black"
                                         android:visibility="gone"/>
 
@@ -152,8 +158,8 @@
                                         style="@style/style_cart_item_quantity_value"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:layout_centerInParent="true"
-                                        />
+                                        android:layout_marginRight="@dimen/two_dp"
+                                        android:text="10"/>
 
                                     <ImageView
                                         android:id="@+id/imPrice"
@@ -161,6 +167,9 @@
                                         android:layout_height="wrap_content"
                                         android:layout_alignParentRight="true"
                                         android:layout_centerInParent="true"
+                                        android:layout_alignBottom="@+id/quantity"
+                                        android:layout_toEndOf="@+id/quantity"
+                                        android:paddingBottom="@dimen/two_dp"
                                         android:src="@drawable/path_3"/>
 
                                 </RelativeLayout>

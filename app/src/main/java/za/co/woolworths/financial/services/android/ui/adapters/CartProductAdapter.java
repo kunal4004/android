@@ -110,6 +110,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 				productHolder.price.setText(WFormatter.formatAmount(commerceItem.getPriceInfo().getAmount()));
 				productImage(productHolder.productImage, commerceItemInfo.externalImageURL);
 				productHolder.btnDeleteRow.setVisibility(this.editMode ? View.VISIBLE : View.GONE);
+				productHolder.rlDeleteButton.setVisibility(this.editMode ? View.VISIBLE : View.GONE);
 				onRemoveSingleItem(productHolder, commerceItem);
 				//enable/disable change quantity click
 				productHolder.llQuantity.setEnabled(!this.editMode);
@@ -133,9 +134,9 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 				//Set Promotion Text START
 				if (commerceItem.getPriceInfo().getDiscountedAmount() > 0) {
 					productHolder.promotionalText.setText(" " + WFormatter.formatAmount(commerceItem.getPriceInfo().getDiscountedAmount()));
-//					ProductHolder.llPromotionalText.setVisibility(View.VISIBLE);
+					productHolder.llPromotionalText.setVisibility(View.VISIBLE);
 				} else {
-//					ProductHolder.llPromotionalText.setVisibility(View.GONE);
+					productHolder.llPromotionalText.setVisibility(View.GONE);
 				}
 				//Set Promotion Text END
 
@@ -166,7 +167,6 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 					}
 				});
 
-
 				productHolder.llQuantity.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View view) {
@@ -182,7 +182,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 				CartPricesViewHolder priceHolder = ((CartPricesViewHolder) holder);
 				if (orderSummary != null) {
 					priceHolder.orderSummeryLayout.setVisibility(View.VISIBLE);
-					setPriceValue(priceHolder.txtPriceEstimatedDelivery, orderSummary.getEstimatedDelivery());
+					priceHolder.txtPriceEstimatedDelivery.setText("TBC");
 					if (orderSummary.getStaffDiscount() > 0) {
 						setPriceValue(priceHolder.txtPriceCompanyDiscount, orderSummary.getStaffDiscount());
 						priceHolder.rlCompanyDiscount.setVisibility(View.VISIBLE);
@@ -361,11 +361,12 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 		private ImageView imPrice;
 		private RelativeLayout llQuantity;
 		private WrapContentDraweeView productImage;
-		private LinearLayout llCartItems;//llPromotionalText
+		private LinearLayout llCartItems, llPromotionalText;
 		private WTextView tvDelete;
 		private ProgressBar pbQuantity;
 		private ProgressBar pbDeleteProgress;
 		private SwipeLayout swipeLayout;
+		private RelativeLayout rlDeleteButton;
 
 		public ProductHolder(View view) {
 			super(view);
@@ -383,8 +384,8 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 			tvDelete = view.findViewById(R.id.tvDelete);
 			promotionalText = view.findViewById(R.id.promotionalText);
 			swipeLayout = view.findViewById(R.id.swipe);
-			//llPromotionalText = view.findViewById(R.id.promotionalTextLayout);
-			//TO:DO:: FIXES FOR PROMOTIONAL TEXT
+			llPromotionalText = view.findViewById(R.id.promotionalTextLayout);
+			rlDeleteButton = view.findViewById(R.id.rlDeleteButton);
 		}
 	}
 
