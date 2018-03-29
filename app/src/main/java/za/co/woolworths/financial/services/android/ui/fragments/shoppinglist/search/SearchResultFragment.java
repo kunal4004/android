@@ -363,6 +363,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 	@Override
 	public void onFoodTypeSelect(ProductList productList) {
 		toggleAddToListBtn(true);
+		getBottomNavigator().openProductDetailFragment(mSearchText, productList);
 	}
 
 	@Override
@@ -560,6 +561,11 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 				}
 			});
 		}
+	}
+
+	@Override
+	public void onFoodTypeChecked(ProductList selectedProduct) {
+		toggleAddToListBtn(true);
 	}
 
 	private void productDetailRequest(ProductRequest productRequest) {

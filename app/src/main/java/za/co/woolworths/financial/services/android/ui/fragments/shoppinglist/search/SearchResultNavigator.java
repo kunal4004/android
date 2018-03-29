@@ -53,4 +53,6 @@ public interface SearchResultNavigator {
 	void onLoadComplete();
 
 	void onLoadDetailFailure(String e);
+
+	void onFoodTypeChecked(ProductList selectedProduct);
 }

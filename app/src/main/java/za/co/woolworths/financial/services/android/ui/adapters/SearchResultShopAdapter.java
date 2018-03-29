@@ -142,10 +142,12 @@ public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.V
 			if (selectedProduct.itemWasChecked) selectedProduct.viewIsLoading = false;
 			selectedProduct.itemWasChecked = productWasChecked(selectedProduct);
 			mSearchResultNavigator.onCheckedItem(selectedProduct, selectedProduct.viewIsLoading);
+			mSearchResultNavigator.minOneItemSelected(mProductList);
 			notifyItemChanged(position);
 		} else {
 			selectedProduct.itemWasChecked = productWasChecked(selectedProduct);
-			mSearchResultNavigator.onFoodTypeSelect(selectedProduct);
+			mSearchResultNavigator.onFoodTypeChecked(selectedProduct);
+			mSearchResultNavigator.minOneItemSelected(mProductList);
 			notifyItemChanged(position);
 		}
 	}
@@ -162,10 +164,7 @@ public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.V
 		if (selectedProduct.productType.equalsIgnoreCase(CLOTHING_PRODUCT) || otherSkuSize > 1) {
 			mSearchResultNavigator.onClothingTypeSelect(selectedProduct);
 		} else {
-			selectedProduct.itemWasChecked = productWasChecked(selectedProduct);
 			mSearchResultNavigator.onFoodTypeSelect(selectedProduct);
-			mSearchResultNavigator.minOneItemSelected(mProductList);
-			notifyItemChanged(position);
 		}
 	}
 
