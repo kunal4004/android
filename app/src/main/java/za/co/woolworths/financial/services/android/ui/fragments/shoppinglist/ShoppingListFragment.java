@@ -81,7 +81,7 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 		showToolbar(R.string.title_my_list);
 
 		EmptyCartView emptyCartView = new EmptyCartView(view, this);
-		emptyCartView.setView(getString(R.string.title_no_shopping_lists), getString(R.string.description_no_shopping_lists), getString(R.string.button_no_shopping_lists), R.drawable.woolworth_logo_icon);
+		emptyCartView.setView(getString(R.string.title_no_shopping_lists), getString(R.string.description_no_shopping_lists), getString(R.string.button_no_shopping_lists), R.drawable.emptylists);
 		view.findViewById(R.id.btnRetry).setOnClickListener(this);
 
 		rlNoConnectionLayout = getViewDataBinding().incConnectionLayout.noConnectionLayout;
