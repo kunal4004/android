@@ -596,6 +596,13 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	}
 
 	@Override
+	public void popFragmentSlideDown() {
+		if (!mNavController.isRootFragment()) {
+			mNavController.popFragment(new FragNavTransactionOptions.Builder().customAnimations(R.anim.stay, R.anim.slide_down_anim).build());
+		}
+	}
+
+	@Override
 	public void setSelectedIconPosition(int position) {
 
 	}

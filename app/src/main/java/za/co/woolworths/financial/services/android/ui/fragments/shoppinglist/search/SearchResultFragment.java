@@ -395,7 +395,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 		progressBar.setVisibility(View.GONE);
 		btnCheck0ut.setVisibility(View.VISIBLE);
 		sendBus(new ShopState(listItems));
-		popFragmentNoAnim();
+		popFragmentSlideDown();
 	}
 
 	@Override

@@ -268,6 +268,10 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 		getBottomNavigator().popFragmentNoAnim();
 	}
 
+	public void popFragmentSlideDown() {
+		getBottomNavigator().popFragmentSlideDown();
+	}
+
 	public WGlobalState getGlobalState() {
 		return WoolworthsApplication.getInstance().getWGlobalState();
 	}
@@ -335,7 +339,7 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 		Utils.sendBus(obj);
 	}
 
-	public void observableOn(Consumer consumer){
+	public void observableOn(Consumer consumer) {
 		getViewModel().consumeObservable(consumer);
 	}
 

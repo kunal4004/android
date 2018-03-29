@@ -68,6 +68,8 @@ public interface BottomNavigator {
 
 	void popFragmentNoAnim();
 
+	void popFragmentSlideDown();
+
 	void setSelectedIconPosition(int position);
 
 	void switchTab(int number);
