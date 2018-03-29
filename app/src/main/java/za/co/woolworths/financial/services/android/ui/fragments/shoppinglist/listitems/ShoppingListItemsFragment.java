@@ -273,7 +273,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	public void onAddToCartSuccess(AddItemToCartResponse addItemToCartResponse) {
 		if (addItemToCartResponse.data.get(0).totalCommerceIteItemCount != null)
 			Utils.sendBus(new BadgeState(CART_COUNT_TEMP, addItemToCartResponse.data.get(0).totalCommerceIteItemCount));
-		popFragmentNoAnim();
+		popFragmentSlideDown();
 	}
 
 	@Override

@@ -13,4 +13,10 @@ public interface ShoppingListNavigator {
 
 	void onDeleteShoppingList(ShoppingListsResponse shoppingListsResponse);
 
+	void onShoppingListsResponse(ShoppingListsResponse shoppingListsResponse);
+
+	void onGetShoppingListFailed(String e);
+
+	void onDeleteFailed();
+
 }

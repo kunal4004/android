@@ -87,4 +87,9 @@ public class ShoppingListAdapter extends RecyclerSwipeAdapter<ShoppingListAdapte
 			progressBar = itemView.findViewById(R.id.pbDeleteIndicator);
 		}
 	}
+
+	public void update(){
+		notifyDataSetChanged();
+		closeAllItems();
+	}
 }

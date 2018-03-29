@@ -11,8 +11,9 @@
         android:id="@+id/title"
         app:WTextView_font="medium"
         android:text="@string/select_all"
-        android:textSize="14sp"
+        android:textSize="12sp"
+        android:letterSpacing="0.2"
         android:textAllCaps="true"
-        android:textColor="@color/black"
+        android:textColor="@color/black_tv_color_toolbar"
         />
 </LinearLayout>
