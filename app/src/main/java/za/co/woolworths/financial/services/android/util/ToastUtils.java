@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.util;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -10,9 +11,7 @@ import android.widget.PopupWindow;
 
 import com.awfs.coordination.R;
 
-import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-
 
 public class ToastUtils {
 
@@ -29,6 +28,7 @@ public class ToastUtils {
 	private int pixel;
 	private View view;
 	private String currentState;
+	private String cartText;
 
 	public ToastUtils() {
 	}
@@ -47,6 +47,10 @@ public class ToastUtils {
 
 	public void setMessage(int message) {
 		this.message = (getActivity() == null) ? "" : getActivity().getResources().getString(message);
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
 	}
 
 	public String getMessage() {
@@ -93,6 +97,18 @@ public class ToastUtils {
 		return currentState;
 	}
 
+	public String getCartText() {
+		return cartText;
+	}
+
+	public void setCartText(String cartText) {
+		this.cartText = cartText;
+	}
+
+	public void setCartText(int cartText) {
+		this.cartText = getActivity().getResources().getString(cartText);
+	}
+
 	public PopupWindow build() {
 		// inflate your xml layout
 		if (getActivity() != null) {
@@ -108,7 +124,8 @@ public class ToastUtils {
 					LinearLayout.LayoutParams.WRAP_CONTENT, true);
 
 			tvView.setVisibility(getViewState() ? View.VISIBLE : View.GONE);
-			tvCart.setVisibility(getViewState() ? View.VISIBLE : View.GONE);
+			tvCart.setVisibility(TextUtils.isEmpty(getCartText()) ? View.GONE : View.VISIBLE);
+			tvCart.setText(getCartText());
 			tvAddToCart.setText(getMessage());
 
 			// handle popupWindow click event

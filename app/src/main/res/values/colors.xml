@@ -58,6 +58,6 @@
     <color name="view_statement_black">#1F1F1F</color>
     <color name="promotional_text_red">#FFD0021B</color>
     <color name="delete_red_bg">#D10B23</color>
-    <color name="toast_background">#CC030303</color>
+    <color name="toast_background">#dd030303</color>
 
 </resources>

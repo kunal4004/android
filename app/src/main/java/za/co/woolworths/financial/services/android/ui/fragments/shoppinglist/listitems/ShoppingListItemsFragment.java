@@ -11,6 +11,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -41,6 +42,7 @@ import za.co.woolworths.financial.services.android.models.service.event.BadgeSta
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
 import za.co.woolworths.financial.services.android.models.service.event.ShopState;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator;
 import za.co.woolworths.financial.services.android.ui.adapters.ShoppingListItemsAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 
@@ -51,11 +53,12 @@ import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.EmptyCartView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
+import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT_TEMP;
 
-public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFragmentBinding, ShoppingListItemsViewModel> implements ShoppingListItemsNavigator, View.OnClickListener, EmptyCartView.EmptyCartInterface, NetworkChangeListener {
+public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFragmentBinding, ShoppingListItemsViewModel> implements ShoppingListItemsNavigator, View.OnClickListener, EmptyCartView.EmptyCartInterface, NetworkChangeListener, ToastUtils.ToastInterface {
 	private ShoppingListItemsViewModel shoppingListItemsViewModel;
 	private String listName;
 	private String listId;
@@ -72,6 +75,8 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	private RelativeLayout rlNoConnectionLayout;
 	private ErrorHandlerView mErrorHandlerView;
 	private BroadcastReceiver mConnectionBroadcast;
+	private ToastUtils mToastUtils;
+	private String TAG = this.getClass().getSimpleName();
 
 	@Override
 	public ShoppingListItemsViewModel getViewModel() {
@@ -102,6 +107,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		getBottomNavigator().hideBottomNavigationMenu();
+		mToastUtils = new ToastUtils(this);
 		listName = getArguments().getString("listName");
 		listId = getArguments().getString("listId");
 		view.findViewById(R.id.btnRetry).setOnClickListener(this);
@@ -135,9 +141,23 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 						}
 
 						if (shopState.getUpdatedList() != null) {
-							listItems = shopState.getUpdatedList();
-							updateList(listItems);
-							setUpView();
+							Activity activity = getActivity();
+							if (activity != null) {
+								BottomNavigator bottomNavigator = getBottomNavigator();
+								mToastUtils.setActivity(getActivity());
+								mToastUtils.setView(bottomNavigator.getBottomNavigationById());
+								mToastUtils.setGravity(Gravity.BOTTOM);
+								mToastUtils.setCurrentState(TAG);
+								mToastUtils.setPixel(0);
+								mToastUtils.setView(bottomNavigator.getBottomNavigationById());
+								mToastUtils.setMessage(shopState.getCount() == 1 ? shopState.getCount() + " item " + activity.getResources().getString(R.string.added_to) : shopState.getCount() + " items " + activity.getResources().getString(R.string.added_to));
+								mToastUtils.setViewState(false);
+								mToastUtils.setCartText(listName);
+								mToastUtils.build();
+								listItems = shopState.getUpdatedList();
+								updateList(listItems);
+								setUpView();
+							}
 						}
 					}
 				}
@@ -506,5 +526,10 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		if (activity != null) {
 			activity.unregisterReceiver(mConnectionBroadcast);
 		}
+	}
+
+	@Override
+	public void onToastButtonClicked(String currentState) {
+
 	}
 }

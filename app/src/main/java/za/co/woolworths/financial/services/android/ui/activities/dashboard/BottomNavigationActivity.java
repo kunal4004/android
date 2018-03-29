@@ -175,6 +175,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					mToastUtils.setView(getBottomNavigationById());
 					mToastUtils.setGravity(Gravity.BOTTOM);
 					mToastUtils.setCurrentState(TAG);
+					mToastUtils.setCartText(R.string.cart);
 					mToastUtils.setPixel(getBottomNavigationById().getHeight() + Utils.dp2px(BottomNavigationActivity.this, 45));
 					mToastUtils.setView(getBottomNavigationById());
 					mToastUtils.setMessage(R.string.added_to);

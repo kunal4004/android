@@ -1175,12 +1175,4 @@ public class Utils {
 	public static String getExternalImageRef() {
 		return "https://images.woolworthsstatic.co.za/";
 	}
-
-	public static void displayPopUp(Activity activity, View view, int gravity, int pixel,
-									int message, boolean viewState) {
-		if (activity != null) {
-			PopupWindow popupWindow = Utils.showToast(activity, activity.getResources().getString(message), viewState);
-			popupWindow.showAtLocation(view, gravity, 0, pixel);
-		}
-	}
 }

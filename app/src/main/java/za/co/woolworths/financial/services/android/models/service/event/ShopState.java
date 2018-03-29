@@ -11,6 +11,7 @@ public class ShopState {
 	private List<ShoppingListItem> updateList;
 	private int quantity;
 	public static final int CHANGE_QUANTITY = 1;
+	private int count = 0;
 
 	public ShopState(String state) {
 		this.state = state;
@@ -21,8 +22,9 @@ public class ShopState {
 		this.listId = listId;
 	}
 
-	public ShopState(List<ShoppingListItem> updateList) {
+	public ShopState(List<ShoppingListItem> updateList, int count) {
 		this.updateList = updateList;
+		this.count = count;
 	}
 
 	public String getState() {
@@ -40,5 +42,9 @@ public class ShopState {
 
 	public List<ShoppingListItem> getUpdatedList() {
 		return updateList;
+	}
+
+	public int getCount() {
+		return count;
 	}
 }

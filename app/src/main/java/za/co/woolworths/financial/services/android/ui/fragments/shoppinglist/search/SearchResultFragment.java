@@ -58,6 +58,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 	private String mListId;
 	private GetProductDetail getProductDetail;
 	private ProductList mSelectedProduct;
+	private int mAddToListSize = 0;
 
 	@Override
 	public SearchResultViewModel getViewModel() {
@@ -341,6 +342,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 						addToListRequests.add(addToList);
 					}
 				}
+				mAddToListSize = addToListRequests.size();
 				getViewModel().addToList(addToListRequests, mListId).execute();
 				break;
 
@@ -406,7 +408,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 		WButton btnCheck0ut = getViewDataBinding().incConfirmButtonLayout.btnCheckOut;
 		progressBar.setVisibility(View.GONE);
 		btnCheck0ut.setVisibility(View.VISIBLE);
-		sendBus(new ShopState(listItems));
+		sendBus(new ShopState(listItems, mAddToListSize));
 		popFragmentSlideDown();
 	}
 
