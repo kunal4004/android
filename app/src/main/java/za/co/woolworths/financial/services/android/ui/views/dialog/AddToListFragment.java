@@ -28,6 +28,7 @@ import za.co.woolworths.financial.services.android.models.dto.AddToListResponse;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostAddToList;
@@ -179,7 +180,7 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 		return new PostAddToList(new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
-				AddToListResponse addToListResponse = (AddToListResponse) object;
+				ShoppingListItemsResponse addToListResponse = (ShoppingListItemsResponse) object;
 				Activity activity = getActivity();
 				if (activity != null) {
 					switch (addToListResponse.httpCode) {
