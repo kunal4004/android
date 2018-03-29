@@ -22,7 +22,6 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.PopupWindow;
 
 import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
@@ -32,6 +31,7 @@ import com.google.gson.Gson;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
@@ -59,6 +59,7 @@ import za.co.woolworths.financial.services.android.util.PermissionResultCallback
 import za.co.woolworths.financial.services.android.util.PermissionUtils;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionManager;
+import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.nav.FragNavController;
 import za.co.woolworths.financial.services.android.util.nav.FragNavSwitchController;
@@ -71,7 +72,7 @@ import static za.co.woolworths.financial.services.android.models.service.event.B
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.REWARD_COUNT;
 import static za.co.woolworths.financial.services.android.util.SessionManager.RELOAD_REWARD;
 
-public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigationBinding, BottomNavigationViewModel> implements BottomNavigator, FragNavController.TransactionListener, FragNavController.RootFragmentListener, PermissionResultCallback {
+public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigationBinding, BottomNavigationViewModel> implements BottomNavigator, FragNavController.TransactionListener, FragNavController.RootFragmentListener, PermissionResultCallback, ToastUtils.ToastInterface {
 
 	public static final int INDEX_TODAY = FragNavController.TAB1;
 	public static final int INDEX_PRODUCT = FragNavController.TAB2;
@@ -79,8 +80,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	public static final int INDEX_REWARD = FragNavController.TAB4;
 	public static final int INDEX_ACCOUNT = FragNavController.TAB5;
 	public static final int OPEN_CART_REQUEST = 12346;
-	private final String TAG = this.getClass().getSimpleName();
-
+	public final String TAG = this.getClass().getSimpleName();
 	private PermissionUtils permissionUtils;
 	private ArrayList<String> permissions;
 	private BottomNavigationViewModel bottomNavigationViewModel;
@@ -89,6 +89,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	private MyAccountsFragment myAccountsFragment;
 	private Bundle mBundle;
 	private int currentSection;
+	private ToastUtils mToastUtils;
 
 	@Override
 	public int getLayoutId() {
@@ -163,17 +164,24 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					}
 				} else if (object instanceof CartSummaryResponse) {
 					// product item successfully added to cart
-					cartSummaryAPI();
 					closeSlideUpPanel();
-					try {
-						PopupWindow popupWindow = Utils.showToast(BottomNavigationActivity.this, getString(R.string.added_to), true);
-						popupWindow.showAtLocation(getBottomNavigationById(), Gravity.BOTTOM, 0, getBottomNavigationById().getHeight() + Utils.dp2px(BottomNavigationActivity.this, 45));
-					} catch (NullPointerException ex) {
-						Log.d(TAG, ex.getMessage());
+					CartSummaryResponse cartSummaryResponse = (CartSummaryResponse) object;
+					List<CartSummary> cartSummaries = cartSummaryResponse.data;
+					if (cartSummaries != null) {
+						addBadge(INDEX_CART, cartSummaries.size() == 0 ? 0 : cartSummaries.get(0).totalItemsCount);
 					}
-
-					// call observer to update independent count
+					mToastUtils = new ToastUtils(BottomNavigationActivity.this);
+					mToastUtils.setActivity(BottomNavigationActivity.this);
+					mToastUtils.setView(getBottomNavigationById());
+					mToastUtils.setGravity(Gravity.BOTTOM);
+					mToastUtils.setCurrentState(TAG);
+					mToastUtils.setPixel(getBottomNavigationById().getHeight() + Utils.dp2px(BottomNavigationActivity.this, 45));
+					mToastUtils.setView(getBottomNavigationById());
+					mToastUtils.setMessage(R.string.added_to);
+					mToastUtils.setViewState(true);
+					mToastUtils.build();
 				} else if (object instanceof BadgeState) {
+					// call observer to update independent count
 					BadgeState badgeState = (BadgeState) object;
 					switch (badgeState.getPosition()) {
 						case CART_COUNT_TEMP:
@@ -775,11 +783,21 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	@Override
 	public Toolbar toolbar() {
 		return getToolbar();
-
 	}
 
 	@Override
-	public void onPointerCaptureChanged(boolean hasCapture) {
-
+	public void onToastButtonClicked(String currentState) {
+		String state = mToastUtils.getCurrentState();
+		if (currentState.equalsIgnoreCase(state)) {
+			// do anything when popupWindow was clicked
+			//TODO:: STOP USING SESSION_TOKEN
+			if (TextUtils.isEmpty(Utils.getSessionToken(this))) {
+				ScreenManager.presentSSOSignin(BottomNavigationActivity.this);
+			} else {
+				Intent openCartActivity = new Intent(BottomNavigationActivity.this, CartActivity.class);
+				startActivity(openCartActivity);
+				overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+			}
+		}
 	}
 }

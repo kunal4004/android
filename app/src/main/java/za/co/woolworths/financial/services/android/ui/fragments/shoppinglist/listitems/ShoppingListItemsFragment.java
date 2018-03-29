@@ -249,7 +249,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	public void onShoppingListItemDelete(ShoppingListItemsResponse shoppingListItemsResponse) {
 		listItems = shoppingListItemsResponse.listItems;
 		updateList(listItems);
-
 	}
 
 	@Override
