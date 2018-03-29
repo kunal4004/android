@@ -201,12 +201,9 @@ public class SearchResultViewModel extends BaseViewModel<SearchResultNavigator> 
 				switch (productDetail.httpCode) {
 					case 200:
 						if (productDetail.product != null) {
-							List<OtherSkus> otherSkusList = productDetail.product.otherSkus;
 							setOtherSkus(productDetail.product.otherSkus);
 						}
 						WProduct product = (WProduct) Utils.strToJson(detailProduct, WProduct.class);
-						//setProduct(detailProduct);
-						//setProduct(product.product);
 						getNavigator().onSuccessResponse(product);
 						break;
 					default:
