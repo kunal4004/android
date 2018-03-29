@@ -11,6 +11,7 @@ import za.co.woolworths.financial.services.android.models.dto.CartSummaryRespons
 import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
@@ -126,7 +127,7 @@ public interface ProductDetailNavigator {
 
 	void onAddToShopListLoad();
 
-	void onAddToListSuccess(ShoppingListsResponse response);
+	void onAddToListSuccess(ShoppingListItemsResponse response);
 
 	void onAddToListFailure(String e);
 }

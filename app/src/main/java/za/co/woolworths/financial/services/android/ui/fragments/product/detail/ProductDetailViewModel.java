@@ -29,6 +29,7 @@ import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetail;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
@@ -612,7 +613,7 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 		return new PostAddToList(new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
-				AddToListResponse response = (AddToListResponse) object;
+				ShoppingListItemsResponse response = (ShoppingListItemsResponse) object;
 				getNavigator().onAddToListSuccess(response);
 			}
 

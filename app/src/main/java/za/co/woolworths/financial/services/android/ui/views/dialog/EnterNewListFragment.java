@@ -28,6 +28,7 @@ import za.co.woolworths.financial.services.android.CreateListResponse;
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
 import za.co.woolworths.financial.services.android.models.dto.CreateList;
 import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostAddList;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostAddToList;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
@@ -246,7 +247,7 @@ public class EnterNewListFragment extends Fragment implements View.OnClickListen
 		return new PostAddToList(new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
-				AddToListResponse addToListResponse = (AddToListResponse) object;
+				ShoppingListItemsResponse addToListResponse = (ShoppingListItemsResponse) object;
 				Activity activity = getActivity();
 				if (activity != null) {
 					switch (addToListResponse.httpCode) {
