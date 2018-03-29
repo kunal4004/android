@@ -639,6 +639,9 @@
     <string name="select_all">SELECT ALL</string>
     <string name="deselect_all">DESELECT ALL</string>
     <string name="title_empty_shopping_list">Shopping list is empty</string>
-    <string name="description_empty_shopping_list">You have no items in your shopping \nlist yet.</string>
-    <string name="button_empty_shopping_list">Browse Products</string>
+    <string name="description_empty_shopping_list">Search for products to start adding \n items to this list.</string>
+    <string name="button_empty_shopping_list">Search Products</string>
+    <string name="title_no_shopping_lists">You have no lists</string>
+    <string name="description_no_shopping_lists">Shopping lists makes it easier and faster to get \n your favourite Woolworths products.</string>
+    <string name="button_no_shopping_lists">create a list</string>
 </resources>
