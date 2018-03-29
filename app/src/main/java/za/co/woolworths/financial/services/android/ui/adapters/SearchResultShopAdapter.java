@@ -29,7 +29,7 @@ import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeVie
 
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailViewModel.CLOTHING_PRODUCT;
 
-public class ShoppingListSearchResultAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHolder> {
+public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHolder> {
 
 	private final int ITEM_VIEW_TYPE_HEADER = 0;
 	private final int ITEM_VIEW_TYPE_BASIC = 1;
@@ -40,8 +40,8 @@ public class ShoppingListSearchResultAdapter extends RecyclerSwipeAdapter<Recycl
 
 	private SearchResultNavigator mSearchResultNavigator;
 
-	public ShoppingListSearchResultAdapter(List<ProductList> mProductList,
-										   SearchResultNavigator searchResultNavigator) {
+	public SearchResultShopAdapter(List<ProductList> mProductList,
+								   SearchResultNavigator searchResultNavigator) {
 		this.mProductList = mProductList;
 		this.mSearchResultNavigator = searchResultNavigator;
 	}
@@ -330,10 +330,21 @@ public class ShoppingListSearchResultAdapter extends RecyclerSwipeAdapter<Recycl
 		}
 	}
 
+	public void onDeselectSKU(ProductList selectedProduct, OtherSkus selectedSKU) {
+		if (mProductList != null) {
+			for (ProductList pList : mProductList) {
+				if (pList == selectedProduct) {
+					pList.itemWasChecked = false;
+					pList.viewIsLoading = false;
+					pList.displayColorSizeText = "";
+				}
+			}
+			notifyDataSetChanged();
+		}
+	}
+
 	@Override
 	public int getItemCount() {
 		return mProductList == null ? 0 : mProductList.size();
 	}
-
-
 }
