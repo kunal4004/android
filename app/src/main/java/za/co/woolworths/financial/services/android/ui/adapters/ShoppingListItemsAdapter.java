@@ -1,22 +1,28 @@
 package za.co.woolworths.financial.services.android.ui.adapters;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
+import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsNavigator;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
+import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 /**
@@ -84,7 +90,7 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 
 			case ITEM_VIEW_TYPE_BASIC:
 				final ViewHolder holder = (ViewHolder) viewHolder;
-				holder.cartProductImage.setImageURI("https://images.woolworthsstatic.co.za/" + listItems.get(position).externalImageURL + "?w=" + 85 + "&q=" + 85);
+				holder.cartProductImage.setImageURI(Utils.getExternalImageRef() + listItems.get(position).externalImageURL + "?w=" + 85 + "&q=" + 85);
 				holder.productName.setText(listItems.get(position).displayName);
 				//holder.productDesc.setText(listItems.get(position).description);
 				holder.quantity.setText(String.valueOf(listItems.get(position).userQuantity));
@@ -92,22 +98,28 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 				holder.select.setChecked(listItems.get(position).isSelected);
 				holder.delete.setVisibility(View.VISIBLE);
 				holder.progressBar.setVisibility(View.INVISIBLE);
-
+				holder.llShopList.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View view) {
+						int position = holder.getAdapterPosition();
+						ShoppingListItem shoppingListItem = listItems.get(position);
+						ProductList productList = createProductList(shoppingListItem);
+						navigator.openProductDetailFragment(listItems.get(position).displayName, productList);
+					}
+				});
 				// Set Color and Size START
+				String sizeColor = listItems.get(position).color;
+				if (sizeColor == null)
+					sizeColor = "";
+				if (sizeColor.isEmpty() && !listItems.get(position).size.isEmpty() && !listItems.get(position).size.equalsIgnoreCase("NO SZ"))
+					sizeColor = listItems.get(position).size;
+				else if (!sizeColor.isEmpty() && !listItems.get(position).size.isEmpty() && !listItems.get(position).size.equalsIgnoreCase("NO SZ"))
+					sizeColor = sizeColor + ", " + listItems.get(position).size;
 
-					String sizeColor = listItems.get(position).color;
-					if (sizeColor == null)
-						sizeColor = "";
-					if (sizeColor.isEmpty() && !listItems.get(position).size.isEmpty() && !listItems.get(position).size.equalsIgnoreCase("NO SZ"))
-						sizeColor = listItems.get(position).size;
-					else if (!sizeColor.isEmpty() && !listItems.get(position).size.isEmpty() && !listItems.get(position).size.equalsIgnoreCase("NO SZ"))
-						sizeColor = sizeColor + ", " + listItems.get(position).size;
-
-					holder.tvColorSize.setText(sizeColor);
-					holder.tvColorSize.setVisibility(View.VISIBLE);
+				holder.tvColorSize.setText(sizeColor);
+				holder.tvColorSize.setVisibility(View.VISIBLE);
 
 				// Set Color and Size END
-
 				holder.select.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View view) {
@@ -150,6 +162,24 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 		}
 	}
 
+	@NonNull
+	private ProductList createProductList(ShoppingListItem shoppingListItem) {
+		ProductList productList = new ProductList();
+		productList.productId = shoppingListItem.productId;
+		productList.productName = shoppingListItem.displayName;
+		productList.fromPrice = (float) shoppingListItem.price;
+		productList.sku = shoppingListItem.Id;
+		productList.externalImageRef = Utils.getExternalImageRef() + shoppingListItem.externalImageURL;
+		OtherSkus otherSku = new OtherSkus();
+		otherSku.price = String.valueOf(shoppingListItem.price);
+		otherSku.size = "";
+		List<OtherSkus> otherSkuList = new ArrayList<>();
+		productList.otherSkus = new ArrayList<>();
+		otherSkuList.add(otherSku);
+		productList.otherSkus = otherSkuList;
+		return productList;
+	}
+
 	@Override
 	public int getItemCount() {
 		return listItems.size();
@@ -170,6 +200,8 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 		private WTextView delete;
 		private ProgressBar progressBar;
 		private RelativeLayout llQuantity;
+		private LinearLayout llShopList;
+
 		public ViewHolder(View itemView) {
 			super(itemView);
 			productName = itemView.findViewById(R.id.tvTitle);
@@ -179,8 +211,9 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 			cartProductImage = itemView.findViewById(R.id.cartProductImage);
 			cartProductImage = itemView.findViewById(R.id.cartProductImage);
 			delete = itemView.findViewById(R.id.tvDelete);
+			llShopList = itemView.findViewById(R.id.llShopList);
 			progressBar = itemView.findViewById(R.id.pbDeleteIndicator);
-			tvColorSize=itemView.findViewById(R.id.tvColorSize);
+			tvColorSize = itemView.findViewById(R.id.tvColorSize);
 			llQuantity = itemView.findViewById(R.id.llQuantity);
 		}
 	}

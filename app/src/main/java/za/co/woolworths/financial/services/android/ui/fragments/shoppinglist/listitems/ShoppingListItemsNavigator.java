@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.li
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
+import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
@@ -39,4 +40,6 @@ public interface ShoppingListItemsNavigator {
 	void onGetListFailure(String errorMessage);
 
 	void onDeleteItemFailed();
+
+	void openProductDetailFragment(String productName, ProductList productList);
 }

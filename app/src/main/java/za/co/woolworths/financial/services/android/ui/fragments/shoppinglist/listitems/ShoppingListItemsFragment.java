@@ -29,6 +29,7 @@ import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
+import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
@@ -137,7 +138,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 							listItems = shopState.getUpdatedList();
 							updateList(listItems);
 							setUpView();
-
 						}
 					}
 				}
@@ -239,7 +239,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	@Override
 	public void onItemSelectionChange(List<ShoppingListItem> items) {
 		getViewDataBinding().incConfirmButtonLayout.rlCheckOut.setVisibility(getButtonStatus(items) ? View.VISIBLE : View.GONE);
-		if(items.size()>0)
+		if (items.size() > 0)
 			tvMenuSelectAll.setText(getString(getSelectAllMenuVisibility(items) ? R.string.deselect_all : R.string.select_all));
 		else
 			mMenuActionSelectAll.setVisible(false);
@@ -336,6 +336,11 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				}
 			});
 		}
+	}
+
+	@Override
+	public void openProductDetailFragment(String productName, ProductList productList) {
+		getBottomNavigator().openProductDetailFragment(productName, productList);
 	}
 
 	public void initGetShoppingListItems() {
