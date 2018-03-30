@@ -34,6 +34,7 @@ public class NewListFragment extends BaseFragment<NewListFragmentBinding, NewLis
 
 	private NewListViewModel newListFragment;
 	private PostAddList mPostAddList;
+	private KeyboardUtil mKeyboardUtil;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -72,7 +73,7 @@ public class NewListFragment extends BaseFragment<NewListFragmentBinding, NewLis
 	private void displayKeyboard(View view, Activity activity) {
 		if (activity != null) {
 			activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-			new KeyboardUtil(activity, view.findViewById(R.id.rlRootList), getBottomNavigator().getBottomNavigationById().getHeight());
+			mKeyboardUtil = new KeyboardUtil(activity, view.findViewById(R.id.rlRootList), getBottomNavigator().getBottomNavigationById().getHeight());
 		}
 	}
 
@@ -195,8 +196,18 @@ public class NewListFragment extends BaseFragment<NewListFragmentBinding, NewLis
 	}
 
 	@Override
+	public void onResume() {
+		super.onResume();
+		showToolbar(R.string.new_list);
+	}
+
+	@Override
 	public void onDetach() {
 		super.onDetach();
+		Activity activity = getActivity();
+		if (activity != null) {
+			if (mKeyboardUtil != null) mKeyboardUtil.hideKeyboard(activity);
+		}
 		closeSoftKeyboard();
 		cancelRequest(mPostAddList);
 	}
