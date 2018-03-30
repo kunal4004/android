@@ -38,8 +38,6 @@ import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-import static android.app.Activity.RESULT_OK;
-
 public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBinding, ShoppingListViewModel> implements ShoppingListNavigator, EmptyCartView.EmptyCartInterface, NetworkChangeListener, View.OnClickListener {
 	private ShoppingListViewModel shoppingListViewModel;
 	private ShoppingListsResponse shoppingListsResponse;
@@ -122,7 +120,7 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 		// Handle item selection
 		switch (item.getItemId()) {
 			case R.id.action_create_list:
-				pushFragment(new NewListFragment());
+				pushFragmentSlideUp(new NewListFragment());
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
@@ -201,7 +199,7 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 
 	@Override
 	public void onEmptyCartRetry() {
-		pushFragment(new NewListFragment());
+		pushFragmentSlideUp(new NewListFragment());
 	}
 
 	public void initGetShoppingList() {
