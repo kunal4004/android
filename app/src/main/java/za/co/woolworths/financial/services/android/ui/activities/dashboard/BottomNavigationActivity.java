@@ -164,23 +164,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					}
 				} else if (object instanceof CartSummaryResponse) {
 					// product item successfully added to cart
+					cartSummaryAPI();
 					closeSlideUpPanel();
-					CartSummaryResponse cartSummaryResponse = (CartSummaryResponse) object;
-					List<CartSummary> cartSummaries = cartSummaryResponse.data;
-					if (cartSummaries != null) {
-						addBadge(INDEX_CART, cartSummaries.size() == 0 ? 0 : cartSummaries.get(0).totalItemsCount);
-					}
-					mToastUtils = new ToastUtils(BottomNavigationActivity.this);
-					mToastUtils.setActivity(BottomNavigationActivity.this);
-					mToastUtils.setView(getBottomNavigationById());
-					mToastUtils.setGravity(Gravity.BOTTOM);
-					mToastUtils.setCurrentState(TAG);
-					mToastUtils.setCartText(R.string.cart);
-					mToastUtils.setPixel(getBottomNavigationById().getHeight() + Utils.dp2px(BottomNavigationActivity.this, 45));
-					mToastUtils.setView(getBottomNavigationById());
-					mToastUtils.setMessage(R.string.added_to);
-					mToastUtils.setViewState(true);
-					mToastUtils.build();
+					setToast();
 				} else if (object instanceof BadgeState) {
 					// call observer to update independent count
 					BadgeState badgeState = (BadgeState) object;
@@ -207,6 +193,20 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		});
 
 		badgeCount();
+	}
+
+	private void setToast() {
+		mToastUtils = new ToastUtils(BottomNavigationActivity.this);
+		mToastUtils.setActivity(BottomNavigationActivity.this);
+		mToastUtils.setView(getBottomNavigationById());
+		mToastUtils.setGravity(Gravity.BOTTOM);
+		mToastUtils.setCurrentState(TAG);
+		mToastUtils.setCartText(R.string.cart);
+		mToastUtils.setPixel(getBottomNavigationById().getHeight() + Utils.dp2px(BottomNavigationActivity.this, 45));
+		mToastUtils.setView(getBottomNavigationById());
+		mToastUtils.setMessage(R.string.added_to);
+		mToastUtils.setViewState(true);
+		mToastUtils.build();
 	}
 
 	@Override
@@ -397,6 +397,17 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		}
 	}
 
+	@Override
+	public void pushFragmentSlideUp(Fragment fragment) {
+		if (mNavController != null) {
+			FragNavTransactionOptions ft = new FragNavTransactionOptions.Builder()
+					.customAnimations(R.anim.stay, R.anim.slide_up_anim)
+					.allowStateLoss(true)
+					.build();
+
+			mNavController.pushFragment(fragment, ft);
+		}
+	}
 
 	@Override
 	public SlidingUpPanelLayout getSlidingLayout() {
