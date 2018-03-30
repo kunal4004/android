@@ -213,6 +213,10 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 		getBottomNavigator().pushFragment(fragment);
 	}
 
+	public void pushFragmentSlideUp(Fragment fragment) {
+		getBottomNavigator().pushFragmentSlideUp(fragment);
+	}
+
 	public void setText(WTextView tv, String text) {
 		try {
 			tv.setText(text);
@@ -342,5 +346,4 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 	public void observableOn(Consumer consumer) {
 		getViewModel().consumeObservable(consumer);
 	}
-
 }
