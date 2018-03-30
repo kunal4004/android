@@ -39,6 +39,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.SearchResultShopA
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_SEARCH_FROM_LIST;
@@ -322,6 +323,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 
 	@Override
 	public void onClick(View view) {
+		MultiClickPreventer.preventMultiClick(view);
 		switch (view.getId()) {
 			case R.id.btnRetry:
 				if (isNetworkConnected()) {
@@ -331,6 +333,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 				break;
 
 			case R.id.btnCheckOut:
+				cancelRequest(getProductDetail);
 				List<AddToListRequest> addToListRequests = new ArrayList<>();
 				for (ProductList list : mProductList) {
 					if (list.itemWasChecked) {
@@ -395,7 +398,6 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 
 	@Override
 	public void onAddToListLoad() {
-		;
 		ProgressBar progressBar = getViewDataBinding().incConfirmButtonLayout.pbLoadingIndicator;
 		WButton btnCheck0ut = getViewDataBinding().incConfirmButtonLayout.btnCheckOut;
 		progressBar.setVisibility(View.VISIBLE);

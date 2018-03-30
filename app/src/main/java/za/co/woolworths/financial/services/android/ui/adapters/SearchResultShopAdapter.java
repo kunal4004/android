@@ -358,9 +358,10 @@ public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.V
 					pList.itemWasChecked = false;
 					pList.viewIsLoading = false;
 					pList.displayColorSizeText = "";
+					notifyDataSetChanged();
+					return;
 				}
 			}
-			notifyDataSetChanged();
 		}
 	}
 

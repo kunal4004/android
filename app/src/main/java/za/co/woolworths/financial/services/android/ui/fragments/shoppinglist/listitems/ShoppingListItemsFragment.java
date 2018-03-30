@@ -174,7 +174,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		mToastUtils.setCurrentState(TAG);
 		mToastUtils.setPixel(0);
 		mToastUtils.setView(bottomNavigator.getBottomNavigationById());
-		mToastUtils.setMessage(shopState.getCount() == 1 ? shopState.getCount() + getString(R.string.single_item_text) + getString(R.string.added_to) : shopState.getCount() + getString(R.string.multiple_item_text) + getString(R.string.added_to));
+		mToastUtils.setMessage(shopState.getCount() == 1 ? shopState.getCount() + " " + getString(R.string.single_item_text) + " " + getString(R.string.added_to) : shopState.getCount() + " " + getString(R.string.multiple_item_text) + " " + getString(R.string.added_to));
 		mToastUtils.setViewState(false);
 		mToastUtils.setCartText(listName);
 		mToastUtils.build();
@@ -485,7 +485,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		isMenuItemReadyToShow = listSize > 1;
 		Activity activity = getActivity();
 		if (activity != null)
-			activity.invalidateOptionsMenu(); //Handle NullPointerException: Attempt to invoke virtual method 'void android.support.v4.app.FragmentActivity.invalidateOptionsMenu()'
+			activity.invalidateOptionsMenu();
 	}
 
 	public void selectAllListItems(boolean setSelection) {

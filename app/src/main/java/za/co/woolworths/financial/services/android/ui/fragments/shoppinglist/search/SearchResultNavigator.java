@@ -40,9 +40,11 @@ public interface SearchResultNavigator {
 
 	void onAddToListLoad();
 
-	void onAddToListLoadComplete(List<ShoppingListItem>  shoppingLists);
+	void onAddToListLoadComplete(List<ShoppingListItem> shoppingLists);
 
 	void onCheckedItem(ProductList selectedProduct, boolean viewIsLoading);
+
+	void toggleAddToListBtn(boolean enable);
 
 	void onLoadStart();
 
