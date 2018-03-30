@@ -416,4 +416,9 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 			}
 		});
 	}
+
+	@Override
+	public void onBackPressed() {
+		closeViewAnimation(CLOSE);
+	}
 }
