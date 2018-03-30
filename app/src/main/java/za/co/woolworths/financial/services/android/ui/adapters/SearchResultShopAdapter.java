@@ -108,19 +108,37 @@ public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.V
 			vh.showProgressBar(productList.viewIsLoading);
 			vh.disableSwipeToDelete(false);
 			vh.setTvColorSize(productList);
-
-			//in some cases, it will prevent unwanted situations
 			vh.cbxItem.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View view) {
-					onCheckItemClick(vh);
+					/**
+					 * Disable clothing type selection when product detail api is loading
+					 * food item type can still be selected.
+					 */
+					ProductList productList = mProductList.get(vh.getAdapterPosition());
+					String productType = productList.productType;
+					List<OtherSkus> otherSkusList = productList.otherSkus;
+					int otherSkuSize = (otherSkusList == null) ? 0 : otherSkusList.size();
+					if (productType.equalsIgnoreCase(CLOTHING_PRODUCT) || otherSkuSize > 1) {
+						boolean unlockSelection = !viewIsLoading();
+						vh.cbxItem.setChecked(unlockSelection);
+						if (unlockSelection) {
+							onCheckItemClick(vh);
+						}
+					} else {
+						onCheckItemClick(vh);
+					}
 				}
 			});
 
-			vh.llItemContainer.setOnClickListener(new View.OnClickListener() {
+			vh.llItemContainer.setOnClickListener(new View.OnClickListener()
+
+			{
 				@Override
 				public void onClick(View v) {
-					onItemClick(vh);
+					if (!viewIsLoading()) {
+						onItemClick(vh);
+					}
 				}
 			});
 
@@ -131,13 +149,9 @@ public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.V
 	private void onCheckItemClick(SimpleViewHolder vh) {
 		int position = vh.getAdapterPosition();
 		ProductList selectedProduct = mProductList.get(position);
-		List<OtherSkus> otherSkuList = selectedProduct.otherSkus;
-		int otherSkuSize = 0;
-		if (otherSkuList != null) {
-			otherSkuSize = otherSkuList.size();
-		}
+		int otherSkuSize = getOtherSkuSize(selectedProduct);
 		// Product of type clothing or OtherSkus > 0
-		if (selectedProduct.productType.equalsIgnoreCase(CLOTHING_PRODUCT) || otherSkuSize > 1) {
+		if (clothingTypeProduct(selectedProduct, otherSkuSize)) {
 			selectedProduct.viewIsLoading = !selectedProduct.viewIsLoading;
 			if (selectedProduct.itemWasChecked) selectedProduct.viewIsLoading = false;
 			selectedProduct.itemWasChecked = productWasChecked(selectedProduct);
@@ -152,20 +166,29 @@ public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.V
 		}
 	}
 
+	boolean clothingTypeProduct(ProductList selectedProduct, int otherSkuSize) {
+		return selectedProduct.productType.equalsIgnoreCase(CLOTHING_PRODUCT) || otherSkuSize > 1;
+	}
+
 	private void onItemClick(SimpleViewHolder vh) {
 		int position = vh.getAdapterPosition();
 		ProductList selectedProduct = mProductList.get(position);
+		int otherSkuSize = getOtherSkuSize(selectedProduct);
+		// Product of type clothing or OtherSkus > 0
+		if (clothingTypeProduct(selectedProduct, otherSkuSize)) {
+			mSearchResultNavigator.onClothingTypeSelect(selectedProduct);
+		} else {
+			mSearchResultNavigator.onFoodTypeSelect(selectedProduct);
+		}
+	}
+
+	private int getOtherSkuSize(ProductList selectedProduct) {
 		List<OtherSkus> otherSkuList = selectedProduct.otherSkus;
 		int otherSkuSize = 0;
 		if (otherSkuList != null) {
 			otherSkuSize = otherSkuList.size();
 		}
-		// Product of type clothing or OtherSkus > 0
-		if (selectedProduct.productType.equalsIgnoreCase(CLOTHING_PRODUCT) || otherSkuSize > 1) {
-			mSearchResultNavigator.onClothingTypeSelect(selectedProduct);
-		} else {
-			mSearchResultNavigator.onFoodTypeSelect(selectedProduct);
-		}
+		return otherSkuSize;
 	}
 
 	private boolean productWasChecked(ProductList prodList) {
@@ -344,5 +367,16 @@ public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.V
 	@Override
 	public int getItemCount() {
 		return mProductList == null ? 0 : mProductList.size();
+	}
+
+	public boolean viewIsLoading() {
+		if (mProductList != null) {
+			for (ProductList pList : mProductList) {
+				if (pList.viewIsLoading) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }
