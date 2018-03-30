@@ -30,6 +30,8 @@ import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
+import za.co.woolworths.financial.services.android.models.dto.AddToCartDaTum;
+import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem;
@@ -38,7 +40,6 @@ import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.DeleteShoppingList;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.DeleteShoppingListItem;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.GetShoppingListItems;
-import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
 import za.co.woolworths.financial.services.android.models.service.event.ShopState;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
@@ -55,8 +56,6 @@ import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
-
-import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT_TEMP;
 
 public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFragmentBinding, ShoppingListItemsViewModel> implements ShoppingListItemsNavigator, View.OnClickListener, EmptyCartView.EmptyCartInterface, NetworkChangeListener, ToastUtils.ToastInterface {
 	private ShoppingListItemsViewModel shoppingListItemsViewModel;
@@ -144,16 +143,8 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 							Activity activity = getActivity();
 							if (activity != null) {
 								BottomNavigator bottomNavigator = getBottomNavigator();
-								mToastUtils.setActivity(getActivity());
-								mToastUtils.setView(bottomNavigator.getBottomNavigationById());
-								mToastUtils.setGravity(Gravity.BOTTOM);
-								mToastUtils.setCurrentState(TAG);
-								mToastUtils.setPixel(0);
-								mToastUtils.setView(bottomNavigator.getBottomNavigationById());
-								mToastUtils.setMessage(shopState.getCount() == 1 ? shopState.getCount() + " item " + activity.getResources().getString(R.string.added_to) : shopState.getCount() + " items " + activity.getResources().getString(R.string.added_to));
-								mToastUtils.setViewState(false);
-								mToastUtils.setCartText(listName);
-								mToastUtils.build();
+								setToast(shopState, bottomNavigator);
+								closeSoftKeyboard();
 								listItems = shopState.getUpdatedList();
 								updateList(listItems);
 								setUpView();
@@ -174,6 +165,19 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		setScrollListener(getViewDataBinding().rcvShoppingListItems);
 		getViewDataBinding().textProductSearch.setOnClickListener(this);
 		setUpAddToCartButton();
+	}
+
+	private void setToast(ShopState shopState, BottomNavigator bottomNavigator) {
+		mToastUtils.setActivity(getActivity());
+		mToastUtils.setView(bottomNavigator.getBottomNavigationById());
+		mToastUtils.setGravity(Gravity.BOTTOM);
+		mToastUtils.setCurrentState(TAG);
+		mToastUtils.setPixel(0);
+		mToastUtils.setView(bottomNavigator.getBottomNavigationById());
+		mToastUtils.setMessage(shopState.getCount() == 1 ? shopState.getCount() + getString(R.string.single_item_text) + getString(R.string.added_to) : shopState.getCount() + getString(R.string.multiple_item_text) + getString(R.string.added_to));
+		mToastUtils.setViewState(false);
+		mToastUtils.setCartText(listName);
+		mToastUtils.build();
 	}
 
 	private void updateList(List<ShoppingListItem> listItems) {
@@ -290,8 +294,15 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 
 	@Override
 	public void onAddToCartSuccess(AddItemToCartResponse addItemToCartResponse) {
-		if (addItemToCartResponse.data.get(0).totalCommerceIteItemCount != null)
-			Utils.sendBus(new BadgeState(CART_COUNT_TEMP, addItemToCartResponse.data.get(0).totalCommerceIteItemCount));
+		if (addItemToCartResponse.data != null) {
+			List<AddToCartDaTum> addToCartDaTumList = addItemToCartResponse.data;
+			AddToCartDaTum addToCartDaTum = addToCartDaTumList.get(0);
+			if (addToCartDaTum != null) {
+				if (addToCartDaTum.totalCommerceIteItemCount != null) {
+					sendBus(new CartSummaryResponse(addItemToCartResponse));
+				}
+			}
+		}
 		popFragmentSlideDown();
 	}
 
