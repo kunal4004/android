@@ -40,6 +40,11 @@ import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class CreateListFragment extends Fragment implements View.OnClickListener {
+	private interface CreateListInterface {
+		void onTotalItemCount(int count);
+	}
+
+	private CreateListInterface createListInterface;
 	private WButton mBtnCancel;
 	private ImageView mImBack, imCloseIcon;
 	private String hideBackButton;
@@ -79,12 +84,11 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 		pbCreateList = view.findViewById(R.id.pbCreateList);
 		mImBack.setVisibility(TextUtils.isEmpty(hideBackButton) ? View.VISIBLE : View.GONE);
 		imCloseIcon.setVisibility(TextUtils.isEmpty(hideBackButton) ? View.GONE : View.VISIBLE);
-		mEtNewList = view.findViewById(R.id.etNewList);
+		mEtNewList = (WLoanEditTextView) view.findViewById(R.id.etNewList);
 		setUpEditText(mEtNewList);
 		mBtnCancel.setOnClickListener(this);
 		mImBack.setOnClickListener(this);
 		imCloseIcon.setOnClickListener(this);
-		enableCreateList(false);
 	}
 
 	private void displayKeyboard(View view, Activity activity) {
@@ -94,12 +98,30 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 		}
 	}
 
-	private void setUpEditText(WLoanEditTextView etNewList) {
+	private void setUpEditText(final WLoanEditTextView etNewList) {
+		etNewList.requestFocus();
 		etNewList.setOnKeyPreImeListener(onKeyPreImeListener);
 		etNewList.setOnEditorActionListener(onEditorActionListener);
-		etNewList.requestFocus();
 		showSoftKeyboard(etNewList);
-		addTextChangedListener(etNewList);
+		textChangeListener(etNewList);
+	}
+
+	private void textChangeListener(final WLoanEditTextView etNewList) {
+		etNewList.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+			}
+
+			@Override
+			public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+				mBtnCancel.setText(etNewList.getText().length() > 0 ? getString(R.string.ok) : getString(R.string.cancel));
+			}
+
+			@Override
+			public void afterTextChanged(Editable editable) {
+
+			}
+		});
 	}
 
 	private WLoanEditTextView.OnKeyPreImeListener onKeyPreImeListener = new WLoanEditTextView.OnKeyPreImeListener() {
@@ -119,30 +141,9 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 
 	private void onBackPressed() {
 		Activity activity = getActivity();
-		cancelRequest(activity);
-	}
-
-	private void addTextChangedListener(final WLoanEditTextView etNewList) {
-		etNewList.addTextChangedListener(new TextWatcher() {
-			@Override
-			public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-			}
-
-			@Override
-			public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-				if (charSequence.length() > 0) {
-					etNewList.setText(getString(R.string.ok));
-				} else {
-					etNewList.setText(getString(R.string.cancel));
-				}
-			}
-
-			@Override
-			public void afterTextChanged(Editable editable) {
-
-			}
-		});
+		if (activity != null) {
+			cancelRequest(activity);
+		}
 	}
 
 	private void enableCreateList(boolean enable) {
@@ -214,7 +215,6 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 					CreateListResponse createListResponse = (CreateListResponse) object;
 					switch (createListResponse.httpCode) {
 						case 200:
-
 							onLoad(false);
 							break;
 
@@ -274,3 +274,4 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 		}, addToListRequest, listId);
 	}
 }
+

@@ -80,13 +80,8 @@
             android:textColor="@color/black"
             android:textColorHint="@color/recent_search_bg"
             android:textCursorDrawable="@drawable/colorcursor"
-            android:textSelectHandle="@drawable/colorcursor"
             android:textSize="@dimen/eighteen_sp"
-            app:WEditTextView_font="myriadpro_regular">
-
-            <requestFocus/>
-
-        </za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView>
+            app:WEditTextView_font="myriadpro_regular"/>
 
         <View
             android:layout_width="match_parent"
@@ -116,7 +111,8 @@
                 android:id="@+id/pbCreateList"
                 android:layout_width="@dimen/twenty_four_dp"
                 android:layout_height="@dimen/twenty_four_dp"
-                android:indeterminateTint="@color/black"/>
+                android:indeterminateTint="@color/black"
+                android:visibility="gone"/>
         </FrameLayout>
 
     </LinearLayout>
