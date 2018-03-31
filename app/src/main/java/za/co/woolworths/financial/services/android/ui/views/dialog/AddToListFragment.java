@@ -128,12 +128,12 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 		switch (view.getId()) {
 			case R.id.imCreateList:
 				Activity activity = getActivity();
-				EnterNewListFragment enterNewListFragment = new EnterNewListFragment();
+				CreateListFragment createListFragment = new CreateListFragment();
 				if (activity != null) {
 					CustomPopUpWindow customPopUpWindow = (CustomPopUpWindow) activity;
 					FragmentManager fragmentManager = customPopUpWindow.getSupportFragmentManager();
 					fragmentManager.beginTransaction()
-							.replace(R.id.flShoppingListContainer, enterNewListFragment)
+							.replace(R.id.flShoppingListContainer, createListFragment)
 							.addToBackStack(null)
 							.commitAllowingStateLoss();
 				}

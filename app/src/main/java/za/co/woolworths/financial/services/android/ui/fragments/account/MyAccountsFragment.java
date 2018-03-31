@@ -251,6 +251,8 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 					if (object instanceof ProductState) {
 						ProductState productState = (ProductState) object;
 						switch (productState.getState()) {
+							//allow navigate to getList screen
+							// fired when new ProductState(OPEN_GET_LIST_SCREEN);
 							case OPEN_GET_LIST_SCREEN:
 								Bundle bundle = new Bundle();
 								if (shoppingListsResponse != null) {

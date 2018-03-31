@@ -57,7 +57,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.statement.Statem
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.dialog.AddToListFragment;
-import za.co.woolworths.financial.services.android.ui.views.dialog.EnterNewListFragment;
+import za.co.woolworths.financial.services.android.ui.views.dialog.CreateListFragment;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.JWTHelper;
@@ -567,11 +567,11 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				if (shoppingListsResponse != null) {
 					List<ShoppingList> lists = shoppingListsResponse.lists;
 					if (lists == null || lists.size() == 0) {
-						EnterNewListFragment enterNewListFragment = new EnterNewListFragment();
+						CreateListFragment createListFragment = new CreateListFragment();
 						bundle.putString("OPEN_FROM_POPUP", "OPEN_FROM_POPUP");
-						enterNewListFragment.setArguments(bundle);
+						createListFragment.setArguments(bundle);
 						fm.beginTransaction()
-								.add(R.id.flShoppingListContainer, enterNewListFragment)
+								.add(R.id.flShoppingListContainer, createListFragment)
 								.commitAllowingStateLoss();
 						return;
 					}

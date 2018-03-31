@@ -39,7 +39,7 @@ import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class EnterNewListFragment extends Fragment implements View.OnClickListener {
+public class CreateListFragment extends Fragment implements View.OnClickListener {
 	private WButton mBtnCancel;
 	private ImageView mImBack, imCloseIcon;
 	private String hideBackButton;
@@ -105,7 +105,7 @@ public class EnterNewListFragment extends Fragment implements View.OnClickListen
 	private WLoanEditTextView.OnKeyPreImeListener onKeyPreImeListener = new WLoanEditTextView.OnKeyPreImeListener() {
 		@Override
 		public void onBackPressed() {
-			EnterNewListFragment.this.onBackPressed();
+			CreateListFragment.this.onBackPressed();
 		}
 	};
 
