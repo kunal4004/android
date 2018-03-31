@@ -70,6 +70,7 @@ import static za.co.woolworths.financial.services.android.models.service.event.B
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.MESSAGE_COUNT;
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT;
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.REWARD_COUNT;
+import static za.co.woolworths.financial.services.android.models.service.event.ProductState.OPEN_GET_LIST_SCREEN;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SHOW_ADDED_TO_SHOPPING_LIST_TOAST;
 import static za.co.woolworths.financial.services.android.util.SessionManager.RELOAD_REWARD;
 
@@ -444,8 +445,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					hideToolbar();
 					return true;
 
-				case R.id.navigation_shop:
-					setCurrentSection(R.id.navigation_shop);
+				case R.id.navigation_product:
+					setCurrentSection(R.id.navigation_product);
 					switchTab(INDEX_PRODUCT);
 					Utils.showOneTimePopup(BottomNavigationActivity.this);
 					return true;
@@ -482,7 +483,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					clearStack();
 					break;
 
-				case R.id.navigation_shop:
+				case R.id.navigation_product:
 					clearStack();
 					break;
 
@@ -823,16 +824,18 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void onToastButtonClicked(String currentState) {
-		String state = mToastUtils.getCurrentState();
-		if (currentState.equalsIgnoreCase(state)) {
-			// do anything when popupWindow was clicked
-			//TODO:: STOP USING SESSION_TOKEN
-			if (TextUtils.isEmpty(Utils.getSessionToken(this))) {
-				ScreenManager.presentSSOSignin(BottomNavigationActivity.this);
-			} else {
-				Intent openCartActivity = new Intent(BottomNavigationActivity.this, CartActivity.class);
-				startActivity(openCartActivity);
-				overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+		if (mToastUtils != null) {
+			String state = mToastUtils.getCurrentState();
+			if (currentState.equalsIgnoreCase(state)) {
+				// do anything when popupWindow was clicked
+				//TODO:: STOP USING SESSION_TOKEN
+				if (TextUtils.isEmpty(Utils.getSessionToken(this))) {
+					ScreenManager.presentSSOSignin(BottomNavigationActivity.this);
+				} else {
+					Intent openCartActivity = new Intent(BottomNavigationActivity.this, CartActivity.class);
+					startActivity(openCartActivity);
+					overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+				}
 			}
 		}
 	}
@@ -844,5 +847,11 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	public boolean closeFromListEnabled() {
 		return closeFromListEnabled;
+	}
+
+	public void navigateToList() {
+		getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
+		closeSlideUpPanel();
+		Utils.sendBus(new ProductState(OPEN_GET_LIST_SCREEN));
 	}
 }

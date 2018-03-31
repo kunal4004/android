@@ -75,6 +75,7 @@ import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWind
 import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductColorAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeAdapter;
@@ -91,6 +92,7 @@ import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SimpleDividerItemDecoration;
+import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
@@ -106,7 +108,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.ConfirmC
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailViewModel.CLOTHING_PRODUCT;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailViewModel.FOOD_PRODUCT;
 
-public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding, ProductDetailViewModel> implements ProductDetailNavigator, ProductViewPagerAdapter.MultipleImageInterface, View.OnClickListener, NetworkChangeListener {
+public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding, ProductDetailViewModel> implements ProductDetailNavigator, ProductViewPagerAdapter.MultipleImageInterface, View.OnClickListener, NetworkChangeListener, ToastUtils.ToastInterface {
 
 	public static final int INDEX_STORE_FINDER = 1;
 	public static final int INDEX_ADD_TO_CART = 2;
@@ -143,6 +145,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	private boolean activate_location_popup = false;
 	private GetShoppingLists mGetShoppingLists;
 	private ShoppingListsResponse mShoppingListsResponse;
+	private ToastUtils mToastUtils;
 
 	@Override
 	public ProductDetailViewModel getViewModel() {
@@ -173,6 +176,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 			mFetchFromJson = bundle.getBoolean("fetchFromJson");
 		}
 
+		mToastUtils = new ToastUtils(this);
 		observableOn(new Consumer<Object>() {
 			@Override
 			public void accept(Object object) throws Exception {
@@ -231,17 +235,29 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 								break;
 
 							case CLOSE_PDP_FROM_ADD_TO_LIST:
-								setAddShopListPage(true);
-								closeSlideUpPanel(getView());
-								getBottomNavigator().closeSlideUpPanelFromList();
-//								ToastUtils toastUtils = new ToastUtils();
-//								toastUtils.setActivity(activity);
-//								toastUtils.setCurrentState(TAG);
-//								toastUtils.setCartText(R.string.shopping_list);
-//								toastUtils.setPixel(getViewDataBinding().llStoreFinder.getHeight() * 2);
-//								toastUtils.setView(getViewDataBinding().llStoreFinder);
-//								toastUtils.setMessage(R.string.added_to);
-//								toastUtils.build();
+								BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
+								switch (bottomNavigationActivity.getCurrentSection()) {
+									case R.id.navigation_account:
+										setAddShopListPage(true);
+										closeSlideUpPanel(getView());
+										getBottomNavigator().closeSlideUpPanelFromList();
+										break;
+
+									case R.id.navigation_product:
+										mToastUtils.setActivity(activity);
+										mToastUtils.setCurrentState(TAG);
+										mToastUtils.setCartText(R.string.shopping_list);
+										mToastUtils.setPixel(getViewDataBinding().llStoreFinder.getHeight() * 2);
+										mToastUtils.setView(getViewDataBinding().llStoreFinder);
+										mToastUtils.setMessage(R.string.added_to);
+										mToastUtils.setViewState(true);
+										mToastUtils.build();
+										break;
+
+									default:
+										break;
+
+								}
 								break;
 
 							default:
@@ -1616,6 +1632,20 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	@Override
 	public void onAddToListFailure(String e) {
 
+	}
+
+	@Override
+	public void onToastButtonClicked(String currentState) {
+		if (mToastUtils != null) {
+			String state = mToastUtils.getCurrentState();
+			if (state.equalsIgnoreCase(currentState)) {
+				Activity activity = getActivity();
+				if (activity != null) {
+					BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
+					bottomNavigationActivity.navigateToList();
+				}
+			}
+		}
 	}
 }
 

@@ -40,6 +40,7 @@ import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.rest.message.GetMessage;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.GetShoppingLists;
+import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
@@ -64,6 +65,7 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
 
 import com.awfs.coordination.BR;
 
+import static za.co.woolworths.financial.services.android.models.service.event.ProductState.OPEN_GET_LIST_SCREEN;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_ACCOUNT;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_REWARD;
 import static za.co.woolworths.financial.services.android.util.SessionManager.ACCOUNT_SESSION_EXPIRED;
@@ -117,6 +119,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	private GetShoppingLists mGetShoppingLists;
 	private WTextView shoppingListCounter;
 	private ShoppingListsResponse shoppingListsResponse;
+	private RelativeLayout relMyList;
 
 	public MyAccountsFragment() {
 		// Required empty public constructor
@@ -181,6 +184,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			loggedOutHeaderLayout = view.findViewById(R.id.loggedOutHeaderLayout);
 			loggedInHeaderLayout = view.findViewById(R.id.loggedInHeaderLayout);
 			unlinkedLayout = view.findViewById(R.id.llUnlinkedAccount);
+			relMyList = view.findViewById(R.id.myLists);
 			signOutBtn = view.findViewById(R.id.signOutBtn);
 			myDetailBtn = view.findViewById(R.id.rlMyDetails);
 			viewPager = view.findViewById(R.id.pager);
@@ -212,7 +216,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			myDetailBtn.setOnClickListener(this);
 			relFAQ.setOnClickListener(this);
 			storeLocator.setOnClickListener(this);
-
+			relMyList.setOnClickListener(this);
 			adapter = new MyAccountOverViewPagerAdapter(getActivity());
 			viewPager.addOnPageChangeListener(this);
 			setUiPageViewController();
@@ -220,7 +224,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			view.findViewById(R.id.loginAccount).setOnClickListener(this.btnSignin_onClick);
 			view.findViewById(R.id.registerAccount).setOnClickListener(this.btnRegister_onClick);
 			view.findViewById(R.id.llUnlinkedAccount).setOnClickListener(this.btnLinkAccounts_onClick);
-			view.findViewById(R.id.myLists).setOnClickListener(this);
 
 			view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
 				@Override
@@ -242,6 +245,23 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 						SessionManager sessionManager = (SessionManager) object;
 						if (sessionManager.getState() == ACCOUNT_SESSION_EXPIRED) {
 							onAccSessionExpired(activity);
+						}
+					}
+
+					if (object instanceof ProductState) {
+						ProductState productState = (ProductState) object;
+						switch (productState.getState()) {
+							case OPEN_GET_LIST_SCREEN:
+								Bundle bundle = new Bundle();
+								if (shoppingListsResponse != null) {
+									bundle.putString("ShoppingList", Utils.objectToJson(shoppingListsResponse));
+									ShoppingListFragment shoppingListFragment = new ShoppingListFragment();
+									shoppingListFragment.setArguments(bundle);
+									pushFragmentSlideUp(shoppingListFragment);
+								}
+								break;
+							default:
+								break;
 						}
 					}
 				}
@@ -559,11 +579,12 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 				break;
 			case R.id.myLists:
 				Bundle bundle = new Bundle();
-				if (shoppingListsResponse != null)
+				if (shoppingListsResponse != null) {
 					bundle.putString("ShoppingList", Utils.objectToJson(shoppingListsResponse));
-				ShoppingListFragment shoppingListFragment = new ShoppingListFragment();
-				shoppingListFragment.setArguments(bundle);
-				pushFragment(shoppingListFragment);
+					ShoppingListFragment shoppingListFragment = new ShoppingListFragment();
+					shoppingListFragment.setArguments(bundle);
+					pushFragment(shoppingListFragment);
+				}
 				break;
 			default:
 				break;

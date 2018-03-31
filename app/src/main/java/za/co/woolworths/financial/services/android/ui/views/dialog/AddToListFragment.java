@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
@@ -24,7 +23,6 @@ import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
-import za.co.woolworths.financial.services.android.models.dto.CommerceItem;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
@@ -35,7 +33,6 @@ import za.co.woolworths.financial.services.android.models.rest.shoppinglist.Post
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.adapters.AddToListAdapter;
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
@@ -193,17 +190,14 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 								PostAddToList postAddToList = addToList(addToListRequest, addToListRequest.get(apiCount).getGiftListId());
 								postAddToList.execute();
 							} else {
-								Activity act = getActivity();
-								if (act != null) {
-									((CustomPopUpWindow) act).startExitAnimation();
-								}
+								((CustomPopUpWindow) activity).startExitAnimation();
 								Utils.sendBus(new ProductState(CLOSE_PDP_FROM_ADD_TO_LIST));
 								onLoad(false);
 							}
 							break;
 						default:
 							Response response = addToListResponse.response;
-							if (response != null) {
+							if (response.desc != null) {
 								Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
 							}
 							onLoad(false);

@@ -14,6 +14,7 @@ public class ProductState {
 	public static final String INDEX_SEARCH_FROM_LIST = "INDEX_SEARCH_FROM_LIST";
 	public static final String CLOSE_PDP_FROM_ADD_TO_LIST = "CLOSE_PDP_FROM_ADD_TO_LIST";
 	public static final String SHOW_ADDED_TO_SHOPPING_LIST_TOAST = "SHOW_ADDED_TO_SHOPPING_LIST_TOAST";
+	public static final String OPEN_GET_LIST_SCREEN = "OPEN_GET_LIST_SCREEN";
 
 	private String state;
 	private int quantity;
