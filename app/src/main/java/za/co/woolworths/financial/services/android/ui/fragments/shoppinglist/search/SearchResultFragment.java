@@ -216,7 +216,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 				super.onScrolled(recyclerView, dx, dy);
 				totalItemCount = mRecyclerViewLayoutManager.getItemCount();
 				lastVisibleItem = mRecyclerViewLayoutManager.findLastVisibleItemPosition();
-				//loadData();
+				loadData();
 			}
 		});
 	}
@@ -224,6 +224,8 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 	private void loadData() {
 		int visibleThreshold = 5;
 		if (!isLoading && totalItemCount <= (lastVisibleItem + visibleThreshold)) {
+			if (getViewModel().productIsLoading())
+				return;
 			int Total = getViewModel().getNumItemsInTotal() + Utils.PAGE_SIZE;
 			int start = mProductList.size();
 			int end = start + Utils.PAGE_SIZE;
@@ -367,13 +369,11 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 
 	@Override
 	public void onFoodTypeSelect(ProductList productList) {
-		toggleAddToListBtn(true);
 		getBottomNavigator().openProductDetailFragment(mSearchText, productList);
 	}
 
 	@Override
 	public void onClothingTypeSelect(ProductList productList) {
-		toggleAddToListBtn(true);
 		getBottomNavigator().openProductDetailFragment(mSearchText, productList);
 	}
 
@@ -383,6 +383,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 		for (ProductList productList : prodList) {
 			if (productList.itemWasChecked) {
 				productWasChecked = true;
+				toggleAddToListBtn(true);
 			}
 		}
 		// hide checkbox when no item selected
