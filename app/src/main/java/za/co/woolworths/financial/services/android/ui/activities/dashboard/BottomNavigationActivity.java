@@ -31,7 +31,6 @@ import com.google.gson.Gson;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
@@ -90,6 +89,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	private Bundle mBundle;
 	private int currentSection;
 	private ToastUtils mToastUtils;
+	private boolean closeFromListEnabled;
 
 	@Override
 	public int getLayoutId() {
@@ -312,9 +312,22 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 							// not that fragment
 						}
 
+						if (closeFromListEnabled()) {
+							ToastUtils toastUtils = new ToastUtils();
+							toastUtils.setActivity(BottomNavigationActivity.this);
+							toastUtils.setCurrentState(TAG);
+							toastUtils.setCartText(R.string.shopping_list);
+							toastUtils.setPixel(getBottomNavigationById().getHeight() * 2);
+							toastUtils.setView(getBottomNavigationById());
+							toastUtils.setMessage(R.string.added_to);
+							toastUtils.build();
+							setCloseFromListEnabled(false);
+						}
+
 						break;
 
 					case EXPANDED:
+						setCloseFromListEnabled(false);
 						hideStatusBar();
 						break;
 					default:
@@ -798,6 +811,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	}
 
 	@Override
+	public void closeSlideUpPanelFromList() {
+		setCloseFromListEnabled(true);
+		closeSlideUpPanel();
+	}
+
+	@Override
 	public void onToastButtonClicked(String currentState) {
 		String state = mToastUtils.getCurrentState();
 		if (currentState.equalsIgnoreCase(state)) {
@@ -811,5 +830,14 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 			}
 		}
+	}
+
+	// show toast after slideUpPanel closed
+	public void setCloseFromListEnabled(boolean closeFromListEnabled) {
+		this.closeFromListEnabled = closeFromListEnabled;
+	}
+
+	public boolean closeFromListEnabled() {
+		return closeFromListEnabled;
 	}
 }

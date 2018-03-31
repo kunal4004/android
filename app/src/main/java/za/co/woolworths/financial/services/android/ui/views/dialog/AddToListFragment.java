@@ -24,6 +24,7 @@ import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
+import za.co.woolworths.financial.services.android.models.dto.CommerceItem;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
@@ -31,12 +32,16 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsR
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostAddToList;
+import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.adapters.AddToListAdapter;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.Utils;
+
+import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CLOSE_PDP_FROM_ADD_TO_LIST;
 
 public class AddToListFragment extends Fragment implements View.OnClickListener, AddToListInterface {
 
@@ -188,9 +193,11 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 								PostAddToList postAddToList = addToList(addToListRequest, addToListRequest.get(apiCount).getGiftListId());
 								postAddToList.execute();
 							} else {
-								Toast.makeText(activity, "Added to ShoppingList", Toast.LENGTH_SHORT).show();
-								activity.finish();
-								activity.overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
+								Activity act = getActivity();
+								if (act != null) {
+									((CustomPopUpWindow) act).startExitAnimation();
+								}
+								Utils.sendBus(new ProductState(CLOSE_PDP_FROM_ADD_TO_LIST));
 								onLoad(false);
 							}
 							break;

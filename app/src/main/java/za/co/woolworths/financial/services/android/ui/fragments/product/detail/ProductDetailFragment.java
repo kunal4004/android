@@ -95,6 +95,7 @@ import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_CALL;
+import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CLOSE_PDP_FROM_ADD_TO_LIST;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.DETERMINE_LOCATION_POPUP;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.OPEN_ADD_TO_SHOPPING_LIST_VIEW;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.POST_ADD_ITEM_TO_CART;
@@ -126,6 +127,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	private boolean mProductHasSize;
 	private boolean mProductHasOneColour;
 	private boolean mProductHasOneSize;
+	private boolean shoppingListPageWasClosed;
 	private OtherSkus mSkuId;
 
 	private BroadcastReceiver mConnectionBroadcast;
@@ -228,6 +230,20 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 								openAddToListFragment(activity);
 								break;
 
+							case CLOSE_PDP_FROM_ADD_TO_LIST:
+								setAddShopListPage(true);
+								closeSlideUpPanel(getView());
+								getBottomNavigator().closeSlideUpPanelFromList();
+//								ToastUtils toastUtils = new ToastUtils();
+//								toastUtils.setActivity(activity);
+//								toastUtils.setCurrentState(TAG);
+//								toastUtils.setCartText(R.string.shopping_list);
+//								toastUtils.setPixel(getViewDataBinding().llStoreFinder.getHeight() * 2);
+//								toastUtils.setView(getViewDataBinding().llStoreFinder);
+//								toastUtils.setMessage(R.string.added_to);
+//								toastUtils.build();
+								break;
+
 							default:
 								break;
 						}
@@ -268,7 +284,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	}
 
 	@Override
-	public void closeView(View view) {
+	public void closeSlideUpPanel(View view) {
 		cancelPopUpMenu();
 		getBottomNavigator().closeSlideUpPanel();
 	}
@@ -498,7 +514,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		MultiClickPreventer.preventMultiClick(view);
 		switch (view.getId()) {
 			case R.id.imClose:
-				closeView(view);
+				closeSlideUpPanel(view);
 				break;
 
 			case R.id.btnAddShoppingList:
@@ -1577,6 +1593,14 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	private void cancelPopUpMenu() {
 		cancelPopWindow(mPSizeWindow);
 		cancelPopWindow(mPColourWindow);
+	}
+
+	public void setAddShopListPage(boolean shoppingListPageWasClosed) {
+		this.shoppingListPageWasClosed = shoppingListPageWasClosed;
+	}
+
+	public boolean getAddShopListPage() {
+		return shoppingListPageWasClosed;
 	}
 
 	@Override

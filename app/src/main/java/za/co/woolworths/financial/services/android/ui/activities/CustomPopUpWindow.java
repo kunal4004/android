@@ -44,7 +44,6 @@ import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.service.event.AuthenticationState;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
-import za.co.woolworths.financial.services.android.models.service.event.ShopState;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.models.dto.statement.EmailStatementResponse;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
@@ -53,7 +52,6 @@ import za.co.woolworths.financial.services.android.models.dto.statement.USDocume
 import za.co.woolworths.financial.services.android.models.rest.statement.SendUserStatement;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
-import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.ShoppingListNavigator;
 import za.co.woolworths.financial.services.android.ui.fragments.statement.EmailStatementFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.statement.StatementFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
@@ -126,7 +124,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 			current_view = (MODAL_LAYOUT) mBundle.getSerializable("key");
 			title = getText(mBundle.getString("title"));
 			description = getText(mBundle.getString("description"));
-			mCloseView = mBundle.getBoolean("closeView");
+			mCloseView = mBundle.getBoolean("closeSlideUpPanel");
 			userStatement = mBundle.getString(StatementActivity.SEND_USER_STATEMENT);
 			displayView(current_view);
 		} else {
@@ -560,6 +558,8 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 			case SHOPPING_ADD_TO_LIST:
 				setContentView(R.layout.shopping_add_list_layout);
 				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = findViewById(R.id.relPopContainer);
+				mRelPopContainer.setOnClickListener(this);
 				FragmentManager fm = getSupportFragmentManager();
 				Bundle bundle = new Bundle();
 				bundle.putString("LIST_PAYLOAD", description);
@@ -571,13 +571,15 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 						bundle.putString("OPEN_FROM_POPUP", "OPEN_FROM_POPUP");
 						enterNewListFragment.setArguments(bundle);
 						fm.beginTransaction()
-								.replace(R.id.flShoppingListContainer, enterNewListFragment).commitAllowingStateLoss();
+								.add(R.id.flShoppingListContainer, enterNewListFragment)
+								.commitAllowingStateLoss();
 						return;
 					}
 					AddToListFragment addToListFragment = new AddToListFragment();
 					addToListFragment.setArguments(bundle);
 					fm.beginTransaction()
-							.replace(R.id.flShoppingListContainer, addToListFragment).commitAllowingStateLoss();
+							.add(R.id.flShoppingListContainer, addToListFragment)
+							.commitAllowingStateLoss();
 				}
 
 				break;

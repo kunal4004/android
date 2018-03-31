@@ -37,6 +37,7 @@ public class SearchResultViewModel extends BaseViewModel<SearchResultNavigator> 
 	private boolean mIsLastPage = false;
 	private int mLoadStatus;
 	private ArrayList<OtherSkus> otherSkus;
+	private boolean productIsLoading;
 
 	public void setLoadStatus(int status) {
 		this.mLoadStatus = status;
@@ -133,6 +134,7 @@ public class SearchResultViewModel extends BaseViewModel<SearchResultNavigator> 
 
 	public SearchProductRequest searchProduct(final Context context, final LoadProduct loadProduct) {
 		getNavigator().onLoadStart(getLoadMoreData());
+		setProductIsLoading(true);
 		return new SearchProductRequest(context, loadProduct, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
@@ -156,6 +158,7 @@ public class SearchResultViewModel extends BaseViewModel<SearchResultNavigator> 
 						}
 						break;
 				}
+				setProductIsLoading(false);
 			}
 
 			@Override
@@ -165,6 +168,7 @@ public class SearchResultViewModel extends BaseViewModel<SearchResultNavigator> 
 					activity.runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
+							setProductIsLoading(false);
 							getNavigator().failureResponseHandler(e);
 							getNavigator().onLoadComplete(getLoadMoreData());
 						}
@@ -303,5 +307,13 @@ public class SearchResultViewModel extends BaseViewModel<SearchResultNavigator> 
 			}
 		}
 		return false;
+	}
+
+	public void setProductIsLoading(boolean productIsLoading) {
+		this.productIsLoading = productIsLoading;
+	}
+
+	public boolean productIsLoading() {
+		return productIsLoading;
 	}
 }

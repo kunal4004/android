@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
@@ -108,6 +109,7 @@ public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.V
 			vh.showProgressBar(productList.viewIsLoading);
 			vh.disableSwipeToDelete(false);
 			vh.setTvColorSize(productList);
+			vh.hideDropdownIcon();
 			vh.cbxItem.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View view) {
@@ -166,7 +168,7 @@ public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.V
 		}
 	}
 
-	boolean clothingTypeProduct(ProductList selectedProduct, int otherSkuSize) {
+	private boolean clothingTypeProduct(ProductList selectedProduct, int otherSkuSize) {
 		return selectedProduct.productType.equalsIgnoreCase(CLOTHING_PRODUCT) || otherSkuSize > 1;
 	}
 
@@ -214,6 +216,7 @@ public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.V
 		private CheckBox cbxItem;
 		private ProgressBar pbLoadProduct;
 		private SwipeLayout swipeLayout;
+		private ImageView imPrice;
 
 		private SimpleViewHolder(View view) {
 			super(view);
@@ -228,6 +231,7 @@ public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.V
 			pbLoadProduct = view.findViewById(R.id.pbLoadProduct);
 			tvQuantity = view.findViewById(R.id.tvQuantity);
 			swipeLayout = view.findViewById(R.id.swipe);
+			imPrice = view.findViewById(R.id.imPrice);
 		}
 
 		private void setDefaultQuantity() {
@@ -280,6 +284,10 @@ public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.V
 
 		public void setTvColorSize(ProductList productlist) {
 			tvColorSize.setText(TextUtils.isEmpty(productlist.displayColorSizeText) ? "" : productlist.displayColorSizeText);
+		}
+
+		public void hideDropdownIcon() {
+			imPrice.setVisibility(View.GONE);
 		}
 	}
 

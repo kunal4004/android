@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -23,8 +24,8 @@ public class ToastUtils {
 	private final int POPUP_DELAY_MILLIS = 3000;
 	private Activity activity;
 	private String message;
-	private boolean viewState;
-	private int gravity;
+	private boolean viewState = false;
+	private int gravity = Gravity.BOTTOM;
 	private int pixel;
 	private View view;
 	private String currentState;
