@@ -455,7 +455,7 @@ public class Utils {
 		Bundle args = new Bundle();
 		args.putSerializable("key", key);
 		args.putString("description", description);
-		args.putBoolean("closeView", closeView);
+		args.putBoolean("closeSlideUpPanel", closeView);
 		openMsg.putExtras(args);
 		context.startActivity(openMsg);
 		((AppCompatActivity) context).overridePendingTransition(0, 0);
