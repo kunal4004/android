@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.views.dialog;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -22,16 +23,25 @@ import android.widget.Toast;
 
 import com.awfs.coordination.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.CreateListResponse;
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
 import za.co.woolworths.financial.services.android.models.dto.CreateList;
+import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
+import za.co.woolworths.financial.services.android.models.dto.ProductDetail;
+import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
+import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostAddList;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostAddToList;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
 import za.co.woolworths.financial.services.android.util.KeyboardUtil;
@@ -40,16 +50,13 @@ import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class CreateListFragment extends Fragment implements View.OnClickListener {
-	private interface CreateListInterface {
-		void onTotalItemCount(int count);
-	}
 
-	private CreateListInterface createListInterface;
-	private WButton mBtnCancel;
 	private ImageView mImBack, imCloseIcon;
 	private String hideBackButton;
 	private WLoanEditTextView mEtNewList;
 	private ProgressBar pbCreateList;
+	private WButton mBtnCancel;
+	private PostAddToList mAddToList;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -178,7 +185,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 				if (strCancel.equalsIgnoreCase("ok")) {
 					String listName = mEtNewList.getText().toString();
 					CreateList createList = new CreateList(listName);
-					//postCreateList(createList).execute();
+					postCreateList(createList).execute();
 				} else {
 					cancelRequest(activity);
 				}
@@ -205,19 +212,38 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 		}
 	}
 
-	public PostAddList postCreateList(CreateList listName) {
+	public PostAddList postCreateList(final CreateList listName) {
 		onLoad(true);
 		return new PostAddList(new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
 				Activity activity = getActivity();
 				if (activity != null) {
-					CreateListResponse createListResponse = (CreateListResponse) object;
+					ShoppingListsResponse createListResponse = (ShoppingListsResponse) object;
 					switch (createListResponse.httpCode) {
 						case 200:
+							List<ShoppingList> itemsInList = createListResponse.lists;
+							if (itemsInList != null) {
+								ShoppingList shoppingList = itemsInList.get(0);
+								String listId = shoppingList.listId;
+								List<AddToListRequest> addToListRequests = new ArrayList<>();
+								AddToListRequest addToList = new AddToListRequest();
+								WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
+								if (woolworthsApplication != null) {
+									WGlobalState globalState = woolworthsApplication.getWGlobalState();
+									OtherSkus sku = globalState.getSelectedSKUId();
+									if (sku != null) {
+										addToList.setSkuID(globalState.getSelectedSKUId().sku);
+										addToList.setCatalogRefId(sku.sku);
+										addToList.setQuantity("1");
+										addToList.setGiftListId(sku.sku);
+										addToListRequests.add(addToList);
+										executeAddToList(listId, addToListRequests);
+									}
+								}
+							}
 							onLoad(false);
 							break;
-
 						default:
 							Response response = createListResponse.response;
 							if (response != null) {
@@ -237,13 +263,17 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 		}, listName);
 	}
 
+	private void executeAddToList(String listId, List<AddToListRequest> addToListRequests) {
+		mAddToList = addToList(addToListRequests, listId);
+		mAddToList.execute();
+	}
+
 	private void onLoad(boolean visible) {
 		pbCreateList.setVisibility(visible ? View.VISIBLE : View.GONE);
 		mBtnCancel.setVisibility(visible ? View.GONE : View.VISIBLE);
 	}
 
 	public PostAddToList addToList(final List<AddToListRequest> addToListRequest, String listId) {
-		final int sizeOfList = addToListRequest.size();
 		return new PostAddToList(new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {

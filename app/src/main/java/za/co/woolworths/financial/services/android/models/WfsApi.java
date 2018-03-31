@@ -309,7 +309,7 @@ public class WfsApi {
 		return mApiInterface.getShoppingLists(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken());
 	}
 
-	public CreateListResponse createList(CreateList listName) {
+	public ShoppingListsResponse createList(CreateList listName) {
 		return mApiInterface.createList(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), listName);
 	}
 
