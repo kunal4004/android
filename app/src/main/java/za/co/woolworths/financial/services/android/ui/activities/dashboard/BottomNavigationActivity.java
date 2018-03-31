@@ -39,6 +39,7 @@ import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.service.event.AuthenticationState;
 import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
+import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
@@ -69,6 +70,7 @@ import static za.co.woolworths.financial.services.android.models.service.event.B
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.MESSAGE_COUNT;
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT;
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.REWARD_COUNT;
+import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SHOW_ADDED_TO_SHOPPING_LIST_TOAST;
 import static za.co.woolworths.financial.services.android.util.SessionManager.RELOAD_REWARD;
 
 public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigationBinding, BottomNavigationViewModel> implements BottomNavigator, FragNavController.TransactionListener, FragNavController.RootFragmentListener, PermissionResultCallback, ToastUtils.ToastInterface {
@@ -312,15 +314,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 							// not that fragment
 						}
 
+						// show toast on search result fragment after add to list
+						// activates when user access pdp page from list section
 						if (closeFromListEnabled()) {
-							ToastUtils toastUtils = new ToastUtils();
-							toastUtils.setActivity(BottomNavigationActivity.this);
-							toastUtils.setCurrentState(TAG);
-							toastUtils.setCartText(R.string.shopping_list);
-							toastUtils.setPixel(getBottomNavigationById().getHeight() * 2);
-							toastUtils.setView(getBottomNavigationById());
-							toastUtils.setMessage(R.string.added_to);
-							toastUtils.build();
+							Utils.sendBus(new ProductState(SHOW_ADDED_TO_SHOPPING_LIST_TOAST));
 							setCloseFromListEnabled(false);
 						}
 
@@ -441,32 +438,32 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			MultiClickPreventer.preventMultiClick(getViewDataBinding().wBottomNavigation);
 			switch (item.getItemId()) {
 				case R.id.navigation_today:
-					currentSection = R.id.navigation_today;
+					setCurrentSection(R.id.navigation_today);
 					setToolbarBackgroundColor(R.color.white);
 					switchTab(INDEX_TODAY);
 					hideToolbar();
 					return true;
 
 				case R.id.navigation_shop:
-					currentSection = R.id.navigation_shop;
+					setCurrentSection(R.id.navigation_shop);
 					switchTab(INDEX_PRODUCT);
 					Utils.showOneTimePopup(BottomNavigationActivity.this);
 					return true;
 
 				case R.id.navigation_cart:
-					currentSection = R.id.navigation_cart;
+					setCurrentSection(R.id.navigation_cart);
 					identifyTokenValidationAPI();
 					return false;
 
 				case R.id.navigation_reward:
-					currentSection = R.id.navigation_reward;
+					setCurrentSection(R.id.navigation_reward);
 					Utils.sendBus(new SessionManager(RELOAD_REWARD));
 					setToolbarBackgroundColor(R.color.white);
 					switchTab(INDEX_REWARD);
 					return true;
 
 				case R.id.navigation_account:
-					currentSection = R.id.navigation_account;
+					setCurrentSection(R.id.navigation_account);
 					setToolbarBackgroundColor(R.color.white);
 					switchTab(INDEX_ACCOUNT);
 					return true;
@@ -697,7 +694,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				case 0:
 					//load count on login success
 					badgeCount();
-					switch (currentSection) {
+					switch (getCurrentSection()) {
 						case R.id.navigation_cart:
 							SessionManager sessionManager = new SessionManager(BottomNavigationActivity.this);
 							sessionManager.setAccountHasExpired(false);
@@ -719,7 +716,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
 			//load count on login success
 			badgeCount();
-			switch (currentSection) {
+			switch (getCurrentSection()) {
 				case R.id.navigation_cart:
 					SessionManager sessionManager = new SessionManager(BottomNavigationActivity.this);
 					sessionManager.setAccountHasExpired(false);
@@ -750,6 +747,14 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				}
 				break;
 		}
+	}
+
+	public void setCurrentSection(int currentSection) {
+		this.currentSection = currentSection;
+	}
+
+	public int getCurrentSection() {
+		return currentSection;
 	}
 
 	@Override
