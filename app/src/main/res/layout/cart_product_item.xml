@@ -98,6 +98,7 @@
                             android:layout_height="wrap_content"
                             android:gravity="center"
                             android:minHeight="@dimen/eighty_dp">
+
                             <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
                                 android:id="@+id/cartProductImage"
                                 android:layout_width="match_parent"
@@ -144,7 +145,7 @@
                                     android:background="@drawable/border_quantity_dropdown"
                                     android:gravity="center"
                                     android:padding="4dp"
-                                  >
+                                    >
 
                                     <ProgressBar
                                         android:id="@+id/pbQuantity"
@@ -154,22 +155,20 @@
                                         android:visibility="gone"/>
 
                                     <za.co.woolworths.financial.services.android.ui.views.WTextView
-                                        android:id="@+id/quantity"
+                                        android:id="@+id/tvQuantity"
                                         style="@style/style_cart_item_quantity_value"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:layout_marginRight="@dimen/two_dp"
-                                        android:text="10"/>
+                                        android:layout_alignParentStart="true"
+                                        android:text="1"/>
 
                                     <ImageView
                                         android:id="@+id/imPrice"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:layout_alignParentRight="true"
-                                        android:layout_centerInParent="true"
-                                        android:layout_alignBottom="@+id/quantity"
-                                        android:layout_toEndOf="@+id/quantity"
-                                        android:paddingBottom="@dimen/two_dp"
+                                        android:layout_toEndOf="@+id/tvQuantity"
+                                        android:paddingStart="@dimen/two_dp"
+                                        android:paddingTop="@dimen/four_dp"
                                         android:src="@drawable/path_3"/>
 
                                 </RelativeLayout>
