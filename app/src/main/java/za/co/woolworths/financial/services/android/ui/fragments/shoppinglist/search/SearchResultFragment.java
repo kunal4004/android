@@ -40,12 +40,15 @@ import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
+import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 
+import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SHOW_ADDED_TO_SHOPPING_LIST_TOAST;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_SEARCH_FROM_LIST;
 
 public class SearchResultFragment extends BaseFragment<GridLayoutBinding, SearchResultViewModel> implements SearchResultNavigator, View.OnClickListener {
 
+	private final String TAG = this.getClass().getSimpleName();
 	private SearchResultViewModel mGridViewModel;
 	private ErrorHandlerView mErrorHandlerView;
 	private SearchResultShopAdapter mProductAdapter;
@@ -60,6 +63,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 	private GetProductDetail getProductDetail;
 	private ProductList mSelectedProduct;
 	private int mAddToListSize = 0;
+	private boolean mToggleAddToList;
 
 	@Override
 	public SearchResultViewModel getViewModel() {
@@ -89,27 +93,6 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 			mListId = bundle.getString("listID");
 		}
 		setProductBody();
-		observableOn(new Consumer() {
-			@Override
-			public void accept(Object object) throws Exception {
-				if (object != null) {
-					if (object instanceof ProductState) {
-						ProductState productState = (ProductState) object;
-						switch (productState.getState()) {
-							case ProductState.INDEX_SEARCH_FROM_LIST:
-								if (getProductAdapter() != null) {
-									getProductAdapter().setSelectedSku(getSelectedProduct(), getGlobalState().getSelectedSKUId());
-								}
-								toggleAddToListBtn(true);
-								break;
-
-							default:
-								break;
-						}
-					}
-				}
-			}
-		});
 	}
 
 	@Override
@@ -129,6 +112,43 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 		onBottomReached();
 		getViewDataBinding().incNoConnectionHandler.btnRetry.setOnClickListener(this);
 		setUpAddToListButton();
+		final Activity activity = getActivity();
+		if (activity != null) {
+			observableOn(new Consumer() {
+				@Override
+				public void accept(Object object) throws Exception {
+					if (object != null) {
+						if (object instanceof ProductState) {
+							ProductState productState = (ProductState) object;
+							switch (productState.getState()) {
+								case ProductState.INDEX_SEARCH_FROM_LIST:
+									if (getProductAdapter() != null) {
+										getProductAdapter().setSelectedSku(getSelectedProduct(), getGlobalState().getSelectedSKUId());
+									}
+									toggleAddToListBtn(true);
+									break;
+
+								case SHOW_ADDED_TO_SHOPPING_LIST_TOAST:
+									RelativeLayout rlAddToList = getViewDataBinding().incConfirmButtonLayout.rlCheckOut;
+									ToastUtils toastUtils = new ToastUtils();
+									toastUtils.setActivity(getActivity());
+									toastUtils.setCurrentState(TAG);
+									toastUtils.setCartText(R.string.shopping_list);
+									// Set Toast above button if add to list is visible
+									toastUtils.setPixel(mToggleAddToList ? rlAddToList.getHeight() * 2 - Utils.dp2px(activity, 8) : 0);
+									toastUtils.setView(rlAddToList);
+									toastUtils.setMessage(R.string.added_to);
+									toastUtils.build();
+									break;
+
+								default:
+									break;
+							}
+						}
+					}
+				}
+			});
+		}
 	}
 
 	private void setUpAddToListButton() {
@@ -579,6 +599,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 	}
 
 	public void toggleAddToListBtn(boolean enable) {
+		mToggleAddToList = enable;
 		RelativeLayout rlAddToList = getViewDataBinding().incConfirmButtonLayout.rlCheckOut;
 		WButton btnAddToList = getViewDataBinding().incConfirmButtonLayout.btnCheckOut;
 		rlAddToList.setVisibility(enable ? View.VISIBLE : View.GONE);
