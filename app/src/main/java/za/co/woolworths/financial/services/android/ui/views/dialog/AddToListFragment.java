@@ -58,16 +58,21 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 		}
 	}
 
+	View view;
+
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.add_to_list_content, container, false);
+		if (view == null) {
+			view = inflater.inflate(R.layout.add_to_list_content, container, false);
+			initUI(view);
+		}
+		return view;
 	}
 
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		initUI(view);
 	}
 
 	private ShoppingListsResponse getShoppingListsResponse() {

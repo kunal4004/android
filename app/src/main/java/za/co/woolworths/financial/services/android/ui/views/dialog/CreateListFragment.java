@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.views.dialog;
 
 import android.app.Activity;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -19,20 +18,16 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.awfs.coordination.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import za.co.woolworths.financial.services.android.CreateListResponse;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
 import za.co.woolworths.financial.services.android.models.dto.CreateList;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
-import za.co.woolworths.financial.services.android.models.dto.ProductDetail;
-import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
@@ -40,14 +35,16 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingListsRespo
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostAddList;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostAddToList;
+import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
 import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.Utils;
+
+import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CLOSE_PDP_FROM_ADD_TO_LIST;
 
 public class CreateListFragment extends Fragment implements View.OnClickListener {
 
@@ -57,6 +54,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 	private ProgressBar pbCreateList;
 	private WButton mBtnCancel;
 	private PostAddToList mAddToList;
+	private KeyboardUtil mkeyboard;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -101,7 +99,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 	private void displayKeyboard(View view, Activity activity) {
 		if (activity != null) {
 			activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-			new KeyboardUtil(activity, view.findViewById(R.id.rlRootList), 0);
+			mkeyboard = new KeyboardUtil(activity, view.findViewById(R.id.rlRootList), 0);
 		}
 	}
 
@@ -224,8 +222,9 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 						case 200:
 							List<ShoppingList> itemsInList = createListResponse.lists;
 							if (itemsInList != null) {
-								ShoppingList shoppingList = itemsInList.get(0);
-								String listId = shoppingList.listId;
+								//ShoppingList shoppingList = itemsInList.get(0);
+								//String listId = shoppingList.listId;
+								String listId = "287241380";
 								List<AddToListRequest> addToListRequests = new ArrayList<>();
 								AddToListRequest addToList = new AddToListRequest();
 								WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
@@ -233,7 +232,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 									WGlobalState globalState = woolworthsApplication.getWGlobalState();
 									OtherSkus sku = globalState.getSelectedSKUId();
 									if (sku != null) {
-										addToList.setSkuID(globalState.getSelectedSKUId().sku);
+										addToList.setSkuID(sku.sku);
 										addToList.setCatalogRefId(sku.sku);
 										addToList.setQuantity("1");
 										addToList.setGiftListId(sku.sku);
@@ -282,10 +281,11 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 				if (activity != null) {
 					switch (addToListResponse.httpCode) {
 						case 200:
-							Toast.makeText(activity, "Added to ShoppingList", Toast.LENGTH_SHORT).show();
-							activity.finish();
-							activity.overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
+							((CustomPopUpWindow) activity).startExitAnimation();
+							mkeyboard.hideKeyboard(activity);
+							Utils.sendBus(new ProductState(CLOSE_PDP_FROM_ADD_TO_LIST));
 							onLoad(false);
+							break;
 						default:
 							Response response = addToListResponse.response;
 							if (response != null) {
