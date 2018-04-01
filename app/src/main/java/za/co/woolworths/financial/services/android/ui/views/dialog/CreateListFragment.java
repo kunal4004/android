@@ -241,7 +241,6 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 									}
 								}
 							}
-							onLoad(false);
 							break;
 						default:
 							Response response = createListResponse.response;
