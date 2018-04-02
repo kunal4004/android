@@ -41,6 +41,7 @@ import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWind
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
@@ -64,6 +65,9 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 	private BroadcastReceiver mConnectionBroadcast;
 	private boolean addToListHasFail = false;
 	private int apiCount = 0;
+	private CreateList mCreateList;
+	private PostAddList mPostCreateList;
+	private PostAddToList mPostAddToList;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -198,8 +202,8 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 				String strCancel = mBtnCancel.getText().toString();
 				if (strCancel.equalsIgnoreCase("ok")) {
 					String listName = mEtNewList.getText().toString();
-					CreateList createList = new CreateList(listName);
-					postCreateList(createList).execute();
+					mCreateList = new CreateList(listName);
+					execusteCreateList();
 				} else {
 					cancelRequest(activity);
 				}
@@ -217,6 +221,11 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 			default:
 				break;
 		}
+	}
+
+	private void execusteCreateList() {
+		mPostCreateList = postCreateList(mCreateList);
+		mPostCreateList.execute();
 	}
 
 	private void cancelRequest(Activity activity) {
@@ -297,7 +306,9 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 
 	@Override
 	public void onConnectionChanged() {
-
+		if (addToListHasFail) {
+			
+		}
 	}
 
 
@@ -317,8 +328,8 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 					switch (addToListResponse.httpCode) {
 						case 200:
 							if (apiCount < sizeOfList) {
-								PostAddToList postAddToList = addToList(addToListRequest, addToListRequest.get(apiCount).getGiftListId());
-								postAddToList.execute();
+								mPostAddToList = addToList(addToListRequest, addToListRequest.get(apiCount).getGiftListId());
+								mPostAddToList.execute();
 							} else {
 								mKeyboardUtils.hideKeyboard(activity);
 								((CustomPopUpWindow) activity).startExitAnimation();
@@ -356,4 +367,20 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 		}, addToListRequest, listId);
 	}
 
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		cancelRequest(mPostCreateList);
+		cancelRequest(mAddToList);
+		cancelRequest(mPostAddToList);
+
+	}
+
+	private void cancelRequest(HttpAsyncTask httpAsyncTask) {
+		if (httpAsyncTask != null) {
+			if (!httpAsyncTask.isCancelled()) {
+				httpAsyncTask.cancel(true);
+			}
+		}
+	}
 }
