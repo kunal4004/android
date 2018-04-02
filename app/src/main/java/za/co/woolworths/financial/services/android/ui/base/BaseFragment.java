@@ -122,7 +122,10 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 	}
 
 	public boolean isNetworkConnected() {
-		return new ConnectionDetector().isOnline(mActivity);
+		if (mActivity != null)
+			return new ConnectionDetector().isOnline(mActivity);
+		else
+			return false;
 	}
 
 	public void hideToolbar() {

@@ -303,6 +303,7 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 	@Override
 	public void onConnectionChanged() {
 		if (addToListHasFail) {
+			apiCount = 0;
 			mBtnCancel.performClick();
 		}
 	}

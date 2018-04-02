@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.views.dialog;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -39,14 +40,16 @@ import za.co.woolworths.financial.services.android.models.service.event.ProductS
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
+import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CLOSE_PDP_FROM_ADD_TO_LIST;
 
-public class CreateListFragment extends Fragment implements View.OnClickListener {
+public class CreateListFragment extends Fragment implements View.OnClickListener, NetworkChangeListener {
 
 	private ImageView mImBack, imCloseIcon;
 	private String hideBackButton;
@@ -57,6 +60,10 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 	private KeyboardUtil mKeyboardUtils;
 	private String addToListItems;
 	private List<AddToListRequest> addToListRequests;
+	private ErrorHandlerView mErrorHandlerView;
+	private BroadcastReceiver mConnectionBroadcast;
+	private boolean addToListHasFail = false;
+	private int apiCount = 0;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -85,7 +92,10 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 					: Utils.toList(addToListItems, AddToListRequest.class);
 			initUI(view);
 			displayKeyboard(view, activity);
+			mErrorHandlerView = new ErrorHandlerView(activity);
+			mConnectionBroadcast = Utils.connectionBroadCast(activity, this);
 		}
+
 	}
 
 	private void initUI(View view) {
@@ -227,8 +237,8 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 					switch (createListResponse.httpCode) {
 						case 200:
 							List<ShoppingList> itemsInList = createListResponse.lists;
-							if (itemsInList != null) {
-								//TODO::REMOVE COMMENT TO MATCH
+							if (itemsInList.get(0) != null) {
+								//TODO::REMOVE COMMENT AND HARDCODED LIST_ID
 								//ShoppingList shoppingList = itemsInList.get(0);
 								//String listId = shoppingList.listId;
 								String listId = "287241380";
@@ -243,7 +253,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 										addToList.setCatalogRefId(sku.sku);
 										addToList.setQuantity("1");
 										addToList.setGiftListId(sku.sku);
-										addToListRequests.add(addToList);
+										addToListRequests.add(0, addToList);
 										executeAddToList(listId, addToListRequests);
 									}
 								}
@@ -262,8 +272,15 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 
 			@Override
 			public void onFailure(String e) {
-
-
+				Activity activity = getActivity();
+				if (activity != null) {
+					activity.runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							onLoad(false);
+						}
+					});
+				}
 			}
 		}, listName);
 	}
@@ -278,7 +295,19 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 		mBtnCancel.setVisibility(visible ? View.GONE : View.VISIBLE);
 	}
 
+	@Override
+	public void onConnectionChanged() {
+
+	}
+
+
+	public void setAddToListHasFail(boolean addToListHasFail) {
+		this.addToListHasFail = addToListHasFail;
+	}
+
 	public PostAddToList addToList(final List<AddToListRequest> addToListRequest, String listId) {
+		final int sizeOfList = addToListRequest.size();
+		onLoad(true);
 		return new PostAddToList(new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
@@ -287,27 +316,44 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 				if (activity != null) {
 					switch (addToListResponse.httpCode) {
 						case 200:
-							((CustomPopUpWindow) activity).startExitAnimation();
-							mKeyboardUtils.hideKeyboard(activity);
-							Utils.sendBus(new ProductState(CLOSE_PDP_FROM_ADD_TO_LIST));
-							onLoad(false);
+							if (apiCount < sizeOfList) {
+								PostAddToList postAddToList = addToList(addToListRequest, addToListRequest.get(apiCount).getGiftListId());
+								postAddToList.execute();
+							} else {
+								mKeyboardUtils.hideKeyboard(activity);
+								((CustomPopUpWindow) activity).startExitAnimation();
+								Utils.sendBus(new ProductState(CLOSE_PDP_FROM_ADD_TO_LIST));
+								onLoad(false);
+							}
 							break;
 						default:
 							Response response = addToListResponse.response;
-							if (response != null) {
-								Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
+							if (response.desc != null) {
+								Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc, true);
 							}
 							onLoad(false);
 							break;
 					}
+					apiCount = apiCount + 1;
+					setAddToListHasFail(false);
 				}
 			}
 
 			@Override
 			public void onFailure(String e) {
-				onLoad(false);
+				Activity activity = getActivity();
+				if (activity != null) {
+					activity.runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							mErrorHandlerView.showToast();
+							onLoad(false);
+							setAddToListHasFail(true);
+						}
+					});
+				}
 			}
 		}, addToListRequest, listId);
 	}
-}
 
+}
