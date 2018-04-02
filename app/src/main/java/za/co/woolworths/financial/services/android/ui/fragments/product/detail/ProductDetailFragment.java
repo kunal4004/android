@@ -57,7 +57,6 @@ import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
 import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.Suburb;
@@ -145,7 +144,9 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	private boolean activate_location_popup = false;
 	private GetShoppingLists mGetShoppingLists;
 	private ShoppingListsResponse mShoppingListsResponse;
+	private boolean shoppingListLoadFailure = false;
 	private ToastUtils mToastUtils;
+
 
 	@Override
 	public ProductDetailViewModel getViewModel() {
@@ -537,7 +538,8 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 				getGlobalState().saveButtonClicked(INDEX_ADD_TO_SHOPPING_LIST);
 				scrolltoTop();
 				WProductDetail product = getViewModel().getProduct();
-				if (product == null) return;
+				//activates when product detail and shopping list loading incomplete
+				if (product == null || !shoppingListLoadFailure) return;
 				switch (getViewModel().getProductType()) {
 					case CLOTHING_PRODUCT:
 						addToShoppingList();
@@ -1593,6 +1595,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 	@Override
 	public void onShoppingListsResponse(ShoppingListsResponse shoppingListsResponse) {
+		shoppingListLoadFailure = true;
 		mShoppingListsResponse = shoppingListsResponse;
 	}
 
@@ -1620,18 +1623,18 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	}
 
 	@Override
-	public void onAddToShopListLoad() {
-
+	public void unknownErrorResponse(Response response) {
+		Activity activity = getActivity();
+		if (activity != null) {
+			if (response.desc != null) {
+				Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
+			}
+		}
 	}
 
 	@Override
-	public void onAddToListSuccess(ShoppingListItemsResponse response) {
-
-	}
-
-	@Override
-	public void onAddToListFailure(String e) {
-
+	public void onShoppingListFailure(String e) {
+		shoppingListLoadFailure = false;
 	}
 
 	@Override

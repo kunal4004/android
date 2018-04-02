@@ -598,29 +598,22 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 			@Override
 			public void onSuccess(Object object) {
 				ShoppingListsResponse shoppingListsResponse = (ShoppingListsResponse) object;
-				getNavigator().onShoppingListsResponse(shoppingListsResponse);
+				switch (shoppingListsResponse.httpCode) {
+					case 200:
+						getNavigator().onShoppingListsResponse(shoppingListsResponse);
+						break;
+					default:
+						if (shoppingListsResponse.response != null)
+							getNavigator().unknownErrorResponse(shoppingListsResponse.response);
+						break;
+				}
 			}
 
 			@Override
 			public void onFailure(String e) {
+				getNavigator().onShoppingListFailure(e);
 
 			}
 		});
-	}
-
-	public PostAddToList addToList(List<AddToListRequest> addToListRequest, String listId) {
-		getNavigator().onAddToShopListLoad();
-		return new PostAddToList(new OnEventListener() {
-			@Override
-			public void onSuccess(Object object) {
-				ShoppingListItemsResponse response = (ShoppingListItemsResponse) object;
-				getNavigator().onAddToListSuccess(response);
-			}
-
-			@Override
-			public void onFailure(String e) {
-				getNavigator().onAddToListFailure(e);
-			}
-		}, addToListRequest, listId);
 	}
 }

@@ -22,6 +22,7 @@ import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.adapters.StockFinderFragmentAdapter;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ColorFragmentList;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.SizeFragmentList;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.EditQuantityFragmentList;
@@ -79,6 +80,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 			mProductHasColor = mBundle.getBoolean(PRODUCT_HAS_COLOR);
 			mProductHasSize = mBundle.getBoolean(PRODUCT_HAS_SIZE);
 		}
+
 		init();
 		addListener();
 		hideBackIcon();

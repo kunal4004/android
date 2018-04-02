@@ -125,9 +125,7 @@ public interface ProductDetailNavigator {
 
 	void onShoppingListsResponse(ShoppingListsResponse shoppingListsResponse);
 
-	void onAddToShopListLoad();
+	void unknownErrorResponse(Response response);
 
-	void onAddToListSuccess(ShoppingListItemsResponse response);
-
-	void onAddToListFailure(String e);
+	void onShoppingListFailure(String e);
 }
