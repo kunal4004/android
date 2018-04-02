@@ -1,6 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.views.dialog;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -35,19 +37,26 @@ import za.co.woolworths.financial.services.android.models.service.event.ProductS
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.adapters.AddToListAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
+import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CLOSE_PDP_FROM_ADD_TO_LIST;
 
-public class AddToListFragment extends Fragment implements View.OnClickListener, AddToListInterface {
+public class AddToListFragment extends Fragment implements View.OnClickListener, AddToListInterface, NetworkChangeListener {
 
 	private String mShoppingResponse = "";
 	private WButton mBtnCancel;
 	private AddToListAdapter mShoppingListAdapter;
 	private int apiCount = 0;
 	private ProgressBar mProgressBar;
+	private BroadcastReceiver mConnectionBroadcast;
+	private boolean addToListHasFail = false;
+	private ErrorHandlerView mErrorHandlerView;
+	private PostAddToList mPostAddToList;
+	private ImageView imCreateList;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -83,13 +92,18 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 	private void initUI(View view) {
 		RecyclerView rcvShoppingLists = view.findViewById(R.id.rclAddToList);
 		mBtnCancel = view.findViewById(R.id.btnCancel);
-		ImageView imCreateList = view.findViewById(R.id.imCreateList);
+		imCreateList = view.findViewById(R.id.imCreateList);
 		mProgressBar = view.findViewById(R.id.pbAddToList);
 		ShoppingListsResponse shoppingResponse = getShoppingListsResponse();
 		recyclerViewHeight(rcvShoppingLists, shoppingResponse);
 		setAdapter(rcvShoppingLists);
 		imCreateList.setOnClickListener(this);
 		mBtnCancel.setOnClickListener(this);
+		Activity activity = getActivity();
+		if (activity != null) {
+			mErrorHandlerView = new ErrorHandlerView(activity);
+			mConnectionBroadcast = Utils.connectionBroadCast(activity, this);
+		}
 	}
 
 	private void setAdapter(RecyclerView rcvShoppingLists) {
@@ -185,7 +199,8 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 
 	private void postAddToList(List<AddToListRequest> addToListRequests) {
 		if (addToListRequests.size() > 0) {
-			addToList(addToListRequests, addToListRequests.get(0).getGiftListId()).execute();
+			mPostAddToList = addToList(addToListRequests, addToListRequests.get(0).getGiftListId());
+			mPostAddToList.execute();
 		}
 	}
 
@@ -212,25 +227,68 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 						default:
 							Response response = addToListResponse.response;
 							if (response.desc != null) {
-								Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
+								Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc, true);
 							}
 							onLoad(false);
 							break;
 					}
 					apiCount = apiCount + 1;
+					setAddToListHasFail(false);
 				}
 			}
 
 			@Override
 			public void onFailure(String e) {
-				onLoad(false);
+				Activity activity = getActivity();
+				if (activity != null) {
+					activity.runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							mErrorHandlerView.showToast();
+							onLoad(false);
+							setAddToListHasFail(true);
+						}
+					});
+				}
 			}
 		}, addToListRequest, listId);
 	}
 
+	private void setAddToListHasFail(boolean value) {
+		addToListHasFail = value;
+	}
+
 	private void onLoad(boolean isLoading) {
+		imCreateList.setEnabled(!isLoading);
 		mProgressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
 		mBtnCancel.setVisibility(isLoading ? View.GONE : View.VISIBLE);
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		unregisterReceiver();
+	}
+
+	private void unregisterReceiver() {
+		Activity activity = getActivity();
+		if (activity != null) {
+			activity.unregisterReceiver(mConnectionBroadcast);
+		}
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		registerReceiver();
+	}
+
+	private void registerReceiver() {
+		Activity activity = getActivity();
+		if (activity != null) {
+			activity.registerReceiver(mConnectionBroadcast,
+					new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+		}
 	}
 
 	public OtherSkus getSelectedSKU() {
@@ -240,5 +298,21 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 			return globalState.getSelectedSKUId();
 		}
 		return null;
+	}
+
+	@Override
+	public void onConnectionChanged() {
+		if (addToListHasFail) {
+			mBtnCancel.performClick();
+		}
+	}
+
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		if (mPostAddToList != null) {
+			if (!mPostAddToList.isCancelled())
+				mPostAddToList.cancel(true);
+		}
 	}
 }

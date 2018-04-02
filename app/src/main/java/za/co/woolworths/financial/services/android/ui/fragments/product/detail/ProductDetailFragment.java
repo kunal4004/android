@@ -82,6 +82,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerA
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ProductUtils;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.ui.views.dialog.AddToListFragment;
 import za.co.woolworths.financial.services.android.util.CancelableCallback;
 import za.co.woolworths.financial.services.android.util.DrawImage;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -1316,9 +1317,9 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	}
 
 	private void unregisterReceiver() {
-		Activity activity = getBaseActivity();
+		Activity activity = getActivity();
 		if (activity != null) {
-			getBaseActivity().unregisterReceiver(mConnectionBroadcast);
+			activity.unregisterReceiver(mConnectionBroadcast);
 		}
 	}
 
@@ -1329,7 +1330,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	}
 
 	private void registerReceiver() {
-		Activity activity = getBaseActivity();
+		Activity activity = getActivity();
 		if (activity != null) {
 			activity.registerReceiver(mConnectionBroadcast,
 					new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
@@ -1338,7 +1339,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 	@Override
 	public void onConnectionChanged() {
-		Activity activity = getBaseActivity();
+		Activity activity = getActivity();
 		if (activity != null) {
 			activity.runOnUiThread(new Runnable() {
 				@Override
