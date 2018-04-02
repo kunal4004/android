@@ -237,7 +237,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 					switch (createListResponse.httpCode) {
 						case 200:
 							List<ShoppingList> itemsInList = createListResponse.lists;
-							if (itemsInList.get(0) != null) {
+							if (itemsInList != null) {
 								//TODO::REMOVE COMMENT AND HARDCODED LIST_ID
 								//ShoppingList shoppingList = itemsInList.get(0);
 								//String listId = shoppingList.listId;
