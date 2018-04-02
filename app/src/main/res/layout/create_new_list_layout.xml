@@ -76,12 +76,17 @@
             android:gravity="center"
             android:hint="@string/enter_list_name"
             android:imeOptions="actionDone"
+            android:inputType="text|textNoSuggestions"
             android:maxLines="1"
             android:textColor="@color/black"
             android:textColorHint="@color/recent_search_bg"
             android:textCursorDrawable="@drawable/colorcursor"
             android:textSize="@dimen/eighteen_sp"
-            app:WEditTextView_font="myriadpro_regular"/>
+            app:WEditTextView_font="myriadpro_regular">
+
+            <requestFocus/>
+
+        </za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView>
 
         <View
             android:layout_width="match_parent"

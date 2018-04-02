@@ -6,6 +6,7 @@ public class AddToListRequest {
 	private String giftListId;
 	private String catalogRefId;
 	private String quantity;
+	private String listId;
 
 	public void setSkuID(String skuID) {
 		this.skuID = skuID;
@@ -37,5 +38,13 @@ public class AddToListRequest {
 
 	public String getQuantity() {
 		return quantity;
+	}
+
+	public void setListId(String listId) {
+		this.listId = listId;
+	}
+
+	public String getListId() {
+		return listId;
 	}
 }

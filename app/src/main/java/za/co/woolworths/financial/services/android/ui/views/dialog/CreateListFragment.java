@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.views.dialog;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -44,13 +43,12 @@ import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
-import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CLOSE_PDP_FROM_ADD_TO_LIST;
 
-public class CreateListFragment extends Fragment implements View.OnClickListener, NetworkChangeListener {
+public class CreateListFragment extends Fragment implements View.OnClickListener {
 
 	private ImageView mImBack, imCloseIcon;
 	private String hideBackButton;
@@ -62,9 +60,6 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 	private String addToListItems;
 	private List<AddToListRequest> addToListRequests;
 	private ErrorHandlerView mErrorHandlerView;
-	private BroadcastReceiver mConnectionBroadcast;
-	private boolean addToListHasFail = false;
-	private int apiCount = 0;
 	private CreateList mCreateList;
 	private PostAddList mPostCreateList;
 	private PostAddToList mPostAddToList;
@@ -97,9 +92,8 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 			initUI(view);
 			displayKeyboard(view, activity);
 			mErrorHandlerView = new ErrorHandlerView(activity);
-			mConnectionBroadcast = Utils.connectionBroadCast(activity, this);
+			KeyboardUtil.showKeyboard(activity);
 		}
-
 	}
 
 	private void initUI(View view) {
@@ -203,7 +197,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 				if (strCancel.equalsIgnoreCase("ok")) {
 					String listName = mEtNewList.getText().toString();
 					mCreateList = new CreateList(listName);
-					execusteCreateList();
+					executeCreateList();
 				} else {
 					cancelRequest(activity);
 				}
@@ -223,7 +217,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 		}
 	}
 
-	private void execusteCreateList() {
+	private void executeCreateList() {
 		mPostCreateList = postCreateList(mCreateList);
 		mPostCreateList.execute();
 	}
@@ -304,18 +298,6 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 		mBtnCancel.setVisibility(visible ? View.GONE : View.VISIBLE);
 	}
 
-	@Override
-	public void onConnectionChanged() {
-		if (addToListHasFail) {
-			
-		}
-	}
-
-
-	public void setAddToListHasFail(boolean addToListHasFail) {
-		this.addToListHasFail = addToListHasFail;
-	}
-
 	public PostAddToList addToList(final List<AddToListRequest> addToListRequest, String listId) {
 		final int sizeOfList = addToListRequest.size();
 		onLoad(true);
@@ -327,15 +309,11 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 				if (activity != null) {
 					switch (addToListResponse.httpCode) {
 						case 200:
-							if (apiCount < sizeOfList) {
-								mPostAddToList = addToList(addToListRequest, addToListRequest.get(apiCount).getGiftListId());
-								mPostAddToList.execute();
-							} else {
-								mKeyboardUtils.hideKeyboard(activity);
-								((CustomPopUpWindow) activity).startExitAnimation();
-								Utils.sendBus(new ProductState(CLOSE_PDP_FROM_ADD_TO_LIST));
-								onLoad(false);
-							}
+							((CustomPopUpWindow) activity).startExitAnimation();
+							mKeyboardUtils.hideKeyboard(activity);
+							KeyboardUtil.hideSoftKeyboard(activity);
+							Utils.sendBus(new ProductState(CLOSE_PDP_FROM_ADD_TO_LIST));
+							onLoad(false);
 							break;
 						default:
 							Response response = addToListResponse.response;
@@ -345,8 +323,6 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 							onLoad(false);
 							break;
 					}
-					apiCount = apiCount + 1;
-					setAddToListHasFail(false);
 				}
 			}
 
@@ -359,12 +335,18 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 						public void run() {
 							mErrorHandlerView.showToast();
 							onLoad(false);
-							setAddToListHasFail(true);
 						}
 					});
 				}
 			}
 		}, addToListRequest, listId);
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		if (mEtNewList != null)
+			mEtNewList.performClick();
 	}
 
 	@Override

@@ -1,10 +1,12 @@
 package za.co.woolworths.financial.services.android.util;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Rect;
 import android.os.Build;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
 public class KeyboardUtil {
@@ -76,6 +78,25 @@ public class KeyboardUtil {
 			InputMethodManager inputMethodManager = (InputMethodManager) act.getSystemService(Activity.INPUT_METHOD_SERVICE);
 			inputMethodManager.hideSoftInputFromWindow(act.getCurrentFocus().getWindowToken(), 0);
 			inputMethodManager.showSoftInputFromInputMethod(act.getCurrentFocus().getWindowToken(), 0);
+		}
+	}
+
+	public static void hideSoftKeyboard(Activity activity) {
+		try {
+			if (activity != null) {
+				activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+				if ((activity.getCurrentFocus() != null) && ((activity.getCurrentFocus().getWindowToken() != null))) {
+					((InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void showKeyboard(Activity activity) {
+		if (activity != null) {
+			((InputMethodManager) (activity).getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
 		}
 	}
 }
