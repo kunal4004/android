@@ -43,7 +43,6 @@ import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWind
 import za.co.woolworths.financial.services.android.ui.adapters.SearchResultShopAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
@@ -432,7 +431,6 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 
 	@Override
 	public void onAddToListFailure(String e) {
-		addToListLoadFail = true;
 		Log.e("onAddToListFailure", e);
 		Activity activity = getActivity();
 		if (activity != null) {
@@ -440,6 +438,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 				@Override
 				public void run() {
 					onAddToListLoad(false);
+					addToListLoadFail = true;
 				}
 			});
 		}
@@ -713,10 +712,8 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 			activity.runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					if (new ConnectionDetector().isOnline(getActivity())) {
-						if (addToListLoadFail) {
-							getViewDataBinding().incConfirmButtonLayout.btnCheckOut.performClick();
-						}
+					if (addToListLoadFail) {
+						getViewDataBinding().incConfirmButtonLayout.btnCheckOut.performClick();
 					}
 				}
 			});
