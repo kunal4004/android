@@ -54,7 +54,9 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 	private ProgressBar pbCreateList;
 	private WButton mBtnCancel;
 	private PostAddToList mAddToList;
-	private KeyboardUtil mkeyboard;
+	private KeyboardUtil mKeyboardUtils;
+	private String addToListItems;
+	private List<AddToListRequest> addToListRequests;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,6 +64,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 		Bundle bundle = getArguments();
 		if (bundle != null) {
 			hideBackButton = bundle.getString("OPEN_FROM_POPUP");
+			addToListItems = bundle.getString("ADD_TO_LIST_ITEMS");
 		}
 	}
 
@@ -77,6 +80,9 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 		super.onViewCreated(view, savedInstanceState);
 		Activity activity = getActivity();
 		if (activity != null) {
+			addToListRequests = TextUtils.isEmpty(addToListItems)
+					? new ArrayList<AddToListRequest>()
+					: Utils.toList(addToListItems, AddToListRequest.class);
 			initUI(view);
 			displayKeyboard(view, activity);
 		}
@@ -89,7 +95,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 		pbCreateList = view.findViewById(R.id.pbCreateList);
 		mImBack.setVisibility(TextUtils.isEmpty(hideBackButton) ? View.VISIBLE : View.GONE);
 		imCloseIcon.setVisibility(TextUtils.isEmpty(hideBackButton) ? View.GONE : View.VISIBLE);
-		mEtNewList = (WLoanEditTextView) view.findViewById(R.id.etNewList);
+		mEtNewList = view.findViewById(R.id.etNewList);
 		setUpEditText(mEtNewList);
 		mBtnCancel.setOnClickListener(this);
 		mImBack.setOnClickListener(this);
@@ -99,7 +105,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 	private void displayKeyboard(View view, Activity activity) {
 		if (activity != null) {
 			activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-			mkeyboard = new KeyboardUtil(activity, view.findViewById(R.id.rlRootList), 0);
+			mKeyboardUtils = new KeyboardUtil(activity, view.findViewById(R.id.rlRootList), 0);
 		}
 	}
 
@@ -222,10 +228,11 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 						case 200:
 							List<ShoppingList> itemsInList = createListResponse.lists;
 							if (itemsInList != null) {
+								//TODO::REMOVE COMMENT TO MATCH
 								//ShoppingList shoppingList = itemsInList.get(0);
 								//String listId = shoppingList.listId;
 								String listId = "287241380";
-								List<AddToListRequest> addToListRequests = new ArrayList<>();
+
 								AddToListRequest addToList = new AddToListRequest();
 								WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
 								if (woolworthsApplication != null) {
@@ -281,7 +288,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 					switch (addToListResponse.httpCode) {
 						case 200:
 							((CustomPopUpWindow) activity).startExitAnimation();
-							mkeyboard.hideKeyboard(activity);
+							mKeyboardUtils.hideKeyboard(activity);
 							Utils.sendBus(new ProductState(CLOSE_PDP_FROM_ADD_TO_LIST));
 							onLoad(false);
 							break;

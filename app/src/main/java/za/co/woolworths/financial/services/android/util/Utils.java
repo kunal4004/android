@@ -332,6 +332,15 @@ public class Utils {
 		return response;
 	}
 
+	public static <T> List<T> toList(String json, Class<T> clazz) {
+		if (null == json) {
+			return null;
+		}
+		Gson gson = new Gson();
+		return gson.fromJson(json, new TypeToken<T>(){}.getType());
+	}
+
+
 	public static int getToolbarHeight(Context context) {
 		final TypedArray styledAttributes = context.getTheme().obtainStyledAttributes(
 				new int[]{R.attr.actionBarSize});

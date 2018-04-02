@@ -2,7 +2,9 @@ package za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.se
 
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
@@ -27,26 +29,32 @@ import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.models.rest.product.GetProductDetail;
 import za.co.woolworths.financial.services.android.models.rest.product.ProductRequest;
+import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostAddToList;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.models.service.event.ShopState;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.adapters.SearchResultShopAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
+import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
+import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SHOW_ADDED_TO_SHOPPING_LIST_TOAST;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_SEARCH_FROM_LIST;
 
-public class SearchResultFragment extends BaseFragment<GridLayoutBinding, SearchResultViewModel> implements SearchResultNavigator, View.OnClickListener {
+public class SearchResultFragment extends BaseFragment<GridLayoutBinding, SearchResultViewModel> implements SearchResultNavigator, View.OnClickListener, NetworkChangeListener {
 
 	private final String TAG = this.getClass().getSimpleName();
 	private SearchResultViewModel mGridViewModel;
@@ -60,10 +68,13 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 	private int lastVisibleItem;
 	private boolean isLoading;
 	private String mListId;
-	private GetProductDetail getProductDetail;
+	private GetProductDetail mGetProductDetail;
 	private ProductList mSelectedProduct;
 	private int mAddToListSize = 0;
 	private boolean mToggleAddToList;
+	private PostAddToList mPostAddToList;
+	private BroadcastReceiver connectionBroadcast;
+	private boolean addToListLoadFail = false;
 
 	@Override
 	public SearchResultViewModel getViewModel() {
@@ -149,6 +160,8 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 				}
 			});
 		}
+
+		connectionBroadcast();
 	}
 
 	private void setUpAddToListButton() {
@@ -355,7 +368,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 				break;
 
 			case R.id.btnCheckOut:
-				cancelRequest(getProductDetail);
+				cancelRequest(mGetProductDetail);
 				List<AddToListRequest> addToListRequests = new ArrayList<>();
 				for (ProductList list : mProductList) {
 					if (list.itemWasChecked) {
@@ -368,12 +381,17 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 					}
 				}
 				mAddToListSize = addToListRequests.size();
-				getViewModel().addToList(addToListRequests, mListId).execute();
+				postAddToList(addToListRequests);
 				break;
 
 			default:
 				break;
 		}
+	}
+
+	private void postAddToList(List<AddToListRequest> addToListRequests) {
+		mPostAddToList = getViewModel().addToList(addToListRequests, mListId);
+		mPostAddToList.execute();
 	}
 
 	@Override
@@ -414,19 +432,31 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 
 	@Override
 	public void onAddToListFailure(String e) {
+		addToListLoadFail = true;
 		Log.e("onAddToListFailure", e);
+		Activity activity = getActivity();
+		if (activity != null) {
+			activity.runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					onAddToListLoad(false);
+				}
+			});
+		}
 	}
 
 	@Override
-	public void onAddToListLoad() {
+	public void onAddToListLoad(boolean isLoading) {
+		addToListLoadFail = false;
 		ProgressBar progressBar = getViewDataBinding().incConfirmButtonLayout.pbLoadingIndicator;
 		WButton btnCheck0ut = getViewDataBinding().incConfirmButtonLayout.btnCheckOut;
-		progressBar.setVisibility(View.VISIBLE);
-		btnCheck0ut.setVisibility(View.GONE);
+		progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+		btnCheck0ut.setVisibility(isLoading ? View.GONE : View.VISIBLE);
 	}
 
 	@Override
 	public void onAddToListLoadComplete(List<ShoppingListItem> listItems) {
+		addToListLoadFail = false;
 		ProgressBar progressBar = getViewDataBinding().incConfirmButtonLayout.pbLoadingIndicator;
 		WButton btnCheck0ut = getViewDataBinding().incConfirmButtonLayout.btnCheckOut;
 		progressBar.setVisibility(View.GONE);
@@ -593,9 +623,36 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 		toggleAddToListBtn(true);
 	}
 
+	@Override
+	public void unknownErrorMessage(ShoppingListItemsResponse shoppingCartResponse) {
+		onAddToListLoad(false);
+		Activity activity = getActivity();
+		if (activity != null)
+			if (shoppingCartResponse != null) {
+				Response response = shoppingCartResponse.response;
+				if (response.desc != null) {
+					Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
+				}
+			}
+
+	}
+
+	@Override
+	public void accountExpired(ShoppingListItemsResponse shoppingCartResponse) {
+		Activity activity = getActivity();
+		if (activity != null) {
+			if (shoppingCartResponse.response != null) {
+				if (shoppingCartResponse.response.stsParams != null) {
+					SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(activity, shoppingCartResponse
+							.response.stsParams);
+				}
+			}
+		}
+	}
+
 	private void productDetailRequest(ProductRequest productRequest) {
-		getProductDetail = getViewModel().getProductDetail(productRequest);
-		getProductDetail.execute();
+		mGetProductDetail = getViewModel().getProductDetail(productRequest);
+		mGetProductDetail.execute();
 	}
 
 	public void toggleAddToListBtn(boolean enable) {
@@ -614,9 +671,55 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 		return mSelectedProduct;
 	}
 
+	private void connectionBroadcast() {
+		connectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
+	}
+
 	@Override
 	public void onDetach() {
 		super.onDetach();
-		cancelRequest(getProductDetail);
+		cancelRequest(mGetProductDetail);
+		cancelRequest(mPostAddToList);
+	}
+
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		Activity activity = getActivity();
+		if (activity != null) {
+			activity.unregisterReceiver(connectionBroadcast);
+		}
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		Activity activity = getActivity();
+		if (activity != null) {
+			activity.registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+		}
+	}
+
+
+	@Override
+	public void onConnectionChanged() {
+		retryConnect();
+	}
+
+	private void retryConnect() {
+		Activity activity = getActivity();
+		if (activity != null) {
+			activity.runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					if (new ConnectionDetector().isOnline(getActivity())) {
+						if (addToListLoadFail) {
+							getViewDataBinding().incConfirmButtonLayout.btnCheckOut.performClick();
+						}
+					}
+				}
+			});
+		}
 	}
 }

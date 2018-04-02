@@ -23,6 +23,7 @@ import za.co.woolworths.financial.services.android.models.rest.product.SearchPro
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostAddToList;
 import za.co.woolworths.financial.services.android.ui.base.BaseViewModel;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
+import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.rx.SchedulerProvider;
 
@@ -179,12 +180,25 @@ public class SearchResultViewModel extends BaseViewModel<SearchResultNavigator> 
 	}
 
 	public PostAddToList addToList(List<AddToListRequest> addToListRequest, String listId) {
-		getNavigator().onAddToListLoad();
+		getNavigator().onAddToListLoad(true);
 		return new PostAddToList(new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
 				ShoppingListItemsResponse shoppingCartResponse = (ShoppingListItemsResponse) object;
-				getNavigator().onAddToListLoadComplete(shoppingCartResponse.listItems);
+				switch (shoppingCartResponse.httpCode) {
+					case 200:
+						getNavigator().onAddToListLoadComplete(shoppingCartResponse.listItems);
+						break;
+
+					case 440:
+						getNavigator().accountExpired(shoppingCartResponse);
+						getNavigator().onAddToListLoad(false);
+						break;
+
+					default:
+						getNavigator().unknownErrorMessage(shoppingCartResponse);
+						break;
+				}
 			}
 
 			@Override

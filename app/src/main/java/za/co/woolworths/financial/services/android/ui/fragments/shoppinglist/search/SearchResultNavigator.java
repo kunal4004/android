@@ -5,6 +5,7 @@ import java.util.List;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 
 public interface SearchResultNavigator {
@@ -38,7 +39,7 @@ public interface SearchResultNavigator {
 
 	void onAddToListFailure(String e);
 
-	void onAddToListLoad();
+	void onAddToListLoad(boolean isLoading);
 
 	void onAddToListLoadComplete(List<ShoppingListItem> shoppingLists);
 
@@ -57,4 +58,8 @@ public interface SearchResultNavigator {
 	void onLoadDetailFailure(String e);
 
 	void onFoodTypeChecked(ProductList selectedProduct);
+
+	void unknownErrorMessage(ShoppingListItemsResponse shoppingCartResponse);
+
+	void accountExpired(ShoppingListItemsResponse shoppingCartResponse);
 }

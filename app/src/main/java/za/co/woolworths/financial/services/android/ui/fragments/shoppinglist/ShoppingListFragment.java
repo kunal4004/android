@@ -3,13 +3,11 @@ package za.co.woolworths.financial.services.android.ui.fragments.shoppinglist;
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
-import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,7 +18,6 @@ import android.widget.RelativeLayout;
 import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.ShoppinglistFragmentBinding;
-import com.google.gson.Gson;
 
 import java.util.List;
 

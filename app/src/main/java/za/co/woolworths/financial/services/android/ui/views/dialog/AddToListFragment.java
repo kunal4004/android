@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.views.dialog;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -89,7 +90,6 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 		setAdapter(rcvShoppingLists);
 		imCreateList.setOnClickListener(this);
 		mBtnCancel.setOnClickListener(this);
-
 	}
 
 	private void setAdapter(RecyclerView rcvShoppingLists) {
@@ -133,7 +133,11 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 		switch (view.getId()) {
 			case R.id.imCreateList:
 				Activity activity = getActivity();
+				Bundle bundle = new Bundle();
 				CreateListFragment createListFragment = new CreateListFragment();
+				List<AddToListRequest> addToList = getAddToListRequests();
+				bundle.putString("ADD_TO_LIST_ITEMS", Utils.objectToJson(addToList));
+				createListFragment.setArguments(bundle);
 				if (activity != null) {
 					CustomPopUpWindow customPopUpWindow = (CustomPopUpWindow) activity;
 					FragmentManager fragmentManager = customPopUpWindow.getSupportFragmentManager();
@@ -147,20 +151,7 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 			case R.id.btnCancel:
 				String label = mBtnCancel.getText().toString();
 				if (label.toLowerCase().equalsIgnoreCase("ok")) {
-					List<AddToListRequest> addToListRequests = new ArrayList<>();
-					for (ShoppingList spl : mShoppingListAdapter.getList()) {
-						if (spl.viewIsSelected) {
-							if (!TextUtils.isEmpty(getSelectedSKU().sku)) {
-								AddToListRequest addToListRequest = new AddToListRequest();
-								addToListRequest.setGiftListId(spl.listId);
-								addToListRequest.setCatalogRefId(getSelectedSKU().sku);
-								addToListRequest.setQuantity("1");
-								addToListRequest.setSkuID(getSelectedSKU().sku);
-								addToListRequests.add(addToListRequest);
-							}
-						}
-					}
-					postAddToList(addToListRequests);
+					postAddToList(getAddToListRequests());
 					return;
 				}
 				Activity act = getActivity();
@@ -172,6 +163,24 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 			default:
 				break;
 		}
+	}
+
+	@NonNull
+	private List<AddToListRequest> getAddToListRequests() {
+		List<AddToListRequest> addToListRequests = new ArrayList<>();
+		for (ShoppingList spl : mShoppingListAdapter.getList()) {
+			if (spl.viewIsSelected) {
+				if (!TextUtils.isEmpty(getSelectedSKU().sku)) {
+					AddToListRequest addToListRequest = new AddToListRequest();
+					addToListRequest.setGiftListId(spl.listId);
+					addToListRequest.setCatalogRefId(getSelectedSKU().sku);
+					addToListRequest.setQuantity("1");
+					addToListRequest.setSkuID(getSelectedSKU().sku);
+					addToListRequests.add(addToListRequest);
+				}
+			}
+		}
+		return addToListRequests;
 	}
 
 	private void postAddToList(List<AddToListRequest> addToListRequests) {

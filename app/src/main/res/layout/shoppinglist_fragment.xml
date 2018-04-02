@@ -23,6 +23,7 @@
             android:clipToPadding="false"
             android:paddingTop="16dp"
             />
+
         <ProgressBar
             android:id="@+id/loadingBar"
             style="?android:attr/progressBarStyle"
@@ -31,13 +32,15 @@
             android:layout_centerInParent="true"
             android:layout_gravity="center_vertical|center_horizontal"
             android:indeterminateTint="@color/black"
-            android:visibility="gone" />
+            android:visibility="gone"/>
+
         <include
             android:id="@+id/incConnectionLayout"
             layout="@layout/no_connection_handler"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             />
+
         <include
             android:id="@+id/incEmptyLayout"
             layout="@layout/empty_state_template"/>
