@@ -419,6 +419,11 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				if (cartProductAdapter != null) {
 					cartProductAdapter.clear();
 				}
+				Activity activity = getActivity();
+				if (activity != null) {
+					CartActivity cartActivity = (CartActivity) activity;
+					cartActivity.hideEditCart();
+				}
 			}
 
 			@Override
@@ -499,7 +504,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		};
 	}
 
-	private void deliveryLocationEnabled(boolean enabled) {
+	public void deliveryLocationEnabled(boolean enabled) {
 		Animation animFadeOut = AnimationUtils.loadAnimation(this.getContext(), R.anim.edit_mode_fade_out);
 		animFadeOut.setAnimationListener(new Animation.AnimationListener() {
 			@Override
