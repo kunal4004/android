@@ -63,6 +63,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 	private CreateList mCreateList;
 	private PostAddList mPostCreateList;
 	private PostAddToList mPostAddToList;
+
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -240,11 +241,8 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 						case 200:
 							List<ShoppingList> itemsInList = createListResponse.lists;
 							if (itemsInList != null) {
-								//TODO::REMOVE COMMENT AND HARDCODED LIST_ID
-								//ShoppingList shoppingList = itemsInList.get(0);
-								//String listId = shoppingList.listId;
-								String listId = "287241380";
-
+								ShoppingList shoppingList = itemsInList.get(0);
+								String listId = shoppingList.listId;
 								AddToListRequest addToList = new AddToListRequest();
 								WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
 								if (woolworthsApplication != null) {
