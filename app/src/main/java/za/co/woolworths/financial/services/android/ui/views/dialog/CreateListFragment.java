@@ -312,7 +312,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 							((CustomPopUpWindow) activity).startExitAnimation();
 							mKeyboardUtils.hideKeyboard(activity);
 							KeyboardUtil.hideSoftKeyboard(activity);
-							Utils.sendBus(new ProductState(CLOSE_PDP_FROM_ADD_TO_LIST));
+							Utils.sendBus(new ProductState(sizeOfList, CLOSE_PDP_FROM_ADD_TO_LIST));
 							onLoad(false);
 							break;
 						default:

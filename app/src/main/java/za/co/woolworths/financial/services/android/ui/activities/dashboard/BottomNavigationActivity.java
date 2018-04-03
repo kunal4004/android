@@ -53,7 +53,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.wtoday.WTodayFra
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
-import za.co.woolworths.financial.services.android.ui.views.dialog.AddToListFragment;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback;

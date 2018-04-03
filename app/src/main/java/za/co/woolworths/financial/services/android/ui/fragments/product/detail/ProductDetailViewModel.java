@@ -602,6 +602,11 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 					case 200:
 						getNavigator().onShoppingListsResponse(shoppingListsResponse);
 						break;
+					case 440:
+					case 400:
+						getNavigator().shoppingListSessionTimedOut();
+						break;
+
 					default:
 						if (shoppingListsResponse.response != null)
 							getNavigator().unknownErrorResponse(shoppingListsResponse.response);

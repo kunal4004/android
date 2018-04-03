@@ -29,7 +29,6 @@ import za.co.woolworths.financial.services.android.util.Utils;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
-
 public class NewListFragment extends BaseFragment<NewListFragmentBinding, NewListViewModel> implements NewListNavigator, View.OnClickListener {
 
 	private NewListViewModel newListFragment;

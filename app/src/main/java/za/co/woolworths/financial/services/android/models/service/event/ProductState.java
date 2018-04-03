@@ -18,6 +18,7 @@ public class ProductState {
 
 	private String state;
 	private int quantity;
+	private int count;
 
 	public ProductState(String state) {
 		this.state = state;
@@ -28,11 +29,20 @@ public class ProductState {
 		this.quantity = quantity;
 	}
 
+	public ProductState(int count, String state) {
+		this.state = state;
+		this.count = count;
+	}
+
 	public String getState() {
 		return state;
 	}
 
 	public int getQuantity() {
 		return quantity;
+	}
+
+	public int getCount() {
+		return count;
 	}
 }

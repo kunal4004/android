@@ -220,7 +220,7 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 								postAddToList.execute();
 							} else {
 								((CustomPopUpWindow) activity).startExitAnimation();
-								Utils.sendBus(new ProductState(CLOSE_PDP_FROM_ADD_TO_LIST));
+								Utils.sendBus(new ProductState(sizeOfList, CLOSE_PDP_FROM_ADD_TO_LIST));
 								onLoad(false);
 							}
 							break;

@@ -128,4 +128,6 @@ public interface ProductDetailNavigator {
 	void unknownErrorResponse(Response response);
 
 	void onShoppingListFailure(String e);
+
+	void shoppingListSessionTimedOut();
 }

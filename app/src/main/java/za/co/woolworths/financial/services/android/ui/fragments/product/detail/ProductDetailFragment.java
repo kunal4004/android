@@ -82,7 +82,6 @@ import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerA
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ProductUtils;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.ui.views.dialog.AddToListFragment;
 import za.co.woolworths.financial.services.android.util.CancelableCallback;
 import za.co.woolworths.financial.services.android.util.DrawImage;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -147,6 +146,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	private ShoppingListsResponse mShoppingListsResponse;
 	private boolean shoppingListLoadFailure = false;
 	private ToastUtils mToastUtils;
+	private boolean shoppingListTimeOut;
 
 
 	@Override
@@ -248,7 +248,9 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 									case R.id.navigation_product:
 										mToastUtils.setActivity(activity);
 										mToastUtils.setCurrentState(TAG);
-										mToastUtils.setCartText(R.string.shopping_list);
+										String shoppingList = getString(R.string.shopping_list);
+										// shopping list vs shopping lists
+										mToastUtils.setCartText((productState.getCount() > 1) ? shoppingList + "s" : shoppingList);
 										mToastUtils.setPixel(getViewDataBinding().llStoreFinder.getHeight() * 2);
 										mToastUtils.setView(getViewDataBinding().llStoreFinder);
 										mToastUtils.setMessage(R.string.added_to);
@@ -258,7 +260,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 									default:
 										break;
-
 								}
 								break;
 
@@ -530,117 +531,120 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	@Override
 	public void onClick(View view) {
 		MultiClickPreventer.preventMultiClick(view);
-		switch (view.getId()) {
-			case R.id.imClose:
-				closeSlideUpPanel(view);
-				break;
+		Activity activity = getActivity();
+		if (activity != null) {
+			switch (view.getId()) {
+				case R.id.imClose:
+					closeSlideUpPanel(view);
+					break;
 
-			case R.id.btnAddShoppingList:
-				getGlobalState().saveButtonClicked(INDEX_ADD_TO_SHOPPING_LIST);
-				scrolltoTop();
-				WProductDetail product = getViewModel().getProduct();
-				//activates when product detail and shopping list loading incomplete
-				if (product == null || !shoppingListLoadFailure) return;
-				switch (getViewModel().getProductType()) {
-					case CLOTHING_PRODUCT:
-						addToShoppingList();
-						break;
-
-					case FOOD_PRODUCT:
-						getGlobalState().setSelectedSKUId(createOtherSkus(product.productId));
-						Activity activity = getActivity();
-						if (activity != null) openAddToListFragment(activity);
-						break;
-
-					default:
-						if (getViewModel().otherSkuList().size() > 1) addToShoppingList();
-						break;
-				}
-				break;
-
-			case R.id.linColour:
-				try {
-					cancelPopWindow(mPSizeWindow);
-					if (!mSizeSkuList.isEmpty()) {
-						LayoutInflater layoutInflater = (LayoutInflater) getBaseActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-						assert layoutInflater != null;
-						View mIflateSize = layoutInflater.inflate(R.layout.product_size_row, null);
-						ProductColorAdapter mProductColorAdapter = new ProductColorAdapter(mSizeSkuList, this);
-						RecyclerView rlSizeList = mIflateSize.findViewById(R.id.rclSize);
-						LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-						rlSizeList.setNestedScrollingEnabled(false);
-						rlSizeList.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
-						rlSizeList.setLayoutManager(mLayoutManager);
-						rlSizeList.setAdapter(mProductColorAdapter);
-						WTextView tvColor = getViewDataBinding().incProductColor.textSelectColour;
-						int height = maximumPopWindowHeight();
-						if (mSizeSkuList.size() > 2) {
-							height = height / 4;
-						} else {
-							height = WindowManager.LayoutParams.WRAP_CONTENT;
-						}
-						mPColourWindow = new PopupWindow(
-								mIflateSize,
-								tvColor.getWidth(), height, false);
-						mPColourWindow.setTouchable(true);
-						mPColourWindow.showAsDropDown(tvColor, -50, -180);
+				case R.id.btnAddShoppingList:
+					getGlobalState().saveButtonClicked(INDEX_ADD_TO_SHOPPING_LIST);
+					scrolltoTop();
+					WProductDetail product = getViewModel().getProduct();
+					if (getShoppingListTimeOut()) {
+						ScreenManager.presentSSOSignin(activity);
+						return;
 					}
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-				break;
+					//activates when product detail and shopping list loading incomplete
+					if (product == null || !shoppingListLoadFailure) return;
+					switch (getViewModel().getProductType()) {
+						case CLOTHING_PRODUCT:
+							addToShoppingList();
+							break;
 
-			case R.id.linSize:
-				try {
-					cancelPopWindow(mPColourWindow);
-					if (!mSkuColorList.isEmpty()) {
-						LayoutInflater layoutInflater = (LayoutInflater) getBaseActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-						assert layoutInflater != null;
-						View mIflateColor = layoutInflater.inflate(R.layout.product_size_row, null);
-						ProductSizeAdapter mProductSizeAdapter = new ProductSizeAdapter(mSkuColorList, this);
-						RecyclerView rlSizeList = mIflateColor.findViewById(R.id.rclSize);
-						LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-						mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-						rlSizeList.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
-						rlSizeList.setLayoutManager(mLayoutManager);
-						rlSizeList.setAdapter(mProductSizeAdapter);
-						WTextView tvProductSize = getViewDataBinding().incProductColor.textProductSize;
-						int height = maximumPopWindowHeight();
-						if (mSkuColorList.size() > 2) {
-							height = height / 4;
-						} else {
-							height = WindowManager.LayoutParams.WRAP_CONTENT;
-						}
-						mPSizeWindow = new PopupWindow(mIflateColor, tvProductSize.getWidth(), height, false);
-						mPSizeWindow.setTouchable(true);
-						mPSizeWindow.showAsDropDown(tvProductSize, -50, -180);
+						case FOOD_PRODUCT:
+							getGlobalState().setSelectedSKUId(createOtherSkus(product.productId));
+							openAddToListFragment(activity);
+							break;
+
+						default:
+							if (getViewModel().otherSkuList().size() > 1) addToShoppingList();
+							break;
 					}
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-				break;
+					break;
 
-			case R.id.llStoreFinder:
-				getGlobalState().saveButtonClicked(INDEX_STORE_FINDER);
-				scrolltoTop();
-				Activity activity = getBaseActivity();
-				if (activity != null) {
+				case R.id.linColour:
+					try {
+						cancelPopWindow(mPSizeWindow);
+						if (!mSizeSkuList.isEmpty()) {
+							LayoutInflater layoutInflater = (LayoutInflater) getBaseActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+							assert layoutInflater != null;
+							View mIflateSize = layoutInflater.inflate(R.layout.product_size_row, null);
+							ProductColorAdapter mProductColorAdapter = new ProductColorAdapter(mSizeSkuList, this);
+							RecyclerView rlSizeList = mIflateSize.findViewById(R.id.rclSize);
+							LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+							rlSizeList.setNestedScrollingEnabled(false);
+							rlSizeList.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
+							rlSizeList.setLayoutManager(mLayoutManager);
+							rlSizeList.setAdapter(mProductColorAdapter);
+							WTextView tvColor = getViewDataBinding().incProductColor.textSelectColour;
+							int height = maximumPopWindowHeight();
+							if (mSizeSkuList.size() > 2) {
+								height = height / 4;
+							} else {
+								height = WindowManager.LayoutParams.WRAP_CONTENT;
+							}
+							mPColourWindow = new PopupWindow(
+									mIflateSize,
+									tvColor.getWidth(), height, false);
+							mPColourWindow.setTouchable(true);
+							mPColourWindow.showAsDropDown(tvColor, -50, -180);
+						}
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+					break;
+
+				case R.id.linSize:
+					try {
+						cancelPopWindow(mPColourWindow);
+						if (!mSkuColorList.isEmpty()) {
+							LayoutInflater layoutInflater = (LayoutInflater) getBaseActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+							assert layoutInflater != null;
+							View mIflateColor = layoutInflater.inflate(R.layout.product_size_row, null);
+							ProductSizeAdapter mProductSizeAdapter = new ProductSizeAdapter(mSkuColorList, this);
+							RecyclerView rlSizeList = mIflateColor.findViewById(R.id.rclSize);
+							LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+							mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+							rlSizeList.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
+							rlSizeList.setLayoutManager(mLayoutManager);
+							rlSizeList.setAdapter(mProductSizeAdapter);
+							WTextView tvProductSize = getViewDataBinding().incProductColor.textProductSize;
+							int height = maximumPopWindowHeight();
+							if (mSkuColorList.size() > 2) {
+								height = height / 4;
+							} else {
+								height = WindowManager.LayoutParams.WRAP_CONTENT;
+							}
+							mPSizeWindow = new PopupWindow(mIflateColor, tvProductSize.getWidth(), height, false);
+							mPSizeWindow.setTouchable(true);
+							mPSizeWindow.showAsDropDown(tvProductSize, -50, -180);
+						}
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+					break;
+
+				case R.id.llStoreFinder:
+					getGlobalState().saveButtonClicked(INDEX_STORE_FINDER);
+					scrolltoTop();
 					if (Utils.isLocationEnabled(getActivity())) {
 						BottomNavigator bottomNavigator = getBottomNavigator();
 						bottomNavigator.getRuntimePermission().check_permission(bottomNavigator.getPermissionType(android.Manifest.permission.ACCESS_FINE_LOCATION), "Explain here why the app needs permissions", 1);
 					} else {
 						Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.LOCATION_OFF, "");
 					}
-				}
-				break;
+					break;
 
-			case R.id.llAddToCart:
-				getGlobalState().saveButtonClicked(INDEX_ADD_TO_CART);
-				apiIdentifyTokenValidation();
-				break;
+				case R.id.llAddToCart:
+					getGlobalState().saveButtonClicked(INDEX_ADD_TO_CART);
+					apiIdentifyTokenValidation();
+					break;
 
-			default:
-				break;
+				default:
+					break;
+			}
 		}
 	}
 
@@ -1639,6 +1643,11 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	}
 
 	@Override
+	public void shoppingListSessionTimedOut() {
+		setShoppingListTimeOut(true);
+	}
+
+	@Override
 	public void onToastButtonClicked(String currentState) {
 		if (mToastUtils != null) {
 			String state = mToastUtils.getCurrentState();
@@ -1650,6 +1659,14 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 				}
 			}
 		}
+	}
+
+	public void setShoppingListTimeOut(boolean shoppingListTimeOut) {
+		this.shoppingListTimeOut = shoppingListTimeOut;
+	}
+
+	public boolean getShoppingListTimeOut() {
+		return shoppingListTimeOut;
 	}
 }
 
