@@ -144,7 +144,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 									toastUtils.setActivity(getActivity());
 									toastUtils.setCurrentState(TAG);
 									String shoppingList = activity.getResources().getString(R.string.shopping_list);
-									toastUtils.setCartText(shoppingList);
+									toastUtils.setCartText((productState.getCount() > 1) ? shoppingList + "s" : shoppingList);
 									// Set Toast above button if add to list is visible
 									toastUtils.setPixel(mToggleAddToList ? rlAddToList.getHeight() * 2 - Utils.dp2px(activity, 8) : 0);
 									toastUtils.setView(rlAddToList);
@@ -682,6 +682,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 		cancelRequest(mPostAddToList);
 	}
 
+
 	@Override
 	public void onPause() {
 		super.onPause();
@@ -699,6 +700,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 			activity.registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
 		}
 	}
+
 
 	@Override
 	public void onConnectionChanged() {

@@ -93,6 +93,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	private int currentSection;
 	private ToastUtils mToastUtils;
 	private boolean closeFromListEnabled;
+	private int shoppingListItemCount;
 
 	@Override
 	public int getLayoutId() {
@@ -318,7 +319,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 						// show toast on search result fragment after add to list
 						// activates when user access pdp page from list section
 						if (closeFromListEnabled()) {
-							Utils.sendBus(new ProductState(SHOW_ADDED_TO_SHOPPING_LIST_TOAST));
+							Utils.sendBus(new ProductState(getShoppingListItemCount(), SHOW_ADDED_TO_SHOPPING_LIST_TOAST));
 							setCloseFromListEnabled(false);
 						}
 
@@ -818,8 +819,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	}
 
 	@Override
-	public void closeSlideUpPanelFromList() {
+	public void closeSlideUpPanelFromList(int count) {
 		setCloseFromListEnabled(true);
+		setShoppingListItemCount(count);
 		closeSlideUpPanel();
 	}
 
@@ -854,5 +856,13 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
 		closeSlideUpPanel();
 		Utils.sendBus(new ProductState(OPEN_GET_LIST_SCREEN));
+	}
+
+	public void setShoppingListItemCount(int shoppingListItemCount) {
+		this.shoppingListItemCount = shoppingListItemCount;
+	}
+
+	public int getShoppingListItemCount() {
+		return shoppingListItemCount;
 	}
 }

@@ -63,7 +63,6 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 	private CreateList mCreateList;
 	private PostAddList mPostCreateList;
 	private PostAddToList mPostAddToList;
-
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

@@ -242,7 +242,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 									case R.id.navigation_account:
 										setAddShopListPage(true);
 										closeSlideUpPanel(getView());
-										getBottomNavigator().closeSlideUpPanelFromList();
+										getBottomNavigator().closeSlideUpPanelFromList(productState.getCount());
 										break;
 
 									case R.id.navigation_product:

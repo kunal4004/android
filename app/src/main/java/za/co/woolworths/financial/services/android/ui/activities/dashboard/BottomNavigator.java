@@ -96,5 +96,5 @@ public interface BottomNavigator {
 
 	Toolbar toolbar();
 
-	void closeSlideUpPanelFromList();
+	void closeSlideUpPanelFromList(int count);
 }
