@@ -177,6 +177,13 @@
                                     android:textSize="10sp"
                                     android:visibility="gone"
                                     app:WTextView_font="medium_bold"/>
+                                <ImageView
+                                    android:id="@+id/myListRightArrow"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_centerVertical="true"
+                                    android:background="@drawable/ic_caret_black"/>
                             </RelativeLayout>
 
                             <RelativeLayout
@@ -203,6 +210,13 @@
                                     android:textSize="10sp"
                                     android:visibility="gone"
                                     app:WTextView_font="medium_bold"/>
+                                <ImageView
+                                    android:id="@+id/messagesRightArrow"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_centerVertical="true"
+                                    android:background="@drawable/ic_caret_black"/>
                             </RelativeLayout>
 
                             <RelativeLayout
