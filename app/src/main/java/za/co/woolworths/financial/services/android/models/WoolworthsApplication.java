@@ -39,6 +39,8 @@ public class WoolworthsApplication extends Application {
 	private static String rewardingLink;
 	private static String howToSaveLink;
 	private static String wrewardsTCLink;
+	private static String cartCheckoutLink;
+
 
 	private WGlobalState mWGlobalState;
 
@@ -359,5 +361,13 @@ public class WoolworthsApplication extends Application {
 
 	public static synchronized WoolworthsApplication getInstance() {
 		return mInstance;
+	}
+
+	public static void setCartCheckoutLink(String link) {
+		cartCheckoutLink = link;
+	}
+
+	public static String getCartCheckoutLink() {
+		return cartCheckoutLink;
 	}
 }

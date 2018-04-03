@@ -21,7 +21,6 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
-import com.daimajia.swipe.util.Attributes;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
@@ -30,6 +29,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -41,8 +41,11 @@ import za.co.woolworths.financial.services.android.models.dto.CommerceItem;
 import za.co.woolworths.financial.services.android.models.dto.CartResponse;
 import za.co.woolworths.financial.services.android.models.dto.ChangeQuantity;
 import za.co.woolworths.financial.services.android.models.dto.Data;
+import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
+import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse;
+import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
@@ -238,7 +241,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				Activity checkOutActivity = getActivity();
 				if (checkOutActivity != null) {
 					Intent openCheckOutActivity = new Intent(getContext(), CartCheckoutActivity.class);
-					startActivityForResult(openCheckOutActivity, CheckOutFragment.REQUESTCODE_CHECKOUT);
+					startActivityForResult(openCheckOutActivity, CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY);
 					checkOutActivity.overridePendingTransition(0, 0);
 				}
 				break;
@@ -298,11 +301,14 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	private void locationSelectionClicked() {
-		Intent openDeliveryLocationSelectionActivity = new Intent(this.getContext(), DeliveryLocationSelectionActivity.class);
-		openDeliveryLocationSelectionActivity.putExtra("suburbName", mSuburbName);
-		openDeliveryLocationSelectionActivity.putExtra("provinceName", mProvinceName);
-		startActivity(openDeliveryLocationSelectionActivity);
-		this.getActivity().overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
+		Activity activity = getActivity();
+		if (activity != null) {
+			Intent openDeliveryLocationSelectionActivity = new Intent(this.getContext(), DeliveryLocationSelectionActivity.class);
+			openDeliveryLocationSelectionActivity.putExtra("suburbName", mSuburbName);
+			openDeliveryLocationSelectionActivity.putExtra("provinceName", mProvinceName);
+			startActivityForResult(openDeliveryLocationSelectionActivity, CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY);
+			activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
+		}
 	}
 
 	public void bindCartData(CartResponse cartResponse) {
@@ -775,8 +781,19 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			cartResponse.orderSummary = data.orderSummary;
 			// set delivery location
 			if (!TextUtils.isEmpty(data.suburbName) && !TextUtils.isEmpty(data.provinceName)) {
+				Activity activity = getActivity();
 				mSuburbName = data.suburbName;
 				mProvinceName = data.provinceName;
+				if (activity != null) {
+					String suburbId = String.valueOf(data.suburbId);
+					Province province = new Province();
+					province.name = data.provinceName;
+					province.id = suburbId;
+					Suburb suburb = new Suburb();
+					suburb.name = data.suburbName;
+					suburb.id = suburbId;
+					Utils.saveRecentDeliveryLocation(new DeliveryLocationHistory(province, suburb), activity);
+				}
 				tvDeliveryLocation.setText(data.suburbName + ", " + data.provinceName);
 			}
 
@@ -809,12 +826,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == CheckOutFragment.REQUESTCODE_CHECKOUT) {
-			if (resultCode == Activity.RESULT_OK) {
-				// TODO: Confirm what message to show
-				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.INFO, "Thank you for shopping with us. Your payment has been received.");
-				loadShoppingCart(false).execute();
-			}
+		if (requestCode == CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY) {
+			loadShoppingCart(false).execute();
 		}
 	}
 
