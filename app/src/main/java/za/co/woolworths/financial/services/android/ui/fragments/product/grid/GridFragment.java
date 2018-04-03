@@ -27,6 +27,7 @@ import za.co.woolworths.financial.services.android.ui.activities.product.Product
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewListAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.Utils;
 
 public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel> implements GridNavigator, View.OnClickListener {
 
@@ -40,10 +41,8 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 	private ProgressBar mProgressLimitStart;
 	private GridLayoutManager mRecyclerViewLayoutManager;
 	private int lastVisibleItem;
-	private int previousTotal = 0;
-	private boolean loading = true;
-	private int visibleThreshold = 5;
-	int firstVisibleItem, visibleItemCount, totalItemCount;
+	int totalItemCount;
+	private boolean isLoading;
 
 	@Override
 	public GridViewModel getViewModel() {
@@ -177,63 +176,34 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 			@Override
 			public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
 				super.onScrolled(recyclerView, dx, dy);
-//				totalItemCount = mRecyclerViewLayoutManager.getItemCount();
-//				lastVisibleItem = mRecyclerViewLayoutManager.findLastVisibleItemPosition();
-
-				visibleItemCount = rcvProductList.getChildCount();
 				totalItemCount = mRecyclerViewLayoutManager.getItemCount();
-				firstVisibleItem = mRecyclerViewLayoutManager.findFirstVisibleItemPosition();
-
-				if (loading) {
-					if (totalItemCount > previousTotal) {
-						loading = false;
-						previousTotal = totalItemCount;
-					}
-				}
-
-				if (!loading && (totalItemCount - visibleItemCount)
-						<= (firstVisibleItem + visibleThreshold)) {
-					// End has been reached
-
-//					Log.e("isLatPage", "lastPage " + getViewModel().isLastPage());
-//					if (getViewModel().isLastPage()) return;
-//					if (!listContainFooter()) {
-//						ProductList footerItem = new ProductList();
-//						footerItem.viewTypeFooter = true;
-//						mProductList.add(footerItem);
-//						mProductAdapter.notifyItemInserted(mProductList.size() - 1);
-//					}
-					//	startProductRequest();
-					loading = true;
-				}
-
-				//loadData(dy);
+				lastVisibleItem = mRecyclerViewLayoutManager.findLastVisibleItemPosition();
+				loadData();
 			}
 		});
 	}
 
-//	private void loadData(int dy) {
-//		if (isLoading && !getViewModel().isLastPage()) {
-//			if (dy > 0) { //check for scroll down
-//				if (totalItemCount <= (lastVisibleItem + visibleThreshold)) {
-//					int Total = getViewModel().getNumItemsInTotal() + Utils.PAGE_SIZE;
-//					int start = mProductList.size();
-//					int end = start + Utils.PAGE_SIZE;
-//					isLoading = (Total > end);
-//					if (!isLoading) {
-//						return;
-//					}
-//					if (!listContainFooter()) {
-//						ProductList footerItem = new ProductList();
-//						footerItem.viewTypeFooter = true;
-//						mProductList.add(footerItem);
-//						mProductAdapter.notifyItemInserted(mProductList.size() - 1);
-//					}
-//					startProductRequest();
-//				}
-//			}
-//		}
-//	}
+	private void loadData() {
+		int visibleThreshold = 5;
+		if (!isLoading && totalItemCount <= (lastVisibleItem + visibleThreshold)) {
+			if (getViewModel().productIsLoading())
+				return;
+			int Total = getViewModel().getNumItemsInTotal() + Utils.PAGE_SIZE;
+			int start = mProductList.size();
+			int end = start + Utils.PAGE_SIZE;
+			isLoading = (Total < end);
+			if (isLoading) {
+				return;
+			}
+			if (!listContainFooter()) {
+				ProductList footerItem = new ProductList();
+				footerItem.viewTypeFooter = true;
+				mProductList.add(footerItem);
+				mProductAdapter.notifyItemInserted(mProductList.size() - 1);
+			}
+			startProductRequest();
+		}
+	}
 
 	private boolean listContainFooter() {
 		try {

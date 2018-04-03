@@ -861,4 +861,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		HttpAsyncTask<String, String, ShoppingCartResponse> removeCartItem = removeCartItem(mCommerceItem);
 		removeCartItem.execute();
 	}
+
+
 }

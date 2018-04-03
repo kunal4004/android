@@ -21,7 +21,6 @@ import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
-import za.co.woolworths.financial.services.android.models.dto.AddToListResponse;
 import za.co.woolworths.financial.services.android.models.dto.AuthoriseLoanRequest;
 import za.co.woolworths.financial.services.android.models.dto.AuthoriseLoanResponse;
 import za.co.woolworths.financial.services.android.models.dto.BankAccountTypes;
@@ -51,7 +50,6 @@ import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.PromotionsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProvincesResponse;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
-import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbRequest;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse;
@@ -183,7 +181,7 @@ public class WfsApi {
 		return mApiInterface.issueLoan(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), issueLoanRequest);
 	}
 
-	public AddToListResponse addToList(List<AddToListRequest> addToListRequest, String listId) {
+	public ShoppingListItemsResponse addToList(List<AddToListRequest> addToListRequest, String listId) {
 		return mApiInterface.addToList(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), listId, addToListRequest);
 	}
 
@@ -311,7 +309,7 @@ public class WfsApi {
 		return mApiInterface.getShoppingLists(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken());
 	}
 
-	public CreateListResponse createList(CreateList listName) {
+	public ShoppingListsResponse createList(CreateList listName) {
 		return mApiInterface.createList(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), listName);
 	}
 

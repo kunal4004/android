@@ -11,9 +11,14 @@ public class ProductState {
 	public static final String CANCEL_CALL = "CANCEL_CALL";
 	public static final String OPEN_ADD_TO_SHOPPING_LIST_VIEW = "OPEN_ADD_TO_SHOPPING_LIST_VIEW";
 	public static final String CLOSE_VIEW = "CLOSE_VIEW";
+	public static final String INDEX_SEARCH_FROM_LIST = "INDEX_SEARCH_FROM_LIST";
+	public static final String CLOSE_PDP_FROM_ADD_TO_LIST = "CLOSE_PDP_FROM_ADD_TO_LIST";
+	public static final String SHOW_ADDED_TO_SHOPPING_LIST_TOAST = "SHOW_ADDED_TO_SHOPPING_LIST_TOAST";
+	public static final String OPEN_GET_LIST_SCREEN = "OPEN_GET_LIST_SCREEN";
 
 	private String state;
 	private int quantity;
+	private int count;
 
 	public ProductState(String state) {
 		this.state = state;
@@ -24,11 +29,20 @@ public class ProductState {
 		this.quantity = quantity;
 	}
 
+	public ProductState(int count, String state) {
+		this.state = state;
+		this.count = count;
+	}
+
 	public String getState() {
 		return state;
 	}
 
 	public int getQuantity() {
 		return quantity;
+	}
+
+	public int getCount() {
+		return count;
 	}
 }

@@ -28,6 +28,7 @@ public class GridViewModel extends BaseViewModel<GridNavigator> {
 	private boolean mIsLoading = false;
 	private boolean mIsLastPage = false;
 	private int mLoadStatus;
+	private boolean productIsLoading = false;
 
 	public void setLoadStatus(int status) {
 		this.mLoadStatus = status;
@@ -98,6 +99,7 @@ public class GridViewModel extends BaseViewModel<GridNavigator> {
 
 	public LoadProductRequest loadProduct(final Context context, final LoadProduct loadProduct) {
 		getNavigator().onLoadStart(getLoadMoreData());
+		setProductIsLoading(true);
 		return new LoadProductRequest(context, loadProduct, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
@@ -121,6 +123,7 @@ public class GridViewModel extends BaseViewModel<GridNavigator> {
 						}
 						break;
 				}
+				setProductIsLoading(false);
 			}
 
 			@Override
@@ -133,6 +136,7 @@ public class GridViewModel extends BaseViewModel<GridNavigator> {
 							public void run() {
 								getNavigator().failureResponseHandler(e);
 								getNavigator().onLoadComplete(getLoadMoreData());
+								setProductIsLoading(false);
 							}
 						});
 					}
@@ -179,6 +183,7 @@ public class GridViewModel extends BaseViewModel<GridNavigator> {
 
 	public SearchProductRequest searchProduct(final Context context, final LoadProduct loadProduct) {
 		getNavigator().onLoadStart(getLoadMoreData());
+		setProductIsLoading(true);
 		return new SearchProductRequest(context, loadProduct, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
@@ -202,6 +207,7 @@ public class GridViewModel extends BaseViewModel<GridNavigator> {
 						}
 						break;
 				}
+				setProductIsLoading(false);
 			}
 
 			@Override
@@ -213,6 +219,7 @@ public class GridViewModel extends BaseViewModel<GridNavigator> {
 							@Override
 							public void run() {
 								getNavigator().failureResponseHandler(e);
+								setProductIsLoading(false);
 								getNavigator().onLoadComplete(getLoadMoreData());
 							}
 						});
@@ -220,5 +227,13 @@ public class GridViewModel extends BaseViewModel<GridNavigator> {
 				}
 			}
 		});
+	}
+
+	public void setProductIsLoading(boolean productIsLoading) {
+		this.productIsLoading = productIsLoading;
+	}
+
+	public boolean productIsLoading() {
+		return productIsLoading;
 	}
 }

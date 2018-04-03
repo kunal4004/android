@@ -38,23 +38,7 @@ public class ShoppingListItemsViewModel extends BaseViewModel<ShoppingListItemsN
 
 			@Override
 			public void onFailure(String e) {
-
-			}
-		},listId);
-	}
-
-	public DeleteShoppingList deleteShoppingList(String listId)
-	{
-		return new DeleteShoppingList(new OnEventListener() {
-			@Override
-			public void onSuccess(Object object) {
-				ShoppingListsResponse shoppingListsResponse = (ShoppingListsResponse) object;
-				getNavigator().onDeleteShoppingList(shoppingListsResponse);
-			}
-
-			@Override
-			public void onFailure(String e) {
-
+				getNavigator().onGetListFailure(e);
 			}
 		},listId);
 	}
@@ -70,7 +54,7 @@ public class ShoppingListItemsViewModel extends BaseViewModel<ShoppingListItemsN
 
 			@Override
 			public void onFailure(String e) {
-
+				getNavigator().onDeleteItemFailed();
 			}
 		},listId,id,productId,catalogRefId);
 	}

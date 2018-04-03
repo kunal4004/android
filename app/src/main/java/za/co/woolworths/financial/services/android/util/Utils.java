@@ -96,6 +96,7 @@ import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -333,6 +334,15 @@ public class Utils {
 		return response;
 	}
 
+	public static <T> List<T> toList(String json, Class<T> clazz) {
+		if (null == json) {
+			return null;
+		}
+		Gson gson = new Gson();
+		return gson.fromJson(json, new TypeToken<T>(){}.getType());
+	}
+
+
 	public static int getToolbarHeight(Context context) {
 		final TypedArray styledAttributes = context.getTheme().obtainStyledAttributes(
 				new int[]{R.attr.actionBarSize});
@@ -456,7 +466,7 @@ public class Utils {
 		Bundle args = new Bundle();
 		args.putSerializable("key", key);
 		args.putString("description", description);
-		args.putBoolean("closeView", closeView);
+		args.putBoolean("closeSlideUpPanel", closeView);
 		openMsg.putExtras(args);
 		context.startActivity(openMsg);
 		((AppCompatActivity) context).overridePendingTransition(0, 0);
@@ -685,7 +695,7 @@ public class Utils {
 		}
 	}
 
-	public static void showView(WTextView view, String messageSummary) {
+	private static void showView(WTextView view, String messageSummary) {
 		view.setVisibility(View.VISIBLE);
 		view.setText(messageSummary);
 	}
@@ -1168,5 +1178,13 @@ public class Utils {
 				}
 			}
 		});
+	}
+
+	public static String toJson(Object jsonObject) {
+		return new Gson().toJson(jsonObject);
+	}
+
+	public static String getExternalImageRef() {
+		return "https://images.woolworthsstatic.co.za/";
 	}
 }

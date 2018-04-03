@@ -36,7 +36,6 @@ import static za.co.woolworths.financial.services.android.models.service.event.P
 
 public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHolder> {
 
-
 	@Override
 	public int getSwipeLayoutResourceId(int position) {
 		return R.id.swipe;
@@ -372,7 +371,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 			super(view);
 			tvTitle = view.findViewById(R.id.tvTitle);
 			tvColorSize = view.findViewById(R.id.tvSize);
-			quantity = view.findViewById(R.id.quantity);
+			quantity = view.findViewById(R.id.tvQuantity);
 			price = view.findViewById(R.id.price);
 			btnDeleteRow = view.findViewById(R.id.btnDeleteRow);
 			productImage = view.findViewById(R.id.cartProductImage);
