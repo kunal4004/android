@@ -239,6 +239,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 					ShoppingListsResponse createListResponse = (ShoppingListsResponse) object;
 					switch (createListResponse.httpCode) {
 						case 200:
+							addToListRequests = new ArrayList<>();
 							List<ShoppingList> itemsInList = createListResponse.lists;
 							if (itemsInList != null) {
 								ShoppingList shoppingList = itemsInList.get(0);
