@@ -782,6 +782,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	@Override
 	public void onMessageResponse(MessageResponse messageResponse) {
 		if (messageResponse.unreadCount > 0) {
+			hideView(getViewDataBinding().messagesRightArrow);
 			showView(messageCounter);
 			int unreadCount = messageResponse.unreadCount;
 			if (TextUtils.isEmpty(String.valueOf(unreadCount)))
@@ -793,6 +794,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			Utils.removeBadgeCounter(getActivity());
 			getBottomNavigator().addBadge(INDEX_ACCOUNT, 0);
 			hideView(messageCounter);
+			showView(getViewDataBinding().messagesRightArrow);
 		}
 	}
 
@@ -800,10 +802,12 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	public void onShoppingListsResponse(ShoppingListsResponse shoppingListsResponse) {
 		this.shoppingListsResponse = shoppingListsResponse;
 		if (shoppingListsResponse.lists != null && shoppingListsResponse.lists.size() > 0) {
+			hideView(getViewDataBinding().myListRightArrow);
 			showView(getViewDataBinding().listsCounter);
 			getViewDataBinding().listsCounter.setText(String.valueOf(shoppingListsResponse.lists.size()));
 		} else {
 			hideView(getViewDataBinding().listsCounter);
+			showView(getViewDataBinding().myListRightArrow);
 		}
 	}
 
