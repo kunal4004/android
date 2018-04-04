@@ -735,7 +735,8 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 	}
 
 	private void finishActivity() {
-		mWGlobalState.setNewSTSParams("");
+		SessionUtilities.getInstance().setSTSParameters(null);
+
 		if (!viewWasClicked) { // prevent more than one click
 			viewWasClicked = true;
 			TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
@@ -1033,9 +1034,8 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 				@Override
 				public void onAnimationEnd(Animation animation) {
-					mWGlobalState.setNewSTSParams(WGlobalState.EMPTY_FIELD);
 					mWGlobalState.setOnBackPressed(false);
-					mWGlobalState.setNewSTSParams("");
+					SessionUtilities.getInstance().setSTSParameters(null);
 					dismissLayout();
 				}
 			});

@@ -9,7 +9,6 @@ import com.awfs.coordination.R;
 import java.util.HashMap;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
@@ -41,8 +40,8 @@ public class ScreenManager {
 	public static void presentExpiredTokenSSOSignIn(Activity activity, String newSTSParams) {
 		WoolworthsApplication woolworthsApplication = (WoolworthsApplication) activity
 				.getApplication();
-		WGlobalState wGlobalState = woolworthsApplication.getWGlobalState();
-		wGlobalState.setNewSTSParams(newSTSParams);
+		SessionUtilities.getInstance().setSTSParameters(newSTSParams);
+
 		Intent intent = new Intent(activity, SSOActivity.class);
 		intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue());
 		intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue());

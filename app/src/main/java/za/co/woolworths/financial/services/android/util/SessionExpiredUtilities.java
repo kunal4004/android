@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
@@ -17,7 +16,7 @@ public enum SessionExpiredUtilities {
 		Intent openMsg = new Intent(activity, CustomPopUpWindow.class);
 		Bundle args = new Bundle();
 		args.putSerializable("key", CustomPopUpWindow.MODAL_LAYOUT.SESSION_EXPIRED);
-		args.putString("description", getGlobalState(activity).getNewSTSParams());
+		args.putString("description", SessionUtilities.getInstance().getSTSParameters());
 		openMsg.putExtras(args);
 		activity.startActivity(openMsg);
 		activity.overridePendingTransition(0, 0);

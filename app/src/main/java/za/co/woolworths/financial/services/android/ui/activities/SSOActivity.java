@@ -408,8 +408,8 @@ public class SSOActivity extends WebViewActivity {
 						}
 
 						try {
-							if (!TextUtils.isEmpty(mGlobalState.getNewSTSParams())) {
-								mGlobalState.setNewSTSParams("");
+							if (!TextUtils.isEmpty(SessionUtilities.getInstance().getSTSParameters())) {
+								SessionUtilities.getInstance().setSTSParameters(null);
 								clearHistory();
 							} else {
 								closeActivity();

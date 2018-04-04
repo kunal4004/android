@@ -46,6 +46,13 @@ public class ApiRequestDao extends BaseDao {
             result = PersistenceLayer.getInstance().executeReturnableQuery(query, new String[]{
                     _endpoint, ("" + _requestType), _headers, _parameters
             });
+
+            if (result.size() == 0)
+                //throw an exception so that empty
+                //cache is handled i.e. new record is created.
+                throw new CacheEmptyException("One or more ApiRequest(s) matching your parameters do not exist.");
+
+
         } catch (Exception e) {
             //record does not exist.
             this.endpoint = _endpoint;
@@ -53,7 +60,7 @@ public class ApiRequestDao extends BaseDao {
             this.headers = _headers;
             this.parameters = _parameters;
 
-            Log.e(TAG, e.getMessage());
+            Log.d(TAG, e.getMessage());
         }
 
         for (Map.Entry<String, String> entry : result.entrySet()) {
@@ -99,5 +106,11 @@ public class ApiRequestDao extends BaseDao {
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
+    }
+}
+
+class CacheEmptyException extends Exception {
+    public CacheEmptyException(String message) {
+        super(message);
     }
 }

@@ -89,4 +89,11 @@ public class SessionUtilities {
 		SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.STS_PARAMS);
 		return sessionDao.value;
 	}
+
+	public void setSTSParameters(String stsParameters){
+		//retain the session state and only set the
+		//sts params to null.
+		SessionDao.SESSION_STATE sessionState = (isUserAuthenticated() ? SessionDao.SESSION_STATE.ACTIVE : SessionDao.SESSION_STATE.INACTIVE);
+		setSessionState(sessionState, null);
+	}
 }

@@ -20,7 +20,7 @@ public class WGlobalState {
 
 	private boolean onBackPressed,
 			colorWasPopup, sizeWasPopup;
-	private String newSTSParams, selectedSKUId, creditLimit;
+	private String selectedSKUId, creditLimit;
 	private List<StoreDetails> storeDetailsArrayList;
 	private ArrayList<OtherSkus> colourSKUArrayList;
 	private OtherSkus colorPopUpValue, sizePopUpValue;
@@ -32,14 +32,6 @@ public class WGlobalState {
 
 	public void setOnBackPressed(boolean pOnBackPressed) {
 		onBackPressed = pOnBackPressed;
-	}
-
-	public String getNewSTSParams() {
-		return newSTSParams;
-	}
-
-	public void setNewSTSParams(String pNewSTSParams) {
-		newSTSParams = pNewSTSParams;
 	}
 
 	public boolean clothingIsEnabled() {
