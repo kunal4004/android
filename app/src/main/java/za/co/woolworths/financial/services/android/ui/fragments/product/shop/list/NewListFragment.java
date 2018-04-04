@@ -28,7 +28,6 @@ import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
 import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-import static android.content.Context.INPUT_METHOD_SERVICE;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
@@ -193,7 +192,7 @@ public class NewListFragment extends BaseFragment<NewListFragmentBinding, NewLis
 	private void postAddList() {
 		WLoanEditTextView etNewList = getViewDataBinding().etNewList;
 		loadView(true);
-		mPostAddList = getViewModel().postCreateList(new CreateList(etNewList.getText().toString()));
+		mPostAddList = getViewModel().postCreateList(new CreateList(etNewList.getText().toString(),null));
 		mPostAddList.execute();
 	}
 
@@ -212,7 +211,6 @@ public class NewListFragment extends BaseFragment<NewListFragmentBinding, NewLis
 	protected void showSoftwareKeyboard(boolean showKeyboard){
 		final Activity activity = getActivity();
 		final InputMethodManager inputManager = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-
 		inputManager.hideSoftInputFromWindow(getViewDataBinding().etNewList.getWindowToken(), showKeyboard ? InputMethodManager.SHOW_FORCED : InputMethodManager.HIDE_NOT_ALWAYS);
 	}
 }

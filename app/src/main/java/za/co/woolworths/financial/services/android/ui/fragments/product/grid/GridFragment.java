@@ -115,28 +115,25 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 									}
 								}
 							}
-							if (newList != null) {
-								int shoppingListSize = newList.size();
-								if (shoppingListSize == 1) {
-									getBottomNavigator().hideBottomNavigationMenu();
-									ShoppingList shop = newList.get(0);
-									Bundle bundle = new Bundle();
-									bundle.putString("listId", shop.listId);
-									bundle.putString("listName", shop.listName);
-									ShoppingListItemsFragment shoppingListItemsFragment = new ShoppingListItemsFragment();
-									shoppingListItemsFragment.setArguments(bundle);
-									pushFragmentSlideUp(shoppingListItemsFragment);
-								} else if (shoppingListSize > 1) {
-									Bundle bundle = new Bundle();
-									ShoppingListsResponse shoppingListsResponse = new ShoppingListsResponse();
-									if (shoppingListsResponse != null) {
-										bundle.putString("ShoppingList", Utils.objectToJson(shoppingListsResponse));
-										ShoppingListFragment shoppingListFragment = new ShoppingListFragment();
-										shoppingListFragment.setArguments(bundle);
-										pushFragmentSlideUp(shoppingListFragment);
-									}
-								}
+							int shoppingListSize = newList.size();
+							if (shoppingListSize == 1) {
+								getBottomNavigator().hideBottomNavigationMenu();
+								ShoppingList shop = newList.get(0);
+								Bundle bundle = new Bundle();
+								bundle.putString("listId", shop.listId);
+								bundle.putString("listName", shop.listName);
+								ShoppingListItemsFragment shoppingListItemsFragment = new ShoppingListItemsFragment();
+								shoppingListItemsFragment.setArguments(bundle);
+								pushFragmentSlideUp(shoppingListItemsFragment);
+							} else if (shoppingListSize > 1) {
+								Bundle bundle = new Bundle();
+								ShoppingListsResponse shoppingListsResponse = new ShoppingListsResponse();
+								bundle.putString("ShoppingList", Utils.objectToJson(shoppingListsResponse));
+								ShoppingListFragment shoppingListFragment = new ShoppingListFragment();
+								shoppingListFragment.setArguments(bundle);
+								pushFragmentSlideUp(shoppingListFragment);
 							}
+
 							break;
 
 						default:
