@@ -94,6 +94,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	private ToastUtils mToastUtils;
 	private boolean closeFromListEnabled;
 	private int shoppingListItemCount;
+	private boolean singleOrMultipleItemSelector;
 
 	@Override
 	public int getLayoutId() {
@@ -323,6 +324,11 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 							setCloseFromListEnabled(false);
 						}
 
+						// open single list or multiple list view on collapsed
+						if (singleOrMultipleItemSelector()) {
+							Utils.sendBus(new ProductState(OPEN_GET_LIST_SCREEN));
+							setSingleOrMultipleItemSelector(false);
+						}
 						break;
 
 					case EXPANDED:
@@ -413,7 +419,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	public void pushFragmentSlideUp(Fragment fragment) {
 		if (mNavController != null) {
 			FragNavTransactionOptions ft = new FragNavTransactionOptions.Builder()
-					.customAnimations(R.anim.stay, R.anim.slide_up_anim)
+					.customAnimations(R.anim.slide_up_anim, R.anim.stay)
 					.allowStateLoss(true)
 					.build();
 
@@ -852,10 +858,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		return closeFromListEnabled;
 	}
 
-	public void navigateToList() {
-		getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
+	public void navigateToList(int listItemCount) {
+		setSingleOrMultipleItemSelector(true);
 		closeSlideUpPanel();
-		Utils.sendBus(new ProductState(OPEN_GET_LIST_SCREEN));
 	}
 
 	public void setShoppingListItemCount(int shoppingListItemCount) {
@@ -864,5 +869,13 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	public int getShoppingListItemCount() {
 		return shoppingListItemCount;
+	}
+
+	public void setSingleOrMultipleItemSelector(boolean singleOrMultipleItemSelector) {
+		this.singleOrMultipleItemSelector = singleOrMultipleItemSelector;
+	}
+
+	public boolean singleOrMultipleItemSelector() {
+		return singleOrMultipleItemSelector;
 	}
 }

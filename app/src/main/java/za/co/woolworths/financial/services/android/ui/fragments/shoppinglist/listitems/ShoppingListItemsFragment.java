@@ -446,7 +446,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 
 	@Override
 	public void onEmptyCartRetry() {
-		//TODO:: should navigate to product landing page???
 		openProductSearchActivity();
 	}
 
@@ -541,4 +540,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	public void onToastButtonClicked(String currentState) {
 
 	}
+
+
 }

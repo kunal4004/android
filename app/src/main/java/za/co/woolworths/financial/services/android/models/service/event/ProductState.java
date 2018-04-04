@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.models.service.event;
 
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
+
 public class ProductState {
 
 	public static final String POST_ADD_ITEM_TO_CART = "POST_ADD_ITEM_TO_CART";

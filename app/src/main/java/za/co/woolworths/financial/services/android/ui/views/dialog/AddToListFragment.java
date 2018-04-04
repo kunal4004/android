@@ -164,12 +164,19 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 
 			case R.id.btnCancel:
 				String label = mBtnCancel.getText().toString();
-				if (label.toLowerCase().equalsIgnoreCase("ok")) {
-					postAddToList(getAddToListRequests());
-					return;
-				}
 				Activity act = getActivity();
 				if (act != null) {
+					if (label.toLowerCase().equalsIgnoreCase("ok")) {
+						List<AddToListRequest> addToLists = getAddToListRequests();
+						WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
+						if (woolworthsApplication != null) {
+							WGlobalState globalState = woolworthsApplication.getWGlobalState();
+							if (mShoppingListAdapter != null)
+								globalState.setShoppingListRequest(mShoppingListAdapter.getList());
+						}
+						postAddToList(addToLists);
+						return;
+					}
 					((CustomPopUpWindow) act).startExitAnimation();
 				}
 				break;

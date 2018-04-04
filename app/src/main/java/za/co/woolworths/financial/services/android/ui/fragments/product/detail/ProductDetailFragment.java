@@ -80,6 +80,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.ProductColorAdapt
 import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ProductUtils;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.CancelableCallback;
@@ -147,6 +148,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	private boolean shoppingListLoadFailure = false;
 	private ToastUtils mToastUtils;
 	private boolean shoppingListTimeOut;
+	private int mNumberOfListSelected = 0;
 
 
 	@Override
@@ -244,13 +246,13 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 										closeSlideUpPanel(getView());
 										getBottomNavigator().closeSlideUpPanelFromList(productState.getCount());
 										break;
-
 									case R.id.navigation_product:
 										mToastUtils.setActivity(activity);
 										mToastUtils.setCurrentState(TAG);
 										String shoppingList = getString(R.string.shopping_list);
+										mNumberOfListSelected = productState.getCount();
 										// shopping list vs shopping lists
-										mToastUtils.setCartText((productState.getCount() > 1) ? shoppingList + "s" : shoppingList);
+										mToastUtils.setCartText((mNumberOfListSelected > 1) ? shoppingList + "s" : shoppingList);
 										mToastUtils.setPixel(getViewDataBinding().llStoreFinder.getHeight() * 2);
 										mToastUtils.setView(getViewDataBinding().llStoreFinder);
 										mToastUtils.setMessage(R.string.added_to);
@@ -1655,10 +1657,11 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 				Activity activity = getActivity();
 				if (activity != null) {
 					BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
-					bottomNavigationActivity.navigateToList();
+					bottomNavigationActivity.navigateToList(mNumberOfListSelected);
 				}
 			}
 		}
+
 	}
 
 	public void setShoppingListTimeOut(boolean shoppingListTimeOut) {

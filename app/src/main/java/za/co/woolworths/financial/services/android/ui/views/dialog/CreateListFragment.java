@@ -62,7 +62,6 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 	private ErrorHandlerView mErrorHandlerView;
 	private CreateList mCreateList;
 	private PostAddList mPostCreateList;
-	private PostAddToList mPostAddToList;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -90,9 +89,9 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 					? new ArrayList<AddToListRequest>()
 					: Utils.toList(addToListItems, AddToListRequest.class);
 			initUI(view);
-			displayKeyboard(view, activity);
 			mErrorHandlerView = new ErrorHandlerView(activity);
 			KeyboardUtil.showKeyboard(activity);
+			displayKeyboard(view, activity);
 		}
 	}
 
@@ -352,8 +351,6 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 		super.onDetach();
 		cancelRequest(mPostCreateList);
 		cancelRequest(mAddToList);
-		cancelRequest(mPostAddToList);
-
 	}
 
 	private void cancelRequest(HttpAsyncTask httpAsyncTask) {

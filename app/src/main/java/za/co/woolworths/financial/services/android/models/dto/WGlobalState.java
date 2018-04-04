@@ -26,6 +26,7 @@ public class WGlobalState {
 	private OtherSkus colorPopUpValue, sizePopUpValue;
 	private CLIOfferDecision mDeclineDecision;
 	private OtherSkus selectedSKUId;
+	private List<ShoppingList> shoppingListRequest;
 
 	public boolean getOnBackPressed() {
 		return onBackPressed;
@@ -191,5 +192,13 @@ public class WGlobalState {
 
 	public int getNavigateFromQuantity() {
 		return navigateFromQuantity;
+	}
+
+	public List<ShoppingList> getShoppingListRequest() {
+		return shoppingListRequest;
+	}
+
+	public void setShoppingListRequest(List<ShoppingList> shoppingListRequest) {
+		this.shoppingListRequest = shoppingListRequest;
 	}
 }
