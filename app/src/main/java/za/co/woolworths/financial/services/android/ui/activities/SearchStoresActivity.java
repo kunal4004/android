@@ -358,8 +358,7 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
 		List<SearchHistory> histories = null;
 		histories = new ArrayList<>();
 		histories = getRecentSearch();
-		SessionDao sessionDao = new SessionDao(SearchStoresActivity.this);
-		sessionDao.key = SessionDao.KEY.STORES_USER_SEARCH;
+		SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.STORES_USER_SEARCH);
 		Gson gson = new Gson();
 		boolean isExist = false;
 		if (histories == null) {
@@ -399,7 +398,7 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
 	public List<SearchHistory> getRecentSearch() {
 		List<SearchHistory> historyList = null;
 		try {
-			SessionDao sessionDao = new SessionDao(SearchStoresActivity.this, SessionDao.KEY.STORES_USER_SEARCH).get();
+			SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.STORES_USER_SEARCH);
 			if (sessionDao.value == null) {
 				historyList = new ArrayList<>();
 			} else {

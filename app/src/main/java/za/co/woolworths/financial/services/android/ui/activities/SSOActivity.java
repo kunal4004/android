@@ -1,12 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.annotation.TargetApi;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
@@ -17,7 +14,6 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.webkit.SslErrorHandler;
 import android.webkit.ValueCallback;
 import android.webkit.WebBackForwardList;
@@ -27,7 +23,6 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
@@ -53,6 +48,7 @@ import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.SSORequiredParameter;
+import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.DETERMINE_LOCATION_POPUP;
@@ -391,15 +387,16 @@ public class SSOActivity extends WebViewActivity {
 							String jwt = list.get(1);
 							intent.putExtra(SSOActivity.TAG_JWT, jwt);
 							//Save JWT
-							SessionDao sessionDao = new SessionDao(SSOActivity.this, SessionDao.KEY.USER_TOKEN);
+							SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.USER_TOKEN);
 							sessionDao.value = jwt;
 							try {
 								sessionDao.save();
 							} catch (Exception e) {
 								Log.e(TAG, e.getMessage());
 							}
+
 							//Trigger Firebase Tag.
-							JWTDecodedModel jwtDecodedModel = Utils.getJWTDecoded(getApplicationContext());
+							JWTDecodedModel jwtDecodedModel = SessionUtilities.getInstance().getJwt();
 							Map<String, String> arguments = new HashMap<>();
 							arguments.put("c2_id", (jwtDecodedModel.C2Id != null) ? jwtDecodedModel.C2Id : "");
 							Utils.triggerFireBaseEvents(getApplicationContext(), FirebaseAnalytics.Event.LOGIN, arguments);

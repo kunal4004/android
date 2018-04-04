@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.MyAccountsFragmentBinding;
 
@@ -48,10 +49,10 @@ import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.UserDetailActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountOverViewPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.ShoppingListFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.main_list.ContactUsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.faq.FAQFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.ShoppingListFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -62,8 +63,6 @@ import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
-
-import com.awfs.coordination.BR;
 
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_ACCOUNT;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_REWARD;
@@ -163,9 +162,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			hideToolbar();
 			setToolbarBackgroundColor(R.color.white);
 			Activity activity = getActivity();
-			if (activity != null) {
-				mSessionManager = new SessionManager(activity);
-			}
+
 			woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
 			openMessageActivity = view.findViewById(R.id.openMessageActivity);
 			openShoppingList = view.findViewById(R.id.openShoppingList);
@@ -239,11 +236,9 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			public void accept(Object object) throws Exception {
 				Activity activity = getActivity();
 				if (activity != null) {
-					if (object instanceof SessionManager) {
-						SessionManager sessionManager = (SessionManager) object;
-						if (sessionManager.getState() == ACCOUNT_SESSION_EXPIRED) {
-							onAccSessionExpired(activity);
-						}
+
+					if (!SessionUtilities.getInstance().isUserAuthenticated()){
+						onAccSessionExpired(activity);
 					}
 				}
 			}

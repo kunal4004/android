@@ -9,7 +9,6 @@ import com.awfs.coordination.R;
 import java.util.HashMap;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
@@ -84,8 +83,7 @@ public class ScreenManager {
 	public static void presentSSOLogout(Activity activity) {
 		HashMap<String, String> params = new HashMap<String, String>();
 		try {
-			SessionDao sessionDao = new SessionDao(activity, SessionDao.KEY.USER_TOKEN).get();
-			params.put("id_token_hint", sessionDao.value);
+			params.put("id_token_hint", SessionUtilities.getInstance().getSessionToken());
 			params.put("post_logout_redirect_uri", WoolworthsApplication.getSsoRedirectURILogout());
 		} catch (Exception e) {
 			e.printStackTrace();

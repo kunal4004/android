@@ -34,6 +34,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 
 import io.reactivex.functions.Consumer;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
@@ -58,6 +59,7 @@ import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
 import za.co.woolworths.financial.services.android.util.PermissionUtils;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
+import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.nav.FragNavController;
 import za.co.woolworths.financial.services.android.util.nav.FragNavSwitchController;
@@ -68,7 +70,6 @@ import static za.co.woolworths.financial.services.android.models.service.event.B
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.MESSAGE_COUNT;
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT;
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.REWARD_COUNT;
-import static za.co.woolworths.financial.services.android.util.SessionManager.RELOAD_REWARD;
 
 public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigationBinding, BottomNavigationViewModel> implements BottomNavigator, FragNavController.TransactionListener, FragNavController.RootFragmentListener, PermissionResultCallback {
 
@@ -426,7 +427,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 				case R.id.navigation_reward:
 					currentSection = R.id.navigation_reward;
-					Utils.sendBus(new SessionManager(RELOAD_REWARD));
 					setToolbarBackgroundColor(R.color.white);
 					switchTab(INDEX_REWARD);
 					return true;
@@ -646,6 +646,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
+		//TODO: Explain where this is coming from.
+
 		// navigate to product section
 		if (requestCode == OPEN_CART_REQUEST) {
 			switch (resultCode) {
@@ -658,9 +660,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					badgeCount();
 					switch (currentSection) {
 						case R.id.navigation_cart:
-							SessionManager sessionManager = new SessionManager(BottomNavigationActivity.this);
-							sessionManager.setAccountHasExpired(false);
-							sessionManager.setRewardSignInState(true);
+							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.ACTIVE);
 							Intent openCartActivity = new Intent(this, CartActivity.class);
 							startActivityForResult(openCartActivity, OPEN_CART_REQUEST);
 							overridePendingTransition(0, 0);
@@ -680,9 +680,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			badgeCount();
 			switch (currentSection) {
 				case R.id.navigation_cart:
-					SessionManager sessionManager = new SessionManager(BottomNavigationActivity.this);
-					sessionManager.setAccountHasExpired(false);
-					sessionManager.setRewardSignInState(true);
+					SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.ACTIVE);
 					Intent openCartActivity = new Intent(this, CartActivity.class);
 					startActivityForResult(openCartActivity, OPEN_CART_REQUEST);
 					overridePendingTransition(0, 0);
@@ -720,7 +718,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void identifyTokenValidationAPI() {
-		if (isEmpty(Utils.getSessionToken(BottomNavigationActivity.this))) {
+		if (!SessionUtilities.getInstance().isUserAuthenticated()) {
 			getGlobalState().setDetermineLocationPopUpEnabled(true);
 			ScreenManager.presentSSOSignin(BottomNavigationActivity.this);
 		} else {

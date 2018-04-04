@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.models.dao;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -27,8 +26,8 @@ public class ApiRequestDao extends BaseDao {
     private Gson gson;
     private final long cacheTime;
 
-    public ApiRequestDao(Context mContext, long cacheTime) {
-        super(mContext);
+    public ApiRequestDao(long cacheTime) {
+        super();
 
         this.gson = new GsonBuilder().create();
         this.cacheTime = cacheTime;
@@ -44,7 +43,7 @@ public class ApiRequestDao extends BaseDao {
         String query = "SELECT * FROM ApiRequest WHERE endpoint=? AND requestType=? AND headers=? AND parameters=? AND dateExpires > datetime() ORDER BY id ASC LIMIT 1;";
         Map<String, String> result = new HashMap<>();
         try {
-            result = PersistenceLayer.getInstance(mContext).executeReturnableQuery(query, new String[]{
+            result = PersistenceLayer.getInstance().executeReturnableQuery(query, new String[]{
                     _endpoint, ("" + _requestType), _headers, _parameters
             });
         } catch (Exception e) {
@@ -75,15 +74,15 @@ public class ApiRequestDao extends BaseDao {
     public void save() {
         //Delete expired Cache data
         try {
-            PersistenceLayer.getInstance(mContext).executeDeleteQuery("DELETE FROM ApiResponse where apiRequestId in ( SELECT id FROM ApiRequest WHERE dateExpires < CURRENT_TIMESTAMP);");
-            PersistenceLayer.getInstance(mContext).executeDeleteQuery("DELETE FROM ApiRequest WHERE dateExpires < CURRENT_TIMESTAMP;");
+            PersistenceLayer.getInstance().executeDeleteQuery("DELETE FROM ApiResponse where apiRequestId in ( SELECT id FROM ApiRequest WHERE dateExpires < CURRENT_TIMESTAMP);");
+            PersistenceLayer.getInstance().executeDeleteQuery("DELETE FROM ApiRequest WHERE dateExpires < CURRENT_TIMESTAMP;");
         }catch (Exception e)
         {
             Log.e(TAG,e.getMessage());
         }
         //ApiRequest will never be updated, only new records will be inserted.
         try {
-            this.dateExpires = PersistenceLayer.getInstance(mContext).executeReturnableQuery("SELECT DATETIME(datetime(), '+" + this.cacheTime + " seconds') as cacheTime",
+            this.dateExpires = PersistenceLayer.getInstance().executeReturnableQuery("SELECT DATETIME(datetime(), '+" + this.cacheTime + " seconds') as cacheTime",
                     new String[]{}).get("cacheTime");
 
             Log.d(TAG, dateExpires);
@@ -95,7 +94,7 @@ public class ApiRequestDao extends BaseDao {
             arguments.put("parameters", this.parameters);
             arguments.put("dateExpires", this.dateExpires);
 
-            long rowid = PersistenceLayer.getInstance(mContext).executeInsertQuery(getTableName(), arguments);
+            long rowid = PersistenceLayer.getInstance().executeInsertQuery(getTableName(), arguments);
             this.id = "" + rowid;
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());

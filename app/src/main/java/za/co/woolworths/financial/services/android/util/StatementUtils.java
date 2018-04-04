@@ -12,7 +12,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
-import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
 public class StatementUtils {
@@ -50,20 +49,8 @@ public class StatementUtils {
 		v.setEnabled(true);
 	}
 
-	public JWTDecodedModel getJWTDecoded() {
-		JWTDecodedModel result = new JWTDecodedModel();
-		try {
-			SessionDao sessionDao = new SessionDao(mContext, SessionDao.KEY.USER_TOKEN).get();
-			if (sessionDao.value != null && !sessionDao.value.equals("")) {
-				result = JWTHelper.decode(sessionDao.value);
-			}
-		} catch (Exception ignored) {
-		}
-		return result;
-	}
-
 	public void populateDocument(WTextView textView) {
-		JWTDecodedModel userDetail = getJWTDecoded();
+		JWTDecodedModel userDetail = SessionUtilities.getInstance().getJwt();
 		if (userDetail != null) {
 			textView.setText(userDetail.email.get(0));
 		}

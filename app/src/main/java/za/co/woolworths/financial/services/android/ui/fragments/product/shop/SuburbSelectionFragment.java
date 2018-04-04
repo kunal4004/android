@@ -44,6 +44,7 @@ import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
+import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.binder.DeliveryLocationSelectionFragmentChange;
 
@@ -170,7 +171,8 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 					configureSuburbList(response.suburbs);
 					break;
 				case 440:
-					SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), response.response.stsParams);
+
+					SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.response.stsParams);
 					SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(getActivity());
 
 					// hide loading
@@ -301,7 +303,7 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 					closeActivity();
 					break;
 				case 440:
-					SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), response.response.stsParams);
+					SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.response.stsParams);
 					SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(getActivity());
 
 					// hide loading
@@ -350,8 +352,7 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 
 	private void saveRecentDeliveryLocation(DeliveryLocationHistory historyItem) {
 		List<DeliveryLocationHistory> history = getRecentDeliveryLocations();
-		SessionDao sessionDao = new SessionDao(getContext());
-		sessionDao.key = SessionDao.KEY.DELIVERY_LOCATION_HISTORY;
+		SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.DELIVERY_LOCATION_HISTORY);
 		Gson gson = new Gson();
 		boolean isExist = false;
 		if (history == null) {
@@ -391,7 +392,7 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 	private List<DeliveryLocationHistory> getRecentDeliveryLocations() {
 		List<DeliveryLocationHistory> history = null;
 		try {
-			SessionDao sessionDao = new SessionDao(getContext(), SessionDao.KEY.DELIVERY_LOCATION_HISTORY).get();
+			SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.DELIVERY_LOCATION_HISTORY);
 			if (sessionDao.value == null) {
 				history = new ArrayList<>();
 			} else {

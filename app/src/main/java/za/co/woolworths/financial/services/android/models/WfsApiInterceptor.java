@@ -57,8 +57,8 @@ public class WfsApiInterceptor implements Interceptor {
         final String headers = request.headers().toString();
         final String parametersJson = (request.method().compareToIgnoreCase("post") == 0 ? bodyToString(request) : "{}");
 
-        ApiRequestDao apiRequestDao = new ApiRequestDao(mContext, cacheTime).get(request.method(), endpoint, headers, parametersJson);
-        ApiResponseDao apiResponseDao = new ApiResponseDao(this.mContext).getByApiRequestId(apiRequestDao.id);
+        ApiRequestDao apiRequestDao = new ApiRequestDao(cacheTime).get(request.method(), endpoint, headers, parametersJson);
+        ApiResponseDao apiResponseDao = new ApiResponseDao().getByApiRequestId(apiRequestDao.id);
 
         if (apiResponseDao.id != null) {  //cache exists. return cached response
             return new Response.Builder()

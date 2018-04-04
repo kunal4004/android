@@ -1,7 +1,5 @@
 package za.co.woolworths.financial.services.android.util;
 
-import android.util.Log;
-
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 
@@ -16,7 +14,7 @@ public class SessionUtilities {
 
 	public static SessionUtilities getInstance(){
 		if(instance == null){
-			new SessionUtilities();
+			instance = new SessionUtilities();
 		}
 		return instance;
 	}
@@ -29,8 +27,11 @@ public class SessionUtilities {
 		boolean isUserAuthenticated = false;
 
 		SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.SESSION_STATE);
-		SessionDao.SESSION_STATE sessionState = (sessionDao.value.isEmpty() ? SessionDao.SESSION_STATE.INACTIVE : SessionDao.SESSION_STATE.valueOf(sessionDao.value));
-
+		SessionDao.SESSION_STATE sessionState;
+		if (sessionDao.value == null){
+			sessionState = SessionDao.SESSION_STATE.INACTIVE;
+		}else
+			sessionState = SessionDao.SESSION_STATE.valueOf(sessionDao.value);
 
 		return sessionState.equals(SessionDao.SESSION_STATE.ACTIVE);
 	}
@@ -41,18 +42,23 @@ public class SessionUtilities {
 		//to WFS product(s) or not i.e.
 		//WFS + Online User or just Online User.
 
-		return !this.getJwt().C2Id.isEmpty();
+		JWTDecodedModel jwt = this.getJwt();
+		return (jwt.C2Id == null ? false : !jwt.C2Id.isEmpty());
 	}
 
 	public JWTDecodedModel getJwt() {
-		JWTDecodedModel model = new JWTDecodedModel();
-		SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.USER_TOKEN);
+		String sessionToken = getSessionToken();
 
-		if (!sessionDao.value.isEmpty()) {
-			model = JWTHelper.decode(sessionDao.value);
+		if (!sessionToken.isEmpty()) {
+			return JWTHelper.decode(sessionToken);
+		}else{
+			return new JWTDecodedModel();
 		}
+	}
 
-		return model;
+	public String getSessionToken() {
+		SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.USER_TOKEN);
+		return sessionDao.value == null ? "" : sessionDao.value;
 	}
 
 	public void setSessionState(SessionDao.SESSION_STATE state){

@@ -39,6 +39,7 @@ import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
+import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.binder.DeliveryLocationSelectionFragmentChange;
 
@@ -144,7 +145,7 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
 	private List<DeliveryLocationHistory> getDeliveryLocationHistory() {
 		List<DeliveryLocationHistory> history = null;
 		try {
-			SessionDao sessionDao = new SessionDao(getContext(), SessionDao.KEY.DELIVERY_LOCATION_HISTORY).get();
+			SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.DELIVERY_LOCATION_HISTORY);
 			if (sessionDao.value == null) {
 				history = new ArrayList<>();
 			} else {
@@ -221,7 +222,8 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
 					}
 					break;
 				case 440:
-					SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), response.response.stsParams);
+
+					SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.response.stsParams);
 					SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(getActivity());
 
 					// hide loading
