@@ -58,8 +58,6 @@ import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
 import za.co.woolworths.financial.services.android.util.PermissionUtils;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
-import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
-import za.co.woolworths.financial.services.android.util.SessionManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.nav.FragNavController;
 import za.co.woolworths.financial.services.android.util.nav.FragNavSwitchController;

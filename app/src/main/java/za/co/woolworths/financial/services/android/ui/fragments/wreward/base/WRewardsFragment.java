@@ -23,7 +23,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewards
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.logged_in.WRewardsLoggedinAndLinkedFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsLoggedinAndNotLinkedFragment;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
-import za.co.woolworths.financial.services.android.util.SessionManager;
 
 import static za.co.woolworths.financial.services.android.util.SessionManager.REWARD_SESSION_EXPIRED;
 
@@ -32,8 +31,7 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 	public static final int FRAGMENT_CODE_2 = 2;
 
 	private WRewardViewModel mWRewardViewModel;
-	private String TAG = this.getClass().getSimpleName();
-	private SessionManager mSessionManager;
+	private final String TAG = this.getClass().getSimpleName();
 	private boolean mRewardSignInState;
 
 	@Override

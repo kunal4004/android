@@ -5,36 +5,13 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 
 public enum SessionExpiredUtilities {
 	INSTANCE;
-	public static final String ACCOUNT = "ACCOUNT";
-	public static final String REWARD = "REWARD";
-	public static final String PRODUCT = "PRODUCT";
-	public void setAccountSessionExpired(Activity activity, String token) {
-		onSessionExpired(activity, token);
-		getGlobalState().setSection(ACCOUNT);
-		openBottomNavigation(activity);
-		Utils.sendBus(new SessionManager(SessionManager.ACCOUNT_SESSION_EXPIRED));
-		Utils.removeEntry(activity);
-	}
-
-	public void setWRewardSessionExpired(Activity activity, String token) {
-		onSessionExpired(activity, token);
-		getGlobalState().setSection(REWARD);
-		openBottomNavigation(activity);
-		Utils.sendBus(new SessionManager(SessionManager.REWARD_SESSION_EXPIRED));
-	}
-
-	public void setProductExpired(Activity activity, String token) {
-		onSessionExpired(activity, token);
-		getGlobalState().setSection(PRODUCT);
-		openBottomNavigation(activity);
-		Utils.sendBus(new SessionManager(SessionManager.PRODUCT_SESSION_EXPIRED));
-	}
 
 	public void showSessionExpireDialog(Activity activity) {
 		Intent openMsg = new Intent(activity, CustomPopUpWindow.class);
@@ -44,10 +21,6 @@ public enum SessionExpiredUtilities {
 		openMsg.putExtras(args);
 		activity.startActivity(openMsg);
 		activity.overridePendingTransition(0, 0);
-	}
-
-	private void onSessionExpired(Activity activity, String stsParams) {
-		getGlobalState(activity).setNewSTSParams(stsParams);
 	}
 
 	public WGlobalState getGlobalState(Activity activity) {
