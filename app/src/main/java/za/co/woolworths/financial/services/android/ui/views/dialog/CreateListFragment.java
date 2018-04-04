@@ -47,7 +47,6 @@ import static za.co.woolworths.financial.services.android.models.service.event.P
 
 public class CreateListFragment extends Fragment implements View.OnClickListener {
 
-	private ImageView mImBack, imCloseIcon;
 	private String hideBackButton;
 	private WLoanEditTextView mEtNewList;
 	private ProgressBar pbCreateList;
@@ -71,8 +70,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.create_new_list_layout, container, false);
-		return view;
+		return inflater.inflate(R.layout.create_new_list_layout, container, false);
 	}
 
 	@Override
@@ -99,8 +97,8 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 
 	private void initUI(View view) {
 		mBtnCancel = view.findViewById(R.id.btnCancel);
-		mImBack = view.findViewById(R.id.imBack);
-		imCloseIcon = view.findViewById(R.id.imCloseIcon);
+		ImageView mImBack = view.findViewById(R.id.imBack);
+		ImageView imCloseIcon = view.findViewById(R.id.imCloseIcon);
 		pbCreateList = view.findViewById(R.id.pbCreateList);
 		mImBack.setVisibility(TextUtils.isEmpty(hideBackButton) ? View.VISIBLE : View.GONE);
 		imCloseIcon.setVisibility(TextUtils.isEmpty(hideBackButton) ? View.GONE : View.VISIBLE);
@@ -113,10 +111,8 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 
 	private void displayKeyboard(View view, Activity activity) {
 		activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-		if (activity != null) {
-			mKeyboardUtils = new KeyboardUtil(activity, view.findViewById(R.id.rlRootList), 0);
-			mKeyboardUtils.enable();
-		}
+		mKeyboardUtils = new KeyboardUtil(activity, view.findViewById(R.id.rlRootList), 0);
+		mKeyboardUtils.enable();
 	}
 
 	private void setUpEditText(final WLoanEditTextView etNewList) {
@@ -156,6 +152,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 		Activity activity = getActivity();
 		if (activity != null) {
 			InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+			assert imm != null;
 			imm.showSoftInput(editTextView, InputMethodManager.SHOW_IMPLICIT);
 		}
 	}
@@ -166,11 +163,6 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 			hideKeyboard(activity);
 			cancelRequest(activity);
 		}
-	}
-
-	private void enableCreateList(boolean enable) {
-		mBtnCancel.setAlpha(enable ? (float) 1.0 : (float) 0.4);
-		mBtnCancel.setEnabled(enable);
 	}
 
 	private WLoanEditTextView.OnEditorActionListener onEditorActionListener = new WLoanEditTextView.OnEditorActionListener() {
@@ -286,9 +278,10 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 							break;
 						default:
 							Response response = createListResponse.response;
-							if (response != null) {
-								Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
-							}
+							if (mKeyboardUtils != null)
+								mKeyboardUtils.hideKeyboard(activity);
+							if (response.desc != null)
+								((CustomPopUpWindow) activity).startExitAnimation(response.desc);
 							onLoad(false);
 							break;
 					}

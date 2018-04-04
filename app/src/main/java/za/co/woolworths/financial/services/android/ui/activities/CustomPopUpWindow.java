@@ -1201,4 +1201,35 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 			Log.e("whiteEffectClick", ex.toString());
 		}
 	}
+
+	public void startExitAnimation(final String desc) {
+		if (!viewWasClicked) { // prevent more than one click
+			viewWasClicked = true;
+			TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
+			animation.setFillAfter(true);
+			animation.setDuration(ANIM_DOWN_DURATION);
+			animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
+
+				@Override
+				public void onAnimationStart(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationRepeat(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationEnd(Animation animation) {
+					if (!TextUtils.isEmpty(desc)) {
+						Utils.displayValidationMessage(CustomPopUpWindow.this,CustomPopUpWindow.MODAL_LAYOUT.ERROR, desc);
+					}
+					if (mCloseView) {
+						Utils.sendBus(new ProductState(ProductState.CLOSE_VIEW));
+					}
+					dismissLayout();
+				}
+			});
+			mRelRootContainer.startAnimation(animation);
+		}
+	}
 }

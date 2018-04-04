@@ -2,10 +2,7 @@ package za.co.woolworths.financial.services.android.models.rest.shoppinglist;
 
 import android.text.TextUtils;
 
-import java.util.List;
-
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
 import za.co.woolworths.financial.services.android.models.dto.CreateList;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
