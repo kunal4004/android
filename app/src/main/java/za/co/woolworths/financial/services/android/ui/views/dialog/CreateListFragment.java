@@ -90,7 +90,15 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 					: Utils.toList(addToListItems, AddToListRequest.class);
 			initUI(view);
 			mErrorHandlerView = new ErrorHandlerView(activity);
+			keyboardState(view, activity);
+		}
+	}
+
+	private void keyboardState(View view, Activity activity) {
+		if (!TextUtils.isEmpty(hideBackButton)) {
 			KeyboardUtil.showKeyboard(activity);
+			displayKeyboard(view, activity);
+		} else {
 			displayKeyboard(view, activity);
 		}
 	}
@@ -110,9 +118,10 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 	}
 
 	private void displayKeyboard(View view, Activity activity) {
+		activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 		if (activity != null) {
-			activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 			mKeyboardUtils = new KeyboardUtil(activity, view.findViewById(R.id.rlRootList), 0);
+			mKeyboardUtils.enable();
 		}
 	}
 
@@ -160,6 +169,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 	private void onBackPressed() {
 		Activity activity = getActivity();
 		if (activity != null) {
+			hideKeyboard(activity);
 			cancelRequest(activity);
 		}
 	}
@@ -178,7 +188,14 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 					|| actionId == EditorInfo.IME_ACTION_DONE
 					|| event.getAction() == KeyEvent.ACTION_DOWN
 					&& event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-				onBackPressed();
+				String cancelText = mBtnCancel.getText().toString();
+				if (cancelText.equalsIgnoreCase("ok")) {
+					String listName = mEtNewList.getText().toString();
+					mCreateList = new CreateList(listName, null);
+					executeCreateList();
+				} else {
+					onBackPressed();
+				}
 				return true;
 			}
 			// Return true if you have consumed the action, else false.
@@ -195,7 +212,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 				String strCancel = mBtnCancel.getText().toString();
 				if (strCancel.equalsIgnoreCase("ok")) {
 					String listName = mEtNewList.getText().toString();
-					mCreateList = new CreateList(listName);
+					mCreateList = new CreateList(listName, null);
 					executeCreateList();
 				} else {
 					cancelRequest(activity);
@@ -203,6 +220,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 				break;
 			case R.id.imCloseIcon:
 				if (activity != null) {
+					hideKeyboard(activity);
 					CustomPopUpWindow customPopUpWindow = (CustomPopUpWindow) activity;
 					customPopUpWindow.finish();
 					customPopUpWindow.overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
@@ -349,8 +367,14 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 	@Override
 	public void onDetach() {
 		super.onDetach();
+		hideKeyboard(getActivity());
 		cancelRequest(mPostCreateList);
 		cancelRequest(mAddToList);
+	}
+
+	private void hideKeyboard(Activity activity) {
+		if (mKeyboardUtils != null)
+			mKeyboardUtils.hideKeyboard(activity);
 	}
 
 	private void cancelRequest(HttpAsyncTask httpAsyncTask) {
