@@ -17,7 +17,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -72,6 +71,7 @@ import static za.co.woolworths.financial.services.android.models.service.event.B
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.REWARD_COUNT;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.OPEN_GET_LIST_SCREEN;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SHOW_ADDED_TO_SHOPPING_LIST_TOAST;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_ADD_TO_SHOPPING_LIST;
 import static za.co.woolworths.financial.services.android.util.SessionManager.RELOAD_REWARD;
 
 public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigationBinding, BottomNavigationViewModel> implements BottomNavigator, FragNavController.TransactionListener, FragNavController.RootFragmentListener, PermissionResultCallback, ToastUtils.ToastInterface {
@@ -123,7 +123,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		try {
 			super.onRestoreInstanceState(SavedInstanceFragment.getInstance(getFragmentManager()).popData());
 		} catch (NullPointerException ex) {
-			Log.d("onRestoreInstanceState", ex.getMessage());
 		}
 	}
 
@@ -306,11 +305,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					case COLLAPSED:
 						showStatusBar();
 						try {
-							FragmentManager fm = getSupportFragmentManager();
-							Fragment fragmentById = fm.findFragmentById(R.id.fragment_bottom_container);
 							//detach detail fragment
-							if (fragmentById instanceof ProductDetailFragment) {
-								ProductDetailFragment productDetailFragment = (ProductDetailFragment) fragmentById;
+							if (getBottomFragmentById() instanceof ProductDetailFragment) {
+								ProductDetailFragment productDetailFragment = (ProductDetailFragment) getBottomFragmentById();
 								productDetailFragment.onDetach();
 							}
 						} catch (ClassCastException e) {
@@ -698,7 +695,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				case RESULT_OK:
 					getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
 					break;
-
 				case 0:
 					//load count on login success
 					badgeCount();
@@ -714,13 +710,11 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 						default:
 							break;
 					}
-
 					break;
 				default:
 					break;
 			}
 		}
-
 		// prevent firing reward and account api on every activity resume
 		if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
 			//load count on login success
@@ -733,17 +727,35 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					Intent openCartActivity = new Intent(this, CartActivity.class);
 					startActivityForResult(openCartActivity, OPEN_CART_REQUEST);
 					overridePendingTransition(0, 0);
-
 					break;
 				default:
 					break;
 			}
-		}
 
+			switch (getBottomNavigationById().getCurrentItem()) {
+				case 1:
+					switch (getGlobalState().getSaveButtonClick()) {
+						case INDEX_ADD_TO_SHOPPING_LIST:
+							try {
+								Fragment fragmentById = getBottomFragmentById();
+								if (fragmentById instanceof ProductDetailFragment) {
+									ProductDetailFragment productDetailFragment = (ProductDetailFragment) fragmentById;
+									productDetailFragment.reloadGetListAPI();
+								}
+							} catch (ClassCastException e) {
+								// not that fragment
+							}
+					}
+					break;
+				default:
+					break;
+			}
+			;
+		}
 		//trigger reward and account call
 		switch (getBottomNavigationById().getCurrentItem()) {
-			case 1:
 			case 0:
+			case 1:
 				break;
 			case 2:
 				break;
@@ -756,6 +768,11 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				}
 				break;
 		}
+	}
+
+	private Fragment getBottomFragmentById() {
+		FragmentManager fm = getSupportFragmentManager();
+		return fm.findFragmentById(R.id.fragment_bottom_container);
 	}
 
 	public void setCurrentSection(int currentSection) {
