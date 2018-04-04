@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.models.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.JsonElement;
@@ -37,7 +38,7 @@ public class Product {
 	public String longDescription;
 	@SerializedName("otherSkus")
 	@Expose
-	public List<OtherSkus> otherSkus = null;
+	public ArrayList<OtherSkus> otherSkus = null;
 	@SerializedName("checkOutLink")
 	@Expose
 	public String checkOutLink;

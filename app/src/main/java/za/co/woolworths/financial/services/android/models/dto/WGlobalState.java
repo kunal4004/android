@@ -20,11 +20,12 @@ public class WGlobalState {
 
 	private boolean onBackPressed,
 			colorWasPopup, sizeWasPopup;
-	private String selectedSKUId, creditLimit;
+	private String creditLimit;
 	private List<StoreDetails> storeDetailsArrayList;
 	private ArrayList<OtherSkus> colourSKUArrayList;
 	private OtherSkus colorPopUpValue, sizePopUpValue;
 	private CLIOfferDecision mDeclineDecision;
+	private OtherSkus selectedSKUId;
 
 	public boolean getOnBackPressed() {
 		return onBackPressed;
@@ -66,11 +67,11 @@ public class WGlobalState {
 		this.endRadius = endRadius;
 	}
 
-	public String getSelectedSKUId() {
+	public OtherSkus getSelectedSKUId() {
 		return selectedSKUId;
 	}
 
-	public void setSelectedSKUId(String selectedSKUId) {
+	public void setSelectedSKUId(OtherSkus selectedSKUId) {
 		this.selectedSKUId = selectedSKUId;
 	}
 

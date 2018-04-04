@@ -76,11 +76,11 @@
             android:gravity="center"
             android:hint="@string/enter_list_name"
             android:imeOptions="actionDone"
+            android:inputType="text|textNoSuggestions"
             android:maxLines="1"
             android:textColor="@color/black"
             android:textColorHint="@color/recent_search_bg"
             android:textCursorDrawable="@drawable/colorcursor"
-            android:textSelectHandle="@drawable/colorcursor"
             android:textSize="@dimen/eighteen_sp"
             app:WEditTextView_font="myriadpro_regular">
 
@@ -116,7 +116,9 @@
                 android:id="@+id/pbCreateList"
                 android:layout_width="@dimen/twenty_four_dp"
                 android:layout_height="@dimen/twenty_four_dp"
-                android:indeterminateTint="@color/black"/>
+                android:layout_gravity="center"
+                android:indeterminateTint="@color/black"
+                android:visibility="gone"/>
         </FrameLayout>
 
     </LinearLayout>

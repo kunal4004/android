@@ -9,7 +9,7 @@ public class ShoppingList {
 	@SerializedName("name")
 	public String listName;
 	@SerializedName("itemCount")
-	public String listCount;
+	public int listCount;
 
 	public boolean viewIsSelected;
 }

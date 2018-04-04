@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -52,16 +53,19 @@ public class SizeFragmentList extends Fragment implements StockFinderSizeColorAd
 
 	@Override
 	public void onUpdate(final ArrayList<OtherSkus> otherSkuList, final String viewType) {
-		SizeFragmentList.this.getActivity().runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				mOtherSKUList = otherSkuList;
-				mSizeRecycleView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-				stockFinderSizeColorAdapter = new StockFinderSizeColorAdapter(mOtherSKUList, mContext, viewType);
-				mSizeRecycleView.setAdapter(stockFinderSizeColorAdapter);
-				mSizeRecycleView.scrollToPosition(0);
-			}
-		});
+		Activity activity = getActivity();
+		if (activity != null) {
+			activity.runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					mOtherSKUList = otherSkuList;
+					mSizeRecycleView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+					stockFinderSizeColorAdapter = new StockFinderSizeColorAdapter(mOtherSKUList, mContext, viewType);
+					mSizeRecycleView.setAdapter(stockFinderSizeColorAdapter);
+					mSizeRecycleView.scrollToPosition(0);
+				}
+			});
+		}
 	}
 
 	@Override

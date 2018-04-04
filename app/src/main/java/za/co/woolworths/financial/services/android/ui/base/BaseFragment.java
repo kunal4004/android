@@ -122,7 +122,10 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 	}
 
 	public boolean isNetworkConnected() {
-		return new ConnectionDetector().isOnline(mActivity);
+		if (mActivity != null)
+			return new ConnectionDetector().isOnline(mActivity);
+		else
+			return false;
 	}
 
 	public void hideToolbar() {
@@ -213,6 +216,10 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 		getBottomNavigator().pushFragment(fragment);
 	}
 
+	public void pushFragmentSlideUp(Fragment fragment) {
+		getBottomNavigator().pushFragmentSlideUp(fragment);
+	}
+
 	public void setText(WTextView tv, String text) {
 		try {
 			tv.setText(text);
@@ -266,6 +273,10 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 
 	public void popFragmentNoAnim() {
 		getBottomNavigator().popFragmentNoAnim();
+	}
+
+	public void popFragmentSlideDown() {
+		getBottomNavigator().popFragmentSlideDown();
 	}
 
 	public WGlobalState getGlobalState() {
@@ -335,8 +346,7 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 		Utils.sendBus(obj);
 	}
 
-	public void observableOn(Consumer consumer){
+	public void observableOn(Consumer consumer) {
 		getViewModel().consumeObservable(consumer);
 	}
-
 }

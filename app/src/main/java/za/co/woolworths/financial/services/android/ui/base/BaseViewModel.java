@@ -4,11 +4,14 @@ import android.arch.lifecycle.ViewModel;
 import android.databinding.ObservableBoolean;
 import android.text.TextUtils;
 
+import java.util.ArrayList;
+
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.rx.SchedulerProvider;
 

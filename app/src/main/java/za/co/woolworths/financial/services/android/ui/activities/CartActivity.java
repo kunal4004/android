@@ -10,6 +10,8 @@ import android.widget.ProgressBar;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.models.dto.ProductDetail;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.Utils;

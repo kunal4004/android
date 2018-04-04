@@ -9,10 +9,10 @@
         android:id="@+id/rlAddToCartRoot"
         android:layout_width="match_parent"
         android:layout_height="@dimen/fifty_two_dp"
-        android:layout_marginBottom="@dimen/sixteen_dp"
-        android:layout_marginEnd="@dimen/sixteen_dp"
-        android:layout_marginStart="@dimen/sixteen_dp"
-        android:background="@color/black">
+        android:layout_marginBottom="@dimen/eight_dp"
+        android:layout_marginEnd="@dimen/eight_dp"
+        android:layout_marginStart="@dimen/eight_dp"
+        android:background="@color/toast_background">
 
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -21,11 +21,14 @@
             android:layout_height="match_parent"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
+            android:layout_marginEnd="@dimen/two_dp"
             android:layout_marginStart="16dp"
             android:layout_weight="1"
             android:duplicateParentState="true"
+            android:ellipsize="end"
             android:gravity="center"
             android:letterSpacing="0.15"
+            android:singleLine="true"
             android:text="@string/added_to"
             android:textAllCaps="true"
             android:textColor="@color/white"
@@ -41,8 +44,10 @@
             android:layout_toEndOf="@+id/tvAddToCart"
             android:layout_weight="1"
             android:duplicateParentState="true"
+            android:ellipsize="end"
             android:gravity="center"
             android:letterSpacing="0.15"
+            android:singleLine="true"
             android:text="@string/bottom_title_cart"
             android:textAllCaps="true"
             android:textColor="@color/white"
@@ -60,10 +65,10 @@
             android:layout_marginEnd="@dimen/sixteen_dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:textColor="@color/white_color_selector"
             android:letterSpacing="0.15"
             android:text="@string/view"
             android:textAllCaps="true"
+            android:textColor="@color/white_color_selector"
             android:textSize="13sp"
             android:visibility="visible"
             app:WTextView_font="medium_bold"/>

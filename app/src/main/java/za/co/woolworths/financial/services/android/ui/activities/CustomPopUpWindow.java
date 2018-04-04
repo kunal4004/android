@@ -51,15 +51,13 @@ import za.co.woolworths.financial.services.android.models.service.event.Authenti
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
-import za.co.woolworths.financial.services.android.models.service.event.ShopState;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
-import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.ShoppingListNavigator;
 import za.co.woolworths.financial.services.android.ui.fragments.statement.EmailStatementFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.statement.StatementFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.dialog.AddToListFragment;
-import za.co.woolworths.financial.services.android.ui.views.dialog.EnterNewListFragment;
+import za.co.woolworths.financial.services.android.ui.views.dialog.CreateListFragment;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
@@ -71,7 +69,7 @@ import za.co.woolworths.financial.services.android.util.StatementUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
-public class CustomPopUpWindow extends AppCompatActivity implements View.OnClickListener, NetworkChangeListener, ShoppingListNavigator {
+public class CustomPopUpWindow extends AppCompatActivity implements View.OnClickListener, NetworkChangeListener {
 
 	public RelativeLayout mRelRootContainer;
 	public Animation mPopEnterAnimation;
@@ -100,7 +98,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 		HIGH_LOAN_AMOUNT, LOW_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION, SIGN_OUT, BARCODE_ERROR,
 		SHOPPING_LIST_INFO, SESSION_EXPIRED, INSTORE_AVAILABILITY, NO_STOCK, LOCATION_OFF, SUPPLY_DETAIL_INFO,
 		CLI_DANGER_ACTION_MESSAGE_VALIDATION, AMOUNT_STOCK, UPLOAD_DOCUMENT_MODAL, PROOF_OF_INCOME,
-		STATEMENT_SENT_TO, CLI_DECLINE, CLI_ERROR, DETERMINE_LOCATION_POPUP, STATEMENT_ERROR, SHOPPING_ADD_TO_LIST, EDIT_SHOPPING_LIST, ERROR_TITLE_DESC
+		STATEMENT_SENT_TO, CLI_DECLINE, CLI_ERROR, DETERMINE_LOCATION_POPUP, STATEMENT_ERROR, SHOPPING_ADD_TO_LIST, ERROR_TITLE_DESC
 	}
 
 	MODAL_LAYOUT current_view;
@@ -123,7 +121,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 			current_view = (MODAL_LAYOUT) mBundle.getSerializable("key");
 			title = getText(mBundle.getString("title"));
 			description = getText(mBundle.getString("description"));
-			mCloseView = mBundle.getBoolean("closeView");
+			mCloseView = mBundle.getBoolean("closeSlideUpPanel");
 			userStatement = mBundle.getString(StatementActivity.SEND_USER_STATEMENT);
 			displayView(current_view);
 		} else {
@@ -550,17 +548,11 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 					}
 				}
 				break;
-			case EDIT_SHOPPING_LIST:
-				setContentView(R.layout.shopping_list_rename_delete_popup);
-				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
-				WTextView tvDelete = findViewById(R.id.deleteList);
-				WTextView tvCancel = findViewById(R.id.cancel);
-				tvCancel.setOnClickListener(this);
-				tvDelete.setOnClickListener(this);
-				break;
 			case SHOPPING_ADD_TO_LIST:
 				setContentView(R.layout.shopping_add_list_layout);
 				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = findViewById(R.id.relPopContainer);
+				mRelPopContainer.setOnClickListener(this);
 				FragmentManager fm = getSupportFragmentManager();
 				Bundle bundle = new Bundle();
 				bundle.putString("LIST_PAYLOAD", description);
@@ -568,17 +560,19 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				if (shoppingListsResponse != null) {
 					List<ShoppingList> lists = shoppingListsResponse.lists;
 					if (lists == null || lists.size() == 0) {
-						EnterNewListFragment enterNewListFragment = new EnterNewListFragment();
+						CreateListFragment createListFragment = new CreateListFragment();
 						bundle.putString("OPEN_FROM_POPUP", "OPEN_FROM_POPUP");
-						enterNewListFragment.setArguments(bundle);
+						createListFragment.setArguments(bundle);
 						fm.beginTransaction()
-								.replace(R.id.flShoppingListContainer, enterNewListFragment).commitAllowingStateLoss();
+								.add(R.id.flShoppingListContainer, createListFragment)
+								.commitAllowingStateLoss();
 						return;
 					}
 					AddToListFragment addToListFragment = new AddToListFragment();
 					addToListFragment.setArguments(bundle);
 					fm.beginTransaction()
-							.replace(R.id.flShoppingListContainer, addToListFragment).commitAllowingStateLoss();
+							.add(R.id.flShoppingListContainer, addToListFragment)
+							.commitAllowingStateLoss();
 				}
 
 				break;
@@ -962,9 +956,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 			case R.id.cancel:
 				startExitAnimation();
 				break;
-			case R.id.deleteList:
-				exitDeleteListAnimation("DELETE_LIST");
-				break;
 		}
 	}
 
@@ -1036,32 +1027,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				public void onAnimationEnd(Animation animation) {
 					mWGlobalState.setOnBackPressed(false);
 					SessionUtilities.getInstance().setSTSParameters(null);
-					dismissLayout();
-				}
-			});
-			mRelRootContainer.startAnimation(animation);
-		}
-	}
-
-	private void exitDeleteListAnimation(final String type) {
-		if (!viewWasClicked) { // prevent more than one click
-			viewWasClicked = true;
-			TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
-			animation.setFillAfter(true);
-			animation.setDuration(ANIM_DOWN_DURATION);
-			animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
-
-				@Override
-				public void onAnimationStart(Animation animation) {
-				}
-
-				@Override
-				public void onAnimationRepeat(Animation animation) {
-				}
-
-				@Override
-				public void onAnimationEnd(Animation animation) {
-					Utils.sendBus(new ShopState(type));
 					dismissLayout();
 				}
 			});
@@ -1216,10 +1181,5 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 		} catch (Exception ex) {
 			Log.e("whiteEffectClick", ex.toString());
 		}
-	}
-
-	@Override
-	public void onListItemSelected(String listName, String listID) {
-
 	}
 }
