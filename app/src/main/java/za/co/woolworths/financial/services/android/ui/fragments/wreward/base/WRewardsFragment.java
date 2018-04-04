@@ -177,11 +177,13 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 			initialize();
 		} else if (resultCode == 0) {
 			Log.d(TAG, "empty");
-		} else {
+		} else if (resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue()){
 			try {
 				signOut();
 			} catch (Exception ignored) {
 			}
+		} else{
+			initialize();
 		}
 	}
 
