@@ -90,6 +90,7 @@ import za.co.woolworths.financial.services.android.util.LocationItemTask;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
+import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.SimpleDividerItemDecoration;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -509,7 +510,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	public void addToShoppingList() {
 		Activity activity = getActivity();
 		if (activity != null) {
-			if (TextUtils.isEmpty(Utils.getSessionToken(null))) {
+			if (!SessionUtilities.getInstance().isUserAuthenticated()) {
 				ScreenManager.presentSSOSignin(activity);
 				return;
 			}
@@ -1380,7 +1381,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		Activity activity = getBaseActivity();
 		if (activity != null) {
 			//Check if the user has a sessionToken
-			if (isEmpty(Utils.getSessionToken(activity))) {
+			if (!SessionUtilities.getInstance().isUserAuthenticated()) {
 				getGlobalState().setDetermineLocationPopUpEnabled(true);
 				ScreenManager.presentSSOSignin(activity);
 				onAddToCartLoadComplete();

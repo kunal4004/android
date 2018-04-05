@@ -31,6 +31,7 @@ import com.google.gson.Gson;
 import java.util.List;
 import java.util.Random;
 
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Bank;
 import za.co.woolworths.financial.services.android.models.dto.BankAccountType;
 import za.co.woolworths.financial.services.android.models.dto.BankAccountTypes;
@@ -44,8 +45,8 @@ import za.co.woolworths.financial.services.android.models.rest.cli.CLIGetDeaBank
 import za.co.woolworths.financial.services.android.models.rest.cli.CLISendEmailRequest;
 import za.co.woolworths.financial.services.android.models.rest.cli.CLIUpdateBankDetails;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
-import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
+import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.adapters.DocumentAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.DocumentsAccountTypeAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.POIDocumentSubmitTypeAdapter;
@@ -59,7 +60,7 @@ import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
-import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
+import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.controller.CLIFragment;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
@@ -212,7 +213,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 
 						break;
 					case 440:
-						SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), deaBankList
+						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, deaBankList
 								.response.stsParams);
 						break;
 
@@ -260,7 +261,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 						loadBankAccountTypesView(bankAccountTypesList);
 						break;
 					case 440:
-						SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), bankAccountTypes
+						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, bankAccountTypes
 								.response.stsParams);
 						break;
 					default:

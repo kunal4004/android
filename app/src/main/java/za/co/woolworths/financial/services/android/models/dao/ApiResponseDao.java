@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.models.dao;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -27,8 +26,8 @@ public class ApiResponseDao extends BaseDao {
 
     private Gson gson;
 
-    public ApiResponseDao(Context mContext) {
-        super(mContext);
+    public ApiResponseDao() {
+        super();
 
         this.gson = new GsonBuilder().create();
     }
@@ -42,7 +41,7 @@ public class ApiResponseDao extends BaseDao {
         String query = "SELECT * FROM ApiResponse WHERE apiRequestId=? AND code=? ORDER BY id ASC LIMIT 1;";
         Map<String, String> result = new HashMap<>();
         try {
-            result = PersistenceLayer.getInstance(mContext).executeReturnableQuery(query, new String[]{
+            result = PersistenceLayer.getInstance().executeReturnableQuery(query, new String[]{
                     apiRequestId, "200"
             });
         } catch (Exception e) {
@@ -90,7 +89,7 @@ public class ApiResponseDao extends BaseDao {
             arguments.put("contentType", this.contentType);
             arguments.put("headers", this.headers);
             arguments.put("body", this.body);
-            long rowid = PersistenceLayer.getInstance(mContext).executeInsertQuery(getTableName(), arguments);
+            long rowid = PersistenceLayer.getInstance().executeInsertQuery(getTableName(), arguments);
             this.id = "" + rowid;
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
