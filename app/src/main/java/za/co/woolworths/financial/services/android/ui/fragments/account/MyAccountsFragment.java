@@ -32,7 +32,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -65,6 +64,7 @@ import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_ACCOUNT;
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_REWARD;
 
 public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, MyAccountsViewModel> implements View.OnClickListener, ViewPager.OnPageChangeListener, MyAccountsNavigator {
@@ -162,8 +162,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		if (savedInstanceState == null) {
 			hideToolbar();
 			setToolbarBackgroundColor(R.color.white);
-			Activity activity = getActivity();
-
 			woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
 			openMessageActivity = view.findViewById(R.id.openMessageActivity);
 			openShoppingList = view.findViewById(R.id.openShoppingList);
@@ -231,19 +229,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 
 			});
 		}
-
-		observableOn(new Consumer<Object>() {
-			@Override
-			public void accept(Object object) throws Exception {
-				Activity activity = getActivity();
-				if (activity != null) {
-
-					if (!SessionUtilities.getInstance().isUserAuthenticated()){
-						onAccSessionExpired(activity);
-					}
-				}
-			}
-		});
 	}
 
 	private void initialize() {
@@ -257,9 +242,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 				this.configureSignInNoC2ID();
 
 		} else{
-			Activity activity = getActivity();
-			if (activity != null) {
-				changeDefaultView();
+			if (getActivity() != null) {
 				configureView();
 			}
 		}
@@ -419,7 +402,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		viewPager.setAdapter(adapter);
 		viewPager.setCurrentItem(0);
 	}
-
 
 	private void configureAndLayoutTopLayerView() {
 		if (SessionUtilities.getInstance().isUserAuthenticated()) {
@@ -645,6 +627,8 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 						case 440:
 
 							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, accountsResponse.response.stsParams);
+							onSessionExpired(getActivity());
+							initialize();
 							break;
 						default:
 							if (accountsResponse.response != null) {
@@ -847,22 +831,26 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		} else if (resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue()) {
 			onSignOut();
 			initialize();
+		}else{
+			initialize();
 		}
 	}
 
 	private void removeAllBottomNavigationIconBadgeCount() {
 		addBadge(INDEX_REWARD, 0);
 		addBadge(INDEX_ACCOUNT, 0);
+		addBadge(INDEX_CART, 0);
 	}
 
-	private void onAccSessionExpired(Activity activity) {
-		SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
+	private void onSessionExpired(Activity activity) {
 
 		Utils.setBadgeCounter(getActivity(), 0);
-		initialize();
-		loadMessageCounter = false;
-		//TODO: remove all badge count when sign out or session expired on bottom navigation menu
+
 		removeAllBottomNavigationIconBadgeCount();
+		SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
 		SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(activity);
+
+		loadMessageCounter = false;
+		initialize();
 	}
 }

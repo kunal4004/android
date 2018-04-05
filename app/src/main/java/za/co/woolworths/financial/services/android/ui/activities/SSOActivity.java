@@ -429,6 +429,7 @@ public class SSOActivity extends WebViewActivity {
 					String urlWithoutQueryString = url.substring(0, indexOfQuestionMark);
 
 					if (urlWithoutQueryString.equals(extraQueryStringParams.get("post_logout_redirect_uri"))) {
+						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
 						Intent intent = new Intent();
 						setResult(SSOActivityResult.SIGNED_OUT.rawValue(), intent);
 						closeActivity();

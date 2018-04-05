@@ -1216,6 +1216,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		setResult(requestCode, data);
+		setResult(resultCode, data);
 	}
 }

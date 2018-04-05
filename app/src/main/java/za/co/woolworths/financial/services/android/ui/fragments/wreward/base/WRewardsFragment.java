@@ -14,15 +14,19 @@ import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.WrewardsFragmentBinding;
 
-import io.reactivex.functions.Consumer;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsLoggedOutFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsLoggedinAndNotLinkedFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.logged_in.WRewardsLoggedinAndLinkedFragment;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
+import za.co.woolworths.financial.services.android.util.Utils;
+
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_ACCOUNT;
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART;
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_REWARD;
 
 public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRewardViewModel> implements WRewardNavigator {
 
@@ -35,21 +39,6 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 		super.onCreate(savedInstanceState);
 		mWRewardViewModel = ViewModelProviders.of(this).get(WRewardViewModel.class);
 		mWRewardViewModel.setNavigator(this);
-
-		getViewModel().consumeObservable(new Consumer<Object>() {
-			@Override
-			public void accept(Object object) throws Exception {
-				Activity activity = getActivity();
-				if (activity != null) {
-
-					if (!SessionUtilities.getInstance().isUserAuthenticated()){
-						addBadge(BottomNavigationActivity.INDEX_REWARD, 0);
-						initialize();
-						SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(getActivity());
-					}
-				}
-			}
-		});
 	}
 
 	@Override
@@ -136,7 +125,7 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue()) {
-			SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(getActivity());
+			onSessionExpired(getActivity());
 		}
 		initialize();
 	}
@@ -149,5 +138,18 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 			initialize();
 		}
 		setTitle(getString(R.string.wrewards));
+	}
+
+	private void onSessionExpired(Activity activity){
+		addBadge(INDEX_REWARD, 0);
+		addBadge(INDEX_ACCOUNT, 0);
+		addBadge(INDEX_CART, 0);
+
+		Utils.setBadgeCounter(getActivity(), 0);
+
+		SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
+		SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(activity);
+
+		initialize();
 	}
 }
