@@ -82,6 +82,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeAdapte
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ProductUtils;
+import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.CancelableCallback;
@@ -244,7 +245,8 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 										closeSlideUpPanel(getView());
 										getBottomNavigator().closeSlideUpPanelFromList(productState.getCount());
 										break;
-									case R.id.navigation_product:
+
+									default:
 										mToastUtils.setActivity(activity);
 										mToastUtils.setCurrentState(TAG);
 										String shoppingList = getString(R.string.shopping_list);
@@ -256,9 +258,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 										mToastUtils.setMessage(R.string.added_to);
 										mToastUtils.setViewState(true);
 										mToastUtils.build();
-										break;
-
-									default:
 										break;
 								}
 								break;
