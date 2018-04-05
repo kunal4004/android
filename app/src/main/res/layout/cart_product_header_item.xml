@@ -26,6 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
+            android:visibility="invisible"
             android:text="@string/add_to_list"/>
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
