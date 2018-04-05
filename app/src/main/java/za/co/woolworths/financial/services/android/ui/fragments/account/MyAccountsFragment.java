@@ -42,7 +42,6 @@ import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.rest.message.GetMessage;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.GetShoppingLists;
-import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
@@ -67,7 +66,6 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
 
 import com.awfs.coordination.BR;
 
-import static za.co.woolworths.financial.services.android.models.service.event.ProductState.OPEN_GET_LIST_SCREEN;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_ACCOUNT;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_REWARD;
 
@@ -244,25 +242,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 
 					if (!SessionUtilities.getInstance().isUserAuthenticated()){
 						onAccSessionExpired(activity);
-					}
-
-					if (object instanceof ProductState) {
-						ProductState productState = (ProductState) object;
-						switch (productState.getState()) {
-							//allow navigate to getList screen
-							// fired when new ProductState(OPEN_GET_LIST_SCREEN);
-							case OPEN_GET_LIST_SCREEN:
-								Bundle bundle = new Bundle();
-								if (shoppingListsResponse != null) {
-									bundle.putString("ShoppingList", Utils.objectToJson(shoppingListsResponse));
-									ShoppingListFragment shoppingListFragment = new ShoppingListFragment();
-									shoppingListFragment.setArguments(bundle);
-									pushFragmentSlideUp(shoppingListFragment);
-								}
-								break;
-							default:
-								break;
-						}
 					}
 				}
 			}

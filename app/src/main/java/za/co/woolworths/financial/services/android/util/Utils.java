@@ -80,6 +80,7 @@ import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.Transaction;
 import za.co.woolworths.financial.services.android.models.dto.TransactionParentObj;
+import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
@@ -331,7 +332,8 @@ public class Utils {
 			return null;
 		}
 		Gson gson = new Gson();
-		return gson.fromJson(json, new TypeToken<T>(){}.getType());
+		return gson.fromJson(json, new TypeToken<T>() {
+		}.getType());
 	}
 
 
