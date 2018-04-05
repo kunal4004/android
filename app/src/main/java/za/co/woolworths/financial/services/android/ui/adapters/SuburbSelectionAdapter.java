@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.adapters;
 
+import android.graphics.Paint;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -27,6 +28,7 @@ public class SuburbSelectionAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
 	public interface SuburbSelectionCallback {
 		void onItemClick(Suburb province);
+
 		void setScrollbarVisibility(boolean visible);
 	}
 
@@ -49,7 +51,7 @@ public class SuburbSelectionAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 		int idxSuburb = 0;
 		for (Suburb suburb : items) {
 			String currentFirstChar = Character.toString(suburb.name.charAt(0)).toUpperCase();
-			if(lastFirstChar == null || (lastFirstChar != null && !lastFirstChar.equals(currentFirstChar))) {
+			if (lastFirstChar == null || (lastFirstChar != null && !lastFirstChar.equals(currentFirstChar))) {
 				suburb.hasHeader = true;
 				headerItems.add(new HeaderPosition(currentFirstChar.toUpperCase(), idxSuburb + 1)); // index + 1 because of search bar
 			}
@@ -61,7 +63,7 @@ public class SuburbSelectionAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
 	@Override
 	public int getItemViewType(int position) {
-		if(position == 0) {
+		if (position == 0) {
 			return ROW_SEARCH;
 		}
 		return ROW_ITEM;
@@ -69,17 +71,17 @@ public class SuburbSelectionAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
 	@Override
 	public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-		if(viewType == ROW_SEARCH) {
+		if (viewType == ROW_SEARCH) {
 			return new SearchBarViewHolder(LayoutInflater.from(parent.getContext())
 					.inflate(R.layout.suburb_selection_searchbar_item, parent, false));
 		}
 		return new SuburbViewHolder(LayoutInflater.from(parent.getContext())
-					.inflate(R.layout.suburb_selection_item, parent, false));
+				.inflate(R.layout.suburb_selection_item, parent, false));
 	}
 
 	@Override
 	public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
-		if(position == 0) {
+		if (position == 0) {
 			// search bar
 			searchbarViewHolder = (SearchBarViewHolder) holder;
 			searchbarViewHolder.etvSuburbFilter.addTextChangedListener(this);
@@ -88,7 +90,7 @@ public class SuburbSelectionAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 			final Suburb suburb = suburbItemsFiltered.get(position - 1);
 			suburbViewHolder.tvSuburbName.setText(suburb.name);
 
-			if(suburb.hasHeader && !isFiltering) {
+			if (suburb.hasHeader && !isFiltering) {
 				suburbViewHolder.tvSuburbHeader.setText(Character.toString(suburb.name.charAt(0)).toUpperCase());
 				suburbViewHolder.headerLayout.setVisibility(View.VISIBLE);
 			} else {
@@ -98,9 +100,14 @@ public class SuburbSelectionAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 			suburbViewHolder.suburbItemLayout.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					suburbSelectionCallback.onItemClick(suburb);
+					if (suburb.suburbDeliverable)
+						suburbSelectionCallback.onItemClick(suburb);
 				}
 			});
+			suburbViewHolder.suburbItemLayout.setAlpha(suburb.suburbDeliverable ? 1f : 0.5f);
+			suburbViewHolder.tvSuburbName.setPaintFlags(Paint.ANTI_ALIAS_FLAG);
+			if (!suburb.suburbDeliverable)
+				suburbViewHolder.tvSuburbName.setPaintFlags(suburbViewHolder.tvSuburbHeader.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 		}
 	}
 
@@ -151,16 +158,18 @@ public class SuburbSelectionAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 		isFiltering = s.length() > 0;
 		suburbSelectionCallback.setScrollbarVisibility(!isFiltering);
 		getFilter().filter(s.toString());
-		if(searchbarViewHolder != null) {
+		if (searchbarViewHolder != null) {
 			searchbarViewHolder.searchSeparator.setVisibility(!isFiltering ? View.GONE : View.VISIBLE);
 		}
 	}
 
 	@Override
-	public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+	public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+	}
 
 	@Override
-	public void onTextChanged(CharSequence s, int start, int before, int count) {}
+	public void onTextChanged(CharSequence s, int start, int before, int count) {
+	}
 
 	public List<HeaderPosition> getHeaderItems() {
 		return headerItems;
