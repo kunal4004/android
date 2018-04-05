@@ -1202,7 +1202,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				@Override
 				public void onAnimationEnd(Animation animation) {
 					if (!TextUtils.isEmpty(desc)) {
-						Utils.displayValidationMessage(CustomPopUpWindow.this,CustomPopUpWindow.MODAL_LAYOUT.ERROR, desc);
+						Utils.displayValidationMessage(CustomPopUpWindow.this, CustomPopUpWindow.MODAL_LAYOUT.ERROR, desc);
 					}
 					if (mCloseView) {
 						Utils.sendBus(new ProductState(ProductState.CLOSE_VIEW));
@@ -1212,5 +1212,10 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 			});
 			mRelRootContainer.startAnimation(animation);
 		}
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		setResult(requestCode, data);
 	}
 }

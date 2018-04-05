@@ -18,12 +18,13 @@ import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.WrewardsLoggedinAndLinkedFragmentBinding;
 
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
-import za.co.woolworths.financial.services.android.models.rest.reward.WRewardsCardDetails;
 import za.co.woolworths.financial.services.android.models.dto.CardDetailsResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.models.rest.message.GetMessage;
 import za.co.woolworths.financial.services.android.models.rest.reward.GetVoucher;
+import za.co.woolworths.financial.services.android.models.rest.reward.WRewardsCardDetails;
+import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WRewardsErrorFragment;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.WRewardsFragmentPagerAdapter;
@@ -34,7 +35,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewards
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
-import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -173,39 +173,35 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	}
 
 	public void handleVoucherResponse(VoucherResponse response) {
-		try {
-			int httpCode = response.httpCode;
-			switch (httpCode) {
-				case 200:
-					if (response.voucherCollection.vouchers != null) {
-						addBadge(BottomNavigationActivity.INDEX_REWARD, response.voucherCollection.vouchers.size());
-					} else {
-						clearVoucherCounter();
-					}
-					voucherResponse = response;
-					isWrewardsCalled = true;
-					handleWrewardsAndCardDetailsResponse();
-					break;
-				case 440:
-					progressBar.setVisibility(View.GONE);
-					fragmentView.setVisibility(View.VISIBLE);
-
-					String stsParams = null;
-
-
-					if (response.response != null) {
-						stsParams = response.response.stsParams;
-					}
-					SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, stsParams);
-					break;
-				default:
-					progressBar.setVisibility(View.GONE);
-					fragmentView.setVisibility(View.VISIBLE);
+		int httpCode = response.httpCode;
+		switch (httpCode) {
+			case 200:
+				if (response.voucherCollection.vouchers != null) {
+					addBadge(BottomNavigationActivity.INDEX_REWARD, response.voucherCollection.vouchers.size());
+				} else {
 					clearVoucherCounter();
-					setupErrorViewPager(viewPager);
-					break;
-			}
-		} catch (Exception ignored) {
+				}
+				voucherResponse = response;
+				isWrewardsCalled = true;
+				handleWrewardsAndCardDetailsResponse();
+				break;
+			case 440:
+				progressBar.setVisibility(View.GONE);
+				fragmentView.setVisibility(View.VISIBLE);
+
+				String stsParams = null;
+				if (response.response != null) {
+					stsParams = response.response.stsParams;
+				}
+				SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, stsParams);
+				getParentFragment().onActivityResult(0, SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue(), null);
+				break;
+			default:
+				progressBar.setVisibility(View.GONE);
+				fragmentView.setVisibility(View.VISIBLE);
+				clearVoucherCounter();
+				setupErrorViewPager(viewPager);
+				break;
 		}
 	}
 

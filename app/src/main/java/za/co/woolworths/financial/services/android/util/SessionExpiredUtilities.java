@@ -18,7 +18,7 @@ public enum SessionExpiredUtilities {
 		args.putSerializable("key", CustomPopUpWindow.MODAL_LAYOUT.SESSION_EXPIRED);
 		args.putString("description", SessionUtilities.getInstance().getSTSParameters());
 		openMsg.putExtras(args);
-		activity.startActivity(openMsg);
+		activity.startActivityForResult(openMsg, 0);
 		activity.overridePendingTransition(0, 0);
 	}
 

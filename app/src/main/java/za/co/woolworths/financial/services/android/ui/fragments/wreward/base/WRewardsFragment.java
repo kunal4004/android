@@ -8,27 +8,23 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 
-import com.awfs.coordination.R;
 import com.awfs.coordination.BR;
+import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.WrewardsFragmentBinding;
 
 import io.reactivex.functions.Consumer;
-import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsLoggedOutFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.wreward.logged_in.WRewardsLoggedinAndLinkedFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsLoggedinAndNotLinkedFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.logged_in.WRewardsLoggedinAndLinkedFragment;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 
 public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRewardViewModel> implements WRewardNavigator {
-	public static final int FRAGMENT_CODE_1 = 1;
-	public static final int FRAGMENT_CODE_2 = 2;
 
 	private WRewardViewModel mWRewardViewModel;
 	private final String TAG = this.getClass().getSimpleName();
@@ -89,16 +85,11 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 			//user is linked and signed in
 			linkSignIn();
 		} else if (isUserAuthenticated && !isC2User) {
-			// sign in but reward state false
 			//user is not linked
 			//but signed in
-			replaceFragment();
+			notLinkSignIn();
 		} else if (!isUserAuthenticated) {
-			// authentication session expired
-			// but reward state true
-			replaceFragment();
-		} else {
-			// user is signed out
+			//user is signed out
 			signOut();
 		}
 	}
@@ -142,49 +133,12 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 		childFragTrans.commitAllowingStateLoss();
 	}
 
-	private void replaceFragment() {
-		boolean isUserAuthenticated = SessionUtilities.getInstance().isUserAuthenticated();
-
-		if (isUserAuthenticated) {
-			boolean isC2User = SessionUtilities.getInstance().isC2User();
-
-			if (isC2User) {
-				//user is linked and signed in
-				linkSignIn();
-			} else {
-				//user is not linked
-				//but signed in
-				notLinkSignIn();
-			}
-		} else {
-			//user is signed out
-			signOut();
-		}
-	}
-
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == FRAGMENT_CODE_1 && resultCode == Activity.RESULT_OK) {
-			try {
-				initialize();
-			} catch (Exception ignored) {
-			}
-		} else if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
-			//TODO: Comment what's actually happening here
-			//where is this callback coming from?
-			SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.ACTIVE);
-			removeAllChildFragments((AppCompatActivity) getActivity());
-			initialize();
-		} else if (resultCode == 0) {
-			Log.d(TAG, "empty");
-		} else if (resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue()){
-			try {
-				signOut();
-			} catch (Exception ignored) {
-			}
-		} else{
-			initialize();
+		if (resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue()) {
+			SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(getActivity());
 		}
+		initialize();
 	}
 
 	@Override

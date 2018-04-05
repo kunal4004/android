@@ -64,8 +64,6 @@ import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
-import com.awfs.coordination.BR;
-
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_ACCOUNT;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_REWARD;
 
@@ -839,8 +837,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 
 		//TODO: Comment what's actually happening here.
 		if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
-			SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.ACTIVE);
-
 			getBottomNavigator().badgeCount();
 			if (loadMessageCounter) {
 				messageCounterRequest();

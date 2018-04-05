@@ -32,7 +32,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 
 import io.reactivex.functions.Consumer;
-import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
@@ -701,7 +700,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					badgeCount();
 					switch (getCurrentSection()) {
 						case R.id.navigation_cart:
-							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.ACTIVE);
 							Intent openCartActivity = new Intent(this, CartActivity.class);
 							startActivityForResult(openCartActivity, OPEN_CART_REQUEST);
 							overridePendingTransition(0, 0);
@@ -720,7 +718,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			badgeCount();
 			switch (getCurrentSection()) {
 				case R.id.navigation_cart:
-					SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.ACTIVE);
 					Intent openCartActivity = new Intent(this, CartActivity.class);
 					startActivityForResult(openCartActivity, OPEN_CART_REQUEST);
 					overridePendingTransition(0, 0);

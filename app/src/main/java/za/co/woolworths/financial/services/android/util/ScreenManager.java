@@ -37,16 +37,16 @@ public class ScreenManager {
 		activity.overridePendingTransition(0, 0);
 	}
 
-	public static void presentExpiredTokenSSOSignIn(Activity activity, String newSTSParams) {
+	public static void presentExpiredTokenSSOSignIn(Activity activity, String stsParams) {
 		WoolworthsApplication woolworthsApplication = (WoolworthsApplication) activity
 				.getApplication();
-		SessionUtilities.getInstance().setSTSParameters(newSTSParams);
+		SessionUtilities.getInstance().setSTSParameters(stsParams);
 
 		Intent intent = new Intent(activity, SSOActivity.class);
 		intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue());
 		intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue());
 		intent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.SIGNIN.rawValue());
-		intent.putExtra(SSOActivity.TAG_SCOPE, newSTSParams);
+		intent.putExtra(SSOActivity.TAG_SCOPE, stsParams);
 		activity.startActivityForResult(intent, SSOActivity.SSOActivityResult.LAUNCH.rawValue());
 		activity.overridePendingTransition(0, 0);
 	}

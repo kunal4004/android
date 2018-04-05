@@ -367,6 +367,9 @@ public class SSOActivity extends WebViewActivity {
 		public void onPageStarted(WebView view, String url, Bitmap favicon) {
 			super.onPageStarted(view, url, favicon);
 			showProgressBar();
+
+			final String stsParams = SessionUtilities.getInstance().getSTSParameters();
+
 			if (SSOActivity.this.path == Path.SIGNIN || SSOActivity.this.path == Path.REGISTER) {
 				view.evaluateJavascript("(function(){return {'content': [document.forms[0].state.value.toString(), document.forms[0].id_token.value.toString()]}})();", new ValueCallback<String>() {
 					@Override
@@ -402,13 +405,14 @@ public class SSOActivity extends WebViewActivity {
 							Utils.triggerFireBaseEvents(getApplicationContext(), FirebaseAnalytics.Event.LOGIN, arguments);
 
 							NotificationUtils.getInstance().sendRegistrationToServer();
+							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.ACTIVE);
 							setResult(SSOActivityResult.SUCCESS.rawValue(), intent);
 						} else {
 							setResult(SSOActivityResult.STATE_MISMATCH.rawValue(), intent);
 						}
 
 						try {
-							if (!TextUtils.isEmpty(SessionUtilities.getInstance().getSTSParameters())) {
+							if (!TextUtils.isEmpty(stsParams)) {
 								SessionUtilities.getInstance().setSTSParameters(null);
 								clearHistory();
 							} else {
