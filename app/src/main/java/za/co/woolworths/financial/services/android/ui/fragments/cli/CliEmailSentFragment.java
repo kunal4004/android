@@ -10,15 +10,13 @@ import android.view.ViewGroup;
 
 import com.awfs.coordination.R;
 
-
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.JWTHelper;
+import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.controller.CLIFragment;
 
 public class CliEmailSentFragment extends CLIFragment implements View.OnClickListener {
@@ -65,20 +63,8 @@ public class CliEmailSentFragment extends CLIFragment implements View.OnClickLis
 		}
 	}
 
-	public JWTDecodedModel getJWTDecoded() {
-		JWTDecodedModel result = new JWTDecodedModel();
-		try {
-			SessionDao sessionDao = new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN).get();
-			if (sessionDao.value != null && !sessionDao.value.equals("")) {
-				result = JWTHelper.decode(sessionDao.value);
-			}
-		} catch (Exception ignored) {
-		}
-		return result;
-	}
-
 	private void populateDocument(WTextView textView) {
-		JWTDecodedModel userDetail = getJWTDecoded();
+		JWTDecodedModel userDetail = SessionUtilities.getInstance().getJwt();
 		if (userDetail != null) {
 			textView.setText(userDetail.email.get(0));
 		}

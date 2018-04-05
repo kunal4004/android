@@ -17,6 +17,7 @@ import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.WrewardsLoggedinAndLinkedFragmentBinding;
 
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.rest.reward.WRewardsCardDetails;
 import za.co.woolworths.financial.services.android.models.dto.CardDetailsResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
@@ -34,7 +35,7 @@ import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
-import za.co.woolworths.financial.services.android.util.SessionManager;
+import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 
@@ -57,7 +58,6 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	public VoucherResponse voucherResponse;
 	private WRewardLoggedInViewModel wRewardViewModel;
 	private GetVoucher getVoucherAsync;
-	private SessionManager mSessionManager;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -84,9 +84,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		Activity activity = getActivity();
-		if (activity != null) {
-			mSessionManager = new SessionManager(activity);
-		}
+
 		viewPager = getViewDataBinding().viewpager;
 		progressBar = getViewDataBinding().progressBar;
 		fragmentView = getViewDataBinding().fragmentView;
@@ -179,8 +177,6 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 			int httpCode = response.httpCode;
 			switch (httpCode) {
 				case 200:
-					mSessionManager.setRewardSignInState(true);
-					mSessionManager.setAccountHasExpired(false);
 					if (response.voucherCollection.vouchers != null) {
 						addBadge(BottomNavigationActivity.INDEX_REWARD, response.voucherCollection.vouchers.size());
 					} else {
@@ -193,15 +189,16 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 				case 440:
 					progressBar.setVisibility(View.GONE);
 					fragmentView.setVisibility(View.VISIBLE);
-					mSessionManager.setRewardSignInState(false);
+
+					String stsParams = null;
+
+
 					if (response.response != null) {
-						if (response.response.stsParams != null) {
-							SessionExpiredUtilities.INSTANCE.setWRewardSessionExpired(getActivity(), response.response.stsParams);
-						}
+						stsParams = response.response.stsParams;
 					}
+					SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, stsParams);
 					break;
 				default:
-					mSessionManager.setRewardSignInState(true);
 					progressBar.setVisibility(View.GONE);
 					fragmentView.setVisibility(View.VISIBLE);
 					clearVoucherCounter();

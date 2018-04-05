@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+
 /**
  * Created by W7099877 on 19/12/2016.
  */
@@ -72,6 +74,16 @@ public class PersistenceLayer extends SQLiteOpenHelper {
                 instance = null;
                 e.printStackTrace();
             }
+        }
+
+        return instance;
+    }
+
+    public static PersistenceLayer getInstance(){
+        if (instance == null){
+
+            Context context = WoolworthsApplication.getInstance().getApplicationContext();
+            instance = getInstance(context);
         }
 
         return instance;

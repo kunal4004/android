@@ -30,15 +30,15 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
-import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.SessionUtilities;
 
 public class CheckOutFragment extends Fragment {
 
@@ -236,7 +236,7 @@ public class CheckOutFragment extends Fragment {
 		Map<String, String> extraHeaders = new HashMap<>();
 		Activity activity = getActivity();
 		if (activity != null) {
-			extraHeaders.put("token", Utils.getSessionToken(activity));
+			extraHeaders.put("token", SessionUtilities.getInstance().getSessionToken());
 		}
 		return extraHeaders;
 	}

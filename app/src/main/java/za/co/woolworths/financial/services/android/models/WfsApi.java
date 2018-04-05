@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.models;
 import android.content.Context;
 import android.location.Location;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.jakewharton.retrofit.Ok3Client;
 
@@ -16,7 +15,6 @@ import okhttp3.OkHttpClient;
 import retrofit.RestAdapter;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.CreateListResponse;
-import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
@@ -25,10 +23,10 @@ import za.co.woolworths.financial.services.android.models.dto.AuthoriseLoanReque
 import za.co.woolworths.financial.services.android.models.dto.AuthoriseLoanResponse;
 import za.co.woolworths.financial.services.android.models.dto.BankAccountTypes;
 import za.co.woolworths.financial.services.android.models.dto.CLIEmailResponse;
+import za.co.woolworths.financial.services.android.models.dto.CLIOfferDecision;
 import za.co.woolworths.financial.services.android.models.dto.CardDetailsResponse;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.ChangeQuantity;
-import za.co.woolworths.financial.services.android.models.dto.CLIOfferDecision;
 import za.co.woolworths.financial.services.android.models.dto.CreateList;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferRequest;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice;
@@ -50,22 +48,23 @@ import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.PromotionsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProvincesResponse;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
+import za.co.woolworths.financial.services.android.models.dto.RootCategories;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbRequest;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
-import za.co.woolworths.financial.services.android.models.dto.SuburbsResponse;
-import za.co.woolworths.financial.services.android.models.dto.RootCategories;
-import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
-import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementResponse;
-import za.co.woolworths.financial.services.android.models.dto.statement.UserStatement;
-import za.co.woolworths.financial.services.android.models.dto.statement.StatementResponse;
 import za.co.woolworths.financial.services.android.models.dto.SubCategories;
+import za.co.woolworths.financial.services.android.models.dto.SuburbsResponse;
 import za.co.woolworths.financial.services.android.models.dto.TransactionHistoryResponse;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
+import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
+import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementResponse;
+import za.co.woolworths.financial.services.android.models.dto.statement.StatementResponse;
+import za.co.woolworths.financial.services.android.models.dto.statement.UserStatement;
+import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class WfsApi {
@@ -361,16 +360,11 @@ public class WfsApi {
 	}
 
 	private String getSessionToken() {
-		try {
-			SessionDao sessionDao = new SessionDao(mContext, SessionDao.KEY.USER_TOKEN).get();
-			if (sessionDao.value != null && !sessionDao.value.equals("")) {
-				Log.i("SessionToken", sessionDao.value);
-				return sessionDao.value;
-			}
-		} catch (Exception e) {
-			Log.e(TAG, e.getMessage());
-		}
-		return "";
+		String sessionToken = SessionUtilities.getInstance().getSessionToken();
+		if (sessionToken.isEmpty())
+			return "";
+		else
+			return sessionToken;
 	}
 
 	private void getMyLocation() {
