@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.ui.activities;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -23,6 +22,7 @@ import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.adapters.StockFinderFragmentAdapter;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ColorFragmentList;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.SizeFragmentList;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.EditQuantityFragmentList;
@@ -36,6 +36,7 @@ import static za.co.woolworths.financial.services.android.models.service.event.P
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.OPEN_ADD_TO_SHOPPING_LIST_VIEW;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.POST_ADD_ITEM_TO_CART;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_ADD_TO_SHOPPING_LIST;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_SEARCH_FROM_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_STORE_FINDER;
 
 public class ConfirmColorSizeActivity extends AppCompatActivity implements View.OnClickListener, WStockFinderActivity.RecyclerItemSelected {
@@ -79,6 +80,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 			mProductHasColor = mBundle.getBoolean(PRODUCT_HAS_COLOR);
 			mProductHasSize = mBundle.getBoolean(PRODUCT_HAS_SIZE);
 		}
+
 		init();
 		addListener();
 		hideBackIcon();
@@ -299,28 +301,23 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 				ArrayList<OtherSkus> otherSkuList = Utils.commonSizeList(mSelectedColour, mProductHasColor, getOtherSKUList(mOtherSKU));
 				if (otherSkuList.size() > 0) {
 					if (otherSkuList.size() == 1) {
-						String selectedSKU = otherSkuList.get(0).sku;
-						mGlobalState.setSelectedSKUId(selectedSKU);
+						mGlobalState.setSelectedSKUId(otherSkuList.get(0));
 						dismissSizeColorActivity();
 					} else {
-						String selectedSKU = getOtherSKUList(mColorList).get(position).sku;
-						mGlobalState.setSelectedSKUId(selectedSKU);
+						mGlobalState.setSelectedSKUId(getOtherSKUList(mColorList).get(position));
 						mViewPager.setCurrentItem(1);
 					}
 				} else {
-					String selectedSKU = getOtherSKUList(mColorList).get(position).sku;
-					mGlobalState.setSelectedSKUId(selectedSKU);
+					mGlobalState.setSelectedSKUId(getOtherSKUList(mColorList).get(position));
 					dismissSizeColorActivity();
 				}
 			} else {
-				String selectedSKU = getOtherSKUList(mColorList).get(position).sku;
-				mGlobalState.setSelectedSKUId(selectedSKU);
+				mGlobalState.setSelectedSKUId(getOtherSKUList(mColorList).get(position));
 				dismissSizeColorActivity();
 			}
 		} else {
 			ArrayList<OtherSkus> mOtherSizeSKU = Utils.commonSizeList(mSelectedColour, mProductHasColor, getOtherSKUList(mOtherSKU));
-			String selectedSKU = mOtherSizeSKU.get(position).sku;
-			mGlobalState.setSelectedSKUId(selectedSKU);
+			mGlobalState.setSelectedSKUId(mOtherSizeSKU.get(position));
 			inStoreFinderUpdate();
 		}
 	}
@@ -333,6 +330,10 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 	private void inStoreFinderUpdate() {
 		if (mGlobalState != null) {
 			switch (mGlobalState.getSaveButtonClick()) {
+				case INDEX_SEARCH_FROM_LIST:
+					Utils.sendBus(new ProductState(ProductState.INDEX_SEARCH_FROM_LIST));
+					closeViewAnimation(CLOSE);
+					break;
 				case INDEX_STORE_FINDER:
 					callInStoreFinder();
 					closeViewAnimation(CLOSE);
@@ -348,7 +349,6 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 	}
 
 	private void callInStoreFinder() {
-		Log.e("INDEX_ADD_TO_SHOPPING", "callInStoreFinder");
 		Utils.sendBus(new ConfirmColorSizeActivity());
 	}
 
@@ -417,5 +417,10 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 				mViewPager.setCurrentItem(position);
 			}
 		});
+	}
+
+	@Override
+	public void onBackPressed() {
+		closeViewAnimation(CLOSE);
 	}
 }

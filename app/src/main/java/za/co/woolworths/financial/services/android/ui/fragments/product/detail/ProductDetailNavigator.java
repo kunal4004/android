@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
-import za.co.woolworths.financial.services.android.models.dto.AddToListResponse;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
@@ -22,7 +21,7 @@ public interface ProductDetailNavigator {
 
 	void renderView();
 
-	void closeView(View view);
+	void closeSlideUpPanel(View view);
 
 	void nestedScrollViewHelper();
 
@@ -126,9 +125,9 @@ public interface ProductDetailNavigator {
 
 	void onShoppingListsResponse(ShoppingListsResponse shoppingListsResponse);
 
-	void onAddToShopListLoad();
+	void unknownErrorResponse(Response response);
 
-	void onAddToListSuccess(AddToListResponse response);
+	void onShoppingListFailure(String e);
 
-	void onAddToListFailure(String e);
+	void shoppingListSessionTimedOut();
 }

@@ -46,10 +46,6 @@ public interface BottomNavigator {
 
 	void fadeOutToolbar(int color);
 
-	void pushFragment(Fragment fragment);
-
-	void pushFragment(Fragment fragment, boolean state);
-
 	void hideBottomNavigationMenu();
 
 	void showBottomNavigationMenu();
@@ -64,9 +60,17 @@ public interface BottomNavigator {
 
 	ArrayList<String> getPermissionType(String type);
 
+	void pushFragment(Fragment fragment);
+
+	void pushFragment(Fragment fragment, boolean state);
+
+	void pushFragmentSlideUp(Fragment fragment);
+
 	void popFragment();
 
 	void popFragmentNoAnim();
+
+	void popFragmentSlideDown();
 
 	void setSelectedIconPosition(int position);
 
@@ -91,4 +95,6 @@ public interface BottomNavigator {
 	void badgeCount();
 
 	Toolbar toolbar();
+
+	void closeSlideUpPanelFromList(int count);
 }

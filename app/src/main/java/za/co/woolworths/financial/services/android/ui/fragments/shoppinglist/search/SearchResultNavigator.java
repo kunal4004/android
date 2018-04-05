@@ -4,6 +4,9 @@ import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
+import za.co.woolworths.financial.services.android.models.dto.WProduct;
 
 public interface SearchResultNavigator {
 	void onLoadProductSuccess(List<ProductList> productLists, boolean loadMoreData);
@@ -36,7 +39,27 @@ public interface SearchResultNavigator {
 
 	void onAddToListFailure(String e);
 
-	void onAddToListLoad();
+	void onAddToListLoad(boolean isLoading);
 
-	void onAddToListLoadComplete();
+	void onAddToListLoadComplete(List<ShoppingListItem> shoppingLists);
+
+	void onCheckedItem(ProductList selectedProduct, boolean viewIsLoading);
+
+	void toggleAddToListBtn(boolean enable);
+
+	void onLoadStart();
+
+	void responseFailureHandler(Response response);
+
+	void onSuccessResponse(WProduct product);
+
+	void onLoadComplete();
+
+	void onLoadDetailFailure(String e);
+
+	void onFoodTypeChecked(ProductList selectedProduct);
+
+	void unknownErrorMessage(ShoppingListItemsResponse shoppingCartResponse);
+
+	void accountExpired(ShoppingListItemsResponse shoppingCartResponse);
 }

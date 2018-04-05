@@ -23,14 +23,12 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
-import za.co.woolworths.financial.services.android.models.dto.AddToListResponse;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetail;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
-import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
@@ -600,29 +598,27 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 			@Override
 			public void onSuccess(Object object) {
 				ShoppingListsResponse shoppingListsResponse = (ShoppingListsResponse) object;
-				getNavigator().onShoppingListsResponse(shoppingListsResponse);
+				switch (shoppingListsResponse.httpCode) {
+					case 200:
+						getNavigator().onShoppingListsResponse(shoppingListsResponse);
+						break;
+					case 440:
+					case 400:
+						getNavigator().shoppingListSessionTimedOut();
+						break;
+
+					default:
+						if (shoppingListsResponse.response != null)
+							getNavigator().unknownErrorResponse(shoppingListsResponse.response);
+						break;
+				}
 			}
 
 			@Override
 			public void onFailure(String e) {
+				getNavigator().onShoppingListFailure(e);
 
 			}
 		});
-	}
-
-	public PostAddToList addToList(List<AddToListRequest> addToListRequest, String listId) {
-		getNavigator().onAddToShopListLoad();
-		return new PostAddToList(new OnEventListener() {
-			@Override
-			public void onSuccess(Object object) {
-				AddToListResponse response = (AddToListResponse) object;
-				getNavigator().onAddToListSuccess(response);
-			}
-
-			@Override
-			public void onFailure(String e) {
-				getNavigator().onAddToListFailure(e);
-			}
-		}, addToListRequest, listId);
 	}
 }

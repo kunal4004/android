@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.adapters;
 
-
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -9,10 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.awfs.coordination.R;
+import com.daimajia.swipe.SwipeLayout;
+import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,7 +29,7 @@ import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeVie
 
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailViewModel.CLOTHING_PRODUCT;
 
-public class ShoppingListSearchResultAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHolder> {
 
 	private final int ITEM_VIEW_TYPE_HEADER = 0;
 	private final int ITEM_VIEW_TYPE_BASIC = 1;
@@ -38,8 +40,8 @@ public class ShoppingListSearchResultAdapter extends RecyclerView.Adapter<Recycl
 
 	private SearchResultNavigator mSearchResultNavigator;
 
-	public ShoppingListSearchResultAdapter(List<ProductList> mProductList,
-										   SearchResultNavigator searchResultNavigator) {
+	public SearchResultShopAdapter(List<ProductList> mProductList,
+								   SearchResultNavigator searchResultNavigator) {
 		this.mProductList = mProductList;
 		this.mSearchResultNavigator = searchResultNavigator;
 	}
@@ -103,35 +105,103 @@ public class ShoppingListSearchResultAdapter extends RecyclerView.Adapter<Recycl
 			vh.setProductName(productList);
 			vh.setCartImage(productList);
 			vh.setChecked(productList);
-			//in some cases, it will prevent unwanted situations
-
-			vh.llItemContainer.setOnClickListener(new View.OnClickListener() {
+			vh.setDefaultQuantity();
+			vh.showProgressBar(productList.viewIsLoading);
+			vh.disableSwipeToDelete(false);
+			vh.setTvColorSize(productList);
+			vh.hideDropdownIcon();
+			vh.cbxItem.setOnClickListener(new View.OnClickListener() {
 				@Override
-				public void onClick(View v) {
-					int position = vh.getAdapterPosition();
-					ProductList selectedProduct = mProductList.get(position);
-					List<OtherSkus> otherSkuList = selectedProduct.otherSkus;
-					int otherSkuSize = 0;
-					if (otherSkuList != null) {
-						otherSkuSize = otherSkuList.size();
-					}
-					// Product of type clothing or OtherSkus > 0
-					if (selectedProduct.productType.equalsIgnoreCase(CLOTHING_PRODUCT) || otherSkuSize > 1) {
-						mSearchResultNavigator.onClothingTypeSelect(selectedProduct);
+				public void onClick(View view) {
+					/**
+					 * Disable clothing type selection when product detail api is loading
+					 * food item type can still be selected.
+					 */
+					ProductList productList = mProductList.get(vh.getAdapterPosition());
+					String productType = productList.productType;
+					List<OtherSkus> otherSkusList = productList.otherSkus;
+					int otherSkuSize = (otherSkusList == null) ? 0 : otherSkusList.size();
+					if (productType.equalsIgnoreCase(CLOTHING_PRODUCT) || otherSkuSize > 1) {
+						boolean unlockSelection = !viewIsLoading();
+						vh.cbxItem.setChecked(unlockSelection);
+						if (unlockSelection) {
+							onCheckItemClick(vh);
+						}
 					} else {
-						selectedProduct.productWasChecked = productWasChecked(selectedProduct);
-						mSearchResultNavigator.onFoodTypeSelect(selectedProduct);
-						mSearchResultNavigator.minOneItemSelected(mProductList);
-						notifyItemChanged(position);
+						onCheckItemClick(vh);
 					}
 				}
 			});
+
+			vh.llItemContainer.setOnClickListener(new View.OnClickListener()
+
+			{
+				@Override
+				public void onClick(View v) {
+					if (!viewIsLoading()) {
+						onItemClick(vh);
+					}
+				}
+			});
+
+			mItemManger.bindView(holder.itemView, position);
 		}
 	}
 
-	private boolean productWasChecked(ProductList prodList) {
-		return !prodList.productWasChecked;
+	private void onCheckItemClick(SimpleViewHolder vh) {
+		int position = vh.getAdapterPosition();
+		ProductList selectedProduct = mProductList.get(position);
+		int otherSkuSize = getOtherSkuSize(selectedProduct);
+		// Product of type clothing or OtherSkus > 0
+		if (clothingTypeProduct(selectedProduct, otherSkuSize)) {
+			selectedProduct.viewIsLoading = !selectedProduct.viewIsLoading;
+			if (selectedProduct.itemWasChecked) selectedProduct.viewIsLoading = false;
+			selectedProduct.itemWasChecked = productWasChecked(selectedProduct);
+			mSearchResultNavigator.onCheckedItem(selectedProduct, selectedProduct.viewIsLoading);
+			mSearchResultNavigator.minOneItemSelected(mProductList);
+			notifyItemChanged(position);
+		} else {
+			selectedProduct.itemWasChecked = productWasChecked(selectedProduct);
+			mSearchResultNavigator.onFoodTypeChecked(selectedProduct);
+			mSearchResultNavigator.minOneItemSelected(mProductList);
+			notifyItemChanged(position);
+		}
 	}
+
+	private boolean clothingTypeProduct(ProductList selectedProduct, int otherSkuSize) {
+		return selectedProduct.productType.equalsIgnoreCase(CLOTHING_PRODUCT) || otherSkuSize > 1;
+	}
+
+	private void onItemClick(SimpleViewHolder vh) {
+		int position = vh.getAdapterPosition();
+		ProductList selectedProduct = mProductList.get(position);
+		int otherSkuSize = getOtherSkuSize(selectedProduct);
+		// Product of type clothing or OtherSkus > 0
+		if (clothingTypeProduct(selectedProduct, otherSkuSize)) {
+			mSearchResultNavigator.onClothingTypeSelect(selectedProduct);
+		} else {
+			mSearchResultNavigator.onFoodTypeSelect(selectedProduct);
+		}
+	}
+
+	private int getOtherSkuSize(ProductList selectedProduct) {
+		List<OtherSkus> otherSkuList = selectedProduct.otherSkus;
+		int otherSkuSize = 0;
+		if (otherSkuList != null) {
+			otherSkuSize = otherSkuList.size();
+		}
+		return otherSkuSize;
+	}
+
+	private boolean productWasChecked(ProductList prodList) {
+		return !prodList.itemWasChecked;
+	}
+
+	@Override
+	public int getSwipeLayoutResourceId(int position) {
+		return R.id.swipe;
+	}
+
 
 	private class SimpleViewHolder extends RecyclerView.ViewHolder {
 
@@ -139,9 +209,14 @@ public class ShoppingListSearchResultAdapter extends RecyclerView.Adapter<Recycl
 		private WTextView tvPrice;
 		private WTextView tvWasPrice;
 		private WTextView tvSaveText;
+		private WTextView tvQuantity;
+		private WTextView tvColorSize;
 		private WrapContentDraweeView cartProductImage;
 		private LinearLayout llItemContainer;
-		private CheckBox btnDeleteRow;
+		private CheckBox cbxItem;
+		private ProgressBar pbLoadProduct;
+		private SwipeLayout swipeLayout;
+		private ImageView imPrice;
 
 		private SimpleViewHolder(View view) {
 			super(view);
@@ -149,9 +224,18 @@ public class ShoppingListSearchResultAdapter extends RecyclerView.Adapter<Recycl
 			tvPrice = view.findViewById(R.id.tvPrice);
 			tvWasPrice = view.findViewById(R.id.tvWasPrice);
 			tvSaveText = view.findViewById(R.id.tvSaveText);
+			tvColorSize = view.findViewById(R.id.tvColorSize);
 			cartProductImage = view.findViewById(R.id.cartProductImage);
 			llItemContainer = view.findViewById(R.id.llItemContainer);
-			btnDeleteRow = view.findViewById(R.id.btnDeleteRow);
+			cbxItem = view.findViewById(R.id.btnDeleteRow);
+			pbLoadProduct = view.findViewById(R.id.pbLoadProduct);
+			tvQuantity = view.findViewById(R.id.tvQuantity);
+			swipeLayout = view.findViewById(R.id.swipe);
+			imPrice = view.findViewById(R.id.imPrice);
+		}
+
+		private void setDefaultQuantity() {
+			tvQuantity.setText("1");
 		}
 
 		private void setCartImage(ProductList productItem) {
@@ -185,8 +269,25 @@ public class ShoppingListSearchResultAdapter extends RecyclerView.Adapter<Recycl
 			tvSaveText.setText(!TextUtils.isEmpty(productItem.saveText) ? productItem.saveText : "");
 		}
 
-		public void setChecked(ProductList checked) {
-			btnDeleteRow.setChecked(checked.productWasChecked);
+		public void setChecked(ProductList productList) {
+			cbxItem.setChecked(productList.itemWasChecked);
+		}
+
+		public void showProgressBar(boolean visible) {
+			pbLoadProduct.setVisibility(visible ? View.VISIBLE : View.GONE);
+			cbxItem.setVisibility(visible ? View.GONE : View.VISIBLE);
+		}
+
+		public void disableSwipeToDelete(boolean enable) {
+			swipeLayout.setRightSwipeEnabled(enable);
+		}
+
+		public void setTvColorSize(ProductList productlist) {
+			tvColorSize.setText(TextUtils.isEmpty(productlist.displayColorSizeText) ? "" : productlist.displayColorSizeText);
+		}
+
+		public void hideDropdownIcon() {
+			imPrice.setVisibility(View.GONE);
 		}
 	}
 
@@ -232,8 +333,59 @@ public class ShoppingListSearchResultAdapter extends RecyclerView.Adapter<Recycl
 		notifyDataSetChanged();
 	}
 
+	public void setCheckedProgressBar(ProductList productList) {
+		if (mProductList != null) {
+			for (ProductList pList : mProductList) {
+				if (pList == productList) {
+					pList.viewIsLoading = !pList.viewIsLoading;
+				}
+			}
+			notifyDataSetChanged();
+		}
+	}
+
+	public void setSelectedSku(ProductList selectedProduct, OtherSkus selectedSKU) {
+		if (mProductList != null) {
+			for (ProductList pList : mProductList) {
+				if (pList == selectedProduct) {
+					pList.sku = selectedSKU.sku;
+					String colour = TextUtils.isEmpty(selectedSKU.colour) ? "" : selectedSKU.colour;
+					String size = TextUtils.isEmpty(selectedSKU.size) ? "" : selectedSKU.size;
+					boolean colourSize = TextUtils.isEmpty(colour) || TextUtils.isEmpty(size);
+					pList.displayColorSizeText = colourSize ? (colour + "" + size) : (colour + ", " + size);
+				}
+			}
+			notifyDataSetChanged();
+		}
+	}
+
+	public void onDeselectSKU(ProductList selectedProduct, OtherSkus selectedSKU) {
+		if (mProductList != null) {
+			for (ProductList pList : mProductList) {
+				if (pList == selectedProduct) {
+					pList.itemWasChecked = false;
+					pList.viewIsLoading = false;
+					pList.displayColorSizeText = "";
+					notifyDataSetChanged();
+					return;
+				}
+			}
+		}
+	}
+
 	@Override
 	public int getItemCount() {
 		return mProductList == null ? 0 : mProductList.size();
+	}
+
+	public boolean viewIsLoading() {
+		if (mProductList != null) {
+			for (ProductList pList : mProductList) {
+				if (pList.viewIsLoading) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

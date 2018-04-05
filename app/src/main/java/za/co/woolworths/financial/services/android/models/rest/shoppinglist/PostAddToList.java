@@ -6,12 +6,11 @@ import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
-import za.co.woolworths.financial.services.android.models.dto.Response;
-import za.co.woolworths.financial.services.android.models.dto.AddToListResponse;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 
-public class PostAddToList extends HttpAsyncTask<String, String, AddToListResponse> {
+public class PostAddToList extends HttpAsyncTask<String, String, ShoppingListItemsResponse> {
 	public OnEventListener mCallBack;
 	private List<AddToListRequest> addToList;
 	private String mException;
@@ -24,24 +23,24 @@ public class PostAddToList extends HttpAsyncTask<String, String, AddToListRespon
 	}
 
 	@Override
-	protected AddToListResponse httpDoInBackground(String... strings) {
+	protected ShoppingListItemsResponse httpDoInBackground(String... strings) {
 		return WoolworthsApplication.getInstance().getApi().addToList(addToList,listId);
 	}
 
 	@Override
-	protected AddToListResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+	protected ShoppingListItemsResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
 		mException = errorMessage;
 		mCallBack.onFailure(errorMessage);
-		return new AddToListResponse();
+		return new ShoppingListItemsResponse();
 	}
 
 	@Override
-	protected Class<AddToListResponse> httpDoInBackgroundReturnType() {
-		return AddToListResponse.class;
+	protected Class<ShoppingListItemsResponse> httpDoInBackgroundReturnType() {
+		return ShoppingListItemsResponse.class;
 	}
 
 	@Override
-	protected void onPostExecute(AddToListResponse response) {
+	protected void onPostExecute(ShoppingListItemsResponse response) {
 		super.onPostExecute(response);
 		if (mCallBack != null) {
 			if (TextUtils.isEmpty(mException)) {

@@ -21,7 +21,7 @@ public class LocationItemTask extends HttpAsyncTask<String, String, LocationResp
 
 	@Override
 	protected LocationResponse httpDoInBackground(String... params) {
-		return mWoolworthApplication.getApi().getLocationsItem(mWGlobalState.getSelectedSKUId(), String.valueOf(mWGlobalState.getStartRadius()), String.valueOf(mWGlobalState.getEndRadius()));
+		return mWoolworthApplication.getApi().getLocationsItem(mWGlobalState.getSelectedSKUId().sku, String.valueOf(mWGlobalState.getStartRadius()), String.valueOf(mWGlobalState.getEndRadius()));
 	}
 
 	@Override

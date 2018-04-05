@@ -65,6 +65,7 @@ import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 
+import static android.app.Activity.DEFAULT_KEYS_SEARCH_GLOBAL;
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT;
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT_TEMP;
 import static za.co.woolworths.financial.services.android.models.service.event.CartState.CHANGE_QUANTITY;
@@ -475,6 +476,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 									public void run() {
 										//TODO:: improve error handling
 										ScreenManager.presentSSOSignin(activity);
+										activity.setResult(DEFAULT_KEYS_SEARCH_GLOBAL);
 										Utils.removeEntry(activity);
 										activity.finish();
 										activity.overridePendingTransition(0, 0);
@@ -859,4 +861,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		HttpAsyncTask<String, String, ShoppingCartResponse> removeCartItem = removeCartItem(mCommerceItem);
 		removeCartItem.execute();
 	}
+
+
 }

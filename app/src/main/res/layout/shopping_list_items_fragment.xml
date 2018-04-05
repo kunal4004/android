@@ -64,6 +64,7 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rcvShoppingListItems"
                 android:layout_width="match_parent"
+                android:animateLayoutChanges="false"
                 android:layout_height="match_parent"
                 android:layout_above="@+id/incConfirmButtonLayout" />
 
@@ -74,6 +75,14 @@
                 android:layout_height="match_parent"
                 android:layout_above="@+id/incConfirmButtonLayout"
                 android:layout_below="@+id/rlShopSearch" />
+            <include
+                android:id="@+id/incConnectionLayout"
+                layout="@layout/no_connection_handler"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@+id/incConfirmButtonLayout"
+                android:layout_below="@+id/rlShopSearch"
+                />
 
             <include
                 android:id="@+id/incConfirmButtonLayout"

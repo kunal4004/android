@@ -14,4 +14,8 @@ public class ProductDetail {
 	@SerializedName("httpCode")
 	@Expose
 	public Integer httpCode;
+
+	public void setProduct(Product product) {
+		this.product = product;
+	}
 }

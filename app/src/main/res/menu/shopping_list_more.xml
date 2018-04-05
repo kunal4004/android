@@ -10,11 +10,12 @@
         app:showAsAction="always"/>
 
     <item
-        android:id="@+id/action_create_list"
+        android:id="@+id/selectAll"
         android:enabled="true"
-        android:icon="@drawable/more"
         android:title=""
-        android:visible="true"
-        app:showAsAction="always"/>
+        android:visible="false"
+        app:actionLayout="@layout/shoppinglist_custom_menu_item"
+        app:showAsAction="always"
+        />
 
 </menu>
