@@ -77,6 +77,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 		btnEditCart.setText(isEditMode ? R.string.done : R.string.edit);
 		btnCloseCart.setVisibility(isEditMode ? View.GONE : View.VISIBLE);
 		btnClearCart.setVisibility(isEditMode ? View.VISIBLE : View.GONE);
+		cartFragment.deliveryLocationEnabled(!isEditMode);
 	}
 
 	@Override
