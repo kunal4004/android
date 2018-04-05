@@ -44,6 +44,7 @@ import java.util.List;
 
 import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.AddToCartDaTum;
@@ -105,7 +106,6 @@ import static za.co.woolworths.financial.services.android.models.service.event.P
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SET_SUBURB;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SET_SUBURB_API;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.USE_MY_LOCATION;
-import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.ADD_TO_SHOPPING_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailViewModel.CLOTHING_PRODUCT;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailViewModel.FOOD_PRODUCT;
 
@@ -1496,25 +1496,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		}
 	}
 
-	private void onSessionExpired(final Response response) {
-		final Activity activity = getBaseActivity();
-		activity.runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				if (activity != null) {
-					onAddToCartLoadComplete();
-					if (response != null) {
-						if (response.message != null) {
-							getGlobalState().setDetermineLocationPopUpEnabled(true);
-							ScreenManager.presentSSOSignin(activity);
-							onAddToCartLoadComplete();
-						}
-					}
-				}
-			}
-		});
-	}
-
 	@Override
 	public void onAddToCartLoad() {
 		hideView(getViewDataBinding().tvAddToCart);
@@ -1586,8 +1567,25 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	}
 
 	@Override
-	public void onSessionTokenExpired(Response response) {
-		onSessionExpired(response);
+	public void onSessionTokenExpired(final Response response) {
+
+		SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
+		final Activity activity = getBaseActivity();
+		activity.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if (activity != null) {
+					onAddToCartLoadComplete();
+					if (response != null) {
+						if (response.message != null) {
+							getGlobalState().setDetermineLocationPopUpEnabled(true);
+							ScreenManager.presentSSOSignin(activity);
+							onAddToCartLoadComplete();
+						}
+					}
+				}
+			}
+		});
 	}
 
 	@Override
