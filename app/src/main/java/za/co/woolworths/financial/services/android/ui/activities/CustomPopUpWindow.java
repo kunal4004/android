@@ -92,6 +92,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 	private WButton mBtnSessionExpiredCancel;
 	private WButton mBtnSignIn;
 	private boolean mCloseView;
+	public static int CART_DEFAULT_ERROR_TAPPED = 1234567;
 
 	public enum MODAL_LAYOUT {
 		CONFIDENTIAL, INSOLVENCY, INFO, EMAIL, ERROR, MANDATORY_FIELD,
@@ -610,9 +611,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 				@Override
 				public void onAnimationEnd(Animation animation) {
-					if (mCloseView) {
-						Utils.sendBus(new ProductState(ProductState.CLOSE_VIEW));
-					}
+					setResult(CART_DEFAULT_ERROR_TAPPED);
 					dismissLayout();
 				}
 			});
@@ -1204,10 +1203,9 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 					if (!TextUtils.isEmpty(desc)) {
 						Utils.displayValidationMessage(CustomPopUpWindow.this, CustomPopUpWindow.MODAL_LAYOUT.ERROR, desc);
 					}
-					if (mCloseView) {
-						Utils.sendBus(new ProductState(ProductState.CLOSE_VIEW));
-					}
-					dismissLayout();
+					setResult(CART_DEFAULT_ERROR_TAPPED);
+					finish();
+					overridePendingTransition(0, 0);
 				}
 			});
 			mRelRootContainer.startAnimation(animation);
