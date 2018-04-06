@@ -718,6 +718,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 							mToggleItemRemoved.onRemoveItem(false);
 							break;
 					}
+					deliveryLocationEnabled(true);
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
