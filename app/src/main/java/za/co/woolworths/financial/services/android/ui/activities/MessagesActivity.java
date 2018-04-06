@@ -40,7 +40,7 @@ import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
-import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
+import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class MessagesActivity extends AppCompatActivity {
@@ -235,7 +235,7 @@ public class MessagesActivity extends AppCompatActivity {
 						}
 						break;
 					case 440:
-						SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(MessagesActivity.this, messageResponse.response.stsParams);
+						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, messageResponse.response.stsParams);
 						break;
 
 					default:
@@ -378,7 +378,7 @@ public class MessagesActivity extends AppCompatActivity {
 					}
 					break;
 				case 440:
-					SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(MessagesActivity.this, messageResponse.response.stsParams);
+					SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, messageResponse.response.stsParams);
 					break;
 				default:
 					Utils.alertErrorMessage(MessagesActivity.this, messageResponse.response.desc);

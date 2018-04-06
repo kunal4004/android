@@ -53,7 +53,6 @@ public class UserManager {
 	public void setWRewards(VoucherResponse voucherResponse) {
 		getSharedPreferences().edit().putString(W_REWARDS, new Gson().toJson(voucherResponse)).commit();
 		getSharedPreferences().edit().putLong(W_REWARDS_CACHE_TIME, System.currentTimeMillis()).commit();
-		WoolworthsApplication.setNumVouchers(voucherResponse.voucherCollection == null || voucherResponse.voucherCollection.vouchers == null ? 0 : voucherResponse.voucherCollection.vouchers.size());
 	}
 
 	public String getAccounts() {

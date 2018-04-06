@@ -10,7 +10,7 @@ import za.co.woolworths.financial.services.android.util.OnEventListener;
 
 public class PostAddList extends HttpAsyncTask<String, String, ShoppingListsResponse> {
 	private CreateList listName;
-	public OnEventListener mCallBack;
+	private OnEventListener mCallBack;
 	private String mException;
 
 	public PostAddList(OnEventListener mCallBack, CreateList listName) {

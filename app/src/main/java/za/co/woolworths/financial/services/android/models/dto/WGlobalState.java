@@ -20,12 +20,13 @@ public class WGlobalState {
 
 	private boolean onBackPressed,
 			colorWasPopup, sizeWasPopup;
-	private String newSTSParams, creditLimit;
+	private String creditLimit;
 	private List<StoreDetails> storeDetailsArrayList;
 	private ArrayList<OtherSkus> colourSKUArrayList;
 	private OtherSkus colorPopUpValue, sizePopUpValue;
 	private CLIOfferDecision mDeclineDecision;
 	private OtherSkus selectedSKUId;
+	private List<ShoppingList> shoppingListRequest;
 
 	public boolean getOnBackPressed() {
 		return onBackPressed;
@@ -33,14 +34,6 @@ public class WGlobalState {
 
 	public void setOnBackPressed(boolean pOnBackPressed) {
 		onBackPressed = pOnBackPressed;
-	}
-
-	public String getNewSTSParams() {
-		return newSTSParams;
-	}
-
-	public void setNewSTSParams(String pNewSTSParams) {
-		newSTSParams = pNewSTSParams;
 	}
 
 	public boolean clothingIsEnabled() {
@@ -191,5 +184,13 @@ public class WGlobalState {
 
 	public int getNavigateFromQuantity() {
 		return navigateFromQuantity;
+	}
+
+	public List<ShoppingList> getShoppingListRequest() {
+		return shoppingListRequest;
+	}
+
+	public void setShoppingListRequest(List<ShoppingList> shoppingListRequest) {
+		this.shoppingListRequest = shoppingListRequest;
 	}
 }

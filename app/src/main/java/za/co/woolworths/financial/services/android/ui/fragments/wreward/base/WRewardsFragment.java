@@ -8,32 +8,30 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 
-import com.awfs.coordination.R;
 import com.awfs.coordination.BR;
+import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.WrewardsFragmentBinding;
 
-import io.reactivex.functions.Consumer;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsLoggedOutFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.wreward.logged_in.WRewardsLoggedinAndLinkedFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsLoggedinAndNotLinkedFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.logged_in.WRewardsLoggedinAndLinkedFragment;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
-import za.co.woolworths.financial.services.android.util.SessionManager;
+import za.co.woolworths.financial.services.android.util.SessionUtilities;
+import za.co.woolworths.financial.services.android.util.Utils;
 
-import static za.co.woolworths.financial.services.android.util.SessionManager.REWARD_SESSION_EXPIRED;
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_ACCOUNT;
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART;
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_REWARD;
 
 public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRewardViewModel> implements WRewardNavigator {
-	public static final int FRAGMENT_CODE_1 = 1;
-	public static final int FRAGMENT_CODE_2 = 2;
 
 	private WRewardViewModel mWRewardViewModel;
-	private String TAG = this.getClass().getSimpleName();
-	private SessionManager mSessionManager;
+	private final String TAG = this.getClass().getSimpleName();
 	private boolean mRewardSignInState;
 
 	@Override
@@ -41,23 +39,6 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 		super.onCreate(savedInstanceState);
 		mWRewardViewModel = ViewModelProviders.of(this).get(WRewardViewModel.class);
 		mWRewardViewModel.setNavigator(this);
-
-		getViewModel().consumeObservable(new Consumer<Object>() {
-			@Override
-			public void accept(Object object) throws Exception {
-				Activity activity = getActivity();
-				if (activity != null) {
-					if (object instanceof SessionManager) {
-						SessionManager sessionManager = (SessionManager) object;
-						if (sessionManager.getState() == REWARD_SESSION_EXPIRED) {
-							addBadge(BottomNavigationActivity.INDEX_REWARD, 0);
-							initialize();
-							SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(getActivity());
-						}
-					}
-				}
-			}
-		});
 	}
 
 	@Override
@@ -83,26 +64,21 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 
 	public void initialize() {
 		Activity activity = getActivity();
-		if (activity != null) {
-			mSessionManager = new SessionManager(getActivity());
-		}
+
 		removeAllChildFragments((AppCompatActivity) getActivity());
-		boolean accountSignInState = mSessionManager.authenticationState();
-		mRewardSignInState = mSessionManager.getRewardSignInState();
-		if (accountSignInState && mRewardSignInState) {
+
+		boolean isUserAuthenticated = SessionUtilities.getInstance().isUserAuthenticated();
+		boolean isC2User = SessionUtilities.getInstance().isC2User();
+
+		if (isUserAuthenticated && isC2User) {
 			//user is linked and signed in
 			linkSignIn();
-		} else if (accountSignInState && !mRewardSignInState) {
-			// sign in but reward state false
+		} else if (isUserAuthenticated && !isC2User) {
 			//user is not linked
 			//but signed in
-			replaceFragment();
-		} else if (!accountSignInState && mRewardSignInState) {
-			// authentication session expired
-			// but reward state true
-			replaceFragment();
-		} else {
-			// user is signed out
+			notLinkSignIn();
+		} else if (!isUserAuthenticated) {
+			//user is signed out
 			signOut();
 		}
 	}
@@ -146,42 +122,12 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 		childFragTrans.commitAllowingStateLoss();
 	}
 
-	private void replaceFragment() {
-		if (mSessionManager.authenticationState()) {
-			if (mSessionManager.isC2IdEnabled() && mRewardSignInState) {
-				//user is linked and signed in
-				linkSignIn();
-			} else {
-				//user is not linked
-				//but signed in
-				notLinkSignIn();
-			}
-		} else {
-			//user is signed out
-			signOut();
-		}
-	}
-
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == FRAGMENT_CODE_1 && resultCode == Activity.RESULT_OK) {
-			try {
-				initialize();
-			} catch (Exception ignored) {
-			}
-		} else if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
-			mSessionManager.setAccountHasExpired(false);
-			mSessionManager.setRewardSignInState(true);
-			removeAllChildFragments((AppCompatActivity) getActivity());
-			initialize();
-		} else if (resultCode == 0) {
-			Log.d(TAG, "empty");
-		} else {
-			try {
-				signOut();
-			} catch (Exception ignored) {
-			}
+		if (resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue()) {
+			onSessionExpired(getActivity());
 		}
+		initialize();
 	}
 
 	@Override
@@ -192,5 +138,18 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 			initialize();
 		}
 		setTitle(getString(R.string.wrewards));
+	}
+
+	private void onSessionExpired(Activity activity){
+		addBadge(INDEX_REWARD, 0);
+		addBadge(INDEX_ACCOUNT, 0);
+		addBadge(INDEX_CART, 0);
+
+		Utils.setBadgeCounter(getActivity(), 0);
+
+		SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
+		SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(activity);
+
+		initialize();
 	}
 }

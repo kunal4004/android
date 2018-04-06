@@ -24,26 +24,19 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Html;
-import android.text.Layout;
-import android.text.SpannableString;
 import android.text.TextUtils;
-import android.text.style.StyleSpan;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.*;
-import android.widget.Button;
+import android.view.animation.Animation;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.awfs.coordination.R;
 import com.google.android.gms.maps.GoogleMap;
@@ -78,7 +71,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
-import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
@@ -88,6 +80,7 @@ import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.Transaction;
 import za.co.woolworths.financial.services.android.models.dto.TransactionParentObj;
+import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
@@ -339,7 +332,8 @@ public class Utils {
 			return null;
 		}
 		Gson gson = new Gson();
-		return gson.fromJson(json, new TypeToken<T>(){}.getType());
+		return gson.fromJson(json, new TypeToken<T>() {
+		}.getType());
 	}
 
 
@@ -361,8 +355,7 @@ public class Utils {
 			return null;
 
 		try {
-			SessionDao sessionDao = new SessionDao(context);
-			sessionDao.key = SessionDao.KEY.STORES_LATEST_PAYLOAD;
+			SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.STORES_LATEST_PAYLOAD);
 			sessionDao.value = value;
 			try {
 				sessionDao.save();
@@ -380,8 +373,7 @@ public class Utils {
 
 
 	public static void sessionDaoSave(Context context, SessionDao.KEY key, String value) {
-		SessionDao sessionDao = new SessionDao(context);
-		sessionDao.key = key;
+		SessionDao sessionDao = SessionDao.getByKey(key);
 		sessionDao.value = value;
 		try {
 			sessionDao.save();
@@ -391,15 +383,9 @@ public class Utils {
 	}
 
 	public static String getSessionDaoValue(Context context, SessionDao.KEY key) {
-		SessionDao sessionDao = null;
-		try {
-			sessionDao = new SessionDao(context, key).get();
-			return sessionDao.value;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-
+		SessionDao sessionDao = SessionDao.getByKey(key);
+		;
+		return sessionDao.value;
 	}
 
 	public static void setBadgeCounter(Context context, int badgeCount) {
@@ -468,7 +454,7 @@ public class Utils {
 		args.putString("description", description);
 		args.putBoolean("closeSlideUpPanel", closeView);
 		openMsg.putExtras(args);
-		context.startActivity(openMsg);
+		((AppCompatActivity) context).startActivityForResult(openMsg, 0);
 		((AppCompatActivity) context).overridePendingTransition(0, 0);
 	}
 
@@ -614,19 +600,6 @@ public class Utils {
 		}
 
 		mFirebaseAnalytics.logEvent(eventName, params);
-	}
-
-	public static JWTDecodedModel getJWTDecoded(Context mContext) {
-		JWTDecodedModel result = new JWTDecodedModel();
-		try {
-			SessionDao sessionDao = new SessionDao(mContext, SessionDao.KEY.USER_TOKEN).get();
-			if (sessionDao.value != null && !sessionDao.value.equals("")) {
-				result = JWTHelper.decode(sessionDao.value);
-			}
-		} catch (Exception e) {
-			Log.e("TAG", e.getMessage());
-		}
-		return result;
 	}
 
 	public static void sendEmail(String emailId, String subject, Context mContext) {
@@ -929,7 +902,7 @@ public class Utils {
 	public static List<DeliveryLocationHistory> getDeliveryLocationHistory(Context context) {
 		List<DeliveryLocationHistory> history = null;
 		try {
-			SessionDao sessionDao = new SessionDao(context, SessionDao.KEY.DELIVERY_LOCATION_HISTORY).get();
+			SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.DELIVERY_LOCATION_HISTORY);
 			if (sessionDao.value == null) {
 				history = new ArrayList<>();
 			} else {
@@ -944,20 +917,6 @@ public class Utils {
 		return history;
 	}
 
-
-	public static String getSessionToken(Context context) {
-		try {
-			SessionDao sessionDao = new SessionDao(context, SessionDao.KEY.USER_TOKEN).get();
-			if (sessionDao.value != null && !sessionDao.value.equals("")) {
-				Log.i("SessionToken", sessionDao.value);
-				return sessionDao.value;
-			}
-		} catch (Exception e) {
-			Log.e("TAG", e.getMessage());
-		}
-		return "";
-	}
-
 	public static void sendBus(Object object) {
 		WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
 		if (woolworthsApplication != null) woolworthsApplication.bus().send(object);
@@ -970,8 +929,8 @@ public class Utils {
 
 	public static void saveRecentDeliveryLocation(DeliveryLocationHistory historyItem, Context context) {
 		List<DeliveryLocationHistory> history = getRecentDeliveryLocations(context);
-		SessionDao sessionDao = new SessionDao(context);
-		sessionDao.key = SessionDao.KEY.DELIVERY_LOCATION_HISTORY;
+		SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.DELIVERY_LOCATION_HISTORY);
+
 		Gson gson = new Gson();
 		boolean isExist = false;
 		if (history == null) {
@@ -1008,7 +967,7 @@ public class Utils {
 	public static List<DeliveryLocationHistory> getRecentDeliveryLocations(Context context) {
 		List<DeliveryLocationHistory> history = null;
 		try {
-			SessionDao sessionDao = new SessionDao(context, SessionDao.KEY.DELIVERY_LOCATION_HISTORY).get();
+			SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.DELIVERY_LOCATION_HISTORY);
 			if (sessionDao.value == null) {
 				history = new ArrayList<>();
 			} else {
@@ -1047,7 +1006,7 @@ public class Utils {
 				public void onClick(View view) {
 					if (viewState) {
 						// do anything when popupWindow was clicked
-						if (getSessionToken(activity) == null) {
+						if (false) {//TODO: this needs to change
 							ScreenManager.presentSSOSignin(activity);
 						} else {
 							Intent openCartActivity = new Intent(activity, CartActivity.class);
@@ -1145,25 +1104,18 @@ public class Utils {
 	}
 
 	public static void removeFromDb(SessionDao.KEY key, Context context) throws Exception {
-		new SessionDao(context, key).delete();
+		SessionDao.getByKey(key).delete();
 	}
 
 	public static void removeEntry(Activity context) {
 		try {
 			Utils.sendBus(new BadgeState(CART_COUNT_TEMP, 0));
-			Utils.removeToken(SessionDao.KEY.USER_TOKEN, context);
 			Utils.removeFromDb(SessionDao.KEY.DELIVERY_LOCATION_HISTORY, context);
 			Utils.removeFromDb(SessionDao.KEY.STORES_USER_SEARCH, context);
 			Utils.removeFromDb(SessionDao.KEY.STORES_USER_LAST_LOCATION, context);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	public static void removeToken(SessionDao.KEY key, Context context) throws Exception {
-		SessionDao sessionDao = new SessionDao(context, key).get();
-		sessionDao.value = "";
-		sessionDao.save();
 	}
 
 	public static void truncateMaxLine(final TextView tv) {

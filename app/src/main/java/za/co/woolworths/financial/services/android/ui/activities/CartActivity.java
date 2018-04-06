@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -10,11 +11,11 @@ import android.widget.ProgressBar;
 
 import com.awfs.coordination.R;
 
-import za.co.woolworths.financial.services.android.models.dto.ProductDetail;
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.Utils;
+
+import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
 
 public class CartActivity extends AppCompatActivity implements View.OnClickListener, CartFragment.ToggleRemoveItem {
 
@@ -79,6 +80,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 		btnEditCart.setText(isEditMode ? R.string.done : R.string.edit);
 		btnCloseCart.setVisibility(isEditMode ? View.GONE : View.VISIBLE);
 		btnClearCart.setVisibility(isEditMode ? View.VISIBLE : View.GONE);
+		cartFragment.deliveryLocationEnabled(!isEditMode);
 	}
 
 	@Override
@@ -123,5 +125,15 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 		pbRemoveAllItem.setVisibility(View.GONE);
 		btnCloseCart.setVisibility(View.VISIBLE);
 		btnClearCart.setVisibility(View.GONE);
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (resultCode == CART_DEFAULT_ERROR_TAPPED) {
+			setResult(CART_DEFAULT_ERROR_TAPPED);
+			finish();
+			overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
+		}
 	}
 }

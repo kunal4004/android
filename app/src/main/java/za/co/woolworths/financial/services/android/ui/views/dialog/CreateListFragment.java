@@ -30,16 +30,13 @@ import za.co.woolworths.financial.services.android.models.dto.CreateList;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostAddList;
-import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostAddToList;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
-import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
@@ -50,19 +47,15 @@ import static za.co.woolworths.financial.services.android.models.service.event.P
 
 public class CreateListFragment extends Fragment implements View.OnClickListener {
 
-	private ImageView mImBack, imCloseIcon;
 	private String hideBackButton;
 	private WLoanEditTextView mEtNewList;
 	private ProgressBar pbCreateList;
 	private WButton mBtnCancel;
-	private PostAddToList mAddToList;
 	private KeyboardUtil mKeyboardUtils;
 	private String addToListItems;
 	private List<AddToListRequest> addToListRequests;
-	private ErrorHandlerView mErrorHandlerView;
 	private CreateList mCreateList;
 	private PostAddList mPostCreateList;
-	private PostAddToList mPostAddToList;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,8 +70,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.create_new_list_layout, container, false);
-		return view;
+		return inflater.inflate(R.layout.create_new_list_layout, container, false);
 	}
 
 	@Override
@@ -90,16 +82,23 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 					? new ArrayList<AddToListRequest>()
 					: Utils.toList(addToListItems, AddToListRequest.class);
 			initUI(view);
-			displayKeyboard(view, activity);
-			mErrorHandlerView = new ErrorHandlerView(activity);
+			keyboardState(view, activity);
+		}
+	}
+
+	private void keyboardState(View view, Activity activity) {
+		if (!TextUtils.isEmpty(hideBackButton)) {
 			KeyboardUtil.showKeyboard(activity);
+			displayKeyboard(view, activity);
+		} else {
+			displayKeyboard(view, activity);
 		}
 	}
 
 	private void initUI(View view) {
 		mBtnCancel = view.findViewById(R.id.btnCancel);
-		mImBack = view.findViewById(R.id.imBack);
-		imCloseIcon = view.findViewById(R.id.imCloseIcon);
+		ImageView mImBack = view.findViewById(R.id.imBack);
+		ImageView imCloseIcon = view.findViewById(R.id.imCloseIcon);
 		pbCreateList = view.findViewById(R.id.pbCreateList);
 		mImBack.setVisibility(TextUtils.isEmpty(hideBackButton) ? View.VISIBLE : View.GONE);
 		imCloseIcon.setVisibility(TextUtils.isEmpty(hideBackButton) ? View.GONE : View.VISIBLE);
@@ -111,10 +110,9 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 	}
 
 	private void displayKeyboard(View view, Activity activity) {
-		if (activity != null) {
-			activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-			mKeyboardUtils = new KeyboardUtil(activity, view.findViewById(R.id.rlRootList), 0);
-		}
+		activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+		mKeyboardUtils = new KeyboardUtil(activity, view.findViewById(R.id.rlRootList), 0);
+		mKeyboardUtils.enable();
 	}
 
 	private void setUpEditText(final WLoanEditTextView etNewList) {
@@ -154,6 +152,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 		Activity activity = getActivity();
 		if (activity != null) {
 			InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+			assert imm != null;
 			imm.showSoftInput(editTextView, InputMethodManager.SHOW_IMPLICIT);
 		}
 	}
@@ -161,13 +160,9 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 	private void onBackPressed() {
 		Activity activity = getActivity();
 		if (activity != null) {
+			hideKeyboard(activity);
 			cancelRequest(activity);
 		}
-	}
-
-	private void enableCreateList(boolean enable) {
-		mBtnCancel.setAlpha(enable ? (float) 1.0 : (float) 0.4);
-		mBtnCancel.setEnabled(enable);
 	}
 
 	private WLoanEditTextView.OnEditorActionListener onEditorActionListener = new WLoanEditTextView.OnEditorActionListener() {
@@ -179,7 +174,15 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 					|| actionId == EditorInfo.IME_ACTION_DONE
 					|| event.getAction() == KeyEvent.ACTION_DOWN
 					&& event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-				onBackPressed();
+				String cancelText = mBtnCancel.getText().toString();
+				if (cancelText.equalsIgnoreCase("ok")) {
+					String listName = mEtNewList.getText().toString();
+
+					mCreateList = new CreateList(listName, getItems());
+					executeCreateList();
+				} else {
+					onBackPressed();
+				}
 				return true;
 			}
 			// Return true if you have consumed the action, else false.
@@ -196,7 +199,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 				String strCancel = mBtnCancel.getText().toString();
 				if (strCancel.equalsIgnoreCase("ok")) {
 					String listName = mEtNewList.getText().toString();
-					mCreateList = new CreateList(listName);
+					mCreateList = new CreateList(listName, getItems());
 					executeCreateList();
 				} else {
 					cancelRequest(activity);
@@ -204,6 +207,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 				break;
 			case R.id.imCloseIcon:
 				if (activity != null) {
+					hideKeyboard(activity);
 					CustomPopUpWindow customPopUpWindow = (CustomPopUpWindow) activity;
 					customPopUpWindow.finish();
 					customPopUpWindow.overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
@@ -215,6 +219,24 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 			default:
 				break;
 		}
+	}
+
+	private List<AddToListRequest> getItems() {
+		addToListRequests = new ArrayList<>();
+		AddToListRequest addToList = new AddToListRequest();
+		WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
+		if (woolworthsApplication != null) {
+			WGlobalState globalState = woolworthsApplication.getWGlobalState();
+			OtherSkus sku = globalState.getSelectedSKUId();
+			if (sku != null) {
+				addToList.setSkuID(sku.sku);
+				addToList.setCatalogRefId(sku.sku);
+				addToList.setQuantity("1");
+				addToList.setGiftListId(sku.sku);
+				addToListRequests.add(0, addToList);
+			}
+		}
+		return addToListRequests;
 	}
 
 	private void executeCreateList() {
@@ -239,31 +261,27 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 					ShoppingListsResponse createListResponse = (ShoppingListsResponse) object;
 					switch (createListResponse.httpCode) {
 						case 200:
-							List<ShoppingList> itemsInList = createListResponse.lists;
-							if (itemsInList != null) {
-								ShoppingList shoppingList = itemsInList.get(0);
-								String listId = shoppingList.listId;
-								AddToListRequest addToList = new AddToListRequest();
-								WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
-								if (woolworthsApplication != null) {
-									WGlobalState globalState = woolworthsApplication.getWGlobalState();
-									OtherSkus sku = globalState.getSelectedSKUId();
-									if (sku != null) {
-										addToList.setSkuID(sku.sku);
-										addToList.setCatalogRefId(sku.sku);
-										addToList.setQuantity("1");
-										addToList.setGiftListId(sku.sku);
-										addToListRequests.add(0, addToList);
-										executeAddToList(listId, addToListRequests);
-									}
+							WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
+							if (woolworthsApplication != null) {
+								WGlobalState wGlobalState = woolworthsApplication.getWGlobalState();
+								if (wGlobalState != null) {
+									List<ShoppingList> shoppingLists = createListResponse.lists;
+									shoppingLists.get(0).viewIsSelected = true;
+									wGlobalState.setShoppingListRequest(shoppingLists);
 								}
 							}
+							((CustomPopUpWindow) activity).startExitAnimation();
+							mKeyboardUtils.hideKeyboard(activity);
+							KeyboardUtil.hideSoftKeyboard(activity);
+							Utils.sendBus(new ProductState(1, CLOSE_PDP_FROM_ADD_TO_LIST));
+							onLoad(false);
 							break;
 						default:
 							Response response = createListResponse.response;
-							if (response != null) {
-								Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
-							}
+							if (mKeyboardUtils != null)
+								mKeyboardUtils.hideKeyboard(activity);
+							if (response.desc != null)
+								((CustomPopUpWindow) activity).startExitAnimation(response.desc);
 							onLoad(false);
 							break;
 					}
@@ -285,58 +303,9 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 		}, listName);
 	}
 
-	private void executeAddToList(String listId, List<AddToListRequest> addToListRequests) {
-		mAddToList = addToList(addToListRequests, listId);
-		mAddToList.execute();
-	}
-
 	private void onLoad(boolean visible) {
 		pbCreateList.setVisibility(visible ? View.VISIBLE : View.GONE);
 		mBtnCancel.setVisibility(visible ? View.GONE : View.VISIBLE);
-	}
-
-	public PostAddToList addToList(final List<AddToListRequest> addToListRequest, String listId) {
-		final int sizeOfList = addToListRequest.size();
-		onLoad(true);
-		return new PostAddToList(new OnEventListener() {
-			@Override
-			public void onSuccess(Object object) {
-				ShoppingListItemsResponse addToListResponse = (ShoppingListItemsResponse) object;
-				Activity activity = getActivity();
-				if (activity != null) {
-					switch (addToListResponse.httpCode) {
-						case 200:
-							((CustomPopUpWindow) activity).startExitAnimation();
-							mKeyboardUtils.hideKeyboard(activity);
-							KeyboardUtil.hideSoftKeyboard(activity);
-							Utils.sendBus(new ProductState(sizeOfList, CLOSE_PDP_FROM_ADD_TO_LIST));
-							onLoad(false);
-							break;
-						default:
-							Response response = addToListResponse.response;
-							if (response.desc != null) {
-								Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc, true);
-							}
-							onLoad(false);
-							break;
-					}
-				}
-			}
-
-			@Override
-			public void onFailure(String e) {
-				Activity activity = getActivity();
-				if (activity != null) {
-					activity.runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							mErrorHandlerView.showToast();
-							onLoad(false);
-						}
-					});
-				}
-			}
-		}, addToListRequest, listId);
 	}
 
 	@Override
@@ -349,10 +318,13 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 	@Override
 	public void onDetach() {
 		super.onDetach();
+		hideKeyboard(getActivity());
 		cancelRequest(mPostCreateList);
-		cancelRequest(mAddToList);
-		cancelRequest(mPostAddToList);
+	}
 
+	private void hideKeyboard(Activity activity) {
+		if (mKeyboardUtils != null)
+			mKeyboardUtils.hideKeyboard(activity);
 	}
 
 	private void cancelRequest(HttpAsyncTask httpAsyncTask) {

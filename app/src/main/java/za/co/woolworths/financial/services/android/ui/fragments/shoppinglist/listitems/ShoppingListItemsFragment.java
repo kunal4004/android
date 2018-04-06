@@ -19,8 +19,8 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import com.awfs.coordination.R;
 import com.awfs.coordination.BR;
+import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.ShoppingListItemsFragmentBinding;
 
 import java.util.ArrayList;
@@ -28,6 +28,7 @@ import java.util.List;
 
 import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.AddToCartDaTum;
@@ -44,16 +45,17 @@ import za.co.woolworths.financial.services.android.models.service.event.CartStat
 import za.co.woolworths.financial.services.android.models.service.event.ShopState;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator;
+import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.ShoppingListItemsAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
-
-import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.EmptyCartView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
+import za.co.woolworths.financial.services.android.util.ScreenManager;
+import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -307,8 +309,22 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	}
 
 	@Override
-	public void onSessionTokenExpired(Response response) {
-
+	public void onSessionTokenExpired(final Response response) {
+		SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
+		final Activity activity = getBaseActivity();
+		activity.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if (activity != null) {
+					if (response != null) {
+						if (response.message != null) {
+							getGlobalState().setDetermineLocationPopUpEnabled(true);
+							ScreenManager.presentSSOSignin(activity);
+						}
+					}
+				}
+			}
+		});
 	}
 
 	@Override
@@ -446,7 +462,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 
 	@Override
 	public void onEmptyCartRetry() {
-		//TODO:: should navigate to product landing page???
 		openProductSearchActivity();
 	}
 
@@ -541,4 +556,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	public void onToastButtonClicked(String currentState) {
 
 	}
+
+
 }

@@ -130,4 +130,6 @@ public interface ProductDetailNavigator {
 	void onShoppingListFailure(String e);
 
 	void shoppingListSessionTimedOut();
+
+	void onShoppingListLoad(boolean onLoad);
 }

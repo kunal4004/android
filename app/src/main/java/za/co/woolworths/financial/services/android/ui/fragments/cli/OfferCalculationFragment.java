@@ -46,8 +46,8 @@ import za.co.woolworths.financial.services.android.models.rest.cli.CLICreateAppl
 import za.co.woolworths.financial.services.android.models.rest.cli.CLIUpdateApplication;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
-import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
+import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
@@ -59,7 +59,7 @@ import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
-import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
+import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 import za.co.woolworths.financial.services.android.util.controller.CLIFragment;
@@ -228,7 +228,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 						break;
 
 					case 440:
-						SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), mObjOffer.response.stsParams);
+						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, mObjOffer.response.stsParams);
 						break;
 
 					default:
@@ -270,7 +270,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 						break;
 
 					case 440:
-						SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), mObjOffer.response.stsParams);
+						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, mObjOffer.response.stsParams);
 						break;
 
 					default:
@@ -310,7 +310,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 						finishActivity();
 						break;
 					case 440:
-						SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), mObjOffer.response.stsParams);
+						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, mObjOffer.response.stsParams);;
 						break;
 					default:
 						Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, mObjOffer.response.desc);
@@ -533,7 +533,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 										}
 										break;
 									case 440:
-										SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), mObjOffer.response.stsParams);
+										SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, mObjOffer.response.stsParams);
 										break;
 									default:
 										if (mObjOffer != null) {
@@ -649,7 +649,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 					}
 					break;
 				case 440:
-					SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), mObjOffer.response.stsParams);
+					SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, mObjOffer.response.stsParams);
 					break;
 
 				default:

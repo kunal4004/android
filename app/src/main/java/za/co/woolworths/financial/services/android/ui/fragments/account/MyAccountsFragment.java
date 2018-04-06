@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.MyAccountsFragmentBinding;
 
@@ -31,16 +32,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.rest.message.GetMessage;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.GetShoppingLists;
-import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
@@ -48,10 +48,10 @@ import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.UserDetailActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountOverViewPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.ShoppingListFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.main_list.ContactUsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.faq.FAQFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.ShoppingListFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -59,18 +59,17 @@ import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
-import za.co.woolworths.financial.services.android.util.SessionManager;
+import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
-import com.awfs.coordination.BR;
-
-import static za.co.woolworths.financial.services.android.models.service.event.ProductState.OPEN_GET_LIST_SCREEN;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_ACCOUNT;
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_REWARD;
-import static za.co.woolworths.financial.services.android.util.SessionManager.ACCOUNT_SESSION_EXPIRED;
 
 public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, MyAccountsViewModel> implements View.OnClickListener, ViewPager.OnPageChangeListener, MyAccountsNavigator {
+
+	private final String TAG = "MyAccountsFragment";
 
 	private MyAccountsViewModel myAccountsViewModel;
 
@@ -111,10 +110,8 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	private NestedScrollView mScrollView;
 	private ErrorHandlerView mErrorHandlerView;
 	private boolean loadMessageCounter = false;
-	private String TAG = "MyAccountsFragment";
 	private LinearLayout allUserOptionsLayout;
 	private LinearLayout loginUserOptionsLayout;
-	private SessionManager mSessionManager;
 	private GetMessage mGessageResponse;
 	private GetShoppingLists mGetShoppingLists;
 	private WTextView shoppingListCounter;
@@ -149,7 +146,8 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	public void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		//Trigger Firebase Tag.
-		JWTDecodedModel jwtDecodedModel = Utils.getJWTDecoded(getActivity());
+
+		JWTDecodedModel jwtDecodedModel = SessionUtilities.getInstance().getJwt();
 		Map<String, String> arguments = new HashMap<>();
 		arguments.put("c2_id", (jwtDecodedModel.C2Id != null) ? jwtDecodedModel.C2Id : "");
 		Utils.triggerFireBaseEvents(getActivity(), "accounts_event_appeared", arguments);
@@ -164,10 +162,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		if (savedInstanceState == null) {
 			hideToolbar();
 			setToolbarBackgroundColor(R.color.white);
-			Activity activity = getActivity();
-			if (activity != null) {
-				mSessionManager = new SessionManager(activity);
-			}
 			woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
 			openMessageActivity = view.findViewById(R.id.openMessageActivity);
 			openShoppingList = view.findViewById(R.id.openShoppingList);
@@ -235,55 +229,20 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 
 			});
 		}
-
-		observableOn(new Consumer<Object>() {
-			@Override
-			public void accept(Object object) throws Exception {
-				Activity activity = getActivity();
-				if (activity != null) {
-					if (object instanceof SessionManager) {
-						SessionManager sessionManager = (SessionManager) object;
-						if (sessionManager.getState() == ACCOUNT_SESSION_EXPIRED) {
-							onAccSessionExpired(activity);
-						}
-					}
-
-					if (object instanceof ProductState) {
-						ProductState productState = (ProductState) object;
-						switch (productState.getState()) {
-							//allow navigate to getList screen
-							// fired when new ProductState(OPEN_GET_LIST_SCREEN);
-							case OPEN_GET_LIST_SCREEN:
-								Bundle bundle = new Bundle();
-								if (shoppingListsResponse != null) {
-									bundle.putString("ShoppingList", Utils.objectToJson(shoppingListsResponse));
-									ShoppingListFragment shoppingListFragment = new ShoppingListFragment();
-									shoppingListFragment.setArguments(bundle);
-									pushFragmentSlideUp(shoppingListFragment);
-								}
-								break;
-							default:
-								break;
-						}
-					}
-				}
-			}
-		});
 	}
 
 	private void initialize() {
 		changeDefaultView();
-		if (mSessionManager != null) {
-			if (mSessionManager.loadSignInView()) {
+
+		if (SessionUtilities.getInstance().isUserAuthenticated()){
+
+			if (SessionUtilities.getInstance().isC2User())
 				this.loadAccounts();
-			} else {
+			else
 				this.configureSignInNoC2ID();
-			}
-		} else {
-			Activity activity = getActivity();
-			if (activity != null) {
-				mSessionManager = new SessionManager(activity);
-				changeDefaultView();
+
+		} else{
+			if (getActivity() != null) {
 				configureView();
 			}
 		}
@@ -444,12 +403,11 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		viewPager.setCurrentItem(0);
 	}
 
-
 	private void configureAndLayoutTopLayerView() {
-		if (mSessionManager.authenticationState()) {
+		if (SessionUtilities.getInstance().isUserAuthenticated()) {
 			showView(loggedInHeaderLayout);
 			//logged in user's name and family name will be displayed on the page
-			JWTDecodedModel jwtDecoded = mSessionManager.getJWTDecoded();
+			JWTDecodedModel jwtDecoded = SessionUtilities.getInstance().getJwt();
 			String name = jwtDecoded.name.get(0);
 			String familyName = jwtDecoded.family_name.get(0);
 			userName.setText(name + " " + familyName);
@@ -459,10 +417,10 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			showView(signOutBtn);
 			showView(myDetailBtn);
 			showView(loginUserOptionsLayout);
-			if (mSessionManager.loadSignInView()) {
-				//user is linked and signed in
+
+			if (SessionUtilities.getInstance().isC2User())
 				showView(linkedAccountsLayout);
-			} else {
+			else {
 				//user is not linked
 				//but signed in
 				showView(unlinkedLayout);
@@ -667,7 +625,10 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 							configureView();
 							break;
 						case 440:
-							SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), accountsResponse.response.stsParams);
+
+							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, accountsResponse.response.stsParams);
+							onSessionExpired(getActivity());
+							initialize();
 							break;
 						default:
 							if (accountsResponse.response != null) {
@@ -857,11 +818,9 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
+
+		//TODO: Comment what's actually happening here.
 		if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
-			if (mSessionManager != null) {
-				mSessionManager.setAccountHasExpired(false);
-				mSessionManager.setRewardSignInState(true);
-			}
 			getBottomNavigator().badgeCount();
 			if (loadMessageCounter) {
 				messageCounterRequest();
@@ -872,24 +831,26 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		} else if (resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue()) {
 			onSignOut();
 			initialize();
+		}else{
+			initialize();
 		}
 	}
 
 	private void removeAllBottomNavigationIconBadgeCount() {
 		addBadge(INDEX_REWARD, 0);
 		addBadge(INDEX_ACCOUNT, 0);
+		addBadge(INDEX_CART, 0);
 	}
 
-	private void onAccSessionExpired(Activity activity) {
-		if (mSessionManager != null) {
-			mSessionManager.setAccountHasExpired(true);
-			mSessionManager.setRewardSignInState(false);
-		}
+	private void onSessionExpired(Activity activity) {
+
 		Utils.setBadgeCounter(getActivity(), 0);
-		initialize();
-		loadMessageCounter = false;
-		//TODO: remove all badge count when sign out or session expired on bottom navigation menu
+
 		removeAllBottomNavigationIconBadgeCount();
+		SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
 		SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(activity);
+
+		loadMessageCounter = false;
+		initialize();
 	}
 }

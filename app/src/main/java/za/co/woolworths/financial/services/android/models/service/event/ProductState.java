@@ -1,16 +1,13 @@
 package za.co.woolworths.financial.services.android.models.service.event;
-
 public class ProductState {
 
 	public static final String POST_ADD_ITEM_TO_CART = "POST_ADD_ITEM_TO_CART";
 	public static final String DETERMINE_LOCATION_POPUP = "DETERMINE_LOCATION_POPUP";
-	public static final String ADD_TO_SHOPPING_LIST = "ADD_TO_SHOPPING_LIST";
 	public static final String USE_MY_LOCATION = "USE_MY_LOCATION";
 	public static final String SET_SUBURB = "SET_SUBURB";
 	public static final String SET_SUBURB_API = "SET_SUBURB_API";
 	public static final String CANCEL_CALL = "CANCEL_CALL";
 	public static final String OPEN_ADD_TO_SHOPPING_LIST_VIEW = "OPEN_ADD_TO_SHOPPING_LIST_VIEW";
-	public static final String CLOSE_VIEW = "CLOSE_VIEW";
 	public static final String INDEX_SEARCH_FROM_LIST = "INDEX_SEARCH_FROM_LIST";
 	public static final String CLOSE_PDP_FROM_ADD_TO_LIST = "CLOSE_PDP_FROM_ADD_TO_LIST";
 	public static final String SHOW_ADDED_TO_SHOPPING_LIST_TOAST = "SHOW_ADDED_TO_SHOPPING_LIST_TOAST";

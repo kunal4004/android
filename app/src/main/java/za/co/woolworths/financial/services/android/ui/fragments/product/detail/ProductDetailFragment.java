@@ -44,6 +44,7 @@ import java.util.List;
 
 import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.AddToCartDaTum;
@@ -81,6 +82,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeAdapte
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ProductUtils;
+import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.CancelableCallback;
 import za.co.woolworths.financial.services.android.util.DrawImage;
@@ -90,6 +92,7 @@ import za.co.woolworths.financial.services.android.util.LocationItemTask;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
+import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.SimpleDividerItemDecoration;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -103,7 +106,6 @@ import static za.co.woolworths.financial.services.android.models.service.event.P
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SET_SUBURB;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SET_SUBURB_API;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.USE_MY_LOCATION;
-import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.ADD_TO_SHOPPING_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailViewModel.CLOTHING_PRODUCT;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailViewModel.FOOD_PRODUCT;
 
@@ -147,6 +149,8 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	private boolean shoppingListLoadFailure = false;
 	private ToastUtils mToastUtils;
 	private boolean shoppingListTimeOut;
+	private int mNumberOfListSelected = 0;
+	private boolean shoppingListDidReload = false;
 
 
 	@Override
@@ -204,10 +208,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 								apiAddItemToCart();
 								break;
 
-							case ADD_TO_SHOPPING_LIST:
-
-								break;
-
 							case DETERMINE_LOCATION_POPUP:
 								activate_location_popup = true;
 								cartSummaryAPI();
@@ -245,20 +245,18 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 										getBottomNavigator().closeSlideUpPanelFromList(productState.getCount());
 										break;
 
-									case R.id.navigation_product:
+									default:
 										mToastUtils.setActivity(activity);
 										mToastUtils.setCurrentState(TAG);
 										String shoppingList = getString(R.string.shopping_list);
+										mNumberOfListSelected = productState.getCount();
 										// shopping list vs shopping lists
-										mToastUtils.setCartText((productState.getCount() > 1) ? shoppingList + "s" : shoppingList);
+										mToastUtils.setCartText((mNumberOfListSelected > 1) ? shoppingList + "s" : shoppingList);
 										mToastUtils.setPixel(getViewDataBinding().llStoreFinder.getHeight() * 2);
 										mToastUtils.setView(getViewDataBinding().llStoreFinder);
 										mToastUtils.setMessage(R.string.added_to);
 										mToastUtils.setViewState(true);
 										mToastUtils.build();
-										break;
-
-									default:
 										break;
 								}
 								break;
@@ -372,7 +370,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		//set promotional text
 		setText(mDefaultProduct.saveText, getViewDataBinding().tvSaveText);
 
-		getViewDataBinding().btnAddShoppingList.setOnClickListener(this);
+		getBtnAddShoppingList().setOnClickListener(this);
 
 		if (mFetchFromJson) { // display product through json string
 			getViewModel().setProduct(mDefaultProductResponse);
@@ -381,6 +379,23 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		} else {
 			getViewModel().productDetail(new ProductRequest(mDefaultProduct.productId, mDefaultProduct.sku)).execute();
 		}
+	}
+
+	public WButton getBtnAddShoppingList() {
+		return getViewDataBinding().btnAddShoppingList;
+	}
+
+	public void reloadGetListAPI() {
+		setShoppingListDidReload(true);
+		shoppingListRequest();
+	}
+
+	private boolean shoppingListDidReload() {
+		return shoppingListDidReload;
+	}
+
+	public void setShoppingListDidReload(boolean shoppingListDidReload) {
+		this.shoppingListDidReload = shoppingListDidReload;
 	}
 
 	private void setSubCategoryTitle() {
@@ -495,7 +510,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	}
 
 	private void enableAddToListBtn(boolean enable) {
-		getViewDataBinding().btnAddShoppingList.setEnabled(enable);
+		getBtnAddShoppingList().setEnabled(enable);
 	}
 
 	@Override
@@ -509,7 +524,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	public void addToShoppingList() {
 		Activity activity = getActivity();
 		if (activity != null) {
-			if (TextUtils.isEmpty(Utils.getSessionToken(null))) {
+			if (!SessionUtilities.getInstance().isUserAuthenticated()) {
 				ScreenManager.presentSSOSignin(activity);
 				return;
 			}
@@ -1380,7 +1395,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		Activity activity = getBaseActivity();
 		if (activity != null) {
 			//Check if the user has a sessionToken
-			if (isEmpty(Utils.getSessionToken(activity))) {
+			if (!SessionUtilities.getInstance().isUserAuthenticated()) {
 				getGlobalState().setDetermineLocationPopUpEnabled(true);
 				ScreenManager.presentSSOSignin(activity);
 				onAddToCartLoadComplete();
@@ -1479,25 +1494,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		}
 	}
 
-	private void onSessionExpired(final Response response) {
-		final Activity activity = getBaseActivity();
-		activity.runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				if (activity != null) {
-					onAddToCartLoadComplete();
-					if (response != null) {
-						if (response.message != null) {
-							getGlobalState().setDetermineLocationPopUpEnabled(true);
-							ScreenManager.presentSSOSignin(activity);
-							onAddToCartLoadComplete();
-						}
-					}
-				}
-			}
-		});
-	}
-
 	@Override
 	public void onAddToCartLoad() {
 		hideView(getViewDataBinding().tvAddToCart);
@@ -1569,8 +1565,25 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	}
 
 	@Override
-	public void onSessionTokenExpired(Response response) {
-		onSessionExpired(response);
+	public void onSessionTokenExpired(final Response response) {
+
+		SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
+		final Activity activity = getBaseActivity();
+		activity.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if (activity != null) {
+					onAddToCartLoadComplete();
+					if (response != null) {
+						if (response.message != null) {
+							getGlobalState().setDetermineLocationPopUpEnabled(true);
+							ScreenManager.presentSSOSignin(activity);
+							onAddToCartLoadComplete();
+						}
+					}
+				}
+			}
+		});
 	}
 
 	@Override
@@ -1601,7 +1614,12 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	@Override
 	public void onShoppingListsResponse(ShoppingListsResponse shoppingListsResponse) {
 		shoppingListLoadFailure = true;
+		setShoppingListTimeOut(false);
 		mShoppingListsResponse = shoppingListsResponse;
+		if (shoppingListDidReload()) {
+			setShoppingListDidReload(false);
+			getBtnAddShoppingList().performClick();
+		}
 	}
 
 	@Override
@@ -1648,6 +1666,13 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	}
 
 	@Override
+	public void onShoppingListLoad(boolean enable) {
+		WButton shoppingListButton = getViewDataBinding().btnAddShoppingList;
+		shoppingListButton.setEnabled(!enable);
+		shoppingListButton.setAlpha(!enable ? 1 : (float) 0.3);
+	}
+
+	@Override
 	public void onToastButtonClicked(String currentState) {
 		if (mToastUtils != null) {
 			String state = mToastUtils.getCurrentState();
@@ -1655,7 +1680,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 				Activity activity = getActivity();
 				if (activity != null) {
 					BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
-					bottomNavigationActivity.navigateToList();
+					bottomNavigationActivity.navigateToList(mNumberOfListSelected);
 				}
 			}
 		}

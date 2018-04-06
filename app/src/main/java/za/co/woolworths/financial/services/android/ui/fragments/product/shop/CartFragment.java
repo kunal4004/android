@@ -29,7 +29,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -44,6 +43,7 @@ import za.co.woolworths.financial.services.android.models.dto.Data;
 import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.Province;
+import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
@@ -70,7 +70,7 @@ import static za.co.woolworths.financial.services.android.models.service.event.B
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT_TEMP;
 import static za.co.woolworths.financial.services.android.models.service.event.CartState.CHANGE_QUANTITY;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_CALL;
-import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CLOSE_VIEW;
+import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
 
 public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick, View.OnClickListener, NetworkChangeListener {
 
@@ -178,12 +178,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 										if (cartProductAdapter != null)
 											cartProductAdapter.onPopUpCancel(CANCEL_CALL);
 										break;
-
-									case CLOSE_VIEW:
-										closeActivity(activity);
-
-										break;
-
 									default:
 										break;
 								}
@@ -419,6 +413,11 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				if (cartProductAdapter != null) {
 					cartProductAdapter.clear();
 				}
+				Activity activity = getActivity();
+				if (activity != null) {
+					CartActivity cartActivity = (CartActivity) activity;
+					cartActivity.hideEditCart();
+				}
 			}
 
 			@Override
@@ -454,8 +453,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			protected void onPostExecute(ShoppingCartResponse shoppingCartResponse) {
 				try {
 					pBar.setVisibility(View.GONE);
-					int httpCode = shoppingCartResponse.httpCode;
-					switch (httpCode) {
+					switch (shoppingCartResponse.httpCode) {
 						case 200:
 							onRemoveItemFailed = false;
 							rlCheckOut.setVisibility(View.VISIBLE);
@@ -499,7 +497,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		};
 	}
 
-	private void deliveryLocationEnabled(boolean enabled) {
+	public void deliveryLocationEnabled(boolean enabled) {
 		Animation animFadeOut = AnimationUtils.loadAnimation(this.getContext(), R.anim.edit_mode_fade_out);
 		animFadeOut.setAnimationListener(new Animation.AnimationListener() {
 			@Override
@@ -828,6 +826,11 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (resultCode == CART_DEFAULT_ERROR_TAPPED) {
+			getActivity().finish();
+			getActivity().overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
+			return;
+		}
 		if (requestCode == CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY) {
 			loadShoppingCart(false).execute();
 		}

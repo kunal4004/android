@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.shop.li
 
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Editable;
@@ -11,6 +12,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import com.awfs.coordination.BR;
@@ -64,7 +66,7 @@ public class NewListFragment extends BaseFragment<NewListFragmentBinding, NewLis
 		displayKeyboard(view, activity);
 		showToolbar(R.string.new_list);
 		setUpEditText();
-		showKeyboard(view.findViewById(R.id.rlRootList));
+		//showKeyboard(view.findViewById(R.id.rlRootList));
 		getViewDataBinding().btnCreateList.setOnClickListener(this);
 		enableCreateList(false);
 	}
@@ -190,7 +192,7 @@ public class NewListFragment extends BaseFragment<NewListFragmentBinding, NewLis
 	private void postAddList() {
 		WLoanEditTextView etNewList = getViewDataBinding().etNewList;
 		loadView(true);
-		mPostAddList = getViewModel().postCreateList(new CreateList(etNewList.getText().toString()));
+		mPostAddList = getViewModel().postCreateList(new CreateList(etNewList.getText().toString(),null));
 		mPostAddList.execute();
 	}
 
@@ -203,11 +205,12 @@ public class NewListFragment extends BaseFragment<NewListFragmentBinding, NewLis
 	@Override
 	public void onDetach() {
 		super.onDetach();
-		Activity activity = getActivity();
-		if (activity != null) {
-			if (mKeyboardUtil != null) mKeyboardUtil.hideKeyboard(activity);
-		}
-		closeSoftKeyboard();
+		showSoftwareKeyboard(false);
 		cancelRequest(mPostAddList);
+	}
+	protected void showSoftwareKeyboard(boolean showKeyboard){
+		final Activity activity = getActivity();
+		final InputMethodManager inputManager = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+		inputManager.hideSoftInputFromWindow(getViewDataBinding().etNewList.getWindowToken(), showKeyboard ? InputMethodManager.SHOW_FORCED : InputMethodManager.HIDE_NOT_ALWAYS);
 	}
 }

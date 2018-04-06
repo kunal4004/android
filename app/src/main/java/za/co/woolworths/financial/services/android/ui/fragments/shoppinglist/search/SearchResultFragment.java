@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.functions.Consumer;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
@@ -46,7 +47,7 @@ import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
-import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
+import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -109,7 +110,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		ViewCompat.setTranslationZ(getView(), 100.f);
-		showToolbar();
+		showSearchResultToolbar();
 		showBackNavigationIcon(true);
 		setToolbarBackgroundDrawable(R.drawable.appbar_background);
 		mProgressLimitStart = getViewDataBinding().incCenteredProgress.progressCreditLimit;
@@ -174,6 +175,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 		if (mSearchText != null)
 			setTitle(mSearchText);
 	}
+
 
 	@Override
 	public void onLoadProductSuccess(List<ProductList> productLists, boolean loadMoreData) {
@@ -398,12 +400,10 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 	public void onHiddenChanged(boolean hidden) {
 		super.onHiddenChanged(hidden);
 		if (!hidden) {
-			showToolbar();
-			showBackNavigationIcon(true);
-			setToolbarBackgroundDrawable(R.drawable.appbar_background);
-			setTitle();
+			showSearchResultToolbar();
 		}
 	}
+
 
 	@Override
 	public void onFoodTypeSelect(ProductList productList) {
@@ -643,8 +643,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 		if (activity != null) {
 			if (shoppingCartResponse.response != null) {
 				if (shoppingCartResponse.response.stsParams != null) {
-					SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(activity, shoppingCartResponse
-							.response.stsParams);
+					SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, shoppingCartResponse.response.stsParams);
 				}
 			}
 		}
@@ -697,8 +696,16 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 		super.onResume();
 		Activity activity = getActivity();
 		if (activity != null) {
+			showSearchResultToolbar();
 			activity.registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
 		}
+	}
+
+	public void showSearchResultToolbar() {
+		showToolbar();
+		showBackNavigationIcon(true);
+		setToolbarBackgroundDrawable(R.drawable.appbar_background);
+		setTitle();
 	}
 
 

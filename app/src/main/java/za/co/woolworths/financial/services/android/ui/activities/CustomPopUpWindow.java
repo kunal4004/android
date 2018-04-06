@@ -42,16 +42,16 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
-import za.co.woolworths.financial.services.android.models.service.event.AuthenticationState;
-import za.co.woolworths.financial.services.android.models.service.event.ProductState;
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.models.dto.statement.EmailStatementResponse;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementResponse;
 import za.co.woolworths.financial.services.android.models.dto.statement.USDocuments;
 import za.co.woolworths.financial.services.android.models.rest.statement.SendUserStatement;
+import za.co.woolworths.financial.services.android.models.service.event.AuthenticationState;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
+import za.co.woolworths.financial.services.android.models.service.event.ProductState;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.statement.EmailStatementFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.statement.StatementFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
@@ -60,17 +60,14 @@ import za.co.woolworths.financial.services.android.ui.views.dialog.AddToListFrag
 import za.co.woolworths.financial.services.android.ui.views.dialog.CreateListFragment;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
-import za.co.woolworths.financial.services.android.util.JWTHelper;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
-import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
+import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.StatementUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
-
-import static za.co.woolworths.financial.services.android.util.SessionExpiredUtilities.REWARD;
 
 public class CustomPopUpWindow extends AppCompatActivity implements View.OnClickListener, NetworkChangeListener {
 
@@ -95,6 +92,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 	private WButton mBtnSessionExpiredCancel;
 	private WButton mBtnSignIn;
 	private boolean mCloseView;
+	public static int CART_DEFAULT_ERROR_TAPPED = 1234567;
 
 	public enum MODAL_LAYOUT {
 		CONFIDENTIAL, INSOLVENCY, INFO, EMAIL, ERROR, MANDATORY_FIELD,
@@ -326,11 +324,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
 				mRelPopContainer = findViewById(R.id.relPopContainer);
 				WTextView tvSessionExpiredDesc = findViewById(R.id.tvSessionExpiredDesc);
-				if (mWGlobalState.getSection().equalsIgnoreCase(REWARD)) {
-					tvSessionExpiredDesc.setText(getString(R.string.session_expired_reward_desc));
-				} else {
-					tvSessionExpiredDesc.setText(getString(R.string.session_expired_account_desc));
-				}
+				tvSessionExpiredDesc.setText(getString(R.string.session_expired_desc));
 				mBtnSessionExpiredCancel = findViewById(R.id.btnSECancel);
 				mBtnSignIn = findViewById(R.id.btnSESignIn);
 				mBtnSessionExpiredCancel.setOnClickListener(this);
@@ -617,9 +611,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 				@Override
 				public void onAnimationEnd(Animation animation) {
-					if (mCloseView) {
-						Utils.sendBus(new ProductState(ProductState.CLOSE_VIEW));
-					}
+					setResult(CART_DEFAULT_ERROR_TAPPED);
 					dismissLayout();
 				}
 			});
@@ -736,7 +728,8 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 	}
 
 	private void finishActivity() {
-		mWGlobalState.setNewSTSParams("");
+		SessionUtilities.getInstance().setSTSParameters(null);
+
 		if (!viewWasClicked) { // prevent more than one click
 			viewWasClicked = true;
 			TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
@@ -1031,26 +1024,13 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 				@Override
 				public void onAnimationEnd(Animation animation) {
-					mWGlobalState.setNewSTSParams(WGlobalState.EMPTY_FIELD);
 					mWGlobalState.setOnBackPressed(false);
-					mWGlobalState.setNewSTSParams("");
+					SessionUtilities.getInstance().setSTSParameters(null);
 					dismissLayout();
 				}
 			});
 			mRelRootContainer.startAnimation(animation);
 		}
-	}
-
-	public JWTDecodedModel getJWTDecoded() {
-		JWTDecodedModel result = new JWTDecodedModel();
-		try {
-			SessionDao sessionDao = new SessionDao(this, SessionDao.KEY.USER_TOKEN).get();
-			if (sessionDao.value != null && !sessionDao.value.equals("")) {
-				result = JWTHelper.decode(sessionDao.value);
-			}
-		} catch (Exception ignored) {
-		}
-		return result;
 	}
 
 	private void populateDocument(WTextView textView) {
@@ -1059,7 +1039,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 	}
 
 	public String userEmailAddress() {
-		JWTDecodedModel userDetail = getJWTDecoded();
+		JWTDecodedModel userDetail = SessionUtilities.getInstance().getJwt();
 		if (userDetail != null) {
 			return userDetail.email.get(0);
 		}
@@ -1111,7 +1091,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 							exitStatementConfirmAnimation(emailResponse);
 							break;
 						case 440:
-							SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(CustomPopUpWindow.this, response.stsParams);
+							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.stsParams);
 							break;
 						default:
 							break;
@@ -1200,5 +1180,40 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 		} catch (Exception ex) {
 			Log.e("whiteEffectClick", ex.toString());
 		}
+	}
+
+	public void startExitAnimation(final String desc) {
+		if (!viewWasClicked) { // prevent more than one click
+			viewWasClicked = true;
+			TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
+			animation.setFillAfter(true);
+			animation.setDuration(ANIM_DOWN_DURATION);
+			animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
+
+				@Override
+				public void onAnimationStart(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationRepeat(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationEnd(Animation animation) {
+					if (!TextUtils.isEmpty(desc)) {
+						Utils.displayValidationMessage(CustomPopUpWindow.this, CustomPopUpWindow.MODAL_LAYOUT.ERROR, desc);
+					}
+					setResult(CART_DEFAULT_ERROR_TAPPED);
+					finish();
+					overridePendingTransition(0, 0);
+				}
+			});
+			mRelRootContainer.startAnimation(animation);
+		}
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		setResult(resultCode, data);
 	}
 }

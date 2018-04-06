@@ -148,7 +148,7 @@ public class ProductSearchActivity extends AppCompatActivity
 	public void saveRecentSearch(SearchHistory searchHistory) {
 		List<SearchHistory> histories;
 		histories = getRecentSearch();
-		SessionDao sessionDao = new SessionDao(ProductSearchActivity.this);
+		SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.STORES_PRODUCT_SEARCH);
 		sessionDao.key = SessionDao.KEY.STORES_PRODUCT_SEARCH;
 		Gson gson = new Gson();
 		boolean isExist = false;
@@ -184,7 +184,7 @@ public class ProductSearchActivity extends AppCompatActivity
 	public List<SearchHistory> getRecentSearch() {
 		List<SearchHistory> historyList = null;
 		try {
-			SessionDao sessionDao = new SessionDao(ProductSearchActivity.this, SessionDao.KEY.STORES_PRODUCT_SEARCH).get();
+			SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.STORES_PRODUCT_SEARCH);
 			if (sessionDao.value == null) {
 				historyList = new ArrayList<>();
 			} else {

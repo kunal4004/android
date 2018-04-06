@@ -25,7 +25,7 @@ import com.awfs.coordination.R;
 import java.lang.reflect.Method;
 
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
+import za.co.woolworths.financial.services.android.util.SessionUtilities;
 
 public class WebViewActivity extends AppCompatActivity {
 
@@ -144,8 +144,7 @@ public class WebViewActivity extends AppCompatActivity {
 	}
 
 	public void finishActivity() {
-		SessionExpiredUtilities.INSTANCE
-				.getGlobalState(WebViewActivity.this).setNewSTSParams("");
+		SessionUtilities.getInstance().setSTSParameters(null);
 		setResult(DEFAULT_KEYS_SEARCH_GLOBAL);
 		finish();
 		overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
