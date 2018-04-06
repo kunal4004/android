@@ -19,6 +19,7 @@ import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.GridLayoutBinding;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
@@ -101,6 +102,9 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 
 	@Override
 	public void onLoadProductSuccess(List<ProductList> productLists, boolean loadMoreData) {
+		if (mProductList == null) {
+			mProductList = new ArrayList<>();
+		}
 		if (productLists.isEmpty()) {
 			if (!listContainHeader()) {
 				ProductList headerProduct = new ProductList();
@@ -122,6 +126,7 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 				loadMoreData(productLists);
 			}
 		}
+
 	}
 
 	@Override
@@ -230,9 +235,11 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 	}
 
 	private boolean listContainHeader() {
-		for (ProductList pl : mProductList) {
-			if (pl.viewTypeHeader) {
-				return true;
+		if (mProductList != null) {
+			for (ProductList pl : mProductList) {
+				if (pl.viewTypeHeader) {
+					return true;
+				}
 			}
 		}
 		return false;
