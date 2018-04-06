@@ -195,7 +195,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			}
 		});
 
-		badgeCount();
+		if (SessionUtilities.getInstance().isUserAuthenticated()) {
+			badgeCount();
+		}
 	}
 
 	private void setToast() {
@@ -744,8 +746,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				default:
 					break;
 			}
-			;
 		}
+
 		//trigger reward and account call
 		switch (getBottomNavigationById().getCurrentItem()) {
 			case 0:
