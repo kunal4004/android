@@ -116,7 +116,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	private GetShoppingLists mGetShoppingLists;
 	private WTextView shoppingListCounter;
 	private ShoppingListsResponse shoppingListsResponse;
-	private RelativeLayout relMyList;
 
 	public MyAccountsFragment() {
 		// Required empty public constructor
@@ -178,7 +177,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			loggedOutHeaderLayout = view.findViewById(R.id.loggedOutHeaderLayout);
 			loggedInHeaderLayout = view.findViewById(R.id.loggedInHeaderLayout);
 			unlinkedLayout = view.findViewById(R.id.llUnlinkedAccount);
-			relMyList = view.findViewById(R.id.myLists);
+			RelativeLayout relMyList = view.findViewById(R.id.myLists);
 			signOutBtn = view.findViewById(R.id.signOutBtn);
 			myDetailBtn = view.findViewById(R.id.rlMyDetails);
 			viewPager = view.findViewById(R.id.pager);
@@ -232,28 +231,25 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	}
 
 	private void initialize() {
-		changeDefaultView();
+		this.accountsResponse = null;
+		this.hideAllLayers();
+		this.accounts.clear();
+		this.unavailableAccounts.clear();
+		this.unavailableAccounts.addAll(Arrays.asList("SC", "CC", "PL"));
+		this.mScrollView.scrollTo(0, 0);
 
-		if (SessionUtilities.getInstance().isUserAuthenticated()){
+		if (SessionUtilities.getInstance().isUserAuthenticated()) {
 
 			if (SessionUtilities.getInstance().isC2User())
 				this.loadAccounts();
 			else
 				this.configureSignInNoC2ID();
 
-		} else{
+		} else {
 			if (getActivity() != null) {
 				configureView();
 			}
 		}
-	}
-
-	private void changeDefaultView() {
-		this.accountsResponse = null;
-		this.hideAllLayers();
-		this.accounts.clear();
-		this.unavailableAccounts.clear();
-		this.unavailableAccounts.addAll(Arrays.asList("SC", "CC", "PL"));
 	}
 
 	//To remove negative signs from negative balance and add "CR" after the negative balance
@@ -721,7 +717,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 					try {
 						Activity activity = getActivity();
 						if (activity != null) {
-							Utils.removeEntry(activity);
+							Utils.clearSQLLiteSearchHistory(activity);
 						}
 					} catch (Exception pE) {
 						Log.d(TAG, pE.getMessage());
@@ -831,7 +827,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		} else if (resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue()) {
 			onSignOut();
 			initialize();
-		}else{
+		} else {
 			initialize();
 		}
 	}
