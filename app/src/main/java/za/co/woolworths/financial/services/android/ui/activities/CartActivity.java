@@ -1,6 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -13,6 +15,8 @@ import com.awfs.coordination.R;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.Utils;
+
+import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED;
 
 public class CartActivity extends AppCompatActivity implements View.OnClickListener, CartFragment.ToggleRemoveItem {
 
@@ -90,7 +94,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 	}
 
 	public void finishActivity() {
-		setResult(DEFAULT_KEYS_SEARCH_GLOBAL);
+		setResult(DISMISS_POP_WINDOW_CLICKED);
 		finish();
 		overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
 	}
@@ -122,5 +126,24 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 		pbRemoveAllItem.setVisibility(View.GONE);
 		btnCloseCart.setVisibility(View.VISIBLE);
 		btnClearCart.setVisibility(View.GONE);
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+
+		FragmentManager fm = getSupportFragmentManager();
+		Fragment fragment = fm.findFragmentById(R.id.content_frame);
+
+		//DISMISS_POP_WINDOW_CLICKED
+		//Cancel button click from session expired pop-up dialog
+		//will close CartActivity
+		if (fragment instanceof CartFragment) {
+			if (resultCode == DISMISS_POP_WINDOW_CLICKED) {
+				finishActivity();
+				return;
+			}
+			fragment.onActivityResult(requestCode, resultCode, data);
+		}
 	}
 }
