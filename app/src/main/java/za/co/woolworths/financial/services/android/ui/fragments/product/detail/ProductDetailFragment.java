@@ -244,7 +244,8 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 										closeSlideUpPanel(getView());
 										getBottomNavigator().closeSlideUpPanelFromList(productState.getCount());
 										break;
-									case R.id.navigation_product:
+
+									default:
 										mToastUtils.setActivity(activity);
 										mToastUtils.setCurrentState(TAG);
 										String shoppingList = getString(R.string.shopping_list);
@@ -256,9 +257,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 										mToastUtils.setMessage(R.string.added_to);
 										mToastUtils.setViewState(true);
 										mToastUtils.build();
-										break;
-
-									default:
 										break;
 								}
 								break;

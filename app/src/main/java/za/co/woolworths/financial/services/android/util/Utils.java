@@ -450,7 +450,7 @@ public class Utils {
 		args.putString("description", description);
 		args.putBoolean("closeSlideUpPanel", closeView);
 		openMsg.putExtras(args);
-		context.startActivity(openMsg);
+		((AppCompatActivity) context).startActivityForResult(openMsg, 0);
 		((AppCompatActivity) context).overridePendingTransition(0, 0);
 	}
 

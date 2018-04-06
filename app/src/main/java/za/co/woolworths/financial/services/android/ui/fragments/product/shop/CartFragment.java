@@ -72,7 +72,7 @@ import static za.co.woolworths.financial.services.android.models.service.event.B
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT_TEMP;
 import static za.co.woolworths.financial.services.android.models.service.event.CartState.CHANGE_QUANTITY;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_CALL;
-import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CLOSE_VIEW;
+import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
 
 public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick, View.OnClickListener, NetworkChangeListener {
 
@@ -180,12 +180,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 										if (cartProductAdapter != null)
 											cartProductAdapter.onPopUpCancel(CANCEL_CALL);
 										break;
-
-									case CLOSE_VIEW:
-										closeActivity(activity);
-
-										break;
-
 									default:
 										break;
 								}
@@ -823,6 +817,11 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (resultCode == CART_DEFAULT_ERROR_TAPPED) {
+			getActivity().finish();
+			getActivity().overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
+			return;
+		}
 		if (requestCode == CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY) {
 			loadShoppingCart(false).execute();
 		}

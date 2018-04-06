@@ -131,7 +131,6 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-
 		FragmentManager fm = getSupportFragmentManager();
 		Fragment fragment = fm.findFragmentById(R.id.content_frame);
 
