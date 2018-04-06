@@ -110,7 +110,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		ViewCompat.setTranslationZ(getView(), 100.f);
-		showToolbar();
+		showSearchResultToolbar();
 		showBackNavigationIcon(true);
 		setToolbarBackgroundDrawable(R.drawable.appbar_background);
 		mProgressLimitStart = getViewDataBinding().incCenteredProgress.progressCreditLimit;
@@ -175,6 +175,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 		if (mSearchText != null)
 			setTitle(mSearchText);
 	}
+
 
 	@Override
 	public void onLoadProductSuccess(List<ProductList> productLists, boolean loadMoreData) {
@@ -399,12 +400,10 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 	public void onHiddenChanged(boolean hidden) {
 		super.onHiddenChanged(hidden);
 		if (!hidden) {
-			showToolbar();
-			showBackNavigationIcon(true);
-			setToolbarBackgroundDrawable(R.drawable.appbar_background);
-			setTitle();
+			showSearchResultToolbar();
 		}
 	}
+
 
 	@Override
 	public void onFoodTypeSelect(ProductList productList) {
@@ -697,8 +696,16 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 		super.onResume();
 		Activity activity = getActivity();
 		if (activity != null) {
+			showSearchResultToolbar();
 			activity.registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
 		}
+	}
+
+	public void showSearchResultToolbar() {
+		showToolbar();
+		showBackNavigationIcon(true);
+		setToolbarBackgroundDrawable(R.drawable.appbar_background);
+		setTitle();
 	}
 
 

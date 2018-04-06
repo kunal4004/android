@@ -383,7 +383,8 @@ public class Utils {
 	}
 
 	public static String getSessionDaoValue(Context context, SessionDao.KEY key) {
-		SessionDao sessionDao = SessionDao.getByKey(key);;
+		SessionDao sessionDao = SessionDao.getByKey(key);
+		;
 		return sessionDao.value;
 	}
 
@@ -453,7 +454,7 @@ public class Utils {
 		args.putString("description", description);
 		args.putBoolean("closeSlideUpPanel", closeView);
 		openMsg.putExtras(args);
-		context.startActivity(openMsg);
+		((AppCompatActivity) context).startActivityForResult(openMsg, 0);
 		((AppCompatActivity) context).overridePendingTransition(0, 0);
 	}
 
