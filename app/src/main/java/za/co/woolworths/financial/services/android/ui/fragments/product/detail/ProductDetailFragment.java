@@ -559,7 +559,8 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 					getGlobalState().saveButtonClicked(INDEX_ADD_TO_SHOPPING_LIST);
 					scrolltoTop();
 					WProductDetail product = getViewModel().getProduct();
-					if (getShoppingListTimeOut()) {
+					// called when shopping list call has time out or user not authenticated
+					if (getShoppingListTimeOut() || !SessionUtilities.getInstance().isUserAuthenticated()) {
 						ScreenManager.presentSSOSignin(activity);
 						return;
 					}
