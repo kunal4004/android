@@ -184,8 +184,10 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 
 	private void updateList(List<ShoppingListItem> listItems) {
 		setHeader();
-		if (shoppingListItemsAdapter != null)
+		if (shoppingListItemsAdapter != null){
 			shoppingListItemsAdapter.updateList(listItems);
+			setUpView();
+		}
 	}
 
 	public void loadShoppingListItems(ShoppingListItemsResponse shoppingListItemsResponse) {
@@ -194,7 +196,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		if (listItems == null)
 			listItems = new ArrayList<>();
 		updateList(listItems);
-		setUpView();
 	}
 
 	private void setUpView() {

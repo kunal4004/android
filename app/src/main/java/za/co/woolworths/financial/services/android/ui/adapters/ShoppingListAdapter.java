@@ -40,9 +40,10 @@ public class ShoppingListAdapter extends RecyclerSwipeAdapter<ShoppingListAdapte
 	@Override
 	public void onBindViewHolder(final ViewHolder holder, final int position) {
 		holder.listName.setText(lists.get(position).listName);
-		holder.listCount.setText(String.valueOf(lists.get(position).listCount)+(lists.get(position).listCount > 1 ? " Items in List" : " Item in List"));
+		holder.listCount.setText(String.valueOf(lists.get(position).listCount)+(lists.get(position).listCount != 1 ? " Items in List" : " Item in List"));
 		holder.tvDelete.setVisibility(View.VISIBLE);
 		holder.progressBar.setVisibility(View.INVISIBLE);
+		holder.listItem.setEnabled(true);
 		holder.listItem.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
@@ -53,6 +54,7 @@ public class ShoppingListAdapter extends RecyclerSwipeAdapter<ShoppingListAdapte
 		holder.tvDelete.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
+				holder.listItem.setEnabled(false);
 				holder.tvDelete.setVisibility(View.INVISIBLE);
 				holder.progressBar.setVisibility(View.VISIBLE);
 				shoppingListNavigator.onClickItemDelete(lists.get(position).listId);

@@ -29,7 +29,7 @@
             android:background="@android:color/transparent"
             android:ems="10"
             android:gravity="center"
-            android:hint="@string/list_name"
+            android:hint="@string/enter_list_name"
             android:imeOptions="actionDone"
             android:maxLines="1"
             android:textColor="@color/black"
