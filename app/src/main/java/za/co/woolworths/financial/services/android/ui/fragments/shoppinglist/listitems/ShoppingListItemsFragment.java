@@ -191,6 +191,8 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	public void loadShoppingListItems(ShoppingListItemsResponse shoppingListItemsResponse) {
 		getViewDataBinding().loadingBar.setVisibility(View.GONE);
 		listItems = shoppingListItemsResponse.listItems;
+		if (listItems == null)
+			listItems = new ArrayList<>();
 		updateList(listItems);
 		setUpView();
 	}
