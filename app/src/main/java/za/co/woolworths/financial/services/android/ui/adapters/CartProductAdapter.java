@@ -32,7 +32,7 @@ import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeVie
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
-import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_CALL;
+import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_DIALOG_TAPPED;
 
 public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHolder> {
 
@@ -485,7 +485,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 
 	public void onPopUpCancel(String status) {
 		switch (status) {
-			case CANCEL_CALL:
+			case CANCEL_DIALOG_TAPPED:
 				resetQuantityState(true);
 				notifyDataSetChanged();
 				break;
