@@ -65,8 +65,11 @@
                     android:text="general Fashion"
                     android:textAllCaps="true"
                     android:textColor="@color/black"
+                    android:singleLine="true"
                     android:textSize="12sp"
-                    app:WTextView_font="bold" />
+                    app:WTextView_font="bold"
+                    android:ellipsize="end"
+                    />
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     android:id="@+id/listItemCount"
