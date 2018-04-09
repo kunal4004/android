@@ -131,7 +131,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 
 			@Override
 			public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-				mBtnCancel.setText(etNewList.getText().length() > 0 ? getString(R.string.ok) : getString(R.string.cancel));
+				mBtnCancel.setText(etNewList.getText().toString().trim().length() > 0 ? getString(R.string.ok) : getString(R.string.cancel));
 			}
 
 			@Override
@@ -198,7 +198,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 			case R.id.btnCancel:
 				String strCancel = mBtnCancel.getText().toString();
 				if (strCancel.equalsIgnoreCase("ok")) {
-					String listName = mEtNewList.getText().toString();
+					String listName = mEtNewList.getText().toString().trim();
 					mCreateList = new CreateList(listName, getItems());
 					executeCreateList();
 				} else {
