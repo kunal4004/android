@@ -92,6 +92,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 	private WButton mBtnSessionExpiredCancel;
 	private WButton mBtnSignIn;
 	private boolean mCloseView;
+	public static final int DISMISS_POP_WINDOW_CLICKED = 123400;
 	public static int CART_DEFAULT_ERROR_TAPPED = 1234567;
 
 	public enum MODAL_LAYOUT {
@@ -935,6 +936,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 			case R.id.btnSESignIn:
 				whiteEffectClick(mBtnSignIn);
 				String mSTSParams = description;
+
 				if (TextUtils.isEmpty(mSTSParams)) {
 					mSTSParams = "";
 				} else {
@@ -1026,6 +1028,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				public void onAnimationEnd(Animation animation) {
 					mWGlobalState.setOnBackPressed(false);
 					SessionUtilities.getInstance().setSTSParameters(null);
+					setResult(DISMISS_POP_WINDOW_CLICKED);
 					dismissLayout();
 				}
 			});

@@ -35,6 +35,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CartItemGroup;
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem;
 import za.co.woolworths.financial.services.android.models.dto.CartResponse;
@@ -55,6 +56,7 @@ import za.co.woolworths.financial.services.android.ui.activities.CartCheckoutAct
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity;
+import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CartProductAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -62,10 +64,10 @@ import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
-import za.co.woolworths.financial.services.android.util.ScreenManager;
+import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
+import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-import static android.app.Activity.DEFAULT_KEYS_SEARCH_GLOBAL;
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT;
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT_TEMP;
 import static za.co.woolworths.financial.services.android.models.service.event.CartState.CHANGE_QUANTITY;
@@ -467,20 +469,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 							deliveryLocationEnabled(true);
 							break;
 						case 440:
-							final Activity activity = getActivity();
-							if (activity != null) {
-								activity.runOnUiThread(new Runnable() {
-									@Override
-									public void run() {
-										//TODO:: improve error handling
-										ScreenManager.presentSSOSignin(activity);
-										activity.setResult(DEFAULT_KEYS_SEARCH_GLOBAL);
-										Utils.removeEntry(activity);
-										activity.finish();
-										activity.overridePendingTransition(0, 0);
-									}
-								});
-							}
+							//TODO:: improve error handling
+							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
+							SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(getActivity());
 							onChangeQuantityComplete();
 							break;
 						default:
@@ -710,6 +701,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 							mToggleItemRemoved.onRemoveItem(false);
 							break;
 					}
+					deliveryLocationEnabled(true);
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -864,6 +856,4 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		HttpAsyncTask<String, String, ShoppingCartResponse> removeCartItem = removeCartItem(mCommerceItem);
 		removeCartItem.execute();
 	}
-
-
 }

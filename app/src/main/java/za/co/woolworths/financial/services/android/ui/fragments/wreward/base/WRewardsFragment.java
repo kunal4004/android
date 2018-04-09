@@ -140,15 +140,17 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 		setTitle(getString(R.string.wrewards));
 	}
 
-	private void onSessionExpired(Activity activity){
+	private void onSessionExpired(Activity activity) {
 		addBadge(INDEX_REWARD, 0);
 		addBadge(INDEX_ACCOUNT, 0);
 		addBadge(INDEX_CART, 0);
 
 		Utils.setBadgeCounter(getActivity(), 0);
 
-		SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
-		SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(activity);
+		if (SessionUtilities.getInstance().isUserAuthenticated()) {
+			SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
+			SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(activity);
+		}
 
 		initialize();
 	}
