@@ -366,8 +366,8 @@ public class SSOActivity extends WebViewActivity {
 		@Override
 		public void onPageStarted(WebView view, String url, Bitmap favicon) {
 			super.onPageStarted(view, url, favicon);
-			showProgressBar();
-
+			if (!url.contains("logout"))
+				showProgressBar();
 			final String stsParams = SessionUtilities.getInstance().getSTSParameters();
 
 			if (SSOActivity.this.path == Path.SIGNIN || SSOActivity.this.path == Path.REGISTER) {
