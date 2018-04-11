@@ -98,7 +98,7 @@ import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
-import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_CALL;
+import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_DIALOG_TAPPED;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CLOSE_PDP_FROM_ADD_TO_LIST;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.DETERMINE_LOCATION_POPUP;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.OPEN_ADD_TO_SHOPPING_LIST_VIEW;
@@ -228,7 +228,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 								}
 								break;
 
-							case CANCEL_CALL:
+							case CANCEL_DIALOG_TAPPED:
 								onAddToCartLoadComplete();
 								break;
 

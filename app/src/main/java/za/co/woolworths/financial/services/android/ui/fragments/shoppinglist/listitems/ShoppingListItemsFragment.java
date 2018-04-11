@@ -184,15 +184,18 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 
 	private void updateList(List<ShoppingListItem> listItems) {
 		setHeader();
-		if (shoppingListItemsAdapter != null)
+		if (shoppingListItemsAdapter != null){
 			shoppingListItemsAdapter.updateList(listItems);
+			setUpView();
+		}
 	}
 
 	public void loadShoppingListItems(ShoppingListItemsResponse shoppingListItemsResponse) {
 		getViewDataBinding().loadingBar.setVisibility(View.GONE);
 		listItems = shoppingListItemsResponse.listItems;
+		if (listItems == null)
+			listItems = new ArrayList<>();
 		updateList(listItems);
-		setUpView();
 	}
 
 	private void setUpView() {

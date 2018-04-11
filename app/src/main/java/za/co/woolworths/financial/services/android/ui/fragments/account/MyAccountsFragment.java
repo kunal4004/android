@@ -808,6 +808,8 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			this.initialize();
 			hideToolbar();
 			setToolbarBackgroundColor(R.color.white);
+			shoppingListRequest();
+			messageCounterRequest();
 		}
 	}
 

@@ -158,6 +158,12 @@ public class CheckOutFragment extends Fragment {
 				} else if (url.contains(QueryString.ABANDON.getValue())) {
 					closeOnNextPage = QueryString.ABANDON;
 				}
+
+				// close cart activity if current url equals next url
+				if (closeOnNextPage != null && !url.contains(closeOnNextPage.getValue())) {
+					mWebCheckOut.stopLoading();
+					finishCartActivity();
+				}
 			}
 
 			public void onPageFinished(WebView view, String url) {
@@ -171,11 +177,19 @@ public class CheckOutFragment extends Fragment {
 						} else if (closeOnNextPage == QueryString.ABANDON) {
 							activity.setResult(Activity.RESULT_CANCELED, returnIntent);
 						}
-						activity.finish();
+						finishCartActivity();
 					}
 				}
 			}
 		});
+	}
+
+	private void finishCartActivity() {
+		Activity activity = getActivity();
+		if (activity != null) {
+			activity.finish();
+			activity.overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
+		}
 	}
 
 	private void setWebChromeClient() {
