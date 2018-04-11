@@ -31,7 +31,7 @@ import za.co.woolworths.financial.services.android.util.NonSwipeableViewPager;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 import static za.co.woolworths.financial.services.android.models.service.event.CartState.CHANGE_QUANTITY;
-import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_CALL;
+import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_DIALOG_TAPPED;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.OPEN_ADD_TO_SHOPPING_LIST_VIEW;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.POST_ADD_ITEM_TO_CART;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_ADD_TO_SHOPPING_LIST;
@@ -164,7 +164,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 				public void onAnimationEnd(Animation animation) {
 					switch (type) {
 						case CLOSE:
-							Utils.sendBus(new ProductState(CANCEL_CALL));
+							Utils.sendBus(new ProductState(CANCEL_DIALOG_TAPPED));
 							break;
 
 						case SHOP_LIST:

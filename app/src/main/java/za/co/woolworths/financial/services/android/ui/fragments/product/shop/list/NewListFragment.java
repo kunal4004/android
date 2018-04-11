@@ -86,7 +86,7 @@ public class NewListFragment extends BaseFragment<NewListFragmentBinding, NewLis
 		addTextChangedListener(etNewList);
 	}
 
-	private void addTextChangedListener(WLoanEditTextView etNewList) {
+	private void addTextChangedListener(final WLoanEditTextView etNewList) {
 		etNewList.addTextChangedListener(new TextWatcher() {
 			@Override
 			public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -95,7 +95,7 @@ public class NewListFragment extends BaseFragment<NewListFragmentBinding, NewLis
 
 			@Override
 			public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-				if (charSequence.length() > 0) {
+				if (charSequence.toString().trim().length() > 0) {
 					enableCreateList(true);
 				} else {
 					enableCreateList(false);
@@ -110,8 +110,9 @@ public class NewListFragment extends BaseFragment<NewListFragmentBinding, NewLis
 	}
 
 	private void enableCreateList(boolean createListEnabled) {
-		Utils.fadeView(getViewDataBinding().flBtnContainer, createListEnabled);
 		WButton btnCreateList = getViewDataBinding().btnCreateList;
+		if(createListEnabled ||btnCreateList.isEnabled())
+			Utils.fadeView(getViewDataBinding().flBtnContainer, createListEnabled);
 		btnCreateList.setEnabled(createListEnabled);
 	}
 
@@ -192,7 +193,7 @@ public class NewListFragment extends BaseFragment<NewListFragmentBinding, NewLis
 	private void postAddList() {
 		WLoanEditTextView etNewList = getViewDataBinding().etNewList;
 		loadView(true);
-		mPostAddList = getViewModel().postCreateList(new CreateList(etNewList.getText().toString(),null));
+		mPostAddList = getViewModel().postCreateList(new CreateList(etNewList.getText().toString().trim(),null));
 		mPostAddList.execute();
 	}
 

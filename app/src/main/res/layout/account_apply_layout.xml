@@ -16,11 +16,6 @@
         android:focusableInTouchMode="false"
         android:orientation="vertical">
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
-            style="@style/accountCardsTitle"
-            android:text="@string/woolworths_financial_services"
-            app:WTextView_font="medium" />
-
         <RelativeLayout
             android:id="@+id/applyStoreCard"
             style="@style/accountsCardStyle">

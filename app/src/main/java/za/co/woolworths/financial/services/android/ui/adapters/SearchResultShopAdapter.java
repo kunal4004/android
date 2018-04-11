@@ -366,6 +366,8 @@ public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.V
 					pList.itemWasChecked = false;
 					pList.viewIsLoading = false;
 					pList.displayColorSizeText = "";
+					if (mSearchResultNavigator != null)
+						mSearchResultNavigator.minOneItemSelected(mProductList);
 					notifyDataSetChanged();
 					return;
 				}

@@ -51,6 +51,7 @@ import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 
+import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_DIALOG_TAPPED;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SHOW_ADDED_TO_SHOPPING_LIST_TOAST;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_SEARCH_FROM_LIST;
 
@@ -153,6 +154,10 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 									toastUtils.build();
 									break;
 
+								case CANCEL_DIALOG_TAPPED:
+									cancelColorSizeSelection();
+									break;
+
 								default:
 									break;
 							}
@@ -210,7 +215,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 		}
 	}
 
-	private void disableSelect() {
+	private void cancelColorSizeSelection() {
 		OtherSkus otherSkus = new OtherSkus();
 		otherSkus.sku = getSelectedProduct().sku;
 		if (getProductAdapter() != null)
@@ -612,7 +617,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 			activity.runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					disableSelect();
+					cancelColorSizeSelection();
 				}
 			});
 		}
