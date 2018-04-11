@@ -22,7 +22,6 @@ import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.adapters.StockFinderFragmentAdapter;
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ColorFragmentList;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.SizeFragmentList;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.EditQuantityFragmentList;
@@ -50,6 +49,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 	public final String PRODUCT_HAS_COLOR = "PRODUCT_HAS_COLOR";
 	public final String PRODUCT_HAS_SIZE = "PRODUCT_HAS_SIZE";
 	private final String CLOSE = "CLOSE";
+	private final String DISABLE_STATE_RESET = "DISABLE_STATE_RESET";
 	private final String SHOP_LIST = "SHOP_LIST";
 	private LinearLayout mRelRootContainer, mRelPopContainer;
 	private ImageView mImCloseIcon, mImBackIcon;
@@ -332,7 +332,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 			switch (mGlobalState.getSaveButtonClick()) {
 				case INDEX_SEARCH_FROM_LIST:
 					Utils.sendBus(new ProductState(ProductState.INDEX_SEARCH_FROM_LIST));
-					closeViewAnimation(CLOSE);
+					closeViewAnimation(DISABLE_STATE_RESET);
 					break;
 				case INDEX_STORE_FINDER:
 					callInStoreFinder();
