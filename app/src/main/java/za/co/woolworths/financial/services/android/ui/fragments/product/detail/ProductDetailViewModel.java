@@ -590,37 +590,4 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 		});
 	}
 
-	protected GetShoppingLists getShoppingListsResponse() {
-		getNavigator().onShoppingListLoad(true);
-		return new GetShoppingLists(new OnEventListener() {
-			@Override
-			public void onSuccess(Object object) {
-				ShoppingListsResponse shoppingListsResponse = (ShoppingListsResponse) object;
-				switch (shoppingListsResponse.httpCode) {
-					case 200:
-						getNavigator().onShoppingListsResponse(shoppingListsResponse);
-						break;
-					case 440:
-						if (shoppingListsResponse.response != null)
-							getNavigator().onSessionTokenExpired(shoppingListsResponse.response);
-					case 400:
-						getNavigator().shoppingListSessionTimedOut();
-						break;
-
-					default:
-						if (shoppingListsResponse.response != null) {
-							getNavigator().unknownErrorResponse(shoppingListsResponse.response);
-						}
-						break;
-				}
-				getNavigator().onShoppingListLoad(false);
-			}
-
-			@Override
-			public void onFailure(String e) {
-				getNavigator().onShoppingListLoad(false);
-				getNavigator().onShoppingListFailure(e);
-			}
-		});
-	}
 }

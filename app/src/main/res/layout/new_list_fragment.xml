@@ -17,29 +17,48 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/eight_dp"
         android:layout_marginTop="?attr/actionBarSize"
-        android:background="@color/white">
+        android:background="@color/white"
+        >
 
 
-        <za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView
-            android:id="@+id/etNewList"
+        <RelativeLayout
+            android:id="@+id/rlEditLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/flBtnContainer"
             android:layout_alignEnd="@+id/flBtnContainer"
-            android:background="@android:color/transparent"
-            android:ems="10"
-            android:gravity="center"
-            android:hint="@string/enter_list_name"
-            android:imeOptions="actionDone"
-            android:maxLines="1"
-            android:textColor="@color/black"
-            android:textColorHint="@color/recent_search_bg"
-            android:textCursorDrawable="@drawable/colorcursor"
-            android:textSize="@dimen/eighteen_sp"
-            app:WEditTextView_font="myriadpro_regular">
+            android:gravity="center">
 
-            <requestFocus/>
-        </za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView>
+            <za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView
+                android:id="@+id/etNewList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:ems="10"
+                android:gravity="center"
+                android:hint="@string/enter_list_name"
+                android:imeOptions="actionDone"
+                android:maxLines="1"
+                android:textColor="@color/black"
+                android:textColorHint="@color/recent_search_bg"
+                android:textCursorDrawable="@drawable/colorcursor"
+                android:textSize="@dimen/eighteen_sp"
+                app:WEditTextView_font="myriadpro_regular">
+
+                <requestFocus/>
+            </za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView>
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/tvOnErrorLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/etNewList"
+                android:layout_marginTop="@dimen/five_dp"
+                android:gravity="center"
+                android:textColor="@color/red"
+                android:textSize="@dimen/twelve_sp"
+                android:visibility="gone"/>
+        </RelativeLayout>
 
         <FrameLayout
             android:id="@+id/flBtnContainer"

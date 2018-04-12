@@ -442,6 +442,18 @@ public class Utils {
 		((AppCompatActivity) context).overridePendingTransition(0, 0);
 	}
 
+	public static void displayDialog(Context context, CustomPopUpWindow.MODAL_LAYOUT key, String description) {
+		Intent openMsg = new Intent(context, CustomPopUpWindow.class);
+		Bundle args = new Bundle();
+		args.putSerializable("key", key);
+		args.putString("description", description);
+		openMsg.putExtras(args);
+		if (((Activity) context) != null) {
+			Activity activity = ((Activity) context);
+			activity.startActivityForResult(openMsg, 1001);
+			((AppCompatActivity) activity).overridePendingTransition(0, 0);
+		}
+	}
 
 	public static void displayValidationMessage(Context context, CustomPopUpWindow.MODAL_LAYOUT key, String description, boolean closeView) {
 		Intent openMsg = new Intent(context, CustomPopUpWindow.class);

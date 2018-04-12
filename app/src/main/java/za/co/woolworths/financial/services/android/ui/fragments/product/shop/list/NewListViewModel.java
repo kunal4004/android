@@ -1,7 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.shop.list;
 
-
 import za.co.woolworths.financial.services.android.models.dto.CreateList;
+import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostAddList;
 import za.co.woolworths.financial.services.android.ui.base.BaseViewModel;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
@@ -20,7 +21,21 @@ public class NewListViewModel extends BaseViewModel<NewListNavigator> {
 		return new PostAddList(new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
-				getNavigator().onSuccess();
+				ShoppingListsResponse shoppingListsResponse = (ShoppingListsResponse) object;
+				int httpCode = shoppingListsResponse.httpCode;
+				switch (httpCode) {
+					case 200:
+						getNavigator().onShoppingListSuccessResponse(shoppingListsResponse);
+						break;
+					default:
+						if (shoppingListsResponse.response != null) {
+							Response response = shoppingListsResponse.response;
+							if (response.desc != null) {
+								getNavigator().onShoppingListFailureResponse(response);
+							}
+						}
+						break;
+				}
 			}
 
 			@Override

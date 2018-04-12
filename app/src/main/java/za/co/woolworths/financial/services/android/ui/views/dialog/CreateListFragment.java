@@ -37,6 +37,7 @@ import za.co.woolworths.financial.services.android.models.service.event.ProductS
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
+import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
@@ -56,6 +57,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 	private List<AddToListRequest> addToListRequests;
 	private CreateList mCreateList;
 	private PostAddList mPostCreateList;
+	private WTextView mTvOnErrorLabel;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -87,18 +89,14 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 	}
 
 	private void keyboardState(View view, Activity activity) {
-		if (!TextUtils.isEmpty(hideBackButton)) {
-			KeyboardUtil.showKeyboard(activity);
-			displayKeyboard(view, activity);
-		} else {
-			displayKeyboard(view, activity);
-		}
+		displayKeyboard(view, activity);
 	}
 
 	private void initUI(View view) {
 		mBtnCancel = view.findViewById(R.id.btnCancel);
 		ImageView mImBack = view.findViewById(R.id.imBack);
 		ImageView imCloseIcon = view.findViewById(R.id.imCloseIcon);
+		mTvOnErrorLabel = view.findViewById(R.id.tvOnErrorLabel);
 		pbCreateList = view.findViewById(R.id.pbCreateList);
 		mImBack.setVisibility(TextUtils.isEmpty(hideBackButton) ? View.VISIBLE : View.GONE);
 		imCloseIcon.setVisibility(TextUtils.isEmpty(hideBackButton) ? View.GONE : View.VISIBLE);
@@ -136,7 +134,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 
 			@Override
 			public void afterTextChanged(Editable editable) {
-
+				messageLabelErrorDisplay(false);
 			}
 		});
 	}
@@ -276,12 +274,21 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 							Utils.sendBus(new ProductState(1, CLOSE_PDP_FROM_ADD_TO_LIST));
 							onLoad(false);
 							break;
+
+						case 440:
+						case 400:
+							//TODO:: HANDLE SESSION TIMEOUT
+							break;
 						default:
 							Response response = createListResponse.response;
-							if (mKeyboardUtils != null)
-								mKeyboardUtils.hideKeyboard(activity);
-							if (response.desc != null)
-								((CustomPopUpWindow) activity).startExitAnimation(response.desc);
+							if (response.desc != null) {
+								if (response.code.equalsIgnoreCase("0654")) {
+									messageLabelErrorDisplay(true, response.desc);
+								} else {
+									Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
+									CreateListFragment.this.getActivity().finish();
+								}
+							}
 							onLoad(false);
 							break;
 					}
@@ -333,5 +340,14 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 				httpAsyncTask.cancel(true);
 			}
 		}
+	}
+
+	private void messageLabelErrorDisplay(boolean isVisible, String message) {
+		mTvOnErrorLabel.setText(message);
+		messageLabelErrorDisplay(isVisible);
+	}
+
+	private void messageLabelErrorDisplay(boolean isVisible) {
+		mTvOnErrorLabel.setVisibility(isVisible ? View.VISIBLE : View.GONE);
 	}
 }
