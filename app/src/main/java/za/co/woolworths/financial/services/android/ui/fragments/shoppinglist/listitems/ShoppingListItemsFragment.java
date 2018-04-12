@@ -268,10 +268,12 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	@Override
 	public void onItemSelectionChange(List<ShoppingListItem> items) {
 		getViewDataBinding().incConfirmButtonLayout.rlCheckOut.setVisibility(getButtonStatus(items) ? View.VISIBLE : View.GONE);
-		if (items.size() > 0)
-			tvMenuSelectAll.setText(getString(getSelectAllMenuVisibility(items) ? R.string.deselect_all : R.string.select_all));
-		else
-			mMenuActionSelectAll.setVisible(false);
+		if (isAdded()) {
+			if (items.size() > 0)
+				tvMenuSelectAll.setText(getString(getSelectAllMenuVisibility(items) ? R.string.deselect_all : R.string.select_all));
+			else
+				mMenuActionSelectAll.setVisible(false);
+		}
 	}
 
 	@Override
@@ -488,7 +490,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		List<AddItemToCart> selectedItems = new ArrayList<>();
 		for (ShoppingListItem item : items) {
 			if (item.isSelected)
-				selectedItems.add(new AddItemToCart(item.productId, item.catalogRefId, item.quantityDesired));
+				selectedItems.add(new AddItemToCart(item.productId, item.catalogRefId, item.userQuantity));
 		}
 
 		getViewModel().postAddItemToCart(selectedItems).execute();
