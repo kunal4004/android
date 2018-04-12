@@ -770,7 +770,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				}
 
 				/**
-				 * Trigger onActivityResult() from respective fragment
+				 * Trigger onActivityResult() from current visible fragment
 				 */
 				Fragment fragment = mNavController.getCurrentFrag();
 				if (fragment != null) {
