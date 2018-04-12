@@ -332,8 +332,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			Activity activity = getActivity();
 			if (activity != null) {
 				CartActivity cartActivity = (CartActivity) activity;
-				cartActivity.toggleCartMode();
-				cartActivity.hideEditCart();
+				cartActivity.resetToolBarIcons();
 			}
 		}
 	}
@@ -353,6 +352,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			rlCheckOut.setVisibility(View.GONE);
 			rvCartList.setVisibility(View.GONE);
 			relEmptyStateHandler.setVisibility(View.VISIBLE);
+			deliveryLocationEnabled(true);
 		}
 		updateCartSummary();
 	}
