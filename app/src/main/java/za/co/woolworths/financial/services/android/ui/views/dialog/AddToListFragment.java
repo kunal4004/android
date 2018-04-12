@@ -67,9 +67,7 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 	private ProgressBar pbLoadShoppingList;
 	private RelativeLayout relEmptyStateHandler;
 	private FrameLayout flCancelButton;
-	private WButton btnGoToProduct;
 	private RelativeLayout rlNoConnectionLayout;
-	private WButton btnRetry;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -119,8 +117,8 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 		pbLoadShoppingList = view.findViewById(R.id.pbLoadShoppingList);
 		relEmptyStateHandler = view.findViewById(R.id.relEmptyView);
 		flCancelButton = view.findViewById(R.id.flCancelButton);
-		btnGoToProduct = view.findViewById(R.id.btnGoToProduct);
-		btnRetry = view.findViewById(R.id.btnRetry);
+		WButton btnGoToProduct = view.findViewById(R.id.btnGoToProduct);
+		WButton btnRetry = view.findViewById(R.id.btnRetry);
 		imCreateList.setOnClickListener(this);
 		imCreateList.setTag(R.drawable.add_black);
 		mBtnCancel.setOnClickListener(this);

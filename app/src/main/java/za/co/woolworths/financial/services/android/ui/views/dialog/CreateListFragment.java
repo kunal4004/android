@@ -274,10 +274,21 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 							Utils.sendBus(new ProductState(1, CLOSE_PDP_FROM_ADD_TO_LIST));
 							onLoad(false);
 							break;
+
+						case 440:
+						case 400:
+							//TODO:: HANDLE SESSION TIMEOUT
+							break;
 						default:
 							Response response = createListResponse.response;
-							if (response.desc != null)
-								messageLabelErrorDisplay(true, response.desc);
+							if (response.desc != null) {
+								if (response.code.equalsIgnoreCase("0654")) {
+									messageLabelErrorDisplay(true, response.desc);
+								} else {
+									Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
+									CreateListFragment.this.getActivity().finish();
+								}
+							}
 							onLoad(false);
 							break;
 					}
