@@ -111,7 +111,7 @@ public class NewListFragment extends BaseFragment<NewListFragmentBinding, NewLis
 
 	private void enableCreateList(boolean createListEnabled) {
 		WButton btnCreateList = getViewDataBinding().btnCreateList;
-		if(createListEnabled ||btnCreateList.isEnabled())
+		if (createListEnabled || btnCreateList.isEnabled())
 			Utils.fadeView(getViewDataBinding().flBtnContainer, createListEnabled);
 		btnCreateList.setEnabled(createListEnabled);
 	}
@@ -193,7 +193,7 @@ public class NewListFragment extends BaseFragment<NewListFragmentBinding, NewLis
 	private void postAddList() {
 		WLoanEditTextView etNewList = getViewDataBinding().etNewList;
 		loadView(true);
-		mPostAddList = getViewModel().postCreateList(new CreateList(etNewList.getText().toString().trim(),null));
+		mPostAddList = getViewModel().postCreateList(new CreateList(etNewList.getText().toString().trim(), null));
 		mPostAddList.execute();
 	}
 
@@ -209,9 +209,10 @@ public class NewListFragment extends BaseFragment<NewListFragmentBinding, NewLis
 		showSoftwareKeyboard(false);
 		cancelRequest(mPostAddList);
 	}
-	protected void showSoftwareKeyboard(boolean showKeyboard){
+
+	protected void showSoftwareKeyboard(boolean showKeyboard) {
 		final Activity activity = getActivity();
-		final InputMethodManager inputManager = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+		final InputMethodManager inputManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
 		inputManager.hideSoftInputFromWindow(getViewDataBinding().etNewList.getWindowToken(), showKeyboard ? InputMethodManager.SHOW_FORCED : InputMethodManager.HIDE_NOT_ALWAYS);
 	}
 }
