@@ -87,12 +87,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 	}
 
 	private void keyboardState(View view, Activity activity) {
-		if (!TextUtils.isEmpty(hideBackButton)) {
-			KeyboardUtil.showKeyboard(activity);
-			displayKeyboard(view, activity);
-		} else {
-			displayKeyboard(view, activity);
-		}
+		displayKeyboard(view, activity);
 	}
 
 	private void initUI(View view) {

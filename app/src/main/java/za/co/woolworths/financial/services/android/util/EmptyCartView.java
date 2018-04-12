@@ -1,12 +1,8 @@
 package za.co.woolworths.financial.services.android.util;
 
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
@@ -27,10 +23,8 @@ public class EmptyCartView implements View.OnClickListener {
 	private String description;
 	private String title;
 	private int imageDrawable;
-	private RelativeLayout relEmptyStateHandler;
 
 	public EmptyCartView(View view, EmptyCartInterface emptyCartInterface) {
-		this.relEmptyStateHandler = view.findViewById(R.id.relEmptyStateHandler);
 		this.tvTitle = view.findViewById(R.id.txtEmptyStateTitle);
 		this.tvDescription = view.findViewById(R.id.txtEmptyStateDesc);
 		this.imImage = view.findViewById(R.id.imgEmpyStateIcon);

@@ -570,12 +570,13 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 								.commitAllowingStateLoss();
 						return;
 					}
-					AddToListFragment addToListFragment = new AddToListFragment();
-					addToListFragment.setArguments(bundle);
-					fm.beginTransaction()
-							.add(R.id.flShoppingListContainer, addToListFragment)
-							.commitAllowingStateLoss();
 				}
+				AddToListFragment addToListFragment = new AddToListFragment();
+				addToListFragment.setArguments(bundle);
+				fm.beginTransaction()
+						.add(R.id.flShoppingListContainer, addToListFragment)
+						.commitAllowingStateLoss();
+
 
 				break;
 			default:
