@@ -217,6 +217,7 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 		initGetShoppingList();
 		Activity activity = getActivity();
 		if (activity != null) {
+			showToolbar(R.string.title_my_list);
 			activity.registerReceiver(mConnectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
 		}
 	}
