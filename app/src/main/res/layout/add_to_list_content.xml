@@ -63,7 +63,7 @@
     <RelativeLayout
         android:id="@+id/relEmptyView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/recent_search_bg"
         android:gravity="center"
         android:visibility="gone">
@@ -114,6 +114,9 @@
             android:layout_height="50dp"
             android:layout_below="@+id/txtEmptyStateDesc"
             android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/sixteen_dp"
+            android:layout_marginEnd="@dimen/sixteen_dp"
+            android:layout_marginStart="@dimen/sixteen_dp"
             android:clickable="true"
             android:letterSpacing="0.15"
             android:paddingEnd="@dimen/thirty_two_dp"
@@ -127,6 +130,12 @@
 
 
     </RelativeLayout>
+
+    <include
+        layout="@layout/no_connection"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="0dp"/>
 
     <View
         android:layout_width="match_parent"

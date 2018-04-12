@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.views.dialog;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.IntentFilter;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,7 +22,6 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +40,7 @@ import za.co.woolworths.financial.services.android.models.service.event.ProductS
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.adapters.AddToListAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.EmptyCartView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
@@ -67,6 +68,8 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 	private RelativeLayout relEmptyStateHandler;
 	private FrameLayout flCancelButton;
 	private WButton btnGoToProduct;
+	private RelativeLayout rlNoConnectionLayout;
+	private WButton btnRetry;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -87,9 +90,13 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 			view = inflater.inflate(R.layout.add_to_list_content, container, false);
 			initUI(view);
 			setEmptyList();
-			getShoppingLists().execute();
+			loadShoppingList();
 		}
 		return view;
+	}
+
+	private AsyncTask<String, String, ShoppingListsResponse> loadShoppingList() {
+		return getShoppingLists().execute();
 	}
 
 	private void setEmptyList() {
@@ -102,12 +109,9 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 		super.onViewCreated(view, savedInstanceState);
 	}
 
-	private ShoppingListsResponse getShoppingListsResponse() {
-		return new Gson().fromJson((TextUtils.isEmpty(mShoppingResponse)) ? "" : mShoppingResponse, ShoppingListsResponse.class);
-	}
-
 	private void initUI(View view) {
 		rcvShoppingLists = view.findViewById(R.id.rclAddToList);
+		rlNoConnectionLayout = view.findViewById(R.id.no_connection_layout);
 		mBtnCancel = view.findViewById(R.id.btnCancel);
 		imCreateList = view.findViewById(R.id.imCreateList);
 		mProgressBar = view.findViewById(R.id.pbAddToList);
@@ -116,13 +120,16 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 		relEmptyStateHandler = view.findViewById(R.id.relEmptyView);
 		flCancelButton = view.findViewById(R.id.flCancelButton);
 		btnGoToProduct = view.findViewById(R.id.btnGoToProduct);
+		btnRetry = view.findViewById(R.id.btnRetry);
 		imCreateList.setOnClickListener(this);
 		imCreateList.setTag(R.drawable.add_black);
 		mBtnCancel.setOnClickListener(this);
 		btnGoToProduct.setOnClickListener(this);
+		btnRetry.setOnClickListener(this);
 		Activity activity = getActivity();
 		if (activity != null) {
 			mErrorHandlerView = new ErrorHandlerView(activity);
+			mErrorHandlerView.setMargin(rlNoConnectionLayout, 0, 0, 0, 0);
 			mConnectionBroadcast = Utils.connectionBroadCast(activity, this);
 		}
 
@@ -138,9 +145,11 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 				List<ShoppingList> shoppingLists = response.lists;
 				if (shoppingLists != null && shoppingLists.size() == 0) {
 					showEmptyListView();
+					recyclerViewVisibility(false);
 					return;
 				}
 
+				recyclerViewVisibility(true);
 				mShoppingListAdapter = new AddToListAdapter(response.lists, this);
 				LinearLayoutManager mLayoutManager = new LinearLayoutManager(activity);
 				mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -182,20 +191,29 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 				navigateToCreateNewListFragment();
 				break;
 			case R.id.imCreateList:
-				if (imCreateList.getTag() != null) {
-					int resourceID = (int) imCreateList.getTag();
-					switch (resourceID) {
-						case R.drawable.close_24:
-							onOkButtonClicked();
-							break;
-						default:
-							navigateToCreateNewListFragment();
-							break;
+				if (imCreateList.getAlpha() == 1.0) {  //enable create list only if alpha is 1.0
+					if (imCreateList.getTag() != null) {
+						int resourceID = (int) imCreateList.getTag();
+						switch (resourceID) {
+							case R.drawable.close_24:
+								onOkButtonClicked();
+								break;
+							default:
+								navigateToCreateNewListFragment();
+								break;
+						}
 					}
 				}
 				break;
 			case R.id.btnCancel:
 				onOkButtonClicked();
+				break;
+
+			case R.id.btnRetry:
+				if (new ConnectionDetector().isOnline(getActivity())) {
+					onConnectionFailure(false);
+					loadShoppingList();
+				}
 				break;
 
 			default:
@@ -325,7 +343,7 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 	}
 
 	private void onLoad(boolean isLoading) {
-		imCreateList.setEnabled(!isLoading);
+		imCreateList.setImageAlpha(isLoading ? 120 : 255);
 		mProgressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
 		mBtnCancel.setVisibility(isLoading ? View.GONE : View.VISIBLE);
 	}
@@ -385,6 +403,7 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 
 	protected GetShoppingLists getShoppingLists() {
 		showShoppingListLoader(true);
+		recyclerViewVisibility(true);
 		return new GetShoppingLists(new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
@@ -394,17 +413,8 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 						recyclerViewHeight(rcvShoppingLists, shoppingListsResponse);
 						setAdapter(rcvShoppingLists, shoppingListsResponse);
 						break;
-					case 440:
-						//if (shoppingListsResponse.response != null)
-						//onSessionTokenExpired(shoppingListsResponse.response);
-					case 400:
-						//shoppingListSessionTimedOut();
-						break;
-
 					default:
-//						if (shoppingListsResponse.response != null) {
-//							unknownErrorResponse(shoppingListsResponse.response);
-//						}
+						recyclerViewVisibility(false);
 						break;
 				}
 				showShoppingListLoader(false);
@@ -412,25 +422,46 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 
 			@Override
 			public void onFailure(String message) {
-				//	onShoppingListLoad(false);
-				//onShoppingListFailure(message);
 				showShoppingListLoader(false);
+				recyclerViewVisibility(false);
+				onConnectionFailure(true);
 			}
 		});
 	}
 
 	private void showShoppingListLoader(boolean isLoading) {
+		imCreateList.setImageAlpha(isLoading ? 120 : 255);
+		imCreateList.setEnabled(!isLoading);
 		pbLoadShoppingList.setVisibility(isLoading ? View.VISIBLE : View.GONE);
 		relProgressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+	}
+
+	private void recyclerViewVisibility(boolean visible) {
+		rcvShoppingLists.setVisibility(visible ? View.VISIBLE : View.GONE);
 	}
 
 	private void showEmptyListView() {
 		rcvShoppingLists.setVisibility(View.GONE);
 		flCancelButton.setVisibility(View.GONE);
+		rlNoConnectionLayout.setVisibility(View.GONE);
 		relEmptyStateHandler.setVisibility(View.VISIBLE);
 		imCreateList.setImageResource(R.drawable.close_24);
 		imCreateList.setTag(R.drawable.close_24);
+	}
 
+	public void onConnectionFailure(final boolean enable) {
+		Activity activity = getActivity();
+		if (activity != null) {
+			activity.runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					imCreateList.setImageResource(enable ? R.drawable.close_24 : R.drawable.add_black);
+					rlNoConnectionLayout.setVisibility(enable ? View.VISIBLE : View.GONE);
+					rcvShoppingLists.setVisibility(enable ? View.GONE : View.GONE);
+					flCancelButton.setVisibility(enable ? View.GONE : View.VISIBLE);
+				}
+			});
+		}
 	}
 
 	@Override

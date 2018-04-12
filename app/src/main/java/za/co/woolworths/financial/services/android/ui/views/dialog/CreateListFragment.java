@@ -134,7 +134,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 
 			@Override
 			public void afterTextChanged(Editable editable) {
-				displayErrorMessageLabel(false);
+				messageLabelErrorDisplay(false);
 			}
 		});
 	}
@@ -277,7 +277,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 						default:
 							Response response = createListResponse.response;
 							if (response.desc != null)
-								displayErrorMessageLabel(true, response.desc);
+								messageLabelErrorDisplay(true, response.desc);
 							onLoad(false);
 							break;
 					}
@@ -331,17 +331,12 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 		}
 	}
 
-	private void displayErrorMessageLabel(boolean isVisible, String message) {
-		displayErrorMessageLabel(isVisible);
+	private void messageLabelErrorDisplay(boolean isVisible, String message) {
 		mTvOnErrorLabel.setText(message);
+		messageLabelErrorDisplay(isVisible);
 	}
 
-	private void displayErrorMessageLabel(boolean isVisible) {
-		if (isVisible) {
-			mTvOnErrorLabel.setVisibility(View.VISIBLE);
-		} else {
-			mTvOnErrorLabel.setVisibility(View.GONE);
-		}
-
+	private void messageLabelErrorDisplay(boolean isVisible) {
+		mTvOnErrorLabel.setVisibility(isVisible ? View.VISIBLE : View.GONE);
 	}
 }
