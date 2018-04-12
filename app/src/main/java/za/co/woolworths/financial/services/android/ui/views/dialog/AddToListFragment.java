@@ -12,7 +12,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -137,7 +136,6 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 		if (activity != null) {
 			if (response != null) {
 				List<ShoppingList> shoppingLists = response.lists;
-				shoppingLists = new ArrayList<>();
 				if (shoppingLists != null && shoppingLists.size() == 0) {
 					showEmptyListView();
 					return;
