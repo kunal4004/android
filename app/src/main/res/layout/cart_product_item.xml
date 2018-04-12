@@ -201,6 +201,7 @@
                                             android:textColor="@color/promotional_text_red"
                                             android:textSize="14sp"
                                             app:WTextView_font="medium"
+                                            android:text="@string/promotional_text"
                                             />
 
                                         <za.co.woolworths.financial.services.android.ui.views.WTextView
