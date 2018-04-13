@@ -3,11 +3,13 @@ package za.co.woolworths.financial.services.android.ui.fragments.shoppinglist;
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -217,7 +219,6 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 		initGetShoppingList();
 		Activity activity = getActivity();
 		if (activity != null) {
-			showToolbar(R.string.title_my_list);
 			activity.registerReceiver(mConnectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
 		}
 	}
@@ -241,5 +242,12 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 			default:
 				break;
 		}
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		Log.e("resultCode", "test");
+		showToolbar(R.string.title_my_list);
 	}
 }
