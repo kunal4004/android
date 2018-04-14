@@ -10,11 +10,13 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
 public class KeyboardUtil {
+	private Activity act;
 	private int bottomViewHeight;
 	private View decorView;
 	private View contentView;
 
 	public KeyboardUtil(Activity act, View contentView, int bottomViewHeight) {
+		this.act = act;
 		this.decorView = act.getWindow().getDecorView();
 		this.contentView = contentView;
 		this.bottomViewHeight = bottomViewHeight;
@@ -87,7 +89,7 @@ public class KeyboardUtil {
 			int height = decorView.getContext().getResources().getDisplayMetrics().heightPixels;
 			int diff = height - r.bottom + bottomViewHeight;
 
-			int removePadding = height / 10;
+			int removePadding = height / 10 - Utils.dp2px(act, 8);
 			//if it could be a keyboard add the padding to the view
 			if (diff != 0) {
 				// if the use-able screen height differs from the total screen height we assume that it shows a keyboard now

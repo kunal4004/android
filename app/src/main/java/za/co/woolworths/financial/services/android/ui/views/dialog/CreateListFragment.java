@@ -8,8 +8,12 @@ import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -30,14 +34,17 @@ import za.co.woolworths.financial.services.android.models.dto.CreateList;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostAddList;
+import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostAddToList;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
@@ -58,6 +65,10 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 	private CreateList mCreateList;
 	private PostAddList mPostCreateList;
 	private WTextView mTvOnErrorLabel;
+	private boolean addToListHasFail = false;
+	private int apiCount = 0;
+	private ErrorHandlerView mErrorHandlerView;
+	private PostAddToList mPostAddToList;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -80,9 +91,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 		super.onViewCreated(view, savedInstanceState);
 		Activity activity = getActivity();
 		if (activity != null) {
-			addToListRequests = TextUtils.isEmpty(addToListItems)
-					? new ArrayList<AddToListRequest>()
-					: Utils.toList(addToListItems, AddToListRequest.class);
+			addToListRequests = new ArrayList<>();
 			initUI(view);
 			keyboardState(view, activity);
 		}
@@ -98,6 +107,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 		ImageView imCloseIcon = view.findViewById(R.id.imCloseIcon);
 		mTvOnErrorLabel = view.findViewById(R.id.tvOnErrorLabel);
 		pbCreateList = view.findViewById(R.id.pbCreateList);
+		mErrorHandlerView = new ErrorHandlerView(getActivity());
 		mImBack.setVisibility(TextUtils.isEmpty(hideBackButton) ? View.VISIBLE : View.GONE);
 		imCloseIcon.setVisibility(TextUtils.isEmpty(hideBackButton) ? View.GONE : View.VISIBLE);
 		mEtNewList = view.findViewById(R.id.etNewList);
@@ -174,6 +184,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 					&& event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
 				String cancelText = mBtnCancel.getText().toString();
 				if (cancelText.equalsIgnoreCase("ok")) {
+
 					String listName = mEtNewList.getText().toString();
 
 					mCreateList = new CreateList(listName, getItems());
@@ -220,7 +231,6 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 	}
 
 	private List<AddToListRequest> getItems() {
-		addToListRequests = new ArrayList<>();
 		AddToListRequest addToList = new AddToListRequest();
 		WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
 		if (woolworthsApplication != null) {
@@ -259,20 +269,29 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 					ShoppingListsResponse createListResponse = (ShoppingListsResponse) object;
 					switch (createListResponse.httpCode) {
 						case 200:
-							WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
-							if (woolworthsApplication != null) {
-								WGlobalState wGlobalState = woolworthsApplication.getWGlobalState();
-								if (wGlobalState != null) {
-									List<ShoppingList> shoppingLists = createListResponse.lists;
-									shoppingLists.get(0).viewIsSelected = true;
-									wGlobalState.setShoppingListRequest(shoppingLists);
+							addToListRequests = Utils.toList(addToListItems);
+							if (addToListRequests != null && addToListRequests.size() > 0) {
+								AddToListRequest addToListRequest = addToListRequests.get(apiCount);
+								List<AddToListRequest> listRequests = new ArrayList<>();
+								listRequests.add(addToListRequest);
+								apiCount = 1;
+								postAddToList(listRequests, addToListRequest.getGiftListId());
+							} else {
+								WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
+								if (woolworthsApplication != null) {
+									WGlobalState wGlobalState = woolworthsApplication.getWGlobalState();
+									if (wGlobalState != null) {
+										List<ShoppingList> shoppingLists = createListResponse.lists;
+										shoppingLists.get(0).viewIsSelected = true;
+										wGlobalState.setShoppingListRequest(shoppingLists);
+									}
 								}
+								((CustomPopUpWindow) activity).startExitAnimation();
+								mKeyboardUtils.hideKeyboard(activity);
+								KeyboardUtil.hideSoftKeyboard(activity);
+								Utils.sendBus(new ProductState(1, CLOSE_PDP_FROM_ADD_TO_LIST));
+								onLoad(false);
 							}
-							((CustomPopUpWindow) activity).startExitAnimation();
-							mKeyboardUtils.hideKeyboard(activity);
-							KeyboardUtil.hideSoftKeyboard(activity);
-							Utils.sendBus(new ProductState(1, CLOSE_PDP_FROM_ADD_TO_LIST));
-							onLoad(false);
 							break;
 
 						case 440:
@@ -302,6 +321,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 					activity.runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
+							mErrorHandlerView.showToast();
 							onLoad(false);
 						}
 					});
@@ -325,8 +345,9 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 	@Override
 	public void onDetach() {
 		super.onDetach();
-		hideKeyboard(getActivity());
 		cancelRequest(mPostCreateList);
+		cancelRequest(mPostAddToList);
+		onBackPressed();
 	}
 
 	private void hideKeyboard(Activity activity) {
@@ -349,5 +370,69 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 
 	private void messageLabelErrorDisplay(boolean isVisible) {
 		mTvOnErrorLabel.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+	}
+
+	private void setAddToListHasFail(boolean value) {
+		addToListHasFail = value;
+	}
+
+	private void postAddToList(final List<AddToListRequest> addToListRequest, String listId) {
+		mPostAddToList = addToList(addToListRequest, listId);
+		mPostAddToList.execute();
+	}
+
+	public PostAddToList addToList(final List<AddToListRequest> addToListRequest, String listId) {
+		final int sizeOfList = addToListRequests.size();
+		onLoad(true);
+		return new PostAddToList(new OnEventListener() {
+			@Override
+			public void onSuccess(Object object) {
+				ShoppingListItemsResponse addToListResponse = (ShoppingListItemsResponse) object;
+				Activity activity = getActivity();
+				if (activity != null) {
+					switch (addToListResponse.httpCode) {
+						case 200:
+							if (apiCount < sizeOfList) {
+								AddToListRequest addToListRequest = addToListRequests.get(apiCount);
+								List<AddToListRequest> listRequests = new ArrayList<>();
+								listRequests.add(addToListRequest);
+								PostAddToList postAddToList = addToList(listRequests, addToListRequest.getGiftListId());
+								postAddToList.execute();
+								apiCount += 1;
+							} else {
+								((CustomPopUpWindow) activity).startExitAnimation();
+								mKeyboardUtils.hideKeyboard(activity);
+								KeyboardUtil.hideSoftKeyboard(activity);
+								Utils.sendBus(new ProductState(sizeOfList, CLOSE_PDP_FROM_ADD_TO_LIST));
+								onLoad(false);
+							}
+							break;
+						default:
+							Response response = addToListResponse.response;
+							if (response.desc != null) {
+								Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc, true);
+							}
+							onLoad(false);
+							break;
+					}
+					setAddToListHasFail(false);
+				}
+			}
+
+			@Override
+			public void onFailure(String e) {
+				Activity activity = getActivity();
+				if (activity != null) {
+					activity.runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							mErrorHandlerView.showToast();
+							onLoad(false);
+							setAddToListHasFail(true);
+						}
+					});
+				}
+			}
+		}, addToListRequest, listId);
 	}
 }
