@@ -52,6 +52,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.wtoday.WTodayFra
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
+import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
@@ -555,6 +556,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		// If we have a backstack, show the back button
 		if (getSupportActionBar() != null && mNavController != null) {
 			getSupportActionBar().setDisplayHomeAsUpEnabled(!mNavController.isRootFragment());
+			KeyboardUtil.hideSoftKeyboard(BottomNavigationActivity.this);
 		}
 	}
 
