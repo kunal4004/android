@@ -655,6 +655,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver, new IntentFilter("UpdateCounter"));
 
 		shoppingListRequest();
+		messageCounterRequest();
 	}
 
 	@Override
@@ -743,13 +744,17 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	}
 
 	private void messageCounterRequest() {
-		mGessageResponse = getViewModel().getMessageResponse();
-		mGessageResponse.execute();
+		if (SessionUtilities.getInstance().isUserAuthenticated()) {
+			mGessageResponse = getViewModel().getMessageResponse();
+			mGessageResponse.execute();
+		}
 	}
 
 	private void shoppingListRequest() {
-		mGetShoppingLists = getViewModel().getShoppingListsResponse();
-		mGetShoppingLists.execute();
+		if (SessionUtilities.getInstance().isUserAuthenticated()) {
+			mGetShoppingLists = getViewModel().getShoppingListsResponse();
+			mGetShoppingLists.execute();
+		}
 	}
 
 	@Override
@@ -833,6 +838,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		addBadge(INDEX_REWARD, 0);
 		addBadge(INDEX_ACCOUNT, 0);
 		addBadge(INDEX_CART, 0);
+		resetShoppingListAndMessagesUI();
 	}
 
 	private void onSessionExpired(Activity activity) {
@@ -845,5 +851,14 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 
 		loadMessageCounter = false;
 		initialize();
+	}
+
+	private void resetShoppingListAndMessagesUI() {
+		if (getActivity() != null){
+			hideView(getViewDataBinding().listsCounter);
+			showView(getViewDataBinding().myListRightArrow);
+			hideView(messageCounter);
+			showView(getViewDataBinding().messagesRightArrow);
+		}
 	}
 }
