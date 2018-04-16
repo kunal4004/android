@@ -817,8 +817,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (resultCode == CART_DEFAULT_ERROR_TAPPED) {
-			getActivity().finish();
-			getActivity().overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
+			Activity activity = getActivity();
+			activity.setResult(CART_DEFAULT_ERROR_TAPPED);
+			activity.finish();
+			activity.overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
 			return;
 		}
 		if (requestCode == CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY) {
