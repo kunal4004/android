@@ -245,6 +245,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 
 		} else {
 			if (getActivity() != null) {
+				removeAllBottomNavigationIconBadgeCount();
 				configureView();
 			}
 		}
@@ -653,9 +654,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		super.onResume();
 		LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver, new IntentFilter("UpdateCounter"));
 
-		messageCounterRequest();
 		shoppingListRequest();
-
 	}
 
 	@Override

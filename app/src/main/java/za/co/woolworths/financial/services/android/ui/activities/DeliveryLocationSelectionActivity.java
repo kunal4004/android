@@ -9,7 +9,6 @@ import android.view.View;
 
 import com.awfs.coordination.R;
 
-import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.DeliveryLocationSelectionFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.ProvinceSelectionFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;

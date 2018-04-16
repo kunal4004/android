@@ -101,7 +101,7 @@ public interface ProductDetailNavigator {
 
 	void onTokenFailure(String e);
 
-	void onSessionTokenValid(CartSummaryResponse cartSummaryResponse);
+	void onCartSummarySuccess(CartSummaryResponse cartSummaryResponse);
 
 	void onAddToCartLoad();
 

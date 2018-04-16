@@ -50,6 +50,7 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
 
 	private ErrorHandlerView mErrorHandlerView;
 	private View btnRetry;
+	private final int SUBURB_SET_RESULT = 123401;
 
 	private View selectionContentLayout, layoutPreviousSelectedLocations;
 	private ProgressBar loadingProgressBar;
@@ -216,6 +217,7 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
 					// TODO: go back to cart if no items removed from cart, else go to list of removed items
 					Activity activity = getActivity();
 					if (activity != null) {
+						activity.setResult(SUBURB_SET_RESULT);
 						Utils.sendBus(new CartState(location.suburb.name + ", " + location.province.name));
 						activity.finish();
 						activity.overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
