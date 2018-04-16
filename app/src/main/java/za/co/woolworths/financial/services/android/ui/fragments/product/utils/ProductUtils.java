@@ -14,11 +14,15 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
 public class ProductUtils {
 
 	public static void gridPriceList(WTextView wPrice, WTextView WwasPrice,
-									 String fromPrice, String wasPrice) throws NumberFormatException,NullPointerException {
+									 String fromPrice, String wasPrice) throws NumberFormatException, NullPointerException {
 		if (TextUtils.isEmpty(wasPrice)) {
-			if (!TextUtils.isEmpty(fromPrice)){
+			if (!TextUtils.isEmpty(fromPrice)) {
+				if (fromPrice == null) {
+					wPrice.setText("");
+					return;
+				}
 				wPrice.setText(WFormatter.formatAmount(fromPrice));
-			}else {
+			} else {
 				wPrice.setText("");
 			}
 			WwasPrice.setText("");

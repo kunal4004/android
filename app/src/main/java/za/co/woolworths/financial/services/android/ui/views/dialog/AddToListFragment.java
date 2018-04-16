@@ -68,6 +68,7 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 	private RelativeLayout relEmptyStateHandler;
 	private FrameLayout flCancelButton;
 	private RelativeLayout rlNoConnectionLayout;
+	private List<AddToListRequest> addToLists;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -224,14 +225,14 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 		Activity act = getActivity();
 		if (act != null) {
 			if (label.toLowerCase().equalsIgnoreCase("ok")) {
-				List<AddToListRequest> addToLists = getAddToListRequests();
+				addToLists = getAddToListRequests();
 				WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
 				if (woolworthsApplication != null) {
 					WGlobalState globalState = woolworthsApplication.getWGlobalState();
 					if (mShoppingListAdapter != null)
 						globalState.setShoppingListRequest(mShoppingListAdapter.getList());
 				}
-				postAddToList(addToLists);
+				postAddToList();
 				return;
 			}
 			((CustomPopUpWindow) act).startExitAnimation();
@@ -279,15 +280,18 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 		return addToListRequests;
 	}
 
-	private void postAddToList(List<AddToListRequest> addToListRequests) {
-		if (addToListRequests.size() > 0) {
-			mPostAddToList = addToList(addToListRequests, addToListRequests.get(0).getGiftListId());
+	private void postAddToList() {
+		if (addToLists.size() > 0) {
+			List<AddToListRequest> addToListRequestList = new ArrayList<>();
+			AddToListRequest addToListRequest = addToLists.get(apiCount);
+			addToListRequestList.add(addToListRequest);
+			mPostAddToList = addToList(addToListRequestList, addToListRequest.getGiftListId());
 			mPostAddToList.execute();
 		}
 	}
 
 	public PostAddToList addToList(final List<AddToListRequest> addToListRequest, String listId) {
-		final int sizeOfList = addToListRequest.size();
+		final int sizeOfList = addToLists.size();
 		onLoad(true);
 		return new PostAddToList(new OnEventListener() {
 			@Override
@@ -298,7 +302,10 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 					switch (addToListResponse.httpCode) {
 						case 200:
 							if (apiCount < sizeOfList) {
-								PostAddToList postAddToList = addToList(addToListRequest, addToListRequest.get(apiCount).getGiftListId());
+								List<AddToListRequest> addToListRequestList = new ArrayList<>();
+								AddToListRequest addToListRequests = addToLists.get(apiCount);
+								addToListRequestList.add(addToListRequests);
+								PostAddToList postAddToList = addToList(addToListRequestList, addToListRequests.getGiftListId());
 								postAddToList.execute();
 							} else {
 								((CustomPopUpWindow) activity).startExitAnimation();
@@ -469,7 +476,6 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 		CreateListFragment createListFragment = new CreateListFragment();
 		List<AddToListRequest> addToList = getAddToListRequests();
 		bundle.putString("OPEN_FROM_POPUP", Utils.objectToJson(addToList));
-
 		createListFragment.setArguments(bundle);
 		if (activity != null) {
 			CustomPopUpWindow customPopUpWindow = (CustomPopUpWindow) activity;

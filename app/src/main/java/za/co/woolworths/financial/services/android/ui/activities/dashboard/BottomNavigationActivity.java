@@ -17,6 +17,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -52,6 +53,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.wtoday.WTodayFra
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
+import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
@@ -555,6 +557,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		// If we have a backstack, show the back button
 		if (getSupportActionBar() != null && mNavController != null) {
 			getSupportActionBar().setDisplayHomeAsUpEnabled(!mNavController.isRootFragment());
+			KeyboardUtil.hideSoftKeyboard(BottomNavigationActivity.this);
 		}
 	}
 
@@ -661,9 +664,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void PermissionGranted(int request_code) {
-		woolworthsApplication()
-				.bus()
-				.send(new ProductDetailFragment());
+		sendBus(new ProductDetailFragment());
 	}
 
 	@Override

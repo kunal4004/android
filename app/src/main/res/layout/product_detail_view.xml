@@ -114,7 +114,11 @@
                             app:WTextView_font="bold"
                             />
 
-                        <include layout="@layout/line"/>
+                        <include
+                            android:id="@+id/lineBelowProductName"
+                            android:layout_width="match_parent"
+                            android:layout_height="0.4dp"
+                            layout="@layout/line"/>
 
                         <RelativeLayout
                             android:id="@+id/relPrice"
@@ -142,7 +146,6 @@
                                         android:gravity="top|start"
                                         android:letterSpacing="-0.01"
                                         android:paddingRight="2dp"
-                                        android:text="R 399.00"
                                         android:textAllCaps="true"
                                         android:textColor="@color/black"
                                         android:textSize="20sp"
@@ -156,7 +159,6 @@
                                         android:layout_alignParentStart="true"
                                         android:gravity="top|start"
                                         android:letterSpacing="-0.01"
-                                        android:text="R 399.00"
                                         android:textAllCaps="true"
                                         android:textColor="@color/red"
                                         android:textSize="20sp"
@@ -393,7 +395,8 @@
                 android:id="@+id/Everything"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <ImageView
                     android:id="@+id/imClose"

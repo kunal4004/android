@@ -265,7 +265,8 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 
 						@Override
 						public void onAnimationEnd(Animation animation) {
-							callInStoreFinder();
+//Navigate to add to list fragment
+							Utils.sendBus(new ProductState(OPEN_ADD_TO_SHOPPING_LIST_VIEW));
 							dismissLayout();
 						}
 					});

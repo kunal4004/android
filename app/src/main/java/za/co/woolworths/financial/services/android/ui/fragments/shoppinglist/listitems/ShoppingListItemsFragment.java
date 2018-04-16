@@ -10,7 +10,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -491,8 +490,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 			@Override
 			public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-				//Your action here
-				Log.e("scroll", (dy > getViewDataBinding().rcvShoppingListItems.getHeight()) + " dy " + dy + " shopList " + getViewDataBinding().relEmptyStateHandler.getHeight());
 				actionSearchVisibility(dy > getViewDataBinding().rcvShoppingListItems.getHeight());
 			}
 		});

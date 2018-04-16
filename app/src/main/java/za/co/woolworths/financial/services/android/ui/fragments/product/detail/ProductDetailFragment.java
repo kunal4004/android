@@ -640,7 +640,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 					scrolltoTop();
 					if (Utils.isLocationEnabled(getActivity())) {
 						BottomNavigator bottomNavigator = getBottomNavigator();
-						bottomNavigator.getRuntimePermission().check_permission(bottomNavigator.getPermissionType(android.Manifest.permission.ACCESS_FINE_LOCATION), "Explain here why the app needs permissions", 1);
+						checkLocationPermission(bottomNavigator, 1);
 					} else {
 						Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.LOCATION_OFF, "");
 					}
@@ -1206,6 +1206,10 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 					break;
 			}
 		}
+	}
+
+	private void checkLocationPermission(BottomNavigator bottomNavigator, int i) {
+		bottomNavigator.getRuntimePermission().check_permission(bottomNavigator.getPermissionType(android.Manifest.permission.ACCESS_FINE_LOCATION), "Explain here why the app needs permissions", i);
 	}
 
 	public void sizeIntent() {
