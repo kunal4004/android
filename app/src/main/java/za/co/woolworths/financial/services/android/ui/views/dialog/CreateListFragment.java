@@ -1,19 +1,17 @@
 package za.co.woolworths.financial.services.android.ui.views.dialog;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -44,16 +42,18 @@ import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWind
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
+import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CLOSE_PDP_FROM_ADD_TO_LIST;
 
-public class CreateListFragment extends Fragment implements View.OnClickListener {
+public class CreateListFragment extends Fragment implements View.OnClickListener, NetworkChangeListener {
 
 	private String hideBackButton;
 	private WLoanEditTextView mEtNewList;
@@ -69,6 +69,10 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 	private int apiCount = 0;
 	private ErrorHandlerView mErrorHandlerView;
 	private PostAddToList mPostAddToList;
+	private BroadcastReceiver mConnectionBroadcast;
+	private boolean createListFailed;
+	private AddToListRequest mAddToListRequest;
+	private List<AddToListRequest> mListRequests;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -91,6 +95,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 		super.onViewCreated(view, savedInstanceState);
 		Activity activity = getActivity();
 		if (activity != null) {
+			mConnectionBroadcast = Utils.connectionBroadCast(activity, this);
 			addToListRequests = new ArrayList<>();
 			initUI(view);
 			keyboardState(view, activity);
@@ -209,7 +214,13 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 				if (strCancel.equalsIgnoreCase("ok")) {
 					String listName = mEtNewList.getText().toString().trim();
 					mCreateList = new CreateList(listName, getItems());
-					executeCreateList();
+					if ((new ConnectionDetector().isOnline(activity))) {
+						setCreateListFailed(false);
+						executeCreateList();
+					} else {
+						setCreateListFailed(true);
+						mErrorHandlerView.showToast();
+					}
 				} else {
 					cancelRequest(activity);
 				}
@@ -271,11 +282,11 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 						case 200:
 							addToListRequests = Utils.toList(addToListItems);
 							if (addToListRequests != null && addToListRequests.size() > 0) {
-								AddToListRequest addToListRequest = addToListRequests.get(apiCount);
-								List<AddToListRequest> listRequests = new ArrayList<>();
-								listRequests.add(addToListRequest);
+								mAddToListRequest = addToListRequests.get(apiCount);
+								mListRequests = new ArrayList<>();
+								mListRequests.add(mAddToListRequest);
 								apiCount = 1;
-								postAddToList(listRequests, addToListRequest.getGiftListId());
+								postAddToList(mListRequests, mAddToListRequest.getGiftListId());
 							} else {
 								WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
 								if (woolworthsApplication != null) {
@@ -311,6 +322,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 							onLoad(false);
 							break;
 					}
+					setAddToListHasFail(false);
 				}
 			}
 
@@ -321,6 +333,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 					activity.runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
+							setAddToListHasFail(true);
 							mErrorHandlerView.showToast();
 							onLoad(false);
 						}
@@ -338,6 +351,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 	@Override
 	public void onResume() {
 		super.onResume();
+		registerReceiver();
 		if (mEtNewList != null)
 			mEtNewList.performClick();
 	}
@@ -347,7 +361,6 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 		super.onDetach();
 		cancelRequest(mPostCreateList);
 		cancelRequest(mPostAddToList);
-		onBackPressed();
 	}
 
 	private void hideKeyboard(Activity activity) {
@@ -393,10 +406,10 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 					switch (addToListResponse.httpCode) {
 						case 200:
 							if (apiCount < sizeOfList) {
-								AddToListRequest addToListRequest = addToListRequests.get(apiCount);
-								List<AddToListRequest> listRequests = new ArrayList<>();
-								listRequests.add(addToListRequest);
-								PostAddToList postAddToList = addToList(listRequests, addToListRequest.getGiftListId());
+								mAddToListRequest = addToListRequests.get(apiCount);
+								mListRequests = new ArrayList<>();
+								mListRequests.add(mAddToListRequest);
+								PostAddToList postAddToList = addToList(mListRequests, mAddToListRequest.getGiftListId());
 								postAddToList.execute();
 								apiCount += 1;
 							} else {
@@ -434,5 +447,53 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 				}
 			}
 		}, addToListRequest, listId);
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		unregisterReceiver();
+	}
+
+	private void unregisterReceiver() {
+		Activity activity = getActivity();
+		if (activity != null) {
+			activity.unregisterReceiver(mConnectionBroadcast);
+		}
+	}
+
+	private void registerReceiver() {
+		Activity activity = getActivity();
+		if (activity != null) {
+			activity.registerReceiver(mConnectionBroadcast,
+					new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+		}
+	}
+
+	@Override
+	public void onConnectionChanged() {
+		if (getCreateListFailed()) {
+			executeCreateList();
+			setCreateListFailed(false);
+		}
+
+		if (addToListHasFail) {
+			addToListRequests = Utils.toList(addToListItems);
+			if (addToListRequests != null && addToListRequests.size() > 0) {
+				mAddToListRequest = addToListRequests.get(apiCount);
+				mListRequests = new ArrayList<>();
+				mListRequests.add(mAddToListRequest);
+				postAddToList(mListRequests, mAddToListRequest.getGiftListId());
+				setAddToListHasFail(false);
+			}
+		}
+	}
+
+	public void setCreateListFailed(boolean createListFailed) {
+		this.createListFailed = createListFailed;
+	}
+
+	public boolean getCreateListFailed() {
+		return createListFailed;
 	}
 }
