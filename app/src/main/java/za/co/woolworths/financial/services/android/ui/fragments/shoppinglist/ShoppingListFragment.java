@@ -26,7 +26,6 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.DeleteShoppingList;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.GetShoppingLists;
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.ShoppingListAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.list.NewListFragment;
@@ -45,7 +44,6 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 	private ShoppingListViewModel shoppingListViewModel;
 	private DeleteShoppingList deleteShoppingList;
 	private GetShoppingLists mGetShoppingLists;
-	private RelativeLayout rlNoConnectionLayout;
 	private ErrorHandlerView mErrorHandlerView;
 	private BroadcastReceiver mConnectionBroadcast;
 	private MenuItem mMenuCreateList;
@@ -82,7 +80,7 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 		emptyCartView.setView(getString(R.string.title_no_shopping_lists), getString(R.string.description_no_shopping_lists), getString(R.string.button_no_shopping_lists), R.drawable.emptylists);
 		view.findViewById(R.id.btnRetry).setOnClickListener(this);
 
-		rlNoConnectionLayout = getViewDataBinding().incConnectionLayout.noConnectionLayout;
+		RelativeLayout rlNoConnectionLayout = getViewDataBinding().incConnectionLayout.noConnectionLayout;
 		mErrorHandlerView = new ErrorHandlerView(getActivity(), rlNoConnectionLayout);
 		mErrorHandlerView.setMargin(rlNoConnectionLayout, 0, 0, 0, 0);
 		mConnectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
@@ -247,18 +245,20 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 		}
 	}
 
+
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		cancelRequest(mGetShoppingLists);
+		cancelRequest(deleteShoppingList);
+	}
+
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		Activity activity = getActivity();
-		if (activity != null) {
-			BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
-			bottomNavigationActivity.getBottomNavigationById();
-			bottomNavigationActivity.getCurrentSection();
-			if (requestCode == OPEN_CART_REQUEST) {
-				if (resultCode == DISMISS_POP_WINDOW_CLICKED) {
-					showToolbar(R.string.title_my_list);
-				}
+		if (requestCode == OPEN_CART_REQUEST) {
+			if (resultCode == DISMISS_POP_WINDOW_CLICKED) {
+				showToolbar(R.string.title_my_list);
 			}
 		}
 	}
