@@ -24,6 +24,7 @@ import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.Utils;
 
 public abstract class BaseActivity<T extends ViewDataBinding, V extends BaseViewModel> extends AppCompatActivity implements BaseFragment.Callback {
 
@@ -152,6 +153,10 @@ public abstract class BaseActivity<T extends ViewDataBinding, V extends BaseView
 		}
 	}
 
+	public void sendBus(Object obj) {
+		Utils.sendBus(obj);
+	}
+
 	public boolean isNetworkConnected() {
 		return new ConnectionDetector().isOnline(this);
 	}
@@ -185,7 +190,7 @@ public abstract class BaseActivity<T extends ViewDataBinding, V extends BaseView
 		return TextUtils.isEmpty(value);
 	}
 
-	public void observableOn(Consumer consumer){
+	public void observableOn(Consumer consumer) {
 		getViewModel().consumeObservable(consumer);
 	}
 }
