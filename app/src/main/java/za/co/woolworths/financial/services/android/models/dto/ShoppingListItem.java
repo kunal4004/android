@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.models.dto;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by W7099877 on 2018/03/13.
  */
@@ -31,5 +33,6 @@ public class ShoppingListItem {
 
 	public int userQuantity = 0;
 
+	@SerializedName("colourDescription")
 	public String color;
 }

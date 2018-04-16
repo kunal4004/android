@@ -3,12 +3,17 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.shop.li
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
@@ -20,7 +25,10 @@ import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.NewListFragmentBinding;
 
 import za.co.woolworths.financial.services.android.models.dto.CreateList;
+import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostAddList;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
@@ -35,7 +43,8 @@ public class NewListFragment extends BaseFragment<NewListFragmentBinding, NewLis
 
 	private NewListViewModel newListFragment;
 	private PostAddList mPostAddList;
-	private KeyboardUtil mKeyboardUtil;
+	private KeyboardUtil mKeyboardUtils;
+	private View mView;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,20 +71,13 @@ public class NewListFragment extends BaseFragment<NewListFragmentBinding, NewLis
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
+		mView = view;
 		Activity activity = getActivity();
 		displayKeyboard(view, activity);
 		showToolbar(R.string.new_list);
 		setUpEditText();
-		//showKeyboard(view.findViewById(R.id.rlRootList));
 		getViewDataBinding().btnCreateList.setOnClickListener(this);
 		enableCreateList(false);
-	}
-
-	private void displayKeyboard(View view, Activity activity) {
-		if (activity != null) {
-			activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-			mKeyboardUtil = new KeyboardUtil(activity, view.findViewById(R.id.rlRootList), getBottomNavigator().getBottomNavigationById().getHeight());
-		}
 	}
 
 	private void setUpEditText() {
@@ -104,14 +106,14 @@ public class NewListFragment extends BaseFragment<NewListFragmentBinding, NewLis
 
 			@Override
 			public void afterTextChanged(Editable editable) {
-
+				messageLabelErrorDisplay(false);
 			}
 		});
 	}
 
 	private void enableCreateList(boolean createListEnabled) {
 		WButton btnCreateList = getViewDataBinding().btnCreateList;
-		if(createListEnabled ||btnCreateList.isEnabled())
+		if (createListEnabled || btnCreateList.isEnabled())
 			Utils.fadeView(getViewDataBinding().flBtnContainer, createListEnabled);
 		btnCreateList.setEnabled(createListEnabled);
 	}
@@ -185,15 +187,29 @@ public class NewListFragment extends BaseFragment<NewListFragmentBinding, NewLis
 	}
 
 	@Override
-	public void onSuccess() {
+	public void onShoppingListSuccessResponse(ShoppingListsResponse shoppingListsResponse) {
 		popFragmentNoAnim();
+	}
 
+	@Override
+	public void onShoppingListFailureResponse(Response response) {
+		Activity activity = getActivity();
+		if (activity != null) {
+			if (response.code.equalsIgnoreCase("0654")) {
+				messageLabelErrorDisplay(true, response.desc);
+			} else {
+				mKeyboardUtils.hideKeyboard(activity);
+				KeyboardUtil.hideSoftKeyboard(activity);
+				Utils.displayDialog(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
+			}
+			loadView(false);
+		}
 	}
 
 	private void postAddList() {
 		WLoanEditTextView etNewList = getViewDataBinding().etNewList;
 		loadView(true);
-		mPostAddList = getViewModel().postCreateList(new CreateList(etNewList.getText().toString().trim(),null));
+		mPostAddList = getViewModel().postCreateList(new CreateList(etNewList.getText().toString().trim(), null));
 		mPostAddList.execute();
 	}
 
@@ -209,9 +225,54 @@ public class NewListFragment extends BaseFragment<NewListFragmentBinding, NewLis
 		showSoftwareKeyboard(false);
 		cancelRequest(mPostAddList);
 	}
-	protected void showSoftwareKeyboard(boolean showKeyboard){
+
+	protected void showSoftwareKeyboard(boolean showKeyboard) {
 		final Activity activity = getActivity();
-		final InputMethodManager inputManager = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+		final InputMethodManager inputManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
 		inputManager.hideSoftInputFromWindow(getViewDataBinding().etNewList.getWindowToken(), showKeyboard ? InputMethodManager.SHOW_FORCED : InputMethodManager.HIDE_NOT_ALWAYS);
+	}
+
+	private void messageLabelErrorDisplay(boolean isVisible, String message) {
+		getViewDataBinding().tvOnErrorLabel.setText(message);
+		messageLabelErrorDisplay(isVisible);
+	}
+
+	private void messageLabelErrorDisplay(boolean isVisible) {
+		getViewDataBinding().tvOnErrorLabel.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (getViewDataBinding().etNewList != null) {
+			displayKeyboard(mView, getActivity());
+		}
+	}
+
+	private void displayKeyboard(View view, Activity activity) {
+		activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+		mKeyboardUtils = new KeyboardUtil(activity, view.findViewById(R.id.rlRootList), 0);
+		mKeyboardUtils.enableGlobal();
+		mKeyboardUtils.showKeyboard(getActivity());
+	}
+
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		// Do something that differs the Activity's menu here
+		super.onCreateOptionsMenu(menu, inflater);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case android.R.id.home:
+				Log.e("homeView","howee");
+				break;
+			default:
+				break;
+		}
+
+		return false;
 	}
 }

@@ -68,7 +68,6 @@ import za.co.woolworths.financial.services.android.models.rest.product.GetCartSu
 import za.co.woolworths.financial.services.android.models.rest.product.PostAddItemToCart;
 import za.co.woolworths.financial.services.android.models.rest.product.ProductRequest;
 import za.co.woolworths.financial.services.android.models.rest.shop.SetDeliveryLocationSuburb;
-import za.co.woolworths.financial.services.android.models.rest.shoppinglist.GetShoppingLists;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
@@ -130,7 +129,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	private boolean mProductHasSize;
 	private boolean mProductHasOneColour;
 	private boolean mProductHasOneSize;
-	private boolean shoppingListPageWasClosed;
 	private OtherSkus mSkuId;
 
 	private BroadcastReceiver mConnectionBroadcast;
@@ -144,11 +142,8 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	private List<OtherSkus> mSkuColorList;
 	private SetDeliveryLocationSuburb mSuburbLocation;
 	private boolean activate_location_popup = false;
-	private GetShoppingLists mGetShoppingLists;
 	private ShoppingListsResponse mShoppingListsResponse;
-	private boolean shoppingListLoadFailure = false;
 	private ToastUtils mToastUtils;
-	private boolean shoppingListTimeOut;
 	private int mNumberOfListSelected = 0;
 	private boolean shoppingListDidReload = false;
 
@@ -240,7 +235,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 								BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
 								switch (bottomNavigationActivity.getCurrentSection()) {
 									case R.id.navigation_account:
-										setAddShopListPage(true);
 										closeSlideUpPanel(getView());
 										getBottomNavigator().closeSlideUpPanelFromList(productState.getCount());
 										break;
@@ -282,7 +276,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		getGlobalState().setSizeWasPopup(false);
 		getGlobalState().setSizePickerSku(null);
 		renderView();
-		shoppingListRequest();
+		//shoppingListRequest();
 	}
 
 	@Override
@@ -386,8 +380,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	}
 
 	public void reloadGetListAPI() {
-		setShoppingListDidReload(true);
-		shoppingListRequest();
+		getBtnAddShoppingList().performClick();
 	}
 
 	private boolean shoppingListDidReload() {
@@ -558,12 +551,12 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 					scrolltoTop();
 					WProductDetail product = getViewModel().getProduct();
 					// called when shopping list call has time out or user not authenticated
-					if (getShoppingListTimeOut() || !SessionUtilities.getInstance().isUserAuthenticated()) {
+					if (!SessionUtilities.getInstance().isUserAuthenticated()) {
 						ScreenManager.presentSSOSignin(activity);
 						return;
 					}
 					//activates when product detail and shopping list loading incomplete
-					if (product == null || !shoppingListLoadFailure) return;
+					if (product == null) return;
 					switch (getViewModel().getProductType()) {
 						case CLOTHING_PRODUCT:
 							addToShoppingList();
@@ -647,7 +640,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 					scrolltoTop();
 					if (Utils.isLocationEnabled(getActivity())) {
 						BottomNavigator bottomNavigator = getBottomNavigator();
-						bottomNavigator.getRuntimePermission().check_permission(bottomNavigator.getPermissionType(android.Manifest.permission.ACCESS_FINE_LOCATION), "Explain here why the app needs permissions", 1);
+						checkLocationPermission(bottomNavigator, 1);
 					} else {
 						Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.LOCATION_OFF, "");
 					}
@@ -948,7 +941,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		cancelRequest(mGetCartSummary);
 		cancelRequest(mPostAddItemToCart);
 		cancelRequest(mSuburbLocation);
-		cancelRequest(mGetShoppingLists);
 	}
 
 	private void cancelPopWindow(PopupWindow popupWindow) {
@@ -1216,6 +1208,10 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		}
 	}
 
+	private void checkLocationPermission(BottomNavigator bottomNavigator, int i) {
+		bottomNavigator.getRuntimePermission().check_permission(bottomNavigator.getPermissionType(android.Manifest.permission.ACCESS_FINE_LOCATION), "Explain here why the app needs permissions", i);
+	}
+
 	public void sizeIntent() {
 		getGlobalState().setColourSKUArrayList(getColorList());
 		Intent mIntent = new Intent(getBaseActivity(), ConfirmColorSizeActivity.class);
@@ -1427,7 +1423,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	}
 
 	@Override
-	public void onSessionTokenValid(CartSummaryResponse cartSummaryResponse) {
+	public void onCartSummarySuccess(CartSummaryResponse cartSummaryResponse) {
 		Activity activity = getBaseActivity();
 		if (activity != null) {
 			if (cartSummaryResponse.data != null) {
@@ -1567,7 +1563,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 	@Override
 	public void onSessionTokenExpired(final Response response) {
-
 		SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
 		final Activity activity = getBaseActivity();
 		activity.runOnUiThread(new Runnable() {
@@ -1614,8 +1609,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 	@Override
 	public void onShoppingListsResponse(ShoppingListsResponse shoppingListsResponse) {
-		shoppingListLoadFailure = true;
-		setShoppingListTimeOut(false);
 		mShoppingListsResponse = shoppingListsResponse;
 		if (shoppingListDidReload()) {
 			setShoppingListDidReload(false);
@@ -1628,22 +1621,9 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
-	private void shoppingListRequest() {
-		mGetShoppingLists = getViewModel().getShoppingListsResponse();
-		mGetShoppingLists.execute();
-	}
-
 	private void cancelPopUpMenu() {
 		cancelPopWindow(mPSizeWindow);
 		cancelPopWindow(mPColourWindow);
-	}
-
-	public void setAddShopListPage(boolean shoppingListPageWasClosed) {
-		this.shoppingListPageWasClosed = shoppingListPageWasClosed;
-	}
-
-	public boolean getAddShopListPage() {
-		return shoppingListPageWasClosed;
 	}
 
 	@Override
@@ -1658,12 +1638,10 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 	@Override
 	public void onShoppingListFailure(String e) {
-		shoppingListLoadFailure = false;
 	}
 
 	@Override
 	public void shoppingListSessionTimedOut() {
-		setShoppingListTimeOut(true);
 	}
 
 	@Override
@@ -1685,14 +1663,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 				}
 			}
 		}
-	}
-
-	public void setShoppingListTimeOut(boolean shoppingListTimeOut) {
-		this.shoppingListTimeOut = shoppingListTimeOut;
-	}
-
-	public boolean getShoppingListTimeOut() {
-		return shoppingListTimeOut;
 	}
 }
 

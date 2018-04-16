@@ -61,6 +61,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.EnumMap;
@@ -75,6 +76,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
+import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
 import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
@@ -323,13 +325,9 @@ public class Utils {
 		return response;
 	}
 
-	public static <T> List<T> toList(String json, Class<T> clazz) {
-		if (null == json) {
-			return null;
-		}
-		Gson gson = new Gson();
-		return gson.fromJson(json, new TypeToken<T>() {
-		}.getType());
+	public static List<AddToListRequest> toList(String jsonArrayString) {
+		if (TextUtils.isEmpty(jsonArrayString)) return null;
+		return Arrays.asList(new Gson().fromJson(jsonArrayString, AddToListRequest[].class));
 	}
 
 
@@ -442,6 +440,18 @@ public class Utils {
 		((AppCompatActivity) context).overridePendingTransition(0, 0);
 	}
 
+	public static void displayDialog(Context context, CustomPopUpWindow.MODAL_LAYOUT key, String description) {
+		Intent openMsg = new Intent(context, CustomPopUpWindow.class);
+		Bundle args = new Bundle();
+		args.putSerializable("key", key);
+		args.putString("description", description);
+		openMsg.putExtras(args);
+		if (((Activity) context) != null) {
+			Activity activity = ((Activity) context);
+			activity.startActivityForResult(openMsg, 1001);
+			((AppCompatActivity) activity).overridePendingTransition(0, 0);
+		}
+	}
 
 	public static void displayValidationMessage(Context context, CustomPopUpWindow.MODAL_LAYOUT key, String description, boolean closeView) {
 		Intent openMsg = new Intent(context, CustomPopUpWindow.class);

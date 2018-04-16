@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.views.dialog;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.IntentFilter;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,11 +16,12 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,11 +34,14 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.models.rest.shoppinglist.GetShoppingLists;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostAddToList;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.adapters.AddToListAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
+import za.co.woolworths.financial.services.android.util.EmptyCartView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
@@ -45,7 +50,7 @@ import za.co.woolworths.financial.services.android.util.Utils;
 
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CLOSE_PDP_FROM_ADD_TO_LIST;
 
-public class AddToListFragment extends Fragment implements View.OnClickListener, AddToListInterface, NetworkChangeListener {
+public class AddToListFragment extends Fragment implements View.OnClickListener, AddToListInterface, NetworkChangeListener, EmptyCartView.EmptyCartInterface {
 
 	private String mShoppingResponse = "";
 	private WButton mBtnCancel;
@@ -57,6 +62,13 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 	private ErrorHandlerView mErrorHandlerView;
 	private PostAddToList mPostAddToList;
 	private ImageView imCreateList;
+	private RecyclerView rcvShoppingLists;
+	private RelativeLayout relProgressBar;
+	private ProgressBar pbLoadShoppingList;
+	private RelativeLayout relEmptyStateHandler;
+	private FrameLayout flCancelButton;
+	private RelativeLayout rlNoConnectionLayout;
+	private List<AddToListRequest> addToLists;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -76,8 +88,19 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 		if (view == null) {
 			view = inflater.inflate(R.layout.add_to_list_content, container, false);
 			initUI(view);
+			setEmptyList();
+			loadShoppingList();
 		}
 		return view;
+	}
+
+	private AsyncTask<String, String, ShoppingListsResponse> loadShoppingList() {
+		return getShoppingLists().execute();
+	}
+
+	private void setEmptyList() {
+		EmptyCartView emptyCartView = new EmptyCartView(view, this);
+		emptyCartView.setView(getString(R.string.title_no_shopping_lists), getString(R.string.description_no_shopping_lists), getString(R.string.button_no_shopping_lists), R.drawable.emptylists);
 	}
 
 	@Override
@@ -85,35 +108,53 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 		super.onViewCreated(view, savedInstanceState);
 	}
 
-	private ShoppingListsResponse getShoppingListsResponse() {
-		return new Gson().fromJson((TextUtils.isEmpty(mShoppingResponse)) ? "" : mShoppingResponse, ShoppingListsResponse.class);
-	}
-
 	private void initUI(View view) {
-		RecyclerView rcvShoppingLists = view.findViewById(R.id.rclAddToList);
+		rcvShoppingLists = view.findViewById(R.id.rclAddToList);
+		rlNoConnectionLayout = view.findViewById(R.id.no_connection_layout);
 		mBtnCancel = view.findViewById(R.id.btnCancel);
 		imCreateList = view.findViewById(R.id.imCreateList);
 		mProgressBar = view.findViewById(R.id.pbAddToList);
-		ShoppingListsResponse shoppingResponse = getShoppingListsResponse();
-		recyclerViewHeight(rcvShoppingLists, shoppingResponse);
-		setAdapter(rcvShoppingLists);
+		relProgressBar = view.findViewById(R.id.relProgressBar);
+		pbLoadShoppingList = view.findViewById(R.id.pbLoadShoppingList);
+		relEmptyStateHandler = view.findViewById(R.id.relEmptyView);
+		flCancelButton = view.findViewById(R.id.flCancelButton);
+		WButton btnGoToProduct = view.findViewById(R.id.btnGoToProduct);
+		WButton btnRetry = view.findViewById(R.id.btnRetry);
 		imCreateList.setOnClickListener(this);
+		imCreateList.setTag(R.drawable.add_black);
 		mBtnCancel.setOnClickListener(this);
+		btnGoToProduct.setOnClickListener(this);
+		btnRetry.setOnClickListener(this);
 		Activity activity = getActivity();
 		if (activity != null) {
 			mErrorHandlerView = new ErrorHandlerView(activity);
+			mErrorHandlerView.setMargin(rlNoConnectionLayout, 0, 0, 0, 0);
 			mConnectionBroadcast = Utils.connectionBroadCast(activity, this);
 		}
+
+		EmptyCartView emptyCartView = new EmptyCartView(view, this);
+		emptyCartView.setView(getString(R.string.title_no_shopping_lists), getString(R.string.description_no_shopping_lists), getString(R.string.button_no_shopping_lists), R.drawable.emptylists);
+		emptyCartView.buttonVisibility(getString(R.string.app_label));
 	}
 
-	private void setAdapter(RecyclerView rcvShoppingLists) {
+	private void setAdapter(RecyclerView rcvShoppingLists, ShoppingListsResponse response) {
 		Activity activity = getActivity();
 		if (activity != null) {
-			mShoppingListAdapter = new AddToListAdapter(getShoppingListsResponse().lists, this);
-			LinearLayoutManager mLayoutManager = new LinearLayoutManager(activity);
-			mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-			rcvShoppingLists.setLayoutManager(mLayoutManager);
-			rcvShoppingLists.setAdapter(mShoppingListAdapter);
+			if (response != null) {
+				List<ShoppingList> shoppingLists = response.lists;
+				if (shoppingLists != null && shoppingLists.size() == 0) {
+					showEmptyListView();
+					recyclerViewVisibility(false);
+					return;
+				}
+
+				recyclerViewVisibility(true);
+				mShoppingListAdapter = new AddToListAdapter(response.lists, this);
+				LinearLayoutManager mLayoutManager = new LinearLayoutManager(activity);
+				mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+				rcvShoppingLists.setLayoutManager(mLayoutManager);
+				rcvShoppingLists.setAdapter(mShoppingListAdapter);
+			}
 		}
 	}
 
@@ -145,39 +186,32 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 	public void onClick(View view) {
 		MultiClickPreventer.preventMultiClick(view);
 		switch (view.getId()) {
+			case R.id.btnGoToProduct:
+				navigateToCreateNewListFragment();
+				break;
 			case R.id.imCreateList:
-				Activity activity = getActivity();
-				Bundle bundle = new Bundle();
-				CreateListFragment createListFragment = new CreateListFragment();
-				List<AddToListRequest> addToList = getAddToListRequests();
-				bundle.putString("ADD_TO_LIST_ITEMS", Utils.objectToJson(addToList));
-				createListFragment.setArguments(bundle);
-				if (activity != null) {
-					CustomPopUpWindow customPopUpWindow = (CustomPopUpWindow) activity;
-					FragmentManager fragmentManager = customPopUpWindow.getSupportFragmentManager();
-					fragmentManager.beginTransaction()
-							.replace(R.id.flShoppingListContainer, createListFragment)
-							.addToBackStack(null)
-							.commitAllowingStateLoss();
+				if (imCreateList.getAlpha() == 1.0) {  //enable create list only if alpha is 1.0
+					if (imCreateList.getTag() != null) {
+						int resourceID = (int) imCreateList.getTag();
+						switch (resourceID) {
+							case R.drawable.close_24:
+								onOkButtonClicked();
+								break;
+							default:
+								navigateToCreateNewListFragment();
+								break;
+						}
+					}
 				}
 				break;
-
 			case R.id.btnCancel:
-				String label = mBtnCancel.getText().toString();
-				Activity act = getActivity();
-				if (act != null) {
-					if (label.toLowerCase().equalsIgnoreCase("ok")) {
-						List<AddToListRequest> addToLists = getAddToListRequests();
-						WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
-						if (woolworthsApplication != null) {
-							WGlobalState globalState = woolworthsApplication.getWGlobalState();
-							if (mShoppingListAdapter != null)
-								globalState.setShoppingListRequest(mShoppingListAdapter.getList());
-						}
-						postAddToList(addToLists);
-						return;
-					}
-					((CustomPopUpWindow) act).startExitAnimation();
+				onOkButtonClicked();
+				break;
+
+			case R.id.btnRetry:
+				if (new ConnectionDetector().isOnline(getActivity())) {
+					onConnectionFailure(false);
+					loadShoppingList();
 				}
 				break;
 
@@ -186,33 +220,78 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 		}
 	}
 
+	private void onOkButtonClicked() {
+		String label = mBtnCancel.getText().toString();
+		Activity act = getActivity();
+		if (act != null) {
+			if (label.toLowerCase().equalsIgnoreCase("ok")) {
+				addToLists = getAddToListRequests();
+				WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
+				if (woolworthsApplication != null) {
+					WGlobalState globalState = woolworthsApplication.getWGlobalState();
+					if (mShoppingListAdapter != null)
+						globalState.setShoppingListRequest(mShoppingListAdapter.getList());
+				}
+				postAddToList();
+				return;
+			}
+			((CustomPopUpWindow) act).startExitAnimation();
+		}
+	}
+
+	private void navigateToCreateNewListFragment() {
+		Activity activity = getActivity();
+		Bundle bundle = new Bundle();
+		CreateListFragment createListFragment = new CreateListFragment();
+		List<AddToListRequest> addToList = getAddToListRequests();
+		bundle.putString("ADD_TO_LIST_ITEMS", Utils.objectToJson(addToList));
+		createListFragment.setArguments(bundle);
+		if (activity != null) {
+			CustomPopUpWindow customPopUpWindow = (CustomPopUpWindow) activity;
+			FragmentManager fragmentManager = customPopUpWindow.getSupportFragmentManager();
+			fragmentManager.beginTransaction()
+					.replace(R.id.flShoppingListContainer, createListFragment)
+					.setCustomAnimations(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
+					.addToBackStack(null)
+					.commitAllowingStateLoss();
+		}
+	}
+
 	@NonNull
 	private List<AddToListRequest> getAddToListRequests() {
 		List<AddToListRequest> addToListRequests = new ArrayList<>();
-		for (ShoppingList spl : mShoppingListAdapter.getList()) {
-			if (spl.viewIsSelected) {
-				if (!TextUtils.isEmpty(getSelectedSKU().sku)) {
-					AddToListRequest addToListRequest = new AddToListRequest();
-					addToListRequest.setGiftListId(spl.listId);
-					addToListRequest.setCatalogRefId(getSelectedSKU().sku);
-					addToListRequest.setQuantity("1");
-					addToListRequest.setSkuID(getSelectedSKU().sku);
-					addToListRequests.add(addToListRequest);
+		if (mShoppingListAdapter != null) {
+			List<ShoppingList> shoppingLists = mShoppingListAdapter.getList();
+			if (shoppingLists != null || shoppingLists.size() != 0)
+				for (ShoppingList spl : shoppingLists) {
+					if (spl.viewIsSelected) {
+						if (!TextUtils.isEmpty(getSelectedSKU().sku)) {
+							AddToListRequest addToListRequest = new AddToListRequest();
+							addToListRequest.setGiftListId(spl.listId);
+							addToListRequest.setCatalogRefId(getSelectedSKU().sku);
+							addToListRequest.setQuantity("1");
+							addToListRequest.setSkuID(getSelectedSKU().sku);
+							addToListRequests.add(addToListRequest);
+						}
+					}
 				}
-			}
+			return addToListRequests;
 		}
 		return addToListRequests;
 	}
 
-	private void postAddToList(List<AddToListRequest> addToListRequests) {
-		if (addToListRequests.size() > 0) {
-			mPostAddToList = addToList(addToListRequests, addToListRequests.get(0).getGiftListId());
+	private void postAddToList() {
+		if (addToLists.size() > 0) {
+			List<AddToListRequest> addToListRequestList = new ArrayList<>();
+			AddToListRequest addToListRequest = addToLists.get(apiCount);
+			addToListRequestList.add(addToListRequest);
+			mPostAddToList = addToList(addToListRequestList, addToListRequest.getGiftListId());
 			mPostAddToList.execute();
 		}
 	}
 
 	public PostAddToList addToList(final List<AddToListRequest> addToListRequest, String listId) {
-		final int sizeOfList = addToListRequest.size();
+		final int sizeOfList = addToLists.size();
 		onLoad(true);
 		return new PostAddToList(new OnEventListener() {
 			@Override
@@ -223,7 +302,10 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 					switch (addToListResponse.httpCode) {
 						case 200:
 							if (apiCount < sizeOfList) {
-								PostAddToList postAddToList = addToList(addToListRequest, addToListRequest.get(apiCount).getGiftListId());
+								List<AddToListRequest> addToListRequestList = new ArrayList<>();
+								AddToListRequest addToListRequests = addToLists.get(apiCount);
+								addToListRequestList.add(addToListRequests);
+								PostAddToList postAddToList = addToList(addToListRequestList, addToListRequests.getGiftListId());
 								postAddToList.execute();
 							} else {
 								((CustomPopUpWindow) activity).startExitAnimation();
@@ -266,7 +348,7 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 	}
 
 	private void onLoad(boolean isLoading) {
-		imCreateList.setEnabled(!isLoading);
+		imCreateList.setImageAlpha(isLoading ? 120 : 255);
 		mProgressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
 		mBtnCancel.setVisibility(isLoading ? View.GONE : View.VISIBLE);
 	}
@@ -321,6 +403,87 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 		if (mPostAddToList != null) {
 			if (!mPostAddToList.isCancelled())
 				mPostAddToList.cancel(true);
+		}
+	}
+
+	protected GetShoppingLists getShoppingLists() {
+		showShoppingListLoader(true);
+		recyclerViewVisibility(true);
+		return new GetShoppingLists(new OnEventListener() {
+			@Override
+			public void onSuccess(Object object) {
+				ShoppingListsResponse shoppingListsResponse = (ShoppingListsResponse) object;
+				switch (shoppingListsResponse.httpCode) {
+					case 200:
+						recyclerViewHeight(rcvShoppingLists, shoppingListsResponse);
+						setAdapter(rcvShoppingLists, shoppingListsResponse);
+						break;
+					default:
+						recyclerViewVisibility(false);
+						break;
+				}
+				showShoppingListLoader(false);
+			}
+
+			@Override
+			public void onFailure(String message) {
+				showShoppingListLoader(false);
+				recyclerViewVisibility(false);
+				onConnectionFailure(true);
+			}
+		});
+	}
+
+	private void showShoppingListLoader(boolean isLoading) {
+		imCreateList.setImageAlpha(isLoading ? 120 : 255);
+		imCreateList.setEnabled(!isLoading);
+		pbLoadShoppingList.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+		relProgressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+	}
+
+	private void recyclerViewVisibility(boolean visible) {
+		rcvShoppingLists.setVisibility(visible ? View.VISIBLE : View.GONE);
+	}
+
+	private void showEmptyListView() {
+		rcvShoppingLists.setVisibility(View.GONE);
+		flCancelButton.setVisibility(View.GONE);
+		rlNoConnectionLayout.setVisibility(View.GONE);
+		relEmptyStateHandler.setVisibility(View.VISIBLE);
+		imCreateList.setImageResource(R.drawable.close_24);
+		imCreateList.setTag(R.drawable.close_24);
+	}
+
+	public void onConnectionFailure(final boolean enable) {
+		Activity activity = getActivity();
+		if (activity != null) {
+			activity.runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					imCreateList.setImageResource(enable ? R.drawable.close_24 : R.drawable.add_black);
+					rlNoConnectionLayout.setVisibility(enable ? View.VISIBLE : View.GONE);
+					rcvShoppingLists.setVisibility(enable ? View.GONE : View.GONE);
+					flCancelButton.setVisibility(enable ? View.GONE : View.VISIBLE);
+				}
+			});
+		}
+	}
+
+	@Override
+	public void onEmptyCartRetry() {
+		Activity activity = getActivity();
+		Bundle bundle = new Bundle();
+		CreateListFragment createListFragment = new CreateListFragment();
+		List<AddToListRequest> addToList = getAddToListRequests();
+		bundle.putString("OPEN_FROM_POPUP", Utils.objectToJson(addToList));
+		createListFragment.setArguments(bundle);
+		if (activity != null) {
+			CustomPopUpWindow customPopUpWindow = (CustomPopUpWindow) activity;
+			FragmentManager fragmentManager = customPopUpWindow.getSupportFragmentManager();
+			fragmentManager.beginTransaction()
+					.replace(R.id.flShoppingListContainer, createListFragment)
+					.setCustomAnimations(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
+					.commitAllowingStateLoss();
 		}
 	}
 }

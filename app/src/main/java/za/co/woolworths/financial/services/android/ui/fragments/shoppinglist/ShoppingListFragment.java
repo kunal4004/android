@@ -32,6 +32,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.lis
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.EmptyCartView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -215,8 +216,10 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 	public void onResume() {
 		super.onResume();
 		initGetShoppingList();
+		KeyboardUtil.hideSoftKeyboard(getActivity());
 		Activity activity = getActivity();
 		if (activity != null) {
+			showToolbar(R.string.title_my_list);
 			activity.registerReceiver(mConnectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
 		}
 	}

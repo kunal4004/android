@@ -10,7 +10,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -32,18 +31,25 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.AddToCartDaTum;
+import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
+import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
+import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
+import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.models.rest.product.GetCartSummary;
+import za.co.woolworths.financial.services.android.models.rest.product.PostAddItemToCart;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.DeleteShoppingList;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.DeleteShoppingListItem;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.GetShoppingListItems;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
 import za.co.woolworths.financial.services.android.models.service.event.ShopState;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
+import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator;
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.ShoppingListItemsAdapter;
@@ -78,6 +84,10 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	private BroadcastReceiver mConnectionBroadcast;
 	private ToastUtils mToastUtils;
 	private String TAG = this.getClass().getSimpleName();
+	private final int DELIVERY_LOCATION_REQUEST = 2;
+	private final int SUBURB_SET_RESULT = 123401;
+	private GetCartSummary mCartSummary;
+	private PostAddItemToCart mPostAddToCart;
 
 	@Override
 	public ShoppingListItemsViewModel getViewModel() {
@@ -161,7 +171,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		mErrorHandlerView = new ErrorHandlerView(getActivity(), rlNoConnectionLayout);
 		mErrorHandlerView.setMargin(rlNoConnectionLayout, 0, 0, 0, 0);
 		mConnectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
-
 		initList(getViewDataBinding().rcvShoppingListItems);
 		initGetShoppingListItems();
 		setScrollListener(getViewDataBinding().rcvShoppingListItems);
@@ -184,7 +193,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 
 	private void updateList(List<ShoppingListItem> listItems) {
 		setHeader();
-		if (shoppingListItemsAdapter != null){
+		if (shoppingListItemsAdapter != null) {
 			shoppingListItemsAdapter.updateList(listItems);
 			setUpView();
 		}
@@ -241,7 +250,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				}
 				break;
 			case R.id.btnCheckOut:
-				executeAddToCart(listItems.subList(1, listItems.size()));
+				loadCartSummary();
 			default:
 				break;
 		}
@@ -268,10 +277,12 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	@Override
 	public void onItemSelectionChange(List<ShoppingListItem> items) {
 		getViewDataBinding().incConfirmButtonLayout.rlCheckOut.setVisibility(getButtonStatus(items) ? View.VISIBLE : View.GONE);
-		if (items.size() > 0)
-			tvMenuSelectAll.setText(getString(getSelectAllMenuVisibility(items) ? R.string.deselect_all : R.string.select_all));
-		else
-			mMenuActionSelectAll.setVisible(false);
+		if (isAdded()) {
+			if (items.size() > 0)
+				tvMenuSelectAll.setText(getString(getSelectAllMenuVisibility(items) ? R.string.deselect_all : R.string.select_all));
+			else
+				mMenuActionSelectAll.setVisible(false);
+		}
 	}
 
 	@Override
@@ -392,6 +403,11 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		getBottomNavigator().openProductDetailFragment(productName, productList);
 	}
 
+	@Override
+	public void onAddToCartLoad() {
+
+	}
+
 	public void initGetShoppingListItems() {
 		mErrorHandlerView.hideErrorHandler();
 		getViewDataBinding().loadingBar.setVisibility(View.VISIBLE);
@@ -402,6 +418,8 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	@Override
 	public void onDetach() {
 		super.onDetach();
+		cancelRequest(mCartSummary);
+		cancelRequest(mPostAddToCart);
 		getBottomNavigator().showBottomNavigationMenu();
 	}
 
@@ -472,8 +490,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 			@Override
 			public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-				//Your action here
-				Log.e("scroll", (dy > getViewDataBinding().rcvShoppingListItems.getHeight()) + " dy " + dy + " shopList " + getViewDataBinding().relEmptyStateHandler.getHeight());
 				actionSearchVisibility(dy > getViewDataBinding().rcvShoppingListItems.getHeight());
 			}
 		});
@@ -485,13 +501,15 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	}
 
 	private void executeAddToCart(List<ShoppingListItem> items) {
+		onAddToCartPreExecute();
 		List<AddItemToCart> selectedItems = new ArrayList<>();
 		for (ShoppingListItem item : items) {
 			if (item.isSelected)
-				selectedItems.add(new AddItemToCart(item.productId, item.catalogRefId, item.quantityDesired));
+				selectedItems.add(new AddItemToCart(item.productId, item.catalogRefId, item.userQuantity));
 		}
 
-		getViewModel().postAddItemToCart(selectedItems).execute();
+		mPostAddToCart = getViewModel().postAddItemToCart(selectedItems);
+		mPostAddToCart.execute();
 	}
 
 	private void resetAddToCartButton() {
@@ -535,6 +553,10 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 
 	@Override
 	public void onConnectionChanged() {
+		if (getViewModel().addedToCart()) {
+			loadCartSummary();
+			getViewModel().addedToCartFail(false);
+		}
 	}
 
 	@Override
@@ -560,5 +582,74 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 
 	}
 
+	@Override
+	public void onCartSummarySuccess(CartSummaryResponse cartSummaryResponse) {
+		Activity activity = getActivity();
+		if (activity != null) {
+			CartSummary cartSummary = cartSummaryResponse.data.get(0);
+			if (!TextUtils.isEmpty(cartSummary.provinceName)) {
+				String suburbId = String.valueOf(cartSummary.suburbId);
+				Province province = new Province();
+				province.name = cartSummary.provinceName;
+				province.id = suburbId;
+				Suburb suburb = new Suburb();
+				suburb.name = cartSummary.suburbName;
+				suburb.id = suburbId;
+				Utils.saveRecentDeliveryLocation(new DeliveryLocationHistory(province, suburb), activity);
+				executeAddToCart(listItems.subList(1, listItems.size()));
+			} else {
+				deliverySelectionIntent(getActivity());
+				resetAddToCartButton();
+			}
+		}
+	}
+
+	@Override
+	public void onCartSummaryExpiredSession(Response response) {
+		resetAddToCartButton();
+	}
+
+	@Override
+	public void onCartSummaryOtherHttpCode(Response response) {
+		resetAddToCartButton();
+	}
+
+	@Override
+	public void onTokenFailure(String e) {
+		Activity activity = getActivity();
+		if (activity != null) {
+			activity.runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					resetAddToCartButton();
+					mErrorHandlerView.showToast();
+				}
+			});
+		}
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == DELIVERY_LOCATION_REQUEST) {
+			if (resultCode == SUBURB_SET_RESULT) { // on suburb selection successful
+				executeAddToCart(listItems.subList(1, listItems.size()));
+			}
+		}
+	}
+
+	private void deliverySelectionIntent(Activity activity) {
+		Intent deliveryLocationSelectionActivity = new Intent(activity, DeliveryLocationSelectionActivity.class);
+		deliveryLocationSelectionActivity.putExtra(DeliveryLocationSelectionActivity.LOAD_PROVINCE, "LOAD_PROVINCE");
+		activity.startActivityForResult(deliveryLocationSelectionActivity, DELIVERY_LOCATION_REQUEST);
+		activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+	}
+
+
+	private void loadCartSummary() {
+		onAddToCartPreExecute();
+		mCartSummary = getViewModel().getCartSummary();
+		mCartSummary.execute();
+	}
 
 }

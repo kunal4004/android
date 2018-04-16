@@ -94,7 +94,7 @@
                     <LinearLayout
                         android:id="@+id/llCartItems"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:orientation="horizontal">
 
                         <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
@@ -103,9 +103,9 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:contentDescription="@string/app_name"
+                            android:minHeight="84dp"
                             fresco:fadeDuration="10"
-                            fresco:failureImage="@drawable/woolworth_logo_icon"
-                            fresco:viewAspectRatio="0.5"/>
+                            fresco:failureImage="@drawable/woolworth_logo_icon"/>
 
                         <LinearLayout
                             android:id="@+id/llProductInfo"

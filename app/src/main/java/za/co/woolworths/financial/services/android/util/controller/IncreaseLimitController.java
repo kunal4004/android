@@ -78,7 +78,7 @@ public class IncreaseLimitController {
 		editTextView.setSelection(editTextView.getText().length());
 	}
 
-	public void cliDefaultView(LinearLayout llCommonLayer, WTextView tvIncreaseLimitDescription){
+	public void cliDefaultView(LinearLayout llCommonLayer, WTextView tvIncreaseLimitDescription) {
 		hideView(llCommonLayer);
 		hideView(tvIncreaseLimitDescription);
 	}

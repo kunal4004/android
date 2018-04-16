@@ -98,7 +98,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	WTextView pl_available_funds;
 	WTextView messageCounter;
 	WTextView userName;
-	WTextView userInitials;
 	private ImageView imgCreditCard;
 
 	Map<String, Account> accounts;
@@ -187,7 +186,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			pl_available_funds = view.findViewById(R.id.pl_available_funds);
 			messageCounter = view.findViewById(R.id.messageCounter);
 			userName = view.findViewById(R.id.user_name);
-			userInitials = view.findViewById(R.id.initials);
 			imgCreditCard = view.findViewById(R.id.imgCreditCard);
 			RelativeLayout relFAQ = view.findViewById(R.id.relFAQ);
 			RelativeLayout relNoConnectionLayout = view.findViewById(R.id.no_connection_layout);
@@ -247,6 +245,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 
 		} else {
 			if (getActivity() != null) {
+				removeAllBottomNavigationIconBadgeCount();
 				configureView();
 			}
 		}
@@ -408,8 +407,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			String familyName = jwtDecoded.family_name.get(0);
 			userName.setText(name + " " + familyName);
 			//initials of the logged in user will be displayed on the page
-			String initials = name.substring(0, 1).concat(" ").concat(familyName.substring(0, 1));
-			userInitials.setText(initials);
 			showView(signOutBtn);
 			showView(myDetailBtn);
 			showView(loginUserOptionsLayout);
@@ -657,9 +654,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		super.onResume();
 		LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver, new IntentFilter("UpdateCounter"));
 
-		messageCounterRequest();
 		shoppingListRequest();
-
 	}
 
 	@Override

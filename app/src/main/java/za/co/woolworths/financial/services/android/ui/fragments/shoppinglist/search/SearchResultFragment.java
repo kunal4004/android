@@ -216,10 +216,14 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 	}
 
 	private void cancelColorSizeSelection() {
-		OtherSkus otherSkus = new OtherSkus();
-		otherSkus.sku = getSelectedProduct().sku;
-		if (getProductAdapter() != null)
-			getProductAdapter().onDeselectSKU(getSelectedProduct(), otherSkus);
+		try {
+			OtherSkus otherSkus = new OtherSkus();
+			otherSkus.sku = getSelectedProduct().sku;
+			if (getProductAdapter() != null)
+				getProductAdapter().onDeselectSKU(getSelectedProduct(), otherSkus);
+		} catch (NullPointerException ex) {
+			Log.d("cancelColorSize", ex.getMessage());
+		}
 	}
 
 	private SearchResultShopAdapter getProductAdapter() {

@@ -1,7 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.views.dialog;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -30,22 +32,28 @@ import za.co.woolworths.financial.services.android.models.dto.CreateList;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostAddList;
+import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostAddToList;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
+import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
+import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CLOSE_PDP_FROM_ADD_TO_LIST;
 
-public class CreateListFragment extends Fragment implements View.OnClickListener {
+public class CreateListFragment extends Fragment implements View.OnClickListener, NetworkChangeListener {
 
 	private String hideBackButton;
 	private WLoanEditTextView mEtNewList;
@@ -56,6 +64,15 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 	private List<AddToListRequest> addToListRequests;
 	private CreateList mCreateList;
 	private PostAddList mPostCreateList;
+	private WTextView mTvOnErrorLabel;
+	private boolean addToListHasFail = false;
+	private int apiCount = 0;
+	private ErrorHandlerView mErrorHandlerView;
+	private PostAddToList mPostAddToList;
+	private BroadcastReceiver mConnectionBroadcast;
+	private boolean createListFailed;
+	private AddToListRequest mAddToListRequest;
+	private List<AddToListRequest> mListRequests;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -78,28 +95,24 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 		super.onViewCreated(view, savedInstanceState);
 		Activity activity = getActivity();
 		if (activity != null) {
-			addToListRequests = TextUtils.isEmpty(addToListItems)
-					? new ArrayList<AddToListRequest>()
-					: Utils.toList(addToListItems, AddToListRequest.class);
+			mConnectionBroadcast = Utils.connectionBroadCast(activity, this);
+			addToListRequests = new ArrayList<>();
 			initUI(view);
 			keyboardState(view, activity);
 		}
 	}
 
 	private void keyboardState(View view, Activity activity) {
-		if (!TextUtils.isEmpty(hideBackButton)) {
-			KeyboardUtil.showKeyboard(activity);
-			displayKeyboard(view, activity);
-		} else {
-			displayKeyboard(view, activity);
-		}
+		displayKeyboard(view, activity);
 	}
 
 	private void initUI(View view) {
 		mBtnCancel = view.findViewById(R.id.btnCancel);
 		ImageView mImBack = view.findViewById(R.id.imBack);
 		ImageView imCloseIcon = view.findViewById(R.id.imCloseIcon);
+		mTvOnErrorLabel = view.findViewById(R.id.tvOnErrorLabel);
 		pbCreateList = view.findViewById(R.id.pbCreateList);
+		mErrorHandlerView = new ErrorHandlerView(getActivity());
 		mImBack.setVisibility(TextUtils.isEmpty(hideBackButton) ? View.VISIBLE : View.GONE);
 		imCloseIcon.setVisibility(TextUtils.isEmpty(hideBackButton) ? View.GONE : View.VISIBLE);
 		mEtNewList = view.findViewById(R.id.etNewList);
@@ -136,7 +149,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 
 			@Override
 			public void afterTextChanged(Editable editable) {
-
+				messageLabelErrorDisplay(false);
 			}
 		});
 	}
@@ -176,6 +189,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 					&& event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
 				String cancelText = mBtnCancel.getText().toString();
 				if (cancelText.equalsIgnoreCase("ok")) {
+
 					String listName = mEtNewList.getText().toString();
 
 					mCreateList = new CreateList(listName, getItems());
@@ -200,7 +214,13 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 				if (strCancel.equalsIgnoreCase("ok")) {
 					String listName = mEtNewList.getText().toString().trim();
 					mCreateList = new CreateList(listName, getItems());
-					executeCreateList();
+					if ((new ConnectionDetector().isOnline(activity))) {
+						setCreateListFailed(false);
+						executeCreateList();
+					} else {
+						setCreateListFailed(true);
+						mErrorHandlerView.showToast();
+					}
 				} else {
 					cancelRequest(activity);
 				}
@@ -222,7 +242,6 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 	}
 
 	private List<AddToListRequest> getItems() {
-		addToListRequests = new ArrayList<>();
 		AddToListRequest addToList = new AddToListRequest();
 		WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
 		if (woolworthsApplication != null) {
@@ -261,30 +280,49 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 					ShoppingListsResponse createListResponse = (ShoppingListsResponse) object;
 					switch (createListResponse.httpCode) {
 						case 200:
-							WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
-							if (woolworthsApplication != null) {
-								WGlobalState wGlobalState = woolworthsApplication.getWGlobalState();
-								if (wGlobalState != null) {
-									List<ShoppingList> shoppingLists = createListResponse.lists;
-									shoppingLists.get(0).viewIsSelected = true;
-									wGlobalState.setShoppingListRequest(shoppingLists);
+							addToListRequests = Utils.toList(addToListItems);
+							if (addToListRequests != null && addToListRequests.size() > 0) {
+								mAddToListRequest = addToListRequests.get(apiCount);
+								mListRequests = new ArrayList<>();
+								mListRequests.add(mAddToListRequest);
+								apiCount = 1;
+								postAddToList(mListRequests, mAddToListRequest.getGiftListId());
+							} else {
+								WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
+								if (woolworthsApplication != null) {
+									WGlobalState wGlobalState = woolworthsApplication.getWGlobalState();
+									if (wGlobalState != null) {
+										List<ShoppingList> shoppingLists = createListResponse.lists;
+										shoppingLists.get(0).viewIsSelected = true;
+										wGlobalState.setShoppingListRequest(shoppingLists);
+									}
 								}
+								((CustomPopUpWindow) activity).startExitAnimation();
+								mKeyboardUtils.hideKeyboard(activity);
+								KeyboardUtil.hideSoftKeyboard(activity);
+								Utils.sendBus(new ProductState(1, CLOSE_PDP_FROM_ADD_TO_LIST));
+								onLoad(false);
 							}
-							((CustomPopUpWindow) activity).startExitAnimation();
-							mKeyboardUtils.hideKeyboard(activity);
-							KeyboardUtil.hideSoftKeyboard(activity);
-							Utils.sendBus(new ProductState(1, CLOSE_PDP_FROM_ADD_TO_LIST));
-							onLoad(false);
+							break;
+
+						case 440:
+						case 400:
+							//TODO:: HANDLE SESSION TIMEOUT
 							break;
 						default:
 							Response response = createListResponse.response;
-							if (mKeyboardUtils != null)
-								mKeyboardUtils.hideKeyboard(activity);
-							if (response.desc != null)
-								((CustomPopUpWindow) activity).startExitAnimation(response.desc);
+							if (response.desc != null) {
+								if (response.code.equalsIgnoreCase("0654")) {
+									messageLabelErrorDisplay(true, response.desc);
+								} else {
+									Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
+									CreateListFragment.this.getActivity().finish();
+								}
+							}
 							onLoad(false);
 							break;
 					}
+					setAddToListHasFail(false);
 				}
 			}
 
@@ -295,6 +333,8 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 					activity.runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
+							setAddToListHasFail(true);
+							mErrorHandlerView.showToast();
 							onLoad(false);
 						}
 					});
@@ -311,6 +351,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 	@Override
 	public void onResume() {
 		super.onResume();
+		registerReceiver();
 		if (mEtNewList != null)
 			mEtNewList.performClick();
 	}
@@ -318,8 +359,8 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 	@Override
 	public void onDetach() {
 		super.onDetach();
-		hideKeyboard(getActivity());
 		cancelRequest(mPostCreateList);
+		cancelRequest(mPostAddToList);
 	}
 
 	private void hideKeyboard(Activity activity) {
@@ -333,5 +374,126 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 				httpAsyncTask.cancel(true);
 			}
 		}
+	}
+
+	private void messageLabelErrorDisplay(boolean isVisible, String message) {
+		mTvOnErrorLabel.setText(message);
+		messageLabelErrorDisplay(isVisible);
+	}
+
+	private void messageLabelErrorDisplay(boolean isVisible) {
+		mTvOnErrorLabel.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+	}
+
+	private void setAddToListHasFail(boolean value) {
+		addToListHasFail = value;
+	}
+
+	private void postAddToList(final List<AddToListRequest> addToListRequest, String listId) {
+		mPostAddToList = addToList(addToListRequest, listId);
+		mPostAddToList.execute();
+	}
+
+	public PostAddToList addToList(final List<AddToListRequest> addToListRequest, String listId) {
+		final int sizeOfList = addToListRequests.size();
+		onLoad(true);
+		return new PostAddToList(new OnEventListener() {
+			@Override
+			public void onSuccess(Object object) {
+				ShoppingListItemsResponse addToListResponse = (ShoppingListItemsResponse) object;
+				Activity activity = getActivity();
+				if (activity != null) {
+					switch (addToListResponse.httpCode) {
+						case 200:
+							if (apiCount < sizeOfList) {
+								mAddToListRequest = addToListRequests.get(apiCount);
+								mListRequests = new ArrayList<>();
+								mListRequests.add(mAddToListRequest);
+								PostAddToList postAddToList = addToList(mListRequests, mAddToListRequest.getGiftListId());
+								postAddToList.execute();
+								apiCount += 1;
+							} else {
+								((CustomPopUpWindow) activity).startExitAnimation();
+								mKeyboardUtils.hideKeyboard(activity);
+								KeyboardUtil.hideSoftKeyboard(activity);
+								Utils.sendBus(new ProductState(sizeOfList, CLOSE_PDP_FROM_ADD_TO_LIST));
+								onLoad(false);
+							}
+							break;
+						default:
+							Response response = addToListResponse.response;
+							if (response.desc != null) {
+								Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc, true);
+							}
+							onLoad(false);
+							break;
+					}
+					setAddToListHasFail(false);
+				}
+			}
+
+			@Override
+			public void onFailure(String e) {
+				Activity activity = getActivity();
+				if (activity != null) {
+					activity.runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							mErrorHandlerView.showToast();
+							onLoad(false);
+							setAddToListHasFail(true);
+						}
+					});
+				}
+			}
+		}, addToListRequest, listId);
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		unregisterReceiver();
+	}
+
+	private void unregisterReceiver() {
+		Activity activity = getActivity();
+		if (activity != null) {
+			activity.unregisterReceiver(mConnectionBroadcast);
+		}
+	}
+
+	private void registerReceiver() {
+		Activity activity = getActivity();
+		if (activity != null) {
+			activity.registerReceiver(mConnectionBroadcast,
+					new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+		}
+	}
+
+	@Override
+	public void onConnectionChanged() {
+		if (getCreateListFailed()) {
+			executeCreateList();
+			setCreateListFailed(false);
+		}
+
+		if (addToListHasFail) {
+			addToListRequests = Utils.toList(addToListItems);
+			if (addToListRequests != null && addToListRequests.size() > 0) {
+				mAddToListRequest = addToListRequests.get(apiCount);
+				mListRequests = new ArrayList<>();
+				mListRequests.add(mAddToListRequest);
+				postAddToList(mListRequests, mAddToListRequest.getGiftListId());
+				setAddToListHasFail(false);
+			}
+		}
+	}
+
+	public void setCreateListFailed(boolean createListFailed) {
+		this.createListFailed = createListFailed;
+	}
+
+	public boolean getCreateListFailed() {
+		return createListFailed;
 	}
 }

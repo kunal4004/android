@@ -4,10 +4,10 @@ import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
+import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
+import za.co.woolworths.financial.services.android.models.rest.product.GetCartSummary;
 import za.co.woolworths.financial.services.android.models.rest.product.PostAddItemToCart;
-import za.co.woolworths.financial.services.android.models.rest.shoppinglist.DeleteShoppingList;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.DeleteShoppingListItem;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.GetShoppingListItems;
 import za.co.woolworths.financial.services.android.ui.base.BaseViewModel;
@@ -19,6 +19,8 @@ import za.co.woolworths.financial.services.android.util.rx.SchedulerProvider;
  */
 
 public class ShoppingListItemsViewModel extends BaseViewModel<ShoppingListItemsNavigator> {
+	private boolean addedToCart;
+
 	public ShoppingListItemsViewModel() {
 		super();
 	}
@@ -27,8 +29,7 @@ public class ShoppingListItemsViewModel extends BaseViewModel<ShoppingListItemsN
 		super(schedulerProvider);
 	}
 
-	public GetShoppingListItems getShoppingListItems(String listId)
-	{
+	public GetShoppingListItems getShoppingListItems(String listId) {
 		return new GetShoppingListItems(new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
@@ -40,11 +41,10 @@ public class ShoppingListItemsViewModel extends BaseViewModel<ShoppingListItemsN
 			public void onFailure(String e) {
 				getNavigator().onGetListFailure(e);
 			}
-		},listId);
+		}, listId);
 	}
 
-	public DeleteShoppingListItem deleteShoppingListItem(String listId, String id, String productId, String catalogRefId)
-	{
+	public DeleteShoppingListItem deleteShoppingListItem(String listId, String id, String productId, String catalogRefId) {
 		return new DeleteShoppingListItem(new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
@@ -56,11 +56,12 @@ public class ShoppingListItemsViewModel extends BaseViewModel<ShoppingListItemsN
 			public void onFailure(String e) {
 				getNavigator().onDeleteItemFailed();
 			}
-		},listId,id,productId,catalogRefId);
+		}, listId, id, productId, catalogRefId);
 	}
 
 	protected PostAddItemToCart postAddItemToCart(List<AddItemToCart> addItemToCart) {
 		getNavigator().onAddToCartPreExecute();
+		addedToCartFail(false);
 		return new PostAddItemToCart(addItemToCart, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
@@ -82,15 +83,61 @@ public class ShoppingListItemsViewModel extends BaseViewModel<ShoppingListItemsN
 									getNavigator().otherHttpCode(addItemToCartResponse.response);
 								break;
 						}
+						addedToCartFail(false);
 					}
 				}
 			}
 
 			@Override
 			public void onFailure(String e) {
+				addedToCartFail(true);
 				getNavigator().onAddItemToCartFailure(e);
 			}
 		});
 	}
 
+
+	protected GetCartSummary getCartSummary() {
+		addedToCartFail(false);
+		getNavigator().onAddToCartLoad();
+		return new GetCartSummary(new OnEventListener() {
+			@Override
+			public void onSuccess(Object object) {
+				if (object != null) {
+					CartSummaryResponse cartSummaryResponse = (CartSummaryResponse) object;
+					if (cartSummaryResponse != null) {
+						switch (cartSummaryResponse.httpCode) {
+							case 200:
+								getNavigator().onCartSummarySuccess(cartSummaryResponse);
+								break;
+
+							case 440:
+								if (cartSummaryResponse.response != null)
+									getNavigator().onCartSummaryExpiredSession(cartSummaryResponse.response);
+								break;
+
+							default:
+								getNavigator().onCartSummaryOtherHttpCode(cartSummaryResponse.response);
+								break;
+						}
+					}
+				}
+				addedToCartFail(false);
+			}
+
+			@Override
+			public void onFailure(String e) {
+				addedToCartFail(true);
+				getNavigator().onTokenFailure(e);
+			}
+		});
+	}
+
+	public void addedToCartFail(boolean addedToCart) {
+		this.addedToCart = addedToCart;
+	}
+
+	public boolean addedToCart() {
+		return addedToCart;
+	}
 }

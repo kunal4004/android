@@ -28,7 +28,6 @@ import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetail;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
@@ -37,7 +36,6 @@ import za.co.woolworths.financial.services.android.models.rest.product.GetProduc
 import za.co.woolworths.financial.services.android.models.rest.product.PostAddItemToCart;
 import za.co.woolworths.financial.services.android.models.rest.product.ProductRequest;
 import za.co.woolworths.financial.services.android.models.rest.shop.SetDeliveryLocationSuburb;
-import za.co.woolworths.financial.services.android.models.rest.shoppinglist.GetShoppingLists;
 import za.co.woolworths.financial.services.android.ui.base.BaseViewModel;
 import za.co.woolworths.financial.services.android.util.LocationItemTask;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
@@ -512,7 +510,7 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 					if (cartSummaryResponse != null) {
 						switch (cartSummaryResponse.httpCode) {
 							case 200:
-								getNavigator().onSessionTokenValid(cartSummaryResponse);
+								getNavigator().onCartSummarySuccess(cartSummaryResponse);
 								break;
 
 							case 440:
@@ -590,37 +588,4 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 		});
 	}
 
-	protected GetShoppingLists getShoppingListsResponse() {
-		getNavigator().onShoppingListLoad(true);
-		return new GetShoppingLists(new OnEventListener() {
-			@Override
-			public void onSuccess(Object object) {
-				ShoppingListsResponse shoppingListsResponse = (ShoppingListsResponse) object;
-				switch (shoppingListsResponse.httpCode) {
-					case 200:
-						getNavigator().onShoppingListsResponse(shoppingListsResponse);
-						break;
-					case 440:
-						if (shoppingListsResponse.response != null)
-							getNavigator().onSessionTokenExpired(shoppingListsResponse.response);
-					case 400:
-						getNavigator().shoppingListSessionTimedOut();
-						break;
-
-					default:
-						if (shoppingListsResponse.response != null) {
-							getNavigator().unknownErrorResponse(shoppingListsResponse.response);
-						}
-						break;
-				}
-				getNavigator().onShoppingListLoad(false);
-			}
-
-			@Override
-			public void onFailure(String e) {
-				getNavigator().onShoppingListLoad(false);
-				getNavigator().onShoppingListFailure(e);
-			}
-		});
-	}
 }
