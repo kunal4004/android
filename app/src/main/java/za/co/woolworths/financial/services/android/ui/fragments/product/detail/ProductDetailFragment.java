@@ -1419,7 +1419,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	}
 
 	@Override
-	public void onSessionTokenValid(CartSummaryResponse cartSummaryResponse) {
+	public void onCartSummarySuccess(CartSummaryResponse cartSummaryResponse) {
 		Activity activity = getBaseActivity();
 		if (activity != null) {
 			if (cartSummaryResponse.data != null) {

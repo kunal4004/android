@@ -28,7 +28,6 @@ import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetail;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
@@ -37,7 +36,6 @@ import za.co.woolworths.financial.services.android.models.rest.product.GetProduc
 import za.co.woolworths.financial.services.android.models.rest.product.PostAddItemToCart;
 import za.co.woolworths.financial.services.android.models.rest.product.ProductRequest;
 import za.co.woolworths.financial.services.android.models.rest.shop.SetDeliveryLocationSuburb;
-import za.co.woolworths.financial.services.android.models.rest.shoppinglist.GetShoppingLists;
 import za.co.woolworths.financial.services.android.ui.base.BaseViewModel;
 import za.co.woolworths.financial.services.android.util.LocationItemTask;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
@@ -512,7 +510,7 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 					if (cartSummaryResponse != null) {
 						switch (cartSummaryResponse.httpCode) {
 							case 200:
-								getNavigator().onSessionTokenValid(cartSummaryResponse);
+								getNavigator().onCartSummarySuccess(cartSummaryResponse);
 								break;
 
 							case 440:

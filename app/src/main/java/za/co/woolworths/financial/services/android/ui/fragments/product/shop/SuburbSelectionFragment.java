@@ -58,6 +58,7 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 
 	private ErrorHandlerView mErrorHandlerView;
 	private View btnRetry;
+	private final int SUBURB_SET_RESULT = 123401;
 
 	private RelativeLayout suburbContentLayout;
 	private ProgressBar loadingProgressBar;
@@ -300,6 +301,10 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 					Utils.sendBus(new CartState(suburb.name + ", " + province.name));
 					saveRecentDeliveryLocation(new DeliveryLocationHistory(province, suburb));
 					// TODO: go back to cart if no items removed from cart, else go to list of removed items
+					Activity activity = getActivity();
+					if (activity != null) {
+						activity.setResult(SUBURB_SET_RESULT);
+					}
 					closeActivity();
 					break;
 				case 440:
