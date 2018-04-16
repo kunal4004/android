@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.shoppinglist;
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -25,6 +26,7 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.DeleteShoppingList;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.GetShoppingLists;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.ShoppingListAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.list.NewListFragment;
@@ -36,10 +38,11 @@ import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.Utils;
 
+import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED;
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.OPEN_CART_REQUEST;
+
 public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBinding, ShoppingListViewModel> implements ShoppingListNavigator, EmptyCartView.EmptyCartInterface, NetworkChangeListener, View.OnClickListener {
 	private ShoppingListViewModel shoppingListViewModel;
-	private ShoppingListsResponse shoppingListsResponse;
-	public static final int DELETE_REQUEST_CODE = 111;
 	private DeleteShoppingList deleteShoppingList;
 	private GetShoppingLists mGetShoppingLists;
 	private RelativeLayout rlNoConnectionLayout;
@@ -219,7 +222,6 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 		KeyboardUtil.hideSoftKeyboard(getActivity());
 		Activity activity = getActivity();
 		if (activity != null) {
-			showToolbar(R.string.title_my_list);
 			activity.registerReceiver(mConnectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
 		}
 	}
@@ -244,4 +246,22 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 				break;
 		}
 	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		Activity activity = getActivity();
+		if (activity != null) {
+			BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
+			bottomNavigationActivity.getBottomNavigationById();
+			bottomNavigationActivity.getCurrentSection();
+			if (requestCode == OPEN_CART_REQUEST) {
+				if (resultCode == DISMISS_POP_WINDOW_CLICKED) {
+					showToolbar(R.string.title_my_list);
+				}
+			}
+		}
+	}
 }
+
+
