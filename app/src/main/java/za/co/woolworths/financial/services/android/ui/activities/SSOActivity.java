@@ -414,10 +414,9 @@ public class SSOActivity extends WebViewActivity {
 						try {
 							if (!TextUtils.isEmpty(stsParams)) {
 								SessionUtilities.getInstance().setSTSParameters(null);
-								clearHistory();
-							} else {
-								closeActivity();
 							}
+							closeActivity();
+
 						} catch (NullPointerException ex) {
 							closeActivity();
 						}

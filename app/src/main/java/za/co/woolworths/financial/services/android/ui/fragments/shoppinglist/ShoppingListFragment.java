@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.shoppinglist;
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -36,13 +37,13 @@ import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.Utils;
 
+import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED;
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.OPEN_CART_REQUEST;
+
 public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBinding, ShoppingListViewModel> implements ShoppingListNavigator, EmptyCartView.EmptyCartInterface, NetworkChangeListener, View.OnClickListener {
 	private ShoppingListViewModel shoppingListViewModel;
-	private ShoppingListsResponse shoppingListsResponse;
-	public static final int DELETE_REQUEST_CODE = 111;
 	private DeleteShoppingList deleteShoppingList;
 	private GetShoppingLists mGetShoppingLists;
-	private RelativeLayout rlNoConnectionLayout;
 	private ErrorHandlerView mErrorHandlerView;
 	private BroadcastReceiver mConnectionBroadcast;
 	private MenuItem mMenuCreateList;
@@ -79,7 +80,7 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 		emptyCartView.setView(getString(R.string.title_no_shopping_lists), getString(R.string.description_no_shopping_lists), getString(R.string.button_no_shopping_lists), R.drawable.emptylists);
 		view.findViewById(R.id.btnRetry).setOnClickListener(this);
 
-		rlNoConnectionLayout = getViewDataBinding().incConnectionLayout.noConnectionLayout;
+		RelativeLayout rlNoConnectionLayout = getViewDataBinding().incConnectionLayout.noConnectionLayout;
 		mErrorHandlerView = new ErrorHandlerView(getActivity(), rlNoConnectionLayout);
 		mErrorHandlerView.setMargin(rlNoConnectionLayout, 0, 0, 0, 0);
 		mConnectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
@@ -219,7 +220,6 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 		KeyboardUtil.hideSoftKeyboard(getActivity());
 		Activity activity = getActivity();
 		if (activity != null) {
-			showToolbar(R.string.title_my_list);
 			activity.registerReceiver(mConnectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
 		}
 	}
@@ -244,4 +244,24 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 				break;
 		}
 	}
+
+
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		cancelRequest(mGetShoppingLists);
+		cancelRequest(deleteShoppingList);
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == OPEN_CART_REQUEST) {
+			if (resultCode == DISMISS_POP_WINDOW_CLICKED) {
+				showToolbar(R.string.title_my_list);
+			}
+		}
+	}
 }
+
+
