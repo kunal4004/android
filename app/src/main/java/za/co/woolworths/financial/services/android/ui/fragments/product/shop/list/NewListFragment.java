@@ -8,8 +8,12 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
@@ -195,6 +199,7 @@ public class NewListFragment extends BaseFragment<NewListFragmentBinding, NewLis
 				messageLabelErrorDisplay(true, response.desc);
 			} else {
 				mKeyboardUtils.hideKeyboard(activity);
+				KeyboardUtil.hideSoftKeyboard(activity);
 				Utils.displayDialog(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
 			}
 			loadView(false);
@@ -249,5 +254,25 @@ public class NewListFragment extends BaseFragment<NewListFragmentBinding, NewLis
 		mKeyboardUtils = new KeyboardUtil(activity, view.findViewById(R.id.rlRootList), 0);
 		mKeyboardUtils.enableGlobal();
 		mKeyboardUtils.showKeyboard(getActivity());
+	}
+
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		// Do something that differs the Activity's menu here
+		super.onCreateOptionsMenu(menu, inflater);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case android.R.id.home:
+				Log.e("homeView","howee");
+				break;
+			default:
+				break;
+		}
+
+		return false;
 	}
 }
