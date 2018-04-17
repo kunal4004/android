@@ -53,6 +53,7 @@ import za.co.woolworths.financial.services.android.util.Utils;
 
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_DIALOG_TAPPED;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SHOW_ADDED_TO_SHOPPING_LIST_TOAST;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_ADD_TO_SHOPPING_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_SEARCH_FROM_LIST;
 
 public class SearchResultFragment extends BaseFragment<GridLayoutBinding, SearchResultViewModel> implements SearchResultNavigator, View.OnClickListener, NetworkChangeListener {
@@ -577,11 +578,17 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 		Activity activity = getActivity();
 		if (activity != null) {
 			switch (getGlobalState().getSaveButtonClick()) {
+				case INDEX_ADD_TO_SHOPPING_LIST:
+					openAddToListFragment(activity);
+					break;
 				default:
-					Log.e("openAddIemToList", "openAddItemToList");
 					break;
 			}
 		}
+	}
+
+	private void openAddToListFragment(Activity activity) {
+		Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.SHOPPING_ADD_TO_LIST, Utils.objectToJson(""));
 	}
 
 	private void twoOrMoreColorIntent(ArrayList<OtherSkus> otherSkuList, ArrayList<OtherSkus> colorList, WProductDetail objProduct) {
