@@ -9,6 +9,8 @@
     @android.** *;
     @za.co.wigroup.appserver.lib.annotations.optional *;
     @java.lang.annotation.** *;
+    long producerIndex;
+    long consumerIndex;
 }
 
 -keep class retrofit.** {
