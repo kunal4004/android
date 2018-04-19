@@ -169,7 +169,7 @@ public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.V
 	}
 
 	private boolean clothingTypeProduct(ProductList selectedProduct, int otherSkuSize) {
-		return selectedProduct.productType.equalsIgnoreCase(CLOTHING_PRODUCT) || otherSkuSize > 1;
+		return selectedProduct.productType.equalsIgnoreCase(CLOTHING_PRODUCT) || otherSkuSize > 0;
 	}
 
 	private void onItemClick(SimpleViewHolder vh) {

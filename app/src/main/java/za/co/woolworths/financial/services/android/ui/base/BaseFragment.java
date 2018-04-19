@@ -19,16 +19,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 
-import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 
 import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator;
-import za.co.woolworths.financial.services.android.ui.fragments.contact_us.ContactUsCustomerServiceFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
-import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
@@ -81,7 +78,6 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 		if (context instanceof BaseActivity) {
 			BaseActivity activity = (BaseActivity) context;
 			mActivity = activity;
-			//activity.onFragmentAttached();
 		}
 	}
 
@@ -89,7 +85,6 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 		int res;
 		//string array of permissions,
 		String[] permissions = new String[]{Manifest.permission.CAMERA};
-
 		for (String perms : permissions) {
 			res = getActivity().checkCallingOrSelfPermission(perms);
 			if (!(res == PackageManager.PERMISSION_GRANTED)) {
@@ -308,14 +303,6 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 		setToolbarBackgroundDrawable(R.drawable.appbar_background);
 		setTitle(title);
 		showToolbar();
-	}
-
-	public void showSoftKeyboard(WEditTextView editTextView) {
-		Activity activity = getActivity();
-		if (activity != null) {
-			InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-			imm.showSoftInput(editTextView, InputMethodManager.SHOW_IMPLICIT);
-		}
 	}
 
 	public void showSoftKeyboard(WLoanEditTextView editTextView) {
