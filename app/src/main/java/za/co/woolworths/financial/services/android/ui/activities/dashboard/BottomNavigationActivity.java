@@ -88,6 +88,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	public static final int INDEX_REWARD = FragNavController.TAB4;
 	public static final int INDEX_ACCOUNT = FragNavController.TAB5;
 	public static final int OPEN_CART_REQUEST = 12346;
+	public static final int SLIDE_UP_COLLAPSE_REQUEST_CODE = 13;
+	public static final int SLIDE_UP_COLLAPSE_RESULT_CODE = 12345;
+
 	public final String TAG = this.getClass().getSimpleName();
 	private PermissionUtils permissionUtils;
 	private ArrayList<String> permissions;
@@ -347,7 +350,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 							Utils.sendBus(new ProductState(OPEN_GET_LIST_SCREEN));
 							setSingleOrMultipleItemSelector(false);
 						}
-						onActivityResult(13, 12345, null);
+						onActivityResult(SLIDE_UP_COLLAPSE_REQUEST_CODE, SLIDE_UP_COLLAPSE_RESULT_CODE, null);
 						break;
 
 					case EXPANDED:
