@@ -51,6 +51,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.barcode.BarcodeF
 import za.co.woolworths.financial.services.android.ui.fragments.barcode.manual.ManualBarcodeFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.category.CategoryFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.product.drill_category.DrillDownCategoryFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.base.WRewardsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wtoday.WTodayFragment;
@@ -403,11 +404,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					@Override
 					public void onAnimationEnd(Animator animation) {
 						super.onAnimationEnd(animation);
-						if (getGlobalState().toolbarIsShown()) {
-							statusBarColor(R.color.white);
-						} else {
-							statusBarColor(R.color.recent_search_bg);
-						}
+						statusBarColor(R.color.white);
 						hideView(mToolbar);
 					}
 				});
@@ -439,6 +436,18 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void pushFragmentSlideUp(Fragment fragment) {
+		if (mNavController != null) {
+			FragNavTransactionOptions ft = new FragNavTransactionOptions.Builder()
+					.customAnimations(R.anim.slide_up_anim, R.anim.stay)
+					.allowStateLoss(true)
+					.build();
+
+			mNavController.pushFragment(fragment, ft);
+		}
+	}
+
+	@Override
+	public void pushFragmentSlideUp(Fragment fragment, boolean state) {
 		if (mNavController != null) {
 			FragNavTransactionOptions ft = new FragNavTransactionOptions.Builder()
 					.customAnimations(R.anim.slide_up_anim, R.anim.stay)
@@ -539,6 +548,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	@SuppressLint("RestrictedApi")
 	@Override
 	public void onBackPressed() {
+		if (mNavController.getCurrentFrag() instanceof DrillDownCategoryFragment) {
+			popFragmentSlideDown();
+			return;
+		}
 		if (mNavController.getCurrentFrag() instanceof BarcodeFragment) {
 			popFragmentSlideDown();
 			return;

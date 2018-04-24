@@ -53,6 +53,10 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 	private Toolbar mProductToolbar;
 	private CategoryViewModel mViewModel;
 
+	public CategoryFragment() {
+		setRetainInstance(true);
+	}
+
 	@Override
 	public int getLayoutId() {
 		return R.layout.product_search_fragment;
@@ -146,11 +150,7 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 
 	@Override
 	public void toolbarState(boolean visibility) {
-		if (visibility) {
-			Utils.updateStatusBarBackground(getActivity(), R.color.white);
-		} else {
-			Utils.updateStatusBarBackground(getActivity(), R.color.recent_search_bg);
-		}
+		Utils.updateStatusBarBackground(getActivity(), R.color.white);
 	}
 
 	@Override
@@ -187,7 +187,7 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 			@Override
 			public void run() {
 				if (getBottomNavigator() != null) {
-					getBottomNavigator().pushFragment(getViewModel().enterNextFragment(rootCategory), true);
+					getBottomNavigator().pushFragmentSlideUp(getViewModel().enterNextFragment(rootCategory), true);
 				}
 			}
 		});

@@ -28,7 +28,6 @@ import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.barcode.manual.ManualBarcodeFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
@@ -111,23 +110,10 @@ public class BarcodeFragment extends BaseFragment<BarcodeMainLayoutBinding, Barc
 					}
 				});
 				setBarcodeScannerToolbar();
-				setCloseButtonListener();
+				slideDownOnToolbarNavigationOnClickListener();
 			}
 		}, getDelayMillis());
 
-	}
-
-	private void setCloseButtonListener() {
-		Activity activity = getActivity();
-		if (activity != null) {
-			BottomNavigationActivity bottomNavigationActivity = ((BottomNavigationActivity) activity);
-			bottomNavigationActivity.getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View view) {
-					popFragmentSlideDown();
-				}
-			});
-		}
 	}
 
 	private int getDelayMillis() {
@@ -207,7 +193,7 @@ public class BarcodeFragment extends BaseFragment<BarcodeMainLayoutBinding, Barc
 
 	private void setBarcodeScannerToolbar() {
 		showToolbar(R.string.scan_product, R.color.black_50);
-		setStatusBarColor(R.color.black,true);
+		setStatusBarColor(R.color.black, true);
 		getBottomNavigator().setHomeAsUpIndicator(R.drawable.close_white);
 	}
 

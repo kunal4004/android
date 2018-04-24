@@ -87,7 +87,7 @@ public class SubCategoryFragment extends BaseFragment<FragmentSubCategoryBinding
 		});
 
 		onRetryConnectionClicked();
-		setCloseButtonListener();
+		slideStartOnToolbarNavigationClickListener();
 	}
 
 	private void onRetryConnectionClicked() {
@@ -167,19 +167,6 @@ public class SubCategoryFragment extends BaseFragment<FragmentSubCategoryBinding
 			getViewDataBinding().productSearchList.addItemDecoration(new SimpleDividerItemDecoration(activity));
 			getViewDataBinding().productSearchList.setItemAnimator(new DefaultItemAnimator());
 			getViewDataBinding().productSearchList.setAdapter(mSubCategoryAdapter);
-		}
-	}
-
-	private void setCloseButtonListener() {
-		Activity activity = getActivity();
-		if (activity != null) {
-			BottomNavigationActivity bottomNavigationActivity = ((BottomNavigationActivity) activity);
-			bottomNavigationActivity.getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View view) {
-					popFragment();
-				}
-			});
 		}
 	}
 
