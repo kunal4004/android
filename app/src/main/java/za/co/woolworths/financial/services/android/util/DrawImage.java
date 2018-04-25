@@ -30,6 +30,7 @@ public class DrawImage {
 
 	public void displayImage(final SimpleDraweeView image, String imgUrl) {
 		if (imgUrl != null) {
+			image.setLegacyVisibilityHandlingEnabled(true);
 			try {
 				ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(imgUrl))
 						.build();

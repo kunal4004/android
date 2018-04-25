@@ -49,6 +49,7 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setRetainInstance(true);
 		mViewModel = getViewModel();
 		setHasOptionsMenu(false);
 	}

@@ -1,11 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.drill_category;
 
-import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
 import android.view.View;
@@ -17,7 +14,6 @@ import com.google.gson.Gson;
 
 import java.util.List;
 
-import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.RootCategory;
 import za.co.woolworths.financial.services.android.models.dto.SubCategory;
@@ -203,8 +199,9 @@ public class DrillDownCategoryFragment extends BaseFragment<DrillDownCategoryLay
 			getViewModel().setChildItem(childItem);
 			getViewModel().executeSubCategory(getActivity(), categoryId);
 		} else {
-			if (!getViewModel().childItem())
+			if (!getViewModel().childItem()) {
 				mErrorHandlerView.networkFailureHandler("e");
+			}
 		}
 	}
 
