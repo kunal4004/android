@@ -2,14 +2,12 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape>
-            <corners
-                android:radius="2dp"/>
             <gradient
-                android:angle="270"
-                android:centerColor="@color/expandable_gradient_color"
+                android:angle="360"
+                android:centerColor="@color/recent_search_bg"
                 android:centerY="0.2"
-                android:endColor="@color/expandable_gradient_color"
-                android:startColor="#22000000"
+                android:endColor="@color/recent_search_bg"
+                android:startColor="@color/recent_search_bg"
                 android:type="linear"
                 />
         </shape>

@@ -1,17 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:orientation="horizontal"
-              android:padding="@dimen/sixteen_dp">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/item_name"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/llRootChildContainer"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:textSize="@dimen/cli_twelve_sp"
-        android:textStyle="bold"/>
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="horizontal"
+        >
 
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/tvChildItemName"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="start|center"
+            android:background="@drawable/sub_category_child_bg"
+            android:clickable="false"
+            android:ellipsize="end"
+            android:focusable="false"
+            android:letterSpacing="0.15"
+            android:lineSpacingMultiplier="1.67"
+            android:paddingBottom="@dimen/sixteen_dp"
+            android:paddingStart="@dimen/twenty_four_dp"
+            android:paddingTop="@dimen/fifteen_dp"
+            android:singleLine="true"
+            android:textAllCaps="true"
+            android:textColor="@color/expandable_title_color"
+            android:textSize="@dimen/twelve_sp"
+            android:textStyle="bold"
+            app:WTextView_font="medium"/>
+    </LinearLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/dark_divider"/>
 </LinearLayout>

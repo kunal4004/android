@@ -13,7 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
 import com.awfs.coordination.R;
 import com.nineoldandroids.view.ViewHelper;
@@ -146,7 +147,7 @@ public class ExpandableRecyclerView extends android.support.v7.widget.RecyclerVi
 		public Adapter() {
 		}
 
-		boolean isExpanded(int group) {
+		public boolean isExpanded(int group) {
 			return expanded.get(group);
 		}
 
@@ -161,6 +162,15 @@ public class ExpandableRecyclerView extends android.support.v7.widget.RecyclerVi
 		public void expand(int group) {
 			if (isExpanded(group))
 				return;
+
+			// collapse previous items
+			for (int count = 0; count < getGroupItemCount(); count++) {
+				if (count != group) {
+					if (isExpanded(count)) {
+						collapse(count);
+					}
+				}
+			}
 
 			// this lines of code calculate number of shown item in recycler view. also group is counting .
 			int position = 0;
@@ -344,20 +354,24 @@ public class ExpandableRecyclerView extends android.support.v7.widget.RecyclerVi
 	public static class SimpleGroupViewHolder extends GroupViewHolder {
 		ImageView expandedIndicator;
 		WTextView text;
+		ProgressBar pbLoadChildItem;
+		LinearLayout llLoadChild;
 		private boolean expanded;
 
 		public SimpleGroupViewHolder(Context context) {
-			super(View.inflate(context, R.layout.exr_group, null));
+			super(View.inflate(context, R.layout.list_item_sub_category_header, null));
 
 			itemView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 			expandedIndicator = itemView.findViewById(R.id.carbon_groupExpandedIndicator);
+			pbLoadChildItem = itemView.findViewById(R.id.pbLoadChildItem);
 			text = itemView.findViewById(R.id.carbon_groupText);
+			llLoadChild = itemView.findViewById(R.id.llLoadChild);
 		}
 
 		public void expand() {
 			ValueAnimator animator = ValueAnimator.ofFloat(0, 1);
 			animator.setInterpolator(new DecelerateInterpolator());
-			animator.setDuration(200);
+			animator.setDuration(400);
 			animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
 				@Override
 				public void onAnimationUpdate(ValueAnimator animation) {
@@ -372,7 +386,7 @@ public class ExpandableRecyclerView extends android.support.v7.widget.RecyclerVi
 		public void collapse() {
 			ValueAnimator animator = ValueAnimator.ofFloat(1, 0);
 			animator.setInterpolator(new DecelerateInterpolator());
-			animator.setDuration(200);
+			animator.setDuration(400);
 			animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
 				@Override
 				public void onAnimationUpdate(ValueAnimator animation) {
@@ -394,8 +408,18 @@ public class ExpandableRecyclerView extends android.support.v7.widget.RecyclerVi
 			return expanded;
 		}
 
-		public void setText(String t) {
-			text.setText(t);
+		public void setText(String name) {
+			text.setText(name);
+		}
+
+
+		public void setArrowVisibility(boolean visible) {
+			llLoadChild.setVisibility(visible ? VISIBLE : INVISIBLE);
+		}
+
+		public void setViewIsLoading(boolean visible) {
+			expandedIndicator.setVisibility(visible ? GONE : VISIBLE);
+			pbLoadChildItem.setVisibility(visible ? VISIBLE : GONE);
 		}
 
 		public String getText() {

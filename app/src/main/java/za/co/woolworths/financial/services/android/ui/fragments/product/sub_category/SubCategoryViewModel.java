@@ -16,6 +16,8 @@ import za.co.woolworths.financial.services.android.util.rx.SchedulerProvider;
 
 public class SubCategoryViewModel extends BaseViewModel<SubCategoryNavigator> {
 
+	private boolean childItem;
+
 	private ProductSubCategoryRequest mProductSubCategoryRequest;
 
 	public SubCategoryViewModel() {
@@ -86,5 +88,13 @@ public class SubCategoryViewModel extends BaseViewModel<SubCategoryNavigator> {
 			gridFragment.setArguments(bundle);
 			return gridFragment;
 		}
+	}
+
+	public void setChildItem(boolean childItem) {
+		this.childItem = childItem;
+	}
+
+	public boolean childItem() {
+		return childItem;
 	}
 }

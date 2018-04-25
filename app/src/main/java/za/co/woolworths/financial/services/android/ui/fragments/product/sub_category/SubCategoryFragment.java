@@ -21,12 +21,13 @@ import com.awfs.coordination.databinding.FragmentSubCategoryBinding;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.dto.RootCategory;
 import za.co.woolworths.financial.services.android.models.dto.SubCategory;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.SubCategoryAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
+import za.co.woolworths.financial.services.android.ui.views.expand.ExpandableRecyclerView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.SimpleDividerItemDecoration;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -176,6 +177,16 @@ public class SubCategoryFragment extends BaseFragment<FragmentSubCategoryBinding
 		if (getBottomNavigator() != null) {
 			getBottomNavigator().pushFragment(getViewModel().enterNextFragment(subCategory));
 		}
+	}
+
+	@Override
+	public void retrieveChildItem(ExpandableRecyclerView.SimpleGroupViewHolder holder, SubCategory selectedSubCategoryList, int group) {
+
+	}
+
+	@Override
+	public void onChildItemClicked(SubCategory subCategory) {
+
 	}
 
 	@Override

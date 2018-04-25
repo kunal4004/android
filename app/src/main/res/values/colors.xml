@@ -25,6 +25,7 @@
     <color name="press_bg">#05000000</color>
     <color name="charcoal_grey">#4F5051</color>
     <color name="bg_overlay">#20000000</color>
+    <color name="bg_light_overlay">#10000000</color>
 
     <!-- step indicator -->
     <color name="horizontal_line">#10000000</color>
@@ -36,6 +37,7 @@
     <color name="barcode_button">#40ffffff</color>
     <color name="barcode_button_light">#20ffffff</color>
     <color name="red">#ff0000</color>
+    <color name="dark_divider">#dadada</color>
 
     <!-- Android standard ICS color -->
     <!-- Android standard ICS color -->
@@ -59,5 +61,8 @@
     <color name="promotional_text_red">#FFD0021B</color>
     <color name="delete_red_bg">#D10B23</color>
     <color name="toast_background">#dd030303</color>
+    <color name="expandable_title_color">#FF212B36</color>
+    <color name="expandable_child_bg_color">#F3F3F3</color>
+    <color name="expandable_gradient_color">#09000000</color>
 
 </resources>

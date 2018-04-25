@@ -548,6 +548,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	@SuppressLint("RestrictedApi")
 	@Override
 	public void onBackPressed() {
+		if (getSlidingLayout() != null) {
+			if (getSlidingLayout().getPanelState().equals(SlidingUpPanelLayout.PanelState.EXPANDED)) {
+				closeSlideUpPanel();
+				return;
+			}
+		}
 		if (mNavController.getCurrentFrag() instanceof DrillDownCategoryFragment) {
 			popFragmentSlideDown();
 			return;
@@ -556,12 +562,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			popFragmentSlideDown();
 			return;
 		}
-		if (getSlidingLayout() != null) {
-			if (getSlidingLayout().getPanelState().equals(SlidingUpPanelLayout.PanelState.EXPANDED)) {
-				closeSlideUpPanel();
-				return;
-			}
-		}
+
 		if (!mNavController.isRootFragment()) {
 			mNavController.popFragment(new FragNavTransactionOptions.Builder().customAnimations(R.anim.slide_in_from_left, R.anim.slide_out_to_right).build());
 		} else {
