@@ -98,12 +98,18 @@ public abstract class BaseActivity<T extends ViewDataBinding, V extends BaseView
 		return findViewById(R.id.incToolbar);
 	}
 
-	private WTextView getToolbarTitle() {
+	public WTextView getToolbarTitle() {
 		return findViewById(R.id.tvToolbar);
 	}
 
 	public void setToolbarTitle(String title) {
 		getToolbarTitle().setText(title);
+		getToolbarTitle().setTextColor(ContextCompat.getColor(BaseActivity.this, R.color.black));
+	}
+
+	public void setToolbarTitle(String title, int color) {
+		getToolbarTitle().setText(title);
+		getToolbarTitle().setTextColor(ContextCompat.getColor(BaseActivity.this, color));
 	}
 
 	public void hideToolbar() {

@@ -246,6 +246,7 @@
         <item name="WButton_font">medium_bold</item>
         <item name="android:stateListAnimator">@null</item>
     </style>
+
     <style name="sectionTitleLight" parent="android:Theme">
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_width">wrap_content</item>
@@ -1214,4 +1215,5 @@
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
     </style>
+
 </resources>

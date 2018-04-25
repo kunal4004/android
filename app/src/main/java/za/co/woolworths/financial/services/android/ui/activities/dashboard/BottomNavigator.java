@@ -28,9 +28,13 @@ public interface BottomNavigator {
 
 	void statusBarColor(int color);
 
+	void statusBarColor(int color, boolean enableDecor);
+
 	void showBackNavigationIcon(boolean visibility);
 
 	void setTitle(String title);
+
+	void setTitle(String title, int color);
 
 	void slideUpBottomView();
 
@@ -97,4 +101,6 @@ public interface BottomNavigator {
 	Toolbar toolbar();
 
 	void closeSlideUpPanelFromList(int count);
+
+	void setHomeAsUpIndicator(int drawable);
 }

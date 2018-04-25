@@ -21,6 +21,8 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.awfs.coordination.R;
 
+import java.util.ArrayList;
+
 import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
@@ -59,7 +61,7 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 		if (activity != null) {
 			try {
 				bottomNavigator = (BottomNavigator) activity;
-			} catch (IllegalStateException ex) {
+			} catch (Exception ex) {
 			}
 		}
 		return mRootView;
@@ -80,27 +82,6 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 			mActivity = activity;
 		}
 	}
-
-	public boolean hasPermissions() {
-		int res;
-		//string array of permissions,
-		String[] permissions = new String[]{Manifest.permission.CAMERA};
-		for (String perms : permissions) {
-			res = getActivity().checkCallingOrSelfPermission(perms);
-			if (!(res == PackageManager.PERMISSION_GRANTED)) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	public void requestPerms() {
-		String[] permissions = new String[]{Manifest.permission.CAMERA};
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-			requestPermissions(permissions, PERMS_REQUEST_CODE);
-		}
-	}
-
 
 	@Override
 	public void onDetach() {
@@ -128,7 +109,7 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 	}
 
 	public void showToolbar() {
-		Utils.updateStatusBarBackground(getActivity());
+		statusBarColor();
 		mActivity.showToolbar();
 	}
 
@@ -175,6 +156,10 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 
 	public void setTitle(String title) {
 		bottomNavigator.setTitle(title);
+	}
+
+	public void setTitle(String title, int color) {
+		bottomNavigator.setTitle(title, color);
 	}
 
 	public void setToolbarBackgroundDrawable(int drawable) {
@@ -282,6 +267,10 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 		getBottomNavigator().statusBarColor(color);
 	}
 
+	public void setStatusBarColor(int color, boolean enableDecor) {
+		getBottomNavigator().statusBarColor(color, enableDecor);
+	}
+
 	public void addBadge(int position, int count) {
 		getBottomNavigator().addBadge(position, count);
 	}
@@ -295,14 +284,31 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 		showBackNavigationIcon(true);
 		setToolbarBackgroundDrawable(R.drawable.appbar_background);
 		setTitle(getString(id));
-		showToolbar();
+		statusBarColor();
+		mActivity.showToolbar();
+	}
+
+	private void statusBarColor() {
+		Utils.updateStatusBarBackground(getActivity());
+	}
+
+	private void statusBarColor(int color) {
+		Utils.updateStatusBarBackground(getActivity(), color);
+	}
+
+	public void showToolbar(int id, int color) {
+		showBackNavigationIcon(true);
+		setToolbarBackgroundDrawable(color);
+		setTitle(getString(id), color);
+		mActivity.showToolbar();
 	}
 
 	public void showToolbar(String title) {
 		showBackNavigationIcon(true);
 		setToolbarBackgroundDrawable(R.drawable.appbar_background);
 		setTitle(title);
-		showToolbar();
+		statusBarColor();
+		mActivity.showToolbar();
 	}
 
 	public void showSoftKeyboard(WLoanEditTextView editTextView) {
@@ -335,5 +341,10 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 
 	public void observableOn(Consumer consumer) {
 		getViewModel().consumeObservable(consumer);
+	}
+
+
+	public void checkLocationPermission(BottomNavigator bottomNavigator, ArrayList<String> permissionType, int request_code) {
+		bottomNavigator.getRuntimePermission().check_permission(permissionType, "Explain here why the app needs permissions", request_code);
 	}
 }

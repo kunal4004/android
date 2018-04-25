@@ -271,6 +271,24 @@ public class Utils {
 		}
 	}
 
+	public static void updateStatusBarBackground(Activity activity, int color,boolean enableDecor) {
+		Window window = activity.getWindow();
+
+		View decor = activity.getWindow().getDecorView();
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+			window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+			window.setStatusBarColor(ContextCompat.getColor(activity, R.color.black));
+			decor.setSystemUiVisibility(0);
+		}
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+			window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+			window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+			window.setStatusBarColor(ContextCompat.getColor(activity, color));
+		}
+	}
+
+
 	public static List<TransactionParentObj> getdata(List<Transaction> transactions) {
 		List<TransactionParentObj> transactionParentObjList = new ArrayList<>();
 		DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");

@@ -36,7 +36,7 @@ public class OnBoardingActivity extends AppCompatActivity implements ViewPager.O
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Utils.updateStatusBarBackground(OnBoardingActivity.this, R.color.drawer_color);
+		Utils.updateStatusBarBackground(OnBoardingActivity.this, R.color.drawer_color,true);
 		setContentView(R.layout.on_boarding_activity);
 		pager = (ViewPager) findViewById(R.id.onBoardingPager);
 		pager_indicator = (LinearLayout) findViewById(R.id.viewPagerCountDots);
@@ -121,6 +121,7 @@ public class OnBoardingActivity extends AppCompatActivity implements ViewPager.O
 			startActivityForResult(new Intent(OnBoardingActivity.this, BottomNavigationActivity.class)
 					, 0);
 			finish();
+			overridePendingTransition(R.anim.stay,R.anim.fade_out);
 		} catch (Exception e) {
 			Log.i(TAG, e.getMessage());
 		}

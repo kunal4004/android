@@ -477,15 +477,13 @@ public class SSOActivity extends WebViewActivity {
 		@Override
 		public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
 			super.onReceivedError(view, request, error);
-			mErrorHandlerView.webViewBlankPage(view);
-			mErrorHandlerView.networkFailureHandler(error.toString());
+			unKnownNetworkFailure(view, error);
 		}
 
 		@SuppressWarnings("deprecation")
 		@Override
 		public void onReceivedError(WebView webView, int errorCode, String description, String failingUrl) {
-			mErrorHandlerView.webViewBlankPage(webView);
-			mErrorHandlerView.networkFailureHandler(description);
+			unknownNetworkFailure(webView, description);
 		}
 
 
@@ -512,6 +510,20 @@ public class SSOActivity extends WebViewActivity {
 		}
 
 	};
+
+	private void unknownNetworkFailure(WebView webView, String description) {
+		if (!new ConnectionDetector().isOnline(SSOActivity.this)) {
+			mErrorHandlerView.webViewBlankPage(webView);
+			mErrorHandlerView.networkFailureHandler(description);
+		}
+	}
+
+	private void unKnownNetworkFailure(WebView view, WebResourceError error) {
+		try {
+			unknownNetworkFailure(view, error.toString());
+		} catch (NullPointerException ex) {
+		}
+	}
 
 	public void hideProgressBar() {
 		toggleLoading(false);
