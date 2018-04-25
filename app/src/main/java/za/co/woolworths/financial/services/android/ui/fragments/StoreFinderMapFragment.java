@@ -319,8 +319,6 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 
 	public void backToAllStoresPage(int position) {
 		googleMap.getUiSettings().setScrollGesturesEnabled(true);
-		Toolbar toolbar = bottomNavigator.toolbar();
-		toolbar.animate().translationY(toolbar.getTop()).setInterpolator(new AccelerateInterpolator()).start();
 		showAllMarkers(markers);
 	}
 
@@ -335,8 +333,6 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 		googleMap.animateCamera(centerCam, CAMERA_ANIMATION_SPEED, null);
 		googleMap.getUiSettings().setScrollGesturesEnabled(false);
 		if (mLayout.getAnchorPoint() == 1.0f) {
-			Toolbar toolbar = bottomNavigator.toolbar();
-			toolbar.animate().translationY(-toolbar.getBottom()).setInterpolator(new AccelerateInterpolator()).start();
 			mLayout.setAnchorPoint(0.7f);
 			mLayout.setPanelState(SlidingUpPanelLayout.PanelState.ANCHORED);
 
