@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.adapters.sub_category;
 
+import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import za.co.woolworths.financial.services.android.models.dto.SubCategory;
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryNavigator;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.expand.ExpandableRecyclerView;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 
 public class DrillDownCategoryAdapter extends ExpandableRecyclerView.Adapter<DrillDownCategoryAdapter.ChildViewHolder, ExpandableRecyclerView.SimpleGroupViewHolder, String, String> {
 
@@ -81,6 +83,14 @@ public class DrillDownCategoryAdapter extends ExpandableRecyclerView.Adapter<Dri
 				@Override
 				public void onClick(View view) {
 					SubCategory selectedSubCategoryList = mSubCategoryList.get(group);
+					if (holder.itemView.getContext() != null) {
+						Context contextCompat = holder.itemView.getContext();
+						if (!new ConnectionDetector().isOnline(contextCompat)) {
+							mSubCategoryNavigator.noConnectionDetected();
+							return;
+						}
+					}
+
 					// close expanded row
 					if (isExpanded(group)) {
 						collapse(group);
@@ -135,13 +145,13 @@ public class DrillDownCategoryAdapter extends ExpandableRecyclerView.Adapter<Dri
 				mSubCategoryNavigator.onChildItemClicked(mSubCategoryList.get(group).subCategoryList.get(position));
 			}
 		});
-
 		//set shadow to first child row
 		setDrawable(holder, (position == 0) ? R.drawable.border_shadow : R.drawable.sub_category_child_bg);
 	}
 
 	private void setDrawable(ChildViewHolder holder, int border_shadow) {
-		holder.llRootChildContainer.setBackground(ContextCompat.getDrawable(holder.llRootChildContainer.getContext(), border_shadow));
+		if (holder.llRootChildContainer.getContext() != null)
+			holder.llRootChildContainer.setBackground(ContextCompat.getDrawable(holder.llRootChildContainer.getContext(), border_shadow));
 	}
 
 	public void updateList(List<SubCategory> mSubCategoryList,

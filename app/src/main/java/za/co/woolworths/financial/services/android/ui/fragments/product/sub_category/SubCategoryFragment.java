@@ -190,6 +190,11 @@ public class SubCategoryFragment extends BaseFragment<FragmentSubCategoryBinding
 	}
 
 	@Override
+	public void noConnectionDetected() {
+
+	}
+
+	@Override
 	public void onHiddenChanged(boolean hidden) {
 		super.onHiddenChanged(hidden);
 		if (!hidden) {

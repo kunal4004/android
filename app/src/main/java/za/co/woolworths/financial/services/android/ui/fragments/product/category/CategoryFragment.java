@@ -34,6 +34,7 @@ import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.barcode.BarcodeFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.ObservableScrollViewCallbacks;
 import za.co.woolworths.financial.services.android.util.ScrollState;
@@ -186,6 +187,15 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 		getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
+				//Show no connection toast instead of opening sub category
+				Activity activity = getActivity();
+				if (activity != null) {
+					if (!new ConnectionDetector().isOnline(activity)) {
+						mErrorHandlerView.showToast();
+						Utils.toggleStatusBarColor(activity, R.color.red);
+						return;
+					}
+				}
 				if (getBottomNavigator() != null) {
 					getBottomNavigator().pushFragmentSlideUp(getViewModel().enterNextFragment(rootCategory), true);
 				}

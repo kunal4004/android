@@ -271,7 +271,7 @@ public class Utils {
 		}
 	}
 
-	public static void updateStatusBarBackground(Activity activity, int color,boolean enableDecor) {
+	public static void updateStatusBarBackground(Activity activity, int color, boolean enableDecor) {
 		Window window = activity.getWindow();
 
 		View decor = activity.getWindow().getDecorView();
@@ -287,7 +287,6 @@ public class Utils {
 			window.setStatusBarColor(ContextCompat.getColor(activity, color));
 		}
 	}
-
 
 	public static List<TransactionParentObj> getdata(List<Transaction> transactions) {
 		List<TransactionParentObj> transactionParentObjList = new ArrayList<>();
@@ -1162,5 +1161,29 @@ public class Utils {
 
 	public static String getExternalImageRef() {
 		return "https://images.woolworthsstatic.co.za/";
+	}
+
+	public static void toggleStatusBarColor(final Activity activity, int color) {
+		if (activity != null) {
+			updateStatusBarBackground(activity, color, true);
+			new Handler().postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					updateStatusBarBackground(activity);
+				}
+			}, 4000);
+		}
+	}
+
+	public static void toggleStatusBarColor(final Activity activity, int toggleColor, final int defaultColor) {
+		if (activity != null) {
+			updateStatusBarBackground(activity, toggleColor, true);
+			new Handler().postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					updateStatusBarBackground(activity, defaultColor);
+				}
+			}, 4000);
+		}
 	}
 }

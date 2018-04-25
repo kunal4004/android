@@ -25,4 +25,6 @@ public interface SubCategoryNavigator {
 	void retrieveChildItem(ExpandableRecyclerView.SimpleGroupViewHolder holder, SubCategory selectedSubCategoryList, int group);
 
 	void onChildItemClicked(SubCategory subCategory);
+
+	void noConnectionDetected();
 }

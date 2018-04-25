@@ -118,7 +118,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/recent_search_bg"
-                    android:visibility="visible">
+                    android:visibility="gone">
 
                     <View
                         android:id="@+id/vTopLine"
