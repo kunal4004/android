@@ -80,6 +80,7 @@ import static za.co.woolworths.financial.services.android.models.service.event.P
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SHOW_ADDED_TO_SHOPPING_LIST_TOAST;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_ADD_TO_SHOPPING_LIST;
+import static za.co.woolworths.financial.services.android.util.ScreenManager.CART_LAUNCH_VALUE;
 
 public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigationBinding, BottomNavigationViewModel> implements BottomNavigator, FragNavController.TransactionListener, FragNavController.RootFragmentListener, PermissionResultCallback, ToastUtils.ToastInterface {
 
@@ -776,9 +777,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			badgeCount();
 			switch (getCurrentSection()) {
 				case R.id.navigation_cart:
-					Intent openCartActivity = new Intent(this, CartActivity.class);
-					startActivityForResult(openCartActivity, OPEN_CART_REQUEST);
-					overridePendingTransition(0, 0);
+					//open cart activity after login from cart only
+					if (requestCode == CART_LAUNCH_VALUE) {
+						Intent openCartActivity = new Intent(this, CartActivity.class);
+						startActivityForResult(openCartActivity, OPEN_CART_REQUEST);
+						overridePendingTransition(0, 0);
+					}
 					break;
 				default:
 					break;
@@ -866,7 +870,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	public void identifyTokenValidationAPI() {
 		if (!SessionUtilities.getInstance().isUserAuthenticated()) {
 			getGlobalState().setDetermineLocationPopUpEnabled(true);
-			ScreenManager.presentSSOSignin(BottomNavigationActivity.this);
+			ScreenManager.presentCartSSOSignin(BottomNavigationActivity.this);
 		} else {
 			openCartActivity();
 		}
@@ -978,5 +982,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 			window.setStatusBarColor(Color.parseColor(color));
 		}
+	}
+
+	public Fragment getCurrentFragment() {
+		return mNavController.getCurrentFrag();
 	}
 }
