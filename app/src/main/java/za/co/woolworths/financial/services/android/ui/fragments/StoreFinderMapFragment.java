@@ -18,11 +18,9 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.support.v7.widget.Toolbar;
 
 import com.awfs.coordination.R;
 import com.google.android.gms.maps.CameraUpdate;
@@ -106,7 +104,6 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 	private PopWindowValidationMessage mPopWindowValidationMessage;
 	private Location mLocation;
 	private StoreFinderMapFragment mFragment;
-	private BottomNavigator bottomNavigator;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -125,7 +122,6 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 			Activity activity = getActivity();
 			if (activity != null) {
 				slidePanelEvent = (SlidePanelEvent) activity;
-				bottomNavigator = (BottomNavigator) activity;
 			}
 		} catch (ClassCastException ignored) {
 		}
@@ -319,8 +315,6 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 
 	public void backToAllStoresPage(int position) {
 		googleMap.getUiSettings().setScrollGesturesEnabled(true);
-		Toolbar toolbar = bottomNavigator.toolbar();
-		toolbar.animate().translationY(toolbar.getTop()).setInterpolator(new AccelerateInterpolator()).start();
 		showAllMarkers(markers);
 	}
 
@@ -335,8 +329,6 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 		googleMap.animateCamera(centerCam, CAMERA_ANIMATION_SPEED, null);
 		googleMap.getUiSettings().setScrollGesturesEnabled(false);
 		if (mLayout.getAnchorPoint() == 1.0f) {
-			Toolbar toolbar = bottomNavigator.toolbar();
-			toolbar.animate().translationY(-toolbar.getBottom()).setInterpolator(new AccelerateInterpolator()).start();
 			mLayout.setAnchorPoint(0.7f);
 			mLayout.setPanelState(SlidingUpPanelLayout.PanelState.ANCHORED);
 
