@@ -51,7 +51,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.barcode.BarcodeF
 import za.co.woolworths.financial.services.android.ui.fragments.barcode.manual.ManualBarcodeFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.category.CategoryFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.product.drill_category.DrillDownCategoryFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.base.WRewardsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wtoday.WTodayFragment;
@@ -555,7 +555,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				return;
 			}
 		}
-		if (mNavController.getCurrentFrag() instanceof DrillDownCategoryFragment) {
+		if (mNavController.getCurrentFrag() instanceof SubCategoryFragment) {
 			popFragmentSlideDown();
 			return;
 		}

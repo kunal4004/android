@@ -1166,12 +1166,13 @@ public class Utils {
 	public static void toggleStatusBarColor(final Activity activity, int color) {
 		if (activity != null) {
 			updateStatusBarBackground(activity, color, true);
-			new Handler().postDelayed(new Runnable() {
+			Runnable runnable = new Runnable() {
 				@Override
 				public void run() {
 					updateStatusBarBackground(activity);
 				}
-			}, 4000);
+			};
+			new Handler().postDelayed(runnable, 4000);
 		}
 	}
 

@@ -40,10 +40,12 @@ import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.ObservableScrollViewCallbacks;
 import za.co.woolworths.financial.services.android.util.ScrollState;
 import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.expand.communicator.DetachableResultReceiver;
 
 public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding, CategoryViewModel>
-		implements CategoryNavigator, ObservableScrollViewCallbacks, View.OnClickListener {
+		implements CategoryNavigator, ObservableScrollViewCallbacks, View.OnClickListener, DetachableResultReceiver.Receiver {
 
+	public static final String EXTRA_RECEIVER = "EXTRA_RECEIVER";
 	private static final float HIDE_ALPHA_VALUE = 0;
 	private static final float SHOW_ALPHA_VALUE = 1;
 	private final int ANIMATION_DURATION = 300;
@@ -54,6 +56,7 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 	private List<RootCategory> mRootCategories;
 	private Toolbar mProductToolbar;
 	private CategoryViewModel mViewModel;
+	private DetachableResultReceiver mReceiver;
 
 	public CategoryFragment() {
 		setRetainInstance(true);
@@ -89,6 +92,11 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 			getViewDataBinding().setHandlers(this);
 			toolbarState(false);
 			hideToolbar();
+			try {
+				mReceiver = new DetachableResultReceiver(new Handler());
+				mReceiver.setReceiver(this);
+			} catch (ClassCastException ignored) {
+			}
 			mProductToolbar = getViewDataBinding().productToolbar;
 			showBackNavigationIcon(false);
 			renderUI();
@@ -198,7 +206,7 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 					}
 				}
 				if (getBottomNavigator() != null) {
-					getBottomNavigator().pushFragmentSlideUp(getViewModel().enterNextFragment(rootCategory), true);
+					getBottomNavigator().pushFragmentSlideUp(getViewModel().enterNextFragment(rootCategory, mReceiver, true));
 				}
 			}
 		});
@@ -291,7 +299,10 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 				ImageView mImageProductCategory = view.findViewById(R.id.imProductCategory);
 				mImageProductCategory.setId(position);
 				mImageProductCategory.setTag(position);
-				Picasso.with(activity).load(rootCategory.imgUrl).fit().into(mImageProductCategory);
+				try {
+					Picasso.get().load(rootCategory.imgUrl).fit().into(mImageProductCategory);
+				} catch (Exception ex) {
+				}
 				view.setOnClickListener(new View.OnClickListener() {
 					public void onClick(View v) {
 						onCategoryItemClicked(mRootCategories.get(v.getId()));
@@ -351,6 +362,24 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 			if (resultCode == 200) {
 				navigateToBarcode();
 			}
+		}
+	}
+
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		if (mReceiver != null)
+			mReceiver.clearReceiver();
+	}
+
+	@Override
+	public void onReceiveResult(int resultCode, Bundle resultData) {
+		switch (resultCode) {
+			case 1:
+				//mSlideUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+				break;
+			default:
+				break;
 		}
 	}
 }

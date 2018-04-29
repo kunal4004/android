@@ -5,7 +5,6 @@
     <!-- Use this to define the shape of the ripple effect (rectangle, oval, ring or line). The color specified here isn't used anyway -->
     <item android:id="@android:id/mask">
         <shape android:shape="rectangle">
-            <corners android:radius="25dp"/>
             <!-- This color is needed to be set - doesn't affect anything -->
             <solid android:color="#000"/>
         </shape>

@@ -164,6 +164,6 @@ dependencies {
     api 'com.google.zxing:android-core:3.3.0'
     implementation 'com.nineoldandroids:library:2.4.0'
     annotationProcessor "android.arch.lifecycle:compiler:1.1.0"
-    compile 'com.squareup.picasso:picasso:2.5.2'
+    implementation 'com.squareup.picasso:picasso:2.71828'
 }
 apply plugin: 'com.google.gms.google-services'

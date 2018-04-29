@@ -104,13 +104,12 @@
                     android:indeterminateTint="@color/black"
                     android:visibility="gone"/>
 
-                <za.co.woolworths.financial.services.android.ui.views.expand.ExpandableRecyclerView
+                <android.support.v7.widget.RecyclerView
                     android:id="@+id/rcvDrillCategory"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:nestedScrollingEnabled="false"
                     android:orientation="vertical"
-                    app:layoutManager="LinearLayoutManager"
                     tools:listitem="@layout/list_item_sub_category_header"/>
 
                 <RelativeLayout
