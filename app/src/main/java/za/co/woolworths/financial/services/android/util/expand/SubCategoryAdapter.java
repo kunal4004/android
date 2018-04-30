@@ -19,6 +19,7 @@ public class SubCategoryAdapter extends ExpandableRecyclerAdapter<HeaderViewHold
 	private Context mContext;
 	private LayoutInflater mInflator;
 	private SubCategoryNavigator mSubCategoryNavigator;
+	private int ROW_NOTIFY_ITEM_CHANGED_DELAY = 50;
 
 	public SubCategoryAdapter(Context context, SubCategoryNavigator subCategoryNavigator, List<? extends ParentListItem> parentItemList) {
 		super(parentItemList);
@@ -126,6 +127,11 @@ public class SubCategoryAdapter extends ExpandableRecyclerAdapter<HeaderViewHold
 	}
 
 	public void updateList(List<SubCategoryModel> mSubCategoryListModel, final ParentSubCategoryViewHolder mParentViewHolder, int selectedPosition) {
+
+		/**
+		 * The handler prevent notifyItemChanged and notifyDataInserted from expanded method
+		 * to send update at the same time.
+		 */
 		Runnable runnable = new Runnable() {
 			@Override
 			public void run() {
@@ -133,7 +139,7 @@ public class SubCategoryAdapter extends ExpandableRecyclerAdapter<HeaderViewHold
 			}
 		};
 		Handler handler = new Handler();
-		handler.postDelayed(runnable, 50);
+		handler.postDelayed(runnable, ROW_NOTIFY_ITEM_CHANGED_DELAY);
 		mSubCategoryListModel.get(selectedPosition).getSubCategory().setSingleProductItemIsLoading(false);
 		setParentItemList(mSubCategoryListModel);
 		notifyItemChanged(selectedPosition);
