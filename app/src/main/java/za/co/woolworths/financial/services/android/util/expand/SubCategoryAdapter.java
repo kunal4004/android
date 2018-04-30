@@ -127,7 +127,6 @@ public class SubCategoryAdapter extends ExpandableRecyclerAdapter<HeaderViewHold
 	}
 
 	public void updateList(List<SubCategoryModel> mSubCategoryListModel, final ParentSubCategoryViewHolder mParentViewHolder, int selectedPosition) {
-
 		/**
 		 * The handler prevent notifyItemChanged and notifyDataInserted from expanded method
 		 * to send update at the same time.
