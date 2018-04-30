@@ -103,5 +103,4 @@ public class Defaults {
 	public void setWrewardsTCLink(String wrewardsTCLink) {
 		this.wrewardsTCLink = wrewardsTCLink;
 	}
-
 }
