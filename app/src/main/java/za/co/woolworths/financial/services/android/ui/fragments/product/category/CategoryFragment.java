@@ -6,22 +6,19 @@ import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
@@ -34,13 +31,13 @@ import za.co.woolworths.financial.services.android.models.dto.RootCategory;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.barcode.BarcodeFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.ObservableScrollViewCallbacks;
 import za.co.woolworths.financial.services.android.util.ScrollState;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.zxing.QRActivity;
 
 public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding, CategoryViewModel>
 		implements CategoryNavigator, ObservableScrollViewCallbacks, View.OnClickListener {
@@ -122,7 +119,12 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 
 	@Override
 	public void navigateToBarcode() {
-		checkCameraPermission();
+		BarcodeFragment barcodeFragment = new BarcodeFragment();
+		Bundle bundle = new Bundle();
+		bundle.putString("SCAN_MODE", "ONE_D_MODE");
+		barcodeFragment.setArguments(bundle);
+		getBottomNavigator().hideBottomNavigationMenu();
+		pushFragmentSlideUp(barcodeFragment);
 	}
 
 	@Override
@@ -134,14 +136,12 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 
 	@Override
 	public void checkCameraPermission() {
-		if (hasPermissions()) {
-			Intent intent = new Intent(getActivity(), QRActivity.class);
-			intent.putExtra("SCAN_MODE", "ONE_D_MODE");
-			getActivity().startActivity(intent);
-			getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
-		} else {
-			requestPerms();
-		}
+		BarcodeFragment barcodeFragment = new BarcodeFragment();
+		Bundle bundle = new Bundle();
+		bundle.putString("SCAN_MODE", "ONE_D_MODE");
+		barcodeFragment.setArguments(bundle);
+		getBottomNavigator().hideBottomNavigationMenu();
+		pushFragmentSlideUp(barcodeFragment);
 	}
 
 	@Override
@@ -201,33 +201,6 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 	@Override
 	public void failureResponseHandler(String e) {
 		mErrorHandlerView.networkFailureHandler(e);
-	}
-
-	@Override
-	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-		boolean allowed = true;
-		switch (requestCode) {
-			case PERMS_REQUEST_CODE:
-				for (int res : grantResults) {
-					// if user granted all permissions.
-					allowed = allowed && (res == PackageManager.PERMISSION_GRANTED);
-				}
-				break;
-			default:
-				// if user not granted permissions.
-				allowed = false;
-				break;
-		}
-		if (allowed) {
-			checkCameraPermission();
-		} else {
-			// we will give warning to user that they haven't granted permissions.
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-				if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-					Toast.makeText(getActivity(), "Camera Permissions denied.", Toast.LENGTH_SHORT).show();
-				}
-			}
-		}
 	}
 
 	@Override
@@ -348,14 +321,25 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 			case R.id.textProductSearch:
 				navigateToProductSearch();
 				break;
-
 			case R.id.imTBBarcodeScanner:
 			case R.id.llBarcodeScanner:
-				navigateToBarcode();
+				checkLocationPermission(getBottomNavigator(), getBottomNavigator().getPermissionType(Manifest.permission.CAMERA), 2);
 				break;
 
 			default:
 				break;
+		}
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		Log.e("resultCode", String.valueOf(resultCode));
+		// navigate to barcode view on camera runtime permission successfully granted
+		if (requestCode == 2) {
+			if (resultCode == 200) {
+				navigateToBarcode();
+			}
 		}
 	}
 }

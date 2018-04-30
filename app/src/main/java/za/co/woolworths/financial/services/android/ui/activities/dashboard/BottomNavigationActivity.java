@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,12 +15,14 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 
 import com.awfs.coordination.BR;
@@ -44,6 +47,8 @@ import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.barcode.BarcodeFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.barcode.manual.ManualBarcodeFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.category.CategoryFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
@@ -83,6 +88,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	public static final int INDEX_REWARD = FragNavController.TAB4;
 	public static final int INDEX_ACCOUNT = FragNavController.TAB5;
 	public static final int OPEN_CART_REQUEST = 12346;
+	public static final int SLIDE_UP_COLLAPSE_REQUEST_CODE = 13;
+	public static final int SLIDE_UP_COLLAPSE_RESULT_CODE = 12345;
+
 	public final String TAG = this.getClass().getSimpleName();
 	private PermissionUtils permissionUtils;
 	private ArrayList<String> permissions;
@@ -149,7 +157,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		renderUI();
 		observableOn(new Consumer<Object>() {
 			@Override
-			public void accept(Object object) throws Exception {
+			public void accept(Object object) {
 				if (object instanceof LoadState) {
 					String searchProduct = ((LoadState) object).getSearchProduct();
 					if (!TextUtils.isEmpty((searchProduct))) {
@@ -270,6 +278,11 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	}
 
 	@Override
+	public void statusBarColor(int color, boolean enableDecor) {
+		Utils.updateStatusBarBackground(this, color, enableDecor);
+	}
+
+	@Override
 	public void showBackNavigationIcon(boolean visibility) {
 		setBackNavigationIcon(visibility);
 	}
@@ -277,6 +290,14 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	@Override
 	public void setTitle(String title) {
 		setToolbarTitle(title);
+	}
+
+	@Override
+	public void setTitle(String title, int color) {
+		setToolbarTitle(title, color);
+		getToolbarTitle().setTextColor(ContextCompat.getColor(BottomNavigationActivity.this, R.color.white));
+		Utils.updateStatusBarBackground(BottomNavigationActivity.this, color, true);
+		setHomeAsUpIndicator(R.drawable.close_white);
 	}
 
 	@Override
@@ -329,6 +350,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 							Utils.sendBus(new ProductState(OPEN_GET_LIST_SCREEN));
 							setSingleOrMultipleItemSelector(false);
 						}
+						onActivityResult(SLIDE_UP_COLLAPSE_REQUEST_CODE, SLIDE_UP_COLLAPSE_RESULT_CODE, null);
 						break;
 
 					case EXPANDED:
@@ -517,6 +539,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	@SuppressLint("RestrictedApi")
 	@Override
 	public void onBackPressed() {
+		if (mNavController.getCurrentFrag() instanceof BarcodeFragment) {
+			popFragmentSlideDown();
+			return;
+		}
 		if (getSlidingLayout() != null) {
 			if (getSlidingLayout().getPanelState().equals(SlidingUpPanelLayout.PanelState.EXPANDED)) {
 				closeSlideUpPanel();
@@ -663,7 +689,18 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void PermissionGranted(int request_code) {
-		sendBus(new ProductDetailFragment());
+		//TODO:: Parse result_code and use only onActivityResult line
+		onActivityResult(request_code, 200, null);
+		switch (request_code) {
+			case 2:
+				onActivityResult(request_code, 200, null);
+				break;
+
+			default:
+				sendBus(new ProductDetailFragment());
+				break;
+		}
+		;
 	}
 
 	@Override
@@ -753,26 +790,37 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			}
 		}
 
+		Fragment fragment = mNavController.getCurrentFrag();
 		//trigger reward and account call
 		switch (getBottomNavigationById().getCurrentItem()) {
 			case 0:
+				break;
 			case 1:
+				if (fragment instanceof CategoryFragment) // camera runtime permission successfully granted
+					if (fragment != null) {
+						fragment.onActivityResult(requestCode, resultCode, data);
+					}
+				if (fragment instanceof BarcodeFragment)
+					if (fragment != null) {
+						fragment.onActivityResult(requestCode, resultCode, data);
+					}
+				if (fragment instanceof ManualBarcodeFragment)
+					if (fragment != null) {
+						fragment.onActivityResult(requestCode, resultCode, data);
+					}
 				break;
 			case 2:
 				break;
 			default:
-
 				if (wRewardsFragment != null) {
 					wRewardsFragment.onActivityResult(requestCode, resultCode, data);
 				}
 				if (myAccountsFragment != null) {
 					myAccountsFragment.onActivityResult(requestCode, resultCode, data);
 				}
-
 				/**
 				 * Trigger onActivityResult() from current visible fragment
 				 */
-				Fragment fragment = mNavController.getCurrentFrag();
 				if (fragment != null) {
 					fragment.onActivityResult(requestCode, resultCode, data);
 				}
@@ -859,6 +907,11 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	}
 
 	@Override
+	public void setHomeAsUpIndicator(int drawable) {
+		getSupportActionBar().setHomeAsUpIndicator(drawable);
+	}
+
+	@Override
 	public void onToastButtonClicked(String currentState) {
 		if (mToastUtils != null) {
 			String state = mToastUtils.getCurrentState();
@@ -903,5 +956,13 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	public boolean singleOrMultipleItemSelector() {
 		return singleOrMultipleItemSelector;
+	}
+
+	public void updateStatusBarColor(String color) {// Color must be in hexadecimal fromat
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			Window window = getWindow();
+			window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+			window.setStatusBarColor(Color.parseColor(color));
+		}
 	}
 }

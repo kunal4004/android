@@ -81,7 +81,7 @@ android {
         qa {
             applicationId "com.awfs.coordination.qa"
             signingConfig signingConfigs.woneappQa
-            versionCode 161
+            versionCode 162
         }
 
         staging {
@@ -126,7 +126,6 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging:11.8.0'
     implementation 'com.google.firebase:firebase-crash:11.8.0'
     implementation 'com.google.firebase:firebase-core:11.8.0'
-    implementation 'com.google.zxing:core:3.3.0'
     implementation 'com.google.android:flexbox:0.2.5'
     implementation 'com.google.firebase:firebase-crash:11.8.0'
     implementation 'com.google.firebase:firebase-core:11.8.0'
@@ -162,9 +161,9 @@ dependencies {
     implementation 'uk.co.chrisjenx:calligraphy:2.2.0'
     implementation 'me.leolin:ShortcutBadger:1.1.13@aar'
     implementation 'com.daimajia.swipelayout:library:1.2.0'
-    implementation 'com.github.thepacific:mvc:0.0.2'
     implementation 'es.voghdev.pdfviewpager:library:1.0.3'
-
+    api 'com.google.zxing:core:3.3.2'
+    api 'com.google.zxing:android-core:3.3.0'
     annotationProcessor "android.arch.lifecycle:compiler:1.1.0"
 }
 apply plugin: 'com.google.gms.google-services'

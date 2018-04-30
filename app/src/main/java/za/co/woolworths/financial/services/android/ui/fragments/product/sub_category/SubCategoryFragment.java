@@ -23,6 +23,7 @@ import java.util.List;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.SubCategory;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.SubCategoryAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
@@ -70,16 +71,12 @@ public class SubCategoryFragment extends BaseFragment<FragmentSubCategoryBinding
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		showToolbar();
-		setTitle(mRootCategoryName);
+		showToolbar(mRootCategoryName);
 		setStatusBarColor(R.color.white);
-		setToolbarBackgroundDrawable(R.drawable.appbar_background);
-		showBackNavigationIcon(true);
 		RelativeLayout relNoConnectionLayout = getViewDataBinding().incNoConnectionHandler.noConnectionLayout;
 		mErrorHandlerView = new ErrorHandlerView(getActivity()
 				, relNoConnectionLayout);
 		mErrorHandlerView.setMargin(relNoConnectionLayout, 0, 0, 0, 0);
-
 		getViewDataBinding()
 				.incNoConnectionHandler
 				.btnRetry.setOnClickListener(new View.OnClickListener() {
@@ -90,6 +87,7 @@ public class SubCategoryFragment extends BaseFragment<FragmentSubCategoryBinding
 		});
 
 		onRetryConnectionClicked();
+		setCloseButtonListener();
 	}
 
 	private void onRetryConnectionClicked() {
@@ -172,6 +170,20 @@ public class SubCategoryFragment extends BaseFragment<FragmentSubCategoryBinding
 		}
 	}
 
+	private void setCloseButtonListener() {
+		Activity activity = getActivity();
+		if (activity != null) {
+			BottomNavigationActivity bottomNavigationActivity = ((BottomNavigationActivity) activity);
+			bottomNavigationActivity.getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					popFragment();
+				}
+			});
+		}
+	}
+
+
 	@Override
 	public void onItemClick(SubCategory subCategory) {
 		if (getBottomNavigator() != null) {
@@ -184,10 +196,7 @@ public class SubCategoryFragment extends BaseFragment<FragmentSubCategoryBinding
 		super.onHiddenChanged(hidden);
 		if (!hidden) {
 			if (mSubCategoryAdapter != null) {
-				setStatusBarColor(R.color.white);
-				showToolbar();
-				setToolbarBackgroundDrawable(R.drawable.appbar_background);
-				setTitle(mRootCategoryName);
+				showToolbar(mRootCategoryName);
 				mSubCategoryAdapter.resetAdapter();
 			}
 		}

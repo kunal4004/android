@@ -69,6 +69,7 @@ public class KeyboardUtil {
 				}
 			} else {
 				//check if the padding is != 0 (if yes reset the padding)
+				if (contentView == null) return;
 				if (contentView.getPaddingBottom() != 0) {
 					//reset the padding of the contentView
 					contentView.setPadding(0, 0, 0, 0);
