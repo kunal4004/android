@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.util.expand;
 
 import android.content.Context;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,19 +13,16 @@ import java.util.List;
 import za.co.woolworths.financial.services.android.models.dto.SubCategory;
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryNavigator;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
-import za.co.woolworths.financial.services.android.util.expand.communicator.OnItemClickListener;
 
 public class SubCategoryAdapter extends ExpandableRecyclerAdapter<HeaderViewHolder, ParentSubCategoryViewHolder, SubCategoryViewHolder> {
 
 	private Context mContext;
 	private LayoutInflater mInflator;
-	private OnItemClickListener onItemClickListener;
 	private SubCategoryNavigator mSubCategoryNavigator;
 
-	public SubCategoryAdapter(Context context, SubCategoryNavigator subCategoryNavigator, OnItemClickListener onItemClickListener, List<? extends ParentListItem> parentItemList) {
+	public SubCategoryAdapter(Context context, SubCategoryNavigator subCategoryNavigator, List<? extends ParentListItem> parentItemList) {
 		super(parentItemList);
 		this.mInflator = LayoutInflater.from(context);
-		this.onItemClickListener = onItemClickListener;
 		this.mSubCategoryNavigator = subCategoryNavigator;
 		this.mContext = context;
 	}
@@ -48,7 +46,7 @@ public class SubCategoryAdapter extends ExpandableRecyclerAdapter<HeaderViewHold
 	}
 
 	@Override
-	public void onBindParentViewHolder(final ParentSubCategoryViewHolder parentSubCategoryViewHolder, final int position, ParentListItem parentListItem) {
+	public void onBindParentViewHolder(final ParentSubCategoryViewHolder parentSubCategoryViewHolder, final int parentPosition, final ParentListItem parentListItem) {
 		final SubCategoryModel subCategoryModel = (SubCategoryModel) parentListItem;
 		parentSubCategoryViewHolder.bind(subCategoryModel);
 		parentSubCategoryViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -67,24 +65,36 @@ public class SubCategoryAdapter extends ExpandableRecyclerAdapter<HeaderViewHold
 					return;
 				}
 
-				int sizeOfList = getParentItemList().size();
-				// retrieve one api call at a time
-				for (int index = 0; index < sizeOfList; index++) {
-					if (((SubCategoryModel) getParentItemList().get(index)).getSubCategory().singleViewLoading) {
-						return;
-					}
-				}
+//				int sizeOfList = getParentItemList().size();
+//				// retrieve one api call at a time
+//				for (int index = 0; index < sizeOfList; index++) {
+//					if (((SubCategoryModel) getParentItemList().get(index)).getSubCategory().singleProductItemIsLoading) {
+//						return;
+//					}
+//				}
 				if (mSubCategoryNavigator == null) return;
 				if (!new ConnectionDetector().isOnline(mContext)) {
 					mSubCategoryNavigator.noConnectionDetected();
 					return;
 				}
 				if (subCategory.hasChildren) {
-					subCategory.singleViewLoading = true;
-					notifyItemChanged(parentSubCategoryViewHolder.getAdapterPosition());
-					mSubCategoryNavigator.retrieveChildItem(parentSubCategoryViewHolder, subCategoryModel.getSubCategory(),
-							position);
-					return;
+					subCategory.singleProductItemIsLoading = true;
+					int headerIndexLoop = 0;
+					int headerPosition = 0;
+					for (ParentListItem pl : getParentItemList()) {
+						if ((((SubCategoryModel) getParentItemList().get(headerIndexLoop)).getSubCategory().categoryId
+								.equalsIgnoreCase(subCategory.categoryId))) {
+							headerPosition = headerIndexLoop;
+						}
+						headerIndexLoop++;
+					}
+					mSubCategoryNavigator.retrieveChildItem(parentSubCategoryViewHolder, subCategoryModel.getSubCategory(), headerPosition);
+					notifyItemChanged(headerPosition);
+				} else
+
+				{
+					//Open GridFragment when hasChildren = false;
+					mSubCategoryNavigator.onChildItemClicked(subCategory);
 				}
 			}
 		});
@@ -101,8 +111,7 @@ public class SubCategoryAdapter extends ExpandableRecyclerAdapter<HeaderViewHold
 	@Override
 	public void onBindChildViewHolder(SubCategoryViewHolder subCategoryViewHolder, int position, Object childListItem) {
 		SubCategoryChild subCategoryChild = (SubCategoryChild) childListItem;
-		subCategoryViewHolder.bind(subCategoryChild);
-		subCategoryViewHolder.listener(onItemClickListener, subCategoryChild);
+		subCategoryViewHolder.bind(mSubCategoryNavigator, subCategoryChild);
 	}
 
 	@Override
@@ -116,15 +125,17 @@ public class SubCategoryAdapter extends ExpandableRecyclerAdapter<HeaderViewHold
 		});
 	}
 
-	public void updateList(List<SubCategoryModel> mSubCategoryListModel, ParentSubCategoryViewHolder mParentViewHolder, int position) {
+	public void updateList(List<SubCategoryModel> mSubCategoryListModel, final ParentSubCategoryViewHolder mParentViewHolder, int selectedPosition) {
+		Runnable runnable = new Runnable() {
+			@Override
+			public void run() {
+				toggleExpandCollapseView(mParentViewHolder);
+			}
+		};
+		Handler handler = new Handler();
+		handler.postDelayed(runnable, 50);
+		mSubCategoryListModel.get(selectedPosition).getSubCategory().setSingleProductItemIsLoading(false);
 		setParentItemList(mSubCategoryListModel);
-		int sizeOfList = getParentItemList().size();
-		// reset progressbar flag
-		for (int index = 0; index < sizeOfList; index++) {
-			((SubCategoryModel) getParentItemList().get(index)).getSubCategory().singleViewLoading = false;
-		}
-		notifyItemChanged(position);
-		mParentViewHolder.retrieveChildVisibility(false);
-		toggleExpandCollapseView(mParentViewHolder);
+		notifyItemChanged(selectedPosition);
 	}
 }

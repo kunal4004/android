@@ -39,7 +39,7 @@ public class ParentSubCategoryViewHolder extends ParentViewHolder {
 	}
 
 	public void retrieveChildVisibility(SubCategoryModel subCategoryModel) {
-		boolean progressBarIsVisible = subCategoryModel.getSubCategory().singleViewLoading;
+		boolean progressBarIsVisible = subCategoryModel.getSubCategory().singleProductItemIsLoading;
 		pbLoadChildItem.setVisibility(progressBarIsVisible ? View.VISIBLE : View.GONE);
 		mArrowExpandImageView.setVisibility(progressBarIsVisible ? View.GONE : View.VISIBLE);
 	}

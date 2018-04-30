@@ -12,6 +12,7 @@ import com.awfs.coordination.R;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.SubCategory;
+import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryNavigator;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 

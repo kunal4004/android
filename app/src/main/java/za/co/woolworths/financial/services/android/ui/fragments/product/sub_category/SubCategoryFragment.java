@@ -7,7 +7,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 
 import com.awfs.coordination.BR;
@@ -26,7 +25,6 @@ import za.co.woolworths.financial.services.android.models.dto.SubCategory;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
-import za.co.woolworths.financial.services.android.ui.views.expand.ExpandableRecyclerView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.expand.ExpandableRecyclerAdapter;
@@ -34,9 +32,8 @@ import za.co.woolworths.financial.services.android.util.expand.ParentSubCategory
 import za.co.woolworths.financial.services.android.util.expand.SubCategoryAdapter;
 import za.co.woolworths.financial.services.android.util.expand.SubCategoryChild;
 import za.co.woolworths.financial.services.android.util.expand.SubCategoryModel;
-import za.co.woolworths.financial.services.android.util.expand.communicator.OnItemClickListener;
 
-public class SubCategoryFragment extends BaseFragment<ExpandableSubCategoryFragmentBinding, SubCategoryViewModel> implements OnItemClickListener, SubCategoryNavigator, View.OnClickListener {
+public class SubCategoryFragment extends BaseFragment<ExpandableSubCategoryFragmentBinding, SubCategoryViewModel> implements SubCategoryNavigator, View.OnClickListener {
 
 	private List<SubCategory> mSubCategories;
 	private RecyclerView rvCategoryDrill;
@@ -45,7 +42,7 @@ public class SubCategoryFragment extends BaseFragment<ExpandableSubCategoryFragm
 	private RootCategory mRootCategory;
 	private SubCategoryViewModel mDrillDownCategoryViewModel;
 	private ErrorHandlerView mErrorHandlerView;
-	private int mCurrentGroupPosition;
+	private int mSelectedHeaderPosition;
 	private ParentSubCategoryViewHolder mParentViewHolder;
 	private List<SubCategoryModel> mSubCategoryListModel;
 
@@ -67,7 +64,6 @@ public class SubCategoryFragment extends BaseFragment<ExpandableSubCategoryFragm
 			if (rootCategory != null)
 				mRootCategory = new Gson().fromJson(rootCategory, RootCategory.class);
 			mRootCategory = new Gson().fromJson(rootCategory, RootCategory.class);
-			mSubCategories.add(new SubCategory());
 		}
 	}
 
@@ -102,41 +98,6 @@ public class SubCategoryFragment extends BaseFragment<ExpandableSubCategoryFragm
 		return BR.viewModel;
 	}
 
-	public void drillCategory(List<SubCategory> subCategories) {
-		final List<SubCategoryModel> subCategoryModels = new ArrayList<>();
-		for (SubCategory subCategory : subCategories) {
-			if (subCategory.hasChildren != null) {
-				if (subCategory.hasChildren) {
-					subCategoryModels.add(new SubCategoryModel(subCategory, null));
-				}
-			}
-		}
-		this.mSubCategoryListModel = subCategoryModels;
-		mAdapter = new SubCategoryAdapter(getActivity(), this, this, subCategoryModels);
-		mAdapter.setExpandCollapseListener(new ExpandableRecyclerAdapter.ExpandCollapseListener() {
-			@Override
-			public void onListItemExpanded(int position) {
-				if (lastExpandedPosition != -1
-						&& position != lastExpandedPosition) {
-					mAdapter.collapseParent(lastExpandedPosition);
-				}
-				lastExpandedPosition = position;
-				LinearLayoutManager llm = (LinearLayoutManager) rvCategoryDrill.getLayoutManager();
-				llm.scrollToPositionWithOffset(position, 0);
-			}
-
-			@Override
-			public void onListItemCollapsed(int position) {
-
-			}
-		});
-		rvCategoryDrill.setAdapter(mAdapter);
-	}
-
-	@Override
-	public void onItemClick(String categoryId) {
-	}
-
 	@Override
 	public void bindSubCategoryResult(List<SubCategory> subCategoryList) {
 		if (getViewModel().childItem()) { // child item
@@ -146,27 +107,16 @@ public class SubCategoryFragment extends BaseFragment<ExpandableSubCategoryFragm
 				subCategoryChild.setSubCategory(subCat);
 				subCategoryChildList.add(subCategoryChild);
 			}
-			if (mCurrentGroupPosition < mSubCategoryListModel.size()) {
-				SubCategoryModel subCategoryModel = mSubCategoryListModel.get(mCurrentGroupPosition);
-				subCategoryModel.setSubCategoryChildList(subCategoryChildList);
-				if (mAdapter != null) {
-					mAdapter.updateList(mSubCategoryListModel, mParentViewHolder, mCurrentGroupPosition);
-				}
+			SubCategoryModel subCategoryModel = mSubCategoryListModel.get(mSelectedHeaderPosition);
+			subCategoryModel.setSubCategoryChildList(subCategoryChildList);
+			if (mAdapter != null) {
+				mAdapter.updateList(mSubCategoryListModel, mParentViewHolder, mSelectedHeaderPosition);
 			}
+
 			return;
 		}
 
-		setHeaderList(subCategoryList);
 		setCategoryAdapter(subCategoryList); // header item
-	}
-
-	private void setHeaderList(List<SubCategory> subCategoryList) {
-		SubCategory subHeaderCategory = new SubCategory();
-		subHeaderCategory.setCategoryId(mRootCategory.categoryId);
-		subHeaderCategory.setCategoryName(mRootCategory.categoryName);
-		subHeaderCategory.setHasChildren(mRootCategory.hasChildren);
-		subHeaderCategory.setImgUrl(mRootCategory.imgUrl);
-		subCategoryList.add(0, subHeaderCategory);
 	}
 
 	@Override
@@ -212,12 +162,6 @@ public class SubCategoryFragment extends BaseFragment<ExpandableSubCategoryFragm
 	}
 
 	@Override
-	public void retrieveChildItem(ExpandableRecyclerView.SimpleGroupViewHolder
-										  holder, SubCategory subCategory, int group) {
-		Log.e("retrieveChildItem", subCategory.categoryName);
-	}
-
-	@Override
 	public void onChildItemClicked(SubCategory subCategory) {
 		//Navigate to product grid
 		GridFragment gridFragment = new GridFragment();
@@ -237,17 +181,10 @@ public class SubCategoryFragment extends BaseFragment<ExpandableSubCategoryFragm
 	}
 
 	@Override
-	public void retrieveChildItem(ParentSubCategoryViewHolder holder, SubCategory subCategory,
-								  int position) {
-		if (subCategory.hasChildren) {
-			this.mCurrentGroupPosition = position;
-			this.mParentViewHolder = holder;
-			onRetryConnectionClicked(subCategory.categoryId, true);
-			return;
-		}
-
-		//Open GridFragment when hasChildren = false;
-		onChildItemClicked(subCategory);
+	public void retrieveChildItem(ParentSubCategoryViewHolder holder, SubCategory subCategory, int selectedHeaderPosition) {
+		this.mSelectedHeaderPosition = selectedHeaderPosition;
+		this.mParentViewHolder = holder;
+		onRetryConnectionClicked(subCategory.categoryId, true);
 	}
 
 	@Override
@@ -291,17 +228,52 @@ public class SubCategoryFragment extends BaseFragment<ExpandableSubCategoryFragm
 	}
 
 	private void setCategoryAdapter(List<SubCategory> subCategories) {
+		this.mSubCategories = subCategories;
+		SubCategory subHeaderCategory = new SubCategory();
+		subHeaderCategory.setCategoryId(mRootCategory.categoryId);
+		subHeaderCategory.setCategoryName(mRootCategory.categoryName);
+		subHeaderCategory.setHasChildren(mRootCategory.hasChildren);
+		subHeaderCategory.setImgUrl(mRootCategory.imgUrl);
+		subHeaderCategory.setHasChildren(false);
+		mSubCategories.add(0, subHeaderCategory);
 		RecyclerView expandableSubCategory = getViewDataBinding().rcvDrillCategory;
 		assert expandableSubCategory != null;
-		for (SubCategory subCategory : subCategories) {
-			mSubCategories.add(subCategory);
+		mSubCategoryListModel = new ArrayList<>();
+		for (SubCategory subCategory : mSubCategories) {
+			mSubCategoryListModel.add(new SubCategoryModel(subCategory, null));
 		}
-		drillCategory(mSubCategories);
+		this.mAdapter = new SubCategoryAdapter(getActivity(), this, mSubCategoryListModel);
+		this.mAdapter.setExpandCollapseListener(new ExpandableRecyclerAdapter.ExpandCollapseListener() {
+			@Override
+			public void onListItemExpanded(int position) {
+				if (lastExpandedPosition != -1
+						&& position != lastExpandedPosition) {
+					mAdapter.collapseParent(lastExpandedPosition);
+				}
+				lastExpandedPosition = position;
+				LinearLayoutManager llm = (LinearLayoutManager) rvCategoryDrill.getLayoutManager();
+				llm.scrollToPositionWithOffset(position, 0);
+			}
+
+			@Override
+			public void onListItemCollapsed(int position) {
+
+			}
+		});
+		rvCategoryDrill.setAdapter(mAdapter);
 	}
 
 	private void showProgressBar(boolean visible) {
 		getViewDataBinding().pbSubCategory.setVisibility(visible ? View.VISIBLE : View.GONE);
 		getViewDataBinding().rootDrillDownCategory.setVisibility(visible ? View.VISIBLE : View.GONE);
 		getViewDataBinding().rcvDrillCategory.setVisibility(visible ? View.GONE : View.VISIBLE);
+	}
+
+	@Override
+	public void onHiddenChanged(boolean hidden) {
+		super.onHiddenChanged(hidden);
+		if (!hidden) {
+			hideToolbar();
+		}
 	}
 }

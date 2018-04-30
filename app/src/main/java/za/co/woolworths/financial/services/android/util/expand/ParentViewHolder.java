@@ -13,6 +13,8 @@ public class ParentViewHolder extends RecyclerView.ViewHolder implements View.On
 		void onParentListItemExpanded(int position);
 
 		void onParentListItemCollapsed(int position);
+
+		void onParentListItemExpandedChanged(int position);
 	}
 
 	public ParentViewHolder(View itemView) {
@@ -73,5 +75,9 @@ public class ParentViewHolder extends RecyclerView.ViewHolder implements View.On
 		if (mParentListItemExpandCollapseListener != null) {
 			mParentListItemExpandCollapseListener.onParentListItemCollapsed(getAdapterPosition());
 		}
+	}
+
+	protected void expandView(boolean notifyChange) {
+		mParentListItemExpandCollapseListener.onParentListItemExpandedChanged(getAdapterPosition());
 	}
 }

@@ -19,7 +19,7 @@ public class SubCategory {
 
 	public String imgUrl;
 	public List<SubCategory> subCategoryList;
-	public boolean singleViewLoading;
+	public boolean singleProductItemIsLoading;
 
 	public void setCategoryName(String categoryName) {
 		this.categoryName = categoryName;
@@ -51,5 +51,13 @@ public class SubCategory {
 
 	public String getImgUrl() {
 		return imgUrl;
+	}
+
+	public void setSingleProductItemIsLoading(boolean singleProductItemIsLoading) {
+		this.singleProductItemIsLoading = singleProductItemIsLoading;
+	}
+
+	public boolean SingleProductItemIsLoading() {
+		return singleProductItemIsLoading;
 	}
 }

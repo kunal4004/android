@@ -121,6 +121,14 @@ public abstract class ExpandableRecyclerAdapter<HVH extends HeaderViewHolder, PV
 	}
 
 	@Override
+	public void onParentListItemExpandedChanged(int position) {
+		Object listItem = getListItem(position);
+		if (listItem instanceof ParentWrapper) {
+			expandParentListItem((ParentWrapper) listItem, position, true, true);
+		}
+	}
+
+	@Override
 	public void onParentListItemCollapsed(int position) {
 		Object listItem = getListItem(position);
 		if (listItem instanceof ParentWrapper) {
@@ -309,6 +317,17 @@ public abstract class ExpandableRecyclerAdapter<HVH extends HeaderViewHolder, PV
 				notifyItemRangeInserted(parentIndex + 1, childListItemCount);
 			}
 
+			if (expansionTriggeredByListItemClick && mExpandCollapseListener != null) {
+				int expandedCountBeforePosition = getExpandedItemCount(parentIndex);
+				mExpandCollapseListener.onListItemExpanded(parentIndex - expandedCountBeforePosition);
+			}
+		}
+	}
+
+	private void expandParentListItem(ParentWrapper parentWrapper, int parentIndex, boolean expansionTriggeredByListItemClick, boolean notifyItemChanged) {
+		if (!parentWrapper.isExpanded()) {
+			parentWrapper.setExpanded(true);
+			notifyItemChanged(parentIndex);
 			if (expansionTriggeredByListItemClick && mExpandCollapseListener != null) {
 				int expandedCountBeforePosition = getExpandedItemCount(parentIndex);
 				mExpandCollapseListener.onListItemExpanded(parentIndex - expandedCountBeforePosition);
