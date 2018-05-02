@@ -183,6 +183,8 @@ public class ManualBarcodeFragment extends BaseFragment<ManualBarcodeLayoutBindi
 				ex.printStackTrace();
 			}
 		}
+
+		showLoadingProgressBar(false);
 	}
 
 	@Override

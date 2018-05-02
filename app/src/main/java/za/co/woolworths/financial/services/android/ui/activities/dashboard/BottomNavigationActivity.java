@@ -965,4 +965,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			window.setStatusBarColor(Color.parseColor(color));
 		}
 	}
+
+	public Fragment getCurrentFragment() {
+		return mNavController.getCurrentFrag();
+	}
 }
