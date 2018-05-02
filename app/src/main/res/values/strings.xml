@@ -7,7 +7,6 @@
 
     <string name="credit_card">CREDIT CARD</string>
     <string name="personal_loan">PERSONAL LOAN</string>
-    <string name="my_accounts">MY ACCOUNTS</string>
     <string name="credit_limit">Credit Limit:</string>
     <string name="available_funds">Available funds</string>
     <string name="next_payment_date">Next Payment Due:</string>
@@ -39,7 +38,6 @@
     <string name="google_maps">GOOGLE MAPS</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="km">km</string>
-    <string name="linked_cards">linked accounts</string>
     <string name="contact_us">Contact us</string>
     <string name="cart">Cart</string>
     <string name="delivery_location">Delivery Location</string>
@@ -47,8 +45,6 @@
     <string name="select_your_province">Select your Province</string>
     <string name="select_your_suburb">Select your Suburb</string>
     <string name="set_your_delivery_location">Select your delivery location</string>
-    <string name="submit_query">Submit Query</string>
-    <string name="faqs">FAQs</string>
     <string name="sign_out">Sign Out</string>
     <string name="brands">Brands</string>
     <string name="why_we_need_location_services">Location Services</string>
@@ -57,15 +53,11 @@
     <string name="off_instantly">OFF INSTANTLY</string>
 
     <string name="nav_item_today">TODAY</string>
-    <string name="nw_today_title">W TODAY</string>
     <string name="nav_item_products">PRODUCTS</string>
-    <string name="nav_item_store">STORES</string>
-    <string name="screen_title_store">STORES NEARBY</string>
     <string name="nav_item_wrewards">WREWARDS</string>
     <string name="nav_item_accounts">MY ACCOUNTS</string>
     <string name="increase_limit">Increase Limit</string>
     <string name="apply_now">APPLY NOW</string>
-    <string name="woolworths_financial_services">Woolworths financial services</string>
     <string name="the_benefits">The benefits:</string>
     <string name="shop_anywhere">Shop anywhere</string>
     <string name="shop_any_where_description">Your Woolworths Credit Card is internationally recognised and accepted at 29 million outlets around the world wherever you see the Visa sign.</string>
@@ -148,7 +140,6 @@
     <string name="cli_credit_limit_increase">CREDIT LIMIT INCREASE</string>
     <string name="cli_before_we_get_started">before we get started</string>
 
-    <string name="cli_credit_limit_amount">Credit Limit Amount</string>
     <string name="cli_select_your_bank">Select your bank</string>
     <string name="cli_other_expenses">Other Expenses</string>
     <string name="expense_monthly_credit_payment">Monthly Credit Payments</string>
@@ -161,8 +152,6 @@
     <string name="cli_yes">YES</string>
     <string name="cli_no">No</string>
     <string name="cli_account_type">ACCOUNT TYPE</string>
-    <string name="cli_option_two">FAX US</string>
-    <string name="cli_option_two_desc">Simply fax your documents to us at 021 407 9343. Your ID number will be your reference.</string>
     <string name="loading">LOADING…</string>
     <string name="cli_cancel_application">UNFORTUNATELY WE CANNOT PROCEED</string>
     <string name="cli_lorem_ipsum">Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum </string>
@@ -315,8 +304,6 @@
     <string name="cc_plus_1">Free Taste magazine vouchers monthly</string>
     <string name="cc_plus_2">2 free coffee vouchers monthly that can be used at any Woolworths Cafe, To Go or Tapas Bar.</string>
     <string name="cc_plus_3">Automatic VIP tier status for the first 12 months and free online delivery for Woolies online purchases (when you pay with your Woolies Black credit card).</string>
-    <string name="checked_item">checked items</string>
-    <string name="shopping_list_header">shopping list</string>
     <string name="added_to_shopping_list">added to shopping list</string>
     <string name="added_to_shopping_list_desc">Your shopping list items can be found in Accounts</string>
     <string name="view_shopping_list">view shopping list</string>
@@ -584,7 +571,6 @@
     <string name="account_type_info_desc">I agree that Woolworths Financial Services may request my latest 3 months bank statement directly from my bank.</string>
     <string name="cli_declined_popup_title">APPLICATION DECLINED</string>
     <string name="cli_declined_popup_description">Oh no - your limit increase application has been declined at this time. Feel free to apply again.</string>
-    <string name="cli_create_application_error_message">Unfortunately we cannot proceed with your application</string>
     <string name="store_locator">Store Locator</string>
     <string name="my_lists">My Lists</string>
     <string name="messages">Messages</string>
@@ -601,14 +587,10 @@
     <string name="bottom_title_reward">WRewards</string>
     <string name="bottom_title_account">Accounts</string>
     <string name="title_activity_main">ShoppingListActivity</string>
-    <string name="action_settings">Settings</string>
-    <string name="title_activity_cart">Cart</string>
     <string name="lets_make_it_easy_for_you">Let us make it easy for you - we can request your latest 3 months bank statements directly from your bank, at no cost to you.</string>
     <string name="statement_send_email_false_desc">Oops, There seems to be a problem. Please try again later. </string>
     <string name="edit_quantity">edit your quantity</string>
     <string name="delivery_location_title">delivery location</string>
-    <string name="update_my_location">Set new location</string>
-    <string name="set_location_desc">Please set your location.</string>
     <string name="your_delivery_location_is_set_to">Your delivery location is set to:</string>
     <string name="confirm_your_location">Confirm location</string>
     <string name="edit_delivery_location"><u>edit delivery location</u></string>
@@ -620,15 +602,12 @@
     <string name="title_my_list">My Lists</string>
 
     <!-- new list item-->
-    <string name="list_name">List Name</string>
     <string name="create_list">create list</string>
     <string name="new_list">new list</string>
-    <string name="general_fashion">General Fashion</string>
     <string name="shopping_search_hint">Search products to add to your list</string>
     <string name="delivery_confirmation_desc">* Delivery cost to be confirmed before payment</string>
     <string name="total_item">Total*</string>
     <string name="rlOtherDiscounts"><![CDATA[WRewards Savings & Other Discounts]]></string>
-    <string name="delete_list">DELETE LIST</string>
     <string name="out_of_stock">out of stock</string>
     <string name="out_of_stock_desc">Unfortunately this item is currently out of stock online, please try to find in-store or consider an alternative item.</string>
     <string name="out_of_stock_err">some of the products chosen are out of stock, please come back later!!</string>

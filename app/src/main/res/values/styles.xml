@@ -23,11 +23,6 @@
         <item name="android:background">@color/black</item>
     </style>
 
-    <style name="StoreLocator" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-    </style>
-
     <style name="StoreDetails" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
@@ -99,11 +94,6 @@
         <item name="android:textCursorDrawable">@drawable/cursor</item>
     </style>
 
-    <style name="ShoppingList" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-    </style>
-
     <style name="Messages" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
@@ -118,14 +108,6 @@
         <item name="android:homeAsUpIndicator">@drawable/back_white</item>
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:windowActionBarOverlay">false</item>
-
-    </style>
-
-    <style name="ContactUs" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="android:background">@android:color/transparent</item>
-        <item name="android:homeAsUpIndicator">@drawable/back24</item>
 
     </style>
 
@@ -244,18 +226,6 @@
         <item name="android:textSize">12sp</item>
         <item name="android:letterSpacing">0.2</item>
         <item name="WButton_font">medium_bold</item>
-        <item name="android:stateListAnimator">@null</item>
-    </style>
-
-    <style name="sectionTitleLight" parent="android:Theme">
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:background">@android:color/transparent</item>
-        <item name="android:textColor">@color/description_color</item>
-        <item name="android:textAllCaps">true</item>
-        <item name="android:gravity">left</item>
-        <item name="android:textSize">12sp</item>
-        <item name="android:letterSpacing">0.1</item>
         <item name="android:stateListAnimator">@null</item>
     </style>
 
@@ -429,24 +399,6 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowIsFloating">false</item>
         <item name="android:backgroundDimEnabled">false</item>
-    </style>
-
-    <style name="FragmentDialogStyle" parent="Base.Theme.AppCompat.Dialog">
-        <item name="android:windowMinWidthMajor">100%</item>
-        <item name="android:windowMinWidthMinor">100%</item>
-    </style>
-
-    <style name="shoppingListTitle" parent="android:Theme">
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:background">@android:color/transparent</item>
-        <item name="android:textColor">@color/description_color</item>
-        <item name="android:textAllCaps">true</item>
-        <item name="android:gravity">left</item>
-        <item name="WTextView_font">medium</item>
-        <item name="android:textSize">12sp</item>
-        <item name="android:letterSpacing">0.12</item>
-        <item name="android:stateListAnimator">@null</item>
     </style>
 
     <style name="contact_us_item_header_textview" parent="android:Theme">
@@ -1048,19 +1000,6 @@
         <item name="android:layout_marginTop">1dp</item>
     </style>
 
-    <style name="accountCardsTitle">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:background">@color/white</item>
-        <item name="android:gravity">center_vertical</item>
-        <item name="android:letterSpacing">0.1</item>
-        <item name="android:minHeight">50dp</item>
-        <item name="android:paddingLeft">24dp</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:textSize">12sp</item>
-        <item name="android:textAllCaps">true</item>
-    </style>
-
     <style name="accountsItem">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -1073,14 +1012,6 @@
     </style>
 
     <!-- Base application theme. -->
-    <style name="bottomAppBaseTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="android:windowActionBar">false</item>
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-    </style>
 
     <style name="style_cart_header_title">
         <item name="android:textSize">12sp</item>
@@ -1207,13 +1138,6 @@
         <item name="android:lineSpacingExtra">0.1sp</item>
         <item name="android:gravity">start</item>
         <item name="WTextView_font">myriadpro_regular</item>
-    </style>
-
-    <style name="full_screen_dialog" parent="Theme.AppCompat.Light">
-        <item name="android:windowFrame">@null</item>
-        <item name="android:windowIsFloating">true</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
     </style>
 
 </resources>

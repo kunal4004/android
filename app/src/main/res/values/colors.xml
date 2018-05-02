@@ -62,7 +62,6 @@
     <color name="delete_red_bg">#D10B23</color>
     <color name="toast_background">#dd030303</color>
     <color name="expandable_title_color">#FF212B36</color>
-    <color name="expandable_child_bg_color">#F3F3F3</color>
     <color name="expandable_gradient_color">#09000000</color>
 
 </resources>
