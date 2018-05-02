@@ -150,15 +150,9 @@ public class SubCategoryFragment extends BaseFragment<ExpandableSubCategoryFragm
 
 	}
 
-
 	@Override
 	public void onLoadComplete() {
 		showProgressBar(false);
-	}
-
-	@Override
-	public void onItemClick(SubCategory subCategory) {
-
 	}
 
 	@Override

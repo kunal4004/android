@@ -14,7 +14,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.sub_cate
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.expand.communicator.DetachableResultReceiver;
 import za.co.woolworths.financial.services.android.util.rx.SchedulerProvider;
 
 public class CategoryViewModel extends BaseViewModel<CategoryNavigator> {
@@ -58,13 +57,12 @@ public class CategoryViewModel extends BaseViewModel<CategoryNavigator> {
 		});
 	}
 
-	public Fragment enterNextFragment(RootCategory rootCategory, DetachableResultReceiver mReceiver, boolean value) {
+	public Fragment enterNextFragment(RootCategory rootCategory, boolean value) {
 		SubCategoryFragment drillDownCategoryFragment = new SubCategoryFragment();
 		if (rootCategory.hasChildren) {
 			// drill down of categories
 			Bundle bundle = new Bundle();
 			bundle.putString("ROOT_CATEGORY", Utils.toJson(rootCategory));
-			bundle.putParcelable(CategoryFragment.EXTRA_RECEIVER, mReceiver);
 			drillDownCategoryFragment.setArguments(bundle);
 			return drillDownCategoryFragment;
 		} else {

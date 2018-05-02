@@ -17,8 +17,6 @@ public interface SubCategoryNavigator {
 
 	void onLoadComplete();
 
-	void onItemClick(SubCategory subCategory);
-
 	void onChildItemClicked(SubCategory subCategory);
 
 	void noConnectionDetected();

@@ -6,7 +6,6 @@ import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryNavigator;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.expand.communicator.OnItemClickListener;
 
 public class SubCategoryViewHolder extends ChildViewHolder {
 
