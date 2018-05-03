@@ -536,19 +536,30 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		overridePendingTransition(R.anim.anim_accelerate_in, R.anim.stay);
 	}
 
-	@SuppressLint("RestrictedApi")
 	@Override
 	public void onBackPressed() {
-		if (mNavController.getCurrentFrag() instanceof BarcodeFragment) {
-			popFragmentSlideDown();
-			return;
-		}
+		/**
+		 *  Close slide up panel when expanded
+		 */
 		if (getSlidingLayout() != null) {
 			if (getSlidingLayout().getPanelState().equals(SlidingUpPanelLayout.PanelState.EXPANDED)) {
 				closeSlideUpPanel();
 				return;
 			}
 		}
+
+		/**
+		 *  Close barcode fragment with slide down animation
+		 */
+		if (mNavController.getCurrentFrag() instanceof BarcodeFragment) {
+			popFragmentSlideDown();
+			return;
+		}
+
+		/**
+		 *  Slide to previous fragment with custom left to right animation
+		 *  Close activity if fragment is at root level
+		 */
 		if (!mNavController.isRootFragment()) {
 			mNavController.popFragment(new FragNavTransactionOptions.Builder().customAnimations(R.anim.slide_in_from_left, R.anim.slide_out_to_right).build());
 		} else {
