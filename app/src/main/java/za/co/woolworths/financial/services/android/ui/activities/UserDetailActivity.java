@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
 
 import com.awfs.coordination.R;
@@ -30,6 +31,7 @@ public class UserDetailActivity extends AppCompatActivity implements UserDetailA
 	private Switch authenticateSwitch;
 	private static final int LOCK_REQUEST_CODE_TO_ENABLE = 222;
 	private static final int LOCK_REQUEST_CODE_TO_DISABLE = 333;
+	private RelativeLayout biometricsLayout;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -59,13 +61,20 @@ public class UserDetailActivity extends AppCompatActivity implements UserDetailA
 		mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 		mRclUserDetail.setLayoutManager(mLayoutManager);
 		authenticateSwitch = findViewById(R.id.auSwitch);
+		biometricsLayout = findViewById(R.id.biometricsLayout);
 		authenticateSwitch.setOnClickListener(this);
 	}
 
 	public void bindDateWithUI() {
 		mUserDetailApdater = new UserDetailAdapter(getItem(), this);
 		mRclUserDetail.setAdapter(mUserDetailApdater);
-		authenticateSwitch.setChecked(AuthenticateUtils.getInstance(UserDetailActivity.this).isAuthenticationEnabled());
+
+		if (AuthenticateUtils.getInstance(UserDetailActivity.this).isAppSupportsAuthentication()) {
+			biometricsLayout.setVisibility(View.VISIBLE);
+			authenticateSwitch.setChecked(AuthenticateUtils.getInstance(UserDetailActivity.this).isAuthenticationEnabled());
+		} else {
+			biometricsLayout.setVisibility(View.GONE);
+		}
 	}
 
 	@Override

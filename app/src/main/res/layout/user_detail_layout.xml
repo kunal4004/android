@@ -55,6 +55,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
+        android:id="@+id/biometricsLayout"
+        android:visibility="gone"
         android:background="@drawable/stores_details_background">
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView

@@ -104,4 +104,8 @@ public class AuthenticateUtils {
 	public boolean isBiometricAuthenticationRequired(){
 		return isAuthenticationEnabled() && isBiometricsEnabledForCurrentSession();
 	}
+
+	public boolean isAppSupportsAuthentication(){
+		return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) && isDeviceSecure() ;
+	}
 }
