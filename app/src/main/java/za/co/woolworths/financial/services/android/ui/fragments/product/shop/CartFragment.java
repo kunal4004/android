@@ -148,6 +148,12 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		mBtnRetry.setOnClickListener(this);
 		btnCheckOut.setOnClickListener(this);
 		tvDeliveryLocation = view.findViewById(R.id.tvDeliveryLocation);
+		DeliveryLocationHistory lastDeliveryLocation = Utils.getLastDeliveryLocation(getActivity());
+		if (lastDeliveryLocation != null) {
+			mSuburbName = lastDeliveryLocation.suburb.name;
+			mProvinceName = lastDeliveryLocation.province.name;
+			tvDeliveryLocation.setText(mSuburbName + ", " + mProvinceName);
+		}
 		emptyCartUI(view);
 		final Activity activity = getActivity();
 		if (activity != null) {
@@ -775,8 +781,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			// set delivery location
 			if (!TextUtils.isEmpty(data.suburbName) && !TextUtils.isEmpty(data.provinceName)) {
 				Activity activity = getActivity();
-				mSuburbName = data.suburbName;
-				mProvinceName = data.provinceName;
+				//mSuburbName = data.suburbName;
+				//mProvinceName = data.provinceName;
 				if (activity != null) {
 					String suburbId = String.valueOf(data.suburbId);
 					Province province = new Province();
@@ -787,7 +793,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					suburb.id = suburbId;
 					Utils.saveRecentDeliveryLocation(new DeliveryLocationHistory(province, suburb), activity);
 				}
-				tvDeliveryLocation.setText(data.suburbName + ", " + data.provinceName);
 			}
 
 		} catch (JSONException e) {
@@ -826,14 +831,15 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			activity.overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
 			return;
 		}
-		if (requestCode == CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY) {
-			DeliveryLocationHistory deliveryLocationHistory = Utils.getRecentDeliveryLocations(getActivity()).get(0);
-			setSuburbRequest(deliveryLocationHistory.province,deliveryLocationHistory.suburb);
+		if (requestCode == CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY || requestCode == REQUEST_SUBURB_CHANGE) {
 			loadShoppingCart(false).execute();
+			DeliveryLocationHistory lastDeliveryLocation = Utils.getLastDeliveryLocation(getActivity());
+			if (lastDeliveryLocation != null) {
+				mSuburbName = lastDeliveryLocation.suburb.name;
+				mProvinceName = lastDeliveryLocation.province.name;
+			}
 		}
-		if(requestCode == REQUEST_SUBURB_CHANGE){
-			loadShoppingCart(false).execute();
-		}
+
 	}
 
 	@Override

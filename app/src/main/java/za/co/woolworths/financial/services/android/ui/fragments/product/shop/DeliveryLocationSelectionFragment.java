@@ -217,6 +217,7 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
 					// TODO: go back to cart if no items removed from cart, else go to list of removed items
 					Activity activity = getActivity();
 					if (activity != null) {
+						Utils.saveRecentDeliveryLocation(location,getActivity());
 						activity.setResult(SUBURB_SET_RESULT);
 						Utils.sendBus(new CartState(location.suburb.name + ", " + location.province.name));
 						activity.finish();
