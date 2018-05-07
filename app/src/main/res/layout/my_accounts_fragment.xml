@@ -324,6 +324,25 @@
                     </RelativeLayout>
 
                     <RelativeLayout
+                        android:id="@+id/rlMyPreferences"
+                        style="@style/listStyle"
+                        android:background="@drawable/stores_details_background"
+                        android:visibility="visible">
+
+                        <za.co.woolworths.financial.services.android.ui.views.WTextView
+                            style="@style/accountsItem"
+                            android:drawableLeft="@drawable/signout_24_copy_3"
+                            android:text="@string/acc_my_preferences"/>
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:background="@drawable/ic_caret_black"/>
+                    </RelativeLayout>
+
+                    <RelativeLayout
                         android:id="@+id/signOutBtn"
                         style="@style/listStyle"
                         android:background="@drawable/stores_details_background"

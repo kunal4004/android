@@ -645,4 +645,6 @@
     <string name="single_item_text">item</string>
     <string name="multiple_item_text">items</string>
     <string name="shopping_list">shopping list</string>
+    <string name="acc_my_preferences">My Preferences</string>
+    <string name="authenticate_with_touch_id">Authenticate with Touch ID</string>
 </resources>

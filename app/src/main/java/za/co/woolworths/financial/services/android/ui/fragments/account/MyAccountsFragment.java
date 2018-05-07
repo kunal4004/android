@@ -45,6 +45,7 @@ import za.co.woolworths.financial.services.android.models.rest.shoppinglist.GetS
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
+import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.UserDetailActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
@@ -91,6 +92,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	RelativeLayout unlinkedLayout;
 	RelativeLayout signOutBtn;
 	RelativeLayout myDetailBtn;
+	RelativeLayout myPreferences;
 	ViewPager viewPager;
 	MyAccountOverViewPagerAdapter adapter;
 	LinearLayout pager_indicator;
@@ -181,6 +183,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			RelativeLayout relMyList = view.findViewById(R.id.myLists);
 			signOutBtn = view.findViewById(R.id.signOutBtn);
 			myDetailBtn = view.findViewById(R.id.rlMyDetails);
+			myPreferences = view.findViewById(R.id.rlMyPreferences);
 			viewPager = view.findViewById(R.id.pager);
 			pager_indicator = view.findViewById(R.id.viewPagerCountDots);
 			sc_available_funds = view.findViewById(R.id.sc_available_funds);
@@ -217,6 +220,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			view.findViewById(R.id.loginAccount).setOnClickListener(this.btnSignin_onClick);
 			view.findViewById(R.id.registerAccount).setOnClickListener(this.btnRegister_onClick);
 			view.findViewById(R.id.llUnlinkedAccount).setOnClickListener(this.btnLinkAccounts_onClick);
+			myPreferences.setOnClickListener(this);
 
 			view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
 				@Override
@@ -411,6 +415,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			//initials of the logged in user will be displayed on the page
 			showView(signOutBtn);
 			showView(myDetailBtn);
+			showView(myPreferences);
 			showView(loginUserOptionsLayout);
 
 			if (SessionUtilities.getInstance().isC2User())
@@ -438,6 +443,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		hideView(allUserOptionsLayout);
 		hideView(unlinkedLayout);
 		hideView(loginUserOptionsLayout);
+		hideView(myPreferences);
 	}
 
 	private void setUiPageViewController() {
@@ -540,6 +546,10 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 					shoppingListFragment.setArguments(bundle);
 					pushFragment(shoppingListFragment);
 				}
+				break;
+			case R.id.rlMyPreferences:
+				startActivity(new Intent(getActivity(), MyPreferencesActivity.class));
+				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				break;
 			default:
 				break;
