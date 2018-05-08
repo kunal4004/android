@@ -872,19 +872,4 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		removeCartItem.execute();
 	}
 
-	private void setSuburbRequest(final Province province, final Suburb suburb) {
-		setDeliveryLocationSuburb = new SetDeliveryLocationSuburb(suburb.id, new OnEventListener() {
-			@Override
-			public void onSuccess(Object object) {
-				Log.i("SuburbSelectionFragment", "setSuburb Succeeded");
-				//handleSetSuburbResponse((SetDeliveryLocationSuburbResponse) object, province, suburb);
-			}
-
-			@Override
-			public void onFailure(final String errorMessage) {
-
-			}
-		});
-		setDeliveryLocationSuburb.execute();
-	}
 }
