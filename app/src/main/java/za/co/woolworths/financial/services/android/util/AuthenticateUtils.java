@@ -102,7 +102,7 @@ public class AuthenticateUtils {
 	}
 
 	public boolean isBiometricAuthenticationRequired(){
-		return isAuthenticationEnabled() && isBiometricsEnabledForCurrentSession();
+		return isAuthenticationEnabled() && isBiometricsEnabledForCurrentSession() && isAppSupportsAuthentication();
 	}
 
 	public boolean isAppSupportsAuthentication(){

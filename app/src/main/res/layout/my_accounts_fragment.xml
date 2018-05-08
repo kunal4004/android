@@ -253,7 +253,7 @@
 
                                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                                     style="@style/accountsItem"
-                                    android:drawableLeft="@drawable/signout_24_copy"
+                                    android:drawableLeft="@drawable/ic_store_locator"
                                     android:text="@string/store_locator"/>
 
                                 <ImageView
@@ -312,7 +312,7 @@
 
                         <za.co.woolworths.financial.services.android.ui.views.WTextView
                             style="@style/accountsItem"
-                            android:drawableLeft="@drawable/signout_24_copy_3"
+                            android:drawableLeft="@drawable/ic_my_details"
                             android:text="@string/acc_my_detail"/>
 
                         <ImageView

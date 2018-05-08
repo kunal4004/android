@@ -13,6 +13,7 @@ import android.widget.Switch;
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -54,10 +55,10 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 
 	public void bindDateWithUI() {
 		if (AuthenticateUtils.getInstance(MyPreferencesActivity.this).isAppSupportsAuthentication()) {
-			biometricsLayout.setVisibility(View.VISIBLE);
 			authenticateSwitch.setChecked(AuthenticateUtils.getInstance(MyPreferencesActivity.this).isAuthenticationEnabled());
 		} else {
-			biometricsLayout.setVisibility(View.GONE);
+			authenticateSwitch.setClickable(false);
+			authenticateSwitch.setEnabled(false);
 		}
 	}
 
@@ -78,6 +79,9 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 		switch (requestCode) {
 			case LOCK_REQUEST_CODE_TO_ENABLE:
 				setUserAuthentication(resultCode == RESULT_OK ? true : false);
+				if(resultCode == RESULT_OK){
+					AuthenticateUtils.getInstance(MyPreferencesActivity.this).enableBiometricForCurrentSession(false);
+				}
 				break;
 			case LOCK_REQUEST_CODE_TO_DISABLE:
 				setUserAuthentication(resultCode == RESULT_OK ? false : true);

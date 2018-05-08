@@ -647,4 +647,6 @@
     <string name="shopping_list">shopping list</string>
     <string name="acc_my_preferences">My Preferences</string>
     <string name="authenticate_with_touch_id">Authenticate with Touch ID</string>
+    <string name="biometrics_authentication">BIOMETRICS AUTHENTICATION</string>
+    <string name="biometrics_description">Biometrics Authentication allows you to easily login into the Woolworths app by using your devices fingerprint reader.</string>
 </resources>
