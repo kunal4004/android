@@ -501,7 +501,6 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 		return productLoadFail;
 	}
 
-
 	protected GetCartSummary getCartSummary() {
 		setAddedToCart(true);
 		getNavigator().onAddToCartLoad();

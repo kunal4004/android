@@ -35,6 +35,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 
 import io.reactivex.functions.Consumer;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
@@ -883,6 +884,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void updateCartSummaryCount(CartSummary cartSummary) {
+		if (cartSummary == null) return;
+		Utils.saveToSQLlite(SessionDao.KEY.CART_SUMMARY_INFO, Utils.toJson(cartSummary));
 		addBadge(INDEX_CART, cartSummary.totalItemsCount);
 	}
 

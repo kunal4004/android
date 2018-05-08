@@ -34,6 +34,7 @@ import com.awfs.coordination.databinding.ProductDetailViewBinding;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -56,9 +57,11 @@ import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
 import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
+import za.co.woolworths.financial.services.android.models.dto.SkuInventory;
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.Suburb;
+import za.co.woolworths.financial.services.android.models.dto.SuburbFulfillment;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
@@ -860,7 +863,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		getGlobalState().setSizePickerSku(null);
 		CancelableCallback.cancelAll();
 		cancelRequest(mLocationItemTask);
-		cancelRequest(mGetCartSummary);
 		cancelRequest(mPostAddItemToCart);
 		cancelRequest(mSuburbLocation);
 	}
@@ -1116,11 +1118,29 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 					openAddToListFragment(activity);
 					break;
 				default:
-					//sendBus(new ProductState(POST_ADD_ITEM_TO_CART, 1));
-					String fulFillmentType = getFulFillmentType();
-
+					/**
+					 * Make add to cart call for food type item
+					 */
+					if (getViewModel().getProductType().equalsIgnoreCase(FOOD_PRODUCT)
+							|| (getViewModel().otherSkuList().size() == 0)) {
+						sendBus(new ProductState(POST_ADD_ITEM_TO_CART, 1));
+						return;
+					}
+					makeInventoryCall(getGlobalState().getSelectedSKUId().sku);
 					break;
 			}
+		}
+	}
+
+	private void makeInventoryCall(String sku) {
+		String fulFillmentType = getFulFillmentType();
+		CartSummary cartSummary = getCartSummaryResponse();
+		SuburbFulfillment suburb = cartSummary.suburb;
+		JsonElement suburbFulfillment = suburb.fulfillmentStores;
+		JsonObject jsSuburbFulfillment = suburbFulfillment.getAsJsonObject();
+		if (jsSuburbFulfillment.has(fulFillmentType)) {
+			String storeId = jsSuburbFulfillment.get(fulFillmentType).toString();
+			executeGetInventoryForStore(storeId, sku);
 		}
 	}
 
@@ -1134,6 +1154,22 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		mIntent.putExtra(ConfirmColorSizeActivity.FULFILLMENT_STORE, getFulfillmentStores());
 		mIntent.putExtra(ConfirmColorSizeActivity.FULFILLMENT_TYPE, getFulfillmentStores());
 		mIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, "");
+		mIntent.putExtra("PRODUCT_NAME", getViewModel().getDefaultProduct().productName);
+		startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
+		getBaseActivity().overridePendingTransition(0, 0);
+	}
+
+	public void colorSizePicker(ArrayList<OtherSkus> otherSkusList, boolean colorIsSelected, boolean sizeIsSelected, OtherSkus selectedSku) {
+		getGlobalState().setColourSKUArrayList(otherSkusList);
+		Intent mIntent = new Intent(getBaseActivity(), ConfirmColorSizeActivity.class);
+		mIntent.putExtra("COLOR_LIST", toJson(otherSkusList));
+		mIntent.putExtra("OTHERSKU", toJson(getViewModel().otherSkuList()));
+		mIntent.putExtra(ConfirmColorSizeActivity.COLOR_PICKER_SELECTOR, colorIsSelected);
+		mIntent.putExtra(ConfirmColorSizeActivity.SIZE_PICKER_SELECTOR, sizeIsSelected);
+		mIntent.putExtra(ConfirmColorSizeActivity.FULFILLMENT_STORE, getFulfillmentStores());
+		mIntent.putExtra(ConfirmColorSizeActivity.FULFILLMENT_TYPE, getFulfillmentStores());
+		mIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, "");
+		mIntent.putExtra(ConfirmColorSizeActivity.SELECTED_SKU, selectedSku.sku);
 		mIntent.putExtra("PRODUCT_NAME", getViewModel().getDefaultProduct().productName);
 		startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
 		getBaseActivity().overridePendingTransition(0, 0);
@@ -1339,8 +1375,67 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	}
 
 	private void cartSummaryAPI() {
-		mGetCartSummary = getViewModel().getCartSummary();
-		mGetCartSummary.execute();
+		CartSummary cartSummary = getCartSummaryResponse();
+		Activity activity = getActivity();
+		if (activity != null) {
+			if (cartSummary != null) {
+				if (!TextUtils.isEmpty(cartSummary.provinceName)) {
+					String suburbId = String.valueOf(cartSummary.suburbId);
+					Province province = new Province();
+					province.name = cartSummary.provinceName;
+					province.id = suburbId;
+					Suburb suburb = new Suburb();
+					suburb.name = cartSummary.suburbName;
+					suburb.id = suburbId;
+					Utils.saveRecentDeliveryLocation(new DeliveryLocationHistory(province, suburb), activity);
+					// show pop up message after login
+					if (activate_location_popup) {
+						Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.DETERMINE_LOCATION_POPUP, DETERMINE_LOCATION_POPUP);
+						activate_location_popup = false;
+						return;
+					}
+
+					// Convert fulfillment object to string
+					JsonElement jsonElementStores = cartSummary.suburb.fulfillmentStores;
+					if (!jsonElementStores.isJsonNull()) {
+						setFulFillMentStore(jsonElementStores.toString());
+						//getFulfillmentProductStore(jsonElementStores);
+					}
+					//user has a valid sessionToken and a delivery location is set.
+
+					/***
+					 * Determine whether to display colour size box
+					 * if product type is of type clothing or otherSkuList size is greater than 0
+					 * size > 0 product i.e. perfume productType of type food but sku can be > 0
+					 * next step become colour/size process
+					 * else run through food step
+					 */
+					if (getViewModel().getProductType() != null) {
+						smoothScrollToTop();
+						if (getViewModel().getProductType().equalsIgnoreCase(CLOTHING_PRODUCT) || getViewModel().otherSkuList().size() > 0) {
+							onAddToCartLoadComplete();
+							onPermissionGranted();
+						} else {
+							onAddToCartLoadComplete();
+							Intent editQuantityIntent = new Intent(activity, ConfirmColorSizeActivity.class);
+							editQuantityIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, ConfirmColorSizeActivity.QUANTITY);
+							activity.startActivity(editQuantityIntent);
+							activity.overridePendingTransition(0, 0);
+						}
+					}
+				} else {
+					//If the user does not have a suburb id & name stored, the set location from region and suburb process is followed
+					onAddToCartLoadComplete();
+					deliverySelectionIntent(activity);
+				}
+			}
+		}
+	}
+
+	private CartSummary getCartSummaryResponse() {
+		String cartSummaryInfo = Utils.getSQLliteValue(SessionDao.KEY.CART_SUMMARY_INFO);
+		Gson gson = new Gson();
+		return gson.fromJson(cartSummaryInfo, CartSummary.class);
 	}
 
 	@Override
@@ -1360,6 +1455,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	@Override
 	public void onCartSummarySuccess(CartSummaryResponse cartSummaryResponse) {
 		Activity activity = getBaseActivity();
+
 		if (activity != null) {
 			if (cartSummaryResponse.data != null) {
 				CartSummary cartSummary = cartSummaryResponse.data.get(0);
@@ -1469,6 +1565,12 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 						Activity activity = getBaseActivity();
 						if (activity != null) {
 							if (formException.message.toLowerCase().contains(getString(R.string.out_of_stock_err))) {
+								if (getViewModel().getProductType().equalsIgnoreCase(CLOTHING_PRODUCT) ||
+										getViewModel().otherSkuList().size() > 0) {
+									onAddToCartLoadComplete();
+									colorSizePicker(mSkuColorList, false, true, getGlobalState().getSelectedSKUId());
+									return;
+								}
 								Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC, getString(R.string.out_of_stock), getString(R.string.out_of_stock_desc));
 								return;
 							}
@@ -1540,16 +1642,13 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	public void getInventoryForStoreSuccess(SkusInventoryForStoreResponse skusInventoryForStoreResponse) {
 		switch (skusInventoryForStoreResponse.httpCode) {
 			case 200:
-//			List<SkuInventory> skuInventory=	skusInventoryForStoreResponse.skuInventory;
-//						for (SkuInventory skuInventory : skusInventoryForStoreResponse.skuInventory) {
-////
-////							for (OtherSkus otherSkus : mOtherSKUList) {
-////								if (skuInventory.sku.equalsIgnoreCase(otherSkus.sku)) {
-////									otherSkus.quantity = skuInventory.quantity;
-////								}
-////							}
-//						}
-////						setSizeAdapter(mOtherSKUList);
+				List<SkuInventory> skuInventory = skusInventoryForStoreResponse.skuInventory;
+				if (skuInventory.size() == 0) {
+					onAddToCartLoadComplete();
+					colorSizePicker(mSkuColorList, false, true, getGlobalState().getSelectedSKUId());
+					return;
+				}
+				sendBus(new ProductState(POST_ADD_ITEM_TO_CART, 1));
 				break;
 			case 440:
 				break;

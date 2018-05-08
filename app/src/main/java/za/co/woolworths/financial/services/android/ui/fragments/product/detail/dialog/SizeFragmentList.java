@@ -2,9 +2,11 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.detail.
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -26,6 +28,7 @@ import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSiz
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CustomSizePickerAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.StockFinderSizeColorAdapter;
+import za.co.woolworths.financial.services.android.util.CenterLayoutManager;
 import za.co.woolworths.financial.services.android.util.ColorInterface;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
@@ -37,7 +40,7 @@ public class SizeFragmentList extends Fragment implements StockFinderSizeColorAd
 	private WStockFinderActivity.RecyclerItemSelected mRecyclerItemSelected;
 	private RecyclerView mSizeRecycleView;
 	private SizeFragmentList mContext;
-	private CustomSizePickerAdapter stockFinderSizeColorAdapter;
+	private CustomSizePickerAdapter mStockFinderSizeColorAdapter;
 	private ArrayList<OtherSkus> mOtherSKUList;
 	private boolean mShouldShowPrice;
 	private GetInventorySkusForStore mGetInventorySkusForStore;
@@ -165,12 +168,36 @@ public class SizeFragmentList extends Fragment implements StockFinderSizeColorAd
 	}
 
 	private void setSizeAdapter(ArrayList<OtherSkus> otherSkuList) {
-		mSizeRecycleView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-		stockFinderSizeColorAdapter = new CustomSizePickerAdapter(otherSkuList, mContext, mShouldShowPrice);
-		mSizeRecycleView.setAdapter(stockFinderSizeColorAdapter);
-		mSizeRecycleView.scrollToPosition(0);
-		if (stockFinderSizeColorAdapter != null)
-			stockFinderSizeColorAdapter.notifyDataSetChanged();
+		Activity activity = getActivity();
+		if (activity != null) {
+			mSizeRecycleView.setLayoutManager(new CenterLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+			RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(activity) {
+				@Override
+				protected int getVerticalSnapPreference() {
+					return LinearSmoothScroller.SNAP_TO_START;
+				}
+			};
+			mStockFinderSizeColorAdapter = new CustomSizePickerAdapter(otherSkuList, mContext, mShouldShowPrice);
+			mSizeRecycleView.setAdapter(mStockFinderSizeColorAdapter);
+			mSizeRecycleView.scrollToPosition(0);
+			if (mStockFinderSizeColorAdapter != null)
+				mStockFinderSizeColorAdapter.notifyDataSetChanged();
+			/***
+			 * Item out of stock
+			 * auto-scroll to out of stock product position in recyclerview
+			 */
+			ConfirmColorSizeActivity confirmColorSizeActivity = (ConfirmColorSizeActivity) activity;
+			mStockFinderSizeColorAdapter.getItemCount();
+			String selectedSku = confirmColorSizeActivity.getSelectedSku();
+			if (TextUtils.isEmpty(selectedSku)) return;
+			final int position = mStockFinderSizeColorAdapter.getPositionBySkuId(selectedSku);
+			new Handler().postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					mSizeRecycleView.smoothScrollToPosition(position);
+				}
+			}, 200);
+		}
 	}
 
 	public ArrayList<OtherSkus> getOtherSKUList() {

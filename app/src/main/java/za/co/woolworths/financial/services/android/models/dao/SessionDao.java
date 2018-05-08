@@ -36,6 +36,7 @@ public class SessionDao extends BaseDao {
 		CLI_SLIDE_EDIT_AMOUNT_TOOLTIP("CLI_SLIDE_EDIT_AMOUNT_TOOLTIP"),
 		DEVICE_ID("DEVICE_ID"),
 		DELIVERY_LOCATION_HISTORY("DELIVERY_LOCATION_HISTORY"),
+		CART_SUMMARY_INFO("CART_SUMMARY_INFO"),
 		PRODUCT_IS_ACTIVE("PRODUCT_IS_ACTIVE"),
 		ACCOUNT_AUTHENTICATION_STATE("ACCOUNT_AUTHENTICATION_STATE"),
 		SESSION_STATE("SESSION_STATE"),
@@ -55,7 +56,7 @@ public class SessionDao extends BaseDao {
 		}
 	}
 
-	public enum SESSION_STATE{
+	public enum SESSION_STATE {
 		ACTIVE(1),
 		INACTIVE(0);
 		/**
@@ -69,7 +70,7 @@ public class SessionDao extends BaseDao {
 	}
 
 
-	public SessionDao(String id, KEY key, String value, String dateCreated, String dateUpdated){
+	public SessionDao(String id, KEY key, String value, String dateCreated, String dateUpdated) {
 		super();
 
 		this.id = id;
@@ -116,7 +117,7 @@ public class SessionDao extends BaseDao {
 			}
 
 			sessionDao = new SessionDao(id, key, value, dateCreated, dateUpdated);
-		}catch (Exception e){
+		} catch (Exception e) {
 
 			Log.d("", "Unable to retrieve entry for " + key.toString());
 

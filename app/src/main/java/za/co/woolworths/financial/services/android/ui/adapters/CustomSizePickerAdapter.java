@@ -26,6 +26,7 @@ public class CustomSizePickerAdapter extends RecyclerView.Adapter<CustomSizePick
 
 	private boolean mShowPrice;
 
+
 	public interface RecyclerViewClickListener {
 		void recyclerViewListClicked(View v, int position);
 	}
@@ -110,5 +111,20 @@ public class CustomSizePickerAdapter extends RecyclerView.Adapter<CustomSizePick
 	 */
 	private boolean shouldShowPrice() {
 		return mShowPrice;
+	}
+
+	public ArrayList<OtherSkus> getOtherSKu() {
+		return mOtherSKu;
+	}
+
+	public int getPositionBySkuId(String selectedSku) {
+		int index = 0;
+		for (OtherSkus otherSkus : mOtherSKu) {
+			if (otherSkus.sku.equalsIgnoreCase(selectedSku)) {
+				return index;
+			}
+			index++;
+		}
+		return index;
 	}
 }

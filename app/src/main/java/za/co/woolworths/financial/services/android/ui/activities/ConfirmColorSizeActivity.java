@@ -56,6 +56,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 	public static final String FULFILLMENT_TYPE = "FULFILLMENT_TYPE";
 
 	public static final int RESULT_TAP_FIND_INSTORE_BTN = 1001;
+	public static final String SELECTED_SKU = "SELECTED_SKU";
 
 	public final String SELECTED_COLOUR = "SELECTED_COLOUR";
 	public final String COLOR_LIST = "COLOR_LIST";
@@ -82,6 +83,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 	private String mFulFillmentStore;
 	private String mFulFillmentType;
 	private String fulFillMentStoreId;
+	private String mSelectedSku;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +100,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 			mFulFillmentStore = mBundle.getString(FULFILLMENT_STORE);
 			mFulFillmentType = mBundle.getString(FULFILLMENT_TYPE);
 			mColorList = mBundle.getString(COLOR_LIST);
+			mSelectedSku = mBundle.getString(SELECTED_SKU);
 			mOtherSKU = mBundle.getString(OTHERSKU);
 			mProductHasColor = mBundle.getBoolean(PRODUCT_HAS_COLOR);
 			mProductHasSize = mBundle.getBoolean(PRODUCT_HAS_SIZE);
@@ -617,5 +620,9 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 	private WGlobalState getGlobalState() {
 		WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
 		return (woolworthsApplication == null) ? null : woolworthsApplication.getWGlobalState();
+	}
+
+	public String getSelectedSku() {
+		return TextUtils.isEmpty(mSelectedSku) ? "" : mSelectedSku;
 	}
 }

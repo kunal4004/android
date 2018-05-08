@@ -77,6 +77,7 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
+import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
@@ -271,7 +272,7 @@ public class Utils {
 		}
 	}
 
-	public static void updateStatusBarBackground(Activity activity, int color,boolean enableDecor) {
+	public static void updateStatusBarBackground(Activity activity, int color, boolean enableDecor) {
 		Window window = activity.getWindow();
 
 		View decor = activity.getWindow().getDecorView();
@@ -1135,6 +1136,7 @@ public class Utils {
 		try {
 			Utils.sendBus(new BadgeState(CART_COUNT_TEMP, 0));
 			Utils.removeFromDb(SessionDao.KEY.DELIVERY_LOCATION_HISTORY, context);
+			Utils.removeFromDb(SessionDao.KEY.CART_SUMMARY_INFO, context);
 			Utils.removeFromDb(SessionDao.KEY.STORES_USER_SEARCH, context);
 			Utils.removeFromDb(SessionDao.KEY.STORES_USER_LAST_LOCATION, context);
 		} catch (Exception e) {
@@ -1162,5 +1164,37 @@ public class Utils {
 
 	public static String getExternalImageRef() {
 		return "https://images.woolworthsstatic.co.za/";
+	}
+
+
+	public static void saveToSQLlite(SessionDao.KEY key, String value) {
+		if (TextUtils.isEmpty(value)) return;
+
+		try {
+			SessionDao sessionDao = SessionDao.getByKey(key);
+			sessionDao.value = value;
+			try {
+				sessionDao.save();
+			} catch (Exception e) {
+				Log.e("TAG", e.getMessage());
+			}
+		} catch (Exception e) {
+			Log.e("exception", String.valueOf(e));
+		}
+	}
+
+	public static String getSQLliteValue(SessionDao.KEY key) {
+		SessionDao sessionDao = null;
+		try {
+			sessionDao = SessionDao.getByKey(key);
+		} catch (Exception e) {
+			Log.e("TAG", e.getMessage());
+		}
+		return sessionDao.value;
+	}
+
+	public static Object jsonStringToObject(String value, Class cl) {
+		if (TextUtils.isEmpty(value)) return null;
+		return new Gson().fromJson(value, cl);// json to Model
 	}
 }
