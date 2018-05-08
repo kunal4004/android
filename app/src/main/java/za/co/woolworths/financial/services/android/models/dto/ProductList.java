@@ -42,4 +42,5 @@ public class ProductList {
 	public boolean itemWasChecked;
 	public boolean viewIsLoading;
 	public String displayColorSizeText;
+	public String fulfillmentType;
 }

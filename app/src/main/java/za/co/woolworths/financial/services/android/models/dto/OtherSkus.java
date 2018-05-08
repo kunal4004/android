@@ -36,4 +36,5 @@ public class OtherSkus {
 	@SerializedName("wasPrice")
 	@Expose
 	public String wasPrice;
+	public int quantity;
 }
