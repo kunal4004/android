@@ -43,8 +43,10 @@ public class EditQuantityFragmentList extends Fragment implements ColorInterface
 		}
 	}
 
+
 	@Override
-	public void onUpdate(ArrayList<OtherSkus> otherSkuList, String viewType) {
+	public void onUpdate(ArrayList<OtherSkus> otherSkuList, String viewType, boolean shouldShowPrice) {
+
 	}
 
 	@Override

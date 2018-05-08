@@ -21,7 +21,6 @@ import za.co.woolworths.financial.services.android.ui.activities.WStockFinderAct
 import za.co.woolworths.financial.services.android.ui.adapters.StockFinderSizeColorAdapter;
 import za.co.woolworths.financial.services.android.util.ColorInterface;
 
-
 public class ColorFragmentList extends Fragment implements StockFinderSizeColorAdapter.RecyclerViewClickListener, ColorInterface {
 
 	private WStockFinderActivity.RecyclerItemSelected mRecyclerItemSelected;
@@ -56,8 +55,9 @@ public class ColorFragmentList extends Fragment implements StockFinderSizeColorA
 		mRecyclerItemSelected.onRecyclerItemClick(v, position, ColorFragmentList.this.getActivity().getResources().getString(R.string.color));
 	}
 
+
 	@Override
-	public void onUpdate(final ArrayList<OtherSkus> otherSkuList, final String viewType) {
+	public void onUpdate(ArrayList<OtherSkus> otherSkuList, String viewType, boolean shouldShowPrice) {
 
 	}
 
