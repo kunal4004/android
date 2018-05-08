@@ -77,6 +77,7 @@ import static za.co.woolworths.financial.services.android.models.service.event.B
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.REWARD_COUNT;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.OPEN_GET_LIST_SCREEN;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SHOW_ADDED_TO_SHOPPING_LIST_TOAST;
+import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.RESULT_TAP_FIND_INSTORE_BTN;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_ADD_TO_SHOPPING_LIST;
 
@@ -825,6 +826,13 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					fragment.onActivityResult(requestCode, resultCode, data);
 				}
 				break;
+		}
+
+		//Call product detail onActivityResult
+		if (resultCode == RESULT_TAP_FIND_INSTORE_BTN) {
+			if (getBottomFragmentById() instanceof ProductDetailFragment) {
+				getBottomFragmentById().onActivityResult(requestCode, resultCode, null);
+			}
 		}
 	}
 
