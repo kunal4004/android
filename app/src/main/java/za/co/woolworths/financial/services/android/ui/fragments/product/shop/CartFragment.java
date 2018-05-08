@@ -781,8 +781,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			// set delivery location
 			if (!TextUtils.isEmpty(data.suburbName) && !TextUtils.isEmpty(data.provinceName)) {
 				Activity activity = getActivity();
-				//mSuburbName = data.suburbName;
-				//mProvinceName = data.provinceName;
+				mSuburbName = data.suburbName;
+				mProvinceName = data.provinceName;
 				if (activity != null) {
 					String suburbId = String.valueOf(data.suburbId);
 					Province province = new Province();
@@ -792,6 +792,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					suburb.name = data.suburbName;
 					suburb.id = suburbId;
 					Utils.saveRecentDeliveryLocation(new DeliveryLocationHistory(province, suburb), activity);
+					tvDeliveryLocation.setText(mSuburbName + ", " + mProvinceName);
 				}
 			}
 
