@@ -103,11 +103,11 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 				CommerceItemInfo commerceItemInfo;
 				if (commerceItem == null) return;
 				commerceItemInfo = commerceItem.commerceItemInfo;
-				productHolder.tvTitle.setText(commerceItemInfo.getProductDisplayName());
+				productHolder.tvTitle.setText((commerceItemInfo == null) ? "" : commerceItemInfo.getProductDisplayName());
 				Utils.truncateMaxLine(productHolder.tvTitle);
-				productHolder.quantity.setText(String.valueOf(commerceItemInfo.getQuantity()));
+				productHolder.quantity.setText((commerceItemInfo == null) ? "" :String.valueOf(commerceItemInfo.getQuantity()));
 				productHolder.price.setText(WFormatter.formatAmount(commerceItem.getPriceInfo().getAmount()));
-				productImage(productHolder.productImage, commerceItemInfo.externalImageURL);
+				productImage(productHolder.productImage, (commerceItemInfo == null) ? "" :commerceItemInfo.externalImageURL);
 				productHolder.btnDeleteRow.setVisibility(this.editMode ? View.VISIBLE : View.GONE);
 				productHolder.rlDeleteButton.setVisibility(this.editMode ? View.VISIBLE : View.GONE);
 				onRemoveSingleItem(productHolder, commerceItem);
@@ -143,14 +143,15 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 				if (itemRow.category.equalsIgnoreCase("FOOD")) {
 					productHolder.tvColorSize.setVisibility(View.INVISIBLE);
 				} else {
-					String sizeColor = commerceItemInfo.getColor();
+					String sizeColor = (commerceItemInfo == null) ? "" :commerceItemInfo.getColor();
 					if (sizeColor == null)
 						sizeColor = "";
-					if (sizeColor.isEmpty() && !commerceItemInfo.getSize().isEmpty() && !commerceItemInfo.getSize().equalsIgnoreCase("NO SZ"))
-						sizeColor = commerceItemInfo.getSize();
-					else if (!sizeColor.isEmpty() && !commerceItemInfo.getSize().isEmpty() && !commerceItemInfo.getSize().equalsIgnoreCase("NO SZ"))
-						sizeColor = sizeColor + ", " + commerceItemInfo.getSize();
-
+					if (commerceItemInfo!=null) {
+						if (sizeColor.isEmpty() && !commerceItemInfo.getSize().isEmpty() && !commerceItemInfo.getSize().equalsIgnoreCase("NO SZ"))
+							sizeColor = commerceItemInfo.getSize();
+						else if (!sizeColor.isEmpty() && !commerceItemInfo.getSize().isEmpty() && !commerceItemInfo.getSize().equalsIgnoreCase("NO SZ"))
+							sizeColor = sizeColor + ", " + commerceItemInfo.getSize();
+					}
 					productHolder.tvColorSize.setText(sizeColor);
 					productHolder.tvColorSize.setVisibility(View.VISIBLE);
 				}
