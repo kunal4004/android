@@ -549,7 +549,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 				break;
 			case R.id.rlMyPreferences:
 				startActivity(new Intent(getActivity(), MyPreferencesActivity.class));
-				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+				getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
 				break;
 			default:
 				break;

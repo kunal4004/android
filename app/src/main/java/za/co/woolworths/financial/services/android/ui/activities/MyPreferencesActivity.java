@@ -1,19 +1,19 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.content.Intent;
+import android.provider.Settings;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -23,7 +23,8 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 	private Switch authenticateSwitch;
 	private static final int LOCK_REQUEST_CODE_TO_ENABLE = 222;
 	private static final int LOCK_REQUEST_CODE_TO_DISABLE = 333;
-	private RelativeLayout biometricsLayout;
+	private static final int SECURITY_SETTING_REQUEST_CODE = 232;
+	private LinearLayout biometricsLayout;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +33,7 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 		setContentView(R.layout.my_preferences_activity);
 		init();
 		setActionBar();
-		bindDateWithUI();
+		bindDataWithUI();
 	}
 
 	private void setActionBar() {
@@ -53,20 +54,27 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 		authenticateSwitch.setOnClickListener(this);
 	}
 
-	public void bindDateWithUI() {
+	public void bindDataWithUI() {
+
 		if (AuthenticateUtils.getInstance(MyPreferencesActivity.this).isAppSupportsAuthentication()) {
-			authenticateSwitch.setChecked(AuthenticateUtils.getInstance(MyPreferencesActivity.this).isAuthenticationEnabled());
+			if (AuthenticateUtils.getInstance(MyPreferencesActivity.this).isDeviceSecure())
+				authenticateSwitch.setChecked(AuthenticateUtils.getInstance(MyPreferencesActivity.this).isAuthenticationEnabled());
+			else
+				setUserAuthentication(false);
 		} else {
-			authenticateSwitch.setClickable(false);
-			authenticateSwitch.setEnabled(false);
+			biometricsLayout.setVerticalGravity(View.GONE);
 		}
+
 	}
 
 	@Override
 	public void onClick(View view) {
 		switch (view.getId()) {
 			case R.id.auSwitch:
-				startBiometricAuthentication(authenticateSwitch.isChecked() ? LOCK_REQUEST_CODE_TO_ENABLE : LOCK_REQUEST_CODE_TO_DISABLE);
+				if (AuthenticateUtils.getInstance(MyPreferencesActivity.this).isDeviceSecure())
+					startBiometricAuthentication(authenticateSwitch.isChecked() ? LOCK_REQUEST_CODE_TO_ENABLE : LOCK_REQUEST_CODE_TO_DISABLE);
+				else
+					openDeviceSecuritySettings();
 				break;
 			default:
 				break;
@@ -85,6 +93,13 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 				break;
 			case LOCK_REQUEST_CODE_TO_DISABLE:
 				setUserAuthentication(resultCode == RESULT_OK ? false : true);
+				break;
+			case SECURITY_SETTING_REQUEST_CODE:
+				if (AuthenticateUtils.getInstance(MyPreferencesActivity.this).isDeviceSecure()) {
+					startBiometricAuthentication(LOCK_REQUEST_CODE_TO_ENABLE);
+				} else {
+					setUserAuthentication(false);
+				}
 				break;
 		}
 	}
@@ -119,6 +134,21 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 
 	private void finishActivity() {
 		finish();
-		overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
+		overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
+	}
+
+	public void openDeviceSecuritySettings(){
+		try {
+			Intent intent = new Intent(Settings.ACTION_SECURITY_SETTINGS);
+			startActivityForResult(intent, SECURITY_SETTING_REQUEST_CODE);
+		} catch (Exception ex) {
+
+		}
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		bindDataWithUI();
 	}
 }

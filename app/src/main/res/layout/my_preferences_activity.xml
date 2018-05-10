@@ -50,70 +50,76 @@
         android:background="@color/white"
         android:orientation="vertical">
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:id="@+id/tvProofIncomeDocument"
-            style="@style/cli_permission_title_text"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/fourteen_dp"
-            android:layout_marginTop="@dimen/sixteen_dp"
-            android:text="@string/biometrics_authentication"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <View
-            android:id="@+id/vBottomLine"
-            style="@style/bottom_line"
-            android:layout_marginTop="@dimen/eight_dp"
-            app:layout_constraintTop_toBottomOf="@+id/tvProofIncomeDocument" />
-
-
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:id="@+id/tvDescription"
-            style="@style/take_photo_document_desc_style"
-            android:text="@string/biometrics_description"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/vBottomLine" />
-
-
-        <View
-            android:id="@+id/vBottomLineDescription"
-            style="@style/bottom_line"
-            android:layout_marginEnd="@dimen/twenty_four_dp"
-            android:layout_marginStart="@dimen/twenty_four_dp"
-            android:layout_marginTop="@dimen/twenty_two_dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvDescription" />
-
-        <RelativeLayout
+        <LinearLayout
             android:id="@+id/biometricsLayout"
             android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:visibility="visible">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/tvMyDetail"
-                android:layout_width="wrap_content"
+                android:id="@+id/tvProofIncomeDocument"
+                style="@style/cli_permission_title_text"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="24dp"
-                android:lineSpacingExtra="0.4sp"
-                android:text="@string/authenticate_with_touch_id"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                app:WTextView_font="myriadpro_regular" />
+                android:layout_marginBottom="@dimen/fourteen_dp"
+                android:layout_marginTop="@dimen/sixteen_dp"
+                android:text="@string/biometrics_authentication"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <Switch
-                android:id="@+id/auSwitch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="16dp"
-                android:theme="@style/SwitchTheme" />
-        </RelativeLayout>
+            <View
+                android:id="@+id/vBottomLine"
+                style="@style/bottom_line"
+                android:layout_marginTop="@dimen/eight_dp"
+                app:layout_constraintTop_toBottomOf="@+id/tvProofIncomeDocument" />
+
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/tvDescription"
+                style="@style/take_photo_document_desc_style"
+                android:text="@string/biometrics_description"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/vBottomLine" />
+
+
+            <View
+                android:id="@+id/vBottomLineDescription"
+                style="@style/bottom_line"
+                android:layout_marginEnd="@dimen/twenty_four_dp"
+                android:layout_marginStart="@dimen/twenty_four_dp"
+                android:layout_marginTop="@dimen/twenty_two_dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvDescription" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:visibility="visible">
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:id="@+id/tvMyDetail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="24dp"
+                    android:lineSpacingExtra="0.4sp"
+                    android:text="@string/authenticate_with_touch_id"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    app:WTextView_font="myriadpro_regular" />
+
+                <Switch
+                    android:id="@+id/auSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="16dp"
+                    android:theme="@style/SwitchTheme" />
+            </RelativeLayout>
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>

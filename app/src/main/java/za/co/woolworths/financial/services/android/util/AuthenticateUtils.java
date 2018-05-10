@@ -102,10 +102,10 @@ public class AuthenticateUtils {
 	}
 
 	public boolean isBiometricAuthenticationRequired(){
-		return isAuthenticationEnabled() && isBiometricsEnabledForCurrentSession() && isAppSupportsAuthentication();
+		return isAuthenticationEnabled() && isBiometricsEnabledForCurrentSession() && isDeviceSecure();
 	}
 
 	public boolean isAppSupportsAuthentication(){
-		return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) && isDeviceSecure() ;
+		return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) ;
 	}
 }
