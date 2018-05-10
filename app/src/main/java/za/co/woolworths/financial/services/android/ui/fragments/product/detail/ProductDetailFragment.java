@@ -208,6 +208,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 								break;
 
 							case SET_SUBURB:
+								onAddToCartLoadComplete();
 								deliverySelectionIntent(activity);
 								break;
 
@@ -216,10 +217,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 								break;
 
 							case SET_SUBURB_API:
-								if (deliveryLocationHistories != null) {
-									DeliveryLocationHistory deliveryLocationHistory = deliveryLocationHistories.get(0);
-									setSuburbAPI(deliveryLocationHistory);
-								}
+								cartSummaryAPI();
 								break;
 
 							case CANCEL_DIALOG_TAPPED:
@@ -865,6 +863,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		cancelRequest(mLocationItemTask);
 		cancelRequest(mPostAddItemToCart);
 		cancelRequest(mSuburbLocation);
+		cancelRequest(mGetCartSummary);
 	}
 
 	/*****************************
@@ -1376,6 +1375,10 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 	private void cartSummaryAPI() {
 		CartSummary cartSummary = getCartSummaryResponse();
+		if (cartSummary == null) {
+			executeCartSummary();
+			return;
+		}
 		Activity activity = getActivity();
 		if (activity != null) {
 			if (cartSummary != null) {
@@ -1390,11 +1393,11 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 					Utils.saveRecentDeliveryLocation(new DeliveryLocationHistory(province, suburb), activity);
 					// show pop up message after login
 					if (activate_location_popup) {
+						smoothScrollToTop();
 						Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.DETERMINE_LOCATION_POPUP, DETERMINE_LOCATION_POPUP);
 						activate_location_popup = false;
 						return;
 					}
-
 					// Convert fulfillment object to string
 					JsonElement jsonElementStores = cartSummary.suburb.fulfillmentStores;
 					if (!jsonElementStores.isJsonNull()) {
@@ -1430,6 +1433,11 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 				}
 			}
 		}
+	}
+
+	private void executeCartSummary() {
+		mGetCartSummary = getViewModel().getCartSummary();
+		mGetCartSummary.execute();
 	}
 
 	private CartSummary getCartSummaryResponse() {
@@ -1454,62 +1462,9 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 	@Override
 	public void onCartSummarySuccess(CartSummaryResponse cartSummaryResponse) {
-		Activity activity = getBaseActivity();
-
-		if (activity != null) {
-			if (cartSummaryResponse.data != null) {
-				CartSummary cartSummary = cartSummaryResponse.data.get(0);
-				if (!TextUtils.isEmpty(cartSummary.provinceName)) {
-					String suburbId = String.valueOf(cartSummary.suburbId);
-					Province province = new Province();
-					province.name = cartSummary.provinceName;
-					province.id = suburbId;
-					Suburb suburb = new Suburb();
-					suburb.name = cartSummary.suburbName;
-					suburb.id = suburbId;
-					Utils.saveRecentDeliveryLocation(new DeliveryLocationHistory(province, suburb), activity);
-					// show pop up message after login
-					if (activate_location_popup) {
-						Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.DETERMINE_LOCATION_POPUP, DETERMINE_LOCATION_POPUP);
-						activate_location_popup = false;
-						return;
-					}
-
-					// Convert fulfillment object to string
-					JsonElement jsonElementStores = cartSummary.suburb.fulfillmentStores;
-					if (!jsonElementStores.isJsonNull()) {
-						setFulFillMentStore(jsonElementStores.toString());
-						//getFulfillmentProductStore(jsonElementStores);
-					}
-					//user has a valid sessionToken and a delivery location is set.
-
-					/***
-					 * Determine whether to display colour size box
-					 * if product type is of type clothing or otherSkuList size is greater than 0
-					 * size > 0 product i.e. perfume productType of type food but sku can be > 0
-					 * next step become colour/size process
-					 * else run through food step
-					 */
-					if (getViewModel().getProductType() != null) {
-						smoothScrollToTop();
-						if (getViewModel().getProductType().equalsIgnoreCase(CLOTHING_PRODUCT) || getViewModel().otherSkuList().size() > 0) {
-							onAddToCartLoadComplete();
-							onPermissionGranted();
-						} else {
-							onAddToCartLoadComplete();
-							Intent editQuantityIntent = new Intent(activity, ConfirmColorSizeActivity.class);
-							editQuantityIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, ConfirmColorSizeActivity.QUANTITY);
-							activity.startActivity(editQuantityIntent);
-							activity.overridePendingTransition(0, 0);
-						}
-					}
-				} else {
-					//If the user does not have a suburb id & name stored, the set location from region and suburb process is followed
-					onAddToCartLoadComplete();
-					deliverySelectionIntent(activity);
-				}
-			}
-		}
+		if (cartSummaryResponse.data != null)
+			Utils.saveToSQLlite(SessionDao.KEY.CART_SUMMARY_INFO, Utils.toJson(cartSummaryResponse.data.get(0)));
+		cartSummaryAPI();
 
 	}
 
