@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.activities.dashboard;
 
+import android.app.Activity;
+
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
@@ -25,8 +27,8 @@ public class BottomNavigationViewModel extends BaseViewModel<BottomNavigator> {
 		super(schedulerProvider);
 	}
 
-	public GetCartSummary getCartSummary() {
-		return new GetCartSummary(new OnEventListener() {
+	public GetCartSummary getCartSummary(Activity activity) {
+		return new GetCartSummary(activity,new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
 				CartSummaryResponse cartSummaryResponse = (CartSummaryResponse) object;

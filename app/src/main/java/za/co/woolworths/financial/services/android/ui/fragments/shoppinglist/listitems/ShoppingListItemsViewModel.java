@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems;
 
+import android.app.Activity;
+
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
@@ -97,10 +99,10 @@ public class ShoppingListItemsViewModel extends BaseViewModel<ShoppingListItemsN
 	}
 
 
-	protected GetCartSummary getCartSummary() {
+	protected GetCartSummary getCartSummary(Activity activity) {
 		addedToCartFail(false);
 		getNavigator().onAddToCartLoad();
-		return new GetCartSummary(new OnEventListener() {
+		return new GetCartSummary(activity,new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
 				if (object != null) {

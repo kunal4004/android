@@ -501,10 +501,10 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 		return productLoadFail;
 	}
 
-	protected GetCartSummary getCartSummary() {
+	protected GetCartSummary getCartSummary(Activity activity) {
 		setAddedToCart(true);
 		getNavigator().onAddToCartLoad();
-		return new GetCartSummary(new OnEventListener() {
+		return new GetCartSummary(activity, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
 				if (object != null) {

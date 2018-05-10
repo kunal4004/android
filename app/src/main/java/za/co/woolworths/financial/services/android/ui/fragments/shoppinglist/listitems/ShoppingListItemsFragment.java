@@ -648,7 +648,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 
 	private void loadCartSummary() {
 		onAddToCartPreExecute();
-		mCartSummary = getViewModel().getCartSummary();
+		mCartSummary = getViewModel().getCartSummary(getActivity());
 		mCartSummary.execute();
 	}
 

@@ -1133,9 +1133,9 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 	private void makeInventoryCall(String sku) {
 		String fulFillmentType = getFulFillmentType();
-		CartSummary cartSummary = getCartSummaryResponse();
-		SuburbFulfillment suburb = cartSummary.suburb;
-		JsonElement suburbFulfillment = suburb.fulfillmentStores;
+		DeliveryLocationHistory cartSummary = getCartSummaryResponse();
+		JsonElement suburb = cartSummary.suburb.fulfillmentStores;
+		JsonElement suburbFulfillment = suburb;
 		JsonObject jsSuburbFulfillment = suburbFulfillment.getAsJsonObject();
 		if (jsSuburbFulfillment.has(fulFillmentType)) {
 			String storeId = jsSuburbFulfillment.get(fulFillmentType).toString();
@@ -1374,21 +1374,21 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	}
 
 	private void cartSummaryAPI() {
-		CartSummary cartSummary = getCartSummaryResponse();
-		if (cartSummary == null) {
+		DeliveryLocationHistory deliveryLocationHistory = getCartSummaryResponse();
+		if (deliveryLocationHistory == null) {
 			executeCartSummary();
 			return;
 		}
 		Activity activity = getActivity();
-		if (activity != null) {
-			if (cartSummary != null) {
-				if (!TextUtils.isEmpty(cartSummary.provinceName)) {
-					String suburbId = String.valueOf(cartSummary.suburbId);
+		if ((activity != null) && deliveryLocationHistory != null) {
+			if (deliveryLocationHistory.suburb != null) {
+				if (!TextUtils.isEmpty(deliveryLocationHistory.suburb.name)) {
+					String suburbId = String.valueOf(deliveryLocationHistory.suburb.id);
 					Province province = new Province();
-					province.name = cartSummary.provinceName;
+					province.name = deliveryLocationHistory.province.name;
 					province.id = suburbId;
 					Suburb suburb = new Suburb();
-					suburb.name = cartSummary.suburbName;
+					suburb.name = deliveryLocationHistory.suburb.name;
 					suburb.id = suburbId;
 					Utils.saveRecentDeliveryLocation(new DeliveryLocationHistory(province, suburb), activity);
 					// show pop up message after login
@@ -1399,7 +1399,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 						return;
 					}
 					// Convert fulfillment object to string
-					JsonElement jsonElementStores = cartSummary.suburb.fulfillmentStores;
+					JsonElement jsonElementStores = deliveryLocationHistory.suburb.fulfillmentStores;
 					if (!jsonElementStores.isJsonNull()) {
 						setFulFillMentStore(jsonElementStores.toString());
 						//getFulfillmentProductStore(jsonElementStores);
@@ -1436,14 +1436,12 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	}
 
 	private void executeCartSummary() {
-		mGetCartSummary = getViewModel().getCartSummary();
+		mGetCartSummary = getViewModel().getCartSummary(getActivity());
 		mGetCartSummary.execute();
 	}
 
-	private CartSummary getCartSummaryResponse() {
-		String cartSummaryInfo = Utils.getSQLliteValue(SessionDao.KEY.CART_SUMMARY_INFO);
-		Gson gson = new Gson();
-		return gson.fromJson(cartSummaryInfo, CartSummary.class);
+	private DeliveryLocationHistory getCartSummaryResponse() {
+		return Utils.getLastDeliveryLocation(getActivity());
 	}
 
 	@Override
@@ -1463,9 +1461,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	@Override
 	public void onCartSummarySuccess(CartSummaryResponse cartSummaryResponse) {
 		if (cartSummaryResponse.data != null)
-			Utils.saveToSQLlite(SessionDao.KEY.CART_SUMMARY_INFO, Utils.toJson(cartSummaryResponse.data.get(0)));
-		cartSummaryAPI();
-
+			cartSummaryAPI();
 	}
 
 	private void deliverySelectionIntent(Activity activity) {

@@ -686,7 +686,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void cartSummaryAPI() {
-		getViewModel().getCartSummary().execute();
+		getViewModel().getCartSummary(BottomNavigationActivity.this).execute();
 	}
 
 	@Override
@@ -852,7 +852,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void badgeCount() {
-		getViewModel().getCartSummary().execute();
+		getViewModel().getCartSummary(BottomNavigationActivity.this).execute();
 		getViewModel().getVoucherCount().execute();
 		getViewModel().getMessageResponse().execute();
 	}
@@ -885,7 +885,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	@Override
 	public void updateCartSummaryCount(CartSummary cartSummary) {
 		if (cartSummary == null) return;
-		Utils.saveToSQLlite(SessionDao.KEY.CART_SUMMARY_INFO, Utils.toJson(cartSummary));
 		addBadge(INDEX_CART, cartSummary.totalItemsCount);
 	}
 
