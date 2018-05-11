@@ -100,7 +100,6 @@ public class SuburbSelectionAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 			suburbViewHolder.suburbItemLayout.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					suburb.suburbDeliverable = true;
 					if (suburb.suburbDeliverable)
 						suburbSelectionCallback.onItemClick(suburb);
 				}
