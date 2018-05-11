@@ -1139,7 +1139,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		JsonElement suburb = cartSummary.suburb.fulfillmentStores;
 		JsonElement suburbFulfillment = suburb;
 		String storeId = retrieveStoreId(fulFillmentType, suburbFulfillment);
-		if (storeId == null) return;
+		if (TextUtils.isEmpty(storeId)) return;
 		executeGetInventoryForStore(storeId, sku);
 	}
 
@@ -1509,7 +1509,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 						if (activity != null) {
 							if (formException.message.toLowerCase().contains(getString(R.string.out_of_stock_err))) {
 								if (getViewModel().getProductType().equalsIgnoreCase(CLOTHING_PRODUCT) ||
-										getViewModel().otherSkuList().size() > 0) {
+										getViewModel().otherSkuList().size() > 1) {
 									onAddToCartLoadComplete();
 									colorSizePicker(mSkuColorList, false, true, getGlobalState().getSelectedSKUId());
 									return;
