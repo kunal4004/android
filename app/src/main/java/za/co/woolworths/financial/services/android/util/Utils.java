@@ -49,6 +49,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.reflect.TypeToken;
 import com.google.zxing.BarcodeFormat;
@@ -77,6 +78,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
+import okhttp3.internal.Util;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
@@ -1199,7 +1201,12 @@ public class Utils {
 	}
 
 	@Nullable
-	public static String retrieveStoreId(String fulFillmentType, JsonElement suburbFulfillment) {
+	public static String retrieveStoreId(String fulFillmentType, Context context) {
+
+		JsonParser parser = new JsonParser();
+		DeliveryLocationHistory deliveryLocationHistory = Utils.getLastDeliveryLocation(context);
+		JsonElement suburbFulfillment = parser.parse(Utils.toJson(deliveryLocationHistory.suburb.fulfillmentStores));
+
 		String storeId = "";
 		if (!suburbFulfillment.isJsonNull()) {
 			if (suburbFulfillment.isJsonArray()) {

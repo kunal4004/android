@@ -12,7 +12,6 @@ import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.google.gson.*;
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -49,7 +48,6 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 	public static final String ADD_TO_SHOPPING_LIST = "ADD_TO_SHOPPING_LIST";
 	public static final String SIZE_PICKER_SELECTOR = "SIZE_PICKER_SELECTOR";
 	public static final String COLOR_PICKER_SELECTOR = "COLOR_PICKER_SELECTOR";
-	public static final String FULFILLMENT_STORE = "FULFILLMENT_STORE";
 	public static final String FULFILLMENT_TYPE = "FULFILLMENT_TYPE";
 
 	public static final int RESULT_TAP_FIND_INSTORE_BTN = 1001;
@@ -77,9 +75,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 	private String mSelectPage;
 	private boolean mSizePickerSelector;
 	private boolean mColorPickerSelector;
-	private String mFulFillmentStore;
 	private String mFulFillmentType;
-	private String fulFillMentStoreId;
 	private String mSelectedSku;
 
 	@Override
@@ -94,7 +90,6 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 		if (mBundle != null) {
 			mSelectPage = mBundle.getString(SELECT_PAGE);
 			mSelectedColour = mBundle.getString(SELECTED_COLOUR);
-			mFulFillmentStore = mBundle.getString(FULFILLMENT_STORE);
 			mFulFillmentType = mBundle.getString(FULFILLMENT_TYPE);
 			mColorList = mBundle.getString(COLOR_LIST);
 			mSelectedSku = mBundle.getString(SELECTED_SKU);
@@ -104,8 +99,6 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 			mSizePickerSelector = mBundle.getBoolean(SIZE_PICKER_SELECTOR);
 			mColorPickerSelector = mBundle.getBoolean(COLOR_PICKER_SELECTOR);
 		}
-
-		setFulFillmentStoreId(mFulFillmentStore);
 
 		init();
 		addListener();
@@ -593,15 +586,8 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 		closeViewAnimation(CLOSE);
 	}
 
-	public void setFulFillmentStoreId(String jsonElementStores) {
-		if (TextUtils.isEmpty(jsonElementStores)) return;
-		JsonParser parser = new JsonParser();
-		JsonElement jsonElement = parser.parse(jsonElementStores);
-		this.fulFillMentStoreId = Utils.retrieveStoreId(mFulFillmentType, jsonElement);
-	}
-
 	public String getFulFillMentStoreId() {
-		return fulFillMentStoreId;
+		return Utils.retrieveStoreId(mFulFillmentType, ConfirmColorSizeActivity.this);
 	}
 
 	private WGlobalState getGlobalState() {

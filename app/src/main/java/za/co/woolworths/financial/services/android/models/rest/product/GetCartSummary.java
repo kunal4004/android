@@ -53,24 +53,28 @@ public class GetCartSummary extends HttpAsyncTask<String, String, CartSummaryRes
 				/***
 				 * Cache suburb response
 				 */
-				if (cartSummaryResponse != null) {
-					List<CartSummary> cartSummary = cartSummaryResponse.data;
-					if (cartSummary != null) {
-						DeliveryLocationHistory deliveryLocationHistory = Utils.getLastDeliveryLocation(mContext);
-						CartSummary cart = cartSummary.get(0);
-						if (deliveryLocationHistory == null) {
-							Province province = getProvince(cart);
-							Suburb suburb = getSuburb(cart);
-							Utils.saveRecentDeliveryLocation(new DeliveryLocationHistory(province, suburb), mContext);
-							return;
-						}
-						Province province = getProvince(cart);
-						if (deliveryLocationHistory.suburb.id.equalsIgnoreCase(String.valueOf(cart.suburbId)))
-							return;
-						Suburb cartSuburb = getSuburb(cart);
-						Utils.saveRecentDeliveryLocation(new DeliveryLocationHistory(province, cartSuburb), mContext);
-					}
+				cacheSuburbFromCartSummary(cartSummaryResponse);
+			}
+		}
+	}
+
+	private void cacheSuburbFromCartSummary(CartSummaryResponse cartSummaryResponse) {
+		if (cartSummaryResponse != null) {
+			List<CartSummary> cartSummary = cartSummaryResponse.data;
+			if (cartSummary != null) {
+				DeliveryLocationHistory deliveryLocationHistory = Utils.getLastDeliveryLocation(mContext);
+				CartSummary cart = cartSummary.get(0);
+				if (deliveryLocationHistory == null) {
+					Province province = getProvince(cart);
+					Suburb suburb = getSuburb(cart);
+					Utils.saveRecentDeliveryLocation(new DeliveryLocationHistory(province, suburb), mContext);
+					return;
 				}
+				Province province = getProvince(cart);
+				if (deliveryLocationHistory.suburb.id.equalsIgnoreCase(String.valueOf(cart.suburbId)))
+					return;
+				Suburb cartSuburb = getSuburb(cart);
+				Utils.saveRecentDeliveryLocation(new DeliveryLocationHistory(province, cartSuburb), mContext);
 			}
 		}
 	}

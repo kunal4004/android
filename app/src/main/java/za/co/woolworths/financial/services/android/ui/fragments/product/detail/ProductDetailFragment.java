@@ -33,9 +33,6 @@ import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.ProductDetailViewBinding;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,21 +45,17 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.AddToCartDaTum;
-import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
 import za.co.woolworths.financial.services.android.models.dto.FormException;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
-import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
 import za.co.woolworths.financial.services.android.models.dto.SkuInventory;
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
-import za.co.woolworths.financial.services.android.models.dto.Suburb;
-import za.co.woolworths.financial.services.android.models.dto.SuburbFulfillment;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
@@ -146,7 +139,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	private boolean activate_location_popup = false;
 	private ToastUtils mToastUtils;
 	private int mNumberOfListSelected = 0;
-	private String fulfillmentStores;
 	private GetInventorySkusForStore mGetInventorySkusForStore;
 
 	@Override
@@ -184,7 +176,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 			public void accept(Object object) throws Exception {
 				Activity activity = getActivity();
 				if (activity != null) {
-					List<DeliveryLocationHistory> deliveryLocationHistories = Utils.getDeliveryLocationHistory(activity);
 					if (object instanceof ProductDetailFragment) {
 						onPermissionGranted();
 					} else if (object instanceof ConfirmColorSizeActivity) {
@@ -1134,11 +1125,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	}
 
 	private void makeInventoryCall(String sku) {
-		String fulFillmentType = getFulFillmentType();
-		DeliveryLocationHistory cartSummary = getCartSummaryResponse();
-		JsonElement suburb = cartSummary.suburb.fulfillmentStores;
-		JsonElement suburbFulfillment = suburb;
-		String storeId = retrieveStoreId(fulFillmentType, suburbFulfillment);
+		String storeId = retrieveStoreId(getFulFillmentType(), getActivity());
 		if (TextUtils.isEmpty(storeId)) return;
 		executeGetInventoryForStore(storeId, sku);
 	}
@@ -1150,8 +1137,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		mIntent.putExtra("OTHERSKU", toJson(getViewModel().otherSkuList()));
 		mIntent.putExtra(ConfirmColorSizeActivity.COLOR_PICKER_SELECTOR, colorIsSelected);
 		mIntent.putExtra(ConfirmColorSizeActivity.SIZE_PICKER_SELECTOR, sizeIsSelected);
-		mIntent.putExtra(ConfirmColorSizeActivity.FULFILLMENT_STORE, getFulfillmentStores());
-		mIntent.putExtra(ConfirmColorSizeActivity.FULFILLMENT_TYPE, getFulfillmentStores());
+		mIntent.putExtra(ConfirmColorSizeActivity.FULFILLMENT_TYPE, getFulFillmentType());
 		mIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, "");
 		mIntent.putExtra("PRODUCT_NAME", getViewModel().getDefaultProduct().productName);
 		startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
@@ -1165,8 +1151,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		mIntent.putExtra("OTHERSKU", toJson(getViewModel().otherSkuList()));
 		mIntent.putExtra(ConfirmColorSizeActivity.COLOR_PICKER_SELECTOR, colorIsSelected);
 		mIntent.putExtra(ConfirmColorSizeActivity.SIZE_PICKER_SELECTOR, sizeIsSelected);
-		mIntent.putExtra(ConfirmColorSizeActivity.FULFILLMENT_STORE, getFulfillmentStores());
-		mIntent.putExtra(ConfirmColorSizeActivity.FULFILLMENT_TYPE, getFulfillmentStores());
+		mIntent.putExtra(ConfirmColorSizeActivity.FULFILLMENT_TYPE, getFulFillmentType());
 		mIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, "");
 		mIntent.putExtra(ConfirmColorSizeActivity.SELECTED_SKU, selectedSku.sku);
 		mIntent.putExtra("PRODUCT_NAME", getViewModel().getDefaultProduct().productName);
@@ -1181,7 +1166,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		mIntent.putExtra("OTHERSKU", toJson(getViewModel().otherSkuList()));
 		mIntent.putExtra("PRODUCT_HAS_COLOR", false);
 		mIntent.putExtra("PRODUCT_HAS_SIZE", true);
-		mIntent.putExtra(ConfirmColorSizeActivity.FULFILLMENT_STORE, getFulfillmentStores());
 		mIntent.putExtra(ConfirmColorSizeActivity.FULFILLMENT_TYPE, getFulFillmentType());
 		mIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, "");
 		mIntent.putExtra("PRODUCT_NAME", getViewModel().getDefaultProduct().productName);
@@ -1197,7 +1181,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		mIntent.putExtra("PRODUCT_HAS_COLOR", false);
 		mIntent.putExtra("PRODUCT_HAS_SIZE", true);
 		mIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, "");
-		mIntent.putExtra(ConfirmColorSizeActivity.FULFILLMENT_STORE, getFulfillmentStores());
 		mIntent.putExtra(ConfirmColorSizeActivity.FULFILLMENT_TYPE, getFulFillmentType());
 		mIntent.putExtra("PRODUCT_NAME", getViewModel().getDefaultProduct().productName);
 		startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
@@ -1212,7 +1195,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		mIntent.putExtra("PRODUCT_HAS_COLOR", true);
 		mIntent.putExtra("PRODUCT_HAS_SIZE", true);
 		mIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, "");
-		mIntent.putExtra(ConfirmColorSizeActivity.FULFILLMENT_STORE, getFulfillmentStores());
 		mIntent.putExtra(ConfirmColorSizeActivity.FULFILLMENT_TYPE, getFulFillmentType());
 		mIntent.putExtra("PRODUCT_NAME", getViewModel().getDefaultProduct().productName);
 		startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
@@ -1226,7 +1208,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		mIntent.putExtra("OTHERSKU", toJson(getViewModel().otherSkuList()));
 		mIntent.putExtra("PRODUCT_HAS_COLOR", true);
 		mIntent.putExtra("PRODUCT_HAS_SIZE", false);
-		mIntent.putExtra(ConfirmColorSizeActivity.FULFILLMENT_STORE, getFulfillmentStores());
 		mIntent.putExtra(ConfirmColorSizeActivity.FULFILLMENT_TYPE, getFulFillmentType());
 		mIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, "");
 		mIntent.putExtra("PRODUCT_NAME", getViewModel().getDefaultProduct().productName);
@@ -1390,13 +1371,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 						activate_location_popup = false;
 						return;
 					}
-					// Convert fulfillment object to string
-					JsonElement jsonElementStores = deliveryLocationHistory.suburb.fulfillmentStores;
-					if (!jsonElementStores.isJsonNull()) {
-						setFulFillMentStore(jsonElementStores.toString());
-						//getFulfillmentProductStore(jsonElementStores);
-					}
-					//user has a valid sessionToken and a delivery location is set.
 
 					/***
 					 * Determine whether to display colour size box
@@ -1664,14 +1638,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 	public void setHighestSizeText(OtherSkus otherSkus) {
 		getViewDataBinding().llColorSize.tvSelectedSizeValue.setText(otherSkus.size);
-	}
-
-	public void setFulFillMentStore(String fulfillmentStoreId) {
-		this.fulfillmentStores = fulfillmentStoreId;
-	}
-
-	public String getFulfillmentStores() {
-		return fulfillmentStores;
 	}
 
 	public String getFulFillmentType() {

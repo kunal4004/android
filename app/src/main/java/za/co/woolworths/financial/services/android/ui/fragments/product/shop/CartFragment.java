@@ -65,6 +65,7 @@ import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
+
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT_TEMP;
 import static za.co.woolworths.financial.services.android.models.service.event.CartState.CHANGE_QUANTITY;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_DIALOG_TAPPED;
@@ -764,9 +765,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				if (productsArray.length() > 0) {
 					ArrayList<CommerceItem> productList = new ArrayList<>();
 					for (int i = 0; i < productsArray.length(); i++) {
-						CommerceItem commerceItem =new CommerceItem();
-						commerceItem=new Gson().fromJson(String.valueOf(productsArray.getJSONObject(i)), CommerceItem.class);
-						commerceItem.fulfillmentStoreId=Utils.retrieveStoreId(commerceItem.fulfillmentType,data.orderSummary.suburb.fullfillmentStores);
+						CommerceItem commerceItem = new CommerceItem();
+						commerceItem = new Gson().fromJson(String.valueOf(productsArray.getJSONObject(i)), CommerceItem.class);
+						commerceItem.fulfillmentStoreId = Utils.retrieveStoreId(commerceItem.fulfillmentType, getActivity());
 						productList.add(commerceItem);
 					}
 					cartItemGroup.setCommerceItems(productList);
