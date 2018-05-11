@@ -1214,17 +1214,11 @@ public class Utils {
 				for (JsonElement fulfillmentElement : suburbFulfillmentArray) {
 					JsonObject fulfillmentObj = fulfillmentElement.getAsJsonObject();
 					JsonElement fulFillmentTypeId = fulfillmentObj.get("fulFillmentTypeId");
-					WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
-					if (woolworthsApplication != null) {
-						if (!fulFillmentTypeId.isJsonNull()) {
-							WGlobalState wGlobalState = woolworthsApplication.getWGlobalState();
-							if (wGlobalState.getSaveButtonClick() == INDEX_ADD_TO_CART) {
-								if (Integer.valueOf(fulFillmentTypeId.getAsString()) == Integer.valueOf(fulFillmentType)) {
-									JsonElement fulFillmentStoreId = fulfillmentObj.get("fulFillmentStoreId");
-									if (fulFillmentStoreId != null)
-										storeId = fulFillmentStoreId.toString();
-								}
-							}
+					if (!fulFillmentTypeId.isJsonNull()) {
+						if (Integer.valueOf(fulFillmentTypeId.getAsString()) == Integer.valueOf(fulFillmentType)) {
+							JsonElement fulFillmentStoreId = fulfillmentObj.get("fulFillmentStoreId");
+							if (fulFillmentStoreId != null)
+								storeId = fulFillmentStoreId.toString();
 						}
 					}
 				}
