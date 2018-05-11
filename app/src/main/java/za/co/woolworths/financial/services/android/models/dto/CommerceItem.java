@@ -15,6 +15,8 @@ public class CommerceItem {
 	private boolean deleteSingleItem = false;
 	private boolean deleteRowPressed = false;
 	private CommerceItem deletedCommerceItemId;
+	public String fulfillmentType;
+	public String fulfillmentStoreId;
 
 	public void setDeleteSingleItem(boolean deleteSingleItem) {
 		this.deleteSingleItem = deleteSingleItem;

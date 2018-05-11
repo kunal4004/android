@@ -764,7 +764,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				if (productsArray.length() > 0) {
 					ArrayList<CommerceItem> productList = new ArrayList<>();
 					for (int i = 0; i < productsArray.length(); i++) {
-						productList.add(new Gson().fromJson(String.valueOf(productsArray.getJSONObject(i)), CommerceItem.class));
+						CommerceItem commerceItem =new CommerceItem();
+						commerceItem=new Gson().fromJson(String.valueOf(productsArray.getJSONObject(i)), CommerceItem.class);
+						commerceItem.fulfillmentStoreId=Utils.retrieveStoreId(commerceItem.fulfillmentType,data.orderSummary.suburb.fullfillmentStores);
+						productList.add(commerceItem);
 					}
 					cartItemGroup.setCommerceItems(productList);
 				}

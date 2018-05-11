@@ -28,4 +28,8 @@ public class Suburb {
 	@SerializedName("fullfilmentStores")
 	@Expose
 	public JsonElement fulfillmentStores;
+
+	@SerializedName("fulfillmentStores")
+	@Expose
+	public JsonElement fullfillmentStores;
 }
