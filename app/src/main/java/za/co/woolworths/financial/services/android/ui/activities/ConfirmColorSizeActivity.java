@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -13,12 +12,10 @@ import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.google.gson.*;
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -108,7 +105,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 			mColorPickerSelector = mBundle.getBoolean(COLOR_PICKER_SELECTOR);
 		}
 
-		getFulfillmentProductStore(mFulFillmentStore);
+		setFulFillmentStoreId(mFulFillmentStore);
 
 		init();
 		addListener();
@@ -596,21 +593,11 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 		closeViewAnimation(CLOSE);
 	}
 
-	private void getFulfillmentProductStore(String jsonElementStores) {
-		try {
-			if (!TextUtils.isEmpty(jsonElementStores)) {
-				JSONObject jsonObject = new JSONObject(jsonElementStores);
-				if (!TextUtils.isEmpty(mFulFillmentType)) {
-					setFulFillmentStoreId(jsonObject.get(mFulFillmentType).toString());
-				}
-			}
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public void setFulFillmentStoreId(String fulFillMentStoreId) {
-		this.fulFillMentStoreId = fulFillMentStoreId;
+	public void setFulFillmentStoreId(String jsonElementStores) {
+		if (TextUtils.isEmpty(jsonElementStores)) return;
+		JsonParser parser = new JsonParser();
+		JsonElement jsonElement = parser.parse(jsonElementStores);
+		this.fulFillMentStoreId = Utils.retrieveStoreId(mFulFillmentType, jsonElement);
 	}
 
 	public String getFulFillMentStoreId() {

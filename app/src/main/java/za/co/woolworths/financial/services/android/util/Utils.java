@@ -19,6 +19,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
+import android.support.annotation.Nullable;
 import android.support.design.internal.BottomNavigationItemView;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
@@ -45,6 +46,10 @@ import com.google.android.gms.maps.model.VisibleRegion;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.google.gson.reflect.TypeToken;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -1189,5 +1194,32 @@ public class Utils {
 	public static Object jsonStringToObject(String value, Class cl) {
 		if (TextUtils.isEmpty(value)) return null;
 		return new Gson().fromJson(value, cl);// json to Model
+	}
+
+	@Nullable
+	public static String retrieveStoreId(String fulFillmentType, JsonElement suburbFulfillment) {
+		String storeId = "";
+		if (!suburbFulfillment.isJsonNull()) {
+			if (suburbFulfillment.isJsonArray()) {
+				JsonArray suburbFulfillmentArray = suburbFulfillment.getAsJsonArray();
+				for (JsonElement fulfillmentElement : suburbFulfillmentArray) {
+					JsonObject fulfillmentObj = fulfillmentElement.getAsJsonObject();
+					JsonElement fulFillmentTypeId = fulfillmentObj.get("fulFillmentTypeId");
+					if (!fulFillmentTypeId.isJsonNull()) {
+						if (Integer.valueOf(fulFillmentTypeId.getAsString()) == Integer.valueOf(fulFillmentType)) {
+							JsonElement fulFillmentStoreId = fulfillmentObj.get("fulFillmentStoreId");
+							if (fulFillmentStoreId != null)
+								storeId = fulFillmentStoreId.toString();
+						}
+					}
+				}
+			} else {
+				JsonObject jsSuburbFulfillment = suburbFulfillment.getAsJsonObject();
+				if (jsSuburbFulfillment.has(fulFillmentType)) {
+					storeId = jsSuburbFulfillment.get(fulFillmentType).toString();
+				}
+			}
+		}
+		return storeId;
 	}
 }

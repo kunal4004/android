@@ -33,6 +33,7 @@ import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.ProductDetailViewBinding;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -108,6 +109,7 @@ import static za.co.woolworths.financial.services.android.models.service.event.P
 import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.RESULT_TAP_FIND_INSTORE_BTN;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailViewModel.CLOTHING_PRODUCT;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailViewModel.FOOD_PRODUCT;
+import static za.co.woolworths.financial.services.android.util.Utils.retrieveStoreId;
 
 public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding, ProductDetailViewModel> implements ProductDetailNavigator, ProductViewPagerAdapter.MultipleImageInterface, View.OnClickListener, NetworkChangeListener, ToastUtils.ToastInterface {
 
@@ -1136,11 +1138,9 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		DeliveryLocationHistory cartSummary = getCartSummaryResponse();
 		JsonElement suburb = cartSummary.suburb.fulfillmentStores;
 		JsonElement suburbFulfillment = suburb;
-		JsonObject jsSuburbFulfillment = suburbFulfillment.getAsJsonObject();
-		if (jsSuburbFulfillment.has(fulFillmentType)) {
-			String storeId = jsSuburbFulfillment.get(fulFillmentType).toString();
-			executeGetInventoryForStore(storeId, sku);
-		}
+		String storeId = retrieveStoreId(fulFillmentType, suburbFulfillment);
+		if (storeId == null) return;
+		executeGetInventoryForStore(storeId, sku);
 	}
 
 	public void colorSizePicker(ArrayList<OtherSkus> otherSkusList, boolean colorIsSelected, boolean sizeIsSelected) {
@@ -1383,14 +1383,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		if ((activity != null) && deliveryLocationHistory != null) {
 			if (deliveryLocationHistory.suburb != null) {
 				if (!TextUtils.isEmpty(deliveryLocationHistory.suburb.name)) {
-					String suburbId = String.valueOf(deliveryLocationHistory.suburb.id);
-					Province province = new Province();
-					province.name = deliveryLocationHistory.province.name;
-					province.id = suburbId;
-					Suburb suburb = new Suburb();
-					suburb.name = deliveryLocationHistory.suburb.name;
-					suburb.id = suburbId;
-					Utils.saveRecentDeliveryLocation(new DeliveryLocationHistory(province, suburb), activity);
 					// show pop up message after login
 					if (activate_location_popup) {
 						smoothScrollToTop();
