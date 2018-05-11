@@ -88,6 +88,7 @@ import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.Transaction;
 import za.co.woolworths.financial.services.android.models.dto.TransactionParentObj;
+import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
@@ -107,6 +108,7 @@ import static android.Manifest.permission_group.STORAGE;
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.WHITE;
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT_TEMP;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_ADD_TO_CART;
 
 public class Utils {
 
@@ -1205,11 +1207,17 @@ public class Utils {
 				for (JsonElement fulfillmentElement : suburbFulfillmentArray) {
 					JsonObject fulfillmentObj = fulfillmentElement.getAsJsonObject();
 					JsonElement fulFillmentTypeId = fulfillmentObj.get("fulFillmentTypeId");
-					if (!fulFillmentTypeId.isJsonNull()) {
-						if (Integer.valueOf(fulFillmentTypeId.getAsString()) == Integer.valueOf(fulFillmentType)) {
-							JsonElement fulFillmentStoreId = fulfillmentObj.get("fulFillmentStoreId");
-							if (fulFillmentStoreId != null)
-								storeId = fulFillmentStoreId.toString();
+					WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
+					if (woolworthsApplication != null) {
+						if (!fulFillmentTypeId.isJsonNull()) {
+							WGlobalState wGlobalState = woolworthsApplication.getWGlobalState();
+							if (wGlobalState.getSaveButtonClick() == INDEX_ADD_TO_CART) {
+								if (Integer.valueOf(fulFillmentTypeId.getAsString()) == Integer.valueOf(fulFillmentType)) {
+									JsonElement fulFillmentStoreId = fulfillmentObj.get("fulFillmentStoreId");
+									if (fulFillmentStoreId != null)
+										storeId = fulFillmentStoreId.toString();
+								}
+							}
 						}
 					}
 				}
