@@ -39,6 +39,7 @@
                 android:hint="@string/enter_list_name"
                 android:imeOptions="actionDone"
                 android:singleLine="true"
+                android:maxLength="50"
                 android:textColor="@color/black"
                 android:textColorHint="@color/recent_search_bg"
                 android:textCursorDrawable="@drawable/colorcursor"
