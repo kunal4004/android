@@ -10,7 +10,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -98,7 +97,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	private PostAddItemToCart mPostAddToCart;
 	private GetInventorySkusForStore mGetInventorySkusForStore;
 	private Map<String, String> mMapStoreFulFillmentKeyValue;
-	private int mIncrementInventorySize = 0;
 
 	@Override
 	public ShoppingListItemsViewModel getViewModel() {
@@ -232,10 +230,11 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 			String multiSKUS = TextUtils.join("-", skuIds);
 			collectOtherSkuId.put(fulFillmentTypeIdCollection, multiSKUS);
 			String fulFillmentStoreId = Utils.retrieveStoreId(fulFillmentTypeIdCollection, getActivity());
-			if (!TextUtils.isEmpty(fulFillmentStoreId))
+			if (!TextUtils.isEmpty(fulFillmentStoreId)) {
 				fulFillmentStoreId = fulFillmentStoreId.replaceAll("\"", "");
-			mMapStoreFulFillmentKeyValue.put(fulFillmentTypeIdCollection, fulFillmentStoreId);
-			executeGetInventoryForStore(fulFillmentStoreId, multiSKUS);
+				mMapStoreFulFillmentKeyValue.put(fulFillmentTypeIdCollection, fulFillmentStoreId);
+				executeGetInventoryForStore(fulFillmentStoreId, multiSKUS);
+			}
 		}
 
 		if (listItems == null)
@@ -683,6 +682,14 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 						fulFillmentType = mapFulfillmentStore.getKey();
 					}
 				}
+				// skuInventory is empty or null
+				if (skusInventoryForStoreResponse.skuInventory.isEmpty()) {
+					for (ShoppingListItem inventoryItems : listItems) {
+						if (TextUtils.isEmpty(inventoryItems.fulfillmentType)) continue;
+						inventoryItems.inventoryCallCompleted = true;
+					}
+				}
+
 				for (SkuInventory skuInventory : skusInventoryForStoreResponse.skuInventory) {
 					String sku = skuInventory.sku;
 					int quantity = skuInventory.quantity;
@@ -697,14 +704,14 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 					}
 				}
 				/**
-				 * @Params: mIncrementInventorySize keeps position
+				 * @method: getLastValueInMap() returns last storeId position
+				 * @method: updateList()
 				 */
-				Log.e("mIncrementInventorySize", mIncrementInventorySize + " == " + (mMapStoreFulFillmentKeyValue.size() - 1));
-				if (mMapStoreFulFillmentKeyValue.size() > mIncrementInventorySize) {
+				if (getLastValueInMap() == null) return;
+				if (getLastValueInMap().equalsIgnoreCase(storeId)) {
 					if (shoppingListItemsAdapter != null)
 						shoppingListItemsAdapter.updateList(listItems);
 				}
-				mIncrementInventorySize++;
 				break;
 			default:
 				break;
@@ -741,4 +748,10 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		mCartSummary.execute();
 	}
 
+	private String getLastValueInMap() {
+		for (Map.Entry<String, String> entry : mMapStoreFulFillmentKeyValue.entrySet()) {
+			return entry.getValue();
+		}
+		return null;
+	}
 }
