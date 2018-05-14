@@ -77,13 +77,6 @@ public class EditQuantityFragmentList extends Fragment implements ColorInterface
 				rclEditQuantity.setAdapter(mEditQuantityAdapter);
 			}
 		});
-
-		new Handler().postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				rclEditQuantity.smoothScrollToPosition(shoppingListItem.quantityDesired);
-			}
-		}, 100);
 	}
 
 	@Override
