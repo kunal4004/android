@@ -137,7 +137,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="@dimen/eight_dp"
                                     android:letterSpacing="0.08"
-                                    android:text="@string/product_available"
+                                    android:text="@string/product_unavailable"
                                     android:textAllCaps="true"
                                     android:textColor="@color/white"
                                     android:textSize="@dimen/twelve_sp"

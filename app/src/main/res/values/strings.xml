@@ -646,5 +646,5 @@
     <string name="multiple_item_text">items</string>
     <string name="shopping_list">shopping list</string>
     <string name="select">select</string>
-    <string name="product_available">product unavailable</string>
+    <string name="product_unavailable">product unavailable</string>
 </resources>

@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -97,6 +98,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	private PostAddItemToCart mPostAddToCart;
 	private GetInventorySkusForStore mGetInventorySkusForStore;
 	private Map<String, String> mMapStoreFulFillmentKeyValue;
+	private int mIncrementInventorySize = 0;
 
 	@Override
 	public ShoppingListItemsViewModel getViewModel() {
@@ -689,12 +691,19 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 							if (sku.equalsIgnoreCase(inventoryItems.catalogRefId)) {
 								inventoryItems.quantityInStock = quantity;
 							}
-							inventoryItems.inventoryCallCompleted = true;
 						}
+						inventoryItems.inventoryCallCompleted = true;
 					}
 				}
-				if (shoppingListItemsAdapter != null)
-					shoppingListItemsAdapter.updateList(listItems);
+				/**
+				 * @Params: mIncrementInventorySize keeps position
+				 */
+				Log.e("mIncrementInventorySize", mIncrementInventorySize + " == " + (mMapStoreFulFillmentKeyValue.size() - 1));
+				if (mMapStoreFulFillmentKeyValue.size() > mIncrementInventorySize) {
+					if (shoppingListItemsAdapter != null)
+						shoppingListItemsAdapter.updateList(listItems);
+				}
+				mIncrementInventorySize++;
 				break;
 			default:
 				break;
