@@ -182,9 +182,6 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 					WoolworthsApplication.setCartCheckoutLink(configResponse.defaults.getCartCheckoutLink());
 					mWGlobalState.setStartRadius(configResponse.enviroment.getStoreStockLocatorConfigStartRadius());
 					mWGlobalState.setEndRadius(configResponse.enviroment.getStoreStockLocatorConfigEndRadius());
-					mWGlobalState.setClothingProducts(configResponse.enviroment.storeStockLocatorConfigClothingProducts());
-					mWGlobalState.setFoodProducts(configResponse.enviroment.storeStockLocatorConfigFoodProducts());
-
 					if (!isFirstTime())
 						presentNextScreen();
 				} catch (NullPointerException ignored) {
