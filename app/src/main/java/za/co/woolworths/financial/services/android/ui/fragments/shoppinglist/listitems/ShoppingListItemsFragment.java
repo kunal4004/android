@@ -23,7 +23,10 @@ import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.ShoppingListItemsFragmentBinding;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
@@ -39,9 +42,12 @@ import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
+import za.co.woolworths.financial.services.android.models.dto.SkuInventory;
+import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
 import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.rest.product.GetCartSummary;
+import za.co.woolworths.financial.services.android.models.rest.product.GetInventorySkusForStore;
 import za.co.woolworths.financial.services.android.models.rest.product.PostAddItemToCart;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.DeleteShoppingList;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.DeleteShoppingListItem;
@@ -59,6 +65,7 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.EmptyCartView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.MultiMap;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
@@ -88,6 +95,8 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	private final int SUBURB_SET_RESULT = 123401;
 	private GetCartSummary mCartSummary;
 	private PostAddItemToCart mPostAddToCart;
+	private GetInventorySkusForStore mGetInventorySkusForStore;
+	private Map<String, String> mMapStoreFulFillmentKeyValue;
 
 	@Override
 	public ShoppingListItemsViewModel getViewModel() {
@@ -119,6 +128,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		super.onViewCreated(view, savedInstanceState);
 		getBottomNavigator().hideBottomNavigationMenu();
 		mToastUtils = new ToastUtils(this);
+		mMapStoreFulFillmentKeyValue = new HashMap<>();
 		listName = getArguments().getString("listName");
 		listId = getArguments().getString("listId");
 		view.findViewById(R.id.btnRetry).setOnClickListener(this);
@@ -202,6 +212,30 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	public void loadShoppingListItems(ShoppingListItemsResponse shoppingListItemsResponse) {
 		getViewDataBinding().loadingBar.setVisibility(View.GONE);
 		listItems = shoppingListItemsResponse.listItems;
+
+		MultiMap<String, ShoppingListItem> multiListItem = MultiMap.create();
+		for (ShoppingListItem shoppingListItem : listItems) {
+			multiListItem.put(shoppingListItem.fulfillmentType, shoppingListItem);
+		}
+
+		Map<String, String> collectOtherSkuId = new HashMap<>();
+		Map<String, Collection<ShoppingListItem>> collections = multiListItem.getEntries();
+		for (Map.Entry<String, Collection<ShoppingListItem>> collectionEntry : collections.entrySet()) {
+			Collection<ShoppingListItem> collectionEntryValue = collectionEntry.getValue();
+			String fulFillmentTypeIdCollection = collectionEntry.getKey();
+			List<String> skuIds = new ArrayList<>();
+			for (ShoppingListItem shoppingListItem : collectionEntryValue) {
+				skuIds.add(shoppingListItem.catalogRefId);
+			}
+			String multiSKUS = TextUtils.join("-", skuIds);
+			collectOtherSkuId.put(fulFillmentTypeIdCollection, multiSKUS);
+			String fulFillmentStoreId = Utils.retrieveStoreId(fulFillmentTypeIdCollection, getActivity());
+			if (!TextUtils.isEmpty(fulFillmentStoreId))
+				fulFillmentStoreId = fulFillmentStoreId.replaceAll("\"", "");
+			mMapStoreFulFillmentKeyValue.put(fulFillmentTypeIdCollection, fulFillmentStoreId);
+			executeGetInventoryForStore(fulFillmentStoreId, multiSKUS);
+		}
+
 		if (listItems == null)
 			listItems = new ArrayList<>();
 		updateList(listItems);
@@ -420,6 +454,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		super.onDetach();
 		cancelRequest(mCartSummary);
 		cancelRequest(mPostAddToCart);
+		cancelRequest(mGetInventorySkusForStore);
 		getBottomNavigator().showBottomNavigationMenu();
 	}
 
@@ -628,9 +663,53 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		}
 	}
 
+	public void executeGetInventoryForStore(String storeId, String multiSku) {
+		onAddToCartLoad();
+		mGetInventorySkusForStore = getViewModel().getInventoryStockForStore(storeId, multiSku);
+		mGetInventorySkusForStore.execute();
+	}
+
+	@Override
+	public void getInventoryForStoreSuccess(SkusInventoryForStoreResponse skusInventoryForStoreResponse) {
+		switch (skusInventoryForStoreResponse.httpCode) {
+			case 200:
+				String fulFillmentType = null;
+				String storeId = skusInventoryForStoreResponse.storeId;
+				for (Map.Entry<String, String> mapFulfillmentStore : mMapStoreFulFillmentKeyValue.entrySet()) {
+					if (storeId.equalsIgnoreCase(mapFulfillmentStore.getValue())) {
+						fulFillmentType = mapFulfillmentStore.getKey();
+					}
+				}
+				for (SkuInventory skuInventory : skusInventoryForStoreResponse.skuInventory) {
+					String sku = skuInventory.sku;
+					int quantity = skuInventory.quantity;
+					for (ShoppingListItem inventoryItems : listItems) {
+						if (TextUtils.isEmpty(inventoryItems.fulfillmentType)) continue;
+						if (inventoryItems.fulfillmentType.equalsIgnoreCase(fulFillmentType)) {
+							if (sku.equalsIgnoreCase(inventoryItems.catalogRefId)) {
+								inventoryItems.quantityInStock = quantity;
+							}
+							inventoryItems.inventoryCallCompleted = true;
+						}
+					}
+				}
+				if (shoppingListItemsAdapter != null)
+					shoppingListItemsAdapter.updateList(listItems);
+				break;
+			default:
+				break;
+		}
+	}
+
+	@Override
+	public void geInventoryForStoreFailure(String e) {
+
+	}
+
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
+		showToolbar(listName);
 		if (requestCode == DELIVERY_LOCATION_REQUEST) {
 			if (resultCode == SUBURB_SET_RESULT) { // on suburb selection successful
 				executeAddToCart(listItems.subList(1, listItems.size()));
