@@ -18,9 +18,6 @@ import com.google.android.gms.location.LocationServices;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 
-/**
- * author: Federico Olivares
- */
 public class FusedLocationSingleton implements GoogleApiClient.ConnectionCallbacks,
 		GoogleApiClient.OnConnectionFailedListener,
 		LocationListener {

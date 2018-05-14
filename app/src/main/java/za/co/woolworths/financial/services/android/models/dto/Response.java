@@ -14,5 +14,7 @@ public class Response {
 	@SerializedName("stsParams")
 	@Expose
 	public String stsParams;
-
+	@SerializedName("message")
+	@Expose
+	public String message;
 }

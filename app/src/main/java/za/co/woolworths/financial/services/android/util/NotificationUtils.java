@@ -25,7 +25,7 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDeviceResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
-import za.co.woolworths.financial.services.android.ui.activities.WSplashScreenActivity;
+import za.co.woolworths.financial.services.android.ui.activities.splash.WSplashScreenActivity;
 
 public class NotificationUtils {
 

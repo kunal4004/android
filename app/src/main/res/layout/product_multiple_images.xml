@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:focusableInTouchMode="false"
-            fresco:placeholderImage="@drawable/rectangle"
+            fresco:placeholderImage="@drawable/woolworth_logo_icon"
             fresco:viewAspectRatio="1.0"/>
 
 
@@ -33,7 +33,7 @@
         android:focusableInTouchMode="false">
 
         <ImageView
-            android:id="@+id/imCloseProduct"
+            android:id="@+id/imClose"
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:layout_marginLeft="@dimen/default_margin"

@@ -103,6 +103,7 @@ public class PermissionUtils {
 	public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
 		switch (requestCode) {
 			case 1:
+			case 2:
 				if (grantResults.length > 0) {
 					Map<String, Integer> perms = new HashMap<>();
 

@@ -11,7 +11,7 @@
         android:layout_alignParentTop="true"
         android:adjustViewBounds="false"
         fresco:fadeDuration="50"
-        fresco:placeholderImage="@drawable/rectangle"
+        fresco:placeholderImage="@drawable/woolworth_logo_icon"
         fresco:viewAspectRatio="0.5" />
 
     <RelativeLayout

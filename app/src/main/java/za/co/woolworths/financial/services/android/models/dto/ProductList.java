@@ -7,7 +7,6 @@ import java.util.List;
 
 public class ProductList {
 
-
 	@SerializedName("productId")
 	@Expose
 	public String productId;
@@ -37,4 +36,10 @@ public class ProductList {
 	@SerializedName("saveText")
 	@Expose
 	public String saveText;
+	public boolean viewTypeHeader;
+	public boolean viewTypeFooter;
+	public Integer numberOfItems;
+	public boolean itemWasChecked;
+	public boolean viewIsLoading;
+	public String displayColorSizeText;
 }

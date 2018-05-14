@@ -11,7 +11,7 @@
     <dimen name="cli_button_height">40dp</dimen>
     <dimen name="cli_button_height_popup">50dp</dimen>
     <dimen name="cli_eight_dp">8dp</dimen>
-    <!-- Per the design guidelines, navigation drawers should be between 240dp and 320dp:
+    <!-- Per the design guidelinmenu_navigationtion drawers should be between 240dp and 320dp:
          https://developer.android.com/design/patterns/navigation-drawer.html -->
 
     <dimen name="default_stack_spacing">12dp</dimen>
@@ -125,6 +125,21 @@
     <dimen name="email_height_50">50dp</dimen>
     <dimen name="email_text_size_15sp">15sp</dimen>
     <dimen name="hundred_dp">100dp</dimen>
-
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="statusbar_view_height">0dp</dimen>
+    <dimen name="eight_sp">8sp</dimen>
+    <dimen name="five_dp">5dp</dimen>
+    <dimen name="six_dp">6dp</dimen>
+    <dimen name="fourty_five_dp">45dp</dimen>
+    <dimen name="twenty_sp">20sp</dimen>
+    <dimen name="seventy_eight_dp">78dp</dimen>
+    <dimen name="eighty_two_dp">82dp</dimen>
+    <dimen name="eighteen_sp">18sp</dimen>
+    <dimen name="eighty_dp">80dp</dimen>
+    <dimen name="eighty_four_dp">84dp</dimen>
+    <dimen name="nineteen_dp">19dp</dimen>
+    <dimen name="line_dp">0.5dp</dimen>
+    <dimen name="seventy_five_dp">75dp</dimen>
+    <dimen name="sixty_dp">60dp</dimen>
 </resources>
 

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-
     <string name="app_name">WOOLWORTHS</string>
     <string name="drawer_faq">FAQ</string>
     <string name="log_in">Sign in</string>
@@ -40,8 +39,14 @@
     <string name="google_maps">GOOGLE MAPS</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="km">km</string>
-    <string name="linked_cards">LINKED CARDS</string>
+    <string name="linked_cards">linked accounts</string>
     <string name="contact_us">Contact us</string>
+    <string name="cart">Cart</string>
+    <string name="delivery_location">Delivery Location</string>
+    <string name="previously_selected_locations">Previously Selected Locations</string>
+    <string name="select_your_province">Select your Province</string>
+    <string name="select_your_suburb">Select your Suburb</string>
+    <string name="set_your_delivery_location">Select your delivery location</string>
     <string name="submit_query">Submit Query</string>
     <string name="faqs">FAQs</string>
     <string name="sign_out">Sign Out</string>
@@ -49,7 +54,7 @@
     <string name="why_we_need_location_services">Location Services</string>
     <string name="location_off_message">Location services allow us to provide store information like opening hours, contact details and directions.</string>
     <string name="go_to_settings">ENABLE LOCATION SERVICES</string>
-
+    <string name="off_instantly">OFF INSTANTLY</string>
 
     <string name="nav_item_today">TODAY</string>
     <string name="nw_today_title">W TODAY</string>
@@ -290,8 +295,13 @@
     <string name="ssl_error">SSL certificate invalid</string>
     <string name="product_item_found">items found</string>
     <string name="product_size">Size</string>
-    <string name="shop_online_woolies">Shop online</string>
+    <string name="add_to_cart">add to cart</string>
     <string name="add_to_shopping_list">Add to shopping list</string>
+    <string name="add_to_list">ADD TO LIST</string>
+    <string name="edit">EDIT</string>
+    <string name="done">DONE</string>
+    <string name="remove_all">REMOVE ALL</string>
+    <string name="checkout">CHECKOUT</string>
     <string name="product_code">Product Code</string>
     <string name="product_colour">Colour</string>
     <string name="unlinked_account_copy">We see that your Woolies Card is not yet linked. To conveniently view your available funds, next payment due, recent transactions and so much more, please link your Woolies Card now.</string>
@@ -337,7 +347,7 @@
     <string name="wrewards_logout_tag_line">WRewards is our way of rewarding customers INSTANTLY. WRewards members save millions every week.</string>
 
     <string name="contact_us_no_email_error">In order for us to process your query, please send an email to email_address with \"subject_line\" entered in the subject line. Remember to include your ID number in the body of the email.</string>
-    <string name="loading_product_info">Loading product info</string>
+    <string name="loading_product_info">Loading info</string>
 
     <string name="services_unavailable">Services Unavailable</string>
     <string name="please_check_back_later">Please check back later.</string>
@@ -379,9 +389,7 @@
     <string name="acc_update_password">Update password</string>
 
     <string name="session_expired_title">SESSION EXPIRED</string>
-    <string name="session_expired_account_desc">Your Accounts session expired. To continue please
-        sign in or cancel to return to the rest of the app.</string>
-    <string name="session_expired_reward_desc">Your WRewards session expired. To continue please
+    <string name="session_expired_desc">Your session expired. To continue please
         sign in or cancel to return to the rest of the app.</string>
     <string name="session_expired_sign_in">sign in</string>
     <string name="view_transactions">View Transactions</string>
@@ -576,6 +584,65 @@
     <string name="account_type_info_desc">I agree that Woolworths Financial Services may request my latest 3 months bank statement directly from my bank.</string>
     <string name="cli_declined_popup_title">APPLICATION DECLINED</string>
     <string name="cli_declined_popup_description">Oh no - your limit increase application has been declined at this time. Feel free to apply again.</string>
+    <string name="cli_create_application_error_message">Unfortunately we cannot proceed with your application</string>
+    <string name="store_locator">Store Locator</string>
+    <string name="my_lists">My Lists</string>
+    <string name="messages">Messages</string>
+    <string name="order_history">Order History</string>
+    <string name="link_your_woolies_card_today">Link Your Woolies Card Today</string>
+    <string name="cart_free_delivery_first_order">WRewards members get instant savings on selected items. Pay with your Woolies Store or Credit Card and get an extra 5% off</string>
+
+    <!-- Bottom navigation activity -->
+
+    <string name="title_activity_bottom_navigation">BottomNavigationActivity</string>
+    <string name="bottom_title_today">Today</string>
+    <string name="bottom_title_product">Products</string>
+    <string name="bottom_title_cart">Cart</string>
+    <string name="bottom_title_reward">WRewards</string>
+    <string name="bottom_title_account">Accounts</string>
+    <string name="title_activity_main">ShoppingListActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_cart">Cart</string>
     <string name="lets_make_it_easy_for_you">Let us make it easy for you - we can request your latest 3 months bank statements directly from your bank, at no cost to you.</string>
     <string name="statement_send_email_false_desc">Oops, There seems to be a problem. Please try again later. </string>
+    <string name="edit_quantity">edit your quantity</string>
+    <string name="delivery_location_title">delivery location</string>
+    <string name="update_my_location">Set new location</string>
+    <string name="set_location_desc">Please set your location.</string>
+    <string name="your_delivery_location_is_set_to">Your delivery location is set to:</string>
+    <string name="confirm_your_location">Confirm location</string>
+    <string name="edit_delivery_location"><u>edit delivery location</u></string>
+    <string name="added_to">added to </string>
+    <string name="empty_cart">EMPTY CART</string>
+    <string name="empty_cart_desc">You currently have no items\nin your cart.</string>
+    <string name="start_shopping">start shopping</string>
+    <string name="delete">delete</string>
+    <string name="title_my_list">My Lists</string>
+
+    <!-- new list item-->
+    <string name="list_name">List Name</string>
+    <string name="create_list">create list</string>
+    <string name="new_list">new list</string>
+    <string name="general_fashion">General Fashion</string>
+    <string name="shopping_search_hint">Search products to add to your list</string>
+    <string name="delivery_confirmation_desc">* Delivery cost to be confirmed before payment</string>
+    <string name="total_item">Total*</string>
+    <string name="rlOtherDiscounts"><![CDATA[WRewards Savings & Other Discounts]]></string>
+    <string name="delete_list">DELETE LIST</string>
+    <string name="out_of_stock">out of stock</string>
+    <string name="out_of_stock_desc">Unfortunately this item is currently out of stock online, please try to find in-store or consider an alternative item.</string>
+    <string name="out_of_stock_err">some of the products chosen are out of stock, please come back later!!</string>
+    <string name="promotional_text">You saved </string>
+    <string name="enter_list_name">Enter list name</string>
+    <string name="select_all">SELECT ALL</string>
+    <string name="deselect_all">DESELECT ALL</string>
+    <string name="title_empty_shopping_list">Shopping list is empty</string>
+    <string name="description_empty_shopping_list">Search for products to start adding \n items to this list.</string>
+    <string name="button_empty_shopping_list">Search Products</string>
+    <string name="title_no_shopping_lists">You have no lists</string>
+    <string name="description_no_shopping_lists">Shopping lists makes it easier and faster to get \n your favourite Woolworths products.</string>
+    <string name="button_no_shopping_lists">create a list</string>
+    <string name="single_item_text">item</string>
+    <string name="multiple_item_text">items</string>
+    <string name="shopping_list">shopping list</string>
 </resources>

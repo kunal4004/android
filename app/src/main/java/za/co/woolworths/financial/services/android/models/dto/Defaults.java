@@ -4,17 +4,19 @@ package za.co.woolworths.financial.services.android.models.dto;
  * Created by denysvera on 2016/04/29.
  */
 public class Defaults {
-    String GCM;
-    String analitics;
-    String server_down_msg;
-    String supportNumber;
-    String applyNowLink;
-    String registerTCLink;
-    String faqLink;
-    String wrewardsLink;
-    String rewardingLink;
-    String howtosaveLink;
-    String wrewardsTCLink;
+    private String GCM;
+    private String analitics;
+    private String server_down_msg;
+    private String supportNumber;
+    private String applyNowLink;
+    private String registerTCLink;
+    private String faqLink;
+    private String wrewardsLink;
+    private String rewardingLink;
+    private String howtosaveLink;
+    private String wrewardsTCLink;
+    private String cartCheckoutLink;
+
 
     public String getAnalitics() {
         return analitics;
@@ -104,4 +106,11 @@ public class Defaults {
         this.wrewardsTCLink = wrewardsTCLink;
     }
 
+    public void setCartCheckoutLink(String cartCheckoutLink) {
+        this.cartCheckoutLink = cartCheckoutLink;
+    }
+
+    public String getCartCheckoutLink() {
+        return cartCheckoutLink;
+    }
 }

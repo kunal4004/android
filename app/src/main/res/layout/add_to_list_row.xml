@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/llSelectListContainer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="@dimen/sixteen_dp"
+    android:layout_marginStart="@dimen/twenty_four_dp"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/twenty_four_dp"
+    >
+
+    <RelativeLayout
+        android:id="@+id/rlSelectListContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/tvName"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignBottom="@+id/chxAddToList"
+            android:layout_alignParentTop="true"
+            android:layout_toStartOf="@+id/chxAddToList"
+            android:gravity="center|start"
+            android:letterSpacing="0.1"
+            android:lineSpacingMultiplier="1.67"
+            android:text="@string/app_label"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            app:WTextView_font="light"/>
+
+        <CheckBox
+            android:id="@+id/chxAddToList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="center_vertical"
+            android:button="@drawable/shopping_list_item_selector"
+            android:checked="false"
+            android:clickable="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            />
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.8dp"
+        android:layout_marginTop="@dimen/twenty_four_dp"
+        android:background="@color/grey_bg"/>
+</LinearLayout>

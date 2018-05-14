@@ -46,11 +46,24 @@
     <style name="CLI" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowDisablePreview">true</item>
         <item name="searchViewStyle">@style/WSearchViewStyle</item>
         <item name="android:homeAsUpIndicator">@drawable/back24</item>
         <item name="autoCompleteTextViewStyle">@style/cursorColor</item>
         <item name="android:windowActionBarOverlay">true</item>
+    </style>
+
+    <style name="bottomNavigationStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:fitsSystemWindows">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:windowAnimationStyle">@null</item>
     </style>
 
     <style name="LoanWithdrawal" parent="Theme.AppCompat.Light.NoActionBar">
@@ -94,6 +107,7 @@
     <style name="Messages" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
+        <item name="android:windowDisablePreview">true</item>
         <item name="android:homeAsUpIndicator">@drawable/close_24</item>
     </style>
 
@@ -112,6 +126,14 @@
         <item name="windowActionBar">false</item>
         <item name="android:background">@android:color/transparent</item>
         <item name="android:homeAsUpIndicator">@drawable/back24</item>
+
+    </style>
+
+
+    <style name="Cart" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:background">@android:color/transparent</item>
 
     </style>
 
@@ -212,6 +234,19 @@
         <item name="android:stateListAnimator">@null</item>
     </style>
 
+    <style name="transparentButtonStyle" parent="android:Theme">
+        <item name="android:layout_height">@dimen/button_style_height</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:letterSpacing">0.2</item>
+        <item name="WButton_font">medium_bold</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
     <style name="sectionTitleLight" parent="android:Theme">
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_width">wrap_content</item>
@@ -240,10 +275,10 @@
 
     <style name="listStyle" parent="android:Theme">
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
         <item name="android:background">@drawable/list_bg</item>
-        <item name="android:minHeight">50dp</item>
-        <item name="android:paddingLeft">16dp</item>
+        <item name="android:minHeight">70dp</item>
+        <item name="android:paddingLeft">24dp</item>
         <item name="android:paddingRight">16dp</item>
     </style>
 
@@ -375,7 +410,7 @@
 
     <style name="colorSizeStyle" parent="android:Theme">
         <item name="android:layout_height">match_parent</item>
-        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
         <item name="android:background">@android:color/transparent</item>
         <item name="android:gravity">center|start</item>
         <item name="android:textColor">@color/black</item>
@@ -1001,12 +1036,184 @@
         <item name="android:textSize">@dimen/cli_sixteen_sp</item>
     </style>
 
+    <style name="accountsCardStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:minHeight">70dp</item>
+        <item name="android:paddingLeft">24dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:visibility">gone</item>
+        <item name="android:layout_marginTop">1dp</item>
+    </style>
+
+    <style name="accountCardsTitle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:letterSpacing">0.1</item>
+        <item name="android:minHeight">50dp</item>
+        <item name="android:paddingLeft">24dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="accountsItem">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:drawablePadding">16dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="WTextView_font">myriadpro_regular</item>
+    </style>
+
+    <!-- Base application theme. -->
+    <style name="bottomAppBaseTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="android:windowActionBar">false</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
+    <style name="style_cart_header_title">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:lineSpacingExtra">0.1sp</item>
+        <item name="android:gravity">center_vertical|start</item>
+        <item name="WTextView_font">myriadpro_semibold</item>
+    </style>
+
+    <style name="style_cart_header_add_to_list">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:lineSpacingExtra">0.1sp</item>
+        <item name="android:gravity">end</item>
+        <item name="WTextView_font">myriadpro_regular</item>
+    </style>
+
+    <style name="style_cart_item_title">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:lineSpacingExtra">0.1sp</item>
+        <item name="android:gravity">start</item>
+        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="style_cart_item_details">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:lineSpacingExtra">0.1sp</item>
+        <item name="android:gravity">start</item>
+        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:alpha">0.4</item>
+    </style>
+
+    <style name="style_cart_item_quantity_value">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:lineSpacingExtra">0.1sp</item>
+        <item name="WTextView_font">myriadpro_regular</item>
+    </style>
+
+    <style name="style_cart_item_price">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:lineSpacingExtra">0.1sp</item>
+        <item name="WTextView_font">myriadpro_semibold</item>
+    </style>
+
+    <style name="style_cart_basket_label">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:lineSpacingExtra">0.1sp</item>
+        <item name="android:gravity">start</item>
+        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:alpha">0.5</item>
+    </style>
+
+    <style name="style_cart_delivery_selected">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:lineSpacingExtra">0.1sp</item>
+        <item name="android:gravity">start</item>
+        <item name="WTextView_font">myriadpro_regular</item>
+    </style>
+
+    <style name="style_cart_delivery_info">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:lineSpacingExtra">0.1sp</item>
+        <item name="android:gravity">center</item>
+        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:background">#4A4A4A</item>
+        <item name="android:paddingBottom">16dp</item>
+        <item name="android:paddingTop">15dp</item>
+    </style>
+
+    <style name="style_delivery_location_item_title">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:lineSpacingExtra">0.1sp</item>
+        <item name="android:gravity">start</item>
+        <item name="WTextView_font">myriadpro_regular</item>
+    </style>
+
+    <style name="style_delivery_location_item_description">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">#B3B3B3</item>
+        <item name="android:lineSpacingExtra">0.1sp</item>
+        <item name="android:gravity">start</item>
+        <item name="WTextView_font">myriadpro_regular</item>
+    </style>
+
+    <style name="style_province_item_title">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:lineSpacingExtra">0.1sp</item>
+        <item name="android:gravity">start</item>
+        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:alpha">0.5</item>
+    </style>
+
+    <style name="style_suburb_item_title">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:lineSpacingExtra">0.1sp</item>
+        <item name="android:gravity">start</item>
+        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:alpha">0.5</item>
+    </style>
+
+    <style name="style_suburb_item_header">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:lineSpacingExtra">0.1sp</item>
+        <item name="android:gravity">start|center_vertical</item>
+        <item name="WTextView_font">medium_bold</item>
+    </style>
+
+    <style name="style_suburb_scrollbar_item">
+        <item name="android:textSize">10sp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:lineSpacingExtra">0.1sp</item>
+        <item name="android:gravity">start</item>
+        <item name="WTextView_font">myriadpro_regular</item>
+    </style>
+
     <style name="full_screen_dialog" parent="Theme.AppCompat.Light">
         <item name="android:windowFrame">@null</item>
         <item name="android:windowIsFloating">true</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
-
     </style>
 
 </resources>
