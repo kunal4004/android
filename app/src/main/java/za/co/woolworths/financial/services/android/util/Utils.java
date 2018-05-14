@@ -1205,6 +1205,9 @@ public class Utils {
 
 		JsonParser parser = new JsonParser();
 		DeliveryLocationHistory deliveryLocationHistory = Utils.getLastDeliveryLocation(context);
+		if (deliveryLocationHistory == null) return "";
+		if (deliveryLocationHistory.suburb == null) return "";
+		if (deliveryLocationHistory.suburb.fulfillmentStores == null) return "";
 		JsonElement suburbFulfillment = parser.parse(Utils.toJson(deliveryLocationHistory.suburb.fulfillmentStores));
 
 		String storeId = "";
@@ -1231,4 +1234,5 @@ public class Utils {
 		}
 		return storeId;
 	}
+
 }

@@ -84,7 +84,7 @@ public class WFormatter {
 		if (sAmount.contains(",")) {
 			sAmount = sAmount.replace(",", ".");
 		}
-		double mAmount = Double.valueOf(sAmount);
+		double mAmount = Double.valueOf(TextUtils.isEmpty(sAmount) ? "0.0" : sAmount);
 		int mIntAmount = (int) (mAmount * 100);
 		String[] split = String.valueOf((mIntAmount / 100)).split("");
 		StringBuilder stringBuilder = new StringBuilder();

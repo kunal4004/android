@@ -739,6 +739,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 	@Override
 	public void setSelectedTextColor(OtherSkus otherSkus) {
+		if (otherSkus == null) return;
 		if (otherSkus.externalColourRef == null) return;
 		selectedColor(otherSkus.externalColourRef);
 	}
@@ -1637,7 +1638,9 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	}
 
 	public void setHighestSizeText(OtherSkus otherSkus) {
-		getViewDataBinding().llColorSize.tvSelectedSizeValue.setText(otherSkus.size);
+		if (otherSkus == null) return;
+		if (otherSkus.size == null) return;
+		getViewDataBinding().llColorSize.tvSelectedSizeValue.setText(TextUtils.isEmpty(otherSkus.size) ? "" : otherSkus.size);
 	}
 
 	public String getFulFillmentType() {

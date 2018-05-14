@@ -127,8 +127,22 @@
                                 android:layout_height="wrap_content"/>
 
                             <RelativeLayout
+                                android:id="@+id/llQuantityContainer"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent">
+
+                                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                                    android:id="@+id/tvProductAvailability"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/eight_dp"
+                                    android:letterSpacing="0.08"
+                                    android:text="@string/product_available"
+                                    android:textAllCaps="true"
+                                    android:textColor="@color/white"
+                                    android:textSize="@dimen/twelve_sp"
+                                    android:visibility="gone"
+                                    app:WTextView_font="myriadpro_semibold"/>
 
                                 <RelativeLayout
                                     android:id="@+id/llQuantity"

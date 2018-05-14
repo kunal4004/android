@@ -2,10 +2,13 @@ package za.co.woolworths.financial.services.android.ui.adapters;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -91,20 +94,22 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 			case ITEM_VIEW_TYPE_BASIC:
 				final ViewHolder holder = (ViewHolder) viewHolder;
 				holder.cartProductImage.setImageURI(Utils.getExternalImageRef() + listItems.get(position).externalImageURL + "?w=" + 85 + "&q=" + 85);
-				holder.productName.setText(listItems.get(position).displayName);
+				ShoppingListItem shoppingListItem = listItems.get(position);
+				holder.productName.setText(shoppingListItem.displayName);
 				//holder.productDesc.setText(listItems.get(position).description);
-				holder.quantity.setText(String.valueOf(listItems.get(position).userQuantity));
-				holder.price.setText(WFormatter.formatAmount(listItems.get(position).price));
-				holder.select.setChecked(listItems.get(position).isSelected);
+				holder.tvQuantity.setText(String.valueOf(shoppingListItem.userQuantity));
+				holder.price.setText(WFormatter.formatAmount(shoppingListItem.price));
+				holder.select.setChecked(shoppingListItem.isSelected);
 				holder.delete.setVisibility(View.VISIBLE);
 				holder.progressBar.setVisibility(View.INVISIBLE);
+
 				holder.llShopList.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View view) {
 						int position = holder.getAdapterPosition();
 						ShoppingListItem shoppingListItem = listItems.get(position);
 						ProductList productList = createProductList(shoppingListItem);
-						navigator.openProductDetailFragment(listItems.get(position).displayName, productList);
+						navigator.openProductDetailFragment(shoppingListItem.displayName, productList);
 					}
 				});
 				// Set Color and Size START
@@ -118,22 +123,30 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 
 				holder.tvColorSize.setText(sizeColor);
 				holder.tvColorSize.setVisibility(View.VISIBLE);
+				boolean productInStock = shoppingListItem.quantityInStock != 0;
+				holder.llQuantity.setAlpha(productInStock ? 1.0f : 0.5f);
+				holder.tvQuantity.setAlpha(productInStock ? 1.0f : 0.5f);
+				holder.select.setEnabled(productInStock);
+				holder.imPrice.setAlpha(productInStock ? 1.0f : 0.5f);
+				holder.tvQuantity.setText(productInStock ? String.valueOf(shoppingListItem.quantityInStock) : "0");
+				Log.e("inventoryCall", "inventoryCallCompleted " + shoppingListItem.inventoryCallCompleted);
+				holder.llQuantity.setVisibility((shoppingListItem.inventoryCallCompleted && productInStock) ? View.VISIBLE : View.GONE);
+				holder.tvProductAvailability.setVisibility((shoppingListItem.inventoryCallCompleted && productInStock) ? View.GONE : View.VISIBLE);
+
+				Utils.setBackgroundColor(holder.tvProductAvailability, R.drawable.round_amber_corner, R.string.product_available);
 
 				// Set Color and Size END
 				holder.select.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View view) {
+						ShoppingListItem shoppingListItem = listItems.get(position);
+						if (shoppingListItem.quantityInStock == 0) return;
 						/*
 						 1. By default quantity will be ZERO.
 						 2. On Selection it will change to ONE.
 						 */
-						if (listItems.get(position).isSelected) {
-							listItems.get(position).userQuantity = 0;
-						} else {
-							listItems.get(position).userQuantity = 1;
-						}
-
-						listItems.get(position).isSelected = !listItems.get(position).isSelected;
+						shoppingListItem.userQuantity = shoppingListItem.isSelected ? 0 : 1;
+						shoppingListItem.isSelected = !listItems.get(position).isSelected;
 						notifyDataSetChanged();
 						// 1st item is header of Recycleview
 						navigator.onItemSelectionChange(listItems.subList(1, listItems.size()));
@@ -151,6 +164,7 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 				holder.llQuantity.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View view) {
+						if (listItems.get(position).quantityInStock == 0) return;
 						navigator.onQuantityChangeClick(position);
 					}
 				});
@@ -167,7 +181,7 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 		ProductList productList = new ProductList();
 		productList.productId = shoppingListItem.productId;
 		productList.productName = shoppingListItem.displayName;
-		productList.fromPrice = (float) shoppingListItem.price;
+		productList.fromPrice = TextUtils.isEmpty(shoppingListItem.price) ? (float) 0.0 : Float.valueOf(shoppingListItem.price);
 		productList.sku = shoppingListItem.Id;
 		productList.externalImageRef = Utils.getExternalImageRef() + shoppingListItem.externalImageURL;
 		OtherSkus otherSku = new OtherSkus();
@@ -193,7 +207,7 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 	public class ViewHolder extends RecyclerView.ViewHolder {
 		private WTextView productName;
 		private WTextView tvColorSize;
-		private WTextView quantity;
+		private WTextView tvQuantity;
 		private WTextView price;
 		private CheckBox select;
 		private WrapContentDraweeView cartProductImage;
@@ -201,20 +215,23 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 		private ProgressBar progressBar;
 		private RelativeLayout llQuantity;
 		private LinearLayout llShopList;
+		private ImageView imPrice;
+		private WTextView tvProductAvailability;
 
 		public ViewHolder(View itemView) {
 			super(itemView);
 			productName = itemView.findViewById(R.id.tvTitle);
-			quantity = itemView.findViewById(R.id.tvQuantity);
+			tvQuantity = itemView.findViewById(R.id.tvQuantity);
 			price = itemView.findViewById(R.id.tvPrice);
 			select = itemView.findViewById(R.id.btnDeleteRow);
 			cartProductImage = itemView.findViewById(R.id.cartProductImage);
-			cartProductImage = itemView.findViewById(R.id.cartProductImage);
+			tvProductAvailability = itemView.findViewById(R.id.tvProductAvailability);
 			delete = itemView.findViewById(R.id.tvDelete);
 			llShopList = itemView.findViewById(R.id.llShopList);
 			progressBar = itemView.findViewById(R.id.pbDeleteIndicator);
 			tvColorSize = itemView.findViewById(R.id.tvColorSize);
 			llQuantity = itemView.findViewById(R.id.llQuantity);
+			imPrice = itemView.findViewById(R.id.imPrice);
 		}
 	}
 
