@@ -28,7 +28,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -45,9 +49,11 @@ import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHi
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem;
 import za.co.woolworths.financial.services.android.models.dto.StoreIdWithSKUs;
 import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.models.rest.product.GetInventorySkusForStore;
 import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
@@ -62,7 +68,9 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.MultiMap;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
+import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -314,9 +322,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	public void bindCartData(CartResponse cartResponse) {
-		getCommonStoreIdsWithSKUs(cartResponse.cartItems);
 		parentLayout.setVisibility(View.VISIBLE);
 		if (cartResponse.cartItems.size() > 0) {
+			loadInventoryRequest(cartResponse.cartItems);
 			rlCheckOut.setVisibility(View.VISIBLE);
 			Activity activity = getActivity();
 			if (activity != null) {
@@ -875,7 +883,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		removeCartItem.execute();
 	}
 
-	public ArrayList<StoreIdWithSKUs> getCommonStoreIdsWithSKUs(ArrayList<CartItemGroup> items) {
+	/*public ArrayList<StoreIdWithSKUs> getCommonStoreIdsWithSKUs(ArrayList<CartItemGroup> items) {
 		ArrayList<StoreIdWithSKUs> storeIdWithSKUses = new ArrayList<>();
 		for (CartItemGroup item : items) {
 			for (CommerceItem commerceItem : item.commerceItems) {
@@ -912,6 +920,42 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			}
 		}
 		return storeIdWithSKUses;
+	}*/
+
+	public void loadInventoryRequest(ArrayList<CartItemGroup> items) {
+		MultiMap<String, CommerceItem> multiListItems = MultiMap.create();
+		for (CartItemGroup cartItemGroup : items) {
+			for (CommerceItem commerceItem : cartItemGroup.getCommerceItems()) {
+				multiListItems.put(commerceItem.fulfillmentStoreId, commerceItem);
+			}
+		}
+		Map<String, Collection<CommerceItem>> collections = multiListItems.getEntries();
+
+		for (Map.Entry<String,Collection<CommerceItem>> collectionEntry : collections.entrySet()){
+			Collection<CommerceItem> collection= collectionEntry.getValue();
+			String fullfilmentStoreId= collectionEntry.getKey();
+			List<String> skuIds = new ArrayList<>();
+			for(CommerceItem commerceItem : collection){
+				skuIds.add(commerceItem.commerceItemInfo.catalogRefId);
+			}
+			String multiSKUS = TextUtils.join("-", skuIds);
+
+			initInventoryRequest(fullfilmentStoreId,multiSKUS).execute();
+		}
 	}
 
+	public GetInventorySkusForStore initInventoryRequest(String storeId, String multiSku) {
+
+		return new GetInventorySkusForStore(storeId, multiSku, new OnEventListener() {
+			@Override
+			public void onSuccess(Object object) {
+
+			}
+
+			@Override
+			public void onFailure(String e) {
+
+			}
+		});
+	}
 }
