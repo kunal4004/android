@@ -931,16 +931,16 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		}
 		Map<String, Collection<CommerceItem>> collections = multiListItems.getEntries();
 
-		for (Map.Entry<String,Collection<CommerceItem>> collectionEntry : collections.entrySet()){
-			Collection<CommerceItem> collection= collectionEntry.getValue();
-			String fullfilmentStoreId= collectionEntry.getKey();
+		for (Map.Entry<String, Collection<CommerceItem>> collectionEntry : collections.entrySet()) {
+			Collection<CommerceItem> collection = collectionEntry.getValue();
+			String fullfilmentStoreId = collectionEntry.getKey();
 			List<String> skuIds = new ArrayList<>();
-			for(CommerceItem commerceItem : collection){
+			for (CommerceItem commerceItem : collection) {
 				skuIds.add(commerceItem.commerceItemInfo.catalogRefId);
 			}
 			String multiSKUS = TextUtils.join("-", skuIds);
 
-			initInventoryRequest(fullfilmentStoreId,multiSKUS).execute();
+			initInventoryRequest(fullfilmentStoreId, multiSKUS).execute();
 		}
 	}
 

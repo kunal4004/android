@@ -123,18 +123,18 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 
 				holder.tvColorSize.setText(sizeColor);
 				holder.tvColorSize.setVisibility(View.VISIBLE);
-				boolean productInStock = shoppingListItem.quantityInStock != 0;
-				holder.llQuantity.setAlpha(productInStock ? 1.0f : 0.5f);
-				holder.tvQuantity.setAlpha(productInStock ? 1.0f : 0.5f);
-				holder.select.setEnabled(productInStock);
-				holder.imPrice.setAlpha(productInStock ? 1.0f : 0.5f);
-				if (shoppingListItem.inventoryCallCompleted) {
-					holder.llQuantity.setVisibility((shoppingListItem.quantityInStock == 0) ? View.GONE : View.VISIBLE);
-					holder.tvProductAvailability.setVisibility((shoppingListItem.quantityInStock == 0) ? View.VISIBLE : View.GONE);
-					Utils.setBackgroundColor(holder.tvProductAvailability, R.drawable.round_red_corner, R.string.product_unavailable);
+				if (shoppingListItem != null) {
+					boolean productInStock = shoppingListItem.quantityInStock != 0;
+					holder.llQuantity.setAlpha(productInStock ? 1.0f : 0.5f);
+					holder.tvQuantity.setAlpha(productInStock ? 1.0f : 0.5f);
+					holder.select.setEnabled(productInStock);
+					holder.imPrice.setAlpha(productInStock ? 1.0f : 0.5f);
+					if (shoppingListItem.inventoryCallCompleted) {
+						holder.llQuantity.setVisibility((shoppingListItem.quantityInStock == 0) ? View.GONE : View.VISIBLE);
+						holder.tvProductAvailability.setVisibility((shoppingListItem.quantityInStock == 0) ? View.VISIBLE : View.GONE);
+						Utils.setBackgroundColor(holder.tvProductAvailability, R.drawable.round_red_corner, R.string.product_unavailable);
+					}
 				}
-
-
 				// Set Color and Size END
 				holder.select.setOnClickListener(new View.OnClickListener() {
 					@Override
@@ -164,11 +164,11 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 				holder.llQuantity.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View view) {
-						if (listItems.get(position).quantityInStock == 0) return;
-						navigator.onQuantityChangeClick(position);
+						ShoppingListItem shoppingListItem = listItems.get(position);
+						if (shoppingListItem.quantityInStock == 0) return;
+						navigator.onQuantityChangeClick(position, shoppingListItem);
 					}
 				});
-
 				mItemManger.bindView(holder.itemView, position);
 				break;
 			default:

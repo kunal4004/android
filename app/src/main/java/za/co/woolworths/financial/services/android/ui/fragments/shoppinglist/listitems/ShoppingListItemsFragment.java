@@ -388,7 +388,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	}
 
 	@Override
-	public void onQuantityChangeClick(int position) {
+	public void onQuantityChangeClick(int position, ShoppingListItem shoppingListItem) {
 		this.changeQuantityItem = position;
 		if (mWoolWorthsApplication != null) {
 			WGlobalState wGlobalState = mWoolWorthsApplication.getWGlobalState();
@@ -400,6 +400,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		if (activity != null) {
 			Intent editQuantityIntent = new Intent(activity, ConfirmColorSizeActivity.class);
 			editQuantityIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, ConfirmColorSizeActivity.QUANTITY);
+			editQuantityIntent.putExtra("QUANTITY_IN_STOCK", Utils.toJson(shoppingListItem));
 			activity.startActivity(editQuantityIntent);
 			activity.overridePendingTransition(0, 0);
 		}

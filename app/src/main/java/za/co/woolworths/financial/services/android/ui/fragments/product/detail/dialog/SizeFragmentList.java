@@ -21,6 +21,7 @@ import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem;
 import za.co.woolworths.financial.services.android.models.dto.SkuInventory;
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
 import za.co.woolworths.financial.services.android.models.rest.product.GetInventorySkusForStore;
@@ -106,6 +107,11 @@ public class SizeFragmentList extends Fragment implements StockFinderSizeColorAd
 
 	@Override
 	public void onUpdate(List<Integer> quantityList) {
+
+	}
+
+	@Override
+	public void onUpdate(ShoppingListItem shoppingListItem) {
 
 	}
 

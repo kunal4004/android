@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem;
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.EditQuantityAdapter;
 import za.co.woolworths.financial.services.android.util.ColorInterface;
@@ -46,7 +48,6 @@ public class EditQuantityFragmentList extends Fragment implements ColorInterface
 
 	@Override
 	public void onUpdate(ArrayList<OtherSkus> otherSkuList, String viewType, boolean shouldShowPrice) {
-
 	}
 
 	@Override
@@ -60,6 +61,29 @@ public class EditQuantityFragmentList extends Fragment implements ColorInterface
 				rclEditQuantity.scrollToPosition(0);
 			}
 		});
+	}
+
+	@Override
+	public void onUpdate(final ShoppingListItem shoppingListItem) {
+		final ArrayList list = new ArrayList();
+		for (int index = 0; index < shoppingListItem.quantityInStock; index++) {
+			list.add(index + 1);
+		}
+		EditQuantityFragmentList.this.getActivity().runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				rclEditQuantity.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+				mEditQuantityAdapter = new EditQuantityAdapter(list, mContext);
+				rclEditQuantity.setAdapter(mEditQuantityAdapter);
+			}
+		});
+
+		new Handler().postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				rclEditQuantity.smoothScrollToPosition(shoppingListItem.quantityDesired);
+			}
+		}, 100);
 	}
 
 	@Override

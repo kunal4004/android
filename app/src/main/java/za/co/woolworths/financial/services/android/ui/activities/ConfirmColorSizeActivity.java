@@ -20,6 +20,7 @@ import java.util.ArrayList;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
@@ -77,6 +78,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 	private boolean mColorPickerSelector;
 	private String mFulFillmentType;
 	private String mSelectedSku;
+	private String mQuantityInStock;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +100,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 			mProductHasSize = mBundle.getBoolean(PRODUCT_HAS_SIZE);
 			mSizePickerSelector = mBundle.getBoolean(SIZE_PICKER_SELECTOR);
 			mColorPickerSelector = mBundle.getBoolean(COLOR_PICKER_SELECTOR);
+			mQuantityInStock = mBundle.getString("QUANTITY_IN_STOCK");
 		}
 
 		init();
@@ -540,6 +543,13 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 			for (int number = 0; number < 10; number++) {
 				list.add(number + 1);
 			}
+
+			if (!TextUtils.isEmpty(mQuantityInStock)) {
+				ShoppingListItem shoppingListItem = new Gson().fromJson(mQuantityInStock, ShoppingListItem.class);
+				fragmentToShow.onUpdate(shoppingListItem);
+				return;
+			}
+
 			fragmentToShow.onUpdate(list);
 		}
 	}

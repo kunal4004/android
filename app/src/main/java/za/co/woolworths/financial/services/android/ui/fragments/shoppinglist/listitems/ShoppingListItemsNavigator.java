@@ -8,7 +8,6 @@ import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
 
 /**
@@ -37,7 +36,7 @@ public interface ShoppingListItemsNavigator {
 
 	void onAddItemToCartFailure(String errorMessage);
 
-	void onQuantityChangeClick(int position);
+	void onQuantityChangeClick(int position, ShoppingListItem shoppingListItem);
 
 	void onGetListFailure(String errorMessage);
 
