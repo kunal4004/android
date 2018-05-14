@@ -45,6 +45,7 @@ import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHi
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse;
+import za.co.woolworths.financial.services.android.models.dto.StoreIdWithSKUs;
 import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
@@ -313,6 +314,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	public void bindCartData(CartResponse cartResponse) {
+		getCommonStoreIdsWithSKUs(cartResponse.cartItems);
 		parentLayout.setVisibility(View.VISIBLE);
 		if (cartResponse.cartItems.size() > 0) {
 			rlCheckOut.setVisibility(View.VISIBLE);
@@ -871,6 +873,45 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	private void removeItemAPI(CommerceItem mCommerceItem) {
 		HttpAsyncTask<String, String, ShoppingCartResponse> removeCartItem = removeCartItem(mCommerceItem);
 		removeCartItem.execute();
+	}
+
+	public ArrayList<StoreIdWithSKUs> getCommonStoreIdsWithSKUs(ArrayList<CartItemGroup> items) {
+		ArrayList<StoreIdWithSKUs> storeIdWithSKUses = new ArrayList<>();
+		for (CartItemGroup item : items) {
+			for (CommerceItem commerceItem : item.commerceItems) {
+				if (storeIdWithSKUses.size() == 0) {
+					StoreIdWithSKUs idWithSKUs = new StoreIdWithSKUs();
+					idWithSKUs.fulFillmentStoreId = commerceItem.fulfillmentStoreId;
+					ArrayList<String> skus = new ArrayList<>();
+					skus.add(commerceItem.commerceItemInfo.catalogRefId);
+					idWithSKUs.setSkus(skus);
+					storeIdWithSKUses.add(idWithSKUs);
+				} else {
+					boolean isStoreIdExist = false;
+					for (StoreIdWithSKUs storeId : storeIdWithSKUses) {
+
+						if (commerceItem.fulfillmentStoreId.equalsIgnoreCase(storeId.fulFillmentStoreId)) {
+							isStoreIdExist = true;
+							ArrayList<String> skus =storeId.getSkus();
+							skus.add(commerceItem.commerceItemInfo.catalogRefId);
+							storeId.setSkus(skus);
+							break;
+						}
+					}
+					if (!isStoreIdExist) {
+						StoreIdWithSKUs idWithSKUs = new StoreIdWithSKUs();
+						idWithSKUs.fulFillmentStoreId = commerceItem.fulfillmentStoreId;
+						ArrayList<String> skus = new ArrayList<>();
+						skus.add(commerceItem.commerceItemInfo.catalogRefId);
+						idWithSKUs.setSkus(skus);
+						storeIdWithSKUses.add(idWithSKUs);
+					}
+
+				}
+
+			}
+		}
+		return storeIdWithSKUses;
 	}
 
 }
