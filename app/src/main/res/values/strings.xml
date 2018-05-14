@@ -582,7 +582,7 @@
 
     <string name="title_activity_bottom_navigation">BottomNavigationActivity</string>
     <string name="bottom_title_today">Today</string>
-    <string name="bottom_title_product">Products</string>
+    <string name="bottom_title_product">Shop</string>
     <string name="bottom_title_cart">Cart</string>
     <string name="bottom_title_reward">WRewards</string>
     <string name="bottom_title_account">Accounts</string>
