@@ -2,6 +2,8 @@ package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
@@ -9,25 +11,28 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 
 import com.awfs.coordination.R;
 
 import java.lang.reflect.Method;
 
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
+import za.co.woolworths.financial.services.android.util.SessionUtilities;
 
 public class WebViewActivity extends AppCompatActivity {
 
 	WebView webView;
 	public Toolbar toolbar;
 	public WTextView toolbarTextView;
+	private ProgressBar loadingProgressBar;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +43,7 @@ public class WebViewActivity extends AppCompatActivity {
 		b = getIntent().getBundleExtra("Bundle");
 		toolbar = (Toolbar) findViewById(R.id.toolbar);
 		toolbarTextView = (WTextView) findViewById(R.id.toolbar_title);
+		loadingProgressBar = findViewById(R.id.loadingProgressBar);
 		setSupportActionBar(toolbar);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setTitle(null);
@@ -67,6 +73,18 @@ public class WebViewActivity extends AppCompatActivity {
 		webView.loadUrl(url);
 	}
 
+	public void toggleLoading(boolean show) {
+		if(show) {
+			// show progress
+			loadingProgressBar.getIndeterminateDrawable().setColorFilter(null);
+			loadingProgressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
+			loadingProgressBar.setVisibility(View.VISIBLE);
+		} else {
+			// hide progress
+			loadingProgressBar.setVisibility(View.GONE);
+			loadingProgressBar.getIndeterminateDrawable().setColorFilter(null);
+		}
+	}
 
 	protected class WebViewController extends WebViewClient {
 
@@ -126,8 +144,8 @@ public class WebViewActivity extends AppCompatActivity {
 	}
 
 	public void finishActivity() {
-		SessionExpiredUtilities.INSTANCE
-				.getGlobalState(WebViewActivity.this).setNewSTSParams("");
+		SessionUtilities.getInstance().setSTSParameters(null);
+		setResult(DEFAULT_KEYS_SEARCH_GLOBAL);
 		finish();
 		overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
 	}

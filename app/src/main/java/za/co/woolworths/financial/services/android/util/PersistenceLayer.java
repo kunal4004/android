@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+
 /**
  * Created by W7099877 on 19/12/2016.
  */
@@ -77,6 +79,16 @@ public class PersistenceLayer extends SQLiteOpenHelper {
         return instance;
     }
 
+    public static PersistenceLayer getInstance(){
+        if (instance == null){
+
+            Context context = WoolworthsApplication.getInstance().getApplicationContext();
+            instance = getInstance(context);
+        }
+
+        return instance;
+    }
+
     public void executeVoidQuery(String query, String[] arguments) throws Exception {
         SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READWRITE);
         Cursor cursor = db.rawQuery(query, arguments);
@@ -105,8 +117,9 @@ public class PersistenceLayer extends SQLiteOpenHelper {
 
         if(cursor.getCount() == 0){//consider this as a failure as no rows were updated
             db.close();
-			return result;
-		}
+            return result;
+            //throw new SQLiteException("Updated row count was 0. This is considered as a failed 'SQL UPDATE' transaction.");
+        }
 
         Log.d(TAG, "" + cursor.getCount());
 

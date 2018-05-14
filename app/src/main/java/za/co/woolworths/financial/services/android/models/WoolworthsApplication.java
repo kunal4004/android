@@ -2,9 +2,9 @@ package za.co.woolworths.financial.services.android.models;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.StrictMode;
 import android.support.multidex.MultiDex;
+import android.support.v7.app.AppCompatDelegate;
 
 import com.awfs.coordination.R;
 import com.facebook.FacebookSdk;
@@ -13,8 +13,6 @@ import com.facebook.drawee.backends.pipeline.Fresco;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.FirebaseApp;
-
-import org.json.JSONObject;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import za.co.wigroup.androidutils.Util;
@@ -38,6 +36,8 @@ public class WoolworthsApplication extends Application {
 	private static String rewardingLink;
 	private static String howToSaveLink;
 	private static String wrewardsTCLink;
+	private static String cartCheckoutLink;
+
 
 	private WGlobalState mWGlobalState;
 
@@ -53,13 +53,9 @@ public class WoolworthsApplication extends Application {
 	private boolean isOther = false;
 	private static int productOfferingId;
 
-	private static int NumVouchers = 0;
-
 	public UpdateBankDetail updateBankDetail;
 
 	private RxBus bus;
-
-	private static long poiDocumentSizeLimit;
 
 	public static void setSha1Password(String sha1Password) {
 		WoolworthsApplication.sha1Password = sha1Password;
@@ -83,14 +79,6 @@ public class WoolworthsApplication extends Application {
 
 	public static String getBaseURL() {
 		return baseURL;
-	}
-
-	public static void setNumVouchers(int numVouchers) {
-		NumVouchers = numVouchers;
-	}
-
-	public static int getNumVouchers() {
-		return NumVouchers;
 	}
 
 	public static String getRegistrationTCLink() {
@@ -193,14 +181,6 @@ public class WoolworthsApplication extends Application {
 
 	private static WoolworthsApplication mInstance;
 
-	public static long getPoiDocumentSizeLimit() {
-		return poiDocumentSizeLimit;
-	}
-
-	public static void setPoiDocumentSizeLimit(long poiDocumentSizeLimit) {
-		WoolworthsApplication.poiDocumentSizeLimit = poiDocumentSizeLimit;
-	}
-
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -208,16 +188,16 @@ public class WoolworthsApplication extends Application {
 		StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
 		StrictMode.setVmPolicy(builder.build());
 		Fresco.initialize(this);
+		AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 		FirebaseApp.initializeApp(WoolworthsApplication.this);
 		FacebookSdk.sdkInitialize(WoolworthsApplication.this);
 		AppEventsLogger.activateApp(WoolworthsApplication.this);
-		mWGlobalState = new WGlobalState(WoolworthsApplication.this);
+		mWGlobalState = new WGlobalState();
 		updateBankDetail = new UpdateBankDetail();
 		WoolworthsApplication.context = this.getApplicationContext();
 		// set app context
 		mContextApplication = getApplicationContext();
-//		Crittercism.initialize(getApplicationContext(), getResources().getString(R.string.crittercism_app_id));
-
+		//Crittercism.initialize(getApplicationContext(), getResources().getString(R.string.crittercism_app_id));
 		CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
 				.setDefaultFontPath("fonts/WFutura-medium.ttf")
 				.setFontAttrId(R.attr.fontPath)
@@ -269,46 +249,6 @@ public class WoolworthsApplication extends Application {
 		return mTracker;
 	}
 
-	public static void setConfig(JSONObject config) {
-
-		SharedPreferences settings = context.getSharedPreferences("config_file", 0);
-		SharedPreferences.Editor editor = settings.edit();
-		editor.putString("jsondata", config.toString());
-		editor.commit();
-
-	}
-
-	public static JSONObject config() {
-
-		SharedPreferences settings = context.getSharedPreferences("config_file", 0);
-		try {
-			return new JSONObject(settings.getString("jsondata", ""));
-		} catch (Exception e) {
-			return null;
-		}
-
-	}
-
-	public static long getConfig_expireLastNotify() {
-
-		SharedPreferences settings = context.getSharedPreferences("config", 0);
-		try {
-			return Long.parseLong(settings.getString("Config_expireLastNotify", "").toString());
-		} catch (Exception e) {
-			return Long.parseLong("0");
-		}
-
-
-	}
-
-	public static void setConfig_expireLastNotify() {
-
-		SharedPreferences settings = context.getSharedPreferences("config", 0);
-		SharedPreferences.Editor editor = settings.edit();
-		editor.putString("Config_expireLastNotify", Long.toString(System.currentTimeMillis()));
-		editor.commit();
-	}
-
 	@Override
 	protected void attachBaseContext(Context base) {
 		super.attachBaseContext(base);
@@ -358,5 +298,13 @@ public class WoolworthsApplication extends Application {
 
 	public static synchronized WoolworthsApplication getInstance() {
 		return mInstance;
+	}
+
+	public static void setCartCheckoutLink(String link) {
+		cartCheckoutLink = link;
+	}
+
+	public static String getCartCheckoutLink() {
+		return cartCheckoutLink;
 	}
 }

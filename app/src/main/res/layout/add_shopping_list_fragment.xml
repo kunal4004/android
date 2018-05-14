@@ -20,8 +20,8 @@
             android:id="@+id/imgShoppingList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            fresco:placeholderImage="@drawable/rectangle"
-            fresco:viewAspectRatio="1.0" />
+            fresco:viewAspectRatio="1.0"
+            app:placeholderImage="@drawable/woolworth_logo_icon"/>
     </LinearLayout>
 
     <za.co.woolworths.financial.services.android.ui.views.WButton

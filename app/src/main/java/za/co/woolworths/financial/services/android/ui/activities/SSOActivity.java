@@ -1,12 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.annotation.TargetApi;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
@@ -17,7 +14,6 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.webkit.SslErrorHandler;
 import android.webkit.ValueCallback;
 import android.webkit.WebBackForwardList;
@@ -27,7 +23,6 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
@@ -47,11 +42,16 @@ import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.models.service.event.ProductState;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.SSORequiredParameter;
+import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
+
+import static za.co.woolworths.financial.services.android.models.service.event.ProductState.DETERMINE_LOCATION_POPUP;
 
 public class SSOActivity extends WebViewActivity {
 
@@ -65,7 +65,6 @@ public class SSOActivity extends WebViewActivity {
 		STATE_MISMATCH(4),
 		NONCE_MISMATCH(5),
 		SUCCESS(6),
-		EXPIRED(7),
 		SIGNED_OUT(8),
 		CHANGE_PASSWORD(9);
 		private int result;
@@ -96,7 +95,6 @@ public class SSOActivity extends WebViewActivity {
 
 	private final String state;
 	private final String nonce;
-	public ProgressDialog progressDialog;
 
 	public SSOActivity() {
 		this.state = UUID.randomUUID().toString();
@@ -107,28 +105,16 @@ public class SSOActivity extends WebViewActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.instantiateWebView();
+		Utils.updateStatusBarBackground(this);
 		mGlobalState = ((WoolworthsApplication) getApplication()).getWGlobalState();
 		mErrorHandlerView = new ErrorHandlerView(SSOActivity.this, (RelativeLayout) findViewById
 				(R.id.no_connection_layout));
-		Utils.updateStatusBarBackground(this, R.color.black);
 	}
 
 	private void instantiateWebView() {
-		progressDialog = new ProgressDialog(SSOActivity.this, R.style.full_screen_dialog) {
-			@Override
-			protected void onCreate(Bundle savedInstanceState) {
-				super.onCreate(savedInstanceState);
-				setContentView(R.layout.sso_progress_dialog);
-				getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
-				ProgressBar mProgressBar = (ProgressBar) findViewById(R.id.progressBar1);
-				mProgressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
-			}
-		};
-		progressDialog.setCancelable(false);
 		this.webView.setWebViewClient(this.webviewClient);
 		this.webView.getSettings().setUseWideViewPort(true);
 		this.webView.getSettings().setLoadWithOverviewMode(true);
-		this.webView.getSettings().setDomStorageEnabled(true);
 		this.webView.getSettings().setDomStorageEnabled(true);
 		if (Build.VERSION.SDK_INT >= 21) {
 			this.webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
@@ -284,7 +270,7 @@ public class SSOActivity extends WebViewActivity {
 				this.redirectURIString = WoolworthsApplication.getSsoRedirectURI();
 
                 /*
-                * // Check if sts params were supplied.
+				* // Check if sts params were supplied.
       guard let query = stsParams else {
         break
       }
@@ -380,10 +366,11 @@ public class SSOActivity extends WebViewActivity {
 		@Override
 		public void onPageStarted(WebView view, String url, Bitmap favicon) {
 			super.onPageStarted(view, url, favicon);
-			showProgressBar();
+			if (!url.contains("logout"))
+				showProgressBar();
+			final String stsParams = SessionUtilities.getInstance().getSTSParameters();
 
 			if (SSOActivity.this.path == Path.SIGNIN || SSOActivity.this.path == Path.REGISTER) {
-
 				view.evaluateJavascript("(function(){return {'content': [document.forms[0].state.value.toString(), document.forms[0].id_token.value.toString()]}})();", new ValueCallback<String>() {
 					@Override
 					public void onReceiveValue(String value) {
@@ -403,34 +390,33 @@ public class SSOActivity extends WebViewActivity {
 							String jwt = list.get(1);
 							intent.putExtra(SSOActivity.TAG_JWT, jwt);
 							//Save JWT
-							SessionDao sessionDao = new SessionDao(SSOActivity.this, SessionDao.KEY.USER_TOKEN);
+							SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.USER_TOKEN);
 							sessionDao.value = jwt;
 							try {
 								sessionDao.save();
 							} catch (Exception e) {
 								Log.e(TAG, e.getMessage());
 							}
+
 							//Trigger Firebase Tag.
-							JWTDecodedModel jwtDecodedModel = Utils.getJWTDecoded(getApplicationContext());
+							JWTDecodedModel jwtDecodedModel = SessionUtilities.getInstance().getJwt();
 							Map<String, String> arguments = new HashMap<>();
-							arguments.put("c2_id", (jwtDecodedModel.C2Id != null)? jwtDecodedModel.C2Id : "");
-							Utils.triggerFireBaseEvents(getApplicationContext(),FirebaseAnalytics.Event.LOGIN,arguments);
+							arguments.put("c2_id", (jwtDecodedModel.C2Id != null) ? jwtDecodedModel.C2Id : "");
+							Utils.triggerFireBaseEvents(getApplicationContext(), FirebaseAnalytics.Event.LOGIN, arguments);
 
 							NotificationUtils.getInstance().sendRegistrationToServer();
+							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.ACTIVE);
 							setResult(SSOActivityResult.SUCCESS.rawValue(), intent);
 						} else {
 							setResult(SSOActivityResult.STATE_MISMATCH.rawValue(), intent);
 						}
 
 						try {
-							if (!TextUtils.isEmpty(mGlobalState.getNewSTSParams())) {
-								mGlobalState.setAccountSignInState(true);
-								mGlobalState.setRewardSignInState(true);
-								mGlobalState.setNewSTSParams("");
-								clearHistory();
-							} else {
-								closeActivity();
+							if (!TextUtils.isEmpty(stsParams)) {
+								SessionUtilities.getInstance().setSTSParameters(null);
 							}
+							closeActivity();
+
 						} catch (NullPointerException ex) {
 							closeActivity();
 						}
@@ -442,6 +428,7 @@ public class SSOActivity extends WebViewActivity {
 					String urlWithoutQueryString = url.substring(0, indexOfQuestionMark);
 
 					if (urlWithoutQueryString.equals(extraQueryStringParams.get("post_logout_redirect_uri"))) {
+						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
 						Intent intent = new Intent();
 						setResult(SSOActivityResult.SIGNED_OUT.rawValue(), intent);
 						closeActivity();
@@ -490,15 +477,13 @@ public class SSOActivity extends WebViewActivity {
 		@Override
 		public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
 			super.onReceivedError(view, request, error);
-			mErrorHandlerView.webViewBlankPage(view);
-			mErrorHandlerView.networkFailureHandler(error.toString());
+			unKnownNetworkFailure(view, error);
 		}
 
 		@SuppressWarnings("deprecation")
 		@Override
 		public void onReceivedError(WebView webView, int errorCode, String description, String failingUrl) {
-			mErrorHandlerView.webViewBlankPage(webView);
-			mErrorHandlerView.networkFailureHandler(description);
+			unknownNetworkFailure(webView, description);
 		}
 
 
@@ -526,22 +511,26 @@ public class SSOActivity extends WebViewActivity {
 
 	};
 
-	public void hideProgressBar() {
-		try {
-			if (progressDialog.isShowing()) {
-				progressDialog.dismiss();
-				progressDialog = null;
-			}
-		} catch (Exception ex) {
+	private void unknownNetworkFailure(WebView webView, String description) {
+		if (!new ConnectionDetector().isOnline(SSOActivity.this)) {
+			mErrorHandlerView.webViewBlankPage(webView);
+			mErrorHandlerView.networkFailureHandler(description);
 		}
 	}
 
-	public void showProgressBar() {
-		if (progressDialog != null) {
-			if (!progressDialog.isShowing()) {
-				progressDialog.show();
-			}
+	private void unKnownNetworkFailure(WebView view, WebResourceError error) {
+		try {
+			unknownNetworkFailure(view, error.toString());
+		} catch (NullPointerException ex) {
 		}
+	}
+
+	public void hideProgressBar() {
+		toggleLoading(false);
+	}
+
+	public void showProgressBar() {
+		toggleLoading(true);
 	}
 
 	@Override
@@ -568,20 +557,29 @@ public class SSOActivity extends WebViewActivity {
 	}
 
 	public void closeActivity() {
+		// Call the popup message to confirm user location
+		//or set new location in ProductDetailFragment
+		if (mGlobalState.determineLocationPopUpEnabled()) {
+			Utils.sendBus(new ProductState(DETERMINE_LOCATION_POPUP));
+			mGlobalState.setDetermineLocationPopUpEnabled(false);
+		}
 		finish();
 		overridePendingTransition(0, 0);
 	}
 
 	@Override
 	protected void onDestroy() {
-		if (this.webView != null)
+		if (this.webView != null) {
+			// handle  WebView.destroy() called while WebView is still attached to window.
+			this.webView.removeAllViews();
 			this.webView.destroy();
+		}
 		super.onDestroy();
 	}
 
 	private void clearHistory() {
 		mGlobalState.setOnBackPressed(false);
-		Intent i = new Intent(SSOActivity.this, WOneAppBaseActivity.class);
+		Intent i = new Intent(SSOActivity.this, BottomNavigationActivity.class);
 		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);

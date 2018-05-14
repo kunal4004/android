@@ -17,20 +17,26 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
+import android.support.design.internal.BottomNavigationItemView;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import com.google.android.gms.iid.InstanceID;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
+import android.view.animation.Animation;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
 import com.google.android.gms.maps.GoogleMap;
@@ -55,6 +61,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.EnumMap;
@@ -65,29 +72,35 @@ import java.util.Locale;
 import java.util.Map;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
-import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
-import za.co.woolworths.financial.services.android.models.dto.AccountResponse;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
-import za.co.woolworths.financial.services.android.models.dto.OtherSku;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
+import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
+import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
+import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.Transaction;
 import za.co.woolworths.financial.services.android.models.dto.TransactionParentObj;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
+import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
+import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
+import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
+import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.ui.views.badgeview.Badge;
+import za.co.woolworths.financial.services.android.ui.views.badgeview.QBadgeView;
 import za.co.woolworths.financial.services.android.util.tooltip.TooltipHelper;
 import za.co.woolworths.financial.services.android.util.tooltip.ViewTooltip;
 
 import static android.Manifest.permission_group.STORAGE;
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.WHITE;
+import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT_TEMP;
 
 public class Utils {
 
@@ -117,6 +130,7 @@ public class Utils {
 	public static final String GOLD_CARD = "410374";
 	public static final String BLACK_CARD = "410375";
 	public static final int ACCOUNTS_PROGRESS_BAR_MAX_VALUE = 10000;
+	private static final int POPUP_DELAY_MILLIS = 3000;
 
 	public static final String[] CLI_POI_ACCEPT_MIME_TYPES = {
 			"application/pdf",
@@ -126,6 +140,7 @@ public class Utils {
 			"image/jpeg",
 			"image/tiff"
 	};
+	private static WTextView elipseEnd;
 
 	public static void saveLastLocation(Location loc, Context mContext) {
 
@@ -155,7 +170,6 @@ public class Utils {
 			}
 		} catch (JSONException e) {
 		}
-
 
 		return null;
 
@@ -253,8 +267,27 @@ public class Utils {
 			window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 			window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 			window.setStatusBarColor(ContextCompat.getColor(activity, color));
+			decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
 		}
 	}
+
+	public static void updateStatusBarBackground(Activity activity, int color,boolean enableDecor) {
+		Window window = activity.getWindow();
+
+		View decor = activity.getWindow().getDecorView();
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+			window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+			window.setStatusBarColor(ContextCompat.getColor(activity, R.color.black));
+			decor.setSystemUiVisibility(0);
+		}
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+			window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+			window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+			window.setStatusBarColor(ContextCompat.getColor(activity, color));
+		}
+	}
+
 
 	public static List<TransactionParentObj> getdata(List<Transaction> transactions) {
 		List<TransactionParentObj> transactionParentObjList = new ArrayList<>();
@@ -310,6 +343,12 @@ public class Utils {
 		return response;
 	}
 
+	public static List<AddToListRequest> toList(String jsonArrayString) {
+		if (TextUtils.isEmpty(jsonArrayString)) return null;
+		return Arrays.asList(new Gson().fromJson(jsonArrayString, AddToListRequest[].class));
+	}
+
+
 	public static int getToolbarHeight(Context context) {
 		final TypedArray styledAttributes = context.getTheme().obtainStyledAttributes(
 				new int[]{R.attr.actionBarSize});
@@ -328,8 +367,7 @@ public class Utils {
 			return null;
 
 		try {
-			SessionDao sessionDao = new SessionDao(context);
-			sessionDao.key = SessionDao.KEY.STORES_LATEST_PAYLOAD;
+			SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.STORES_LATEST_PAYLOAD);
 			sessionDao.value = value;
 			try {
 				sessionDao.save();
@@ -347,8 +385,7 @@ public class Utils {
 
 
 	public static void sessionDaoSave(Context context, SessionDao.KEY key, String value) {
-		SessionDao sessionDao = new SessionDao(context);
-		sessionDao.key = key;
+		SessionDao sessionDao = SessionDao.getByKey(key);
 		sessionDao.value = value;
 		try {
 			sessionDao.save();
@@ -358,15 +395,9 @@ public class Utils {
 	}
 
 	public static String getSessionDaoValue(Context context, SessionDao.KEY key) {
-		SessionDao sessionDao = null;
-		try {
-			sessionDao = new SessionDao(context, key).get();
-			return sessionDao.value;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-
+		SessionDao sessionDao = SessionDao.getByKey(key);
+		;
+		return sessionDao.value;
 	}
 
 	public static void setBadgeCounter(Context context, int badgeCount) {
@@ -405,58 +436,6 @@ public class Utils {
 		}
 	}
 
-	public static void addToShoppingCart(Context context, ShoppingList addtoShoppingCart) {
-		List<ShoppingList> addtoShoppingCarts = getShoppingList(context);
-		SessionDao sessionDao = new SessionDao(context);
-		sessionDao.key = SessionDao.KEY.STORE_SHOPPING_LIST;
-		Gson gson = new Gson();
-		boolean isExist = false;
-		if (addtoShoppingCarts == null) {
-			addtoShoppingCarts = new ArrayList<>();
-			addtoShoppingCarts.add(0, addtoShoppingCart);
-			sessionDao.value = gson.toJson(addtoShoppingCarts);
-			try {
-				sessionDao.save();
-			} catch (Exception e) {
-				Log.e("TAG", e.getMessage());
-			}
-		} else {
-			for (ShoppingList s : addtoShoppingCarts) {
-				if (s.getProduct_id().equalsIgnoreCase(addtoShoppingCart.getProduct_id())) {
-					isExist = true;
-				}
-			}
-			if (!isExist) {
-				addtoShoppingCarts.add(0, addtoShoppingCart);
-				sessionDao.value = gson.toJson(addtoShoppingCarts);
-				try {
-					sessionDao.save();
-				} catch (Exception e) {
-					Log.e("TAG", e.getMessage());
-				}
-			}
-		}
-	}
-
-	public static List<ShoppingList> getShoppingList(Context context) {
-		List<ShoppingList> historyList = null;
-		try {
-			SessionDao sessionDao = new SessionDao(context,
-					SessionDao.KEY.STORE_SHOPPING_LIST).get();
-			if (sessionDao.value == null) {
-				historyList = new ArrayList<>();
-			} else {
-				Gson gson = new Gson();
-				Type type = new TypeToken<List<ShoppingList>>() {
-				}.getType();
-				historyList = gson.fromJson(sessionDao.value, type);
-			}
-		} catch (Exception e) {
-			Log.e("TAG", e.getMessage());
-		}
-		return historyList;
-	}
-
 	public static void displayValidationMessage(Context context, CustomPopUpWindow.MODAL_LAYOUT key, SendUserStatementRequest susr) {
 		Intent openMsg = new Intent(context, CustomPopUpWindow.class);
 		Bundle args = new Bundle();
@@ -476,6 +455,30 @@ public class Utils {
 		args.putString("description", description);
 		openMsg.putExtras(args);
 		context.startActivity(openMsg);
+		((AppCompatActivity) context).overridePendingTransition(0, 0);
+	}
+
+	public static void displayDialog(Context context, CustomPopUpWindow.MODAL_LAYOUT key, String description) {
+		Intent openMsg = new Intent(context, CustomPopUpWindow.class);
+		Bundle args = new Bundle();
+		args.putSerializable("key", key);
+		args.putString("description", description);
+		openMsg.putExtras(args);
+		if (((Activity) context) != null) {
+			Activity activity = ((Activity) context);
+			activity.startActivityForResult(openMsg, 1001);
+			((AppCompatActivity) activity).overridePendingTransition(0, 0);
+		}
+	}
+
+	public static void displayValidationMessage(Context context, CustomPopUpWindow.MODAL_LAYOUT key, String description, boolean closeView) {
+		Intent openMsg = new Intent(context, CustomPopUpWindow.class);
+		Bundle args = new Bundle();
+		args.putSerializable("key", key);
+		args.putString("description", description);
+		args.putBoolean("closeSlideUpPanel", closeView);
+		openMsg.putExtras(args);
+		((AppCompatActivity) context).startActivityForResult(openMsg, 0);
 		((AppCompatActivity) context).overridePendingTransition(0, 0);
 	}
 
@@ -598,6 +601,20 @@ public class Utils {
 		mTooltip.show();
 	}
 
+
+	public static void showOneTimePopup(Context context, SessionDao.KEY key, View view) {
+		try {
+			String firstTime = Utils.getSessionDaoValue(context, key);
+			if (firstTime == null) {
+				view.setVisibility(View.VISIBLE);
+			} else {
+				view.setVisibility(View.GONE);
+			}
+			Utils.sessionDaoSave(context, key, "1");
+		} catch (NullPointerException ignored) {
+		}
+	}
+
 	public static void triggerFireBaseEvents(Context mContext, String eventName, Map<String, String> arguments) {
 		FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(mContext);
 
@@ -607,19 +624,6 @@ public class Utils {
 		}
 
 		mFirebaseAnalytics.logEvent(eventName, params);
-	}
-
-	public static JWTDecodedModel getJWTDecoded(Context mContext) {
-		JWTDecodedModel result = new JWTDecodedModel();
-		try {
-			SessionDao sessionDao = new SessionDao(mContext, SessionDao.KEY.USER_TOKEN).get();
-			if (sessionDao.value != null && !sessionDao.value.equals("")) {
-				result = JWTHelper.decode(sessionDao.value);
-			}
-		} catch (Exception e) {
-			Log.e("TAG", e.getMessage());
-		}
-		return result;
 	}
 
 	public static void sendEmail(String emailId, String subject, Context mContext) {
@@ -671,7 +675,6 @@ public class Utils {
 		return listIterator;
 	}
 
-
 	public static String getString(Context context, int id) {
 		Resources resources = context.getResources();
 		return resources.getString(id);
@@ -689,7 +692,7 @@ public class Utils {
 		}
 	}
 
-	public static void showView(WTextView view, String messageSummary) {
+	private static void showView(WTextView view, String messageSummary) {
 		view.setVisibility(View.VISIBLE);
 		view.setText(messageSummary);
 	}
@@ -698,33 +701,33 @@ public class Utils {
 		view.setVisibility(View.GONE);
 	}
 
-	public static ArrayList<OtherSku> commonSizeList(String colour, boolean productHasColor, List<OtherSku> mOtherSKU) {
-		ArrayList<OtherSku> commonSizeList = new ArrayList<>();
+	public static ArrayList<OtherSkus> commonSizeList(String colour, boolean productHasColor, List<OtherSkus> mOtherSKU) {
+		ArrayList<OtherSkus> commonSizeList = new ArrayList<>();
 		if (productHasColor) { //product has color
 			// filter by colour
-			ArrayList<OtherSku> sizeList = new ArrayList<>();
-			for (OtherSku sku : mOtherSKU) {
+			ArrayList<OtherSkus> sizeList = new ArrayList<>();
+			for (OtherSkus sku : mOtherSKU) {
 				if (sku.colour.equalsIgnoreCase(colour)) {
 					sizeList.add(sku);
 				}
 			}
 
 			//remove duplicates
-			for (OtherSku os : sizeList) {
+			for (OtherSkus os : sizeList) {
 				if (!sizeValueExist(commonSizeList, os.colour)) {
 					commonSizeList.add(os);
 				}
 			}
 		} else { // no color found
-			ArrayList<OtherSku> sizeList = new ArrayList<>();
-			for (OtherSku sku : mOtherSKU) {
+			ArrayList<OtherSkus> sizeList = new ArrayList<>();
+			for (OtherSkus sku : mOtherSKU) {
 				if (sku.colour.contains(colour)) {
 					sizeList.add(sku);
 				}
 			}
 
 			//remove duplicates
-			for (OtherSku os : sizeList) {
+			for (OtherSkus os : sizeList) {
 				if (!sizeValueExist(commonSizeList, os.size)) {
 					commonSizeList.add(os);
 				}
@@ -733,8 +736,8 @@ public class Utils {
 		return commonSizeList;
 	}
 
-	public static boolean sizeValueExist(ArrayList<OtherSku> list, String name) {
-		for (OtherSku item : list) {
+	public static boolean sizeValueExist(ArrayList<OtherSkus> list, String name) {
+		for (OtherSkus item : list) {
 			if (item.size.equals(name)) {
 				return true;
 			}
@@ -837,6 +840,42 @@ public class Utils {
 		activity.startActivity(intent);
 	}
 
+	public static Badge addBadgeAt(Context context, WBottomNavigationView mBottomNav, int position, int number) {
+		BottomNavigationItemView bottomNavItem = mBottomNav.getBottomNavigationItemView(position);
+		String tagPosition = "BADGE_POSITION_" + position;
+		QBadgeView badge = ((ViewGroup) bottomNavItem.getParent()).findViewWithTag(tagPosition);
+		if (badge != null) {
+			return badge.setBadgeNumber(number);
+		} else {
+			badge = new QBadgeView(context);
+			badge.setTag(tagPosition);
+			return badge
+					.setBadgeNumber(number)
+					.setGravityOffset(15, 2, true)
+					.bindTarget(mBottomNav.getBottomNavigationItemView(position));
+		}
+	}
+
+//	public static void updateStatusBar(Activity activity, int color) {
+//		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//			Window window = activity.getWindow();
+//			window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+//			window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+//			window.setStatusBarColor(activity.getResources().getColor(color));
+//		}
+//	}
+
+	public static void showOneTimePopup(Context context) {
+		try {
+			String firstTime = Utils.getSessionDaoValue(context, SessionDao.KEY.PRODUCTS_ONE_TIME_POPUP);
+			if (firstTime == null) {
+				Utils.displayValidationMessage(context, CustomPopUpWindow.MODAL_LAYOUT.INFO, context.getResources().getString(R.string.products_onetime_popup_text));
+				Utils.sessionDaoSave(context, SessionDao.KEY.PRODUCTS_ONE_TIME_POPUP, "1");
+			}
+		} catch (NullPointerException ignored) {
+		}
+	}
+
 	private static Calendar getCurrentInstance() {
 		return Calendar.getInstance(Locale.ENGLISH);
 	}
@@ -881,5 +920,247 @@ public class Utils {
 
 	private static void setProductOfferingId(int productOfferingId) {
 		WoolworthsApplication.getInstance().setProductOfferingId(productOfferingId);
+	}
+
+
+	public static List<DeliveryLocationHistory> getDeliveryLocationHistory(Context context) {
+		List<DeliveryLocationHistory> history = null;
+		try {
+			SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.DELIVERY_LOCATION_HISTORY);
+			if (sessionDao.value == null) {
+				history = new ArrayList<>();
+			} else {
+				Gson gson = new Gson();
+				Type type = new TypeToken<List<DeliveryLocationHistory>>() {
+				}.getType();
+				history = gson.fromJson(sessionDao.value, type);
+			}
+		} catch (Exception e) {
+			Log.e("TAG", e.getMessage());
+		}
+		return history;
+	}
+
+	public static void sendBus(Object object) {
+		WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
+		if (woolworthsApplication != null) woolworthsApplication.bus().send(object);
+	}
+
+	public static int dp2px(Context context, float dpValue) {
+		final float scale = context.getResources().getDisplayMetrics().density;
+		return (int) (dpValue * scale + 0.5f);
+	}
+
+	public static void saveRecentDeliveryLocation(DeliveryLocationHistory historyItem, Context context) {
+		List<DeliveryLocationHistory> history = getRecentDeliveryLocations(context);
+		SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.DELIVERY_LOCATION_HISTORY);
+
+		Gson gson = new Gson();
+		boolean isExist = false;
+		if (history == null) {
+			history = new ArrayList<>();
+			history.add(0, historyItem);
+			String json = gson.toJson(history);
+			sessionDao.value = json;
+			try {
+				sessionDao.save();
+			} catch (Exception e) {
+				Log.e("TAG", e.getMessage());
+			}
+		} else {
+			for (DeliveryLocationHistory item : history) {
+				if (item.suburb.id.equals(historyItem.suburb.id)) {
+					isExist = true;
+				}
+			}
+			if (!isExist) {
+				history.add(0, historyItem);
+				if (history.size() > 5)
+					history.remove(5);
+
+				sessionDao.value = gson.toJson(history);
+				try {
+					sessionDao.save();
+				} catch (Exception e) {
+					Log.e("TAG", e.getMessage());
+				}
+			}
+		}
+	}
+
+	public static List<DeliveryLocationHistory> getRecentDeliveryLocations(Context context) {
+		List<DeliveryLocationHistory> history = null;
+		try {
+			SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.DELIVERY_LOCATION_HISTORY);
+			if (sessionDao.value == null) {
+				history = new ArrayList<>();
+			} else {
+				Gson gson = new Gson();
+				Type type = new TypeToken<List<DeliveryLocationHistory>>() {
+				}.getType();
+				history = gson.fromJson(sessionDao.value, type);
+			}
+		} catch (Exception e) {
+			Log.e("TAG", e.getMessage());
+		}
+		return history;
+	}
+
+	public static PopupWindow showToast(final Activity activity, String message, final boolean viewState) {
+		// inflate your xml layout
+		if (activity != null) {
+			LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			View layout = inflater.inflate(R.layout.add_to_cart_success, null);
+			// set the custom display
+			WTextView tvView = layout.findViewById(R.id.tvView);
+			WTextView tvCart = layout.findViewById(R.id.tvCart);
+			WTextView tvAddToCart = layout.findViewById(R.id.tvAddToCart);
+			// initialize your popupWindow and use your custom layout as the view
+			final PopupWindow pw = new PopupWindow(layout,
+					LinearLayout.LayoutParams.MATCH_PARENT,
+					LinearLayout.LayoutParams.WRAP_CONTENT, true);
+
+			tvView.setVisibility(viewState ? View.VISIBLE : View.GONE);
+			tvCart.setVisibility(viewState ? View.VISIBLE : View.GONE);
+			tvAddToCart.setText(message);
+
+			// handle popupWindow click event
+			tvView.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					if (viewState) {
+						// do anything when popupWindow was clicked
+						if (false) {//TODO: this needs to change
+							ScreenManager.presentSSOSignin(activity);
+						} else {
+							Intent openCartActivity = new Intent(activity, CartActivity.class);
+							activity.startActivity(openCartActivity);
+							activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+						}
+						pw.dismiss(); // dismiss the window
+					}
+				}
+			});
+
+			// dismiss the popup window after 3sec
+			new Handler().postDelayed(new Runnable() {
+				public void run() {
+					if (pw != null)
+						pw.dismiss();
+				}
+			}, POPUP_DELAY_MILLIS);
+			return pw;
+		}
+
+		return null;
+	}
+
+	public static void fadeInFadeOutAnimation(final View view, final boolean editMode) {
+		Animation animation;
+		if (!editMode) {
+			animation = android.view.animation.AnimationUtils.loadAnimation(view.getContext(), R.anim.edit_mode_fade_in);
+		} else {
+			animation = android.view.animation.AnimationUtils.loadAnimation(view.getContext(), R.anim.edit_mode_fade_out);
+		}
+
+		if (view instanceof WButton) {
+			animation.setAnimationListener(new Animation.AnimationListener() {
+				@Override
+				public void onAnimationStart(Animation animation) {
+
+				}
+
+				@Override
+				public void onAnimationEnd(Animation animation) {
+					view.setEnabled(!editMode);
+				}
+
+				@Override
+				public void onAnimationRepeat(Animation animation) {
+
+				}
+			});
+		}
+		view.startAnimation(animation);
+	}
+
+
+	public static void fadeView(final View view, final boolean editMode) {
+		Animation animation;
+		if (editMode) {
+			animation = android.view.animation.AnimationUtils.loadAnimation(view.getContext(), R.anim.edit_mode_fade_in);
+		} else {
+			animation = android.view.animation.AnimationUtils.loadAnimation(view.getContext(), R.anim.edit_mode_fade_out);
+		}
+
+		if (view instanceof WButton) {
+			animation.setAnimationListener(new Animation.AnimationListener() {
+				@Override
+				public void onAnimationStart(Animation animation) {
+
+				}
+
+				@Override
+				public void onAnimationEnd(Animation animation) {
+					view.setEnabled(editMode);
+				}
+
+				@Override
+				public void onAnimationRepeat(Animation animation) {
+
+				}
+			});
+		}
+		view.startAnimation(animation);
+	}
+
+	public static void whiteEffectClick(WButton button) {
+		//TODO:: TEST FOR DIFFERENT POPUP
+
+		try {
+			if (button != null) {
+				button.setBackgroundColor(Color.BLACK);
+				button.setTextColor(Color.WHITE);
+			}
+		} catch (Exception ex) {
+			Log.e("whiteEffectClick", ex.toString());
+		}
+	}
+
+	public static void removeFromDb(SessionDao.KEY key, Context context) throws Exception {
+		SessionDao.getByKey(key).delete();
+	}
+
+	public static void clearSQLLiteSearchHistory(Activity context) {
+		try {
+			Utils.sendBus(new BadgeState(CART_COUNT_TEMP, 0));
+			Utils.removeFromDb(SessionDao.KEY.DELIVERY_LOCATION_HISTORY, context);
+			Utils.removeFromDb(SessionDao.KEY.STORES_USER_SEARCH, context);
+			Utils.removeFromDb(SessionDao.KEY.STORES_USER_LAST_LOCATION, context);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void truncateMaxLine(final TextView tv) {
+		tv.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+			@Override
+			public void onGlobalLayout() {
+				tv.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+				if (tv.getLineCount() > 2) {
+					int lineEndIndex = tv.getLayout().getLineEnd(1);
+					String text = tv.getText().subSequence(0, lineEndIndex - 6) + "..."; //TODO:: truncate 3 characters at end
+					tv.setText(text);
+				}
+			}
+		});
+	}
+
+	public static String toJson(Object jsonObject) {
+		return new Gson().toJson(jsonObject);
+	}
+
+	public static String getExternalImageRef() {
+		return "https://images.woolworthsstatic.co.za/";
 	}
 }

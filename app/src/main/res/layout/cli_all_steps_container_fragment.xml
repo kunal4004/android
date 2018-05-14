@@ -3,7 +3,7 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical"
-              tools:context="za.co.woolworths.financial.services.android.ui.fragments.CLIAllStepsContainerFragment">
+              tools:context="za.co.woolworths.financial.services.android.ui.fragments.cli.CLIAllStepsContainerFragment">
 
     <include
         layout="@layout/cli_step_indicator_layout"

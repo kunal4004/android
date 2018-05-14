@@ -13,6 +13,7 @@ import android.widget.RelativeLayout;
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.TransactionHistoryResponse;
 import za.co.woolworths.financial.services.android.ui.adapters.WTransactionsAdapter;
 import za.co.woolworths.financial.services.android.ui.views.ProgressDialogFragment;
@@ -20,7 +21,7 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
-import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
+import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class WTransactionsActivity extends AppCompatActivity {
@@ -127,7 +128,8 @@ public class WTransactionsActivity extends AppCompatActivity {
 							break;
 						case 440:
 							if (!(WTransactionsActivity.this.isFinishing())) {
-								SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(WTransactionsActivity.this, transactionHistoryResponse.response.stsParams);
+								SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, transactionHistoryResponse
+										.response.stsParams);
 							}
 							break;
 						default:
