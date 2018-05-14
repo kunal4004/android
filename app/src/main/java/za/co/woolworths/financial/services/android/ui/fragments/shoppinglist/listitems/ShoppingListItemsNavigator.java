@@ -9,6 +9,7 @@ import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
+import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
 
 /**
  * Created by W7099877 on 2018/03/08.
@@ -53,4 +54,8 @@ public interface ShoppingListItemsNavigator {
 	void onCartSummaryOtherHttpCode(Response response);
 
 	void onTokenFailure(String e);
+
+	void getInventoryForStoreSuccess(SkusInventoryForStoreResponse skusInventoryForStoreResponse);
+
+	void geInventoryForStoreFailure(String e);
 }

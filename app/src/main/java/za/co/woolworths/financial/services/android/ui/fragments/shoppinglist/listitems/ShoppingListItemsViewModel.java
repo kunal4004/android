@@ -8,7 +8,9 @@ import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
+import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
 import za.co.woolworths.financial.services.android.models.rest.product.GetCartSummary;
+import za.co.woolworths.financial.services.android.models.rest.product.GetInventorySkusForStore;
 import za.co.woolworths.financial.services.android.models.rest.product.PostAddItemToCart;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.DeleteShoppingListItem;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.GetShoppingListItems;
@@ -141,5 +143,21 @@ public class ShoppingListItemsViewModel extends BaseViewModel<ShoppingListItemsN
 
 	public boolean addedToCart() {
 		return addedToCart;
+	}
+
+
+	public GetInventorySkusForStore getInventoryStockForStore(String storeId, String multiSku) {
+		return new GetInventorySkusForStore(storeId, multiSku, new OnEventListener() {
+			@Override
+			public void onSuccess(Object object) {
+				SkusInventoryForStoreResponse skusInventoryForStoreResponse = (SkusInventoryForStoreResponse) object;
+				getNavigator().getInventoryForStoreSuccess(skusInventoryForStoreResponse);
+			}
+
+			@Override
+			public void onFailure(String e) {
+				getNavigator().geInventoryForStoreFailure(e);
+			}
+		});
 	}
 }
