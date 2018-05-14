@@ -55,6 +55,7 @@ import za.co.woolworths.financial.services.android.models.rest.shoppinglist.GetS
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
 import za.co.woolworths.financial.services.android.models.service.event.ShopState;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator;
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
@@ -714,13 +715,19 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				}
 				break;
 			default:
-				break;
+				Activity activity = getActivity();
+				if (activity == null) return;
+				if (skusInventoryForStoreResponse == null) return;
+				if (skusInventoryForStoreResponse.response == null) return;
+				if (TextUtils.isEmpty(skusInventoryForStoreResponse.response.desc)) return;
+			Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, skusInventoryForStoreResponse.response.desc);
+
+			break;
 		}
 	}
 
 	@Override
 	public void geInventoryForStoreFailure(String e) {
-
 	}
 
 	@Override
