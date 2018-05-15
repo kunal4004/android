@@ -24,6 +24,8 @@ import za.co.woolworths.financial.services.android.util.rx.SchedulerProvider;
 
 public class ShoppingListItemsViewModel extends BaseViewModel<ShoppingListItemsNavigator> {
 	private boolean addedToCart;
+	private boolean internetConnectionWasLost = false;
+
 
 	public ShoppingListItemsViewModel() {
 		super();
@@ -104,7 +106,7 @@ public class ShoppingListItemsViewModel extends BaseViewModel<ShoppingListItemsN
 	protected GetCartSummary getCartSummary(Activity activity) {
 		addedToCartFail(false);
 		getNavigator().onAddToCartLoad();
-		return new GetCartSummary(activity,new OnEventListener() {
+		return new GetCartSummary(activity, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
 				if (object != null) {
@@ -147,6 +149,7 @@ public class ShoppingListItemsViewModel extends BaseViewModel<ShoppingListItemsN
 
 
 	public GetInventorySkusForStore getInventoryStockForStore(String storeId, String multiSku) {
+		setInternetConnectionWasLost(false);
 		return new GetInventorySkusForStore(storeId, multiSku, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
@@ -156,8 +159,17 @@ public class ShoppingListItemsViewModel extends BaseViewModel<ShoppingListItemsN
 
 			@Override
 			public void onFailure(String e) {
+				setInternetConnectionWasLost(true);
 				getNavigator().geInventoryForStoreFailure(e);
 			}
 		});
+	}
+
+	public void setInternetConnectionWasLost(boolean internetConnectionWasLost) {
+		this.internetConnectionWasLost = internetConnectionWasLost;
+	}
+
+	public boolean internetConnectionWasLost() {
+		return internetConnectionWasLost;
 	}
 }

@@ -214,9 +214,17 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	public void loadShoppingListItems(ShoppingListItemsResponse shoppingListItemsResponse) {
 		getViewDataBinding().loadingBar.setVisibility(View.GONE);
 		listItems = shoppingListItemsResponse.listItems;
+		if (shoppingListInventory()) return;
+
+		if (listItems == null)
+			listItems = new ArrayList<>();
+		updateList(listItems);
+	}
+
+	private boolean shoppingListInventory() {
 		if (listItems == null) {
 			setUpView();
-			return;
+			return true;
 		}
 		MultiMap<String, ShoppingListItem> multiListItem = MultiMap.create();
 		for (ShoppingListItem shoppingListItem : listItems) {
@@ -241,10 +249,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				executeGetInventoryForStore(fulFillmentStoreId, multiSKUS);
 			}
 		}
-
-		if (listItems == null)
-			listItems = new ArrayList<>();
-		updateList(listItems);
+		return false;
 	}
 
 	private void setUpView() {
@@ -427,7 +432,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 
 	@Override
 	public void onGetListFailure(final String errorMessage) {
-		Activity activity = getBaseActivity();
+		Activity activity = getActivity();
 		if (activity != null) {
 			activity.runOnUiThread(new Runnable() {
 				@Override
@@ -610,6 +615,11 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 
 	@Override
 	public void onConnectionChanged() {
+		if (getViewModel().internetConnectionWasLost()) {
+			shoppingListInventory();
+			getViewModel().setInternetConnectionWasLost(false);
+		}
+
 		if (getViewModel().addedToCart()) {
 			loadCartSummary();
 			getViewModel().addedToCartFail(false);
@@ -757,8 +767,17 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	}
 
 	@Override
-	public void geInventoryForStoreFailure(String e) {
-		updateList();
+	public void geInventoryForStoreFailure(final String errorMessage) {
+		Activity activity = getActivity();
+		if (activity != null) {
+			activity.runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					mErrorHandlerView.showToast();
+					updateList();
+				}
+			});
+		}
 	}
 
 	@Override
