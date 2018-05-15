@@ -50,7 +50,8 @@ import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem;
-import za.co.woolworths.financial.services.android.models.dto.StoreIdWithSKUs;
+import za.co.woolworths.financial.services.android.models.dto.SkuInventory;
+import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
 import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.rest.product.GetInventorySkusForStore;
@@ -883,45 +884,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		removeCartItem.execute();
 	}
 
-	/*public ArrayList<StoreIdWithSKUs> getCommonStoreIdsWithSKUs(ArrayList<CartItemGroup> items) {
-		ArrayList<StoreIdWithSKUs> storeIdWithSKUses = new ArrayList<>();
-		for (CartItemGroup item : items) {
-			for (CommerceItem commerceItem : item.commerceItems) {
-				if (storeIdWithSKUses.size() == 0) {
-					StoreIdWithSKUs idWithSKUs = new StoreIdWithSKUs();
-					idWithSKUs.fulFillmentStoreId = commerceItem.fulfillmentStoreId;
-					ArrayList<String> skus = new ArrayList<>();
-					skus.add(commerceItem.commerceItemInfo.catalogRefId);
-					idWithSKUs.setSkus(skus);
-					storeIdWithSKUses.add(idWithSKUs);
-				} else {
-					boolean isStoreIdExist = false;
-					for (StoreIdWithSKUs storeId : storeIdWithSKUses) {
-
-						if (commerceItem.fulfillmentStoreId.equalsIgnoreCase(storeId.fulFillmentStoreId)) {
-							isStoreIdExist = true;
-							ArrayList<String> skus =storeId.getSkus();
-							skus.add(commerceItem.commerceItemInfo.catalogRefId);
-							storeId.setSkus(skus);
-							break;
-						}
-					}
-					if (!isStoreIdExist) {
-						StoreIdWithSKUs idWithSKUs = new StoreIdWithSKUs();
-						idWithSKUs.fulFillmentStoreId = commerceItem.fulfillmentStoreId;
-						ArrayList<String> skus = new ArrayList<>();
-						skus.add(commerceItem.commerceItemInfo.catalogRefId);
-						idWithSKUs.setSkus(skus);
-						storeIdWithSKUses.add(idWithSKUs);
-					}
-
-				}
-
-			}
-		}
-		return storeIdWithSKUses;
-	}*/
-
 	public void loadInventoryRequest(ArrayList<CartItemGroup> items) {
 		MultiMap<String, CommerceItem> multiListItems = MultiMap.create();
 		for (CartItemGroup cartItemGroup : items) {
@@ -929,11 +891,13 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				multiListItems.put(commerceItem.fulfillmentStoreId, commerceItem);
 			}
 		}
-		Map<String, Collection<CommerceItem>> collections = multiListItems.getEntries();
+		Map<String, Collection<CommerceItem>> mapStoreIdWithCommerceItems = multiListItems.getEntries();
 
-		for (Map.Entry<String, Collection<CommerceItem>> collectionEntry : collections.entrySet()) {
+
+		for (Map.Entry<String, Collection<CommerceItem>> collectionEntry : mapStoreIdWithCommerceItems.entrySet()) {
 			Collection<CommerceItem> collection = collectionEntry.getValue();
 			String fullfilmentStoreId = collectionEntry.getKey();
+			fullfilmentStoreId = fullfilmentStoreId.replaceAll("\"", "");
 			List<String> skuIds = new ArrayList<>();
 			for (CommerceItem commerceItem : collection) {
 				skuIds.add(commerceItem.commerceItemInfo.catalogRefId);
@@ -949,7 +913,12 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		return new GetInventorySkusForStore(storeId, multiSku, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
-
+				SkusInventoryForStoreResponse skusInventoryForStoreResponse = (SkusInventoryForStoreResponse) object;
+				switch (skusInventoryForStoreResponse.httpCode) {
+					case 200:
+						updateCartListWithAvailableStock(skusInventoryForStoreResponse.skuInventory);
+						break;
+				}
 			}
 
 			@Override
@@ -957,5 +926,21 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 			}
 		});
+	}
+
+	public void updateCartListWithAvailableStock(List<SkuInventory> inventories) {
+		for (CartItemGroup cartItemGroup : cartItems) {
+			for (CommerceItem commerceItem : cartItemGroup.commerceItems) {
+				for (SkuInventory skuInventory : inventories) {
+					if (skuInventory.sku.equalsIgnoreCase(commerceItem.commerceItemInfo.catalogRefId)) {
+						commerceItem.quantityInStock = skuInventory.quantity;
+						commerceItem.isStockChecked = true;
+						break;
+					}
+				}
+			}
+		}
+		if (cartProductAdapter != null)
+			cartProductAdapter.updateStockAvailability(cartItems);
 	}
 }
