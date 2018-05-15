@@ -160,9 +160,12 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 				productHolder.llQuantity.setAlpha(commerceItem.isStockChecked ? 1.0f : 0.5f);
 
 				if(commerceItem.isStockChecked){
-					productHolder.llQuantity.setVisibility(commerceItem.quantityInStock > 0 ? View.VISIBLE : View.GONE);
+					productHolder.llQuantity.setVisibility((commerceItem.quantityInStock == 0) ? View.GONE : View.VISIBLE);
 					productHolder.tvProductAvailability.setVisibility((commerceItem.quantityInStock == 0) ? View.VISIBLE : View.GONE);
 					Utils.setBackgroundColor(productHolder.tvProductAvailability, R.drawable.round_red_corner, R.string.product_unavailable);
+				}else {
+					productHolder.llQuantity.setVisibility(View.VISIBLE);
+					productHolder.tvProductAvailability.setVisibility(View.GONE);
 				}
 
 				productHolder.btnDeleteRow.setOnClickListener(new View.OnClickListener() {

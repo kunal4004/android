@@ -778,7 +778,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					for (int i = 0; i < productsArray.length(); i++) {
 						CommerceItem commerceItem = new CommerceItem();
 						commerceItem = new Gson().fromJson(String.valueOf(productsArray.getJSONObject(i)), CommerceItem.class);
-						commerceItem.fulfillmentStoreId = Utils.retrieveStoreId(commerceItem.fulfillmentType, getActivity());
+						String fulfillmentStoreId = Utils.retrieveStoreId(commerceItem.fulfillmentType, getActivity());
+						commerceItem.fulfillmentStoreId = fulfillmentStoreId.replaceAll("\"","");
 						productList.add(commerceItem);
 					}
 					cartItemGroup.setCommerceItems(productList);
@@ -916,7 +917,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				SkusInventoryForStoreResponse skusInventoryForStoreResponse = (SkusInventoryForStoreResponse) object;
 				switch (skusInventoryForStoreResponse.httpCode) {
 					case 200:
-						updateCartListWithAvailableStock(skusInventoryForStoreResponse.skuInventory);
+						updateCartListWithAvailableStock(skusInventoryForStoreResponse.skuInventory,skusInventoryForStoreResponse.storeId);
 						break;
 				}
 			}
@@ -928,15 +929,19 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		});
 	}
 
-	public void updateCartListWithAvailableStock(List<SkuInventory> inventories) {
+	public void updateCartListWithAvailableStock(List<SkuInventory> inventories, String storeID) {
+			HashMap<String,Integer> inventoryMap=new HashMap<>();
+			for(SkuInventory skuInventory : inventories){
+				inventoryMap.put(skuInventory.sku,skuInventory.quantity);
+			}
+
 		for (CartItemGroup cartItemGroup : cartItems) {
 			for (CommerceItem commerceItem : cartItemGroup.commerceItems) {
-				for (SkuInventory skuInventory : inventories) {
-					if (skuInventory.sku.equalsIgnoreCase(commerceItem.commerceItemInfo.catalogRefId)) {
-						commerceItem.quantityInStock = skuInventory.quantity;
-						commerceItem.isStockChecked = true;
-						break;
-					}
+
+				if (commerceItem.fulfillmentStoreId.equalsIgnoreCase(storeID)) {
+					String sku = commerceItem.commerceItemInfo.getCatalogRefId();
+					commerceItem.quantityInStock = inventoryMap.containsKey(sku) ? inventoryMap.get(sku) : 0;
+					commerceItem.isStockChecked = true;
 				}
 			}
 		}
