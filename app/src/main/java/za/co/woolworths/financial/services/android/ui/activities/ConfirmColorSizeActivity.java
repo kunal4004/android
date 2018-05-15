@@ -81,6 +81,8 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 	private String mFulFillmentType;
 	private String mSelectedSku;
 	private String mQuantityInStock;
+	private int mCartQuantityInStock;
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +105,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 			mSizePickerSelector = mBundle.getBoolean(SIZE_PICKER_SELECTOR);
 			mColorPickerSelector = mBundle.getBoolean(COLOR_PICKER_SELECTOR);
 			mQuantityInStock = mBundle.getString("QUANTITY_IN_STOCK");
+			mCartQuantityInStock = mBundle.getInt("CART_QUANTITY_In_STOCK");
 		}
 
 		init();
@@ -554,6 +557,13 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 				ShoppingListItem shoppingListItem = new Gson().fromJson(mQuantityInStock, ShoppingListItem.class);
 				fragmentToShow.onUpdate(shoppingListItem);
 				return;
+			}
+
+			if(mCartQuantityInStock!= 0){
+				list.clear();
+				for (int number = 0; number < mCartQuantityInStock; number++) {
+					list.add(number + 1);
+				}
 			}
 
 			fragmentToShow.onUpdate(list);

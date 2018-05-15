@@ -281,6 +281,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		if (activity != null) {
 			Intent editQuantityIntent = new Intent(activity, ConfirmColorSizeActivity.class);
 			editQuantityIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, ConfirmColorSizeActivity.QUANTITY);
+			editQuantityIntent.putExtra("CART_QUANTITY_In_STOCK",commerceId.quantityInStock);
 			activity.startActivity(editQuantityIntent);
 			activity.overridePendingTransition(0, 0);
 		}
