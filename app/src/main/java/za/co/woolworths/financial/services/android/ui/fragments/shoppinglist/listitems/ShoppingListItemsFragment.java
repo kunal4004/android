@@ -214,7 +214,10 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	public void loadShoppingListItems(ShoppingListItemsResponse shoppingListItemsResponse) {
 		getViewDataBinding().loadingBar.setVisibility(View.GONE);
 		listItems = shoppingListItemsResponse.listItems;
-		if (listItems==null) return;
+		if (listItems == null) {
+			setUpView();
+			return;
+		}
 		MultiMap<String, ShoppingListItem> multiListItem = MultiMap.create();
 		for (ShoppingListItem shoppingListItem : listItems) {
 			multiListItem.put(shoppingListItem.fulfillmentType, shoppingListItem);
@@ -309,7 +312,21 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 
 	@Override
 	public void onShoppingListItemsResponse(ShoppingListItemsResponse shoppingListItemsResponse) {
-		loadShoppingListItems(shoppingListItemsResponse);
+		switch (shoppingListItemsResponse.httpCode) {
+			case 200:
+				loadShoppingListItems(shoppingListItemsResponse);
+				break;
+			case 440:
+				break;
+			default:
+				getViewDataBinding().loadingBar.setVisibility(View.GONE);
+				Activity activity = getActivity();
+				if (activity == null) return;
+				if (shoppingListItemsResponse.response == null) return;
+				if (TextUtils.isEmpty(shoppingListItemsResponse.response.desc)) return;
+				Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, shoppingListItemsResponse.response.desc);
+				break;
+		}
 	}
 
 	@Override
