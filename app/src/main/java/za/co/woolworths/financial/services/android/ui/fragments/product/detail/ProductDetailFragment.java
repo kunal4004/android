@@ -99,6 +99,7 @@ import static za.co.woolworths.financial.services.android.models.service.event.P
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SET_SUBURB;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SET_SUBURB_API;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.USE_MY_LOCATION;
+import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.RESULT_LOADING_INVENTORY_FAILURE;
 import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.RESULT_TAP_FIND_INSTORE_BTN;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailViewModel.CLOTHING_PRODUCT;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailViewModel.FOOD_PRODUCT;
@@ -1590,8 +1591,17 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 			getViewModel().setFindInStoreLoadFail(false);
 			executeLocationItemTask();
 			return;
-		}
-		if (data != null) {
+		} else if ((requestCode == 3401) && (resultCode == RESULT_LOADING_INVENTORY_FAILURE)) {
+			if (data != null) {
+				Bundle bundleResponse = data.getExtras();
+				String responseFromBundle = bundleResponse.getString("response");
+				Response response = new Gson().fromJson(responseFromBundle, Response.class);
+				if (response != null) {
+					Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
+				}
+			}
+			return;
+		} else if (data != null) {
 			if (requestCode == 3401) {
 				if (resultCode == RESULT_OK) {
 					Bundle extras = data.getExtras();

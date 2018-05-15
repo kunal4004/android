@@ -25,6 +25,7 @@ import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.adapters.StockFinderFragmentAdapter;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ColorFragmentList;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.SizeFragmentList;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.EditQuantityFragmentList;
@@ -52,6 +53,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 	public static final String FULFILLMENT_TYPE = "FULFILLMENT_TYPE";
 
 	public static final int RESULT_TAP_FIND_INSTORE_BTN = 1001;
+	public static final int RESULT_LOADING_INVENTORY_FAILURE = 2002;
 	public static final String SELECTED_SKU = "SELECTED_SKU";
 
 	public final String SELECTED_COLOUR = "SELECTED_COLOUR";
@@ -343,7 +345,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 		}
 	}
 
-	private void popClose(final int result) {
+	public void closeConfirmColorSizeActivity(final int result, final Intent bundle) {
 		if (!viewWasClicked) { // prevent more than one click
 			viewWasClicked = true;
 			TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
@@ -365,6 +367,10 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 					switch (result) {
 						case RESULT_TAP_FIND_INSTORE_BTN:
 							setResult(RESULT_TAP_FIND_INSTORE_BTN);
+							dismissLayout();
+							break;
+						case RESULT_LOADING_INVENTORY_FAILURE:
+							setResult(RESULT_LOADING_INVENTORY_FAILURE, bundle);
 							dismissLayout();
 							break;
 						default:
@@ -443,7 +449,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 			mGlobalState.setSelectedSKUId(mOtherSizeSKU.get(position));
 			if (otherSku.quantity == 0
 					&& getGlobalState().getSaveButtonClick() == INDEX_ADD_TO_CART) {
-				popClose(RESULT_TAP_FIND_INSTORE_BTN);
+				closeConfirmColorSizeActivity(RESULT_TAP_FIND_INSTORE_BTN,null);
 				return;
 			}
 			inStoreFinderUpdate();

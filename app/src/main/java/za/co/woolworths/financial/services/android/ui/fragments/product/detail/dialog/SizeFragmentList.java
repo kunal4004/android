@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -33,7 +34,9 @@ import za.co.woolworths.financial.services.android.util.CenterLayoutManager;
 import za.co.woolworths.financial.services.android.util.ColorInterface;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
+import za.co.woolworths.financial.services.android.util.Utils;
 
+import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.RESULT_LOADING_INVENTORY_FAILURE;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_ADD_TO_CART;
 
 public class SizeFragmentList extends Fragment implements StockFinderSizeColorAdapter.RecyclerViewClickListener, ColorInterface, CustomSizePickerAdapter.RecyclerViewClickListener {
@@ -140,8 +143,22 @@ public class SizeFragmentList extends Fragment implements StockFinderSizeColorAd
 						setSizeAdapter(mOtherSKUList);
 						break;
 					case 440:
+
 						break;
 					default:
+						/***
+						 * close the activity with close down animation and open result
+						 * from pdp onActivity result
+						 */
+						Activity activity = getActivity();
+						if (activity != null) {
+							ConfirmColorSizeActivity confirmColorSizeActivity = (ConfirmColorSizeActivity) activity;
+							if (skusInventoryForStoreResponse == null) return;
+							if (skusInventoryForStoreResponse.response == null) return;
+							Intent intent = new Intent();
+							intent.putExtra("response", Utils.toJson(skusInventoryForStoreResponse.response));
+							confirmColorSizeActivity.closeConfirmColorSizeActivity(RESULT_LOADING_INVENTORY_FAILURE, intent);
+						}
 						break;
 				}
 				showInventoryProgressBar(false);
