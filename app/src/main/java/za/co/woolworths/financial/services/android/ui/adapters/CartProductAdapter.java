@@ -157,6 +157,14 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 				}
 				// Set Color and Size END
 
+				productHolder.llQuantity.setAlpha(commerceItem.isStockChecked ? 1.0f : 0.5f);
+
+				if(commerceItem.isStockChecked){
+					productHolder.llQuantity.setVisibility(commerceItem.quantityInStock > 0 ? View.VISIBLE : View.GONE);
+					productHolder.tvProductAvailability.setVisibility((commerceItem.quantityInStock == 0) ? View.VISIBLE : View.GONE);
+					Utils.setBackgroundColor(productHolder.tvProductAvailability, R.drawable.round_red_corner, R.string.product_unavailable);
+				}
+
 				productHolder.btnDeleteRow.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
@@ -170,6 +178,8 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 				productHolder.llQuantity.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View view) {
+						if (commerceItem.quantityInStock == 0) return;
+
 						commerceItem.setQuantityUploading(true);
 						setFirstLoadCompleted(false);
 						onItemClick.onChangeQuantity(commerceItem);
@@ -367,6 +377,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 		private ProgressBar pbDeleteProgress;
 		private SwipeLayout swipeLayout;
 		private RelativeLayout rlDeleteButton;
+		private WTextView tvProductAvailability;
 
 		public ProductHolder(View view) {
 			super(view);
@@ -386,6 +397,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 			swipeLayout = view.findViewById(R.id.swipe);
 			llPromotionalText = view.findViewById(R.id.promotionalTextLayout);
 			rlDeleteButton = view.findViewById(R.id.rlDeleteButton);
+			tvProductAvailability = view.findViewById(R.id.tvProductAvailability);
 		}
 	}
 
@@ -521,5 +533,10 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 		this.editMode = editMode;
 		if (cartItems != null)
 			notifyItemRangeChanged(0, cartItems.size());
+	}
+
+	public void updateStockAvailability(ArrayList<CartItemGroup> cartItems) {
+		this.cartItems = cartItems;
+		notifyDataSetChanged();
 	}
 }

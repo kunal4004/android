@@ -17,6 +17,8 @@ public class CommerceItem {
 	private CommerceItem deletedCommerceItemId;
 	public String fulfillmentType;
 	public String fulfillmentStoreId;
+	public int quantityInStock;
+	public boolean isStockChecked;
 
 	public void setDeleteSingleItem(boolean deleteSingleItem) {
 		this.deleteSingleItem = deleteSingleItem;
