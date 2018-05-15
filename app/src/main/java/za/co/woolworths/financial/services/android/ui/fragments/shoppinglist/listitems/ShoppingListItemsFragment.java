@@ -98,6 +98,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	private PostAddItemToCart mPostAddToCart;
 	private GetInventorySkusForStore mGetInventorySkusForStore;
 	private Map<String, String> mMapStoreFulFillmentKeyValue;
+	private boolean errorMessageWasPopUp;
 
 	@Override
 	public ShoppingListItemsViewModel getViewModel() {
@@ -213,7 +214,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	public void loadShoppingListItems(ShoppingListItemsResponse shoppingListItemsResponse) {
 		getViewDataBinding().loadingBar.setVisibility(View.GONE);
 		listItems = shoppingListItemsResponse.listItems;
-
+		if (listItems==null) return;
 		MultiMap<String, ShoppingListItem> multiListItem = MultiMap.create();
 		for (ShoppingListItem shoppingListItem : listItems) {
 			multiListItem.put(shoppingListItem.fulfillmentType, shoppingListItem);
@@ -282,6 +283,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				break;
 			case R.id.btnRetry:
 				if (new ConnectionDetector().isOnline(getActivity())) {
+					errorMessageWasPopUp = false;
 					initGetShoppingListItems();
 				}
 				break;
@@ -708,26 +710,38 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				 * @method: getLastValueInMap() returns last storeId position
 				 * @method: updateList()
 				 */
-				if (getLastValueInMap() == null) return;
+				if (getLastValueInMap() == null) {
+					updateList();
+					return;
+				}
 				if (getLastValueInMap().equalsIgnoreCase(storeId)) {
-					if (shoppingListItemsAdapter != null)
-						shoppingListItemsAdapter.updateList(listItems);
+					updateList();
 				}
 				break;
 			default:
-				Activity activity = getActivity();
-				if (activity == null) return;
-				if (skusInventoryForStoreResponse == null) return;
-				if (skusInventoryForStoreResponse.response == null) return;
-				if (TextUtils.isEmpty(skusInventoryForStoreResponse.response.desc)) return;
-			Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, skusInventoryForStoreResponse.response.desc);
-
-			break;
+				updateList();
+				if (errorMessageWasPopUp) {
+					Activity activity = getActivity();
+					if (activity == null) return;
+					if (skusInventoryForStoreResponse == null) return;
+					if (skusInventoryForStoreResponse.response == null) return;
+					if (TextUtils.isEmpty(skusInventoryForStoreResponse.response.desc)) return;
+					Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, skusInventoryForStoreResponse.response.desc);
+					errorMessageWasPopUp = true;
+				}
+				break;
 		}
+
+	}
+
+	private void updateList() {
+		if (shoppingListItemsAdapter != null)
+			shoppingListItemsAdapter.updateList(listItems);
 	}
 
 	@Override
 	public void geInventoryForStoreFailure(String e) {
+		updateList();
 	}
 
 	@Override
