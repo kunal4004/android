@@ -1,11 +1,14 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.provider.Settings;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -138,12 +141,31 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 	}
 
 	public void openDeviceSecuritySettings(){
-		try {
-			Intent intent = new Intent(Settings.ACTION_SECURITY_SETTINGS);
-			startActivityForResult(intent, SECURITY_SETTING_REQUEST_CODE);
-		} catch (Exception ex) {
+		new AlertDialog.Builder(this)
+				.setTitle("Use Authentication ?")
+				.setMessage("Thia app want to change your device settings:")
+				.setCancelable(false)
+				.setPositiveButton(R.string.cli_yes, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+						try {
+							Intent intent = new Intent(Settings.ACTION_SETTINGS);
+							startActivityForResult(intent, SECURITY_SETTING_REQUEST_CODE);
+						} catch (Exception ex) {
+							setUserAuthentication(false);
+						}
+					}
+				})
+				.setNegativeButton(R.string.cli_no, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+						setUserAuthentication(false);
+					}
+				})
+				.show();
 
-		}
 	}
 
 	@Override
@@ -151,4 +173,5 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 		super.onResume();
 		bindDataWithUI();
 	}
+
 }

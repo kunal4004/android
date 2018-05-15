@@ -50,7 +50,7 @@ public class AuthenticateUtils {
 
 		//Check if the device version is greater than or equal to Lollipop(21)
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-			Intent i = keyguardManager.createConfirmDeviceCredentialIntent("Unlock Title", "Description");
+			Intent i = keyguardManager.createConfirmDeviceCredentialIntent("", "");
 			try {
 				//Start activity for result
 				mContext.startActivityForResult(i, requestCode);
