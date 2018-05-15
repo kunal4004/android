@@ -65,8 +65,6 @@ import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
-
-import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT;
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT_TEMP;
 import static za.co.woolworths.financial.services.android.models.service.event.CartState.CHANGE_QUANTITY;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_DIALOG_TAPPED;
@@ -165,7 +163,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 							if (object instanceof CartState) {
 								CartState cartState = (CartState) object;
 								if (!TextUtils.isEmpty(cartState.getState())) {
-									loadShoppingCart(false).execute();
 									tvDeliveryLocation.setText(cartState.getState());
 								} else if (cartState.getIndexState() == CHANGE_QUANTITY) {
 									mQuantity = cartState.getQuantity();
@@ -354,7 +351,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			relEmptyStateHandler.setVisibility(View.VISIBLE);
 			deliveryLocationEnabled(true);
 		}
-		updateCartSummary();
+		updateCartSummary(cartResponse.orderSummary.totalItemsCount);
 	}
 
 	@Override
@@ -381,12 +378,12 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			rlCheckOut.setVisibility(View.GONE);
 			relEmptyStateHandler.setVisibility(View.VISIBLE);
 		}
-		updateCartSummary();
+		updateCartSummary(cartResponse.orderSummary.totalItemsCount);
 		onChangeQuantityComplete();
 	}
 
-	private void updateCartSummary() {
-		Utils.sendBus(new BadgeState(CART_COUNT, CART_COUNT));
+	private void updateCartSummary(int cartCount) {
+		Utils.sendBus(new BadgeState(CART_COUNT_TEMP, cartCount));
 	}
 
 	private void onChangeQuantityComplete() {

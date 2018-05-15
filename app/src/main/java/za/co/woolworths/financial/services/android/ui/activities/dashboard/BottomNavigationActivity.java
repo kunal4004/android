@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.activities.dashboard;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Color;
@@ -53,11 +52,13 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.category
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.base.WRewardsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wtoday.WTodayFragment;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
+import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
@@ -106,6 +107,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	private boolean closeFromListEnabled;
 	private int shoppingListItemCount;
 	private boolean singleOrMultipleItemSelector;
+	public static final int LOCK_REQUEST_CODE_ACCOUNTS = 444;
 
 	@Override
 	public int getLayoutId() {
@@ -502,10 +504,18 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					return true;
 
 				case R.id.navigation_account:
-					setCurrentSection(R.id.navigation_account);
-					setToolbarBackgroundColor(R.color.white);
-					switchTab(INDEX_ACCOUNT);
-					return true;
+					if(AuthenticateUtils.getInstance(BottomNavigationActivity.this).isBiometricAuthenticationRequired()){
+						try {
+							AuthenticateUtils.getInstance(BottomNavigationActivity.this).startAuthenticateApp(LOCK_REQUEST_CODE_ACCOUNTS);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}else {
+						setCurrentSection(R.id.navigation_account);
+						setToolbarBackgroundColor(R.color.white);
+						switchTab(INDEX_ACCOUNT);
+						return true;
+					}
 			}
 			return false;
 		}
@@ -546,9 +556,11 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		overridePendingTransition(R.anim.anim_accelerate_in, R.anim.stay);
 	}
 
-	@SuppressLint("RestrictedApi")
 	@Override
 	public void onBackPressed() {
+		/**
+		 *  Close slide up panel when expanded
+		 */
 		if (getSlidingLayout() != null) {
 			if (getSlidingLayout().getPanelState().equals(SlidingUpPanelLayout.PanelState.EXPANDED)) {
 				closeSlideUpPanel();
@@ -559,11 +571,18 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			popFragmentSlideDown();
 			return;
 		}
+		/**
+		 *  Close barcode fragment with slide down animation
+		 */
 		if (mNavController.getCurrentFrag() instanceof BarcodeFragment) {
 			popFragmentSlideDown();
 			return;
 		}
 
+		/**
+		 *  Slide to previous fragment with custom left to right animation
+		 *  Close activity if fragment is at root level
+		 */
 		if (!mNavController.isRootFragment()) {
 			mNavController.popFragment(new FragNavTransactionOptions.Builder().customAnimations(R.anim.slide_in_from_left, R.anim.slide_out_to_right).build());
 		} else {
@@ -843,6 +862,15 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					fragment.onActivityResult(requestCode, resultCode, data);
 				}
 				break;
+		}
+
+		if (requestCode == WRewardsVouchersFragment.LOCK_REQUEST_CODE_WREWARDS && resultCode == RESULT_OK) {
+			Utils.sendBus(new WRewardsVouchersFragment());
+		}
+
+		if (requestCode == LOCK_REQUEST_CODE_ACCOUNTS && resultCode == RESULT_OK) {
+			AuthenticateUtils.getInstance(BottomNavigationActivity.this).enableBiometricForCurrentSession(false);
+			getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
 		}
 	}
 
