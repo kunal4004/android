@@ -967,9 +967,11 @@ public class Utils {
 				Log.e("TAG", e.getMessage());
 			}
 		} else {
-			for (DeliveryLocationHistory item : history) {
-				if (item.suburb.id.equals(historyItem.suburb.id)) {
+			int position = 0;
+			for (int i = 0; i < history.size(); i++) {
+				if (history.get(i).suburb.id.equals(historyItem.suburb.id)) {
 					isExist = true;
+					position = i;
 				}
 			}
 			if (!isExist) {
@@ -977,6 +979,17 @@ public class Utils {
 				if (history.size() > 5)
 					history.remove(5);
 
+				sessionDao.value = gson.toJson(history);
+				try {
+					sessionDao.save();
+				} catch (Exception e) {
+					Log.e("TAG", e.getMessage());
+				}
+			}
+
+			if (isExist && position > 0) {
+				DeliveryLocationHistory recent = history.remove(position);
+				history.add(0, recent);
 				sessionDao.value = gson.toJson(history);
 				try {
 					sessionDao.save();
@@ -1002,6 +1015,14 @@ public class Utils {
 		} catch (Exception e) {
 			Log.e("TAG", e.getMessage());
 		}
+		return history;
+	}
+
+	public static DeliveryLocationHistory getLastDeliveryLocation(Context context) {
+		DeliveryLocationHistory history = null;
+		List<DeliveryLocationHistory> locationHistories = Utils.getDeliveryLocationHistory(context);
+		if (locationHistories != null && locationHistories.size() > 0)
+			history = locationHistories.get(0);
 		return history;
 	}
 

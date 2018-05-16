@@ -44,9 +44,11 @@ import za.co.woolworths.financial.services.android.models.dto.Data;
 import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.Province;
+import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.models.rest.shop.SetDeliveryLocationSuburb;
 import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
@@ -62,6 +64,7 @@ import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
+import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -77,6 +80,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	private RelativeLayout rlLocationSelectedLayout;
 	private boolean onRemoveItemFailed = false;
 	private boolean mRemoveAllItemFailed = false;
+	private static final int REQUEST_SUBURB_CHANGE = 143;
 
 	public interface ToggleRemoveItem {
 		void onRemoveItem(boolean visibility);
@@ -103,6 +107,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	private ErrorHandlerView mErrorHandlerView;
 	private CommerceItem mCommerceItem;
 	private boolean changeQuantityWasClicked = false;
+	private SetDeliveryLocationSuburb setDeliveryLocationSuburb;
 
 	public CartFragment() {
 		// Required empty public constructor
@@ -143,6 +148,12 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		mBtnRetry.setOnClickListener(this);
 		btnCheckOut.setOnClickListener(this);
 		tvDeliveryLocation = view.findViewById(R.id.tvDeliveryLocation);
+		DeliveryLocationHistory lastDeliveryLocation = Utils.getLastDeliveryLocation(getActivity());
+		if (lastDeliveryLocation != null) {
+			mSuburbName = lastDeliveryLocation.suburb.name;
+			mProvinceName = lastDeliveryLocation.province.name;
+			tvDeliveryLocation.setText(mSuburbName + ", " + mProvinceName);
+		}
 		emptyCartUI(view);
 		final Activity activity = getActivity();
 		if (activity != null) {
@@ -298,7 +309,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			Intent openDeliveryLocationSelectionActivity = new Intent(this.getContext(), DeliveryLocationSelectionActivity.class);
 			openDeliveryLocationSelectionActivity.putExtra("suburbName", mSuburbName);
 			openDeliveryLocationSelectionActivity.putExtra("provinceName", mProvinceName);
-			startActivityForResult(openDeliveryLocationSelectionActivity, CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY);
+			startActivityForResult(openDeliveryLocationSelectionActivity, REQUEST_SUBURB_CHANGE);
 			activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
 		}
 	}
@@ -780,8 +791,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					suburb.name = data.suburbName;
 					suburb.id = suburbId;
 					Utils.saveRecentDeliveryLocation(new DeliveryLocationHistory(province, suburb), activity);
+					tvDeliveryLocation.setText(mSuburbName + ", " + mProvinceName);
 				}
-				tvDeliveryLocation.setText(data.suburbName + ", " + data.provinceName);
 			}
 
 		} catch (JSONException e) {
@@ -820,9 +831,15 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			activity.overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
 			return;
 		}
-		if (requestCode == CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY) {
+		if (requestCode == CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY || requestCode == REQUEST_SUBURB_CHANGE) {
 			loadShoppingCart(false).execute();
+			DeliveryLocationHistory lastDeliveryLocation = Utils.getLastDeliveryLocation(getActivity());
+			if (lastDeliveryLocation != null) {
+				mSuburbName = lastDeliveryLocation.suburb.name;
+				mProvinceName = lastDeliveryLocation.province.name;
+			}
 		}
+
 	}
 
 	@Override
@@ -853,4 +870,5 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		HttpAsyncTask<String, String, ShoppingCartResponse> removeCartItem = removeCartItem(mCommerceItem);
 		removeCartItem.execute();
 	}
+
 }
