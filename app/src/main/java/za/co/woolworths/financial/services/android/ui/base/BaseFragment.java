@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
@@ -48,6 +49,7 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setRetainInstance(true);
 		mViewModel = getViewModel();
 		setHasOptionsMenu(false);
 	}
@@ -346,5 +348,31 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 
 	public void checkLocationPermission(BottomNavigator bottomNavigator, ArrayList<String> permissionType, int request_code) {
 		bottomNavigator.getRuntimePermission().check_permission(permissionType, "Explain here why the app needs permissions", request_code);
+	}
+
+	public void slideDownOnToolbarNavigationOnClickListener() {
+		Activity activity = getActivity();
+		if (activity != null) {
+			BottomNavigationActivity bottomNavigationActivity = ((BottomNavigationActivity) activity);
+			bottomNavigationActivity.getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					popFragmentSlideDown();
+				}
+			});
+		}
+	}
+
+	public void slideStartOnToolbarNavigationClickListener() {
+		Activity activity = getActivity();
+		if (activity != null) {
+			BottomNavigationActivity bottomNavigationActivity = ((BottomNavigationActivity) activity);
+			bottomNavigationActivity.getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					popFragment();
+				}
+			});
+		}
 	}
 }

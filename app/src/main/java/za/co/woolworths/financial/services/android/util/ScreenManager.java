@@ -19,6 +19,8 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 
 public class ScreenManager {
 
+	public static final int CART_LAUNCH_VALUE = 1442;
+
 	public static void presentMain(Activity activity, String notificationUtils) {
 
 		Intent intent = new Intent(activity, BottomNavigationActivity.class);
@@ -34,6 +36,15 @@ public class ScreenManager {
 		intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue());
 		intent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.SIGNIN.rawValue());
 		activity.startActivityForResult(intent, SSOActivity.SSOActivityResult.LAUNCH.rawValue());
+		activity.overridePendingTransition(0, 0);
+	}
+
+	public static void presentCartSSOSignin(Activity activity) {
+		Intent intent = new Intent(activity, SSOActivity.class);
+		intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue());
+		intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue());
+		intent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.SIGNIN.rawValue());
+		activity.startActivityForResult(intent, CART_LAUNCH_VALUE);
 		activity.overridePendingTransition(0, 0);
 	}
 

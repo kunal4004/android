@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.activities.dashboard;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Color;
@@ -44,7 +43,6 @@ import za.co.woolworths.financial.services.android.models.service.event.LoadStat
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
-import za.co.woolworths.financial.services.android.ui.activities.splash.WSplashScreenActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment;
@@ -52,6 +50,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.barcode.BarcodeF
 import za.co.woolworths.financial.services.android.ui.fragments.barcode.manual.ManualBarcodeFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.category.CategoryFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.base.WRewardsFragment;
@@ -82,6 +81,7 @@ import static za.co.woolworths.financial.services.android.models.service.event.P
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SHOW_ADDED_TO_SHOPPING_LIST_TOAST;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_ADD_TO_SHOPPING_LIST;
+import static za.co.woolworths.financial.services.android.util.ScreenManager.CART_LAUNCH_VALUE;
 
 public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigationBinding, BottomNavigationViewModel> implements BottomNavigator, FragNavController.TransactionListener, FragNavController.RootFragmentListener, PermissionResultCallback, ToastUtils.ToastInterface {
 
@@ -407,11 +407,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					@Override
 					public void onAnimationEnd(Animator animation) {
 						super.onAnimationEnd(animation);
-						if (getGlobalState().toolbarIsShown()) {
-							statusBarColor(R.color.white);
-						} else {
-							statusBarColor(R.color.recent_search_bg);
-						}
+						statusBarColor(R.color.white);
 						hideView(mToolbar);
 					}
 				});
@@ -443,6 +439,18 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void pushFragmentSlideUp(Fragment fragment) {
+		if (mNavController != null) {
+			FragNavTransactionOptions ft = new FragNavTransactionOptions.Builder()
+					.customAnimations(R.anim.slide_up_anim, R.anim.stay)
+					.allowStateLoss(true)
+					.build();
+
+			mNavController.pushFragment(fragment, ft);
+		}
+	}
+
+	@Override
+	public void pushFragmentSlideUp(Fragment fragment, boolean state) {
 		if (mNavController != null) {
 			FragNavTransactionOptions ft = new FragNavTransactionOptions.Builder()
 					.customAnimations(R.anim.slide_up_anim, R.anim.stay)
@@ -559,7 +567,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				return;
 			}
 		}
-
+		if (mNavController.getCurrentFrag() instanceof SubCategoryFragment) {
+			popFragmentSlideDown();
+			return;
+		}
 		/**
 		 *  Close barcode fragment with slide down animation
 		 */
@@ -785,9 +796,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			badgeCount();
 			switch (getCurrentSection()) {
 				case R.id.navigation_cart:
-					Intent openCartActivity = new Intent(this, CartActivity.class);
-					startActivityForResult(openCartActivity, OPEN_CART_REQUEST);
-					overridePendingTransition(0, 0);
+					//open cart activity after login from cart only
+					if (requestCode == CART_LAUNCH_VALUE) {
+						Intent openCartActivity = new Intent(this, CartActivity.class);
+						startActivityForResult(openCartActivity, OPEN_CART_REQUEST);
+						overridePendingTransition(0, 0);
+					}
 					break;
 				default:
 					break;
@@ -884,7 +898,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	public void identifyTokenValidationAPI() {
 		if (!SessionUtilities.getInstance().isUserAuthenticated()) {
 			getGlobalState().setDetermineLocationPopUpEnabled(true);
-			ScreenManager.presentSSOSignin(BottomNavigationActivity.this);
+			ScreenManager.presentCartSSOSignin(BottomNavigationActivity.this);
 		} else {
 			openCartActivity();
 		}
@@ -1001,5 +1015,4 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	public Fragment getCurrentFragment() {
 		return mNavController.getCurrentFrag();
 	}
-
 }

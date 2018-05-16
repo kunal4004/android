@@ -405,7 +405,7 @@
                     android:layout_marginLeft="@dimen/default_margin"
                     android:layout_marginTop="@dimen/default_margin"
                     android:contentDescription="@string/app_name"
-                    android:src="@drawable/closecircle"/>
+                    android:src="@drawable/icon_close_circle"/>
 
 
                 <LinearLayout
