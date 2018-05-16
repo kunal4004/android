@@ -747,7 +747,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				break;
 			default:
 				updateList();
-				if (errorMessageWasPopUp) {
+				if (!errorMessageWasPopUp) {
 					Activity activity = getActivity();
 					if (activity == null) return;
 					if (skusInventoryForStoreResponse == null) return;
@@ -758,7 +758,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				}
 				break;
 		}
-
 	}
 
 	private void updateList() {
