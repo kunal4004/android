@@ -115,6 +115,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	private ErrorHandlerView mErrorHandlerView;
 	private CommerceItem mCommerceItem;
 	private boolean changeQuantityWasClicked = false;
+	private boolean errorMessageWasPopUp = false;
 
 	public CartFragment() {
 		// Required empty public constructor
@@ -244,6 +245,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				break;
 			case R.id.btnRetry:
 				if (new ConnectionDetector().isOnline(getActivity())) {
+					errorMessageWasPopUp = false;
 					rvCartList.setVisibility(View.VISIBLE);
 					loadShoppingCart(false).execute();
 				}
@@ -919,6 +921,17 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				switch (skusInventoryForStoreResponse.httpCode) {
 					case 200:
 						updateCartListWithAvailableStock(skusInventoryForStoreResponse.skuInventory,skusInventoryForStoreResponse.storeId);
+						break;
+					default:
+						if (!errorMessageWasPopUp) {
+							Activity activity = getActivity();
+							if (activity == null) return;
+							if (skusInventoryForStoreResponse == null) return;
+							if (skusInventoryForStoreResponse.response == null) return;
+							if (TextUtils.isEmpty(skusInventoryForStoreResponse.response.desc)) return;
+							Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, skusInventoryForStoreResponse.response.desc);
+							errorMessageWasPopUp = true;
+						}
 						break;
 				}
 			}
