@@ -964,12 +964,13 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				}
 			}
 		}
+
 		setCheckoutButtonAlpha();
 		if (cartProductAdapter != null)
 			cartProductAdapter.updateStockAvailability(cartItems);
 	}
 
 	private void setCheckoutButtonAlpha() {
-		rlCheckOut.setAlpha(mShouldDisplayCheckout ? 1f : 0.5f);
+		Utils.fadeInFadeOutAnimation(btnCheckOut, !mShouldDisplayCheckout);
 	}
 }
