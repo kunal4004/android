@@ -49,7 +49,6 @@ import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHi
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem;
 import za.co.woolworths.financial.services.android.models.dto.SkuInventory;
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
 import za.co.woolworths.financial.services.android.models.dto.Suburb;
@@ -90,6 +89,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	private boolean mRemoveAllItemFailed = false;
 	private static final int REQUEST_SUBURB_CHANGE = 143;
 	private boolean mShouldDisplayCheckout;
+	private String mStoreId;
+	private Map<String, String> mMapStoreId;
 
 	public interface ToggleRemoveItem {
 		void onRemoveItem(boolean visibility);
@@ -139,6 +140,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		} catch (IllegalStateException ex) {
 			Log.d("mToggleItemRemoved", ex.toString());
 		}
+		mMapStoreId = new HashMap<>();
 		mChangeQuantity = new ChangeQuantity();
 		rvCartList = view.findViewById(R.id.cartList);
 		btnCheckOut = view.findViewById(R.id.btnCheckOut);
@@ -891,7 +893,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 	public void loadInventoryRequest(ArrayList<CartItemGroup> items) {
 		MultiMap<String, CommerceItem> multiListItems = MultiMap.create();
-		setCheckoutButtonAlpha();
+		fadeCheckoutButton();
 		for (CartItemGroup cartItemGroup : items) {
 			for (CommerceItem commerceItem : cartItemGroup.getCommerceItems()) {
 				multiListItems.put(commerceItem.fulfillmentStoreId, commerceItem);
@@ -908,7 +910,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				skuIds.add(commerceItem.commerceItemInfo.catalogRefId);
 			}
 			String multiSKUS = TextUtils.join("-", skuIds);
-
+			mMapStoreId.put("storeId", fullfilmentStoreId);
 			initInventoryRequest(fullfilmentStoreId, multiSKUS).execute();
 		}
 	}
@@ -920,6 +922,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				SkusInventoryForStoreResponse skusInventoryForStoreResponse = (SkusInventoryForStoreResponse) object;
 				switch (skusInventoryForStoreResponse.httpCode) {
 					case 200:
+						mStoreId = skusInventoryForStoreResponse.storeId;
 						updateCartListWithAvailableStock(skusInventoryForStoreResponse.skuInventory, skusInventoryForStoreResponse.storeId);
 						break;
 					default:
@@ -964,13 +967,34 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				}
 			}
 		}
-
-		setCheckoutButtonAlpha();
+		mShouldDisplayCheckout = false;
+		/**
+		 * @Method getLastValueInMap() return last stored store Id
+		 * to trigger checkout button only once
+		 */
+		if (getLastValueInMap().equalsIgnoreCase(mStoreId)) {
+			if (mShouldDisplayCheckout)
+				fadeCheckoutButton();
+		}
 		if (cartProductAdapter != null)
 			cartProductAdapter.updateStockAvailability(cartItems);
 	}
 
-	private void setCheckoutButtonAlpha() {
+	/***
+	 * @method fadeCheckoutButton() is called before inventory api get executed to
+	 * disable the checkout button
+	 * It is called again after the last inventory call if
+	 * @params mShouldDisplayCheckout is true only to avoid blinking animation on
+	 *                               checkout button
+	 */
+	private void fadeCheckoutButton() {
 		Utils.fadeInFadeOutAnimation(btnCheckOut, !mShouldDisplayCheckout);
+	}
+
+	private String getLastValueInMap() {
+		for (Map.Entry<String, String> entry : mMapStoreId.entrySet()) {
+			return entry.getValue();
+		}
+		return null;
 	}
 }
