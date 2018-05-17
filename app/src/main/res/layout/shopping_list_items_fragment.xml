@@ -21,52 +21,93 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/rlShoppingListSearch">
+            android:layout_height="match_parent">
 
-            <RelativeLayout
-                android:id="@+id/rlShopSearch"
+            <LinearLayout
+                android:id="@+id/headerLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:gravity="center_vertical"
-                android:visibility="gone">
+                android:orientation="vertical"
+                android:visibility="gone"
+                >
 
-                <ImageView
-                    android:id="@+id/imProductSearch"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_alignBottom="@+id/textProductSearch"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_margin="18dp"
-                    android:src="@drawable/ic_search" />
-
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    android:id="@+id/textProductSearch"
+                <RelativeLayout
+                    android:id="@+id/locationSelectedLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:layout_alignParentTop="true"
-                    android:background="@android:color/transparent"
-                    android:gravity="start|center"
-                    android:hint="@string/shopping_search_hint"
-                    android:inputType="textNoSuggestions"
-                    android:maxLines="1"
-                    android:paddingLeft="@dimen/fifty_dp"
-                    android:paddingRight="@dimen/default_margin"
-                    android:textColor="@color/black"
-                    android:textColorHint="@color/product_search_hint"
-                    android:textSize="16sp"
-                    app:WTextView_font="myriadpro_regular" />
+                    android:layout_height="@dimen/fifty_dp"
+                    android:background="@drawable/white_bg_pressed"
+                    android:paddingLeft="@dimen/sixteen_dp"
+                    android:paddingRight="@dimen/nineteen_dp"
+                    android:layout_marginBottom="1dp"
+                    >
 
-            </RelativeLayout>
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        android:id="@+id/tvDeliveryLocation"
+                        style="@style/style_cart_delivery_selected"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toLeftOf="@+id/iconCaretRight"
+                        android:drawableLeft="@drawable/mapview"
+                        android:drawablePadding="16dp"
+                        android:gravity="center_vertical"
+                        android:text="@string/set_your_delivery_location" />
+
+                    <ImageView
+                        android:id="@+id/iconCaretRight"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="20dp"
+                        android:src="@drawable/ic_caret_black" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rlShopSearch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:id="@+id/imProductSearch"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_alignBottom="@+id/textProductSearch"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_margin="18dp"
+                        android:src="@drawable/ic_search" />
+
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        android:id="@+id/textProductSearch"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:layout_alignParentTop="true"
+                        android:background="@android:color/transparent"
+                        android:gravity="start|center"
+                        android:hint="@string/shopping_search_hint"
+                        android:inputType="textNoSuggestions"
+                        android:maxLines="1"
+                        android:paddingLeft="@dimen/fifty_dp"
+                        android:paddingRight="@dimen/default_margin"
+                        android:textColor="@color/black"
+                        android:textColorHint="@color/product_search_hint"
+                        android:textSize="16sp"
+                        app:WTextView_font="myriadpro_regular" />
+
+                </RelativeLayout>
+
+            </LinearLayout>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rcvShoppingListItems"
                 android:layout_width="match_parent"
-                android:animateLayoutChanges="false"
                 android:layout_height="match_parent"
-                android:layout_above="@+id/incConfirmButtonLayout" />
+                android:layout_above="@+id/incConfirmButtonLayout"
+                android:animateLayoutChanges="false" />
 
             <include
                 android:id="@+id/incEmptyLayout"
@@ -74,15 +115,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_above="@+id/incConfirmButtonLayout"
-                android:layout_below="@+id/rlShopSearch" />
+                android:layout_below="@+id/headerLayout" />
+
             <include
                 android:id="@+id/incConnectionLayout"
                 layout="@layout/no_connection_handler"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_above="@+id/incConfirmButtonLayout"
-                android:layout_below="@+id/rlShopSearch"
-                />
+                android:layout_below="@+id/headerLayout" />
 
             <include
                 android:id="@+id/incConfirmButtonLayout"

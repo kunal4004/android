@@ -350,7 +350,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			rlCheckOut.setVisibility(View.GONE);
 			mToggleItemRemoved.onRemoveSuccess();
 			relEmptyStateHandler.setVisibility(View.VISIBLE);
-			deliveryLocationEnabled(true);
+			Utils.deliveryLocationEnabled(getActivity(),true, rlLocationSelectedLayout);
 			Activity activity = getActivity();
 			if (activity != null) {
 				CartActivity cartActivity = (CartActivity) activity;
@@ -374,7 +374,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			rlCheckOut.setVisibility(View.GONE);
 			rvCartList.setVisibility(View.GONE);
 			relEmptyStateHandler.setVisibility(View.VISIBLE);
-			deliveryLocationEnabled(true);
+			Utils.deliveryLocationEnabled(getActivity(),true, rlLocationSelectedLayout);
 		}
 		updateCartSummary(cartResponse.orderSummary.totalItemsCount);
 	}
@@ -426,7 +426,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 			@Override
 			protected void onPreExecute() {
-				deliveryLocationEnabled(false);
+				Utils.deliveryLocationEnabled(getActivity(),false, rlLocationSelectedLayout);
 				rlCheckOut.setEnabled(onItemRemove ? false : true);
 				rlCheckOut.setVisibility(onItemRemove ? View.VISIBLE : View.GONE);
 				pBar.setVisibility(View.VISIBLE);
@@ -460,7 +460,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 						@Override
 						public void run() {
 							if (!onItemRemove) {
-								deliveryLocationEnabled(true);
+								Utils.deliveryLocationEnabled(getActivity(),true, rlLocationSelectedLayout);
 								rvCartList.setVisibility(View.GONE);
 								rlCheckOut.setVisibility(View.GONE);
 								mErrorHandlerView.showErrorHandler();
@@ -486,7 +486,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 								cartProductAdapter.setEditMode(true);
 							}
 							onChangeQuantityComplete();
-							deliveryLocationEnabled(true);
+							Utils.deliveryLocationEnabled(getActivity(),true, rlLocationSelectedLayout);
 							break;
 						case 440:
 							//TODO:: improve error handling
@@ -495,59 +495,17 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 							onChangeQuantityComplete();
 							break;
 						default:
-							deliveryLocationEnabled(true);
+							Utils.deliveryLocationEnabled(getActivity(),true, rlLocationSelectedLayout);
 							if (shoppingCartResponse.response != null)
 								Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, shoppingCartResponse.response.desc, true);
 							break;
 					}
-					deliveryLocationEnabled(true);
+					Utils.deliveryLocationEnabled(getActivity(),true, rlLocationSelectedLayout);
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
 			}
 		};
-	}
-
-	public void deliveryLocationEnabled(boolean enabled) {
-		Animation animFadeOut = AnimationUtils.loadAnimation(this.getContext(), R.anim.edit_mode_fade_out);
-		animFadeOut.setAnimationListener(new Animation.AnimationListener() {
-			@Override
-			public void onAnimationStart(Animation animation) {
-
-			}
-
-			@Override
-			public void onAnimationEnd(Animation animation) {
-				rlLocationSelectedLayout.setEnabled(false);
-			}
-
-			@Override
-			public void onAnimationRepeat(Animation animation) {
-
-			}
-		});
-		Animation animFadeIn = AnimationUtils.loadAnimation(this.getContext(), R.anim.edit_mode_fade_in);
-		animFadeIn.setAnimationListener(new Animation.AnimationListener() {
-			@Override
-			public void onAnimationStart(Animation animation) {
-
-			}
-
-			@Override
-			public void onAnimationEnd(Animation animation) {
-				rlLocationSelectedLayout.setEnabled(true);
-			}
-
-			@Override
-			public void onAnimationRepeat(Animation animation) {
-
-			}
-		});
-		if (enabled) {
-			rlLocationSelectedLayout.startAnimation(animFadeIn);
-		} else {
-			rlLocationSelectedLayout.startAnimation(animFadeOut);
-		}
 	}
 
 	private HttpAsyncTask<String, String, ShoppingCartResponse> changeQuantityAPI(final ChangeQuantity changeQuantity) {
@@ -721,7 +679,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 							mToggleItemRemoved.onRemoveItem(false);
 							break;
 					}
-					deliveryLocationEnabled(true);
+					Utils.deliveryLocationEnabled(getActivity(),true, rlLocationSelectedLayout);
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -995,5 +953,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			return entry.getValue();
 		}
 		return null;
+	}
+
+	public void deliveryLocationEnabled(boolean isEditMode) {
+		Utils.deliveryLocationEnabled(getActivity(), isEditMode, rlLocationSelectedLayout);
 	}
 }

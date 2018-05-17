@@ -34,7 +34,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.Animation;
+import android.view.animation.*;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -1239,6 +1239,48 @@ public class Utils {
 					updateStatusBarBackground(activity, defaultColor);
 				}
 			}, 4000);
+		}
+	}
+
+	public static void deliveryLocationEnabled(Context context, boolean enabled, final View view) {
+		Animation animFadeOut = android.view.animation.AnimationUtils.loadAnimation(context, R.anim.edit_mode_fade_out);
+		animFadeOut.setAnimationListener(new Animation.AnimationListener() {
+			@Override
+			public void onAnimationStart(Animation animation) {
+
+			}
+
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				view.setEnabled(false);
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+
+			}
+		});
+		Animation animFadeIn = android.view.animation.AnimationUtils.loadAnimation(context, R.anim.edit_mode_fade_in);
+		animFadeIn.setAnimationListener(new Animation.AnimationListener() {
+			@Override
+			public void onAnimationStart(Animation animation) {
+
+			}
+
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				view.setEnabled(true);
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+
+			}
+		});
+		if (enabled) {
+			view.startAnimation(animFadeIn);
+		} else {
+			view.startAnimation(animFadeOut);
 		}
 	}
 }
