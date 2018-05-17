@@ -39,7 +39,10 @@ public class SessionDao extends BaseDao {
 		PRODUCT_IS_ACTIVE("PRODUCT_IS_ACTIVE"),
 		ACCOUNT_AUTHENTICATION_STATE("ACCOUNT_AUTHENTICATION_STATE"),
 		SESSION_STATE("SESSION_STATE"),
-		STS_PARAMS("STS_PARAMS");
+		STS_PARAMS("STS_PARAMS"),
+		BIOMETRIC_AUTHENTICATION_STATE("BIOMETRIC_AUTHENTICATION_STATE"),
+		BIOMETRIC_AUTHENTICATION_SESSION("BIOMETRIC_AUTHENTICATION_SESSION");
+
 		private final String text;
 
 		/**
@@ -160,5 +163,18 @@ public class SessionDao extends BaseDao {
 		PersistenceLayer.getInstance().executeVoidQuery(query, new String[]{
 				this.value, this.key.toString()
 		});
+	}
+
+	public enum BIOMETRIC_AUTHENTICATION_STATE{
+		ON(1),
+		OFF(0);
+		/**
+		 * @param sessionState
+		 */
+		private final Integer state;
+
+		private BIOMETRIC_AUTHENTICATION_STATE(final Integer state) {
+			this.state = state;
+		}
 	}
 }

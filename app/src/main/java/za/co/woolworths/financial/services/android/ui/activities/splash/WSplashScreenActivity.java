@@ -32,6 +32,7 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.views.WVideoView;
+import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
@@ -100,6 +101,7 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 		});
 		//Remove old usage of SharedPreferences data.
 		Utils.clearSharedPreferences(WSplashScreenActivity.this);
+		AuthenticateUtils.getInstance(WSplashScreenActivity.this).enableBiometricForCurrentSession(true);
 	}
 
 	private void executeConfigServer() {
@@ -182,9 +184,6 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 					WoolworthsApplication.setCartCheckoutLink(configResponse.defaults.getCartCheckoutLink());
 					mWGlobalState.setStartRadius(configResponse.enviroment.getStoreStockLocatorConfigStartRadius());
 					mWGlobalState.setEndRadius(configResponse.enviroment.getStoreStockLocatorConfigEndRadius());
-					mWGlobalState.setClothingProducts(configResponse.enviroment.storeStockLocatorConfigClothingProducts());
-					mWGlobalState.setFoodProducts(configResponse.enviroment.storeStockLocatorConfigFoodProducts());
-
 					if (!isFirstTime())
 						presentNextScreen();
 				} catch (NullPointerException ignored) {

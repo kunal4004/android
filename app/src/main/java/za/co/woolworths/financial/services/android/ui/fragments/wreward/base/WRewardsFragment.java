@@ -19,6 +19,7 @@ import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsLoggedOutFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsLoggedinAndNotLinkedFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.logged_in.WRewardsLoggedinAndLinkedFragment;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
@@ -124,6 +125,10 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == WRewardsVouchersFragment.LOCK_REQUEST_CODE_WREWARDS) {
+			return;
+		}
+
 		if (resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue()) {
 			onSessionExpired(getActivity());
 		}

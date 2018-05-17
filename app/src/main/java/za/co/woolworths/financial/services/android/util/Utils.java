@@ -50,7 +50,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.JsonPrimitive;
 import com.google.gson.reflect.TypeToken;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -78,19 +77,16 @@ import java.util.Locale;
 import java.util.Map;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
-import okhttp3.internal.Util;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
-import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.Transaction;
 import za.co.woolworths.financial.services.android.models.dto.TransactionParentObj;
-import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
@@ -110,7 +106,6 @@ import static android.Manifest.permission_group.STORAGE;
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.WHITE;
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT_TEMP;
-import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_ADD_TO_CART;
 
 public class Utils {
 
@@ -297,7 +292,6 @@ public class Utils {
 			window.setStatusBarColor(ContextCompat.getColor(activity, color));
 		}
 	}
-
 
 	public static List<TransactionParentObj> getdata(List<Transaction> transactions) {
 		List<TransactionParentObj> transactionParentObjList = new ArrayList<>();
@@ -1196,6 +1190,7 @@ public class Utils {
 		return "https://images.woolworthsstatic.co.za/";
 	}
 
+
 	public static Object jsonStringToObject(String value, Class cl) {
 		if (TextUtils.isEmpty(value)) return null;
 		return new Gson().fromJson(value, cl);// json to Model
@@ -1236,4 +1231,28 @@ public class Utils {
 		return storeId;
 	}
 
+	public static void toggleStatusBarColor(final Activity activity, int color) {
+		if (activity != null) {
+			updateStatusBarBackground(activity, color, true);
+			Runnable runnable = new Runnable() {
+				@Override
+				public void run() {
+					updateStatusBarBackground(activity);
+				}
+			};
+			new Handler().postDelayed(runnable, 4000);
+		}
+	}
+
+	public static void toggleStatusBarColor(final Activity activity, int toggleColor, final int defaultColor) {
+		if (activity != null) {
+			updateStatusBarBackground(activity, toggleColor, true);
+			new Handler().postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					updateStatusBarBackground(activity, defaultColor);
+				}
+			}, 4000);
+		}
+	}
 }

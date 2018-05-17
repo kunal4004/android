@@ -40,7 +40,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import io.reactivex.functions.Consumer;
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
@@ -141,6 +140,8 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	private ToastUtils mToastUtils;
 	private int mNumberOfListSelected = 0;
 	private GetInventorySkusForStore mGetInventorySkusForStore;
+	private boolean shoppingListDidReload = false;
+	private final int ACCESS_FINE_LOCATION_REQUEST_CODE = 1;
 
 	@Override
 	public ProductDetailViewModel getViewModel() {
@@ -575,8 +576,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 					smoothScrollToTop();
 					if (Utils.isLocationEnabled(getActivity())) {
 						BottomNavigator bottomNavigator = getBottomNavigator();
-						checkLocationPermission(bottomNavigator, bottomNavigator.getPermissionType(android.Manifest.permission.ACCESS_FINE_LOCATION), 1);
-
+						checkLocationPermission(bottomNavigator, bottomNavigator.getPermissionType(android.Manifest.permission.ACCESS_FINE_LOCATION), ACCESS_FINE_LOCATION_REQUEST_CODE);
 					} else {
 						Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.LOCATION_OFF, "");
 					}
@@ -756,10 +756,11 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 			try {
 				LinearLayout llStoreFinder = getViewDataBinding().llStoreFinder;
 				LinearLayout llAddToCart = getViewDataBinding().llAddToCart;
-				String productType = productList.productType;
-				WGlobalState mcs = WoolworthsApplication.getInstance().getWGlobalState();
-				if ((productType.equalsIgnoreCase(CLOTHING_PRODUCT) & mcs.clothingIsEnabled())
-						|| (productType.equalsIgnoreCase(FOOD_PRODUCT) & mcs.isFoodProducts())) {
+				/***
+				 * isnAvailable:true show find in store button
+				 * isnAvailable:false do not show find in store button
+				 */
+				if (productList.isnAvailable) {
 					llAddToCart.setAlpha(1f);
 					llAddToCart.setEnabled(true);
 					setLayoutWeight(llAddToCart, 0.5f);

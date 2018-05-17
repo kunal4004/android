@@ -44,6 +44,7 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
+import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
@@ -429,6 +430,7 @@ public class SSOActivity extends WebViewActivity {
 
 					if (urlWithoutQueryString.equals(extraQueryStringParams.get("post_logout_redirect_uri"))) {
 						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
+						AuthenticateUtils.getInstance(SSOActivity.this).setUserAuthenticate(SessionDao.BIOMETRIC_AUTHENTICATION_STATE.OFF);
 						Intent intent = new Intent();
 						setResult(SSOActivityResult.SIGNED_OUT.rawValue(), intent);
 						closeActivity();

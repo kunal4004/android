@@ -255,6 +255,7 @@ public class ManualBarcodeFragment extends BaseFragment<ManualBarcodeLayoutBindi
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
+		showLoadingProgressBar(false);
 		showSoftKeyboard();
 	}
 
@@ -337,4 +338,6 @@ public class ManualBarcodeFragment extends BaseFragment<ManualBarcodeLayoutBindi
 			executeBarcodeProduct(mEditBarcodeIdText);
 		}
 	}
+
+
 }

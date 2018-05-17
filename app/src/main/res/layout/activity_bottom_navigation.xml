@@ -64,7 +64,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
-                    android:background="@color/white"
+                    android:background="@drawable/sub_category_header_bg"
 
                     app:elevation="0dp"
                     app:itemIconTint="@color/selector_item_gray_color"
