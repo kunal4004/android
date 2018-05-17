@@ -31,7 +31,7 @@ public class ErrorHandlerView {
 	private WTextView mTxtEmptyStateDesc;
 	private WTextView mTxtEmptyStateTitle;
 	private ImageView mImgEmptyStateIcon;
-	private RelativeLayout mRelativeLayout;
+	private RelativeLayout mRlRootNoConnectionLayout;
 	private Context mContext;
 
 	public ErrorHandlerView(Context context) {
@@ -45,9 +45,9 @@ public class ErrorHandlerView {
 	}
 
 	public ErrorHandlerView(Context context,
-							RelativeLayout relativeLayout, ImageView imageIcon, WTextView
+							RelativeLayout rootNoConnectionLayout, ImageView imageIcon, WTextView
 									textTitle, WTextView textDesc) {
-		this.mRelativeLayout = relativeLayout;
+		this.mRlRootNoConnectionLayout = rootNoConnectionLayout;
 		this.mContext = context;
 		this.mImgEmptyStateIcon = imageIcon;
 		this.mTxtEmptyStateTitle = textTitle;
@@ -58,7 +58,7 @@ public class ErrorHandlerView {
 							RelativeLayout relativeLayout, ImageView imageIcon, WTextView
 									textTitle, WTextView textDesc,
 							RelativeLayout relative) {
-		this.mRelativeLayout = relativeLayout;
+		this.mRlRootNoConnectionLayout = relativeLayout;
 		this.mContext = context;
 		this.mImgEmptyStateIcon = imageIcon;
 		this.mTxtEmptyStateTitle = textTitle;
@@ -86,11 +86,11 @@ public class ErrorHandlerView {
 	}
 
 	public void hideEmpyState() {
-		mRelativeLayout.setVisibility(View.GONE);
+		mRlRootNoConnectionLayout.setVisibility(View.GONE);
 	}
 
 	public void showEmptyState(int position) {
-		mRelativeLayout.setVisibility(View.VISIBLE);
+		mRlRootNoConnectionLayout.setVisibility(View.VISIBLE);
 		setEmptyState(position);
 	}
 
@@ -211,5 +211,9 @@ public class ErrorHandlerView {
 
 	private void hideView(View view) {
 		view.setVisibility(View.GONE);
+	}
+
+	public void showErrorView(){
+		mRlRootNoConnectionLayout.setVisibility(View.VISIBLE);
 	}
 }

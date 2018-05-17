@@ -374,6 +374,7 @@ public class MessagesActivity extends AppCompatActivity {
 							mErrorHandlerView.hideTitle();
 							mErrorHandlerView.hideIcon();
 							mErrorHandlerView.textDescription(getString(R.string.no_messages_to_display));
+							mErrorHandlerView.showErrorView();
 						}
 					}
 					break;
