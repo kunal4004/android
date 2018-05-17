@@ -967,7 +967,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				}
 			}
 		}
-		mShouldDisplayCheckout = false;
 		/**
 		 * @Method getLastValueInMap() return last stored store Id
 		 * to trigger checkout button only once
