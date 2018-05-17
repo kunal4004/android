@@ -271,7 +271,7 @@ public class Utils {
 		}
 	}
 
-	public static void updateStatusBarBackground(Activity activity, int color,boolean enableDecor) {
+	public static void updateStatusBarBackground(Activity activity, int color, boolean enableDecor) {
 		Window window = activity.getWindow();
 
 		View decor = activity.getWindow().getDecorView();
@@ -287,7 +287,6 @@ public class Utils {
 			window.setStatusBarColor(ContextCompat.getColor(activity, color));
 		}
 	}
-
 
 	public static List<TransactionParentObj> getdata(List<Transaction> transactions) {
 		List<TransactionParentObj> transactionParentObjList = new ArrayList<>();
@@ -968,9 +967,11 @@ public class Utils {
 				Log.e("TAG", e.getMessage());
 			}
 		} else {
-			for (DeliveryLocationHistory item : history) {
-				if (item.suburb.id.equals(historyItem.suburb.id)) {
+			int position = 0;
+			for (int i = 0; i < history.size(); i++) {
+				if (history.get(i).suburb.id.equals(historyItem.suburb.id)) {
 					isExist = true;
+					position = i;
 				}
 			}
 			if (!isExist) {
@@ -978,6 +979,17 @@ public class Utils {
 				if (history.size() > 5)
 					history.remove(5);
 
+				sessionDao.value = gson.toJson(history);
+				try {
+					sessionDao.save();
+				} catch (Exception e) {
+					Log.e("TAG", e.getMessage());
+				}
+			}
+
+			if (isExist && position > 0) {
+				DeliveryLocationHistory recent = history.remove(position);
+				history.add(0, recent);
 				sessionDao.value = gson.toJson(history);
 				try {
 					sessionDao.save();
@@ -1003,6 +1015,14 @@ public class Utils {
 		} catch (Exception e) {
 			Log.e("TAG", e.getMessage());
 		}
+		return history;
+	}
+
+	public static DeliveryLocationHistory getLastDeliveryLocation(Context context) {
+		DeliveryLocationHistory history = null;
+		List<DeliveryLocationHistory> locationHistories = Utils.getDeliveryLocationHistory(context);
+		if (locationHistories != null && locationHistories.size() > 0)
+			history = locationHistories.get(0);
 		return history;
 	}
 
@@ -1162,5 +1182,30 @@ public class Utils {
 
 	public static String getExternalImageRef() {
 		return "https://images.woolworthsstatic.co.za/";
+	}
+
+	public static void toggleStatusBarColor(final Activity activity, int color) {
+		if (activity != null) {
+			updateStatusBarBackground(activity, color, true);
+			Runnable runnable = new Runnable() {
+				@Override
+				public void run() {
+					updateStatusBarBackground(activity);
+				}
+			};
+			new Handler().postDelayed(runnable, 4000);
+		}
+	}
+
+	public static void toggleStatusBarColor(final Activity activity, int toggleColor, final int defaultColor) {
+		if (activity != null) {
+			updateStatusBarBackground(activity, toggleColor, true);
+			new Handler().postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					updateStatusBarBackground(activity, defaultColor);
+				}
+			}, 4000);
+		}
 	}
 }

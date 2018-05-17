@@ -15,10 +15,17 @@ import android.widget.RelativeLayout;
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.ui.activities.WRewardsVoucherDetailsActivity;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.WRewardsVoucherListAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.RecycleViewClickListner;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -33,7 +40,9 @@ public class WRewardsVouchersFragment extends Fragment {
 	private RecyclerView recyclerView;
 	public VoucherResponse voucherResponse;
 	private ErrorHandlerView mErrorHandlerView;
-
+	public int selectedVoucherPosition;
+	public static final int LOCK_REQUEST_CODE_WREWARDS = 111;
+	private CompositeDisposable mDisposables = new CompositeDisposable();
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -60,6 +69,22 @@ public class WRewardsVouchersFragment extends Fragment {
 			displayVouchers(voucherResponse);
 		}
 
+		mDisposables.add(WoolworthsApplication.getInstance()
+				.bus()
+				.toObservable()
+				.subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribe(new Consumer<Object>() {
+					@Override
+					public void accept(Object object) throws Exception {
+						if (object != null) {
+							if (object instanceof WRewardsVouchersFragment) {
+								AuthenticateUtils.getInstance(getActivity()).enableBiometricForCurrentSession(false);
+								startVoucherDetailsActivity();
+							}
+						}
+					}
+				}));
 		return view;
 	}
 
@@ -79,10 +104,17 @@ public class WRewardsVouchersFragment extends Fragment {
 		recyclerView.addOnItemTouchListener(new RecycleViewClickListner(getActivity(), recyclerView, new RecycleViewClickListner.ClickListener() {
 			@Override
 			public void onClick(View view, int position) {
-				Intent intent = new Intent(getActivity(), WRewardsVoucherDetailsActivity.class);
-				intent.putExtra("VOUCHERS", Utils.objectToJson(vResponse.voucherCollection));
-				intent.putExtra("POSITION", position);
-				startActivity(intent);
+				selectedVoucherPosition = position;
+				if(AuthenticateUtils.getInstance(getActivity()).isBiometricAuthenticationRequired()){
+					try {
+						AuthenticateUtils.getInstance(getActivity()).startAuthenticateApp(LOCK_REQUEST_CODE_WREWARDS);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}else {
+					startVoucherDetailsActivity();
+				}
+
 			}
 
 			@Override
@@ -90,4 +122,12 @@ public class WRewardsVouchersFragment extends Fragment {
 			}
 		}));
 	}
+
+	public void startVoucherDetailsActivity(){
+		Intent intent = new Intent(getActivity(), WRewardsVoucherDetailsActivity.class);
+		intent.putExtra("VOUCHERS", Utils.objectToJson(voucherResponse.voucherCollection));
+		intent.putExtra("POSITION", selectedVoucherPosition);
+		startActivity(intent);
+	}
+
 }

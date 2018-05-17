@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.activities.dashboard;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Color;
@@ -51,12 +50,15 @@ import za.co.woolworths.financial.services.android.ui.fragments.barcode.BarcodeF
 import za.co.woolworths.financial.services.android.ui.fragments.barcode.manual.ManualBarcodeFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.category.CategoryFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.base.WRewardsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wtoday.WTodayFragment;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
+import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
@@ -79,6 +81,7 @@ import static za.co.woolworths.financial.services.android.models.service.event.P
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SHOW_ADDED_TO_SHOPPING_LIST_TOAST;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_ADD_TO_SHOPPING_LIST;
+import static za.co.woolworths.financial.services.android.util.ScreenManager.CART_LAUNCH_VALUE;
 
 public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigationBinding, BottomNavigationViewModel> implements BottomNavigator, FragNavController.TransactionListener, FragNavController.RootFragmentListener, PermissionResultCallback, ToastUtils.ToastInterface {
 
@@ -104,6 +107,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	private boolean closeFromListEnabled;
 	private int shoppingListItemCount;
 	private boolean singleOrMultipleItemSelector;
+	public static final int LOCK_REQUEST_CODE_ACCOUNTS = 444;
 
 	@Override
 	public int getLayoutId() {
@@ -403,11 +407,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					@Override
 					public void onAnimationEnd(Animator animation) {
 						super.onAnimationEnd(animation);
-						if (getGlobalState().toolbarIsShown()) {
-							statusBarColor(R.color.white);
-						} else {
-							statusBarColor(R.color.recent_search_bg);
-						}
+						statusBarColor(R.color.white);
 						hideView(mToolbar);
 					}
 				});
@@ -439,6 +439,18 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void pushFragmentSlideUp(Fragment fragment) {
+		if (mNavController != null) {
+			FragNavTransactionOptions ft = new FragNavTransactionOptions.Builder()
+					.customAnimations(R.anim.slide_up_anim, R.anim.stay)
+					.allowStateLoss(true)
+					.build();
+
+			mNavController.pushFragment(fragment, ft);
+		}
+	}
+
+	@Override
+	public void pushFragmentSlideUp(Fragment fragment, boolean state) {
 		if (mNavController != null) {
 			FragNavTransactionOptions ft = new FragNavTransactionOptions.Builder()
 					.customAnimations(R.anim.slide_up_anim, R.anim.stay)
@@ -492,10 +504,18 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					return true;
 
 				case R.id.navigation_account:
-					setCurrentSection(R.id.navigation_account);
-					setToolbarBackgroundColor(R.color.white);
-					switchTab(INDEX_ACCOUNT);
-					return true;
+					if(AuthenticateUtils.getInstance(BottomNavigationActivity.this).isBiometricAuthenticationRequired()){
+						try {
+							AuthenticateUtils.getInstance(BottomNavigationActivity.this).startAuthenticateApp(LOCK_REQUEST_CODE_ACCOUNTS);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}else {
+						setCurrentSection(R.id.navigation_account);
+						setToolbarBackgroundColor(R.color.white);
+						switchTab(INDEX_ACCOUNT);
+						return true;
+					}
 			}
 			return false;
 		}
@@ -536,19 +556,33 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		overridePendingTransition(R.anim.anim_accelerate_in, R.anim.stay);
 	}
 
-	@SuppressLint("RestrictedApi")
 	@Override
 	public void onBackPressed() {
-		if (mNavController.getCurrentFrag() instanceof BarcodeFragment) {
-			popFragmentSlideDown();
-			return;
-		}
+		/**
+		 *  Close slide up panel when expanded
+		 */
 		if (getSlidingLayout() != null) {
 			if (getSlidingLayout().getPanelState().equals(SlidingUpPanelLayout.PanelState.EXPANDED)) {
 				closeSlideUpPanel();
 				return;
 			}
 		}
+		if (mNavController.getCurrentFrag() instanceof SubCategoryFragment) {
+			popFragmentSlideDown();
+			return;
+		}
+		/**
+		 *  Close barcode fragment with slide down animation
+		 */
+		if (mNavController.getCurrentFrag() instanceof BarcodeFragment) {
+			popFragmentSlideDown();
+			return;
+		}
+
+		/**
+		 *  Slide to previous fragment with custom left to right animation
+		 *  Close activity if fragment is at root level
+		 */
 		if (!mNavController.isRootFragment()) {
 			mNavController.popFragment(new FragNavTransactionOptions.Builder().customAnimations(R.anim.slide_in_from_left, R.anim.slide_out_to_right).build());
 		} else {
@@ -762,9 +796,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			badgeCount();
 			switch (getCurrentSection()) {
 				case R.id.navigation_cart:
-					Intent openCartActivity = new Intent(this, CartActivity.class);
-					startActivityForResult(openCartActivity, OPEN_CART_REQUEST);
-					overridePendingTransition(0, 0);
+					//open cart activity after login from cart only
+					if (requestCode == CART_LAUNCH_VALUE) {
+						Intent openCartActivity = new Intent(this, CartActivity.class);
+						startActivityForResult(openCartActivity, OPEN_CART_REQUEST);
+						overridePendingTransition(0, 0);
+					}
 					break;
 				default:
 					break;
@@ -826,6 +863,15 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				}
 				break;
 		}
+
+		if (requestCode == WRewardsVouchersFragment.LOCK_REQUEST_CODE_WREWARDS && resultCode == RESULT_OK) {
+			Utils.sendBus(new WRewardsVouchersFragment());
+		}
+
+		if (requestCode == LOCK_REQUEST_CODE_ACCOUNTS && resultCode == RESULT_OK) {
+			AuthenticateUtils.getInstance(BottomNavigationActivity.this).enableBiometricForCurrentSession(false);
+			getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
+		}
 	}
 
 	private Fragment getBottomFragmentById() {
@@ -852,7 +898,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	public void identifyTokenValidationAPI() {
 		if (!SessionUtilities.getInstance().isUserAuthenticated()) {
 			getGlobalState().setDetermineLocationPopUpEnabled(true);
-			ScreenManager.presentSSOSignin(BottomNavigationActivity.this);
+			ScreenManager.presentCartSSOSignin(BottomNavigationActivity.this);
 		} else {
 			openCartActivity();
 		}
