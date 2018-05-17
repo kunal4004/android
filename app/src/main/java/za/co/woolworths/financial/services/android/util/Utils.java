@@ -965,13 +965,6 @@ public class Utils {
 		if (history == null) {
 			history = new ArrayList<>();
 			history.add(0, historyItem);
-			String json = gson.toJson(history);
-			sessionDao.value = json;
-			try {
-				sessionDao.save();
-			} catch (Exception e) {
-				Log.e("TAG", e.getMessage());
-			}
 		} else {
 			int position = 0;
 			for (int i = 0; i < history.size(); i++) {
@@ -984,25 +977,18 @@ public class Utils {
 				history.add(0, historyItem);
 				if (history.size() > 5)
 					history.remove(5);
-
-				sessionDao.value = gson.toJson(history);
-				try {
-					sessionDao.save();
-				} catch (Exception e) {
-					Log.e("TAG", e.getMessage());
-				}
+			} else {
+				history.remove(position);
+				history.add(0, historyItem);
 			}
+		}
 
-			if (isExist && position > 0) {
-				DeliveryLocationHistory recent = history.remove(position);
-				history.add(0, recent);
-				sessionDao.value = gson.toJson(history);
-				try {
-					sessionDao.save();
-				} catch (Exception e) {
-					Log.e("TAG", e.getMessage());
-				}
-			}
+		String json = gson.toJson(history);
+		sessionDao.value = json;
+		try {
+			sessionDao.save();
+		} catch (Exception e) {
+			Log.e("TAG", e.getMessage());
 		}
 	}
 

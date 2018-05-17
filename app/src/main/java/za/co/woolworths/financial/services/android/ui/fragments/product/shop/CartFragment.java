@@ -751,6 +751,25 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			cartResponse = new CartResponse();
 			cartResponse.httpCode = response.httpCode;
 			Data data = response.data[0];
+			cartResponse.orderSummary = data.orderSummary;
+			// set delivery location
+			if (!TextUtils.isEmpty(data.suburbName) && !TextUtils.isEmpty(data.provinceName)) {
+				Activity activity = getActivity();
+				mSuburbName = data.suburbName;
+				mProvinceName = data.provinceName;
+				if (activity != null) {
+					String suburbId = String.valueOf(data.suburbId);
+					Province province = new Province();
+					province.name = data.provinceName;
+					province.id = suburbId;
+					Suburb suburb = new Suburb();
+					suburb.name = data.suburbName;
+					suburb.id = suburbId;
+					suburb.fulfillmentStores = data.orderSummary.suburb.fullfillmentStores;
+					Utils.saveRecentDeliveryLocation(new DeliveryLocationHistory(province, suburb), activity);
+					tvDeliveryLocation.setText(mSuburbName + ", " + mProvinceName);
+				}
+			}
 			JSONObject itemsObject = new JSONObject(new Gson().toJson(data.items));
 			Iterator<String> keys = itemsObject.keys();
 			ArrayList<CartItemGroup> cartItemGroups = new ArrayList<>();
@@ -794,25 +813,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 			cartResponse.cartItems = cartItemGroups;
 
-			cartResponse.orderSummary = data.orderSummary;
-			// set delivery location
-			if (!TextUtils.isEmpty(data.suburbName) && !TextUtils.isEmpty(data.provinceName)) {
-				Activity activity = getActivity();
-				mSuburbName = data.suburbName;
-				mProvinceName = data.provinceName;
-				if (activity != null) {
-					String suburbId = String.valueOf(data.suburbId);
-					Province province = new Province();
-					province.name = data.provinceName;
-					province.id = suburbId;
-					Suburb suburb = new Suburb();
-					suburb.name = data.suburbName;
-					suburb.id = suburbId;
-					suburb.fulfillmentStores = data.orderSummary.suburb.fulfillmentStores;
-					Utils.saveRecentDeliveryLocation(new DeliveryLocationHistory(province, suburb), activity);
-					tvDeliveryLocation.setText(mSuburbName + ", " + mProvinceName);
-				}
-			}
+
 
 		} catch (JSONException e) {
 			e.printStackTrace();
