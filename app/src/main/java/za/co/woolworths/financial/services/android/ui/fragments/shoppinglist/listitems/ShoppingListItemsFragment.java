@@ -589,9 +589,11 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	public void selectAllListItems(boolean setSelection) {
 		if (shoppingListItemsAdapter != null && listItems != null && listItems.size() > 1) {
 			for (ShoppingListItem item : listItems) {
-				item.isSelected = setSelection;
-				int quantity = item.userQuantity > 1 ? item.userQuantity : 1; // Click -> Select all - when one item quantity is > 1
-				item.userQuantity = setSelection ? quantity : 0;
+				if (item.quantityInStock != 0) {
+					item.isSelected = setSelection;
+					int quantity = item.userQuantity > 1 ? item.userQuantity : 1; // Click -> Select all - when one item quantity is > 1
+					item.userQuantity = setSelection ? quantity : 0;
+				}
 			}
 			shoppingListItemsAdapter.updateList(listItems);
 		}
