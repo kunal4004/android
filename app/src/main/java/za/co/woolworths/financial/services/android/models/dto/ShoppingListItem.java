@@ -37,9 +37,12 @@ public class ShoppingListItem {
 	public String color;
 
 	public String fulfillmentType;
-	// quantityInStock amount value is set from Inventory stock call
+	//quantityInStock amount value is set from Inventory stock call
 	public int quantityInStock;
 
 	//Grey out the quantity counter so it cannot be clicked until inventory call done
 	public boolean inventoryCallCompleted = false;
+
+	//select your delivery location address
+	public String delivery_location;
 }

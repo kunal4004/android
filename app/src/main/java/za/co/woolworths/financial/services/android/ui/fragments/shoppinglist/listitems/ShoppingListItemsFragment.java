@@ -15,8 +15,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
@@ -63,7 +61,6 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.ShoppingListItemsAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
@@ -102,14 +99,16 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	private GetInventorySkusForStore mGetInventorySkusForStore;
 	private Map<String, String> mMapStoreFulFillmentKeyValue;
 	private boolean errorMessageWasPopUp;
-	private RelativeLayout rlLocationSelectedLayout;
-	private WTextView tvDeliveryLocation;
 	private String mSuburbName, mProvinceName;
 	private static final int REQUEST_SUBURB_CHANGE = 143;
 
+	//flag to enable/disable set delivery location layout on loadShoppingList api call
+	public boolean shoppingListIsLoading;
+	private RelativeLayout rlLocationSelectedLayout;
+	private WTextView tvDeliveryLocation;
+
 	@Override
 	public ShoppingListItemsViewModel getViewModel() {
-
 		return shoppingListItemsViewModel;
 	}
 
@@ -229,7 +228,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 
 	public void loadShoppingListItems(ShoppingListItemsResponse shoppingListItemsResponse) {
 		getViewDataBinding().loadingBar.setVisibility(View.GONE);
-		Utils.deliveryLocationEnabled(getActivity(),true, rlLocationSelectedLayout);
+		Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
 		listItems = shoppingListItemsResponse.listItems;
 		if (shoppingListInventory()) return;
 
@@ -274,7 +273,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		RelativeLayout rlSoppingList = getViewDataBinding().incEmptyLayout.relEmptyStateHandler;
 		rlSoppingList.setVisibility(listItems == null || listItems.size() <= 1 ? View.VISIBLE : View.GONE); // 1 to exclude header
 		rcvShoppingListItems.setVisibility(listItems == null || listItems.size() <= 1 ? View.GONE : View.VISIBLE);
-		getViewDataBinding().headerLayout.setVisibility(listItems == null || listItems.size() <= 1 ? View.VISIBLE : View.GONE);
+		//getViewDataBinding().headerLayout.setVisibility(listItems == null || listItems.size() <= 1 ? View.VISIBLE : View.GONE);
 		manageSelectAllMenuVisibility(listItems.size());
 	}
 
@@ -346,7 +345,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				break;
 			default:
 				getViewDataBinding().loadingBar.setVisibility(View.GONE);
-				Utils.deliveryLocationEnabled(getActivity(),true, rlLocationSelectedLayout);
+				Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
 				Activity activity = getActivity();
 				if (activity == null) return;
 				if (shoppingListItemsResponse.response == null) return;
@@ -354,6 +353,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, shoppingListItemsResponse.response.desc);
 				break;
 		}
+		setShoppingListIsLoading(false);
 	}
 
 	@Override
@@ -459,12 +459,19 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 			activity.runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
+					setShoppingListIsLoading(false);
 					getViewDataBinding().loadingBar.setVisibility(View.GONE);
 					mErrorHandlerView.showErrorHandler();
 					mErrorHandlerView.networkFailureHandler(errorMessage);
 				}
 			});
 		}
+	}
+
+	private void setShoppingListIsLoading(boolean isLoading) {
+		shoppingListIsLoading = isLoading;
+		if (shoppingListItemsAdapter != null)
+			shoppingListItemsAdapter.notifyDeliveryLocationChanged(isLoading);
 	}
 
 	@Override
@@ -494,7 +501,8 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	public void initGetShoppingListItems() {
 		mErrorHandlerView.hideErrorHandler();
 		getViewDataBinding().loadingBar.setVisibility(View.VISIBLE);
-		Utils.deliveryLocationEnabled(getActivity(),false, rlLocationSelectedLayout);
+		Utils.deliveryLocationEnabled(getActivity(), false, rlLocationSelectedLayout);
+		setShoppingListIsLoading(shoppingListIsLoading);
 		getShoppingListItems = getViewModel().getShoppingListItems(listId);
 		getShoppingListItems.execute();
 	}
@@ -805,6 +813,11 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	}
 
 	@Override
+	public void onSetLocationItemClicked() {
+		locationSelectionClicked();
+	}
+
+	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		showToolbar(listName);
@@ -819,8 +832,10 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				mSuburbName = lastDeliveryLocation.suburb.name;
 				mProvinceName = lastDeliveryLocation.province.name;
 				tvDeliveryLocation.setText(mSuburbName + ", " + mProvinceName);
-				initGetShoppingListItems();
+				if (shoppingListItemsAdapter != null)
+					shoppingListItemsAdapter.notifyDeliveryLocationChanged();
 			}
+			initGetShoppingListItems();
 		}
 	}
 
@@ -830,7 +845,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		activity.startActivityForResult(deliveryLocationSelectionActivity, DELIVERY_LOCATION_REQUEST);
 		activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 	}
-
 
 	private void loadCartSummary() {
 		onAddToCartPreExecute();

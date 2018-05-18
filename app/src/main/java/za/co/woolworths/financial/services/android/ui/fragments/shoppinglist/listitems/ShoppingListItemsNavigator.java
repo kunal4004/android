@@ -57,4 +57,6 @@ public interface ShoppingListItemsNavigator {
 	void getInventoryForStoreSuccess(SkusInventoryForStoreResponse skusInventoryForStoreResponse);
 
 	void geInventoryForStoreFailure(String e);
+
+	void onSetLocationItemClicked();
 }
