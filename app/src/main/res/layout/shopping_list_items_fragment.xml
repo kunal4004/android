@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+        xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
-        <import type="android.view.View" />
+        <import type="android.view.View"/>
 
         <variable
             name="handler"
-            type="za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsFragment" />
+            type="za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsFragment"/>
     </data>
 
     <RelativeLayout
@@ -35,10 +35,10 @@
                     android:id="@+id/locationSelectedLayout"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/fifty_dp"
+                    android:layout_marginBottom="1dp"
                     android:background="@drawable/white_bg_pressed"
                     android:paddingLeft="@dimen/sixteen_dp"
                     android:paddingRight="@dimen/nineteen_dp"
-                    android:layout_marginBottom="1dp"
                     >
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -51,7 +51,7 @@
                         android:drawableLeft="@drawable/mapview"
                         android:drawablePadding="16dp"
                         android:gravity="center_vertical"
-                        android:text="@string/set_your_delivery_location" />
+                        android:text="@string/set_your_delivery_location"/>
 
                     <ImageView
                         android:id="@+id/iconCaretRight"
@@ -60,7 +60,7 @@
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="20dp"
-                        android:src="@drawable/ic_caret_black" />
+                        android:src="@drawable/ic_caret_black"/>
 
                 </RelativeLayout>
 
@@ -79,7 +79,7 @@
                         android:layout_alignParentStart="true"
                         android:layout_alignParentTop="true"
                         android:layout_margin="18dp"
-                        android:src="@drawable/ic_search" />
+                        android:src="@drawable/ic_search"/>
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         android:id="@+id/textProductSearch"
@@ -96,7 +96,7 @@
                         android:textColor="@color/black"
                         android:textColorHint="@color/product_search_hint"
                         android:textSize="16sp"
-                        app:WTextView_font="myriadpro_regular" />
+                        app:WTextView_font="myriadpro_regular"/>
 
                 </RelativeLayout>
 
@@ -107,7 +107,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_above="@+id/incConfirmButtonLayout"
-                android:animateLayoutChanges="false" />
+                android:animateLayoutChanges="false"/>
 
             <include
                 android:id="@+id/incEmptyLayout"
@@ -115,7 +115,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_above="@+id/incConfirmButtonLayout"
-                android:layout_below="@+id/headerLayout" />
+                android:layout_below="@+id/headerLayout"/>
 
             <include
                 android:id="@+id/incConnectionLayout"
@@ -123,14 +123,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_above="@+id/incConfirmButtonLayout"
-                android:layout_below="@+id/headerLayout" />
+                android:layout_below="@+id/headerLayout"/>
 
             <include
                 android:id="@+id/incConfirmButtonLayout"
                 layout="@layout/confirm_button_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true" />
+                android:layout_alignParentBottom="true"/>
 
             <ProgressBar
                 android:id="@+id/loadingBar"
@@ -140,7 +140,7 @@
                 android:layout_centerInParent="true"
                 android:layout_gravity="center_vertical|center_horizontal"
                 android:indeterminateTint="@color/black"
-                android:visibility="gone" />
+                android:visibility="gone"/>
         </RelativeLayout>
     </RelativeLayout>
 </layout>

@@ -87,7 +87,7 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 				HeaderViewHolder headerViewHolder = (HeaderViewHolder) viewHolder;
 				Context context = headerViewHolder.tvDeliveryLocation.getContext();
 				if (headerViewHolder.tvDeliveryLocation.getContext() == null) return;
-				Utils.deliveryLocationEnabled(context, !mShoppingListIsLoading, headerViewHolder.rlSelectedYourLocationLayout);
+				Utils.deliveryLocationEnabled(context, mShoppingListIsLoading, headerViewHolder.rlSelectedYourLocationLayout);
 				DeliveryLocationHistory lastDeliveryLocation = Utils.getLastDeliveryLocation(context);
 				if (lastDeliveryLocation != null) {
 					headerViewHolder.tvDeliveryLocation.setText(lastDeliveryLocation.suburb.name + ", " + lastDeliveryLocation.province.name);

@@ -228,13 +228,13 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 
 	public void loadShoppingListItems(ShoppingListItemsResponse shoppingListItemsResponse) {
 		getViewDataBinding().loadingBar.setVisibility(View.GONE);
-		Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
 		listItems = shoppingListItemsResponse.listItems;
 		if (shoppingListInventory()) return;
 
 		if (listItems == null)
 			listItems = new ArrayList<>();
 		updateList(listItems);
+		Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
 	}
 
 	private boolean shoppingListInventory() {
@@ -345,7 +345,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				break;
 			default:
 				getViewDataBinding().loadingBar.setVisibility(View.GONE);
-				Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
 				Activity activity = getActivity();
 				if (activity == null) return;
 				if (shoppingListItemsResponse.response == null) return;
@@ -353,7 +352,8 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, shoppingListItemsResponse.response.desc);
 				break;
 		}
-		setShoppingListIsLoading(false);
+		setShoppingListLoadComplete(true);
+		Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
 	}
 
 	@Override
@@ -459,7 +459,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 			activity.runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					setShoppingListIsLoading(false);
+					setShoppingListLoadComplete(true);
 					getViewDataBinding().loadingBar.setVisibility(View.GONE);
 					mErrorHandlerView.showErrorHandler();
 					mErrorHandlerView.networkFailureHandler(errorMessage);
@@ -468,7 +468,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		}
 	}
 
-	private void setShoppingListIsLoading(boolean isLoading) {
+	private void setShoppingListLoadComplete(boolean isLoading) {
 		shoppingListIsLoading = isLoading;
 		if (shoppingListItemsAdapter != null)
 			shoppingListItemsAdapter.notifyDeliveryLocationChanged(isLoading);
@@ -502,7 +502,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		mErrorHandlerView.hideErrorHandler();
 		getViewDataBinding().loadingBar.setVisibility(View.VISIBLE);
 		Utils.deliveryLocationEnabled(getActivity(), false, rlLocationSelectedLayout);
-		setShoppingListIsLoading(shoppingListIsLoading);
+		setShoppingListLoadComplete(false);
 		getShoppingListItems = getViewModel().getShoppingListItems(listId);
 		getShoppingListItems.execute();
 	}
