@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.sub_category;
 
+import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -16,7 +17,6 @@ import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.Response;
@@ -120,14 +120,32 @@ public class SubCategoryFragment extends BaseFragment<ExpandableSubCategoryFragm
 	}
 
 	@Override
-	public void unhandledResponseHandler(Response response) {
-		showProgressBar(false);
+	public void unhandledResponseHandler(final Response response) {
+		if (getViewModel().childItem()) {
+			if (mAdapter != null)
+				mAdapter.hideChildItemProgressBar();
+			subcategoryOtherHttpResponse(response);
+		} else {
+			Activity activity = getActivity();
+			if (activity == null) return;
+			activity.runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					hideView(getViewDataBinding().pbSubCategory);
+					hideView(getViewDataBinding().rcvDrillCategory);
+					showView(getViewDataBinding().rootDrillDownCategory);
+					subcategoryOtherHttpResponse(response);
+				}
+			});
+		}
+	}
+
+	private void subcategoryOtherHttpResponse(Response response) {
 		if (!TextUtils.isEmpty(response.desc)) {
 			Utils.displayValidationMessage(getActivity(),
 					CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
 		}
 	}
-
 
 	@Override
 	public void onFailureResponse(String e) {
@@ -147,7 +165,6 @@ public class SubCategoryFragment extends BaseFragment<ExpandableSubCategoryFragm
 		if (!getViewModel().childItem()) {
 			showProgressBar(true);
 		}
-
 	}
 
 	@Override
