@@ -15,6 +15,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
@@ -61,6 +63,7 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.ShoppingListItemsAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
@@ -99,6 +102,10 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	private GetInventorySkusForStore mGetInventorySkusForStore;
 	private Map<String, String> mMapStoreFulFillmentKeyValue;
 	private boolean errorMessageWasPopUp;
+	private RelativeLayout rlLocationSelectedLayout;
+	private WTextView tvDeliveryLocation;
+	private String mSuburbName, mProvinceName;
+	private static final int REQUEST_SUBURB_CHANGE = 143;
 
 	@Override
 	public ShoppingListItemsViewModel getViewModel() {
@@ -179,6 +186,8 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 			}
 		});
 
+		rlLocationSelectedLayout = getViewDataBinding().locationSelectedLayout;
+		tvDeliveryLocation = getViewDataBinding().tvDeliveryLocation;
 		rlNoConnectionLayout = getViewDataBinding().incConnectionLayout.noConnectionLayout;
 		mErrorHandlerView = new ErrorHandlerView(getActivity(), rlNoConnectionLayout);
 		mErrorHandlerView.setMargin(rlNoConnectionLayout, 0, 0, 0, 0);
@@ -188,6 +197,13 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		setScrollListener(getViewDataBinding().rcvShoppingListItems);
 		getViewDataBinding().textProductSearch.setOnClickListener(this);
 		setUpAddToCartButton();
+		rlLocationSelectedLayout.setOnClickListener(this);
+		DeliveryLocationHistory lastDeliveryLocation = Utils.getLastDeliveryLocation(getActivity());
+		if (lastDeliveryLocation != null) {
+			mSuburbName = lastDeliveryLocation.suburb.name;
+			mProvinceName = lastDeliveryLocation.province.name;
+			tvDeliveryLocation.setText(mSuburbName + ", " + mProvinceName);
+		}
 	}
 
 	private void setToast(ShopState shopState, BottomNavigator bottomNavigator) {
@@ -213,6 +229,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 
 	public void loadShoppingListItems(ShoppingListItemsResponse shoppingListItemsResponse) {
 		getViewDataBinding().loadingBar.setVisibility(View.GONE);
+		Utils.deliveryLocationEnabled(getActivity(),true, rlLocationSelectedLayout);
 		listItems = shoppingListItemsResponse.listItems;
 		if (shoppingListInventory()) return;
 
@@ -257,7 +274,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		RelativeLayout rlSoppingList = getViewDataBinding().incEmptyLayout.relEmptyStateHandler;
 		rlSoppingList.setVisibility(listItems == null || listItems.size() <= 1 ? View.VISIBLE : View.GONE); // 1 to exclude header
 		rcvShoppingListItems.setVisibility(listItems == null || listItems.size() <= 1 ? View.GONE : View.VISIBLE);
-		getViewDataBinding().rlShopSearch.setVisibility(listItems == null || listItems.size() <= 1 ? View.VISIBLE : View.GONE);
+		getViewDataBinding().headerLayout.setVisibility(listItems == null || listItems.size() <= 1 ? View.VISIBLE : View.GONE);
 		manageSelectAllMenuVisibility(listItems.size());
 	}
 
@@ -297,6 +314,10 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				break;
 			case R.id.btnCheckOut:
 				loadCartSummary();
+				break;
+			case R.id.locationSelectedLayout:
+				locationSelectionClicked();
+				break;
 			default:
 				break;
 		}
@@ -325,6 +346,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				break;
 			default:
 				getViewDataBinding().loadingBar.setVisibility(View.GONE);
+				Utils.deliveryLocationEnabled(getActivity(),true, rlLocationSelectedLayout);
 				Activity activity = getActivity();
 				if (activity == null) return;
 				if (shoppingListItemsResponse.response == null) return;
@@ -472,6 +494,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	public void initGetShoppingListItems() {
 		mErrorHandlerView.hideErrorHandler();
 		getViewDataBinding().loadingBar.setVisibility(View.VISIBLE);
+		Utils.deliveryLocationEnabled(getActivity(),false, rlLocationSelectedLayout);
 		getShoppingListItems = getViewModel().getShoppingListItems(listId);
 		getShoppingListItems.execute();
 	}
@@ -790,6 +813,15 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				executeAddToCart(listItems.subList(1, listItems.size()));
 			}
 		}
+		if (requestCode == REQUEST_SUBURB_CHANGE) {
+			DeliveryLocationHistory lastDeliveryLocation = Utils.getLastDeliveryLocation(getActivity());
+			if (lastDeliveryLocation != null) {
+				mSuburbName = lastDeliveryLocation.suburb.name;
+				mProvinceName = lastDeliveryLocation.province.name;
+				tvDeliveryLocation.setText(mSuburbName + ", " + mProvinceName);
+				initGetShoppingListItems();
+			}
+		}
 	}
 
 	private void deliverySelectionIntent(Activity activity) {
@@ -812,4 +844,16 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		}
 		return null;
 	}
+
+	private void locationSelectionClicked() {
+		Activity activity = getActivity();
+		if (activity != null) {
+			Intent openDeliveryLocationSelectionActivity = new Intent(this.getContext(), DeliveryLocationSelectionActivity.class);
+			openDeliveryLocationSelectionActivity.putExtra("suburbName", mSuburbName);
+			openDeliveryLocationSelectionActivity.putExtra("provinceName", mProvinceName);
+			startActivityForResult(openDeliveryLocationSelectionActivity, REQUEST_SUBURB_CHANGE);
+			activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
+		}
+	}
+
 }
