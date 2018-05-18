@@ -630,4 +630,6 @@
     <string name="authenticate_with_touch_id">Sign In using Biometrics</string>
     <string name="biometrics_authentication">BIOMETRICS/PIN</string>
     <string name="biometrics_description">This allows you to easily sign in to the App by using the biometric reader on your device.</string>
+    <string name="delivery_location_description">To improve your shopping experience, you can reserve your delivery timeslot up front. It will be reserved while you complete your shop.</string>
+    <string name="my_pref_set_your_delivery_location">Set your Delivery Location</string>
 </resources>
