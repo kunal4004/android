@@ -99,13 +99,9 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	private GetInventorySkusForStore mGetInventorySkusForStore;
 	private Map<String, String> mMapStoreFulFillmentKeyValue;
 	private boolean errorMessageWasPopUp;
-	private String mSuburbName, mProvinceName;
-	private static final int REQUEST_SUBURB_CHANGE = 143;
 
 	//flag to enable/disable set delivery location layout on loadShoppingList api call
 	public boolean shoppingListIsLoading;
-	private RelativeLayout rlLocationSelectedLayout;
-	private WTextView tvDeliveryLocation;
 
 	@Override
 	public ShoppingListItemsViewModel getViewModel() {
@@ -185,8 +181,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 			}
 		});
 
-		rlLocationSelectedLayout = getViewDataBinding().locationSelectedLayout;
-		tvDeliveryLocation = getViewDataBinding().tvDeliveryLocation;
 		rlNoConnectionLayout = getViewDataBinding().incConnectionLayout.noConnectionLayout;
 		mErrorHandlerView = new ErrorHandlerView(getActivity(), rlNoConnectionLayout);
 		mErrorHandlerView.setMargin(rlNoConnectionLayout, 0, 0, 0, 0);
@@ -196,13 +190,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		setScrollListener(getViewDataBinding().rcvShoppingListItems);
 		getViewDataBinding().textProductSearch.setOnClickListener(this);
 		setUpAddToCartButton();
-		rlLocationSelectedLayout.setOnClickListener(this);
-		DeliveryLocationHistory lastDeliveryLocation = Utils.getLastDeliveryLocation(getActivity());
-		if (lastDeliveryLocation != null) {
-			mSuburbName = lastDeliveryLocation.suburb.name;
-			mProvinceName = lastDeliveryLocation.province.name;
-			tvDeliveryLocation.setText(mSuburbName + ", " + mProvinceName);
-		}
 	}
 
 	private void setToast(ShopState shopState, BottomNavigator bottomNavigator) {
@@ -234,7 +221,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		if (listItems == null)
 			listItems = new ArrayList<>();
 		updateList(listItems);
-		Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
 	}
 
 	private boolean shoppingListInventory() {
@@ -314,9 +300,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 			case R.id.btnCheckOut:
 				loadCartSummary();
 				break;
-			case R.id.locationSelectedLayout:
-				locationSelectionClicked();
-				break;
 			default:
 				break;
 		}
@@ -352,8 +335,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, shoppingListItemsResponse.response.desc);
 				break;
 		}
-		setShoppingListLoadComplete(true);
-		Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
 	}
 
 	@Override
@@ -459,19 +440,12 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 			activity.runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					setShoppingListLoadComplete(true);
 					getViewDataBinding().loadingBar.setVisibility(View.GONE);
 					mErrorHandlerView.showErrorHandler();
 					mErrorHandlerView.networkFailureHandler(errorMessage);
 				}
 			});
 		}
-	}
-
-	private void setShoppingListLoadComplete(boolean isLoading) {
-		shoppingListIsLoading = isLoading;
-		if (shoppingListItemsAdapter != null)
-			shoppingListItemsAdapter.notifyDeliveryLocationChanged(isLoading);
 	}
 
 	@Override
@@ -501,8 +475,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	public void initGetShoppingListItems() {
 		mErrorHandlerView.hideErrorHandler();
 		getViewDataBinding().loadingBar.setVisibility(View.VISIBLE);
-		Utils.deliveryLocationEnabled(getActivity(), false, rlLocationSelectedLayout);
-		setShoppingListLoadComplete(false);
 		getShoppingListItems = getViewModel().getShoppingListItems(listId);
 		getShoppingListItems.execute();
 	}
@@ -813,11 +785,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	}
 
 	@Override
-	public void onSetLocationItemClicked() {
-		locationSelectionClicked();
-	}
-
-	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		showToolbar(listName);
@@ -825,17 +792,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 			if (resultCode == SUBURB_SET_RESULT) { // on suburb selection successful
 				executeAddToCart(listItems.subList(1, listItems.size()));
 			}
-		}
-		if (requestCode == REQUEST_SUBURB_CHANGE) {
-			DeliveryLocationHistory lastDeliveryLocation = Utils.getLastDeliveryLocation(getActivity());
-			if (lastDeliveryLocation != null) {
-				mSuburbName = lastDeliveryLocation.suburb.name;
-				mProvinceName = lastDeliveryLocation.province.name;
-				tvDeliveryLocation.setText(mSuburbName + ", " + mProvinceName);
-				if (shoppingListItemsAdapter != null)
-					shoppingListItemsAdapter.notifyDeliveryLocationChanged();
-			}
-			initGetShoppingListItems();
 		}
 	}
 
@@ -857,17 +813,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 			return entry.getValue();
 		}
 		return null;
-	}
-
-	private void locationSelectionClicked() {
-		Activity activity = getActivity();
-		if (activity != null) {
-			Intent openDeliveryLocationSelectionActivity = new Intent(this.getContext(), DeliveryLocationSelectionActivity.class);
-			openDeliveryLocationSelectionActivity.putExtra("suburbName", mSuburbName);
-			openDeliveryLocationSelectionActivity.putExtra("provinceName", mProvinceName);
-			startActivityForResult(openDeliveryLocationSelectionActivity, REQUEST_SUBURB_CHANGE);
-			activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
-		}
 	}
 
 }

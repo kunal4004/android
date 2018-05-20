@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.adapters;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -19,7 +18,6 @@ import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem;
@@ -85,25 +83,10 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 		switch (getItemViewType(position)) {
 			case ITEM_VIEW_TYPE_HEADER:
 				HeaderViewHolder headerViewHolder = (HeaderViewHolder) viewHolder;
-				Context context = headerViewHolder.tvDeliveryLocation.getContext();
-				if (headerViewHolder.tvDeliveryLocation.getContext() == null) return;
-				Utils.deliveryLocationEnabled(context, mShoppingListIsLoading, headerViewHolder.rlSelectedYourLocationLayout);
-				DeliveryLocationHistory lastDeliveryLocation = Utils.getLastDeliveryLocation(context);
-				if (lastDeliveryLocation != null) {
-					headerViewHolder.tvDeliveryLocation.setText(lastDeliveryLocation.suburb.name + ", " + lastDeliveryLocation.province.name);
-				} else {
-					headerViewHolder.tvDeliveryLocation.setText(context.getResources().getString(R.string.set_your_delivery_location));
-				}
 				headerViewHolder.tvSearchText.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View view) {
 						navigator.onShoppingSearchClick();
-					}
-				});
-				headerViewHolder.rlSelectedYourLocationLayout.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View view) {
-						navigator.onSetLocationItemClicked();
 					}
 				});
 				break;
@@ -254,14 +237,10 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 
 	public class HeaderViewHolder extends RecyclerView.ViewHolder {
 		private WTextView tvSearchText;
-		private RelativeLayout rlSelectedYourLocationLayout;
-		private WTextView tvDeliveryLocation;
 
 		public HeaderViewHolder(View itemView) {
 			super(itemView);
 			tvSearchText = itemView.findViewById(R.id.textProductSearch);
-			rlSelectedYourLocationLayout = itemView.findViewById(R.id.rlSelectedYourLocationLayout);
-			tvDeliveryLocation = itemView.findViewById(R.id.tvDeliveryLocation);
 		}
 
 	}
@@ -276,14 +255,5 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 	@Override
 	public int getItemViewType(int position) {
 		return position == 0 ? ITEM_VIEW_TYPE_HEADER : ITEM_VIEW_TYPE_BASIC;
-	}
-
-	public void notifyDeliveryLocationChanged() {
-		notifyItemChanged(0);
-	}
-
-	public void notifyDeliveryLocationChanged(boolean shoppingListIsLoading) {
-		this.mShoppingListIsLoading = shoppingListIsLoading;
-		notifyItemChanged(0);
 	}
 }

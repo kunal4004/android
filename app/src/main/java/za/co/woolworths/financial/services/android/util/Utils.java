@@ -1189,15 +1189,18 @@ public class Utils {
 		DeliveryLocationHistory deliveryLocationHistory = Utils.getLastDeliveryLocation(context);
 		if (deliveryLocationHistory == null) return "";
 		if (deliveryLocationHistory.suburb == null) return "";
-		if (deliveryLocationHistory.suburb.fulfillmentStores == null) return "";
-		JsonElement suburbFulfillment = parser.parse(Utils.toJson(deliveryLocationHistory.suburb.fulfillmentStores));
-
+		if ((deliveryLocationHistory.suburb.fulfillmentStores == null)
+				&& (deliveryLocationHistory.suburb.fullfillmentStores == null))
+			return "";
+		String fulfillmentStore = Utils.toJson(deliveryLocationHistory.suburb.fulfillmentStores);
+		String swapFulFillmentStore = (TextUtils.isEmpty(fulfillmentStore.replaceAll("null", "")) ? Utils.toJson(deliveryLocationHistory.suburb.fullfillmentStores) : fulfillmentStore);
+		JsonElement suburbFulfillment = parser.parse(swapFulFillmentStore);
 		String storeId = "";
 		if (!suburbFulfillment.isJsonNull()) {
 			if (suburbFulfillment.isJsonArray()) {
 				JsonArray suburbFulfillmentArray = suburbFulfillment.getAsJsonArray();
-				for (JsonElement fulfillmentElement : suburbFulfillmentArray) {
-					JsonObject fulfillmentObj = fulfillmentElement.getAsJsonObject();
+				for (JsonElement jsonElement : suburbFulfillmentArray) {
+					JsonObject fulfillmentObj = jsonElement.getAsJsonObject();
 					JsonElement fulFillmentTypeId = fulfillmentObj.get("fulFillmentTypeId");
 					if (!fulFillmentTypeId.isJsonNull()) {
 						if (Integer.valueOf(fulFillmentTypeId.getAsString()) == Integer.valueOf(fulFillmentType)) {

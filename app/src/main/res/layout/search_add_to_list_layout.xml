@@ -8,40 +8,6 @@
               android:orientation="vertical">
 
     <RelativeLayout
-        android:id="@+id/rlSelectedYourLocationLayout"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/fifty_dp"
-        android:layout_marginBottom="1dp"
-        android:background="@drawable/white_bg_pressed"
-        android:clickable="false"
-        android:paddingLeft="@dimen/sixteen_dp"
-        android:paddingRight="@dimen/nineteen_dp">
-
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:id="@+id/tvDeliveryLocation"
-            style="@style/style_cart_delivery_selected"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/iconCaretRight"
-            android:clickable="false"
-            android:drawableLeft="@drawable/mapview"
-            android:drawablePadding="16dp"
-            android:gravity="center_vertical"
-            android:text="@string/set_your_delivery_location"/>
-
-        <ImageView
-            android:id="@+id/iconCaretRight"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="20dp"
-            android:src="@drawable/ic_caret_black"/>
-
-    </RelativeLayout>
-
-    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/sixteen_dp"
