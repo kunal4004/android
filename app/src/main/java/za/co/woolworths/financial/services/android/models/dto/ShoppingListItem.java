@@ -45,4 +45,7 @@ public class ShoppingListItem {
 
 	//select your delivery location address
 	public String delivery_location;
+
+	// Prevent quantity layout to remain greyed out
+	public boolean userShouldSetSuburb = false;
 }

@@ -99,9 +99,8 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	private GetInventorySkusForStore mGetInventorySkusForStore;
 	private Map<String, String> mMapStoreFulFillmentKeyValue;
 	private boolean errorMessageWasPopUp;
-
-	//flag to enable/disable set delivery location layout on loadShoppingList api call
-	public boolean shoppingListIsLoading;
+	private int REQUEST_SUBURB_CHANGE = 12345;
+	private ShoppingListItem mOpenShoppingListItem;
 
 	@Override
 	public ShoppingListItemsViewModel getViewModel() {
@@ -198,6 +197,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		mToastUtils.setGravity(Gravity.BOTTOM);
 		mToastUtils.setCurrentState(TAG);
 		mToastUtils.setPixel(0);
+		mToastUtils.setAllCapsUpperCase(true);
 		mToastUtils.setView(bottomNavigator.getBottomNavigationById());
 		mToastUtils.setMessage(shopState.getCount() == 1 ? shopState.getCount() + " " + getString(R.string.single_item_text) + " " + getString(R.string.added_to) : shopState.getCount() + " " + getString(R.string.multiple_item_text) + " " + getString(R.string.added_to));
 		mToastUtils.setViewState(false);
@@ -216,11 +216,57 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	public void loadShoppingListItems(ShoppingListItemsResponse shoppingListItemsResponse) {
 		getViewDataBinding().loadingBar.setVisibility(View.GONE);
 		listItems = shoppingListItemsResponse.listItems;
+		Activity activity = getActivity();
+		if (activity == null) return;
+
+		List<DeliveryLocationHistory> deliveryLocationHistories = Utils.getDeliveryLocationHistory(activity);
+		if (deliveryLocationHistories.size() == 0) {
+			if (listItems == null)
+				listItems = new ArrayList<>();
+			cancelQuantityLoad();
+			updateList(listItems);
+			return;
+		}
+
 		if (shoppingListInventory()) return;
 
 		if (listItems == null)
 			listItems = new ArrayList<>();
 		updateList(listItems);
+
+		/**
+		 * Activated when a user click on quantity selector but no suburb was set
+		 * OpenQuantitySelector automatically
+		 */
+		if (mOpenShoppingListItem != null) {
+			for (ShoppingListItem shoppingListItem : listItems) {
+				if (shoppingListItem.catalogRefId == null) continue;
+				if (shoppingListItem.catalogRefId.equalsIgnoreCase(mOpenShoppingListItem.catalogRefId)) {
+					mOpenShoppingListItem.quantityInStock = shoppingListItem.quantityInStock;
+				}
+			}
+
+			if (mOpenShoppingListItem.quantityInStock == 0) {
+				mToastUtils.setActivity(getActivity());
+				mToastUtils.setView(getBottomNavigator().getBottomNavigationById());
+				mToastUtils.setGravity(Gravity.BOTTOM);
+				mToastUtils.setCurrentState(TAG);
+				mToastUtils.setPixel(0);
+				mToastUtils.setView(getBottomNavigator().getBottomNavigationById());
+				mToastUtils.setMessage(activity.getResources().getString(R.string.product_unavailable_desc));
+				mToastUtils.setViewState(false);
+				mToastUtils.setAllCapsUpperCase(false);
+				mToastUtils.setCartText("");
+				mToastUtils.build();
+				return;
+			}
+			Intent editQuantityIntent = new Intent(activity, ConfirmColorSizeActivity.class);
+			editQuantityIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, ConfirmColorSizeActivity.QUANTITY);
+			editQuantityIntent.putExtra("CART_QUANTITY_In_STOCK", mOpenShoppingListItem.quantityInStock);
+			activity.startActivity(editQuantityIntent);
+			activity.overridePendingTransition(0, 0);
+
+		}
 	}
 
 	private boolean shoppingListInventory() {
@@ -259,7 +305,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		RelativeLayout rlSoppingList = getViewDataBinding().incEmptyLayout.relEmptyStateHandler;
 		rlSoppingList.setVisibility(listItems == null || listItems.size() <= 1 ? View.VISIBLE : View.GONE); // 1 to exclude header
 		rcvShoppingListItems.setVisibility(listItems == null || listItems.size() <= 1 ? View.GONE : View.VISIBLE);
-		//getViewDataBinding().headerLayout.setVisibility(listItems == null || listItems.size() <= 1 ? View.VISIBLE : View.GONE);
 		manageSelectAllMenuVisibility(listItems.size());
 	}
 
@@ -722,6 +767,8 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 					for (ShoppingListItem inventoryItems : listItems) {
 						if (TextUtils.isEmpty(inventoryItems.fulfillmentType)) continue;
 						inventoryItems.inventoryCallCompleted = true;
+
+						inventoryItems.userShouldSetSuburb = false;
 					}
 				}
 
@@ -785,6 +832,12 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	}
 
 	@Override
+	public void openSetSuburbProcess(ShoppingListItem shoppingListItem) {
+		this.mOpenShoppingListItem = shoppingListItem;
+		locationSelectionClicked();
+	}
+
+	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		showToolbar(listName);
@@ -792,6 +845,10 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 			if (resultCode == SUBURB_SET_RESULT) { // on suburb selection successful
 				executeAddToCart(listItems.subList(1, listItems.size()));
 			}
+		}
+
+		if (requestCode == REQUEST_SUBURB_CHANGE) {
+			initGetShoppingListItems();
 		}
 	}
 
@@ -815,4 +872,17 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		return null;
 	}
 
+	private void cancelQuantityLoad() {
+		for (ShoppingListItem inventoryItems : listItems) {
+			inventoryItems.userShouldSetSuburb = true;
+		}
+	}
+
+	private void locationSelectionClicked() {
+		Activity activity = getActivity();
+		if (activity == null) return;
+		Intent openDeliveryLocationSelectionActivity = new Intent(this.getContext(), DeliveryLocationSelectionActivity.class);
+		startActivityForResult(openDeliveryLocationSelectionActivity, REQUEST_SUBURB_CHANGE);
+		activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
+	}
 }

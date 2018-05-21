@@ -38,7 +38,6 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 
 	private List<ShoppingListItem> listItems;
 	private ShoppingListItemsNavigator navigator;
-	private boolean mShoppingListIsLoading;
 
 
 	public ShoppingListItemsAdapter(List<ShoppingListItem> listItems, ShoppingListItemsNavigator navigator) {
@@ -123,16 +122,27 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 
 				holder.tvColorSize.setText(sizeColor);
 				holder.tvColorSize.setVisibility(View.VISIBLE);
-				if (shoppingListItem != null) {
-					boolean productInStock = shoppingListItem.quantityInStock != 0;
-					holder.llQuantity.setAlpha(productInStock ? 1.0f : 0.5f);
-					holder.tvQuantity.setAlpha(productInStock ? 1.0f : 0.5f);
-					holder.select.setEnabled(productInStock);
-					holder.imPrice.setAlpha(productInStock ? 1.0f : 0.5f);
-					if (shoppingListItem.inventoryCallCompleted) {
-						holder.llQuantity.setVisibility((shoppingListItem.quantityInStock == 0) ? View.GONE : View.VISIBLE);
-						holder.tvProductAvailability.setVisibility((shoppingListItem.quantityInStock == 0) ? View.VISIBLE : View.GONE);
-						Utils.setBackgroundColor(holder.tvProductAvailability, R.drawable.round_red_corner, R.string.product_unavailable);
+				/****
+				 * shoppingListItem.userShouldSetSuburb - is set to true when user did not select any suburb
+				 */
+				if (shoppingListItem.userShouldSetSuburb) {
+					holder.tvProductAvailability.setVisibility(View.GONE);
+					holder.llQuantity.setVisibility(View.VISIBLE);
+					holder.llQuantity.setAlpha(1.0f);
+					holder.select.setEnabled(true);
+					holder.llQuantity.setEnabled(true);
+				} else {
+					if (shoppingListItem != null) {
+						boolean productInStock = shoppingListItem.quantityInStock != 0;
+						holder.llQuantity.setAlpha(productInStock ? 1.0f : 0.5f);
+						holder.tvQuantity.setAlpha(productInStock ? 1.0f : 0.5f);
+						holder.select.setEnabled(productInStock);
+						holder.imPrice.setAlpha(productInStock ? 1.0f : 0.5f);
+						if (shoppingListItem.inventoryCallCompleted) {
+							holder.llQuantity.setVisibility((shoppingListItem.quantityInStock == 0) ? View.GONE : View.VISIBLE);
+							holder.tvProductAvailability.setVisibility((shoppingListItem.quantityInStock == 0) ? View.VISIBLE : View.GONE);
+							Utils.setBackgroundColor(holder.tvProductAvailability, R.drawable.round_red_corner, R.string.product_unavailable);
+						}
 					}
 				}
 				// Set Color and Size END
@@ -165,6 +175,10 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 					@Override
 					public void onClick(View view) {
 						ShoppingListItem shoppingListItem = listItems.get(position);
+						if (shoppingListItem.userShouldSetSuburb) {
+							navigator.openSetSuburbProcess(shoppingListItem);
+							return;
+						}
 						if (shoppingListItem.quantityInStock == 0) return;
 						navigator.onQuantityChangeClick(position, shoppingListItem);
 					}
