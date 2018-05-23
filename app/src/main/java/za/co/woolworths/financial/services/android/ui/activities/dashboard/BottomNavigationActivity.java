@@ -82,6 +82,7 @@ import static za.co.woolworths.financial.services.android.models.service.event.P
 import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.RESULT_TAP_FIND_INSTORE_BTN;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_ADD_TO_SHOPPING_LIST;
+import static za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment.LOCK_REQUEST_CODE_WREWARDS;
 import static za.co.woolworths.financial.services.android.util.ScreenManager.CART_LAUNCH_VALUE;
 
 public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigationBinding, BottomNavigationViewModel> implements BottomNavigator, FragNavController.TransactionListener, FragNavController.RootFragmentListener, PermissionResultCallback, ToastUtils.ToastInterface {
@@ -870,13 +871,20 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			if (getBottomFragmentById() instanceof ProductDetailFragment) {
 				getBottomFragmentById().onActivityResult(requestCode, resultCode, null);
 			}
-			if (requestCode == WRewardsVouchersFragment.LOCK_REQUEST_CODE_WREWARDS && resultCode == RESULT_OK) {
-				Utils.sendBus(new WRewardsVouchersFragment());
-			}
 
-			if (requestCode == LOCK_REQUEST_CODE_ACCOUNTS && resultCode == RESULT_OK) {
-				AuthenticateUtils.getInstance(BottomNavigationActivity.this).enableBiometricForCurrentSession(false);
-				getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
+		}
+		// Biometric Authentication check
+		if (resultCode == RESULT_OK) {
+			switch (requestCode) {
+				case LOCK_REQUEST_CODE_ACCOUNTS:
+					AuthenticateUtils.getInstance(BottomNavigationActivity.this).enableBiometricForCurrentSession(false);
+					getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
+					break;
+				case LOCK_REQUEST_CODE_WREWARDS:
+					Utils.sendBus(new WRewardsVouchersFragment());
+					break;
+				default:
+					break;
 			}
 		}
 	}
