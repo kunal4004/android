@@ -29,7 +29,7 @@ public class ShoppingListItem {
 
 	public boolean isSelected = false;
 
-	public double price;
+	public String price;
 
 	public int userQuantity = 0;
 

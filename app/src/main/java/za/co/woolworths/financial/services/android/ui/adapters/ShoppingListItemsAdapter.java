@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.adapters;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -167,7 +168,7 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 		ProductList productList = new ProductList();
 		productList.productId = shoppingListItem.productId;
 		productList.productName = shoppingListItem.displayName;
-		productList.fromPrice = (float) shoppingListItem.price;
+		productList.fromPrice = Float.valueOf((TextUtils.isEmpty(shoppingListItem.price) ? "0.0" : shoppingListItem.price));
 		productList.sku = shoppingListItem.Id;
 		productList.externalImageRef = Utils.getExternalImageRef() + shoppingListItem.externalImageURL;
 		OtherSkus otherSku = new OtherSkus();

@@ -37,14 +37,13 @@ import io.reactivex.schedulers.Schedulers;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CartItemGroup;
-import za.co.woolworths.financial.services.android.models.dto.CommerceItem;
 import za.co.woolworths.financial.services.android.models.dto.CartResponse;
 import za.co.woolworths.financial.services.android.models.dto.ChangeQuantity;
+import za.co.woolworths.financial.services.android.models.dto.CommerceItem;
 import za.co.woolworths.financial.services.android.models.dto.Data;
 import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.Province;
-import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
@@ -64,10 +63,10 @@ import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
-import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
+
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT_TEMP;
 import static za.co.woolworths.financial.services.android.models.service.event.CartState.CHANGE_QUANTITY;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_DIALOG_TAPPED;
@@ -839,7 +838,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				mProvinceName = lastDeliveryLocation.province.name;
 			}
 		}
-
 	}
 
 	@Override
@@ -870,5 +868,4 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		HttpAsyncTask<String, String, ShoppingCartResponse> removeCartItem = removeCartItem(mCommerceItem);
 		removeCartItem.execute();
 	}
-
 }
