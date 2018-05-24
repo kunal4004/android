@@ -365,7 +365,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 					Context context = tvAddToList.getContext();
 					if (context == null) return;
 					Utils.displayValidationMessage(context, CustomPopUpWindow.MODAL_LAYOUT.SHOPPING_ADD_TO_LIST, Utils.toJson(commerceItems));
-					}
+				}
 			});
 		}
 	}

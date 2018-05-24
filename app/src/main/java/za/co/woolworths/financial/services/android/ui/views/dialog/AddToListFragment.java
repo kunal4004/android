@@ -339,7 +339,7 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 		return getCurrentListId(keys);
 	}
 
-	public PostAddToList addToList(final List<AddToListRequest> addToListRequest, String listId) {
+	public PostAddToList addToList(final List<AddToListRequest> addToListRequest, final String listId) {
 		final int sizeOfList = mMapAddedToList.size();
 		onLoad(true);
 		return new PostAddToList(new OnEventListener() {
