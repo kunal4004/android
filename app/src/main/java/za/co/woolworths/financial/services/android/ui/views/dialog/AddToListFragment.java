@@ -161,7 +161,7 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 			if (response != null) {
 				List<ShoppingList> shoppingLists = response.lists;
 				if (shoppingLists != null && shoppingLists.size() == 0) {
-					showEmptyListView();
+					onEmptyCartRetry();
 					recyclerViewVisibility(false);
 					return;
 				}
