@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Switch;
@@ -20,7 +21,7 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class MyPreferencesActivity extends AppCompatActivity implements View.OnClickListener {
+public class MyPreferencesActivity extends AppCompatActivity implements View.OnClickListener, View.OnTouchListener {
 
 	private Toolbar mToolbar;
 	private Switch authenticateSwitch;
@@ -55,6 +56,7 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 		authenticateSwitch = findViewById(R.id.auSwitch);
 		biometricsLayout = findViewById(R.id.biometricsLayout);
 		authenticateSwitch.setOnClickListener(this);
+		authenticateSwitch.setOnTouchListener(this);
 	}
 
 	public void bindDataWithUI() {
@@ -174,4 +176,14 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 		bindDataWithUI();
 	}
 
+	@Override
+	public boolean onTouch(View view, MotionEvent motionEvent) {
+		switch (view.getId()){
+			case  R.id.auSwitch :
+				return motionEvent.getActionMasked() == MotionEvent.ACTION_MOVE;
+			default:
+				break;
+		}
+		return false;
+	}
 }
