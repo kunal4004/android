@@ -134,7 +134,13 @@ public class NewListFragment extends BaseFragment<NewListFragmentBinding, NewLis
 					|| actionId == EditorInfo.IME_ACTION_DONE
 					|| event.getAction() == KeyEvent.ACTION_DOWN
 					&& event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-				onBackPressed();
+
+				if (getViewDataBinding().btnCreateList.isEnabled()) {
+					postAddList();
+				} else {
+					onBackPressed();
+				}
+
 				return true;
 			}
 			// Return true if you have consumed the action, else false.
