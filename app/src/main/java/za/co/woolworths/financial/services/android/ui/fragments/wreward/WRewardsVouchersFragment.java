@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.wreward;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -43,6 +45,8 @@ public class WRewardsVouchersFragment extends Fragment {
 	public int selectedVoucherPosition;
 	public static final int LOCK_REQUEST_CODE_WREWARDS = 111;
 	private CompositeDisposable mDisposables = new CompositeDisposable();
+	private Activity mActivity;
+	private boolean isAuthenticated;
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -79,8 +83,11 @@ public class WRewardsVouchersFragment extends Fragment {
 					public void accept(Object object) throws Exception {
 						if (object != null) {
 							if (object instanceof WRewardsVouchersFragment) {
-								AuthenticateUtils.getInstance(getActivity()).enableBiometricForCurrentSession(false);
-								startVoucherDetailsActivity();
+								if(!isAuthenticated) {
+									AuthenticateUtils.getInstance(getActivity()).enableBiometricForCurrentSession(false);
+									startVoucherDetailsActivity();
+									isAuthenticated = true;
+								}
 							}
 						}
 					}
@@ -124,10 +131,17 @@ public class WRewardsVouchersFragment extends Fragment {
 	}
 
 	public void startVoucherDetailsActivity(){
-		Intent intent = new Intent(getActivity(), WRewardsVoucherDetailsActivity.class);
+		Intent intent = new Intent(mActivity, WRewardsVoucherDetailsActivity.class);
 		intent.putExtra("VOUCHERS", Utils.objectToJson(voucherResponse.voucherCollection));
 		intent.putExtra("POSITION", selectedVoucherPosition);
-		startActivity(intent);
+		mActivity.startActivity(intent);
 	}
 
+	@Override
+	public void onAttach(Context context) {
+		super.onAttach(context);
+		if (context instanceof Activity){
+			mActivity=(Activity) context;
+		}
+	}
 }
