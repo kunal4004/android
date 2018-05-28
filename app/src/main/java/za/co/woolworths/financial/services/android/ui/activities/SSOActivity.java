@@ -228,6 +228,8 @@ public class SSOActivity extends WebViewActivity {
 		}
 
 		public static Host getHostByRawValue(String rawValue) {
+			if (rawValue == null) return null;
+			if (Host.values() == null) return null;
 			for (Host h : Host.values()) {
 				if (rawValue.equals(h.rawValue()))
 					return h;
