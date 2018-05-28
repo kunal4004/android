@@ -26,11 +26,8 @@ import com.awfs.coordination.R;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,12 +36,8 @@ import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CLIOfferDecision;
-import za.co.woolworths.financial.services.android.models.dto.CommerceItem;
-import za.co.woolworths.financial.services.android.models.dto.CommerceItemInfo;
-import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.Response;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.statement.EmailStatementResponse;
@@ -62,7 +55,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.statement.Statem
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.dialog.AddToListFragment;
-import za.co.woolworths.financial.services.android.ui.views.dialog.CreateListFragment;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
@@ -544,13 +536,13 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				});
 
 				WTextView tvLocation = findViewById(R.id.tvLocation);
-				List<DeliveryLocationHistory> deliveryLocationHistories = Utils.getDeliveryLocationHistory(CustomPopUpWindow.this);
+				List<ShoppingDeliveryLocation> deliveryLocationHistories = Utils.getDeliveryLocationHistory(CustomPopUpWindow.this);
 				if (deliveryLocationHistories != null) {
-					DeliveryLocationHistory deliveryLocationHistory = deliveryLocationHistories.get(0);
-					if (deliveryLocationHistory != null) {
-						Suburb suburb = deliveryLocationHistory.suburb;
+					ShoppingDeliveryLocation shoppingDeliveryLocation = deliveryLocationHistories.get(0);
+					if (shoppingDeliveryLocation != null) {
+						Suburb suburb = shoppingDeliveryLocation.suburb;
 						if (suburb != null) {
-							tvLocation.setText(suburb.name + ", " + deliveryLocationHistory.province.name);
+							tvLocation.setText(suburb.name + ", " + shoppingDeliveryLocation.province.name);
 						}
 					}
 				}

@@ -8,16 +8,18 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
 
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
+import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -29,6 +31,10 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 	private static final int LOCK_REQUEST_CODE_TO_DISABLE = 333;
 	private static final int SECURITY_SETTING_REQUEST_CODE = 232;
 	private LinearLayout biometricsLayout;
+	private RelativeLayout rlLocationSelectedLayout;
+	private WTextView tvDeliveryLocation;
+	private String mSuburbName, mProvinceName;
+	private static final int REQUEST_SUBURB_CHANGE = 143;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +61,10 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 		mToolbar = findViewById(R.id.mToolbar);
 		authenticateSwitch = findViewById(R.id.auSwitch);
 		biometricsLayout = findViewById(R.id.biometricsLayout);
+		tvDeliveryLocation = findViewById(R.id.tvDeliveryLocation);
+		rlLocationSelectedLayout = findViewById(R.id.locationSelectedLayout);
 		authenticateSwitch.setOnClickListener(this);
+		rlLocationSelectedLayout.setOnClickListener(this);
 		authenticateSwitch.setOnTouchListener(this);
 	}
 
@@ -70,6 +79,13 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 			biometricsLayout.setVerticalGravity(View.GONE);
 		}
 
+		ShoppingDeliveryLocation lastDeliveryLocation = Utils.getLastDeliveryLocation(MyPreferencesActivity.this);
+		if (lastDeliveryLocation != null) {
+			mSuburbName = lastDeliveryLocation.suburb.name;
+			mProvinceName = lastDeliveryLocation.province.name;
+			tvDeliveryLocation.setText(mSuburbName + ", " + mProvinceName);
+		}
+
 	}
 
 	@Override
@@ -80,6 +96,9 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 					startBiometricAuthentication(authenticateSwitch.isChecked() ? LOCK_REQUEST_CODE_TO_ENABLE : LOCK_REQUEST_CODE_TO_DISABLE);
 				else
 					openDeviceSecuritySettings();
+				break;
+			case R.id.locationSelectedLayout:
+				locationSelectionClicked();
 				break;
 			default:
 				break;
@@ -105,6 +124,16 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 				} else {
 					setUserAuthentication(false);
 				}
+				break;
+			case REQUEST_SUBURB_CHANGE:
+				ShoppingDeliveryLocation lastDeliveryLocation = Utils.getLastDeliveryLocation(MyPreferencesActivity.this);
+				if (lastDeliveryLocation != null) {
+					mSuburbName = lastDeliveryLocation.suburb.name;
+					mProvinceName = lastDeliveryLocation.province.name;
+					tvDeliveryLocation.setText(mSuburbName + ", " + mProvinceName);
+				}
+				break;
+			default:
 				break;
 		}
 	}
@@ -174,6 +203,14 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 	protected void onResume() {
 		super.onResume();
 		bindDataWithUI();
+	}
+
+	private void locationSelectionClicked() {
+			Intent openDeliveryLocationSelectionActivity = new Intent(MyPreferencesActivity.this, DeliveryLocationSelectionActivity.class);
+			openDeliveryLocationSelectionActivity.putExtra("suburbName", mSuburbName);
+			openDeliveryLocationSelectionActivity.putExtra("provinceName", mProvinceName);
+			startActivityForResult(openDeliveryLocationSelectionActivity, REQUEST_SUBURB_CHANGE);
+			overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
 	}
 
 	@Override

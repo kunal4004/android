@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
-import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
 import za.co.woolworths.financial.services.android.models.dto.SuburbsResponse;
@@ -299,7 +299,7 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 			switch (response.httpCode) {
 				case 200:
 					Utils.sendBus(new CartState(suburb.name + ", " + province.name));
-					saveRecentDeliveryLocation(new DeliveryLocationHistory(province, suburb));
+					saveRecentDeliveryLocation(new ShoppingDeliveryLocation(province, suburb));
 					// TODO: go back to cart if no items removed from cart, else go to list of removed items
 					Activity activity = getActivity();
 					if (activity != null) {
@@ -355,8 +355,8 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 		}
 	}
 
-	private void saveRecentDeliveryLocation(DeliveryLocationHistory historyItem) {
-		List<DeliveryLocationHistory> history = getRecentDeliveryLocations();
+	private void saveRecentDeliveryLocation(ShoppingDeliveryLocation historyItem) {
+		List<ShoppingDeliveryLocation> history = getRecentDeliveryLocations();
 		SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.DELIVERY_LOCATION_HISTORY);
 		Gson gson = new Gson();
 		boolean isExist = false;
@@ -371,7 +371,7 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 				Log.e("TAG", e.getMessage());
 			}
 		} else {
-			for (DeliveryLocationHistory item : history) {
+			for (ShoppingDeliveryLocation item : history) {
 				if (item.suburb.id.equals(historyItem.suburb.id)) {
 					isExist = true;
 				}
@@ -394,15 +394,15 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 		Utils.sendBus(new ProductState(USE_MY_LOCATION));
 	}
 
-	private List<DeliveryLocationHistory> getRecentDeliveryLocations() {
-		List<DeliveryLocationHistory> history = null;
+	private List<ShoppingDeliveryLocation> getRecentDeliveryLocations() {
+		List<ShoppingDeliveryLocation> history = null;
 		try {
 			SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.DELIVERY_LOCATION_HISTORY);
 			if (sessionDao.value == null) {
 				history = new ArrayList<>();
 			} else {
 				Gson gson = new Gson();
-				Type type = new TypeToken<List<DeliveryLocationHistory>>() {
+				Type type = new TypeToken<List<ShoppingDeliveryLocation>>() {
 				}.getType();
 				history = gson.fromJson(sessionDao.value, type);
 			}

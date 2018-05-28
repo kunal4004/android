@@ -106,11 +106,11 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 				CommerceItemInfo commerceItemInfo;
 				if (commerceItem == null) return;
 				commerceItemInfo = commerceItem.commerceItemInfo;
-				productHolder.tvTitle.setText(commerceItemInfo.getProductDisplayName());
+				productHolder.tvTitle.setText((commerceItemInfo == null) ? "" : commerceItemInfo.getProductDisplayName());
 				Utils.truncateMaxLine(productHolder.tvTitle);
-				productHolder.quantity.setText(String.valueOf(commerceItemInfo.getQuantity()));
+				productHolder.quantity.setText((commerceItemInfo == null) ? "" :String.valueOf(commerceItemInfo.getQuantity()));
 				productHolder.price.setText(WFormatter.formatAmount(commerceItem.getPriceInfo().getAmount()));
-				productImage(productHolder.productImage, commerceItemInfo.externalImageURL);
+				productImage(productHolder.productImage, (commerceItemInfo == null) ? "" :commerceItemInfo.externalImageURL);
 				productHolder.btnDeleteRow.setVisibility(this.editMode ? View.VISIBLE : View.GONE);
 				productHolder.rlDeleteButton.setVisibility(this.editMode ? View.VISIBLE : View.GONE);
 				onRemoveSingleItem(productHolder, commerceItem);
@@ -146,18 +146,30 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 				if (itemRow.category.equalsIgnoreCase("FOOD")) {
 					productHolder.tvColorSize.setVisibility(View.INVISIBLE);
 				} else {
-					String sizeColor = commerceItemInfo.getColor();
+					String sizeColor = (commerceItemInfo == null) ? "" :commerceItemInfo.getColor();
 					if (sizeColor == null)
 						sizeColor = "";
-					if (sizeColor.isEmpty() && !commerceItemInfo.getSize().isEmpty() && !commerceItemInfo.getSize().equalsIgnoreCase("NO SZ"))
-						sizeColor = commerceItemInfo.getSize();
-					else if (!sizeColor.isEmpty() && !commerceItemInfo.getSize().isEmpty() && !commerceItemInfo.getSize().equalsIgnoreCase("NO SZ"))
-						sizeColor = sizeColor + ", " + commerceItemInfo.getSize();
-
+					if (commerceItemInfo!=null) {
+						if (sizeColor.isEmpty() && !commerceItemInfo.getSize().isEmpty() && !commerceItemInfo.getSize().equalsIgnoreCase("NO SZ"))
+							sizeColor = commerceItemInfo.getSize();
+						else if (!sizeColor.isEmpty() && !commerceItemInfo.getSize().isEmpty() && !commerceItemInfo.getSize().equalsIgnoreCase("NO SZ"))
+							sizeColor = sizeColor + ", " + commerceItemInfo.getSize();
+					}
 					productHolder.tvColorSize.setText(sizeColor);
 					productHolder.tvColorSize.setVisibility(View.VISIBLE);
 				}
 				// Set Color and Size END
+
+				productHolder.llQuantity.setAlpha(commerceItem.isStockChecked ? 1.0f : 0.5f);
+
+				if(commerceItem.isStockChecked){
+					productHolder.llQuantity.setAlpha((commerceItem.quantityInStock == 0) ? 0.0f : 1.0f);
+					productHolder.tvProductAvailability.setVisibility((commerceItem.quantityInStock == 0) ? View.VISIBLE : View.GONE);
+					Utils.setBackgroundColor(productHolder.tvProductAvailability, R.drawable.round_red_corner, R.string.product_unavailable);
+				}else {
+					productHolder.llQuantity.setVisibility(View.VISIBLE);
+					productHolder.tvProductAvailability.setVisibility(View.GONE);
+				}
 
 				productHolder.btnDeleteRow.setOnClickListener(new View.OnClickListener() {
 					@Override
@@ -172,6 +184,8 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 				productHolder.llQuantity.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View view) {
+						if (commerceItem.quantityInStock == 0) return;
+
 						commerceItem.setQuantityUploading(true);
 						setFirstLoadCompleted(false);
 						onItemClick.onChangeQuantity(commerceItem);
@@ -382,6 +396,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 		private ProgressBar pbDeleteProgress;
 		private SwipeLayout swipeLayout;
 		private RelativeLayout rlDeleteButton;
+		private WTextView tvProductAvailability;
 
 		public ProductHolder(View view) {
 			super(view);
@@ -401,6 +416,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 			swipeLayout = view.findViewById(R.id.swipe);
 			llPromotionalText = view.findViewById(R.id.promotionalTextLayout);
 			rlDeleteButton = view.findViewById(R.id.rlDeleteButton);
+			tvProductAvailability = view.findViewById(R.id.tvProductAvailability);
 		}
 	}
 
@@ -536,5 +552,10 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 		this.editMode = editMode;
 		if (cartItems != null)
 			notifyItemRangeChanged(0, cartItems.size());
+	}
+
+	public void updateStockAvailability(ArrayList<CartItemGroup> cartItems) {
+		this.cartItems = cartItems;
+		notifyDataSetChanged();
 	}
 }

@@ -58,7 +58,7 @@ public class SessionDao extends BaseDao {
 		}
 	}
 
-	public enum SESSION_STATE{
+	public enum SESSION_STATE {
 		ACTIVE(1),
 		INACTIVE(0);
 		/**
@@ -72,7 +72,7 @@ public class SessionDao extends BaseDao {
 	}
 
 
-	public SessionDao(String id, KEY key, String value, String dateCreated, String dateUpdated){
+	public SessionDao(String id, KEY key, String value, String dateCreated, String dateUpdated) {
 		super();
 
 		this.id = id;
@@ -119,7 +119,7 @@ public class SessionDao extends BaseDao {
 			}
 
 			sessionDao = new SessionDao(id, key, value, dateCreated, dateUpdated);
-		}catch (Exception e){
+		} catch (Exception e) {
 
 			Log.d("", "Unable to retrieve entry for " + key.toString());
 

@@ -23,15 +23,17 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
-import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetail;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
+import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.models.rest.product.GetCartSummary;
+import za.co.woolworths.financial.services.android.models.rest.product.GetInventorySkusForStore;
 import za.co.woolworths.financial.services.android.models.rest.product.GetProductDetail;
 import za.co.woolworths.financial.services.android.models.rest.product.PostAddItemToCart;
 import za.co.woolworths.financial.services.android.models.rest.product.ProductRequest;
@@ -498,11 +500,10 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 		return productLoadFail;
 	}
 
-
-	protected GetCartSummary getCartSummary() {
+	protected GetCartSummary getCartSummary(Activity activity) {
 		setAddedToCart(true);
 		getNavigator().onAddToCartLoad();
-		return new GetCartSummary(new OnEventListener() {
+		return new GetCartSummary(activity, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
 				if (object != null) {
@@ -572,10 +573,9 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 		});
 	}
 
-	protected SetDeliveryLocationSuburb setSuburb(DeliveryLocationHistory deliveryLocationHistory) {
+	protected SetDeliveryLocationSuburb setSuburb(ShoppingDeliveryLocation shoppingDeliveryLocation) {
 		// TODO: confirm loading when doing this request
-
-		return new SetDeliveryLocationSuburb(deliveryLocationHistory.suburb.id, new OnEventListener() {
+		return new SetDeliveryLocationSuburb(shoppingDeliveryLocation.suburb.id, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
 				getNavigator().handleSetSuburbResponse(object);
@@ -588,4 +588,19 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 		});
 	}
 
+
+	public GetInventorySkusForStore getInventoryStockForStore(String storeId, String multiSku) {
+		return new GetInventorySkusForStore(storeId, multiSku, new OnEventListener() {
+			@Override
+			public void onSuccess(Object object) {
+				SkusInventoryForStoreResponse skusInventoryForStoreResponse = (SkusInventoryForStoreResponse) object;
+				getNavigator().getInventoryForStoreSuccess(skusInventoryForStoreResponse);
+			}
+
+			@Override
+			public void onFailure(String e) {
+				getNavigator().geInventoryForStoreFailure(e);
+			}
+		});
+	}
 }

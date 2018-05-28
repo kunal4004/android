@@ -129,6 +129,8 @@
     <dimen name="line_dp">0.5dp</dimen>
     <dimen name="seventy_five_dp">75dp</dimen>
     <dimen name="sixty_dp">60dp</dimen>
+    <dimen name="three_dp">3dp</dimen>
+    <dimen name="thirteen_sp">13sp</dimen>
     <dimen name="two_hundred_and_twenty_one_dp">221dp</dimen>
     <dimen name="twenty_eight_sp">28sp</dimen>
     <dimen name="exr_margin">16dp</dimen>

@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -92,20 +93,22 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 			case ITEM_VIEW_TYPE_BASIC:
 				final ViewHolder holder = (ViewHolder) viewHolder;
 				holder.cartProductImage.setImageURI(Utils.getExternalImageRef() + listItems.get(position).externalImageURL + "?w=" + 85 + "&q=" + 85);
-				holder.productName.setText(listItems.get(position).displayName);
+				ShoppingListItem shoppingListItem = listItems.get(position);
+				holder.productName.setText(shoppingListItem.displayName);
 				//holder.productDesc.setText(listItems.get(position).description);
-				holder.quantity.setText(String.valueOf(listItems.get(position).userQuantity));
-				holder.price.setText(WFormatter.formatAmount(listItems.get(position).price));
-				holder.select.setChecked(listItems.get(position).isSelected);
+				holder.tvQuantity.setText(String.valueOf(shoppingListItem.userQuantity));
+				holder.price.setText(WFormatter.formatAmount(shoppingListItem.price));
+				holder.select.setChecked(shoppingListItem.isSelected);
 				holder.delete.setVisibility(View.VISIBLE);
 				holder.progressBar.setVisibility(View.INVISIBLE);
+
 				holder.llShopList.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View view) {
 						int position = holder.getAdapterPosition();
 						ShoppingListItem shoppingListItem = listItems.get(position);
 						ProductList productList = createProductList(shoppingListItem);
-						navigator.openProductDetailFragment(listItems.get(position).displayName, productList);
+						navigator.openProductDetailFragment(shoppingListItem.displayName, productList);
 					}
 				});
 				// Set Color and Size START
@@ -119,22 +122,41 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 
 				holder.tvColorSize.setText(sizeColor);
 				holder.tvColorSize.setVisibility(View.VISIBLE);
-
+				/****
+				 * shoppingListItem.userShouldSetSuburb - is set to true when user did not select any suburb
+				 */
+				if (shoppingListItem.userShouldSetSuburb) {
+					holder.tvProductAvailability.setVisibility(View.GONE);
+					holder.llQuantity.setVisibility(View.VISIBLE);
+					holder.llQuantity.setAlpha(1.0f);
+					holder.select.setEnabled(true);
+					holder.llQuantity.setEnabled(true);
+				} else {
+					if (shoppingListItem != null) {
+						boolean productInStock = shoppingListItem.quantityInStock != 0;
+						holder.llQuantity.setAlpha(productInStock ? 1.0f : 0.5f);
+						holder.tvQuantity.setAlpha(productInStock ? 1.0f : 0.5f);
+						holder.select.setEnabled(productInStock);
+						holder.imPrice.setAlpha(productInStock ? 1.0f : 0.5f);
+						if (shoppingListItem.inventoryCallCompleted) {
+							holder.llQuantity.setVisibility((shoppingListItem.quantityInStock == 0) ? View.GONE : View.VISIBLE);
+							holder.tvProductAvailability.setVisibility((shoppingListItem.quantityInStock == 0) ? View.VISIBLE : View.GONE);
+							Utils.setBackgroundColor(holder.tvProductAvailability, R.drawable.round_red_corner, R.string.product_unavailable);
+						}
+					}
+				}
 				// Set Color and Size END
 				holder.select.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View view) {
+						ShoppingListItem shoppingListItem = listItems.get(position);
+						if (shoppingListItem.quantityInStock == 0) return;
 						/*
 						 1. By default quantity will be ZERO.
 						 2. On Selection it will change to ONE.
 						 */
-						if (listItems.get(position).isSelected) {
-							listItems.get(position).userQuantity = 0;
-						} else {
-							listItems.get(position).userQuantity = 1;
-						}
-
-						listItems.get(position).isSelected = !listItems.get(position).isSelected;
+						shoppingListItem.userQuantity = shoppingListItem.isSelected ? 0 : 1;
+						shoppingListItem.isSelected = !listItems.get(position).isSelected;
 						notifyDataSetChanged();
 						// 1st item is header of Recycleview
 						navigator.onItemSelectionChange(listItems.subList(1, listItems.size()));
@@ -152,10 +174,15 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 				holder.llQuantity.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View view) {
-						navigator.onQuantityChangeClick(position);
+						ShoppingListItem shoppingListItem = listItems.get(position);
+						if (shoppingListItem.userShouldSetSuburb) {
+							navigator.openSetSuburbProcess(shoppingListItem);
+							return;
+						}
+						if (shoppingListItem.quantityInStock == 0) return;
+						navigator.onQuantityChangeClick(position, shoppingListItem);
 					}
 				});
-
 				mItemManger.bindView(holder.itemView, position);
 				break;
 			default:
@@ -194,7 +221,7 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 	public class ViewHolder extends RecyclerView.ViewHolder {
 		private WTextView productName;
 		private WTextView tvColorSize;
-		private WTextView quantity;
+		private WTextView tvQuantity;
 		private WTextView price;
 		private CheckBox select;
 		private WrapContentDraweeView cartProductImage;
@@ -202,20 +229,23 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 		private ProgressBar progressBar;
 		private RelativeLayout llQuantity;
 		private LinearLayout llShopList;
+		private ImageView imPrice;
+		private WTextView tvProductAvailability;
 
 		public ViewHolder(View itemView) {
 			super(itemView);
 			productName = itemView.findViewById(R.id.tvTitle);
-			quantity = itemView.findViewById(R.id.tvQuantity);
+			tvQuantity = itemView.findViewById(R.id.tvQuantity);
 			price = itemView.findViewById(R.id.tvPrice);
 			select = itemView.findViewById(R.id.btnDeleteRow);
 			cartProductImage = itemView.findViewById(R.id.cartProductImage);
-			cartProductImage = itemView.findViewById(R.id.cartProductImage);
+			tvProductAvailability = itemView.findViewById(R.id.tvProductAvailability);
 			delete = itemView.findViewById(R.id.tvDelete);
 			llShopList = itemView.findViewById(R.id.llShopList);
 			progressBar = itemView.findViewById(R.id.pbDeleteIndicator);
 			tvColorSize = itemView.findViewById(R.id.tvColorSize);
 			llQuantity = itemView.findViewById(R.id.llQuantity);
+			imPrice = itemView.findViewById(R.id.imPrice);
 		}
 	}
 
@@ -226,6 +256,7 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 			super(itemView);
 			tvSearchText = itemView.findViewById(R.id.textProductSearch);
 		}
+
 	}
 
 	public void updateList(List<ShoppingListItem> updatedListItems) {
@@ -239,5 +270,4 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 	public int getItemViewType(int position) {
 		return position == 0 ? ITEM_VIEW_TYPE_HEADER : ITEM_VIEW_TYPE_BASIC;
 	}
-
 }

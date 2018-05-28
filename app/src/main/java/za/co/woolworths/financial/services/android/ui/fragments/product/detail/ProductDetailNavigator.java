@@ -8,11 +8,10 @@ import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
-import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.Response;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
+import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
@@ -71,15 +70,11 @@ public interface ProductDetailNavigator {
 
 	void setupPagerIndicatorDots(int size);
 
-	void colorSizeContainerVisibility(int size);
+	void colorSizeContainerVisibility(List<OtherSkus> otherSkuList);
 
 	void setColorList(List<OtherSkus> skuList);
 
 	void setSizeList(List<OtherSkus> skuList);
-
-	void onSizeItemClicked(OtherSkus otherSkus);
-
-	void onColourItemClicked(OtherSkus otherSkus);
 
 	// find in-store
 	void startLocationUpdates();
@@ -115,11 +110,13 @@ public interface ProductDetailNavigator {
 
 	void onAddItemToCartFailure(String error);
 
-	int maximumPopWindowHeight();
-
 	void onSessionTokenExpired(Response response);
 
 	void handleSetSuburbResponse(Object object);
 
-	void setSuburbAPI(DeliveryLocationHistory deliveryLocation);
+	void setSuburbAPI(ShoppingDeliveryLocation deliveryLocation);
+
+	void getInventoryForStoreSuccess(SkusInventoryForStoreResponse skusInventoryForStoreResponse);
+
+	void geInventoryForStoreFailure(String e);
 }

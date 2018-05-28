@@ -1,12 +1,16 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems;
 
+import android.app.Activity;
+
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
+import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
 import za.co.woolworths.financial.services.android.models.rest.product.GetCartSummary;
+import za.co.woolworths.financial.services.android.models.rest.product.GetInventorySkusForStore;
 import za.co.woolworths.financial.services.android.models.rest.product.PostAddItemToCart;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.DeleteShoppingListItem;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.GetShoppingListItems;
@@ -18,8 +22,11 @@ import za.co.woolworths.financial.services.android.util.rx.SchedulerProvider;
  * Created by W7099877 on 2018/03/08.
  */
 
+
 public class ShoppingListItemsViewModel extends BaseViewModel<ShoppingListItemsNavigator> {
 	private boolean addedToCart;
+	private boolean internetConnectionWasLost = false;
+
 
 	public ShoppingListItemsViewModel() {
 		super();
@@ -97,10 +104,10 @@ public class ShoppingListItemsViewModel extends BaseViewModel<ShoppingListItemsN
 	}
 
 
-	protected GetCartSummary getCartSummary() {
+	protected GetCartSummary getCartSummary(Activity activity) {
 		addedToCartFail(false);
 		getNavigator().onAddToCartLoad();
-		return new GetCartSummary(new OnEventListener() {
+		return new GetCartSummary(activity, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
 				if (object != null) {
@@ -139,5 +146,31 @@ public class ShoppingListItemsViewModel extends BaseViewModel<ShoppingListItemsN
 
 	public boolean addedToCart() {
 		return addedToCart;
+	}
+
+
+	public GetInventorySkusForStore getInventoryStockForStore(String storeId, String multiSku) {
+		setInternetConnectionWasLost(false);
+		return new GetInventorySkusForStore(storeId, multiSku, new OnEventListener() {
+			@Override
+			public void onSuccess(Object object) {
+				SkusInventoryForStoreResponse skusInventoryForStoreResponse = (SkusInventoryForStoreResponse) object;
+				getNavigator().getInventoryForStoreSuccess(skusInventoryForStoreResponse);
+			}
+
+			@Override
+			public void onFailure(String e) {
+				setInternetConnectionWasLost(true);
+				getNavigator().geInventoryForStoreFailure(e);
+			}
+		});
+	}
+
+	public void setInternetConnectionWasLost(boolean internetConnectionWasLost) {
+		this.internetConnectionWasLost = internetConnectionWasLost;
+	}
+
+	public boolean internetConnectionWasLost() {
+		return internetConnectionWasLost;
 	}
 }

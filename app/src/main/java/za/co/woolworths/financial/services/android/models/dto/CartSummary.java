@@ -19,4 +19,7 @@ public class CartSummary {
 	@SerializedName("provinceName")
 	@Expose
 	public String provinceName;
+	@SerializedName("suburb")
+	@Expose
+	public SuburbFulfillment suburb;
 }

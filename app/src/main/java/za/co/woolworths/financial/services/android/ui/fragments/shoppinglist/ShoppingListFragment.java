@@ -22,14 +22,17 @@ import com.awfs.coordination.databinding.ShoppinglistFragmentBinding;
 
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.DeleteShoppingList;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.GetShoppingLists;
+import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.ShoppingListAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.list.NewListFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsFragment;
+import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.EmptyCartView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -48,6 +51,10 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 	private BroadcastReceiver mConnectionBroadcast;
 	private MenuItem mMenuCreateList;
 	ShoppingListAdapter shoppingListAdapter;
+	private String mSuburbName, mProvinceName;
+	private static final int REQUEST_SUBURB_CHANGE = 143;
+	private RelativeLayout rlLocationSelectedLayout;
+	private WTextView tvDeliveryLocation;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -80,10 +87,21 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 		emptyCartView.setView(getString(R.string.title_no_shopping_lists), getString(R.string.description_no_shopping_lists), getString(R.string.button_no_shopping_lists), R.drawable.emptylists);
 		view.findViewById(R.id.btnRetry).setOnClickListener(this);
 
+		rlLocationSelectedLayout = getViewDataBinding().locationSelectedLayout;
+		tvDeliveryLocation = getViewDataBinding().tvDeliveryLocation;
+
+		ShoppingDeliveryLocation lastDeliveryLocation = Utils.getLastDeliveryLocation(getActivity());
+		if (lastDeliveryLocation != null) {
+			mSuburbName = lastDeliveryLocation.suburb.name;
+			mProvinceName = lastDeliveryLocation.province.name;
+			tvDeliveryLocation.setText(mSuburbName + ", " + mProvinceName);
+		}
+
 		RelativeLayout rlNoConnectionLayout = getViewDataBinding().incConnectionLayout.noConnectionLayout;
 		mErrorHandlerView = new ErrorHandlerView(getActivity(), rlNoConnectionLayout);
 		mErrorHandlerView.setMargin(rlNoConnectionLayout, 0, 0, 0, 0);
 		mConnectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
+		rlLocationSelectedLayout.setOnClickListener(this);
 	}
 
 	public void loadShoppingList(List<ShoppingList> lists) {
@@ -150,6 +168,7 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 	public void onShoppingListsResponse(ShoppingListsResponse shoppingListsResponse) {
 		getViewDataBinding().loadingBar.setVisibility(View.GONE);
 		loadShoppingList(shoppingListsResponse.lists);
+		Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
 	}
 
 	@Override
@@ -159,6 +178,7 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 			activity.runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
+					Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
 					getViewDataBinding().loadingBar.setVisibility(View.GONE);
 					mMenuCreateList.setVisible(false);
 					mErrorHandlerView.showErrorHandler();
@@ -202,6 +222,7 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 
 	public void initGetShoppingList() {
 		mErrorHandlerView.hideErrorHandler();
+		Utils.deliveryLocationEnabled(getActivity(), false, rlLocationSelectedLayout);
 		getViewDataBinding().rcvShoppingLists.setVisibility(View.GONE);
 		getViewDataBinding().loadingBar.setVisibility(View.VISIBLE);
 		mGetShoppingLists = getViewModel().getShoppingListsResponse();
@@ -240,6 +261,10 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 				if (new ConnectionDetector().isOnline(getActivity())) {
 					initGetShoppingList();
 				}
+				break;
+			case R.id.locationSelectedLayout:
+				locationSelectionClicked();
+				break;
 			default:
 				break;
 		}
@@ -256,10 +281,33 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == REQUEST_SUBURB_CHANGE) {
+			showToolbar(R.string.title_my_list);
+			ShoppingDeliveryLocation lastDeliveryLocation = Utils.getLastDeliveryLocation(getActivity());
+			if (lastDeliveryLocation != null) {
+				mSuburbName = lastDeliveryLocation.suburb.name;
+				mProvinceName = lastDeliveryLocation.province.name;
+				tvDeliveryLocation.setText(mSuburbName + ", " + mProvinceName);
+			}
+			initGetShoppingList();
+			return;
+		}
+
 		if (requestCode == OPEN_CART_REQUEST) {
 			if (resultCode == DISMISS_POP_WINDOW_CLICKED) {
 				showToolbar(R.string.title_my_list);
 			}
+		}
+	}
+
+	private void locationSelectionClicked() {
+		Activity activity = getActivity();
+		if (activity != null) {
+			Intent openDeliveryLocationSelectionActivity = new Intent(this.getContext(), DeliveryLocationSelectionActivity.class);
+			openDeliveryLocationSelectionActivity.putExtra("suburbName", mSuburbName);
+			openDeliveryLocationSelectionActivity.putExtra("provinceName", mProvinceName);
+			startActivityForResult(openDeliveryLocationSelectionActivity, REQUEST_SUBURB_CHANGE);
+			activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
 		}
 	}
 }

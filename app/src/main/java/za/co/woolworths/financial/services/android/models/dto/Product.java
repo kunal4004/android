@@ -57,5 +57,8 @@ public class Product {
 	@SerializedName("externalImageRef")
 	@Expose
 	public String externalImageRef;
+	@SerializedName("fulfillmentType")
+	@Expose
+	public String fulfillmentType;
 
 }

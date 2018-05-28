@@ -81,8 +81,10 @@ import static za.co.woolworths.financial.services.android.models.service.event.B
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.REWARD_COUNT;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.OPEN_GET_LIST_SCREEN;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SHOW_ADDED_TO_SHOPPING_LIST_TOAST;
+import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.RESULT_TAP_FIND_INSTORE_BTN;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_ADD_TO_SHOPPING_LIST;
+import static za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment.LOCK_REQUEST_CODE_WREWARDS;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment.MOVE_TO_LIST_ON_TOAST_VIEW_CLICKED;
 import static za.co.woolworths.financial.services.android.util.ScreenManager.CART_LAUNCH_VALUE;
 
@@ -721,7 +723,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void cartSummaryAPI() {
-		getViewModel().getCartSummary().execute();
+		getViewModel().getCartSummary(BottomNavigationActivity.this).execute();
 	}
 
 	@Override
@@ -889,13 +891,26 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				break;
 		}
 
-		if (requestCode == WRewardsVouchersFragment.LOCK_REQUEST_CODE_WREWARDS && resultCode == RESULT_OK) {
-			Utils.sendBus(new WRewardsVouchersFragment());
-		}
+		//Call product detail onActivityResult
+		if (resultCode == RESULT_TAP_FIND_INSTORE_BTN) {
+			if (getBottomFragmentById() instanceof ProductDetailFragment) {
+				getBottomFragmentById().onActivityResult(requestCode, resultCode, null);
+			}
 
-		if (requestCode == LOCK_REQUEST_CODE_ACCOUNTS && resultCode == RESULT_OK) {
-			AuthenticateUtils.getInstance(BottomNavigationActivity.this).enableBiometricForCurrentSession(false);
-			getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
+		}
+		// Biometric Authentication check
+		if (resultCode == RESULT_OK) {
+			switch (requestCode) {
+				case LOCK_REQUEST_CODE_ACCOUNTS:
+					AuthenticateUtils.getInstance(BottomNavigationActivity.this).enableBiometricForCurrentSession(false);
+					getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
+					break;
+				case LOCK_REQUEST_CODE_WREWARDS:
+					Utils.sendBus(new WRewardsVouchersFragment());
+					break;
+				default:
+					break;
+			}
 		}
 	}
 
@@ -914,7 +929,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void badgeCount() {
-		getViewModel().getCartSummary().execute();
+		getViewModel().getCartSummary(BottomNavigationActivity.this).execute();
 		getViewModel().getVoucherCount().execute();
 		getViewModel().getMessageResponse().execute();
 	}
@@ -946,6 +961,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void updateCartSummaryCount(CartSummary cartSummary) {
+		if (cartSummary == null) return;
 		addBadge(INDEX_CART, cartSummary.totalItemsCount);
 	}
 
