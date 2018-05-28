@@ -42,8 +42,8 @@ public class SubCategoryViewModel extends BaseViewModel<SubCategoryNavigator> {
 				switch (subCategories.httpCode) {
 					case 200:
 						getNavigator().bindSubCategoryResult(subCategories.subCategories);
+						getNavigator().onLoadComplete();
 						break;
-
 					default:
 						Response response = subCategories.response;
 						if (response != null) {
@@ -51,7 +51,6 @@ public class SubCategoryViewModel extends BaseViewModel<SubCategoryNavigator> {
 						}
 						break;
 				}
-				getNavigator().onLoadComplete();
 			}
 
 			@Override
