@@ -9,7 +9,7 @@ import java.util.List;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
-import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
@@ -62,19 +62,19 @@ public class GetCartSummary extends HttpAsyncTask<String, String, CartSummaryRes
 		if (cartSummaryResponse != null) {
 			List<CartSummary> cartSummary = cartSummaryResponse.data;
 			if (cartSummary != null) {
-				DeliveryLocationHistory deliveryLocationHistory = Utils.getLastDeliveryLocation(mContext);
+				ShoppingDeliveryLocation shoppingDeliveryLocation = Utils.getLastDeliveryLocation(mContext);
 				CartSummary cart = cartSummary.get(0);
-				if (deliveryLocationHistory == null) {
+				if (shoppingDeliveryLocation == null) {
 					Province province = getProvince(cart);
 					Suburb suburb = getSuburb(cart);
-					Utils.saveRecentDeliveryLocation(new DeliveryLocationHistory(province, suburb), mContext);
+					Utils.saveRecentDeliveryLocation(new ShoppingDeliveryLocation(province, suburb), mContext);
 					return;
 				}
 				Province province = getProvince(cart);
-				if (deliveryLocationHistory.suburb.id.equalsIgnoreCase(String.valueOf(cart.suburbId)))
+				if (shoppingDeliveryLocation.suburb.id.equalsIgnoreCase(String.valueOf(cart.suburbId)))
 					return;
 				Suburb cartSuburb = getSuburb(cart);
-				Utils.saveRecentDeliveryLocation(new DeliveryLocationHistory(province, cartSuburb), mContext);
+				Utils.saveRecentDeliveryLocation(new ShoppingDeliveryLocation(province, cartSuburb), mContext);
 			}
 		}
 	}

@@ -22,7 +22,7 @@ import com.awfs.coordination.databinding.ShoppinglistFragmentBinding;
 
 import java.util.List;
 
-import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.DeleteShoppingList;
@@ -90,7 +90,7 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 		rlLocationSelectedLayout = getViewDataBinding().locationSelectedLayout;
 		tvDeliveryLocation = getViewDataBinding().tvDeliveryLocation;
 
-		DeliveryLocationHistory lastDeliveryLocation = Utils.getLastDeliveryLocation(getActivity());
+		ShoppingDeliveryLocation lastDeliveryLocation = Utils.getLastDeliveryLocation(getActivity());
 		if (lastDeliveryLocation != null) {
 			mSuburbName = lastDeliveryLocation.suburb.name;
 			mProvinceName = lastDeliveryLocation.province.name;
@@ -283,7 +283,7 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == REQUEST_SUBURB_CHANGE) {
 			showToolbar(R.string.title_my_list);
-			DeliveryLocationHistory lastDeliveryLocation = Utils.getLastDeliveryLocation(getActivity());
+			ShoppingDeliveryLocation lastDeliveryLocation = Utils.getLastDeliveryLocation(getActivity());
 			if (lastDeliveryLocation != null) {
 				mSuburbName = lastDeliveryLocation.suburb.name;
 				mProvinceName = lastDeliveryLocation.province.name;

@@ -23,12 +23,11 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
-import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetail;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
-import za.co.woolworths.financial.services.android.models.dto.SkuInventory;
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
@@ -574,9 +573,9 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 		});
 	}
 
-	protected SetDeliveryLocationSuburb setSuburb(DeliveryLocationHistory deliveryLocationHistory) {
+	protected SetDeliveryLocationSuburb setSuburb(ShoppingDeliveryLocation shoppingDeliveryLocation) {
 		// TODO: confirm loading when doing this request
-		return new SetDeliveryLocationSuburb(deliveryLocationHistory.suburb.id, new OnEventListener() {
+		return new SetDeliveryLocationSuburb(shoppingDeliveryLocation.suburb.id, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
 				getNavigator().handleSetSuburbResponse(object);

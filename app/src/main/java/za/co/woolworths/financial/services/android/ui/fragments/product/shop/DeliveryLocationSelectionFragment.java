@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
-import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
 import za.co.woolworths.financial.services.android.models.dto.Suburb;
@@ -95,7 +95,7 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
 		configureCurrentLocation();
 		configureLocationHistory();
 
-		List<DeliveryLocationHistory> deliveryHistory = Utils.getDeliveryLocationHistory(this.getContext());
+		List<ShoppingDeliveryLocation> deliveryHistory = Utils.getDeliveryLocationHistory(this.getContext());
 		if (deliveryHistory != null && deliveryHistory.size() > 0) {
 			if (!TextUtils.isEmpty(suburbName)) {
 				tvCurrentLocationTitle.setText(suburbName);
@@ -116,14 +116,14 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
 	private void configureCurrentLocation() {
 		// TODO: make API request & show loading before setting the current location, if needed
 
-		DeliveryLocationHistory currentLocation = getCurrentDeliveryLocation();
+		ShoppingDeliveryLocation currentLocation = getCurrentDeliveryLocation();
 		tvCurrentLocationTitle.setText(currentLocation.suburb.name);
 		tvCurrentLocationDescription.setText(currentLocation.province.name);
 	}
 
 	private void configureLocationHistory() {
 		// TODO: make API request & show loading before setting the list
-		List<DeliveryLocationHistory> history = getDeliveryLocationHistory();
+		List<ShoppingDeliveryLocation> history = getDeliveryLocationHistory();
 		if (history != null && history.size() > 0) {
 			DeliveryLocationAdapter deliveryLocationAdapter = new DeliveryLocationAdapter(history, this);
 			LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
@@ -135,23 +135,23 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
 		}
 	}
 
-	private DeliveryLocationHistory getCurrentDeliveryLocation() {
+	private ShoppingDeliveryLocation getCurrentDeliveryLocation() {
 		Province province = new Province();
 		province.name = "Current province here";
 		Suburb suburb = new Suburb();
 		suburb.name = "Current suburb here";
-		return new DeliveryLocationHistory(province, suburb);
+		return new ShoppingDeliveryLocation(province, suburb);
 	}
 
-	private List<DeliveryLocationHistory> getDeliveryLocationHistory() {
-		List<DeliveryLocationHistory> history = null;
+	private List<ShoppingDeliveryLocation> getDeliveryLocationHistory() {
+		List<ShoppingDeliveryLocation> history = null;
 		try {
 			SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.DELIVERY_LOCATION_HISTORY);
 			if (sessionDao.value == null) {
 				history = new ArrayList<>();
 			} else {
 				Gson gson = new Gson();
-				Type type = new TypeToken<List<DeliveryLocationHistory>>() {
+				Type type = new TypeToken<List<ShoppingDeliveryLocation>>() {
 				}.getType();
 				history = gson.fromJson(sessionDao.value, type);
 			}
@@ -167,12 +167,12 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
 	}
 
 	@Override
-	public void onItemClick(DeliveryLocationHistory location) {
+	public void onItemClick(ShoppingDeliveryLocation location) {
 		Log.i("DeliveryLocation", "Location selected: " + location.suburb.name);
 		setSuburb(location);
 	}
 
-	private void setSuburb(final DeliveryLocationHistory location) {
+	private void setSuburb(final ShoppingDeliveryLocation location) {
 		// TODO: confirm loading when doing this request
 		toggleLoading(true);
 
@@ -210,7 +210,7 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
 		setDeliveryLocationSuburb.execute();
 	}
 
-	private void handleSetSuburbResponse(SetDeliveryLocationSuburbResponse response, final DeliveryLocationHistory location) {
+	private void handleSetSuburbResponse(SetDeliveryLocationSuburbResponse response, final ShoppingDeliveryLocation location) {
 		try {
 			switch (response.httpCode) {
 				case 200:

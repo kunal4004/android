@@ -45,7 +45,7 @@ import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.AddToCartDaTum;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
-import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.FormException;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
@@ -1364,15 +1364,15 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	}
 
 	private void cartSummaryAPI() {
-		DeliveryLocationHistory deliveryLocationHistory = getCartSummaryResponse();
-		if (deliveryLocationHistory == null) {
+		ShoppingDeliveryLocation shoppingDeliveryLocation = getCartSummaryResponse();
+		if (shoppingDeliveryLocation == null) {
 			executeCartSummary();
 			return;
 		}
 		Activity activity = getActivity();
-		if ((activity != null) && deliveryLocationHistory != null) {
-			if (deliveryLocationHistory.suburb != null) {
-				if (!TextUtils.isEmpty(deliveryLocationHistory.suburb.name)) {
+		if ((activity != null) && shoppingDeliveryLocation != null) {
+			if (shoppingDeliveryLocation.suburb != null) {
+				if (!TextUtils.isEmpty(shoppingDeliveryLocation.suburb.name)) {
 					// show pop up message after login
 					if (activate_location_popup) {
 						smoothScrollToTop();
@@ -1415,7 +1415,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		mGetCartSummary.execute();
 	}
 
-	private DeliveryLocationHistory getCartSummaryResponse() {
+	private ShoppingDeliveryLocation getCartSummaryResponse() {
 		return Utils.getLastDeliveryLocation(getActivity());
 	}
 
@@ -1559,7 +1559,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	}
 
 	@Override
-	public void setSuburbAPI(DeliveryLocationHistory deliveryLocation) {
+	public void setSuburbAPI(ShoppingDeliveryLocation deliveryLocation) {
 		mSuburbLocation = getViewModel().setSuburb(deliveryLocation);
 		mSuburbLocation.execute();
 	}

@@ -36,7 +36,7 @@ import za.co.woolworths.financial.services.android.models.dto.AddItemToCartRespo
 import za.co.woolworths.financial.services.android.models.dto.AddToCartDaTum;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
-import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.Response;
@@ -219,7 +219,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		Activity activity = getActivity();
 		if (activity == null) return;
 
-		List<DeliveryLocationHistory> deliveryLocationHistories = Utils.getDeliveryLocationHistory(activity);
+		List<ShoppingDeliveryLocation> deliveryLocationHistories = Utils.getDeliveryLocationHistory(activity);
 		if (deliveryLocationHistories.size() == 0) {
 			if (listItems == null)
 				listItems = new ArrayList<>();
@@ -712,7 +712,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				Suburb suburb = new Suburb();
 				suburb.name = cartSummary.suburbName;
 				suburb.id = suburbId;
-				Utils.saveRecentDeliveryLocation(new DeliveryLocationHistory(province, suburb), activity);
+				Utils.saveRecentDeliveryLocation(new ShoppingDeliveryLocation(province, suburb), activity);
 				executeAddToCart(listItems.subList(1, listItems.size()));
 			} else {
 				deliverySelectionIntent(getActivity());

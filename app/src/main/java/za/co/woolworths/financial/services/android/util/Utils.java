@@ -82,7 +82,7 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
-import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.Transaction;
@@ -927,15 +927,15 @@ public class Utils {
 	}
 
 
-	public static List<DeliveryLocationHistory> getDeliveryLocationHistory(Context context) {
-		List<DeliveryLocationHistory> history = null;
+	public static List<ShoppingDeliveryLocation> getDeliveryLocationHistory(Context context) {
+		List<ShoppingDeliveryLocation> history = null;
 		try {
 			SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.DELIVERY_LOCATION_HISTORY);
 			if (sessionDao.value == null) {
 				history = new ArrayList<>();
 			} else {
 				Gson gson = new Gson();
-				Type type = new TypeToken<List<DeliveryLocationHistory>>() {
+				Type type = new TypeToken<List<ShoppingDeliveryLocation>>() {
 				}.getType();
 				history = gson.fromJson(sessionDao.value, type);
 			}
@@ -956,8 +956,8 @@ public class Utils {
 		return (int) (dpValue * scale + 0.5f);
 	}
 
-	public static void saveRecentDeliveryLocation(DeliveryLocationHistory historyItem, Context context) {
-		List<DeliveryLocationHistory> history = getRecentDeliveryLocations(context);
+	public static void saveRecentDeliveryLocation(ShoppingDeliveryLocation historyItem, Context context) {
+		List<ShoppingDeliveryLocation> history = getRecentDeliveryLocations(context);
 		SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.DELIVERY_LOCATION_HISTORY);
 
 		Gson gson = new Gson();
@@ -992,15 +992,15 @@ public class Utils {
 		}
 	}
 
-	public static List<DeliveryLocationHistory> getRecentDeliveryLocations(Context context) {
-		List<DeliveryLocationHistory> history = null;
+	public static List<ShoppingDeliveryLocation> getRecentDeliveryLocations(Context context) {
+		List<ShoppingDeliveryLocation> history = null;
 		try {
 			SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.DELIVERY_LOCATION_HISTORY);
 			if (sessionDao.value == null) {
 				history = new ArrayList<>();
 			} else {
 				Gson gson = new Gson();
-				Type type = new TypeToken<List<DeliveryLocationHistory>>() {
+				Type type = new TypeToken<List<ShoppingDeliveryLocation>>() {
 				}.getType();
 				history = gson.fromJson(sessionDao.value, type);
 			}
@@ -1010,9 +1010,9 @@ public class Utils {
 		return history;
 	}
 
-	public static DeliveryLocationHistory getLastDeliveryLocation(Context context) {
-		DeliveryLocationHistory history = null;
-		List<DeliveryLocationHistory> locationHistories = Utils.getDeliveryLocationHistory(context);
+	public static ShoppingDeliveryLocation getLastDeliveryLocation(Context context) {
+		ShoppingDeliveryLocation history = null;
+		List<ShoppingDeliveryLocation> locationHistories = Utils.getDeliveryLocationHistory(context);
 		if (locationHistories != null && locationHistories.size() > 0)
 			history = locationHistories.get(0);
 		return history;
@@ -1186,14 +1186,14 @@ public class Utils {
 	public static String retrieveStoreId(String fulFillmentType, Context context) {
 
 		JsonParser parser = new JsonParser();
-		DeliveryLocationHistory deliveryLocationHistory = Utils.getLastDeliveryLocation(context);
-		if (deliveryLocationHistory == null) return "";
-		if (deliveryLocationHistory.suburb == null) return "";
-		if ((deliveryLocationHistory.suburb.fulfillmentStores == null)
-				&& (deliveryLocationHistory.suburb.fullfillmentStores == null))
+		ShoppingDeliveryLocation shoppingDeliveryLocation = Utils.getLastDeliveryLocation(context);
+		if (shoppingDeliveryLocation == null) return "";
+		if (shoppingDeliveryLocation.suburb == null) return "";
+		if ((shoppingDeliveryLocation.suburb.fulfillmentStores == null)
+				&& (shoppingDeliveryLocation.suburb.fullfillmentStores == null))
 			return "";
-		String fulfillmentStore = Utils.toJson(deliveryLocationHistory.suburb.fulfillmentStores);
-		String swapFulFillmentStore = (TextUtils.isEmpty(fulfillmentStore.replaceAll("null", "")) ? Utils.toJson(deliveryLocationHistory.suburb.fullfillmentStores) : fulfillmentStore);
+		String fulfillmentStore = Utils.toJson(shoppingDeliveryLocation.suburb.fulfillmentStores);
+		String swapFulFillmentStore = (TextUtils.isEmpty(fulfillmentStore.replaceAll("null", "")) ? Utils.toJson(shoppingDeliveryLocation.suburb.fullfillmentStores) : fulfillmentStore);
 		JsonElement suburbFulfillment = parser.parse(swapFulFillmentStore);
 		String storeId = "";
 		if (!suburbFulfillment.isJsonNull()) {

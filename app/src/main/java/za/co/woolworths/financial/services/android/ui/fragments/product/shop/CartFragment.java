@@ -44,7 +44,7 @@ import za.co.woolworths.financial.services.android.models.dto.CartResponse;
 import za.co.woolworths.financial.services.android.models.dto.ChangeQuantity;
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem;
 import za.co.woolworths.financial.services.android.models.dto.Data;
-import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse;
@@ -166,7 +166,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		mBtnRetry.setOnClickListener(this);
 		btnCheckOut.setOnClickListener(this);
 		tvDeliveryLocation = view.findViewById(R.id.tvDeliveryLocation);
-		DeliveryLocationHistory lastDeliveryLocation = Utils.getLastDeliveryLocation(getActivity());
+		ShoppingDeliveryLocation lastDeliveryLocation = Utils.getLastDeliveryLocation(getActivity());
 		if (lastDeliveryLocation != null) {
 			mSuburbName = lastDeliveryLocation.suburb.name;
 			mProvinceName = lastDeliveryLocation.province.name;
@@ -745,7 +745,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					suburb.name = data.suburbName;
 					suburb.id = suburbId;
 					suburb.fulfillmentStores = data.orderSummary.suburb.fullfillmentStores;
-					Utils.saveRecentDeliveryLocation(new DeliveryLocationHistory(province, suburb), activity);
+					Utils.saveRecentDeliveryLocation(new ShoppingDeliveryLocation(province, suburb), activity);
 					tvDeliveryLocation.setText(mSuburbName + ", " + mProvinceName);
 				}
 			}
@@ -831,7 +831,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		}
 		if (requestCode == CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY || requestCode == REQUEST_SUBURB_CHANGE) {
 			loadShoppingCart(false).execute();
-			DeliveryLocationHistory lastDeliveryLocation = Utils.getLastDeliveryLocation(getActivity());
+			ShoppingDeliveryLocation lastDeliveryLocation = Utils.getLastDeliveryLocation(getActivity());
 			if (lastDeliveryLocation != null) {
 				mSuburbName = lastDeliveryLocation.suburb.name;
 				mProvinceName = lastDeliveryLocation.province.name;

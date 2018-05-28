@@ -8,7 +8,7 @@ import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
-import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
@@ -114,7 +114,7 @@ public interface ProductDetailNavigator {
 
 	void handleSetSuburbResponse(Object object);
 
-	void setSuburbAPI(DeliveryLocationHistory deliveryLocation);
+	void setSuburbAPI(ShoppingDeliveryLocation deliveryLocation);
 
 	void getInventoryForStoreSuccess(SkusInventoryForStoreResponse skusInventoryForStoreResponse);
 

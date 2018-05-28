@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.provider.Settings;
@@ -9,7 +8,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,7 +18,7 @@ import android.widget.Switch;
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
-import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -81,7 +79,7 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 			biometricsLayout.setVerticalGravity(View.GONE);
 		}
 
-		DeliveryLocationHistory lastDeliveryLocation = Utils.getLastDeliveryLocation(MyPreferencesActivity.this);
+		ShoppingDeliveryLocation lastDeliveryLocation = Utils.getLastDeliveryLocation(MyPreferencesActivity.this);
 		if (lastDeliveryLocation != null) {
 			mSuburbName = lastDeliveryLocation.suburb.name;
 			mProvinceName = lastDeliveryLocation.province.name;
@@ -128,7 +126,7 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 				}
 				break;
 			case REQUEST_SUBURB_CHANGE:
-				DeliveryLocationHistory lastDeliveryLocation = Utils.getLastDeliveryLocation(MyPreferencesActivity.this);
+				ShoppingDeliveryLocation lastDeliveryLocation = Utils.getLastDeliveryLocation(MyPreferencesActivity.this);
 				if (lastDeliveryLocation != null) {
 					mSuburbName = lastDeliveryLocation.suburb.name;
 					mProvinceName = lastDeliveryLocation.province.name;
