@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -24,7 +25,7 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class MyPreferencesActivity extends AppCompatActivity implements View.OnClickListener {
+public class MyPreferencesActivity extends AppCompatActivity implements View.OnClickListener, View.OnTouchListener {
 
 	private Toolbar mToolbar;
 	private Switch authenticateSwitch;
@@ -66,6 +67,7 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 		rlLocationSelectedLayout = findViewById(R.id.locationSelectedLayout);
 		authenticateSwitch.setOnClickListener(this);
 		rlLocationSelectedLayout.setOnClickListener(this);
+		authenticateSwitch.setOnTouchListener(this);
 	}
 
 	public void bindDataWithUI() {
@@ -213,4 +215,14 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 			overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
 	}
 
+	@Override
+	public boolean onTouch(View view, MotionEvent motionEvent) {
+		switch (view.getId()){
+			case  R.id.auSwitch :
+				return motionEvent.getActionMasked() == MotionEvent.ACTION_MOVE;
+			default:
+				break;
+		}
+		return false;
+	}
 }

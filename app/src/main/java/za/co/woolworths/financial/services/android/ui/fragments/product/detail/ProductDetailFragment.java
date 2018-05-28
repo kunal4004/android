@@ -449,7 +449,14 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 	@Override
 	public void responseFailureHandler(Response response) {
-
+		onLoadComplete();
+		enableAddToListBtn(false);
+		hideView(getViewDataBinding().productCode);
+		hideView(getViewDataBinding().llLoadingColorSize);
+		Activity activity = getActivity();
+		if (activity == null) return;
+		if (response.desc == null) return;
+		Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
 	}
 
 	@Override

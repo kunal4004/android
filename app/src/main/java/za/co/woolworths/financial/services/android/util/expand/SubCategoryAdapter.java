@@ -143,4 +143,16 @@ public class SubCategoryAdapter extends ExpandableRecyclerAdapter<HeaderViewHold
 		setParentItemList(mSubCategoryListModel);
 		notifyItemChanged(selectedPosition);
 	}
+
+	/***
+	 * @Method hideChildItemProgressBar hide the progressbar and display arrow indicator on error response
+	 */
+	public void hideChildItemProgressBar() {
+		int sizeOfList = getParentItemList().size();
+		for (int index = 0; index < sizeOfList; index++) {
+			((SubCategoryModel) getParentItemList().get(index)).getSubCategory().singleProductItemIsLoading = false;
+		}
+		notifyDataSetChanged();
+	}
+
 }

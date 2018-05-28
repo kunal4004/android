@@ -47,7 +47,7 @@
     <string name="set_your_delivery_location">Select your delivery location</string>
     <string name="sign_out">Sign Out</string>
     <string name="brands">Brands</string>
-    <string name="why_we_need_location_services">Location Services</string>
+    <string name="why_we_need_location_services">WHY WE NEED LOCATION SERVICES</string>
     <string name="location_off_message">Location services allow us to provide store information like opening hours, contact details and directions.</string>
     <string name="go_to_settings">ENABLE LOCATION SERVICES</string>
     <string name="off_instantly">OFF INSTANTLY</string>
@@ -360,7 +360,7 @@
         <item>We have no data for the current year.</item>
         <item>We have no transaction data to show.</item>
         <item>You have no items in your  shopping list yet.</item>
-        <item>When you receive messages you will see them here.</item>
+        <item>When you receive messages you will\n see them here.</item>
     </string-array>
 
     <string name="on_boarding_title_1">WELCOME</string>
