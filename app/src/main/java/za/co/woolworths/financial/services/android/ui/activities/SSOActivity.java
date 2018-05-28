@@ -592,6 +592,7 @@ public class SSOActivity extends WebViewActivity {
 	}
 
 	private void showFailureView(String s) {
-		mErrorHandlerView.networkFailureHandler(s);
+		if (!new ConnectionDetector().isOnline(SSOActivity.this))
+			mErrorHandlerView.networkFailureHandler(s);
 	}
 }
