@@ -228,6 +228,8 @@ public class SSOActivity extends WebViewActivity {
 		}
 
 		public static Host getHostByRawValue(String rawValue) {
+			if (rawValue == null) return null;
+			if (Host.values() == null) return null;
 			for (Host h : Host.values()) {
 				if (rawValue.equals(h.rawValue()))
 					return h;
@@ -263,8 +265,7 @@ public class SSOActivity extends WebViewActivity {
 	}
 
 	private String constructAndGetAuthorisationRequestURL(String scope) {
-
-
+		if (this.path == null) return "";
 		switch (this.path) {
 
 			case SIGNIN:
@@ -337,16 +338,17 @@ public class SSOActivity extends WebViewActivity {
 		scope = scope.trim();
 
 		Uri.Builder builder = new Uri.Builder();
-		builder.scheme(this.host.rawValue()) // moved host.rawValue() from authority to schema as MCS returns host with " https:// "
-				.appendEncodedPath(this.path.rawValue())
-				.appendQueryParameter("client_id", "WWOneApp")
-				.appendQueryParameter("response_type", "id_token") // Identity token
-				.appendQueryParameter("response_mode", "form_post")
-				.appendQueryParameter("redirect_uri", this.redirectURIString)
-				.appendQueryParameter("state", this.state)
-				.appendQueryParameter("nonce", this.nonce)
-				.appendQueryParameter("scope", scope);
-
+		if (this.host != null) {
+			builder.scheme(this.host.rawValue()) // moved host.rawValue() from authority to schema as MCS returns host with " https:// "
+					.appendEncodedPath(this.path.rawValue())
+					.appendQueryParameter("client_id", "WWOneApp")
+					.appendQueryParameter("response_type", "id_token") // Identity token
+					.appendQueryParameter("response_mode", "form_post")
+					.appendQueryParameter("redirect_uri", this.redirectURIString)
+					.appendQueryParameter("state", this.state)
+					.appendQueryParameter("nonce", this.nonce)
+					.appendQueryParameter("scope", scope);
+		}
 
 		if (this.extraQueryStringParams != null) {
 			for (Map.Entry<String, String> param : this.extraQueryStringParams.entrySet()) {
@@ -479,13 +481,13 @@ public class SSOActivity extends WebViewActivity {
 		@Override
 		public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
 			super.onReceivedError(view, request, error);
-			unKnownNetworkFailure(view, error);
+			showFailureView(error.toString());
 		}
 
 		@SuppressWarnings("deprecation")
 		@Override
 		public void onReceivedError(WebView webView, int errorCode, String description, String failingUrl) {
-			unknownNetworkFailure(webView, description);
+			showFailureView(description);
 		}
 
 
@@ -587,5 +589,10 @@ public class SSOActivity extends WebViewActivity {
 		i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		startActivity(i);
 		closeActivity();
+	}
+
+	private void showFailureView(String s) {
+		if (!new ConnectionDetector().isOnline(SSOActivity.this))
+			mErrorHandlerView.networkFailureHandler(s);
 	}
 }
