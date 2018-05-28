@@ -122,14 +122,4 @@ public interface ProductDetailNavigator {
 	void handleSetSuburbResponse(Object object);
 
 	void setSuburbAPI(DeliveryLocationHistory deliveryLocation);
-
-	void onShoppingListsResponse(ShoppingListsResponse shoppingListsResponse);
-
-	void unknownErrorResponse(Response response);
-
-	void onShoppingListFailure(String e);
-
-	void shoppingListSessionTimedOut();
-
-	void onShoppingListLoad(boolean onLoad);
 }
