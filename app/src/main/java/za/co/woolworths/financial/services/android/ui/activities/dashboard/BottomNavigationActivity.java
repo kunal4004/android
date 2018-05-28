@@ -52,6 +52,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.category
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.ShoppingListFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.base.WRewardsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wtoday.WTodayFragment;
@@ -83,6 +85,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.ConfirmC
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_ADD_TO_SHOPPING_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment.LOCK_REQUEST_CODE_WREWARDS;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment.MOVE_TO_LIST_ON_TOAST_VIEW_CLICKED;
 import static za.co.woolworths.financial.services.android.util.ScreenManager.CART_LAUNCH_VALUE;
 
 public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigationBinding, BottomNavigationViewModel> implements BottomNavigator, FragNavController.TransactionListener, FragNavController.RootFragmentListener, PermissionResultCallback, ToastUtils.ToastInterface {
@@ -764,6 +767,28 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		//TODO: Explain where this is coming from.
+
+		/***
+		 * Navigate to list name view on view clicked from cart toast
+		 */
+		if (resultCode == MOVE_TO_LIST_ON_TOAST_VIEW_CLICKED) {
+			if (data != null) {
+				Bundle bundle = data.getExtras();
+				if (bundle != null) {
+					int countShopItem = bundle.getInt("count");
+					if (countShopItem > 1) {
+						pushFragment(new ShoppingListFragment());
+					} else {
+						bundle.putString("listName", bundle.getString("listName"));
+						bundle.putString("listId", bundle.getString("listId"));
+						ShoppingListItemsFragment shoppingListItemsFragment = new ShoppingListItemsFragment();
+						shoppingListItemsFragment.setArguments(bundle);
+						pushFragment(shoppingListItemsFragment);
+					}
+					return;
+				}
+			}
+		}
 
 		// navigate to product section
 		if (requestCode == OPEN_CART_REQUEST) {

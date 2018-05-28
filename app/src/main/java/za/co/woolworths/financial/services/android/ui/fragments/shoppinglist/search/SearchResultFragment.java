@@ -724,7 +724,6 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 		setTitle();
 	}
 
-
 	@Override
 	public void onConnectionChanged() {
 		retryConnect();

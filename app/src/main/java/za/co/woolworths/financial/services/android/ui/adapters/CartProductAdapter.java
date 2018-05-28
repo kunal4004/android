@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.adapters;
 
 import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -27,6 +28,7 @@ import za.co.woolworths.financial.services.android.models.dto.CommerceItem;
 import za.co.woolworths.financial.services.android.models.dto.CommerceItemInfo;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -96,6 +98,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 				CartHeaderViewHolder headerHolder = ((CartHeaderViewHolder) holder);
 				ArrayList<CommerceItem> commerceItems = itemRow.commerceItems;
 				headerHolder.tvHeaderTitle.setText(commerceItems.size() > 1 ? commerceItems.size() + " " + itemRow.category.toUpperCase() + " ITEMS" : commerceItems.size() + " " + itemRow.category.toUpperCase() + " ITEM");
+				headerHolder.addToListListener(commerceItems);
 				break;
 			case PRODUCT:
 				final ProductHolder productHolder = ((ProductHolder) holder);
@@ -361,10 +364,23 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 
 	private class CartHeaderViewHolder extends RecyclerView.ViewHolder {
 		private WTextView tvHeaderTitle;
+		private WTextView tvAddToList;
 
 		public CartHeaderViewHolder(View view) {
 			super(view);
 			tvHeaderTitle = view.findViewById(R.id.tvHeaderTitle);
+			tvAddToList = view.findViewById(R.id.tvAddToList);
+		}
+
+		public void addToListListener(final ArrayList<CommerceItem> commerceItems) {
+			tvAddToList.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					Context context = tvAddToList.getContext();
+					if (context == null) return;
+					Utils.displayValidationMessage(context, CustomPopUpWindow.MODAL_LAYOUT.SHOPPING_ADD_TO_LIST, Utils.toJson(commerceItems));
+				}
+			});
 		}
 	}
 
@@ -440,9 +456,9 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 
 	private void productImage(final WrapContentDraweeView image, String imgUrl) {
 		try {
-			String url = "https://images.woolworthsstatic.co.za/" + imgUrl + "?w=" + 85 + "&q=" + 85;
+			String url = "https://images.woolworthsstatic.co.za/" + imgUrl;
 			//TODO:: get domain name dynamically
-			image.setImageURI(TextUtils.isEmpty(imgUrl) ? "https://images.woolworthsstatic.co.za" : url);
+			image.setImageURI(TextUtils.isEmpty(imgUrl) ? "https://images.woolworthsstatic.co.za/" : url);
 		} catch (IllegalArgumentException ignored) {
 		}
 	}

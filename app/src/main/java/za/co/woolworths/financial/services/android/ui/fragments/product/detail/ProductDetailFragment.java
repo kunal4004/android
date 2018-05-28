@@ -268,7 +268,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		getGlobalState().setSizeWasPopup(false);
 		getGlobalState().setSizePickerSku(null);
 		renderView();
-		//shoppingListRequest();
 	}
 
 	@Override
