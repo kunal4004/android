@@ -26,8 +26,11 @@ import com.awfs.coordination.R;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +39,8 @@ import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CLIOfferDecision;
+import za.co.woolworths.financial.services.android.models.dto.CommerceItem;
+import za.co.woolworths.financial.services.android.models.dto.CommerceItemInfo;
 import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
@@ -558,19 +563,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				FragmentManager fm = getSupportFragmentManager();
 				Bundle bundle = new Bundle();
 				bundle.putString("LIST_PAYLOAD", description);
-				ShoppingListsResponse shoppingListsResponse = new Gson().fromJson((TextUtils.isEmpty(description)) ? "" : description, ShoppingListsResponse.class);
-				if (shoppingListsResponse != null) {
-					List<ShoppingList> lists = shoppingListsResponse.lists;
-					if (lists == null || lists.size() == 0) {
-						CreateListFragment createListFragment = new CreateListFragment();
-						bundle.putString("OPEN_FROM_POPUP", "OPEN_FROM_POPUP");
-						createListFragment.setArguments(bundle);
-						fm.beginTransaction()
-								.add(R.id.flShoppingListContainer, createListFragment)
-								.commitAllowingStateLoss();
-						return;
-					}
-				}
 				AddToListFragment addToListFragment = new AddToListFragment();
 				addToListFragment.setArguments(bundle);
 				fm.beginTransaction()
@@ -622,7 +614,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 	}
 
 	private void cliDeclineAnimation() {
-		if (!viewWasClicked) { // prevent more than one click
+		if (!viewWasClicked) { // prevent more tan one click
 			viewWasClicked = true;
 			TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
 			animation.setFillAfter(true);

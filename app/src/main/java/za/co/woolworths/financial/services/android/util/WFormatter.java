@@ -80,7 +80,7 @@ public class WFormatter {
 	}
 
 	public static String formatAmount(String amount) {
-		String sAmount = amount;
+		String sAmount = TextUtils.isEmpty(amount) ? "0.0" : amount;
 		if (sAmount.contains(",")) {
 			sAmount = sAmount.replace(",", ".");
 		}

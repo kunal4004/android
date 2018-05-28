@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
-              android:layout_height="wrap_content"
+              android:layout_height="@dimen/sixty_dp"
               android:orientation="vertical">
 
     <View
@@ -23,11 +23,15 @@
             android:id="@+id/tvAddToList"
             style="@style/style_cart_header_add_to_list"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:visibility="invisible"
-            android:text="@string/add_to_list"/>
+            android:letterSpacing="0.1"
+            android:lineSpacingMultiplier="1.67"
+            android:text="@string/add_to_list"
+            android:textSize="@dimen/twelve_sp"
+
+            />
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:id="@+id/tvHeaderTitle"

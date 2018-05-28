@@ -24,7 +24,9 @@ import android.widget.TextView;
 import com.awfs.coordination.R;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
@@ -73,6 +75,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 	private boolean createListFailed;
 	private AddToListRequest mAddToListRequest;
 	private List<AddToListRequest> mListRequests;
+	private Map<String, List<AddToListRequest>> mMapAddedToList;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -255,7 +258,10 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 				addToListRequests.add(0, addToList);
 			}
 		}
-		return addToListRequests;
+		addToListRequests = Utils.toList(addToListItems);
+		mMapAddedToList = groupListByListId();
+		mListRequests = mMapAddedToList.get(getCurrentListId());
+		return mListRequests;
 	}
 
 	private void executeCreateList() {
@@ -282,11 +288,10 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 						case 200:
 							addToListRequests = Utils.toList(addToListItems);
 							if (addToListRequests != null && addToListRequests.size() > 0) {
-								mAddToListRequest = addToListRequests.get(apiCount);
-								mListRequests = new ArrayList<>();
-								mListRequests.add(mAddToListRequest);
-								apiCount = 1;
-								postAddToList(mListRequests, mAddToListRequest.getGiftListId());
+								mMapAddedToList = groupListByListId();
+								mListRequests = mMapAddedToList.get(getCurrentListId());
+								apiCount = 0;
+								postAddToList(mListRequests, getCurrentListId());
 							} else {
 								WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
 								if (woolworthsApplication != null) {
@@ -395,7 +400,8 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 	}
 
 	public PostAddToList addToList(final List<AddToListRequest> addToListRequest, String listId) {
-		final int sizeOfList = addToListRequests.size();
+		mMapAddedToList = groupListByListId();
+		final int sizeOfList = mMapAddedToList.size();
 		onLoad(true);
 		return new PostAddToList(new OnEventListener() {
 			@Override
@@ -406,10 +412,8 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 					switch (addToListResponse.httpCode) {
 						case 200:
 							if (apiCount < sizeOfList) {
-								mAddToListRequest = addToListRequests.get(apiCount);
-								mListRequests = new ArrayList<>();
-								mListRequests.add(mAddToListRequest);
-								PostAddToList postAddToList = addToList(mListRequests, mAddToListRequest.getGiftListId());
+								mListRequests = mMapAddedToList.get(getCurrentListId());
+								PostAddToList postAddToList = addToList(mListRequests, getCurrentListId());
 								postAddToList.execute();
 								apiCount += 1;
 							} else {
@@ -447,6 +451,23 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 				}
 			}
 		}, addToListRequest, listId);
+	}
+
+	private Map<String, List<AddToListRequest>> groupListByListId() {
+		mMapAddedToList = new HashMap<>();
+		for (AddToListRequest student : addToListRequests) {
+			String key = student.getListId();
+			if (mMapAddedToList.containsKey(key)) {
+				List<AddToListRequest> list = mMapAddedToList.get(key);
+				list.add(student);
+			} else {
+				List<AddToListRequest> list = new ArrayList<>();
+				list.add(student);
+				mMapAddedToList.put(key, list);
+			}
+		}
+
+		return mMapAddedToList;
 	}
 
 	@Override
@@ -495,5 +516,14 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 
 	public boolean getCreateListFailed() {
 		return createListFailed;
+	}
+
+	private String getCurrentListId() {
+		Object[] keys = mMapAddedToList.keySet().toArray();
+		return getCurrentListId(keys);
+	}
+
+	private String getCurrentListId(Object[] keys) {
+		return String.valueOf(keys[apiCount]);
 	}
 }
