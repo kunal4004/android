@@ -878,7 +878,19 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 		if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
 			getSupportFragmentManager().popBackStack();
 		} else {
-			finishActivity();
+			switch (current_view) {
+				/***
+				 * @method: startExitAnimation() dismisses session expired popup
+				 * with setResult(CART_DEFAULT_ERROR_TAPPED) enabled to prevent activity loop
+				 */
+				case SESSION_EXPIRED:
+					startExitAnimation();
+					break;
+
+				default:
+					finishActivity();
+					break;
+			}
 		}
 	}
 
