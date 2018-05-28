@@ -440,9 +440,9 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 
 	private void productImage(final WrapContentDraweeView image, String imgUrl) {
 		try {
-			String url = "https://images.woolworthsstatic.co.za/" + imgUrl + "?w=" + 85 + "&q=" + 85;
+			String url = "https://images.woolworthsstatic.co.za/" + imgUrl;
 			//TODO:: get domain name dynamically
-			image.setImageURI(TextUtils.isEmpty(imgUrl) ? "https://images.woolworthsstatic.co.za" : url);
+			image.setImageURI(TextUtils.isEmpty(imgUrl) ? "https://images.woolworthsstatic.co.za/" : url);
 		} catch (IllegalArgumentException ignored) {
 		}
 	}
