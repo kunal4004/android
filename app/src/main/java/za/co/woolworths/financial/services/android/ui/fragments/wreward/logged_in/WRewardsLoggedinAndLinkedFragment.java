@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.wreward.logged_
 
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -58,6 +59,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	public VoucherResponse voucherResponse;
 	private WRewardLoggedInViewModel wRewardViewModel;
 	private GetVoucher getVoucherAsync;
+	private AsyncTask<String, String, CardDetailsResponse> wRewardsCardDetails;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -227,7 +229,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	}
 
 	public void loadCardDetails() {
-		new WRewardsCardDetails(getActivity(), new OnEventListener() {
+		wRewardsCardDetails = new WRewardsCardDetails(getActivity(), new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
 				isCardDetailsCalled = true;
@@ -286,5 +288,8 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	public void onDestroy() {
 		super.onDestroy();
 		hideToolbar();
+		if (wRewardsCardDetails != null && !wRewardsCardDetails.isCancelled()) {
+			wRewardsCardDetails.cancel(true);
+		}
 	}
 }
