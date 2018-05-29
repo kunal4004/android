@@ -451,8 +451,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				rlCheckOut.setEnabled(onItemRemove ? false : true);
 				rlCheckOut.setVisibility(onItemRemove ? View.VISIBLE : View.GONE);
 				pBar.setVisibility(View.VISIBLE);
-				//parentLayout.setVisibility(View.GONE);
-				//Utils.showOneTimePopup(getActivity(), SessionDao.KEY.CART_FIRST_ORDER_FREE_DELIVERY, tvFreeDeliveryFirstOrder);
 				if (cartProductAdapter != null) {
 					cartProductAdapter.clear();
 				}
