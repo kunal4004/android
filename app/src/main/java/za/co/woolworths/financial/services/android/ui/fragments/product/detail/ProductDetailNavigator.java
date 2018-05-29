@@ -113,10 +113,4 @@ public interface ProductDetailNavigator {
 	void onSessionTokenExpired(Response response);
 
 	void handleSetSuburbResponse(Object object);
-
-	void setSuburbAPI(ShoppingDeliveryLocation deliveryLocation);
-
-	void getInventoryForStoreSuccess(SkusInventoryForStoreResponse skusInventoryForStoreResponse);
-
-	void geInventoryForStoreFailure(String e);
 }
