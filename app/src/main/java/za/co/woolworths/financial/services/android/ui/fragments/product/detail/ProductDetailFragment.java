@@ -45,13 +45,13 @@ import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.AddToCartDaTum;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.FormException;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.SkuInventory;
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
@@ -1135,7 +1135,10 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 	private void makeInventoryCall(String sku) {
 		String storeId = retrieveStoreId(getFulFillmentType(), getActivity());
-		if (TextUtils.isEmpty(storeId)) return;
+		if (TextUtils.isEmpty(storeId)) {
+			sizeOnlyIntent(getGlobalState().getSelectedSKUId());
+			return;
+		}
 		executeGetInventoryForStore(storeId, sku);
 	}
 
@@ -1571,7 +1574,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 				List<SkuInventory> skuInventory = skusInventoryForStoreResponse.skuInventory;
 				if (skuInventory.size() == 0) {
 					onAddToCartLoadComplete();
-					colorSizePicker(mSkuColorList, false, true, getGlobalState().getSelectedSKUId());
+					sizeOnlyIntent(getGlobalState().getSelectedSKUId());
 					return;
 				}
 				sendBus(new ProductState(POST_ADD_ITEM_TO_CART, 1));
