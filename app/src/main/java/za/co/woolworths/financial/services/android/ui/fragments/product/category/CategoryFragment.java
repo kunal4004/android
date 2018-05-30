@@ -18,13 +18,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.ProductSearchFragmentBinding;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -35,7 +33,7 @@ import za.co.woolworths.financial.services.android.ui.activities.product.Product
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.barcode.BarcodeFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
+import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.ObservableScrollViewCallbacks;
 import za.co.woolworths.financial.services.android.util.ScrollState;
@@ -54,10 +52,6 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 	private List<RootCategory> mRootCategories;
 	private Toolbar mProductToolbar;
 	private CategoryViewModel mViewModel;
-
-	public CategoryFragment() {
-		setRetainInstance(true);
-	}
 
 	@Override
 	public int getLayoutId() {
@@ -152,7 +146,11 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 
 	@Override
 	public void toolbarState(boolean visibility) {
-		Utils.updateStatusBarBackground(getActivity(), R.color.white);
+		if (visibility) {
+			Utils.updateStatusBarBackground(getActivity(), R.color.white);
+		} else {
+			Utils.updateStatusBarBackground(getActivity(), R.color.recent_search_bg);
+		}
 	}
 
 	@Override
@@ -188,17 +186,8 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 		getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				//Show no connection toast instead of opening sub category
-				Activity activity = getActivity();
-				if (activity != null) {
-					if (!new ConnectionDetector().isOnline(activity)) {
-						mErrorHandlerView.showToast();
-						Utils.toggleStatusBarColor(activity, R.color.red);
-						return;
-					}
-				}
 				if (getBottomNavigator() != null) {
-					getBottomNavigator().pushFragmentSlideUp(getViewModel().enterNextFragment(rootCategory, true));
+					getBottomNavigator().pushFragment(getViewModel().enterNextFragment(rootCategory), true);
 				}
 			}
 		});
@@ -288,13 +277,10 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 				view.setTag(position);
 				WTextView tv = view.findViewById(R.id.textProduct);
 				tv.setText(rootCategory.categoryName);
-				ImageView mImageProductCategory = view.findViewById(R.id.imProductCategory);
+				WrapContentDraweeView mImageProductCategory = view.findViewById(R.id.imProductCategory);
 				mImageProductCategory.setId(position);
 				mImageProductCategory.setTag(position);
-				try {
-					Picasso.get().load(rootCategory.imgUrl).fit().into(mImageProductCategory);
-				} catch (Exception ex) {
-				}
+				mImageProductCategory.setImageURI(rootCategory.imgUrl, getActivity());
 				view.setOnClickListener(new View.OnClickListener() {
 					public void onClick(View v) {
 						onCategoryItemClicked(mRootCategories.get(v.getId()));

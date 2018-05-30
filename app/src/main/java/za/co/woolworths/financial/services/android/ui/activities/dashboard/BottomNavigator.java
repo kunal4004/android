@@ -70,8 +70,6 @@ public interface BottomNavigator {
 
 	void pushFragmentSlideUp(Fragment fragment);
 
-	void pushFragmentSlideUp(Fragment fragment, boolean state);
-
 	void popFragment();
 
 	void popFragmentNoAnim();
