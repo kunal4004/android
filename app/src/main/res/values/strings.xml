@@ -47,7 +47,7 @@
     <string name="set_your_delivery_location">Select your delivery location</string>
     <string name="sign_out">Sign Out</string>
     <string name="brands">Brands</string>
-    <string name="why_we_need_location_services">Location Services</string>
+    <string name="why_we_need_location_services">WHY WE NEED LOCATION SERVICES</string>
     <string name="location_off_message">Location services allow us to provide store information like opening hours, contact details and directions.</string>
     <string name="go_to_settings">ENABLE LOCATION SERVICES</string>
     <string name="off_instantly">OFF INSTANTLY</string>
@@ -360,7 +360,7 @@
         <item>We have no data for the current year.</item>
         <item>We have no transaction data to show.</item>
         <item>You have no items in your  shopping list yet.</item>
-        <item>When you receive messages you will see them here.</item>
+        <item>When you receive messages you will\n see them here.</item>
     </string-array>
 
     <string name="on_boarding_title_1">WELCOME</string>
@@ -443,8 +443,8 @@
     <string name="stock_finder_btn_label">find in-store</string>
     <string name="product_loading_color_size">Loading size &amp; colour</string>
     <string name="find_in_store_info">We update these numbers every few hours. Stock moves quickly, so items may have sold since the last count.</string>
-    <string name="confirm_color_desc">Please confirm your colour</string>
-    <string name="confirm_size_desc">Please confirm your size</string>
+    <string name="confirm_color_desc">select your colour</string>
+    <string name="confirm_size_desc">select your size</string>
     <string name="sf_instore_availability_title">In-Store Availability</string>
     <string name="color">color</string>
     <string name="size">size</string>
@@ -624,8 +624,13 @@
     <string name="single_item_text">item</string>
     <string name="multiple_item_text">items</string>
     <string name="shopping_list">shopping list</string>
+    <string name="select">select</string>
+    <string name="product_unavailable">product unavailable</string>
     <string name="acc_my_preferences">My Preferences</string>
     <string name="authenticate_with_touch_id">Sign In using Biometrics</string>
     <string name="biometrics_authentication">BIOMETRICS/PIN</string>
     <string name="biometrics_description">This allows you to easily sign in to the App by using the biometric reader on your device.</string>
+    <string name="delivery_location_description">To improve your shopping experience, you can reserve your delivery timeslot up front. It will be reserved while you complete your shop.</string>
+    <string name="my_pref_set_your_delivery_location">Set your Delivery Location</string>
+    <string name="product_unavailable_desc">Sorry, this product is unavailable in your delivery location</string>
 </resources>

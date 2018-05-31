@@ -50,8 +50,10 @@ import za.co.woolworths.financial.services.android.ui.fragments.barcode.BarcodeF
 import za.co.woolworths.financial.services.android.ui.fragments.barcode.manual.ManualBarcodeFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.category.CategoryFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.ShoppingListFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.base.WRewardsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wtoday.WTodayFragment;
@@ -79,8 +81,11 @@ import static za.co.woolworths.financial.services.android.models.service.event.B
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.REWARD_COUNT;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.OPEN_GET_LIST_SCREEN;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SHOW_ADDED_TO_SHOPPING_LIST_TOAST;
+import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.RESULT_TAP_FIND_INSTORE_BTN;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_ADD_TO_SHOPPING_LIST;
+import static za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment.LOCK_REQUEST_CODE_WREWARDS;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment.MOVE_TO_LIST_ON_TOAST_VIEW_CLICKED;
 import static za.co.woolworths.financial.services.android.util.ScreenManager.CART_LAUNCH_VALUE;
 
 public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigationBinding, BottomNavigationViewModel> implements BottomNavigator, FragNavController.TransactionListener, FragNavController.RootFragmentListener, PermissionResultCallback, ToastUtils.ToastInterface {
@@ -504,13 +509,13 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					return true;
 
 				case R.id.navigation_account:
-					if(AuthenticateUtils.getInstance(BottomNavigationActivity.this).isBiometricAuthenticationRequired()){
+					if (AuthenticateUtils.getInstance(BottomNavigationActivity.this).isBiometricAuthenticationRequired()) {
 						try {
 							AuthenticateUtils.getInstance(BottomNavigationActivity.this).startAuthenticateApp(LOCK_REQUEST_CODE_ACCOUNTS);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
-					}else {
+					} else {
 						setCurrentSection(R.id.navigation_account);
 						setToolbarBackgroundColor(R.color.white);
 						switchTab(INDEX_ACCOUNT);
@@ -718,7 +723,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void cartSummaryAPI() {
-		getViewModel().getCartSummary().execute();
+		getViewModel().getCartSummary(BottomNavigationActivity.this).execute();
 	}
 
 	@Override
@@ -762,6 +767,28 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		//TODO: Explain where this is coming from.
+
+		/***
+		 * Navigate to list name view on view clicked from cart toast
+		 */
+		if (resultCode == MOVE_TO_LIST_ON_TOAST_VIEW_CLICKED) {
+			if (data != null) {
+				Bundle bundle = data.getExtras();
+				if (bundle != null) {
+					int countShopItem = bundle.getInt("count");
+					if (countShopItem > 1) {
+						pushFragment(new ShoppingListFragment());
+					} else {
+						bundle.putString("listName", bundle.getString("listName"));
+						bundle.putString("listId", bundle.getString("listId"));
+						ShoppingListItemsFragment shoppingListItemsFragment = new ShoppingListItemsFragment();
+						shoppingListItemsFragment.setArguments(bundle);
+						pushFragment(shoppingListItemsFragment);
+					}
+					return;
+				}
+			}
+		}
 
 		// navigate to product section
 		if (requestCode == OPEN_CART_REQUEST) {
@@ -864,13 +891,26 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				break;
 		}
 
-		if (requestCode == WRewardsVouchersFragment.LOCK_REQUEST_CODE_WREWARDS && resultCode == RESULT_OK) {
-			Utils.sendBus(new WRewardsVouchersFragment());
-		}
+		//Call product detail onActivityResult
+		if (resultCode == RESULT_TAP_FIND_INSTORE_BTN) {
+			if (getBottomFragmentById() instanceof ProductDetailFragment) {
+				getBottomFragmentById().onActivityResult(requestCode, resultCode, null);
+			}
 
-		if (requestCode == LOCK_REQUEST_CODE_ACCOUNTS && resultCode == RESULT_OK) {
-			AuthenticateUtils.getInstance(BottomNavigationActivity.this).enableBiometricForCurrentSession(false);
-			getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
+		}
+		// Biometric Authentication check
+		if (resultCode == RESULT_OK) {
+			switch (requestCode) {
+				case LOCK_REQUEST_CODE_ACCOUNTS:
+					AuthenticateUtils.getInstance(BottomNavigationActivity.this).enableBiometricForCurrentSession(false);
+					getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
+					break;
+				case LOCK_REQUEST_CODE_WREWARDS:
+					Utils.sendBus(new WRewardsVouchersFragment());
+					break;
+				default:
+					break;
+			}
 		}
 	}
 
@@ -889,7 +929,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void badgeCount() {
-		getViewModel().getCartSummary().execute();
+		getViewModel().getCartSummary(BottomNavigationActivity.this).execute();
 		getViewModel().getVoucherCount().execute();
 		getViewModel().getMessageResponse().execute();
 	}
@@ -921,6 +961,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void updateCartSummaryCount(CartSummary cartSummary) {
+		if (cartSummary == null) return;
 		addBadge(INDEX_CART, cartSummary.totalItemsCount);
 	}
 

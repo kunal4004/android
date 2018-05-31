@@ -19,6 +19,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
+import android.support.annotation.Nullable;
 import android.support.design.internal.BottomNavigationItemView;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
@@ -45,6 +46,10 @@ import com.google.android.gms.maps.model.VisibleRegion;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -77,7 +82,7 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
-import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.Transaction;
@@ -922,15 +927,15 @@ public class Utils {
 	}
 
 
-	public static List<DeliveryLocationHistory> getDeliveryLocationHistory(Context context) {
-		List<DeliveryLocationHistory> history = null;
+	public static List<ShoppingDeliveryLocation> getDeliveryLocationHistory(Context context) {
+		List<ShoppingDeliveryLocation> history = null;
 		try {
 			SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.DELIVERY_LOCATION_HISTORY);
 			if (sessionDao.value == null) {
 				history = new ArrayList<>();
 			} else {
 				Gson gson = new Gson();
-				Type type = new TypeToken<List<DeliveryLocationHistory>>() {
+				Type type = new TypeToken<List<ShoppingDeliveryLocation>>() {
 				}.getType();
 				history = gson.fromJson(sessionDao.value, type);
 			}
@@ -946,12 +951,13 @@ public class Utils {
 	}
 
 	public static int dp2px(Context context, float dpValue) {
+		if (context == null) return 0;
 		final float scale = context.getResources().getDisplayMetrics().density;
 		return (int) (dpValue * scale + 0.5f);
 	}
 
-	public static void saveRecentDeliveryLocation(DeliveryLocationHistory historyItem, Context context) {
-		List<DeliveryLocationHistory> history = getRecentDeliveryLocations(context);
+	public static void saveRecentDeliveryLocation(ShoppingDeliveryLocation historyItem, Context context) {
+		List<ShoppingDeliveryLocation> history = getRecentDeliveryLocations(context);
 		SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.DELIVERY_LOCATION_HISTORY);
 
 		Gson gson = new Gson();
@@ -959,13 +965,6 @@ public class Utils {
 		if (history == null) {
 			history = new ArrayList<>();
 			history.add(0, historyItem);
-			String json = gson.toJson(history);
-			sessionDao.value = json;
-			try {
-				sessionDao.save();
-			} catch (Exception e) {
-				Log.e("TAG", e.getMessage());
-			}
 		} else {
 			int position = 0;
 			for (int i = 0; i < history.size(); i++) {
@@ -978,37 +977,30 @@ public class Utils {
 				history.add(0, historyItem);
 				if (history.size() > 5)
 					history.remove(5);
-
-				sessionDao.value = gson.toJson(history);
-				try {
-					sessionDao.save();
-				} catch (Exception e) {
-					Log.e("TAG", e.getMessage());
-				}
+			} else {
+				history.remove(position);
+				history.add(0, historyItem);
 			}
+		}
 
-			if (isExist && position > 0) {
-				DeliveryLocationHistory recent = history.remove(position);
-				history.add(0, recent);
-				sessionDao.value = gson.toJson(history);
-				try {
-					sessionDao.save();
-				} catch (Exception e) {
-					Log.e("TAG", e.getMessage());
-				}
-			}
+		String json = gson.toJson(history);
+		sessionDao.value = json;
+		try {
+			sessionDao.save();
+		} catch (Exception e) {
+			Log.e("TAG", e.getMessage());
 		}
 	}
 
-	public static List<DeliveryLocationHistory> getRecentDeliveryLocations(Context context) {
-		List<DeliveryLocationHistory> history = null;
+	public static List<ShoppingDeliveryLocation> getRecentDeliveryLocations(Context context) {
+		List<ShoppingDeliveryLocation> history = null;
 		try {
 			SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.DELIVERY_LOCATION_HISTORY);
 			if (sessionDao.value == null) {
 				history = new ArrayList<>();
 			} else {
 				Gson gson = new Gson();
-				Type type = new TypeToken<List<DeliveryLocationHistory>>() {
+				Type type = new TypeToken<List<ShoppingDeliveryLocation>>() {
 				}.getType();
 				history = gson.fromJson(sessionDao.value, type);
 			}
@@ -1018,9 +1010,9 @@ public class Utils {
 		return history;
 	}
 
-	public static DeliveryLocationHistory getLastDeliveryLocation(Context context) {
-		DeliveryLocationHistory history = null;
-		List<DeliveryLocationHistory> locationHistories = Utils.getDeliveryLocationHistory(context);
+	public static ShoppingDeliveryLocation getLastDeliveryLocation(Context context) {
+		ShoppingDeliveryLocation history = null;
+		List<ShoppingDeliveryLocation> locationHistories = Utils.getDeliveryLocationHistory(context);
 		if (locationHistories != null && locationHistories.size() > 0)
 			history = locationHistories.get(0);
 		return history;
@@ -1184,6 +1176,50 @@ public class Utils {
 		return "https://images.woolworthsstatic.co.za/";
 	}
 
+
+	public static Object jsonStringToObject(String value, Class cl) {
+		if (TextUtils.isEmpty(value)) return null;
+		return new Gson().fromJson(value, cl);// json to Model
+	}
+
+	@Nullable
+	public static String retrieveStoreId(String fulFillmentType, Context context) {
+
+		JsonParser parser = new JsonParser();
+		ShoppingDeliveryLocation shoppingDeliveryLocation = Utils.getLastDeliveryLocation(context);
+		if (shoppingDeliveryLocation == null) return "";
+		if (shoppingDeliveryLocation.suburb == null) return "";
+		if ((shoppingDeliveryLocation.suburb.fulfillmentStores == null)
+				&& (shoppingDeliveryLocation.suburb.fullfillmentStores == null))
+			return "";
+		String fulfillmentStore = Utils.toJson(shoppingDeliveryLocation.suburb.fulfillmentStores);
+		String swapFulFillmentStore = (TextUtils.isEmpty(fulfillmentStore.replaceAll("null", "")) ? Utils.toJson(shoppingDeliveryLocation.suburb.fullfillmentStores) : fulfillmentStore);
+		JsonElement suburbFulfillment = parser.parse(swapFulFillmentStore);
+		String storeId = "";
+		if (!suburbFulfillment.isJsonNull()) {
+			if (suburbFulfillment.isJsonArray()) {
+				JsonArray suburbFulfillmentArray = suburbFulfillment.getAsJsonArray();
+				for (JsonElement jsonElement : suburbFulfillmentArray) {
+					JsonObject fulfillmentObj = jsonElement.getAsJsonObject();
+					JsonElement fulFillmentTypeId = fulfillmentObj.get("fulFillmentTypeId");
+					if (!fulFillmentTypeId.isJsonNull()) {
+						if (Integer.valueOf(fulFillmentTypeId.getAsString()) == Integer.valueOf(fulFillmentType)) {
+							JsonElement fulFillmentStoreId = fulfillmentObj.get("fulFillmentStoreId");
+							if (fulFillmentStoreId != null)
+								storeId = fulFillmentStoreId.toString();
+						}
+					}
+				}
+			} else {
+				JsonObject jsSuburbFulfillment = suburbFulfillment.getAsJsonObject();
+				if (jsSuburbFulfillment.has(fulFillmentType)) {
+					storeId = jsSuburbFulfillment.get(fulFillmentType).toString();
+				}
+			}
+		}
+		return storeId;
+	}
+
 	public static void toggleStatusBarColor(final Activity activity, int color) {
 		if (activity != null) {
 			updateStatusBarBackground(activity, color, true);
@@ -1206,6 +1242,48 @@ public class Utils {
 					updateStatusBarBackground(activity, defaultColor);
 				}
 			}, 4000);
+		}
+	}
+
+	public static void deliveryLocationEnabled(Context context, boolean enabled, final View view) {
+		Animation animFadeOut = android.view.animation.AnimationUtils.loadAnimation(context, R.anim.edit_mode_fade_out);
+		animFadeOut.setAnimationListener(new Animation.AnimationListener() {
+			@Override
+			public void onAnimationStart(Animation animation) {
+
+			}
+
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				view.setEnabled(false);
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+
+			}
+		});
+		Animation animFadeIn = android.view.animation.AnimationUtils.loadAnimation(context, R.anim.edit_mode_fade_in);
+		animFadeIn.setAnimationListener(new Animation.AnimationListener() {
+			@Override
+			public void onAnimationStart(Animation animation) {
+
+			}
+
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				view.setEnabled(true);
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+
+			}
+		});
+		if (enabled) {
+			view.startAnimation(animFadeIn);
+		} else {
+			view.startAnimation(animFadeOut);
 		}
 	}
 }

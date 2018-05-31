@@ -371,9 +371,7 @@ public class MessagesActivity extends AppCompatActivity {
 						assert messageResponse.messagesList != null;
 						if (messageResponse.messagesList.size() == 0) {
 							messsageListview.setVisibility(View.GONE);
-							mErrorHandlerView.hideTitle();
-							mErrorHandlerView.hideIcon();
-							mErrorHandlerView.textDescription(getString(R.string.no_messages_to_display));
+							mErrorHandlerView.setEmptyState(5);
 							mErrorHandlerView.showErrorView();
 						}
 					}
@@ -382,7 +380,8 @@ public class MessagesActivity extends AppCompatActivity {
 					SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, messageResponse.response.stsParams);
 					break;
 				default:
-					Utils.alertErrorMessage(MessagesActivity.this, messageResponse.response.desc);
+					mErrorHandlerView.networkFailureHandler("");
+					Utils.displayValidationMessage(MessagesActivity.this, CustomPopUpWindow.MODAL_LAYOUT.ERROR,messageResponse.response.desc);
 					break;
 			}
 		} catch (Exception ignored) {

@@ -724,7 +724,6 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 		setTitle();
 	}
 
-
 	@Override
 	public void onConnectionChanged() {
 		retryConnect();
@@ -742,5 +741,11 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 				}
 			});
 		}
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		showSearchResultToolbar();
 	}
 }

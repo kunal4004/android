@@ -2,11 +2,13 @@ package za.co.woolworths.financial.services.android.ui.fragments.wreward.logged_
 
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -58,6 +60,8 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	public VoucherResponse voucherResponse;
 	private WRewardLoggedInViewModel wRewardViewModel;
 	private GetVoucher getVoucherAsync;
+	private AsyncTask<String, String, CardDetailsResponse> wRewardsCardDetails;
+	private String TAG = this.getClass().getSimpleName();
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -174,34 +178,38 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 
 	public void handleVoucherResponse(VoucherResponse response) {
 		int httpCode = response.httpCode;
-		switch (httpCode) {
-			case 200:
-				if (response.voucherCollection.vouchers != null) {
-					addBadge(BottomNavigationActivity.INDEX_REWARD, response.voucherCollection.vouchers.size());
-				} else {
-					clearVoucherCounter();
-				}
-				voucherResponse = response;
-				isWrewardsCalled = true;
-				handleWrewardsAndCardDetailsResponse();
-				break;
-			case 440:
-				progressBar.setVisibility(View.GONE);
-				fragmentView.setVisibility(View.VISIBLE);
+		try {
+			switch (httpCode) {
+				case 200:
+					if (response.voucherCollection.vouchers != null) {
+						addBadge(BottomNavigationActivity.INDEX_REWARD, response.voucherCollection.vouchers.size());
+					} else {
+						clearVoucherCounter();
+					}
+					voucherResponse = response;
+					isWrewardsCalled = true;
+					handleWrewardsAndCardDetailsResponse();
+					break;
+				case 440:
+					progressBar.setVisibility(View.GONE);
+					fragmentView.setVisibility(View.VISIBLE);
 
-				String stsParams = null;
-				if (response.response != null) {
-					stsParams = response.response.stsParams;
-				}
-				SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, stsParams);
-				getParentFragment().onActivityResult(0, SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue(), null);
-				break;
-			default:
-				progressBar.setVisibility(View.GONE);
-				fragmentView.setVisibility(View.VISIBLE);
-				clearVoucherCounter();
-				setupErrorViewPager(viewPager);
-				break;
+					String stsParams = null;
+					if (response.response != null) {
+						stsParams = response.response.stsParams;
+					}
+					SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, stsParams);
+					getParentFragment().onActivityResult(0, SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue(), null);
+					break;
+				default:
+					progressBar.setVisibility(View.GONE);
+					fragmentView.setVisibility(View.VISIBLE);
+					clearVoucherCounter();
+					setupErrorViewPager(viewPager);
+					break;
+			}
+		} catch (Exception ex) {
+			Log.e(TAG, ex.toString());
 		}
 	}
 
@@ -227,7 +235,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	}
 
 	public void loadCardDetails() {
-		new WRewardsCardDetails(getActivity(), new OnEventListener() {
+		wRewardsCardDetails = new WRewardsCardDetails(getActivity(), new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
 				isCardDetailsCalled = true;
@@ -286,5 +294,8 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	public void onDestroy() {
 		super.onDestroy();
 		hideToolbar();
+		if (wRewardsCardDetails != null && !wRewardsCardDetails.isCancelled()) {
+			wRewardsCardDetails.cancel(true);
+		}
 	}
 }
