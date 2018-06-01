@@ -6,6 +6,7 @@ android {
     def major = "5"
     def minor = "6"
     def fix = "0"
+
     def env = System.getenv()
     def job = env['BUILD_NUMBER']
     if (job == null) {
@@ -81,7 +82,7 @@ android {
         qa {
             applicationId "com.awfs.coordination.qa"
             signingConfig signingConfigs.woneappQa
-            versionCode 163
+            versionCode 165
         }
 
         staging {
@@ -93,7 +94,7 @@ android {
         production {
             applicationId "com.awfs.coordination"
             signingConfig signingConfigs.woolworths
-            versionCode 69
+            versionCode 71
         }
         dexOptions {
             javaMaxHeapSize "2560M"

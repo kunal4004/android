@@ -12,6 +12,7 @@ public class WProductDetail {
     public String externalImageRef;
     public String categoryName;
     public String categoryId;
+    public boolean isnAvailable;
     public String imagePath;
     public Float fromPrice;
     public String sku;
