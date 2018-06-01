@@ -6,10 +6,10 @@
                 android:radius="2dp"/>
             <gradient
                 android:angle="270"
-                android:centerColor="@color/expandable_gradient_color"
+                android:centerColor="#11000000"
                 android:centerY="0.2"
-                android:endColor="@color/expandable_gradient_color"
-                android:startColor="#22000000"
+                android:endColor="#11000000"
+                android:startColor="#33000000"
                 android:type="linear"
                 />
         </shape>

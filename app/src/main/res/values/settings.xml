@@ -2,6 +2,7 @@
 <resources>
     <string name="app_label">Woolworths</string>
 
+    <string name="crittercism_app_id">55dd92eecb114f1000e34bf6</string>
     <integer name="account_time_to_live">600000</integer>
     <string name="config_endpoint">http://mobileconfig.wigroup.co:8080/config-server/rest/mobile/android/</string>
     <!--<string name="config_endpoint">https://admin.wigroup.co/server/api/v1/config-server/dev/config/</string>-->

@@ -63,7 +63,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
-                    android:background="@drawable/sub_category_header_bg"
+                    android:background="@color/white"
 
                     app:elevation="0dp"
                     app:itemIconTint="@color/selector_item_gray_color"

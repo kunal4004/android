@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/llProductSearch"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/bank_spacing_width"
+    android:paddingRight="@dimen/bank_spacing_width">
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/subCategoryName"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:gravity="center"
+        android:letterSpacing="0.07"
+        android:textColor="@color/black"
+        android:textSize="12sp"
+        app:WTextView_font="medium"
+        tools:targetApi="lollipop" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/recent_search_bg" />
+
+</LinearLayout>

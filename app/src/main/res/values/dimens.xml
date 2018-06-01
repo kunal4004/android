@@ -18,6 +18,8 @@
     <dimen name="button_style_height">50dp</dimen>
     <dimen name="page_margin">16dp</dimen>
     <dimen name="card_margin">45dp</dimen>
+    <dimen name="card_padding_margin">16dp</dimen>
+    <dimen name="account_margin">10dp</dimen>
     <dimen name="acc_fifteen_dp">12sp</dimen>
     <dimen name="acc_thirteen_sp">13sp</dimen>
     <dimen name="unlinked_account_copy_padding_left_right">33dp</dimen>
@@ -31,7 +33,13 @@
     <dimen name="terms_and_conditions_margin">16dp</dimen>
     <dimen name="voucher_card_layout_padding">8dp</dimen>
     <dimen name="ten_dp">10dp</dimen>
+    <dimen name="size_qr_box_view_corner">2dp</dimen>
+    <dimen name="size_qr_box_view_corner_offset">-20dp</dimen>
+    <dimen name="cornerOffsetBottom">-20dp</dimen>
+    <dimen name="length_qr_box_view_corner">17dp</dimen>
 
+    <dimen name="width_qr_box_view">240dp</dimen>
+    <dimen name="height_qr_box_view">240dp</dimen>
     <dimen name="LoadingDots_dots_size_default">3dp</dimen>
     <dimen name="LoadingDots_dots_space_default">6dp</dimen>
     <dimen name="LoadingDots_jump_height_default">5dp</dimen>
@@ -117,11 +125,15 @@
     <dimen name="email_height_50">50dp</dimen>
     <dimen name="email_text_size_15sp">15sp</dimen>
     <dimen name="hundred_dp">100dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="statusbar_view_height">0dp</dimen>
+    <dimen name="eight_sp">8sp</dimen>
     <dimen name="five_dp">5dp</dimen>
     <dimen name="six_dp">6dp</dimen>
     <dimen name="fourty_five_dp">45dp</dimen>
     <dimen name="twenty_sp">20sp</dimen>
+    <dimen name="seventy_eight_dp">78dp</dimen>
+    <dimen name="eighty_two_dp">82dp</dimen>
     <dimen name="eighteen_sp">18sp</dimen>
     <dimen name="eighty_dp">80dp</dimen>
     <dimen name="eighty_four_dp">84dp</dimen>
@@ -129,8 +141,5 @@
     <dimen name="line_dp">0.5dp</dimen>
     <dimen name="seventy_five_dp">75dp</dimen>
     <dimen name="sixty_dp">60dp</dimen>
-    <dimen name="two_hundred_and_twenty_one_dp">221dp</dimen>
-    <dimen name="twenty_eight_sp">28sp</dimen>
-    <dimen name="exr_margin">16dp</dimen>
 </resources>
 

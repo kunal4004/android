@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -36,6 +37,7 @@ import za.co.woolworths.financial.services.android.util.Utils;
 
 public class ProductSearchActivity extends AppCompatActivity
 		implements View.OnClickListener {
+	public RecyclerView productListview;
 	public LinearLayoutManager mLayoutManager;
 	public Toolbar toolbar;
 	private WEditTextView mEditSearchProduct;
@@ -75,6 +77,7 @@ public class ProductSearchActivity extends AppCompatActivity
 
 	private void initUI() {
 		mLayoutManager = new LinearLayoutManager(ProductSearchActivity.this);
+		productListview = findViewById(R.id.productSearchList);
 		mEditSearchProduct = findViewById(R.id.toolbarText);
 		recentSearchLayout = findViewById(R.id.recentSearchLayout);
 		recentSearchList = findViewById(R.id.recentSearchList);
