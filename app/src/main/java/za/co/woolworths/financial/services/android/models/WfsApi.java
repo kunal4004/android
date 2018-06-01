@@ -89,7 +89,7 @@ public class WfsApi {
 	}
 
 	public LoginResponse login(LoginRequest loginRequest) {
-		return mApiInterface.login(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", loginRequest);
+		return mApiInterface.login(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), loginRequest);
 	}
 
 	public AccountsResponse getAccounts() {
@@ -122,9 +122,9 @@ public class WfsApi {
 		getMyLocation();
 		if (startRadius != null && startRadius.equals("")) {
 			//This should never happen for now
-			return mApiInterface.getStoresLocationItem(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", String.valueOf(loc.getLatitude()), String.valueOf(loc.getLongitude()), sku, startRadius, endRadius, true);
+			return mApiInterface.getStoresLocationItem(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", String.valueOf(loc.getLatitude()), String.valueOf(loc.getLongitude()), getSessionToken(), sku, startRadius, endRadius, true);
 		} else {
-			return mApiInterface.getStoresLocationItem(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", String.valueOf(loc.getLatitude()), String.valueOf(loc.getLongitude()), sku, startRadius, endRadius, true);
+			return mApiInterface.getStoresLocationItem(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", String.valueOf(loc.getLatitude()), String.valueOf(loc.getLongitude()), getSessionToken(), sku, startRadius, endRadius, true);
 		}
 	}
 
@@ -185,15 +185,15 @@ public class WfsApi {
 	}
 
 	public PromotionsResponse getPromotions() {
-		return mApiInterface.getPromotions(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "");
+		return mApiInterface.getPromotions(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", getSessionToken(), "");
 	}
 
 	public RootCategories getRootCategory() {
-		return mApiInterface.getRootCategories(getOsVersion(), getApiId(), getOS(), getSha1Password(), getDeviceModel(), getNetworkCarrier(), getOsVersion(), "Android");
+		return mApiInterface.getRootCategories(getOsVersion(), getApiId(), getOS(), getSha1Password(), getDeviceModel(), getNetworkCarrier(), getOsVersion(), getSessionToken(), "Android");
 	}
 
 	public SubCategories getSubCategory(String category_id) {
-		return mApiInterface.getSubCategory(getOsVersion(), getApiId(), getOS(), getSha1Password(), getDeviceModel(), getNetworkCarrier(), getOsVersion(), "Android", category_id);
+		return mApiInterface.getSubCategory(getOsVersion(), getApiId(), getOS(), getSha1Password(), getDeviceModel(), getNetworkCarrier(), getOsVersion(), "Android", getSessionToken(), category_id);
 	}
 
 	public ProvincesResponse getProvinces() {
@@ -216,9 +216,9 @@ public class WfsApi {
 	public ProductView productViewRequest(LoadProduct lp) {
 		getMyLocation();
 		if (Utils.isLocationEnabled(mContext)) {
-			return mApiInterface.getProduct(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLatitude(), loc.getLongitude(), lp.getPageOffset(), lp.getPageSize(), lp.getProductId());
+			return mApiInterface.getProduct(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLatitude(), loc.getLongitude(), getSessionToken(), lp.getPageOffset(), lp.getPageSize(), lp.getProductId());
 		} else {
-			return mApiInterface.getProduct(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), lp.getPageOffset(), lp.getPageSize(), lp.getProductId());
+			return mApiInterface.getProduct(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), getSessionToken(), lp.getPageOffset(), lp.getPageSize(), lp.getProductId());
 		}
 	}
 
@@ -232,9 +232,9 @@ public class WfsApi {
 		}
 
 		if (Utils.isLocationEnabled(mContext)) {// should we implement location update here ?
-			return mApiInterface.getProductSearch(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLatitude(), loc.getLongitude(), loadProduct.isBarcode(), search_item, loadProduct.getPageOffset(), Utils.PAGE_SIZE);
+			return mApiInterface.getProductSearch(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLatitude(), loc.getLongitude(), getSessionToken(), loadProduct.isBarcode(), search_item, loadProduct.getPageOffset(), Utils.PAGE_SIZE);
 		} else {
-			return mApiInterface.getProductSearch(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loadProduct.isBarcode(), search_item, loadProduct.getPageOffset(), Utils.PAGE_SIZE);
+			return mApiInterface.getProductSearch(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), getSessionToken(), loadProduct.isBarcode(), search_item, loadProduct.getPageOffset(), Utils.PAGE_SIZE);
 		}
 	}
 
@@ -247,14 +247,14 @@ public class WfsApi {
 		}
 
 		if (Utils.isLocationEnabled(mContext)) {// should we implement location update here ?
-			return mApiInterface.getProductSearch(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLatitude(), loc.getLongitude(), isBarcode, search_item, pageSize, pageNumber);
+			return mApiInterface.getProductSearch(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLatitude(), loc.getLongitude(), getSessionToken(), isBarcode, search_item, pageSize, pageNumber);
 		} else {
-			return mApiInterface.getProductSearch(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), isBarcode, search_item, pageSize, pageNumber);
+			return mApiInterface.getProductSearch(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), getSessionToken(), isBarcode, search_item, pageSize, pageNumber);
 		}
 	}
 
 	public FAQ getFAQ() {
-		return mApiInterface.getFAQ(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "");
+		return mApiInterface.getFAQ(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", getSessionToken(), "");
 	}
 
 	public CardDetailsResponse getCardDetails() {
@@ -296,11 +296,11 @@ public class WfsApi {
 		if (Utils.isLocationEnabled(mContext)) {
 			return mApiInterface.productDetail(getOsVersion(), getDeviceModel(), getOsVersion(),
 					getOS(), getNetworkCarrier(), getApiId(), "", "",
-					getSha1Password(), loc.getLongitude(), loc.getLatitude(), productId, skuId);
+					getSha1Password(), loc.getLongitude(), loc.getLatitude(), getSessionToken(), productId, skuId);
 		} else {
 			return mApiInterface.productDetail(getOsVersion(), getDeviceModel(), getOsVersion(),
 					getOS(), getNetworkCarrier(), getApiId(), "", "",
-					getSha1Password(), productId, skuId);
+					getSha1Password(), getSessionToken(), productId, skuId);
 		}
 	}
 

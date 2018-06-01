@@ -87,11 +87,10 @@ public class RetrofitAsyncClient {
 		getMyLocation();
 		if (Utils.isLocationEnabled(mContext)) {
 			mApiInterface.getProductDetail(getOsVersion(), getDeviceModel(), getOsVersion(),
-					getOS(), getNetworkCarrier(), getApiId(), "", "",
-					getSha1Password(), loc.getLongitude(), loc.getLatitude(), productId, skuId, callback);
+					getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLongitude(), loc.getLatitude(), getSessionToken(), productId, skuId, callback);
 		} else {
 			mApiInterface.getProductDetail(getOsVersion(), getDeviceModel(), getOsVersion(),
-					getOS(), getNetworkCarrier(), getApiId(), "", "",
+					getOS(), getNetworkCarrier(), getApiId(), "", "", getSessionToken(),
 					getSha1Password(), productId, skuId, callback);
 		}
 	}
@@ -116,8 +115,5 @@ public class RetrofitAsyncClient {
 	public void getPDFResponse(GetStatement getStatement, Callback<Response> callback) {
 		mApiInterface.getStatement(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), getStatement.getDocId(), getStatement.getProductOfferingId(), getStatement.getDocDesc(), callback);
 	}
-
-
-
 }
 
