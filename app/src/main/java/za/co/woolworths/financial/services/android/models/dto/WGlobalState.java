@@ -15,7 +15,6 @@ public class WGlobalState {
 
 	public static final int SYNC_FIND_IN_STORE = 3401;
 
-	private boolean clothingProducts, foodProducts;
 	private int startRadius, endRadius, mLatestSelectedPicker;
 
 	private boolean onBackPressed,
@@ -34,22 +33,6 @@ public class WGlobalState {
 
 	public void setOnBackPressed(boolean pOnBackPressed) {
 		onBackPressed = pOnBackPressed;
-	}
-
-	public boolean clothingIsEnabled() {
-		return clothingProducts;
-	}
-
-	public void setClothingProducts(boolean clothingProducts) {
-		this.clothingProducts = clothingProducts;
-	}
-
-	public boolean isFoodProducts() {
-		return foodProducts;
-	}
-
-	public void setFoodProducts(boolean foodProducts) {
-		this.foodProducts = foodProducts;
 	}
 
 	public int getStartRadius() {
