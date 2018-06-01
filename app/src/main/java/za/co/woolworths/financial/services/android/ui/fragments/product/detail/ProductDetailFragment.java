@@ -45,13 +45,13 @@ import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.AddToCartDaTum;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.FormException;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.SkuInventory;
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
@@ -140,7 +140,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	private ToastUtils mToastUtils;
 	private int mNumberOfListSelected = 0;
 	private GetInventorySkusForStore mGetInventorySkusForStore;
-	private boolean shoppingListDidReload = false;
 	private final int ACCESS_FINE_LOCATION_REQUEST_CODE = 1;
 
 	@Override
@@ -230,7 +229,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 										closeSlideUpPanel(getView());
 										getBottomNavigator().closeSlideUpPanelFromList(productState.getCount());
 										break;
-
 									default:
 										mToastUtils.setActivity(activity);
 										mToastUtils.setCurrentState(TAG);
@@ -377,7 +375,11 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	}
 
 	private void setSubCategoryTitle() {
-		setText(getViewDataBinding().tvSubCategoryTitle, mSubCategoryTitle);
+		try {
+			setText(getViewDataBinding().tvSubCategoryTitle, mSubCategoryTitle);
+		} catch (NullPointerException ex) {
+			Log.e(TAG, ex.toString());
+		}
 	}
 
 	@Override
@@ -471,7 +473,11 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 	@Override
 	public void setProductName() {
-		setText(getViewDataBinding().tvProductName, getViewModel().getDefaultProduct().productName);
+		try {
+			setText(getViewDataBinding().tvProductName, getViewModel().getDefaultProduct().productName);
+		} catch (NullPointerException ex) {
+			Log.i(TAG, ex.toString());
+		}
 	}
 
 	@Override
