@@ -37,13 +37,13 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 	private final int ITEM_VIEW_TYPE_HEADER = 0;
 	private final int ITEM_VIEW_TYPE_BASIC = 1;
 
-	private List<ShoppingListItem> listItems;
+	private List<ShoppingListItem> mShoppingListItem;
 	private ShoppingListItemsNavigator navigator;
 	private boolean mAdapterIsClickable;
 
 
 	public ShoppingListItemsAdapter(List<ShoppingListItem> shoppingListItems, ShoppingListItemsNavigator navigator) {
-		listItems = shoppingListItems;
+		mShoppingListItem = shoppingListItems;
 		this.navigator = navigator;
 	}
 
@@ -158,6 +158,15 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 					public void onClick(View view) {
 						if (!mAdapterIsClickable) return;
 						ShoppingListItem shoppingListItem = getItem(position);
+						if (!shoppingListItem.isSelected) {
+							if (shoppingListItem.userShouldSetSuburb) {
+								shoppingListItem.isSelected = false;
+								int currentPosition = position - 1;
+								notifyItemRangeChanged(currentPosition, mShoppingListItem.size());
+								navigator.openSetSuburbProcess(shoppingListItem);
+								return;
+							}
+						}
 						if (shoppingListItem.quantityInStock == 0) return;
 						/*
 						 1. By default quantity will be ZERO.
@@ -166,7 +175,7 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 						shoppingListItem.userQuantity = shoppingListItem.isSelected ? 0 : 1;
 						shoppingListItem.isSelected = !shoppingListItem.isSelected;
 						notifyDataSetChanged();
-						navigator.onItemSelectionChange(listItems);
+						navigator.onItemSelectionChange(mShoppingListItem);
 					}
 				});
 
@@ -221,7 +230,7 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 
 	@Override
 	public int getItemCount() {
-		return listItems.size() + 1;
+		return mShoppingListItem.size() + 1;
 	}
 
 	@Override
@@ -275,20 +284,22 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 		 * Update old list with new list before refreshing the adapter
 		 */
 		if (updatedListItems == null) return;
-		if (listItems == null) return;
+		if (mShoppingListItem == null) return;
 		try {
-			for (ShoppingListItem shoppinglistItem : listItems) {
+			for (ShoppingListItem shoppinglistItem : mShoppingListItem) {
 				for (ShoppingListItem updatedList : updatedListItems) {
 					if (shoppinglistItem.catalogRefId.equalsIgnoreCase(updatedList.catalogRefId)) {
 						updatedList.inventoryCallCompleted = shoppinglistItem.inventoryCallCompleted;
+						updatedList.userQuantity = shoppinglistItem.userQuantity;
 						updatedList.quantityInStock = shoppinglistItem.quantityInStock;
 						updatedList.delivery_location = shoppinglistItem.delivery_location;
 						updatedList.userShouldSetSuburb = shoppinglistItem.userShouldSetSuburb;
+						updatedList.isSelected = shoppinglistItem.isSelected;
 					}
 				}
 			}
-			this.listItems = updatedListItems;
-			this.navigator.onItemSelectionChange(listItems);
+			this.mShoppingListItem = updatedListItems;
+			this.navigator.onItemSelectionChange(mShoppingListItem);
 			notifyDataSetChanged();
 			closeAllItems();
 		} catch (IllegalArgumentException ex) {
@@ -310,6 +321,10 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 	}
 
 	private ShoppingListItem getItem(int position) {
-		return listItems.get(position - 1);
+		return mShoppingListItem.get(position - 1);
+	}
+
+	public List<ShoppingListItem> getShoppingListItems() {
+		return mShoppingListItem;
 	}
 }

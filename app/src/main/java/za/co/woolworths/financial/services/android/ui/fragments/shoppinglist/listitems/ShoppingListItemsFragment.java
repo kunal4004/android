@@ -73,6 +73,8 @@ import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 
+import static za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity.DELIVERY_LOCATION_CLOSE_CLICKED;
+
 public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFragmentBinding, ShoppingListItemsViewModel> implements ShoppingListItemsNavigator, View.OnClickListener, EmptyCartView.EmptyCartInterface, NetworkChangeListener, ToastUtils.ToastInterface {
 	private ShoppingListItemsViewModel shoppingListItemsViewModel;
 	private String listName;
@@ -101,6 +103,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	private boolean errorMessageWasPopUp;
 	private int REQUEST_SUBURB_CHANGE = 12345;
 	private ShoppingListItem mOpenShoppingListItem;
+	public final static int QUANTITY_CHANGED_FROM_LIST = 2010;
 
 	@Override
 	public ShoppingListItemsViewModel getViewModel() {
@@ -142,6 +145,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 			@Override
 			public void accept(Object object) throws Exception {
 				if (object != null) {
+
 					if (object instanceof CartState) {
 						CartState cartState = (CartState) object;
 						int updatedQuantity = cartState.getQuantity();
@@ -177,6 +181,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 									}
 								}
 							}
+
 
 							Activity activity = getActivity();
 							if (activity != null) {
@@ -281,7 +286,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 			Intent editQuantityIntent = new Intent(activity, ConfirmColorSizeActivity.class);
 			editQuantityIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, ConfirmColorSizeActivity.QUANTITY);
 			editQuantityIntent.putExtra("CART_QUANTITY_In_STOCK", mOpenShoppingListItem.quantityInStock);
-			activity.startActivity(editQuantityIntent);
+			activity.startActivityForResult(editQuantityIntent, QUANTITY_CHANGED_FROM_LIST);
 			activity.overridePendingTransition(0, 0);
 
 		}
@@ -487,18 +492,14 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	@Override
 	public void onQuantityChangeClick(int position, ShoppingListItem shoppingListItem) {
 		this.changeQuantityItem = position;
-		if (mWoolWorthsApplication != null) {
-			WGlobalState wGlobalState = mWoolWorthsApplication.getWGlobalState();
-			if (wGlobalState != null) {
-				wGlobalState.navigateFromQuantity(1);
-			}
-		}
+		this.mOpenShoppingListItem = shoppingListItem;
+		navigateFromQuantity();
 		Activity activity = getActivity();
 		if (activity != null) {
 			Intent editQuantityIntent = new Intent(activity, ConfirmColorSizeActivity.class);
 			editQuantityIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, ConfirmColorSizeActivity.QUANTITY);
 			editQuantityIntent.putExtra("QUANTITY_IN_STOCK", Utils.toJson(shoppingListItem));
-			activity.startActivity(editQuantityIntent);
+			activity.startActivityForResult(editQuantityIntent, QUANTITY_CHANGED_FROM_LIST);
 			activity.overridePendingTransition(0, 0);
 		}
 	}
@@ -860,7 +861,17 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	@Override
 	public void openSetSuburbProcess(ShoppingListItem shoppingListItem) {
 		this.mOpenShoppingListItem = shoppingListItem;
+		navigateFromQuantity();
 		locationSelectionClicked();
+	}
+
+	private void navigateFromQuantity() {
+		if (mWoolWorthsApplication != null) {
+			WGlobalState wGlobalState = mWoolWorthsApplication.getWGlobalState();
+			if (wGlobalState != null) {
+				wGlobalState.navigateFromQuantity(QUANTITY_CHANGED_FROM_LIST);
+			}
+		}
 	}
 
 	@Override
@@ -874,7 +885,29 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		}
 
 		if (requestCode == REQUEST_SUBURB_CHANGE) {
-			initGetShoppingListItems();
+			if (resultCode != DELIVERY_LOCATION_CLOSE_CLICKED) {
+				initGetShoppingListItems();
+			}
+		}
+
+		if (requestCode == QUANTITY_CHANGED_FROM_LIST) {
+			if (resultCode == QUANTITY_CHANGED_FROM_LIST) {
+				Bundle bundleUpdatedQuantity = data.getExtras();
+				int updatedQuantity = bundleUpdatedQuantity.getInt("QUANTITY_CHANGED_FROM_LIST");
+				if (updatedQuantity > 0) {
+					if (shoppingListItemsAdapter == null) return;
+					List<ShoppingListItem> shoppingListItems = shoppingListItemsAdapter.getShoppingListItems();
+					if (shoppingListItems == null) return;
+					for (ShoppingListItem shoppingListItem : shoppingListItems) {
+						if (shoppingListItem.catalogRefId == null) continue;
+						if (shoppingListItem.catalogRefId.equalsIgnoreCase(mOpenShoppingListItem.catalogRefId)) {
+							shoppingListItem.userQuantity = updatedQuantity;
+							shoppingListItem.isSelected = true;
+							shoppingListItemsAdapter.updateList(listItems);
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -907,6 +940,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	private void locationSelectionClicked() {
 		Activity activity = getActivity();
 		if (activity == null) return;
+
 		Intent openDeliveryLocationSelectionActivity = new Intent(this.getContext(), DeliveryLocationSelectionActivity.class);
 		startActivityForResult(openDeliveryLocationSelectionActivity, REQUEST_SUBURB_CHANGE);
 		activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);

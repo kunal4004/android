@@ -258,7 +258,7 @@ public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.V
 			}
 
 			String fromPrice = String.valueOf(productItem.fromPrice);
-			ProductUtils.gridPriceList(tvPrice, tvWasPrice,
+			ProductUtils.gridPriceList(tvWasPrice, tvPrice,
 					fromPrice, wasPrice);
 		}
 
