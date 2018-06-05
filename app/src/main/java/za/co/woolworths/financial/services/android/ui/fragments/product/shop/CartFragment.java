@@ -409,11 +409,23 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		}
 	}
 
-	public void changeQuantity(CartResponse cartResponse) {
+	public void changeQuantity(CartResponse cartResponse, ChangeQuantity changeQuantity) {
 		if (cartResponse.cartItems.size() > 0 && cartProductAdapter != null) {
-			cartItems = cartResponse.cartItems;
-			orderSummary = cartResponse.orderSummary;
-			cartProductAdapter.changeQuantity(cartItems, orderSummary);
+			CommerceItem updatedCommerceItem = getUpdatedCommerceItem(cartResponse.cartItems,changeQuantity.getCommerceId());
+			//update list instead of using the new list to handle inventory data.
+			if(updatedCommerceItem != null) {
+				for (CartItemGroup cartItemGroup : cartItems) {
+					for (CommerceItem commerceItem : cartItemGroup.commerceItems) {
+						if (commerceItem.commerceItemInfo.commerceId.equalsIgnoreCase(updatedCommerceItem.commerceItemInfo.commerceId)) {
+							commerceItem.commerceItemInfo = updatedCommerceItem.commerceItemInfo;
+							commerceItem.priceInfo = updatedCommerceItem.priceInfo;
+							commerceItem.setQuantityUploading(false);
+						}
+					}
+				}
+				orderSummary = cartResponse.orderSummary;
+				cartProductAdapter.changeQuantity(cartItems, orderSummary);
+			}
 		} else {
 			cartProductAdapter.clear();
 			Activity activity = getActivity();
@@ -426,6 +438,16 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		}
 		updateCartSummary(cartResponse.orderSummary.totalItemsCount);
 		onChangeQuantityComplete();
+	}
+
+	private CommerceItem getUpdatedCommerceItem(ArrayList<CartItemGroup> cartItems, String commerceId) {
+		for (CartItemGroup cartItemGroup : cartItems) {
+			for (CommerceItem commerceItem : cartItemGroup.commerceItems) {
+				if (commerceItem.commerceItemInfo.commerceId.equalsIgnoreCase(commerceId))
+						return commerceItem;
+			}
+		}
+		return null;
 	}
 
 	private void updateCartSummary(int cartCount) {
@@ -573,7 +595,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					switch (httpCode) {
 						case 200:
 							CartResponse cartResponse = convertResponseToCartResponseObject(shoppingCartResponse);
-							changeQuantity(cartResponse);
+							changeQuantity(cartResponse,changeQuantity);
 							break;
 						default:
 							onChangeQuantityComplete();
@@ -903,6 +925,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 						updateCartListWithAvailableStock(skusInventoryForStoreResponse.skuInventory, skusInventoryForStoreResponse.storeId);
 						break;
 					default:
+						mShouldDisplayCheckout = true;
 						if (!errorMessageWasPopUp) {
 							Activity activity = getActivity();
 							if (activity == null) return;
