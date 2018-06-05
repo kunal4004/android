@@ -29,11 +29,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
-import za.co.woolworths.financial.services.android.models.dto.SuburbsResponse;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.Suburb;
+import za.co.woolworths.financial.services.android.models.dto.SuburbsResponse;
 import za.co.woolworths.financial.services.android.models.rest.shop.GetSuburbs;
 import za.co.woolworths.financial.services.android.models.rest.shop.SetDeliveryLocationSuburb;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
@@ -298,10 +298,11 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 		try {
 			switch (response.httpCode) {
 				case 200:
-					Utils.sendBus(new CartState(suburb.name + ", " + province.name));
-					saveRecentDeliveryLocation(new ShoppingDeliveryLocation(province, suburb));
-					// TODO: go back to cart if no items removed from cart, else go to list of removed items
 					Activity activity = getActivity();
+					if (activity == null) return;
+					Utils.saveRecentDeliveryLocation(new ShoppingDeliveryLocation(province, suburb), activity);
+					Utils.sendBus(new CartState(suburb.name + ", " + province.name));
+					// TODO: go back to cart if no items removed from cart, else go to list of removed items
 					if (activity != null) {
 						activity.setResult(SUBURB_SET_RESULT);
 					}

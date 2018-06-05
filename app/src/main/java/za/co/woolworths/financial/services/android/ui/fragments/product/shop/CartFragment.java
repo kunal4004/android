@@ -44,10 +44,10 @@ import za.co.woolworths.financial.services.android.models.dto.CartResponse;
 import za.co.woolworths.financial.services.android.models.dto.ChangeQuantity;
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem;
 import za.co.woolworths.financial.services.android.models.dto.Data;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.SkuInventory;
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
@@ -744,7 +744,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					Suburb suburb = new Suburb();
 					suburb.name = data.suburbName;
 					suburb.id = suburbId;
-					suburb.fulfillmentStores = data.orderSummary.suburb.fullfillmentStores;
+					suburb.fulfillmentStores = data.orderSummary.suburb.fulfillmentStores;
 					Utils.saveRecentDeliveryLocation(new ShoppingDeliveryLocation(province, suburb), activity);
 					tvDeliveryLocation.setText(mSuburbName + ", " + mProvinceName);
 				}
