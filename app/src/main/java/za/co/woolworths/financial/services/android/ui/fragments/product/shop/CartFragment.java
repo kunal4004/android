@@ -90,7 +90,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	private boolean onRemoveItemFailed = false;
 	private boolean mRemoveAllItemFailed = false;
 	private static final int REQUEST_SUBURB_CHANGE = 143;
-	private boolean mShouldDisplayCheckout;
 	private String mStoreId;
 	private Map<String, String> mMapStoreId;
 	private String TAG = this.getClass().getSimpleName();
@@ -125,6 +124,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	private CommerceItem mCommerceItem;
 	private boolean changeQuantityWasClicked = false;
 	private boolean errorMessageWasPopUp = false;
+	private boolean isCheckoutButtonReadyToDisplay;
 
 	public CartFragment() {
 		// Required empty public constructor
@@ -275,7 +275,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				break;
 			case R.id.btnCheckOut:
 				Activity checkOutActivity = getActivity();
-				if ((checkOutActivity != null) && mShouldDisplayCheckout) {
+				if ((checkOutActivity != null) && btnCheckOut.isEnabled()) {
 					Intent openCheckOutActivity = new Intent(getContext(), CartCheckoutActivity.class);
 					startActivityForResult(openCheckOutActivity, CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY);
 					checkOutActivity.overridePendingTransition(0, 0);
@@ -380,12 +380,21 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		}
 	}
 
-	public void updateCart(CartResponse cartResponse, CommerceItem commerceItem) {
+	public void updateCart(CartResponse cartResponse, CommerceItem commerceItemToRemove) {
 		this.cartItems = cartResponse.cartItems;
 		this.orderSummary = cartResponse.orderSummary;
-		if (cartResponse.cartItems.size() > 0 && cartProductAdapter != null) {
-			cartProductAdapter.removeItem(cartResponse.cartItems, cartResponse.orderSummary, commerceItem);
+		if (cartResponse.cartItems.size() > 0 && cartProductAdapter != null && commerceItemToRemove != null) {
+			for (CartItemGroup cartItemGroup : cartItems) {
+				for (CommerceItem commerceItem : cartItemGroup.commerceItems) {
+					if (commerceItem.commerceItemInfo.commerceId.equalsIgnoreCase(commerceItemToRemove.commerceItemInfo.commerceId)){
+						cartItemGroup.commerceItems.remove(commerceItem);
+						break;
+					}
+				}
+			}
+			cartProductAdapter.notifyAdapter(cartItems,orderSummary);
 		} else {
+
 			cartProductAdapter.clear();
 			Activity activity = getActivity();
 			if (activity != null) {
@@ -424,7 +433,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					}
 				}
 				orderSummary = cartResponse.orderSummary;
-				cartProductAdapter.changeQuantity(cartItems, orderSummary);
+				cartProductAdapter.notifyAdapter(cartItems, orderSummary);
 			}
 		} else {
 			cartProductAdapter.clear();
@@ -892,7 +901,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 	public void loadInventoryRequest(ArrayList<CartItemGroup> items) {
 		MultiMap<String, CommerceItem> multiListItems = MultiMap.create();
-		fadeCheckoutButton();
+		fadeCheckoutButton(true);
 		for (CartItemGroup cartItemGroup : items) {
 			for (CommerceItem commerceItem : cartItemGroup.getCommerceItems()) {
 				multiListItems.put(commerceItem.fulfillmentStoreId, commerceItem);
@@ -925,7 +934,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 						updateCartListWithAvailableStock(skusInventoryForStoreResponse.skuInventory, skusInventoryForStoreResponse.storeId);
 						break;
 					default:
-						mShouldDisplayCheckout = true;
+						isCheckoutButtonReadyToDisplay = false;
 						if (!errorMessageWasPopUp) {
 							Activity activity = getActivity();
 							if (activity == null) return;
@@ -948,6 +957,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	public void updateCartListWithAvailableStock(List<SkuInventory> inventories, String storeID) {
+		isCheckoutButtonReadyToDisplay = true;
 		HashMap<String, Integer> inventoryMap = new HashMap<>();
 		for (SkuInventory skuInventory : inventories) {
 			inventoryMap.put(skuInventory.sku, skuInventory.quantity);
@@ -962,8 +972,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					commerceItem.isStockChecked = true;
 				}
 
-				if (commerceItem.quantityInStock != 0) {
-					mShouldDisplayCheckout = true;
+				if (!commerceItem.isStockChecked) {
+					isCheckoutButtonReadyToDisplay = false;
 				}
 			}
 		}
@@ -972,8 +982,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		 * to trigger checkout button only once
 		 */
 		if (getLastValueInMap().equalsIgnoreCase(mStoreId)) {
-			if (mShouldDisplayCheckout)
-				fadeCheckoutButton();
+			if(!btnCheckOut.isEnabled() && isCheckoutButtonReadyToDisplay )
+				fadeCheckoutButton(false);
 		}
 		if (cartProductAdapter != null)
 			cartProductAdapter.updateStockAvailability(cartItems);
@@ -986,8 +996,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	 * @params mShouldDisplayCheckout is true only to avoid blinking animation on
 	 *                               checkout button
 	 */
-	private void fadeCheckoutButton() {
-		Utils.fadeInFadeOutAnimation(btnCheckOut, !mShouldDisplayCheckout);
+	private void fadeCheckoutButton(boolean value) {
+		Utils.fadeInFadeOutAnimation(btnCheckOut, value);
 	}
 
 	private String getLastValueInMap() {
