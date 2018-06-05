@@ -124,7 +124,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	private CommerceItem mCommerceItem;
 	private boolean changeQuantityWasClicked = false;
 	private boolean errorMessageWasPopUp = false;
-	private boolean isCheckoutButtonReadyToDisplay;
+	private boolean isAllInventoryAPICallSucceed;
 
 	public CartFragment() {
 		// Required empty public constructor
@@ -319,7 +319,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 	public boolean toggleEditMode() {
 		boolean isEditMode = cartProductAdapter.toggleEditMode();
-		Utils.fadeInFadeOutAnimation(btnCheckOut, isEditMode);
+		if(isAllInventoryAPICallSucceed)
+			Utils.fadeInFadeOutAnimation(btnCheckOut, isEditMode);
 		resetItemDelete(isEditMode);
 		return isEditMode;
 	}
@@ -934,7 +935,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 						updateCartListWithAvailableStock(skusInventoryForStoreResponse.skuInventory, skusInventoryForStoreResponse.storeId);
 						break;
 					default:
-						isCheckoutButtonReadyToDisplay = false;
+						isAllInventoryAPICallSucceed = false;
 						if (!errorMessageWasPopUp) {
 							Activity activity = getActivity();
 							if (activity == null) return;
@@ -957,7 +958,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	public void updateCartListWithAvailableStock(List<SkuInventory> inventories, String storeID) {
-		isCheckoutButtonReadyToDisplay = true;
+		isAllInventoryAPICallSucceed = true;
 		HashMap<String, Integer> inventoryMap = new HashMap<>();
 		for (SkuInventory skuInventory : inventories) {
 			inventoryMap.put(skuInventory.sku, skuInventory.quantity);
@@ -973,7 +974,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				}
 
 				if (!commerceItem.isStockChecked) {
-					isCheckoutButtonReadyToDisplay = false;
+					isAllInventoryAPICallSucceed = false;
 				}
 			}
 		}
@@ -982,7 +983,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		 * to trigger checkout button only once
 		 */
 		if (getLastValueInMap().equalsIgnoreCase(mStoreId)) {
-			if(!btnCheckOut.isEnabled() && isCheckoutButtonReadyToDisplay )
+			if(!btnCheckOut.isEnabled() && isAllInventoryAPICallSucceed)
 				fadeCheckoutButton(false);
 		}
 		if (cartProductAdapter != null)
