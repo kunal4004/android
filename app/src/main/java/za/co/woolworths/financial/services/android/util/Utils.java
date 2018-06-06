@@ -25,6 +25,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
@@ -1282,5 +1283,17 @@ public class Utils {
 		} else {
 			view.startAnimation(animFadeOut);
 		}
+	}
+
+	/***
+	 * @method setRecyclerViewMargin - method to set margin to Recyclerview
+	 * @param recyclerView - represent current Recyclerview
+	 * @param bottomMargin - bottom margin of the recyclerview
+	 */
+	public static void setRecyclerViewMargin(RecyclerView recyclerView, int bottomMargin) {
+		ViewGroup.MarginLayoutParams marginLayoutParams =
+				(ViewGroup.MarginLayoutParams) recyclerView.getLayoutParams();
+		marginLayoutParams.setMargins(0, 0, 0, bottomMargin);
+		recyclerView.setLayoutParams(marginLayoutParams);
 	}
 }

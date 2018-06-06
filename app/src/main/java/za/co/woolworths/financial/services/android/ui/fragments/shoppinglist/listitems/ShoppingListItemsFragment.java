@@ -414,7 +414,11 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 
 	@Override
 	public void onItemSelectionChange(List<ShoppingListItem> items) {
-		getViewDataBinding().incConfirmButtonLayout.rlCheckOut.setVisibility(getButtonStatus(items) ? View.VISIBLE : View.GONE);
+		boolean itemWasSelected = getButtonStatus(items);
+		Activity activity = getActivity();
+		if (activity == null) return;
+		getViewDataBinding().incConfirmButtonLayout.rlCheckOut.setVisibility(itemWasSelected ? View.VISIBLE : View.GONE);
+		Utils.setRecyclerViewMargin(getViewDataBinding().rcvShoppingListItems, itemWasSelected ? Utils.dp2px(activity, 60) : 0);
 		if (isAdded()) {
 			if (items.size() > 0)
 				tvMenuSelectAll.setText(getString(getSelectAllMenuVisibility(items) ? R.string.deselect_all : R.string.select_all));
@@ -651,6 +655,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	private void resetAddToCartButton() {
 		getViewDataBinding().incConfirmButtonLayout.pbLoadingIndicator.setVisibility(View.GONE);
 		getViewDataBinding().incConfirmButtonLayout.btnCheckOut.setVisibility(View.VISIBLE);
+
 	}
 
 	public void manageSelectAllMenuVisibility(int listSize) {
