@@ -367,7 +367,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			rvCartList.setLayoutManager(mLayoutManager);
 			rvCartList.setAdapter(cartProductAdapter);
 		} else {
-			Utils.sendBus(new BadgeState(CART_COUNT_TEMP, 0));
+			updateCartSummary(0);
 			rvCartList.setVisibility(View.GONE);
 			rlCheckOut.setVisibility(View.GONE);
 			mToggleItemRemoved.onRemoveSuccess();
@@ -407,7 +407,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			relEmptyStateHandler.setVisibility(View.VISIBLE);
 			Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
 		}
-		updateCartSummary(cartResponse.orderSummary.totalItemsCount);
 	}
 
 	@Override
@@ -446,7 +445,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			rlCheckOut.setVisibility(View.GONE);
 			relEmptyStateHandler.setVisibility(View.VISIBLE);
 		}
-		updateCartSummary(cartResponse.orderSummary.totalItemsCount);
 		onChangeQuantityComplete();
 	}
 
@@ -697,7 +695,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 			@Override
 			protected ShoppingCartResponse httpDoInBackground(String... params) {
-				Utils.sendBus(new BadgeState(CART_COUNT_TEMP, 0));
+				updateCartSummary(0);
 				return ((WoolworthsApplication) getActivity().getApplication()).getApi().removeAllCartItems();
 			}
 
@@ -763,6 +761,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			cartResponse.httpCode = response.httpCode;
 			Data data = response.data[0];
 			cartResponse.orderSummary = data.orderSummary;
+			//Update Cart Counter
+			if (cartResponse.orderSummary != null) {
+				updateCartSummary(cartResponse.orderSummary.totalItemsCount);
+			}
 			// set delivery location
 			if (!TextUtils.isEmpty(data.suburbName) && !TextUtils.isEmpty(data.provinceName)) {
 				Activity activity = getActivity();
