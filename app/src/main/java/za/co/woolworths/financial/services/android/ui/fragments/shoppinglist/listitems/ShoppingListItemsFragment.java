@@ -104,6 +104,9 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	private int REQUEST_SUBURB_CHANGE = 12345;
 	private ShoppingListItem mOpenShoppingListItem;
 	public final static int QUANTITY_CHANGED_FROM_LIST = 2010;
+	private String mFulFillmentStoreId;
+	private int DELIVERY_LOCATION_REQUEST_CODE_FROM_SELECT_ALL = 1222;
+	private Integer mDeliveryResultCode;
 
 	@Override
 	public ShoppingListItemsViewModel getViewModel() {
@@ -316,11 +319,11 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 			}
 			String multiSKUS = TextUtils.join("-", skuIds);
 			collectOtherSkuId.put(fulFillmentTypeIdCollection, multiSKUS);
-			String fulFillmentStoreId = Utils.retrieveStoreId(fulFillmentTypeIdCollection, getActivity());
-			if (!TextUtils.isEmpty(fulFillmentStoreId)) {
-				fulFillmentStoreId = fulFillmentStoreId.replaceAll("\"", "");
-				mMapStoreFulFillmentKeyValue.put(fulFillmentTypeIdCollection, fulFillmentStoreId);
-				executeGetInventoryForStore(fulFillmentStoreId, multiSKUS);
+			mFulFillmentStoreId = Utils.retrieveStoreId(fulFillmentTypeIdCollection, getActivity());
+			if (!TextUtils.isEmpty(mFulFillmentStoreId)) {
+				mFulFillmentStoreId = mFulFillmentStoreId.replaceAll("\"", "");
+				mMapStoreFulFillmentKeyValue.put(fulFillmentTypeIdCollection, mFulFillmentStoreId);
+				executeGetInventoryForStore(mFulFillmentStoreId, multiSKUS);
 			}
 		}
 		return false;
@@ -604,6 +607,11 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.selectAll:
+				if (shouldUserSetSuburb()) {
+					deliverySelectionIntent(DELIVERY_LOCATION_REQUEST_CODE_FROM_SELECT_ALL);
+					return super.onOptionsItemSelected(item);
+				}
+
 				if (tvMenuSelectAll.getText().toString().equalsIgnoreCase("SELECT ALL")) {
 					selectAllListItems(true);
 					tvMenuSelectAll.setText(getString(R.string.deselect_all));
@@ -746,7 +754,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				Utils.saveRecentDeliveryLocation(new ShoppingDeliveryLocation(province, suburb), activity);
 				executeAddToCart(listItems.subList(1, listItems.size()));
 			} else {
-				deliverySelectionIntent(getActivity());
+				deliverySelectionIntent(DELIVERY_LOCATION_REQUEST);
 				resetAddToCartButton();
 			}
 		}
@@ -826,6 +834,28 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				}
 				if (getLastValueInMap().equalsIgnoreCase(storeId)) {
 					updateList();
+
+					/***
+					 * Triggered when "SELECT ALL" is selected from toolbar
+					 * and no deliverable location found
+					 * @params: allItemsAreOutOfStock returns true if one or more item
+					 * is available
+					 * tvMenuSelectAll.performClick() checked all available items
+					 */
+					if (getDeliveryResultCode() != null) {
+						setResultCode(null);
+						boolean allItemsAreOutOfStock = true;
+						for (ShoppingListItem shoppingListItem : shoppingListItemsAdapter.getShoppingListItems()) {
+							if (shoppingListItem.quantityInStock > 0) {
+								allItemsAreOutOfStock = false;
+								break;
+							}
+						}
+						if (!allItemsAreOutOfStock)
+							tvMenuSelectAll.performClick();
+						return;
+					}
+
 				}
 				break;
 			default:
@@ -867,7 +897,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	public void openSetSuburbProcess(ShoppingListItem shoppingListItem) {
 		this.mOpenShoppingListItem = shoppingListItem;
 		navigateFromQuantity();
-		locationSelectionClicked();
+		deliverySelectionIntent(DELIVERY_LOCATION_REQUEST);
 	}
 
 	private void navigateFromQuantity() {
@@ -885,7 +915,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		showToolbar(listName);
 		if (requestCode == DELIVERY_LOCATION_REQUEST) {
 			if (resultCode == SUBURB_SET_RESULT) { // on suburb selection successful
-				executeAddToCart(listItems.subList(1, listItems.size()));
+				makeInventoryCall();
 			}
 		}
 
@@ -914,12 +944,21 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				}
 			}
 		}
+
+		if (requestCode == DELIVERY_LOCATION_REQUEST_CODE_FROM_SELECT_ALL) {
+			if (resultCode == SUBURB_SET_RESULT) { // on suburb selection successful
+				setResultCode(DELIVERY_LOCATION_REQUEST_CODE_FROM_SELECT_ALL);
+				makeInventoryCall();
+			}
+		}
 	}
 
-	private void deliverySelectionIntent(Activity activity) {
+	private void deliverySelectionIntent(int resultCode) {
+		Activity activity = getActivity();
+		if (activity == null) return;
 		Intent deliveryLocationSelectionActivity = new Intent(activity, DeliveryLocationSelectionActivity.class);
 		deliveryLocationSelectionActivity.putExtra(DeliveryLocationSelectionActivity.LOAD_PROVINCE, "LOAD_PROVINCE");
-		activity.startActivityForResult(deliveryLocationSelectionActivity, DELIVERY_LOCATION_REQUEST);
+		activity.startActivityForResult(deliveryLocationSelectionActivity, resultCode);
 		activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 	}
 
@@ -942,12 +981,15 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		}
 	}
 
-	private void locationSelectionClicked() {
-		Activity activity = getActivity();
-		if (activity == null) return;
+	private boolean shouldUserSetSuburb() {
+		return TextUtils.isEmpty(mFulFillmentStoreId);
+	}
 
-		Intent openDeliveryLocationSelectionActivity = new Intent(this.getContext(), DeliveryLocationSelectionActivity.class);
-		startActivityForResult(openDeliveryLocationSelectionActivity, REQUEST_SUBURB_CHANGE);
-		activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
+	private void setResultCode(Integer resultCode) {
+		this.mDeliveryResultCode = resultCode;
+	}
+
+	public Integer getDeliveryResultCode() {
+		return mDeliveryResultCode;
 	}
 }
