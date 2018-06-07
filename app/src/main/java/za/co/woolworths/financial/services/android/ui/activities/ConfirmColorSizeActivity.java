@@ -420,6 +420,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 
 		if (filterType.equalsIgnoreCase(getString(R.string.color))) {
 			if (mProductHasSize) {
+				if (mColorList == null) return;
 				mSelectedColour = getOtherSKUList(mColorList).get(position).colour;
 				ArrayList<OtherSkus> otherSkuList = Utils.commonSizeList(mSelectedColour, mProductHasColor, getOtherSKUList(mOtherSKU));
 				if (otherSkuList.size() > 0) {

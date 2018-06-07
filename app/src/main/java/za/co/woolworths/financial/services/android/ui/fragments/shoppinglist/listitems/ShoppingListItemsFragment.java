@@ -80,7 +80,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	private String listName;
 	private String listId;
 	private GetShoppingListItems getShoppingListItems;
-	private List<ShoppingListItem> listItems;
+	private List<ShoppingListItem> mShoppingListItems;
 	private DeleteShoppingList deleteShoppingList;
 	private DeleteShoppingListItem deleteShoppingListItem;
 	private ShoppingListItemsAdapter shoppingListItemsAdapter;
@@ -107,6 +107,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	private String mFulFillmentStoreId;
 	private int DELIVERY_LOCATION_REQUEST_CODE_FROM_SELECT_ALL = 1222;
 	private Integer mDeliveryResultCode;
+	private List<ShoppingListItem> shoppingListItems;
 
 	@Override
 	public ShoppingListItemsViewModel getViewModel() {
@@ -153,11 +154,11 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 						CartState cartState = (CartState) object;
 						int updatedQuantity = cartState.getQuantity();
 						if (updatedQuantity > 0) {
-							listItems.get(changeQuantityItem).userQuantity = updatedQuantity;
-							listItems.get(changeQuantityItem).isSelected = true;
-							shoppingListItemsAdapter.updateList(listItems);
+							mShoppingListItems.get(changeQuantityItem).userQuantity = updatedQuantity;
+							mShoppingListItems.get(changeQuantityItem).isSelected = true;
+							shoppingListItemsAdapter.updateList(mShoppingListItems);
+							return;
 						}
-						return;
 					}
 					if (object instanceof ShopState) {
 						ShopState shopState = (ShopState) object;
@@ -172,27 +173,27 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 						}
 
 						if (shopState.getUpdatedList() != null) {
-							List<ShoppingListItem> shoppingListItems = shopState.getUpdatedList();
-							for (ShoppingListItem shoppingListItem : listItems) {
-								if (shoppingListItem.catalogRefId == null) {
-									continue;
-								}
-								for (ShoppingListItem newList : shoppingListItems) {
-									if (shoppingListItem.catalogRefId.equalsIgnoreCase(newList.catalogRefId)) {
-										newList.inventoryCallCompleted = shoppingListItem.inventoryCallCompleted;
-										newList.quantityInStock = shoppingListItem.quantityInStock;
-									}
-								}
-							}
-
-
+							mOpenShoppingListItem = null;
 							Activity activity = getActivity();
 							if (activity != null) {
 								BottomNavigator bottomNavigator = getBottomNavigator();
+								shoppingListItems = shopState.getUpdatedList();
+								for (ShoppingListItem shoppingListItem : mShoppingListItems) {
+									if (shoppingListItem.catalogRefId == null) {
+										continue;
+									}
+									for (ShoppingListItem newList : shoppingListItems) {
+										if (shoppingListItem.catalogRefId.equalsIgnoreCase(newList.catalogRefId)) {
+											newList.inventoryCallCompleted = shoppingListItem.inventoryCallCompleted;
+											newList.quantityInStock = shoppingListItem.quantityInStock;
+										}
+									}
+								}
+
 								setToast(shopState, bottomNavigator);
 								closeSoftKeyboard();
-								listItems = shoppingListItems;
-								updateList(listItems);
+								mShoppingListItems = shoppingListItems;
+								updateList(mShoppingListItems);
 								setUpView();
 								makeInventoryCall();
 							}
@@ -236,7 +237,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 
 	public void loadShoppingListItems(ShoppingListItemsResponse shoppingListItemsResponse) {
 		getViewDataBinding().loadingBar.setVisibility(View.GONE);
-		listItems = shoppingListItemsResponse.listItems;
+		mShoppingListItems = shoppingListItemsResponse.listItems;
 		makeInventoryCall();
 	}
 
@@ -246,26 +247,27 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 
 		List<ShoppingDeliveryLocation> deliveryLocationHistories = Utils.getDeliveryLocationHistory(activity);
 		if (deliveryLocationHistories.size() == 0) {
-			if (listItems == null)
-				listItems = new ArrayList<>();
+			if (mShoppingListItems == null)
+				mShoppingListItems = new ArrayList<>();
 			cancelQuantityLoad();
-			updateList(listItems);
+			updateList(mShoppingListItems);
 			adapterClickable(true);
 			return;
 		}
 
 		if (shoppingListInventory()) return;
 
-		if (listItems == null)
-			listItems = new ArrayList<>();
-		updateList(listItems);
+		if (mShoppingListItems == null)
+			mShoppingListItems = new ArrayList<>();
+		updateList(mShoppingListItems);
+
 
 		/**
 		 * Activated when a user click on quantity selector but no suburb was set
 		 * OpenQuantitySelector automatically
 		 */
 		if (mOpenShoppingListItem != null) {
-			for (ShoppingListItem shoppingListItem : listItems) {
+			for (ShoppingListItem shoppingListItem : mShoppingListItems) {
 				if (shoppingListItem.catalogRefId == null) continue;
 				if (shoppingListItem.catalogRefId.equalsIgnoreCase(mOpenShoppingListItem.catalogRefId)) {
 					mOpenShoppingListItem.quantityInStock = shoppingListItem.quantityInStock;
@@ -296,13 +298,13 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	}
 
 	private boolean shoppingListInventory() {
-		if (listItems == null) {
+		if (mShoppingListItems == null) {
 			setUpView();
 			adapterClickable(true);
 			return true;
 		}
 		MultiMap<String, ShoppingListItem> multiListItem = MultiMap.create();
-		for (ShoppingListItem shoppingListItem : listItems) {
+		for (ShoppingListItem shoppingListItem : mShoppingListItems) {
 			if (!shoppingListItem.inventoryCallCompleted
 					&& !TextUtils.isEmpty(shoppingListItem.catalogRefId))
 				multiListItem.put(shoppingListItem.fulfillmentType, shoppingListItem);
@@ -332,15 +334,15 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	private void setUpView() {
 		RecyclerView rcvShoppingListItems = getViewDataBinding().rcvShoppingListItems;
 		LinearLayout rlEmptyView = getViewDataBinding().rlEmptyListView;
-		rlEmptyView.setVisibility(listItems == null || listItems.size() <= 1 ? View.VISIBLE : View.GONE);
+		rlEmptyView.setVisibility(mShoppingListItems == null || mShoppingListItems.size() <= 1 ? View.VISIBLE : View.GONE);
 		// 1 to exclude header
-		rcvShoppingListItems.setVisibility(listItems == null || listItems.size() <= 1 ? View.GONE : View.VISIBLE);
-		manageSelectAllMenuVisibility(listItems.size());
+		rcvShoppingListItems.setVisibility(mShoppingListItems == null || mShoppingListItems.size() <= 1 ? View.GONE : View.VISIBLE);
+		manageSelectAllMenuVisibility(mShoppingListItems.size());
 	}
 
 	private void initList(RecyclerView rcvShoppingListItems) {
-		listItems = new ArrayList<>();
-		shoppingListItemsAdapter = new ShoppingListItemsAdapter(listItems, this);
+		mShoppingListItems = new ArrayList<>();
+		shoppingListItemsAdapter = new ShoppingListItemsAdapter(mShoppingListItems, this);
 		LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
 		mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 		rcvShoppingListItems.setLayoutManager(mLayoutManager);
@@ -432,8 +434,8 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 
 	@Override
 	public void onShoppingListItemDelete(ShoppingListItemsResponse shoppingListItemsResponse) {
-		listItems = shoppingListItemsResponse.listItems;
-		updateList(listItems);
+		mShoppingListItems = shoppingListItemsResponse.listItems;
+		updateList(mShoppingListItems);
 	}
 
 	@Override
@@ -534,7 +536,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				@Override
 				public void run() {
 					mErrorHandlerView.showToast();
-					shoppingListItemsAdapter.updateList(listItems);
+					shoppingListItemsAdapter.updateList(mShoppingListItems);
 				}
 			});
 		}
@@ -674,15 +676,15 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	}
 
 	public void selectAllListItems(boolean setSelection) {
-		if (shoppingListItemsAdapter != null && listItems != null && listItems.size() > 1) {
-			for (ShoppingListItem item : listItems) {
+		if (shoppingListItemsAdapter != null && mShoppingListItems != null && mShoppingListItems.size() > 1) {
+			for (ShoppingListItem item : mShoppingListItems) {
 				if (item.quantityInStock != 0) {
 					item.isSelected = setSelection;
 					int quantity = item.userQuantity > 1 ? item.userQuantity : 1; // Click -> Select all - when one item quantity is > 1
 					item.userQuantity = setSelection ? quantity : 0;
 				}
 			}
-			shoppingListItemsAdapter.updateList(listItems);
+			shoppingListItemsAdapter.updateList(mShoppingListItems);
 		}
 
 	}
@@ -752,7 +754,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				suburb.name = cartSummary.suburbName;
 				suburb.id = suburbId;
 				Utils.saveRecentDeliveryLocation(new ShoppingDeliveryLocation(province, suburb), activity);
-				executeAddToCart(listItems.subList(1, listItems.size()));
+				executeAddToCart(mShoppingListItems.subList(1, mShoppingListItems.size()));
 			} else {
 				deliverySelectionIntent(DELIVERY_LOCATION_REQUEST);
 				resetAddToCartButton();
@@ -803,10 +805,9 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				}
 				// skuInventory is empty or null
 				if (skusInventoryForStoreResponse.skuInventory.isEmpty()) {
-					for (ShoppingListItem inventoryItems : listItems) {
+					for (ShoppingListItem inventoryItems : mShoppingListItems) {
 						if (TextUtils.isEmpty(inventoryItems.fulfillmentType)) continue;
 						inventoryItems.inventoryCallCompleted = true;
-
 						inventoryItems.userShouldSetSuburb = false;
 					}
 				}
@@ -814,7 +815,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				for (SkuInventory skuInventory : skusInventoryForStoreResponse.skuInventory) {
 					String sku = skuInventory.sku;
 					int quantity = skuInventory.quantity;
-					for (ShoppingListItem inventoryItems : listItems) {
+					for (ShoppingListItem inventoryItems : mShoppingListItems) {
 						if (TextUtils.isEmpty(inventoryItems.fulfillmentType)) continue;
 						if (inventoryItems.fulfillmentType.equalsIgnoreCase(fulFillmentType)) {
 							if (sku.equalsIgnoreCase(inventoryItems.catalogRefId)) {
@@ -824,6 +825,13 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 						inventoryItems.inventoryCallCompleted = true;
 					}
 				}
+
+				if (shoppingListItems != null) {
+					updateList();
+					shoppingListItems = null;
+					return;
+				}
+
 				/**
 				 * @method: getLastValueInMap() returns last storeId position
 				 * @method: updateList()
@@ -876,7 +884,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	private void updateList() {
 		adapterClickable(true);
 		if (shoppingListItemsAdapter != null)
-			shoppingListItemsAdapter.updateList(listItems);
+			shoppingListItemsAdapter.updateList(mShoppingListItems);
 	}
 
 	@Override
@@ -938,7 +946,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 						if (shoppingListItem.catalogRefId.equalsIgnoreCase(mOpenShoppingListItem.catalogRefId)) {
 							shoppingListItem.userQuantity = updatedQuantity;
 							shoppingListItem.isSelected = true;
-							shoppingListItemsAdapter.updateList(listItems);
+							shoppingListItemsAdapter.updateList(mShoppingListItems);
 						}
 					}
 				}
@@ -976,7 +984,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	}
 
 	private void cancelQuantityLoad() {
-		for (ShoppingListItem inventoryItems : listItems) {
+		for (ShoppingListItem inventoryItems : mShoppingListItems) {
 			inventoryItems.userShouldSetSuburb = true;
 		}
 	}

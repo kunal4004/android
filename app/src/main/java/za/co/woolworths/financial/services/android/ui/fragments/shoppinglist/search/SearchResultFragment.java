@@ -381,8 +381,16 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 
 			case R.id.btnCheckOut:
 				cancelRequest(mGetProductDetail);
+				if (mProductAdapter == null) return;
+				for (ProductList productList : mProductAdapter.getProductList()) {
+					if (productList.viewIsLoading) {
+						productList.viewIsLoading = false;
+						productList.itemWasChecked = false;
+					}
+					mProductAdapter.notifyDataSetChanged();
+				}
 				List<AddToListRequest> addToListRequests = new ArrayList<>();
-				for (ProductList list : mProductList) {
+				for (ProductList list : mProductAdapter.getProductList()) {
 					if (list.itemWasChecked) {
 						AddToListRequest addToList = new AddToListRequest();
 						addToList.setSkuID(list.sku);
