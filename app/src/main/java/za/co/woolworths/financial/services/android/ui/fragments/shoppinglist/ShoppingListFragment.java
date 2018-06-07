@@ -89,9 +89,9 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 		emptyCartView.setView(getString(R.string.title_no_shopping_lists), getString(R.string.description_no_shopping_lists), getString(R.string.button_no_shopping_lists), R.drawable.emptylists);
 		view.findViewById(R.id.btnRetry).setOnClickListener(this);
 
-		rlLocationSelectedLayout = getViewDataBinding().locationSelectedLayout;
-		tvDeliveryLocation = getViewDataBinding().tvDeliveryLocation;
-		tvDeliveringToText = getViewDataBinding().tvDeliveringTo;
+		rlLocationSelectedLayout = getViewDataBinding().deliveryLocationLayout.locationSelectedLayout;
+		tvDeliveryLocation = getViewDataBinding().deliveryLocationLayout.tvDeliveryLocation;
+		tvDeliveringToText = getViewDataBinding().deliveryLocationLayout.tvDeliveringTo;
 
 		ShoppingDeliveryLocation lastDeliveryLocation = Utils.getLastDeliveryLocation(getActivity());
 		if (lastDeliveryLocation != null) {
@@ -104,7 +104,12 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 		mErrorHandlerView = new ErrorHandlerView(getActivity(), rlNoConnectionLayout);
 		mErrorHandlerView.setMargin(rlNoConnectionLayout, 0, 0, 0, 0);
 		mConnectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
-		rlLocationSelectedLayout.setOnClickListener(this);
+		rlLocationSelectedLayout.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				locationSelectionClicked();
+			}
+		});
 	}
 
 	public void loadShoppingList(List<ShoppingList> lists) {
@@ -264,9 +269,6 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 				if (new ConnectionDetector().isOnline(getActivity())) {
 					initGetShoppingList();
 				}
-				break;
-			case R.id.locationSelectedLayout:
-				locationSelectionClicked();
 				break;
 			default:
 				break;
