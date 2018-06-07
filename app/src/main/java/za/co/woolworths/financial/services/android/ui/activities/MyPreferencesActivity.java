@@ -33,6 +33,7 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 	private LinearLayout biometricsLayout;
 	private RelativeLayout rlLocationSelectedLayout;
 	private WTextView tvDeliveryLocation;
+	private WTextView tvDeliveringToText;
 	private String mSuburbName, mProvinceName;
 	private static final int REQUEST_SUBURB_CHANGE = 143;
 
@@ -62,6 +63,7 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 		authenticateSwitch = findViewById(R.id.auSwitch);
 		biometricsLayout = findViewById(R.id.biometricsLayout);
 		tvDeliveryLocation = findViewById(R.id.tvDeliveryLocation);
+		tvDeliveringToText = findViewById(R.id.tvDeliveringTo);
 		rlLocationSelectedLayout = findViewById(R.id.locationSelectedLayout);
 		authenticateSwitch.setOnClickListener(this);
 		rlLocationSelectedLayout.setOnClickListener(this);
@@ -83,7 +85,7 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 		if (lastDeliveryLocation != null) {
 			mSuburbName = lastDeliveryLocation.suburb.name;
 			mProvinceName = lastDeliveryLocation.province.name;
-			tvDeliveryLocation.setText(mSuburbName + ", " + mProvinceName);
+			setDeliveryLocation(mSuburbName + ", " + mProvinceName);
 		}
 
 	}
@@ -130,7 +132,7 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 				if (lastDeliveryLocation != null) {
 					mSuburbName = lastDeliveryLocation.suburb.name;
 					mProvinceName = lastDeliveryLocation.province.name;
-					tvDeliveryLocation.setText(mSuburbName + ", " + mProvinceName);
+					setDeliveryLocation(mSuburbName + ", " + mProvinceName);
 				}
 				break;
 			default:
@@ -222,5 +224,11 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 				break;
 		}
 		return false;
+	}
+
+	public void setDeliveryLocation(String deliveryLocation) {
+		tvDeliveringToText.setText(getResources().getString(R.string.delivering_to));
+		tvDeliveryLocation.setVisibility(View.VISIBLE);
+		tvDeliveryLocation.setText(deliveryLocation);
 	}
 }

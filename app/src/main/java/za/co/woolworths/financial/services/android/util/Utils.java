@@ -1286,4 +1286,16 @@ public class Utils {
 			view.startAnimation(animFadeOut);
 		}
 	}
+
+	public static void showOneTimePopup(Context context, SessionDao.KEY key, CustomPopUpWindow.MODAL_LAYOUT message_key, int message) {
+		try {
+			String firstTime = Utils.getSessionDaoValue(context, key);
+			if (firstTime == null) {
+				Utils.displayValidationMessage(context, message_key, context.getResources().getString(message));
+				Utils.sessionDaoSave(context, key, "1");
+			}
+		} catch (NullPointerException ignored) {
+		}
+	}
+
 }

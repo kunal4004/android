@@ -55,6 +55,8 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 	private static final int REQUEST_SUBURB_CHANGE = 143;
 	private RelativeLayout rlLocationSelectedLayout;
 	private WTextView tvDeliveryLocation;
+	private WTextView tvDeliveringToText;
+
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -89,12 +91,13 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 
 		rlLocationSelectedLayout = getViewDataBinding().locationSelectedLayout;
 		tvDeliveryLocation = getViewDataBinding().tvDeliveryLocation;
+		tvDeliveringToText = getViewDataBinding().tvDeliveringTo;
 
 		ShoppingDeliveryLocation lastDeliveryLocation = Utils.getLastDeliveryLocation(getActivity());
 		if (lastDeliveryLocation != null) {
 			mSuburbName = lastDeliveryLocation.suburb.name;
 			mProvinceName = lastDeliveryLocation.province.name;
-			tvDeliveryLocation.setText(mSuburbName + ", " + mProvinceName);
+			setDeliveryLocation(mSuburbName + ", " + mProvinceName);
 		}
 
 		RelativeLayout rlNoConnectionLayout = getViewDataBinding().incConnectionLayout.noConnectionLayout;
@@ -287,7 +290,7 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 			if (lastDeliveryLocation != null) {
 				mSuburbName = lastDeliveryLocation.suburb.name;
 				mProvinceName = lastDeliveryLocation.province.name;
-				tvDeliveryLocation.setText(mSuburbName + ", " + mProvinceName);
+				setDeliveryLocation(mSuburbName + ", " + mProvinceName);
 			}
 			initGetShoppingList();
 			return;
@@ -309,6 +312,12 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 			startActivityForResult(openDeliveryLocationSelectionActivity, REQUEST_SUBURB_CHANGE);
 			activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
 		}
+	}
+
+	public void setDeliveryLocation(String deliveryLocation) {
+		tvDeliveringToText.setText(getContext().getString(R.string.delivering_to));
+		tvDeliveryLocation.setVisibility(View.VISIBLE);
+		tvDeliveryLocation.setText(deliveryLocation);
 	}
 }
 
