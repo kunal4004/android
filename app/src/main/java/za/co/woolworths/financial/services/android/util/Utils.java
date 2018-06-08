@@ -870,17 +870,6 @@ public class Utils {
 //		}
 //	}
 
-	public static void showOneTimePopup(Context context) {
-		try {
-			String firstTime = Utils.getSessionDaoValue(context, SessionDao.KEY.PRODUCTS_ONE_TIME_POPUP);
-			if (firstTime == null) {
-				Utils.displayValidationMessage(context, CustomPopUpWindow.MODAL_LAYOUT.INFO, context.getResources().getString(R.string.products_onetime_popup_text));
-				Utils.sessionDaoSave(context, SessionDao.KEY.PRODUCTS_ONE_TIME_POPUP, "1");
-			}
-		} catch (NullPointerException ignored) {
-		}
-	}
-
 	private static Calendar getCurrentInstance() {
 		return Calendar.getInstance(Locale.ENGLISH);
 	}
