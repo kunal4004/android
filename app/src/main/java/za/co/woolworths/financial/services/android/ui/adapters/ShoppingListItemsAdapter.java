@@ -141,6 +141,8 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 						if (shoppingListItem.inventoryCallCompleted) {
 							holder.llQuantity.setVisibility((shoppingListItem.quantityInStock == 0) ? View.GONE : View.VISIBLE);
 							holder.tvProductAvailability.setVisibility((shoppingListItem.quantityInStock == 0) ? View.VISIBLE : View.GONE);
+							holder.llSelectedCheckBox.setAlpha((shoppingListItem.quantityInStock == 0) ? 0f : 1f);
+							holder.price.setAlpha((shoppingListItem.quantityInStock == 0) ? 0f : 1f);
 							Utils.setBackgroundColor(holder.tvProductAvailability, R.drawable.round_red_corner, R.string.product_unavailable);
 						}
 					}
@@ -231,11 +233,13 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 		private LinearLayout llShopList;
 		private ImageView imPrice;
 		private WTextView tvProductAvailability;
+		private RelativeLayout llSelectedCheckBox;
 
 		public ViewHolder(View itemView) {
 			super(itemView);
 			productName = itemView.findViewById(R.id.tvTitle);
 			tvQuantity = itemView.findViewById(R.id.tvQuantity);
+			llSelectedCheckBox = itemView.findViewById(R.id.llSelectedCheckBox);
 			price = itemView.findViewById(R.id.tvPrice);
 			select = itemView.findViewById(R.id.btnDeleteRow);
 			cartProductImage = itemView.findViewById(R.id.cartProductImage);
