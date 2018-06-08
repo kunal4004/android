@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
@@ -36,7 +37,9 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 	private WTextView tvDeliveringToText;
 	private String mSuburbName, mProvinceName;
 	private static final int REQUEST_SUBURB_CHANGE = 143;
-
+	private ImageView imRightArrow;
+	private ImageView imDeliveryLocationIcon;
+	private WTextView tvEditDeliveryLocation;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -65,6 +68,9 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 		tvDeliveryLocation = findViewById(R.id.tvDeliveryLocation);
 		tvDeliveringToText = findViewById(R.id.tvDeliveringTo);
 		rlLocationSelectedLayout = findViewById(R.id.locationSelectedLayout);
+		tvEditDeliveryLocation = findViewById(R.id.editLocation);
+		imRightArrow = findViewById(R.id.iconCaretRight);
+		imDeliveryLocationIcon = findViewById(R.id.deliverLocationIcon);
 		authenticateSwitch.setOnClickListener(this);
 		rlLocationSelectedLayout.setOnClickListener(this);
 		authenticateSwitch.setOnTouchListener(this);
@@ -85,7 +91,7 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 		if (lastDeliveryLocation != null) {
 			mSuburbName = lastDeliveryLocation.suburb.name;
 			mProvinceName = lastDeliveryLocation.province.name;
-			setDeliveryLocation(mSuburbName + ", " + mProvinceName);
+			setDeliveryLocation(mSuburbName, mProvinceName);
 		}
 
 	}
@@ -132,7 +138,7 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 				if (lastDeliveryLocation != null) {
 					mSuburbName = lastDeliveryLocation.suburb.name;
 					mProvinceName = lastDeliveryLocation.province.name;
-					setDeliveryLocation(mSuburbName + ", " + mProvinceName);
+					setDeliveryLocation(mSuburbName,mProvinceName);
 				}
 				break;
 			default:
@@ -226,9 +232,13 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 		return false;
 	}
 
-	public void setDeliveryLocation(String deliveryLocation) {
-		tvDeliveringToText.setText(getResources().getString(R.string.delivering_to));
+	public void setDeliveryLocation(String suburb, String provinceName) {
+		imRightArrow.setVisibility(View.GONE);
+		tvDeliveringToText.setVisibility(View.VISIBLE);
+		tvEditDeliveryLocation.setVisibility(View.VISIBLE);
+		imDeliveryLocationIcon.setBackgroundResource(R.drawable.tick_cli_active);
+		tvDeliveringToText.setText(provinceName);
 		tvDeliveryLocation.setVisibility(View.VISIBLE);
-		tvDeliveryLocation.setText(deliveryLocation);
+		tvDeliveryLocation.setText(suburb);
 	}
 }

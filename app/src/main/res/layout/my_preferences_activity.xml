@@ -97,32 +97,21 @@
                 android:visibility="visible">
 
                 <ImageView
-                    android:id="@+id/truckIcon"
+                    android:id="@+id/deliverLocationIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:src="@drawable/ic_delivery_truck" />
+                    android:background="@drawable/ic_delivery_truck" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="16dp"
                     android:layout_toLeftOf="@+id/iconCaretRight"
-                    android:layout_toRightOf="@+id/truckIcon"
+                    android:layout_toRightOf="@+id/deliverLocationIcon"
                     android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        android:id="@+id/tvDeliveringTo"
-                        style="@style/style_cart_delivery_to_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:layout_marginRight="4dp"
-                        android:text="@string/set_your_delivery_location"
-                        />
-
+                    android:orientation="vertical">
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         android:id="@+id/tvDeliveryLocation"
                         style="@style/style_cart_delivery_selected"
@@ -133,10 +122,19 @@
                         android:gravity="center_vertical"
                         android:singleLine="true"
                         android:ellipsize="end"
+                        app:WTextView_font="myriadpro_regular"
+                        android:text="@string/my_pref_set_your_delivery_location"
+                        />
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        android:id="@+id/tvDeliveringTo"
+                        style="@style/style_cart_delivery_to_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:textColor="@color/semi_transparent_black"
                         android:visibility="gone"
                         />
                 </LinearLayout>
-
                 <ImageView
                     android:id="@+id/iconCaretRight"
                     android:layout_width="wrap_content"
@@ -145,6 +143,20 @@
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="20dp"
                     android:src="@drawable/ic_caret_black" />
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:id="@+id/editLocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/edit"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    app:WTextView_font="bold"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="20dp"
+                    android:letterSpacing="0.1"
+                    android:visibility="gone"
+                    />
             </RelativeLayout>
         </LinearLayout>
 

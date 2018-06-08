@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
@@ -56,6 +57,7 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
 	private ProgressBar loadingProgressBar;
 	private RecyclerView deliveryLocationHistoryList;
 	private WTextView tvCurrentLocationTitle, tvCurrentLocationDescription;
+	private ImageView imDeliveryLocation;
 
 	public DeliveryLocationSelectionFragment() {
 		// Required empty public constructor
@@ -89,10 +91,10 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
 		deliveryLocationHistoryList = view.findViewById(R.id.deliveryLocationHistoryList);
 		tvCurrentLocationTitle = view.findViewById(R.id.tvCurrentLocationTitle);
 		tvCurrentLocationDescription = view.findViewById(R.id.tvCurrentLocationDescription);
+		imDeliveryLocation = view.findViewById(R.id.iconTick);
 
 		view.findViewById(R.id.currentLocationLayout).setOnClickListener(this);
 
-		configureCurrentLocation();
 		configureLocationHistory();
 
 		List<ShoppingDeliveryLocation> deliveryHistory = Utils.getDeliveryLocationHistory(this.getContext());
@@ -100,6 +102,8 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
 			if (!TextUtils.isEmpty(suburbName)) {
 				tvCurrentLocationTitle.setText(suburbName);
 				tvCurrentLocationDescription.setText(provinceName);
+				tvCurrentLocationDescription.setVisibility(View.VISIBLE);
+				imDeliveryLocation.setBackgroundResource(R.drawable.tick_cli_active);
 			}
 		}
 	}
@@ -111,14 +115,6 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
 				onCurrentLocationClicked();
 				break;
 		}
-	}
-
-	private void configureCurrentLocation() {
-		// TODO: make API request & show loading before setting the current location, if needed
-
-		ShoppingDeliveryLocation currentLocation = getCurrentDeliveryLocation();
-		tvCurrentLocationTitle.setText(currentLocation.suburb.name);
-		tvCurrentLocationDescription.setText(currentLocation.province.name);
 	}
 
 	private void configureLocationHistory() {
