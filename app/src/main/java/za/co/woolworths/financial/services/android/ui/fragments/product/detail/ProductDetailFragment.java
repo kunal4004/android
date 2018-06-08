@@ -45,13 +45,13 @@ import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.AddToCartDaTum;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.FormException;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.SkuInventory;
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
@@ -140,8 +140,9 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	private ToastUtils mToastUtils;
 	private int mNumberOfListSelected = 0;
 	private GetInventorySkusForStore mGetInventorySkusForStore;
-	private boolean shoppingListDidReload = false;
 	private final int ACCESS_FINE_LOCATION_REQUEST_CODE = 1;
+	private LinearLayout llStoreFinder;
+	private OtherSkus selectedFindInStoreOtherSkus;
 
 	@Override
 	public ProductDetailViewModel getViewModel() {
@@ -760,7 +761,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	public void enableFindInStoreButton(WProductDetail productList) {
 		if (productList != null) {
 			try {
-				LinearLayout llStoreFinder = getViewDataBinding().llStoreFinder;
+				llStoreFinder = getViewDataBinding().llStoreFinder;
 				LinearLayout llAddToCart = getViewDataBinding().llAddToCart;
 				/***
 				 * isnAvailable:true show find in store button
@@ -952,17 +953,22 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	@Override
 	public void onPermissionGranted() {
 		smoothScrollToTop();
-		if (isNetworkConnected()) {
-			mProductHasColour = productHasColour();
-			mProductHasSize = productHasSize();
-			mProductHasOneColour = productHasOneColour();
-			mProductHasOneSize = productHasOneSize();
+		if (!isNetworkConnected()) return;
+		if (selectedFindInStoreOtherSkus != null) {
+			noSizeColorIntent();
+			setFinInStoreOtherSkus(null);
+			return;
+		}
+		mProductHasColour = productHasColour();
+		mProductHasSize = productHasSize();
+		mProductHasOneColour = productHasOneColour();
+		mProductHasOneSize = productHasOneSize();
 
-			boolean colorWasPopUp = getGlobalState().colorWasPopup();
-			boolean sizeWasPopUp = getGlobalState().sizeWasPopup();
+		boolean colorWasPopUp = getGlobalState().colorWasPopup();
+		boolean sizeWasPopUp = getGlobalState().sizeWasPopup();
 
-			OtherSkus popupColorSKu = getGlobalState().getColorPickerSku();
-			OtherSkus popupSizeSKu = getGlobalState().getSizePickerSku();
+		OtherSkus popupColorSKu = getGlobalState().getColorPickerSku();
+		OtherSkus popupSizeSKu = getGlobalState().getSizePickerSku();
 
 			/*
 			color | size
@@ -972,26 +978,30 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 			1 | 1 - color and size were selected
 			*/
 
-			if (!colorWasPopUp && !sizeWasPopUp) {
-				sizeColorSelector();
-			} else if (!colorWasPopUp && sizeWasPopUp) {
-				displayColor(popupSizeSKu);
-			} else if (colorWasPopUp && !sizeWasPopUp) {
-				sizeOnlyIntent(popupColorSKu);
-			} else {
-				switch (getGlobalState().getLatestSelectedPicker()) {
-					case 1:
-						mSkuId = getGlobalState().getColorPickerSku();
-						break;
-					case 2:
-						mSkuId = getGlobalState().getSizePickerSku();
-						break;
-					default:
-						break;
-				}
-				noSizeColorIntent();
+		if (!colorWasPopUp && !sizeWasPopUp) {
+			sizeColorSelector();
+		} else if (!colorWasPopUp && sizeWasPopUp) {
+			displayColor(popupSizeSKu);
+		} else if (colorWasPopUp && !sizeWasPopUp) {
+			sizeOnlyIntent(popupColorSKu);
+		} else {
+			switch (getGlobalState().getLatestSelectedPicker()) {
+				case 1:
+					mSkuId = getGlobalState().getColorPickerSku();
+					break;
+				case 2:
+					mSkuId = getGlobalState().getSizePickerSku();
+					break;
+				default:
+					break;
 			}
+			noSizeColorIntent();
 		}
+
+	}
+
+	private void setFinInStoreOtherSkus(OtherSkus otherSkus) {
+		selectedFindInStoreOtherSkus = otherSkus;
 	}
 
 	private boolean productHasColour() {
@@ -1594,9 +1604,8 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		super.onActivityResult(requestCode, resultCode, data);
 		// perform find in-store api call
 		if ((requestCode == 3401) && (resultCode == RESULT_TAP_FIND_INSTORE_BTN)) {
-			//TODO:: Check for permission
-			getViewModel().setFindInStoreLoadFail(false);
-			executeLocationItemTask();
+			setFinInStoreOtherSkus(getGlobalState().getSelectedSKUId());
+			llStoreFinder.performClick();
 			return;
 		} else if ((requestCode == 3401) && (resultCode == RESULT_LOADING_INVENTORY_FAILURE)) {
 			if (data != null) {

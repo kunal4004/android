@@ -25,10 +25,9 @@ import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.adapters.StockFinderFragmentAdapter;
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ColorFragmentList;
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.SizeFragmentList;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.EditQuantityFragmentList;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.SizeFragmentList;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ColorInterface;
 import za.co.woolworths.financial.services.android.util.NonSwipeableViewPager;
@@ -452,7 +451,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 			mGlobalState.setSelectedSKUId(mOtherSizeSKU.get(position));
 			if (otherSku.quantity == 0
 					&& getGlobalState().getSaveButtonClick() == INDEX_ADD_TO_CART) {
-				closeConfirmColorSizeActivity(RESULT_TAP_FIND_INSTORE_BTN,null);
+				closeConfirmColorSizeActivity(RESULT_TAP_FIND_INSTORE_BTN, null);
 				return;
 			}
 			inStoreFinderUpdate();
@@ -559,7 +558,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 				return;
 			}
 
-			if(mCartQuantityInStock!= 0){
+			if (mCartQuantityInStock != 0) {
 				list.clear();
 				for (int number = 0; number < mCartQuantityInStock; number++) {
 					list.add(number + 1);
@@ -573,6 +572,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 	private void populateCustomSizeSelector(ColorInterface fragmentToShow, boolean shouldShowPrice) {
 		showBackIcon();
 		tvTitle.setText(getString(R.string.confirm_size_desc));
+		if (TextUtils.isEmpty(mSelectedColour)) return;
 		ArrayList<OtherSkus> mOtherSizeSKU = Utils.commonSizeList(mSelectedColour,
 				mProductHasColor, getOtherSKUList(mOtherSKU));
 		if (fragmentToShow != null) {
@@ -623,5 +623,10 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 
 	public String getSelectedSku() {
 		return TextUtils.isEmpty(mSelectedSku) ? "" : mSelectedSku;
+	}
+
+	public void tapOnFindInStoreButton(OtherSkus otherSkus) {
+		mGlobalState.setSelectedSKUId(otherSkus);
+		closeConfirmColorSizeActivity(RESULT_TAP_FIND_INSTORE_BTN, null);
 	}
 }
