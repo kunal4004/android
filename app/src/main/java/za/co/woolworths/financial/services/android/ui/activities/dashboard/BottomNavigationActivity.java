@@ -494,7 +494,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				case R.id.navigation_product:
 					setCurrentSection(R.id.navigation_product);
 					switchTab(INDEX_PRODUCT);
-					Utils.showOneTimePopup(BottomNavigationActivity.this);
 					return true;
 
 				case R.id.navigation_cart:

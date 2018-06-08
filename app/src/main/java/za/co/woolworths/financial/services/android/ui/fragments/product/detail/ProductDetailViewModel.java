@@ -23,17 +23,15 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetail;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
-import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.models.rest.product.GetCartSummary;
-import za.co.woolworths.financial.services.android.models.rest.product.GetInventorySkusForStore;
 import za.co.woolworths.financial.services.android.models.rest.product.GetProductDetail;
 import za.co.woolworths.financial.services.android.models.rest.product.PostAddItemToCart;
 import za.co.woolworths.financial.services.android.models.rest.product.ProductRequest;
@@ -584,22 +582,6 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 			@Override
 			public void onFailure(final String errorMessage) {
 				getNavigator().onTokenFailure(errorMessage);
-			}
-		});
-	}
-
-
-	public GetInventorySkusForStore getInventoryStockForStore(String storeId, String multiSku) {
-		return new GetInventorySkusForStore(storeId, multiSku, new OnEventListener() {
-			@Override
-			public void onSuccess(Object object) {
-				SkusInventoryForStoreResponse skusInventoryForStoreResponse = (SkusInventoryForStoreResponse) object;
-				getNavigator().getInventoryForStoreSuccess(skusInventoryForStoreResponse);
-			}
-
-			@Override
-			public void onFailure(String e) {
-				getNavigator().geInventoryForStoreFailure(e);
 			}
 		});
 	}
