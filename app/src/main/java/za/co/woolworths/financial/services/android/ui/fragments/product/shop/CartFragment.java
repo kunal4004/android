@@ -44,10 +44,10 @@ import za.co.woolworths.financial.services.android.models.dto.CartResponse;
 import za.co.woolworths.financial.services.android.models.dto.ChangeQuantity;
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem;
 import za.co.woolworths.financial.services.android.models.dto.Data;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.SkuInventory;
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
@@ -382,7 +382,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	public void updateCart(CartResponse cartResponse, CommerceItem commerceItemToRemove) {
-		this.cartItems = cartResponse.cartItems;
 		this.orderSummary = cartResponse.orderSummary;
 		if (cartResponse.cartItems.size() > 0 && cartProductAdapter != null && commerceItemToRemove != null) {
 			for (CartItemGroup cartItemGroup : cartItems) {
@@ -463,6 +462,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	private void onChangeQuantityComplete() {
+		if (isAllInventoryAPICallSucceed)
+			fadeCheckoutButton(false);
 		if (cartProductAdapter != null)
 			cartProductAdapter.onChangeQuantityComplete();
 	}
@@ -481,8 +482,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				rlCheckOut.setEnabled(onItemRemove ? false : true);
 				rlCheckOut.setVisibility(onItemRemove ? View.VISIBLE : View.GONE);
 				pBar.setVisibility(View.VISIBLE);
-				//parentLayout.setVisibility(View.GONE);
-				//Utils.showOneTimePopup(getActivity(), SessionDao.KEY.CART_FIRST_ORDER_FREE_DELIVERY, tvFreeDeliveryFirstOrder);
 				if (cartProductAdapter != null) {
 					cartProductAdapter.clear();
 				}
@@ -536,7 +535,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 							if (onItemRemove) {
 								cartProductAdapter.setEditMode(true);
 							}
-							onChangeQuantityComplete();
 							Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
 							break;
 						case 440:
@@ -566,6 +564,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			@Override
 			protected void onPreExecute() {
 				cartProductAdapter.onChangeQuantityLoad();
+				fadeCheckoutButton(true);
 			}
 
 			@Override
@@ -974,7 +973,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					commerceItem.quantityInStock = inventoryMap.containsKey(sku) ? inventoryMap.get(sku) : 0;
 					commerceItem.isStockChecked = true;
 				}
-
 				if (!commerceItem.isStockChecked) {
 					isAllInventoryAPICallSucceed = false;
 				}
