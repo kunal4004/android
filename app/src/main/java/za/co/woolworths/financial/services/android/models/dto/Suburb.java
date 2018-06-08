@@ -25,11 +25,7 @@ public class Suburb {
 	 "fulFillmentTypeId": "1"
 	 }
 	 */
-	@SerializedName("fullfilmentStores")
-	@Expose
-	public JsonElement fulfillmentStores;
-
 	@SerializedName("fulfillmentStores")
 	@Expose
-	public JsonElement fullfillmentStores;
+	public JsonElement fulfillmentStores;
 }

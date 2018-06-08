@@ -25,6 +25,7 @@ public class DeliveryLocationSelectionActivity extends AppCompatActivity impleme
 	private View btnBack, btnClose;
 	private String mSuburbName;
 	private String mProvinceName;
+	public static  final int DELIVERY_LOCATION_CLOSE_CLICKED = 1203;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +71,7 @@ public class DeliveryLocationSelectionActivity extends AppCompatActivity impleme
 					.replace(R.id.content_frame, new ProvinceSelectionFragment()).commitAllowingStateLoss();
 		}
 
-		Utils.showOneTimePopup(DeliveryLocationSelectionActivity.this, SessionDao.KEY.DELIVERY_LOCATION_ONE_TIME_POPUP, CustomPopUpWindow.MODAL_LAYOUT.INFO,R.string.delivering_location_popup_message);
+		Utils.showOneTimePopup(DeliveryLocationSelectionActivity.this, SessionDao.KEY.DELIVERY_LOCATION_ONE_TIME_POPUP, CustomPopUpWindow.MODAL_LAYOUT.INFO,getResources().getString(R.string.delivering_location_popup_message));
 	}
 
 	@Override
@@ -88,6 +89,7 @@ public class DeliveryLocationSelectionActivity extends AppCompatActivity impleme
 		if (getFragmentManager().getBackStackEntryCount() > 0) {
 			getFragmentManager().popBackStack();
 		} else {
+			setResult(DELIVERY_LOCATION_CLOSE_CLICKED);
 			super.onBackPressed();
 		}
 		overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
