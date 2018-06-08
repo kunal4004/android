@@ -44,10 +44,10 @@ import za.co.woolworths.financial.services.android.models.dto.CartResponse;
 import za.co.woolworths.financial.services.android.models.dto.ChangeQuantity;
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem;
 import za.co.woolworths.financial.services.android.models.dto.Data;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.SkuInventory;
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
@@ -275,7 +275,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				break;
 			case R.id.btnCheckOut:
 				Activity checkOutActivity = getActivity();
-				if ((checkOutActivity != null) && mShouldDisplayCheckout) {
+				if ((checkOutActivity != null) && shouldDisplayCheckout()) {
 					Intent openCheckOutActivity = new Intent(getContext(), CartCheckoutActivity.class);
 					startActivityForResult(openCheckOutActivity, CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY);
 					checkOutActivity.overridePendingTransition(0, 0);
@@ -433,6 +433,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	private void onChangeQuantityComplete() {
+		setShouldDisplayCheckout(true);
 		if (cartProductAdapter != null)
 			cartProductAdapter.onChangeQuantityComplete();
 	}
@@ -534,6 +535,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			@Override
 			protected void onPreExecute() {
 				cartProductAdapter.onChangeQuantityLoad();
+				setShouldDisplayCheckout(false);
 			}
 
 			@Override
@@ -938,7 +940,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				}
 
 				if (commerceItem.quantityInStock != 0) {
-					mShouldDisplayCheckout = true;
+					setShouldDisplayCheckout(true);
 				}
 			}
 		}
@@ -947,11 +949,20 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		 * to trigger checkout button only once
 		 */
 		if (getLastValueInMap().equalsIgnoreCase(mStoreId)) {
-			if (mShouldDisplayCheckout)
+			if (shouldDisplayCheckout())
 				fadeCheckoutButton();
 		}
 		if (cartProductAdapter != null)
 			cartProductAdapter.updateStockAvailability(cartItems);
+	}
+
+	/***
+	 * @param displayCheckout true will enable checkout button with fade in animation
+	 *                        false will disable checkout button with fade out animation
+	 */
+	private void setShouldDisplayCheckout(boolean displayCheckout) {
+		mShouldDisplayCheckout = displayCheckout;
+		fadeCheckoutButton();
 	}
 
 	/***
@@ -962,7 +973,11 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	 *                               checkout button
 	 */
 	private void fadeCheckoutButton() {
-		Utils.fadeInFadeOutAnimation(btnCheckOut, !mShouldDisplayCheckout);
+		Utils.fadeInFadeOutAnimation(btnCheckOut, !shouldDisplayCheckout());
+	}
+
+	private boolean shouldDisplayCheckout() {
+		return mShouldDisplayCheckout;
 	}
 
 	private String getLastValueInMap() {
