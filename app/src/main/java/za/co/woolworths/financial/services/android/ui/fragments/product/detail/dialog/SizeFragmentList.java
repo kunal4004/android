@@ -75,7 +75,18 @@ public class SizeFragmentList extends Fragment implements StockFinderSizeColorAd
 	}
 
 	@Override
-	public void onUpdate(final ArrayList<OtherSkus> otherSkuList, final String viewType, final boolean shouldShowPrice) {
+	public void onOutOfStockItemClicked(OtherSkus otherSkus) {
+		Activity activity = getActivity();
+		if (activity == null) return;
+		if (activity instanceof ConfirmColorSizeActivity) {
+			ConfirmColorSizeActivity confirmColorSizeActivity = (ConfirmColorSizeActivity) activity;
+			confirmColorSizeActivity.tapOnFindInStoreButton(otherSkus);
+		}
+	}
+
+	@Override
+	public void onUpdate(final ArrayList<OtherSkus> otherSkuList, final String viewType,
+						 final boolean shouldShowPrice) {
 		final Activity activity = getActivity();
 		if (activity != null) {
 			activity.runOnUiThread(new Runnable() {

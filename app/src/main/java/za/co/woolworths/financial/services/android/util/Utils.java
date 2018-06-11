@@ -1195,7 +1195,7 @@ public class Utils {
 						if (Integer.valueOf(fulFillmentTypeId.getAsString()) == Integer.valueOf(fulFillmentType)) {
 							JsonElement fulFillmentStoreId = fulfillmentObj.get("fulFillmentStoreId");
 							if (fulFillmentStoreId != null)
-								storeId = fulFillmentStoreId.toString();
+								storeId = fulFillmentStoreId.toString().replaceAll("\"","");
 						}
 					}
 				}

@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.content.res.TypedArray;
-import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -33,7 +32,6 @@ public class WStockFinderActivity extends AppCompatActivity implements StoreFind
 	private int mActionBarSize;
 	public GoogleMapViewPager mViewPager;
 	public StockFinderFragmentAdapter mPagerAdapter;
-	private Location mLocation;
 	private String mProductName;
 
 	public interface RecyclerItemSelected {
