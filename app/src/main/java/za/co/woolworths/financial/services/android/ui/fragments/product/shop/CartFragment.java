@@ -37,6 +37,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
 import za.co.woolworths.financial.services.android.models.dto.CartItemGroup;
@@ -782,6 +783,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					suburb.id = suburbId;
 					suburb.fulfillmentStores = data.orderSummary.suburb.fulfillmentStores;
 					Utils.saveRecentDeliveryLocation(new ShoppingDeliveryLocation(province, suburb), activity);
+					new AppInstanceObject(new ShoppingDeliveryLocation(province, suburb)).save();
 					setDeliveryLocation(mSuburbName + ", " + mProvinceName);
 				}
 			}

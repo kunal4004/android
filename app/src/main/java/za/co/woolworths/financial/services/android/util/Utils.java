@@ -79,6 +79,7 @@ import java.util.Map;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
@@ -1002,9 +1003,9 @@ public class Utils {
 
 	public static ShoppingDeliveryLocation getLastDeliveryLocation(Context context) {
 		ShoppingDeliveryLocation history = null;
-		List<ShoppingDeliveryLocation> locationHistories = Utils.getDeliveryLocationHistory(context);
-		if (locationHistories != null && locationHistories.size() > 0)
-			history = locationHistories.get(0);
+		AppInstanceObject appInstanceObject = new AppInstanceObject().get();
+		if (appInstanceObject !=null)
+			history = appInstanceObject.getShoppingDeliveryLocation();
 		return history;
 	}
 

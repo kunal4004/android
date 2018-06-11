@@ -30,6 +30,7 @@ import java.util.Map;
 
 import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
@@ -754,6 +755,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				suburb.name = cartSummary.suburbName;
 				suburb.id = suburbId;
 				Utils.saveRecentDeliveryLocation(new ShoppingDeliveryLocation(province, suburb), activity);
+				new AppInstanceObject(new ShoppingDeliveryLocation(province, suburb)).save();
 				executeAddToCart(mShoppingListItems.subList(1, mShoppingListItems.size()));
 			} else {
 				deliverySelectionIntent(DELIVERY_LOCATION_REQUEST);

@@ -27,6 +27,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.Province;
@@ -214,6 +215,7 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
 					Activity activity = getActivity();
 					if (activity != null) {
 						Utils.saveRecentDeliveryLocation(location,getActivity());
+						new AppInstanceObject(location).save();
 						activity.setResult(SUBURB_SET_RESULT);
 						Utils.sendBus(new CartState(location.suburb.name + ", " + location.province.name));
 						activity.finish();
