@@ -83,8 +83,8 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
-import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
+import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.Transaction;
 import za.co.woolworths.financial.services.android.models.dto.TransactionParentObj;
@@ -1174,13 +1174,16 @@ public class Utils {
 
 	@Nullable
 	public static String retrieveStoreId(String fulFillmentType, Context context) {
+
 		JsonParser parser = new JsonParser();
 		ShoppingDeliveryLocation shoppingDeliveryLocation = Utils.getLastDeliveryLocation(context);
 		if (shoppingDeliveryLocation == null) return "";
 		if (shoppingDeliveryLocation.suburb == null) return "";
-		if (shoppingDeliveryLocation.suburb.fulfillmentStores == null) return "";
+		if ((shoppingDeliveryLocation.suburb.fulfillmentStores == null)
+				&& (shoppingDeliveryLocation.suburb.fullfillmentStores == null))
+			return "";
 		String fulfillmentStore = Utils.toJson(shoppingDeliveryLocation.suburb.fulfillmentStores);
-		String swapFulFillmentStore = TextUtils.isEmpty(fulfillmentStore.replaceAll("null", "")) ? "" : fulfillmentStore;
+		String swapFulFillmentStore = (TextUtils.isEmpty(fulfillmentStore.replaceAll("null", "")) ? Utils.toJson(shoppingDeliveryLocation.suburb.fullfillmentStores) : fulfillmentStore);
 		JsonElement suburbFulfillment = parser.parse(swapFulFillmentStore);
 		String storeId = "";
 		if (!suburbFulfillment.isJsonNull()) {
@@ -1193,7 +1196,7 @@ public class Utils {
 						if (Integer.valueOf(fulFillmentTypeId.getAsString()) == Integer.valueOf(fulFillmentType)) {
 							JsonElement fulFillmentStoreId = fulfillmentObj.get("fulFillmentStoreId");
 							if (fulFillmentStoreId != null)
-								storeId = fulFillmentStoreId.toString();
+								storeId = fulFillmentStoreId.toString().replaceAll("\"","");
 						}
 					}
 				}

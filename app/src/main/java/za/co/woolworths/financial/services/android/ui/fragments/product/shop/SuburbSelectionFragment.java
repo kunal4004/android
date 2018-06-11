@@ -29,11 +29,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
-import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.dto.SuburbsResponse;
+import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.rest.shop.GetSuburbs;
 import za.co.woolworths.financial.services.android.models.rest.shop.SetDeliveryLocationSuburb;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
@@ -137,11 +137,13 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 		return new GetSuburbs(locationId, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
+				Log.i("SuburbSelectionFragment", "getRegions Succeeded");
 				handleSuburbsResponse((SuburbsResponse) object);
 			}
 
 			@Override
 			public void onFailure(final String errorMessage) {
+				Log.e("SuburbSelectionFragment", "getRegions Error: " + errorMessage);
 
 				getActivity().runOnUiThread(new Runnable() {
 					@Override
@@ -250,6 +252,7 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 
 	@Override
 	public void onItemClick(Suburb suburb) {
+		Log.i("SuburbSelection", "Suburb selected: " + suburb.name + " for province: " + selectedProvince.name);
 		setSuburbRequest(selectedProvince, suburb);
 	}
 
@@ -261,11 +264,13 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 		setDeliveryLocationSuburb = new SetDeliveryLocationSuburb(suburb.id, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
+				Log.i("SuburbSelectionFragment", "setSuburb Succeeded");
 				handleSetSuburbResponse((SetDeliveryLocationSuburbResponse) object, province, suburb);
 			}
 
 			@Override
 			public void onFailure(final String errorMessage) {
+				Log.e("SuburbSelectionFragment", "setSuburb Error: " + errorMessage);
 
 				getActivity().runOnUiThread(new Runnable() {
 					@Override
@@ -293,11 +298,10 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 		try {
 			switch (response.httpCode) {
 				case 200:
-					Activity activity = getActivity();
-					if (activity == null) return;
-					saveRecentDeliveryLocation(new ShoppingDeliveryLocation(province, suburb));
 					Utils.sendBus(new CartState(suburb.name + ", " + province.name));
+					saveRecentDeliveryLocation(new ShoppingDeliveryLocation(province, suburb));
 					// TODO: go back to cart if no items removed from cart, else go to list of removed items
+					Activity activity = getActivity();
 					if (activity != null) {
 						activity.setResult(SUBURB_SET_RESULT);
 					}

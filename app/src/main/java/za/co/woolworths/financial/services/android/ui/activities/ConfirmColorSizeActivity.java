@@ -41,7 +41,6 @@ import static za.co.woolworths.financial.services.android.ui.fragments.product.d
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_ADD_TO_SHOPPING_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_SEARCH_FROM_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_STORE_FINDER;
-import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsFragment.QUANTITY_CHANGED_FROM_LIST;
 
 public class ConfirmColorSizeActivity extends AppCompatActivity implements View.OnClickListener, WStockFinderActivity.RecyclerItemSelected {
 
@@ -273,11 +272,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 								Utils.sendBus(new CartState(CHANGE_QUANTITY, quantity));
 								mGlobalState.navigateFromQuantity(0);
 								break;
-							case QUANTITY_CHANGED_FROM_LIST:
-								Intent intent = new Intent();
-								intent.putExtra("QUANTITY_CHANGED_FROM_LIST", quantity);
-								setResult(QUANTITY_CHANGED_FROM_LIST, intent);
-								break;
+
 							default:
 								Utils.sendBus(new ProductState(POST_ADD_ITEM_TO_CART, quantity));
 								break;
@@ -577,6 +572,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 	private void populateCustomSizeSelector(ColorInterface fragmentToShow, boolean shouldShowPrice) {
 		showBackIcon();
 		tvTitle.setText(getString(R.string.confirm_size_desc));
+		if (TextUtils.isEmpty(mSelectedColour)) return;
 		ArrayList<OtherSkus> mOtherSizeSKU = Utils.commonSizeList(mSelectedColour,
 				mProductHasColor, getOtherSKUList(mOtherSKU));
 		if (fragmentToShow != null) {
@@ -627,5 +623,10 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 
 	public String getSelectedSku() {
 		return TextUtils.isEmpty(mSelectedSku) ? "" : mSelectedSku;
+	}
+
+	public void tapOnFindInStoreButton(OtherSkus otherSkus) {
+		mGlobalState.setSelectedSKUId(otherSkus);
+		closeConfirmColorSizeActivity(RESULT_TAP_FIND_INSTORE_BTN, null);
 	}
 }

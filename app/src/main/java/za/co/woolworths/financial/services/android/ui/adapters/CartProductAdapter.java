@@ -108,9 +108,9 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 				commerceItemInfo = commerceItem.commerceItemInfo;
 				productHolder.tvTitle.setText((commerceItemInfo == null) ? "" : commerceItemInfo.getProductDisplayName());
 				Utils.truncateMaxLine(productHolder.tvTitle);
-				productHolder.quantity.setText((commerceItemInfo == null) ? "" : String.valueOf(commerceItemInfo.getQuantity()));
+				productHolder.quantity.setText((commerceItemInfo == null) ? "" :String.valueOf(commerceItemInfo.getQuantity()));
 				productHolder.price.setText(WFormatter.formatAmount(commerceItem.getPriceInfo().getAmount()));
-				productImage(productHolder.productImage, (commerceItemInfo == null) ? "" : commerceItemInfo.externalImageURL);
+				productImage(productHolder.productImage, (commerceItemInfo == null) ? "" :commerceItemInfo.externalImageURL);
 				productHolder.btnDeleteRow.setVisibility(this.editMode ? View.VISIBLE : View.GONE);
 				productHolder.rlDeleteButton.setVisibility(this.editMode ? View.VISIBLE : View.GONE);
 				onRemoveSingleItem(productHolder, commerceItem);
@@ -146,10 +146,10 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 				if (itemRow.category.equalsIgnoreCase("FOOD")) {
 					productHolder.tvColorSize.setVisibility(View.INVISIBLE);
 				} else {
-					String sizeColor = (commerceItemInfo == null) ? "" : commerceItemInfo.getColor();
+					String sizeColor = (commerceItemInfo == null) ? "" :commerceItemInfo.getColor();
 					if (sizeColor == null)
 						sizeColor = "";
-					if (commerceItemInfo != null) {
+					if (commerceItemInfo!=null) {
 						if (sizeColor.isEmpty() && !commerceItemInfo.getSize().isEmpty() && !commerceItemInfo.getSize().equalsIgnoreCase("NO SZ"))
 							sizeColor = commerceItemInfo.getSize();
 						else if (!sizeColor.isEmpty() && !commerceItemInfo.getSize().isEmpty() && !commerceItemInfo.getSize().equalsIgnoreCase("NO SZ"))
@@ -162,11 +162,11 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 
 				productHolder.llQuantity.setAlpha(commerceItem.isStockChecked ? 1.0f : 0.5f);
 
-				if (commerceItem.isStockChecked) {
+				if(commerceItem.isStockChecked){
 					productHolder.llQuantity.setAlpha((commerceItem.quantityInStock == 0) ? 0.0f : 1.0f);
 					productHolder.tvProductAvailability.setVisibility((commerceItem.quantityInStock == 0) ? View.VISIBLE : View.GONE);
 					Utils.setBackgroundColor(productHolder.tvProductAvailability, R.drawable.round_red_corner, R.string.product_unavailable);
-				} else {
+				}else {
 					productHolder.llQuantity.setVisibility(View.VISIBLE);
 					productHolder.tvProductAvailability.setVisibility(View.GONE);
 				}
@@ -312,35 +312,6 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 		return firstLoadCompleted;
 	}
 
-	public void removeItem(ArrayList<CartItemGroup> updatedCartItems, OrderSummary updatedOrderSummer, CommerceItem commerceItem) {
-		ArrayList<CommerceItem> newCommerceItemList = new ArrayList<>();
-		for (CartItemGroup cartItemGroup : cartItems) {
-			ArrayList<CommerceItem> commerceItemList = cartItemGroup.commerceItems;
-			for (CommerceItem cm : commerceItemList) {
-				if (commerceItem.commerceItemInfo.commerceId.equalsIgnoreCase(cm.commerceItemInfo.commerceId)) {
-					cartItems.remove(commerceItem);
-				} else {
-					if (cm.deleteIconWasPressed()) {
-						newCommerceItemList.add(cm);
-					}
-				}
-			}
-		}
-		for (CartItemGroup cartItemGroup : updatedCartItems) {
-			ArrayList<CommerceItem> commerceItemList = cartItemGroup.commerceItems;
-			for (CommerceItem cm : commerceItemList) {
-				for (CommerceItem oldCommerceItem : newCommerceItemList) {
-					if (cm.commerceItemInfo.commerceId.equals(oldCommerceItem.commerceItemInfo.commerceId)) {
-						cm.setDeleteIconWasPressed(true);
-					}
-				}
-			}
-		}
-		this.cartItems = updatedCartItems;
-		this.orderSummary = updatedOrderSummer;
-		notifyDataSetChanged();
-	}
-
 	public void toggleDeleteSingleItem(CommerceItem commerceItem) {
 		for (CartItemGroup cartItemGroup : this.cartItems) {
 			ArrayList<CommerceItem> commerceItemList = cartItemGroup.commerceItems;
@@ -463,8 +434,8 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 		}
 	}
 
-	public void changeQuantity(ArrayList<CartItemGroup> cartItems,
-							   OrderSummary orderSummary) {
+	public void notifyAdapter(ArrayList<CartItemGroup> cartItems,
+							  OrderSummary orderSummary) {
 		this.cartItems = cartItems;
 		this.orderSummary = orderSummary;
 		resetQuantityState(false);

@@ -36,10 +36,10 @@ import za.co.woolworths.financial.services.android.models.dto.AddItemToCartRespo
 import za.co.woolworths.financial.services.android.models.dto.AddToCartDaTum;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.Response;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
 import za.co.woolworths.financial.services.android.models.dto.SkuInventory;
@@ -73,8 +73,6 @@ import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-import static za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity.DELIVERY_LOCATION_CLOSE_CLICKED;
-
 public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFragmentBinding, ShoppingListItemsViewModel> implements ShoppingListItemsNavigator, View.OnClickListener, EmptyCartView.EmptyCartInterface, NetworkChangeListener, ToastUtils.ToastInterface {
 	private ShoppingListItemsViewModel shoppingListItemsViewModel;
 	private String listName;
@@ -103,10 +101,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	private boolean errorMessageWasPopUp;
 	private int REQUEST_SUBURB_CHANGE = 12345;
 	private ShoppingListItem mOpenShoppingListItem;
-	public final static int QUANTITY_CHANGED_FROM_LIST = 2010;
-	private String mFulFillmentStoreId;
-	private int DELIVERY_LOCATION_REQUEST_CODE_FROM_SELECT_ALL = 1222;
-	private Integer mDeliveryResultCode;
 
 	@Override
 	public ShoppingListItemsViewModel getViewModel() {
@@ -148,7 +142,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 			@Override
 			public void accept(Object object) throws Exception {
 				if (object != null) {
-
 					if (object instanceof CartState) {
 						CartState cartState = (CartState) object;
 						int updatedQuantity = cartState.getQuantity();
@@ -172,29 +165,14 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 						}
 
 						if (shopState.getUpdatedList() != null) {
-							List<ShoppingListItem> shoppingListItems = shopState.getUpdatedList();
-							for (ShoppingListItem shoppingListItem : listItems) {
-								if (shoppingListItem.catalogRefId == null) {
-									continue;
-								}
-								for (ShoppingListItem newList : shoppingListItems) {
-									if (shoppingListItem.catalogRefId.equalsIgnoreCase(newList.catalogRefId)) {
-										newList.inventoryCallCompleted = shoppingListItem.inventoryCallCompleted;
-										newList.quantityInStock = shoppingListItem.quantityInStock;
-									}
-								}
-							}
-
-
 							Activity activity = getActivity();
 							if (activity != null) {
 								BottomNavigator bottomNavigator = getBottomNavigator();
 								setToast(shopState, bottomNavigator);
 								closeSoftKeyboard();
-								listItems = shoppingListItems;
+								listItems = shopState.getUpdatedList();
 								updateList(listItems);
 								setUpView();
-								makeInventoryCall();
 							}
 						}
 					}
@@ -228,6 +206,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	}
 
 	private void updateList(List<ShoppingListItem> listItems) {
+		setHeader();
 		if (shoppingListItemsAdapter != null) {
 			shoppingListItemsAdapter.updateList(listItems);
 			setUpView();
@@ -237,10 +216,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	public void loadShoppingListItems(ShoppingListItemsResponse shoppingListItemsResponse) {
 		getViewDataBinding().loadingBar.setVisibility(View.GONE);
 		listItems = shoppingListItemsResponse.listItems;
-		makeInventoryCall();
-	}
-
-	private void makeInventoryCall() {
 		Activity activity = getActivity();
 		if (activity == null) return;
 
@@ -250,7 +225,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				listItems = new ArrayList<>();
 			cancelQuantityLoad();
 			updateList(listItems);
-			adapterClickable(true);
 			return;
 		}
 
@@ -289,7 +263,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 			Intent editQuantityIntent = new Intent(activity, ConfirmColorSizeActivity.class);
 			editQuantityIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, ConfirmColorSizeActivity.QUANTITY);
 			editQuantityIntent.putExtra("CART_QUANTITY_In_STOCK", mOpenShoppingListItem.quantityInStock);
-			activity.startActivityForResult(editQuantityIntent, QUANTITY_CHANGED_FROM_LIST);
+			activity.startActivity(editQuantityIntent);
 			activity.overridePendingTransition(0, 0);
 
 		}
@@ -298,14 +272,11 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	private boolean shoppingListInventory() {
 		if (listItems == null) {
 			setUpView();
-			adapterClickable(true);
 			return true;
 		}
 		MultiMap<String, ShoppingListItem> multiListItem = MultiMap.create();
 		for (ShoppingListItem shoppingListItem : listItems) {
-			if (!shoppingListItem.inventoryCallCompleted
-					&& !TextUtils.isEmpty(shoppingListItem.catalogRefId))
-				multiListItem.put(shoppingListItem.fulfillmentType, shoppingListItem);
+			multiListItem.put(shoppingListItem.fulfillmentType, shoppingListItem);
 		}
 
 		Map<String, String> collectOtherSkuId = new HashMap<>();
@@ -319,11 +290,11 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 			}
 			String multiSKUS = TextUtils.join("-", skuIds);
 			collectOtherSkuId.put(fulFillmentTypeIdCollection, multiSKUS);
-			mFulFillmentStoreId = Utils.retrieveStoreId(fulFillmentTypeIdCollection, getActivity());
-			if (!TextUtils.isEmpty(mFulFillmentStoreId)) {
-				mFulFillmentStoreId = mFulFillmentStoreId.replaceAll("\"", "");
-				mMapStoreFulFillmentKeyValue.put(fulFillmentTypeIdCollection, mFulFillmentStoreId);
-				executeGetInventoryForStore(mFulFillmentStoreId, multiSKUS);
+			String fulFillmentStoreId = Utils.retrieveStoreId(fulFillmentTypeIdCollection, getActivity());
+			if (!TextUtils.isEmpty(fulFillmentStoreId)) {
+				fulFillmentStoreId = fulFillmentStoreId.replaceAll("\"", "");
+				mMapStoreFulFillmentKeyValue.put(fulFillmentTypeIdCollection, fulFillmentStoreId);
+				executeGetInventoryForStore(fulFillmentStoreId, multiSKUS);
 			}
 		}
 		return false;
@@ -331,15 +302,19 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 
 	private void setUpView() {
 		RecyclerView rcvShoppingListItems = getViewDataBinding().rcvShoppingListItems;
-		LinearLayout rlEmptyView = getViewDataBinding().rlEmptyListView;
-		rlEmptyView.setVisibility(listItems == null || listItems.size() <= 1 ? View.VISIBLE : View.GONE);
-		// 1 to exclude header
+		RelativeLayout rlSoppingList = getViewDataBinding().incEmptyLayout.relEmptyStateHandler;
+		rlSoppingList.setVisibility(listItems == null || listItems.size() <= 1 ? View.VISIBLE : View.GONE); // 1 to exclude header
 		rcvShoppingListItems.setVisibility(listItems == null || listItems.size() <= 1 ? View.GONE : View.VISIBLE);
 		manageSelectAllMenuVisibility(listItems.size());
 	}
 
+	private void setHeader() {
+		listItems.add(0, new ShoppingListItem());
+	}
+
 	private void initList(RecyclerView rcvShoppingListItems) {
 		listItems = new ArrayList<>();
+		listItems.add(new ShoppingListItem());
 		shoppingListItemsAdapter = new ShoppingListItemsAdapter(listItems, this);
 		LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
 		mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -395,10 +370,8 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				loadShoppingListItems(shoppingListItemsResponse);
 				break;
 			case 440:
-				adapterClickable(true);
 				break;
 			default:
-				adapterClickable(true);
 				getViewDataBinding().loadingBar.setVisibility(View.GONE);
 				Activity activity = getActivity();
 				if (activity == null) return;
@@ -407,21 +380,11 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, shoppingListItemsResponse.response.desc);
 				break;
 		}
-
-	}
-
-	private void adapterClickable(boolean clickable) {
-		if (shoppingListItemsAdapter != null)
-			shoppingListItemsAdapter.adapterClickable(clickable);
 	}
 
 	@Override
 	public void onItemSelectionChange(List<ShoppingListItem> items) {
-		boolean itemWasSelected = getButtonStatus(items);
-		Activity activity = getActivity();
-		if (activity == null) return;
-		getViewDataBinding().incConfirmButtonLayout.rlCheckOut.setVisibility(itemWasSelected ? View.VISIBLE : View.GONE);
-		Utils.setRecyclerViewMargin(getViewDataBinding().rcvShoppingListItems, itemWasSelected ? Utils.dp2px(activity, 60) : 0);
+		getViewDataBinding().incConfirmButtonLayout.rlCheckOut.setVisibility(getButtonStatus(items) ? View.VISIBLE : View.GONE);
 		if (isAdded()) {
 			if (items.size() > 0)
 				tvMenuSelectAll.setText(getString(getSelectAllMenuVisibility(items) ? R.string.deselect_all : R.string.select_all));
@@ -499,14 +462,18 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	@Override
 	public void onQuantityChangeClick(int position, ShoppingListItem shoppingListItem) {
 		this.changeQuantityItem = position;
-		this.mOpenShoppingListItem = shoppingListItem;
-		navigateFromQuantity();
+		if (mWoolWorthsApplication != null) {
+			WGlobalState wGlobalState = mWoolWorthsApplication.getWGlobalState();
+			if (wGlobalState != null) {
+				wGlobalState.navigateFromQuantity(1);
+			}
+		}
 		Activity activity = getActivity();
 		if (activity != null) {
 			Intent editQuantityIntent = new Intent(activity, ConfirmColorSizeActivity.class);
 			editQuantityIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, ConfirmColorSizeActivity.QUANTITY);
 			editQuantityIntent.putExtra("QUANTITY_IN_STOCK", Utils.toJson(shoppingListItem));
-			activity.startActivityForResult(editQuantityIntent, QUANTITY_CHANGED_FROM_LIST);
+			activity.startActivity(editQuantityIntent);
 			activity.overridePendingTransition(0, 0);
 		}
 	}
@@ -607,11 +574,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.selectAll:
-				if (shouldUserSetSuburb()) {
-					deliverySelectionIntent(DELIVERY_LOCATION_REQUEST_CODE_FROM_SELECT_ALL);
-					return super.onOptionsItemSelected(item);
-				}
-
 				if (tvMenuSelectAll.getText().toString().equalsIgnoreCase("SELECT ALL")) {
 					selectAllListItems(true);
 					tvMenuSelectAll.setText(getString(R.string.deselect_all));
@@ -663,7 +625,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	private void resetAddToCartButton() {
 		getViewDataBinding().incConfirmButtonLayout.pbLoadingIndicator.setVisibility(View.GONE);
 		getViewDataBinding().incConfirmButtonLayout.btnCheckOut.setVisibility(View.VISIBLE);
-
 	}
 
 	public void manageSelectAllMenuVisibility(int listSize) {
@@ -754,7 +715,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				Utils.saveRecentDeliveryLocation(new ShoppingDeliveryLocation(province, suburb), activity);
 				executeAddToCart(listItems.subList(1, listItems.size()));
 			} else {
-				deliverySelectionIntent(DELIVERY_LOCATION_REQUEST);
+				deliverySelectionIntent(getActivity());
 				resetAddToCartButton();
 			}
 		}
@@ -834,28 +795,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				}
 				if (getLastValueInMap().equalsIgnoreCase(storeId)) {
 					updateList();
-
-					/***
-					 * Triggered when "SELECT ALL" is selected from toolbar
-					 * and no deliverable location found
-					 * @params: allItemsAreOutOfStock returns true if one or more item
-					 * is available
-					 * tvMenuSelectAll.performClick() checked all available items
-					 */
-					if (getDeliveryResultCode() != null) {
-						setResultCode(null);
-						boolean allItemsAreOutOfStock = true;
-						for (ShoppingListItem shoppingListItem : shoppingListItemsAdapter.getShoppingListItems()) {
-							if (shoppingListItem.quantityInStock > 0) {
-								allItemsAreOutOfStock = false;
-								break;
-							}
-						}
-						if (!allItemsAreOutOfStock)
-							tvMenuSelectAll.performClick();
-						return;
-					}
-
 				}
 				break;
 			default:
@@ -874,7 +813,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	}
 
 	private void updateList() {
-		adapterClickable(true);
 		if (shoppingListItemsAdapter != null)
 			shoppingListItemsAdapter.updateList(listItems);
 	}
@@ -896,17 +834,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	@Override
 	public void openSetSuburbProcess(ShoppingListItem shoppingListItem) {
 		this.mOpenShoppingListItem = shoppingListItem;
-		navigateFromQuantity();
-		deliverySelectionIntent(DELIVERY_LOCATION_REQUEST);
-	}
-
-	private void navigateFromQuantity() {
-		if (mWoolWorthsApplication != null) {
-			WGlobalState wGlobalState = mWoolWorthsApplication.getWGlobalState();
-			if (wGlobalState != null) {
-				wGlobalState.navigateFromQuantity(QUANTITY_CHANGED_FROM_LIST);
-			}
-		}
+		locationSelectionClicked();
 	}
 
 	@Override
@@ -915,50 +843,19 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		showToolbar(listName);
 		if (requestCode == DELIVERY_LOCATION_REQUEST) {
 			if (resultCode == SUBURB_SET_RESULT) { // on suburb selection successful
-				makeInventoryCall();
+				executeAddToCart(listItems.subList(1, listItems.size()));
 			}
 		}
 
 		if (requestCode == REQUEST_SUBURB_CHANGE) {
-			if (resultCode != DELIVERY_LOCATION_CLOSE_CLICKED) {
-				initGetShoppingListItems();
-			}
-		}
-
-		if (requestCode == QUANTITY_CHANGED_FROM_LIST) {
-			if (resultCode == QUANTITY_CHANGED_FROM_LIST) {
-				Bundle bundleUpdatedQuantity = data.getExtras();
-				int updatedQuantity = bundleUpdatedQuantity.getInt("QUANTITY_CHANGED_FROM_LIST");
-				if (updatedQuantity > 0) {
-					if (shoppingListItemsAdapter == null) return;
-					List<ShoppingListItem> shoppingListItems = shoppingListItemsAdapter.getShoppingListItems();
-					if (shoppingListItems == null) return;
-					for (ShoppingListItem shoppingListItem : shoppingListItems) {
-						if (shoppingListItem.catalogRefId == null) continue;
-						if (shoppingListItem.catalogRefId.equalsIgnoreCase(mOpenShoppingListItem.catalogRefId)) {
-							shoppingListItem.userQuantity = updatedQuantity;
-							shoppingListItem.isSelected = true;
-							shoppingListItemsAdapter.updateList(listItems);
-						}
-					}
-				}
-			}
-		}
-
-		if (requestCode == DELIVERY_LOCATION_REQUEST_CODE_FROM_SELECT_ALL) {
-			if (resultCode == SUBURB_SET_RESULT) { // on suburb selection successful
-				setResultCode(DELIVERY_LOCATION_REQUEST_CODE_FROM_SELECT_ALL);
-				makeInventoryCall();
-			}
+			initGetShoppingListItems();
 		}
 	}
 
-	private void deliverySelectionIntent(int resultCode) {
-		Activity activity = getActivity();
-		if (activity == null) return;
+	private void deliverySelectionIntent(Activity activity) {
 		Intent deliveryLocationSelectionActivity = new Intent(activity, DeliveryLocationSelectionActivity.class);
 		deliveryLocationSelectionActivity.putExtra(DeliveryLocationSelectionActivity.LOAD_PROVINCE, "LOAD_PROVINCE");
-		activity.startActivityForResult(deliveryLocationSelectionActivity, resultCode);
+		activity.startActivityForResult(deliveryLocationSelectionActivity, DELIVERY_LOCATION_REQUEST);
 		activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 	}
 
@@ -981,15 +878,11 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		}
 	}
 
-	private boolean shouldUserSetSuburb() {
-		return TextUtils.isEmpty(mFulFillmentStoreId);
-	}
-
-	private void setResultCode(Integer resultCode) {
-		this.mDeliveryResultCode = resultCode;
-	}
-
-	public Integer getDeliveryResultCode() {
-		return mDeliveryResultCode;
+	private void locationSelectionClicked() {
+		Activity activity = getActivity();
+		if (activity == null) return;
+		Intent openDeliveryLocationSelectionActivity = new Intent(this.getContext(), DeliveryLocationSelectionActivity.class);
+		startActivityForResult(openDeliveryLocationSelectionActivity, REQUEST_SUBURB_CHANGE);
+		activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
 	}
 }
