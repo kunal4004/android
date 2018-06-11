@@ -29,6 +29,8 @@ public class CustomSizePickerAdapter extends RecyclerView.Adapter<CustomSizePick
 
 	public interface RecyclerViewClickListener {
 		void recyclerViewListClicked(View v, int position);
+
+		void onOutOfStockItemClicked(OtherSkus otherSkus);
 	}
 
 	private RecyclerViewClickListener mRecyclerViewClickListener;
@@ -60,16 +62,19 @@ public class CustomSizePickerAdapter extends RecyclerView.Adapter<CustomSizePick
 			if (context == null) return;
 			if (otherSkus == null) return;
 			if (mWoolworthApplication == null) return;
-			if ((mWoolworthApplication.getWGlobalState().getSaveButtonClick() == INDEX_ADD_TO_CART)) {
+			if (addToCartButtonWasClicked()) {
 				boolean quantityIsAvailable = otherSkus.quantity > 0;
 				tvName.setAlpha(quantityIsAvailable ? 1f : 0.5f);
 				tvPrice.setAlpha(quantityIsAvailable ? 0.6f : 1f);
-				if (!quantityIsAvailable)
-					relRootSizeLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.unavailable_color));
+				relRootSizeLayout.setBackgroundColor(quantityIsAvailable ? ContextCompat.getColor(context, R.color.white) : ContextCompat.getColor(context, R.color.unavailable_color));
 				tvName.setPaintFlags(quantityIsAvailable ? Paint.ANTI_ALIAS_FLAG : tvName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 				tvPrice.setText(quantityIsAvailable ? WFormatter.formatAmount(otherSkus.price) : context.getString(R.string.stock_finder_btn_label));
 			}
 		}
+	}
+
+	private boolean addToCartButtonWasClicked() {
+		return mWoolworthApplication.getWGlobalState().getSaveButtonClick() == INDEX_ADD_TO_CART;
 	}
 
 	@Override
@@ -85,6 +90,21 @@ public class CustomSizePickerAdapter extends RecyclerView.Adapter<CustomSizePick
 			@Override
 			public void onClick(View v) {
 				int position = holder.getAdapterPosition();
+				int quantityInStock = otherSkus.quantity;
+				/*****
+				 * addToCartButtonWasClicked determine whether add to cart button was pressed
+				 * if add to cart button was pressed and quantity is stock is 0 when user tap
+				 * find in store row, perform out of stock item process i.e. auto-tap find in store button
+				 * on pdp page
+				 */
+				if (addToCartButtonWasClicked()) {
+					if (quantityInStock > 0) {
+						mRecyclerViewClickListener.recyclerViewListClicked(v, position);
+					} else {
+						mRecyclerViewClickListener.onOutOfStockItemClicked(otherSkus);
+					}
+					return;
+				}
 				mRecyclerViewClickListener.recyclerViewListClicked(v, position);
 			}
 		});

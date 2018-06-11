@@ -29,7 +29,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="20dp"
                     android:layout_marginRight="20dp"
-                    android:src="@drawable/tick_cli_active"/>
+                    android:background="@drawable/ic_delivery_truck"/>
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -44,7 +44,7 @@
                         style="@style/style_delivery_location_item_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Woodstock, Western Cape"/>
+                        android:text="@string/my_pref_set_your_delivery_location"/>
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         android:id="@+id/tvCurrentLocationDescription"
@@ -52,7 +52,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:text="Western Cape"/>
+                        android:visibility="gone"
+                        />
 
                 </LinearLayout>
 

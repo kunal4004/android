@@ -55,6 +55,8 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 	private static final int REQUEST_SUBURB_CHANGE = 143;
 	private RelativeLayout rlLocationSelectedLayout;
 	private WTextView tvDeliveryLocation;
+	private WTextView tvDeliveringToText;
+
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -87,21 +89,27 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 		emptyCartView.setView(getString(R.string.title_no_shopping_lists), getString(R.string.description_no_shopping_lists), getString(R.string.button_no_shopping_lists), R.drawable.emptylists);
 		view.findViewById(R.id.btnRetry).setOnClickListener(this);
 
-		rlLocationSelectedLayout = getViewDataBinding().locationSelectedLayout;
-		tvDeliveryLocation = getViewDataBinding().tvDeliveryLocation;
+		rlLocationSelectedLayout = getViewDataBinding().deliveryLocationLayout.locationSelectedLayout;
+		tvDeliveryLocation = getViewDataBinding().deliveryLocationLayout.tvDeliveryLocation;
+		tvDeliveringToText = getViewDataBinding().deliveryLocationLayout.tvDeliveringTo;
 
 		ShoppingDeliveryLocation lastDeliveryLocation = Utils.getLastDeliveryLocation(getActivity());
 		if (lastDeliveryLocation != null) {
 			mSuburbName = lastDeliveryLocation.suburb.name;
 			mProvinceName = lastDeliveryLocation.province.name;
-			tvDeliveryLocation.setText(mSuburbName + ", " + mProvinceName);
+			setDeliveryLocation(mSuburbName + ", " + mProvinceName);
 		}
 
 		RelativeLayout rlNoConnectionLayout = getViewDataBinding().incConnectionLayout.noConnectionLayout;
 		mErrorHandlerView = new ErrorHandlerView(getActivity(), rlNoConnectionLayout);
 		mErrorHandlerView.setMargin(rlNoConnectionLayout, 0, 0, 0, 0);
 		mConnectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
-		rlLocationSelectedLayout.setOnClickListener(this);
+		rlLocationSelectedLayout.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				locationSelectionClicked();
+			}
+		});
 	}
 
 	public void loadShoppingList(List<ShoppingList> lists) {
@@ -262,9 +270,6 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 					initGetShoppingList();
 				}
 				break;
-			case R.id.locationSelectedLayout:
-				locationSelectionClicked();
-				break;
 			default:
 				break;
 		}
@@ -287,7 +292,7 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 			if (lastDeliveryLocation != null) {
 				mSuburbName = lastDeliveryLocation.suburb.name;
 				mProvinceName = lastDeliveryLocation.province.name;
-				tvDeliveryLocation.setText(mSuburbName + ", " + mProvinceName);
+				setDeliveryLocation(mSuburbName + ", " + mProvinceName);
 			}
 			initGetShoppingList();
 			return;
@@ -309,6 +314,12 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 			startActivityForResult(openDeliveryLocationSelectionActivity, REQUEST_SUBURB_CHANGE);
 			activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
 		}
+	}
+
+	public void setDeliveryLocation(String deliveryLocation) {
+		tvDeliveringToText.setText(getContext().getString(R.string.delivering_to));
+		tvDeliveryLocation.setVisibility(View.VISIBLE);
+		tvDeliveryLocation.setText(deliveryLocation);
 	}
 }
 
