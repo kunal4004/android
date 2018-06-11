@@ -777,7 +777,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					Suburb suburb = new Suburb();
 					suburb.name = data.suburbName;
 					suburb.id = suburbId;
-					suburb.fulfillmentStores = data.orderSummary.suburb.fullfillmentStores;
+					suburb.fulfillmentStores = data.orderSummary.suburb.fulfillmentStores;
 					Utils.saveRecentDeliveryLocation(new ShoppingDeliveryLocation(province, suburb), activity);
 					tvDeliveryLocation.setText(mSuburbName + ", " + mProvinceName);
 				}

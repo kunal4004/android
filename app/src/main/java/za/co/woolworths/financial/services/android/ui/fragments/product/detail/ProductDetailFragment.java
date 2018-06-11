@@ -226,7 +226,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 										closeSlideUpPanel(getView());
 										getBottomNavigator().closeSlideUpPanelFromList(productState.getCount());
 										break;
-
 									default:
 										mToastUtils.setActivity(activity);
 										mToastUtils.setCurrentState(TAG);
@@ -373,7 +372,11 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	}
 
 	private void setSubCategoryTitle() {
-		setText(getViewDataBinding().tvSubCategoryTitle, mSubCategoryTitle);
+		try {
+			setText(getViewDataBinding().tvSubCategoryTitle, mSubCategoryTitle);
+		} catch (NullPointerException ex) {
+			Log.e(TAG, ex.toString());
+		}
 	}
 
 	@Override
@@ -467,7 +470,11 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 	@Override
 	public void setProductName() {
-		setText(getViewDataBinding().tvProductName, getViewModel().getDefaultProduct().productName);
+		try {
+			setText(getViewDataBinding().tvProductName, getViewModel().getDefaultProduct().productName);
+		} catch (NullPointerException ex) {
+			Log.i(TAG, ex.toString());
+		}
 	}
 
 	@Override

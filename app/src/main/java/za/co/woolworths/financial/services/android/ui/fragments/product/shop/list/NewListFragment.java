@@ -5,15 +5,14 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
@@ -33,7 +32,6 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
-import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 import static android.view.View.GONE;
@@ -43,12 +41,20 @@ public class NewListFragment extends BaseFragment<NewListFragmentBinding, NewLis
 
 	private NewListViewModel newListFragment;
 	private PostAddList mPostAddList;
-	private KeyboardUtil mKeyboardUtils;
-	private View mView;
+	private WLoanEditTextView etNewList;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Activity activity = getActivity();
+		if (activity == null) return;
+		/*****
+		 * @Params:
+		 * WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE
+		 * | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
+		 * helps to push all content up
+		 */
+		activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 		newListFragment = ViewModelProviders.of(this).get(NewListViewModel.class);
 		newListFragment.setNavigator(this);
 	}
@@ -71,9 +77,8 @@ public class NewListFragment extends BaseFragment<NewListFragmentBinding, NewLis
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		mView = view;
-		Activity activity = getActivity();
-		displayKeyboard(view, activity);
+		getBottomNavigator().hideBottomNavigationMenu();
+		displayVirtualKeyboard(true);
 		showToolbar(R.string.new_list);
 		setUpEditText();
 		getViewDataBinding().btnCreateList.setOnClickListener(this);
@@ -81,10 +86,9 @@ public class NewListFragment extends BaseFragment<NewListFragmentBinding, NewLis
 	}
 
 	private void setUpEditText() {
-		WLoanEditTextView etNewList = getViewDataBinding().etNewList;
+		etNewList = getViewDataBinding().etNewList;
 		etNewList.setOnKeyPreImeListener(onKeyPreImeListener);
 		etNewList.setOnEditorActionListener(onEditorActionListener);
-		showSoftKeyboard(etNewList);
 		addTextChangedListener(etNewList);
 	}
 
@@ -200,20 +204,19 @@ public class NewListFragment extends BaseFragment<NewListFragmentBinding, NewLis
 	@Override
 	public void onShoppingListFailureResponse(Response response) {
 		Activity activity = getActivity();
-		if (activity != null) {
-			if (response.code.equalsIgnoreCase("0654")) {
-				messageLabelErrorDisplay(true, response.desc);
-			} else {
-				mKeyboardUtils.hideKeyboard(activity);
-				KeyboardUtil.hideSoftKeyboard(activity);
-				Utils.displayDialog(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
-			}
-			loadView(false);
+		if (activity == null) return;
+		if (response.code == null) return;
+		if (response.desc == null) return;
+		if (response.code.equalsIgnoreCase("0654")) {
+			messageLabelErrorDisplay(true, response.desc);
+		} else {
+			displayVirtualKeyboard(false);
+			Utils.displayDialog(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
 		}
+		loadView(false);
 	}
 
 	private void postAddList() {
-		WLoanEditTextView etNewList = getViewDataBinding().etNewList;
 		loadView(true);
 		mPostAddList = getViewModel().postCreateList(new CreateList(etNewList.getText().toString().trim(), null));
 		mPostAddList.execute();
@@ -228,14 +231,9 @@ public class NewListFragment extends BaseFragment<NewListFragmentBinding, NewLis
 	@Override
 	public void onDetach() {
 		super.onDetach();
-		showSoftwareKeyboard(false);
+		getBottomNavigator().showBottomNavigationMenu();
+		displayVirtualKeyboard(false);
 		cancelRequest(mPostAddList);
-	}
-
-	protected void showSoftwareKeyboard(boolean showKeyboard) {
-		final Activity activity = getActivity();
-		final InputMethodManager inputManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-		inputManager.hideSoftInputFromWindow(getViewDataBinding().etNewList.getWindowToken(), showKeyboard ? InputMethodManager.SHOW_FORCED : InputMethodManager.HIDE_NOT_ALWAYS);
 	}
 
 	private void messageLabelErrorDisplay(boolean isVisible, String message) {
@@ -250,18 +248,10 @@ public class NewListFragment extends BaseFragment<NewListFragmentBinding, NewLis
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		if (getViewDataBinding().etNewList != null) {
-			displayKeyboard(mView, getActivity());
+		if (etNewList != null) {
+			displayVirtualKeyboard(true);
 		}
 	}
-
-	private void displayKeyboard(View view, Activity activity) {
-		activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-		mKeyboardUtils = new KeyboardUtil(activity, view.findViewById(R.id.rlRootList), 0);
-		mKeyboardUtils.enableGlobal();
-		mKeyboardUtils.showKeyboard(getActivity());
-	}
-
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -269,16 +259,20 @@ public class NewListFragment extends BaseFragment<NewListFragmentBinding, NewLis
 		super.onCreateOptionsMenu(menu, inflater);
 	}
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-			case android.R.id.home:
-				Log.e("homeView","howee");
-				break;
-			default:
-				break;
-		}
-
-		return false;
+	/**
+	 * @param showKeyboard show or hide soft keyboard
+	 */
+	private void displayVirtualKeyboard(final boolean showKeyboard) {
+		final Activity activity = getActivity();
+		Handler handler = new Handler();
+		handler.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				InputMethodManager m = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+				if (m != null) {
+					m.toggleSoftInput(0, showKeyboard ? InputMethodManager.SHOW_IMPLICIT : InputMethodManager.HIDE_NOT_ALWAYS);
+				}
+			}
+		}, 10);
 	}
 }
