@@ -9,6 +9,7 @@ import android.view.View;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.DeliveryLocationSelectionFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.ProvinceSelectionFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -69,6 +70,8 @@ public class DeliveryLocationSelectionActivity extends AppCompatActivity impleme
 			fragmentManager.beginTransaction()
 					.replace(R.id.content_frame, new ProvinceSelectionFragment()).commitAllowingStateLoss();
 		}
+
+		Utils.showOneTimePopup(DeliveryLocationSelectionActivity.this, SessionDao.KEY.DELIVERY_LOCATION_ONE_TIME_POPUP, CustomPopUpWindow.MODAL_LAYOUT.INFO,getResources().getString(R.string.delivering_location_popup_message));
 	}
 
 	@Override

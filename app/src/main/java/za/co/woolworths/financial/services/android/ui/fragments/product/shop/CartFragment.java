@@ -116,6 +116,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	private ArrayList<CartItemGroup> cartItems;
 	private OrderSummary orderSummary;
 	private WTextView tvDeliveryLocation;
+	private WTextView tvDeliveringToText;
 	private CompositeDisposable mDisposables = new CompositeDisposable();
 	private RelativeLayout rlCheckOut;
 	private ChangeQuantity mChangeQuantity;
@@ -166,11 +167,12 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		mBtnRetry.setOnClickListener(this);
 		btnCheckOut.setOnClickListener(this);
 		tvDeliveryLocation = view.findViewById(R.id.tvDeliveryLocation);
+		tvDeliveringToText = view.findViewById(R.id.tvDeliveringTo);
 		ShoppingDeliveryLocation lastDeliveryLocation = Utils.getLastDeliveryLocation(getActivity());
 		if (lastDeliveryLocation != null) {
 			mSuburbName = lastDeliveryLocation.suburb.name;
 			mProvinceName = lastDeliveryLocation.province.name;
-			tvDeliveryLocation.setText(mSuburbName + ", " + mProvinceName);
+			setDeliveryLocation(mSuburbName + ", " + mProvinceName);
 		}
 		emptyCartUI(view);
 		final Activity activity = getActivity();
@@ -193,7 +195,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 							if (object instanceof CartState) {
 								CartState cartState = (CartState) object;
 								if (!TextUtils.isEmpty(cartState.getState())) {
-									tvDeliveryLocation.setText(cartState.getState());
+									setDeliveryLocation(mSuburbName + ", " + mProvinceName);
 								} else if (cartState.getIndexState() == CHANGE_QUANTITY) {
 									mQuantity = cartState.getQuantity();
 									changeQuantityAPI(new ChangeQuantity(mQuantity, mChangeQuantity.getCommerceId())).execute();
@@ -240,12 +242,13 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	private void emptyCartUI(View view) {
+		String firstName =  SessionUtilities.getInstance().getJwt().name.get(0);
 		ImageView imEmptyCart = view.findViewById(R.id.imgEmpyStateIcon);
-		imEmptyCart.setImageResource(R.drawable.cart_empty_vector);
+		imEmptyCart.setImageResource(R.drawable.ic_empty_cart);
 		WTextView txtEmptyStateTitle = view.findViewById(R.id.txtEmptyStateTitle);
 		WTextView txtEmptyStateDesc = view.findViewById(R.id.txtEmptyStateDesc);
 		WButton btnGoToProduct = view.findViewById(R.id.btnGoToProduct);
-		txtEmptyStateTitle.setText(getString(R.string.empty_cart));
+		txtEmptyStateTitle.setText("HI "+firstName+",");
 		txtEmptyStateDesc.setText(getString(R.string.empty_cart_desc));
 		btnGoToProduct.setVisibility(View.VISIBLE);
 		btnGoToProduct.setText(getString(R.string.start_shopping));
@@ -779,7 +782,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					suburb.id = suburbId;
 					suburb.fulfillmentStores = data.orderSummary.suburb.fulfillmentStores;
 					Utils.saveRecentDeliveryLocation(new ShoppingDeliveryLocation(province, suburb), activity);
-					tvDeliveryLocation.setText(mSuburbName + ", " + mProvinceName);
+					setDeliveryLocation(mSuburbName + ", " + mProvinceName);
 				}
 			}
 			JSONObject itemsObject = new JSONObject(new Gson().toJson(data.items));
@@ -1034,4 +1037,11 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		activity.finish();
 		activity.overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
 	}
+
+	public void setDeliveryLocation(String deliveryLocation) {
+		tvDeliveringToText.setText(getContext().getString(R.string.delivering_to));
+		tvDeliveryLocation.setVisibility(View.VISIBLE);
+		tvDeliveryLocation.setText(deliveryLocation);
+	}
+
 }

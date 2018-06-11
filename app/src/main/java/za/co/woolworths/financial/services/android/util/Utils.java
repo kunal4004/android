@@ -1274,6 +1274,17 @@ public class Utils {
 		}
 	}
 
+	public static void showOneTimePopup(Context context, SessionDao.KEY key, CustomPopUpWindow.MODAL_LAYOUT message_key, String message) {
+		try {
+			String firstTime = Utils.getSessionDaoValue(context, key);
+			if (firstTime == null) {
+				Utils.displayValidationMessage(context, message_key, message);
+				Utils.sessionDaoSave(context, key, "1");
+			}
+		} catch (NullPointerException ignored) {
+		}
+	}
+
 	/***
 	 * @method setRecyclerViewMargin - method to set margin to Recyclerview
 	 * @param recyclerView - represent current Recyclerview
