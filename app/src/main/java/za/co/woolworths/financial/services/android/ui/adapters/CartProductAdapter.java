@@ -312,35 +312,6 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 		return firstLoadCompleted;
 	}
 
-	public void removeItem(ArrayList<CartItemGroup> updatedCartItems, OrderSummary updatedOrderSummer, CommerceItem commerceItem) {
-		ArrayList<CommerceItem> newCommerceItemList = new ArrayList<>();
-		for (CartItemGroup cartItemGroup : cartItems) {
-			ArrayList<CommerceItem> commerceItemList = cartItemGroup.commerceItems;
-			for (CommerceItem cm : commerceItemList) {
-				if (commerceItem.commerceItemInfo.commerceId.equalsIgnoreCase(cm.commerceItemInfo.commerceId)) {
-					cartItems.remove(commerceItem);
-				} else {
-					if (cm.deleteIconWasPressed()) {
-						newCommerceItemList.add(cm);
-					}
-				}
-			}
-		}
-		for (CartItemGroup cartItemGroup : updatedCartItems) {
-			ArrayList<CommerceItem> commerceItemList = cartItemGroup.commerceItems;
-			for (CommerceItem cm : commerceItemList) {
-				for (CommerceItem oldCommerceItem : newCommerceItemList) {
-					if (cm.commerceItemInfo.commerceId.equals(oldCommerceItem.commerceItemInfo.commerceId)) {
-						cm.setDeleteIconWasPressed(true);
-					}
-				}
-			}
-		}
-		this.cartItems = updatedCartItems;
-		this.orderSummary = updatedOrderSummer;
-		notifyDataSetChanged();
-	}
-
 	public void toggleDeleteSingleItem(CommerceItem commerceItem) {
 		for (CartItemGroup cartItemGroup : this.cartItems) {
 			ArrayList<CommerceItem> commerceItemList = cartItemGroup.commerceItems;
@@ -463,8 +434,8 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 		}
 	}
 
-	public void changeQuantity(ArrayList<CartItemGroup> cartItems,
-							   OrderSummary orderSummary) {
+	public void notifyAdapter(ArrayList<CartItemGroup> cartItems,
+							  OrderSummary orderSummary) {
 		this.cartItems = cartItems;
 		this.orderSummary = orderSummary;
 		resetQuantityState(false);

@@ -113,6 +113,13 @@ public class SizeFragmentList extends Fragment implements StockFinderSizeColorAd
 					String multiSKU = TextUtils.join("-", skuIds);
 					ConfirmColorSizeActivity confirmColorSizeActivity = (ConfirmColorSizeActivity) activity;
 					String storeId = confirmColorSizeActivity.getFulFillMentStoreId();
+					// no store found, display size with find in-store button to the right.
+					if (TextUtils.isEmpty(storeId)) {
+						setSizeAdapter(otherSkuList);
+						return;
+					}
+
+					//store id exist, perform inventory call
 					executeGetInventoryForStore(storeId, multiSKU);
 				}
 			});

@@ -52,8 +52,6 @@ import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
-import za.co.woolworths.financial.services.android.models.dto.SkuInventory;
-import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
@@ -62,7 +60,6 @@ import za.co.woolworths.financial.services.android.models.rest.product.GetCartSu
 import za.co.woolworths.financial.services.android.models.rest.product.GetInventorySkusForStore;
 import za.co.woolworths.financial.services.android.models.rest.product.PostAddItemToCart;
 import za.co.woolworths.financial.services.android.models.rest.product.ProductRequest;
-import za.co.woolworths.financial.services.android.models.rest.shop.SetDeliveryLocationSuburb;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
@@ -102,7 +99,6 @@ import static za.co.woolworths.financial.services.android.ui.activities.ConfirmC
 import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.RESULT_TAP_FIND_INSTORE_BTN;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailViewModel.CLOTHING_PRODUCT;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailViewModel.FOOD_PRODUCT;
-import static za.co.woolworths.financial.services.android.util.Utils.retrieveStoreId;
 
 public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding, ProductDetailViewModel> implements ProductDetailNavigator, ProductViewPagerAdapter.MultipleImageInterface, View.OnClickListener, NetworkChangeListener, ToastUtils.ToastInterface {
 
@@ -135,7 +131,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	private PostAddItemToCart mPostAddItemToCart;
 	private ArrayList<OtherSkus> mSizeSkuList;
 	private ArrayList<OtherSkus> mSkuColorList;
-	private SetDeliveryLocationSuburb mSuburbLocation;
 	private boolean activate_location_popup = false;
 	private ToastUtils mToastUtils;
 	private int mNumberOfListSelected = 0;
@@ -774,7 +769,9 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 					setLayoutWeight(llStoreFinder, 0.5f);
 					showView(llStoreFinder);
 				} else {
-					setLayoutWeight(llAddToCart, 1f);
+					llAddToCart.setAlpha(1.0f);
+					llAddToCart.setEnabled(true);
+					setLayoutWeight(llAddToCart, 1.0f);
 					hideView(llStoreFinder);
 				}
 			} catch (IllegalStateException ex) {
@@ -865,7 +862,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		CancelableCallback.cancelAll();
 		cancelRequest(mLocationItemTask);
 		cancelRequest(mPostAddItemToCart);
-		cancelRequest(mSuburbLocation);
 		cancelRequest(mGetCartSummary);
 	}
 
@@ -1137,16 +1133,19 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 						sendBus(new ProductState(POST_ADD_ITEM_TO_CART, 1));
 						return;
 					}
-					makeInventoryCall(getGlobalState().getSelectedSKUId().sku);
+
+					String productId = getViewModel().getProductId();
+					String catalogRefId = productId;
+					//Parse skuId to catalogRefId if productType is of type CLOTHING_PRODUCT
+					if (getViewModel().getProductType().equalsIgnoreCase(CLOTHING_PRODUCT)) {
+						catalogRefId = getGlobalState().getSelectedSKUId().sku;
+					}
+					int quantity = 1;
+					mApiAddItemToCart = new AddItemToCart(productId, catalogRefId, quantity);
+					apiAddItemToCart();
 					break;
 			}
 		}
-	}
-
-	private void makeInventoryCall(String sku) {
-		String storeId = retrieveStoreId(getFulFillmentType(), getActivity());
-		if (TextUtils.isEmpty(storeId)) return;
-		executeGetInventoryForStore(storeId, sku);
 	}
 
 	public void colorSizePicker(ArrayList<OtherSkus> otherSkusList, boolean colorIsSelected, boolean sizeIsSelected) {
@@ -1569,37 +1568,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	}
 
 	@Override
-	public void setSuburbAPI(ShoppingDeliveryLocation deliveryLocation) {
-		mSuburbLocation = getViewModel().setSuburb(deliveryLocation);
-		mSuburbLocation.execute();
-	}
-
-	@Override
-	public void getInventoryForStoreSuccess(SkusInventoryForStoreResponse skusInventoryForStoreResponse) {
-		switch (skusInventoryForStoreResponse.httpCode) {
-			case 200:
-				List<SkuInventory> skuInventory = skusInventoryForStoreResponse.skuInventory;
-				if (skuInventory.size() == 0) {
-					onAddToCartLoadComplete();
-					colorSizePicker(mSkuColorList, false, true, getGlobalState().getSelectedSKUId());
-					return;
-				}
-				sendBus(new ProductState(POST_ADD_ITEM_TO_CART, 1));
-				break;
-			case 440:
-				break;
-			default:
-				break;
-		}
-		onAddToCartLoadComplete();
-	}
-
-	@Override
-	public void geInventoryForStoreFailure(String e) {
-		onAddItemToCartFailure(e);
-	}
-
-	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		// perform find in-store api call
@@ -1671,12 +1639,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 	public String getFulFillmentType() {
 		return TextUtils.isEmpty(getViewModel().getProduct().fulfillmentType) ? null : getViewModel().getProduct().fulfillmentType;
-	}
-
-	public void executeGetInventoryForStore(String storeId, String multiSku) {
-		onAddToCartLoad();
-		mGetInventorySkusForStore = getViewModel().getInventoryStockForStore(storeId, multiSku);
-		mGetInventorySkusForStore.execute();
 	}
 }
 

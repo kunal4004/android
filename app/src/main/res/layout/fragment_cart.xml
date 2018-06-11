@@ -54,17 +54,6 @@
 
                 </RelativeLayout>
 
-
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    android:id="@+id/tvFreeDeliveryFirstOrder"
-                    style="@style/style_cart_delivery_info"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:lineSpacingMultiplier="1.27"
-                    android:padding="@dimen/fifteen_sp"
-                    android:text="@string/cart_free_delivery_first_order"
-                    app:WTextView_font="myriadpro_regular"/>
-
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/cartList"
                     android:layout_width="match_parent"
