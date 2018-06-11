@@ -25,9 +25,10 @@ import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.adapters.StockFinderFragmentAdapter;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ColorFragmentList;
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.EditQuantityFragmentList;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.SizeFragmentList;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.EditQuantityFragmentList;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ColorInterface;
 import za.co.woolworths.financial.services.android.util.NonSwipeableViewPager;
@@ -41,7 +42,6 @@ import static za.co.woolworths.financial.services.android.ui.fragments.product.d
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_ADD_TO_SHOPPING_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_SEARCH_FROM_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_STORE_FINDER;
-import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsFragment.QUANTITY_CHANGED_FROM_LIST;
 
 public class ConfirmColorSizeActivity extends AppCompatActivity implements View.OnClickListener, WStockFinderActivity.RecyclerItemSelected {
 
@@ -273,11 +273,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 								Utils.sendBus(new CartState(CHANGE_QUANTITY, quantity));
 								mGlobalState.navigateFromQuantity(0);
 								break;
-							case QUANTITY_CHANGED_FROM_LIST:
-								Intent intent = new Intent();
-								intent.putExtra("QUANTITY_CHANGED_FROM_LIST", quantity);
-								setResult(QUANTITY_CHANGED_FROM_LIST, intent);
-								break;
+
 							default:
 								Utils.sendBus(new ProductState(POST_ADD_ITEM_TO_CART, quantity));
 								break;
@@ -456,7 +452,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 			mGlobalState.setSelectedSKUId(mOtherSizeSKU.get(position));
 			if (otherSku.quantity == 0
 					&& getGlobalState().getSaveButtonClick() == INDEX_ADD_TO_CART) {
-				closeConfirmColorSizeActivity(RESULT_TAP_FIND_INSTORE_BTN, null);
+				closeConfirmColorSizeActivity(RESULT_TAP_FIND_INSTORE_BTN,null);
 				return;
 			}
 			inStoreFinderUpdate();
@@ -563,7 +559,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 				return;
 			}
 
-			if (mCartQuantityInStock != 0) {
+			if(mCartQuantityInStock!= 0){
 				list.clear();
 				for (int number = 0; number < mCartQuantityInStock; number++) {
 					list.add(number + 1);

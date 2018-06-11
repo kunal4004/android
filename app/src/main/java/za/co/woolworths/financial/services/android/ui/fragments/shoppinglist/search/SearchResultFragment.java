@@ -560,9 +560,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 		if (sizeListSize > 0) {
 			if (sizeListSize == 1) {
 				// one size only
-				OtherSkus otherSkus = sizeList.get(0);
-				getProductAdapter().setSelectedSku(getSelectedProduct(), otherSkus);
-				noSizeColorIntent(otherSkus.sku);
+				noSizeColorIntent(sizeList.get(0).sku);
 			} else {
 				// size > 1
 				twoOrMoreSizeIntent(color, otherSkuList, sizeList, objProduct);
