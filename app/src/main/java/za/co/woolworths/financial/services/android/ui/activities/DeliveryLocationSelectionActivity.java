@@ -24,6 +24,7 @@ public class DeliveryLocationSelectionActivity extends AppCompatActivity impleme
 	private View btnBack, btnClose;
 	private String mSuburbName;
 	private String mProvinceName;
+	public static  final int DELIVERY_LOCATION_CLOSE_CLICKED = 1203;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +86,7 @@ public class DeliveryLocationSelectionActivity extends AppCompatActivity impleme
 		if (getFragmentManager().getBackStackEntryCount() > 0) {
 			getFragmentManager().popBackStack();
 		} else {
+			setResult(DELIVERY_LOCATION_CLOSE_CLICKED);
 			super.onBackPressed();
 		}
 		overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
