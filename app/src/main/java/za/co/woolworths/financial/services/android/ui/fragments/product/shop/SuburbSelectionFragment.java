@@ -137,13 +137,11 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 		return new GetSuburbs(locationId, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
-				Log.i("SuburbSelectionFragment", "getRegions Succeeded");
 				handleSuburbsResponse((SuburbsResponse) object);
 			}
 
 			@Override
 			public void onFailure(final String errorMessage) {
-				Log.e("SuburbSelectionFragment", "getRegions Error: " + errorMessage);
 
 				getActivity().runOnUiThread(new Runnable() {
 					@Override
@@ -252,7 +250,6 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 
 	@Override
 	public void onItemClick(Suburb suburb) {
-		Log.i("SuburbSelection", "Suburb selected: " + suburb.name + " for province: " + selectedProvince.name);
 		setSuburbRequest(selectedProvince, suburb);
 	}
 
@@ -264,13 +261,11 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 		setDeliveryLocationSuburb = new SetDeliveryLocationSuburb(suburb.id, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
-				Log.i("SuburbSelectionFragment", "setSuburb Succeeded");
 				handleSetSuburbResponse((SetDeliveryLocationSuburbResponse) object, province, suburb);
 			}
 
 			@Override
 			public void onFailure(final String errorMessage) {
-				Log.e("SuburbSelectionFragment", "setSuburb Error: " + errorMessage);
 
 				getActivity().runOnUiThread(new Runnable() {
 					@Override

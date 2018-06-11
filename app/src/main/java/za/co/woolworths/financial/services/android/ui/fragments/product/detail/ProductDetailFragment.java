@@ -774,7 +774,9 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 					setLayoutWeight(llStoreFinder, 0.5f);
 					showView(llStoreFinder);
 				} else {
-					setLayoutWeight(llAddToCart, 1f);
+					llAddToCart.setAlpha(1.0f);
+					llAddToCart.setEnabled(true);
+					setLayoutWeight(llAddToCart, 1.0f);
 					hideView(llStoreFinder);
 				}
 			} catch (IllegalStateException ex) {
