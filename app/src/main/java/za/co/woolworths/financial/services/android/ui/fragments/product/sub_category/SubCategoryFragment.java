@@ -239,6 +239,12 @@ public class SubCategoryFragment extends BaseFragment<ExpandableSubCategoryFragm
 	}
 
 	private void setCategoryAdapter(List<SubCategory> subCategories) {
+		/***
+		 * Check for NullPointerException on Activity to prevent
+		 * Attempt to invoke virtual method 'java.lang.Object android.content.Context.getSystemService
+		 */
+		Activity activity = getActivity();
+		if (activity == null) return;
 		this.mSubCategories = subCategories;
 		SubCategory subHeaderCategory = new SubCategory();
 		subHeaderCategory.setCategoryId(mRootCategory.categoryId);
@@ -253,7 +259,7 @@ public class SubCategoryFragment extends BaseFragment<ExpandableSubCategoryFragm
 		for (SubCategory subCategory : mSubCategories) {
 			mSubCategoryListModel.add(new SubCategoryModel(subCategory, null));
 		}
-		this.mAdapter = new SubCategoryAdapter(getActivity(), this, mSubCategoryListModel);
+		this.mAdapter = new SubCategoryAdapter(activity, this, mSubCategoryListModel);
 		this.mAdapter.setExpandCollapseListener(new ExpandableRecyclerAdapter.ExpandCollapseListener() {
 			@Override
 			public void onListItemExpanded(int position) {

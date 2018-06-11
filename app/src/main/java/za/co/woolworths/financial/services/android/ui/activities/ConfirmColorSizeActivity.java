@@ -578,6 +578,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 	private void populateCustomSizeSelector(ColorInterface fragmentToShow, boolean shouldShowPrice) {
 		showBackIcon();
 		tvTitle.setText(getString(R.string.confirm_size_desc));
+		if (TextUtils.isEmpty(mSelectedColour)) return;
 		ArrayList<OtherSkus> mOtherSizeSKU = Utils.commonSizeList(mSelectedColour,
 				mProductHasColor, getOtherSKUList(mOtherSKU));
 		if (fragmentToShow != null) {
@@ -628,5 +629,10 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 
 	public String getSelectedSku() {
 		return TextUtils.isEmpty(mSelectedSku) ? "" : mSelectedSku;
+	}
+
+	public void tapOnFindInStoreButton(OtherSkus otherSkus) {
+		mGlobalState.setSelectedSKUId(otherSkus);
+		closeConfirmColorSizeActivity(RESULT_TAP_FIND_INSTORE_BTN, null);
 	}
 }
