@@ -27,7 +27,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.sea
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
 
-import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailViewModel.FOOD_PRODUCT;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailViewModel.CLOTHING_PRODUCT;
 
 public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHolder> {
 
@@ -119,7 +119,9 @@ public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.V
 					 */
 					ProductList productList = mProductList.get(vh.getAdapterPosition());
 					String productType = productList.productType;
-					if (!productType.equalsIgnoreCase(FOOD_PRODUCT)) {
+					List<OtherSkus> otherSkusList = productList.otherSkus;
+					int otherSkuSize = (otherSkusList == null) ? 0 : otherSkusList.size();
+					if (productType.equalsIgnoreCase(CLOTHING_PRODUCT) || otherSkuSize > 1) {
 						boolean unlockSelection = !viewIsLoading();
 						vh.cbxItem.setChecked(unlockSelection);
 						if (unlockSelection) {
@@ -151,7 +153,7 @@ public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.V
 		ProductList selectedProduct = mProductList.get(position);
 		int otherSkuSize = getOtherSkuSize(selectedProduct);
 		// Product of type clothing or OtherSkus > 0
-		if (clothingTypeProduct(selectedProduct)) {
+		if (clothingTypeProduct(selectedProduct, otherSkuSize)) {
 			selectedProduct.viewIsLoading = !selectedProduct.viewIsLoading;
 			if (selectedProduct.itemWasChecked) selectedProduct.viewIsLoading = false;
 			selectedProduct.itemWasChecked = productWasChecked(selectedProduct);
@@ -166,8 +168,8 @@ public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.V
 		}
 	}
 
-	private boolean clothingTypeProduct(ProductList selectedProduct) {
-		return !selectedProduct.productType.equalsIgnoreCase(FOOD_PRODUCT);
+	private boolean clothingTypeProduct(ProductList selectedProduct, int otherSkuSize) {
+		return selectedProduct.productType.equalsIgnoreCase(CLOTHING_PRODUCT) || otherSkuSize > 0;
 	}
 
 	private void onItemClick(SimpleViewHolder vh) {
@@ -175,7 +177,7 @@ public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.V
 		ProductList selectedProduct = mProductList.get(position);
 		int otherSkuSize = getOtherSkuSize(selectedProduct);
 		// Product of type clothing or OtherSkus > 0
-		if (clothingTypeProduct(selectedProduct)) {
+		if (clothingTypeProduct(selectedProduct, otherSkuSize)) {
 			mSearchResultNavigator.onClothingTypeSelect(selectedProduct);
 		} else {
 			mSearchResultNavigator.onFoodTypeSelect(selectedProduct);
@@ -258,7 +260,7 @@ public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.V
 			}
 
 			String fromPrice = String.valueOf(productItem.fromPrice);
-			ProductUtils.gridPriceList(tvWasPrice, tvPrice,
+			ProductUtils.gridPriceList(tvPrice, tvWasPrice,
 					fromPrice, wasPrice);
 		}
 

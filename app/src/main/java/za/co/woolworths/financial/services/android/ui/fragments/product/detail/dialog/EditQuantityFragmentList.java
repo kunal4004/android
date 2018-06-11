@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;

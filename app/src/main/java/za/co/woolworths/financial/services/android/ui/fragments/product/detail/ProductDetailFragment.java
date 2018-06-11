@@ -57,7 +57,6 @@ import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.models.rest.product.GetCartSummary;
-import za.co.woolworths.financial.services.android.models.rest.product.GetInventorySkusForStore;
 import za.co.woolworths.financial.services.android.models.rest.product.PostAddItemToCart;
 import za.co.woolworths.financial.services.android.models.rest.product.ProductRequest;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
@@ -134,7 +133,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	private boolean activate_location_popup = false;
 	private ToastUtils mToastUtils;
 	private int mNumberOfListSelected = 0;
-	private GetInventorySkusForStore mGetInventorySkusForStore;
 	private final int ACCESS_FINE_LOCATION_REQUEST_CODE = 1;
 
 	@Override
@@ -224,6 +222,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 										closeSlideUpPanel(getView());
 										getBottomNavigator().closeSlideUpPanelFromList(productState.getCount());
 										break;
+
 									default:
 										mToastUtils.setActivity(activity);
 										mToastUtils.setCurrentState(TAG);
@@ -370,11 +369,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	}
 
 	private void setSubCategoryTitle() {
-		try {
-			setText(getViewDataBinding().tvSubCategoryTitle, mSubCategoryTitle);
-		} catch (NullPointerException ex) {
-			Log.e(TAG, ex.toString());
-		}
+		setText(getViewDataBinding().tvSubCategoryTitle, mSubCategoryTitle);
 	}
 
 	@Override
@@ -468,11 +463,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 	@Override
 	public void setProductName() {
-		try {
-			setText(getViewDataBinding().tvProductName, getViewModel().getDefaultProduct().productName);
-		} catch (NullPointerException ex) {
-			Log.i(TAG, ex.toString());
-		}
+		setText(getViewDataBinding().tvProductName, getViewModel().getDefaultProduct().productName);
 	}
 
 	@Override
