@@ -204,44 +204,6 @@ public class Utils {
 
 	}
 
-	public static String getDistance(GoogleMap googleMap) {
-
-		VisibleRegion visibleRegion = googleMap.getProjection().getVisibleRegion();
-
-		LatLng farRight = visibleRegion.farRight;
-		LatLng farLeft = visibleRegion.farLeft;
-		LatLng nearRight = visibleRegion.nearRight;
-		LatLng nearLeft = visibleRegion.nearLeft;
-
-		float[] distanceWidth = new float[2];
-		Location.distanceBetween(
-				(farRight.latitude + nearRight.latitude) / 2,
-				(farRight.longitude + nearRight.longitude) / 2,
-				(farLeft.latitude + nearLeft.latitude) / 2,
-				(farLeft.longitude + nearLeft.longitude) / 2,
-				distanceWidth
-		);
-
-
-		float[] distanceHeight = new float[2];
-		Location.distanceBetween(
-				(farRight.latitude + nearRight.latitude) / 2,
-				(farRight.longitude + nearRight.longitude) / 2,
-				(farLeft.latitude + nearLeft.latitude) / 2,
-				(farLeft.longitude + nearLeft.longitude) / 2,
-				distanceHeight
-		);
-
-		float distance;
-
-		if (distanceWidth[0] > distanceHeight[0]) {
-			distance = distanceWidth[0];
-		} else {
-			distance = distanceHeight[0];
-		}
-		return String.valueOf(distance);
-	}
-
 	public static void updateStatusBarBackground(Activity activity) {
 		Window window = activity.getWindow();
 		View decor = activity.getWindow().getDecorView();
@@ -927,7 +889,7 @@ public class Utils {
 		return (int) (dpValue * scale + 0.5f);
 	}
 
-	public static ShoppingDeliveryLocation getPreferredDeliveryLocation(Context context) {
+	public static ShoppingDeliveryLocation getPreferredDeliveryLocation() {
 		ShoppingDeliveryLocation preferredDeliveryLocation = null;
 		AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
 		return (currentUserObject.preferredShoppingDeliveryLocation !=null) ? currentUserObject.preferredShoppingDeliveryLocation : preferredDeliveryLocation;
@@ -1117,9 +1079,9 @@ public class Utils {
 	}
 
 	@Nullable
-	public static String retrieveStoreId(String fulFillmentType, Context context) {
+	public static String retrieveStoreId(String fulFillmentType) {
 		JsonParser parser = new JsonParser();
-		ShoppingDeliveryLocation shoppingDeliveryLocation = Utils.getPreferredDeliveryLocation(context);
+		ShoppingDeliveryLocation shoppingDeliveryLocation = Utils.getPreferredDeliveryLocation();
 		if (shoppingDeliveryLocation == null) return "";
 		if (shoppingDeliveryLocation.suburb == null) return "";
 		if (shoppingDeliveryLocation.suburb.fulfillmentStores == null) return "";

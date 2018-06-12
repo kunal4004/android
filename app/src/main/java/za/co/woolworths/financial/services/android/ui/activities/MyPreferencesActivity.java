@@ -87,7 +87,7 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 			biometricsLayout.setVerticalGravity(View.GONE);
 		}
 
-		ShoppingDeliveryLocation lastDeliveryLocation = Utils.getPreferredDeliveryLocation(MyPreferencesActivity.this);
+		ShoppingDeliveryLocation lastDeliveryLocation = Utils.getPreferredDeliveryLocation();
 		if (lastDeliveryLocation != null) {
 			mSuburbName = lastDeliveryLocation.suburb.name;
 			mProvinceName = lastDeliveryLocation.province.name;
@@ -134,7 +134,7 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 				}
 				break;
 			case REQUEST_SUBURB_CHANGE:
-				ShoppingDeliveryLocation lastDeliveryLocation = Utils.getPreferredDeliveryLocation(MyPreferencesActivity.this);
+				ShoppingDeliveryLocation lastDeliveryLocation = Utils.getPreferredDeliveryLocation();
 				if (lastDeliveryLocation != null) {
 					mSuburbName = lastDeliveryLocation.suburb.name;
 					mProvinceName = lastDeliveryLocation.province.name;

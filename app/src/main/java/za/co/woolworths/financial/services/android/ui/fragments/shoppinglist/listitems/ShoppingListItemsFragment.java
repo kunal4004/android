@@ -245,7 +245,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		Activity activity = getActivity();
 		if (activity == null) return;
 
-		ShoppingDeliveryLocation shoppingDeliveryLocation = Utils.getPreferredDeliveryLocation(getActivity());
+		ShoppingDeliveryLocation shoppingDeliveryLocation = Utils.getPreferredDeliveryLocation();
 		if (shoppingDeliveryLocation == null) {
 			if (mShoppingListItems == null)
 				mShoppingListItems = new ArrayList<>();
@@ -321,7 +321,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 			}
 			String multiSKUS = TextUtils.join("-", skuIds);
 			collectOtherSkuId.put(fulFillmentTypeIdCollection, multiSKUS);
-			mFulFillmentStoreId = Utils.retrieveStoreId(fulFillmentTypeIdCollection, getActivity());
+			mFulFillmentStoreId = Utils.retrieveStoreId(fulFillmentTypeIdCollection);
 			if (!TextUtils.isEmpty(mFulFillmentStoreId)) {
 				mFulFillmentStoreId = mFulFillmentStoreId.replaceAll("\"", "");
 				mMapStoreFulFillmentKeyValue.put(fulFillmentTypeIdCollection, mFulFillmentStoreId);
