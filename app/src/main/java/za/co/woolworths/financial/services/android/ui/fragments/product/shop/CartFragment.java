@@ -38,7 +38,6 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
-import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
 import za.co.woolworths.financial.services.android.models.dto.CartItemGroup;
 import za.co.woolworths.financial.services.android.models.dto.CartResponse;
 import za.co.woolworths.financial.services.android.models.dto.ChangeQuantity;
@@ -96,7 +95,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	private ToastUtils mToastUtils;
 	public static final int MOVE_TO_LIST_ON_TOAST_VIEW_CLICKED = 1020;
 	private int mNumberOfListSelected;
-	private Map<String, List<AddToListRequest>> mapOfItem;
+	private List<ChangeQuantity> mChangeQuantityList;
 
 	public interface ToggleRemoveItem {
 		void onRemoveItem(boolean visibility);
@@ -149,6 +148,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			Log.d("mToggleItemRemoved", ex.toString());
 		}
 		mMapStoreId = new HashMap<>();
+		mChangeQuantityList = new ArrayList<>();
 		mChangeQuantity = new ChangeQuantity();
 		rvCartList = view.findViewById(R.id.cartList);
 		btnCheckOut = view.findViewById(R.id.btnCheckOut);
@@ -198,7 +198,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 									setDeliveryLocation(mSuburbName + ", " + mProvinceName);
 								} else if (cartState.getIndexState() == CHANGE_QUANTITY) {
 									mQuantity = cartState.getQuantity();
-									changeQuantityAPI(new ChangeQuantity(mQuantity, mChangeQuantity.getCommerceId())).execute();
+									postChangeQuantity();
 								}
 							} else if (object instanceof ProductState) {
 								ProductState productState = (ProductState) object;
@@ -229,16 +229,19 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				}));
 	}
 
-	private void closeActivity(final Activity activity) {
-		getView().postDelayed(new Runnable() {
+	/****
+	 * mChangeQuantityList save all ChangeQuantityRequest after quantity selection
+	 * Top ChangeQuantity item in list is selected
+	 * Extract commerceId of the selected ChangeQuantity object
+	 * Perform changeQuantity call
+	 * Remove top changeQuantity object from list
+	 */
 
-			@Override
-			public void run() {
-				activity.finish();
-				activity.overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
-			}
-
-		}, 10);
+	private void postChangeQuantity() {
+		mChangeQuantityList.add(mChangeQuantity);
+		ChangeQuantity changeQuantity = mChangeQuantityList.get(0);
+		changeQuantityAPI(new ChangeQuantity(mQuantity, changeQuantity.getCommerceId())).execute();
+		mChangeQuantityList.remove(0);
 	}
 
 	private void emptyCartUI(View view) {
@@ -465,8 +468,17 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	private void onChangeQuantityComplete() {
-		if (isAllInventoryAPICallSucceed)
+		boolean quantityUploaded = false;
+		for (CartItemGroup cartItemGroup : cartItems) {
+			for (CommerceItem commerceItem : cartItemGroup.commerceItems) {
+				if (commerceItem.getQuantityUploading())
+					quantityUploaded = true;
+			}
+		}
+		if (isAllInventoryAPICallSucceed && !quantityUploaded) {
+			mChangeQuantityList = new ArrayList<>();
 			fadeCheckoutButton(false);
+		}
 		if (cartProductAdapter != null)
 			cartProductAdapter.onChangeQuantityComplete();
 	}
@@ -561,7 +573,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	private HttpAsyncTask<String, String, ShoppingCartResponse> changeQuantityAPI(final ChangeQuantity changeQuantity) {
-		mChangeQuantity = changeQuantity;
 		return new HttpAsyncTask<String, String, ShoppingCartResponse>() {
 
 			@Override
@@ -591,7 +602,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 							changeQuantityWasClicked = true;
 							if (cartProductAdapter != null)
 								cartProductAdapter.onChangeQuantityError();
-
 						}
 					});
 				}
@@ -894,7 +904,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			if (cartProductAdapter != null) {
 				cartProductAdapter.onChangeQuantityLoad(mCommerceItem);
 			}
-			changeQuantityAPI(new ChangeQuantity(mQuantity, mChangeQuantity.getCommerceId())).execute();
+			postChangeQuantity();
 			changeQuantityWasClicked = false;
 		}
 	}
