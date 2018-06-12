@@ -942,6 +942,8 @@ public class Utils {
 	public static void addToShoppingDeliveryLocationHistory(ShoppingDeliveryLocation shoppingDeliveryLocation){
 		AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
 		currentUserObject.shoppingDeliveryLocationHistory.add(shoppingDeliveryLocation);
+		if (currentUserObject.shoppingDeliveryLocationHistory.size() > AppInstanceObject.MAX_DELIVERY_LOCATION_HISTORY)
+			currentUserObject.shoppingDeliveryLocationHistory.remove(0);
 		currentUserObject.save();
 	}
 

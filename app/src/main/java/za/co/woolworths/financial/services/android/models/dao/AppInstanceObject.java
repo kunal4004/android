@@ -15,6 +15,9 @@ public class AppInstanceObject {
 
 	public ArrayList<User> users;
 
+	public static final int MAX_DELIVERY_LOCATION_HISTORY = 5;
+	public static final int MAX_USERS = 3;
+
 	public AppInstanceObject() {
 		users = new ArrayList<>();
 	}
@@ -74,7 +77,7 @@ public class AppInstanceObject {
 				appInstanceObject.users.add(this);
 			} else {
 				int index = -1;
-				for (int i = 0; i <= appInstanceObject.users.size(); i++) {
+				for (int i = 0; i < appInstanceObject.users.size(); i++) {
 					if (appInstanceObject.users.get(i).id.equalsIgnoreCase(this.id)) {
 						index = i;
 						break;
@@ -82,6 +85,8 @@ public class AppInstanceObject {
 				}
 				if (index == -1){
 					appInstanceObject.users.add(this);
+					if(appInstanceObject.users.size() > AppInstanceObject.MAX_USERS)
+						appInstanceObject.users.remove(0);
 				}
 				else
 					appInstanceObject.users.set(index, this);
