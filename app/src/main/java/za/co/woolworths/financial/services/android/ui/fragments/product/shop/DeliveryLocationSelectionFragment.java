@@ -29,9 +29,7 @@ import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
-import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
-import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.rest.shop.SetDeliveryLocationSuburb;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
 import za.co.woolworths.financial.services.android.ui.adapters.DeliveryLocationAdapter;
@@ -97,7 +95,7 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
 
 		configureLocationHistory();
 
-		List<ShoppingDeliveryLocation> deliveryHistory = Utils.getDeliveryLocationHistory(this.getContext());
+		List<ShoppingDeliveryLocation> deliveryHistory = Utils.getShoppingDeliveryLocationHistory();
 		if (deliveryHistory != null && deliveryHistory.size() > 0) {
 			if (!TextUtils.isEmpty(suburbName)) {
 				tvCurrentLocationTitle.setText(suburbName);
@@ -129,32 +127,6 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
 		} else {
 			layoutPreviousSelectedLocations.setVisibility(View.GONE);
 		}
-	}
-
-	private ShoppingDeliveryLocation getCurrentDeliveryLocation() {
-		Province province = new Province();
-		province.name = "Current province here";
-		Suburb suburb = new Suburb();
-		suburb.name = "Current suburb here";
-		return new ShoppingDeliveryLocation(province, suburb);
-	}
-
-	private List<ShoppingDeliveryLocation> getDeliveryLocationHistory() {
-		List<ShoppingDeliveryLocation> history = null;
-		try {
-			SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.DELIVERY_LOCATION_HISTORY);
-			if (sessionDao.value == null) {
-				history = new ArrayList<>();
-			} else {
-				Gson gson = new Gson();
-				Type type = new TypeToken<List<ShoppingDeliveryLocation>>() {
-				}.getType();
-				history = gson.fromJson(sessionDao.value, type);
-			}
-		} catch (Exception e) {
-			Log.e("TAG", e.getMessage());
-		}
-		return history;
 	}
 
 	private void onCurrentLocationClicked() {
@@ -213,7 +185,6 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
 					// TODO: go back to cart if no items removed from cart, else go to list of removed items
 					Activity activity = getActivity();
 					if (activity != null) {
-						Utils.saveRecentDeliveryLocation(location,getActivity());
 						Utils.savePreferredDeliveryLocation(location);
 						activity.setResult(SUBURB_SET_RESULT);
 						Utils.sendBus(new CartState(location.suburb.name + ", " + location.province.name));

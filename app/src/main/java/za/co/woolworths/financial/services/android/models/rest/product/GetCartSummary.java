@@ -62,12 +62,11 @@ public class GetCartSummary extends HttpAsyncTask<String, String, CartSummaryRes
 		if (cartSummaryResponse != null) {
 			List<CartSummary> cartSummary = cartSummaryResponse.data;
 			if (cartSummary != null) {
-				ShoppingDeliveryLocation shoppingDeliveryLocation = Utils.getLastDeliveryLocation(mContext);
+				ShoppingDeliveryLocation shoppingDeliveryLocation = Utils.getPreferredDeliveryLocation(mContext);
 				CartSummary cart = cartSummary.get(0);
 				if (shoppingDeliveryLocation == null) {
 					Province province = getProvince(cart);
 					Suburb suburb = getSuburb(cart);
-					Utils.saveRecentDeliveryLocation(new ShoppingDeliveryLocation(province, suburb), mContext);
 					Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(province, suburb));
 					return;
 				}
@@ -75,7 +74,6 @@ public class GetCartSummary extends HttpAsyncTask<String, String, CartSummaryRes
 				if (shoppingDeliveryLocation.suburb.id.equalsIgnoreCase(String.valueOf(cart.suburbId)))
 					return;
 				Suburb cartSuburb = getSuburb(cart);
-				Utils.saveRecentDeliveryLocation(new ShoppingDeliveryLocation(province, cartSuburb), mContext);
 				Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(province, cartSuburb));
 			}
 		}

@@ -245,8 +245,8 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		Activity activity = getActivity();
 		if (activity == null) return;
 
-		List<ShoppingDeliveryLocation> deliveryLocationHistories = Utils.getDeliveryLocationHistory(activity);
-		if (deliveryLocationHistories.size() == 0) {
+		ShoppingDeliveryLocation shoppingDeliveryLocation = Utils.getPreferredDeliveryLocation(getActivity());
+		if (shoppingDeliveryLocation == null) {
 			if (mShoppingListItems == null)
 				mShoppingListItems = new ArrayList<>();
 			cancelQuantityLoad();
@@ -753,7 +753,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				Suburb suburb = new Suburb();
 				suburb.name = cartSummary.suburbName;
 				suburb.id = suburbId;
-				Utils.saveRecentDeliveryLocation(new ShoppingDeliveryLocation(province, suburb), activity);
 				Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(province, suburb));				executeAddToCart(mShoppingListItems.subList(1, mShoppingListItems.size()));
 			} else {
 				deliverySelectionIntent(DELIVERY_LOCATION_REQUEST);

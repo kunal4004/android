@@ -108,7 +108,7 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 	}
 
 	public void setDeliveryLocation(){
-		ShoppingDeliveryLocation lastDeliveryLocation = Utils.getLastDeliveryLocation(getActivity());
+		ShoppingDeliveryLocation lastDeliveryLocation = Utils.getPreferredDeliveryLocation(getActivity());
 		if (lastDeliveryLocation != null) {
 			mSuburbName = lastDeliveryLocation.suburb.name;
 			mProvinceName = lastDeliveryLocation.province.name;
@@ -293,7 +293,7 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == REQUEST_SUBURB_CHANGE) {
 			showToolbar(R.string.title_my_list);
-			ShoppingDeliveryLocation lastDeliveryLocation = Utils.getLastDeliveryLocation(getActivity());
+			ShoppingDeliveryLocation lastDeliveryLocation = Utils.getPreferredDeliveryLocation(getActivity());
 			if (lastDeliveryLocation != null) {
 				mSuburbName = lastDeliveryLocation.suburb.name;
 				mProvinceName = lastDeliveryLocation.province.name;

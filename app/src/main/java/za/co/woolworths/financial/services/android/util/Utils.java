@@ -62,7 +62,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -917,25 +916,6 @@ public class Utils {
 		WoolworthsApplication.getInstance().setProductOfferingId(productOfferingId);
 	}
 
-
-	public static List<ShoppingDeliveryLocation> getDeliveryLocationHistory(Context context) {
-		List<ShoppingDeliveryLocation> history = null;
-		try {
-			SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.DELIVERY_LOCATION_HISTORY);
-			if (sessionDao.value == null) {
-				history = new ArrayList<>();
-			} else {
-				Gson gson = new Gson();
-				Type type = new TypeToken<List<ShoppingDeliveryLocation>>() {
-				}.getType();
-				history = gson.fromJson(sessionDao.value, type);
-			}
-		} catch (Exception e) {
-			Log.e("TAG", e.getMessage());
-		}
-		return history;
-	}
-
 	public static void sendBus(Object object) {
 		WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
 		if (woolworthsApplication != null) woolworthsApplication.bus().send(object);
@@ -947,61 +927,7 @@ public class Utils {
 		return (int) (dpValue * scale + 0.5f);
 	}
 
-	public static void saveRecentDeliveryLocation(ShoppingDeliveryLocation historyItem, Context context) {
-		List<ShoppingDeliveryLocation> history = getRecentDeliveryLocations(context);
-		SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.DELIVERY_LOCATION_HISTORY);
-
-		Gson gson = new Gson();
-		boolean isExist = false;
-		if (history == null) {
-			history = new ArrayList<>();
-			history.add(0, historyItem);
-		} else {
-			int position = 0;
-			for (int i = 0; i < history.size(); i++) {
-				if (history.get(i).suburb.id.equals(historyItem.suburb.id)) {
-					isExist = true;
-					position = i;
-				}
-			}
-			if (!isExist) {
-				history.add(0, historyItem);
-				if (history.size() > 5)
-					history.remove(5);
-			} else {
-				history.remove(position);
-				history.add(0, historyItem);
-			}
-		}
-
-		String json = gson.toJson(history);
-		sessionDao.value = json;
-		try {
-			sessionDao.save();
-		} catch (Exception e) {
-			Log.e("TAG", e.getMessage());
-		}
-	}
-
-	public static List<ShoppingDeliveryLocation> getRecentDeliveryLocations(Context context) {
-		List<ShoppingDeliveryLocation> history = null;
-		try {
-			SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.DELIVERY_LOCATION_HISTORY);
-			if (sessionDao.value == null) {
-				history = new ArrayList<>();
-			} else {
-				Gson gson = new Gson();
-				Type type = new TypeToken<List<ShoppingDeliveryLocation>>() {
-				}.getType();
-				history = gson.fromJson(sessionDao.value, type);
-			}
-		} catch (Exception e) {
-			Log.e("TAG", e.getMessage());
-		}
-		return history;
-	}
-
-	public static ShoppingDeliveryLocation getLastDeliveryLocation(Context context) {
+	public static ShoppingDeliveryLocation getPreferredDeliveryLocation(Context context) {
 		ShoppingDeliveryLocation preferredDeliveryLocation = null;
 		AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
 		return (currentUserObject.preferredShoppingDeliveryLocation !=null) ? currentUserObject.preferredShoppingDeliveryLocation : preferredDeliveryLocation;
@@ -1023,6 +949,7 @@ public class Utils {
 		AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
 		return  currentUserObject.shoppingDeliveryLocationHistory;
 	}
+
 	public static PopupWindow showToast(final Activity activity, String message, final boolean viewState) {
 		// inflate your xml layout
 		if (activity != null) {
@@ -1190,7 +1117,7 @@ public class Utils {
 	@Nullable
 	public static String retrieveStoreId(String fulFillmentType, Context context) {
 		JsonParser parser = new JsonParser();
-		ShoppingDeliveryLocation shoppingDeliveryLocation = Utils.getLastDeliveryLocation(context);
+		ShoppingDeliveryLocation shoppingDeliveryLocation = Utils.getPreferredDeliveryLocation(context);
 		if (shoppingDeliveryLocation == null) return "";
 		if (shoppingDeliveryLocation.suburb == null) return "";
 		if (shoppingDeliveryLocation.suburb.fulfillmentStores == null) return "";

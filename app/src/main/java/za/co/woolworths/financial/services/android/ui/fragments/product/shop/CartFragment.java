@@ -168,7 +168,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		btnCheckOut.setOnClickListener(this);
 		tvDeliveryLocation = view.findViewById(R.id.tvDeliveryLocation);
 		tvDeliveringToText = view.findViewById(R.id.tvDeliveringTo);
-		ShoppingDeliveryLocation lastDeliveryLocation = Utils.getLastDeliveryLocation(getActivity());
+		ShoppingDeliveryLocation lastDeliveryLocation = Utils.getPreferredDeliveryLocation(getActivity());
 		if (lastDeliveryLocation != null) {
 			mSuburbName = lastDeliveryLocation.suburb.name;
 			mProvinceName = lastDeliveryLocation.province.name;
@@ -781,7 +781,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					suburb.name = data.suburbName;
 					suburb.id = suburbId;
 					suburb.fulfillmentStores = data.orderSummary.suburb.fulfillmentStores;
-					Utils.saveRecentDeliveryLocation(new ShoppingDeliveryLocation(province, suburb), activity);
 					Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(province, suburb));
 					setDeliveryLocation(mSuburbName + ", " + mProvinceName);
 				}
@@ -868,7 +867,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		}
 		if (requestCode == CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY || requestCode == REQUEST_SUBURB_CHANGE) {
 			loadShoppingCart(false).execute();
-			ShoppingDeliveryLocation lastDeliveryLocation = Utils.getLastDeliveryLocation(getActivity());
+			ShoppingDeliveryLocation lastDeliveryLocation = Utils.getPreferredDeliveryLocation(getActivity());
 			if (lastDeliveryLocation != null) {
 				mSuburbName = lastDeliveryLocation.suburb.name;
 				mProvinceName = lastDeliveryLocation.province.name;
