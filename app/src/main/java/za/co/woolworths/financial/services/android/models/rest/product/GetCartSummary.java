@@ -7,7 +7,6 @@ import android.text.TextUtils;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
@@ -69,7 +68,7 @@ public class GetCartSummary extends HttpAsyncTask<String, String, CartSummaryRes
 					Province province = getProvince(cart);
 					Suburb suburb = getSuburb(cart);
 					Utils.saveRecentDeliveryLocation(new ShoppingDeliveryLocation(province, suburb), mContext);
-					new AppInstanceObject(new ShoppingDeliveryLocation(province, suburb)).save();
+					Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(province, suburb));
 					return;
 				}
 				Province province = getProvince(cart);
@@ -77,7 +76,7 @@ public class GetCartSummary extends HttpAsyncTask<String, String, CartSummaryRes
 					return;
 				Suburb cartSuburb = getSuburb(cart);
 				Utils.saveRecentDeliveryLocation(new ShoppingDeliveryLocation(province, cartSuburb), mContext);
-				new AppInstanceObject(new ShoppingDeliveryLocation(province, cartSuburb)).save();
+				Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(province, cartSuburb));
 			}
 		}
 	}

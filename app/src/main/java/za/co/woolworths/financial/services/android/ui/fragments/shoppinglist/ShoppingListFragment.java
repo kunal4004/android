@@ -93,12 +93,7 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 		tvDeliveryLocation = getViewDataBinding().deliveryLocationLayout.tvDeliveryLocation;
 		tvDeliveringToText = getViewDataBinding().deliveryLocationLayout.tvDeliveringTo;
 
-		ShoppingDeliveryLocation lastDeliveryLocation = Utils.getLastDeliveryLocation(getActivity());
-		if (lastDeliveryLocation != null) {
-			mSuburbName = lastDeliveryLocation.suburb.name;
-			mProvinceName = lastDeliveryLocation.province.name;
-			setDeliveryLocation(mSuburbName + ", " + mProvinceName);
-		}
+		setDeliveryLocation();
 
 		RelativeLayout rlNoConnectionLayout = getViewDataBinding().incConnectionLayout.noConnectionLayout;
 		mErrorHandlerView = new ErrorHandlerView(getActivity(), rlNoConnectionLayout);
@@ -110,6 +105,15 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 				locationSelectionClicked();
 			}
 		});
+	}
+
+	public void setDeliveryLocation(){
+		ShoppingDeliveryLocation lastDeliveryLocation = Utils.getLastDeliveryLocation(getActivity());
+		if (lastDeliveryLocation != null) {
+			mSuburbName = lastDeliveryLocation.suburb.name;
+			mProvinceName = lastDeliveryLocation.province.name;
+			manageDeliveryLocationUI(mSuburbName + ", " + mProvinceName);
+		}
 	}
 
 	public void loadShoppingList(List<ShoppingList> lists) {
@@ -246,6 +250,7 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 	public void onResume() {
 		super.onResume();
 		initGetShoppingList();
+		setDeliveryLocation();
 		KeyboardUtil.hideSoftKeyboard(getActivity());
 		Activity activity = getActivity();
 		if (activity != null) {
@@ -292,7 +297,7 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 			if (lastDeliveryLocation != null) {
 				mSuburbName = lastDeliveryLocation.suburb.name;
 				mProvinceName = lastDeliveryLocation.province.name;
-				setDeliveryLocation(mSuburbName + ", " + mProvinceName);
+				manageDeliveryLocationUI(mSuburbName + ", " + mProvinceName);
 			}
 			initGetShoppingList();
 			return;
@@ -316,7 +321,7 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 		}
 	}
 
-	public void setDeliveryLocation(String deliveryLocation) {
+	public void manageDeliveryLocationUI(String deliveryLocation) {
 		tvDeliveringToText.setText(getContext().getString(R.string.delivering_to));
 		tvDeliveryLocation.setVisibility(View.VISIBLE);
 		tvDeliveryLocation.setText(deliveryLocation);

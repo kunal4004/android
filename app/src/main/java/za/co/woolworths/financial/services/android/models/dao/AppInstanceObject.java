@@ -1,62 +1,56 @@
 package za.co.woolworths.financial.services.android.models.dao;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
-import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 
 /**
- * Created by w7099877 on 2018/06/11.
+ * Created by w7099877 on 2018/06/12.
  */
 
 public class AppInstanceObject {
 
-	private ShoppingDeliveryLocation shoppingDeliveryLocation;
-	private JWTDecodedModel jwt;
-	private String userEmailId;
-
-
-	public AppInstanceObject(ShoppingDeliveryLocation shoppingDeliveryLocation) {
-		this.shoppingDeliveryLocation = shoppingDeliveryLocation;
-		this.jwt = this.getCurrentUserJWT();
-		this.userEmailId = jwt.email.get(0);
-	}
+	public ArrayList<User> users;
 
 	public AppInstanceObject() {
-		this.jwt = this.getCurrentUserJWT();
-		this.userEmailId = jwt.email.get(0);
+		users = new ArrayList<>();
+	}
+
+	public static AppInstanceObject get() {
+		try {
+			SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.APP_INSTANCE_OBJECT);
+			if (sessionDao.value != null) {
+				return new Gson().fromJson(sessionDao.value, AppInstanceObject.class);
+			}
+		} catch (Exception e) {
+
+		}
+
+		return new AppInstanceObject();
+	}
+
+	public User getCurrentUserObject() {
+
+		if (this.users.size() == 0) {
+			return new User();
+		}else {
+			for (User user : this.users)
+			{
+				if(user.id.equalsIgnoreCase(getCurrentUsersID())){
+					return user;
+				}
+			}
+		}
+
+		return new User();
 	}
 
 	public void save() {
-
-		List<AppInstanceObject> appInstanceObjects = new ArrayList<>();
 		SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.APP_INSTANCE_OBJECT);
-		if (sessionDao.value == null) {
-			appInstanceObjects.add(new AppInstanceObject(this.shoppingDeliveryLocation));
-		} else {
-			Type type = new TypeToken<List<AppInstanceObject>>() {
-			}.getType();
-			appInstanceObjects = new Gson().fromJson(sessionDao.value, type);
-			boolean isUSerFound = false;
-			for (AppInstanceObject object : appInstanceObjects) {
-				if (object.userEmailId.equalsIgnoreCase(this.userEmailId)) {
-					object.shoppingDeliveryLocation = this.shoppingDeliveryLocation;
-					isUSerFound = true;
-					break;
-				}
-			}
-			if (!isUSerFound)
-				appInstanceObjects.add(new AppInstanceObject(this.shoppingDeliveryLocation));
-
-		}
-		sessionDao.value = new Gson().toJson(appInstanceObjects);
+		sessionDao.value = new Gson().toJson(this);
 		try {
 			sessionDao.save();
 		} catch (Exception e) {
@@ -64,27 +58,41 @@ public class AppInstanceObject {
 		}
 	}
 
-	public AppInstanceObject get() {
-		AppInstanceObject appInstanceObject = null;
-		List<AppInstanceObject> appInstanceObjects;
-		SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.APP_INSTANCE_OBJECT);
-		if (sessionDao.value != null) {
-			Type type = new TypeToken<List<AppInstanceObject>>() {
-			}.getType();
-			appInstanceObjects = new Gson().fromJson(sessionDao.value, type);
-			for (AppInstanceObject appInstance : appInstanceObjects) {
-				if (appInstance.userEmailId.equalsIgnoreCase(this.userEmailId))
-					return appInstance;
-			}
+	public class User {
+		public String id;
+		public ShoppingDeliveryLocation preferredShoppingDeliveryLocation;
+		public ArrayList<ShoppingDeliveryLocation> shoppingDeliveryLocationHistory;
+
+		public User() {
+			id = AppInstanceObject.getCurrentUsersID();
+			shoppingDeliveryLocationHistory = new ArrayList<>();
 		}
-		return appInstanceObject;
+
+		public void save() {
+			AppInstanceObject appInstanceObject = AppInstanceObject.get();
+			if (appInstanceObject.users.size() == 0) {
+				appInstanceObject.users.add(this);
+			} else {
+				int index = -1;
+				for (int i = 0; i <= appInstanceObject.users.size(); i++) {
+					if (appInstanceObject.users.get(i).id.equalsIgnoreCase(this.id)) {
+						index = i;
+						break;
+					}
+				}
+				if (index == -1){
+					appInstanceObject.users.add(this);
+				}
+				else
+					appInstanceObject.users.set(index, this);
+
+			}
+			appInstanceObject.save();
+		}
+
+	}
+	public static String getCurrentUsersID() {
+		return SessionUtilities.getInstance().getJwt().email.get(0);
 	}
 
-	public ShoppingDeliveryLocation getShoppingDeliveryLocation() {
-		return shoppingDeliveryLocation;
-	}
-
-	private JWTDecodedModel getCurrentUserJWT() {
-		return SessionUtilities.getInstance().getJwt();
-	}
 }

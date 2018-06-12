@@ -1002,13 +1002,27 @@ public class Utils {
 	}
 
 	public static ShoppingDeliveryLocation getLastDeliveryLocation(Context context) {
-		ShoppingDeliveryLocation history = null;
-		AppInstanceObject appInstanceObject = new AppInstanceObject().get();
-		if (appInstanceObject !=null)
-			history = appInstanceObject.getShoppingDeliveryLocation();
-		return history;
+		ShoppingDeliveryLocation preferredDeliveryLocation = null;
+		AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+		return (currentUserObject.preferredShoppingDeliveryLocation !=null) ? currentUserObject.preferredShoppingDeliveryLocation : preferredDeliveryLocation;
 	}
 
+	public static void savePreferredDeliveryLocation(ShoppingDeliveryLocation shoppingDeliveryLocation){
+		AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+		currentUserObject.preferredShoppingDeliveryLocation = shoppingDeliveryLocation;
+		currentUserObject.save();
+	}
+
+	public static void addToShoppingDeliveryLocationHistory(ShoppingDeliveryLocation shoppingDeliveryLocation){
+		AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+		currentUserObject.shoppingDeliveryLocationHistory.add(shoppingDeliveryLocation);
+		currentUserObject.save();
+	}
+
+	public static ArrayList<ShoppingDeliveryLocation> getShoppingDeliveryLocationHistory(){
+		AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+		return  currentUserObject.shoppingDeliveryLocationHistory;
+	}
 	public static PopupWindow showToast(final Activity activity, String message, final boolean viewState) {
 		// inflate your xml layout
 		if (activity != null) {

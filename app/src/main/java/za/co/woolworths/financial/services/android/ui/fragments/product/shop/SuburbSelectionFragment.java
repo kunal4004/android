@@ -297,6 +297,8 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 					if (activity == null) return;
 					saveRecentDeliveryLocation(new ShoppingDeliveryLocation(province, suburb));
 					Utils.sendBus(new CartState(suburb.name + ", " + province.name));
+					Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(province,suburb));
+					Utils.addToShoppingDeliveryLocationHistory(new ShoppingDeliveryLocation(province,suburb));
 					// TODO: go back to cart if no items removed from cart, else go to list of removed items
 					if (activity != null) {
 						activity.setResult(SUBURB_SET_RESULT);
