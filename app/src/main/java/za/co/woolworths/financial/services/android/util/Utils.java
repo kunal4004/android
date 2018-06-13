@@ -1193,15 +1193,14 @@ public class Utils {
 						if (Integer.valueOf(fulFillmentTypeId.getAsString()) == Integer.valueOf(fulFillmentType)) {
 							JsonElement fulFillmentStoreId = fulfillmentObj.get("fulFillmentStoreId");
 							if (fulFillmentStoreId != null)
-								storeId = fulFillmentStoreId.toString().replaceAll("\"","");
+								storeId = fulfillmentObj.get("fulFillmentStoreId").getAsString();
 						}
 					}
 				}
 			} else {
 				JsonObject jsSuburbFulfillment = suburbFulfillment.getAsJsonObject();
-				if (jsSuburbFulfillment.has(fulFillmentType)) {
-					storeId = jsSuburbFulfillment.get(fulFillmentType).toString();
-				}
+				if (jsSuburbFulfillment.has(fulFillmentType))
+					storeId = jsSuburbFulfillment.get(fulFillmentType).getAsString();
 			}
 		}
 		return storeId;
