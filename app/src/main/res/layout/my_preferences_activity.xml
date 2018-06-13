@@ -123,7 +123,7 @@
                         android:singleLine="true"
                         android:ellipsize="end"
                         app:WTextView_font="myriadpro_regular"
-                        android:text="@string/my_pref_set_your_delivery_location"
+                        android:text="@string/set_your_delivery_location"
                         />
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         android:id="@+id/tvDeliveringTo"

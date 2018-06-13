@@ -624,7 +624,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 	}
 
 	public String getFulFillMentStoreId() {
-		return Utils.retrieveStoreId(mFulFillmentType, ConfirmColorSizeActivity.this);
+		return Utils.retrieveStoreId(mFulFillmentType);
 	}
 
 	private WGlobalState getGlobalState() {

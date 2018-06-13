@@ -10,32 +10,22 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
-import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
-import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.rest.shop.SetDeliveryLocationSuburb;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
 import za.co.woolworths.financial.services.android.ui.adapters.DeliveryLocationAdapter;
-import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
@@ -56,8 +46,6 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
 	private View selectionContentLayout, layoutPreviousSelectedLocations;
 	private ProgressBar loadingProgressBar;
 	private RecyclerView deliveryLocationHistoryList;
-	private WTextView tvCurrentLocationTitle, tvCurrentLocationDescription;
-	private ImageView imDeliveryLocation;
 
 	public DeliveryLocationSelectionFragment() {
 		// Required empty public constructor
@@ -72,14 +60,6 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-
-		Bundle bundle = getArguments();
-		String suburbName = null, provinceName = null;
-		if (bundle != null) {
-			suburbName = bundle.getString("suburbName");
-			provinceName = bundle.getString("provinceName");
-		}
-
 		RelativeLayout relNoConnectionLayout = view.findViewById(R.id.no_connection_layout);
 		mErrorHandlerView = new ErrorHandlerView(getActivity(), relNoConnectionLayout);
 		mErrorHandlerView.setMargin(relNoConnectionLayout, 0, 0, 0, 0);
@@ -89,23 +69,9 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
 		layoutPreviousSelectedLocations = view.findViewById(R.id.layoutPreviousSelectedLocations);
 		loadingProgressBar = view.findViewById(R.id.loadingProgressBar);
 		deliveryLocationHistoryList = view.findViewById(R.id.deliveryLocationHistoryList);
-		tvCurrentLocationTitle = view.findViewById(R.id.tvCurrentLocationTitle);
-		tvCurrentLocationDescription = view.findViewById(R.id.tvCurrentLocationDescription);
-		imDeliveryLocation = view.findViewById(R.id.iconTick);
-
 		view.findViewById(R.id.currentLocationLayout).setOnClickListener(this);
 
 		configureLocationHistory();
-
-		List<ShoppingDeliveryLocation> deliveryHistory = Utils.getDeliveryLocationHistory(this.getContext());
-		if (deliveryHistory != null && deliveryHistory.size() > 0) {
-			if (!TextUtils.isEmpty(suburbName)) {
-				tvCurrentLocationTitle.setText(suburbName);
-				tvCurrentLocationDescription.setText(provinceName);
-				tvCurrentLocationDescription.setVisibility(View.VISIBLE);
-				imDeliveryLocation.setBackgroundResource(R.drawable.tick_cli_active);
-			}
-		}
 	}
 
 	@Override
@@ -119,7 +85,7 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
 
 	private void configureLocationHistory() {
 		// TODO: make API request & show loading before setting the list
-		List<ShoppingDeliveryLocation> history = getDeliveryLocationHistory();
+		List<ShoppingDeliveryLocation> history = Utils.getShoppingDeliveryLocationHistory();
 		if (history != null && history.size() > 0) {
 			DeliveryLocationAdapter deliveryLocationAdapter = new DeliveryLocationAdapter(history, this);
 			LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
@@ -129,32 +95,6 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
 		} else {
 			layoutPreviousSelectedLocations.setVisibility(View.GONE);
 		}
-	}
-
-	private ShoppingDeliveryLocation getCurrentDeliveryLocation() {
-		Province province = new Province();
-		province.name = "Current province here";
-		Suburb suburb = new Suburb();
-		suburb.name = "Current suburb here";
-		return new ShoppingDeliveryLocation(province, suburb);
-	}
-
-	private List<ShoppingDeliveryLocation> getDeliveryLocationHistory() {
-		List<ShoppingDeliveryLocation> history = null;
-		try {
-			SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.DELIVERY_LOCATION_HISTORY);
-			if (sessionDao.value == null) {
-				history = new ArrayList<>();
-			} else {
-				Gson gson = new Gson();
-				Type type = new TypeToken<List<ShoppingDeliveryLocation>>() {
-				}.getType();
-				history = gson.fromJson(sessionDao.value, type);
-			}
-		} catch (Exception e) {
-			Log.e("TAG", e.getMessage());
-		}
-		return history;
 	}
 
 	private void onCurrentLocationClicked() {
@@ -213,7 +153,7 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
 					// TODO: go back to cart if no items removed from cart, else go to list of removed items
 					Activity activity = getActivity();
 					if (activity != null) {
-						Utils.saveRecentDeliveryLocation(location,getActivity());
+						Utils.savePreferredDeliveryLocation(location);
 						activity.setResult(SUBURB_SET_RESULT);
 						Utils.sendBus(new CartState(location.suburb.name + ", " + location.province.name));
 						activity.finish();
