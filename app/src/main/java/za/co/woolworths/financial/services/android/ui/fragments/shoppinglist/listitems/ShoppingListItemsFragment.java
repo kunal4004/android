@@ -49,7 +49,6 @@ import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.rest.product.GetCartSummary;
 import za.co.woolworths.financial.services.android.models.rest.product.GetInventorySkusForStore;
 import za.co.woolworths.financial.services.android.models.rest.product.PostAddItemToCart;
-import za.co.woolworths.financial.services.android.models.rest.shoppinglist.DeleteShoppingList;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.DeleteShoppingListItem;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.GetShoppingListItems;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
@@ -81,7 +80,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	private String listId;
 	private GetShoppingListItems getShoppingListItems;
 	private List<ShoppingListItem> mShoppingListItems;
-	private DeleteShoppingList deleteShoppingList;
 	private DeleteShoppingListItem deleteShoppingListItem;
 	private ShoppingListItemsAdapter shoppingListItemsAdapter;
 	private MenuItem mMenuActionSearch, mMenuActionSelectAll;
@@ -337,7 +335,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		rlEmptyView.setVisibility(mShoppingListItems == null || mShoppingListItems.size() <= 1 ? View.VISIBLE : View.GONE);
 		// 1 to exclude header
 		rcvShoppingListItems.setVisibility(mShoppingListItems == null || mShoppingListItems.size() <= 1 ? View.GONE : View.VISIBLE);
-		manageSelectAllMenuVisibility(mShoppingListItems.size());
 	}
 
 	private void initList(RecyclerView rcvShoppingListItems) {
@@ -435,6 +432,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	@Override
 	public void onShoppingListItemDelete(ShoppingListItemsResponse shoppingListItemsResponse) {
 		mShoppingListItems = shoppingListItemsResponse.listItems;
+		manageSelectAllMenuVisibility(mShoppingListItems.size());
 		updateList(mShoppingListItems);
 	}
 
@@ -665,11 +663,16 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	private void resetAddToCartButton() {
 		getViewDataBinding().incConfirmButtonLayout.pbLoadingIndicator.setVisibility(View.GONE);
 		getViewDataBinding().incConfirmButtonLayout.btnCheckOut.setVisibility(View.VISIBLE);
-
 	}
 
 	public void manageSelectAllMenuVisibility(int listSize) {
-		isMenuItemReadyToShow = listSize > 1;
+		isMenuItemReadyToShow = false;
+		for (ShoppingListItem shoppingListItem : mShoppingListItems) {
+			if (shoppingListItem.quantityInStock > 0) {
+				isMenuItemReadyToShow = true;
+				break;
+			}
+		}
 		Activity activity = getActivity();
 		if (activity != null)
 			activity.invalidateOptionsMenu();
@@ -788,8 +791,13 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 
 	public void executeGetInventoryForStore(String storeId, String multiSku) {
 		onAddToCartLoad();
+		selectAllTextVisibility(false);
 		mGetInventorySkusForStore = getViewModel().getInventoryStockForStore(storeId, multiSku);
 		mGetInventorySkusForStore.execute();
+	}
+
+	private void selectAllTextVisibility(boolean visible) {
+		tvMenuSelectAll.setVisibility(visible ? View.VISIBLE : View.GONE);
 	}
 
 	@Override
@@ -827,7 +835,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				}
 
 				if (shoppingListItems != null) {
-					updateList();
+					updateShoppingList();
 					shoppingListItems = null;
 					return;
 				}
@@ -837,11 +845,11 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				 * @method: updateList()
 				 */
 				if (getLastValueInMap() == null) {
-					updateList();
+					updateShoppingList();
 					return;
 				}
 				if (getLastValueInMap().equalsIgnoreCase(storeId)) {
-					updateList();
+					updateShoppingList();
 
 					/***
 					 * Triggered when "SELECT ALL" is selected from toolbar
@@ -879,6 +887,11 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				}
 				break;
 		}
+	}
+
+	private void updateShoppingList() {
+		manageSelectAllMenuVisibility(mShoppingListItems.size());
+		updateList();
 	}
 
 	private void updateList() {
