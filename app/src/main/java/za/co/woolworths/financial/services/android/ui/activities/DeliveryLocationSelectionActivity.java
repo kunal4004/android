@@ -23,8 +23,6 @@ public class DeliveryLocationSelectionActivity extends AppCompatActivity impleme
 	private Toolbar toolbar;
 	private WTextView toolbarText;
 	private View btnBack, btnClose;
-	private String mSuburbName;
-	private String mProvinceName;
 	public static  final int DELIVERY_LOCATION_CLOSE_CLICKED = 1203;
 
 	@Override
@@ -32,17 +30,6 @@ public class DeliveryLocationSelectionActivity extends AppCompatActivity impleme
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_delivery_location_selection);
 		Utils.updateStatusBarBackground(this);
-		String province = "";
-		if (getIntent().hasExtra(LOAD_PROVINCE)) {
-			province = getIntent().getStringExtra(LOAD_PROVINCE);
-		}
-
-		Bundle bundle = getIntent().getExtras();
-		if (bundle != null) {
-			mSuburbName = bundle.getString("suburbName");
-			mProvinceName = bundle.getString("provinceName");
-		}
-
 		toolbar = findViewById(R.id.toolbar);
 		toolbarText = findViewById(R.id.toolbarText);
 
@@ -56,12 +43,8 @@ public class DeliveryLocationSelectionActivity extends AppCompatActivity impleme
 		getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 		getSupportActionBar().setTitle(null);
 
-		if (TextUtils.isEmpty(province)) {
+		if (Utils.getShoppingDeliveryLocationHistory().size() > 0) {
 			DeliveryLocationSelectionFragment deliveryLocationSelectionFragment = new DeliveryLocationSelectionFragment();
-			Bundle deliveryBundle = new Bundle();
-			deliveryBundle.putString("suburbName", mSuburbName);
-			deliveryBundle.putString("provinceName", mProvinceName);
-			deliveryLocationSelectionFragment.setArguments(deliveryBundle);
 			FragmentManager fragmentManager = getSupportFragmentManager();
 			fragmentManager.beginTransaction()
 					.replace(R.id.content_frame, deliveryLocationSelectionFragment).commitAllowingStateLoss();

@@ -62,7 +62,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -79,6 +78,7 @@ import java.util.Map;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
@@ -202,44 +202,6 @@ public class Utils {
 
 		return gps_enabled || network_enabled;
 
-	}
-
-	public static String getDistance(GoogleMap googleMap) {
-
-		VisibleRegion visibleRegion = googleMap.getProjection().getVisibleRegion();
-
-		LatLng farRight = visibleRegion.farRight;
-		LatLng farLeft = visibleRegion.farLeft;
-		LatLng nearRight = visibleRegion.nearRight;
-		LatLng nearLeft = visibleRegion.nearLeft;
-
-		float[] distanceWidth = new float[2];
-		Location.distanceBetween(
-				(farRight.latitude + nearRight.latitude) / 2,
-				(farRight.longitude + nearRight.longitude) / 2,
-				(farLeft.latitude + nearLeft.latitude) / 2,
-				(farLeft.longitude + nearLeft.longitude) / 2,
-				distanceWidth
-		);
-
-
-		float[] distanceHeight = new float[2];
-		Location.distanceBetween(
-				(farRight.latitude + nearRight.latitude) / 2,
-				(farRight.longitude + nearRight.longitude) / 2,
-				(farLeft.latitude + nearLeft.latitude) / 2,
-				(farLeft.longitude + nearLeft.longitude) / 2,
-				distanceHeight
-		);
-
-		float distance;
-
-		if (distanceWidth[0] > distanceHeight[0]) {
-			distance = distanceWidth[0];
-		} else {
-			distance = distanceHeight[0];
-		}
-		return String.valueOf(distance);
 	}
 
 	public static void updateStatusBarBackground(Activity activity) {
@@ -916,25 +878,6 @@ public class Utils {
 		WoolworthsApplication.getInstance().setProductOfferingId(productOfferingId);
 	}
 
-
-	public static List<ShoppingDeliveryLocation> getDeliveryLocationHistory(Context context) {
-		List<ShoppingDeliveryLocation> history = null;
-		try {
-			SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.DELIVERY_LOCATION_HISTORY);
-			if (sessionDao.value == null) {
-				history = new ArrayList<>();
-			} else {
-				Gson gson = new Gson();
-				Type type = new TypeToken<List<ShoppingDeliveryLocation>>() {
-				}.getType();
-				history = gson.fromJson(sessionDao.value, type);
-			}
-		} catch (Exception e) {
-			Log.e("TAG", e.getMessage());
-		}
-		return history;
-	}
-
 	public static void sendBus(Object object) {
 		WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
 		if (woolworthsApplication != null) woolworthsApplication.bus().send(object);
@@ -946,66 +889,29 @@ public class Utils {
 		return (int) (dpValue * scale + 0.5f);
 	}
 
-	public static void saveRecentDeliveryLocation(ShoppingDeliveryLocation historyItem, Context context) {
-		List<ShoppingDeliveryLocation> history = getRecentDeliveryLocations(context);
-		SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.DELIVERY_LOCATION_HISTORY);
-
-		Gson gson = new Gson();
-		boolean isExist = false;
-		if (history == null) {
-			history = new ArrayList<>();
-			history.add(0, historyItem);
-		} else {
-			int position = 0;
-			for (int i = 0; i < history.size(); i++) {
-				if (history.get(i).suburb.id.equals(historyItem.suburb.id)) {
-					isExist = true;
-					position = i;
-				}
-			}
-			if (!isExist) {
-				history.add(0, historyItem);
-				if (history.size() > 5)
-					history.remove(5);
-			} else {
-				history.remove(position);
-				history.add(0, historyItem);
-			}
-		}
-
-		String json = gson.toJson(history);
-		sessionDao.value = json;
-		try {
-			sessionDao.save();
-		} catch (Exception e) {
-			Log.e("TAG", e.getMessage());
-		}
+	public static ShoppingDeliveryLocation getPreferredDeliveryLocation() {
+		ShoppingDeliveryLocation preferredDeliveryLocation = null;
+		AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+		return (currentUserObject.preferredShoppingDeliveryLocation !=null) ? currentUserObject.preferredShoppingDeliveryLocation : preferredDeliveryLocation;
 	}
 
-	public static List<ShoppingDeliveryLocation> getRecentDeliveryLocations(Context context) {
-		List<ShoppingDeliveryLocation> history = null;
-		try {
-			SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.DELIVERY_LOCATION_HISTORY);
-			if (sessionDao.value == null) {
-				history = new ArrayList<>();
-			} else {
-				Gson gson = new Gson();
-				Type type = new TypeToken<List<ShoppingDeliveryLocation>>() {
-				}.getType();
-				history = gson.fromJson(sessionDao.value, type);
-			}
-		} catch (Exception e) {
-			Log.e("TAG", e.getMessage());
-		}
-		return history;
+	public static void savePreferredDeliveryLocation(ShoppingDeliveryLocation shoppingDeliveryLocation){
+		AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+		currentUserObject.preferredShoppingDeliveryLocation = shoppingDeliveryLocation;
+		currentUserObject.save();
 	}
 
-	public static ShoppingDeliveryLocation getLastDeliveryLocation(Context context) {
-		ShoppingDeliveryLocation history = null;
-		List<ShoppingDeliveryLocation> locationHistories = Utils.getDeliveryLocationHistory(context);
-		if (locationHistories != null && locationHistories.size() > 0)
-			history = locationHistories.get(0);
-		return history;
+	public static void addToShoppingDeliveryLocationHistory(ShoppingDeliveryLocation shoppingDeliveryLocation){
+		AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+		currentUserObject.shoppingDeliveryLocationHistory.add(shoppingDeliveryLocation);
+		if (currentUserObject.shoppingDeliveryLocationHistory.size() > AppInstanceObject.MAX_DELIVERY_LOCATION_HISTORY)
+			currentUserObject.shoppingDeliveryLocationHistory.remove(0);
+		currentUserObject.save();
+	}
+
+	public static ArrayList<ShoppingDeliveryLocation> getShoppingDeliveryLocationHistory(){
+		AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+		return  currentUserObject.shoppingDeliveryLocationHistory;
 	}
 
 	public static PopupWindow showToast(final Activity activity, String message, final boolean viewState) {
@@ -1173,9 +1079,9 @@ public class Utils {
 	}
 
 	@Nullable
-	public static String retrieveStoreId(String fulFillmentType, Context context) {
+	public static String retrieveStoreId(String fulFillmentType) {
 		JsonParser parser = new JsonParser();
-		ShoppingDeliveryLocation shoppingDeliveryLocation = Utils.getLastDeliveryLocation(context);
+		ShoppingDeliveryLocation shoppingDeliveryLocation = Utils.getPreferredDeliveryLocation();
 		if (shoppingDeliveryLocation == null) return "";
 		if (shoppingDeliveryLocation.suburb == null) return "";
 		if (shoppingDeliveryLocation.suburb.fulfillmentStores == null) return "";
