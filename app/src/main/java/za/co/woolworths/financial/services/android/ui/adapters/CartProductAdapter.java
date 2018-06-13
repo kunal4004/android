@@ -122,15 +122,10 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 				if (firstLoadWasCompleted())
 					animateOnDeleteButtonVisibility(productHolder.llCartItems, this.editMode);
 
-				if (commerceItem.getQuantityUploading()) {
-					productHolder.pbQuantity.setVisibility(View.VISIBLE);
-					productHolder.quantity.setVisibility(View.GONE);
-					productHolder.imPrice.setVisibility(View.GONE);
-				} else {
-					productHolder.pbQuantity.setVisibility(View.GONE);
-					productHolder.quantity.setVisibility(View.VISIBLE);
-					productHolder.imPrice.setVisibility(View.VISIBLE);
-				}
+				boolean quantityIsLoading = commerceItem.getQuantityUploading();
+				productHolder.pbQuantity.setVisibility(quantityIsLoading ? View.VISIBLE : View.GONE);
+				productHolder.quantity.setVisibility(quantityIsLoading ? View.GONE : View.VISIBLE);
+				productHolder.imPrice.setVisibility(quantityIsLoading ? View.GONE : View.VISIBLE);
 
 				productHolder.swipeLayout.setRightSwipeEnabled(false);
 				//Set Promotion Text START
@@ -531,5 +526,9 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 	public void updateStockAvailability(ArrayList<CartItemGroup> cartItems) {
 		this.cartItems = cartItems;
 		notifyDataSetChanged();
+	}
+
+	public ArrayList<CartItemGroup> getCartItems() {
+		return cartItems;
 	}
 }
