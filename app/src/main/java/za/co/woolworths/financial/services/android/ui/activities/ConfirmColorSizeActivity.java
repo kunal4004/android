@@ -268,17 +268,22 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 				@Override
 				public void onAnimationEnd(Animation animation) {
 					if (mGlobalState != null) {
+						Intent intent = new Intent();
 						switch (mGlobalState.getNavigateFromQuantity()) {
 							case 1: //cart
 								Utils.sendBus(new CartState(CHANGE_QUANTITY, quantity));
 								mGlobalState.navigateFromQuantity(0);
 								break;
 							case QUANTITY_CHANGED_FROM_LIST:
-								Intent intent = new Intent();
 								intent.putExtra("QUANTITY_CHANGED_FROM_LIST", quantity);
 								setResult(QUANTITY_CHANGED_FROM_LIST, intent);
 								break;
 							default:
+								if (getGlobalState().getSaveButtonClick() == INDEX_SEARCH_FROM_LIST) {
+									Utils.sendBus(new ProductState(ProductState.INDEX_SEARCH_FROM_LIST));
+									dismissLayout();
+									return;
+								}
 								Utils.sendBus(new ProductState(POST_ADD_ITEM_TO_CART, quantity));
 								break;
 

@@ -242,13 +242,13 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	private void emptyCartUI(View view) {
-		String firstName =  SessionUtilities.getInstance().getJwt().name.get(0);
+		String firstName = SessionUtilities.getInstance().getJwt().name.get(0);
 		ImageView imEmptyCart = view.findViewById(R.id.imgEmpyStateIcon);
 		imEmptyCart.setImageResource(R.drawable.ic_empty_cart);
 		WTextView txtEmptyStateTitle = view.findViewById(R.id.txtEmptyStateTitle);
 		WTextView txtEmptyStateDesc = view.findViewById(R.id.txtEmptyStateDesc);
 		WButton btnGoToProduct = view.findViewById(R.id.btnGoToProduct);
-		txtEmptyStateTitle.setText("HI "+firstName+",");
+		txtEmptyStateTitle.setText("HI " + firstName + ",");
 		txtEmptyStateDesc.setText(getString(R.string.empty_cart_desc));
 		btnGoToProduct.setVisibility(View.VISIBLE);
 		btnGoToProduct.setText(getString(R.string.start_shopping));
@@ -322,7 +322,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 	public boolean toggleEditMode() {
 		boolean isEditMode = cartProductAdapter.toggleEditMode();
-		if(isAllInventoryAPICallSucceed)
+		if (isAllInventoryAPICallSucceed)
 			Utils.fadeInFadeOutAnimation(btnCheckOut, isEditMode);
 		resetItemDelete(isEditMode);
 		return isEditMode;
@@ -389,13 +389,13 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		if (cartResponse.cartItems.size() > 0 && cartProductAdapter != null && commerceItemToRemove != null) {
 			for (CartItemGroup cartItemGroup : cartItems) {
 				for (CommerceItem commerceItem : cartItemGroup.commerceItems) {
-					if (commerceItem.commerceItemInfo.commerceId.equalsIgnoreCase(commerceItemToRemove.commerceItemInfo.commerceId)){
+					if (commerceItem.commerceItemInfo.commerceId.equalsIgnoreCase(commerceItemToRemove.commerceItemInfo.commerceId)) {
 						cartItemGroup.commerceItems.remove(commerceItem);
 						break;
 					}
 				}
 			}
-			cartProductAdapter.notifyAdapter(cartItems,orderSummary);
+			cartProductAdapter.notifyAdapter(cartItems, orderSummary);
 		} else {
 
 			cartProductAdapter.clear();
@@ -422,9 +422,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 	public void changeQuantity(CartResponse cartResponse, ChangeQuantity changeQuantity) {
 		if (cartResponse.cartItems.size() > 0 && cartProductAdapter != null) {
-			CommerceItem updatedCommerceItem = getUpdatedCommerceItem(cartResponse.cartItems,changeQuantity.getCommerceId());
+			CommerceItem updatedCommerceItem = getUpdatedCommerceItem(cartResponse.cartItems, changeQuantity.getCommerceId());
 			//update list instead of using the new list to handle inventory data.
-			if(updatedCommerceItem != null) {
+			if (updatedCommerceItem != null) {
 				for (CartItemGroup cartItemGroup : cartItems) {
 					for (CommerceItem commerceItem : cartItemGroup.commerceItems) {
 						if (commerceItem.commerceItemInfo.commerceId.equalsIgnoreCase(updatedCommerceItem.commerceItemInfo.commerceId)) {
@@ -454,7 +454,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		for (CartItemGroup cartItemGroup : cartItems) {
 			for (CommerceItem commerceItem : cartItemGroup.commerceItems) {
 				if (commerceItem.commerceItemInfo.commerceId.equalsIgnoreCase(commerceId))
-						return commerceItem;
+					return commerceItem;
 			}
 		}
 		return null;
@@ -605,7 +605,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					switch (httpCode) {
 						case 200:
 							CartResponse cartResponse = convertResponseToCartResponseObject(shoppingCartResponse);
-							changeQuantity(cartResponse,changeQuantity);
+							changeQuantity(cartResponse, changeQuantity);
 							break;
 						default:
 							onChangeQuantityComplete();
@@ -986,7 +986,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		 * to trigger checkout button only once
 		 */
 		if (getLastValueInMap().equalsIgnoreCase(mStoreId)) {
-			if(!btnCheckOut.isEnabled() && isAllInventoryAPICallSucceed)
+			if (!btnCheckOut.isEnabled() && isAllInventoryAPICallSucceed)
 				fadeCheckoutButton(false);
 		}
 		if (cartProductAdapter != null)
