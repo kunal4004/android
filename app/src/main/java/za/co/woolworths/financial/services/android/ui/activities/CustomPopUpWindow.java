@@ -536,7 +536,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				});
 
 				WTextView tvLocation = findViewById(R.id.tvLocation);
-				List<ShoppingDeliveryLocation> deliveryLocationHistories = Utils.getDeliveryLocationHistory(CustomPopUpWindow.this);
+				List<ShoppingDeliveryLocation> deliveryLocationHistories = Utils.getShoppingDeliveryLocationHistory();
 				if (deliveryLocationHistories != null) {
 					ShoppingDeliveryLocation shoppingDeliveryLocation = deliveryLocationHistories.get(0);
 					if (shoppingDeliveryLocation != null) {

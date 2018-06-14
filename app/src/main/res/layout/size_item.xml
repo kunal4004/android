@@ -25,8 +25,8 @@
             android:text="@string/size"
             android:textAllCaps="true"
             android:textColor="@color/black"
-            android:textSize="@dimen/twelve_sp"
-            app:WTextView_font="myriadpro_semibold"/>
+            android:textSize="@dimen/fourteen_sp"
+            app:WTextView_font="medium"/>
 
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -44,7 +44,7 @@
             android:textAllCaps="true"
             android:textColor="@color/black"
             android:textSize="@dimen/twelve_sp"
-            app:WTextView_font="myriadpro_regular"/>
+            app:WTextView_font="medium"/>
 
     </RelativeLayout>
 
