@@ -594,7 +594,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 	private void populateCustomSizePicker(ColorInterface fragmentToShow, boolean shouldShowPrice) {
 		ArrayList<OtherSkus> mOtherSKUList = getOtherSKUList(mColorList);
 		hideBackIcon();
-		tvTitle.setText(getString(R.string.confirm_size_desc));
+		tvTitle.setText(getString(R.string.confirm_size_range_desc));
 		if (fragmentToShow != null) {
 			fragmentToShow.onUpdate(mOtherSKUList, getString(R.string.size), shouldShowPrice);
 		}
