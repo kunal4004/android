@@ -139,6 +139,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 										getProductAdapter().setSelectedSku(getSelectedProduct(), getGlobalState().getSelectedSKUId());
 									}
 									toggleAddToListBtn(true);
+									minOneItemSelected(mProductList);
 									break;
 
 								case SHOW_ADDED_TO_SHOPPING_LIST_TOAST:
@@ -435,6 +436,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 
 	@Override
 	public void minOneItemSelected(List<ProductList> prodList) {
+		this.mProductList = prodList;
 		boolean productWasChecked = false;
 		for (ProductList productList : prodList) {
 			if (productList.itemWasChecked) {
@@ -484,8 +486,9 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 	}
 
 	@Override
-	public void onCheckedItem(ProductList selectedProduct, boolean viewIsLoading) {
+	public void onCheckedItem(List<ProductList> productLists, ProductList selectedProduct, boolean viewIsLoading) {
 		setSelectedProduct(selectedProduct);
+		mProductList = productLists;
 		if (viewIsLoading) {
 			ProductRequest productRequest = new ProductRequest(selectedProduct.productId, selectedProduct.sku);
 			productDetailRequest(productRequest);
@@ -571,6 +574,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 				OtherSkus otherSkus = sizeList.get(0);
 				getProductAdapter().setSelectedSku(getSelectedProduct(), otherSkus);
 				noSizeColorIntent(otherSkus.sku);
+				minOneItemSelected(mProductList);
 			} else {
 				// size > 1
 				twoOrMoreSizeIntent(color, otherSkuList, sizeList, objProduct);
@@ -645,7 +649,8 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 	}
 
 	@Override
-	public void onFoodTypeChecked(ProductList selectedProduct) {
+	public void onFoodTypeChecked(List<ProductList> productLists, ProductList selectedProduct) {
+		this.mProductList = productLists;
 		toggleAddToListBtn(true);
 	}
 
