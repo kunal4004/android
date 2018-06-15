@@ -404,7 +404,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		setSelectedSize(highestPriceSku);
 
 		setSelectedTextColor(highestPriceSku);
-		setHighestSizeText(highestPriceSku);
+		//setHighestSizeText(highestPriceSku);
 		setPrice(highestPriceSku);
 
 		colorSizeContainerVisibility(otherSkuList);
