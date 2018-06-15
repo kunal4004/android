@@ -633,4 +633,5 @@
     <string name="product_unavailable_desc">Sorry, this product is unavailable in your delivery location</string>
     <string name="delivering_to">Delivering to</string>
     <string name="delivering_location_popup_message">Your delivery location must match your delivery address. Changing your delivery location can affect the product availability of items in your cart.</string>
+    <string name="confirm_size_range_desc">size range</string>
 </resources>

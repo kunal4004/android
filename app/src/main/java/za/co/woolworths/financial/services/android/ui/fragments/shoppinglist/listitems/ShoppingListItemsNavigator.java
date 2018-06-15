@@ -46,14 +46,6 @@ public interface ShoppingListItemsNavigator {
 
 	void onAddToCartLoad();
 
-	void onCartSummarySuccess(CartSummaryResponse cartSummaryResponse);
-
-	void onCartSummaryExpiredSession(Response response);
-
-	void onCartSummaryOtherHttpCode(Response response);
-
-	void onTokenFailure(String e);
-
 	void getInventoryForStoreSuccess(SkusInventoryForStoreResponse skusInventoryForStoreResponse);
 
 	void geInventoryForStoreFailure(String e);
