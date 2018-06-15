@@ -54,7 +54,7 @@ public class DeliveryLocationSelectionActivity extends AppCompatActivity impleme
 					.replace(R.id.content_frame, new ProvinceSelectionFragment()).commitAllowingStateLoss();
 		}
 
-		Utils.showOneTimePopup(DeliveryLocationSelectionActivity.this, SessionDao.KEY.DELIVERY_LOCATION_ONE_TIME_POPUP, CustomPopUpWindow.MODAL_LAYOUT.INFO,getResources().getString(R.string.delivering_location_popup_message));
+		Utils.displayValidationMessage(DeliveryLocationSelectionActivity.this, CustomPopUpWindow.MODAL_LAYOUT.INFO,getResources().getString(R.string.delivering_location_popup_message));
 	}
 
 	@Override
