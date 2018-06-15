@@ -43,7 +43,7 @@ public interface SearchResultNavigator {
 
 	void onAddToListLoadComplete(List<ShoppingListItem> shoppingLists);
 
-	void onCheckedItem(ProductList selectedProduct, boolean viewIsLoading);
+	void onCheckedItem(List<ProductList> mProductList, ProductList selectedProduct, boolean viewIsLoading);
 
 	void toggleAddToListBtn(boolean enable);
 
@@ -57,7 +57,7 @@ public interface SearchResultNavigator {
 
 	void onLoadDetailFailure(String e);
 
-	void onFoodTypeChecked(ProductList selectedProduct);
+	void onFoodTypeChecked(List<ProductList> mProductList, ProductList selectedProduct);
 
 	void unknownErrorMessage(ShoppingListItemsResponse shoppingCartResponse);
 
