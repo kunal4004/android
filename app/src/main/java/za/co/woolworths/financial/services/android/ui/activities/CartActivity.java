@@ -121,6 +121,11 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 		btnEditCart.setEnabled(visibility ? false : true);
 	}
 
+	public void enableEditCart(boolean enable) {
+		Utils.fadeInFadeOutAnimation(btnEditCart, enable);
+		btnEditCart.setEnabled(enable ? false : true);
+	}
+
 	@Override
 	public void onRemoveSuccess() {
 		pbRemoveAllItem.setVisibility(View.GONE);

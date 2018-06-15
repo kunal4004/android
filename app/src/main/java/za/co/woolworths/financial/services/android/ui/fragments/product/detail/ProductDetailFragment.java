@@ -1429,7 +1429,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	}
 
 	private ShoppingDeliveryLocation getCartSummaryResponse() {
-		return Utils.getLastDeliveryLocation(getActivity());
+		return Utils.getPreferredDeliveryLocation();
 	}
 
 	@Override

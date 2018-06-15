@@ -295,8 +295,9 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 				case 200:
 					Activity activity = getActivity();
 					if (activity == null) return;
-					saveRecentDeliveryLocation(new ShoppingDeliveryLocation(province, suburb));
 					Utils.sendBus(new CartState(suburb.name + ", " + province.name));
+					Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(province,suburb));
+					Utils.addToShoppingDeliveryLocationHistory(new ShoppingDeliveryLocation(province,suburb));
 					// TODO: go back to cart if no items removed from cart, else go to list of removed items
 					if (activity != null) {
 						activity.setResult(SUBURB_SET_RESULT);
@@ -351,62 +352,6 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 		}
 	}
 
-	private void saveRecentDeliveryLocation(ShoppingDeliveryLocation historyItem) {
-		List<ShoppingDeliveryLocation> history = getRecentDeliveryLocations();
-		SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.DELIVERY_LOCATION_HISTORY);
-		Gson gson = new Gson();
-		boolean isExist = false;
-		if (history == null) {
-			history = new ArrayList<>();
-			history.add(0, historyItem);
-			String json = gson.toJson(history);
-			sessionDao.value = json;
-			try {
-				sessionDao.save();
-			} catch (Exception e) {
-				Log.e("TAG", e.getMessage());
-			}
-		} else {
-			for (ShoppingDeliveryLocation item : history) {
-				if (item.suburb.id.equals(historyItem.suburb.id)) {
-					isExist = true;
-				}
-			}
-			if (!isExist) {
-				history.add(0, historyItem);
-				if (history.size() > 5)
-					history.remove(5);
-
-				sessionDao.value = gson.toJson(history);
-				try {
-					sessionDao.save();
-				} catch (Exception e) {
-					Log.e("TAG", e.getMessage());
-				}
-			}
-		}
-
-		//Trigger api validation token in ProductDetailFragment
-		Utils.sendBus(new ProductState(USE_MY_LOCATION));
-	}
-
-	private List<ShoppingDeliveryLocation> getRecentDeliveryLocations() {
-		List<ShoppingDeliveryLocation> history = null;
-		try {
-			SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.DELIVERY_LOCATION_HISTORY);
-			if (sessionDao.value == null) {
-				history = new ArrayList<>();
-			} else {
-				Gson gson = new Gson();
-				Type type = new TypeToken<List<ShoppingDeliveryLocation>>() {
-				}.getType();
-				history = gson.fromJson(sessionDao.value, type);
-			}
-		} catch (Exception e) {
-			Log.e("TAG", e.getMessage());
-		}
-		return history;
-	}
 
 	@Override
 	public void onAttach(Context context) {
