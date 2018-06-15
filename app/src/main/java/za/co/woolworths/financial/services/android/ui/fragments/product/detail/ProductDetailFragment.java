@@ -183,13 +183,10 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 						switch (productState.getState()) {
 							case POST_ADD_ITEM_TO_CART:
 								String productId = getViewModel().getProductId();
-								String catalogRefId = productId;
 								//Parse skuId to catalogRefId if productType is of type CLOTHING_PRODUCT
-								if (getViewModel().getProductType().equalsIgnoreCase(CLOTHING_PRODUCT)) {
-									catalogRefId = getGlobalState().getSelectedSKUId().sku;
-								}
-								int quantity = productState.getQuantity();
-								mApiAddItemToCart = new AddItemToCart(productId, catalogRefId, quantity);
+								mApiAddItemToCart = new AddItemToCart(productId
+										, getGlobalState().getSelectedSKUId().sku
+										, productState.getQuantity());
 								apiAddItemToCart();
 								break;
 

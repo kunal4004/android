@@ -332,9 +332,10 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	private void setUpView() {
 		RecyclerView rcvShoppingListItems = getViewDataBinding().rcvShoppingListItems;
 		LinearLayout rlEmptyView = getViewDataBinding().rlEmptyListView;
-		rlEmptyView.setVisibility(mShoppingListItems == null || mShoppingListItems.size() <= 1 ? View.VISIBLE : View.GONE);
+		rlEmptyView.setVisibility(mShoppingListItems == null || mShoppingListItems.size() == 0 ? View.VISIBLE : View.GONE);
 		// 1 to exclude header
-		rcvShoppingListItems.setVisibility(mShoppingListItems == null || mShoppingListItems.size() <= 1 ? View.GONE : View.VISIBLE);
+		rcvShoppingListItems.setVisibility(mShoppingListItems == null || mShoppingListItems.size() == 0 ? View.GONE : View.VISIBLE);
+		manageSelectAllMenuVisibility(mShoppingListItems.size());
 	}
 
 	private void initList(RecyclerView rcvShoppingListItems) {
@@ -756,7 +757,8 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				Suburb suburb = new Suburb();
 				suburb.name = cartSummary.suburbName;
 				suburb.id = suburbId;
-				Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(province, suburb));				executeAddToCart(mShoppingListItems.subList(1, mShoppingListItems.size()));
+				Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(province, suburb));
+				executeAddToCart(mShoppingListItems.subList(1, mShoppingListItems.size()));
 			} else {
 				deliverySelectionIntent(DELIVERY_LOCATION_REQUEST);
 				resetAddToCartButton();
