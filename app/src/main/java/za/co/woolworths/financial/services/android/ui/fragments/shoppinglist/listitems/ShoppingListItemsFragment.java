@@ -674,7 +674,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	}
 
 	public void selectAllListItems(boolean setSelection) {
-		if (shoppingListItemsAdapter != null && mShoppingListItems != null && mShoppingListItems.size() > 1) {
+		if (shoppingListItemsAdapter != null && mShoppingListItems != null && mShoppingListItems.size() > 0) {
 			for (ShoppingListItem item : mShoppingListItems) {
 				if (item.quantityInStock != 0) {
 					item.isSelected = setSelection;
