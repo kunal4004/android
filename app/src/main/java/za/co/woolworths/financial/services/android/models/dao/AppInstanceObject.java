@@ -65,6 +65,7 @@ public class AppInstanceObject {
 		public String id;
 		public ShoppingDeliveryLocation preferredShoppingDeliveryLocation;
 		public ArrayList<ShoppingDeliveryLocation> shoppingDeliveryLocationHistory;
+		public SessionDao.BIOMETRIC_AUTHENTICATION_STATE biometricAuthenticationState;
 
 		public User() {
 			id = AppInstanceObject.getCurrentUsersID();
