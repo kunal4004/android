@@ -155,11 +155,11 @@ public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.V
 			selectedProduct.viewIsLoading = !selectedProduct.viewIsLoading;
 			if (selectedProduct.itemWasChecked) selectedProduct.viewIsLoading = false;
 			selectedProduct.itemWasChecked = productWasChecked(selectedProduct);
-			mSearchResultNavigator.onCheckedItem(selectedProduct, selectedProduct.viewIsLoading);
+			mSearchResultNavigator.onCheckedItem(mProductList, selectedProduct, selectedProduct.viewIsLoading);
 			notifyItemChanged(position);
 		} else {
 			selectedProduct.itemWasChecked = productWasChecked(selectedProduct);
-			mSearchResultNavigator.onFoodTypeChecked(selectedProduct);
+			mSearchResultNavigator.onFoodTypeChecked(mProductList, selectedProduct);
 			mSearchResultNavigator.minOneItemSelected(mProductList);
 			notifyItemChanged(position);
 		}

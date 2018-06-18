@@ -432,7 +432,6 @@ public class SSOActivity extends WebViewActivity {
 
 					if (urlWithoutQueryString.equals(extraQueryStringParams.get("post_logout_redirect_uri"))) {
 						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
-						AuthenticateUtils.getInstance(SSOActivity.this).setUserAuthenticate(SessionDao.BIOMETRIC_AUTHENTICATION_STATE.OFF);
 						Intent intent = new Intent();
 						setResult(SSOActivityResult.SIGNED_OUT.rawValue(), intent);
 						closeActivity();
