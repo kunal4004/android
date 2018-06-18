@@ -1502,6 +1502,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	@Override
 	public void addItemToCartResponse(AddItemToCartResponse addItemToCartResponse) {
 		Log.d(TAG, addItemToCartResponse.toString());
+		((BottomNavigationActivity) getActivity()).cartSummaryAPI();
 		onAddToCartLoadComplete();
 		List<AddToCartDaTum> addToCartList = addItemToCartResponse.data;
 		if (addToCartList != null && addToCartList.size() > 0) {

@@ -53,6 +53,7 @@ import za.co.woolworths.financial.services.android.models.service.event.ShopStat
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator;
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.ShoppingListItemsAdapter;
@@ -453,6 +454,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 
 	@Override
 	public void onAddToCartSuccess(AddItemToCartResponse addItemToCartResponse) {
+		((BottomNavigationActivity) getActivity()).cartSummaryAPI();
 		if (addItemToCartResponse.data != null) {
 			List<AddToCartDaTum> addToCartDaTumList = addItemToCartResponse.data;
 			AddToCartDaTum addToCartDaTum = addToCartDaTumList.get(0);
