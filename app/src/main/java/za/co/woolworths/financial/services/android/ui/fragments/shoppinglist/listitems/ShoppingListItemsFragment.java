@@ -43,6 +43,7 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsR
 import za.co.woolworths.financial.services.android.models.dto.SkuInventory;
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.models.rest.product.GetCartSummary;
 import za.co.woolworths.financial.services.android.models.rest.product.GetInventorySkusForStore;
 import za.co.woolworths.financial.services.android.models.rest.product.PostAddItemToCart;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.DeleteShoppingListItem;
@@ -89,7 +90,8 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	private ToastUtils mToastUtils;
 	private String TAG = this.getClass().getSimpleName();
 	private final int DELIVERY_LOCATION_REQUEST = 2;
-	private final int SUBURB_SET_RESULT = 123401;
+	public static final int SUBURB_SET_RESULT = 123401;
+	private GetCartSummary mCartSummary;
 	private PostAddItemToCart mPostAddToCart;
 	private GetInventorySkusForStore mGetInventorySkusForStore;
 	private Map<String, String> mMapStoreFulFillmentKeyValue;
