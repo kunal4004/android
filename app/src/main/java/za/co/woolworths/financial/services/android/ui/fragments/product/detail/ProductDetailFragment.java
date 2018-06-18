@@ -560,7 +560,8 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 							break;
 
 						case FOOD_PRODUCT:
-							getGlobalState().setSelectedSKUId(createOtherSkus(product.productId));
+							if (product == null) return;
+							getGlobalState().setSelectedSKUId(createOtherSkus(TextUtils.isEmpty(product.sku) ? product.productId : product.sku));
 							openAddToListFragment(activity);
 							break;
 
