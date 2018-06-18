@@ -404,7 +404,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		setSelectedSize(highestPriceSku);
 
 		setSelectedTextColor(highestPriceSku);
-		setHighestSizeText(highestPriceSku);
+		//setHighestSizeText(highestPriceSku);
 		setPrice(highestPriceSku);
 
 		colorSizeContainerVisibility(otherSkuList);
@@ -1576,6 +1576,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		super.onActivityResult(requestCode, resultCode, data);
 		// perform find in-store api call
 		if ((requestCode == 3401) && (resultCode == RESULT_TAP_FIND_INSTORE_BTN)) {
+			mSkuId = getGlobalState().getSelectedSKUId();
 			setFinInStoreOtherSkus(getGlobalState().getSelectedSKUId());
 			llStoreFinder.performClick();
 			return;
