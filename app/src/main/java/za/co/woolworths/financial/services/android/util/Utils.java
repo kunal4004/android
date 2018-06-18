@@ -41,9 +41,6 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.awfs.coordination.R;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.VisibleRegion;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
@@ -205,6 +202,7 @@ public class Utils {
 	}
 
 	public static void updateStatusBarBackground(Activity activity) {
+		if (activity == null) return;
 		Window window = activity.getWindow();
 		View decor = activity.getWindow().getDecorView();
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -892,16 +890,16 @@ public class Utils {
 	public static ShoppingDeliveryLocation getPreferredDeliveryLocation() {
 		ShoppingDeliveryLocation preferredDeliveryLocation = null;
 		AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
-		return (currentUserObject.preferredShoppingDeliveryLocation !=null) ? currentUserObject.preferredShoppingDeliveryLocation : preferredDeliveryLocation;
+		return (currentUserObject.preferredShoppingDeliveryLocation != null) ? currentUserObject.preferredShoppingDeliveryLocation : preferredDeliveryLocation;
 	}
 
-	public static void savePreferredDeliveryLocation(ShoppingDeliveryLocation shoppingDeliveryLocation){
+	public static void savePreferredDeliveryLocation(ShoppingDeliveryLocation shoppingDeliveryLocation) {
 		AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
 		currentUserObject.preferredShoppingDeliveryLocation = shoppingDeliveryLocation;
 		currentUserObject.save();
 	}
 
-	public static void addToShoppingDeliveryLocationHistory(ShoppingDeliveryLocation shoppingDeliveryLocation){
+	public static void addToShoppingDeliveryLocationHistory(ShoppingDeliveryLocation shoppingDeliveryLocation) {
 		AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
 		currentUserObject.shoppingDeliveryLocationHistory.add(shoppingDeliveryLocation);
 		if (currentUserObject.shoppingDeliveryLocationHistory.size() > AppInstanceObject.MAX_DELIVERY_LOCATION_HISTORY)
@@ -909,9 +907,9 @@ public class Utils {
 		currentUserObject.save();
 	}
 
-	public static ArrayList<ShoppingDeliveryLocation> getShoppingDeliveryLocationHistory(){
+	public static ArrayList<ShoppingDeliveryLocation> getShoppingDeliveryLocationHistory() {
 		AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
-		return  currentUserObject.shoppingDeliveryLocationHistory;
+		return currentUserObject.shoppingDeliveryLocationHistory;
 	}
 
 	public static PopupWindow showToast(final Activity activity, String message, final boolean viewState) {
