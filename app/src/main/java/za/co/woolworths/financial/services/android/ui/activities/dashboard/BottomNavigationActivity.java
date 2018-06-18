@@ -85,8 +85,11 @@ import static za.co.woolworths.financial.services.android.models.service.event.B
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SHOW_ADDED_TO_SHOPPING_LIST_TOAST;
 import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.RESULT_TAP_FIND_INSTORE_BTN;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.DELIVERY_LOCATION_FROM_PDP_REQUEST;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_ADD_TO_CART;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_ADD_TO_SHOPPING_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment.MOVE_TO_LIST_ON_TOAST_VIEW_CLICKED;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.SuburbSelectionFragment.SUBURB_SET_RESULT;
 import static za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment.LOCK_REQUEST_CODE_WREWARDS;
 import static za.co.woolworths.financial.services.android.util.ScreenManager.CART_LAUNCH_VALUE;
 
@@ -864,6 +867,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			switch (getBottomNavigationById().getCurrentItem()) {
 				case 1:
 					switch (getGlobalState().getSaveButtonClick()) {
+						// TODO:: add INDEX_ADD_TO_SHOPPING_LIST to product detail instead of
+						// parent activity
 						case INDEX_ADD_TO_SHOPPING_LIST:
 							try {
 								Fragment fragmentById = getBottomFragmentById();
@@ -937,6 +942,16 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					break;
 				default:
 					break;
+			}
+		}
+
+		if (requestCode == DELIVERY_LOCATION_FROM_PDP_REQUEST) {
+			if (resultCode == SUBURB_SET_RESULT) {
+				if (getGlobalState().getSaveButtonClick() == INDEX_ADD_TO_CART) {
+					Fragment fragmentById = getBottomFragmentById();
+					fragmentById.onActivityResult(requestCode, resultCode, null);
+					return;
+				}
 			}
 		}
 	}

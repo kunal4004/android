@@ -58,7 +58,7 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 
 	private ErrorHandlerView mErrorHandlerView;
 	private View btnRetry;
-	private final int SUBURB_SET_RESULT = 123401;
+	public static final int SUBURB_SET_RESULT = 123401;
 
 	private RelativeLayout suburbContentLayout;
 	private ProgressBar loadingProgressBar;

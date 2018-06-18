@@ -202,7 +202,7 @@ public class WfsApi {
 	}
 
 	public CartSummaryResponse getCartSummary() {
-		return mApiInterface.getCartSummary(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken());
+		return mApiInterface.getCartSummary(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), null, null, getSessionToken());
 	}
 
 	public SuburbsResponse getSuburbs(String locationId) {
