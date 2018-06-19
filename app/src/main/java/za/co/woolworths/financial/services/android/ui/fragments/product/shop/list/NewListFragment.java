@@ -5,7 +5,6 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -23,13 +22,18 @@ import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.NewListFragmentBinding;
 
+import java.util.List;
+
 import za.co.woolworths.financial.services.android.models.dto.CreateList;
 import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostAddList;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.ShoppingListFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -42,6 +46,7 @@ public class NewListFragment extends BaseFragment<NewListFragmentBinding, NewLis
 	private NewListViewModel newListFragment;
 	private PostAddList mPostAddList;
 	private WLoanEditTextView etNewList;
+	private int CREATE_LIST_SUCCESS_RESULT = 53921;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -198,7 +203,15 @@ public class NewListFragment extends BaseFragment<NewListFragmentBinding, NewLis
 
 	@Override
 	public void onShoppingListSuccessResponse(ShoppingListsResponse shoppingListsResponse) {
+		Activity activity = getActivity();
+		if (activity == null) return;
 		popFragmentNoAnim();
+		Bundle bundle = new Bundle();
+		bundle.putString("listId", shoppingListsResponse.lists.get(0).listId);
+		bundle.putString("listName", shoppingListsResponse.lists.get(0).listName);
+		ShoppingListItemsFragment shoppingListFragment = new ShoppingListItemsFragment();
+		shoppingListFragment.setArguments(bundle);
+		pushFragmentNoAnim(shoppingListFragment);
 	}
 
 	@Override
@@ -264,15 +277,24 @@ public class NewListFragment extends BaseFragment<NewListFragmentBinding, NewLis
 	 */
 	private void displayVirtualKeyboard(final boolean showKeyboard) {
 		final Activity activity = getActivity();
-		Handler handler = new Handler();
-		handler.postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				InputMethodManager m = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-				if (m != null) {
-					m.toggleSoftInput(0, showKeyboard ? InputMethodManager.SHOW_IMPLICIT : InputMethodManager.HIDE_NOT_ALWAYS);
-				}
-			}
-		}, 10);
+		if (activity == null) return;
+		if (showKeyboard)
+			showKeyboard(activity);
+		else
+			hideKeyboard(activity);
+
+	}
+
+	public void hideKeyboard(Activity activity) {
+		View view = activity.findViewById(android.R.id.content);
+		if (view != null) {
+			InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+			imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+		}
+	}
+
+	public void showKeyboard(Activity activity) {
+		InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+		inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 	}
 }
