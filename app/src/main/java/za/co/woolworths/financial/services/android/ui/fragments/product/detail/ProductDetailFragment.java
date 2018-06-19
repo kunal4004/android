@@ -409,7 +409,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		setSelectedSize(highestPriceSku);
 
 		setSelectedTextColor(highestPriceSku);
-		//setHighestSizeText(highestPriceSku);
 		setPrice(highestPriceSku);
 
 		colorSizeContainerVisibility(otherSkuList);
@@ -1633,7 +1632,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 							WTextView tvSize = getViewDataBinding().llColorSize.tvSelectedSizeValue;
 							setSelectedSize(otherSkus);
 							getGlobalState().setSizeWasPopup(true);
-							setPrice(getViewModel().updatePrice(otherSkus, tvSize.getText().toString()));
+							setPrice(otherSkus);
 							tvSize.setText(otherSkus.size);
 							break;
 
@@ -1657,12 +1656,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 				}
 			}
 		}
-	}
-
-	public void setHighestSizeText(OtherSkus otherSkus) {
-		if (otherSkus == null) return;
-		if (otherSkus.size == null) return;
-		getViewDataBinding().llColorSize.tvSelectedSizeValue.setText(TextUtils.isEmpty(otherSkus.size) ? "" : otherSkus.size);
 	}
 
 	public String getFulFillmentType() {

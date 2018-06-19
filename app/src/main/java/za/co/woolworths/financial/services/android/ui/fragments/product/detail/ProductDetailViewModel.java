@@ -432,21 +432,6 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 		return false;
 	}
 
-	public OtherSkus updatePrice(OtherSkus sku, String size) {
-		String colour = sku.colour;
-		if (otherSkuList() != null) {
-			if (otherSkuList().size() > 0) {
-				for (OtherSkus os : otherSkuList()) {
-					if (colour.equalsIgnoreCase(os.colour) &&
-							size.equalsIgnoreCase(os.size)) {
-						return os;
-					}
-				}
-			}
-		}
-		return new OtherSkus();
-	}
-
 	public ArrayList<OtherSkus> commonSizeList(boolean productHasColour, String colour) {
 		ArrayList<OtherSkus> commonSizeList = new ArrayList<>();
 
