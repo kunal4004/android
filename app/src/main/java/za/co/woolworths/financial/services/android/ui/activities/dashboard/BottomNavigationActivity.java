@@ -470,6 +470,18 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	}
 
 	@Override
+	public void pushFragmentNoAnim(Fragment fragment) {
+		if (mNavController != null) {
+			FragNavTransactionOptions ft = new FragNavTransactionOptions.Builder()
+					.customAnimations(0, 0)
+					.allowStateLoss(true)
+					.build();
+
+			mNavController.pushFragment(fragment, ft);
+		}
+	}
+
+	@Override
 	public SlidingUpPanelLayout getSlidingLayout() {
 		return getViewDataBinding().slideUpPanel;
 	}

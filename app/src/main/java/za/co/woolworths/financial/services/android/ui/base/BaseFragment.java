@@ -202,6 +202,10 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 		getBottomNavigator().pushFragmentSlideUp(fragment);
 	}
 
+	public void pushFragmentNoAnim(Fragment fragment) {
+		getBottomNavigator().pushFragmentNoAnim(fragment);
+	}
+
 	public void setText(WTextView tv, String text) {
 		try {
 			tv.setText(text);
