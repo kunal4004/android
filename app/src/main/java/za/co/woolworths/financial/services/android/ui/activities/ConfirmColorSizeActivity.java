@@ -416,7 +416,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 				selectedPickerOtherSku(position, intent, getOtherSKUList(mColorList), "color");
 			}
 			if (sizePickerWasEnabled()) {
-				selectedPickerOtherSku(position, intent, getOtherSKUList(mOtherSKU), "size");
+				selectedPickerOtherSku(position, intent, getOtherSKUList(mColorList), "size");
 			}
 			setResult(RESULT_OK, intent);
 			closeViewAnimation(CLOSE);
