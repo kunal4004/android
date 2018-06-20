@@ -350,6 +350,12 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 				if (activity != null) {
 					switch (addToListResponse.httpCode) {
 						case 200:
+							if (sizeOfList == 1) {
+								((CustomPopUpWindow) activity).startExitAnimation();
+								Utils.sendBus(new ProductState(sizeOfList, CLOSE_PDP_FROM_ADD_TO_LIST));
+								onLoad(false);
+								return;
+							}else
 							if (apiCount < sizeOfList) {
 								String currentKey = getCurrentListId();
 								List<AddToListRequest> addToListRequestList = mMapAddedToList.get(currentKey);

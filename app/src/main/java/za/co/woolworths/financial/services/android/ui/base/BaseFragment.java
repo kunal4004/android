@@ -1,13 +1,10 @@
 package za.co.woolworths.financial.services.android.ui.base;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
@@ -153,19 +150,23 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 	}
 
 	public void showBackNavigationIcon(boolean visibility) {
-		bottomNavigator.showBackNavigationIcon(visibility);
+		if (bottomNavigator != null)
+			bottomNavigator.showBackNavigationIcon(visibility);
 	}
 
 	public void setTitle(String title) {
-		bottomNavigator.setTitle(title);
+		if (bottomNavigator != null)
+			bottomNavigator.setTitle(title);
 	}
 
 	public void setTitle(String title, int color) {
-		bottomNavigator.setTitle(title, color);
+		if (bottomNavigator != null)
+			bottomNavigator.setTitle(title, color);
 	}
 
 	public void setToolbarBackgroundDrawable(int drawable) {
-		mActivity.setToolbarBackgroundDrawable(drawable);
+		if (mActivity != null)
+			mActivity.setToolbarBackgroundDrawable(drawable);
 	}
 
 	public void setToolbarBackgroundColor(int color) {
@@ -200,6 +201,10 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 
 	public void pushFragmentSlideUp(Fragment fragment) {
 		getBottomNavigator().pushFragmentSlideUp(fragment);
+	}
+
+	public void pushFragmentNoAnim(Fragment fragment) {
+		getBottomNavigator().pushFragmentNoAnim(fragment);
 	}
 
 	public void setText(WTextView tv, String text) {
@@ -310,7 +315,8 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 		setToolbarBackgroundDrawable(R.drawable.appbar_background);
 		setTitle(title);
 		statusBarColor();
-		mActivity.showToolbar();
+		if (mActivity != null)
+			mActivity.showToolbar();
 	}
 
 	public void showSoftKeyboard(WLoanEditTextView editTextView) {

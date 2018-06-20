@@ -72,6 +72,8 @@ public interface BottomNavigator {
 
 	void pushFragmentSlideUp(Fragment fragment, boolean state);
 
+	void pushFragmentNoAnim(Fragment fragment);
+
 	void popFragment();
 
 	void popFragmentNoAnim();
@@ -105,4 +107,5 @@ public interface BottomNavigator {
 	void closeSlideUpPanelFromList(int count);
 
 	void setHomeAsUpIndicator(int drawable);
+
 }

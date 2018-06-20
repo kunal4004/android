@@ -32,11 +32,14 @@ import com.google.gson.Gson;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.service.event.AuthenticationState;
 import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
@@ -79,7 +82,6 @@ import static za.co.woolworths.financial.services.android.models.service.event.B
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT_TEMP;
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.MESSAGE_COUNT;
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.REWARD_COUNT;
-import static za.co.woolworths.financial.services.android.models.service.event.ProductState.OPEN_GET_LIST_SCREEN;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SHOW_ADDED_TO_SHOPPING_LIST_TOAST;
 import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.RESULT_TAP_FIND_INSTORE_BTN;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
@@ -359,7 +361,33 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 						// open single list or multiple list view on collapsed
 						if (singleOrMultipleItemSelector()) {
-							Utils.sendBus(new ProductState(OPEN_GET_LIST_SCREEN));
+							List<ShoppingList> newList = new ArrayList<>();
+							List<ShoppingList> shoppingList = getGlobalState().getShoppingListRequest();
+							if (shoppingList != null) {
+								for (ShoppingList shopList : shoppingList) {
+									if (shopList.viewIsSelected) {
+										newList.add(shopList);
+									}
+								}
+							}
+							int shoppingListSize = newList.size();
+							if (shoppingListSize == 1) {
+								hideBottomNavigationMenu();
+								ShoppingList shop = newList.get(0);
+								Bundle bundle = new Bundle();
+								bundle.putString("listId", shop.listId);
+								bundle.putString("listName", shop.listName);
+								ShoppingListItemsFragment shoppingListItemsFragment = new ShoppingListItemsFragment();
+								shoppingListItemsFragment.setArguments(bundle);
+								pushFragmentSlideUp(shoppingListItemsFragment);
+							} else if (shoppingListSize > 1) {
+								Bundle bundle = new Bundle();
+								ShoppingListsResponse shoppingListsResponse = new ShoppingListsResponse();
+								bundle.putString("ShoppingList", Utils.objectToJson(shoppingListsResponse));
+								ShoppingListFragment shoppingListFragment = new ShoppingListFragment();
+								shoppingListFragment.setArguments(bundle);
+								pushFragmentSlideUp(shoppingListFragment);
+							}
 							setSingleOrMultipleItemSelector(false);
 						}
 						onActivityResult(SLIDE_UP_COLLAPSE_REQUEST_CODE, SLIDE_UP_COLLAPSE_RESULT_CODE, null);
@@ -462,6 +490,18 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		if (mNavController != null) {
 			FragNavTransactionOptions ft = new FragNavTransactionOptions.Builder()
 					.customAnimations(R.anim.slide_up_anim, R.anim.stay)
+					.allowStateLoss(true)
+					.build();
+
+			mNavController.pushFragment(fragment, ft);
+		}
+	}
+
+	@Override
+	public void pushFragmentNoAnim(Fragment fragment) {
+		if (mNavController != null) {
+			FragNavTransactionOptions ft = new FragNavTransactionOptions.Builder()
+					.customAnimations(0, 0)
 					.allowStateLoss(true)
 					.build();
 

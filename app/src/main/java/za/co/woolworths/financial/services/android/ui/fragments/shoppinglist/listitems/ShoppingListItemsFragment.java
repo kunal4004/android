@@ -49,6 +49,7 @@ import za.co.woolworths.financial.services.android.models.rest.product.PostAddIt
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.DeleteShoppingListItem;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.GetShoppingListItems;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
+import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.models.service.event.ShopState;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
@@ -70,6 +71,7 @@ import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 
+import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SHOW_ADDED_TO_SHOPPING_LIST_TOAST;
 import static za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity.DELIVERY_LOCATION_CLOSE_CLICKED;
 
 public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFragmentBinding, ShoppingListItemsViewModel> implements ShoppingListItemsNavigator, View.OnClickListener, EmptyCartView.EmptyCartInterface, NetworkChangeListener, ToastUtils.ToastInterface {
@@ -104,6 +106,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	private int DELIVERY_LOCATION_REQUEST_CODE_FROM_SELECT_ALL = 1222;
 	private Integer mDeliveryResultCode;
 	private List<ShoppingListItem> shoppingListItems;
+	private boolean itemWasSelected;
 
 	@Override
 	public ShoppingListItemsViewModel getViewModel() {
@@ -145,7 +148,28 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 			@Override
 			public void accept(Object object) throws Exception {
 				if (object != null) {
-
+					if (object instanceof ProductState) {
+						ProductState productState = (ProductState) object;
+						Activity activity = getActivity();
+						if (activity == null) return;
+						switch (productState.getState()) {
+							case SHOW_ADDED_TO_SHOPPING_LIST_TOAST:
+								RelativeLayout rlAddToList = getViewDataBinding().incConfirmButtonLayout.rlCheckOut;
+								ToastUtils toastUtils = new ToastUtils();
+								toastUtils.setActivity(getActivity());
+								toastUtils.setCurrentState(TAG);
+								String shoppingList = activity.getResources().getString(R.string.shopping_list);
+								toastUtils.setCartText((productState.getCount() > 1) ? shoppingList + "s" : shoppingList);
+								// Set Toast above button if add to list is visible
+								toastUtils.setPixel(itemWasSelected ? rlAddToList.getHeight() * 2 - Utils.dp2px(activity, 8) : 0);
+								toastUtils.setView(rlAddToList);
+								toastUtils.setMessage(R.string.added_to);
+								toastUtils.build();
+								break;
+							default:
+								break;
+						}
+					}
 					if (object instanceof CartState) {
 						CartState cartState = (CartState) object;
 						int updatedQuantity = cartState.getQuantity();
@@ -415,7 +439,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 
 	@Override
 	public void onItemSelectionChange(List<ShoppingListItem> items) {
-		boolean itemWasSelected = getButtonStatus(items);
+		itemWasSelected = getButtonStatus(items);
 		Activity activity = getActivity();
 		if (activity == null) return;
 		getViewDataBinding().incConfirmButtonLayout.rlCheckOut.setVisibility(itemWasSelected ? View.VISIBLE : View.GONE);
