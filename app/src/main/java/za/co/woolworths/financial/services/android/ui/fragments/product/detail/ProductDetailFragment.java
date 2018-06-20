@@ -57,7 +57,6 @@ import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.models.rest.product.GetCartSummary;
-import za.co.woolworths.financial.services.android.models.rest.product.GetInventorySkusForStore;
 import za.co.woolworths.financial.services.android.models.rest.product.PostAddItemToCart;
 import za.co.woolworths.financial.services.android.models.rest.product.ProductRequest;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
@@ -99,6 +98,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.ConfirmC
 import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.RESULT_TAP_FIND_INSTORE_BTN;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailViewModel.CLOTHING_PRODUCT;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailViewModel.FOOD_PRODUCT;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.SuburbSelectionFragment.SUBURB_SET_RESULT;
 
 public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding, ProductDetailViewModel> implements ProductDetailNavigator, ProductViewPagerAdapter.MultipleImageInterface, View.OnClickListener, NetworkChangeListener, ToastUtils.ToastInterface {
 
@@ -134,10 +134,10 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	private boolean activate_location_popup = false;
 	private ToastUtils mToastUtils;
 	private int mNumberOfListSelected = 0;
-	private GetInventorySkusForStore mGetInventorySkusForStore;
 	private final int ACCESS_FINE_LOCATION_REQUEST_CODE = 1;
 	private LinearLayout llStoreFinder;
 	private OtherSkus selectedFindInStoreOtherSkus;
+	public static int DELIVERY_LOCATION_FROM_PDP_REQUEST = 2553;
 
 	@Override
 	public ProductDetailViewModel getViewModel() {
@@ -183,14 +183,16 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 						switch (productState.getState()) {
 							case POST_ADD_ITEM_TO_CART:
 								String productId = getViewModel().getProductId();
-								String catalogRefId = productId;
 								//Parse skuId to catalogRefId if productType is of type CLOTHING_PRODUCT
-								if (getViewModel().getProductType().equalsIgnoreCase(CLOTHING_PRODUCT)) {
-									catalogRefId = getGlobalState().getSelectedSKUId().sku;
+								mApiAddItemToCart = new AddItemToCart(productId
+										, getGlobalState().getSelectedSKUId().sku
+										, productState.getQuantity());
+								ShoppingDeliveryLocation deliveryLocation = Utils.getPreferredDeliveryLocation();
+								if (deliveryLocation.suburb == null) {
+									deliverySelectionIntent(activity);
+								} else {
+									apiAddItemToCart();
 								}
-								int quantity = productState.getQuantity();
-								mApiAddItemToCart = new AddItemToCart(productId, catalogRefId, quantity);
-								apiAddItemToCart();
 								break;
 
 							case DETERMINE_LOCATION_POPUP:
@@ -407,7 +409,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		setSelectedSize(highestPriceSku);
 
 		setSelectedTextColor(highestPriceSku);
-		setHighestSizeText(highestPriceSku);
+		//setHighestSizeText(highestPriceSku);
 		setPrice(highestPriceSku);
 
 		colorSizeContainerVisibility(otherSkuList);
@@ -558,7 +560,8 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 							break;
 
 						case FOOD_PRODUCT:
-							getGlobalState().setSelectedSKUId(createOtherSkus(product.productId));
+							if (product == null) return;
+							getGlobalState().setSelectedSKUId(createOtherSkus(TextUtils.isEmpty(product.sku) ? product.productId : product.sku));
 							openAddToListFragment(activity);
 							break;
 
@@ -1380,13 +1383,13 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	}
 
 	private void cartSummaryAPI() {
-		ShoppingDeliveryLocation shoppingDeliveryLocation = getCartSummaryResponse();
-		if (shoppingDeliveryLocation == null) {
-			executeCartSummary();
-			return;
-		}
 		Activity activity = getActivity();
-		if ((activity != null) && shoppingDeliveryLocation != null) {
+		if (activity != null) {
+			ShoppingDeliveryLocation shoppingDeliveryLocation = getCartSummaryResponse();
+			if (shoppingDeliveryLocation == null) {
+				executeCartSummary();
+				return;
+			}
 			if (shoppingDeliveryLocation.suburb != null) {
 				if (!TextUtils.isEmpty(shoppingDeliveryLocation.suburb.name)) {
 					// show pop up message after login
@@ -1427,7 +1430,12 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	}
 
 	private void executeCartSummary() {
-		mGetCartSummary = getViewModel().getCartSummary(getActivity());
+		Activity activity = getActivity();
+		if (activity == null) {
+			onAddToCartLoadComplete();
+			return;
+		}
+		mGetCartSummary = getViewModel().getCartSummary(activity);
 		mGetCartSummary.execute();
 	}
 
@@ -1457,8 +1465,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 	private void deliverySelectionIntent(Activity activity) {
 		Intent deliveryLocationSelectionActivity = new Intent(activity, DeliveryLocationSelectionActivity.class);
-		deliveryLocationSelectionActivity.putExtra(DeliveryLocationSelectionActivity.LOAD_PROVINCE, "LOAD_PROVINCE");
-		activity.startActivity(deliveryLocationSelectionActivity);
+		activity.startActivityForResult(deliveryLocationSelectionActivity, DELIVERY_LOCATION_FROM_PDP_REQUEST);
 		activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 	}
 
@@ -1495,6 +1502,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	@Override
 	public void addItemToCartResponse(AddItemToCartResponse addItemToCartResponse) {
 		Log.d(TAG, addItemToCartResponse.toString());
+		((BottomNavigationActivity) getActivity()).cartSummaryAPI();
 		onAddToCartLoadComplete();
 		List<AddToCartDaTum> addToCartList = addItemToCartResponse.data;
 		if (addToCartList != null && addToCartList.size() > 0) {
@@ -1577,8 +1585,21 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
+		/***
+		 * perform add to cart call for first time user
+		 */
+		if (requestCode == DELIVERY_LOCATION_FROM_PDP_REQUEST) {
+			if (resultCode == SUBURB_SET_RESULT) {
+				if (getGlobalState().getSaveButtonClick() == INDEX_ADD_TO_CART) {
+					getViewDataBinding().llAddToCart.performClick();
+					return;
+				}
+			}
+		}
+
 		// perform find in-store api call
 		if ((requestCode == 3401) && (resultCode == RESULT_TAP_FIND_INSTORE_BTN)) {
+			mSkuId = getGlobalState().getSelectedSKUId();
 			setFinInStoreOtherSkus(getGlobalState().getSelectedSKUId());
 			llStoreFinder.performClick();
 			return;

@@ -1,15 +1,11 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems;
 
-import android.app.Activity;
-
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
-import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
-import za.co.woolworths.financial.services.android.models.rest.product.GetCartSummary;
 import za.co.woolworths.financial.services.android.models.rest.product.GetInventorySkusForStore;
 import za.co.woolworths.financial.services.android.models.rest.product.PostAddItemToCart;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.DeleteShoppingListItem;
@@ -99,43 +95,6 @@ public class ShoppingListItemsViewModel extends BaseViewModel<ShoppingListItemsN
 			public void onFailure(String e) {
 				addedToCartFail(true);
 				getNavigator().onAddItemToCartFailure(e);
-			}
-		});
-	}
-
-
-	protected GetCartSummary getCartSummary(Activity activity) {
-		addedToCartFail(false);
-		getNavigator().onAddToCartLoad();
-		return new GetCartSummary(activity, new OnEventListener() {
-			@Override
-			public void onSuccess(Object object) {
-				if (object != null) {
-					CartSummaryResponse cartSummaryResponse = (CartSummaryResponse) object;
-					if (cartSummaryResponse != null) {
-						switch (cartSummaryResponse.httpCode) {
-							case 200:
-								getNavigator().onCartSummarySuccess(cartSummaryResponse);
-								break;
-
-							case 440:
-								if (cartSummaryResponse.response != null)
-									getNavigator().onCartSummaryExpiredSession(cartSummaryResponse.response);
-								break;
-
-							default:
-								getNavigator().onCartSummaryOtherHttpCode(cartSummaryResponse.response);
-								break;
-						}
-					}
-				}
-				addedToCartFail(false);
-			}
-
-			@Override
-			public void onFailure(String e) {
-				addedToCartFail(true);
-				getNavigator().onTokenFailure(e);
 			}
 		});
 	}
