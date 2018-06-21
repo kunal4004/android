@@ -84,6 +84,7 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 	private void webSetting() {
 		showProgressBar();
 		webInternalPage.getSettings().setJavaScriptEnabled(true);
+		webInternalPage.getSettings().setDomStorageEnabled(true);
 		webInternalPage.setWebViewClient(new WebViewClient() {
 			@TargetApi(android.os.Build.VERSION_CODES.M)
 			@Override

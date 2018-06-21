@@ -75,6 +75,7 @@ public class WTodayFragment extends BaseFragment<WtodayFragmentBinding, WTodayVi
 		webView = view.findViewById(R.id.wtoday_fragment_webview);
 		webView.getSettings().setJavaScriptEnabled(true);
 		webView.getSettings().setMediaPlaybackRequiresUserGesture(false);
+		webView.getSettings().setDomStorageEnabled(true);
 		webView.addJavascriptInterface(new WebAppInterface(getActivity()), "Android");
 		webView.loadUrl(WoolworthsApplication.getWwTodayURI());
 		webView.setWebViewClient(new WebViewClient() {
