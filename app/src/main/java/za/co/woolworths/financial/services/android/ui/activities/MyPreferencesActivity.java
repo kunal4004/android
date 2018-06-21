@@ -1,10 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.provider.Settings;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -31,6 +29,8 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 	private static final int LOCK_REQUEST_CODE_TO_ENABLE = 222;
 	private static final int LOCK_REQUEST_CODE_TO_DISABLE = 333;
 	private static final int SECURITY_SETTING_REQUEST_CODE = 232;
+	public static final int SECURITY_SETTING_REQUEST_DIALOG = 234;
+	public static final int SECURITY_INFO_REQUEST_DIALOG = 235;
 	private LinearLayout biometricsLayout;
 	private RelativeLayout rlLocationSelectedLayout;
 	private WTextView tvDeliveryLocation;
@@ -100,8 +100,13 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 	public void onClick(View view) {
 		switch (view.getId()) {
 			case R.id.auSwitch:
-				if (AuthenticateUtils.getInstance(MyPreferencesActivity.this).isDeviceSecure())
-					startBiometricAuthentication(authenticateSwitch.isChecked() ? LOCK_REQUEST_CODE_TO_ENABLE : LOCK_REQUEST_CODE_TO_DISABLE);
+				if (AuthenticateUtils.getInstance(MyPreferencesActivity.this).isDeviceSecure()) {
+					if (authenticateSwitch.isChecked()) {
+						startBiometricAuthentication(LOCK_REQUEST_CODE_TO_ENABLE);
+					} else {
+						Utils.displayValidationMessageForResult(MyPreferencesActivity.this, CustomPopUpWindow.MODAL_LAYOUT.BIOMETRICS_SECURITY_INFO, getString(R.string.biometrics_security_info), SECURITY_INFO_REQUEST_DIALOG);
+					}
+				}
 				else
 					openDeviceSecuritySettings();
 				break;
@@ -140,6 +145,21 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 					mProvinceName = lastDeliveryLocation.province.name;
 					setDeliveryLocation(mSuburbName,mProvinceName);
 				}
+				break;
+			case SECURITY_SETTING_REQUEST_DIALOG:
+				if(resultCode == RESULT_OK){
+					try {
+						Intent intent = new Intent(Settings.ACTION_SETTINGS);
+						startActivityForResult(intent, SECURITY_SETTING_REQUEST_CODE);
+					} catch (Exception ex) {
+						setUserAuthentication(false);
+					}
+				}else {
+					setUserAuthentication(false);
+				}
+				break;
+			case SECURITY_INFO_REQUEST_DIALOG:
+				startBiometricAuthentication(LOCK_REQUEST_CODE_TO_DISABLE);
 				break;
 			default:
 				break;
@@ -180,31 +200,7 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 	}
 
 	public void openDeviceSecuritySettings(){
-		new AlertDialog.Builder(this)
-				.setTitle("Use Authentication ?")
-				.setMessage("Thia app want to change your device settings:")
-				.setCancelable(false)
-				.setPositiveButton(R.string.cli_yes, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						dialog.dismiss();
-						try {
-							Intent intent = new Intent(Settings.ACTION_SETTINGS);
-							startActivityForResult(intent, SECURITY_SETTING_REQUEST_CODE);
-						} catch (Exception ex) {
-							setUserAuthentication(false);
-						}
-					}
-				})
-				.setNegativeButton(R.string.cli_no, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						dialog.dismiss();
-						setUserAuthentication(false);
-					}
-				})
-				.show();
-
+		Utils.displayValidationMessageForResult(MyPreferencesActivity.this, CustomPopUpWindow.MODAL_LAYOUT.SET_UP_BIOMETRICS_ON_DEVICE,"", SECURITY_SETTING_REQUEST_DIALOG);
 	}
 
 	@Override
