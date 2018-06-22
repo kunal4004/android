@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,7 +20,6 @@ import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 
 import com.awfs.coordination.BR;
@@ -83,6 +81,7 @@ import static za.co.woolworths.financial.services.android.models.service.event.B
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.MESSAGE_COUNT;
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.REWARD_COUNT;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SHOW_ADDED_TO_SHOPPING_LIST_TOAST;
+import static za.co.woolworths.financial.services.android.ui.activities.BottomActivity.NAVIGATE_TO_SHOPPING_LIST_FRAGMENT;
 import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.RESULT_TAP_FIND_INSTORE_BTN;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.DELIVERY_LOCATION_FROM_PDP_REQUEST;
@@ -966,6 +965,38 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				}
 			}
 		}
+
+		if (requestCode == OPEN_CART_REQUEST) {
+			if (resultCode == NAVIGATE_TO_SHOPPING_LIST_FRAGMENT) {
+				List<ShoppingList> newList = new ArrayList<>();
+				List<ShoppingList> shoppingList = getGlobalState().getShoppingListRequest();
+				if (shoppingList != null) {
+					for (ShoppingList shopList : shoppingList) {
+						if (shopList.viewIsSelected) {
+							newList.add(shopList);
+						}
+					}
+				}
+				int shoppingListSize = newList.size();
+				if (shoppingListSize == 1) {
+					hideBottomNavigationMenu();
+					ShoppingList shop = newList.get(0);
+					Bundle bundle = new Bundle();
+					bundle.putString("listId", shop.listId);
+					bundle.putString("listName", shop.listName);
+					ShoppingListItemsFragment shoppingListItemsFragment = new ShoppingListItemsFragment();
+					shoppingListItemsFragment.setArguments(bundle);
+					pushFragmentSlideUp(shoppingListItemsFragment);
+				} else if (shoppingListSize > 1) {
+					Bundle bundle = new Bundle();
+					ShoppingListsResponse shoppingListsResponse = new ShoppingListsResponse();
+					bundle.putString("ShoppingList", Utils.objectToJson(shoppingListsResponse));
+					ShoppingListFragment shoppingListFragment = new ShoppingListFragment();
+					shoppingListFragment.setArguments(bundle);
+					pushFragmentSlideUp(shoppingListFragment);
+				}
+			}
+		}
 	}
 
 	private Fragment getBottomFragmentById() {
@@ -1062,7 +1093,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					ScreenManager.presentSSOSignin(BottomNavigationActivity.this);
 				} else {
 					Intent openCartActivity = new Intent(BottomNavigationActivity.this, CartActivity.class);
-					startActivity(openCartActivity);
+					startActivityForResult(openCartActivity, OPEN_CART_REQUEST);
 					overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				}
 			}
@@ -1097,14 +1128,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	public boolean singleOrMultipleItemSelector() {
 		return singleOrMultipleItemSelector;
-	}
-
-	public void updateStatusBarColor(String color) {// Color must be in hexadecimal fromat
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-			Window window = getWindow();
-			window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-			window.setStatusBarColor(Color.parseColor(color));
-		}
 	}
 
 	public Fragment getCurrentFragment() {
