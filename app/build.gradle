@@ -4,7 +4,7 @@ android {
 
     def major = "5"
     def minor = "5"
-    def fix = "4"
+    def fix = "5"
     def env = System.getenv()
     def job = env['BUILD_NUMBER']
     if (job == null) {
@@ -85,7 +85,7 @@ android {
         production {
             applicationId "com.awfs.coordination"
             signingConfig signingConfigs.woolworths
-            versionCode 67
+            versionCode 73
         }
         dexOptions {
             javaMaxHeapSize "2560M"
