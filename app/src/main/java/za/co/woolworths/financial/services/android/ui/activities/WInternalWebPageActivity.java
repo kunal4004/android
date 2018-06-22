@@ -25,6 +25,7 @@ import android.webkit.URLUtil;
 import android.webkit.WebBackForwardList;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
@@ -85,6 +86,8 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 		showProgressBar();
 		webInternalPage.getSettings().setJavaScriptEnabled(true);
 		webInternalPage.getSettings().setDomStorageEnabled(true);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+			webInternalPage.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
 		webInternalPage.setWebViewClient(new WebViewClient() {
 			@TargetApi(android.os.Build.VERSION_CODES.M)
 			@Override
