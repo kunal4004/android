@@ -44,6 +44,9 @@ public class WebViewActivity extends AppCompatActivity {
 
 		String url = b.getString("link");
 		webView.getSettings().setJavaScriptEnabled(true);
+		webView.getSettings().setDomStorageEnabled(true);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+			webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
 		webView.setWebViewClient(new WebViewController());
 		try {
 			Method m = WebSettings.class.getMethod("setMixedContentMode", int.class);
