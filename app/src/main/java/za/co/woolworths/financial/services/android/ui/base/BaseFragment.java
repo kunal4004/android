@@ -19,10 +19,13 @@ import android.view.inputmethod.InputMethodManager;
 import com.awfs.coordination.R;
 
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
 import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
@@ -97,10 +100,8 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 	}
 
 	public boolean isNetworkConnected() {
-		if (mActivity != null)
-			return new ConnectionDetector().isOnline(mActivity);
-		else
-			return false;
+		Activity activity = getActivity();
+		return (activity == null) ? false : new ConnectionDetector().isOnline(activity);
 	}
 
 	public void hideToolbar() {
@@ -188,7 +189,8 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 	}
 
 	public void slideBottomPanel() {
-		bottomNavigator.slideUpBottomView();
+		if (bottomNavigator != null)
+			bottomNavigator.slideUpBottomView();
 	}
 
 	public boolean isEmpty(String value) {
@@ -354,6 +356,10 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 
 	public void checkLocationPermission(BottomNavigator bottomNavigator, ArrayList<String> permissionType, int request_code) {
 		bottomNavigator.getRuntimePermission().check_permission(permissionType, "Explain here why the app needs permissions", request_code);
+	}
+
+	public void checkLocationPermission(CartActivity cartActivity, ArrayList<String> permissionType, int request_code) {
+		cartActivity.getRuntimePermission().check_permission(permissionType, "Explain here why the app needs permissions", request_code);
 	}
 
 	public void slideDownOnToolbarNavigationOnClickListener() {

@@ -42,8 +42,10 @@ import za.co.woolworths.financial.services.android.models.dto.CartItemGroup;
 import za.co.woolworths.financial.services.android.models.dto.CartResponse;
 import za.co.woolworths.financial.services.android.models.dto.ChangeQuantity;
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem;
+import za.co.woolworths.financial.services.android.models.dto.CommerceItemInfo;
 import za.co.woolworths.financial.services.android.models.dto.Data;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
+import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
@@ -321,6 +323,19 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	@Override
 	public void totalItemInBasket(int total) {
 
+	}
+
+	@Override
+	public void onOpenProductDetail(CommerceItem commerceItem) {
+		CartActivity cartActivity = (CartActivity) getActivity();
+		ProductList productList = new ProductList();
+		CommerceItemInfo commerceItemInfo = commerceItem.commerceItemInfo;
+		productList.externalImageRef = commerceItemInfo.externalImageURL;
+		productList.productName = commerceItemInfo.productDisplayName;
+		productList.fromPrice = (float) commerceItem.priceInfo.getAmount();
+		productList.productId = commerceItemInfo.productId;
+		productList.sku = commerceItemInfo.catalogRefId;
+		cartActivity.openProductDetailFragment("", productList);
 	}
 
 	public boolean toggleEditMode() {

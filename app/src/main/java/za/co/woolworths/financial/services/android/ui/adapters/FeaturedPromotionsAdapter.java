@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.awfs.coordination.R;
-import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.List;
 
