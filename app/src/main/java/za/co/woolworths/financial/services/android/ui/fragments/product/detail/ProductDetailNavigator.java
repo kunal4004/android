@@ -20,7 +20,7 @@ public interface ProductDetailNavigator {
 
 	void renderView();
 
-	void closeSlideUpPanel(View view);
+	void closeSlideUpPanel();
 
 	void nestedScrollViewHelper();
 
