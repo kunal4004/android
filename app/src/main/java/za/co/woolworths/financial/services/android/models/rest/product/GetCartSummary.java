@@ -62,8 +62,8 @@ public class GetCartSummary extends HttpAsyncTask<String, String, CartSummaryRes
 		if (cartSummaryResponse != null) {
 			List<CartSummary> cartSummary = cartSummaryResponse.data;
 			if (cartSummary != null) {
-				CartSummary cart = cartSummary.get(0);
-				if(!TextUtils.isEmpty(cart.suburbName) || !TextUtils.isEmpty(cart.provinceName)) {
+				if (cartSummary.get(0) != null) {
+					CartSummary cart = cartSummary.get(0);
 					Province province = getProvince(cart);
 					Suburb suburb = getSuburb(cart);
 					Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(province, suburb));
