@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.wreward;
 
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 
 import com.awfs.coordination.R;
 
@@ -31,6 +33,7 @@ public class WRewardsLoggedinAndNotLinkedFragment extends Fragment implements Vi
 	public WTextView wRewars_linkaccounts;
 	public WTextView applyForWRewards;
 	public WTextView wRewardsTagLine;
+	public ScrollView scrollLoggedOutLoggedIn;
 	public String TAG = this.getClass().getSimpleName();
 
 	private BottomNavigator mBottomNavigator;
@@ -47,6 +50,7 @@ public class WRewardsLoggedinAndNotLinkedFragment extends Fragment implements Vi
 		} catch (IllegalStateException ex) {
 			Log.d(TAG, ex.toString());
 		}
+		scrollLoggedOutLoggedIn = view.findViewById(R.id.scrollLoggedOutLoggedIn);
 		valuedMember = view.findViewById(R.id.layoutValuedMember);
 		loyalMember = view.findViewById(R.id.layoutLoyalMember);
 		vipMember = view.findViewById(R.id.layoutVipMember);
@@ -103,4 +107,8 @@ public class WRewardsLoggedinAndNotLinkedFragment extends Fragment implements Vi
 		}
 	}
 
+	public void scrollToTop() {
+		ObjectAnimator anim = ObjectAnimator.ofInt(scrollLoggedOutLoggedIn, "scrollY", scrollLoggedOutLoggedIn.getScrollY(), 0);
+		anim.setDuration(500).start();
+	}
 }

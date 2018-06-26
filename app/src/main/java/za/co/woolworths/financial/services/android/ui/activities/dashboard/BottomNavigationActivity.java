@@ -57,8 +57,11 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.grid.Gri
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.ShoppingListFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsLoggedOutFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsLoggedinAndNotLinkedFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.base.WRewardsFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.logged_in.WRewardsLoggedinAndLinkedFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wtoday.WTodayFragment;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
@@ -592,6 +595,15 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 				case R.id.navigation_reward:
 					clearStack();
+					WRewardsFragment wRewardsFragment = (WRewardsFragment) mNavController.getCurrentFrag();
+					Fragment currentChildFragment = wRewardsFragment.getWRewardContentFrame();
+					if (currentChildFragment instanceof WRewardsLoggedinAndLinkedFragment) {
+						((WRewardsLoggedinAndLinkedFragment) currentChildFragment).scrollToTop();
+					} else if (currentChildFragment instanceof WRewardsLoggedinAndNotLinkedFragment) {
+						((WRewardsLoggedinAndNotLinkedFragment) currentChildFragment).scrollToTop();
+					} else {
+						((WRewardsLoggedOutFragment) currentChildFragment).scrollToTop();
+					}
 					break;
 
 				case R.id.navigation_account:
