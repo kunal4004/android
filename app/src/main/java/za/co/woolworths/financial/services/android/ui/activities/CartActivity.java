@@ -100,15 +100,19 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 	}
 
 	public void showEditCart() {
+		btnEditCart.setAlpha(1.0f);
 		btnEditCart.setVisibility(View.VISIBLE);
+		btnEditCart.setEnabled(true);
 	}
 
 	public void hideEditCart() {
+		btnEditCart.setAlpha(0.0f);
 		btnEditCart.setVisibility(View.GONE);
+		btnEditCart.setEnabled(false);
 	}
 
 	public void resetToolBarIcons() {
-		btnEditCart.setVisibility(View.GONE);
+		hideEditCart();
 		btnCloseCart.setVisibility(View.VISIBLE);
 		btnClearCart.setVisibility(View.GONE);
 	}
