@@ -576,10 +576,14 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			switch (item.getItemId()) {
 				case R.id.navigation_today:
 					clearStack();
+					WTodayFragment currentWTodayFragment = (WTodayFragment) mNavController.getCurrentFrag();
+					currentWTodayFragment.scrollToTop();
 					break;
 
 				case R.id.navigation_product:
 					clearStack();
+					CategoryFragment currentProductCategoryFragment = (CategoryFragment) mNavController.getCurrentFrag();
+					currentProductCategoryFragment.scrollToTop();
 					break;
 
 				case R.id.navigation_cart:
@@ -592,6 +596,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 				case R.id.navigation_account:
 					clearStack();
+					MyAccountsFragment currentAccountFragment = (MyAccountsFragment) mNavController.getCurrentFrag();
+					currentAccountFragment.scrollToTop();
 					break;
 			}
 		}

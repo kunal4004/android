@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account;
 
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
@@ -878,5 +879,10 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			hideView(messageCounter);
 			showView(getViewDataBinding().messagesRightArrow);
 		}
+	}
+
+	public void scrollToTop() {
+		ObjectAnimator anim = ObjectAnimator.ofInt(mScrollView, "scrollY", mScrollView.getScrollY(), 0);
+		anim.setDuration(500).start();
 	}
 }
