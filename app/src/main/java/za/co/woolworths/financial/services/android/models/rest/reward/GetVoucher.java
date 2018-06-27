@@ -6,7 +6,6 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
-import za.co.woolworths.financial.services.android.util.SessionUtilities;
 
 public class GetVoucher extends HttpAsyncTask<String, String, VoucherResponse> {
 
@@ -42,12 +41,5 @@ public class GetVoucher extends HttpAsyncTask<String, String, VoucherResponse> {
 				mCallBack.onSuccess(voucherResponse);
 			}
 		}
-	}
-
-	@Override
-	protected void onPreExecute() {
-		if (!SessionUtilities.getInstance().isC2User())
-			this.cancel(true);
-		super.onPreExecute();
 	}
 }
