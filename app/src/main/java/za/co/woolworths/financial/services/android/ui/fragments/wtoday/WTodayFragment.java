@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.wtoday;
 
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -126,5 +127,10 @@ public class WTodayFragment extends BaseFragment<WtodayFragmentBinding, WTodayVi
 			setStatusBarColor(R.color.white);
 			hideToolbar();
 		}
+	}
+
+	public void scrollToTop() {
+		ObjectAnimator anim = ObjectAnimator.ofInt(webView, "scrollY", webView.getScrollY(), 0);
+		anim.setDuration(500).start();
 	}
 }

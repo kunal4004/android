@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.category;
 
 import android.Manifest;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
@@ -355,5 +356,10 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 				navigateToBarcode();
 			}
 		}
+	}
+
+	public void scrollToTop() {
+		ObjectAnimator anim = ObjectAnimator.ofInt(getViewDataBinding().mNestedScrollview, "scrollY", getViewDataBinding().mNestedScrollview.getScrollY(), 0);
+		anim.setDuration(500).start();
 	}
 }

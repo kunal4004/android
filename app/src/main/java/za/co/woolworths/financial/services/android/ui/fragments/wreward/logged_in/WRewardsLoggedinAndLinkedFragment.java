@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -296,6 +297,31 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 		hideToolbar();
 		if (wRewardsCardDetails != null && !wRewardsCardDetails.isCancelled()) {
 			wRewardsCardDetails.cancel(true);
+		}
+	}
+
+	public void scrollToTop() {
+		if (adapter != null) {
+			Fragment page = getChildFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + viewPager.getCurrentItem());
+			switch (viewPager.getCurrentItem()) {
+				case 0:
+					WRewardsOverviewFragment wRewardsOverviewFragment = (WRewardsOverviewFragment) page;
+					wRewardsOverviewFragment.scrollToTop();
+					break;
+
+				case 1:
+					WRewardsVouchersFragment wRewardsVouchersFragment = (WRewardsVouchersFragment) page;
+					wRewardsVouchersFragment.scrollToTop();
+					break;
+
+				case 2:
+					WRewardsSavingsFragment wRewardsSavingsFragment = (WRewardsSavingsFragment) page;
+					wRewardsSavingsFragment.scrollToTop();
+					break;
+
+				default:
+					break;
+			}
 		}
 	}
 }
