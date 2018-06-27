@@ -8,6 +8,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -239,6 +240,5 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 		imDeliveryLocationIcon.setBackgroundResource(R.drawable.tick_cli_active);
 		tvDeliveringToText.setText(provinceName);
 		tvDeliveryLocation.setVisibility(View.VISIBLE);
-		tvDeliveryLocation.setText(suburb);
-	}
+		tvDeliveryLocation.setText(TextUtils.isEmpty(suburb) ? "" : suburb);	}
 }
