@@ -90,6 +90,7 @@ import static za.co.woolworths.financial.services.android.ui.fragments.product.d
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_ADD_TO_SHOPPING_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment.MOVE_TO_LIST_ON_TOAST_VIEW_CLICKED;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.SuburbSelectionFragment.SUBURB_SET_RESULT;
+import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsFragment.ADD_TO_CART_SUCCESS_RESULT;
 import static za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment.LOCK_REQUEST_CODE_WREWARDS;
 import static za.co.woolworths.financial.services.android.util.ScreenManager.CART_LAUNCH_VALUE;
 
@@ -806,7 +807,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	}
 
 	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		//TODO: Explain where this is coming from.
 
@@ -964,6 +965,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					fragmentById.onActivityResult(requestCode, resultCode, null);
 					return;
 				}
+			}
+		}
+
+		if (requestCode == ADD_TO_CART_SUCCESS_RESULT) {
+			if (resultCode == ADD_TO_CART_SUCCESS_RESULT) {
+				setToast();
 			}
 		}
 	}
