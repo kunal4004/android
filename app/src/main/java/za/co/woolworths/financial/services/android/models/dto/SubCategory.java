@@ -10,12 +10,18 @@ public class SubCategory {
 	@SerializedName("categoryName")
 	@Expose
 	public String categoryName;
+
 	@SerializedName("categoryId")
 	@Expose
 	public String categoryId;
+
 	@SerializedName("hasChildren")
 	@Expose
 	public Boolean hasChildren;
+
+	@SerializedName("dimValId")
+	@Expose
+	public String dimValId;
 
 	public String imgUrl;
 	public List<SubCategory> subCategoryList;
