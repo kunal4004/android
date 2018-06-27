@@ -36,8 +36,8 @@ import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CLIOfferDecision;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.statement.EmailStatementResponse;
@@ -193,7 +193,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				mLinEmail.setVisibility(View.GONE);
 				mOverlayTitle.setVisibility(View.GONE);
 				mOverlayDescription.setText(description);
-				mOverlayBtn.setText((current_view == BIOMETRICS_SECURITY_INFO)? getString(R.string.ok) :getString(R.string.cli_got_it));
+				mOverlayBtn.setText((current_view == BIOMETRICS_SECURITY_INFO) ? getString(R.string.ok) : getString(R.string.cli_got_it));
 				mOverlayBtn.setOnClickListener(this);
 				mRelPopContainer.setOnClickListener(this);
 				break;
@@ -538,14 +538,11 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				});
 
 				WTextView tvLocation = findViewById(R.id.tvLocation);
-				List<ShoppingDeliveryLocation> deliveryLocationHistories = Utils.getShoppingDeliveryLocationHistory();
-				if (deliveryLocationHistories != null) {
-					ShoppingDeliveryLocation shoppingDeliveryLocation = deliveryLocationHistories.get(0);
-					if (shoppingDeliveryLocation != null) {
-						Suburb suburb = shoppingDeliveryLocation.suburb;
-						if (suburb != null) {
-							tvLocation.setText(suburb.name + ", " + shoppingDeliveryLocation.province.name);
-						}
+				ShoppingDeliveryLocation shoppingDeliveryLocation = Utils.getPreferredDeliveryLocation();
+				if (shoppingDeliveryLocation != null) {
+					Suburb suburb = shoppingDeliveryLocation.suburb;
+					if (suburb != null) {
+						tvLocation.setText(suburb.name + ", " + shoppingDeliveryLocation.province.name);
 					}
 				}
 				break;
@@ -915,9 +912,9 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 			case R.id.btnShopOk:
 			case R.id.btnMandatoryOK:
 			case R.id.btnOk:
-				if(current_view == BIOMETRICS_SECURITY_INFO){
+				if (current_view == BIOMETRICS_SECURITY_INFO) {
 					exitSetupBiometricsAnimation();
-				}else {
+				} else {
 					if (v != mRelPopContainer) {
 						whiteEffectClick(mNegativeActionButton);
 					}
@@ -927,10 +924,10 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				break;
 
 			case R.id.btnSignOut:
-				if(current_view == MODAL_LAYOUT.SIGN_OUT) {
+				if (current_view == MODAL_LAYOUT.SIGN_OUT) {
 					whiteEffectClick(mPositiveActionButton);
 					exitAnimation();
-				}else if(current_view == MODAL_LAYOUT.SET_UP_BIOMETRICS_ON_DEVICE){
+				} else if (current_view == MODAL_LAYOUT.SET_UP_BIOMETRICS_ON_DEVICE) {
 					exitSetupBiometricsAnimation();
 				}
 				break;
