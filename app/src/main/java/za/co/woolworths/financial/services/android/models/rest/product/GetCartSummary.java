@@ -52,6 +52,7 @@ public class GetCartSummary extends HttpAsyncTask<String, String, CartSummaryRes
 				mCallBack.onSuccess(cartSummaryResponse);
 				/***
 				 * Cache suburb response
+				 *
 				 */
 				cacheSuburbFromCartSummary(cartSummaryResponse);
 			}
