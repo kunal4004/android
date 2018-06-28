@@ -104,6 +104,7 @@ import static android.Manifest.permission_group.STORAGE;
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.WHITE;
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT_TEMP;
+import static za.co.woolworths.financial.services.android.ui.activities.MyPreferencesActivity.SECURITY_SETTING_REQUEST_DIALOG;
 
 public class Utils {
 
@@ -1198,5 +1199,15 @@ public class Utils {
 				(ViewGroup.MarginLayoutParams) recyclerView.getLayoutParams();
 		marginLayoutParams.setMargins(0, 0, 0, bottomMargin);
 		recyclerView.setLayoutParams(marginLayoutParams);
+	}
+
+	public static void displayValidationMessageForResult(Activity context, CustomPopUpWindow.MODAL_LAYOUT key, String description, int requestCode) {
+		Intent openMsg = new Intent(context, CustomPopUpWindow.class);
+		Bundle args = new Bundle();
+		args.putSerializable("key", key);
+		args.putString("description", description);
+		openMsg.putExtras(args);
+		context.startActivityForResult(openMsg, requestCode);
+		((AppCompatActivity) context).overridePendingTransition(0, 0);
 	}
 }

@@ -69,7 +69,7 @@ public class CategoryViewModel extends BaseViewModel<CategoryNavigator> {
 			// navigate to product grid
 			GridFragment gridFragment = new GridFragment();
 			Bundle bundle = new Bundle();
-			bundle.putString("sub_category_id", rootCategory.categoryId);
+			bundle.putString("sub_category_id", rootCategory.dimValId);
 			bundle.putString("sub_category_name", rootCategory.categoryName);
 			gridFragment.setArguments(bundle);
 			return gridFragment;

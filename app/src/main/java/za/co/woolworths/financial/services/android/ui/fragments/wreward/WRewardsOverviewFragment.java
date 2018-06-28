@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.wreward;
 
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
@@ -32,7 +34,6 @@ import za.co.woolworths.financial.services.android.util.CardType;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
-import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
@@ -61,8 +62,10 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 	private AnimatorSet mSetRightOut;
 	private AnimatorSet mSetLeftIn;
 	private boolean mIsBackVisible = false;
-	private boolean isStarted=false;
-	public CardDetailsResponse cardDetailsResponse;;
+	private boolean isStarted = false;
+	public CardDetailsResponse cardDetailsResponse;
+	;
+	private ScrollView scrollWRewardsOverview;
 
 	@Nullable
 	@Override
@@ -71,6 +74,7 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 		noTireHistory = (WTextView) view.findViewById(R.id.noTireHistory);
 		overviewLayout = (LinearLayout) view.findViewById(R.id.overviewLayout);
 		infoImage = (ImageView) view.findViewById(R.id.infoImage);
+		scrollWRewardsOverview = view.findViewById(R.id.scrollWRewardsOverview);
 		tireStatus = (WTextView) view.findViewById(R.id.tireStatus);
 		savings = (WTextView) view.findViewById(R.id.savings);
 		mRlConnect = (RelativeLayout) view.findViewById(R.id.no_connection_layout);
@@ -79,10 +83,10 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 		toNextTire = (WTextView) view.findViewById(R.id.toNextTire);
 		toNextTireLayout = (RelativeLayout) view.findViewById(R.id.toNextTireLayout);
 		promotionViewPager = (ViewPager) view.findViewById(R.id.promotionViewPager);
-		barCodeNumber=(WTextView)view.findViewById(R.id.barCodeNumber);
-		bardCodeImage=(ImageView) view.findViewById(R.id.barCodeImage);
-		flipCardFrontLayout=view.findViewById(R.id.flipCardFrontLayout);
-		flipCardBackLayout=view.findViewById(R.id.flipCardBackLayout);
+		barCodeNumber = (WTextView) view.findViewById(R.id.barCodeNumber);
+		bardCodeImage = (ImageView) view.findViewById(R.id.barCodeImage);
+		flipCardFrontLayout = view.findViewById(R.id.flipCardFrontLayout);
+		flipCardBackLayout = view.findViewById(R.id.flipCardBackLayout);
 		loadDefaultCardType();
 		Bundle bundle = getArguments();
 		voucherResponse = new Gson().fromJson(bundle.getString("WREWARDS"), VoucherResponse.class);
@@ -246,23 +250,18 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 	@Override
 	public void onStart() {
 		super.onStart();
-		isStarted=true;
+		isStarted = true;
 	}
 
-	public void handleCard(CardDetailsResponse cardDetailsResponse)
-	{
-		if(cardDetailsResponse.cardType !=null&& cardDetailsResponse.cardNumber !=null)
-		{
-			if(cardDetailsResponse.cardType.equalsIgnoreCase(CardType.WREWARDS.getType()))
-			{
+	public void handleCard(CardDetailsResponse cardDetailsResponse) {
+		if (cardDetailsResponse.cardType != null && cardDetailsResponse.cardNumber != null) {
+			if (cardDetailsResponse.cardType.equalsIgnoreCase(CardType.WREWARDS.getType())) {
 				flipCardFrontLayout.setBackgroundResource(R.drawable.wrewards_card);
 				flipCardBackLayout.setBackgroundResource(R.drawable.wrewards_card_flipped);
-			}else if(cardDetailsResponse.cardType.equalsIgnoreCase(CardType.MYSCHOOL.getType()))
-			{
+			} else if (cardDetailsResponse.cardType.equalsIgnoreCase(CardType.MYSCHOOL.getType())) {
 				flipCardFrontLayout.setBackgroundResource(R.drawable.myschool_card);
 				flipCardBackLayout.setBackgroundResource(R.drawable.myschool_card_flipped);
-			}
-			else {
+			} else {
 				return;
 			}
 			barCodeNumber.setText(WFormatter.formatVoucher(cardDetailsResponse.cardNumber));
@@ -283,9 +282,13 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 		}
 	}
 
-	public void loadDefaultCardType()
-	{
+	public void loadDefaultCardType() {
 		flipCardFrontLayout.setBackgroundResource(R.drawable.wrewards_card);
 		flipCardBackLayout.setBackgroundResource(R.drawable.wrewards_card_flipped);
+	}
+
+	public void scrollToTop() {
+		ObjectAnimator anim = ObjectAnimator.ofInt(scrollWRewardsOverview, "scrollY", scrollWRewardsOverview.getScrollY(), 0);
+		anim.setDuration(500).start();
 	}
 }

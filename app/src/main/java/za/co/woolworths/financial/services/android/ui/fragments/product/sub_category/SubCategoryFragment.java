@@ -177,7 +177,7 @@ public class SubCategoryFragment extends BaseFragment<ExpandableSubCategoryFragm
 		//Navigate to product grid
 		GridFragment gridFragment = new GridFragment();
 		Bundle bundle = new Bundle();
-		bundle.putString("sub_category_id", subCategory.categoryId);
+		bundle.putString("sub_category_id", subCategory.dimValId);
 		bundle.putString("sub_category_name", subCategory.categoryName);
 		gridFragment.setArguments(bundle);
 		pushFragment(gridFragment);
