@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
 
+import com.awfs.coordination.R;
+
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 
@@ -45,7 +47,7 @@ public class AuthenticateUtils {
 
 		//Check if the device version is greater than or equal to Lollipop(21)
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-			Intent i = keyguardManager.createConfirmDeviceCredentialIntent("", "");
+			Intent i = keyguardManager.createConfirmDeviceCredentialIntent(mContext.getString(R.string.enter_password), "");
 			try {
 				//Start activity for result
 				mContext.startActivityForResult(i, requestCode);

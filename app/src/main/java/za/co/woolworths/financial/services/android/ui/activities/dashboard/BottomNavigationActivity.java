@@ -55,8 +55,11 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.grid.Gri
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.ShoppingListFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsLoggedOutFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsLoggedinAndNotLinkedFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.base.WRewardsFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.logged_in.WRewardsLoggedinAndLinkedFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wtoday.WTodayFragment;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
@@ -89,6 +92,7 @@ import static za.co.woolworths.financial.services.android.ui.fragments.product.d
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_ADD_TO_SHOPPING_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment.MOVE_TO_LIST_ON_TOAST_VIEW_CLICKED;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.SuburbSelectionFragment.SUBURB_SET_RESULT;
+import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsFragment.ADD_TO_CART_SUCCESS_RESULT;
 import static za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment.LOCK_REQUEST_CODE_WREWARDS;
 import static za.co.woolworths.financial.services.android.util.ScreenManager.CART_LAUNCH_VALUE;
 
@@ -575,10 +579,14 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			switch (item.getItemId()) {
 				case R.id.navigation_today:
 					clearStack();
+					WTodayFragment currentWTodayFragment = (WTodayFragment) mNavController.getCurrentFrag();
+					currentWTodayFragment.scrollToTop();
 					break;
 
 				case R.id.navigation_product:
 					clearStack();
+					CategoryFragment currentProductCategoryFragment = (CategoryFragment) mNavController.getCurrentFrag();
+					currentProductCategoryFragment.scrollToTop();
 					break;
 
 				case R.id.navigation_cart:
@@ -587,10 +595,21 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 				case R.id.navigation_reward:
 					clearStack();
+					WRewardsFragment wRewardsFragment = (WRewardsFragment) mNavController.getCurrentFrag();
+					Fragment currentChildFragment = wRewardsFragment.getWRewardContentFrame();
+					if (currentChildFragment instanceof WRewardsLoggedinAndLinkedFragment) {
+						((WRewardsLoggedinAndLinkedFragment) currentChildFragment).scrollToTop();
+					} else if (currentChildFragment instanceof WRewardsLoggedinAndNotLinkedFragment) {
+						((WRewardsLoggedinAndNotLinkedFragment) currentChildFragment).scrollToTop();
+					} else {
+						((WRewardsLoggedOutFragment) currentChildFragment).scrollToTop();
+					}
 					break;
 
 				case R.id.navigation_account:
 					clearStack();
+					MyAccountsFragment currentAccountFragment = (MyAccountsFragment) mNavController.getCurrentFrag();
+					currentAccountFragment.scrollToTop();
 					break;
 			}
 		}
@@ -805,7 +824,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	}
 
 	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		//TODO: Explain where this is coming from.
 
@@ -966,35 +985,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			}
 		}
 
-		if (requestCode == OPEN_CART_REQUEST) {
-			if (resultCode == NAVIGATE_TO_SHOPPING_LIST_FRAGMENT) {
-				List<ShoppingList> newList = new ArrayList<>();
-				List<ShoppingList> shoppingList = getGlobalState().getShoppingListRequest();
-				if (shoppingList != null) {
-					for (ShoppingList shopList : shoppingList) {
-						if (shopList.viewIsSelected) {
-							newList.add(shopList);
-						}
-					}
-				}
-				int shoppingListSize = newList.size();
-				if (shoppingListSize == 1) {
-					hideBottomNavigationMenu();
-					ShoppingList shop = newList.get(0);
-					Bundle bundle = new Bundle();
-					bundle.putString("listId", shop.listId);
-					bundle.putString("listName", shop.listName);
-					ShoppingListItemsFragment shoppingListItemsFragment = new ShoppingListItemsFragment();
-					shoppingListItemsFragment.setArguments(bundle);
-					pushFragmentSlideUp(shoppingListItemsFragment);
-				} else if (shoppingListSize > 1) {
-					Bundle bundle = new Bundle();
-					ShoppingListsResponse shoppingListsResponse = new ShoppingListsResponse();
-					bundle.putString("ShoppingList", Utils.objectToJson(shoppingListsResponse));
-					ShoppingListFragment shoppingListFragment = new ShoppingListFragment();
-					shoppingListFragment.setArguments(bundle);
-					pushFragmentSlideUp(shoppingListFragment);
-				}
+		if (requestCode == ADD_TO_CART_SUCCESS_RESULT) {
+			if (resultCode == ADD_TO_CART_SUCCESS_RESULT) {
+				setToast();
 			}
 		}
 	}

@@ -33,8 +33,6 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
-import za.co.woolworths.financial.services.android.models.dto.AddToCartDaTum;
-import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
@@ -107,6 +105,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	private Integer mDeliveryResultCode;
 	private List<ShoppingListItem> shoppingListItems;
 	private boolean itemWasSelected;
+	public static final int ADD_TO_CART_SUCCESS_RESULT = 2000;
 
 	@Override
 	public ShoppingListItemsViewModel getViewModel() {
@@ -197,25 +196,9 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 							Activity activity = getActivity();
 							if (activity != null) {
 								BottomNavigator bottomNavigator = getBottomNavigator();
-								shoppingListItems = shopState.getUpdatedList();
-								for (ShoppingListItem shoppingListItem : mShoppingListItems) {
-									if (shoppingListItem.catalogRefId == null) {
-										continue;
-									}
-									for (ShoppingListItem newList : shoppingListItems) {
-										if (shoppingListItem.catalogRefId.equalsIgnoreCase(newList.catalogRefId)) {
-											newList.inventoryCallCompleted = shoppingListItem.inventoryCallCompleted;
-											newList.quantityInStock = shoppingListItem.quantityInStock;
-										}
-									}
-								}
-
 								setToast(shopState, bottomNavigator);
 								closeSoftKeyboard();
-								mShoppingListItems = shoppingListItems;
-								updateList(mShoppingListItems);
-								setUpView();
-								makeInventoryCall();
+								initGetShoppingListItems();
 							}
 						}
 					}
@@ -478,16 +461,11 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 
 	@Override
 	public void onAddToCartSuccess(AddItemToCartResponse addItemToCartResponse) {
-		((BottomNavigationActivity) getActivity()).cartSummaryAPI();
-		if (addItemToCartResponse.data != null) {
-			List<AddToCartDaTum> addToCartDaTumList = addItemToCartResponse.data;
-			AddToCartDaTum addToCartDaTum = addToCartDaTumList.get(0);
-			if (addToCartDaTum != null) {
-				if (addToCartDaTum.totalCommerceIteItemCount != null) {
-					sendBus(new CartSummaryResponse(addItemToCartResponse));
-				}
-			}
-		}
+		Activity activity = getActivity();
+		if (activity == null) return;
+		BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
+		bottomNavigationActivity.cartSummaryAPI();
+		bottomNavigationActivity.onActivityResult(ADD_TO_CART_SUCCESS_RESULT, ADD_TO_CART_SUCCESS_RESULT, null);
 		popFragmentSlideDown();
 	}
 
@@ -576,6 +554,11 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 
 	public void initGetShoppingListItems() {
 		mErrorHandlerView.hideErrorHandler();
+		mShoppingListItems = new ArrayList<>();
+		RecyclerView rcvShoppingListItems = getViewDataBinding().rcvShoppingListItems;
+		LinearLayout rlEmptyView = getViewDataBinding().rlEmptyListView;
+		rlEmptyView.setVisibility(View.GONE);
+		rcvShoppingListItems.setVisibility(View.GONE);
 		getViewDataBinding().loadingBar.setVisibility(View.VISIBLE);
 		getShoppingListItems = getViewModel().getShoppingListItems(listId);
 		getShoppingListItems.execute();

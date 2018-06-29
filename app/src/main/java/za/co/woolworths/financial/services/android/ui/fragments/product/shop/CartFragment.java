@@ -174,7 +174,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		if (lastDeliveryLocation != null) {
 			mSuburbName = lastDeliveryLocation.suburb.name;
 			mProvinceName = lastDeliveryLocation.province.name;
-			setDeliveryLocation(mSuburbName + ", " + mProvinceName);
+			if (!TextUtils.isEmpty(mSuburbName))
+				setDeliveryLocation(mSuburbName + ", " + mProvinceName);
 		}
 		emptyCartUI(view);
 		final Activity activity = getActivity();
