@@ -28,7 +28,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
-import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.ProductDetailViewBinding;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -38,12 +37,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import com.awfs.coordination.BR;
 
 import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.AddToCartDaTum;
+import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.FormException;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
@@ -99,6 +100,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.ConfirmC
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailViewModel.CLOTHING_PRODUCT;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailViewModel.FOOD_PRODUCT;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.SuburbSelectionFragment.SUBURB_SET_RESULT;
+
 
 public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding, ProductDetailViewModel> implements ProductDetailNavigator, ProductViewPagerAdapter.MultipleImageInterface, View.OnClickListener, NetworkChangeListener, ToastUtils.ToastInterface {
 
@@ -1384,7 +1386,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	private void cartSummaryAPI() {
 		Activity activity = getActivity();
 		if (activity != null) {
-			ShoppingDeliveryLocation shoppingDeliveryLocation = getCartSummaryResponse();
+			ShoppingDeliveryLocation shoppingDeliveryLocation = Utils.getPreferredDeliveryLocation();
 			if (shoppingDeliveryLocation == null) {
 				executeCartSummary();
 				return;
@@ -1438,10 +1440,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		mGetCartSummary.execute();
 	}
 
-	private ShoppingDeliveryLocation getCartSummaryResponse() {
-		return Utils.getPreferredDeliveryLocation();
-	}
-
 	@Override
 	public void onTokenFailure(String e) {
 		Activity activity = getBaseActivity();
@@ -1458,8 +1456,17 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 	@Override
 	public void onCartSummarySuccess(CartSummaryResponse cartSummaryResponse) {
-		if (cartSummaryResponse.data != null)
-			cartSummaryAPI();
+		if (cartSummaryResponse.data != null) {
+			List<CartSummary> cartSummaryList = cartSummaryResponse.data;
+			if (cartSummaryList.get(0) != null) {
+				CartSummary cartSummary = cartSummaryList.get(0);
+				if (TextUtils.isEmpty(cartSummary.suburbId)) {
+					deliverySelectionIntent(getActivity());
+				} else {
+					cartSummaryAPI();
+				}
+			}
+		}
 	}
 
 	private void deliverySelectionIntent(Activity activity) {
