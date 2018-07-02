@@ -18,7 +18,6 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.ShoppingListItemsFragmentBinding;
 
@@ -68,9 +67,12 @@ import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
+import com.awfs.coordination.BR;
 
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SHOW_ADDED_TO_SHOPPING_LIST_TOAST;
 import static za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity.DELIVERY_LOCATION_CLOSE_CLICKED;
+
+
 
 public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFragmentBinding, ShoppingListItemsViewModel> implements ShoppingListItemsNavigator, View.OnClickListener, EmptyCartView.EmptyCartInterface, NetworkChangeListener, ToastUtils.ToastInterface {
 	private ShoppingListItemsViewModel shoppingListItemsViewModel;
@@ -254,7 +256,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				mShoppingListItems = new ArrayList<>();
 			cancelQuantityLoad();
 			updateList(mShoppingListItems);
-			adapterClickable(true);
+			enableAdapterClickEvent(true);
 			return;
 		}
 
@@ -303,7 +305,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	private boolean shoppingListInventory() {
 		if (mShoppingListItems == null) {
 			setUpView();
-			adapterClickable(true);
+			enableAdapterClickEvent(true);
 			return true;
 		}
 		MultiMap<String, ShoppingListItem> multiListItem = MultiMap.create();
@@ -329,6 +331,9 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				mFulFillmentStoreId = mFulFillmentStoreId.replaceAll("\"", "");
 				mMapStoreFulFillmentKeyValue.put(fulFillmentTypeIdCollection, mFulFillmentStoreId);
 				executeGetInventoryForStore(mFulFillmentStoreId, multiSKUS);
+			} else {
+				cancelQuantityLoad();
+				enableAdapterClickEvent(true);
 			}
 		}
 		return false;
@@ -400,10 +405,10 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				loadShoppingListItems(shoppingListItemsResponse);
 				break;
 			case 440:
-				adapterClickable(true);
+				enableAdapterClickEvent(true);
 				break;
 			default:
-				adapterClickable(true);
+				enableAdapterClickEvent(true);
 				getViewDataBinding().loadingBar.setVisibility(View.GONE);
 				Activity activity = getActivity();
 				if (activity == null) return;
@@ -415,7 +420,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 
 	}
 
-	private void adapterClickable(boolean clickable) {
+	private void enableAdapterClickEvent(boolean clickable) {
 		if (shoppingListItemsAdapter != null)
 			shoppingListItemsAdapter.adapterClickable(clickable);
 	}
@@ -859,7 +864,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	}
 
 	private void updateList() {
-		adapterClickable(true);
+		enableAdapterClickEvent(true);
 		if (shoppingListItemsAdapter != null)
 			shoppingListItemsAdapter.updateList(mShoppingListItems);
 	}
