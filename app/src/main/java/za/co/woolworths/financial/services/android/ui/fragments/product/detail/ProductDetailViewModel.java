@@ -376,7 +376,8 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 		Point size = new Point();
 		display.getSize(size);
 		int width = size.x;
-		return imageUrl + "?w=" + width + "&q=" + 85;
+		imageUrl = (imageUrl.contains("jpg")) ? "https://images.woolworthsstatic.co.za/" + imageUrl : imageUrl;
+		return imageUrl + "" + ((imageUrl.contains("jpg")) ? "" : "?w=" + width + "&q=" + 85);
 	}
 
 	public ArrayList<OtherSkus> commonColorList(OtherSkus otherSku) throws NullPointerException {

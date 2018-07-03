@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -290,7 +291,6 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 							if (addToListRequests != null && addToListRequests.size() > 0) {
 								mMapAddedToList = groupListByListId();
 								mListRequests = mMapAddedToList.get(getCurrentListId());
-								apiCount = 0;
 								postAddToList(mListRequests, getCurrentListId());
 							} else {
 								WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
@@ -411,16 +411,17 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 				if (activity != null) {
 					switch (addToListResponse.httpCode) {
 						case 200:
+							apiCount += 1;
 							if (apiCount < sizeOfList) {
 								mListRequests = mMapAddedToList.get(getCurrentListId());
 								PostAddToList postAddToList = addToList(mListRequests, getCurrentListId());
 								postAddToList.execute();
-								apiCount += 1;
+								Log.e("amountClicked",apiCount+" sizeOfList "+sizeOfList);
 							} else {
 								((CustomPopUpWindow) activity).startExitAnimation();
 								mKeyboardUtils.hideKeyboard(activity);
 								KeyboardUtil.hideSoftKeyboard(activity);
-								Utils.sendBus(new ProductState(sizeOfList, CLOSE_PDP_FROM_ADD_TO_LIST));
+								Utils.sendBus(new ProductState(sizeOfList + 1, CLOSE_PDP_FROM_ADD_TO_LIST));
 								onLoad(false);
 							}
 							break;
