@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.ShoppingListItemsFragmentBinding;
 
@@ -68,11 +69,9 @@ import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
-import com.awfs.coordination.BR;
 
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SHOW_ADDED_TO_SHOPPING_LIST_TOAST;
 import static za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity.DELIVERY_LOCATION_CLOSE_CLICKED;
-
 
 
 public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFragmentBinding, ShoppingListItemsViewModel> implements ShoppingListItemsNavigator, View.OnClickListener, EmptyCartView.EmptyCartInterface, NetworkChangeListener, ToastUtils.ToastInterface {
@@ -804,16 +803,9 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 					}
 				}
 
-				/**
-				 * @method: getLastValueInMap() returns last storeId position
-				 * @method: updateList()
-				 */
-				if (getLastValueInMap() == null) {
-					updateShoppingList();
-					return;
-				}
+				updateShoppingList();
+
 				if (getLastValueInMap().equalsIgnoreCase(storeId)) {
-					updateShoppingList();
 
 					/***
 					 * Triggered when "SELECT ALL" is selected from toolbar
