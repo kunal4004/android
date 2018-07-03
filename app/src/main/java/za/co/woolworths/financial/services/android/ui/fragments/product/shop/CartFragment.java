@@ -1052,10 +1052,12 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			if (woolworthsApplication == null) return;
 			WGlobalState globalState = woolworthsApplication.getWGlobalState();
 			List<ShoppingList> shoppingListRequest = globalState.getShoppingListRequest();
-			for (ShoppingList shoppingList : shoppingListRequest) {
-				if (shoppingList.viewIsSelected) {
-					intent.putExtra("listId", shoppingList.listId);
-					intent.putExtra("listName", shoppingList.listName);
+			if (shoppingListRequest != null) {
+				for (ShoppingList shoppingList : shoppingListRequest) {
+					if (shoppingList.viewIsSelected) {
+						intent.putExtra("listId", shoppingList.listId);
+						intent.putExtra("listName", shoppingList.listName);
+					}
 				}
 			}
 		}

@@ -328,8 +328,9 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 					mMapAddedToList.put(key, list);
 				}
 			}
-			addToListRequestList = mMapAddedToList.get(getCurrentListId());
-			mPostAddToList = addToList(addToListRequestList, getCurrentListId());
+			String currentListId = getCurrentListId();
+			addToListRequestList = mMapAddedToList.get(currentListId);
+			mPostAddToList = addToList(addToListRequestList,currentListId);
 			mPostAddToList.execute();
 		}
 	}
@@ -355,16 +356,18 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 								Utils.sendBus(new ProductState(sizeOfList, CLOSE_PDP_FROM_ADD_TO_LIST));
 								onLoad(false);
 								return;
-							}else
-							if (apiCount < sizeOfList) {
-								String currentKey = getCurrentListId();
-								List<AddToListRequest> addToListRequestList = mMapAddedToList.get(currentKey);
-								PostAddToList postAddToList = addToList(addToListRequestList, currentKey);
-								postAddToList.execute();
 							} else {
-								((CustomPopUpWindow) activity).startExitAnimation();
-								Utils.sendBus(new ProductState(sizeOfList, CLOSE_PDP_FROM_ADD_TO_LIST));
-								onLoad(false);
+								apiCount += 1;
+								if (apiCount < sizeOfList) {
+									String currentKey = getCurrentListId();
+									List<AddToListRequest> addToListRequestList = mMapAddedToList.get(currentKey);
+									PostAddToList postAddToList = addToList(addToListRequestList, currentKey);
+									postAddToList.execute();
+								} else {
+									((CustomPopUpWindow) activity).startExitAnimation();
+									Utils.sendBus(new ProductState(sizeOfList, CLOSE_PDP_FROM_ADD_TO_LIST));
+									onLoad(false);
+								}
 							}
 							break;
 						default:
@@ -375,7 +378,6 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 							onLoad(false);
 							break;
 					}
-					apiCount = apiCount + 1;
 					setAddToListHasFail(false);
 				}
 			}
