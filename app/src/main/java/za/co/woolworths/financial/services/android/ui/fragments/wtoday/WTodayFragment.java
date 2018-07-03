@@ -81,7 +81,6 @@ public class WTodayFragment extends BaseFragment<WtodayFragmentBinding, WTodayVi
 		webView.getSettings().setDomStorageEnabled(true);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
 			webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
-
 		webView.addJavascriptInterface(new WebAppInterface(getActivity()), "Android");
 		webView.loadUrl(WoolworthsApplication.getWwTodayURI());
 		webView.setWebViewClient(new WebViewClient() {
