@@ -24,6 +24,7 @@ import com.awfs.coordination.databinding.ShoppingListItemsFragmentBinding;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -793,15 +794,9 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 							if (sku.equalsIgnoreCase(inventoryItems.catalogRefId)) {
 								inventoryItems.quantityInStock = quantity;
 							}
+							inventoryItems.inventoryCallCompleted = true;
 						}
-						inventoryItems.inventoryCallCompleted = true;
 					}
-				}
-
-				if (shoppingListItems != null) {
-					updateShoppingList();
-					shoppingListItems = null;
-					return;
 				}
 
 				/**
@@ -948,10 +943,9 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	}
 
 	private String getLastValueInMap() {
-		for (Map.Entry<String, String> entry : mMapStoreFulFillmentKeyValue.entrySet()) {
-			return entry.getValue();
-		}
-		return null;
+		if (mMapStoreFulFillmentKeyValue == null) return null;
+		List<String> listOfFulfillmentValue = Collections.list(Collections.enumeration(mMapStoreFulFillmentKeyValue.values()));
+		return listOfFulfillmentValue.get(listOfFulfillmentValue.size() - 1);
 	}
 
 	private void cancelQuantityLoad() {
