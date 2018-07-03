@@ -9,8 +9,8 @@ import java.util.List;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.Province;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
@@ -52,6 +52,7 @@ public class GetCartSummary extends HttpAsyncTask<String, String, CartSummaryRes
 				mCallBack.onSuccess(cartSummaryResponse);
 				/***
 				 * Cache suburb response
+				 *
 				 */
 				cacheSuburbFromCartSummary(cartSummaryResponse);
 			}
@@ -59,17 +60,15 @@ public class GetCartSummary extends HttpAsyncTask<String, String, CartSummaryRes
 	}
 
 	private void cacheSuburbFromCartSummary(CartSummaryResponse cartSummaryResponse) {
-		if (cartSummaryResponse != null) {
-			List<CartSummary> cartSummary = cartSummaryResponse.data;
-			if (cartSummary != null) {
-				if (cartSummary.get(0) != null) {
-					CartSummary cart = cartSummary.get(0);
-					Province province = getProvince(cart);
-					Suburb suburb = getSuburb(cart);
-					Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(province, suburb));
-				}
-			}
-		}
+		if (cartSummaryResponse == null) return;
+		List<CartSummary> cartSummary = cartSummaryResponse.data;
+		if (cartSummary == null) return;
+		if (cartSummary.get(0) == null) return;
+		CartSummary cart = cartSummary.get(0);
+		if (TextUtils.isEmpty(cart.suburbName) || TextUtils.isEmpty(cart.provinceName)) return;
+		Province province = getProvince(cart);
+		Suburb suburb = getSuburb(cart);
+		Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(province, suburb));
 	}
 
 	@NonNull
