@@ -5,11 +5,11 @@ import android.graphics.drawable.Animatable;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.view.ViewGroup;
 
 import com.facebook.drawee.backends.pipeline.PipelineDraweeControllerBuilder;
 import com.facebook.drawee.controller.BaseControllerListener;
 import com.facebook.drawee.controller.ControllerListener;
-import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -64,7 +64,6 @@ public class WrapContentDraweeView extends SimpleDraweeView {
 	void updateViewSize(@Nullable ImageInfo imageInfo) {
 		if (imageInfo != null) {
 			setAspectRatio((float) imageInfo.getWidth() / imageInfo.getHeight());
-			getHierarchy().setActualImageScaleType(ScalingUtils.ScaleType.FIT_XY);
 		}
 	}
 }

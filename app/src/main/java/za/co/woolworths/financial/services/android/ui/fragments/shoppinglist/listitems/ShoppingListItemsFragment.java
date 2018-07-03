@@ -766,7 +766,8 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	}
 
 	private void selectAllTextVisibility(boolean visible) {
-		tvMenuSelectAll.setVisibility(visible ? View.VISIBLE : View.GONE);
+		if (tvMenuSelectAll != null)
+			tvMenuSelectAll.setVisibility(visible ? View.VISIBLE : View.GONE);
 	}
 
 	@Override

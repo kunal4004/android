@@ -30,7 +30,6 @@ import android.widget.ScrollView;
 
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.ProductDetailViewBinding;
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -61,6 +60,7 @@ import za.co.woolworths.financial.services.android.models.rest.product.GetCartSu
 import za.co.woolworths.financial.services.android.models.rest.product.PostAddItemToCart;
 import za.co.woolworths.financial.services.android.models.rest.product.ProductRequest;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
+import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity;
@@ -73,6 +73,7 @@ import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ProductUtils;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
 import za.co.woolworths.financial.services.android.util.CancelableCallback;
 import za.co.woolworths.financial.services.android.util.DrawImage;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -110,6 +111,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	public static final int INDEX_SEARCH_FROM_LIST = 4;
 	private int DEFAULT_PICKER = 0;
 
+	public static final int RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL = 4002;
 	private ProductDetailViewModel productDetailViewModel;
 	private List<String> mAuxiliaryImage = new ArrayList<>();
 	private String mSubCategoryTitle;
@@ -161,7 +163,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		super.onCreate(savedInstanceState);
 		productDetailViewModel = ViewModelProviders.of(this).get(ProductDetailViewModel.class);
 		getViewModel().setNavigator(this);
-		mConnectionBroadcast = Utils.connectionBroadCast(getBaseActivity(), this);
+		mConnectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
 		final Bundle bundle = this.getArguments();
 		if (bundle != null) {
 			getViewModel().setDefaultProduct(bundle.getString("strProductList"));
@@ -172,6 +174,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 		mToastUtils = new ToastUtils(this);
 		observableOn(new Consumer<Object>() {
+
 			@Override
 			public void accept(Object object) throws Exception {
 				Activity activity = getActivity();
@@ -224,25 +227,13 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 								break;
 
 							case CLOSE_PDP_FROM_ADD_TO_LIST:
-								BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
-								switch (bottomNavigationActivity.getCurrentSection()) {
-									case R.id.navigation_account:
-										closeSlideUpPanel(getView());
-										getBottomNavigator().closeSlideUpPanelFromList(productState.getCount());
-										break;
-									default:
-										mToastUtils.setActivity(activity);
-										mToastUtils.setCurrentState(TAG);
-										String shoppingList = getString(R.string.shopping_list);
-										mNumberOfListSelected = productState.getCount();
-										// shopping list vs shopping lists
-										mToastUtils.setCartText((mNumberOfListSelected > 1) ? shoppingList + "s" : shoppingList);
-										mToastUtils.setPixel(getViewDataBinding().llStoreFinder.getHeight() * 2);
-										mToastUtils.setView(getViewDataBinding().llStoreFinder);
-										mToastUtils.setMessage(R.string.added_to);
-										mToastUtils.setViewState(true);
-										mToastUtils.build();
-										break;
+								if (activity instanceof BottomNavigationActivity) {
+									BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
+									showToastMessage(activity, productState, bottomNavigationActivity);
+								}
+
+								if (activity instanceof CartActivity) {
+									showCartToastMessage(activity, productState);
 								}
 								break;
 
@@ -253,6 +244,42 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 				}
 			}
 		});
+	}
+
+	private void showToastMessage(Activity activity, ProductState productState, BottomNavigationActivity bottomNavigationActivity) {
+		switch (bottomNavigationActivity.getCurrentSection()) {
+			case R.id.navigation_account:
+				closeSlideUpPanel();
+				getBottomNavigator().closeSlideUpPanelFromList(productState.getCount());
+				break;
+			default:
+				mToastUtils.setActivity(activity);
+				mToastUtils.setCurrentState(TAG);
+				String shoppingList = getString(R.string.shopping_list);
+				mNumberOfListSelected = productState.getCount();
+				// shopping list vs shopping lists
+				mToastUtils.setCartText((mNumberOfListSelected > 1) ? shoppingList + "s" : shoppingList);
+				mToastUtils.setPixel(getViewDataBinding().llStoreFinder.getHeight() * 2);
+				mToastUtils.setView(getViewDataBinding().llStoreFinder);
+				mToastUtils.setMessage(R.string.added_to);
+				mToastUtils.setViewState(true);
+				mToastUtils.build();
+				break;
+		}
+	}
+
+	private void showCartToastMessage(Activity activity, ProductState productState) {
+		mToastUtils.setActivity(activity);
+		mToastUtils.setCurrentState(TAG);
+		String shoppingList = getString(R.string.shopping_list);
+		mNumberOfListSelected = productState.getCount();
+		// shopping list vs shopping lists
+		mToastUtils.setCartText((mNumberOfListSelected > 1) ? shoppingList + "s" : shoppingList);
+		mToastUtils.setPixel(getViewDataBinding().llStoreFinder.getHeight() * 2);
+		mToastUtils.setView(getViewDataBinding().llStoreFinder);
+		mToastUtils.setMessage(R.string.added_to);
+		mToastUtils.setViewState(true);
+		mToastUtils.build();
 	}
 
 	private void openAddToListFragment(Activity activity) {
@@ -284,17 +311,23 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		getViewDataBinding().llColorSize.relSizeSelector.setOnClickListener(this);
 		getViewDataBinding().llStoreFinder.setOnClickListener(this);
 
-		mErrorHandlerView = new ErrorHandlerView(getBaseActivity());
+		mErrorHandlerView = new ErrorHandlerView(getActivity());
 	}
 
 	@Override
-	public void closeSlideUpPanel(View view) {
-		getBottomNavigator().closeSlideUpPanel();
+	public void closeSlideUpPanel() {
+		if (getActivity() instanceof CartActivity) {
+			((CartActivity) getActivity()).closeSlideUpPanel();
+		}
+
+		if (getBottomNavigator() != null)
+			getBottomNavigator().closeSlideUpPanel();
 	}
 
 	@Override
 	public void nestedScrollViewHelper() {
-		getBottomNavigator().scrollableViewHelper(getViewDataBinding().scrollProductDetail);
+		if (getBottomNavigator() != null)
+			getBottomNavigator().scrollableViewHelper(getViewDataBinding().scrollProductDetail);
 	}
 
 	@Override
@@ -335,7 +368,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		setProductName();
 
 		//set sub category title
-		setSubCategoryTitle();
+		setSubCategoryTitle(mSubCategoryTitle);
 
 		try {
 			// set price list
@@ -375,7 +408,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		getBtnAddShoppingList().performClick();
 	}
 
-	private void setSubCategoryTitle() {
+	private void setSubCategoryTitle(String mSubCategoryTitle) {
 		try {
 			setText(getViewDataBinding().tvSubCategoryTitle, mSubCategoryTitle);
 		} catch (NullPointerException ex) {
@@ -402,6 +435,8 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		getViewModel().displayIngredient();
 
 		setProductCode(getViewModel().getProductId());
+
+		setSubCategoryTitle(newProductList.categoryName);
 
 		setProductDescription(getViewModel().getProductDescription(getActivity()));
 
@@ -462,7 +497,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 	@Override
 	public void SelectedImage(String image) {
-		Activity activity = getBaseActivity();
+		Activity activity = getActivity();
 		if (activity != null) {
 			Intent openMultipleImage = new Intent(getActivity(), MultipleImageActivity.class);
 			openMultipleImage.putExtra("auxiliaryImages", image);
@@ -532,7 +567,8 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		Point size = new Point();
 		deviceHeight.getSize(size);
 		int width = size.x;
-		return imageUrl + "?w=" + width + "&q=" + 85;
+		imageUrl = (imageUrl.contains("jpg")) ? "https://images.woolworthsstatic.co.za/" + imageUrl : imageUrl;
+		return imageUrl + "" + ((imageUrl.contains("jpg")) ? "" : "?w=" + width + "&q=" + 85);
 	}
 
 	@Override
@@ -542,7 +578,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		if (activity != null) {
 			switch (view.getId()) {
 				case R.id.imClose:
-					closeSlideUpPanel(view);
+					closeSlideUpPanel();
 					break;
 				case R.id.btnAddShoppingList:
 					getGlobalState().saveButtonClicked(INDEX_ADD_TO_SHOPPING_LIST);
@@ -588,8 +624,13 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 					getGlobalState().saveButtonClicked(INDEX_STORE_FINDER);
 					smoothScrollToTop();
 					if (Utils.isLocationEnabled(getActivity())) {
-						BottomNavigator bottomNavigator = getBottomNavigator();
-						checkLocationPermission(bottomNavigator, bottomNavigator.getPermissionType(android.Manifest.permission.ACCESS_FINE_LOCATION), ACCESS_FINE_LOCATION_REQUEST_CODE);
+						if (activity instanceof BottomNavigationActivity) {
+							BottomNavigator bottomNavigator = getBottomNavigator();
+							checkLocationPermission(bottomNavigator, bottomNavigator.getPermissionType(android.Manifest.permission.ACCESS_FINE_LOCATION), ACCESS_FINE_LOCATION_REQUEST_CODE);
+						} else {
+							CartActivity cartActivity = (CartActivity) activity;
+							checkLocationPermission(cartActivity, cartActivity.getPermissionType(android.Manifest.permission.ACCESS_FINE_LOCATION), ACCESS_FINE_LOCATION_REQUEST_CODE);
+						}
 					} else {
 						Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.LOCATION_OFF, "");
 					}
@@ -792,7 +833,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	}
 
 	private void selectedColor(String url) {
-		SimpleDraweeView mImSelectedColor = getViewDataBinding().llColorSize.imSelectedColor;
+		WrapContentDraweeView mImSelectedColor = getViewDataBinding().llColorSize.imSelectedColor;
 		mImSelectedColor.setImageAlpha(TextUtils.isEmpty(url) ? 0 : 255);
 		DrawImage drawImage = new DrawImage(getActivity());
 		drawImage.displayImage(mImSelectedColor, url);
@@ -887,7 +928,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		public void onReceive(Context context, final Intent intent) {
 			try {
 				Location mLocation = intent.getParcelableExtra(FusedLocationSingleton.LBM_EVENT_LOCATION_UPDATE);
-				Utils.saveLastLocation(mLocation, getBaseActivity());
+				Utils.saveLastLocation(mLocation, getContext());
 				stopLocationUpdate();
 				executeLocationItemTask();
 			} catch (Exception e) {
@@ -897,7 +938,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	};
 
 	private void executeLocationItemTask() {
-		mLocationItemTask = getViewModel().locationItemTask(getBaseActivity());
+		mLocationItemTask = getViewModel().locationItemTask(getActivity());
 		mLocationItemTask.execute();
 	}
 
@@ -906,7 +947,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		showFindInStoreProgress();
 		FusedLocationSingleton.getInstance().startLocationUpdates();
 		// register observer for location updates
-		LocalBroadcastManager.getInstance(getBaseActivity()).registerReceiver(mLocationUpdated,
+		LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mLocationUpdated,
 				new IntentFilter(FusedLocationSingleton.INTENT_FILTER_LOCATION_UPDATE));
 	}
 
@@ -915,7 +956,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		// stop location updates
 		FusedLocationSingleton.getInstance().stopLocationUpdates();
 		// unregister observer
-		LocalBroadcastManager.getInstance(getBaseActivity()).unregisterReceiver(mLocationUpdated);
+		LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mLocationUpdated);
 	}
 
 	@Override
@@ -927,7 +968,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 	@Override
 	public void dismissFindInStoreProgress() {
-		getBaseActivity().runOnUiThread(new Runnable() {
+		getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
 				getViewDataBinding().llStoreFinder.setEnabled(true);
@@ -939,13 +980,13 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 	@Override
 	public void onLocationItemSuccess(List<StoreDetails> location) {
-		Utils.removeObjectFromArrayList(getBaseActivity(), location);
+		Utils.removeObjectFromArrayList(getActivity(), location);
 		if (location.size() > 0) {
 			getGlobalState().setStoreDetailsArrayList(location);
-			Intent intentInStoreFinder = new Intent(getBaseActivity(), WStockFinderActivity.class);
+			Intent intentInStoreFinder = new Intent(getActivity(), WStockFinderActivity.class);
 			intentInStoreFinder.putExtra("PRODUCT_NAME", mSubCategoryTitle);
 			startActivity(intentInStoreFinder);
-			getBaseActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+			getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 		} else {
 			outOfStockDialog();
 		}
@@ -954,7 +995,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	@Override
 	public void outOfStockDialog() {
 		//no stock error message
-		Utils.displayValidationMessage(getBaseActivity(), CustomPopUpWindow.MODAL_LAYOUT.NO_STOCK, "");
+		Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.NO_STOCK, "");
 	}
 
 	@Override
@@ -1161,7 +1202,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 	public void colorSizePicker(ArrayList<OtherSkus> otherSkusList, boolean colorIsSelected, boolean sizeIsSelected) {
 		getGlobalState().setColourSKUArrayList(otherSkusList);
-		Intent mIntent = new Intent(getBaseActivity(), ConfirmColorSizeActivity.class);
+		Intent mIntent = new Intent(getActivity(), ConfirmColorSizeActivity.class);
 		mIntent.putExtra("COLOR_LIST", toJson(otherSkusList));
 		mIntent.putExtra("OTHERSKU", toJson(getViewModel().otherSkuList()));
 		mIntent.putExtra(ConfirmColorSizeActivity.COLOR_PICKER_SELECTOR, colorIsSelected);
@@ -1169,13 +1210,13 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		mIntent.putExtra(ConfirmColorSizeActivity.FULFILLMENT_TYPE, getFulFillmentType());
 		mIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, "");
 		mIntent.putExtra("PRODUCT_NAME", getViewModel().getDefaultProduct().productName);
-		startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
-		getBaseActivity().overridePendingTransition(0, 0);
+		getActivity().startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
+		getActivity().overridePendingTransition(0, 0);
 	}
 
 	public void colorSizePicker(ArrayList<OtherSkus> otherSkusList, boolean colorIsSelected, boolean sizeIsSelected, OtherSkus selectedSku) {
 		getGlobalState().setColourSKUArrayList(otherSkusList);
-		Intent mIntent = new Intent(getBaseActivity(), ConfirmColorSizeActivity.class);
+		Intent mIntent = new Intent(getActivity(), ConfirmColorSizeActivity.class);
 		mIntent.putExtra("COLOR_LIST", toJson(otherSkusList));
 		mIntent.putExtra("OTHERSKU", toJson(getViewModel().otherSkuList()));
 		mIntent.putExtra(ConfirmColorSizeActivity.COLOR_PICKER_SELECTOR, colorIsSelected);
@@ -1184,13 +1225,13 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		mIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, "");
 		mIntent.putExtra(ConfirmColorSizeActivity.SELECTED_SKU, selectedSku.sku);
 		mIntent.putExtra("PRODUCT_NAME", getViewModel().getDefaultProduct().productName);
-		startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
-		getBaseActivity().overridePendingTransition(0, 0);
+		getActivity().startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
+		getActivity().overridePendingTransition(0, 0);
 	}
 
 	public void sizeIntent() {
 		getGlobalState().setColourSKUArrayList(getColorList());
-		Intent mIntent = new Intent(getBaseActivity(), ConfirmColorSizeActivity.class);
+		Intent mIntent = new Intent(getActivity(), ConfirmColorSizeActivity.class);
 		mIntent.putExtra("COLOR_LIST", toJson(getColorList()));
 		mIntent.putExtra("OTHERSKU", toJson(getViewModel().otherSkuList()));
 		mIntent.putExtra("PRODUCT_HAS_COLOR", false);
@@ -1198,13 +1239,13 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		mIntent.putExtra(ConfirmColorSizeActivity.FULFILLMENT_TYPE, getFulFillmentType());
 		mIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, "");
 		mIntent.putExtra("PRODUCT_NAME", getViewModel().getDefaultProduct().productName);
-		startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
-		getBaseActivity().overridePendingTransition(0, 0);
+		getActivity().startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
+		getActivity().overridePendingTransition(0, 0);
 	}
 
 	public void sizeIntent(String colour) {
 		getGlobalState().setColourSKUArrayList(getColorList());
-		Intent mIntent = new Intent(getBaseActivity(), ConfirmColorSizeActivity.class);
+		Intent mIntent = new Intent(getActivity(), ConfirmColorSizeActivity.class);
 		mIntent.putExtra("SELECTED_COLOUR", colour);
 		mIntent.putExtra("OTHERSKU", toJson(getViewModel().otherSkuList()));
 		mIntent.putExtra("PRODUCT_HAS_COLOR", false);
@@ -1212,13 +1253,13 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		mIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, "");
 		mIntent.putExtra(ConfirmColorSizeActivity.FULFILLMENT_TYPE, getFulFillmentType());
 		mIntent.putExtra("PRODUCT_NAME", getViewModel().getDefaultProduct().productName);
-		startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
-		getBaseActivity().overridePendingTransition(0, 0);
+		getActivity().startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
+		getActivity().overridePendingTransition(0, 0);
 	}
 
 	public void colourIntent() {
 		getGlobalState().setColourSKUArrayList(getColorList());
-		Intent mIntent = new Intent(getBaseActivity(), ConfirmColorSizeActivity.class);
+		Intent mIntent = new Intent(getActivity(), ConfirmColorSizeActivity.class);
 		mIntent.putExtra("COLOR_LIST", toJson(getColorList()));
 		mIntent.putExtra("OTHERSKU", toJson(getViewModel().otherSkuList()));
 		mIntent.putExtra("PRODUCT_HAS_COLOR", true);
@@ -1226,12 +1267,12 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		mIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, "");
 		mIntent.putExtra(ConfirmColorSizeActivity.FULFILLMENT_TYPE, getFulFillmentType());
 		mIntent.putExtra("PRODUCT_NAME", getViewModel().getDefaultProduct().productName);
-		startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
-		getBaseActivity().overridePendingTransition(0, 0);
+		getActivity().startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
+		getActivity().overridePendingTransition(0, 0);
 	}
 
 	public void colorIntent(String size) {
-		Intent mIntent = new Intent(getBaseActivity(), ConfirmColorSizeActivity.class);
+		Intent mIntent = new Intent(getActivity(), ConfirmColorSizeActivity.class);
 		mIntent.putExtra("SELECTED_COLOUR", size);
 		mIntent.putExtra("COLOR_LIST", toJson(getGlobalState().getColourSKUArrayList()));
 		mIntent.putExtra("OTHERSKU", toJson(getViewModel().otherSkuList()));
@@ -1240,8 +1281,8 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		mIntent.putExtra(ConfirmColorSizeActivity.FULFILLMENT_TYPE, getFulFillmentType());
 		mIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, "");
 		mIntent.putExtra("PRODUCT_NAME", getViewModel().getDefaultProduct().productName);
-		startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
-		getBaseActivity().overridePendingTransition(0, 0);
+		getActivity().startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
+		getActivity().overridePendingTransition(0, 0);
 	}
 
 	private void sizeOnlyIntent(OtherSkus otherSku) {
@@ -1369,7 +1410,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	@Override
 	public void apiIdentifyTokenValidation() {
 		getViewModel().setAddedToCart(true);
-		Activity activity = getBaseActivity();
+		Activity activity = getActivity();
 		if (activity != null) {
 			//Check if the user has a sessionToken
 			if (!SessionUtilities.getInstance().isUserAuthenticated()) {
@@ -1442,7 +1483,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 	@Override
 	public void onTokenFailure(String e) {
-		Activity activity = getBaseActivity();
+		Activity activity = getActivity();
 		if (activity != null) {
 			activity.runOnUiThread(new Runnable() {
 				@Override
@@ -1508,7 +1549,9 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	@Override
 	public void addItemToCartResponse(AddItemToCartResponse addItemToCartResponse) {
 		Log.d(TAG, addItemToCartResponse.toString());
-		((BottomNavigationActivity) getActivity()).cartSummaryAPI();
+		if (getActivity() instanceof BottomNavigationActivity)
+			((BottomNavigationActivity) getActivity()).cartSummaryAPI();
+
 		onAddToCartLoadComplete();
 		List<AddToCartDaTum> addToCartList = addItemToCartResponse.data;
 		if (addToCartList != null && addToCartList.size() > 0) {
@@ -1518,7 +1561,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 				if (formExceptionList != null) {
 					FormException formException = formExceptionList.get(0);
 					if (formException != null) {
-						Activity activity = getBaseActivity();
+						Activity activity = getActivity();
 						if (activity != null) {
 							if (formException.message.toLowerCase().contains(getString(R.string.out_of_stock_err))) {
 								if (getViewModel().getProductType().equalsIgnoreCase(CLOTHING_PRODUCT) ||
@@ -1539,7 +1582,11 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		}
 
 		if (addToCartList != null) {
-			sendBus(new CartSummaryResponse(addItemToCartResponse));
+			if (getActivity() instanceof BottomNavigationActivity)
+				sendBus(new CartSummaryResponse(addItemToCartResponse));
+			if (getActivity() instanceof CartActivity)
+				((CartActivity) getActivity()).onActivityResult(RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL, RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL, null);
+			closeSlideUpPanel();
 		}
 	}
 
@@ -1551,7 +1598,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	@Override
 	public void onSessionTokenExpired(final Response response) {
 		SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
-		final Activity activity = getBaseActivity();
+		final Activity activity = getActivity();
 		activity.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
@@ -1658,8 +1705,14 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 			if (state.equalsIgnoreCase(currentState)) {
 				Activity activity = getActivity();
 				if (activity != null) {
-					BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
-					bottomNavigationActivity.navigateToList(mNumberOfListSelected);
+					if (activity instanceof BottomNavigationActivity) {
+						BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
+						bottomNavigationActivity.navigateToList(mNumberOfListSelected);
+					}
+					if (activity instanceof CartActivity) {
+						CartActivity cartActivity = (CartActivity) activity;
+						cartActivity.navigateToList(mNumberOfListSelected);
+					}
 				}
 			}
 		}
