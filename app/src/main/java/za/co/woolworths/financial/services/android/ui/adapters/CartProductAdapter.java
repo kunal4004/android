@@ -59,6 +59,8 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 		void onChangeQuantity(CommerceItem commerceId);
 
 		void totalItemInBasket(int total);
+
+		void onOpenProductDetail(CommerceItem commerceItem);
 	}
 
 	private OnItemClick onItemClick;
@@ -163,7 +165,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 					productHolder.tvProductAvailability.setVisibility((commerceItem.quantityInStock == 0) ? View.VISIBLE : View.GONE);
 					Utils.setBackgroundColor(productHolder.tvProductAvailability, R.drawable.round_red_corner, R.string.product_unavailable);
 					productHolder.price.setVisibility((commerceItem.quantityInStock == 0) ? View.GONE : View.VISIBLE);
-					if(commerceItem.quantityInStock == 0)
+					if (commerceItem.quantityInStock == 0)
 						productHolder.llPromotionalText.setVisibility(View.GONE);
 				} else {
 					productHolder.llQuantity.setVisibility(View.VISIBLE);
@@ -188,6 +190,13 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 						commerceItem.setQuantityUploading(true);
 						setFirstLoadCompleted(false);
 						onItemClick.onChangeQuantity(commerceItem);
+					}
+				});
+
+				productHolder.swipe.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View view) {
+						onItemClick.onOpenProductDetail(commerceItem);
 					}
 				});
 				mItemManger.bindView(productHolder.itemView, position);
@@ -367,6 +376,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 		private SwipeLayout swipeLayout;
 		private RelativeLayout rlDeleteButton;
 		private WTextView tvProductAvailability;
+		private SwipeLayout swipe;
 
 		public ProductHolder(View view) {
 			super(view);
@@ -387,6 +397,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 			llPromotionalText = view.findViewById(R.id.promotionalTextLayout);
 			rlDeleteButton = view.findViewById(R.id.rlDeleteButton);
 			tvProductAvailability = view.findViewById(R.id.tvProductAvailability);
+			swipe =  view.findViewById(R.id.swipe);
 		}
 	}
 

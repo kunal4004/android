@@ -38,7 +38,7 @@
     <string name="google_maps">GOOGLE MAPS</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="km">km</string>
-    <string name="contact_us">Contact us</string>
+    <string name="contact_us">Contact Us</string>
     <string name="cart">Cart</string>
     <string name="delivery_location">Delivery Location</string>
     <string name="previously_selected_locations">Previously Selected Locations</string>
@@ -371,7 +371,7 @@
     <string name="please_ensure_connection">Please ensure that you are connected \nto the internet.</string>
     <string name="sso_title_text_submit_this_form">SUBMIT THIS FORM</string>
 
-    <string name="acc_my_detail">My details</string>
+    <string name="acc_my_detail">My Details</string>
     <string name="acc_profile">Profile</string>
     <string name="acc_update_password">Update password</string>
 
@@ -638,4 +638,5 @@
     <string name="set_up_device_biometrics_desc">You need to set up Biometrics on your device in order to activate this feature.</string>
     <string name="enter_password">ENTER PASSWORD</string>
     <string name="biometrics_security_info">Please remember that the security of your phone is your responsibility. See our terms and conditions for more.</string>
+    <string name="available_sizes">available sizes</string>
 </resources>

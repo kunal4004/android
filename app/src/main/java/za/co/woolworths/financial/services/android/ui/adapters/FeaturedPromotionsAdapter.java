@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.awfs.coordination.R;
-import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.List;
 
@@ -16,6 +15,7 @@ import za.co.woolworths.financial.services.android.models.dto.Promotion;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
+import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
 import za.co.woolworths.financial.services.android.util.DrawImage;
 
 public class FeaturedPromotionsAdapter extends PagerAdapter {
@@ -43,7 +43,7 @@ public class FeaturedPromotionsAdapter extends PagerAdapter {
 	@Override
 	public Object instantiateItem(ViewGroup container, final int position) {
 		View cView = mContext.getLayoutInflater().inflate(R.layout.featured_prmotion_list_item, container, false);
-		final SimpleDraweeView image = cView.findViewById(R.id.promotionImage);
+		final WrapContentDraweeView image = cView.findViewById(R.id.promotionImage);
 		DrawImage drawImage = new DrawImage(container.getContext());
 		drawImage.displayImage(image, promotions.get(position).image);
 		container.addView(cView);

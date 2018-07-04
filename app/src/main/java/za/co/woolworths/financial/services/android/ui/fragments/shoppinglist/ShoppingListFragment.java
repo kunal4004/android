@@ -23,6 +23,7 @@ import com.awfs.coordination.databinding.ShoppinglistFragmentBinding;
 
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
@@ -39,6 +40,7 @@ import za.co.woolworths.financial.services.android.util.EmptyCartView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
+import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED;
@@ -181,7 +183,20 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 	@Override
 	public void onShoppingListsResponse(ShoppingListsResponse shoppingListsResponse) {
 		getViewDataBinding().loadingBar.setVisibility(View.GONE);
-		loadShoppingList(shoppingListsResponse.lists);
+		switch (shoppingListsResponse.httpCode) {
+			case 200:
+				loadShoppingList(shoppingListsResponse.lists);
+				break;
+
+			case 440:
+				SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE,
+						shoppingListsResponse.response.stsParams);
+				break;
+
+			default:
+				displayErrorMessage("");
+				break;
+		}
 		Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
 	}
 
@@ -192,15 +207,19 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 			activity.runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
-					getViewDataBinding().loadingBar.setVisibility(View.GONE);
-					mMenuCreateList.setVisible(false);
-					mErrorHandlerView.showErrorHandler();
-					mErrorHandlerView.networkFailureHandler(errorMessage);
+					displayErrorMessage(errorMessage);
 				}
 			});
 		}
 
+	}
+
+	private void displayErrorMessage(String errorMessage) {
+		Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
+		getViewDataBinding().loadingBar.setVisibility(View.GONE);
+		mMenuCreateList.setVisible(false);
+		mErrorHandlerView.showErrorHandler();
+		mErrorHandlerView.networkFailureHandler(errorMessage);
 	}
 
 	@Override

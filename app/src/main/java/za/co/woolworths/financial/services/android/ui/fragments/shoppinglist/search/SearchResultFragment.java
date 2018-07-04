@@ -481,7 +481,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 		WButton btnCheck0ut = getViewDataBinding().incConfirmButtonLayout.btnCheckOut;
 		progressBar.setVisibility(View.GONE);
 		btnCheck0ut.setVisibility(View.VISIBLE);
-		sendBus(new ShopState(listItems, mAddToListSize));
+		sendBus(new ShopState(new ArrayList<ShoppingListItem>(), mAddToListSize));
 		popFragmentSlideDown();
 	}
 
