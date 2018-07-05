@@ -960,6 +960,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					fragment.onActivityResult(requestCode, resultCode, data);
 				}
 				break;
+
 		}
 
 		//Call product detail onActivityResult
@@ -998,6 +999,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			if (resultCode == ADD_TO_CART_SUCCESS_RESULT) {
 				setToast();
 			}
+		}
+
+		if (getBottomFragmentById() instanceof ProductDetailFragment){
+			getBottomFragmentById().onActivityResult(requestCode,resultCode,data);
 		}
 	}
 

@@ -259,12 +259,8 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 				addToList.setGiftListId(sku.sku);
 				addToListRequests.add(addToList);
 			}
-
-			for (AddToListRequest addToListRequest : addToListRequestList) {
-				if (!addToListRequest.getListId().equalsIgnoreCase(sku.sku))
-					addToListRequests.add(addToListRequest);
-			}
 		}
+		addToListRequests = addToListRequestList;
 		mMapAddedToList = groupListByListId();
 		mListRequests = mMapAddedToList.get(getCurrentListId());
 		return mListRequests;
@@ -294,14 +290,23 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 						case 200:
 							addToListRequests = new ArrayList<>();
 							addToListRequests = Utils.toList(addToListItems);
-							if (addToListRequests != null && addToListRequests.size() > 0) {
-								mMapAddedToList = groupListByListId();
+							WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
+							WGlobalState wGlobalState = woolworthsApplication.getWGlobalState();
+							if (wGlobalState.getSelectedSKUId() != null) {
+								for (AddToListRequest addToListRequest : addToListRequests) {
+									if (addToListRequest.getListId().equalsIgnoreCase(wGlobalState.getSelectedSKUId().sku)) {
+										addToListRequest.setListId("0");
+									}
+								}
+							}
+							mMapAddedToList = groupListByListId();
+							if (addToListRequests != null
+									&& addToListRequests.size() > 0
+									&& !getCurrentListId().equalsIgnoreCase("0")) {
 								mListRequests = mMapAddedToList.get(getCurrentListId());
 								postAddToList(mListRequests, getCurrentListId());
 							} else {
-								WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
 								if (woolworthsApplication != null) {
-									WGlobalState wGlobalState = woolworthsApplication.getWGlobalState();
 									if (wGlobalState != null) {
 										List<ShoppingList> shoppingLists = createListResponse.lists;
 										shoppingLists.get(0).viewIsSelected = true;
