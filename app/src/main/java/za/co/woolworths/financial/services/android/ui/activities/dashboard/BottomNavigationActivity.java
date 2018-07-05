@@ -1000,10 +1000,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				setToast();
 			}
 		}
-
-		if (getBottomFragmentById() instanceof ProductDetailFragment){
-			getBottomFragmentById().onActivityResult(requestCode,resultCode,data);
-		}
 	}
 
 	private Fragment getBottomFragmentById() {
