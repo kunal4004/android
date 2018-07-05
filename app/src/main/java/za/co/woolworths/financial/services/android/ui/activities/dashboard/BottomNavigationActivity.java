@@ -88,6 +88,7 @@ import static za.co.woolworths.financial.services.android.models.service.event.B
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SHOW_ADDED_TO_SHOPPING_LIST_TOAST;
 import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.RESULT_TAP_FIND_INSTORE_BTN;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
+import static za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity.DELIVERY_LOCATION_CLOSE_CLICKED;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.DELIVERY_LOCATION_FROM_PDP_REQUEST;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_ADD_TO_CART;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_ADD_TO_SHOPPING_LIST;
@@ -977,12 +978,26 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		}
 
 		if (requestCode == DELIVERY_LOCATION_FROM_PDP_REQUEST) {
+			/***
+			 * Activated when set delivery location process is successfully set
+			 */
+
 			if (resultCode == SUBURB_SET_RESULT) {
 				if (getGlobalState().getSaveButtonClick() == INDEX_ADD_TO_CART) {
 					Fragment fragmentById = getBottomFragmentById();
 					fragmentById.onActivityResult(requestCode, resultCode, null);
 					return;
 				}
+			}
+
+			/***
+			 * Activated when set delivery location process is canceled
+			 */
+
+			if (resultCode == DELIVERY_LOCATION_CLOSE_CLICKED) {
+				Fragment fragmentById = getBottomFragmentById();
+				fragmentById.onActivityResult(requestCode, resultCode, null);
+				return;
 			}
 		}
 
