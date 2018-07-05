@@ -10,7 +10,6 @@ import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -288,7 +287,9 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 					switch (createListResponse.httpCode) {
 						case 200:
 							addToListRequests = Utils.toList(addToListItems);
-							if (addToListRequests != null && addToListRequests.size() > 0) {
+							if (addToListRequests != null
+									&& addToListRequests.size() > 0
+									&& !getCurrentListId().equalsIgnoreCase("0")) { // TODO:: hardcoded value "0" should be removed
 								mMapAddedToList = groupListByListId();
 								mListRequests = mMapAddedToList.get(getCurrentListId());
 								postAddToList(mListRequests, getCurrentListId());
@@ -416,7 +417,6 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 								mListRequests = mMapAddedToList.get(getCurrentListId());
 								PostAddToList postAddToList = addToList(mListRequests, getCurrentListId());
 								postAddToList.execute();
-								Log.e("amountClicked",apiCount+" sizeOfList "+sizeOfList);
 							} else {
 								((CustomPopUpWindow) activity).startExitAnimation();
 								mKeyboardUtils.hideKeyboard(activity);
