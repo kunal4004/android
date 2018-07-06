@@ -84,7 +84,6 @@ import static za.co.woolworths.financial.services.android.models.service.event.B
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.MESSAGE_COUNT;
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.REWARD_COUNT;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SHOW_ADDED_TO_SHOPPING_LIST_TOAST;
-import static za.co.woolworths.financial.services.android.ui.activities.BottomActivity.NAVIGATE_TO_SHOPPING_LIST_FRAGMENT;
 import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.RESULT_TAP_FIND_INSTORE_BTN;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.DELIVERY_LOCATION_FROM_PDP_REQUEST;
@@ -106,6 +105,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	public static final int OPEN_CART_REQUEST = 12346;
 	public static final int SLIDE_UP_COLLAPSE_REQUEST_CODE = 13;
 	public static final int SLIDE_UP_COLLAPSE_RESULT_CODE = 12345;
+	public static final int BOTTOM_FRAGMENT_REQUEST_CODE = 3401;
 
 	public final String TAG = this.getClass().getSimpleName();
 	private PermissionUtils permissionUtils;
@@ -345,15 +345,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				switch (newState) {
 					case COLLAPSED:
 						showStatusBar();
-						try {
-							//detach detail fragment
-							if (getBottomFragmentById() instanceof ProductDetailFragment) {
-								ProductDetailFragment productDetailFragment = (ProductDetailFragment) getBottomFragmentById();
-								productDetailFragment.onDetach();
-							}
-						} catch (ClassCastException e) {
-							// not that fragment
-						}
 
 						// show toast on search result fragment after add to list
 						// activates when user access pdp page from list section
@@ -394,6 +385,14 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 							setSingleOrMultipleItemSelector(false);
 						}
 						onActivityResult(SLIDE_UP_COLLAPSE_REQUEST_CODE, SLIDE_UP_COLLAPSE_RESULT_CODE, null);
+						try {
+							//detach detail fragment
+							if (getBottomFragmentById() instanceof ProductDetailFragment) {
+								removeBottomFragment();
+							}
+						} catch (ClassCastException e) {
+							// not that fragment
+						}
 						break;
 
 					case EXPANDED:
@@ -990,11 +989,26 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				setToast();
 			}
 		}
+
+		if (requestCode == BOTTOM_FRAGMENT_REQUEST_CODE) {
+			if (resultCode == RESULT_OK) {
+				if (getBottomFragmentById() instanceof ProductDetailFragment) {
+					getBottomFragmentById().onActivityResult(requestCode, resultCode, data);
+				}
+			}
+		}
 	}
 
 	private Fragment getBottomFragmentById() {
 		FragmentManager fm = getSupportFragmentManager();
 		return fm.findFragmentById(R.id.fragment_bottom_container);
+	}
+
+	private void removeBottomFragment() {
+		FragmentManager fm = getSupportFragmentManager();
+		fm.beginTransaction()
+				.remove(fm.findFragmentById(R.id.fragment_bottom_container))
+				.commitAllowingStateLoss();
 	}
 
 	public void setCurrentSection(int currentSection) {
