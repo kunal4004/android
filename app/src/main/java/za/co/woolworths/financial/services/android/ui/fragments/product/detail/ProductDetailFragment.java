@@ -98,6 +98,7 @@ import static za.co.woolworths.financial.services.android.models.service.event.P
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.USE_MY_LOCATION;
 import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.RESULT_LOADING_INVENTORY_FAILURE;
 import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.RESULT_TAP_FIND_INSTORE_BTN;
+import static za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity.DELIVERY_LOCATION_CLOSE_CLICKED;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.BOTTOM_FRAGMENT_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailViewModel.CLOTHING_PRODUCT;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailViewModel.FOOD_PRODUCT;
@@ -1648,6 +1649,10 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 					getViewDataBinding().llAddToCart.performClick();
 					return;
 				}
+			}
+
+			if (resultCode == DELIVERY_LOCATION_CLOSE_CLICKED) {
+				onAddToCartLoadComplete();
 			}
 		}
 
