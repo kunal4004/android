@@ -84,9 +84,9 @@ import static za.co.woolworths.financial.services.android.models.service.event.B
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.MESSAGE_COUNT;
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.REWARD_COUNT;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SHOW_ADDED_TO_SHOPPING_LIST_TOAST;
-import static za.co.woolworths.financial.services.android.ui.activities.BottomActivity.NAVIGATE_TO_SHOPPING_LIST_FRAGMENT;
 import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.RESULT_TAP_FIND_INSTORE_BTN;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
+import static za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity.DELIVERY_LOCATION_CLOSE_CLICKED;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.DELIVERY_LOCATION_FROM_PDP_REQUEST;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_ADD_TO_CART;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_ADD_TO_SHOPPING_LIST;
@@ -106,6 +106,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	public static final int OPEN_CART_REQUEST = 12346;
 	public static final int SLIDE_UP_COLLAPSE_REQUEST_CODE = 13;
 	public static final int SLIDE_UP_COLLAPSE_RESULT_CODE = 12345;
+	public static final int BOTTOM_FRAGMENT_REQUEST_CODE = 3401;
 
 	public final String TAG = this.getClass().getSimpleName();
 	private PermissionUtils permissionUtils;
@@ -121,6 +122,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	private int shoppingListItemCount;
 	private boolean singleOrMultipleItemSelector;
 	public static final int LOCK_REQUEST_CODE_ACCOUNTS = 444;
+	private int mListItemCount = 0;
 
 	@Override
 	public int getLayoutId() {
@@ -345,15 +347,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				switch (newState) {
 					case COLLAPSED:
 						showStatusBar();
-						try {
-							//detach detail fragment
-							if (getBottomFragmentById() instanceof ProductDetailFragment) {
-								ProductDetailFragment productDetailFragment = (ProductDetailFragment) getBottomFragmentById();
-								productDetailFragment.onDetach();
-							}
-						} catch (ClassCastException e) {
-							// not that fragment
-						}
 
 						// show toast on search result fragment after add to list
 						// activates when user access pdp page from list section
@@ -364,6 +357,15 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 						// open single list or multiple list view on collapsed
 						if (singleOrMultipleItemSelector()) {
+							if (mListItemCount > 1) {
+								Bundle bundle = new Bundle();
+								ShoppingListsResponse shoppingListsResponse = new ShoppingListsResponse();
+								bundle.putString("ShoppingList", Utils.objectToJson(shoppingListsResponse));
+								ShoppingListFragment shoppingListFragment = new ShoppingListFragment();
+								shoppingListFragment.setArguments(bundle);
+								pushFragmentSlideUp(shoppingListFragment);
+								return;
+							}
 							List<ShoppingList> newList = new ArrayList<>();
 							List<ShoppingList> shoppingList = getGlobalState().getShoppingListRequest();
 							if (shoppingList != null) {
@@ -394,6 +396,14 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 							setSingleOrMultipleItemSelector(false);
 						}
 						onActivityResult(SLIDE_UP_COLLAPSE_REQUEST_CODE, SLIDE_UP_COLLAPSE_RESULT_CODE, null);
+						try {
+							//detach detail fragment
+							if (getBottomFragmentById() instanceof ProductDetailFragment) {
+								removeBottomFragment();
+							}
+						} catch (ClassCastException e) {
+							// not that fragment
+						}
 						break;
 
 					case EXPANDED:
@@ -951,6 +961,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					fragment.onActivityResult(requestCode, resultCode, data);
 				}
 				break;
+
 		}
 
 		//Call product detail onActivityResult
@@ -976,12 +987,26 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		}
 
 		if (requestCode == DELIVERY_LOCATION_FROM_PDP_REQUEST) {
+			/***
+			 * Activated when set delivery location process is successfully set
+			 */
+
 			if (resultCode == SUBURB_SET_RESULT) {
 				if (getGlobalState().getSaveButtonClick() == INDEX_ADD_TO_CART) {
 					Fragment fragmentById = getBottomFragmentById();
 					fragmentById.onActivityResult(requestCode, resultCode, null);
 					return;
 				}
+			}
+
+			/***
+			 * Activated when set delivery location process is canceled
+			 */
+
+			if (resultCode == DELIVERY_LOCATION_CLOSE_CLICKED) {
+				Fragment fragmentById = getBottomFragmentById();
+				fragmentById.onActivityResult(requestCode, resultCode, null);
+				return;
 			}
 		}
 
@@ -990,11 +1015,26 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				setToast();
 			}
 		}
+
+		if (requestCode == BOTTOM_FRAGMENT_REQUEST_CODE) {
+			if (resultCode == RESULT_OK) {
+				if (getBottomFragmentById() instanceof ProductDetailFragment) {
+					getBottomFragmentById().onActivityResult(requestCode, resultCode, data);
+				}
+			}
+		}
 	}
 
 	private Fragment getBottomFragmentById() {
 		FragmentManager fm = getSupportFragmentManager();
 		return fm.findFragmentById(R.id.fragment_bottom_container);
+	}
+
+	private void removeBottomFragment() {
+		FragmentManager fm = getSupportFragmentManager();
+		fm.beginTransaction()
+				.remove(fm.findFragmentById(R.id.fragment_bottom_container))
+				.commitAllowingStateLoss();
 	}
 
 	public void setCurrentSection(int currentSection) {
@@ -1103,6 +1143,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	}
 
 	public void navigateToList(int listItemCount) {
+		this.mListItemCount = listItemCount;
 		setSingleOrMultipleItemSelector(true);
 		closeSlideUpPanel();
 	}

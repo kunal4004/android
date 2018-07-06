@@ -10,7 +10,6 @@ import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -193,9 +192,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 					&& event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
 				String cancelText = mBtnCancel.getText().toString();
 				if (cancelText.equalsIgnoreCase("ok")) {
-
 					String listName = mEtNewList.getText().toString();
-
 					mCreateList = new CreateList(listName, getItems());
 					executeCreateList();
 				} else {
@@ -247,6 +244,8 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 
 	private List<AddToListRequest> getItems() {
 		AddToListRequest addToList = new AddToListRequest();
+		addToListRequests = new ArrayList<>();
+		List<AddToListRequest> addToListRequestList = Utils.toList(addToListItems);
 		WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
 		if (woolworthsApplication != null) {
 			WGlobalState globalState = woolworthsApplication.getWGlobalState();
@@ -255,11 +254,12 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 				addToList.setSkuID(sku.sku);
 				addToList.setCatalogRefId(sku.sku);
 				addToList.setQuantity("1");
+				addToList.setListId("0");
 				addToList.setGiftListId(sku.sku);
-				addToListRequests.add(0, addToList);
+				addToListRequests.add(addToList);
 			}
 		}
-		addToListRequests = Utils.toList(addToListItems);
+		addToListRequests = addToListRequestList;
 		mMapAddedToList = groupListByListId();
 		mListRequests = mMapAddedToList.get(getCurrentListId());
 		return mListRequests;
@@ -287,15 +287,26 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 					ShoppingListsResponse createListResponse = (ShoppingListsResponse) object;
 					switch (createListResponse.httpCode) {
 						case 200:
+							addToListRequests = new ArrayList<>();
 							addToListRequests = Utils.toList(addToListItems);
-							if (addToListRequests != null && addToListRequests.size() > 0) {
-								mMapAddedToList = groupListByListId();
+							WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
+							WGlobalState wGlobalState = woolworthsApplication.getWGlobalState();
+							if (wGlobalState.getSelectedSKUId() != null) {
+								for (AddToListRequest addToListRequest : addToListRequests) {
+									if (addToListRequest.getListId().equalsIgnoreCase(wGlobalState.getSelectedSKUId().sku)) {
+										addToListRequest.setListId("0");
+									}
+								}
+							}
+							mMapAddedToList = groupListByListId();
+							if (addToListRequests != null
+									&& addToListRequests.size() > 0
+									&& !getCurrentListId().equalsIgnoreCase("0")) {
 								mListRequests = mMapAddedToList.get(getCurrentListId());
+                                mMapAddedToList = groupListByListId();
 								postAddToList(mListRequests, getCurrentListId());
 							} else {
-								WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
 								if (woolworthsApplication != null) {
-									WGlobalState wGlobalState = woolworthsApplication.getWGlobalState();
 									if (wGlobalState != null) {
 										List<ShoppingList> shoppingLists = createListResponse.lists;
 										shoppingLists.get(0).viewIsSelected = true;
@@ -416,7 +427,6 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 								mListRequests = mMapAddedToList.get(getCurrentListId());
 								PostAddToList postAddToList = addToList(mListRequests, getCurrentListId());
 								postAddToList.execute();
-								Log.e("amountClicked",apiCount+" sizeOfList "+sizeOfList);
 							} else {
 								((CustomPopUpWindow) activity).startExitAnimation();
 								mKeyboardUtils.hideKeyboard(activity);
