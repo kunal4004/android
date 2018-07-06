@@ -11,6 +11,7 @@ import android.widget.ProgressBar;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -151,10 +152,14 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 
-		Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_frame);
-		if(fragment != null)
-			fragment.onActivityResult(requestCode, resultCode, data);
-
+		FragmentManager fm = getSupportFragmentManager();
+		Fragment fragment = fm.findFragmentById(R.id.content_frame);
+		Fragment bottomFragment = fm.findFragmentById(R.id.fragment_bottom_container);
+		if (bottomFragment != null) {
+			if (bottomFragment != null && bottomFragment instanceof ProductDetailFragment) {
+				bottomFragment.onActivityResult(requestCode, resultCode, data);
+			}
+		}
 		/***
 		 * Result from success add to cart
 		 */

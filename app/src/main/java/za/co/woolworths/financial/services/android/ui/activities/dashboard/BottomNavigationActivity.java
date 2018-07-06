@@ -122,6 +122,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	private int shoppingListItemCount;
 	private boolean singleOrMultipleItemSelector;
 	public static final int LOCK_REQUEST_CODE_ACCOUNTS = 444;
+	private int mListItemCount = 0;
 
 	@Override
 	public int getLayoutId() {
@@ -356,6 +357,15 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 						// open single list or multiple list view on collapsed
 						if (singleOrMultipleItemSelector()) {
+							if (mListItemCount > 1) {
+								Bundle bundle = new Bundle();
+								ShoppingListsResponse shoppingListsResponse = new ShoppingListsResponse();
+								bundle.putString("ShoppingList", Utils.objectToJson(shoppingListsResponse));
+								ShoppingListFragment shoppingListFragment = new ShoppingListFragment();
+								shoppingListFragment.setArguments(bundle);
+								pushFragmentSlideUp(shoppingListFragment);
+								return;
+							}
 							List<ShoppingList> newList = new ArrayList<>();
 							List<ShoppingList> shoppingList = getGlobalState().getShoppingListRequest();
 							if (shoppingList != null) {
@@ -951,6 +961,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					fragment.onActivityResult(requestCode, resultCode, data);
 				}
 				break;
+
 		}
 
 		//Call product detail onActivityResult
@@ -1132,6 +1143,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	}
 
 	public void navigateToList(int listItemCount) {
+		this.mListItemCount = listItemCount;
 		setSingleOrMultipleItemSelector(true);
 		closeSlideUpPanel();
 	}
