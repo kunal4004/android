@@ -24,6 +24,7 @@ import com.awfs.coordination.databinding.ShoppingListItemsFragmentBinding;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,6 +72,7 @@ import za.co.woolworths.financial.services.android.util.Utils;
 
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SHOW_ADDED_TO_SHOPPING_LIST_TOAST;
 import static za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity.DELIVERY_LOCATION_CLOSE_CLICKED;
+
 
 public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFragmentBinding, ShoppingListItemsViewModel> implements ShoppingListItemsNavigator, View.OnClickListener, EmptyCartView.EmptyCartInterface, NetworkChangeListener, ToastUtils.ToastInterface {
 	private ShoppingListItemsViewModel shoppingListItemsViewModel;
@@ -254,7 +256,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				mShoppingListItems = new ArrayList<>();
 			cancelQuantityLoad();
 			updateList(mShoppingListItems);
-			adapterClickable(true);
+			enableAdapterClickEvent(true);
 			return;
 		}
 
@@ -303,7 +305,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	private boolean shoppingListInventory() {
 		if (mShoppingListItems == null) {
 			setUpView();
-			adapterClickable(true);
+			enableAdapterClickEvent(true);
 			return true;
 		}
 		MultiMap<String, ShoppingListItem> multiListItem = MultiMap.create();
@@ -329,6 +331,9 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				mFulFillmentStoreId = mFulFillmentStoreId.replaceAll("\"", "");
 				mMapStoreFulFillmentKeyValue.put(fulFillmentTypeIdCollection, mFulFillmentStoreId);
 				executeGetInventoryForStore(mFulFillmentStoreId, multiSKUS);
+			} else {
+				cancelQuantityLoad();
+				enableAdapterClickEvent(true);
 			}
 		}
 		return false;
@@ -400,10 +405,10 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				loadShoppingListItems(shoppingListItemsResponse);
 				break;
 			case 440:
-				adapterClickable(true);
+				enableAdapterClickEvent(true);
 				break;
 			default:
-				adapterClickable(true);
+				enableAdapterClickEvent(true);
 				getViewDataBinding().loadingBar.setVisibility(View.GONE);
 				Activity activity = getActivity();
 				if (activity == null) return;
@@ -415,7 +420,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 
 	}
 
-	private void adapterClickable(boolean clickable) {
+	private void enableAdapterClickEvent(boolean clickable) {
 		if (shoppingListItemsAdapter != null)
 			shoppingListItemsAdapter.adapterClickable(clickable);
 	}
@@ -761,7 +766,8 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	}
 
 	private void selectAllTextVisibility(boolean visible) {
-		tvMenuSelectAll.setVisibility(visible ? View.VISIBLE : View.GONE);
+		if (tvMenuSelectAll != null)
+			tvMenuSelectAll.setVisibility(visible ? View.VISIBLE : View.GONE);
 	}
 
 	@Override
@@ -793,27 +799,14 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 							if (sku.equalsIgnoreCase(inventoryItems.catalogRefId)) {
 								inventoryItems.quantityInStock = quantity;
 							}
+							inventoryItems.inventoryCallCompleted = true;
 						}
-						inventoryItems.inventoryCallCompleted = true;
 					}
 				}
 
-				if (shoppingListItems != null) {
-					updateShoppingList();
-					shoppingListItems = null;
-					return;
-				}
+				updateShoppingList();
 
-				/**
-				 * @method: getLastValueInMap() returns last storeId position
-				 * @method: updateList()
-				 */
-				if (getLastValueInMap() == null) {
-					updateShoppingList();
-					return;
-				}
 				if (getLastValueInMap().equalsIgnoreCase(storeId)) {
-					updateShoppingList();
 
 					/***
 					 * Triggered when "SELECT ALL" is selected from toolbar
@@ -859,7 +852,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	}
 
 	private void updateList() {
-		adapterClickable(true);
+		enableAdapterClickEvent(true);
 		if (shoppingListItemsAdapter != null)
 			shoppingListItemsAdapter.updateList(mShoppingListItems);
 	}
@@ -948,10 +941,9 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	}
 
 	private String getLastValueInMap() {
-		for (Map.Entry<String, String> entry : mMapStoreFulFillmentKeyValue.entrySet()) {
-			return entry.getValue();
-		}
-		return null;
+		if (mMapStoreFulFillmentKeyValue == null) return null;
+		List<String> listOfFulfillmentValue = Collections.list(Collections.enumeration(mMapStoreFulFillmentKeyValue.values()));
+		return listOfFulfillmentValue.get(listOfFulfillmentValue.size() - 1);
 	}
 
 	private void cancelQuantityLoad() {

@@ -6,7 +6,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <import type="android.view.View"/>
     </data>
 
@@ -41,7 +40,7 @@
                 app:WTextView_font="medium_bold"/>
 
 
-            <com.facebook.drawee.view.SimpleDraweeView
+            <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
                 android:id="@+id/imSelectedColor"
                 android:layout_width="@dimen/twenty_two_dp"
                 android:layout_height="19dp"

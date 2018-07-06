@@ -1,17 +1,17 @@
 package za.co.woolworths.financial.services.android.ui.adapters;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.awfs.coordination.R;
-import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.List;
 
-import za.co.woolworths.financial.services.android.util.DrawImage;
+import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
 
 public class ProductViewPagerAdapter extends PagerAdapter {
 
@@ -22,13 +22,13 @@ public class ProductViewPagerAdapter extends PagerAdapter {
 	private MultipleImageInterface multipleImageInterface;
 
 	private final Context mContext;
-	private List<String> mViewPager;
+	private List<String> mExternalImageRefList;
 
-	public ProductViewPagerAdapter(Context mContext, List<String> mViewPager,
+	public ProductViewPagerAdapter(Context mContext, List<String> externalImageRefList,
 								   MultipleImageInterface multipleImageInterface) {
 		this.mContext = mContext;
 		this.multipleImageInterface = multipleImageInterface;
-		this.mViewPager = mViewPager;
+		this.mExternalImageRefList = externalImageRefList;
 	}
 
 	@Override
@@ -36,16 +36,16 @@ public class ProductViewPagerAdapter extends PagerAdapter {
 		LayoutInflater inflater = LayoutInflater.from(mContext);
 		ViewGroup v = (ViewGroup) inflater.inflate(R.layout.product_view,
 				collection, false);
-		String image = mViewPager.get(position);
-		SimpleDraweeView mProductImage = v.findViewById(R.id.imProductView);
-		DrawImage drawImage = new DrawImage(mContext);
-		drawImage.displayImage(mProductImage, image);
+		String image = mExternalImageRefList.get(position);
+		WrapContentDraweeView mProductImage = v.findViewById(R.id.imProductView);
+		mProductImage.setResizeImage(true);
+		mProductImage.setImageURI(Uri.parse(image), mProductImage.getContext());
 		collection.addView(v, 0);
 
 		v.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				multipleImageInterface.SelectedImage(mViewPager.get(position));
+				multipleImageInterface.SelectedImage(mExternalImageRefList.get(position));
 			}
 		});
 		return v;
@@ -58,7 +58,7 @@ public class ProductViewPagerAdapter extends PagerAdapter {
 
 	@Override
 	public int getCount() {
-		return mViewPager.size();
+		return mExternalImageRefList.size();
 	}
 
 	@Override
