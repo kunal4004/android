@@ -10,7 +10,6 @@ import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -304,6 +303,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 									&& addToListRequests.size() > 0
 									&& !getCurrentListId().equalsIgnoreCase("0")) {
 								mListRequests = mMapAddedToList.get(getCurrentListId());
+                                mMapAddedToList = groupListByListId();
 								postAddToList(mListRequests, getCurrentListId());
 							} else {
 								if (woolworthsApplication != null) {
@@ -427,7 +427,6 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 								mListRequests = mMapAddedToList.get(getCurrentListId());
 								PostAddToList postAddToList = addToList(mListRequests, getCurrentListId());
 								postAddToList.execute();
-								Log.e("amountClicked", apiCount + " sizeOfList " + sizeOfList);
 							} else {
 								((CustomPopUpWindow) activity).startExitAnimation();
 								mKeyboardUtils.hideKeyboard(activity);

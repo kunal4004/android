@@ -38,6 +38,7 @@ public class ProductViewPagerAdapter extends PagerAdapter {
 				collection, false);
 		String image = mExternalImageRefList.get(position);
 		WrapContentDraweeView mProductImage = v.findViewById(R.id.imProductView);
+		mProductImage.setResizeImage(true);
 		mProductImage.setImageURI(Uri.parse(image), mProductImage.getContext());
 		collection.addView(v, 0);
 

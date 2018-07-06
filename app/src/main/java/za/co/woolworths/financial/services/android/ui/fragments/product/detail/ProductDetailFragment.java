@@ -28,6 +28,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
+import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.ProductDetailViewBinding;
 import com.google.gson.Gson;
@@ -36,7 +37,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import com.awfs.coordination.BR;
 
 import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -98,6 +98,8 @@ import static za.co.woolworths.financial.services.android.models.service.event.P
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.USE_MY_LOCATION;
 import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.RESULT_LOADING_INVENTORY_FAILURE;
 import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.RESULT_TAP_FIND_INSTORE_BTN;
+import static za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity.DELIVERY_LOCATION_CLOSE_CLICKED;
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.BOTTOM_FRAGMENT_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailViewModel.CLOTHING_PRODUCT;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailViewModel.FOOD_PRODUCT;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.SuburbSelectionFragment.SUBURB_SET_RESULT;
@@ -1648,15 +1650,19 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 					return;
 				}
 			}
+
+			if (resultCode == DELIVERY_LOCATION_CLOSE_CLICKED) {
+				onAddToCartLoadComplete();
+			}
 		}
 
 		// perform find in-store api call
-		if ((requestCode == 3401) && (resultCode == RESULT_TAP_FIND_INSTORE_BTN)) {
+		if ((requestCode == BOTTOM_FRAGMENT_REQUEST_CODE) && (resultCode == RESULT_TAP_FIND_INSTORE_BTN)) {
 			mSkuId = getGlobalState().getSelectedSKUId();
 			setFinInStoreOtherSkus(getGlobalState().getSelectedSKUId());
 			llStoreFinder.performClick();
 			return;
-		} else if ((requestCode == 3401) && (resultCode == RESULT_LOADING_INVENTORY_FAILURE)) {
+		} else if ((requestCode == BOTTOM_FRAGMENT_REQUEST_CODE) && (resultCode == RESULT_LOADING_INVENTORY_FAILURE)) {
 			if (data != null) {
 				Bundle bundleResponse = data.getExtras();
 				String responseFromBundle = bundleResponse.getString("response");
@@ -1667,7 +1673,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 			}
 			return;
 		} else if (data != null) {
-			if (requestCode == 3401) {
+			if (requestCode == BOTTOM_FRAGMENT_REQUEST_CODE) {
 				if (resultCode == RESULT_OK) {
 					Bundle extras = data.getExtras();
 					String selectedSKu = extras.getString("selected_sku");
