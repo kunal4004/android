@@ -26,7 +26,7 @@
             android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:letterSpacing="0.1"
+            android:letterSpacing="0.15"
             android:lineSpacingMultiplier="1.67"
             android:text="@string/add_to_list"
             android:textSize="@dimen/twelve_sp"
