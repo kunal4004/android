@@ -1216,7 +1216,8 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		getActivity().overridePendingTransition(0, 0);
 	}
 
-	public void colorSizePicker(ArrayList<OtherSkus> otherSkusList, boolean colorIsSelected, boolean sizeIsSelected, OtherSkus selectedSku) {
+	public void colorSizePicker(ArrayList<OtherSkus> otherSkusList,
+								boolean colorIsSelected, boolean sizeIsSelected, OtherSkus selectedSku) {
 		getGlobalState().setColourSKUArrayList(otherSkusList);
 		Intent mIntent = new Intent(getActivity(), ConfirmColorSizeActivity.class);
 		mIntent.putExtra("COLOR_LIST", toJson(otherSkusList));
@@ -1230,6 +1231,25 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		getActivity().startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
 		getActivity().overridePendingTransition(0, 0);
 	}
+
+
+	public void colorSizePicker(ArrayList<OtherSkus> otherSkusList,
+								boolean colorIsSelected, boolean sizeIsSelected, OtherSkus selectedSku, boolean enableInventoryCall) {
+		getGlobalState().setColourSKUArrayList(otherSkusList);
+		Intent mIntent = new Intent(getActivity(), ConfirmColorSizeActivity.class);
+		mIntent.putExtra("COLOR_LIST", toJson(otherSkusList));
+		mIntent.putExtra("OTHERSKU", toJson(getViewModel().otherSkuList()));
+		mIntent.putExtra(ConfirmColorSizeActivity.COLOR_PICKER_SELECTOR, colorIsSelected);
+		mIntent.putExtra(ConfirmColorSizeActivity.SIZE_PICKER_SELECTOR, sizeIsSelected);
+		mIntent.putExtra(ConfirmColorSizeActivity.FULFILLMENT_TYPE, getFulFillmentType());
+		mIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, "");
+		mIntent.putExtra(ConfirmColorSizeActivity.SELECTED_SKU, selectedSku.sku);
+		mIntent.putExtra("PRODUCT_NAME", getViewModel().getDefaultProduct().productName);
+		mIntent.putExtra("MAKE_INVENTORY_CALL", enableInventoryCall);
+		getActivity().startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
+		getActivity().overridePendingTransition(0, 0);
+	}
+
 
 	public void sizeIntent() {
 		getGlobalState().setColourSKUArrayList(getColorList());
@@ -1569,7 +1589,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 								if (getViewModel().getProductType().equalsIgnoreCase(CLOTHING_PRODUCT) ||
 										getViewModel().otherSkuList().size() > 1) {
 									onAddToCartLoadComplete();
-									colorSizePicker(mSkuColorList, false, true, getGlobalState().getSelectedSKUId());
+									colorSizePicker(mSkuColorList, false, true, getGlobalState().getSelectedSKUId(), true);
 									return;
 								}
 								Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC, getString(R.string.out_of_stock), getString(R.string.out_of_stock_desc));
