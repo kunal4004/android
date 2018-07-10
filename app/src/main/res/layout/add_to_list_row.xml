@@ -24,12 +24,12 @@
             android:layout_alignParentTop="true"
             android:layout_toStartOf="@+id/chxAddToList"
             android:gravity="center|start"
-            android:letterSpacing="0.1"
+            android:letterSpacing="0.15"
             android:lineSpacingMultiplier="1.67"
             android:text="@string/app_label"
             android:textAllCaps="true"
             android:textColor="@color/black"
-            app:WTextView_font="light"/>
+            app:WTextView_font="medium"/>
 
         <CheckBox
             android:id="@+id/chxAddToList"

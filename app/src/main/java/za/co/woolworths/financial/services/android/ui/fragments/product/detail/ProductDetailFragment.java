@@ -799,6 +799,16 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		if (otherSkus == null) return;
 		if (otherSkus.externalColourRef == null) return;
 		selectedColor(otherSkus.externalColourRef);
+		/***
+		 * set size textField to "NO SZ"
+		 * and disable click event when otherSku size field contains NO SZ
+		 */
+		if (TextUtils.isEmpty(otherSkus.size)) return;
+		String size = otherSkus.size;
+		boolean noSizeFound = size.toUpperCase().equalsIgnoreCase("NO SZ");
+		if (noSizeFound)
+			getViewDataBinding().llColorSize.tvSelectedSizeValue.setText(size.toUpperCase());
+		getViewDataBinding().llColorSize.relSizeSelector.setEnabled(!noSizeFound);
 	}
 
 	@Override
