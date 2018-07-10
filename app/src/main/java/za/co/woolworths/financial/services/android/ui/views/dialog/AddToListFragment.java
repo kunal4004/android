@@ -330,7 +330,7 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 			}
 			String currentListId = getCurrentListId();
 			addToListRequestList = mMapAddedToList.get(currentListId);
-			mPostAddToList = addToList(addToListRequestList,currentListId);
+			mPostAddToList = addToList(addToListRequestList, currentListId);
 			mPostAddToList.execute();
 		}
 	}

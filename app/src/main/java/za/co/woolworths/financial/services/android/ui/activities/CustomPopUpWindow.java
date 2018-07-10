@@ -74,7 +74,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 	public Animation mPopEnterAnimation;
 	public RelativeLayout mRelPopContainer;
 	public boolean viewWasClicked = false;
-	public static final int ANIM_DOWN_DURATION = 800;
+	public static final int ANIM_DOWN_DURATION = 300;
 	public WoolworthsApplication woolworthsApplication;
 	public WGlobalState mWGlobalState;
 	private ProgressBar mWoolworthsProgressBar;
