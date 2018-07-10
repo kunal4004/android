@@ -68,7 +68,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 	private LinearLayout mRelRootContainer, mRelPopContainer;
 	private ImageView mImCloseIcon, mImBackIcon;
 	private String mColorList, mOtherSKU;
-	private static final int ANIM_DOWN_DURATION = 700;
+	private static final int ANIM_DOWN_DURATION = 300;
 	private NonSwipeableViewPager mViewPager;
 	private WTextView tvTitle;
 	private String mSelectedColour;
