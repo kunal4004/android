@@ -82,6 +82,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 	private String mSelectedSku;
 	private String mQuantityInStock;
 	private int mCartQuantityInStock;
+	private boolean shouldMakeInventoryCall;
 
 
 	@Override
@@ -106,6 +107,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 			mColorPickerSelector = mBundle.getBoolean(COLOR_PICKER_SELECTOR);
 			mQuantityInStock = mBundle.getString("QUANTITY_IN_STOCK");
 			mCartQuantityInStock = mBundle.getInt("CART_QUANTITY_In_STOCK");
+			shouldMakeInventoryCall = mBundle.getBoolean("MAKE_INVENTORY_CALL");
 		}
 
 		init();
@@ -533,7 +535,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 		ColorInterface fragmentToShow = (ColorInterface) mPagerAdapter.getItem(position);
 		if (shouldDisplayColorSizePicker()) {
 			if (sizePickerWasEnabled()) {
-				populateCustomSizePicker(fragmentToShow, false);
+				populateCustomSizePicker(fragmentToShow, shouldMakeInventoryCall);
 			}
 
 			if (colorPickerWasEnabled()) {
