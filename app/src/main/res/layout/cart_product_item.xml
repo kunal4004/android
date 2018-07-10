@@ -104,9 +104,9 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
+                                android:adjustViewBounds="true"
                                 android:contentDescription="@string/app_name"
                                 android:minHeight="@dimen/sixty_dp"
-                                android:adjustViewBounds="true"
                                 fresco:failureImage="@drawable/woolworth_logo_icon"
                                 fresco:placeholderImage="@drawable/woolworth_logo_icon"/>
                         </RelativeLayout>
@@ -135,6 +135,7 @@
                             <RelativeLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent">
+
                                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                                     android:id="@+id/tvProductAvailability"
                                     android:layout_width="wrap_content"
@@ -209,11 +210,11 @@
                                         <za.co.woolworths.financial.services.android.ui.views.WTextView
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
+                                            android:text="@string/promotional_text"
                                             android:textAllCaps="true"
                                             android:textColor="@color/promotional_text_red"
                                             android:textSize="14sp"
                                             app:WTextView_font="medium"
-                                            android:text="@string/promotional_text"
                                             />
 
                                         <za.co.woolworths.financial.services.android.ui.views.WTextView
