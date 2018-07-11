@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#8c000000"
+    android:paddingLeft="24dp"
+    android:paddingRight="24dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        android:paddingTop="24dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/close"
+            android:layout_gravity="end"
+            android:background="@drawable/close_24" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/touch_id" />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:layout_width="40dp"
+            android:layout_height="18dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="24dp"
+            android:background="@color/violet"
+            android:gravity="center"
+            android:letterSpacing="0.075"
+            android:text="@string/text_new"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="9sp"
+            app:WTextView_font="medium_bold" />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:letterSpacing="0.14"
+            android:text="@string/walkthrough_biometrics_title"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:WTextView_font="bold" />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:text="@string/walkthrough_biometrics_desc"
+            android:textColor="@color/black_50"
+            android:textSize="15sp"
+            app:WTextView_font="myriadpro_regular" />
+
+        <View
+            android:id="@+id/vBottomLineDescription"
+            style="@style/bottom_line"
+            android:layout_marginTop="@dimen/thirty_four_dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvDescription" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:visibility="visible">
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/tvMyDetail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:drawableLeft="@drawable/ic_touch_id"
+                android:drawablePadding="16dp"
+                android:gravity="center_vertical"
+                android:lineSpacingExtra="0.4sp"
+                android:text="Enable Biometrics"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                app:WTextView_font="myriadpro_regular" />
+
+            <Switch
+                android:id="@+id/auSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:theme="@style/SwitchTheme" />
+        </RelativeLayout>
+    </LinearLayout>
+</RelativeLayout>

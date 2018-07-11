@@ -639,4 +639,7 @@
     <string name="enter_password">ENTER PASSWORD</string>
     <string name="biometrics_security_info">Please remember that the security of your phone is your responsibility. See our terms and conditions for more.</string>
     <string name="available_sizes">available sizes</string>
+    <string name="text_new">NEW</string>
+    <string name="walkthrough_biometrics_title">we’ve added \n biometrics authentication</string>
+    <string name="walkthrough_biometrics_desc">You can now easily access secure features in the app by using the biometrics reader on your device.</string>
 </resources>

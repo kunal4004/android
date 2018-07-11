@@ -9,6 +9,9 @@ import com.awfs.coordination.R;
 import java.util.HashMap;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
+import za.co.woolworths.financial.services.android.ui.activities.BiometricsWalkthrough;
+import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
@@ -126,5 +129,12 @@ public class ScreenManager {
 		intent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.UPDATE_PASSWORD.rawValue());
 		activity.startActivityForResult(intent, SSOActivity.SSOActivityResult.LAUNCH.rawValue());
 		activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+	}
+
+	public static void presentBiometricWalkthrough(Activity activity){
+		if (!AppInstanceObject.get().isBiometricWalkthroughPresented() &&
+				AuthenticateUtils.getInstance(activity).isAppSupportsAuthentication() && !AuthenticateUtils.getInstance(activity).isAuthenticationEnabled()) {
+			activity.startActivity(new Intent(activity, BiometricsWalkthrough.class));
+		}
 	}
 }

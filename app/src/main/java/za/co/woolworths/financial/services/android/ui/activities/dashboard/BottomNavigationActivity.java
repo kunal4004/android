@@ -924,6 +924,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				default:
 					break;
 			}
+
+			ScreenManager.presentBiometricWalkthrough(BottomNavigationActivity.this);
 		}
 
 		Fragment fragment = mNavController.getCurrentFrag();
