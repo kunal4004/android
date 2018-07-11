@@ -131,10 +131,23 @@ public class ScreenManager {
 		activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 	}
 
-	public static void presentBiometricWalkthrough(Activity activity){
-		if (!AppInstanceObject.get().isBiometricWalkthroughPresented() &&
-				AuthenticateUtils.getInstance(activity).isAppSupportsAuthentication() && !AuthenticateUtils.getInstance(activity).isAuthenticationEnabled()) {
-			activity.startActivity(new Intent(activity, BiometricsWalkthrough.class));
-		}
+	public static void presentBiometricWalkthrough(final Activity activity){
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+
+				if (!AppInstanceObject.get().isBiometricWalkthroughPresented() &&
+						AuthenticateUtils.getInstance(activity).isAppSupportsAuthentication() && !AuthenticateUtils.getInstance(activity).isAuthenticationEnabled()) {
+					activity.startActivity(new Intent(activity, BiometricsWalkthrough.class));
+				}
+			}
+		}).start();
+
 	}
 }

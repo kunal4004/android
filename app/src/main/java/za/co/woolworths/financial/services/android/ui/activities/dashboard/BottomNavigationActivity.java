@@ -898,6 +898,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 						Intent openCartActivity = new Intent(this, CartActivity.class);
 						startActivityForResult(openCartActivity, OPEN_CART_REQUEST);
 						overridePendingTransition(0, 0);
+						return;
 					}
 					break;
 				default:
@@ -925,7 +926,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					break;
 			}
 
-			ScreenManager.presentBiometricWalkthrough(BottomNavigationActivity.this);
 		}
 
 		Fragment fragment = mNavController.getCurrentFrag();
@@ -950,12 +950,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			case 2:
 				break;
 			default:
-				if (wRewardsFragment != null) {
-					wRewardsFragment.onActivityResult(requestCode, resultCode, data);
-				}
-				if (myAccountsFragment != null) {
-					myAccountsFragment.onActivityResult(requestCode, resultCode, data);
-				}
 				/**
 				 * Trigger onActivityResult() from current visible fragment
 				 */

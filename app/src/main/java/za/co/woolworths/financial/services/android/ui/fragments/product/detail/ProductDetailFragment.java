@@ -608,6 +608,8 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 							if (getViewModel().otherSkuList().size() > 1) addToShoppingList();
 							break;
 					}
+					//One time biometricsWalkthrough
+					ScreenManager.presentBiometricWalkthrough(getActivity());
 					break;
 
 				case R.id.relColorSelector:
@@ -1441,6 +1443,8 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 						smoothScrollToTop();
 						Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.DETERMINE_LOCATION_POPUP, DETERMINE_LOCATION_POPUP);
 						activate_location_popup = false;
+						//One time biometricsWalkthrough
+						ScreenManager.presentBiometricWalkthrough(getActivity());
 						return;
 					}
 
@@ -1516,6 +1520,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		Intent deliveryLocationSelectionActivity = new Intent(activity, DeliveryLocationSelectionActivity.class);
 		activity.startActivityForResult(deliveryLocationSelectionActivity, DELIVERY_LOCATION_FROM_PDP_REQUEST);
 		activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+
 	}
 
 	@Override
