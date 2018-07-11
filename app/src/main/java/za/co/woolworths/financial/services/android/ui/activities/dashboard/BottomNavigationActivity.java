@@ -48,7 +48,6 @@ import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.barcode.BarcodeFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.barcode.manual.ManualBarcodeFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.category.CategoryFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
@@ -793,7 +792,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void cartSummaryAPI() {
-		getViewModel().getCartSummary(BottomNavigationActivity.this).execute();
+		getViewModel().getCartSummary().execute();
 	}
 
 	@Override
@@ -928,40 +927,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 		Fragment fragment = mNavController.getCurrentFrag();
 		//trigger reward and account call
-		switch (getBottomNavigationById().getCurrentItem()) {
-			case 0:
-				break;
-			case 1:
-				if (fragment instanceof CategoryFragment) // camera runtime permission successfully granted
-					if (fragment != null) {
-						fragment.onActivityResult(requestCode, resultCode, data);
-					}
-				if (fragment instanceof BarcodeFragment)
-					if (fragment != null) {
-						fragment.onActivityResult(requestCode, resultCode, data);
-					}
-				if (fragment instanceof ManualBarcodeFragment)
-					if (fragment != null) {
-						fragment.onActivityResult(requestCode, resultCode, data);
-					}
-				break;
-			case 2:
-				break;
-			default:
-				if (wRewardsFragment != null) {
-					wRewardsFragment.onActivityResult(requestCode, resultCode, data);
-				}
-				if (myAccountsFragment != null) {
-					myAccountsFragment.onActivityResult(requestCode, resultCode, data);
-				}
-				/**
-				 * Trigger onActivityResult() from current visible fragment
-				 */
-				if (fragment != null) {
-					fragment.onActivityResult(requestCode, resultCode, data);
-				}
-				break;
 
+		if (fragment != null) {
+			fragment.onActivityResult(requestCode, resultCode, data);
 		}
 
 		//Call product detail onActivityResult
@@ -1047,7 +1015,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void badgeCount() {
-		getViewModel().getCartSummary(BottomNavigationActivity.this).execute();
+		getViewModel().getCartSummary().execute();
 		getViewModel().getVoucherCount().execute();
 		getViewModel().getMessageResponse().execute();
 	}

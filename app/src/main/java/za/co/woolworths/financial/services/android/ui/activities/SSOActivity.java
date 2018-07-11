@@ -44,7 +44,6 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
-import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
@@ -560,12 +559,6 @@ public class SSOActivity extends WebViewActivity {
 	}
 
 	public void closeActivity() {
-		// Call the popup message to confirm user location
-		//or set new location in ProductDetailFragment
-		if (mGlobalState.determineLocationPopUpEnabled()) {
-			Utils.sendBus(new ProductState(DETERMINE_LOCATION_POPUP));
-			mGlobalState.setDetermineLocationPopUpEnabled(false);
-		}
 		finish();
 		overridePendingTransition(0, 0);
 	}

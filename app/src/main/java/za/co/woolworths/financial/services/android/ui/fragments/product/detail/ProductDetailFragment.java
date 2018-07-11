@@ -1509,7 +1509,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 			onAddToCartLoadComplete();
 			return;
 		}
-		mGetCartSummary = getViewModel().getCartSummary(activity);
+		mGetCartSummary = getViewModel().getCartSummary();
 		mGetCartSummary.execute();
 	}
 

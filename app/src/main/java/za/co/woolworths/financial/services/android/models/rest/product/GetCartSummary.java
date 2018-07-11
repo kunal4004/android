@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.models.rest.product;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
@@ -18,13 +17,11 @@ import za.co.woolworths.financial.services.android.util.Utils;
 
 public class GetCartSummary extends HttpAsyncTask<String, String, CartSummaryResponse> {
 
-	private Context mContext;
 	private OnEventListener mCallBack;
 	private String mException;
 
-	public GetCartSummary(Context context, OnEventListener callback) {
+	public GetCartSummary(OnEventListener callback) {
 		this.mCallBack = callback;
-		this.mContext = context;
 	}
 
 	@Override

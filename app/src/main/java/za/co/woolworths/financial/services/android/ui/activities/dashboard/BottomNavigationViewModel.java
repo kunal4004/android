@@ -27,8 +27,8 @@ public class BottomNavigationViewModel extends BaseViewModel<BottomNavigator> {
 		super(schedulerProvider);
 	}
 
-	public GetCartSummary getCartSummary(Activity activity) {
-		return new GetCartSummary(activity,new OnEventListener() {
+	public GetCartSummary getCartSummary() {
+		return new GetCartSummary(new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
 				CartSummaryResponse cartSummaryResponse = (CartSummaryResponse) object;
