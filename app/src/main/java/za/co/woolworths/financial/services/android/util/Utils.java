@@ -1216,7 +1216,7 @@ public class Utils {
 		for (String word : words) {
 			for (int i = 0; i < word.length(); i++)
 				newSentence = newSentence + ((i == 0) ? word.substring(i, i + 1).toUpperCase() :
-						(i != word.length() - 1) ? word.substring(i, i + 1).toLowerCase() : word.substring(i, i + 1).toLowerCase().toLowerCase() + " ");
+						(i != word.length() - 1) ? word.substring(i, i + 1).toLowerCase() : word.substring(i, i + 1).toLowerCase() + " ");
 		}
 
 		return newSentence;
