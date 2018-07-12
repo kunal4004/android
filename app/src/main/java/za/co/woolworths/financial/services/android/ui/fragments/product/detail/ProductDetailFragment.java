@@ -801,16 +801,33 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		if (otherSkus == null) return;
 		if (otherSkus.externalColourRef == null) return;
 		selectedColor(otherSkus.externalColourRef);
+
 		/***
 		 * set size textField to "NO SZ"
 		 * and disable click event when otherSku size field contains NO SZ
 		 */
-		if (TextUtils.isEmpty(otherSkus.size)) return;
-		String size = otherSkus.size;
-		boolean noSizeFound = size.toUpperCase().equalsIgnoreCase("NO SZ");
-		if (noSizeFound)
-			getViewDataBinding().llColorSize.tvSelectedSizeValue.setText(size.toUpperCase());
-		getViewDataBinding().llColorSize.relSizeSelector.setEnabled(!noSizeFound);
+		if (!TextUtils.isEmpty(otherSkus.size)) {
+			String size = otherSkus.size;
+			boolean noSizeFound = size.equalsIgnoreCase("NO SZ");
+			if (noSizeFound) {
+				getViewDataBinding().llColorSize.tvSelectedSizeValue.setText(size.toUpperCase());
+				getViewDataBinding().llColorSize.tvSelectedSizeValue.setTextColor(getResources().getColor(R.color.black));
+				getViewDataBinding().llColorSize.relSizeSelector.setAlpha(0.3f);
+			}
+			getViewDataBinding().llColorSize.relSizeSelector.setEnabled(!noSizeFound);
+		}
+
+		/***
+		 * disable click event when otherSku color field is empty
+		 */
+		if (!TextUtils.isEmpty(otherSkus.colour)) {
+			String colour = otherSkus.colour;
+			boolean noColourFound = colour.equalsIgnoreCase("N/A");
+			if (noColourFound) {
+				getViewDataBinding().llColorSize.relColorSelector.setAlpha(0.3f);
+			}
+			getViewDataBinding().llColorSize.relColorSelector.setEnabled(!noColourFound);
+		}
 	}
 
 	@Override
