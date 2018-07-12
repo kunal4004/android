@@ -65,4 +65,5 @@
     <color name="disabled_text">#212B36</color>
     <color name="expandable_title_color">#FF212B36</color>
     <color name="expandable_gradient_color">#09000000</color>
+    <color name="dark_gray">#4A4A4A</color>
 </resources>

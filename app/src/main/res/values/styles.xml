@@ -1159,4 +1159,19 @@
         <item name="android:colorControlActivated">#000000</item>
     </style>
 
+    <style name="cli_only_cents_banner">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/email_height_50</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@color/dark_gray</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/email_text_size_15sp</item>
+        <item name="WTextView_font">myriadpro_regular</item>
+    </style>
+
+    <style name="top_view_style_income_expenses" parent="android:Theme">
+        <item name="android:layout_height">@dimen/sixteen_dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:background">@color/default_background</item>
+    </style>
 </resources>
