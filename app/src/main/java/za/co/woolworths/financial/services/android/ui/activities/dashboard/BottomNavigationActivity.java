@@ -69,6 +69,7 @@ import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
 import za.co.woolworths.financial.services.android.util.PermissionUtils;
+import za.co.woolworths.financial.services.android.util.QueryBadgeCounters;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
@@ -80,7 +81,6 @@ import za.co.woolworths.financial.services.android.util.nav.tabhistory.FragNavTa
 
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT;
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT_TEMP;
-import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.MESSAGE_COUNT;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SHOW_ADDED_TO_SHOPPING_LIST_TOAST;
 import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.RESULT_TAP_FIND_INSTORE_BTN;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
@@ -205,10 +205,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 							break;
 						case CART_COUNT:
 							cartSummaryAPI();
-							break;
-
-						case MESSAGE_COUNT:
-							//getViewModel().getMessageResponse().execute();
 							break;
 						default:
 							break;
@@ -863,8 +859,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
 					break;
 				case 0:
-					//load count on login success
-					badgeCount();
 					switch (getCurrentSection()) {
 						case R.id.navigation_cart:
 							Intent openCartActivity = new Intent(this, CartActivity.class);
@@ -1004,7 +998,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void badgeCount() {
-
+		QueryBadgeCounters queryBadgeCounters = new QueryBadgeCounters();
+		queryBadgeCounters.setCartBadgeCounter();
+		queryBadgeCounters.queryBadgeCounter();
 	}
 
 	@Override
