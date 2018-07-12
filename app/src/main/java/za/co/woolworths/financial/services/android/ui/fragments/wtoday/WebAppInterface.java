@@ -9,10 +9,13 @@ import android.text.TextUtils;
 import android.webkit.JavascriptInterface;
 
 import com.awfs.coordination.R;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -164,6 +167,14 @@ public class WebAppInterface {
 															FragmentTransaction transaction = ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction();
 															transaction.replace(R.id.fragment_bottom_container, productDetailFragment).commit();
 															mBottomNavigator.slideUpBottomView();
+														}else {
+															dismissFragmentDialog();
+															Utils.displayValidationMessage(mContext, CustomPopUpWindow.MODAL_LAYOUT.ERROR, Utils.getString(mContext, R.string.statement_send_email_false_desc));
+															Map<String, String> arguments = new HashMap<>();
+															arguments.put(skuId, "NO PRICE INFO");
+															arguments.put(skuId, "From WToday Promotions");
+															Utils.triggerFireBaseEvents(mContext, FirebaseAnalytics.Event.VIEW_ITEM, arguments);
+															return;
 														}
 													}
 												}
