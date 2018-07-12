@@ -22,6 +22,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewards
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsLoggedinAndNotLinkedFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.logged_in.WRewardsLoggedinAndLinkedFragment;
+import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -129,9 +130,11 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 		if (requestCode == WRewardsVouchersFragment.LOCK_REQUEST_CODE_WREWARDS) {
 			return;
 		}
-
 		if (resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue()) {
 			onSessionExpired(getActivity());
+		}else if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
+			//One time biometricsWalkthrough
+			ScreenManager.presentBiometricWalkthrough(getActivity());
 		}
 		initialize();
 	}

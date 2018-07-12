@@ -60,7 +60,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/fourteen_dp"
                 android:layout_marginTop="@dimen/sixteen_dp"
-                android:text="@string/delivery_location"
+                android:text="@string/favourite_delivery_location"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -73,7 +73,7 @@
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 style="@style/take_photo_document_desc_style"
-                android:text="@string/delivery_location_description"
+                android:text="@string/favourite_delivery_location_description"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/vBottomLine" />

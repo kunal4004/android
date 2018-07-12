@@ -565,11 +565,12 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	public String getImageByWidth(String imageUrl, Context context) {
 		WindowManager display = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE));
 		assert display != null;
+		if (imageUrl == null) return "";
 		Display deviceHeight = display.getDefaultDisplay();
 		Point size = new Point();
 		deviceHeight.getSize(size);
 		int width = size.x;
-		imageUrl = (imageUrl.contains("jpg")) ? "https://images.woolworthsstatic.co.za/" + imageUrl : imageUrl;
+		imageUrl = (imageUrl.contains("jpg")) ? Utils.getExternalImageRef() + imageUrl : imageUrl;
 		return imageUrl + "" + ((imageUrl.contains("jpg")) ? "" : "?w=" + width + "&q=" + 85);
 	}
 
@@ -608,6 +609,8 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 							if (getViewModel().otherSkuList().size() > 1) addToShoppingList();
 							break;
 					}
+					//One time biometricsWalkthrough
+					ScreenManager.presentBiometricWalkthrough(getActivity());
 					break;
 
 				case R.id.relColorSelector:
@@ -799,6 +802,33 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		if (otherSkus == null) return;
 		if (otherSkus.externalColourRef == null) return;
 		selectedColor(otherSkus.externalColourRef);
+
+		/***
+		 * set size textField to "NO SZ"
+		 * and disable click event when otherSku size field contains NO SZ
+		 */
+		if (!TextUtils.isEmpty(otherSkus.size)) {
+			String size = otherSkus.size;
+			boolean noSizeFound = size.equalsIgnoreCase("NO SZ");
+			if (noSizeFound) {
+				getViewDataBinding().llColorSize.tvSelectedSizeValue.setText(size.toUpperCase());
+				getViewDataBinding().llColorSize.tvSelectedSizeValue.setTextColor(getResources().getColor(R.color.black));
+				getViewDataBinding().llColorSize.relSizeSelector.setAlpha(0.3f);
+			}
+			getViewDataBinding().llColorSize.relSizeSelector.setEnabled(!noSizeFound);
+		}
+
+		/***
+		 * disable click event when otherSku color field is empty
+		 */
+		if (!TextUtils.isEmpty(otherSkus.colour)) {
+			String colour = otherSkus.colour;
+			boolean noColourFound = colour.equalsIgnoreCase("N/A");
+			if (noColourFound) {
+				getViewDataBinding().llColorSize.relColorSelector.setAlpha(0.3f);
+			}
+			getViewDataBinding().llColorSize.relColorSelector.setEnabled(!noColourFound);
+		}
 	}
 
 	@Override
@@ -1216,7 +1246,8 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		getActivity().overridePendingTransition(0, 0);
 	}
 
-	public void colorSizePicker(ArrayList<OtherSkus> otherSkusList, boolean colorIsSelected, boolean sizeIsSelected, OtherSkus selectedSku) {
+	public void colorSizePicker(ArrayList<OtherSkus> otherSkusList,
+								boolean colorIsSelected, boolean sizeIsSelected, OtherSkus selectedSku) {
 		getGlobalState().setColourSKUArrayList(otherSkusList);
 		Intent mIntent = new Intent(getActivity(), ConfirmColorSizeActivity.class);
 		mIntent.putExtra("COLOR_LIST", toJson(otherSkusList));
@@ -1230,6 +1261,25 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		getActivity().startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
 		getActivity().overridePendingTransition(0, 0);
 	}
+
+
+	public void colorSizePicker(ArrayList<OtherSkus> otherSkusList,
+								boolean colorIsSelected, boolean sizeIsSelected, OtherSkus selectedSku, boolean enableInventoryCall) {
+		getGlobalState().setColourSKUArrayList(otherSkusList);
+		Intent mIntent = new Intent(getActivity(), ConfirmColorSizeActivity.class);
+		mIntent.putExtra("COLOR_LIST", toJson(otherSkusList));
+		mIntent.putExtra("OTHERSKU", toJson(getViewModel().otherSkuList()));
+		mIntent.putExtra(ConfirmColorSizeActivity.COLOR_PICKER_SELECTOR, colorIsSelected);
+		mIntent.putExtra(ConfirmColorSizeActivity.SIZE_PICKER_SELECTOR, sizeIsSelected);
+		mIntent.putExtra(ConfirmColorSizeActivity.FULFILLMENT_TYPE, getFulFillmentType());
+		mIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, "");
+		mIntent.putExtra(ConfirmColorSizeActivity.SELECTED_SKU, selectedSku.sku);
+		mIntent.putExtra("PRODUCT_NAME", getViewModel().getDefaultProduct().productName);
+		mIntent.putExtra("MAKE_INVENTORY_CALL", enableInventoryCall);
+		getActivity().startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
+		getActivity().overridePendingTransition(0, 0);
+	}
+
 
 	public void sizeIntent() {
 		getGlobalState().setColourSKUArrayList(getColorList());
@@ -1441,6 +1491,8 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 						smoothScrollToTop();
 						Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.DETERMINE_LOCATION_POPUP, DETERMINE_LOCATION_POPUP);
 						activate_location_popup = false;
+						//One time biometricsWalkthrough
+						ScreenManager.presentBiometricWalkthrough(getActivity());
 						return;
 					}
 
@@ -1516,6 +1568,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		Intent deliveryLocationSelectionActivity = new Intent(activity, DeliveryLocationSelectionActivity.class);
 		activity.startActivityForResult(deliveryLocationSelectionActivity, DELIVERY_LOCATION_FROM_PDP_REQUEST);
 		activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+
 	}
 
 	@Override
@@ -1569,7 +1622,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 								if (getViewModel().getProductType().equalsIgnoreCase(CLOTHING_PRODUCT) ||
 										getViewModel().otherSkuList().size() > 1) {
 									onAddToCartLoadComplete();
-									colorSizePicker(mSkuColorList, false, true, getGlobalState().getSelectedSKUId());
+									colorSizePicker(mSkuColorList, false, true, getGlobalState().getSelectedSKUId(), true);
 									return;
 								}
 								Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC, getString(R.string.out_of_stock), getString(R.string.out_of_stock_desc));

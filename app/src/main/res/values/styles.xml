@@ -1018,7 +1018,7 @@
         <item name="android:textColor">@color/black</item>
         <item name="android:lineSpacingExtra">0.1sp</item>
         <item name="android:gravity">center_vertical|start</item>
-        <item name="WTextView_font">myriadpro_semibold</item>
+        <item name="WTextView_font">medium_bold</item>
     </style>
 
     <style name="style_cart_header_add_to_list">
@@ -1026,7 +1026,7 @@
         <item name="android:textColor">@color/black</item>
         <item name="android:lineSpacingExtra">0.1sp</item>
         <item name="android:gravity">end</item>
-        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="WTextView_font">medium</item>
     </style>
 
     <style name="style_cart_item_title">
@@ -1052,14 +1052,14 @@
         <item name="android:textSize">13sp</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:lineSpacingExtra">0.1sp</item>
-        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="WTextView_font">medium</item>
     </style>
 
     <style name="style_cart_item_price">
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:lineSpacingExtra">0.1sp</item>
-        <item name="WTextView_font">myriadpro_semibold</item>
+        <item name="WTextView_font">medium_bold</item>
     </style>
 
     <style name="style_cart_basket_label">

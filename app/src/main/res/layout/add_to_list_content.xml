@@ -25,7 +25,7 @@
             android:text="@string/add_to_list"
             android:textColor="@color/black"
             android:textSize="@dimen/twelve_sp"
-            app:WTextView_font="bold"/>
+            app:WTextView_font="medium_bold"/>
 
         <ImageView
             android:id="@+id/imCreateList"
