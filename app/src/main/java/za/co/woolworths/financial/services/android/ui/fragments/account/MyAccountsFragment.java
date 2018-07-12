@@ -845,6 +845,8 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			} else {
 				initialize();
 			}
+			//One time biometricsWalkthrough
+			ScreenManager.presentBiometricWalkthrough(getActivity());
 		} else if (resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue()) {
 			onSignOut();
 			initialize();
