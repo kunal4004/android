@@ -146,20 +146,26 @@ public class WebAppInterface {
 												if (productList != null) {
 													mProductList.add(productList);
 												}
-												if (mProductList.size() > 0 && mProductList.get(0).productId != null) {
-													GsonBuilder builder = new GsonBuilder();
-													Gson gson = builder.create();
-													ProductDetailFragment productDetailFragment = new ProductDetailFragment();
-													String strProductList = gson.toJson(mProductList.get(0));
-													Bundle bundle = new Bundle();
-													bundle.putString("strProductList", strProductList);
-													bundle.putString("strProductCategory", mProductList.get(0).productName);
-													bundle.putString("productResponse", strProduct);
-													bundle.putBoolean("fetchFromJson", true);
-													productDetailFragment.setArguments(bundle);
-													FragmentTransaction transaction = ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction();
-													transaction.replace(R.id.fragment_bottom_container, productDetailFragment).commit();
-													mBottomNavigator.slideUpBottomView();
+												if (mProductList.size() > 0) {
+													WProductDetail product = mProductList.get(0);
+													if (product != null) {
+														if (product.productId != null
+																&& product.fromPrice != null) {
+															GsonBuilder builder = new GsonBuilder();
+															Gson gson = builder.create();
+															ProductDetailFragment productDetailFragment = new ProductDetailFragment();
+															String strProductList = gson.toJson(mProductList.get(0));
+															Bundle bundle = new Bundle();
+															bundle.putString("strProductList", strProductList);
+															bundle.putString("strProductCategory", mProductList.get(0).productName);
+															bundle.putString("productResponse", strProduct);
+															bundle.putBoolean("fetchFromJson", true);
+															productDetailFragment.setArguments(bundle);
+															FragmentTransaction transaction = ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction();
+															transaction.replace(R.id.fragment_bottom_container, productDetailFragment).commit();
+															mBottomNavigator.slideUpBottomView();
+														}
+													}
 												}
 											} catch (Exception ex) {
 												ex.printStackTrace();
