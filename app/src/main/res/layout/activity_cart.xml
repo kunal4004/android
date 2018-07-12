@@ -65,7 +65,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
                         android:letterSpacing="0.2"
-                        android:text="@string/cart"
+                        android:text="@string/bottom_title_cart"
                         android:textAllCaps="true"
                         android:textColor="@color/black"
                         android:textSize="12sp"

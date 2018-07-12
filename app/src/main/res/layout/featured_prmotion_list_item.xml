@@ -6,10 +6,14 @@
               android:orientation="vertical"
               android:paddingLeft="8dp">
 
-    <com.facebook.drawee.view.SimpleDraweeView
+
+    <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
         android:id="@+id/promotionImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        fresco:viewAspectRatio="1.0"/>
+        android:layout_gravity="center"
+        android:contentDescription="@string/app_name"
+        fresco:fadeDuration="50"
+        fresco:placeholderImage="@drawable/woolworth_logo_icon"/>
 
 </LinearLayout>
