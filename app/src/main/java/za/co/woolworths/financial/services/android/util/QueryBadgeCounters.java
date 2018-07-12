@@ -18,9 +18,9 @@ public class QueryBadgeCounters {
 	}
 
 	public void queryBadgeCounter() {
-		this.loadVoucherCount();
-		this.loadShoppingCartCount();
-		this.getMessageResponse();
+		this.loadVoucherCount().execute();
+		this.loadShoppingCartCount().execute();
+		this.getMessageResponse().execute();
 	}
 
 	public void configureBadges() {
