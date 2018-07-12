@@ -376,7 +376,7 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 		Point size = new Point();
 		display.getSize(size);
 		int width = size.x;
-		imageUrl = (imageUrl.contains("jpg")) ? "https://images.woolworthsstatic.co.za/" + imageUrl : imageUrl;
+		imageUrl = (imageUrl.contains("jpg")) ? Utils.getExternalImageRef() + imageUrl : imageUrl;
 		return imageUrl + "" + ((imageUrl.contains("jpg")) ? "" : "?w=" + width + "&q=" + 85);
 	}
 

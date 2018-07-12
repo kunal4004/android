@@ -565,11 +565,12 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	public String getImageByWidth(String imageUrl, Context context) {
 		WindowManager display = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE));
 		assert display != null;
+		if (imageUrl == null) return "";
 		Display deviceHeight = display.getDefaultDisplay();
 		Point size = new Point();
 		deviceHeight.getSize(size);
 		int width = size.x;
-		imageUrl = (imageUrl.contains("jpg")) ? "https://images.woolworthsstatic.co.za/" + imageUrl : imageUrl;
+		imageUrl = (imageUrl.contains("jpg")) ? Utils.getExternalImageRef() + imageUrl : imageUrl;
 		return imageUrl + "" + ((imageUrl.contains("jpg")) ? "" : "?w=" + width + "&q=" + 85);
 	}
 
