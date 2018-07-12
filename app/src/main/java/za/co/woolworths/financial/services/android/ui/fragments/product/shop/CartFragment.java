@@ -413,6 +413,12 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 						break;
 					}
 				}
+				/***
+				 * Remove header when commerceItems is empty
+				 */
+				if (cartItemGroup.commerceItems.size() == 0) {
+					cartItems.remove(cartItemGroup);
+				}
 			}
 			cartProductAdapter.notifyAdapter(cartItems, orderSummary);
 		} else {
@@ -1022,8 +1028,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		boolean isAnyItemNeedsQuantityUpdate = false;
 		for (CartItemGroup cartItemGroup : cartItems) {
 			for (CommerceItem commerceItem : cartItemGroup.commerceItems) {
-				if(commerceItem.commerceItemInfo.getQuantity() > commerceItem.quantityInStock )
-				{
+				if (commerceItem.commerceItemInfo.getQuantity() > commerceItem.quantityInStock) {
 					isAnyItemNeedsQuantityUpdate = true;
 					mCommerceItem = commerceItem;
 					mChangeQuantity.setCommerceId(commerceItem.commerceItemInfo.getCommerceId());
