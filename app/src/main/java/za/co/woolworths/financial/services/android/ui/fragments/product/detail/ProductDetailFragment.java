@@ -65,6 +65,7 @@ import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSiz
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity;
+import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator;
@@ -200,11 +201,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 								} else {
 									apiAddItemToCart();
 								}
-								break;
-
-							case DETERMINE_LOCATION_POPUP:
-								activate_location_popup = true;
-								cartSummaryAPI();
 								break;
 
 							case SET_SUBURB:
@@ -404,10 +400,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 	public WButton getBtnAddShoppingList() {
 		return getViewDataBinding().btnAddShoppingList;
-	}
-
-	public void reloadGetListAPI() {
-		getBtnAddShoppingList().performClick();
 	}
 
 	private void setSubCategoryTitle(String mSubCategoryTitle) {
@@ -1670,6 +1662,26 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
+
+		if (requestCode == SSOActivity.SSOActivityResult.LAUNCH.rawValue()) {
+			if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
+				switch (getGlobalState().getSaveButtonClick()) {
+					case INDEX_ADD_TO_SHOPPING_LIST:
+						getBtnAddShoppingList().performClick();
+						break;
+
+					case INDEX_ADD_TO_CART:
+						activate_location_popup = true;
+						cartSummaryAPI();
+						break;
+
+					default:
+						break;
+				}
+				return;
+			}
+		}
+
 		/***
 		 * perform add to cart call for first time user
 		 */

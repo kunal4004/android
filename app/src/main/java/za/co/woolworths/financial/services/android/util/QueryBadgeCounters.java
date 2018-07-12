@@ -16,7 +16,6 @@ public class QueryBadgeCounters {
 	}
 
 	public void configureBadges() {
-
 	}
 
 	public GetVoucher loadVoucherCount() {

@@ -120,6 +120,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	private GetShoppingLists mGetShoppingLists;
 	private WTextView shoppingListCounter;
 	private ShoppingListsResponse shoppingListsResponse;
+	private static int OPEN_MESSAGE_REQUEST_CODE = 1111;
 
 	public MyAccountsFragment() {
 		// Required empty public constructor
@@ -500,7 +501,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			case R.id.openMessageActivity:
 				Intent openMessageActivity = new Intent(getActivity(), MessagesActivity.class);
 				openMessageActivity.putExtra("fromNotification", false);
-				startActivityForResult(openMessageActivity, 0);
+				startActivityForResult(openMessageActivity, OPEN_MESSAGE_REQUEST_CODE);
 				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				break;
 			case R.id.applyStoreCard:
@@ -838,7 +839,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 
 		//TODO: Comment what's actually happening here.
 		if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
-			getBottomNavigator().badgeCount();
 			if (loadMessageCounter) {
 				messageCounterRequest();
 				shoppingListRequest();
@@ -873,7 +873,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	}
 
 	private void resetShoppingListAndMessagesUI() {
-		if (getActivity() != null){
+		if (getActivity() != null) {
 			hideView(getViewDataBinding().listsCounter);
 			showView(getViewDataBinding().myListRightArrow);
 			hideView(messageCounter);
