@@ -671,9 +671,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			Fragment currentFragment = bottomNavigationActivity.getCurrentFragment();
 			if (currentFragment instanceof MyAccountsFragment) {
 				LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver, new IntentFilter("UpdateCounter"));
-
 				shoppingListRequest();
-				messageCounterRequest();
 			}
 		}
 	}
