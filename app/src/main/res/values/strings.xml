@@ -629,7 +629,7 @@
     <string name="authenticate_with_touch_id">Authenticate using Biometrics</string>
     <string name="biometrics_authentication">BIOMETRICS/PIN</string>
     <string name="biometrics_description">This allows you to easily access secure features in the app by using the biometric reader on your device.</string>
-    <string name="delivery_location_description">To improve your shopping experience, you can reserve your delivery timeslot up front. It will be reserved while you complete your shop.</string>
+    <string name="favourite_delivery_location_description">In order to improve your shopping experience you can set your favourite delivery location. We will use this as your default delivery location.</string>
     <string name="product_unavailable_desc">Sorry, this product is unavailable in your delivery location</string>
     <string name="delivering_to">Delivering to</string>
     <string name="delivering_location_popup_message">Your delivery location must match your delivery address. Changing your delivery location can affect the product availability of items in your cart.</string>
@@ -639,6 +639,7 @@
     <string name="enter_password">ENTER PASSWORD</string>
     <string name="biometrics_security_info">Please remember that the security of your phone is your responsibility. See our terms and conditions for more.</string>
     <string name="available_sizes">available sizes</string>
+    <string name="favourite_delivery_location">Favourite Delivery Location</string>
     <string name="text_new">NEW</string>
     <string name="walkthrough_biometrics_title">we’ve added \n biometrics authentication</string>
     <string name="walkthrough_biometrics_desc">You can now easily access secure features in the app by using the biometrics reader on your device.</string>
