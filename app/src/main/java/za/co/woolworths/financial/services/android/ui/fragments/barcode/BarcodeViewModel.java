@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.LoadProduct;
-import za.co.woolworths.financial.services.android.models.dto.ProductDetail;
+import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
@@ -108,7 +108,7 @@ public class BarcodeViewModel extends BaseViewModel<BarcodeNavigator> {
 	}
 
 	/***
-	 * Product detail calls
+	 * ProductDetails detail calls
 	 */
 
 	public void executeProductDetail(ProductRequest productRequest) {
@@ -121,7 +121,7 @@ public class BarcodeViewModel extends BaseViewModel<BarcodeNavigator> {
 		return new GetProductDetail(productRequest, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
-				ProductDetail productDetail = (ProductDetail) object;
+				ProductDetailResponse productDetail = (ProductDetailResponse) object;
 				String detailProduct = Utils.objectToJson(productDetail);
 				switch (productDetail.httpCode) {
 					case 200:

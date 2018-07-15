@@ -1,0 +1,75 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:clickable="true"
+    android:focusable="true">
+
+    <data></data>
+
+    <RelativeLayout
+        android:id="@+id/relPrice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/eight_dp">
+
+        <LinearLayout
+            android:id="@+id/actualPriceLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/eight_dp"
+            android:layout_marginStart="@dimen/default_margin"
+            android:orientation="horizontal">
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/textPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="top|start"
+                android:letterSpacing="-0.01"
+                android:paddingRight="2dp"
+                android:textAllCaps="true"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                app:WTextView_font="medium_bold" />
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/textActualPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="top|start"
+                android:letterSpacing="-0.01"
+                android:textAllCaps="true"
+                android:textColor="@color/red"
+                android:textSize="20sp"
+                android:visibility="visible"
+                app:WTextView_font="medium_bold" />
+
+        </LinearLayout>
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/tvSaveText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/actualPriceLayout"
+            android:layout_marginBottom="@dimen/default_margin"
+            android:layout_marginEnd="@dimen/default_margin"
+            android:layout_marginStart="@dimen/default_margin"
+            android:gravity="top|start"
+            android:letterSpacing="0.1"
+            android:textAllCaps="true"
+            android:textColor="@color/red"
+            android:textSize="12sp"
+            android:visibility="gone"
+            app:WTextView_font="medium" />
+
+        <LinearLayout
+            android:id="@+id/promotionalImages"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="@dimen/default_margin"
+            android:gravity="right"
+            android:orientation="horizontal" />
+
+
+    </RelativeLayout>
+</layout>

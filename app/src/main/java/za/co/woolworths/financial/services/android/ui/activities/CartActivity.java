@@ -92,7 +92,7 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
 
 	@Override
 	public void onBackPressed() {
-		// close expanded Product detail page
+		// close expanded ProductDetails detail page
 		if (getSlidingLayout().getPanelState().equals(SlidingUpPanelLayout.PanelState.EXPANDED)) {
 			closeSlideUpPanel();
 			return;

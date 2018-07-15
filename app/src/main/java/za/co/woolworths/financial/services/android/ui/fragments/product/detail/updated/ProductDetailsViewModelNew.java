@@ -1,5 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments.product.detail;
-
+package za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated;
 
 import android.app.Activity;
 import android.content.Context;
@@ -26,10 +25,10 @@ import za.co.woolworths.financial.services.android.models.dto.CartSummaryRespons
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse;
+import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
-import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.models.rest.product.GetCartSummary;
 import za.co.woolworths.financial.services.android.models.rest.product.GetProductDetail;
@@ -39,10 +38,13 @@ import za.co.woolworths.financial.services.android.models.rest.shop.SetDeliveryL
 import za.co.woolworths.financial.services.android.ui.base.BaseViewModel;
 import za.co.woolworths.financial.services.android.util.LocationItemTask;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
-import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.rx.SchedulerProvider;
 
-public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator> {
+/**
+ * Created by W7099877 on 2018/07/14.
+ */
+
+public class ProductDetailsViewModelNew extends BaseViewModel<ProductDetailNavigatorNew>{
 
 	private String TAG = this.getClass().getSimpleName();
 	private final String EMPTY = " ";
@@ -59,11 +61,11 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 	private boolean findInStoreLoadFail = false;
 	private boolean addedToCart = true;
 
-	public ProductDetailViewModel() {
+	public ProductDetailsViewModelNew() {
 		super();
 	}
 
-	public ProductDetailViewModel(SchedulerProvider schedulerProvider) {
+	public ProductDetailsViewModelNew(SchedulerProvider schedulerProvider) {
 		super(schedulerProvider);
 	}
 
@@ -97,18 +99,14 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 		return new GetProductDetail(productRequest, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
-				ProductDetailResponse productDetail = (ProductDetailResponse) object;
-				String detailProduct = Utils.objectToJson(productDetail);
-				switch (productDetail.httpCode) {
+				ProductDetailResponse productDetailResponse = (ProductDetailResponse) object;
+				switch (productDetailResponse.httpCode) {
 					case 200:
-						WProduct product = (WProduct) Utils.strToJson(detailProduct, WProduct.class);
-						setProduct(detailProduct);
-						setProduct(product.product);
-						getNavigator().onSuccessResponse(product);
+						getNavigator().onSuccessResponse(productDetailResponse.product);
 						break;
 					default:
-						if (productDetail.response != null) {
-							getNavigator().responseFailureHandler(productDetail.response);
+						if (productDetailResponse.response != null) {
+							getNavigator().responseFailureHandler(productDetailResponse.response);
 						}
 						break;
 				}
@@ -224,7 +222,7 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 		}
 	}
 
-	public String getProductDescription(Context context) {
+	public String getProductDescription(Context context, ProductDetails productDetails) {
 
 		if (context == null)
 			return "";
@@ -244,9 +242,9 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 				"</head>";
 
 		String descriptionWithoutExtraTag = "";
-		if (getProduct() != null) {
-			if (!TextUtils.isEmpty(getProduct().longDescription)) {
-				descriptionWithoutExtraTag = getProduct().longDescription
+		if (productDetails != null) {
+			if (!TextUtils.isEmpty(productDetails.longDescription)) {
+				descriptionWithoutExtraTag = productDetails.longDescription
 						.replaceAll("</ul>\n\n<ul>\n", " ")
 						.replaceAll("<p>&nbsp;</p>", "")
 						.replaceAll("<ul><p>&nbsp;</p></ul>", " ");
