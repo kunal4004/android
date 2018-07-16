@@ -9,10 +9,13 @@ import android.text.TextUtils;
 import android.webkit.JavascriptInterface;
 
 import com.awfs.coordination.R;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -146,20 +149,34 @@ public class WebAppInterface {
 												if (productList != null) {
 													mProductList.add(productList);
 												}
-												if (mProductList.size() > 0 && mProductList.get(0).productId != null) {
-													GsonBuilder builder = new GsonBuilder();
-													Gson gson = builder.create();
-													ProductDetailFragment productDetailFragment = new ProductDetailFragment();
-													String strProductList = gson.toJson(mProductList.get(0));
-													Bundle bundle = new Bundle();
-													bundle.putString("strProductList", strProductList);
-													bundle.putString("strProductCategory", mProductList.get(0).productName);
-													bundle.putString("productResponse", strProduct);
-													bundle.putBoolean("fetchFromJson", true);
-													productDetailFragment.setArguments(bundle);
-													FragmentTransaction transaction = ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction();
-													transaction.replace(R.id.fragment_bottom_container, productDetailFragment).commit();
-													mBottomNavigator.slideUpBottomView();
+												if (mProductList.size() > 0) {
+													WProductDetail product = mProductList.get(0);
+													if (product != null) {
+														if (product.productId != null
+																&& product.fromPrice != null) {
+															GsonBuilder builder = new GsonBuilder();
+															Gson gson = builder.create();
+															ProductDetailFragment productDetailFragment = new ProductDetailFragment();
+															String strProductList = gson.toJson(mProductList.get(0));
+															Bundle bundle = new Bundle();
+															bundle.putString("strProductList", strProductList);
+															bundle.putString("strProductCategory", mProductList.get(0).productName);
+															bundle.putString("productResponse", strProduct);
+															bundle.putBoolean("fetchFromJson", true);
+															productDetailFragment.setArguments(bundle);
+															FragmentTransaction transaction = ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction();
+															transaction.replace(R.id.fragment_bottom_container, productDetailFragment).commit();
+															mBottomNavigator.slideUpBottomView();
+														}else {
+															dismissFragmentDialog();
+															Utils.displayValidationMessage(mContext, CustomPopUpWindow.MODAL_LAYOUT.ERROR, Utils.getString(mContext, R.string.statement_send_email_false_desc));
+															Map<String, String> arguments = new HashMap<>();
+															arguments.put(skuId, "NO PRICE INFO");
+															arguments.put(skuId, "From WToday Promotions");
+															Utils.triggerFireBaseEvents(mContext, FirebaseAnalytics.Event.VIEW_ITEM, arguments);
+															return;
+														}
+													}
 												}
 											} catch (Exception ex) {
 												ex.printStackTrace();
