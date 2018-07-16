@@ -23,10 +23,10 @@ public abstract class InventoryForStore {
 			onNoMatchFoundForStoreId();
 			return;
 		}
-		executeGextInventoryTask(storeId, multiSku);
+		executeGetInventoryTask(storeId, multiSku);
 	}
 
-	private void executeGextInventoryTask(String storeId, String multiSku) {
+	private void executeGetInventoryTask(String storeId, String multiSku) {
 		getInventorySkusForStore = getInventoryStockForStore(storeId, multiSku);
 		getInventorySkusForStore.execute();
 	}
