@@ -147,7 +147,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	private OtherSkus selectedFindInStoreOtherSkus;
 	public static int DELIVERY_LOCATION_FROM_PDP_REQUEST = 2553;
 	private InventoryForStore mInventoryForStore;
-	private final int DEFAULT_MAX_QUANTITY = 10;
 
 	@Override
 	public ProductDetailViewModel getViewModel() {
@@ -1577,7 +1576,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 								@Override
 								public void onNoMatchFoundForStoreId() {
 									onAddToCartLoadComplete();
-									openQuantityPopup(DEFAULT_MAX_QUANTITY);
+									outOfStockDialog();
 								}
 							};
 						}
