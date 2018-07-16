@@ -646,8 +646,10 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 					break;
 
 				case R.id.llAddToCart:
-					getGlobalState().saveButtonClicked(INDEX_ADD_TO_CART);
-					apiIdentifyTokenValidation();
+					if (isNetworkConnected()) {
+						getGlobalState().saveButtonClicked(INDEX_ADD_TO_CART);
+						apiIdentifyTokenValidation();
+					}
 					break;
 
 				default:

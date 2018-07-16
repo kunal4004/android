@@ -19,7 +19,7 @@ public abstract class InventoryForStore {
 
 	private boolean onConnectivityFailure;
 
-	public InventoryForStore(String fulFillmentTypeId, String multiSku) {
+	InventoryForStore(String fulFillmentTypeId, String multiSku) {
 		String storeId = Utils.retrieveStoreId(fulFillmentTypeId);
 		if (TextUtils.isEmpty(storeId)) { // no storeId match found, cannot perform Inventory check
 			onNoMatchFoundForStoreId();
@@ -43,8 +43,8 @@ public abstract class InventoryForStore {
 
 			@Override
 			public void onFailure(String errorMessage) {
-				setOnConnectFailure(true);
 				onInventoryForStoreFailure(errorMessage);
+				setOnConnectFailure(true);
 			}
 		});
 	}
