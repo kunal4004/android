@@ -52,6 +52,8 @@ import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
+import za.co.woolworths.financial.services.android.models.dto.SkuInventory;
+import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
@@ -144,6 +146,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	private LinearLayout llStoreFinder;
 	private OtherSkus selectedFindInStoreOtherSkus;
 	public static int DELIVERY_LOCATION_FROM_PDP_REQUEST = 2553;
+	private InventoryForStore mInventoryForStore;
 
 	@Override
 	public ProductDetailViewModel getViewModel() {
@@ -947,6 +950,8 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		cancelRequest(mLocationItemTask);
 		cancelRequest(mPostAddItemToCart);
 		cancelRequest(mGetCartSummary);
+		if (mInventoryForStore != null)
+			mInventoryForStore.cancelInventoryForStoreCall();
 	}
 
 	/*****************************
@@ -1477,7 +1482,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	}
 
 	private void cartSummaryAPI() {
-		Activity activity = getActivity();
+		final Activity activity = getActivity();
 		if (activity != null) {
 			ShoppingDeliveryLocation shoppingDeliveryLocation = Utils.getPreferredDeliveryLocation();
 			if (shoppingDeliveryLocation == null) {
@@ -1498,22 +1503,59 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 					/***
 					 * Determine whether to display colour size box
-					 * if product type is of type clothing or otherSkuList size is greater than 0
-					 * size > 0 product i.e. perfume productType of type food but sku can be > 0
+					 * if product type is of type clothing or otherSkuList size is greater than 1
+					 * size > 1 product i.e. perfume productType of type food but sku can be > 1
 					 * next step become colour/size process
 					 * else run through food step
 					 */
 					if (getViewModel().getProductType() != null) {
 						smoothScrollToTop();
-						if (getViewModel().getProductType().equalsIgnoreCase(CLOTHING_PRODUCT) || getViewModel().otherSkuList().size() > 0) {
+						if (getViewModel().getProductType().equalsIgnoreCase(CLOTHING_PRODUCT)) {
 							onAddToCartLoadComplete();
 							onPermissionGranted();
 						} else {
-							onAddToCartLoadComplete();
-							Intent editQuantityIntent = new Intent(activity, ConfirmColorSizeActivity.class);
-							editQuantityIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, ConfirmColorSizeActivity.QUANTITY);
-							activity.startActivity(editQuantityIntent);
-							activity.overridePendingTransition(0, 0);
+							WProductDetail product = getViewModel().getProduct();
+							if (product == null) return;
+							if (product.otherSkus == null) return;
+							if (product.otherSkus.get(0) == null) return;
+							getGlobalState().setSelectedSKUId(product.otherSkus.get(0));
+							mInventoryForStore = new InventoryForStore(product.fulfillmentType, product.sku) {
+								@Override
+								public void onInventoryForStoreSuccess(SkusInventoryForStoreResponse skusInventoryForStoreResponse) {
+									if (skusInventoryForStoreResponse == null) return;
+									switch (skusInventoryForStoreResponse.httpCode) {
+										case 200:
+											List<SkuInventory> skuInventoryList = skusInventoryForStoreResponse.skuInventory;
+											if (skuInventoryList.get(0) != null) {
+
+											}
+											Intent editQuantityIntent = new Intent(activity, ConfirmColorSizeActivity.class);
+											editQuantityIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, ConfirmColorSizeActivity.QUANTITY);
+											editQuantityIntent.putExtra(ConfirmColorSizeActivity.QUANTITY_IN_STOCK, ConfirmColorSizeActivity.QUANTITY);
+											activity.startActivity(editQuantityIntent);
+											activity.overridePendingTransition(0, 0);
+											break;
+
+										case 440:
+											break;
+
+										default:
+											break;
+									}
+									onAddToCartLoadComplete();
+								}
+
+								@Override
+								public void onInventoryForStoreFailure(String message) {
+									onAddToCartLoadComplete();
+								}
+
+								@Override
+								public void onNoMatchFoundForStoreId() {
+
+									onAddToCartLoadComplete();
+								}
+							};
 						}
 					}
 				} else {
