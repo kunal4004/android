@@ -1459,6 +1459,15 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 								!addedToCart) {
 							getViewDataBinding().llAddToCart.performClick();
 						}
+
+						/***
+						 * Auto-connect on inventory connection failure
+						 */
+						if (mInventoryForStore != null) {
+							if (mInventoryForStore.getOnConnectFailure()) {
+								getViewDataBinding().llAddToCart.performClick();
+							}
+						}
 					}
 				}
 			});
@@ -1542,6 +1551,10 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 												// If quantity is found, perform default add to cart flow
 												openQuantityPopup(quantity);
 											}
+											break;
+
+										case 440:
+											SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, skusInventoryForStoreResponse.response.stsParams);
 											break;
 
 										default:

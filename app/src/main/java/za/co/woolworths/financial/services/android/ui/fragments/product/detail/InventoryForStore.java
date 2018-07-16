@@ -17,6 +17,8 @@ public abstract class InventoryForStore {
 
 	private GetInventorySkusForStore getInventorySkusForStore;
 
+	private boolean onConnectivityFailure;
+
 	public InventoryForStore(String fulFillmentTypeId, String multiSku) {
 		String storeId = Utils.retrieveStoreId(fulFillmentTypeId);
 		if (TextUtils.isEmpty(storeId)) { // no storeId match found, cannot perform Inventory check
@@ -32,6 +34,7 @@ public abstract class InventoryForStore {
 	}
 
 	private GetInventorySkusForStore getInventoryStockForStore(String storeId, String multiSku) {
+		setOnConnectFailure(false);
 		return new GetInventorySkusForStore(storeId, multiSku, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
@@ -40,6 +43,7 @@ public abstract class InventoryForStore {
 
 			@Override
 			public void onFailure(String errorMessage) {
+				setOnConnectFailure(true);
 				onInventoryForStoreFailure(errorMessage);
 			}
 		});
@@ -49,5 +53,13 @@ public abstract class InventoryForStore {
 		if (getInventorySkusForStore == null) return;
 		if (!getInventorySkusForStore.isCancelled())
 			getInventorySkusForStore.cancel(true);
+	}
+
+	private void setOnConnectFailure(boolean isConnected) {
+		this.onConnectivityFailure = isConnected;
+	}
+
+	public boolean getOnConnectFailure() {
+		return onConnectivityFailure;
 	}
 }
