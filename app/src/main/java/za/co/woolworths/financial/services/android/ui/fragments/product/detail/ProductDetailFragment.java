@@ -1521,6 +1521,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 							if (product.otherSkus == null) return;
 							if (product.otherSkus.get(0) == null) return;
 							getGlobalState().setSelectedSKUId(product.otherSkus.get(0));
+							onAddToCartLoad();
 							mInventoryForStore = new InventoryForStore(product.fulfillmentType, product.sku) {
 								@Override
 								public void onInventoryForStoreSuccess(SkusInventoryForStoreResponse skusInventoryForStoreResponse) {
@@ -1563,9 +1564,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 									onAddToCartLoadComplete();
 									openQuantityPopup(DEFAULT_MAX_QUANTITY);
 								}
-							}
-
-							;
+							};
 						}
 					}
 				} else {
