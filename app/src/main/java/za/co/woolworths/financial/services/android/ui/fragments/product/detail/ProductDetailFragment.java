@@ -147,6 +147,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	private OtherSkus selectedFindInStoreOtherSkus;
 	public static int DELIVERY_LOCATION_FROM_PDP_REQUEST = 2553;
 	private InventoryForStore mInventoryForStore;
+	private final int DEFAULT_MAX_QUANTITY = 10;
 
 	@Override
 	public ProductDetailViewModel getViewModel() {
@@ -1514,6 +1515,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 							onAddToCartLoadComplete();
 							onPermissionGranted();
 						} else {
+							onAddToCartLoadComplete();
 							WProductDetail product = getViewModel().getProduct();
 							if (product == null) return;
 							if (product.otherSkus == null) return;
@@ -1526,23 +1528,29 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 									switch (skusInventoryForStoreResponse.httpCode) {
 										case 200:
 											List<SkuInventory> skuInventoryList = skusInventoryForStoreResponse.skuInventory;
-											if (skuInventoryList.get(0) != null) {
-
+											// If no quantity is found, display the out of stock message
+											if (skuInventoryList.size() == 0) {
+												outOfStockDialog();
+												return;
 											}
-											Intent editQuantityIntent = new Intent(activity, ConfirmColorSizeActivity.class);
-											editQuantityIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, ConfirmColorSizeActivity.QUANTITY);
-											editQuantityIntent.putExtra(ConfirmColorSizeActivity.QUANTITY_IN_STOCK, ConfirmColorSizeActivity.QUANTITY);
-											activity.startActivity(editQuantityIntent);
-											activity.overridePendingTransition(0, 0);
-											break;
-
-										case 440:
+											SkuInventory skuInventory = skuInventoryList.get(0);
+											int quantity = skuInventory.quantity;
+											if (quantity == 0) {
+												outOfStockDialog();
+											} else {
+												// If quantity is found, perform default add to cart flow
+												openQuantityPopup(quantity);
+											}
 											break;
 
 										default:
+											if (skusInventoryForStoreResponse.response == null)
+												return;
+											if (skusInventoryForStoreResponse.response.desc == null)
+												return;
+											Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, skusInventoryForStoreResponse.response.desc);
 											break;
 									}
-									onAddToCartLoadComplete();
 								}
 
 								@Override
@@ -1552,10 +1560,12 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 								@Override
 								public void onNoMatchFoundForStoreId() {
-
 									onAddToCartLoadComplete();
+									openQuantityPopup(DEFAULT_MAX_QUANTITY);
 								}
-							};
+							}
+
+							;
 						}
 					}
 				} else {
@@ -1565,6 +1575,16 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 				}
 			}
 		}
+	}
+
+	private void openQuantityPopup(int quantity) {
+		Activity activity = getActivity();
+		if (activity == null) return;
+		Intent editQuantityIntent = new Intent(activity, ConfirmColorSizeActivity.class);
+		editQuantityIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, ConfirmColorSizeActivity.QUANTITY);
+		editQuantityIntent.putExtra("CART_QUANTITY_In_STOCK", quantity);
+		activity.startActivity(editQuantityIntent);
+		activity.overridePendingTransition(0, 0);
 	}
 
 	private void executeCartSummary() {
