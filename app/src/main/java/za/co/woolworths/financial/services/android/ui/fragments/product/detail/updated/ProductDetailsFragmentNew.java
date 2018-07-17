@@ -43,6 +43,7 @@ import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.models.rest.product.ProductRequest;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductColorPickerAdapter;
+import za.co.woolworths.financial.services.android.ui.adapters.ProductSizePickerAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ProductUtils;
@@ -55,7 +56,7 @@ import za.co.woolworths.financial.services.android.util.Utils;
  * Created by W7099877 on 2018/07/14.
  */
 
-public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragmentNewBinding, ProductDetailsViewModelNew> implements ProductDetailNavigatorNew, ProductViewPagerAdapter.MultipleImageInterface, View.OnClickListener, ProductColorPickerAdapter.OnColorSelection {
+public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragmentNewBinding, ProductDetailsViewModelNew> implements ProductDetailNavigatorNew, ProductViewPagerAdapter.MultipleImageInterface, View.OnClickListener, ProductColorPickerAdapter.OnColorSelection, ProductSizePickerAdapter.OnSizeSelection {
 	public ProductDetailsViewModelNew productDetailsViewModelNew;
 	private String mSubCategoryTitle;
 	private boolean mFetchFromJson;
@@ -72,15 +73,18 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	private boolean hasColor;
 	private boolean hasSize;
 	private OtherSkus defaultSku;
-	private OtherSkus selectedSize;
+	private OtherSkus selectedOtherSku;
 	private String selectedGroupKey;
 	private RelativeLayout btnColorSelector;
 	private RelativeLayout btnSizeSelector;
-	private WrapContentDraweeView imgSelectedColor;
 	private WTextView tvSelectedSize;
 	private BottomSheetDialog colorPickerDialog;
 	private BottomSheetDialog sizePickerDialog;
 	private ProductColorPickerAdapter colorPickerAdapter;
+	private ProductSizePickerAdapter sizePickerAdapter;
+	private RecyclerView rcvSizePicker;
+	private RelativeLayout btnFindInStore;
+	private RelativeLayout btnAddToCart;
 
 
 	@Override
@@ -126,8 +130,9 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		mImageViewPager = getViewDataBinding().mProductDetailPager;
 		btnColorSelector = getViewDataBinding().llColorSize.relColorSelector;
 		btnSizeSelector = getViewDataBinding().llColorSize.relSizeSelector;
-		imgSelectedColor = getViewDataBinding().llColorSize.imSelectedColor;
 		tvSelectedSize = getViewDataBinding().llColorSize.tvSelectedSizeValue;
+		btnFindInStore = getView().findViewById(R.id.rlStoreFinder);
+		btnAddToCart = getView().findViewById(R.id.rlAddToCart);
 		colorPickerDialog = new BottomSheetDialog(getActivity());
 		sizePickerDialog = new BottomSheetDialog(getActivity());
 		getViewDataBinding().imClose.setOnClickListener(this);
@@ -196,10 +201,14 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 				colorPickerDialog.show();
 				break;
 			case R.id.relSizeSelector:
+				openSizePicker(selectedGroupKey);
 				break;
 		}
 	}
 
+	public void addItemToCart(){
+
+	}
 
 	@Override
 	public void renderView() {
@@ -275,24 +284,49 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		this.updateDefaultUI();
 	}
 
-	public void updateDefaultUI(){
+	public void updateDefaultUI() {
 		this.defaultSku = getDefaultSku(otherSKUsByGroupKey);
+		// when there is no size available
+		// selectedSKU will be the defaultSKU
+			if(!hasSize)
+				this.selectedOtherSku = this.defaultSku;
 		getViewDataBinding().llLoadingColorSize.setVisibility(View.GONE);
 		getViewDataBinding().loadingInfoView.setVisibility(View.GONE);
-		getViewDataBinding().colorSizeLayout.setVisibility(View.VISIBLE);
-		btnColorSelector.setEnabled(hasColor);
-		btnSizeSelector.setEnabled(hasSize);
+		this.configureButtonsAndSelectors();
+		this.updateViewPagerWithAuxiliaryImages();
 		this.setProductCode(productDetails.productId);
 		this.setProductDescription(getViewModel().getProductDescription(getActivity(), productDetails));
 		this.configureUIForOtherSKU(defaultSku);
-		this.configureColorPicker();
+	}
+
+	public void configureButtonsAndSelectors(){
+		getViewDataBinding().colorSizeLayout.setVisibility((hasColor || hasSize) ? View.VISIBLE : View.GONE);
+		btnColorSelector.setEnabled(hasColor);
+		btnSizeSelector.setEnabled(hasSize);
+
+		// if colors not available set the color icon to N/A icon , Icons will look like " / "
+		if(hasColor){
+			this.configureColorPicker();
+		}else {
+			this.setSelectedColorIcon();
+		}
+
+		if(hasSize){
+			this.configureSizePicker();
+		}else {
+			tvSelectedSize.setText("NO SZ");
+		}
+
+		btnFindInStore.setVisibility(Boolean.valueOf(productDetails.isnAvailable) ? View.VISIBLE :View.GONE);
+		btnAddToCart.setAlpha(1f);
+		btnAddToCart.setEnabled(true);
 	}
 
 	private void configureColorPicker() {
 		View view = getLayoutInflater().inflate(R.layout.color_size_picker_bottom_sheet_dialog, null);
 		WTextView title = view.findViewById(R.id.title);
 		RecyclerView rcvColors = view.findViewById(R.id.rvPickerList);
-		ImageView closePicker =view.findViewById(R.id.imClosePicker);
+		ImageView closePicker = view.findViewById(R.id.imClosePicker);
 		closePicker.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
@@ -306,15 +340,36 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		colorPickerDialog.setContentView(view);
 	}
 
+	private void configureSizePicker() {
+		View view = getLayoutInflater().inflate(R.layout.color_size_picker_bottom_sheet_dialog, null);
+		WTextView title = view.findViewById(R.id.title);
+		rcvSizePicker = view.findViewById(R.id.rvPickerList);
+		ImageView closeSizePicker = view.findViewById(R.id.imClosePicker);
+		closeSizePicker.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				sizePickerDialog.dismiss();
+			}
+		});
+		rcvSizePicker.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+		title.setText(getString(R.string.confirm_size_range_desc));
+		sizePickerDialog.setContentView(view);
+	}
+
+	public void openSizePicker(String groupKey) {
+		ArrayList<OtherSkus> selectedOtherSKUsForGroupKey = this.otherSKUsByGroupKey.get(groupKey);
+		sizePickerAdapter = new ProductSizePickerAdapter(selectedOtherSKUsForGroupKey, this);
+		rcvSizePicker.setAdapter(sizePickerAdapter);
+		sizePickerDialog.show();
+	}
 
 	private void configureUIForOtherSKU(OtherSkus otherSku) {
 		txtFromPrice.setText(otherSku.price);
-		if(!TextUtils.isEmpty(otherSku.wasPrice))
+		if (!TextUtils.isEmpty(otherSku.wasPrice))
 			txtActualPrice.setText(otherSku.wasPrice);
-		this.updateViewPagerWithAuxiliaryImages();
-		this.setSelectedColorIcon(otherSku.colourImagePath);
+		if (hasColor)
+			this.setSelectedColorIcon();
 	}
-
 
 
 	@Override
@@ -349,13 +404,13 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
 	@Override
 	public void setProductCode(String productCode) {
-			try {
-				getViewDataBinding().productCode.setVisibility(View.VISIBLE);
-				getViewDataBinding().productCode.setText(getString(R.string.product_code) + ": " + productCode);
-			} catch (IllegalStateException ex) {
-				getViewDataBinding().productCode.setVisibility(View.GONE);
-				Log.d("setProductCode", ex.getMessage());
-			}
+		try {
+			getViewDataBinding().productCode.setVisibility(View.VISIBLE);
+			getViewDataBinding().productCode.setText(getString(R.string.product_code) + ": " + productCode);
+		} catch (IllegalStateException ex) {
+			getViewDataBinding().productCode.setVisibility(View.GONE);
+			Log.d("setProductCode", ex.getMessage());
+		}
 	}
 
 	@Override
@@ -509,9 +564,13 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		otherSKUsByGroupKey = new HashMap<>();
 		for (OtherSkus otherSkuObj : otherSKUsList) {
 			String groupKey = "";
-			if (otherSkuObj.colour == null && otherSkuObj.size != null) {
-				this.hasSize = true;
+			if (TextUtils.isEmpty(otherSkuObj.colour) && !TextUtils.isEmpty(otherSkuObj.size)) {
+				this.hasSize = otherSkuObj.size.equalsIgnoreCase("NO SZ") ? false : true;
 				groupKey = otherSkuObj.size.trim();
+			} else if (!TextUtils.isEmpty(otherSkuObj.colour) && !TextUtils.isEmpty(otherSkuObj.size)) {
+				this.hasColor = otherSkuObj.colour.equalsIgnoreCase("N/A") ? false : true;
+				this.hasSize = otherSkuObj.size.equalsIgnoreCase("NO SZ") ? false : true;
+				groupKey = otherSkuObj.colour.trim();
 			} else {
 				this.hasColor = true;
 				groupKey = otherSkuObj.colour.trim();
@@ -540,7 +599,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	}
 
 	private void updateViewPagerWithAuxiliaryImages() {
-		this.mAuxiliaryImage = this.getAuxiliaryImagesByGroupKey(hasColor ? this.defaultSku.colour : this.defaultSku.size);
+		this.mAuxiliaryImage = this.getAuxiliaryImagesByGroupKey(this.selectedGroupKey);
 		mProductViewPagerAdapter.updatePagerItems(this.mAuxiliaryImage);
 	}
 
@@ -585,14 +644,71 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		return codeForAuxiliaryImages;
 	}
 
-	private void setSelectedColorIcon(String url) {
-		imgSelectedColor.setImageAlpha(TextUtils.isEmpty(url) ? 0 : 255);
+	private void setSelectedColorIcon() {
+		WrapContentDraweeView mImSelectedColor = getViewDataBinding().llColorSize.imSelectedColor;
 		DrawImage drawImage = new DrawImage(getActivity());
-		drawImage.displayImage(imgSelectedColor, url);
+		String	url = this.otherSKUsByGroupKey.get(this.selectedGroupKey).get(0).externalColourRef;
+		mImSelectedColor.setImageAlpha(TextUtils.isEmpty(url) ? 0 : 255);
+		drawImage.displayImage(mImSelectedColor, url);
 	}
 
 	@Override
-	public void colorSelected(String color) {
+	public void onColorSelected(String color) {
 
+		if (this.selectedGroupKey.equalsIgnoreCase(color.trim())) {
+			colorPickerDialog.dismiss();
+			return;
+		}
+
+		this.selectedGroupKey = color;
+		this.setSelectedColorIcon();
+		this.updateViewPagerWithAuxiliaryImages();
+
+		// when there is no size available
+		// selectedSKU will be from color group
+		if(!hasSize) {
+			this.selectedOtherSku = this.otherSKUsByGroupKey.get(this.selectedGroupKey).get(0);
+			this.configureUIForOtherSKU(this.selectedOtherSku);
+			this.colorPickerDialog.dismiss();
+			return;
+		}
+
+		//===== positive flow
+		// if selected size available for the selected color
+		// get the sku for the selected size from the new color group
+		// update the selectedSizeSKU
+
+		//===== negative flow
+		// if selected size not available on the new color group
+		// make selectedSKU to null
+
+		if (this.selectedOtherSku != null) {
+			ArrayList<OtherSkus> selectedColorSKUs = this.otherSKUsByGroupKey.get(this.selectedGroupKey);
+			int index = -1;
+			for (int i = 0; i < selectedColorSKUs.size(); i++) {
+				if (selectedColorSKUs.get(i).size.equalsIgnoreCase(this.selectedOtherSku.size)) {
+					index = i;
+					break;
+				}
+			}
+			if (index == -1) {
+				this.selectedOtherSku = null;
+				this.tvSelectedSize.setText(getString(R.string.select));
+				this.defaultSku = this.otherSKUsByGroupKey.get(this.selectedGroupKey).get(0);
+				this.configureUIForOtherSKU(this.defaultSku);
+			} else {
+				this.selectedOtherSku = selectedColorSKUs.get(index);
+				this.configureUIForOtherSKU(selectedOtherSku);
+			}
+		}
+		colorPickerDialog.dismiss();
+	}
+
+	@Override
+	public void onSizeSelected(OtherSkus selectedSizeSku) {
+		this.selectedOtherSku = selectedSizeSku;
+		this.tvSelectedSize.setText(this.selectedOtherSku.size);
+		this.configureUIForOtherSKU(selectedOtherSku);
+		sizePickerDialog.dismiss();
 	}
 }

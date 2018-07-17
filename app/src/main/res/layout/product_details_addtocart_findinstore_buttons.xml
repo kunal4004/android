@@ -18,7 +18,7 @@
         android:paddingTop="2dp">
 
         <RelativeLayout
-            android:id="@+id/llStoreFinder"
+            android:id="@+id/rlStoreFinder"
             style="@style/blackButtonStyle"
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -54,7 +54,7 @@
 
 
         <RelativeLayout
-            android:id="@+id/llAddToCart"
+            android:id="@+id/rlAddToCart"
             style="@style/blackButtonStyle"
             android:layout_width="0dp"
             android:layout_height="match_parent"

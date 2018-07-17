@@ -299,7 +299,9 @@
                 </LinearLayout>
             </android.support.v4.widget.NestedScrollView>
 
-            <include layout="@layout/product_details_addtocart_findinstore_buttons" />
+            <include
+                android:id="@+id/llAddToCartFindInStore"
+                layout="@layout/product_details_addtocart_findinstore_buttons" />
         </RelativeLayout>
 
         <ImageView

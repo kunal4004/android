@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.adapters;
 
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +9,6 @@ import com.awfs.coordination.R;
 
 import java.util.ArrayList;
 
-import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
 /**
@@ -21,7 +19,7 @@ public class ProductColorPickerAdapter extends RecyclerView.Adapter<ProductColor
 
 
 	public interface OnColorSelection {
-		void colorSelected(String color);
+		void onColorSelected(String color);
 	}
 
 	private OnColorSelection onColorSelection;
@@ -53,7 +51,7 @@ public class ProductColorPickerAdapter extends RecyclerView.Adapter<ProductColor
 			@Override
 			public void onClick(View v) {
 				int position = holder.getAdapterPosition();
-				onColorSelection.colorSelected(colorArray.get(position));
+				onColorSelection.onColorSelected(colorArray.get(position));
 			}
 		});
 	}
