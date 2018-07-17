@@ -400,6 +400,8 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		viewSwitcher = view.findViewById(R.id.viewSwitcher);
 		rcvSizePickerForInventory = view.findViewById(R.id.sizeSelectorForInventory);
 		rcvQuantityPicker = view.findViewById(R.id.quantitySelector);
+		rcvQuantityPicker.setNestedScrollingEnabled(false);
+		rcvSizePickerForInventory.setNestedScrollingEnabled(false);
 		ImageView closeSizePicker = view.findViewById(R.id.imCloseIcon);
 		tvMultiPickerTitle = view.findViewById(R.id.title);
 		imBackIconOnPicker = view.findViewById(R.id.imBackIcon);
