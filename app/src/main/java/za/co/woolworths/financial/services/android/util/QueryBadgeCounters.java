@@ -11,20 +11,36 @@ import za.co.woolworths.financial.services.android.models.rest.message.GetMessag
 import za.co.woolworths.financial.services.android.models.rest.product.GetCartSummary;
 import za.co.woolworths.financial.services.android.models.rest.reward.GetVoucher;
 
-public class QueryBadgeCounters {
+public abstract class QueryBadgeCounters {
 
-	public void setCartBadgeCounter() {
+	public abstract void messageCount(int number);
 
+	public abstract void voucherCount(int number);
+
+	public abstract void cartCount(int number);
+
+	private GetMessage mGetMessage;
+	private GetVoucher mGetVoucher;
+	private GetCartSummary mGetCartCount;
+
+	public void queryAllBadgeCounters() {
+		queryVoucherCount();
+		queryCartCount();
+		queryMessageCount();
 	}
 
-	public void queryBadgeCounter() {
-		this.loadVoucherCount().execute();
-		this.loadShoppingCartCount().execute();
-		this.getMessageResponse().execute();
+	public void queryMessageCount() {
+		mGetMessage = loadMessageCount();
+		mGetMessage.execute();
 	}
 
-	public void configureBadges() {
+	public void queryVoucherCount() {
+		mGetVoucher = loadVoucherCount();
+		mGetVoucher.execute();
+	}
 
+	public void queryCartCount() {
+		mGetCartCount = loadShoppingCartCount();
 	}
 
 	private GetVoucher loadVoucherCount() {
@@ -36,14 +52,14 @@ public class QueryBadgeCounters {
 				VoucherResponse voucherResponse = (VoucherResponse) object;
 				switch (voucherResponse.httpCode) {
 					case 200:
-						if (voucherResponse != null) {
-							VoucherCollection voucherCollection = voucherResponse.voucherCollection;
-							if (voucherCollection != null) {
-								if (voucherCollection.vouchers != null) {
-									voucherCollection.vouchers.size();
-								}
+						VoucherCollection voucherCollection = voucherResponse.voucherCollection;
+						if (voucherCollection != null) {
+							if (voucherCollection.vouchers != null) {
+								voucherCount(voucherCollection.vouchers.size());
 							}
 						}
+						break;
+					default:
 						break;
 				}
 			}
@@ -67,7 +83,8 @@ public class QueryBadgeCounters {
 						if (cartSummaryResponse.data == null) return;
 						List<CartSummary> cartSummary = cartSummaryResponse.data;
 						if (cartSummary.get(0) != null)
-							break;
+							cartCount(cartSummary.get(0).totalItemsCount);
+						break;
 					case 400:
 						break;
 					default:
@@ -83,13 +100,14 @@ public class QueryBadgeCounters {
 		});
 	}
 
-	private GetMessage getMessageResponse() {
+	private GetMessage loadMessageCount() {
 		isUserAuthenticated();
 		isC2User();
 		return new GetMessage(new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
 				MessageResponse messageResponse = (MessageResponse) object;
+				messageCount(messageResponse.unreadCount);
 			}
 
 			@Override
@@ -104,5 +122,19 @@ public class QueryBadgeCounters {
 
 	private void isC2User() {
 		if (!SessionUtilities.getInstance().isC2User()) return;
+	}
+
+	public void cancelCounterRequest() {
+		cancelRequest(mGetMessage);
+		cancelRequest(mGetVoucher);
+		cancelRequest(mGetCartCount);
+	}
+
+	private void cancelRequest(HttpAsyncTask httpAsyncTask) {
+		if (httpAsyncTask != null) {
+			if (!httpAsyncTask.isCancelled()) {
+				httpAsyncTask.cancel(true);
+			}
+		}
 	}
 }

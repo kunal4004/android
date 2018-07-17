@@ -17,6 +17,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -895,6 +896,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					break;
 			}
 
+
 		}
 
 		Fragment fragment = mNavController.getCurrentFrag();
@@ -996,9 +998,23 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void badgeCount() {
-		QueryBadgeCounters queryBadgeCounters = new QueryBadgeCounters();
-		queryBadgeCounters.setCartBadgeCounter();
-		queryBadgeCounters.queryBadgeCounter();
+		QueryBadgeCounters queryBadgeCounters = new QueryBadgeCounters() {
+			@Override
+			public void messageCount(int number) {
+				addBadge(INDEX_ACCOUNT,number);
+			}
+
+			@Override
+			public void voucherCount(int number) {
+				addBadge(INDEX_REWARD,number);
+			}
+
+			@Override
+			public void cartCount(int number) {
+				addBadge(INDEX_CART,number);
+			}
+		};
+		queryBadgeCounters.queryAllBadgeCounters();
 	}
 
 	@Override
