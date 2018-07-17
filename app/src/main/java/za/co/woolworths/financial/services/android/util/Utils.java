@@ -104,7 +104,6 @@ import static android.Manifest.permission_group.STORAGE;
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.WHITE;
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT_TEMP;
-import static za.co.woolworths.financial.services.android.ui.activities.MyPreferencesActivity.SECURITY_SETTING_REQUEST_DIALOG;
 
 public class Utils {
 
@@ -368,6 +367,10 @@ public class Utils {
 
 	public static void setBadgeCounter(Context context, int badgeCount) {
 		try {
+			if (badgeCount == 0) {
+				removeBadgeCounter(context);
+				return;
+			}
 			ShortcutBadger.applyCount(context, badgeCount);
 			sessionDaoSave(context, SessionDao.KEY.UNREAD_MESSAGE_COUNT, String.valueOf(badgeCount));
 		} catch (NullPointerException ex) {
