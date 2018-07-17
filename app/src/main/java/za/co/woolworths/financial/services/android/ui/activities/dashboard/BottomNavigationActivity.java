@@ -105,6 +105,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	public static final int SLIDE_UP_COLLAPSE_REQUEST_CODE = 13;
 	public static final int SLIDE_UP_COLLAPSE_RESULT_CODE = 12345;
 	public static final int BOTTOM_FRAGMENT_REQUEST_CODE = 3401;
+	public static final int MESSAGE_COUNTER_REQUEST = 3454;
 
 	public final String TAG = this.getClass().getSimpleName();
 	private PermissionUtils permissionUtils;
@@ -121,6 +122,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	private boolean singleOrMultipleItemSelector;
 	public static final int LOCK_REQUEST_CODE_ACCOUNTS = 444;
 	private int mListItemCount = 0;
+	private QueryBadgeCounters mQueryBadgeCounters;
 
 	@Override
 	public int getLayoutId() {
@@ -214,9 +216,42 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			}
 		});
 
+		/***
+		 * Update bottom navigation view counter
+		 */
+		initBadgeCounter();
+
 		if (SessionUtilities.getInstance().isUserAuthenticated()) {
 			badgeCount();
 		}
+	}
+
+	private void initBadgeCounter() {
+		mQueryBadgeCounters = new QueryBadgeCounters() {
+			@Override
+			public void messageCount(int unreadCount) {
+				/****
+				 * Set unread badge count on app icon
+				 * Set unread count for account bottom navigation view
+				 * Parse unread count to MyAccount fragment to update message counter row
+				 */
+				Utils.setBadgeCounter(BottomNavigationActivity.this, unreadCount);
+				addBadge(INDEX_ACCOUNT, unreadCount);
+				Intent intent = new Intent();
+				intent.putExtra("unreadCount", unreadCount);
+				onActivityResult(MESSAGE_COUNTER_REQUEST, MESSAGE_COUNTER_REQUEST, intent);
+			}
+
+			@Override
+			public void voucherCount(int number) {
+				addBadge(INDEX_REWARD, number);
+			}
+
+			@Override
+			public void cartCount(int number) {
+				addBadge(INDEX_CART, number);
+			}
+		};
 	}
 
 	private void setToast() {
@@ -998,23 +1033,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void badgeCount() {
-		QueryBadgeCounters queryBadgeCounters = new QueryBadgeCounters() {
-			@Override
-			public void messageCount(int number) {
-				addBadge(INDEX_ACCOUNT,number);
-			}
-
-			@Override
-			public void voucherCount(int number) {
-				addBadge(INDEX_REWARD,number);
-			}
-
-			@Override
-			public void cartCount(int number) {
-				addBadge(INDEX_CART,number);
-			}
-		};
-		queryBadgeCounters.queryAllBadgeCounters();
+		getBadgeCountInstance().queryAllBadgeCounters();
 	}
 
 	@Override
@@ -1131,5 +1150,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	public Fragment getCurrentFragment() {
 		return mNavController.getCurrentFrag();
+	}
+
+	public QueryBadgeCounters getBadgeCountInstance() {
+		return mQueryBadgeCounters;
 	}
 }
