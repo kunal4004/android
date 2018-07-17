@@ -274,18 +274,24 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 			Fragment page = getChildFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + viewPager.getCurrentItem());
 			switch (viewPager.getCurrentItem()) {
 				case 0:
-					WRewardsOverviewFragment wRewardsOverviewFragment = (WRewardsOverviewFragment) page;
-					wRewardsOverviewFragment.scrollToTop();
+					if (page instanceof WRewardsOverviewFragment) {
+						WRewardsOverviewFragment wRewardsOverviewFragment = (WRewardsOverviewFragment) page;
+						wRewardsOverviewFragment.scrollToTop();
+					}
 					break;
 
 				case 1:
-					WRewardsVouchersFragment wRewardsVouchersFragment = (WRewardsVouchersFragment) page;
-					wRewardsVouchersFragment.scrollToTop();
+					if (page instanceof WRewardsVouchersFragment) {
+						WRewardsVouchersFragment wRewardsVouchersFragment = (WRewardsVouchersFragment) page;
+						wRewardsVouchersFragment.scrollToTop();
+					}
 					break;
 
 				case 2:
-					WRewardsSavingsFragment wRewardsSavingsFragment = (WRewardsSavingsFragment) page;
-					wRewardsSavingsFragment.scrollToTop();
+					if (page instanceof WRewardsSavingsFragment) {
+						WRewardsSavingsFragment wRewardsSavingsFragment = (WRewardsSavingsFragment) page;
+						wRewardsSavingsFragment.scrollToTop();
+					}
 					break;
 
 				default:
