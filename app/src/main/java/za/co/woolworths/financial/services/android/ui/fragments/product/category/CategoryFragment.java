@@ -28,6 +28,7 @@ import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.ProductSearchFragmentBinding;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.Response;
@@ -278,6 +279,7 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 		if (activity != null) {
 			LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			int position = 0;
+			llAddView.removeAllViews();
 			while (position < mRootCategories.size()) {
 				RootCategory rootCategory = rootCategories.get(position);
 				assert inflater != null;
