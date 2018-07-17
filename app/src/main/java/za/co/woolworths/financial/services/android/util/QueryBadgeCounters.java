@@ -30,22 +30,26 @@ public abstract class QueryBadgeCounters {
 	}
 
 	public void queryMessageCount() {
+		isUserAuthenticated();
+		isC2User();
 		mGetMessage = loadMessageCount();
 		mGetMessage.execute();
 	}
 
-	public void queryVoucherCount() {
+	private void queryVoucherCount() {
+		isUserAuthenticated();
+		isC2User();
 		mGetVoucher = loadVoucherCount();
 		mGetVoucher.execute();
 	}
 
-	public void queryCartCount() {
+	private void queryCartCount() {
+		isUserAuthenticated();
 		mGetCartCount = loadShoppingCartCount();
+		mGetCartCount.execute();
 	}
 
 	private GetVoucher loadVoucherCount() {
-		isUserAuthenticated();
-		isC2User();
 		return new GetVoucher(new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
@@ -72,7 +76,6 @@ public abstract class QueryBadgeCounters {
 	}
 
 	private GetCartSummary loadShoppingCartCount() {
-		isUserAuthenticated();
 		return new GetCartSummary(new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
