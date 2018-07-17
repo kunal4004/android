@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:background="@color/white"
+    android:layout_height="match_parent">
+        <RelativeLayout
+            android:id="@+id/rlDeliveryLocation"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginEnd="@dimen/thirty_two_dp"
+            android:layout_marginStart="@dimen/thirty_two_dp">
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:gravity="center"
+                android:letterSpacing="0.07"
+                android:text="@string/delivery_location_title"
+                android:textAllCaps="true"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:WTextView_font="medium_bold"/>
+
+
+            <ImageView
+                android:id="@+id/imCloseIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/close_24"/>
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/recent_search_bg"
+            />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/four_dp"
+            android:layout_marginTop="@dimen/thirty_two_dp"
+            android:gravity="center"
+            android:lineSpacingExtra="4dp"
+            android:text="@string/your_delivery_location_is_set_to"
+            android:textColor="@color/description_color"
+            android:textSize="15sp"
+            app:WTextView_font="myriadpro_regular"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/thirty_two_dp"
+            android:layout_marginStart="@dimen/thirty_two_dp"
+            android:orientation="vertical">
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/tvLocation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/thirty_two_dp"
+                android:gravity="center"
+                android:lineSpacingExtra="4dp"
+                android:text="@string/your_delivery_location_is_set_to"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                app:WTextView_font="medium_bold"/>
+
+            <za.co.woolworths.financial.services.android.ui.views.WButton
+                android:id="@+id/btnDefaultLocation"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/four_dp"
+                android:background="@color/black"
+                android:gravity="center"
+                android:letterSpacing="0.2"
+                android:text="@string/confirm_your_location"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                app:WButton_font="medium_bold"/>
+
+            <za.co.woolworths.financial.services.android.ui.views.WButton
+                android:id="@+id/btnSetNewLocation"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:gravity="center"
+                android:letterSpacing="0.2"
+                android:text="@string/edit_delivery_location"
+                android:textAllCaps="true"
+                android:textSize="12sp"
+                app:WButton_font="medium"/>
+        </LinearLayout>
+</LinearLayout>

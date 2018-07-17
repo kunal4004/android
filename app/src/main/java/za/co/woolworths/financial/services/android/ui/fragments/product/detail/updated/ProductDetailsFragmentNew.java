@@ -1,11 +1,14 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated;
 
+import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +17,7 @@ import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -34,6 +38,7 @@ import java.util.Map;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.AuxiliaryImage;
+import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
@@ -44,19 +49,27 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLo
 import za.co.woolworths.financial.services.android.models.dto.SkuInventory;
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
+import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.models.rest.product.ProductRequest;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
+import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity;
+import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.AvailableSizePickerAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductColorPickerAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductSizePickerAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ProductUtils;
+import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
 import za.co.woolworths.financial.services.android.util.DrawImage;
+import za.co.woolworths.financial.services.android.util.ScreenManager;
+import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
+
+import static android.app.Activity.RESULT_OK;
 
 /**
  * Created by W7099877 on 2018/07/14.
@@ -102,7 +115,10 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	private ProductColorPickerAdapter quantityPickerAdapter;
 	private final int VIEW_SWITCHER_QUANTITY_PICKER = 1;
 	private final int VIEW_SWITCHER_SIZE_PICKER = 0;
-
+	private final int SSO_REQUEST_ADD_TO_CART = 1;
+	private final int SSO_REQUEST_ADD_TO_SHOPPING_LIST = 2;
+	private static final int REQUEST_SUBURB_CHANGE = 153;
+	private BottomSheetDialog confirmDeliveryLocationDialog;
 
 	@Override
 	public ProductDetailsViewModelNew getViewModel() {
@@ -229,9 +245,16 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	}
 
 	public void addItemToCart() {
+		if (!SessionUtilities.getInstance().isUserAuthenticated()) {
+			ScreenManager.presentSSOSignin(getActivity(), SSO_REQUEST_ADD_TO_CART);
+			return;
+		}
 
 		ShoppingDeliveryLocation deliveryLocation = Utils.getPreferredDeliveryLocation();
-
+		if (deliveryLocation == null) {
+			getViewModel().getCartSummary(getActivity()).execute();
+			return;
+		}
 
 		if (this.otherSKUForCart != null) {
 			String storeId = Utils.retrieveStoreId(productDetails.fulfillmentType);
@@ -600,7 +623,26 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
 	@Override
 	public void onCartSummarySuccess(CartSummaryResponse cartSummaryResponse) {
+		if (cartSummaryResponse.data != null) {
+			List<CartSummary> cartSummaryList = cartSummaryResponse.data;
+			if (cartSummaryList.get(0) != null) {
+				CartSummary cartSummary = cartSummaryList.get(0);
+				if (TextUtils.isEmpty(cartSummary.suburbId)) {
+					startActivityToSelectDeliveryLocation();
+				} else {
+					// show popup to confirm location
+					this.confirmDeliveryLocation();
+				}
+			}
+		}
+	}
 
+	private void startActivityToSelectDeliveryLocation() {
+		if (getActivity() != null) {
+			Intent openDeliveryLocationSelectionActivity = new Intent(this.getContext(), DeliveryLocationSelectionActivity.class);
+			startActivityForResult(openDeliveryLocationSelectionActivity, REQUEST_SUBURB_CHANGE);
+			getActivity().overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
+		}
 	}
 
 	@Override
@@ -892,5 +934,64 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	@Override
 	public void onFindInStoreForNotAvailableProducts(OtherSkus notAvailableSKU) {
 
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
+			switch (requestCode) {
+				case SSO_REQUEST_ADD_TO_CART:
+					addItemToCart();
+					break;
+				case SSO_REQUEST_ADD_TO_SHOPPING_LIST:
+					break;
+			}
+		} else if (resultCode == RESULT_OK) {
+			switch (requestCode) {
+				case REQUEST_SUBURB_CHANGE:
+					addItemToCart();
+					break;
+			}
+		}
+	}
+
+	public void confirmDeliveryLocation(){
+		confirmDeliveryLocationDialog = new BottomSheetDialog(getActivity());
+		View view = getLayoutInflater().inflate(R.layout.color_size_picker_bottom_sheet_dialog, null);
+		WTextView tvLocation = view.findViewById(R.id.tvLocation);
+		WButton btnSetNewLocation = view.findViewById(R.id.btnSetNewLocation);
+		ImageView closeDialog = view.findViewById(R.id.imCloseIcon);
+		Button btnConfirmLocation = view.findViewById(R.id.btnDefaultLocation);
+		ShoppingDeliveryLocation shoppingDeliveryLocation = Utils.getPreferredDeliveryLocation();
+		if (shoppingDeliveryLocation != null) {
+			Suburb suburb = shoppingDeliveryLocation.suburb;
+			if (suburb != null) {
+				tvLocation.setText(suburb.name + ", " + shoppingDeliveryLocation.province.name);
+			}
+		}
+		closeDialog.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				dismissPickerDialog(confirmDeliveryLocationDialog);
+			}
+		});
+		btnConfirmLocation.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				confirmDeliveryLocationDialog.dismiss();
+				addItemToCart();
+			}
+		});
+		btnSetNewLocation.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				startActivityToSelectDeliveryLocation();
+			}
+		});
+		confirmDeliveryLocationDialog.setCancelable(false);
+		confirmDeliveryLocationDialog.setCanceledOnTouchOutside(false);
+		confirmDeliveryLocationDialog.setContentView(view);
+		confirmDeliveryLocationDialog.show();
 	}
 }

@@ -127,4 +127,13 @@ public class ScreenManager {
 		activity.startActivityForResult(intent, SSOActivity.SSOActivityResult.LAUNCH.rawValue());
 		activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 	}
+
+	public static void presentSSOSignin(Activity activity,int requestCode) {
+		Intent intent = new Intent(activity, SSOActivity.class);
+		intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue());
+		intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue());
+		intent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.SIGNIN.rawValue());
+		activity.startActivityForResult(intent, requestCode);
+		activity.overridePendingTransition(0, 0);
+	}
 }
