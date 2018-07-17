@@ -884,6 +884,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 						Intent openCartActivity = new Intent(this, CartActivity.class);
 						startActivityForResult(openCartActivity, OPEN_CART_REQUEST);
 						overridePendingTransition(0, 0);
+						return;
 					}
 					break;
 				default:
@@ -893,11 +894,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 						fragmentById.onActivityResult(requestCode, resultCode, data);
 					break;
 			}
+
 		}
 
 		Fragment fragment = mNavController.getCurrentFrag();
-		//trigger reward and account call
-
 		if (fragment != null)
 
 		{
@@ -905,9 +905,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		}
 
 		//Call product detail onActivityResult
-		if (resultCode == RESULT_TAP_FIND_INSTORE_BTN)
-
-		{
+		if (resultCode == RESULT_TAP_FIND_INSTORE_BTN) {
 			if (getBottomFragmentById() instanceof ProductDetailFragment) {
 				getBottomFragmentById().onActivityResult(requestCode, resultCode, null);
 			}
