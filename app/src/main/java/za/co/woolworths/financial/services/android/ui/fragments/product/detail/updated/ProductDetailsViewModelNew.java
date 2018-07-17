@@ -28,23 +28,27 @@ import za.co.woolworths.financial.services.android.models.dto.ProductDetailRespo
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
+import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.models.rest.product.GetCartSummary;
+import za.co.woolworths.financial.services.android.models.rest.product.GetInventorySkusForStore;
 import za.co.woolworths.financial.services.android.models.rest.product.GetProductDetail;
 import za.co.woolworths.financial.services.android.models.rest.product.PostAddItemToCart;
 import za.co.woolworths.financial.services.android.models.rest.product.ProductRequest;
 import za.co.woolworths.financial.services.android.models.rest.shop.SetDeliveryLocationSuburb;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.base.BaseViewModel;
 import za.co.woolworths.financial.services.android.util.LocationItemTask;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
+import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.rx.SchedulerProvider;
 
 /**
  * Created by W7099877 on 2018/07/14.
  */
 
-public class ProductDetailsViewModelNew extends BaseViewModel<ProductDetailNavigatorNew>{
+public class ProductDetailsViewModelNew extends BaseViewModel<ProductDetailNavigatorNew> {
 
 	private String TAG = this.getClass().getSimpleName();
 	private final String EMPTY = " ";
@@ -566,6 +570,30 @@ public class ProductDetailsViewModelNew extends BaseViewModel<ProductDetailNavig
 			@Override
 			public void onFailure(final String errorMessage) {
 				getNavigator().onTokenFailure(errorMessage);
+			}
+		});
+	}
+
+	public GetInventorySkusForStore queryInventoryForSKUs(String storeId, String multiSku, final boolean isMultiSKUs) {
+		return new GetInventorySkusForStore(storeId, multiSku, new OnEventListener() {
+			@Override
+			public void onSuccess(Object object) {
+				SkusInventoryForStoreResponse skusInventoryForStoreResponse = (SkusInventoryForStoreResponse) object;
+				switch (skusInventoryForStoreResponse.httpCode) {
+					case 200:
+						if (isMultiSKUs)
+							getNavigator().onInventoryResponseForAllSKUs(skusInventoryForStoreResponse);
+						else
+							getNavigator().onInventoryResponseForSelectedSKU(skusInventoryForStoreResponse);
+						break;
+					default:
+						break;
+				}
+			}
+
+			@Override
+			public void onFailure(String e) {
+
 			}
 		});
 	}

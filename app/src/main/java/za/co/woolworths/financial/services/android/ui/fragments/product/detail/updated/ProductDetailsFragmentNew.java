@@ -17,6 +17,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ViewSwitcher;
 
 import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
@@ -30,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.AuxiliaryImage;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
@@ -38,10 +40,14 @@ import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
 import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
+import za.co.woolworths.financial.services.android.models.dto.SkuInventory;
+import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.models.rest.product.ProductRequest;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
+import za.co.woolworths.financial.services.android.ui.adapters.AvailableSizePickerAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductColorPickerAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductSizePickerAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter;
@@ -56,7 +62,7 @@ import za.co.woolworths.financial.services.android.util.Utils;
  * Created by W7099877 on 2018/07/14.
  */
 
-public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragmentNewBinding, ProductDetailsViewModelNew> implements ProductDetailNavigatorNew, ProductViewPagerAdapter.MultipleImageInterface, View.OnClickListener, ProductColorPickerAdapter.OnColorSelection, ProductSizePickerAdapter.OnSizeSelection {
+public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragmentNewBinding, ProductDetailsViewModelNew> implements ProductDetailNavigatorNew, ProductViewPagerAdapter.MultipleImageInterface, View.OnClickListener, ProductColorPickerAdapter.OnItemSelection, ProductSizePickerAdapter.OnSizeSelection, AvailableSizePickerAdapter.OnAvailableSizeSelection {
 	public ProductDetailsViewModelNew productDetailsViewModelNew;
 	private String mSubCategoryTitle;
 	private boolean mFetchFromJson;
@@ -80,11 +86,22 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	private WTextView tvSelectedSize;
 	private BottomSheetDialog colorPickerDialog;
 	private BottomSheetDialog sizePickerDialog;
+	private BottomSheetDialog multiPickerDialog;
 	private ProductColorPickerAdapter colorPickerAdapter;
 	private ProductSizePickerAdapter sizePickerAdapter;
+	private AvailableSizePickerAdapter availableSizePickerAdapter;
 	private RecyclerView rcvSizePicker;
 	private RelativeLayout btnFindInStore;
 	private RelativeLayout btnAddToCart;
+	private ViewSwitcher viewSwitcher;
+	private RecyclerView rcvSizePickerForInventory;
+	private RecyclerView rcvQuantityPicker;
+	private ImageView imBackIconOnPicker;
+	private WTextView tvMultiPickerTitle;
+	private OtherSkus otherSKUForCart;
+	private ProductColorPickerAdapter quantityPickerAdapter;
+	private final int VIEW_SWITCHER_QUANTITY_PICKER = 1;
+	private final int VIEW_SWITCHER_SIZE_PICKER = 0;
 
 
 	@Override
@@ -135,9 +152,11 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		btnAddToCart = getView().findViewById(R.id.rlAddToCart);
 		colorPickerDialog = new BottomSheetDialog(getActivity());
 		sizePickerDialog = new BottomSheetDialog(getActivity());
+		multiPickerDialog = new BottomSheetDialog((getActivity()));
 		getViewDataBinding().imClose.setOnClickListener(this);
 		btnSizeSelector.setOnClickListener(this);
 		btnColorSelector.setOnClickListener(this);
+		btnAddToCart.setOnClickListener(this);
 		this.configureDefaultUI();
 	}
 
@@ -201,12 +220,31 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 				colorPickerDialog.show();
 				break;
 			case R.id.relSizeSelector:
-				openSizePicker(selectedGroupKey);
+				openSizePicker(selectedGroupKey, false);
+				break;
+			case R.id.rlAddToCart:
+				addItemToCart();
 				break;
 		}
 	}
 
-	public void addItemToCart(){
+	public void addItemToCart() {
+
+		ShoppingDeliveryLocation deliveryLocation = Utils.getPreferredDeliveryLocation();
+
+
+		if (this.otherSKUForCart != null) {
+			String storeId = Utils.retrieveStoreId(productDetails.fulfillmentType);
+			getViewModel().queryInventoryForSKUs(storeId, this.otherSKUForCart.sku, false).execute();
+			return;
+		} else if (this.selectedOtherSku != null) {
+			this.otherSKUForCart = this.selectedOtherSku;
+			addItemToCart();
+			return;
+		} else {
+			openSizePicker(this.selectedGroupKey, true);
+			return;
+		}
 
 	}
 
@@ -288,8 +326,8 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		this.defaultSku = getDefaultSku(otherSKUsByGroupKey);
 		// when there is no size available
 		// selectedSKU will be the defaultSKU
-			if(!hasSize)
-				this.selectedOtherSku = this.defaultSku;
+		if (!hasSize)
+			this.selectedOtherSku = this.defaultSku;
 		getViewDataBinding().llLoadingColorSize.setVisibility(View.GONE);
 		getViewDataBinding().loadingInfoView.setVisibility(View.GONE);
 		this.configureButtonsAndSelectors();
@@ -299,27 +337,28 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		this.configureUIForOtherSKU(defaultSku);
 	}
 
-	public void configureButtonsAndSelectors(){
+	public void configureButtonsAndSelectors() {
 		getViewDataBinding().colorSizeLayout.setVisibility((hasColor || hasSize) ? View.VISIBLE : View.GONE);
 		btnColorSelector.setEnabled(hasColor);
 		btnSizeSelector.setEnabled(hasSize);
 
 		// if colors not available set the color icon to N/A icon , Icons will look like " / "
-		if(hasColor){
+		if (hasColor) {
 			this.configureColorPicker();
-		}else {
+		} else {
 			this.setSelectedColorIcon();
 		}
 
-		if(hasSize){
+		if (hasSize) {
 			this.configureSizePicker();
-		}else {
+		} else {
 			tvSelectedSize.setText("NO SZ");
 		}
 
-		btnFindInStore.setVisibility(Boolean.valueOf(productDetails.isnAvailable) ? View.VISIBLE :View.GONE);
+		btnFindInStore.setVisibility(Boolean.valueOf(productDetails.isnAvailable) ? View.VISIBLE : View.GONE);
 		btnAddToCart.setAlpha(1f);
 		btnAddToCart.setEnabled(true);
+		this.configureMultiPickerDialog();
 	}
 
 	private void configureColorPicker() {
@@ -348,7 +387,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		closeSizePicker.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				sizePickerDialog.dismiss();
+				dismissPickerDialog(sizePickerDialog);
 			}
 		});
 		rcvSizePicker.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
@@ -356,11 +395,59 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		sizePickerDialog.setContentView(view);
 	}
 
-	public void openSizePicker(String groupKey) {
+	private void configureMultiPickerDialog() {
+		View view = getLayoutInflater().inflate(R.layout.size_quantity_selector_layout, null);
+		viewSwitcher = view.findViewById(R.id.viewSwitcher);
+		rcvSizePickerForInventory = view.findViewById(R.id.sizeSelectorForInventory);
+		rcvQuantityPicker = view.findViewById(R.id.quantitySelector);
+		ImageView closeSizePicker = view.findViewById(R.id.imCloseIcon);
+		tvMultiPickerTitle = view.findViewById(R.id.title);
+		imBackIconOnPicker = view.findViewById(R.id.imBackIcon);
+		rcvQuantityPicker.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+		rcvSizePickerForInventory.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+		closeSizePicker.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				multiPickerDialog.dismiss();
+			}
+		});
+		imBackIconOnPicker.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				viewSwitcher.setDisplayedChild(VIEW_SWITCHER_SIZE_PICKER);
+				imBackIconOnPicker.setVisibility(View.GONE);
+			}
+		});
+		multiPickerDialog.setContentView(view);
+	}
+
+	public void openSizePicker(String groupKey, boolean isForInventory) {
+
+		//if (isForInventory = true) - color picker is used for select size to check inventory
+
 		ArrayList<OtherSkus> selectedOtherSKUsForGroupKey = this.otherSKUsByGroupKey.get(groupKey);
-		sizePickerAdapter = new ProductSizePickerAdapter(selectedOtherSKUsForGroupKey, this);
+		sizePickerAdapter = new ProductSizePickerAdapter(selectedOtherSKUsForGroupKey, this, isForInventory);
 		rcvSizePicker.setAdapter(sizePickerAdapter);
 		sizePickerDialog.show();
+	}
+
+	public void openQuantityPicker(int inStockQuantity, boolean isMultiSKUs) {
+		quantityPickerAdapter = new ProductColorPickerAdapter(inStockQuantity, this);
+		rcvQuantityPicker.setAdapter(quantityPickerAdapter);
+		viewSwitcher.setDisplayedChild(VIEW_SWITCHER_QUANTITY_PICKER);
+		// isMultiSKUs will manage back button on picker
+		// will true when user have option to select other size's
+		imBackIconOnPicker.setVisibility(isMultiSKUs ? View.VISIBLE : View.GONE);
+		tvMultiPickerTitle.setText(getString(R.string.edit_quantity));
+		multiPickerDialog.show();
+	}
+
+	public void openSizePickerWithAvailableQuantity(ArrayList<OtherSkus> otherSkuses) {
+		availableSizePickerAdapter = new AvailableSizePickerAdapter(otherSkuses, this);
+		rcvSizePickerForInventory.setAdapter(availableSizePickerAdapter);
+		viewSwitcher.setDisplayedChild(VIEW_SWITCHER_SIZE_PICKER);
+		tvMultiPickerTitle.setText(getString(R.string.available_sizes));
+		multiPickerDialog.show();
 	}
 
 	private void configureUIForOtherSKU(OtherSkus otherSku) {
@@ -555,6 +642,53 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	}
 
 	@Override
+	public void onInventoryResponseForSelectedSKU(SkusInventoryForStoreResponse inventoryResponse) {
+		int quantityInStock = 0;
+		for (SkuInventory skuInventory : inventoryResponse.skuInventory) {
+			if (skuInventory.sku.equalsIgnoreCase(this.otherSKUForCart.sku)) {
+				quantityInStock = skuInventory.quantity;
+			}
+		}
+
+		if (quantityInStock == 1) {
+			executeAddToCartRequest(1);
+		} else if (quantityInStock == 0) {
+
+			if (this.otherSKUsByGroupKey.get(this.selectedGroupKey).size() == 1) {
+				//if there is no other skus for that selected group show out of stock
+
+				return;
+			}
+
+			List<String> skuIds = new ArrayList<>();
+			for (OtherSkus otherSkus : this.otherSKUsByGroupKey.get(this.selectedGroupKey)) {
+				skuIds.add(otherSkus.sku);
+			}
+			String multiSKUS = TextUtils.join("-", skuIds);
+			String storeId = Utils.retrieveStoreId(productDetails.fulfillmentType);
+			getViewModel().queryInventoryForSKUs(storeId, multiSKUS, true).execute();
+		} else {
+			openQuantityPicker(quantityInStock, false);
+		}
+	}
+
+	@Override
+	public void onInventoryResponseForAllSKUs(SkusInventoryForStoreResponse inventoryResponse) {
+		ArrayList<OtherSkus> stockRequestedSkus = this.otherSKUsByGroupKey.get(this.selectedGroupKey);
+
+		for (OtherSkus otherSkus : stockRequestedSkus) {
+			for (SkuInventory skuInventory : inventoryResponse.skuInventory) {
+				if (otherSkus.sku.equalsIgnoreCase(skuInventory.sku)) {
+					otherSkus.quantity = skuInventory.quantity;
+					break;
+				}
+			}
+		}
+		this.openSizePickerWithAvailableQuantity(stockRequestedSkus);
+
+	}
+
+	@Override
 	public void SelectedImage(String otherSkus) {
 
 	}
@@ -647,7 +781,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	private void setSelectedColorIcon() {
 		WrapContentDraweeView mImSelectedColor = getViewDataBinding().llColorSize.imSelectedColor;
 		DrawImage drawImage = new DrawImage(getActivity());
-		String	url = this.otherSKUsByGroupKey.get(this.selectedGroupKey).get(0).externalColourRef;
+		String url = this.otherSKUsByGroupKey.get(this.selectedGroupKey).get(0).externalColourRef;
 		mImSelectedColor.setImageAlpha(TextUtils.isEmpty(url) ? 0 : 255);
 		drawImage.displayImage(mImSelectedColor, url);
 	}
@@ -666,7 +800,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
 		// when there is no size available
 		// selectedSKU will be from color group
-		if(!hasSize) {
+		if (!hasSize) {
 			this.selectedOtherSku = this.otherSKUsByGroupKey.get(this.selectedGroupKey).get(0);
 			this.configureUIForOtherSKU(this.selectedOtherSku);
 			this.colorPickerDialog.dismiss();
@@ -705,10 +839,56 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	}
 
 	@Override
+	public void onQuantitySelected(int selectedQuantity) {
+		this.executeAddToCartRequest(selectedQuantity);
+	}
+
+	@Override
 	public void onSizeSelected(OtherSkus selectedSizeSku) {
 		this.selectedOtherSku = selectedSizeSku;
 		this.tvSelectedSize.setText(this.selectedOtherSku.size);
 		this.configureUIForOtherSKU(selectedOtherSku);
 		sizePickerDialog.dismiss();
+	}
+
+	@Override
+	public void onSizeSelectedToCheckInventory(OtherSkus selectedSizeSku) {
+		sizePickerDialog.dismiss();
+		this.otherSKUForCart = selectedSizeSku;
+		addItemToCart();
+	}
+
+	public void executeAddToCartRequest(int quantity) {
+		AddItemToCart item = new AddItemToCart(productDetails.productId, this.otherSKUForCart.sku, quantity);
+		ArrayList<AddItemToCart> listOfItems = new ArrayList<>();
+		listOfItems.add(item);
+		getViewModel().postAddItemToCart(listOfItems).execute();
+		this.dismissPickerDialog(multiPickerDialog);
+	}
+
+	public void dismissPickerDialog(BottomSheetDialog dialog) {
+		if (dialog.isShowing()) {
+			dialog.dismiss();
+			this.otherSKUForCart = null;
+		}
+	}
+
+	@Override
+	public void onAvailableSizeSelected(OtherSkus selectedAvailableSizeSku) {
+		this.otherSKUForCart = selectedAvailableSizeSku;
+		if (this.otherSKUForCart.quantity == 1) {
+			this.executeAddToCartRequest(1);
+			this.dismissPickerDialog(multiPickerDialog);
+			return;
+		}
+		imBackIconOnPicker.setVisibility(View.VISIBLE);
+		quantityPickerAdapter = new ProductColorPickerAdapter(this.otherSKUForCart.quantity, this);
+		rcvQuantityPicker.setAdapter(quantityPickerAdapter);
+		viewSwitcher.setDisplayedChild(VIEW_SWITCHER_QUANTITY_PICKER);
+	}
+
+	@Override
+	public void onFindInStoreForNotAvailableProducts(OtherSkus notAvailableSKU) {
+
 	}
 }

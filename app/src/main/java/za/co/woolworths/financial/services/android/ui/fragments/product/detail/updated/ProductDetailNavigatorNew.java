@@ -11,6 +11,7 @@ import za.co.woolworths.financial.services.android.models.dto.CartSummaryRespons
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
 import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
@@ -115,4 +116,8 @@ public interface ProductDetailNavigatorNew {
 	void onSessionTokenExpired(Response response);
 
 	void handleSetSuburbResponse(Object object);
+
+	void onInventoryResponseForSelectedSKU(SkusInventoryForStoreResponse inventoryResponse);
+
+	void onInventoryResponseForAllSKUs(SkusInventoryForStoreResponse inventoryResponse);
 }

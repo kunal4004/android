@@ -18,16 +18,26 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 public class ProductColorPickerAdapter extends RecyclerView.Adapter<ProductColorPickerAdapter.SimpleViewHolder> {
 
 
-	public interface OnColorSelection {
+	public interface OnItemSelection {
 		void onColorSelected(String color);
+
+		void onQuantitySelected(int selectedQuantity);
 	}
 
-	private OnColorSelection onColorSelection;
+	private OnItemSelection onItemSelection;
 	private ArrayList<String> colorArray;
+	private int maxQuantity;
+	private boolean isQuantityType;
 
-	public ProductColorPickerAdapter(ArrayList<String> colorArray, OnColorSelection onColorSelection) {
-		this.onColorSelection = onColorSelection;
+	public ProductColorPickerAdapter(ArrayList<String> colorArray, OnItemSelection onItemSelection) {
+		this.onItemSelection = onItemSelection;
 		this.colorArray = colorArray;
+	}
+
+	public ProductColorPickerAdapter(int maxQuantity, OnItemSelection onItemSelection) {
+		this.onItemSelection = onItemSelection;
+		this.maxQuantity = maxQuantity;
+		this.isQuantityType = true;
 
 	}
 
@@ -46,12 +56,16 @@ public class ProductColorPickerAdapter extends RecyclerView.Adapter<ProductColor
 
 
 		//skipping the filling of the view
-		holder.productName.setText(colorArray.get(position));
+		holder.productName.setText(isQuantityType ? String.valueOf(position+1) : colorArray.get(position));
 		holder.itemView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				int position = holder.getAdapterPosition();
-				onColorSelection.onColorSelected(colorArray.get(position));
+
+				if (isQuantityType)
+					onItemSelection.onQuantitySelected(position+1);
+				else
+					onItemSelection.onColorSelected(colorArray.get(position));
 			}
 		});
 	}
@@ -64,6 +78,6 @@ public class ProductColorPickerAdapter extends RecyclerView.Adapter<ProductColor
 
 	@Override
 	public int getItemCount() {
-		return colorArray.size();
+		return isQuantityType ? maxQuantity : colorArray.size();
 	}
 }

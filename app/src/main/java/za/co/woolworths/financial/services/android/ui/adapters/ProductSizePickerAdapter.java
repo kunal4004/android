@@ -21,15 +21,22 @@ public class ProductSizePickerAdapter extends RecyclerView.Adapter<ProductSizePi
 
 	public interface OnSizeSelection {
 		void onSizeSelected(OtherSkus selectedSizeSku);
+		void onSizeSelectedToCheckInventory(OtherSkus selectedSizeSku);
 	}
 
 	private ProductSizePickerAdapter.OnSizeSelection onSizeSelection;
 	private ArrayList<OtherSkus> otherSkuses;
+	private boolean isForInventory;
 
-	public ProductSizePickerAdapter(ArrayList<OtherSkus> otherSkuses, ProductSizePickerAdapter.OnSizeSelection onSizeSelection) {
+	/*public ProductSizePickerAdapter(ArrayList<OtherSkus> otherSkuses, ProductSizePickerAdapter.OnSizeSelection onSizeSelection) {
 		this.onSizeSelection = onSizeSelection;
 		this.otherSkuses = otherSkuses;
+	}*/
 
+	public ProductSizePickerAdapter(ArrayList<OtherSkus> otherSkuses, ProductSizePickerAdapter.OnSizeSelection onSizeSelection,boolean isForInventory ) {
+		this.onSizeSelection = onSizeSelection;
+		this.otherSkuses = otherSkuses;
+		this.isForInventory = isForInventory;
 	}
 
 	static class SimpleViewHolder extends RecyclerView.ViewHolder {
@@ -55,7 +62,10 @@ public class ProductSizePickerAdapter extends RecyclerView.Adapter<ProductSizePi
 			@Override
 			public void onClick(View v) {
 				int position = holder.getAdapterPosition();
-				onSizeSelection.onSizeSelected(otherSkuses.get(position));
+				if(isForInventory)
+					onSizeSelection.onSizeSelectedToCheckInventory(otherSkuses.get(position));
+				else
+					onSizeSelection.onSizeSelected(otherSkuses.get(position));
 			}
 		});
 	}
