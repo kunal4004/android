@@ -4,20 +4,15 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
 import android.text.SpannableString;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -39,9 +34,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
-import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
-import za.co.woolworths.financial.services.android.models.rest.message.GetMessage;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.GetShoppingLists;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
@@ -61,6 +54,7 @@ import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.QueryBadgeCounters;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
@@ -70,6 +64,7 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_ACCOUNT;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_REWARD;
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.MESSAGE_COUNTER_REQUEST;
 
 public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, MyAccountsViewModel> implements View.OnClickListener, ViewPager.OnPageChangeListener, MyAccountsNavigator {
 
@@ -116,11 +111,9 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	private boolean loadMessageCounter = false;
 	private LinearLayout allUserOptionsLayout;
 	private LinearLayout loginUserOptionsLayout;
-	private GetMessage mGessageResponse;
 	private GetShoppingLists mGetShoppingLists;
 	private WTextView shoppingListCounter;
 	private ShoppingListsResponse shoppingListsResponse;
-	private static int OPEN_MESSAGE_REQUEST_CODE = 1111;
 
 	public MyAccountsFragment() {
 		// Required empty public constructor
@@ -501,7 +494,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			case R.id.openMessageActivity:
 				Intent openMessageActivity = new Intent(getActivity(), MessagesActivity.class);
 				openMessageActivity.putExtra("fromNotification", false);
-				startActivityForResult(openMessageActivity, OPEN_MESSAGE_REQUEST_CODE);
+				startActivityForResult(openMessageActivity, MESSAGE_COUNTER_REQUEST);
 				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				break;
 			case R.id.applyStoreCard:
@@ -670,34 +663,15 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) getActivity();
 			Fragment currentFragment = bottomNavigationActivity.getCurrentFragment();
 			if (currentFragment instanceof MyAccountsFragment) {
-				LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver, new IntentFilter("UpdateCounter"));
 				shoppingListRequest();
 			}
 		}
 	}
 
 	@Override
-	public void onPause() {
-		super.onPause();
-		try {
-			LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(broadcastReceiver);
-		} catch (Exception e) {
-			Log.e(TAG, "Broadcast Unregister Exception");
-		}
-	}
-
-	public BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			messageCounterRequest();
-		}
-	};
-
-	@Override
 	public void onDestroy() {
 		super.onDestroy();
 		hideProgressBar();
-		cancelRequest(mGessageResponse);
 		cancelRequest(mGetShoppingLists);
 	}
 
@@ -762,35 +736,13 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	}
 
 	private void messageCounterRequest() {
-		if (SessionUtilities.getInstance().isUserAuthenticated()) {
-			mGessageResponse = getViewModel().getMessageResponse();
-			mGessageResponse.execute();
-		}
+		getBadgeCounter().queryMessageCount();
 	}
 
 	private void shoppingListRequest() {
 		if (SessionUtilities.getInstance().isUserAuthenticated()) {
 			mGetShoppingLists = getViewModel().getShoppingListsResponse();
 			mGetShoppingLists.execute();
-		}
-	}
-
-	@Override
-	public void onMessageResponse(MessageResponse messageResponse) {
-		if (messageResponse.unreadCount > 0) {
-			hideView(getViewDataBinding().messagesRightArrow);
-			showView(messageCounter);
-			int unreadCount = messageResponse.unreadCount;
-			if (TextUtils.isEmpty(String.valueOf(unreadCount)))
-				unreadCount = 0;
-			Utils.setBadgeCounter(getActivity(), unreadCount);
-			messageCounter.setText(String.valueOf(unreadCount));
-			getBottomNavigator().addBadge(INDEX_ACCOUNT, unreadCount);
-		} else {
-			Utils.removeBadgeCounter(getActivity());
-			getBottomNavigator().addBadge(INDEX_ACCOUNT, 0);
-			hideView(messageCounter);
-			showView(getViewDataBinding().messagesRightArrow);
 		}
 	}
 
@@ -834,7 +786,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-
 		//TODO: Comment what's actually happening here.
 		if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
 			if (loadMessageCounter) {
@@ -850,6 +801,22 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			initialize();
 		} else {
 			initialize();
+		}
+
+		// Update message counter ui
+		if (requestCode == MESSAGE_COUNTER_REQUEST) {
+			if (resultCode == MESSAGE_COUNTER_REQUEST) {
+				int unreadCount = data.getIntExtra("unreadCount", 0);
+				if (unreadCount > 0) {
+					hideView(getViewDataBinding().messagesRightArrow);
+					showView(messageCounter);
+					messageCounter.setText(String.valueOf(unreadCount));
+				} else {
+					Utils.removeBadgeCounter(getActivity());
+					hideView(messageCounter);
+					showView(getViewDataBinding().messagesRightArrow);
+				}
+			}
 		}
 	}
 
@@ -884,5 +851,11 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	public void scrollToTop() {
 		ObjectAnimator anim = ObjectAnimator.ofInt(mScrollView, "scrollY", mScrollView.getScrollY(), 0);
 		anim.setDuration(500).start();
+	}
+
+	public QueryBadgeCounters getBadgeCounter() {
+		BottomNavigationActivity bottomNavigationActivity = getBottomNavigationActivity();
+		if (bottomNavigationActivity == null) return null;
+		return bottomNavigationActivity.getBadgeCountInstance();
 	}
 }
