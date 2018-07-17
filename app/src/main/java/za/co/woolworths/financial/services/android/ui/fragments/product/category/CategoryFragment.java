@@ -11,6 +11,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -161,9 +162,11 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 		if (isNetworkConnected()) {
 			showBackNavigationIcon(false);
 			mErrorHandlerView.hideErrorHandler();
-			getViewModel()
-					.categoryRequest(getViewDataBinding()
-							.llCustomViews).execute();
+
+			Fragment currentFragment = getBottomNavigationActivity().getCurrentFragment();
+			if (currentFragment instanceof CategoryFragment) {
+				getViewModel().categoryRequest().execute();
+			}
 		} else {
 			mErrorHandlerView.networkFailureHandler("e");
 		}
@@ -323,6 +326,7 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 					//do when hidden
 					fadeOutToolbar(R.color.recent_search_bg);
 					showBackNavigationIcon(false);
+					onRetryConnectionClicked();
 				}
 			}
 		}, 10);
