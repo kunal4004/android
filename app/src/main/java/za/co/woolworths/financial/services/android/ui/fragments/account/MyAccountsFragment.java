@@ -64,7 +64,6 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_ACCOUNT;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_REWARD;
-import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.MESSAGE_COUNTER_REQUEST;
 
 public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, MyAccountsViewModel> implements View.OnClickListener, ViewPager.OnPageChangeListener, MyAccountsNavigator {
 
@@ -500,7 +499,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			case R.id.openMessageActivity:
 				Intent openMessageActivity = new Intent(getActivity(), MessagesActivity.class);
 				openMessageActivity.putExtra("fromNotification", false);
-				startActivityForResult(openMessageActivity, MESSAGE_COUNTER_REQUEST);
+				startActivityForResult(openMessageActivity, 0);
 				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				break;
 			case R.id.applyStoreCard:
@@ -728,7 +727,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	}
 
 	private void messageCounterRequest() {
-		getBadgeCounter().queryMessageCount();
+		getViewModel().loadMessageCount().execute();
 	}
 
 	private void shoppingListRequest() {
@@ -751,6 +750,23 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		}
 	}
 
+	@Override
+	public void onMessageResponse(int unreadCount) {
+		Activity activity = getActivity();
+		if (activity == null) return;
+		Utils.setBadgeCounter(activity, unreadCount);
+		addBadge(INDEX_ACCOUNT, unreadCount);
+		if (unreadCount > 0) {
+			hideView(getViewDataBinding().messagesRightArrow);
+			showView(messageCounter);
+			messageCounter.setText(String.valueOf(unreadCount));
+		} else {
+			Utils.removeBadgeCounter(getActivity());
+			hideView(messageCounter);
+			showView(getViewDataBinding().messagesRightArrow);
+		}
+	}
+
 	public void showProgressBar() {
 		getViewDataBinding().pbAccount.bringToFront();
 		showView(getViewDataBinding().pbAccount);
@@ -770,6 +786,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			hideToolbar();
 			setToolbarBackgroundColor(R.color.white);
 			shoppingListRequest();
+			messageCounterRequest();
 		}
 	}
 
@@ -788,26 +805,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			initialize();
 		} else {
 			initialize();
-		}
-
-		// Update message counter ui
-		if (requestCode == MESSAGE_COUNTER_REQUEST) {
-			if (resultCode == MESSAGE_COUNTER_REQUEST) {
-				Activity activity = getActivity();
-				if (activity == null) return;
-				int unreadCount = data.getIntExtra("unreadCount", 0);
-				Utils.setBadgeCounter(activity, unreadCount);
-				addBadge(INDEX_ACCOUNT, unreadCount);
-				if (unreadCount > 0) {
-					hideView(getViewDataBinding().messagesRightArrow);
-					showView(messageCounter);
-					messageCounter.setText(String.valueOf(unreadCount));
-				} else {
-					Utils.removeBadgeCounter(getActivity());
-					hideView(messageCounter);
-					showView(getViewDataBinding().messagesRightArrow);
-				}
-			}
 		}
 	}
 

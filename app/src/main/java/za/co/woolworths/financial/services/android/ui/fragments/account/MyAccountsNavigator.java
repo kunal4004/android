@@ -4,4 +4,6 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingListsRespo
 
 public interface MyAccountsNavigator {
 	void onShoppingListsResponse(ShoppingListsResponse shoppingListsResponse);
+
+	void onMessageResponse(int unreadCount);
 }
