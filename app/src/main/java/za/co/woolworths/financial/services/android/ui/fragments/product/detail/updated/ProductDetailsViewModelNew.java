@@ -50,56 +50,7 @@ import za.co.woolworths.financial.services.android.util.rx.SchedulerProvider;
 
 public class ProductDetailsViewModelNew extends BaseViewModel<ProductDetailNavigatorNew> {
 
-	private String TAG = this.getClass().getSimpleName();
-	private final String EMPTY = " ";
-	private final String INGREDIENTS = "ingredients";
-	private final String PRODUCT = "product";
-	public static final String CLOTHING_PRODUCT = "clothingProducts";
-	public static final String FOOD_PRODUCT = "foodProducts";
-
-	private ProductList defaultProduct;
-	private List<String> AuxiliaryImage;
-	private WProductDetail newProductDetail;
-	private String mProductJson;
-	private boolean productLoadFail = false;
-	private boolean findInStoreLoadFail = false;
-	private boolean addedToCart = true;
-
-	public ProductDetailsViewModelNew() {
-		super();
-	}
-
-	public ProductDetailsViewModelNew(SchedulerProvider schedulerProvider) {
-		super(schedulerProvider);
-	}
-
-	public void setAuxiliaryImage(List<String> auxiliaryImage) {
-		AuxiliaryImage = auxiliaryImage;
-	}
-
-	public List<String> getAuxiliaryImage() {
-		return AuxiliaryImage;
-	}
-
-	public void setDefaultProduct(String defaultProduct) {
-		this.defaultProduct = new Gson().fromJson(defaultProduct, ProductList.class);
-	}
-
-	public ProductList getDefaultProduct() {
-		return defaultProduct;
-	}
-
-	public void setAddedToCart(boolean addedToCart) {
-		this.addedToCart = addedToCart;
-	}
-
-	public boolean getAddToCart() {
-		return addedToCart;
-	}
-
 	public GetProductDetail productDetail(ProductRequest productRequest) {
-		getNavigator().onLoadStart();
-		setProductLoadFail(false);
 		return new GetProductDetail(productRequest, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
@@ -114,21 +65,16 @@ public class ProductDetailsViewModelNew extends BaseViewModel<ProductDetailNavig
 						}
 						break;
 				}
-				setProductLoadFail(false);
-				getNavigator().onLoadComplete();
 			}
 
 			@Override
 			public void onFailure(String e) {
-				setProductLoadFail(true);
 				getNavigator().onFailureResponse(e.toString());
 			}
 		});
 	}
 
 	public LocationItemTask locationItemTask(final Context context,OtherSkus otherSkus) {
-		setFindInStoreLoadFail(false);
-		getNavigator().showFindInStoreProgress();
 		return new LocationItemTask(new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
@@ -141,7 +87,6 @@ public class ProductDetailsViewModelNew extends BaseViewModel<ProductDetailNavig
 					}
 				}
 				getNavigator().dismissFindInStoreProgress();
-				setFindInStoreLoadFail(false);
 			}
 
 			@Override
@@ -149,81 +94,11 @@ public class ProductDetailsViewModelNew extends BaseViewModel<ProductDetailNavig
 				if (context != null) {
 					Activity activity = (Activity) context;
 					if (activity != null) {
-						setFindInStoreLoadFail(true);
 						getNavigator().dismissFindInStoreProgress();
-						getNavigator().onFailureResponse(e);
 					}
 				}
 			}
 		},otherSkus);
-	}
-
-	public String getProductType() {
-		return getProduct().productType;
-	}
-
-	public List<OtherSkus> otherSkuList() {
-		if (getProduct() != null) {
-			if (!getProduct().otherSkus.isEmpty()) {
-				return getProduct().otherSkus;
-			}
-		}
-		return new ArrayList<>();
-	}
-
-	//set new product list
-	public void setProduct(WProductDetail prod) {
-		this.newProductDetail = prod;
-	}
-
-	public void setProduct(String strProduct) {
-		this.mProductJson = strProduct;
-	}
-
-	public JSONObject getProductJSON() throws JSONException {
-		JSONObject jsonObject = new JSONObject(mProductJson);
-		if (jsonObject != null) {
-			if (jsonObject.has(PRODUCT)) {
-				return jsonObject.getJSONObject(PRODUCT);
-			}
-		}
-		return null;
-	}
-
-	public String getProductId() {
-		if (getProduct() != null) {
-			return getProduct().productId;
-		}
-		return null;
-	}
-
-	// return new product list
-	public WProductDetail getProduct() {
-		if (newProductDetail != null)
-			return newProductDetail;
-		else
-			return null;
-	}
-
-	//return check out link
-	public String getCheckOutLink() {
-		return getProduct().checkOutLink;
-	}
-
-	//return ingredient info
-	public void displayIngredient() {
-		try {
-			if (getProductJSON() != null) {
-				JSONObject jsProductList = getProductJSON();
-				if (jsProductList.has(INGREDIENTS)) {
-					getNavigator().setIngredients(jsProductList.getString(INGREDIENTS));
-				} else {
-					getNavigator().setIngredients("");
-				}
-			}
-		} catch (JSONException e) {
-			Log.d(TAG, e.toString());
-		}
 	}
 
 	public String getProductDescription(Context context, ProductDetails productDetails) {
@@ -262,17 +137,7 @@ public class ProductDetailsViewModelNew extends BaseViewModel<ProductDetailNavig
 		return htmlData;
 	}
 
-	public OtherSkus highestSKUPrice(Float fromPrice) {
-		String fp = String.valueOf(fromPrice);
-		if (otherSkuList().size() > 0) {
-			for (OtherSkus os : otherSkuList()) {
-				if (fp.equalsIgnoreCase(os.price)) {
-					return os;
-				}
-			}
-		}
-		return null;
-	}
+
 
 	public String maxWasPrice(List<OtherSkus> otherSku) {
 		ArrayList<Double> priceList = new ArrayList<>();
@@ -288,207 +153,7 @@ public class ProductDetailsViewModelNew extends BaseViewModel<ProductDetailNavig
 		return wasPrice;
 	}
 
-	//setup auxiliaryImages
-	public ArrayList<String> getAuxiliaryImageList(OtherSkus sku) {
-		ArrayList<String> auxiliarySku = new ArrayList<>();
-		// add default image if it match sku object
-		OtherSkus gridSku = getDefaultSKUModel();
-		ProductList product = getDefaultProduct();
-		try {
-			if (gridSku.colour.equalsIgnoreCase(sku.colour)) {
-				auxiliarySku.add(getImageByWidth(gridSku.externalImageRef));
-			}
-
-			JSONObject jsProduct = getProductJSON();
-			if (jsProduct.has("auxiliaryImages")) {
-				// get auxiliaryImages list
-				JSONObject jsAuxiliaryImages = jsProduct.getJSONObject("auxiliaryImages");
-				Iterator<String> keyStr = jsAuxiliaryImages.keys();
-				while (keyStr.hasNext()) {
-					String key = keyStr.next();
-					Object objAuxiliaryImage = jsAuxiliaryImages.get(key);
-					String defaultColour = sku.colour.toLowerCase();
-					int lastCharacterIsSpace = defaultColour.lastIndexOf(" ");
-					int colourLength = defaultColour.length() - 1;
-					if (!TextUtils.isEmpty(key)) {
-						String auxiliaryColour = key.toLowerCase();
-						// Concatenate first character with other colours if colour has space
-						if (lastCharacterIsSpace == colourLength) {
-							defaultColour = defaultColour.substring(0, colourLength - 1);
-						}
-						if (defaultColour.contains(EMPTY)) {
-							String[] splitColour = defaultColour.split(EMPTY);
-							defaultColour = "";
-							int position = 0;
-							for (String currentColour : splitColour) {
-								if (position == 0) {
-									defaultColour = currentColour.substring(0, 1);
-								} else {
-									defaultColour = defaultColour.concat(currentColour);
-								}
-								position++;
-							}
-						}
-						// remove all spaces in colour
-						String defaultSkuColour = sku.colour.toLowerCase();
-						if (!TextUtils.isEmpty(defaultSkuColour)) {
-							defaultSkuColour = defaultSkuColour.replaceAll(EMPTY, "");
-						}
-						// check if auxiliary colour code contains defaultColour
-						if (auxiliaryColour.contains(defaultColour) || auxiliaryColour.contains(defaultSkuColour)) {
-							String image = ((JSONObject) objAuxiliaryImage).getString("externalImageRef");
-							auxiliarySku.add(getImageByWidth(image));
-						}
-					}
-				}
-
-				// show default colour if auxiliary image is empty
-				if (auxiliarySku.isEmpty())
-					auxiliarySku.add(getImageByWidth(product.externalImageRef));
-
-				return auxiliarySku;
-			}
-		} catch (JSONException e) {
-			Log.d(TAG, e.toString());
-		} catch (NullPointerException e) {
-			Log.d(TAG, e.toString());
-		}
-		// show default colour if auxiliary image is empty
-		if (auxiliarySku.isEmpty())
-			auxiliarySku.add(getImageByWidth(product.externalImageRef));
-		return auxiliarySku;
-	}
-
-	private OtherSkus getDefaultSKUModel() {
-		if (otherSkuList() != null) {
-			if (otherSkuList().size() > 0) {
-				for (OtherSkus option : otherSkuList()) {
-					if (option.sku.equalsIgnoreCase(getProduct().sku)) {
-						return option;
-					}
-				}
-			}
-		}
-		return new OtherSkus();
-	}
-
-	private String getImageByWidth(String imageUrl) {
-		Display display = ((WindowManager) WoolworthsApplication.getInstance()
-				.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-		Point size = new Point();
-		display.getSize(size);
-		int width = size.x;
-		imageUrl = (imageUrl.contains("jpg")) ? "https://images.woolworthsstatic.co.za/" + imageUrl : imageUrl;
-		return imageUrl + "" + ((imageUrl.contains("jpg")) ? "" : "?w=" + width + "&q=" + 85);
-	}
-
-	public ArrayList<OtherSkus> commonColorList(OtherSkus otherSku) throws NullPointerException {
-		ArrayList<OtherSkus> commonSizeList = new ArrayList<>();
-
-		// filter by colour
-		ArrayList<OtherSkus> sizeList = new ArrayList<>();
-		for (OtherSkus sku : otherSkuList()) {
-			if (sku.size.equalsIgnoreCase(otherSku.size)) {
-				sizeList.add(sku);
-			}
-		}
-
-		//remove duplicates
-		for (OtherSkus os : sizeList) {
-			if (!sizeValueExist(commonSizeList, os.colour)) {
-				commonSizeList.add(os);
-			}
-		}
-
-		return commonSizeList;
-	}
-
-	public ArrayList<OtherSkus> commonSizeList(OtherSkus otherSku) throws NullPointerException {
-		ArrayList<OtherSkus> commonSizeList = new ArrayList<>();
-
-		// filter by colour
-		ArrayList<OtherSkus> sizeList = new ArrayList<>();
-		for (OtherSkus sku : otherSkuList()) {
-			if (sku.colour != null) {
-				if (sku.colour.equalsIgnoreCase(otherSku.colour)) {
-					sizeList.add(sku);
-				}
-			}
-		}
-
-		//remove duplicates
-		for (OtherSkus os : sizeList) {
-			if (!sizeValueExist(commonSizeList, os.size)) {
-				commonSizeList.add(os);
-			}
-		}
-
-		return commonSizeList;
-	}
-
-	private boolean sizeValueExist(ArrayList<OtherSkus> list, String name) {
-		for (OtherSkus item : list) {
-			if (item.size.equals(name)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public ArrayList<OtherSkus> commonSizeList(boolean productHasColour, String colour) {
-		ArrayList<OtherSkus> commonSizeList = new ArrayList<>();
-
-		if (productHasColour) { //product has color
-			// filter by colour
-			ArrayList<OtherSkus> sizeList = new ArrayList<>();
-			for (OtherSkus sku : otherSkuList()) {
-				if (sku.colour.equalsIgnoreCase(colour)) {
-					sizeList.add(sku);
-				}
-			}
-
-			//remove duplicates
-			for (OtherSkus os : sizeList) {
-				if (!sizeValueExist(commonSizeList, os.colour)) {
-					commonSizeList.add(os);
-				}
-			}
-		} else { // no color found
-			ArrayList<OtherSkus> sizeList = new ArrayList<>();
-			for (OtherSkus sku : otherSkuList()) {
-				if (sku.colour.contains(colour)) {
-					sizeList.add(sku);
-				}
-			}
-			//remove duplicates
-			for (OtherSkus os : sizeList) {
-				if (!sizeValueExist(commonSizeList, os.size)) {
-					commonSizeList.add(os);
-				}
-			}
-		}
-		return commonSizeList;
-	}
-
-	public void setFindInStoreLoadFail(boolean findInStoreLoadFail) {
-		this.findInStoreLoadFail = findInStoreLoadFail;
-	}
-
-	public boolean findInStoreLoadFail() {
-		return findInStoreLoadFail;
-	}
-
-	public void setProductLoadFail(boolean productLoadFail) {
-		this.productLoadFail = productLoadFail;
-	}
-
-	public boolean productLoadFail() {
-		return productLoadFail;
-	}
-
 	protected GetCartSummary getCartSummary(Activity activity) {
-		setAddedToCart(true);
-		getNavigator().onAddToCartLoad();
 		return new GetCartSummary(activity, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
@@ -506,25 +171,21 @@ public class ProductDetailsViewModelNew extends BaseViewModel<ProductDetailNavig
 								break;
 
 							default:
-								getNavigator().otherHttpCode(cartSummaryResponse.response);
+								getNavigator().responseFailureHandler(cartSummaryResponse.response);
 								break;
 						}
 					}
 				}
-				setAddedToCart(true);
 			}
 
 			@Override
 			public void onFailure(String e) {
-				setAddedToCart(false);
 				getNavigator().onTokenFailure(e);
 			}
 		});
 	}
 
 	protected PostAddItemToCart postAddItemToCart(List<AddItemToCart> addItemToCart) {
-		setAddedToCart(true);
-		getNavigator().onAddToCartLoad();
 		return new PostAddItemToCart(addItemToCart, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
@@ -543,33 +204,16 @@ public class ProductDetailsViewModelNew extends BaseViewModel<ProductDetailNavig
 
 							default:
 								if (addItemToCartResponse.response != null)
-									getNavigator().otherHttpCode(addItemToCartResponse.response);
+									getNavigator().responseFailureHandler(addItemToCartResponse.response);
 								break;
 						}
 					}
-					setAddedToCart(true);
 				}
 			}
 
 			@Override
 			public void onFailure(String e) {
-				setAddedToCart(false);
 				getNavigator().onAddItemToCartFailure(e);
-			}
-		});
-	}
-
-	protected SetDeliveryLocationSuburb setSuburb(ShoppingDeliveryLocation shoppingDeliveryLocation) {
-		// TODO: confirm loading when doing this request
-		return new SetDeliveryLocationSuburb(shoppingDeliveryLocation.suburb.id, new OnEventListener() {
-			@Override
-			public void onSuccess(Object object) {
-				getNavigator().handleSetSuburbResponse(object);
-			}
-
-			@Override
-			public void onFailure(final String errorMessage) {
-				getNavigator().onTokenFailure(errorMessage);
 			}
 		});
 	}
@@ -587,6 +231,8 @@ public class ProductDetailsViewModelNew extends BaseViewModel<ProductDetailNavig
 							getNavigator().onInventoryResponseForSelectedSKU(skusInventoryForStoreResponse);
 						break;
 					default:
+						if (skusInventoryForStoreResponse.response != null)
+							getNavigator().responseFailureHandler(skusInventoryForStoreResponse.response);
 						break;
 				}
 			}

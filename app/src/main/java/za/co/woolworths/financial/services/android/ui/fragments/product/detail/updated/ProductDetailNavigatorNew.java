@@ -21,68 +21,22 @@ import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
  */
 
 public interface ProductDetailNavigatorNew {
-	void renderView();
-
-	void closeSlideUpPanel();
-
-	void nestedScrollViewHelper();
-
-	void setUpImageViewPager(List<String> auxImages);
-
-	void defaultProduct();
-
-	void setProductName();
-
-	void onLoadStart();
-
-	void onLoadComplete();
 
 	String getImageByWidth(String imageUrl, Context context);
-
-	List<String> getAuxiliaryImage();
 
 	void onSuccessResponse(ProductDetails productDetails);
 
 	void onFailureResponse(String s);
 
-	void disableStoreFinder();
-
 	void responseFailureHandler(Response response);
-
-	void enableFindInStoreButton(WProductDetail productList);
-
-	void setLayoutWeight(View v, float weight);
-
-	void setIngredients(String string);
 
 	void setProductCode(String productCode);
 
 	void setProductDescription(String productDescription);
-
-	void setSelectedSize(OtherSkus sku);
-
-	void setPrice(OtherSkus otherSkus);
-
-	void setAuxiliaryImages(ArrayList<String> auxiliaryImages);
-
-	void setSelectedTextColor(OtherSkus otherSkus);
-
-	void removeAllDots();
-
-	void setupPagerIndicatorDots(int size);
-
-	void colorSizeContainerVisibility(List<OtherSkus> otherSkuList);
-
-	void setColorList(List<OtherSkus> skuList);
-
-	void setSizeList(List<OtherSkus> skuList);
-
 	// find in-store
 	void startLocationUpdates();
 
 	void stopLocationUpdate();
-
-	void showFindInStoreProgress();
 
 	void dismissFindInStoreProgress();
 
@@ -90,30 +44,15 @@ public interface ProductDetailNavigatorNew {
 
 	void outOfStockDialog();
 
-	void onPermissionGranted();
-
-	// add item to cart
-	void apiIdentifyTokenValidation();
-
 	void onTokenFailure(String e);
 
 	void onCartSummarySuccess(CartSummaryResponse cartSummaryResponse);
 
-	void onAddToCartLoad();
-
-	void onAddToCartLoadComplete();
-
-	void apiAddItemToCart();
-
 	void addItemToCartResponse(AddItemToCartResponse addItemToCartResponse);
-
-	void otherHttpCode(Response addItemToCartResponse);
 
 	void onAddItemToCartFailure(String error);
 
 	void onSessionTokenExpired(Response response);
-
-	void handleSetSuburbResponse(Object object);
 
 	void onInventoryResponseForSelectedSKU(SkusInventoryForStoreResponse inventoryResponse);
 
