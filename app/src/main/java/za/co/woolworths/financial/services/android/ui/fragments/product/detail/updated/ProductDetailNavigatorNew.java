@@ -37,8 +37,6 @@ public interface ProductDetailNavigatorNew {
 
 	void onLoadComplete();
 
-	void addToShoppingList();
-
 	String getImageByWidth(String imageUrl, Context context);
 
 	List<String> getAuxiliaryImage();

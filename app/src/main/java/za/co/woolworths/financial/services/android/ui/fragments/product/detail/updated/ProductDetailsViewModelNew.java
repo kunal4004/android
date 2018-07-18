@@ -126,7 +126,7 @@ public class ProductDetailsViewModelNew extends BaseViewModel<ProductDetailNavig
 		});
 	}
 
-	public LocationItemTask locationItemTask(final Context context) {
+	public LocationItemTask locationItemTask(final Context context,OtherSkus otherSkus) {
 		setFindInStoreLoadFail(false);
 		getNavigator().showFindInStoreProgress();
 		return new LocationItemTask(new OnEventListener() {
@@ -155,7 +155,7 @@ public class ProductDetailsViewModelNew extends BaseViewModel<ProductDetailNavig
 					}
 				}
 			}
-		});
+		},otherSkus);
 	}
 
 	public String getProductType() {

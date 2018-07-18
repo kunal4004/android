@@ -21,27 +21,36 @@ public class ProductSizePickerAdapter extends RecyclerView.Adapter<ProductSizePi
 
 	public interface OnSizeSelection {
 		void onSizeSelected(OtherSkus selectedSizeSku);
+
 		void onSizeSelectedToCheckInventory(OtherSkus selectedSizeSku);
+
+		void onSizeSelectedForShoppingList(OtherSkus selectedSizeSku);
+
+		void onSizeSelectedForFindInStore(OtherSkus selectedSizeSku);
 	}
 
 	private ProductSizePickerAdapter.OnSizeSelection onSizeSelection;
 	private ArrayList<OtherSkus> otherSkuses;
 	private boolean isForInventory;
+	private boolean isForShoppingList;
+	boolean isForFindInStore;
 
 	/*public ProductSizePickerAdapter(ArrayList<OtherSkus> otherSkuses, ProductSizePickerAdapter.OnSizeSelection onSizeSelection) {
 		this.onSizeSelection = onSizeSelection;
 		this.otherSkuses = otherSkuses;
 	}*/
 
-	public ProductSizePickerAdapter(ArrayList<OtherSkus> otherSkuses, ProductSizePickerAdapter.OnSizeSelection onSizeSelection,boolean isForInventory ) {
+	public ProductSizePickerAdapter(ArrayList<OtherSkus> otherSkuses, OnSizeSelection onSizeSelection, boolean isForInventory, boolean isForShoppingList, boolean isForFindInStore) {
 		this.onSizeSelection = onSizeSelection;
 		this.otherSkuses = otherSkuses;
 		this.isForInventory = isForInventory;
+		this.isForShoppingList = isForShoppingList;
+		this.isForFindInStore = isForFindInStore;
 	}
 
 	static class SimpleViewHolder extends RecyclerView.ViewHolder {
 
-		WTextView productSize,productPrice;
+		WTextView productSize, productPrice;
 
 		SimpleViewHolder(View view) {
 			super(view);
@@ -62,8 +71,12 @@ public class ProductSizePickerAdapter extends RecyclerView.Adapter<ProductSizePi
 			@Override
 			public void onClick(View v) {
 				int position = holder.getAdapterPosition();
-				if(isForInventory)
+				if (isForInventory)
 					onSizeSelection.onSizeSelectedToCheckInventory(otherSkuses.get(position));
+				else if (isForShoppingList)
+					onSizeSelection.onSizeSelectedForShoppingList(otherSkuses.get(position));
+				else if (isForFindInStore)
+					onSizeSelection.onSizeSelectedForFindInStore(otherSkuses.get(position));
 				else
 					onSizeSelection.onSizeSelected(otherSkuses.get(position));
 			}

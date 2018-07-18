@@ -1,14 +1,22 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated;
 
+import android.Manifest;
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Point;
+import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -53,8 +61,10 @@ import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.models.rest.product.ProductRequest;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
+import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.AvailableSizePickerAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductColorPickerAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductSizePickerAdapter;
@@ -65,6 +75,9 @@ import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
 import za.co.woolworths.financial.services.android.util.DrawImage;
+import za.co.woolworths.financial.services.android.util.FusedLocationSingleton;
+import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
+import za.co.woolworths.financial.services.android.util.PermissionUtils;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -75,7 +88,7 @@ import static android.app.Activity.RESULT_OK;
  * Created by W7099877 on 2018/07/14.
  */
 
-public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragmentNewBinding, ProductDetailsViewModelNew> implements ProductDetailNavigatorNew, ProductViewPagerAdapter.MultipleImageInterface, View.OnClickListener, ProductColorPickerAdapter.OnItemSelection, ProductSizePickerAdapter.OnSizeSelection, AvailableSizePickerAdapter.OnAvailableSizeSelection {
+public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragmentNewBinding, ProductDetailsViewModelNew> implements ProductDetailNavigatorNew, ProductViewPagerAdapter.MultipleImageInterface, View.OnClickListener, ProductColorPickerAdapter.OnItemSelection, ProductSizePickerAdapter.OnSizeSelection, AvailableSizePickerAdapter.OnAvailableSizeSelection, PermissionResultCallback {
 	public ProductDetailsViewModelNew productDetailsViewModelNew;
 	private String mSubCategoryTitle;
 	private boolean mFetchFromJson;
@@ -119,6 +132,11 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	private final int SSO_REQUEST_ADD_TO_SHOPPING_LIST = 2;
 	private static final int REQUEST_SUBURB_CHANGE = 153;
 	private BottomSheetDialog confirmDeliveryLocationDialog;
+	private WButton btnAddToShoppingList;
+	private OtherSkus otherSKUForList;
+	private String TAG = this.getClass().getSimpleName();
+	PermissionUtils permissionUtils;
+	private OtherSkus otherSKUForFindInStore;
 
 	@Override
 	public ProductDetailsViewModelNew getViewModel() {
@@ -169,10 +187,13 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		colorPickerDialog = new BottomSheetDialog(getActivity());
 		sizePickerDialog = new BottomSheetDialog(getActivity());
 		multiPickerDialog = new BottomSheetDialog((getActivity()));
+		btnAddToShoppingList = getViewDataBinding().btnAddShoppingList;
 		getViewDataBinding().imClose.setOnClickListener(this);
+		btnFindInStore.setOnClickListener(this);
 		btnSizeSelector.setOnClickListener(this);
 		btnColorSelector.setOnClickListener(this);
 		btnAddToCart.setOnClickListener(this);
+		btnAddToShoppingList.setOnClickListener(this);
 		this.configureDefaultUI();
 	}
 
@@ -230,18 +251,70 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	public void onClick(View view) {
 		switch (view.getId()) {
 			case R.id.imClose:
-				closeSlideUpPanel();
+				getActivity().onBackPressed();
 				break;
 			case R.id.relColorSelector:
 				colorPickerDialog.show();
 				break;
 			case R.id.relSizeSelector:
-				openSizePicker(selectedGroupKey, false);
+				openSizePicker(selectedGroupKey, false, false, false);
 				break;
 			case R.id.rlAddToCart:
 				addItemToCart();
 				break;
+			case R.id.btnAddShoppingList:
+				addItemToShoppingList();
+			case R.id.rlStoreFinder:
+				findItemInStore();
+				break;
 		}
+	}
+
+	private void findItemInStore() {
+
+		if (Utils.isLocationEnabled(getActivity())) {
+			if (!checkRunTimePermissionForLocation()) {
+				return;
+			}
+		} else {
+			Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.LOCATION_OFF, "");
+			return;
+		}
+
+		if (otherSKUForFindInStore != null) {
+			// once application get current location it will execute findInStore API
+			this.startLocationUpdates();
+		} else if (this.selectedOtherSku != null) {
+			this.otherSKUForFindInStore = this.selectedOtherSku;
+			this.findItemInStore();
+			return;
+		} else {
+			openSizePicker(this.selectedGroupKey, false, false, true);
+			return;
+		}
+
+	}
+
+	public void addItemToShoppingList() {
+
+		if (!SessionUtilities.getInstance().isUserAuthenticated()) {
+			ScreenManager.presentSSOSignin(getActivity(), SSO_REQUEST_ADD_TO_SHOPPING_LIST);
+			return;
+		}
+
+		if (this.otherSKUForList != null) {
+			getGlobalState().setSelectedSKUId(this.otherSKUForList);
+			openAddToListFragment(getActivity());
+
+		} else if (this.selectedOtherSku != null) {
+			this.otherSKUForList = this.selectedOtherSku;
+			this.addItemToShoppingList();
+			return;
+		} else {
+			openSizePicker(this.selectedGroupKey, false, true, false);
+			return;
+		}
+
 	}
 
 	public void addItemToCart() {
@@ -265,7 +338,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 			addItemToCart();
 			return;
 		} else {
-			openSizePicker(this.selectedGroupKey, true);
+			openSizePicker(this.selectedGroupKey, true, false, false);
 			return;
 		}
 
@@ -278,12 +351,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
 	@Override
 	public void closeSlideUpPanel() {
-		if (getActivity() instanceof CartActivity) {
-			((CartActivity) getActivity()).closeSlideUpPanel();
-		}
 
-		if (getBottomNavigator() != null)
-			getBottomNavigator().closeSlideUpPanel();
 	}
 
 	@Override
@@ -316,10 +384,6 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
 	}
 
-	@Override
-	public void addToShoppingList() {
-
-	}
 
 	@Override
 	public String getImageByWidth(String imageUrl, Context context) {
@@ -361,6 +425,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	}
 
 	public void configureButtonsAndSelectors() {
+		btnAddToShoppingList.setEnabled(true);
 		getViewDataBinding().colorSizeLayout.setVisibility((hasColor || hasSize) ? View.VISIBLE : View.GONE);
 		btnColorSelector.setEnabled(hasColor);
 		btnSizeSelector.setEnabled(hasSize);
@@ -446,12 +511,12 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		multiPickerDialog.setContentView(view);
 	}
 
-	public void openSizePicker(String groupKey, boolean isForInventory) {
+	public void openSizePicker(String groupKey, boolean isForInventory, boolean isForShoppingList, boolean isForFindInStore) {
 
 		//if (isForInventory = true) - color picker is used for select size to check inventory
 
 		ArrayList<OtherSkus> selectedOtherSKUsForGroupKey = this.otherSKUsByGroupKey.get(groupKey);
-		sizePickerAdapter = new ProductSizePickerAdapter(selectedOtherSKUsForGroupKey, this, isForInventory);
+		sizePickerAdapter = new ProductSizePickerAdapter(selectedOtherSKUsForGroupKey, this, isForInventory, isForShoppingList, isForFindInStore);
 		rcvSizePicker.setAdapter(sizePickerAdapter);
 		sizePickerDialog.show();
 	}
@@ -577,16 +642,6 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	}
 
 	@Override
-	public void startLocationUpdates() {
-
-	}
-
-	@Override
-	public void stopLocationUpdate() {
-
-	}
-
-	@Override
 	public void showFindInStoreProgress() {
 
 	}
@@ -598,12 +653,20 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
 	@Override
 	public void onLocationItemSuccess(List<StoreDetails> location) {
-
+		if (location.size() > 0) {
+			getGlobalState().setStoreDetailsArrayList(location);
+			Intent intentInStoreFinder = new Intent(getActivity(), WStockFinderActivity.class);
+			intentInStoreFinder.putExtra("PRODUCT_NAME", mSubCategoryTitle);
+			startActivity(intentInStoreFinder);
+			getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+		} else {
+			outOfStockDialog();
+		}
 	}
 
 	@Override
 	public void outOfStockDialog() {
-
+		Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.NO_STOCK, "");
 	}
 
 	@Override
@@ -778,7 +841,9 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
 	private void updateViewPagerWithAuxiliaryImages() {
 		this.mAuxiliaryImage = this.getAuxiliaryImagesByGroupKey(this.selectedGroupKey);
-		mProductViewPagerAdapter.updatePagerItems(this.mAuxiliaryImage);
+		//mProductViewPagerAdapter.updatePagerItems(this.mAuxiliaryImage);
+		mProductViewPagerAdapter = new ProductViewPagerAdapter(getActivity(), this.mAuxiliaryImage, this);
+		mImageViewPager.setAdapter(mProductViewPagerAdapter);
 	}
 
 	public List<String> getAuxiliaryImagesByGroupKey(String groupKey) {
@@ -902,6 +967,20 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		addItemToCart();
 	}
 
+	@Override
+	public void onSizeSelectedForShoppingList(OtherSkus selectedSizeSku) {
+		sizePickerDialog.dismiss();
+		this.otherSKUForList = selectedSizeSku;
+		this.addItemToShoppingList();
+	}
+
+	@Override
+	public void onSizeSelectedForFindInStore(OtherSkus selectedSizeSku) {
+		sizePickerDialog.dismiss();
+		this.otherSKUForFindInStore = selectedSizeSku;
+		this.findItemInStore();
+	}
+
 	public void executeAddToCartRequest(int quantity) {
 		AddItemToCart item = new AddItemToCart(productDetails.productId, this.otherSKUForCart.sku, quantity);
 		ArrayList<AddItemToCart> listOfItems = new ArrayList<>();
@@ -945,6 +1024,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 					addItemToCart();
 					break;
 				case SSO_REQUEST_ADD_TO_SHOPPING_LIST:
+					addItemToShoppingList();
 					break;
 			}
 		} else if (resultCode == RESULT_OK) {
@@ -956,9 +1036,9 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		}
 	}
 
-	public void confirmDeliveryLocation(){
+	public void confirmDeliveryLocation() {
 		confirmDeliveryLocationDialog = new BottomSheetDialog(getActivity());
-		View view = getLayoutInflater().inflate(R.layout.color_size_picker_bottom_sheet_dialog, null);
+		View view = getLayoutInflater().inflate(R.layout.confirm_deliverylocation_bottom_sheet_dialog, null);
 		WTextView tvLocation = view.findViewById(R.id.tvLocation);
 		WButton btnSetNewLocation = view.findViewById(R.id.btnSetNewLocation);
 		ImageView closeDialog = view.findViewById(R.id.imCloseIcon);
@@ -993,5 +1073,83 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		confirmDeliveryLocationDialog.setCanceledOnTouchOutside(false);
 		confirmDeliveryLocationDialog.setContentView(view);
 		confirmDeliveryLocationDialog.show();
+	}
+
+	private void openAddToListFragment(Activity activity) {
+		Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.SHOPPING_ADD_TO_LIST, "");
+	}
+
+	/*****************************
+	 * FIND IN STORE SECTION
+	 * ***************
+	 */
+
+	private BroadcastReceiver mLocationUpdated = new BroadcastReceiver() {
+		@RequiresApi(api = Build.VERSION_CODES.M)
+		@Override
+		public void onReceive(Context context, final Intent intent) {
+			try {
+				Location mLocation = intent.getParcelableExtra(FusedLocationSingleton.LBM_EVENT_LOCATION_UPDATE);
+				Utils.saveLastLocation(mLocation, getContext());
+				stopLocationUpdate();
+				executeLocationItemTask();
+			} catch (Exception e) {
+				Log.e(TAG, e.toString());
+			}
+		}
+	};
+
+	private void executeLocationItemTask() {
+		getViewModel().locationItemTask(getActivity(),this.otherSKUForFindInStore).execute();
+	}
+
+	@Override
+	public void startLocationUpdates() {
+		FusedLocationSingleton.getInstance().startLocationUpdates();
+		// register observer for location updates
+		LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mLocationUpdated,
+				new IntentFilter(FusedLocationSingleton.INTENT_FILTER_LOCATION_UPDATE));
+	}
+
+	@Override
+	public void stopLocationUpdate() {
+		// stop location updates
+		FusedLocationSingleton.getInstance().stopLocationUpdates();
+		// unregister observer
+		LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mLocationUpdated);
+	}
+
+	@Override
+	public void PermissionGranted(int request_code) {
+		this.findItemInStore();
+	}
+
+	@Override
+	public void PartialPermissionGranted(int request_code, ArrayList<String> granted_permissions) {
+
+	}
+
+	@Override
+	public void PermissionDenied(int request_code) {
+
+	}
+
+	@Override
+	public void NeverAskAgain(int request_code) {
+
+	}
+
+	public boolean checkRunTimePermissionForLocation() {
+		permissionUtils = new PermissionUtils(getActivity(), this);
+		ArrayList<String> permissions = new ArrayList<>();
+		permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
+		boolean result = permissionUtils.checkAndRequestPermissions(permissions, 1);
+		return result;
+	}
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+		permissionUtils.onRequestPermissionsResult(requestCode, permissions, grantResults);
 	}
 }
