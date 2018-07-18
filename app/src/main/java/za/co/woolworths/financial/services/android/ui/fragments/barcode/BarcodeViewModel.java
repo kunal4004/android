@@ -125,8 +125,8 @@ public class BarcodeViewModel extends BaseViewModel<BarcodeNavigator> {
 				String detailProduct = Utils.objectToJson(productDetail);
 				switch (productDetail.httpCode) {
 					case 200:
-						final WProduct wProduct = (WProduct) Utils.strToJson(detailProduct, WProduct.class);
-						getNavigator().onLoadProductSuccess(wProduct, detailProduct);
+						//final WProduct wProduct = (WProduct) Utils.strToJson(detailProduct, WProduct.class);
+						getNavigator().onLoadProductSuccess(productDetail, detailProduct);
 						break;
 					default:
 						if (productDetail.response != null) {

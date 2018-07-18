@@ -17,8 +17,10 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
+import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
+import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
@@ -138,17 +140,17 @@ public abstract class BottomActivity extends AppCompatActivity implements Permis
 		});
 	}
 
-	public void openProductDetailFragment(String productName, ProductList productList) {
-		ProductDetailFragment productDetailFragment = new ProductDetailFragment();
+	public void openProductDetailFragment(String productName, ProductDetails productList) {
 		Gson gson = new Gson();
 		String strProductList = gson.toJson(productList);
 		Bundle bundle = new Bundle();
 		bundle.putString("strProductList", strProductList);
 		bundle.putString("strProductCategory", productName);
-		productDetailFragment.setArguments(bundle);
-		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		ft.replace(R.id.fragment_bottom_container, productDetailFragment).commitAllowingStateLoss();
-		slideUpBottomView();
+		Intent intent = new Intent(BottomActivity.this, ProductDetailsActivity.class);
+		intent.putExtras(bundle);
+		startActivity(intent);
+		overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
+
 	}
 
 	public void scrollableViewHelper(NestedScrollView nsv) {

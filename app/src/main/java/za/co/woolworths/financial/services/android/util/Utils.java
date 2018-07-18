@@ -81,6 +81,8 @@ import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
+import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse;
+import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.Transaction;
@@ -328,7 +330,7 @@ public class Utils {
 		return (int) context.getResources().getDimension(R.dimen.bank_spacing_width);
 	}
 
-	public static WProduct stringToJson(Context context, String value) {
+	public static ProductDetailResponse stringToJson(Context context, String value) {
 		if (TextUtils.isEmpty(value))
 			return null;
 
@@ -344,7 +346,7 @@ public class Utils {
 			Log.e("exception", String.valueOf(e));
 		}
 
-		TypeToken<WProduct> token = new TypeToken<WProduct>() {
+		TypeToken<ProductDetailResponse> token = new TypeToken<ProductDetailResponse>() {
 		};
 		return new Gson().fromJson(value, token.getType());
 	}

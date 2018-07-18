@@ -42,6 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import me.relex.circleindicator.CircleIndicator;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
@@ -61,6 +62,7 @@ import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.rest.product.ProductRequest;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity;
+import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.AvailableSizePickerAdapter;
@@ -135,6 +137,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	private String TAG = this.getClass().getSimpleName();
 	PermissionUtils permissionUtils;
 	private OtherSkus otherSKUForFindInStore;
+	CircleIndicator circleindicator;
 
 	@Override
 	public ProductDetailsViewModelNew getViewModel() {
@@ -168,7 +171,6 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		slideBottomPanel();
 		initViews();
 	}
 
@@ -193,6 +195,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		btnAddToCart.setOnClickListener(this);
 		btnAddToCart.setEnabled(false);
 		btnAddToShoppingList.setOnClickListener(this);
+		circleindicator = getView().findViewById(R.id.indicator);
 		this.configureDefaultUI();
 	}
 
@@ -215,13 +218,19 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		this.mAuxiliaryImage.add(getImageByWidth(mDefaultProduct.externalImageRef, getActivity()));
 		this.mProductViewPagerAdapter = new ProductViewPagerAdapter(getActivity(), this.mAuxiliaryImage, this);
 		this.mImageViewPager.setAdapter(mProductViewPagerAdapter);
+		circleindicator.setViewPager(this.mImageViewPager);
 
 		//set promotional Images
 		if (mDefaultProduct.promotionImages != null)
 			loadPromotionalImages(mDefaultProduct.promotionImages);
 
-		//loadProductDetails.
-		getViewModel().productDetail(new ProductRequest(mDefaultProduct.productId, mDefaultProduct.sku)).execute();
+		if (mFetchFromJson) {
+			ProductDetails productDetails = Utils.stringToJson(getActivity(), mDefaultProductResponse).product;
+			this.onSuccessResponse(productDetails);
+		} else {
+			//loadProductDetails.
+			getViewModel().productDetail(new ProductRequest(mDefaultProduct.productId, mDefaultProduct.sku)).execute();
+		}
 	}
 
 	private void loadPromotionalImages(PromotionImages promotionalImage) {
@@ -685,8 +694,14 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	}
 
 	@Override
-	public void SelectedImage(String otherSkus) {
-
+	public void SelectedImage(String image) {
+		Activity activity = getActivity();
+		if (activity != null) {
+			Intent openMultipleImage = new Intent(getActivity(), MultipleImageActivity.class);
+			openMultipleImage.putExtra("auxiliaryImages", image);
+			startActivity(openMultipleImage);
+			activity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+		}
 	}
 
 
@@ -733,6 +748,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		//mProductViewPagerAdapter.updatePagerItems(this.mAuxiliaryImage);
 		mProductViewPagerAdapter = new ProductViewPagerAdapter(getActivity(), this.mAuxiliaryImage, this);
 		mImageViewPager.setAdapter(mProductViewPagerAdapter);
+		circleindicator.setViewPager(this.mImageViewPager);
 	}
 
 	public List<String> getAuxiliaryImagesByGroupKey(String groupKey) {

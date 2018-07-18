@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.wtoday;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -17,10 +18,14 @@ import java.util.ArrayList;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse;
+import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator;
+import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
 import za.co.woolworths.financial.services.android.ui.views.ProductProgressDialogFrag;
@@ -132,7 +137,7 @@ public class WebAppInterface {
 				.getProductDetail(productId, skuId, new Callback<String>() {
 					@Override
 					public void success(final String strProduct, retrofit.client.Response response) {
-						final WProduct wProduct = Utils.stringToJson(mContext, strProduct);
+						final ProductDetailResponse wProduct = Utils.stringToJson(mContext, strProduct);
 						if (wProduct != null) {
 							switch (wProduct.httpCode) {
 								case 200:
@@ -140,8 +145,8 @@ public class WebAppInterface {
 										@Override
 										public void run() {
 											try {
-												ArrayList<WProductDetail> mProductList;
-												WProductDetail productList = wProduct.product;
+												ArrayList<ProductDetails> mProductList;
+												ProductDetails productList = wProduct.product;
 												mProductList = new ArrayList<>();
 												if (productList != null) {
 													mProductList.add(productList);
@@ -149,17 +154,21 @@ public class WebAppInterface {
 												if (mProductList.size() > 0 && mProductList.get(0).productId != null) {
 													GsonBuilder builder = new GsonBuilder();
 													Gson gson = builder.create();
-													ProductDetailFragment productDetailFragment = new ProductDetailFragment();
+													//ProductDetailFragment productDetailFragment = new ProductDetailFragment();
 													String strProductList = gson.toJson(mProductList.get(0));
 													Bundle bundle = new Bundle();
 													bundle.putString("strProductList", strProductList);
 													bundle.putString("strProductCategory", mProductList.get(0).productName);
 													bundle.putString("productResponse", strProduct);
 													bundle.putBoolean("fetchFromJson", true);
-													productDetailFragment.setArguments(bundle);
+													/*productDetailFragment.setArguments(bundle);
 													FragmentTransaction transaction = ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction();
 													transaction.replace(R.id.fragment_bottom_container, productDetailFragment).commit();
-													mBottomNavigator.slideUpBottomView();
+													mBottomNavigator.slideUpBottomView();*/
+													Intent intent = new Intent(mContext, ProductDetailsActivity.class);
+													intent.putExtras(bundle);
+													mContext.startActivity(intent);
+													((AppCompatActivity) mContext).overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
 												}
 											} catch (Exception ex) {
 												ex.printStackTrace();

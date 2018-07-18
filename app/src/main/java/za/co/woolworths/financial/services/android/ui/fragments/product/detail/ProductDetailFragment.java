@@ -395,7 +395,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 		if (mFetchFromJson) { // display product through json string
 			getViewModel().setProduct(mDefaultProductResponse);
-			onSuccessResponse(Utils.stringToJson(getActivity(), mDefaultProductResponse));
+			//onSuccessResponse(Utils.stringToJson(getActivity(), mDefaultProductResponse)); =================
 			onLoadComplete();
 		} else {
 			getViewModel().productDetail(new ProductRequest(mDefaultProduct.productId, mDefaultProduct.sku)).execute();

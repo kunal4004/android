@@ -45,6 +45,7 @@ import za.co.woolworths.financial.services.android.models.dto.CommerceItem;
 import za.co.woolworths.financial.services.android.models.dto.CommerceItemInfo;
 import za.co.woolworths.financial.services.android.models.dto.Data;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
+import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse;
@@ -329,7 +330,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	@Override
 	public void onOpenProductDetail(CommerceItem commerceItem) {
 		CartActivity cartActivity = (CartActivity) getActivity();
-		ProductList productList = new ProductList();
+		ProductDetails productList = new ProductDetails();
 		CommerceItemInfo commerceItemInfo = commerceItem.commerceItemInfo;
 		productList.externalImageRef = commerceItemInfo.externalImageURL;
 		productList.productName = commerceItemInfo.productDisplayName;

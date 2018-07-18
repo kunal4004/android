@@ -30,11 +30,14 @@ import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
 
+import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse;
+import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
+import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.barcode.BarcodeNavigator;
 import za.co.woolworths.financial.services.android.ui.fragments.barcode.BarcodeViewModel;
@@ -152,13 +155,13 @@ public class ManualBarcodeFragment extends BaseFragment<ManualBarcodeLayoutBindi
 	}
 
 	@Override
-	public void onLoadProductSuccess(WProduct wProduct, String detailProduct) {
+	public void onLoadProductSuccess(ProductDetailResponse productDetailResponse, String detailProduct) {
 		hideKeyboard();
 		Activity activity = getActivity();
 		if (activity != null) {
 			try {
-				ArrayList<WProductDetail> mProductList;
-				WProductDetail productList = wProduct.product;
+				ArrayList<ProductDetails> mProductList;
+				ProductDetails productList = productDetailResponse.product;
 				mProductList = new ArrayList<>();
 				if (productList != null) {
 					mProductList.add(productList);
@@ -166,17 +169,18 @@ public class ManualBarcodeFragment extends BaseFragment<ManualBarcodeLayoutBindi
 				if (mProductList.size() > 0 && mProductList.get(0).productId != null) {
 					GsonBuilder builder = new GsonBuilder();
 					Gson gson = builder.create();
-					ProductDetailFragment productDetailFragment = new ProductDetailFragment();
+					//ProductDetailFragment productDetailFragment = new ProductDetailFragment();
 					String strProductList = gson.toJson(mProductList.get(0));
 					Bundle bundle = new Bundle();
 					bundle.putString("strProductList", strProductList);
 					bundle.putString("strProductCategory", mProductList.get(0).productName);
 					bundle.putString("productResponse", detailProduct);
 					bundle.putBoolean("fetchFromJson", true);
-					productDetailFragment.setArguments(bundle);
-					FragmentTransaction transaction = ((AppCompatActivity) activity).getSupportFragmentManager().beginTransaction();
-					transaction.replace(R.id.fragment_bottom_container, productDetailFragment).commit();
-					slideBottomPanel();
+					Intent intent = new Intent(getActivity(), ProductDetailsActivity.class);
+					intent.putExtras(bundle);
+					getActivity().startActivity(intent);
+					getActivity().overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
+
 				}
 				slideBottomPanel();
 			} catch (Exception ex) {
