@@ -1,99 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
-          package="com.awfs.coordination">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.awfs.coordination">
 
     <permission
         android:name="com.awfs.coordination.permission.MAPS_RECEIVE"
-        android:protectionLevel="signature"/>
+        android:protectionLevel="signature" />
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="com.awfs.coordination.permission.MAPS_RECEIVE"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="com.awfs.coordination.permission.MAPS_RECEIVE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- Barcode scanner -->
-    <uses-permission android:name="com.android.browser.permission.READ_HISTORY_BOOKMARKS"/>
-    <uses-permission android:name="android.permission.VIBRATE"/>
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-permission android:name="android.permission.FLASHLIGHT"/>
+    <uses-permission android:name="com.android.browser.permission.READ_HISTORY_BOOKMARKS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
     <!-- To check application on background or not for KITKAT -->
-    <uses-permission android:name="android.permission.GET_TASKS"/>
+    <uses-permission android:name="android.permission.GET_TASKS" />
     <!-- Don't require camera, as this requires a rear camera. This allows it to work on the Nexus 7 -->
 
     <uses-feature
         android:name="android.hardware.camera"
-        android:required="false"/>
+        android:required="false" />
     <uses-feature
         android:name="android.hardware.camera.front"
-        android:required="false"/>
+        android:required="false" />
 
     <!-- replace above two with next line after Android 4.2 -->
     <uses-feature
         android:name="android.hardware.camera.any"
-        android:required="false"/>
+        android:required="false" />
     <uses-feature
         android:name="android.hardware.camera.autofocus"
-        android:required="false"/>
+        android:required="false" />
     <uses-feature
         android:name="android.hardware.camera.flash"
-        android:required="false"/>
+        android:required="false" />
     <uses-feature
         android:name="android.hardware.screen.landscape"
-        android:required="false"/>
+        android:required="false" />
     <uses-feature
         android:name="android.hardware.wifi"
-        android:required="false"/>
+        android:required="false" />
     <!-- This excludes Google TV, which is unfortunately included by virtue of not requiring a camera -->
     <uses-feature
         android:name="android.hardware.touchscreen"
-        android:required="false"/>
+        android:required="false" />
     <uses-feature
         android:name="android.hardware.camera.setParameters"
-        android:required="false"/>
+        android:required="false" />
 
     <!-- end barcode scanner -->
 
 
     <!-- for Samsung -->
-    <uses-permission android:name="com.sec.android.provider.badge.permission.READ"/>
-    <uses-permission android:name="com.sec.android.provider.badge.permission.WRITE"/>
+    <uses-permission android:name="com.sec.android.provider.badge.permission.READ" />
+    <uses-permission android:name="com.sec.android.provider.badge.permission.WRITE" />
 
     <!-- for htc -->
-    <uses-permission android:name="com.htc.launcher.permission.READ_SETTINGS"/>
-    <uses-permission android:name="com.htc.launcher.permission.UPDATE_SHORTCUT"/>
+    <uses-permission android:name="com.htc.launcher.permission.READ_SETTINGS" />
+    <uses-permission android:name="com.htc.launcher.permission.UPDATE_SHORTCUT" />
 
     <!-- for sony -->
-    <uses-permission android:name="com.sonyericsson.home.permission.BROADCAST_BADGE"/>
-    <uses-permission android:name="com.sonymobile.home.permission.PROVIDER_INSERT_BADGE"/>
+    <uses-permission android:name="com.sonyericsson.home.permission.BROADCAST_BADGE" />
+    <uses-permission android:name="com.sonymobile.home.permission.PROVIDER_INSERT_BADGE" />
     <!-- for apex -->
-    <uses-permission android:name="com.anddoes.launcher.permission.UPDATE_COUNT"/>
+    <uses-permission android:name="com.anddoes.launcher.permission.UPDATE_COUNT" />
 
     <!-- for solid -->
-    <uses-permission android:name="com.majeur.launcher.permission.UPDATE_BADGE"/>
+    <uses-permission android:name="com.majeur.launcher.permission.UPDATE_BADGE" />
 
     <!-- for huawei -->
-    <uses-permission android:name="com.huawei.android.launcher.permission.CHANGE_BADGE"/>
-    <uses-permission android:name="com.huawei.android.launcher.permission.READ_SETTINGS"/>
-    <uses-permission android:name="com.huawei.android.launcher.permission.WRITE_SETTINGS"/>
+    <uses-permission android:name="com.huawei.android.launcher.permission.CHANGE_BADGE" />
+    <uses-permission android:name="com.huawei.android.launcher.permission.READ_SETTINGS" />
+    <uses-permission android:name="com.huawei.android.launcher.permission.WRITE_SETTINGS" />
 
     <!-- for ZUK -->
-    <uses-permission android:name="android.permission.READ_APP_BADGE"/>
+    <uses-permission android:name="android.permission.READ_APP_BADGE" />
 
     <uses-feature
         android:glEsVersion="0x00020000"
-        android:required="true"/>
+        android:required="true" />
 
     <supports-screens
         android:anyDensity="true"
         android:largeScreens="true"
         android:normalScreens="true"
         android:smallScreens="false"
-        android:xlargeScreens="true"/>
+        android:xlargeScreens="true" />
 
     <application
         android:name="za.co.woolworths.financial.services.android.models.WoolworthsApplication"
@@ -103,178 +103,171 @@
         android:largeHeap="true"
         android:theme="@style/AppTheme"
         tools:replace="android:label">
-
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/ic_notification"/>
-
+            android:resource="@drawable/ic_notification" />
         <meta-data
             android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version"/>
+            android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id"/>
+            android:value="@string/facebook_app_id" />
 
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.splash.WSplashScreenActivity"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WebViewActivity"
             android:icon="@drawable/ic_action_bar_logo"
             android:screenOrientation="portrait"
-            android:theme="@style/SSOActivity"/>
+            android:theme="@style/SSOActivity" />
         <!-- Goolge Maps API Key -->
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyBscGwCrt-mloCl8JXkqX95r3_gwtRLnk4"/>
-
+            android:value="AIzaSyBscGwCrt-mloCl8JXkqX95r3_gwtRLnk4" />
 
         <!-- Google Analytics -->
         <receiver
             android:name="com.google.android.gms.analytics.AnalyticsReceiver"
             android:enabled="true">
             <intent-filter>
-                <action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH"/>
+                <action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH" />
             </intent-filter>
         </receiver>
-
         <receiver
             android:name="com.google.android.gms.analytics.CampaignTrackingReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
-                <action android:name="com.android.vending.INSTALL_REFERRER"/>
+                <action android:name="com.android.vending.INSTALL_REFERRER" />
             </intent-filter>
         </receiver>
 
-        <service android:name="com.google.android.gms.analytics.CampaignTrackingService"/>
+        <service android:name="com.google.android.gms.analytics.CampaignTrackingService" />
+
         <receiver
             android:name="com.google.android.gms.analytics.AnalyticsReceiver"
             android:enabled="true">
             <intent-filter>
-                <action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH"/>
+                <action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH" />
             </intent-filter>
         </receiver>
+
         <service
             android:name="com.google.android.gms.analytics.AnalyticsService"
             android:enabled="true"
-            android:exported="false"/>
-
+            android:exported="false" />
 
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.StoreDetailsActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/StoreDetails"/>
+            android:theme="@style/StoreDetails" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.SearchStoresActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/StoreSearch"/>
+            android:theme="@style/StoreSearch" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.LoanWithdrawalActivity"
             android:screenOrientation="portrait"
             android:theme="@style/LoanWithdrawal"
-            android:windowSoftInputMode="adjustResize|stateAlwaysVisible"/>
+            android:windowSoftInputMode="adjustResize|stateAlwaysVisible" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.LoanWithdrawalSuccessActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/LoanWithdrawal"/>
-
+            android:theme="@style/LoanWithdrawal" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.MessagesActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Messages">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity"/>
+                android:value="za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity" />
         </activity>
-
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.LoanWithdrawalConfirmActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/OneAppBaseTheme"/>
-
+            android:theme="@style/OneAppBaseTheme" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/MyAccountCards"/>
+            android:theme="@style/MyAccountCards" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.SSOActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/SSOActivity"/>
+            android:theme="@style/SSOActivity" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/WTransaction"/>
+            android:theme="@style/WTransaction" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WRewardsMembersInfoActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/WRewardsInfo"/>
+            android:theme="@style/WRewardsInfo" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WRewardsVoucherDetailsActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/WRewardsVoucherDetails"/>
+            android:theme="@style/WRewardsVoucherDetails" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WRewardsVoucherTermAndConditions"
             android:screenOrientation="portrait"
-            android:theme="@style/WTransaction"/>
+            android:theme="@style/WTransaction" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CLI"
-            android:windowSoftInputMode="adjustResize|stateAlwaysVisible"/>
+            android:windowSoftInputMode="adjustResize|stateAlwaysVisible" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.UserDetailActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/FaqStyle"/>
+            android:theme="@style/FaqStyle" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.OnBoardingActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/FaqStyle"/>
+            android:theme="@style/FaqStyle" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/FaqStyle"/>
+            android:theme="@style/FaqStyle" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/StockFinderStyle"/>
+            android:theme="@style/StockFinderStyle" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity"
-            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/FaqStyle"/>
+            android:theme="@style/FaqStyle" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.cli.FindOutMoreActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/FaqStyle"/>
+            android:theme="@style/FaqStyle" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity"
             android:screenOrientation="portrait"
             android:theme="@style/CLI"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.StatementActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CLI"
-            android:windowSoftInputMode="adjustResize"
-            />
+            android:windowSoftInputMode="adjustResize" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -283,52 +276,46 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"/>
+                android:resource="@xml/provider_paths" />
         </provider>
 
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WStoreLocatorActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/StoreSearch"/>
+            android:theme="@style/StoreSearch" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity"
             android:label="@string/title_activity_bottom_navigation"
             android:screenOrientation="portrait"
             android:theme="@style/bottomNavigationStyle"
-            android:windowSoftInputMode="adjustNothing"/>
+            android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListActivity"
             android:label="@string/title_activity_main"
-            android:theme="@style/bottomNavigationStyle"/>
-
+            android:theme="@style/bottomNavigationStyle" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.CartActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Cart"/>
-
+            android:theme="@style/Cart" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.CartCheckoutActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Cart"/>
-
-
+            android:theme="@style/Cart" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity"
             android:noHistory="true"
             android:screenOrientation="portrait"
-            android:theme="@style/Cart"/>
+            android:theme="@style/Cart" />
 
         <!-- Firebase Notifications -->
         <service android:name="za.co.woolworths.financial.services.android.util.WFirebaseMessagingService">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
-        <service
-            android:name="za.co.woolworths.financial.services.android.util.WFirebaseInstanceIDService">
+        <service android:name="za.co.woolworths.financial.services.android.util.WFirebaseInstanceIDService">
             <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
         <!-- ./Firebase Notifications -->
@@ -336,7 +323,11 @@
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.MyPreferencesActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/FaqStyle"/>
+            android:theme="@style/FaqStyle" />
+        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.NoActionBar"
+            />
     </application>
 
 </manifest>

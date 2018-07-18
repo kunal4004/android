@@ -35,6 +35,7 @@ import java.util.List;
 import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
+import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
@@ -44,6 +45,7 @@ import za.co.woolworths.financial.services.android.models.service.event.LoadStat
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
+import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment;
@@ -227,8 +229,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 		if (SessionUtilities.getInstance().isUserAuthenticated()) {
 			badgeCount();
-		}
-	}
+		}	}
+
 
 	private void setToast() {
 		mToastUtils = new ToastUtils(BottomNavigationActivity.this);
@@ -421,15 +423,19 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	@Override
 	public void openProductDetailFragment(String productName, ProductList productList) {
 		//ProductDetailFragment productDetailFragment = new ProductDetailFragment();
-		ProductDetailsFragmentNew productDetailFragment = new ProductDetailsFragmentNew();
+		//ProductDetailsFragmentNew productDetailFragment = new ProductDetailsFragmentNew();
 		Gson gson = new Gson();
 		String strProductList = gson.toJson(productList);
 		Bundle bundle = new Bundle();
 		bundle.putString("strProductList", strProductList);
 		bundle.putString("strProductCategory", productName);
-		productDetailFragment.setArguments(bundle);
+		/*productDetailFragment.setArguments(bundle);
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-		transaction.replace(R.id.fragment_bottom_container, productDetailFragment).commitAllowingStateLoss();
+		transaction.replace(R.id.fragment_bottom_container, productDetailFragment).commitAllowingStateLoss();*/
+		Intent intent = new Intent(BottomNavigationActivity.this, ProductDetailsActivity.class);
+		intent.putExtras(bundle);
+		startActivity(intent);
+		overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
 	}
 
 	@Override
