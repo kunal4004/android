@@ -499,7 +499,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			case R.id.openMessageActivity:
 				Intent openMessageActivity = new Intent(getActivity(), MessagesActivity.class);
 				openMessageActivity.putExtra("fromNotification", false);
-				startActivityForResult(openMessageActivity, 0);
+				startActivity(openMessageActivity);
 				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				break;
 			case R.id.applyStoreCard:
