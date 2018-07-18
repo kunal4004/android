@@ -727,7 +727,10 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	}
 
 	private void messageCounterRequest() {
-		getViewModel().loadMessageCount().execute();
+		if (SessionUtilities.getInstance().isUserAuthenticated()
+				&& SessionUtilities.getInstance().isC2User()) {
+			getViewModel().loadMessageCount().execute();
+		}
 	}
 
 	private void shoppingListRequest() {
