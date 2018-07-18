@@ -1032,7 +1032,19 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void badgeCount() {
-		getBadgeCountInstance().queryAllBadgeCounters();
+		switch (getCurrentSection()) {
+			case R.id.navigation_account:
+				getBadgeCountInstance().queryCartCount();
+				getBadgeCountInstance().queryVoucherCount();
+				break;
+			case R.id.navigation_reward:
+				getBadgeCountInstance().queryCartCount();
+				getBadgeCountInstance().queryMessageCount();
+				break;
+			default:
+				getBadgeCountInstance().queryAllBadgeCounters();
+				break;
+		}
 	}
 
 	@Override
@@ -1153,5 +1165,11 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	public QueryBadgeCounters getBadgeCountInstance() {
 		return mQueryBadgeCounters;
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		getBadgeCountInstance().cancelCounterRequest();
 	}
 }
