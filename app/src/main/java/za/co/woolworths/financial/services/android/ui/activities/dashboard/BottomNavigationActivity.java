@@ -104,7 +104,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	public static final int SLIDE_UP_COLLAPSE_REQUEST_CODE = 13;
 	public static final int SLIDE_UP_COLLAPSE_RESULT_CODE = 12345;
 	public static final int BOTTOM_FRAGMENT_REQUEST_CODE = 3401;
-	public static final int MESSAGE_COUNTER_REQUEST = 3454;
 
 	public final String TAG = this.getClass().getSimpleName();
 	private PermissionUtils permissionUtils;
@@ -236,9 +235,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				 */
 				Utils.setBadgeCounter(BottomNavigationActivity.this, unreadCount);
 				addBadge(INDEX_ACCOUNT, unreadCount);
-				Intent intent = new Intent();
-				intent.putExtra("unreadCount", unreadCount);
-				onActivityResult(MESSAGE_COUNTER_REQUEST, MESSAGE_COUNTER_REQUEST, intent);
 			}
 
 			@Override
