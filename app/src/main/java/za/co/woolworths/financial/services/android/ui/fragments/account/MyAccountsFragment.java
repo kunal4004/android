@@ -798,7 +798,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		super.onActivityResult(requestCode, resultCode, data);
 		//TODO: Comment what's actually happening here.
 		if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
-			messageCounterRequest();
 			shoppingListRequest();
 			initialize();
 			//One time biometricsWalkthrough
