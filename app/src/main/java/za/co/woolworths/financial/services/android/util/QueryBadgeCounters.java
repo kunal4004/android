@@ -36,14 +36,14 @@ public abstract class QueryBadgeCounters {
 		mGetMessage.execute();
 	}
 
-	private void queryVoucherCount() {
+	public void queryVoucherCount() {
 		isUserAuthenticated();
 		isC2User();
 		mGetVoucher = loadVoucherCount();
 		mGetVoucher.execute();
 	}
 
-	private void queryCartCount() {
+	public void queryCartCount() {
 		isUserAuthenticated();
 		mGetCartCount = loadShoppingCartCount();
 		mGetCartCount.execute();
@@ -104,8 +104,6 @@ public abstract class QueryBadgeCounters {
 	}
 
 	private GetMessage loadMessageCount() {
-		isUserAuthenticated();
-		isC2User();
 		return new GetMessage(new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {

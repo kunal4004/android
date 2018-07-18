@@ -42,6 +42,8 @@ import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.MESSAGE_COUNTER_REQUEST;
+
 public class MessagesActivity extends AppCompatActivity {
 	public RecyclerView messsageListview;
 	public MesssagesListAdapter adapter = null;
@@ -59,6 +61,7 @@ public class MessagesActivity extends AppCompatActivity {
 	private final ThreadLocal<FragmentManager> fm = new ThreadLocal<>();
 	private ErrorHandlerView mErrorHandlerView;
 	private boolean paginationIsEnabled = false;
+	private int unreadMessageCount = 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -316,6 +319,7 @@ public class MessagesActivity extends AppCompatActivity {
 	@Override
 	public void onBackPressed() {
 		boolean fromNotification = false;
+		setResult(MESSAGE_COUNTER_REQUEST, new Intent().putExtra("unreadCount", unreadMessageCount));
 		if (getIntent().hasExtra("fromNotification"))
 			fromNotification = getIntent().getExtras().getBoolean("fromNotification");
 		if (fromNotification) {
@@ -349,6 +353,7 @@ public class MessagesActivity extends AppCompatActivity {
 					messageList = new ArrayList<>();
 					if (messageResponse.messagesList != null && messageResponse.messagesList.size() != 0) {
 						messageList = messageResponse.messagesList;
+						unreadMessageCount = messageResponse.unreadCount;
 						bindDataWithUI(messageList);
 						String unreadCountValue = Utils.getSessionDaoValue(MessagesActivity.this,
 								SessionDao.KEY.UNREAD_MESSAGE_COUNT);

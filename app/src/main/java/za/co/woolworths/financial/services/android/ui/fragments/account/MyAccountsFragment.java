@@ -68,7 +68,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.dashboar
 
 public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, MyAccountsViewModel> implements View.OnClickListener, ViewPager.OnPageChangeListener, MyAccountsNavigator {
 
-	private final String TAG = "MyAccountsFragment";
+	private final String TAG = this.getClass().getSimpleName();
 
 	private MyAccountsViewModel myAccountsViewModel;
 
@@ -108,11 +108,9 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	private ImageView[] dots;
 	private NestedScrollView mScrollView;
 	private ErrorHandlerView mErrorHandlerView;
-	private boolean loadMessageCounter = false;
 	private LinearLayout allUserOptionsLayout;
 	private LinearLayout loginUserOptionsLayout;
 	private GetShoppingLists mGetShoppingLists;
-	private WTextView shoppingListCounter;
 	private ShoppingListsResponse shoppingListsResponse;
 
 	public MyAccountsFragment() {
@@ -236,18 +234,26 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		this.unavailableAccounts.clear();
 		this.unavailableAccounts.addAll(Arrays.asList("SC", "CC", "PL"));
 		this.mScrollView.scrollTo(0, 0);
-
 		if (SessionUtilities.getInstance().isUserAuthenticated()) {
-
 			if (SessionUtilities.getInstance().isC2User())
 				this.loadAccounts();
 			else
 				this.configureSignInNoC2ID();
-
 		} else {
-			if (getActivity() != null) {
-				removeAllBottomNavigationIconBadgeCount();
-				configureView();
+			if (getActivity() == null) return;
+			removeAllBottomNavigationIconBadgeCount();
+			configureView();
+		}
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		if (getActivity() != null) {
+			BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) getActivity();
+			Fragment currentFragment = bottomNavigationActivity.getCurrentFragment();
+			if (currentFragment instanceof MyAccountsFragment) {
+				messageCounterRequest();
 			}
 		}
 	}
@@ -578,7 +584,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 
 			@Override
 			protected void onPreExecute() {
-				loadMessageCounter = false;
 				mErrorHandlerView.hideErrorHandlerLayout();
 				mScrollView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.recent_search_bg));
 				showProgressBar();
@@ -607,7 +612,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 					int httpCode = accountsResponse.httpCode;
 					switch (httpCode) {
 						case 200:
-							loadMessageCounter = false;
 							MyAccountsFragment.this.accountsResponse = accountsResponse;
 							List<Account> accountList = accountsResponse.accountList;
 							for (Account p : accountList) {
@@ -654,18 +658,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		startActivityForResult(intent, 0);
 		getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
 
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
-		if (getActivity() != null) {
-			BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) getActivity();
-			Fragment currentFragment = bottomNavigationActivity.getCurrentFragment();
-			if (currentFragment instanceof MyAccountsFragment) {
-				shoppingListRequest();
-			}
-		}
 	}
 
 	@Override
@@ -774,12 +766,10 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		if (!hidden) {
 			//do when hidden
 			//hide all views, load accounts may occur
-
 			this.initialize();
 			hideToolbar();
 			setToolbarBackgroundColor(R.color.white);
 			shoppingListRequest();
-			messageCounterRequest();
 		}
 	}
 
@@ -788,12 +778,9 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		super.onActivityResult(requestCode, resultCode, data);
 		//TODO: Comment what's actually happening here.
 		if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
-			if (loadMessageCounter) {
-				messageCounterRequest();
-				shoppingListRequest();
-			} else {
-				initialize();
-			}
+			messageCounterRequest();
+			shoppingListRequest();
+			initialize();
 			//One time biometricsWalkthrough
 			ScreenManager.presentBiometricWalkthrough(getActivity());
 		} else if (resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue()) {
@@ -806,7 +793,11 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		// Update message counter ui
 		if (requestCode == MESSAGE_COUNTER_REQUEST) {
 			if (resultCode == MESSAGE_COUNTER_REQUEST) {
+				Activity activity = getActivity();
+				if (activity == null) return;
 				int unreadCount = data.getIntExtra("unreadCount", 0);
+				Utils.setBadgeCounter(activity, unreadCount);
+				addBadge(INDEX_ACCOUNT, unreadCount);
 				if (unreadCount > 0) {
 					hideView(getViewDataBinding().messagesRightArrow);
 					showView(messageCounter);
@@ -828,14 +819,10 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	}
 
 	private void onSessionExpired(Activity activity) {
-
 		Utils.setBadgeCounter(getActivity(), 0);
-
 		removeAllBottomNavigationIconBadgeCount();
 		SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
 		SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(activity);
-
-		loadMessageCounter = false;
 		initialize();
 	}
 
