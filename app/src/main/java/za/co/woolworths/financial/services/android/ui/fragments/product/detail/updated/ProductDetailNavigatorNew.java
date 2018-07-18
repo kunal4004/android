@@ -57,4 +57,6 @@ public interface ProductDetailNavigatorNew {
 	void onInventoryResponseForSelectedSKU(SkusInventoryForStoreResponse inventoryResponse);
 
 	void onInventoryResponseForAllSKUs(SkusInventoryForStoreResponse inventoryResponse);
+
+	void onProductDetailedFailed(Response response);
 }

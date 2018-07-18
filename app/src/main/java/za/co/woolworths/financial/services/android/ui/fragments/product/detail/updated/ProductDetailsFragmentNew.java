@@ -191,6 +191,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		btnSizeSelector.setOnClickListener(this);
 		btnColorSelector.setOnClickListener(this);
 		btnAddToCart.setOnClickListener(this);
+		btnAddToCart.setEnabled(false);
 		btnAddToShoppingList.setOnClickListener(this);
 		this.configureDefaultUI();
 	}
@@ -237,7 +238,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		promotionalImagesLayout.removeAllViews();
 		DrawImage drawImage = new DrawImage(getActivity());
 		for (String image : images) {
-			View view = getLayoutInflater().inflate(R.layout.promotional_image, null);
+			View view = getActivity().getLayoutInflater().inflate(R.layout.promotional_image, null);
 			SimpleDraweeView simpleDraweeView = view.findViewById(R.id.promotionImage);
 			drawImage.displaySmallImage(simpleDraweeView, image);
 			promotionalImagesLayout.addView(view);
@@ -406,7 +407,9 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	}
 
 	private void configureColorPicker() {
-		View view = getLayoutInflater().inflate(R.layout.color_size_picker_bottom_sheet_dialog, null);
+		if (!isAdded())
+			return;
+		View view = getActivity().getLayoutInflater().inflate(R.layout.color_size_picker_bottom_sheet_dialog, null);
 		WTextView title = view.findViewById(R.id.title);
 		RecyclerView rcvColors = view.findViewById(R.id.rvPickerList);
 		ImageView closePicker = view.findViewById(R.id.imClosePicker);
@@ -424,7 +427,9 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	}
 
 	private void configureSizePicker() {
-		View view = getLayoutInflater().inflate(R.layout.color_size_picker_bottom_sheet_dialog, null);
+		if (!isAdded())
+			return;
+		View view = getActivity().getLayoutInflater().inflate(R.layout.color_size_picker_bottom_sheet_dialog, null);
 		WTextView title = view.findViewById(R.id.title);
 		rcvSizePicker = view.findViewById(R.id.rvPickerList);
 		ImageView closeSizePicker = view.findViewById(R.id.imClosePicker);
@@ -440,7 +445,9 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	}
 
 	private void configureMultiPickerDialog() {
-		View view = getLayoutInflater().inflate(R.layout.size_quantity_selector_layout, null);
+		if (!isAdded())
+			return;
+		View view = getActivity().getLayoutInflater().inflate(R.layout.size_quantity_selector_layout, null);
 		viewSwitcher = view.findViewById(R.id.viewSwitcher);
 		rcvSizePickerForInventory = view.findViewById(R.id.sizeSelectorForInventory);
 		rcvQuantityPicker = view.findViewById(R.id.quantitySelector);
@@ -516,8 +523,6 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	public void responseFailureHandler(Response response) {
 		enableAddToCartButton(false);
 		enableFindInStoreButton(false);
-		getViewDataBinding().llLoadingColorSize.setVisibility(View.GONE);
-		getViewDataBinding().loadingInfoView.setVisibility(View.GONE);
 		Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
 	}
 
@@ -670,6 +675,13 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		}
 		this.openSizePickerWithAvailableQuantity(stockRequestedSkus);
 
+	}
+
+	@Override
+	public void onProductDetailedFailed(Response response) {
+		getViewDataBinding().llLoadingColorSize.setVisibility(View.GONE);
+		getViewDataBinding().loadingInfoView.setVisibility(View.GONE);
+		Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
 	}
 
 	@Override
@@ -916,8 +928,10 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	}
 
 	public void confirmDeliveryLocation() {
+		if (!isAdded())
+			return;
 		confirmDeliveryLocationDialog = new BottomSheetDialog(getActivity());
-		View view = getLayoutInflater().inflate(R.layout.confirm_deliverylocation_bottom_sheet_dialog, null);
+		View view = getActivity().getLayoutInflater().inflate(R.layout.confirm_deliverylocation_bottom_sheet_dialog, null);
 		WTextView tvLocation = view.findViewById(R.id.tvLocation);
 		WButton btnSetNewLocation = view.findViewById(R.id.btnSetNewLocation);
 		ImageView closeDialog = view.findViewById(R.id.imCloseIcon);

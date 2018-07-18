@@ -61,7 +61,7 @@ public class ProductDetailsViewModelNew extends BaseViewModel<ProductDetailNavig
 						break;
 					default:
 						if (productDetailResponse.response != null) {
-							getNavigator().responseFailureHandler(productDetailResponse.response);
+							getNavigator().onProductDetailedFailed(productDetailResponse.response);
 						}
 						break;
 				}
