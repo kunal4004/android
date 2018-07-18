@@ -722,6 +722,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	private void messageCounterRequest() {
 		Activity activity = getActivity();
 		if (activity != null) {
+			// Enable message counter update if navigator points to account tab only
 			BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
 			Fragment currentFragment = bottomNavigationActivity.getCurrentFragment();
 			if ((bottomNavigationActivity.getCurrentSection() == R.id.navigation_account)
