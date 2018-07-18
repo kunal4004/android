@@ -54,7 +54,6 @@ import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
-import za.co.woolworths.financial.services.android.util.QueryBadgeCounters;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
@@ -248,13 +247,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	@Override
 	public void onResume() {
 		super.onResume();
-		if (getActivity() != null) {
-			BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) getActivity();
-			Fragment currentFragment = bottomNavigationActivity.getCurrentFragment();
-			if (currentFragment instanceof MyAccountsFragment) {
-				messageCounterRequest();
-			}
-		}
+		messageCounterRequest();
 	}
 
 	//To remove negative signs from negative balance and add "CR" after the negative balance
@@ -727,9 +720,17 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	}
 
 	private void messageCounterRequest() {
-		if (SessionUtilities.getInstance().isUserAuthenticated()
-				&& SessionUtilities.getInstance().isC2User()) {
-			getViewModel().loadMessageCount().execute();
+		Activity activity = getActivity();
+		if (activity != null) {
+			BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
+			Fragment currentFragment = bottomNavigationActivity.getCurrentFragment();
+			if ((bottomNavigationActivity.getCurrentSection() == R.id.navigation_account)
+					&& (currentFragment instanceof MyAccountsFragment)) {
+				if (SessionUtilities.getInstance().isUserAuthenticated()
+						&& SessionUtilities.getInstance().isC2User()) {
+					getViewModel().loadMessageCount().execute();
+				}
+			}
 		}
 	}
 
@@ -837,11 +838,5 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	public void scrollToTop() {
 		ObjectAnimator anim = ObjectAnimator.ofInt(mScrollView, "scrollY", mScrollView.getScrollY(), 0);
 		anim.setDuration(500).start();
-	}
-
-	public QueryBadgeCounters getBadgeCounter() {
-		BottomNavigationActivity bottomNavigationActivity = getBottomNavigationActivity();
-		if (bottomNavigationActivity == null) return null;
-		return bottomNavigationActivity.getBadgeCountInstance();
 	}
 }
