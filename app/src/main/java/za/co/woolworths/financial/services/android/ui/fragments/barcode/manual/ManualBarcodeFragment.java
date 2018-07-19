@@ -181,7 +181,6 @@ public class ManualBarcodeFragment extends BaseFragment<ManualBarcodeLayoutBindi
 					ScreenManager.presentProductDetails(getActivity(),bundle);
 
 				}
-				slideBottomPanel();
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
