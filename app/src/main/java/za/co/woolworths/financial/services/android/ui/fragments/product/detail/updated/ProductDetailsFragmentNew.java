@@ -375,8 +375,13 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	@Override
 	public void onSuccessResponse(ProductDetails productDetails) {
 		this.productDetails = productDetails;
-		this.otherSKUsByGroupKey = groupOtherSKUsByColor(productDetails.otherSkus);
-		this.updateDefaultUI();
+		if(this.productDetails.otherSkus!=null && this.productDetails.otherSkus.size()>0) {
+			this.otherSKUsByGroupKey = groupOtherSKUsByColor(productDetails.otherSkus);
+			this.updateDefaultUI();
+		}else {
+			getViewDataBinding().llLoadingColorSize.setVisibility(View.GONE);
+			getViewDataBinding().loadingInfoView.setVisibility(View.GONE);
+		}
 	}
 
 	public void updateDefaultUI() {
@@ -928,6 +933,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		this.dismissPickerDialog(multiPickerDialog);
 		enableAddToCartButton(false);
 		this.otherSKUForFindInStore = notAvailableSKU;
+		this.findItemInStore();
 	}
 
 	@Override
@@ -988,6 +994,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		btnSetNewLocation.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
+				confirmDeliveryLocationDialog.dismiss();
 				startActivityToSelectDeliveryLocation();
 			}
 		});
@@ -1022,12 +1029,12 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	};
 
 	private void executeLocationItemTask() {
-		this.enableFindInStoreButton(true);
 		getViewModel().locationItemTask(getActivity(), this.otherSKUForFindInStore).execute();
 	}
 
 	@Override
 	public void startLocationUpdates() {
+		this.enableFindInStoreButton(true);
 		FusedLocationSingleton.getInstance().startLocationUpdates();
 		// register observer for location updates
 		LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mLocationUpdated,
