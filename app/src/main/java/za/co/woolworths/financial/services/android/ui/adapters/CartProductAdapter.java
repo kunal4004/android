@@ -23,6 +23,7 @@ import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.CartItemGroup;
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem;
 import za.co.woolworths.financial.services.android.models.dto.CommerceItemInfo;
@@ -357,6 +358,10 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 				public void onClick(View view) {
 					Context context = tvAddToList.getContext();
 					if (context == null) return;
+					WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
+					if (woolworthsApplication != null) {
+						woolworthsApplication.getWGlobalState().setSelectedSKUId(null);
+					}
 					Utils.displayValidationMessage(context, CustomPopUpWindow.MODAL_LAYOUT.SHOPPING_ADD_TO_LIST, Utils.toJson(commerceItems));
 				}
 			});
@@ -397,7 +402,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 			llPromotionalText = view.findViewById(R.id.promotionalTextLayout);
 			rlDeleteButton = view.findViewById(R.id.rlDeleteButton);
 			tvProductAvailability = view.findViewById(R.id.tvProductAvailability);
-			swipe =  view.findViewById(R.id.swipe);
+			swipe = view.findViewById(R.id.swipe);
 		}
 	}
 
