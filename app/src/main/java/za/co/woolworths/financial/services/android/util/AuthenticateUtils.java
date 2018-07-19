@@ -2,17 +2,14 @@ package za.co.woolworths.financial.services.android.util;
 
 import android.app.Activity;
 import android.app.KeyguardManager;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.provider.Settings;
 import android.util.Log;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
-import za.co.woolworths.financial.services.android.ui.activities.OnBoardingActivity;
-import za.co.woolworths.financial.services.android.ui.activities.splash.WSplashScreenActivity;
 
 import static android.content.Context.KEYGUARD_SERVICE;
 
@@ -50,7 +47,7 @@ public class AuthenticateUtils {
 
 		//Check if the device version is greater than or equal to Lollipop(21)
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-			Intent i = keyguardManager.createConfirmDeviceCredentialIntent("", "");
+			Intent i = keyguardManager.createConfirmDeviceCredentialIntent(mContext.getString(R.string.enter_password), "");
 			try {
 				//Start activity for result
 				mContext.startActivityForResult(i, requestCode);
@@ -61,29 +58,23 @@ public class AuthenticateUtils {
 	}
 
 	public boolean isAuthenticationEnabled() {
-		SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.BIOMETRIC_AUTHENTICATION_STATE);
+		if (!SessionUtilities.getInstance().isUserAuthenticated())
+			return false;
 		SessionDao.BIOMETRIC_AUTHENTICATION_STATE authenticationState;
-
-		if (sessionDao.value == null) {
+		AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+		authenticationState = currentUserObject.biometricAuthenticationState;
+		if (authenticationState == null)
 			authenticationState = SessionDao.BIOMETRIC_AUTHENTICATION_STATE.OFF;
-		} else {
-			authenticationState = SessionDao.BIOMETRIC_AUTHENTICATION_STATE.valueOf(sessionDao.value);
-		}
-		// check isDeviceSecure()
-		return authenticationState.equals(SessionDao.BIOMETRIC_AUTHENTICATION_STATE.ON) ;
+		return authenticationState.equals(SessionDao.BIOMETRIC_AUTHENTICATION_STATE.ON);
 	}
 
 	public void setUserAuthenticate(SessionDao.BIOMETRIC_AUTHENTICATION_STATE state) {
-		SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.BIOMETRIC_AUTHENTICATION_STATE);
-		sessionDao.value = state.toString();
-		try {
-			sessionDao.save();
-		} catch (Exception e) {
-
-		}
+		AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+		currentUserObject.biometricAuthenticationState = state;
+		currentUserObject.save();
 	}
 
-	public void enableBiometricForCurrentSession(boolean value){
+	public void enableBiometricForCurrentSession(boolean value) {
 		try {
 			Utils.sessionDaoSave(mContext, SessionDao.KEY.BIOMETRIC_AUTHENTICATION_SESSION, value ? "1" : "0");
 		} catch (Exception e) {
@@ -91,7 +82,7 @@ public class AuthenticateUtils {
 		}
 	}
 
-	public boolean isBiometricsEnabledForCurrentSession(){
+	public boolean isBiometricsEnabledForCurrentSession() {
 		String result = Utils.getSessionDaoValue(mContext, SessionDao.KEY.BIOMETRIC_AUTHENTICATION_SESSION);
 		boolean isEnabled;
 		if (result == null)
@@ -101,11 +92,11 @@ public class AuthenticateUtils {
 		return isEnabled;
 	}
 
-	public boolean isBiometricAuthenticationRequired(){
+	public boolean isBiometricAuthenticationRequired() {
 		return isAuthenticationEnabled() && isBiometricsEnabledForCurrentSession() && isDeviceSecure();
 	}
 
-	public boolean isAppSupportsAuthentication(){
-		return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) ;
+	public boolean isAppSupportsAuthentication() {
+		return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
 	}
 }

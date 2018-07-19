@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.wreward;
 
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 
 import com.awfs.coordination.R;
 
@@ -33,6 +35,7 @@ public class WRewardsLoggedOutFragment extends Fragment implements View.OnClickL
 	public WTextView applyForWRewards;
 	public WTextView wRewardsTagLine;
 	private BottomNavigator mBottomNavigator;
+	private ScrollView scrollLoggedOutLoggedIn;
 	private String TAG = this.getClass().getSimpleName();
 
 	@Nullable
@@ -53,6 +56,7 @@ public class WRewardsLoggedOutFragment extends Fragment implements View.OnClickL
 		vipMember = view.findViewById(R.id.layoutVipMember);
 		applyForWRewards = view.findViewById(R.id.applyForWRewards);
 		wRewardsTagLine = view.findViewById(R.id.wRewards_tag_line);
+		scrollLoggedOutLoggedIn = view.findViewById(R.id.scrollLoggedOutLoggedIn);
 		wRewardsTagLine.setText(getResources().getText(R.string.wrewards_logout_tag_line));
 		login.setOnClickListener(this);
 		register.setOnClickListener(this);
@@ -105,5 +109,10 @@ public class WRewardsLoggedOutFragment extends Fragment implements View.OnClickL
 		super.onHiddenChanged(hidden);
 		if (mBottomNavigator != null)
 			mBottomNavigator.removeToolbar();
+	}
+
+	public void scrollToTop() {
+		ObjectAnimator anim = ObjectAnimator.ofInt(scrollLoggedOutLoggedIn, "scrollY", scrollLoggedOutLoggedIn.getScrollY(), 0);
+		anim.setDuration(500).start();
 	}
 }

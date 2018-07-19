@@ -22,12 +22,19 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
+import za.co.woolworths.financial.services.android.models.dto.CommerceItem;
+import za.co.woolworths.financial.services.android.models.dto.CommerceItemInfo;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
@@ -52,7 +59,7 @@ import static za.co.woolworths.financial.services.android.models.service.event.P
 
 public class AddToListFragment extends Fragment implements View.OnClickListener, AddToListInterface, NetworkChangeListener, EmptyCartView.EmptyCartInterface {
 
-	private String mShoppingResponse = "";
+	private String mCommercialItemsList = "";
 	private WButton mBtnCancel;
 	private AddToListAdapter mShoppingListAdapter;
 	private int apiCount = 0;
@@ -69,15 +76,26 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 	private FrameLayout flCancelButton;
 	private RelativeLayout rlNoConnectionLayout;
 	private List<AddToListRequest> addToLists;
+	private Map<String, List<AddToListRequest>> mMapAddedToList;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		if (getArguments() != null) {
 			if (getArguments().containsKey("LIST_PAYLOAD")) {
-				mShoppingResponse = getArguments().getString("LIST_PAYLOAD");
+				mCommercialItemsList = getArguments().getString("LIST_PAYLOAD");
 			}
 		}
+		getItemsFromCart();
+	}
+
+	private List<CommerceItem> getItemsFromCart() {
+		if (!TextUtils.isEmpty(mCommercialItemsList)) {
+			Type type = new TypeToken<ArrayList<CommerceItem>>() {
+			}.getType();
+			return new Gson().fromJson(mCommercialItemsList, type);
+		}
+		return null;
 	}
 
 	View view;
@@ -143,7 +161,7 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 			if (response != null) {
 				List<ShoppingList> shoppingLists = response.lists;
 				if (shoppingLists != null && shoppingLists.size() == 0) {
-					showEmptyListView();
+					onEmptyCartRetry();
 					recyclerViewVisibility(false);
 					return;
 				}
@@ -226,6 +244,7 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 		if (act != null) {
 			if (label.toLowerCase().equalsIgnoreCase("ok")) {
 				addToLists = getAddToListRequests();
+				addToLists = getAddToListRequests(addToLists);
 				WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
 				if (woolworthsApplication != null) {
 					WGlobalState globalState = woolworthsApplication.getWGlobalState();
@@ -262,36 +281,67 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 		List<AddToListRequest> addToListRequests = new ArrayList<>();
 		if (mShoppingListAdapter != null) {
 			List<ShoppingList> shoppingLists = mShoppingListAdapter.getList();
-			if (shoppingLists != null || shoppingLists.size() != 0)
-				for (ShoppingList spl : shoppingLists) {
-					if (spl.viewIsSelected) {
-						if (!TextUtils.isEmpty(getSelectedSKU().sku)) {
-							AddToListRequest addToListRequest = new AddToListRequest();
-							addToListRequest.setGiftListId(spl.listId);
-							addToListRequest.setCatalogRefId(getSelectedSKU().sku);
-							addToListRequest.setQuantity("1");
-							addToListRequest.setSkuID(getSelectedSKU().sku);
-							addToListRequests.add(addToListRequest);
+			if (shoppingLists != null || shoppingLists.size() != 0) {
+				if (getSelectedSKU() != null) {
+					if (getSelectedSKU().sku != null) {
+						for (ShoppingList spl : shoppingLists) {
+							if (spl.viewIsSelected) {
+								if (!TextUtils.isEmpty(getSelectedSKU().sku)) {
+									AddToListRequest addToListRequest = new AddToListRequest();
+									addToListRequest.setGiftListId(spl.listId);
+									addToListRequest.setCatalogRefId(getSelectedSKU().sku);
+									addToListRequest.setQuantity("1");
+									addToListRequest.setListId(spl.listId);
+									addToListRequest.setSkuID(getSelectedSKU().sku);
+									addToListRequests.add(addToListRequest);
+								}
+							}
 						}
 					}
 				}
+			}
+			addToListRequests = getAddToListRequests(addToListRequests);
 			return addToListRequests;
 		}
+		addToListRequests = getAddToListRequests(addToListRequests);
+		return addToListRequests;
+	}
+
+	private List<AddToListRequest> getAddToListRequests(List<AddToListRequest> addToListRequests) {
+		if (addToListRequests.size() == 0)
+			addToListRequests = getAddToListItemFromCart();
 		return addToListRequests;
 	}
 
 	private void postAddToList() {
 		if (addToLists.size() > 0) {
 			List<AddToListRequest> addToListRequestList = new ArrayList<>();
-			AddToListRequest addToListRequest = addToLists.get(apiCount);
-			addToListRequestList.add(addToListRequest);
-			mPostAddToList = addToList(addToListRequestList, addToListRequest.getGiftListId());
+			mMapAddedToList = new HashMap<>();
+			for (AddToListRequest student : addToLists) {
+				String key = student.getListId();
+				if (mMapAddedToList.containsKey(key)) {
+					List<AddToListRequest> list = mMapAddedToList.get(key);
+					list.add(student);
+				} else {
+					List<AddToListRequest> list = new ArrayList<>();
+					list.add(student);
+					mMapAddedToList.put(key, list);
+				}
+			}
+			String currentListId = getCurrentListId();
+			addToListRequestList = mMapAddedToList.get(currentListId);
+			mPostAddToList = addToList(addToListRequestList,currentListId);
 			mPostAddToList.execute();
 		}
 	}
 
-	public PostAddToList addToList(final List<AddToListRequest> addToListRequest, String listId) {
-		final int sizeOfList = addToLists.size();
+	private String getCurrentListId() {
+		Object[] keys = mMapAddedToList.keySet().toArray();
+		return getCurrentListId(keys);
+	}
+
+	public PostAddToList addToList(final List<AddToListRequest> addToListRequest, final String listId) {
+		final int sizeOfList = mMapAddedToList.size();
 		onLoad(true);
 		return new PostAddToList(new OnEventListener() {
 			@Override
@@ -301,16 +351,23 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 				if (activity != null) {
 					switch (addToListResponse.httpCode) {
 						case 200:
-							if (apiCount < sizeOfList) {
-								List<AddToListRequest> addToListRequestList = new ArrayList<>();
-								AddToListRequest addToListRequests = addToLists.get(apiCount);
-								addToListRequestList.add(addToListRequests);
-								PostAddToList postAddToList = addToList(addToListRequestList, addToListRequests.getGiftListId());
-								postAddToList.execute();
-							} else {
+							if (sizeOfList == 1) {
 								((CustomPopUpWindow) activity).startExitAnimation();
 								Utils.sendBus(new ProductState(sizeOfList, CLOSE_PDP_FROM_ADD_TO_LIST));
 								onLoad(false);
+								return;
+							} else {
+								apiCount += 1;
+								if (apiCount < sizeOfList) {
+									String currentKey = getCurrentListId();
+									List<AddToListRequest> addToListRequestList = mMapAddedToList.get(currentKey);
+									PostAddToList postAddToList = addToList(addToListRequestList, currentKey);
+									postAddToList.execute();
+								} else {
+									((CustomPopUpWindow) activity).startExitAnimation();
+									Utils.sendBus(new ProductState(sizeOfList, CLOSE_PDP_FROM_ADD_TO_LIST));
+									onLoad(false);
+								}
 							}
 							break;
 						default:
@@ -321,7 +378,6 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 							onLoad(false);
 							break;
 					}
-					apiCount = apiCount + 1;
 					setAddToListHasFail(false);
 				}
 			}
@@ -341,6 +397,10 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 				}
 			}
 		}, addToListRequest, listId);
+	}
+
+	private String getCurrentListId(Object[] keys) {
+		return String.valueOf(keys[apiCount]);
 	}
 
 	private void setAddToListHasFail(boolean value) {
@@ -476,6 +536,7 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 		CreateListFragment createListFragment = new CreateListFragment();
 		List<AddToListRequest> addToList = getAddToListRequests();
 		bundle.putString("OPEN_FROM_POPUP", Utils.objectToJson(addToList));
+		bundle.putString("ADD_TO_LIST_ITEMS", Utils.objectToJson(addToList));
 		createListFragment.setArguments(bundle);
 		if (activity != null) {
 			CustomPopUpWindow customPopUpWindow = (CustomPopUpWindow) activity;
@@ -485,5 +546,55 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 					.setCustomAnimations(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
 					.commitAllowingStateLoss();
 		}
+	}
+
+	private List<AddToListRequest> getAddToListItemFromCart() {
+		List<AddToListRequest> addToListRequests = new ArrayList<>();
+		if (mShoppingListAdapter != null) {
+			List<ShoppingList> shoppingLists = mShoppingListAdapter.getList();
+			if (shoppingLists != null || shoppingLists.size() != 0) {
+				for (ShoppingList spl : shoppingLists) {
+					if (spl.viewIsSelected) {
+						for (CommerceItem commerceItemInfo : getItemsFromCart()) {
+							AddToListRequest addToList = new AddToListRequest();
+							CommerceItemInfo commItemInfo = commerceItemInfo.commerceItemInfo;
+							addToList.setSkuID(commItemInfo.catalogRefId);
+							addToList.setCatalogRefId(commItemInfo.catalogRefId);
+							addToList.setQuantity("1");
+							addToList.setGiftListId(spl.listId);
+							addToList.setListId(spl.listId);
+							addToListRequests.add(addToList);
+						}
+					}
+				}
+			}
+		}
+		if (addToListRequests.size() == 0) {
+			if (getItemsFromCart() != null) {
+				for (CommerceItem commerceItemInfo : getItemsFromCart()) {
+					AddToListRequest addToList = new AddToListRequest();
+					CommerceItemInfo commItemInfo = commerceItemInfo.commerceItemInfo;
+					addToList.setSkuID(commItemInfo.catalogRefId);
+					addToList.setCatalogRefId(commItemInfo.catalogRefId);
+					addToList.setQuantity("1");
+					addToList.setGiftListId("0");
+					addToList.setListId("0");
+					addToListRequests.add(addToList);
+				}
+			} else {
+				if (getSelectedSKU() != null) {
+					AddToListRequest addToList = new AddToListRequest();
+					addToList.setSkuID(getSelectedSKU().sku);
+					addToList.setCatalogRefId(getSelectedSKU().sku);
+					addToList.setQuantity("1");
+					addToList.setGiftListId(getSelectedSKU().sku);
+					addToList.setListId(getSelectedSKU().sku);
+					addToListRequests.add(addToList);
+				}
+				return addToListRequests;
+			}
+			return addToListRequests;
+		}
+		return addToListRequests;
 	}
 }

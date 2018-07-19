@@ -1,4 +1,10 @@
 package za.co.woolworths.financial.services.android.models.service.event;
+
+import java.util.List;
+import java.util.Map;
+
+import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
+
 public class ProductState {
 
 	public static final String POST_ADD_ITEM_TO_CART = "POST_ADD_ITEM_TO_CART";
@@ -42,4 +48,5 @@ public class ProductState {
 	public int getCount() {
 		return count;
 	}
+
 }

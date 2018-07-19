@@ -12,11 +12,14 @@ public class CartSummary {
 	public Float total;
 	@SerializedName("suburbId")
 	@Expose
-	public Integer suburbId;
+	public String suburbId;
 	@SerializedName("suburbName")
 	@Expose
 	public String suburbName;
 	@SerializedName("provinceName")
 	@Expose
 	public String provinceName;
+	@SerializedName("suburb")
+	@Expose
+	public SuburbFulfillment suburb;
 }

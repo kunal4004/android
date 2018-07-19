@@ -13,6 +13,7 @@ public class OrderSummary {
 	public boolean shippingAdjusted;
 	public double savedAmount;
 	public double totalStaffDiscount;
+	public Suburb suburb;
 
 	public int getTotalItemsCount() {
 		return totalItemsCount;

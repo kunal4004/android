@@ -1,13 +1,10 @@
 package za.co.woolworths.financial.services.android.ui.base;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
@@ -22,10 +19,14 @@ import android.view.inputmethod.InputMethodManager;
 import com.awfs.coordination.R;
 
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
 import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
@@ -48,6 +49,7 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setRetainInstance(true);
 		mViewModel = getViewModel();
 		setHasOptionsMenu(false);
 	}
@@ -98,10 +100,8 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 	}
 
 	public boolean isNetworkConnected() {
-		if (mActivity != null)
-			return new ConnectionDetector().isOnline(mActivity);
-		else
-			return false;
+		Activity activity = getActivity();
+		return (activity == null) ? false : new ConnectionDetector().isOnline(activity);
 	}
 
 	public void hideToolbar() {
@@ -151,19 +151,23 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 	}
 
 	public void showBackNavigationIcon(boolean visibility) {
-		bottomNavigator.showBackNavigationIcon(visibility);
+		if (bottomNavigator != null)
+			bottomNavigator.showBackNavigationIcon(visibility);
 	}
 
 	public void setTitle(String title) {
-		bottomNavigator.setTitle(title);
+		if (bottomNavigator != null)
+			bottomNavigator.setTitle(title);
 	}
 
 	public void setTitle(String title, int color) {
-		bottomNavigator.setTitle(title, color);
+		if (bottomNavigator != null)
+			bottomNavigator.setTitle(title, color);
 	}
 
 	public void setToolbarBackgroundDrawable(int drawable) {
-		mActivity.setToolbarBackgroundDrawable(drawable);
+		if (mActivity != null)
+			mActivity.setToolbarBackgroundDrawable(drawable);
 	}
 
 	public void setToolbarBackgroundColor(int color) {
@@ -185,7 +189,8 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 	}
 
 	public void slideBottomPanel() {
-		bottomNavigator.slideUpBottomView();
+		if (bottomNavigator != null)
+			bottomNavigator.slideUpBottomView();
 	}
 
 	public boolean isEmpty(String value) {
@@ -198,6 +203,10 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 
 	public void pushFragmentSlideUp(Fragment fragment) {
 		getBottomNavigator().pushFragmentSlideUp(fragment);
+	}
+
+	public void pushFragmentNoAnim(Fragment fragment) {
+		getBottomNavigator().pushFragmentNoAnim(fragment);
 	}
 
 	public void setText(WTextView tv, String text) {
@@ -308,7 +317,8 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 		setToolbarBackgroundDrawable(R.drawable.appbar_background);
 		setTitle(title);
 		statusBarColor();
-		mActivity.showToolbar();
+		if (mActivity != null)
+			mActivity.showToolbar();
 	}
 
 	public void showSoftKeyboard(WLoanEditTextView editTextView) {
@@ -346,5 +356,35 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 
 	public void checkLocationPermission(BottomNavigator bottomNavigator, ArrayList<String> permissionType, int request_code) {
 		bottomNavigator.getRuntimePermission().check_permission(permissionType, "Explain here why the app needs permissions", request_code);
+	}
+
+	public void checkLocationPermission(CartActivity cartActivity, ArrayList<String> permissionType, int request_code) {
+		cartActivity.getRuntimePermission().check_permission(permissionType, "Explain here why the app needs permissions", request_code);
+	}
+
+	public void slideDownOnToolbarNavigationOnClickListener() {
+		Activity activity = getActivity();
+		if (activity != null) {
+			BottomNavigationActivity bottomNavigationActivity = ((BottomNavigationActivity) activity);
+			bottomNavigationActivity.getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					popFragmentSlideDown();
+				}
+			});
+		}
+	}
+
+	public void slideStartOnToolbarNavigationClickListener() {
+		Activity activity = getActivity();
+		if (activity != null) {
+			BottomNavigationActivity bottomNavigationActivity = ((BottomNavigationActivity) activity);
+			bottomNavigationActivity.getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					popFragment();
+				}
+			});
+		}
 	}
 }

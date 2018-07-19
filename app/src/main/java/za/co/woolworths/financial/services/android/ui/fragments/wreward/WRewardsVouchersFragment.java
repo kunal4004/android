@@ -24,8 +24,8 @@ import io.reactivex.schedulers.Schedulers;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.ui.activities.WRewardsVoucherDetailsActivity;
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.WRewardsVoucherListAdapter;
+import za.co.woolworths.financial.services.android.ui.views.ScrollingLinearLayoutManager;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -37,7 +37,7 @@ import za.co.woolworths.financial.services.android.util.Utils;
  */
 
 public class WRewardsVouchersFragment extends Fragment {
-	private RecyclerView.LayoutManager mLayoutManager;
+	private ScrollingLinearLayoutManager mLayoutManager;
 	private WRewardsVoucherListAdapter mAdapter;
 	private RecyclerView recyclerView;
 	public VoucherResponse voucherResponse;
@@ -47,6 +47,7 @@ public class WRewardsVouchersFragment extends Fragment {
 	private CompositeDisposable mDisposables = new CompositeDisposable();
 	private Activity mActivity;
 	private boolean isAuthenticated;
+
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -61,12 +62,14 @@ public class WRewardsVouchersFragment extends Fragment {
 				(WTextView) view.findViewById(R.id.txtEmptyStateTitle),
 				(WTextView) view.findViewById(R.id.txtEmptyStateDesc));
 
-		mLayoutManager = new LinearLayoutManager(
+		mLayoutManager = new ScrollingLinearLayoutManager(
 				getActivity(),
 				LinearLayoutManager.VERTICAL,
-				false
+				false, 1500
 		);
+
 		recyclerView.setLayoutManager(mLayoutManager);
+
 		if (voucherResponse.voucherCollection.vouchers == null || voucherResponse.voucherCollection.vouchers.size() == 0) {
 			displayNoVouchersView();
 		} else {
@@ -83,7 +86,7 @@ public class WRewardsVouchersFragment extends Fragment {
 					public void accept(Object object) throws Exception {
 						if (object != null) {
 							if (object instanceof WRewardsVouchersFragment) {
-								if(!isAuthenticated) {
+								if (!isAuthenticated) {
 									AuthenticateUtils.getInstance(getActivity()).enableBiometricForCurrentSession(false);
 									startVoucherDetailsActivity();
 									isAuthenticated = true;
@@ -103,6 +106,7 @@ public class WRewardsVouchersFragment extends Fragment {
 		recyclerView.setVisibility(View.GONE);
 	}
 
+
 	public void displayVouchers(final VoucherResponse vResponse) {
 		mErrorHandlerView.hideEmpyState();
 		recyclerView.setVisibility(View.VISIBLE);
@@ -112,13 +116,13 @@ public class WRewardsVouchersFragment extends Fragment {
 			@Override
 			public void onClick(View view, int position) {
 				selectedVoucherPosition = position;
-				if(AuthenticateUtils.getInstance(getActivity()).isBiometricAuthenticationRequired()){
+				if (AuthenticateUtils.getInstance(getActivity()).isBiometricAuthenticationRequired()) {
 					try {
 						AuthenticateUtils.getInstance(getActivity()).startAuthenticateApp(LOCK_REQUEST_CODE_WREWARDS);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-				}else {
+				} else {
 					startVoucherDetailsActivity();
 				}
 
@@ -130,7 +134,7 @@ public class WRewardsVouchersFragment extends Fragment {
 		}));
 	}
 
-	public void startVoucherDetailsActivity(){
+	public void startVoucherDetailsActivity() {
 		Intent intent = new Intent(mActivity, WRewardsVoucherDetailsActivity.class);
 		intent.putExtra("VOUCHERS", Utils.objectToJson(voucherResponse.voucherCollection));
 		intent.putExtra("POSITION", selectedVoucherPosition);
@@ -140,8 +144,12 @@ public class WRewardsVouchersFragment extends Fragment {
 	@Override
 	public void onAttach(Context context) {
 		super.onAttach(context);
-		if (context instanceof Activity){
-			mActivity=(Activity) context;
+		if (context instanceof Activity) {
+			mActivity = (Activity) context;
 		}
+	}
+
+	public void scrollToTop() {
+		recyclerView.smoothScrollToPosition(0);
 	}
 }

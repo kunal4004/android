@@ -139,6 +139,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 										getProductAdapter().setSelectedSku(getSelectedProduct(), getGlobalState().getSelectedSKUId());
 									}
 									toggleAddToListBtn(true);
+									minOneItemSelected(mProductList);
 									break;
 
 								case SHOW_ADDED_TO_SHOPPING_LIST_TOAST:
@@ -381,8 +382,16 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 
 			case R.id.btnCheckOut:
 				cancelRequest(mGetProductDetail);
+				if (mProductAdapter == null) return;
+				for (ProductList productList : mProductAdapter.getProductList()) {
+					if (productList.viewIsLoading) {
+						productList.viewIsLoading = false;
+						productList.itemWasChecked = false;
+					}
+					mProductAdapter.notifyDataSetChanged();
+				}
 				List<AddToListRequest> addToListRequests = new ArrayList<>();
-				for (ProductList list : mProductList) {
+				for (ProductList list : mProductAdapter.getProductList()) {
 					if (list.itemWasChecked) {
 						AddToListRequest addToList = new AddToListRequest();
 						addToList.setSkuID(list.sku);
@@ -427,6 +436,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 
 	@Override
 	public void minOneItemSelected(List<ProductList> prodList) {
+		this.mProductList = prodList;
 		boolean productWasChecked = false;
 		for (ProductList productList : prodList) {
 			if (productList.itemWasChecked) {
@@ -471,13 +481,14 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 		WButton btnCheck0ut = getViewDataBinding().incConfirmButtonLayout.btnCheckOut;
 		progressBar.setVisibility(View.GONE);
 		btnCheck0ut.setVisibility(View.VISIBLE);
-		sendBus(new ShopState(listItems, mAddToListSize));
+		sendBus(new ShopState(new ArrayList<ShoppingListItem>(), mAddToListSize));
 		popFragmentSlideDown();
 	}
 
 	@Override
-	public void onCheckedItem(ProductList selectedProduct, boolean viewIsLoading) {
+	public void onCheckedItem(List<ProductList> productLists, ProductList selectedProduct, boolean viewIsLoading) {
 		setSelectedProduct(selectedProduct);
+		mProductList = productLists;
 		if (viewIsLoading) {
 			ProductRequest productRequest = new ProductRequest(selectedProduct.productId, selectedProduct.sku);
 			productDetailRequest(productRequest);
@@ -560,7 +571,10 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 		if (sizeListSize > 0) {
 			if (sizeListSize == 1) {
 				// one size only
-				noSizeColorIntent(sizeList.get(0).sku);
+				OtherSkus otherSkus = sizeList.get(0);
+				getProductAdapter().setSelectedSku(getSelectedProduct(), otherSkus);
+				noSizeColorIntent(otherSkus.sku);
+				minOneItemSelected(mProductList);
 			} else {
 				// size > 1
 				twoOrMoreSizeIntent(color, otherSkuList, sizeList, objProduct);
@@ -635,7 +649,8 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 	}
 
 	@Override
-	public void onFoodTypeChecked(ProductList selectedProduct) {
+	public void onFoodTypeChecked(List<ProductList> productLists, ProductList selectedProduct) {
+		this.mProductList = productLists;
 		toggleAddToListBtn(true);
 	}
 
@@ -724,7 +739,6 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 		setTitle();
 	}
 
-
 	@Override
 	public void onConnectionChanged() {
 		retryConnect();
@@ -742,5 +756,11 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 				}
 			});
 		}
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		showSearchResultToolbar();
 	}
 }

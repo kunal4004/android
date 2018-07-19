@@ -36,10 +36,8 @@ import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CLIOfferDecision;
-import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
 import za.co.woolworths.financial.services.android.models.dto.Response;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.statement.EmailStatementResponse;
@@ -57,7 +55,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.statement.Statem
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.dialog.AddToListFragment;
-import za.co.woolworths.financial.services.android.ui.views.dialog.CreateListFragment;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
@@ -68,6 +65,8 @@ import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.StatementUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
+
+import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.MODAL_LAYOUT.BIOMETRICS_SECURITY_INFO;
 
 public class CustomPopUpWindow extends AppCompatActivity implements View.OnClickListener, NetworkChangeListener {
 
@@ -87,8 +86,8 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 	private LoadState loadState;
 	private SendUserStatementRequest mSendUserStatementRequest;
 	protected WTextView mTvStatementSendTo;
-	private WButton mBtnSignOutCancel;
-	private WButton mBtnSignOut;
+	private WButton mNegativeActionButton;
+	private WButton mPositiveActionButton;
 	private WButton mBtnSessionExpiredCancel;
 	private WButton mBtnSignIn;
 	private boolean mCloseView;
@@ -100,7 +99,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 		HIGH_LOAN_AMOUNT, LOW_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION, SIGN_OUT, BARCODE_ERROR,
 		SHOPPING_LIST_INFO, SESSION_EXPIRED, INSTORE_AVAILABILITY, NO_STOCK, LOCATION_OFF, SUPPLY_DETAIL_INFO,
 		CLI_DANGER_ACTION_MESSAGE_VALIDATION, AMOUNT_STOCK, UPLOAD_DOCUMENT_MODAL, PROOF_OF_INCOME,
-		STATEMENT_SENT_TO, CLI_DECLINE, CLI_ERROR, DETERMINE_LOCATION_POPUP, STATEMENT_ERROR, SHOPPING_ADD_TO_LIST, ERROR_TITLE_DESC
+		STATEMENT_SENT_TO, CLI_DECLINE, CLI_ERROR, DETERMINE_LOCATION_POPUP, STATEMENT_ERROR, SHOPPING_ADD_TO_LIST, ERROR_TITLE_DESC, SET_UP_BIOMETRICS_ON_DEVICE, BIOMETRICS_SECURITY_INFO
 	}
 
 	MODAL_LAYOUT current_view;
@@ -176,13 +175,13 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				setContentView(R.layout.sign_out);
 				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
 				mRelPopContainer = findViewById(R.id.relPopContainer);
-				mBtnSignOutCancel = findViewById(R.id.btnSignOutCancel);
-				mBtnSignOut = findViewById(R.id.btnSignOut);
-				mBtnSignOutCancel.setOnClickListener(this);
-				mBtnSignOut.setOnClickListener(this);
+				mNegativeActionButton = findViewById(R.id.btnSignOutCancel);
+				mPositiveActionButton = findViewById(R.id.btnSignOut);
+				mNegativeActionButton.setOnClickListener(this);
+				mPositiveActionButton.setOnClickListener(this);
 				mRelPopContainer.setOnClickListener(this);
 				break;
-
+			case BIOMETRICS_SECURITY_INFO:
 			case INFO:
 				setContentView(R.layout.open_overlay_got_it);
 				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
@@ -194,7 +193,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				mLinEmail.setVisibility(View.GONE);
 				mOverlayTitle.setVisibility(View.GONE);
 				mOverlayDescription.setText(description);
-				mOverlayBtn.setText(getString(R.string.cli_got_it));
+				mOverlayBtn.setText((current_view == BIOMETRICS_SECURITY_INFO) ? getString(R.string.ok) : getString(R.string.cli_got_it));
 				mOverlayBtn.setOnClickListener(this);
 				mRelPopContainer.setOnClickListener(this);
 				break;
@@ -539,14 +538,11 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				});
 
 				WTextView tvLocation = findViewById(R.id.tvLocation);
-				List<DeliveryLocationHistory> deliveryLocationHistories = Utils.getDeliveryLocationHistory(CustomPopUpWindow.this);
-				if (deliveryLocationHistories != null) {
-					DeliveryLocationHistory deliveryLocationHistory = deliveryLocationHistories.get(0);
-					if (deliveryLocationHistory != null) {
-						Suburb suburb = deliveryLocationHistory.suburb;
-						if (suburb != null) {
-							tvLocation.setText(suburb.name + ", " + deliveryLocationHistory.province.name);
-						}
+				ShoppingDeliveryLocation shoppingDeliveryLocation = Utils.getPreferredDeliveryLocation();
+				if (shoppingDeliveryLocation != null) {
+					Suburb suburb = shoppingDeliveryLocation.suburb;
+					if (suburb != null) {
+						tvLocation.setText(suburb.name + ", " + shoppingDeliveryLocation.province.name);
 					}
 				}
 				break;
@@ -558,19 +554,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				FragmentManager fm = getSupportFragmentManager();
 				Bundle bundle = new Bundle();
 				bundle.putString("LIST_PAYLOAD", description);
-				ShoppingListsResponse shoppingListsResponse = new Gson().fromJson((TextUtils.isEmpty(description)) ? "" : description, ShoppingListsResponse.class);
-				if (shoppingListsResponse != null) {
-					List<ShoppingList> lists = shoppingListsResponse.lists;
-					if (lists == null || lists.size() == 0) {
-						CreateListFragment createListFragment = new CreateListFragment();
-						bundle.putString("OPEN_FROM_POPUP", "OPEN_FROM_POPUP");
-						createListFragment.setArguments(bundle);
-						fm.beginTransaction()
-								.add(R.id.flShoppingListContainer, createListFragment)
-								.commitAllowingStateLoss();
-						return;
-					}
-				}
 				AddToListFragment addToListFragment = new AddToListFragment();
 				addToListFragment.setArguments(bundle);
 				fm.beginTransaction()
@@ -578,6 +561,22 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 						.commitAllowingStateLoss();
 
 
+				break;
+			case SET_UP_BIOMETRICS_ON_DEVICE:
+				setContentView(R.layout.sign_out);
+				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = findViewById(R.id.relPopContainer);
+				mNegativeActionButton = findViewById(R.id.btnSignOutCancel);
+				mPositiveActionButton = findViewById(R.id.btnSignOut);
+				WTextView tvTitle = findViewById(R.id.textSignOut);
+				WTextView tvDescription = findViewById(R.id.overlayDescription);
+				mPositiveActionButton.setText(getString(R.string.cli_yes));
+				mNegativeActionButton.setText(getString(R.string.cli_no));
+				tvTitle.setText(getString(R.string.set_up_device_biometrics_title));
+				tvDescription.setText(getString(R.string.set_up_device_biometrics_desc));
+				mNegativeActionButton.setOnClickListener(this);
+				mPositiveActionButton.setOnClickListener(this);
+				mRelPopContainer.setOnClickListener(this);
 				break;
 			default:
 				break;
@@ -622,7 +621,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 	}
 
 	private void cliDeclineAnimation() {
-		if (!viewWasClicked) { // prevent more than one click
+		if (!viewWasClicked) { // prevent more tan one click
 			viewWasClicked = true;
 			TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
 			animation.setFillAfter(true);
@@ -878,7 +877,19 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 		if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
 			getSupportFragmentManager().popBackStack();
 		} else {
-			finishActivity();
+			switch (current_view) {
+				/***
+				 * @method: startExitAnimation() dismisses session expired popup
+				 * with setResult(CART_DEFAULT_ERROR_TAPPED) enabled to prevent activity loop
+				 */
+				case SESSION_EXPIRED:
+					startExitAnimation();
+					break;
+
+				default:
+					finishActivity();
+					break;
+			}
 		}
 	}
 
@@ -901,16 +912,24 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 			case R.id.btnShopOk:
 			case R.id.btnMandatoryOK:
 			case R.id.btnOk:
-				if (v != mRelPopContainer) {
-					whiteEffectClick(mBtnSignOutCancel);
-				}
+				if (current_view == BIOMETRICS_SECURITY_INFO) {
+					exitSetupBiometricsAnimation();
+				} else {
+					if (v != mRelPopContainer) {
+						whiteEffectClick(mNegativeActionButton);
+					}
 
-				startExitAnimation();
+					startExitAnimation();
+				}
 				break;
 
 			case R.id.btnSignOut:
-				whiteEffectClick(mBtnSignOut);
-				exitAnimation();
+				if (current_view == MODAL_LAYOUT.SIGN_OUT) {
+					whiteEffectClick(mPositiveActionButton);
+					exitAnimation();
+				} else if (current_view == MODAL_LAYOUT.SET_UP_BIOMETRICS_ON_DEVICE) {
+					exitSetupBiometricsAnimation();
+				}
 				break;
 
 			case R.id.btnEmailOk:
@@ -1219,5 +1238,32 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		setResult(resultCode, data);
+	}
+
+	private void exitSetupBiometricsAnimation() {
+		if (!viewWasClicked) { // prevent more than one click
+			viewWasClicked = true;
+			TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
+			animation.setFillAfter(true);
+			animation.setDuration(ANIM_DOWN_DURATION);
+			animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
+
+				@Override
+				public void onAnimationStart(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationRepeat(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationEnd(Animation animation) {
+					mWGlobalState.setOnBackPressed(false);
+					setResult(RESULT_OK);
+					dismissLayout();
+				}
+			});
+			mRelRootContainer.startAnimation(animation);
+		}
 	}
 }

@@ -7,7 +7,6 @@
 
     <string name="credit_card">CREDIT CARD</string>
     <string name="personal_loan">PERSONAL LOAN</string>
-    <string name="my_accounts">MY ACCOUNTS</string>
     <string name="credit_limit">Credit Limit:</string>
     <string name="available_funds">Available funds</string>
     <string name="next_payment_date">Next Payment Due:</string>
@@ -39,33 +38,26 @@
     <string name="google_maps">GOOGLE MAPS</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="km">km</string>
-    <string name="linked_cards">linked accounts</string>
-    <string name="contact_us">Contact us</string>
+    <string name="contact_us">Contact Us</string>
     <string name="cart">Cart</string>
     <string name="delivery_location">Delivery Location</string>
     <string name="previously_selected_locations">Previously Selected Locations</string>
     <string name="select_your_province">Select your Province</string>
     <string name="select_your_suburb">Select your Suburb</string>
-    <string name="set_your_delivery_location">Select your delivery location</string>
-    <string name="submit_query">Submit Query</string>
-    <string name="faqs">FAQs</string>
+    <string name="set_your_delivery_location">Set your Delivery Location</string>
     <string name="sign_out">Sign Out</string>
     <string name="brands">Brands</string>
-    <string name="why_we_need_location_services">Location Services</string>
+    <string name="why_we_need_location_services">WHY WE NEED LOCATION SERVICES</string>
     <string name="location_off_message">Location services allow us to provide store information like opening hours, contact details and directions.</string>
     <string name="go_to_settings">ENABLE LOCATION SERVICES</string>
     <string name="off_instantly">OFF INSTANTLY</string>
 
     <string name="nav_item_today">TODAY</string>
-    <string name="nw_today_title">W TODAY</string>
     <string name="nav_item_products">PRODUCTS</string>
-    <string name="nav_item_store">STORES</string>
-    <string name="screen_title_store">STORES NEARBY</string>
     <string name="nav_item_wrewards">WREWARDS</string>
     <string name="nav_item_accounts">MY ACCOUNTS</string>
     <string name="increase_limit">Increase Limit</string>
     <string name="apply_now">APPLY NOW</string>
-    <string name="woolworths_financial_services">Woolworths financial services</string>
     <string name="the_benefits">The benefits:</string>
     <string name="shop_anywhere">Shop anywhere</string>
     <string name="shop_any_where_description">Your Woolworths Credit Card is internationally recognised and accepted at 29 million outlets around the world wherever you see the Visa sign.</string>
@@ -148,7 +140,6 @@
     <string name="cli_credit_limit_increase">CREDIT LIMIT INCREASE</string>
     <string name="cli_before_we_get_started">before we get started</string>
 
-    <string name="cli_credit_limit_amount">Credit Limit Amount</string>
     <string name="cli_select_your_bank">Select your bank</string>
     <string name="cli_other_expenses">Other Expenses</string>
     <string name="expense_monthly_credit_payment">Monthly Credit Payments</string>
@@ -161,8 +152,6 @@
     <string name="cli_yes">YES</string>
     <string name="cli_no">No</string>
     <string name="cli_account_type">ACCOUNT TYPE</string>
-    <string name="cli_option_two">FAX US</string>
-    <string name="cli_option_two_desc">Simply fax your documents to us at 021 407 9343. Your ID number will be your reference.</string>
     <string name="loading">LOADING…</string>
     <string name="cli_cancel_application">UNFORTUNATELY WE CANNOT PROCEED</string>
     <string name="cli_lorem_ipsum">Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum </string>
@@ -315,8 +304,6 @@
     <string name="cc_plus_1">Free Taste magazine vouchers monthly</string>
     <string name="cc_plus_2">2 free coffee vouchers monthly that can be used at any Woolworths Cafe, To Go or Tapas Bar.</string>
     <string name="cc_plus_3">Automatic VIP tier status for the first 12 months and free online delivery for Woolies online purchases (when you pay with your Woolies Black credit card).</string>
-    <string name="checked_item">checked items</string>
-    <string name="shopping_list_header">shopping list</string>
     <string name="added_to_shopping_list">added to shopping list</string>
     <string name="added_to_shopping_list_desc">Your shopping list items can be found in Accounts</string>
     <string name="view_shopping_list">view shopping list</string>
@@ -373,7 +360,7 @@
         <item>We have no data for the current year.</item>
         <item>We have no transaction data to show.</item>
         <item>You have no items in your  shopping list yet.</item>
-        <item>When you receive messages you will see them here.</item>
+        <item>When you receive messages you will\n see them here.</item>
     </string-array>
 
     <string name="on_boarding_title_1">WELCOME</string>
@@ -384,7 +371,7 @@
     <string name="please_ensure_connection">Please ensure that you are connected \nto the internet.</string>
     <string name="sso_title_text_submit_this_form">SUBMIT THIS FORM</string>
 
-    <string name="acc_my_detail">My details</string>
+    <string name="acc_my_detail">My Details</string>
     <string name="acc_profile">Profile</string>
     <string name="acc_update_password">Update password</string>
 
@@ -456,8 +443,8 @@
     <string name="stock_finder_btn_label">find in-store</string>
     <string name="product_loading_color_size">Loading size &amp; colour</string>
     <string name="find_in_store_info">We update these numbers every few hours. Stock moves quickly, so items may have sold since the last count.</string>
-    <string name="confirm_color_desc">Please confirm your colour</string>
-    <string name="confirm_size_desc">Please confirm your size</string>
+    <string name="confirm_color_desc">select your colour</string>
+    <string name="confirm_size_desc">select your size</string>
     <string name="sf_instore_availability_title">In-Store Availability</string>
     <string name="color">color</string>
     <string name="size">size</string>
@@ -584,9 +571,8 @@
     <string name="account_type_info_desc">I agree that Woolworths Financial Services may request my latest 3 months bank statement directly from my bank.</string>
     <string name="cli_declined_popup_title">APPLICATION DECLINED</string>
     <string name="cli_declined_popup_description">Oh no - your limit increase application has been declined at this time. Feel free to apply again.</string>
-    <string name="cli_create_application_error_message">Unfortunately we cannot proceed with your application</string>
     <string name="store_locator">Store Locator</string>
-    <string name="my_lists">My Lists</string>
+    <string name="my_lists">My Shopping Lists</string>
     <string name="messages">Messages</string>
     <string name="order_history">Order History</string>
     <string name="link_your_woolies_card_today">Link Your Woolies Card Today</string>
@@ -596,39 +582,31 @@
 
     <string name="title_activity_bottom_navigation">BottomNavigationActivity</string>
     <string name="bottom_title_today">Today</string>
-    <string name="bottom_title_product">Products</string>
+    <string name="bottom_title_product">Shop</string>
     <string name="bottom_title_cart">Cart</string>
     <string name="bottom_title_reward">WRewards</string>
     <string name="bottom_title_account">Accounts</string>
     <string name="title_activity_main">ShoppingListActivity</string>
-    <string name="action_settings">Settings</string>
-    <string name="title_activity_cart">Cart</string>
     <string name="lets_make_it_easy_for_you">Let us make it easy for you - we can request your latest 3 months bank statements directly from your bank, at no cost to you.</string>
     <string name="statement_send_email_false_desc">Oops, There seems to be a problem. Please try again later. </string>
     <string name="edit_quantity">edit your quantity</string>
     <string name="delivery_location_title">delivery location</string>
-    <string name="update_my_location">Set new location</string>
-    <string name="set_location_desc">Please set your location.</string>
     <string name="your_delivery_location_is_set_to">Your delivery location is set to:</string>
     <string name="confirm_your_location">Confirm location</string>
     <string name="edit_delivery_location"><u>edit delivery location</u></string>
     <string name="added_to">added to </string>
-    <string name="empty_cart">EMPTY CART</string>
-    <string name="empty_cart_desc">You currently have no items\nin your cart.</string>
+    <string name="empty_cart_desc">We see that you currently have no items in\n your cart. Would you like to start shopping?</string>
     <string name="start_shopping">start shopping</string>
     <string name="delete">delete</string>
-    <string name="title_my_list">My Lists</string>
+    <string name="title_my_list">My Shopping Lists</string>
 
     <!-- new list item-->
-    <string name="list_name">List Name</string>
     <string name="create_list">create list</string>
     <string name="new_list">new list</string>
-    <string name="general_fashion">General Fashion</string>
     <string name="shopping_search_hint">Search products to add to your list</string>
     <string name="delivery_confirmation_desc">* Delivery cost to be confirmed before payment</string>
     <string name="total_item">Total*</string>
     <string name="rlOtherDiscounts"><![CDATA[WRewards Savings & Other Discounts]]></string>
-    <string name="delete_list">DELETE LIST</string>
     <string name="out_of_stock">out of stock</string>
     <string name="out_of_stock_desc">Unfortunately this item is currently out of stock online, please try to find in-store or consider an alternative item.</string>
     <string name="out_of_stock_err">some of the products chosen are out of stock, please come back later!!</string>
@@ -645,8 +623,20 @@
     <string name="single_item_text">item</string>
     <string name="multiple_item_text">items</string>
     <string name="shopping_list">shopping list</string>
+    <string name="select">select</string>
+    <string name="product_unavailable">product unavailable</string>
     <string name="acc_my_preferences">My Preferences</string>
-    <string name="authenticate_with_touch_id">Sign In using Biometrics</string>
+    <string name="authenticate_with_touch_id">Authenticate using Biometrics</string>
     <string name="biometrics_authentication">BIOMETRICS/PIN</string>
-    <string name="biometrics_description">This allows you to easily sign in to the App by using the biometric reader on your device.</string>
+    <string name="biometrics_description">This allows you to easily access secure features in the app by using the biometric reader on your device.</string>
+    <string name="delivery_location_description">To improve your shopping experience, you can reserve your delivery timeslot up front. It will be reserved while you complete your shop.</string>
+    <string name="product_unavailable_desc">Sorry, this product is unavailable in your delivery location</string>
+    <string name="delivering_to">Delivering to</string>
+    <string name="delivering_location_popup_message">Your delivery location must match your delivery address. Changing your delivery location can affect the product availability of items in your cart.</string>
+    <string name="confirm_size_range_desc">size range</string>
+    <string name="set_up_device_biometrics_title">BIOMETRICS&#47;PIN</string>
+    <string name="set_up_device_biometrics_desc">You need to set up Biometrics on your device in order to activate this feature.</string>
+    <string name="enter_password">ENTER PASSWORD</string>
+    <string name="biometrics_security_info">Please remember that the security of your phone is your responsibility. See our terms and conditions for more.</string>
+    <string name="available_sizes">available sizes</string>
 </resources>

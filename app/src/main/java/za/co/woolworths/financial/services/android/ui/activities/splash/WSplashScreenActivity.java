@@ -37,7 +37,6 @@ import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
-import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class WSplashScreenActivity extends AppCompatActivity implements MediaPlayer.OnCompletionListener {
@@ -59,7 +58,7 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.activity_wsplash_screen);
-		Toolbar toolbar = (Toolbar) findViewById(R.id.mToolbar);
+		Toolbar toolbar = findViewById(R.id.mToolbar);
 		setSupportActionBar(toolbar);
 		ActionBar actionBar = getSupportActionBar();
 		if (actionBar != null) {
@@ -148,7 +147,7 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 						.build()
 						.create(ApiInterface.class);
 
-				return mApiInterface.getConfig(getString(R.string.app_token), getDeviceID(), getSessionToken(), mcsAppVersion);
+				return mApiInterface.getConfig(getString(R.string.app_token), getDeviceID(), mcsAppVersion);
 			}
 
 			@Override
@@ -162,7 +161,7 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 				try {
 					WSplashScreenActivity.this.mVideoPlayerShouldPlay = false;
 
-					if (configResponse.enviroment.stsURI == null || configResponse.enviroment.stsURI.isEmpty()) {
+					if(configResponse.enviroment.stsURI == null || configResponse.enviroment.stsURI.isEmpty()) {
 						showNonVideoViewWithErrorLayout();
 						return;
 					}
@@ -317,13 +316,5 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 	protected void onResume() {
 		super.onResume();
 		NotificationUtils.clearNotifications(WSplashScreenActivity.this);
-	}
-
-	private String getSessionToken() {
-		String sessionToken = SessionUtilities.getInstance().getSessionToken();
-		if (sessionToken.isEmpty())
-			return "";
-		else
-			return sessionToken;
 	}
 }

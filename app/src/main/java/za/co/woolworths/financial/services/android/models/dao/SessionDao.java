@@ -27,7 +27,6 @@ public class SessionDao extends BaseDao {
 		USER_TOKEN("USER_TOKEN"),
 		STORE_FINDER_ONE_TIME_POPUP("STORE_FINDER_ONE_TIME_POPUP"),
 		CART_FIRST_ORDER_FREE_DELIVERY("CART_FIRST_ORDER_FREE_DELIVERY"),
-		PRODUCTS_ONE_TIME_POPUP("PRODUCTS_ONE_TIME_POPUP"),
 		ON_BOARDING_SCREEN("ON_BOARDING_SCREEN"),
 		SPLASH_VIDEO("SPLASH_VIDEO"),
 		APP_VERSION("APP_VERSION"),
@@ -41,7 +40,8 @@ public class SessionDao extends BaseDao {
 		SESSION_STATE("SESSION_STATE"),
 		STS_PARAMS("STS_PARAMS"),
 		BIOMETRIC_AUTHENTICATION_STATE("BIOMETRIC_AUTHENTICATION_STATE"),
-		BIOMETRIC_AUTHENTICATION_SESSION("BIOMETRIC_AUTHENTICATION_SESSION");
+		BIOMETRIC_AUTHENTICATION_SESSION("BIOMETRIC_AUTHENTICATION_SESSION"),
+		APP_INSTANCE_OBJECT("APP_INSTANCE_OBJECT");
 
 		private final String text;
 
@@ -58,7 +58,7 @@ public class SessionDao extends BaseDao {
 		}
 	}
 
-	public enum SESSION_STATE{
+	public enum SESSION_STATE {
 		ACTIVE(1),
 		INACTIVE(0);
 		/**
@@ -72,7 +72,7 @@ public class SessionDao extends BaseDao {
 	}
 
 
-	public SessionDao(String id, KEY key, String value, String dateCreated, String dateUpdated){
+	public SessionDao(String id, KEY key, String value, String dateCreated, String dateUpdated) {
 		super();
 
 		this.id = id;
@@ -119,7 +119,7 @@ public class SessionDao extends BaseDao {
 			}
 
 			sessionDao = new SessionDao(id, key, value, dateCreated, dateUpdated);
-		}catch (Exception e){
+		} catch (Exception e) {
 
 			Log.d("", "Unable to retrieve entry for " + key.toString());
 
