@@ -11,10 +11,12 @@ import android.widget.ProgressBar;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -59,6 +61,9 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		fragmentManager.beginTransaction()
 				.replace(R.id.content_frame, cartFragment).commit();
+
+		//One time biometricsWalkthrough
+		ScreenManager.presentBiometricWalkthrough(CartActivity.this);
 	}
 
 	@Override

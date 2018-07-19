@@ -17,6 +17,7 @@ public class AppInstanceObject {
 
 	public static final int MAX_DELIVERY_LOCATION_HISTORY = 5;
 	public static final int MAX_USERS = 3;
+	public boolean biometric;
 
 	public AppInstanceObject() {
 		users = new ArrayList<>();
@@ -101,4 +102,11 @@ public class AppInstanceObject {
 		return SessionUtilities.getInstance().getJwt().email.get(0);
 	}
 
+	public boolean isBiometricWalkthroughPresented() {
+		return biometric;
+	}
+
+	public void setBiometricWalkthroughPresented(boolean biometric) {
+		this.biometric = biometric;
+	}
 }
