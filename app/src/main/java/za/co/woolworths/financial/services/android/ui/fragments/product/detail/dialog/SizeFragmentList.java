@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -211,13 +210,7 @@ public class SizeFragmentList extends Fragment implements StockFinderSizeColorAd
 	private void setSizeAdapter(ArrayList<OtherSkus> otherSkuList) {
 		Activity activity = getActivity();
 		if (activity != null) {
-			mSizeRecycleView.setLayoutManager(new CenterLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-			RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(activity) {
-				@Override
-				protected int getVerticalSnapPreference() {
-					return LinearSmoothScroller.SNAP_TO_START;
-				}
-			};
+			mSizeRecycleView.setLayoutManager(new CenterLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false, 1500));
 			mStockFinderSizeColorAdapter = new CustomSizePickerAdapter(otherSkuList, mContext, mShouldShowPrice);
 			mSizeRecycleView.setAdapter(mStockFinderSizeColorAdapter);
 			mSizeRecycleView.scrollToPosition(0);
