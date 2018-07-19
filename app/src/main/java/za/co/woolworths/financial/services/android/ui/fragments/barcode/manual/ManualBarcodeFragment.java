@@ -172,7 +172,6 @@ public class ManualBarcodeFragment extends BaseFragment<ManualBarcodeLayoutBindi
 				if (mProductList.size() > 0 && mProductList.get(0).productId != null) {
 					GsonBuilder builder = new GsonBuilder();
 					Gson gson = builder.create();
-					//ProductDetailFragment productDetailFragment = new ProductDetailFragment();
 					String strProductList = gson.toJson(mProductList.get(0));
 					Bundle bundle = new Bundle();
 					bundle.putString("strProductList", strProductList);
