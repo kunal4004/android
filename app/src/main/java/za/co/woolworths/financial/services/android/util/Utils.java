@@ -426,7 +426,7 @@ public class Utils {
 		((AppCompatActivity) context).overridePendingTransition(0, 0);
 	}
 
-	public static void displayDialog(Context context, CustomPopUpWindow.MODAL_LAYOUT key, String description) {
+	public static void displayDialog(Context context, CustomPopUpWindow.MODAL_LAYOUT key, String description, int requestCode) {
 		Intent openMsg = new Intent(context, CustomPopUpWindow.class);
 		Bundle args = new Bundle();
 		args.putSerializable("key", key);
@@ -434,7 +434,7 @@ public class Utils {
 		openMsg.putExtras(args);
 		if (((Activity) context) != null) {
 			Activity activity = ((Activity) context);
-			activity.startActivityForResult(openMsg, 1001);
+			activity.startActivityForResult(openMsg, requestCode);
 			((AppCompatActivity) activity).overridePendingTransition(0, 0);
 		}
 	}

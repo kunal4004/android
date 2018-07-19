@@ -30,6 +30,7 @@ import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.barcode.manual.ManualBarcodeFragment;
@@ -37,6 +38,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.detail.P
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
+import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.barcode.AutoFocusMode;
 import za.co.woolworths.financial.services.android.util.barcode.CodeScanner;
@@ -239,11 +241,7 @@ public class BarcodeFragment extends BaseFragment<BarcodeMainLayoutBinding, Barc
 					bundle.putString("strProductCategory", mProductList.get(0).productName);
 					bundle.putString("productResponse", detailProduct);
 					bundle.putBoolean("fetchFromJson", true);
-					Intent intent = new Intent(getActivity(), ProductDetailsActivity.class);
-					intent.putExtras(bundle);
-					getActivity().startActivity(intent);
-					getActivity().overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
-
+					ScreenManager.presentProductDetails(getActivity(),bundle);
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();

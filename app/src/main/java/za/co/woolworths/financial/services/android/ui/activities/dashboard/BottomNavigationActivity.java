@@ -126,6 +126,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	private boolean singleOrMultipleItemSelector;
 	public static final int LOCK_REQUEST_CODE_ACCOUNTS = 444;
 	private int mListItemCount = 0;
+	public static final int PDP_REQUEST_CODE = 18;
 
 	@Override
 	public int getLayoutId() {
@@ -422,20 +423,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void openProductDetailFragment(String productName, ProductList productList) {
-		//ProductDetailFragment productDetailFragment = new ProductDetailFragment();
-		//ProductDetailsFragmentNew productDetailFragment = new ProductDetailsFragmentNew();
 		Gson gson = new Gson();
 		String strProductList = gson.toJson(productList);
 		Bundle bundle = new Bundle();
 		bundle.putString("strProductList", strProductList);
 		bundle.putString("strProductCategory", productName);
-		/*productDetailFragment.setArguments(bundle);
-		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-		transaction.replace(R.id.fragment_bottom_container, productDetailFragment).commitAllowingStateLoss();*/
-		Intent intent = new Intent(BottomNavigationActivity.this, ProductDetailsActivity.class);
-		intent.putExtras(bundle);
-		startActivity(intent);
-		overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
+		ScreenManager.presentProductDetails(BottomNavigationActivity.this,bundle);
 	}
 
 	@Override
@@ -866,6 +859,19 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					return;
 				}
 			}
+		}
+
+		if(requestCode == PDP_REQUEST_CODE && resultCode == RESULT_OK){
+			boolean isItemAddToCart = data.getBooleanExtra("addedToCart",false);
+			boolean isItemAddToShoppingList = data.getBooleanExtra("addedToShoppingList",false);
+			if(isItemAddToCart){
+				setToast();
+			}else if(isItemAddToShoppingList){
+				// call back when Toast clicked after adding item to shopping list
+				List<ShoppingList> shoppingList = getGlobalState().getShoppingListRequest();
+				getViewModel().openShoppingListOnToastClick(shoppingList,this);
+			}
+			return;
 		}
 
 		// navigate to product section

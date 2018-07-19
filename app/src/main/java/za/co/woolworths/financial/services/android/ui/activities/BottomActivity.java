@@ -20,12 +20,14 @@ import java.util.ArrayList;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
 import za.co.woolworths.financial.services.android.util.PermissionUtils;
+import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SHOW_ADDED_TO_SHOPPING_LIST_TOAST;
@@ -146,11 +148,7 @@ public abstract class BottomActivity extends AppCompatActivity implements Permis
 		Bundle bundle = new Bundle();
 		bundle.putString("strProductList", strProductList);
 		bundle.putString("strProductCategory", productName);
-		Intent intent = new Intent(BottomActivity.this, ProductDetailsActivity.class);
-		intent.putExtras(bundle);
-		startActivity(intent);
-		overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
-
+		ScreenManager.presentProductDetails(BottomActivity.this,bundle);
 	}
 
 	public void scrollableViewHelper(NestedScrollView nsv) {

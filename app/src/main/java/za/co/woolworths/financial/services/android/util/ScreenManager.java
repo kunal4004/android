@@ -2,6 +2,8 @@ package za.co.woolworths.financial.services.android.util;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
+import android.os.Bundle;
 import android.util.Log;
 
 import com.awfs.coordination.R;
@@ -12,6 +14,9 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.ui.activities.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
+import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity;
+
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
 
 /**
  * Created by eesajacobs on 2016/11/30.
@@ -135,5 +140,13 @@ public class ScreenManager {
 		intent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.SIGNIN.rawValue());
 		activity.startActivityForResult(intent, requestCode);
 		activity.overridePendingTransition(0, 0);
+	}
+
+	public static void presentProductDetails(Activity activity, Bundle bundle)
+	{
+		Intent intent = new Intent(activity, ProductDetailsActivity.class);
+		intent.putExtras(bundle);
+		activity.startActivityForResult(intent,PDP_REQUEST_CODE);
+		activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
 	}
 }

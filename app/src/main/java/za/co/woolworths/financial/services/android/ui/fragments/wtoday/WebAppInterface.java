@@ -33,6 +33,7 @@ import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.MyRunnable;
 import za.co.woolworths.financial.services.android.util.PauseHandlerFragment;
+import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class WebAppInterface {
@@ -165,10 +166,7 @@ public class WebAppInterface {
 													FragmentTransaction transaction = ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction();
 													transaction.replace(R.id.fragment_bottom_container, productDetailFragment).commit();
 													mBottomNavigator.slideUpBottomView();*/
-													Intent intent = new Intent(mContext, ProductDetailsActivity.class);
-													intent.putExtras(bundle);
-													mContext.startActivity(intent);
-													((AppCompatActivity) mContext).overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
+													ScreenManager.presentProductDetails(((AppCompatActivity) mContext),bundle);
 												}
 											} catch (Exception ex) {
 												ex.printStackTrace();

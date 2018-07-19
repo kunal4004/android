@@ -48,7 +48,10 @@ import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
+import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
+
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
 
 public class ManualBarcodeFragment extends BaseFragment<ManualBarcodeLayoutBinding, BarcodeViewModel> implements BarcodeNavigator, View.OnClickListener, NetworkChangeListener {
 
@@ -176,10 +179,7 @@ public class ManualBarcodeFragment extends BaseFragment<ManualBarcodeLayoutBindi
 					bundle.putString("strProductCategory", mProductList.get(0).productName);
 					bundle.putString("productResponse", detailProduct);
 					bundle.putBoolean("fetchFromJson", true);
-					Intent intent = new Intent(getActivity(), ProductDetailsActivity.class);
-					intent.putExtras(bundle);
-					getActivity().startActivity(intent);
-					getActivity().overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
+					ScreenManager.presentProductDetails(getActivity(),bundle);
 
 				}
 				slideBottomPanel();
