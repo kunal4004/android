@@ -1011,11 +1011,31 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		 * to trigger checkout button only once
 		 */
 		if (getLastValueInMap().equalsIgnoreCase(mStoreId)) {
-			if (!btnCheckOut.isEnabled() && isAllInventoryAPICallSucceed)
-				fadeCheckoutButton(false);
+			updateItemQuantityToMatchStock();
 		}
 		if (cartProductAdapter != null)
 			cartProductAdapter.updateStockAvailability(cartItems);
+	}
+
+	// If CommerceItem quantity in cart is more then inStock Update quantity to match stock
+	private void updateItemQuantityToMatchStock() {
+		boolean isAnyItemNeedsQuantityUpdate = false;
+		for (CartItemGroup cartItemGroup : cartItems) {
+			for (CommerceItem commerceItem : cartItemGroup.commerceItems) {
+				if(commerceItem.commerceItemInfo.getQuantity() > commerceItem.quantityInStock )
+				{
+					isAnyItemNeedsQuantityUpdate = true;
+					mCommerceItem = commerceItem;
+					mChangeQuantity.setCommerceId(commerceItem.commerceItemInfo.getCommerceId());
+					mQuantity = commerceItem.quantityInStock;
+					mCommerceItem.setQuantityUploading(true);
+					postChangeQuantity();
+				}
+			}
+		}
+		if (!btnCheckOut.isEnabled() && isAllInventoryAPICallSucceed && !isAnyItemNeedsQuantityUpdate)
+			fadeCheckoutButton(false);
+
 	}
 
 	/***

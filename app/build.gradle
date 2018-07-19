@@ -82,7 +82,7 @@ android {
         qa {
             applicationId "com.awfs.coordination.qa"
             signingConfig signingConfigs.woneappQa
-            versionCode 174
+            versionCode 175
         }
 
         staging {
@@ -94,7 +94,7 @@ android {
         production {
             applicationId "com.awfs.coordination"
             signingConfig signingConfigs.woolworths
-            versionCode 73
+            versionCode 76
         }
         dexOptions {
             javaMaxHeapSize "2560M"

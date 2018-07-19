@@ -11,6 +11,7 @@ import android.widget.ProgressBar;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -153,6 +154,29 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
 
 		FragmentManager fm = getSupportFragmentManager();
 		Fragment fragment = fm.findFragmentById(R.id.content_frame);
+		Fragment bottomFragment = fm.findFragmentById(R.id.fragment_bottom_container);
+		if (bottomFragment != null) {
+			if (bottomFragment != null && bottomFragment instanceof ProductDetailFragment) {
+				bottomFragment.onActivityResult(requestCode, resultCode, data);
+			}
+		}
+		/***
+		 * Result from success add to cart
+		 */
+
+		if (requestCode == RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL) {
+			if (resultCode == RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL) {
+				ToastUtils mToastUtils = new ToastUtils(this);
+				mToastUtils.setActivity(this);
+				mToastUtils.setGravity(Gravity.BOTTOM);
+				mToastUtils.setCartText(R.string.cart);
+				mToastUtils.setView((SlidingUpPanelLayout) findViewById(R.id.slideUpPanel));
+				mToastUtils.setPixel(Utils.dp2px(this, 105));
+				mToastUtils.setMessage(R.string.added_to);
+				mToastUtils.setViewState(false);
+				mToastUtils.build();
+			}
+		}
 
 		Fragment bottomFragment = fm.findFragmentById(R.id.fragment_bottom_container);
 		bottomFragment.onActivityResult(requestCode, resultCode, data);
