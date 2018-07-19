@@ -178,27 +178,6 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
 			}
 		}
 
-		Fragment bottomFragment = fm.findFragmentById(R.id.fragment_bottom_container);
-		bottomFragment.onActivityResult(requestCode, resultCode, data);
-
-		/***
-		 * Result from success add to cart
-		 */
-
-		if (requestCode == RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL) {
-			if (resultCode == RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL) {
-				ToastUtils mToastUtils = new ToastUtils(this);
-				mToastUtils.setActivity(this);
-				mToastUtils.setGravity(Gravity.BOTTOM);
-				mToastUtils.setCartText(R.string.cart);
-				mToastUtils.setView((SlidingUpPanelLayout) findViewById(R.id.slideUpPanel));
-				mToastUtils.setPixel(Utils.dp2px(this, 105));
-				mToastUtils.setMessage(R.string.added_to);
-				mToastUtils.setViewState(false);
-				mToastUtils.build();
-			}
-		}
-
 		//DISMISS_POP_WINDOW_CLICKED
 		//Cancel button click from session expired pop-up dialog
 		//will close CartActivity
