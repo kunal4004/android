@@ -17,30 +17,26 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.PopupWindow;
+import android.widget.ScrollView;
 
-import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.ProductDetailViewBinding;
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import com.awfs.coordination.BR;
 
 import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -49,25 +45,22 @@ import za.co.woolworths.financial.services.android.models.dto.AddItemToCartRespo
 import za.co.woolworths.financial.services.android.models.dto.AddToCartDaTum;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
-import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
 import za.co.woolworths.financial.services.android.models.dto.FormException;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
-import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
-import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.models.rest.product.GetCartSummary;
 import za.co.woolworths.financial.services.android.models.rest.product.PostAddItemToCart;
 import za.co.woolworths.financial.services.android.models.rest.product.ProductRequest;
-import za.co.woolworths.financial.services.android.models.rest.shop.SetDeliveryLocationSuburb;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
+import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity;
@@ -75,13 +68,12 @@ import za.co.woolworths.financial.services.android.ui.activities.MultipleImageAc
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator;
-import za.co.woolworths.financial.services.android.ui.adapters.ProductColorAdapter;
-import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ProductUtils;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
 import za.co.woolworths.financial.services.android.util.CancelableCallback;
 import za.co.woolworths.financial.services.android.util.DrawImage;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -91,11 +83,11 @@ import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
-import za.co.woolworths.financial.services.android.util.SimpleDividerItemDecoration;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
+import static android.app.Activity.RESULT_OK;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_DIALOG_TAPPED;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CLOSE_PDP_FROM_ADD_TO_LIST;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.DETERMINE_LOCATION_POPUP;
@@ -104,8 +96,12 @@ import static za.co.woolworths.financial.services.android.models.service.event.P
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SET_SUBURB;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SET_SUBURB_API;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.USE_MY_LOCATION;
+import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.RESULT_LOADING_INVENTORY_FAILURE;
+import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.RESULT_TAP_FIND_INSTORE_BTN;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailViewModel.CLOTHING_PRODUCT;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailViewModel.FOOD_PRODUCT;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.SuburbSelectionFragment.SUBURB_SET_RESULT;
+
 
 public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding, ProductDetailViewModel> implements ProductDetailNavigator, ProductViewPagerAdapter.MultipleImageInterface, View.OnClickListener, NetworkChangeListener, ToastUtils.ToastInterface {
 
@@ -113,15 +109,15 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	public static final int INDEX_ADD_TO_CART = 2;
 	public static final int INDEX_ADD_TO_SHOPPING_LIST = 3;
 	public static final int INDEX_SEARCH_FROM_LIST = 4;
+	private int DEFAULT_PICKER = 0;
 
+	public static final int RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL = 4002;
 	private ProductDetailViewModel productDetailViewModel;
 	private List<String> mAuxiliaryImage = new ArrayList<>();
 	private String mSubCategoryTitle;
 	private String TAG = this.getClass().getSimpleName();
 
 	private ImageView[] ivArrayDotsPager;
-	private PopupWindow mPColourWindow;
-	private PopupWindow mPSizeWindow;
 	private LocationItemTask mLocationItemTask;
 
 	private boolean mProductHasColour;
@@ -137,16 +133,15 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	private GetCartSummary mGetCartSummary;
 	private AddItemToCart mApiAddItemToCart;
 	private PostAddItemToCart mPostAddItemToCart;
-	private List<OtherSkus> mSizeSkuList;
-	private List<OtherSkus> mSkuColorList;
-	private SetDeliveryLocationSuburb mSuburbLocation;
+	private ArrayList<OtherSkus> mSizeSkuList;
+	private ArrayList<OtherSkus> mSkuColorList;
 	private boolean activate_location_popup = false;
-	private ShoppingListsResponse mShoppingListsResponse;
 	private ToastUtils mToastUtils;
 	private int mNumberOfListSelected = 0;
-	private boolean shoppingListDidReload = false;
 	private final int ACCESS_FINE_LOCATION_REQUEST_CODE = 1;
-
+	private LinearLayout llStoreFinder;
+	private OtherSkus selectedFindInStoreOtherSkus;
+	public static int DELIVERY_LOCATION_FROM_PDP_REQUEST = 2553;
 
 	@Override
 	public ProductDetailViewModel getViewModel() {
@@ -168,7 +163,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		super.onCreate(savedInstanceState);
 		productDetailViewModel = ViewModelProviders.of(this).get(ProductDetailViewModel.class);
 		getViewModel().setNavigator(this);
-		mConnectionBroadcast = Utils.connectionBroadCast(getBaseActivity(), this);
+		mConnectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
 		final Bundle bundle = this.getArguments();
 		if (bundle != null) {
 			getViewModel().setDefaultProduct(bundle.getString("strProductList"));
@@ -179,11 +174,11 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 		mToastUtils = new ToastUtils(this);
 		observableOn(new Consumer<Object>() {
+
 			@Override
 			public void accept(Object object) throws Exception {
 				Activity activity = getActivity();
 				if (activity != null) {
-					List<DeliveryLocationHistory> deliveryLocationHistories = Utils.getDeliveryLocationHistory(activity);
 					if (object instanceof ProductDetailFragment) {
 						onPermissionGranted();
 					} else if (object instanceof ConfirmColorSizeActivity) {
@@ -193,14 +188,16 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 						switch (productState.getState()) {
 							case POST_ADD_ITEM_TO_CART:
 								String productId = getViewModel().getProductId();
-								String catalogRefId = productId;
 								//Parse skuId to catalogRefId if productType is of type CLOTHING_PRODUCT
-								if (getViewModel().getProductType().equalsIgnoreCase(CLOTHING_PRODUCT)) {
-									catalogRefId = getGlobalState().getSelectedSKUId().sku;
+								mApiAddItemToCart = new AddItemToCart(productId
+										, getGlobalState().getSelectedSKUId().sku
+										, productState.getQuantity());
+								ShoppingDeliveryLocation deliveryLocation = Utils.getPreferredDeliveryLocation();
+								if (deliveryLocation.suburb == null) {
+									deliverySelectionIntent(activity);
+								} else {
+									apiAddItemToCart();
 								}
-								int quantity = productState.getQuantity();
-								mApiAddItemToCart = new AddItemToCart(productId, catalogRefId, quantity);
-								apiAddItemToCart();
 								break;
 
 							case DETERMINE_LOCATION_POPUP:
@@ -209,6 +206,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 								break;
 
 							case SET_SUBURB:
+								onAddToCartLoadComplete();
 								deliverySelectionIntent(activity);
 								break;
 
@@ -217,10 +215,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 								break;
 
 							case SET_SUBURB_API:
-								if (deliveryLocationHistories != null) {
-									DeliveryLocationHistory deliveryLocationHistory = deliveryLocationHistories.get(0);
-									setSuburbAPI(deliveryLocationHistory);
-								}
+								cartSummaryAPI();
 								break;
 
 							case CANCEL_DIALOG_TAPPED:
@@ -232,26 +227,13 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 								break;
 
 							case CLOSE_PDP_FROM_ADD_TO_LIST:
-								BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
-								switch (bottomNavigationActivity.getCurrentSection()) {
-									case R.id.navigation_account:
-										closeSlideUpPanel(getView());
-										getBottomNavigator().closeSlideUpPanelFromList(productState.getCount());
-										break;
+								if (activity instanceof BottomNavigationActivity) {
+									BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
+									showToastMessage(activity, productState, bottomNavigationActivity);
+								}
 
-									default:
-										mToastUtils.setActivity(activity);
-										mToastUtils.setCurrentState(TAG);
-										String shoppingList = getString(R.string.shopping_list);
-										mNumberOfListSelected = productState.getCount();
-										// shopping list vs shopping lists
-										mToastUtils.setCartText((mNumberOfListSelected > 1) ? shoppingList + "s" : shoppingList);
-										mToastUtils.setPixel(getViewDataBinding().llStoreFinder.getHeight() * 2);
-										mToastUtils.setView(getViewDataBinding().llStoreFinder);
-										mToastUtils.setMessage(R.string.added_to);
-										mToastUtils.setViewState(true);
-										mToastUtils.build();
-										break;
+								if (activity instanceof CartActivity) {
+									showCartToastMessage(activity, productState);
 								}
 								break;
 
@@ -264,8 +246,44 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		});
 	}
 
+	private void showToastMessage(Activity activity, ProductState productState, BottomNavigationActivity bottomNavigationActivity) {
+		switch (bottomNavigationActivity.getCurrentSection()) {
+			case R.id.navigation_account:
+				closeSlideUpPanel();
+				getBottomNavigator().closeSlideUpPanelFromList(productState.getCount());
+				break;
+			default:
+				mToastUtils.setActivity(activity);
+				mToastUtils.setCurrentState(TAG);
+				String shoppingList = getString(R.string.shopping_list);
+				mNumberOfListSelected = productState.getCount();
+				// shopping list vs shopping lists
+				mToastUtils.setCartText((mNumberOfListSelected > 1) ? shoppingList + "s" : shoppingList);
+				mToastUtils.setPixel(getViewDataBinding().llStoreFinder.getHeight() * 2);
+				mToastUtils.setView(getViewDataBinding().llStoreFinder);
+				mToastUtils.setMessage(R.string.added_to);
+				mToastUtils.setViewState(true);
+				mToastUtils.build();
+				break;
+		}
+	}
+
+	private void showCartToastMessage(Activity activity, ProductState productState) {
+		mToastUtils.setActivity(activity);
+		mToastUtils.setCurrentState(TAG);
+		String shoppingList = getString(R.string.shopping_list);
+		mNumberOfListSelected = productState.getCount();
+		// shopping list vs shopping lists
+		mToastUtils.setCartText((mNumberOfListSelected > 1) ? shoppingList + "s" : shoppingList);
+		mToastUtils.setPixel(getViewDataBinding().llStoreFinder.getHeight() * 2);
+		mToastUtils.setView(getViewDataBinding().llStoreFinder);
+		mToastUtils.setMessage(R.string.added_to);
+		mToastUtils.setViewState(true);
+		mToastUtils.build();
+	}
+
 	private void openAddToListFragment(Activity activity) {
-		Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.SHOPPING_ADD_TO_LIST, Utils.objectToJson(mShoppingListsResponse));
+		Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.SHOPPING_ADD_TO_LIST, "");
 	}
 
 	@Override
@@ -276,7 +294,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		getGlobalState().setSizeWasPopup(false);
 		getGlobalState().setSizePickerSku(null);
 		renderView();
-		//shoppingListRequest();
 	}
 
 	@Override
@@ -290,19 +307,27 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		getViewDataBinding().llAddToCart.setOnClickListener(this);
 		getViewDataBinding().incProductColor.linSize.setOnClickListener(this);
 		getViewDataBinding().incProductColor.linColour.setOnClickListener(this);
+		getViewDataBinding().llColorSize.relColorSelector.setOnClickListener(this);
+		getViewDataBinding().llColorSize.relSizeSelector.setOnClickListener(this);
 		getViewDataBinding().llStoreFinder.setOnClickListener(this);
-		mErrorHandlerView = new ErrorHandlerView(getBaseActivity());
+
+		mErrorHandlerView = new ErrorHandlerView(getActivity());
 	}
 
 	@Override
-	public void closeSlideUpPanel(View view) {
-		cancelPopUpMenu();
-		getBottomNavigator().closeSlideUpPanel();
+	public void closeSlideUpPanel() {
+		if (getActivity() instanceof CartActivity) {
+			((CartActivity) getActivity()).closeSlideUpPanel();
+		}
+
+		if (getBottomNavigator() != null)
+			getBottomNavigator().closeSlideUpPanel();
 	}
 
 	@Override
 	public void nestedScrollViewHelper() {
-		getBottomNavigator().scrollableViewHelper(getViewDataBinding().scrollProductDetail);
+		if (getBottomNavigator() != null)
+			getBottomNavigator().scrollableViewHelper(getViewDataBinding().scrollProductDetail);
 	}
 
 	@Override
@@ -343,7 +368,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		setProductName();
 
 		//set sub category title
-		setSubCategoryTitle();
+		setSubCategoryTitle(mSubCategoryTitle);
 
 		try {
 			// set price list
@@ -383,16 +408,12 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		getBtnAddShoppingList().performClick();
 	}
 
-	private boolean shoppingListDidReload() {
-		return shoppingListDidReload;
-	}
-
-	public void setShoppingListDidReload(boolean shoppingListDidReload) {
-		this.shoppingListDidReload = shoppingListDidReload;
-	}
-
-	private void setSubCategoryTitle() {
-		setText(getViewDataBinding().tvSubCategoryTitle, mSubCategoryTitle);
+	private void setSubCategoryTitle(String mSubCategoryTitle) {
+		try {
+			setText(getViewDataBinding().tvSubCategoryTitle, mSubCategoryTitle);
+		} catch (NullPointerException ex) {
+			Log.e(TAG, ex.toString());
+		}
 	}
 
 	@Override
@@ -415,6 +436,8 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 		setProductCode(getViewModel().getProductId());
 
+		setSubCategoryTitle(newProductList.categoryName);
+
 		setProductDescription(getViewModel().getProductDescription(getActivity()));
 
 		// use highest sku as default price
@@ -423,10 +446,9 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		setSelectedSize(highestPriceSku);
 
 		setSelectedTextColor(highestPriceSku);
-
 		setPrice(highestPriceSku);
 
-		colorSizeContainerVisibility(otherSkuList.size());
+		colorSizeContainerVisibility(otherSkuList);
 
 		//set promotional Images
 		ProductUtils.showPromotionalImages(getViewDataBinding().imSave, getViewDataBinding().imReward, getViewDataBinding().imVitality, getViewDataBinding().imVitality, product.product.promotionImages);
@@ -451,6 +473,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 	@Override
 	public void onFailureResponse(String s) {
+		onAddToCartLoadComplete();
 		mErrorHandlerView.showToast();
 	}
 
@@ -462,12 +485,19 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 	@Override
 	public void responseFailureHandler(Response response) {
-
+		onLoadComplete();
+		enableAddToListBtn(false);
+		hideView(getViewDataBinding().productCode);
+		hideView(getViewDataBinding().llLoadingColorSize);
+		Activity activity = getActivity();
+		if (activity == null) return;
+		if (response.desc == null) return;
+		Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
 	}
 
 	@Override
 	public void SelectedImage(String image) {
-		Activity activity = getBaseActivity();
+		Activity activity = getActivity();
 		if (activity != null) {
 			Intent openMultipleImage = new Intent(getActivity(), MultipleImageActivity.class);
 			openMultipleImage.putExtra("auxiliaryImages", image);
@@ -478,7 +508,11 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 	@Override
 	public void setProductName() {
-		setText(getViewDataBinding().tvProductName, getViewModel().getDefaultProduct().productName);
+		try {
+			setText(getViewDataBinding().tvProductName, getViewModel().getDefaultProduct().productName);
+		} catch (NullPointerException ex) {
+			Log.i(TAG, ex.toString());
+		}
 	}
 
 	@Override
@@ -491,7 +525,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		getViewDataBinding().llAddToCart.setEnabled(false);
 
 		// hide color and size view
-		hideView(getViewDataBinding().incProductColor.linProductContainer);
+		hideView(getViewDataBinding().incColorSize);
 		hideView(getViewDataBinding().incProductColorBottomLine);
 
 		// hide ingredient
@@ -533,7 +567,8 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		Point size = new Point();
 		deviceHeight.getSize(size);
 		int width = size.x;
-		return imageUrl + "?w=" + width + "&q=" + 85;
+		imageUrl = (imageUrl.contains("jpg")) ? "https://images.woolworthsstatic.co.za/" + imageUrl : imageUrl;
+		return imageUrl + "" + ((imageUrl.contains("jpg")) ? "" : "?w=" + width + "&q=" + 85);
 	}
 
 	@Override
@@ -543,12 +578,11 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		if (activity != null) {
 			switch (view.getId()) {
 				case R.id.imClose:
-					closeSlideUpPanel(view);
+					closeSlideUpPanel();
 					break;
-
 				case R.id.btnAddShoppingList:
 					getGlobalState().saveButtonClicked(INDEX_ADD_TO_SHOPPING_LIST);
-					scrolltoTop();
+					smoothScrollToTop();
 					WProductDetail product = getViewModel().getProduct();
 					// called when shopping list call has time out or user not authenticated
 					if (!SessionUtilities.getInstance().isUserAuthenticated()) {
@@ -563,7 +597,8 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 							break;
 
 						case FOOD_PRODUCT:
-							getGlobalState().setSelectedSKUId(createOtherSkus(product.productId));
+							if (product == null) return;
+							getGlobalState().setSelectedSKUId(createOtherSkus(TextUtils.isEmpty(product.sku) ? product.productId : product.sku));
 							openAddToListFragment(activity);
 							break;
 
@@ -573,74 +608,29 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 					}
 					break;
 
-				case R.id.linColour:
-					try {
-						cancelPopWindow(mPSizeWindow);
-						if (!mSizeSkuList.isEmpty()) {
-							LayoutInflater layoutInflater = (LayoutInflater) getBaseActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-							assert layoutInflater != null;
-							View mIflateSize = layoutInflater.inflate(R.layout.product_size_row, null);
-							ProductColorAdapter mProductColorAdapter = new ProductColorAdapter(mSizeSkuList, this);
-							RecyclerView rlSizeList = mIflateSize.findViewById(R.id.rclSize);
-							LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-							rlSizeList.setNestedScrollingEnabled(false);
-							rlSizeList.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
-							rlSizeList.setLayoutManager(mLayoutManager);
-							rlSizeList.setAdapter(mProductColorAdapter);
-							WTextView tvColor = getViewDataBinding().incProductColor.textSelectColour;
-							int height = maximumPopWindowHeight();
-							if (mSizeSkuList.size() > 2) {
-								height = height / 4;
-							} else {
-								height = WindowManager.LayoutParams.WRAP_CONTENT;
-							}
-							mPColourWindow = new PopupWindow(
-									mIflateSize,
-									tvColor.getWidth(), height, false);
-							mPColourWindow.setTouchable(true);
-							mPColourWindow.showAsDropDown(tvColor, -50, -180);
-						}
-					} catch (Exception ex) {
-						ex.printStackTrace();
+				case R.id.relColorSelector:
+					getGlobalState().saveButtonClicked(DEFAULT_PICKER);
+					if (!mSizeSkuList.isEmpty()) {
+						colorSizePicker(mSizeSkuList, true, false);
 					}
 					break;
 
-				case R.id.linSize:
-					try {
-						cancelPopWindow(mPColourWindow);
-						if (!mSkuColorList.isEmpty()) {
-							LayoutInflater layoutInflater = (LayoutInflater) getBaseActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-							assert layoutInflater != null;
-							View mIflateColor = layoutInflater.inflate(R.layout.product_size_row, null);
-							ProductSizeAdapter mProductSizeAdapter = new ProductSizeAdapter(mSkuColorList, this);
-							RecyclerView rlSizeList = mIflateColor.findViewById(R.id.rclSize);
-							LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-							mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-							rlSizeList.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
-							rlSizeList.setLayoutManager(mLayoutManager);
-							rlSizeList.setAdapter(mProductSizeAdapter);
-							WTextView tvProductSize = getViewDataBinding().incProductColor.textProductSize;
-							int height = maximumPopWindowHeight();
-							if (mSkuColorList.size() > 2) {
-								height = height / 4;
-							} else {
-								height = WindowManager.LayoutParams.WRAP_CONTENT;
-							}
-							mPSizeWindow = new PopupWindow(mIflateColor, tvProductSize.getWidth(), height, false);
-							mPSizeWindow.setTouchable(true);
-							mPSizeWindow.showAsDropDown(tvProductSize, -50, -180);
-						}
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
+				case R.id.relSizeSelector:
+					getGlobalState().saveButtonClicked(DEFAULT_PICKER);
+					colorSizePicker(mSkuColorList, false, true);
 					break;
 
 				case R.id.llStoreFinder:
 					getGlobalState().saveButtonClicked(INDEX_STORE_FINDER);
-					scrolltoTop();
+					smoothScrollToTop();
 					if (Utils.isLocationEnabled(getActivity())) {
-						BottomNavigator bottomNavigator = getBottomNavigator();
-						checkLocationPermission(bottomNavigator, bottomNavigator.getPermissionType(android.Manifest.permission.ACCESS_FINE_LOCATION), ACCESS_FINE_LOCATION_REQUEST_CODE);
+						if (activity instanceof BottomNavigationActivity) {
+							BottomNavigator bottomNavigator = getBottomNavigator();
+							checkLocationPermission(bottomNavigator, bottomNavigator.getPermissionType(android.Manifest.permission.ACCESS_FINE_LOCATION), ACCESS_FINE_LOCATION_REQUEST_CODE);
+						} else {
+							CartActivity cartActivity = (CartActivity) activity;
+							checkLocationPermission(cartActivity, cartActivity.getPermissionType(android.Manifest.permission.ACCESS_FINE_LOCATION), ACCESS_FINE_LOCATION_REQUEST_CODE);
+						}
 					} else {
 						Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.LOCATION_OFF, "");
 					}
@@ -657,8 +647,13 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		}
 	}
 
-	private void scrolltoTop() {
-		getViewDataBinding().scrollProductDetail.scrollTo(0, 0);
+	private void smoothScrollToTop() {
+		/**
+		 * Combination of fling and fullScroll
+		 * create a smooth animation during scrolling to top
+		 */
+		getViewDataBinding().scrollProductDetail.fling(0);  // Sets mLastScrollerY for next command
+		getViewDataBinding().scrollProductDetail.fullScroll(ScrollView.FOCUS_UP);  // Starts a scroll itself
 	}
 
 	@Override
@@ -799,19 +794,9 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 	@Override
 	public void setSelectedTextColor(OtherSkus otherSkus) {
-		if (otherSkus != null) {
-			WTextView tvColour = getViewDataBinding().incProductColor.textColour;
-			selectedColor(otherSkus.externalColourRef);
-			if (!isEmpty(otherSkus.colour)) {
-				setText(tvColour, otherSkus.colour);
-			} else {
-				try {
-					setText(tvColour, getString(R.string.product_colour));
-				} catch (IllegalStateException ex) {
-					Log.e("product_colour", ex.getMessage());
-				}
-			}
-		}
+		if (otherSkus == null) return;
+		if (otherSkus.externalColourRef == null) return;
+		selectedColor(otherSkus.externalColourRef);
 	}
 
 	@Override
@@ -823,7 +808,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	public void enableFindInStoreButton(WProductDetail productList) {
 		if (productList != null) {
 			try {
-				LinearLayout llStoreFinder = getViewDataBinding().llStoreFinder;
+				llStoreFinder = getViewDataBinding().llStoreFinder;
 				LinearLayout llAddToCart = getViewDataBinding().llAddToCart;
 				/***
 				 * isnAvailable:true show find in store button
@@ -836,7 +821,9 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 					setLayoutWeight(llStoreFinder, 0.5f);
 					showView(llStoreFinder);
 				} else {
-					setLayoutWeight(llAddToCart, 1f);
+					llAddToCart.setAlpha(1.0f);
+					llAddToCart.setEnabled(true);
+					setLayoutWeight(llAddToCart, 1.0f);
 					hideView(llStoreFinder);
 				}
 			} catch (IllegalStateException ex) {
@@ -846,14 +833,10 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	}
 
 	private void selectedColor(String url) {
-		SimpleDraweeView mImSelectedColor = getViewDataBinding().incProductColor.imSelectedColor;
-		if (TextUtils.isEmpty(url)) {
-			mImSelectedColor.setImageAlpha(0);
-		} else {
-			mImSelectedColor.setImageAlpha(255);
-			DrawImage drawImage = new DrawImage(getActivity());
-			drawImage.displayImage(mImSelectedColor, url);
-		}
+		WrapContentDraweeView mImSelectedColor = getViewDataBinding().llColorSize.imSelectedColor;
+		mImSelectedColor.setImageAlpha(TextUtils.isEmpty(url) ? 0 : 255);
+		DrawImage drawImage = new DrawImage(getActivity());
+		drawImage.displayImage(mImSelectedColor, url);
 	}
 
 	@Override
@@ -881,49 +864,40 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	}
 
 	@Override
-	public void colorSizeContainerVisibility(int size) {
-		if (size > 0 && getViewModel().getProductType().equalsIgnoreCase(CLOTHING_PRODUCT)) {
-			showView(getViewDataBinding().incProductColor.linProductContainer);
+	public void colorSizeContainerVisibility(List<OtherSkus> otherSkuList) {
+
+		// Product item has no colour
+		if (!productHasColour()) {
+			hideView(getViewDataBinding().llColorSize.relColorSelector);
+			getViewDataBinding().llColorSize.relSizeSelector.setPadding(Utils.dp2px(getActivity(), 16), 0, 0, 0);
+
+			hideView(getViewDataBinding().llColorSize.vwSeparator);
+		}
+
+		// Product item has no size
+		if (!productHasSize()) {
+			hideView(getViewDataBinding().llColorSize.relSizeSelector);
+			getViewDataBinding().llColorSize.relColorSelector.setPadding(Utils.dp2px(getActivity(), 16), 0, 0, 0);
+			hideView(getViewDataBinding().llColorSize.vwSeparator);
+		}
+
+		if (otherSkuList.size() > 0 && getViewModel().getProductType().equalsIgnoreCase(CLOTHING_PRODUCT)) {
+			showView(getViewDataBinding().incColorSize);
 			hideView(getViewDataBinding().llLoadingColorSize);
 		} else {
-			hideView(getViewDataBinding().incProductColor.linProductContainer);
+			hideView(getViewDataBinding().incColorSize);
 			hideView(getViewDataBinding().llLoadingColorSize);
 		}
 	}
 
 	@Override
 	public void setColorList(List<OtherSkus> skuList) {
-		mSizeSkuList = skuList;
+		mSizeSkuList = (ArrayList<OtherSkus>) skuList;
 	}
 
 	@Override
 	public void setSizeList(List<OtherSkus> skuList) {
-		mSkuColorList = skuList;
-	}
-
-	@Override
-	public void onSizeItemClicked(OtherSkus sku) {
-		if (sku != null) {
-			WTextView tvSize = getViewDataBinding().incProductColor.textProductSize;
-			cancelPopWindow(mPSizeWindow);
-			setSelectedSize(sku);
-			getGlobalState().setSizeWasPopup(true);
-			setPrice(getViewModel().updatePrice(sku, tvSize.getText().toString()));
-		}
-	}
-
-	@Override
-	public void onColourItemClicked(OtherSkus otherSkus) {
-		if (otherSkus != null) {
-			WTextView tvSize = getViewDataBinding().incProductColor.textProductSize;
-			cancelPopWindow(mPColourWindow);
-			setSelectedTextColor(otherSkus);
-			setSizeList(getViewModel().commonSizeList(otherSkus));
-			setAuxiliaryImages(getViewModel().getAuxiliaryImageList(otherSkus));
-			getGlobalState().setColorWasPopup(true);
-			getGlobalState().setColorPickerSku(otherSkus);
-			setPrice(getViewModel().updatePrice(otherSkus, tvSize.getText().toString()));
-		}
+		mSkuColorList = (ArrayList<OtherSkus>) skuList;
 	}
 
 	@Override
@@ -939,17 +913,8 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		getGlobalState().setSizePickerSku(null);
 		CancelableCallback.cancelAll();
 		cancelRequest(mLocationItemTask);
-		cancelRequest(mGetCartSummary);
 		cancelRequest(mPostAddItemToCart);
-		cancelRequest(mSuburbLocation);
-	}
-
-	private void cancelPopWindow(PopupWindow popupWindow) {
-		if (popupWindow != null) {
-			if (popupWindow.isShowing()) {
-				popupWindow.dismiss();
-			}
-		}
+		cancelRequest(mGetCartSummary);
 	}
 
 	/*****************************
@@ -963,7 +928,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		public void onReceive(Context context, final Intent intent) {
 			try {
 				Location mLocation = intent.getParcelableExtra(FusedLocationSingleton.LBM_EVENT_LOCATION_UPDATE);
-				Utils.saveLastLocation(mLocation, getBaseActivity());
+				Utils.saveLastLocation(mLocation, getContext());
 				stopLocationUpdate();
 				executeLocationItemTask();
 			} catch (Exception e) {
@@ -973,7 +938,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	};
 
 	private void executeLocationItemTask() {
-		mLocationItemTask = getViewModel().locationItemTask(getBaseActivity());
+		mLocationItemTask = getViewModel().locationItemTask(getActivity());
 		mLocationItemTask.execute();
 	}
 
@@ -982,7 +947,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		showFindInStoreProgress();
 		FusedLocationSingleton.getInstance().startLocationUpdates();
 		// register observer for location updates
-		LocalBroadcastManager.getInstance(getBaseActivity()).registerReceiver(mLocationUpdated,
+		LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mLocationUpdated,
 				new IntentFilter(FusedLocationSingleton.INTENT_FILTER_LOCATION_UPDATE));
 	}
 
@@ -991,7 +956,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		// stop location updates
 		FusedLocationSingleton.getInstance().stopLocationUpdates();
 		// unregister observer
-		LocalBroadcastManager.getInstance(getBaseActivity()).unregisterReceiver(mLocationUpdated);
+		LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mLocationUpdated);
 	}
 
 	@Override
@@ -1003,7 +968,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 	@Override
 	public void dismissFindInStoreProgress() {
-		getBaseActivity().runOnUiThread(new Runnable() {
+		getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
 				getViewDataBinding().llStoreFinder.setEnabled(true);
@@ -1015,13 +980,13 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 	@Override
 	public void onLocationItemSuccess(List<StoreDetails> location) {
-		Utils.removeObjectFromArrayList(getBaseActivity(), location);
+		Utils.removeObjectFromArrayList(getActivity(), location);
 		if (location.size() > 0) {
 			getGlobalState().setStoreDetailsArrayList(location);
-			Intent intentInStoreFinder = new Intent(getBaseActivity(), WStockFinderActivity.class);
+			Intent intentInStoreFinder = new Intent(getActivity(), WStockFinderActivity.class);
 			intentInStoreFinder.putExtra("PRODUCT_NAME", mSubCategoryTitle);
 			startActivity(intentInStoreFinder);
-			getBaseActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+			getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 		} else {
 			outOfStockDialog();
 		}
@@ -1030,23 +995,28 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	@Override
 	public void outOfStockDialog() {
 		//no stock error message
-		Utils.displayValidationMessage(getBaseActivity(), CustomPopUpWindow.MODAL_LAYOUT.NO_STOCK, "");
+		Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.NO_STOCK, "");
 	}
 
 	@Override
 	public void onPermissionGranted() {
-		scrolltoTop();
-		if (isNetworkConnected()) {
-			mProductHasColour = productHasColour();
-			mProductHasSize = productHasSize();
-			mProductHasOneColour = productHasOneColour();
-			mProductHasOneSize = productHasOneSize();
+		smoothScrollToTop();
+		if (!isNetworkConnected()) return;
+		if (selectedFindInStoreOtherSkus != null) {
+			noSizeColorIntent();
+			setFinInStoreOtherSkus(null);
+			return;
+		}
+		mProductHasColour = productHasColour();
+		mProductHasSize = productHasSize();
+		mProductHasOneColour = productHasOneColour();
+		mProductHasOneSize = productHasOneSize();
 
-			boolean colorWasPopUp = getGlobalState().colorWasPopup();
-			boolean sizeWasPopUp = getGlobalState().sizeWasPopup();
+		boolean colorWasPopUp = getGlobalState().colorWasPopup();
+		boolean sizeWasPopUp = getGlobalState().sizeWasPopup();
 
-			OtherSkus popupColorSKu = getGlobalState().getColorPickerSku();
-			OtherSkus popupSizeSKu = getGlobalState().getSizePickerSku();
+		OtherSkus popupColorSKu = getGlobalState().getColorPickerSku();
+		OtherSkus popupSizeSKu = getGlobalState().getSizePickerSku();
 
 			/*
 			color | size
@@ -1056,26 +1026,30 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 			1 | 1 - color and size were selected
 			*/
 
-			if (!colorWasPopUp && !sizeWasPopUp) {
-				sizeColorSelector();
-			} else if (!colorWasPopUp && sizeWasPopUp) {
-				displayColor(popupSizeSKu);
-			} else if (colorWasPopUp && !sizeWasPopUp) {
-				sizeOnlyIntent(popupColorSKu);
-			} else {
-				switch (getGlobalState().getLatestSelectedPicker()) {
-					case 1:
-						mSkuId = getGlobalState().getColorPickerSku();
-						break;
-					case 2:
-						mSkuId = getGlobalState().getSizePickerSku();
-						break;
-					default:
-						break;
-				}
-				noSizeColorIntent();
+		if (!colorWasPopUp && !sizeWasPopUp) {
+			sizeColorSelector();
+		} else if (!colorWasPopUp && sizeWasPopUp) {
+			displayColor(popupSizeSKu);
+		} else if (colorWasPopUp && !sizeWasPopUp) {
+			sizeOnlyIntent(popupColorSKu);
+		} else {
+			switch (getGlobalState().getLatestSelectedPicker()) {
+				case 1:
+					mSkuId = getGlobalState().getColorPickerSku();
+					break;
+				case 2:
+					mSkuId = getGlobalState().getSizePickerSku();
+					break;
+				default:
+					break;
 			}
+			noSizeColorIntent();
 		}
+
+	}
+
+	private void setFinInStoreOtherSkus(OtherSkus otherSkus) {
+		selectedFindInStoreOtherSkus = otherSkus;
 	}
 
 	private boolean productHasColour() {
@@ -1190,7 +1164,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	}
 
 	public void noSizeColorIntent() {
-		scrolltoTop();
+		smoothScrollToTop();
 		getGlobalState().setSelectedSKUId(mSkuId);
 		Activity activity = getActivity();
 		if (activity != null) {
@@ -1203,62 +1177,112 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 					openAddToListFragment(activity);
 					break;
 				default:
-					sendBus(new ProductState(POST_ADD_ITEM_TO_CART, 1));
+					/**
+					 * Make add to cart call for food type item
+					 */
+					if (getViewModel().getProductType().equalsIgnoreCase(FOOD_PRODUCT)
+							|| (getViewModel().otherSkuList().size() == 0)) {
+						sendBus(new ProductState(POST_ADD_ITEM_TO_CART, 1));
+						return;
+					}
+
+					String productId = getViewModel().getProductId();
+					String catalogRefId = productId;
+					//Parse skuId to catalogRefId if productType is of type CLOTHING_PRODUCT
+					if (getViewModel().getProductType().equalsIgnoreCase(CLOTHING_PRODUCT)) {
+						catalogRefId = getGlobalState().getSelectedSKUId().sku;
+					}
+					int quantity = 1;
+					mApiAddItemToCart = new AddItemToCart(productId, catalogRefId, quantity);
+					apiAddItemToCart();
 					break;
 			}
 		}
 	}
 
+	public void colorSizePicker(ArrayList<OtherSkus> otherSkusList, boolean colorIsSelected, boolean sizeIsSelected) {
+		getGlobalState().setColourSKUArrayList(otherSkusList);
+		Intent mIntent = new Intent(getActivity(), ConfirmColorSizeActivity.class);
+		mIntent.putExtra("COLOR_LIST", toJson(otherSkusList));
+		mIntent.putExtra("OTHERSKU", toJson(getViewModel().otherSkuList()));
+		mIntent.putExtra(ConfirmColorSizeActivity.COLOR_PICKER_SELECTOR, colorIsSelected);
+		mIntent.putExtra(ConfirmColorSizeActivity.SIZE_PICKER_SELECTOR, sizeIsSelected);
+		mIntent.putExtra(ConfirmColorSizeActivity.FULFILLMENT_TYPE, getFulFillmentType());
+		mIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, "");
+		mIntent.putExtra("PRODUCT_NAME", getViewModel().getDefaultProduct().productName);
+		getActivity().startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
+		getActivity().overridePendingTransition(0, 0);
+	}
+
+	public void colorSizePicker(ArrayList<OtherSkus> otherSkusList, boolean colorIsSelected, boolean sizeIsSelected, OtherSkus selectedSku) {
+		getGlobalState().setColourSKUArrayList(otherSkusList);
+		Intent mIntent = new Intent(getActivity(), ConfirmColorSizeActivity.class);
+		mIntent.putExtra("COLOR_LIST", toJson(otherSkusList));
+		mIntent.putExtra("OTHERSKU", toJson(getViewModel().otherSkuList()));
+		mIntent.putExtra(ConfirmColorSizeActivity.COLOR_PICKER_SELECTOR, colorIsSelected);
+		mIntent.putExtra(ConfirmColorSizeActivity.SIZE_PICKER_SELECTOR, sizeIsSelected);
+		mIntent.putExtra(ConfirmColorSizeActivity.FULFILLMENT_TYPE, getFulFillmentType());
+		mIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, "");
+		mIntent.putExtra(ConfirmColorSizeActivity.SELECTED_SKU, selectedSku.sku);
+		mIntent.putExtra("PRODUCT_NAME", getViewModel().getDefaultProduct().productName);
+		getActivity().startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
+		getActivity().overridePendingTransition(0, 0);
+	}
+
 	public void sizeIntent() {
 		getGlobalState().setColourSKUArrayList(getColorList());
-		Intent mIntent = new Intent(getBaseActivity(), ConfirmColorSizeActivity.class);
+		Intent mIntent = new Intent(getActivity(), ConfirmColorSizeActivity.class);
 		mIntent.putExtra("COLOR_LIST", toJson(getColorList()));
 		mIntent.putExtra("OTHERSKU", toJson(getViewModel().otherSkuList()));
 		mIntent.putExtra("PRODUCT_HAS_COLOR", false);
 		mIntent.putExtra("PRODUCT_HAS_SIZE", true);
+		mIntent.putExtra(ConfirmColorSizeActivity.FULFILLMENT_TYPE, getFulFillmentType());
 		mIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, "");
 		mIntent.putExtra("PRODUCT_NAME", getViewModel().getDefaultProduct().productName);
-		startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
-		getBaseActivity().overridePendingTransition(0, 0);
+		getActivity().startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
+		getActivity().overridePendingTransition(0, 0);
 	}
 
 	public void sizeIntent(String colour) {
 		getGlobalState().setColourSKUArrayList(getColorList());
-		Intent mIntent = new Intent(getBaseActivity(), ConfirmColorSizeActivity.class);
+		Intent mIntent = new Intent(getActivity(), ConfirmColorSizeActivity.class);
 		mIntent.putExtra("SELECTED_COLOUR", colour);
 		mIntent.putExtra("OTHERSKU", toJson(getViewModel().otherSkuList()));
 		mIntent.putExtra("PRODUCT_HAS_COLOR", false);
 		mIntent.putExtra("PRODUCT_HAS_SIZE", true);
 		mIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, "");
+		mIntent.putExtra(ConfirmColorSizeActivity.FULFILLMENT_TYPE, getFulFillmentType());
 		mIntent.putExtra("PRODUCT_NAME", getViewModel().getDefaultProduct().productName);
-		startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
-		getBaseActivity().overridePendingTransition(0, 0);
+		getActivity().startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
+		getActivity().overridePendingTransition(0, 0);
 	}
 
 	public void colourIntent() {
 		getGlobalState().setColourSKUArrayList(getColorList());
-		Intent mIntent = new Intent(getBaseActivity(), ConfirmColorSizeActivity.class);
+		Intent mIntent = new Intent(getActivity(), ConfirmColorSizeActivity.class);
 		mIntent.putExtra("COLOR_LIST", toJson(getColorList()));
 		mIntent.putExtra("OTHERSKU", toJson(getViewModel().otherSkuList()));
 		mIntent.putExtra("PRODUCT_HAS_COLOR", true);
 		mIntent.putExtra("PRODUCT_HAS_SIZE", true);
 		mIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, "");
+		mIntent.putExtra(ConfirmColorSizeActivity.FULFILLMENT_TYPE, getFulFillmentType());
 		mIntent.putExtra("PRODUCT_NAME", getViewModel().getDefaultProduct().productName);
-		startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
-		getBaseActivity().overridePendingTransition(0, 0);
+		getActivity().startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
+		getActivity().overridePendingTransition(0, 0);
 	}
 
 	public void colorIntent(String size) {
-		Intent mIntent = new Intent(getBaseActivity(), ConfirmColorSizeActivity.class);
+		Intent mIntent = new Intent(getActivity(), ConfirmColorSizeActivity.class);
 		mIntent.putExtra("SELECTED_COLOUR", size);
 		mIntent.putExtra("COLOR_LIST", toJson(getGlobalState().getColourSKUArrayList()));
 		mIntent.putExtra("OTHERSKU", toJson(getViewModel().otherSkuList()));
 		mIntent.putExtra("PRODUCT_HAS_COLOR", true);
 		mIntent.putExtra("PRODUCT_HAS_SIZE", false);
+		mIntent.putExtra(ConfirmColorSizeActivity.FULFILLMENT_TYPE, getFulFillmentType());
 		mIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, "");
 		mIntent.putExtra("PRODUCT_NAME", getViewModel().getDefaultProduct().productName);
-		startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
-		getBaseActivity().overridePendingTransition(0, 0);
+		getActivity().startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
+		getActivity().overridePendingTransition(0, 0);
 	}
 
 	private void sizeOnlyIntent(OtherSkus otherSku) {
@@ -1386,7 +1410,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	@Override
 	public void apiIdentifyTokenValidation() {
 		getViewModel().setAddedToCart(true);
-		Activity activity = getBaseActivity();
+		Activity activity = getActivity();
 		if (activity != null) {
 			//Check if the user has a sessionToken
 			if (!SessionUtilities.getInstance().isUserAuthenticated()) {
@@ -1401,13 +1425,65 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	}
 
 	private void cartSummaryAPI() {
-		mGetCartSummary = getViewModel().getCartSummary();
+		Activity activity = getActivity();
+		if (activity != null) {
+			ShoppingDeliveryLocation shoppingDeliveryLocation = Utils.getPreferredDeliveryLocation();
+			if (shoppingDeliveryLocation == null) {
+				executeCartSummary();
+				return;
+			}
+			if (shoppingDeliveryLocation.suburb != null) {
+				if (!TextUtils.isEmpty(shoppingDeliveryLocation.suburb.name)) {
+					// show pop up message after login
+					if (activate_location_popup) {
+						smoothScrollToTop();
+						Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.DETERMINE_LOCATION_POPUP, DETERMINE_LOCATION_POPUP);
+						activate_location_popup = false;
+						return;
+					}
+
+					/***
+					 * Determine whether to display colour size box
+					 * if product type is of type clothing or otherSkuList size is greater than 0
+					 * size > 0 product i.e. perfume productType of type food but sku can be > 0
+					 * next step become colour/size process
+					 * else run through food step
+					 */
+					if (getViewModel().getProductType() != null) {
+						smoothScrollToTop();
+						if (getViewModel().getProductType().equalsIgnoreCase(CLOTHING_PRODUCT) || getViewModel().otherSkuList().size() > 0) {
+							onAddToCartLoadComplete();
+							onPermissionGranted();
+						} else {
+							onAddToCartLoadComplete();
+							Intent editQuantityIntent = new Intent(activity, ConfirmColorSizeActivity.class);
+							editQuantityIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, ConfirmColorSizeActivity.QUANTITY);
+							activity.startActivity(editQuantityIntent);
+							activity.overridePendingTransition(0, 0);
+						}
+					}
+				} else {
+					//If the user does not have a suburb id & name stored, the set location from region and suburb process is followed
+					onAddToCartLoadComplete();
+					deliverySelectionIntent(activity);
+				}
+			}
+		}
+	}
+
+	private void executeCartSummary() {
+		Activity activity = getActivity();
+		if (activity == null) {
+			onAddToCartLoadComplete();
+			return;
+		}
+		mGetCartSummary = getViewModel().getCartSummary(activity);
 		mGetCartSummary.execute();
 	}
 
 	@Override
 	public void onTokenFailure(String e) {
-		Activity activity = getBaseActivity();
+		Activity activity = getActivity();
 		if (activity != null) {
 			activity.runOnUiThread(new Runnable() {
 				@Override
@@ -1421,60 +1497,22 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 	@Override
 	public void onCartSummarySuccess(CartSummaryResponse cartSummaryResponse) {
-		Activity activity = getBaseActivity();
-		if (activity != null) {
-			if (cartSummaryResponse.data != null) {
-				CartSummary cartSummary = cartSummaryResponse.data.get(0);
-				if (!TextUtils.isEmpty(cartSummary.provinceName)) {
-					String suburbId = String.valueOf(cartSummary.suburbId);
-					Province province = new Province();
-					province.name = cartSummary.provinceName;
-					province.id = suburbId;
-					Suburb suburb = new Suburb();
-					suburb.name = cartSummary.suburbName;
-					suburb.id = suburbId;
-					Utils.saveRecentDeliveryLocation(new DeliveryLocationHistory(province, suburb), activity);
-					// show pop up message after login
-					if (activate_location_popup) {
-						Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.DETERMINE_LOCATION_POPUP, DETERMINE_LOCATION_POPUP);
-						activate_location_popup = false;
-						return;
-					}
-					//user has a valid sessionToken and a delivery location is set.
-					if (getViewModel().getProductType() != null) {
-						scrolltoTop();
-						switch (getViewModel().getProductType()) {
-							case FOOD_PRODUCT:
-								onAddToCartLoadComplete();
-								Intent editQuantityIntent = new Intent(activity, ConfirmColorSizeActivity.class);
-								editQuantityIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, ConfirmColorSizeActivity.QUANTITY);
-								activity.startActivity(editQuantityIntent);
-								activity.overridePendingTransition(0, 0);
-								break;
-
-							case CLOTHING_PRODUCT:
-								onAddToCartLoadComplete();
-								onPermissionGranted();
-								break;
-
-							default:
-								break;
-						}
-					}
+		if (cartSummaryResponse.data != null) {
+			List<CartSummary> cartSummaryList = cartSummaryResponse.data;
+			if (cartSummaryList.get(0) != null) {
+				CartSummary cartSummary = cartSummaryList.get(0);
+				if (TextUtils.isEmpty(cartSummary.suburbId)) {
+					deliverySelectionIntent(getActivity());
 				} else {
-					//If the user does not have a suburb id & name stored, the set location from region and suburb process is followed
-					onAddToCartLoadComplete();
-					deliverySelectionIntent(activity);
+					cartSummaryAPI();
 				}
 			}
 		}
-
 	}
 
 	private void deliverySelectionIntent(Activity activity) {
 		Intent deliveryLocationSelectionActivity = new Intent(activity, DeliveryLocationSelectionActivity.class);
-		deliveryLocationSelectionActivity.putExtra(DeliveryLocationSelectionActivity.LOAD_PROVINCE, "LOAD_PROVINCE");
-		activity.startActivity(deliveryLocationSelectionActivity);
+		activity.startActivityForResult(deliveryLocationSelectionActivity, DELIVERY_LOCATION_FROM_PDP_REQUEST);
 		activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 	}
 
@@ -1511,6 +1549,9 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	@Override
 	public void addItemToCartResponse(AddItemToCartResponse addItemToCartResponse) {
 		Log.d(TAG, addItemToCartResponse.toString());
+		if (getActivity() instanceof BottomNavigationActivity)
+			((BottomNavigationActivity) getActivity()).cartSummaryAPI();
+
 		onAddToCartLoadComplete();
 		List<AddToCartDaTum> addToCartList = addItemToCartResponse.data;
 		if (addToCartList != null && addToCartList.size() > 0) {
@@ -1520,9 +1561,15 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 				if (formExceptionList != null) {
 					FormException formException = formExceptionList.get(0);
 					if (formException != null) {
-						Activity activity = getBaseActivity();
+						Activity activity = getActivity();
 						if (activity != null) {
 							if (formException.message.toLowerCase().contains(getString(R.string.out_of_stock_err))) {
+								if (getViewModel().getProductType().equalsIgnoreCase(CLOTHING_PRODUCT) ||
+										getViewModel().otherSkuList().size() > 1) {
+									onAddToCartLoadComplete();
+									colorSizePicker(mSkuColorList, false, true, getGlobalState().getSelectedSKUId());
+									return;
+								}
 								Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC, getString(R.string.out_of_stock), getString(R.string.out_of_stock_desc));
 								return;
 							}
@@ -1535,33 +1582,23 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		}
 
 		if (addToCartList != null) {
-			cancelPopUpMenu();
-			sendBus(new CartSummaryResponse(addItemToCartResponse));
+			if (getActivity() instanceof BottomNavigationActivity)
+				sendBus(new CartSummaryResponse(addItemToCartResponse));
+			if (getActivity() instanceof CartActivity)
+				((CartActivity) getActivity()).onActivityResult(RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL, RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL, null);
+			closeSlideUpPanel();
 		}
 	}
 
 	@Override
 	public void onAddItemToCartFailure(String error) {
-		Log.d(TAG, error);
 		onAddToCartLoadComplete();
-	}
-
-	@Override
-	public int maximumPopWindowHeight() {
-		Activity activity = getActivity();
-		if (activity != null) {
-			Display display = activity.getWindowManager().getDefaultDisplay();
-			Point size = new Point();
-			display.getSize(size);
-			return size.y;
-		}
-		return 1;
 	}
 
 	@Override
 	public void onSessionTokenExpired(final Response response) {
 		SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
-		final Activity activity = getBaseActivity();
+		final Activity activity = getActivity();
 		activity.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
@@ -1599,53 +1636,66 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	}
 
 	@Override
-	public void setSuburbAPI(DeliveryLocationHistory deliveryLocation) {
-		mSuburbLocation = getViewModel().setSuburb(deliveryLocation);
-		mSuburbLocation.execute();
-	}
-
-	@Override
-	public void onShoppingListsResponse(ShoppingListsResponse shoppingListsResponse) {
-		mShoppingListsResponse = shoppingListsResponse;
-		if (shoppingListDidReload()) {
-			setShoppingListDidReload(false);
-			getBtnAddShoppingList().performClick();
-		}
-	}
-
-	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-	}
-
-	private void cancelPopUpMenu() {
-		cancelPopWindow(mPSizeWindow);
-		cancelPopWindow(mPColourWindow);
-	}
-
-	@Override
-	public void unknownErrorResponse(Response response) {
-		Activity activity = getActivity();
-		if (activity != null) {
-			if (response.desc != null) {
-				Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
+		/***
+		 * perform add to cart call for first time user
+		 */
+		if (requestCode == DELIVERY_LOCATION_FROM_PDP_REQUEST) {
+			if (resultCode == SUBURB_SET_RESULT) {
+				if (getGlobalState().getSaveButtonClick() == INDEX_ADD_TO_CART) {
+					getViewDataBinding().llAddToCart.performClick();
+					return;
+				}
 			}
 		}
-	}
 
-	@Override
-	public void onShoppingListFailure(String e) {
-	}
+		// perform find in-store api call
+		if ((requestCode == 3401) && (resultCode == RESULT_TAP_FIND_INSTORE_BTN)) {
+			mSkuId = getGlobalState().getSelectedSKUId();
+			setFinInStoreOtherSkus(getGlobalState().getSelectedSKUId());
+			llStoreFinder.performClick();
+			return;
+		} else if ((requestCode == 3401) && (resultCode == RESULT_LOADING_INVENTORY_FAILURE)) {
+			if (data != null) {
+				Bundle bundleResponse = data.getExtras();
+				String responseFromBundle = bundleResponse.getString("response");
+				Response response = new Gson().fromJson(responseFromBundle, Response.class);
+				if (response != null) {
+					Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
+				}
+			}
+			return;
+		} else if (data != null) {
+			if (requestCode == 3401) {
+				if (resultCode == RESULT_OK) {
+					Bundle extras = data.getExtras();
+					String selectedSKu = extras.getString("selected_sku");
+					String selectionType = extras.getString("sectionType");
+					OtherSkus otherSkus = new Gson().fromJson(selectedSKu, OtherSkus.class);
+					switch (selectionType) {
+						case "color":
+							setSelectedTextColor(otherSkus);
+							setSizeList(getViewModel().commonSizeList(otherSkus));
+							setAuxiliaryImages(getViewModel().getAuxiliaryImageList(otherSkus));
+							getGlobalState().setColorWasPopup(true);
+							getGlobalState().setColorPickerSku(otherSkus);
+							break;
 
-	@Override
-	public void shoppingListSessionTimedOut() {
-	}
+						case "size":
+							WTextView tvSize = getViewDataBinding().llColorSize.tvSelectedSizeValue;
+							setSelectedSize(otherSkus);
+							getGlobalState().setSizeWasPopup(true);
+							setPrice(otherSkus);
+							tvSize.setText(otherSkus.size);
+							break;
 
-	@Override
-	public void onShoppingListLoad(boolean enable) {
-		WButton shoppingListButton = getViewDataBinding().btnAddShoppingList;
-		shoppingListButton.setEnabled(!enable);
-		shoppingListButton.setAlpha(!enable ? 1 : (float) 0.3);
+						default:
+							break;
+					}
+				}
+			}
+		}
 	}
 
 	@Override
@@ -1655,11 +1705,21 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 			if (state.equalsIgnoreCase(currentState)) {
 				Activity activity = getActivity();
 				if (activity != null) {
-					BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
-					bottomNavigationActivity.navigateToList(mNumberOfListSelected);
+					if (activity instanceof BottomNavigationActivity) {
+						BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
+						bottomNavigationActivity.navigateToList(mNumberOfListSelected);
+					}
+					if (activity instanceof CartActivity) {
+						CartActivity cartActivity = (CartActivity) activity;
+						cartActivity.navigateToList(mNumberOfListSelected);
+					}
 				}
 			}
 		}
+	}
+
+	public String getFulFillmentType() {
+		return TextUtils.isEmpty(getViewModel().getProduct().fulfillmentType) ? null : getViewModel().getProduct().fulfillmentType;
 	}
 }
 

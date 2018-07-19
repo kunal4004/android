@@ -1,11 +1,10 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -13,12 +12,15 @@ import android.widget.ProgressBar;
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment;
+import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL;
 
-public class CartActivity extends AppCompatActivity implements View.OnClickListener, CartFragment.ToggleRemoveItem {
+public class CartActivity extends BottomActivity implements View.OnClickListener, CartFragment.ToggleRemoveItem, ToastUtils.ToastInterface {
 
 	private WTextView btnEditCart;
 	private WTextView btnClearCart;
@@ -27,9 +29,12 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 	private ProgressBar pbRemoveAllItem;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_cart);
+	protected int getLayoutResourceId() {
+		return R.layout.activity_cart;
+	}
+
+	@Override
+	protected void initUI() {
 		Utils.updateStatusBarBackground(this);
 
 		Toolbar toolbar = findViewById(R.id.toolbar);
@@ -86,6 +91,11 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 
 	@Override
 	public void onBackPressed() {
+		// close expanded Product detail page
+		if (getSlidingLayout().getPanelState().equals(SlidingUpPanelLayout.PanelState.EXPANDED)) {
+			closeSlideUpPanel();
+			return;
+		}
 		if (getFragmentManager().getBackStackEntryCount() > 0) {
 			getFragmentManager().popBackStack();
 		} else {
@@ -100,15 +110,19 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 	}
 
 	public void showEditCart() {
+		btnEditCart.setAlpha(1.0f);
 		btnEditCart.setVisibility(View.VISIBLE);
+		btnEditCart.setEnabled(true);
 	}
 
 	public void hideEditCart() {
+		btnEditCart.setAlpha(0.0f);
 		btnEditCart.setVisibility(View.GONE);
+		btnEditCart.setEnabled(false);
 	}
 
 	public void resetToolBarIcons() {
-		btnEditCart.setVisibility(View.GONE);
+		hideEditCart();
 		btnCloseCart.setVisibility(View.VISIBLE);
 		btnClearCart.setVisibility(View.GONE);
 	}
@@ -121,6 +135,11 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 		btnEditCart.setEnabled(visibility ? false : true);
 	}
 
+	public void enableEditCart(boolean enable) {
+		Utils.fadeInFadeOutAnimation(btnEditCart, enable);
+		btnEditCart.setEnabled(enable ? false : true);
+	}
+
 	@Override
 	public void onRemoveSuccess() {
 		pbRemoveAllItem.setVisibility(View.GONE);
@@ -129,10 +148,32 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 	}
 
 	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
+
 		FragmentManager fm = getSupportFragmentManager();
 		Fragment fragment = fm.findFragmentById(R.id.content_frame);
+
+		Fragment bottomFragment = fm.findFragmentById(R.id.fragment_bottom_container);
+		bottomFragment.onActivityResult(requestCode, resultCode, data);
+
+		/***
+		 * Result from success add to cart
+		 */
+
+		if (requestCode == RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL) {
+			if (resultCode == RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL) {
+				ToastUtils mToastUtils = new ToastUtils(this);
+				mToastUtils.setActivity(this);
+				mToastUtils.setGravity(Gravity.BOTTOM);
+				mToastUtils.setCartText(R.string.cart);
+				mToastUtils.setView((SlidingUpPanelLayout) findViewById(R.id.slideUpPanel));
+				mToastUtils.setPixel(Utils.dp2px(this, 105));
+				mToastUtils.setMessage(R.string.added_to);
+				mToastUtils.setViewState(false);
+				mToastUtils.build();
+			}
+		}
 
 		//DISMISS_POP_WINDOW_CLICKED
 		//Cancel button click from session expired pop-up dialog
@@ -144,5 +185,10 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 			}
 			fragment.onActivityResult(requestCode, resultCode, data);
 		}
+	}
+
+	@Override
+	public void onToastButtonClicked(String currentState) {
+
 	}
 }

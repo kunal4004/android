@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.util;
 
 import android.app.Activity;
 import android.content.Context;
+import android.icu.lang.UProperty;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -15,6 +16,8 @@ import com.awfs.coordination.R;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
 public class ToastUtils {
+
+	private boolean allCapsUpperCase = true;
 
 	public interface ToastInterface {
 		void onToastButtonClicked(String currentState);
@@ -128,6 +131,7 @@ public class ToastUtils {
 			tvCart.setVisibility(TextUtils.isEmpty(getCartText()) ? View.GONE : View.VISIBLE);
 			tvCart.setText(getCartText());
 			tvAddToCart.setText(getMessage());
+			tvAddToCart.setAllCaps(allCapsUpperCase);
 
 			// handle popupWindow click event
 			tvView.setOnClickListener(new View.OnClickListener() {
@@ -153,5 +157,9 @@ public class ToastUtils {
 		}
 
 		return null;
+	}
+
+	public void setAllCapsUpperCase(boolean upperCase){
+		this.allCapsUpperCase = upperCase;
 	}
 }

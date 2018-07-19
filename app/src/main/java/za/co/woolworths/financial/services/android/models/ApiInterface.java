@@ -15,7 +15,6 @@ import retrofit.http.Path;
 import retrofit.http.Query;
 import retrofit.http.Streaming;
 import retrofit.mime.MultipartTypedOutput;
-import za.co.woolworths.financial.services.android.CreateListResponse;
 import za.co.woolworths.financial.services.android.models.dto.AccountResponse;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
@@ -58,6 +57,8 @@ import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocatio
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
+import za.co.woolworths.financial.services.android.models.dto.SkuInventoryResponse;
+import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
 import za.co.woolworths.financial.services.android.models.dto.SuburbsResponse;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementResponse;
@@ -142,7 +143,6 @@ public interface ApiInterface {
 			@Header("osVersion") String osVersion,
 			@Header("userAgent") String userAgent,
 			@Header("userAgentVersion") String userAgentVersion,
-			@Header("sessionToken") String sessionToken,
 			@Body LoginRequest loginRequest);
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
@@ -184,7 +184,6 @@ public interface ApiInterface {
 			@Header("deviceModel") String deviceModel,
 			@Header("network") String network,
 			@Header("os") String os,
-			@Header("sessionToken") String sessionToken,
 			@Header("osVersion") String osVersion,
 			@Header("userAgent") String userAgent,
 			@Header("userAgentVersion") String userAgentVersion);
@@ -194,7 +193,6 @@ public interface ApiInterface {
 	ConfigResponse getConfig(
 			@Header("Authorization-X") String AuthorizationX,
 			@Header("UUID") String UUID,
-			@Header("sessionToken") String sessionToken,
 			@Path("appVersion") String appVersion
 	);
 
@@ -249,7 +247,6 @@ public interface ApiInterface {
 			@Header("userAgentVersion") String userAgentVersion,
 			@Header("latitude") String latitude,
 			@Header("longitude") String longitude,
-			@Header("sessionToken") String sessionToken,
 			@Path(value = "sku", encode = false) String sku,
 			@Query("startRadius") String startRadius,
 			@Query("endRadius") String endRadius,
@@ -471,7 +468,6 @@ public interface ApiInterface {
 			@Header("os") String os,
 			@Header("osVersion") String osVersion,
 			@Header("userAgent") String userAgent,
-			@Header("sessionToken") String sessionToken,
 			@Header("userAgentVersion") String userAgentVersion);
 
 
@@ -485,7 +481,6 @@ public interface ApiInterface {
 			@Header("deviceModel") String deviceModel,
 			@Header("network") String network,
 			@Header("deviceVersion") String deviceVersion,
-			@Header("sessionToken") String sessionToken,
 			@Header("apiKey") String userAgent);
 
 
@@ -503,7 +498,6 @@ public interface ApiInterface {
 			@Header("sha1Password") String sha1Password,
 			@Header("longitude") double longitude,
 			@Header("latitude") double latitude,
-			@Header("sessionToken") String sessionToken,
 			@Query("pageOffset") int pageOffset,
 			@Query("pageSize") int pageSize,
 			@Path("cat") String category);
@@ -521,7 +515,6 @@ public interface ApiInterface {
 			@Header("userAgent") String userAgent,
 			@Header("userAgentVersion") String userAgentVersion,
 			@Header("sha1Password") String sha1Password,
-			@Header("sessionToken") String sessionToken,
 			@Query("pageOffset") int pageOffset,
 			@Query("pageSize") int pageSize,
 			@Path("cat") String category);
@@ -537,7 +530,6 @@ public interface ApiInterface {
 			@Header("network") String network,
 			@Header("deviceVersion") String deviceVersion,
 			@Header("apiKey") String apiKey,
-			@Header("sessionToken") String sessionToken,
 			@Path("cat") String category);
 
 
@@ -555,7 +547,6 @@ public interface ApiInterface {
 			@Header("sha1Password") String sha1Password,
 			@Header("longitude") double longitude,
 			@Header("latitude") double latitude,
-			@Header("sessionToken") String sessionToken,
 			@Query("isBarCode") boolean isBarcode,
 			@Query(value = "searchTerm", encodeValue = false) String searchTerm,
 			@Query("pageOffset") int pageOffset,
@@ -573,7 +564,6 @@ public interface ApiInterface {
 			@Header("userAgent") String userAgent,
 			@Header("userAgentVersion") String userAgentVersion,
 			@Header("sha1Password") String sha1Password,
-			@Header("sessionToken") String sessionToken,
 			@Query("isBarCode") boolean isBarcode,
 			@Query(value = "searchTerm", encodeValue = false) String searchTerm,
 			@Query("pageOffset") int pageOffset,
@@ -591,7 +581,6 @@ public interface ApiInterface {
 			@Header("os") String os,
 			@Header("osVersion") String osVersion,
 			@Header("userAgent") String userAgent,
-			@Header("sessionToken") String sessionToken,
 			@Header("userAgentVersion") String userAgentVersion);
 
 
@@ -607,7 +596,6 @@ public interface ApiInterface {
 			@Header("userAgent") String userAgent,
 			@Header("userAgentVersion") String userAgentVersion,
 			@Header("sha1Password") String sha1Password,
-			@Header("sessionToken") String sessionToken,
 			@Path("productId") String productId,
 			@Query("sku") String sku);
 
@@ -623,7 +611,6 @@ public interface ApiInterface {
 			@Header("userAgent") String userAgent,
 			@Header("userAgentVersion") String userAgentVersion,
 			@Header("sha1Password") String sha1Password,
-			@Header("sessionToken") String sessionToken,
 			@Path("productId") String productId,
 			@Query("sku") String sku,
 			Callback<String> callback);
@@ -642,7 +629,6 @@ public interface ApiInterface {
 			@Header("sha1Password") String sha1Password,
 			@Header("longitude") double longitude,
 			@Header("latitude") double latitude,
-			@Header("sessionToken") String sessionToken,
 			@Path("productId") String productId,
 			@Query("sku") String sku,
 			Callback<String> callback);
@@ -854,7 +840,6 @@ public interface ApiInterface {
 			@Header("userAgent") String userAgent,
 			@Header("userAgentVersion") String userAgentVersion,
 			@Header("sha1Password") String sha1Password,
-			@Header("sessionToken") String sessionToken,
 			@Path("productId") String productId,
 			@Query("sku") String sku);
 
@@ -873,7 +858,6 @@ public interface ApiInterface {
 			@Header("sha1Password") String sha1Password,
 			@Header("longitude") double longitude,
 			@Header("latitude") double latitude,
-			@Header("sessionToken") String sessionToken,
 			@Path("productId") String productId,
 			@Query("sku") String sku);
 
@@ -957,4 +941,31 @@ public interface ApiInterface {
 			@Path("id") String id,
 			@Query("productId") String productId,
 			@Query("catalogRefId") String catalogRefId);
+
+	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+	@GET("/inventory/multiSku/{multipleSku}")
+	SkuInventoryResponse getInventorySKU(
+			@Header("apiId") String apiId,
+			@Header("sha1Password") String sha1Password,
+			@Header("deviceVersion") String deviceVersion,
+			@Header("deviceModel") String deviceModel,
+			@Header("network") String network,
+			@Header("os") String os,
+			@Header("osVersion") String osVersion,
+			@Header("sessionToken") String sessionToken,
+			@Path("multipleSku") String multipleSku);
+
+	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+	@GET("/inventory/store/{store_id}/multiSku/{multipleSku}")
+	SkusInventoryForStoreResponse getInventorySKUForStore(
+			@Header("apiId") String apiId,
+			@Header("sha1Password") String sha1Password,
+			@Header("deviceVersion") String deviceVersion,
+			@Header("deviceModel") String deviceModel,
+			@Header("network") String network,
+			@Header("os") String os,
+			@Header("osVersion") String osVersion,
+			@Header("sessionToken") String sessionToken,
+			@Path("store_id") String store_id,
+			@Path("multipleSku") String multipleSku);
 }

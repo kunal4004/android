@@ -10,19 +10,19 @@ import com.awfs.coordination.R;
 
 import java.util.List;
 
-import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
 public class DeliveryLocationAdapter extends RecyclerView.Adapter<DeliveryLocationAdapter.DeliveryLocationViewHolder> {
 
 	public interface OnItemClick {
-		void onItemClick(DeliveryLocationHistory location);
+		void onItemClick(ShoppingDeliveryLocation location);
 	}
 
 	private OnItemClick onItemClick;
-	private List<DeliveryLocationHistory> deliveryLocationItems;
+	private List<ShoppingDeliveryLocation> deliveryLocationItems;
 
-	public DeliveryLocationAdapter(List<DeliveryLocationHistory> deliveryLocationItems, OnItemClick onItemClick) {
+	public DeliveryLocationAdapter(List<ShoppingDeliveryLocation> deliveryLocationItems, OnItemClick onItemClick) {
 		this.deliveryLocationItems = deliveryLocationItems;
 		this.onItemClick = onItemClick;
 	}
@@ -35,7 +35,7 @@ public class DeliveryLocationAdapter extends RecyclerView.Adapter<DeliveryLocati
 
 	@Override
 	public void onBindViewHolder(final DeliveryLocationViewHolder holder, final int position) {
-		final DeliveryLocationHistory location = deliveryLocationItems.get(position);
+		final ShoppingDeliveryLocation location = deliveryLocationItems.get(position);
 		holder.tvTitle.setText(location.suburb.name);
 		holder.tvDescription.setText(location.province.name);
 		holder.deliveryLocationItemLayout.setOnClickListener(new View.OnClickListener() {

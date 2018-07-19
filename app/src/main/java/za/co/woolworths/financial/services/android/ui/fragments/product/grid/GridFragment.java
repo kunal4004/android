@@ -28,6 +28,8 @@ import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewListAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
@@ -90,6 +92,18 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 		showToolbar();
 		showBackNavigationIcon(true);
 		setToolbarBackgroundDrawable(R.drawable.appbar_background);
+
+		Activity activity = getActivity();
+		if (activity != null) {
+			BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
+			bottomNavigationActivity.getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					popFragment();
+				}
+			});
+		}
+
 		mProgressLimitStart = getViewDataBinding().incCenteredProgress.progressCreditLimit;
 		RelativeLayout relNoConnectionLayout = getViewDataBinding().incNoConnectionHandler.noConnectionLayout;
 		assert getViewDataBinding().incNoConnectionHandler != null;
@@ -183,6 +197,10 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 
 	@Override
 	public void unhandledResponseCode(Response response) {
+		Activity activity = getActivity();
+		if (activity == null) return;
+		if (response.desc == null) return;
+		Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
 	}
 
 	@Override

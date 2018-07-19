@@ -23,11 +23,11 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
-import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetail;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
@@ -376,7 +376,8 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 		Point size = new Point();
 		display.getSize(size);
 		int width = size.x;
-		return imageUrl + "?w=" + width + "&q=" + 85;
+		imageUrl = (imageUrl.contains("jpg")) ? "https://images.woolworthsstatic.co.za/" + imageUrl : imageUrl;
+		return imageUrl + "" + ((imageUrl.contains("jpg")) ? "" : "?w=" + width + "&q=" + 85);
 	}
 
 	public ArrayList<OtherSkus> commonColorList(OtherSkus otherSku) throws NullPointerException {
@@ -432,21 +433,6 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 		return false;
 	}
 
-	public OtherSkus updatePrice(OtherSkus sku, String size) {
-		String colour = sku.colour;
-		if (otherSkuList() != null) {
-			if (otherSkuList().size() > 0) {
-				for (OtherSkus os : otherSkuList()) {
-					if (colour.equalsIgnoreCase(os.colour) &&
-							size.equalsIgnoreCase(os.size)) {
-						return os;
-					}
-				}
-			}
-		}
-		return new OtherSkus();
-	}
-
 	public ArrayList<OtherSkus> commonSizeList(boolean productHasColour, String colour) {
 		ArrayList<OtherSkus> commonSizeList = new ArrayList<>();
 
@@ -498,11 +484,10 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 		return productLoadFail;
 	}
 
-
-	protected GetCartSummary getCartSummary() {
+	protected GetCartSummary getCartSummary(Activity activity) {
 		setAddedToCart(true);
 		getNavigator().onAddToCartLoad();
-		return new GetCartSummary(new OnEventListener() {
+		return new GetCartSummary(activity, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
 				if (object != null) {
@@ -572,10 +557,9 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 		});
 	}
 
-	protected SetDeliveryLocationSuburb setSuburb(DeliveryLocationHistory deliveryLocationHistory) {
+	protected SetDeliveryLocationSuburb setSuburb(ShoppingDeliveryLocation shoppingDeliveryLocation) {
 		// TODO: confirm loading when doing this request
-
-		return new SetDeliveryLocationSuburb(deliveryLocationHistory.suburb.id, new OnEventListener() {
+		return new SetDeliveryLocationSuburb(shoppingDeliveryLocation.suburb.id, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
 				getNavigator().handleSetSuburbResponse(object);
@@ -587,5 +571,4 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 			}
 		});
 	}
-
 }

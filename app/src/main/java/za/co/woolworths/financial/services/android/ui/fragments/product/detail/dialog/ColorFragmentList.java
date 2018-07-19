@@ -16,11 +16,11 @@ import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.StockFinderSizeColorAdapter;
 import za.co.woolworths.financial.services.android.util.ColorInterface;
-
 
 public class ColorFragmentList extends Fragment implements StockFinderSizeColorAdapter.RecyclerViewClickListener, ColorInterface {
 
@@ -56,13 +56,19 @@ public class ColorFragmentList extends Fragment implements StockFinderSizeColorA
 		mRecyclerItemSelected.onRecyclerItemClick(v, position, ColorFragmentList.this.getActivity().getResources().getString(R.string.color));
 	}
 
+
 	@Override
-	public void onUpdate(final ArrayList<OtherSkus> otherSkuList, final String viewType) {
+	public void onUpdate(ArrayList<OtherSkus> otherSkuList, String viewType, boolean shouldShowPrice) {
 
 	}
 
 	@Override
 	public void onUpdate(List<Integer> quantityList) {
+
+	}
+
+	@Override
+	public void onUpdate(ShoppingListItem shoppingListItem) {
 
 	}
 }

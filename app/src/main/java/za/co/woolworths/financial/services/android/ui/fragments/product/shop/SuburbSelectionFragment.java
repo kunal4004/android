@@ -29,11 +29,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
-import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
 import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
-import za.co.woolworths.financial.services.android.models.dto.SuburbsResponse;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.Suburb;
+import za.co.woolworths.financial.services.android.models.dto.SuburbsResponse;
 import za.co.woolworths.financial.services.android.models.rest.shop.GetSuburbs;
 import za.co.woolworths.financial.services.android.models.rest.shop.SetDeliveryLocationSuburb;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
@@ -58,7 +58,7 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 
 	private ErrorHandlerView mErrorHandlerView;
 	private View btnRetry;
-	private final int SUBURB_SET_RESULT = 123401;
+	public static final int SUBURB_SET_RESULT = 123401;
 
 	private RelativeLayout suburbContentLayout;
 	private ProgressBar loadingProgressBar;
@@ -137,13 +137,11 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 		return new GetSuburbs(locationId, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
-				Log.i("SuburbSelectionFragment", "getRegions Succeeded");
 				handleSuburbsResponse((SuburbsResponse) object);
 			}
 
 			@Override
 			public void onFailure(final String errorMessage) {
-				Log.e("SuburbSelectionFragment", "getRegions Error: " + errorMessage);
 
 				getActivity().runOnUiThread(new Runnable() {
 					@Override
@@ -252,7 +250,6 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 
 	@Override
 	public void onItemClick(Suburb suburb) {
-		Log.i("SuburbSelection", "Suburb selected: " + suburb.name + " for province: " + selectedProvince.name);
 		setSuburbRequest(selectedProvince, suburb);
 	}
 
@@ -264,13 +261,11 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 		setDeliveryLocationSuburb = new SetDeliveryLocationSuburb(suburb.id, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
-				Log.i("SuburbSelectionFragment", "setSuburb Succeeded");
 				handleSetSuburbResponse((SetDeliveryLocationSuburbResponse) object, province, suburb);
 			}
 
 			@Override
 			public void onFailure(final String errorMessage) {
-				Log.e("SuburbSelectionFragment", "setSuburb Error: " + errorMessage);
 
 				getActivity().runOnUiThread(new Runnable() {
 					@Override
@@ -298,10 +293,12 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 		try {
 			switch (response.httpCode) {
 				case 200:
-					Utils.sendBus(new CartState(suburb.name + ", " + province.name));
-					saveRecentDeliveryLocation(new DeliveryLocationHistory(province, suburb));
-					// TODO: go back to cart if no items removed from cart, else go to list of removed items
 					Activity activity = getActivity();
+					if (activity == null) return;
+					Utils.sendBus(new CartState(suburb.name + ", " + province.name));
+					Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(province,suburb));
+					Utils.addToShoppingDeliveryLocationHistory(new ShoppingDeliveryLocation(province,suburb));
+					// TODO: go back to cart if no items removed from cart, else go to list of removed items
 					if (activity != null) {
 						activity.setResult(SUBURB_SET_RESULT);
 					}
@@ -355,62 +352,6 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 		}
 	}
 
-	private void saveRecentDeliveryLocation(DeliveryLocationHistory historyItem) {
-		List<DeliveryLocationHistory> history = getRecentDeliveryLocations();
-		SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.DELIVERY_LOCATION_HISTORY);
-		Gson gson = new Gson();
-		boolean isExist = false;
-		if (history == null) {
-			history = new ArrayList<>();
-			history.add(0, historyItem);
-			String json = gson.toJson(history);
-			sessionDao.value = json;
-			try {
-				sessionDao.save();
-			} catch (Exception e) {
-				Log.e("TAG", e.getMessage());
-			}
-		} else {
-			for (DeliveryLocationHistory item : history) {
-				if (item.suburb.id.equals(historyItem.suburb.id)) {
-					isExist = true;
-				}
-			}
-			if (!isExist) {
-				history.add(0, historyItem);
-				if (history.size() > 5)
-					history.remove(5);
-
-				sessionDao.value = gson.toJson(history);
-				try {
-					sessionDao.save();
-				} catch (Exception e) {
-					Log.e("TAG", e.getMessage());
-				}
-			}
-		}
-
-		//Trigger api validation token in ProductDetailFragment
-		Utils.sendBus(new ProductState(USE_MY_LOCATION));
-	}
-
-	private List<DeliveryLocationHistory> getRecentDeliveryLocations() {
-		List<DeliveryLocationHistory> history = null;
-		try {
-			SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.DELIVERY_LOCATION_HISTORY);
-			if (sessionDao.value == null) {
-				history = new ArrayList<>();
-			} else {
-				Gson gson = new Gson();
-				Type type = new TypeToken<List<DeliveryLocationHistory>>() {
-				}.getType();
-				history = gson.fromJson(sessionDao.value, type);
-			}
-		} catch (Exception e) {
-			Log.e("TAG", e.getMessage());
-		}
-		return history;
-	}
 
 	@Override
 	public void onAttach(Context context) {
