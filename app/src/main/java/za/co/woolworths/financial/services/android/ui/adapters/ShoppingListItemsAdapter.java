@@ -21,6 +21,7 @@ import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsNavigator;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -43,8 +44,9 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 
 
 	public ShoppingListItemsAdapter(List<ShoppingListItem> shoppingListItems, ShoppingListItemsNavigator navigator) {
-		mShoppingListItem = shoppingListItems;
+		this.mShoppingListItem = shoppingListItems;
 		this.navigator = navigator;
+
 	}
 
 	@Override
@@ -129,11 +131,14 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 				/****
 				 * shoppingListItem.userShouldSetSuburb - is set to true when user did not select any suburb
 				 */
-				if (shoppingListItem.userShouldSetSuburb) {
+
+				if (userShouldSetSuburb()) {
 					holder.tvProductAvailability.setVisibility(View.GONE);
 					holder.llQuantity.setVisibility(View.VISIBLE);
 					holder.llQuantity.setAlpha(1.0f);
 					holder.select.setEnabled(true);
+					adapterClickable(true);
+					holder.select.setAlpha(1.0f);
 					holder.llQuantity.setEnabled(true);
 				} else {
 					if (shoppingListItem != null) {
@@ -143,26 +148,47 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 						holder.select.setEnabled(productInStock);
 						holder.imPrice.setAlpha(productInStock ? 1.0f : 0.5f);
 						if (shoppingListItem.inventoryCallCompleted) {
-							holder.llQuantity.setVisibility((shoppingListItem.quantityInStock == 0) ? View.GONE : View.VISIBLE);
-							holder.tvProductAvailability.setVisibility((shoppingListItem.quantityInStock == 0) ? View.VISIBLE : View.GONE);
-							holder.select.setAlpha((shoppingListItem.quantityInStock == 0) ? 0f : 1f);
-							holder.price.setAlpha((shoppingListItem.quantityInStock == 0) ? 0f : 1f);
-							holder.tvColorSize.setVisibility(shoppingListItem.quantityInStock == 0 ? View.GONE : View.VISIBLE);
-							Utils.setBackgroundColor(holder.tvProductAvailability, R.drawable.round_red_corner, R.string.product_unavailable);
+							int inventoryQueryStatus = shoppingListItem.quantityInStock;
+							if (inventoryQueryStatus == -1) {
+								holder.llQuantity.setAlpha(0f);
+								holder.select.setAlpha(0.0f);
+								holder.imPrice.setAlpha(0.5f);
+								holder.tvColorSize.setVisibility(View.GONE);
+								holder.tvQuantity.setVisibility(View.GONE);
+								holder.tvProductAvailability.setVisibility(View.VISIBLE);
+								holder.price.setAlpha(0f);
+								Utils.setBackgroundColor(holder.tvProductAvailability, R.drawable.round_red_corner, R.string.product_unavailable);
+							} else {
+								holder.llQuantity.setVisibility((shoppingListItem.quantityInStock == 0) ? View.GONE : View.VISIBLE);
+								holder.tvProductAvailability.setVisibility((shoppingListItem.quantityInStock == 0) ? View.VISIBLE : View.GONE);
+								holder.select.setAlpha(1f);
+								holder.price.setAlpha(1f);
+								holder.tvColorSize.setVisibility(View.VISIBLE);
+								Utils.setBackgroundColor(holder.tvProductAvailability, R.drawable.round_amber_corner, R.string.out_of_stock);
+							}
 						} else {
 							holder.llQuantity.setVisibility(View.VISIBLE);
 							holder.tvProductAvailability.setVisibility(View.GONE);
 						}
 					}
 				}
+
+				if (!userShouldSetSuburb())
+					if (!shoppingListItem.inventoryCallCompleted) {
+						holder.llQuantity.setAlpha(0.5f);
+						holder.tvQuantity.setAlpha(0.5f);
+						holder.imPrice.setAlpha(0.5f);
+					}
+
 				// Set Color and Size END
 				holder.select.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View view) {
-						if (!mAdapterIsClickable) return;
 						ShoppingListItem shoppingListItem = getItem(position);
+						if (enableClickEvent(shoppingListItem)) return;
+						if (!mAdapterIsClickable) return;
 						if (!shoppingListItem.isSelected) {
-							if (shoppingListItem.userShouldSetSuburb) {
+							if (userShouldSetSuburb()) {
 								shoppingListItem.isSelected = false;
 								int currentPosition = position - 1;
 								notifyItemRangeChanged(currentPosition, mShoppingListItem.size());
@@ -185,6 +211,8 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 				holder.delete.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View view) {
+						ShoppingListItem shoppingListItem = getItem(position);
+						if (enableClickEvent(shoppingListItem)) return;
 						if (!mAdapterIsClickable) return;
 						holder.delete.setVisibility(View.INVISIBLE);
 						holder.progressBar.setVisibility(View.VISIBLE);
@@ -194,9 +222,10 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 				holder.llQuantity.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View view) {
-						if (!mAdapterIsClickable) return;
 						ShoppingListItem shoppingListItem = getItem(position);
-						if (shoppingListItem.userShouldSetSuburb) {
+						if (enableClickEvent(shoppingListItem)) return;
+						if (!mAdapterIsClickable) return;
+						if (userShouldSetSuburb()) {
 							navigator.openSetSuburbProcess(shoppingListItem);
 							return;
 						}
@@ -211,6 +240,12 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 			default:
 				break;
 		}
+	}
+
+	private boolean enableClickEvent(ShoppingListItem shoppingListItem) {
+		if (!userShouldSetSuburb())
+			if (shoppingListItem.quantityInStock == -1) return true;
+		return false;
 	}
 
 	@NonNull
@@ -296,7 +331,6 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 						updatedList.userQuantity = shoppinglistItem.userQuantity;
 						updatedList.quantityInStock = shoppinglistItem.quantityInStock;
 						updatedList.delivery_location = shoppinglistItem.delivery_location;
-						updatedList.userShouldSetSuburb = shoppinglistItem.userShouldSetSuburb;
 						updatedList.isSelected = shoppinglistItem.isSelected;
 					}
 				}
@@ -329,5 +363,11 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 
 	public List<ShoppingListItem> getShoppingListItems() {
 		return mShoppingListItem;
+	}
+
+	public boolean userShouldSetSuburb() {
+		ShoppingDeliveryLocation shoppingDeliveryLocation = Utils.getPreferredDeliveryLocation();
+		if (shoppingDeliveryLocation == null) return true;
+		return shoppingDeliveryLocation.suburb == null;
 	}
 }

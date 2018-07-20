@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -197,7 +198,11 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 				displayErrorMessage("");
 				break;
 		}
-		Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
+		try {
+			Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
+		} catch (NullPointerException ex) {
+			Log.d("onDeliveryLocation", ex.getMessage());
+		}
 	}
 
 	@Override
