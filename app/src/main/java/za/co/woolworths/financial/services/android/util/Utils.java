@@ -106,7 +106,6 @@ import static android.Manifest.permission_group.STORAGE;
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.WHITE;
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT_TEMP;
-import static za.co.woolworths.financial.services.android.ui.activities.MyPreferencesActivity.SECURITY_SETTING_REQUEST_DIALOG;
 
 public class Utils {
 
@@ -1214,13 +1213,14 @@ public class Utils {
 	}
 
 	public static String toTitleCase(String givenString) {
-		String[] arr = givenString.split(" ");
-		StringBuffer sb = new StringBuffer();
-
-		for (int i = 0; i < arr.length; i++) {
-			sb.append(Character.toUpperCase(arr[i].charAt(0)))
-					.append(arr[i].substring(1)).append(" ");
+		String words[] = givenString.replaceAll("\\s+", " ").trim().split(" ");
+		String newSentence = "";
+		for (String word : words) {
+			for (int i = 0; i < word.length(); i++)
+				newSentence = newSentence + ((i == 0) ? word.substring(i, i + 1).toUpperCase() :
+						(i != word.length() - 1) ? word.substring(i, i + 1).toLowerCase() : word.substring(i, i + 1).toLowerCase() + " ");
 		}
-		return sb.toString().trim();
+
+		return newSentence;
 	}
 }
