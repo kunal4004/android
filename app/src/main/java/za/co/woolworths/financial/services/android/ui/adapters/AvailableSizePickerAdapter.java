@@ -36,12 +36,13 @@ public class AvailableSizePickerAdapter extends RecyclerView.Adapter<AvailableSi
 
 	static class SimpleViewHolder extends RecyclerView.ViewHolder {
 
-		WTextView productSize, productPrice;
+		WTextView productSize, productPrice, outOfStockText;
 
 		SimpleViewHolder(View view) {
 			super(view);
 			productSize = view.findViewById(R.id.name);
 			productPrice = view.findViewById(R.id.tvPrice);
+			outOfStockText = view.findViewById(R.id.outOfStock);
 		}
 	}
 
@@ -55,7 +56,7 @@ public class AvailableSizePickerAdapter extends RecyclerView.Adapter<AvailableSi
 		holder.productSize.setAlpha(isQuantityAvailable ? 1f : 0.5f);
 		holder.productPrice.setAlpha(isQuantityAvailable ? 0.6f : 1f);
 		holder.productSize.setPaintFlags(isQuantityAvailable ? Paint.ANTI_ALIAS_FLAG : holder.productSize.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-
+		holder.outOfStockText.setVisibility(isQuantityAvailable ? View.GONE : View.VISIBLE);
 		holder.itemView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
