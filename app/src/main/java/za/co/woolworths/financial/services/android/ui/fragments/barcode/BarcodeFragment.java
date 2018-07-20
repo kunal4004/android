@@ -24,16 +24,21 @@ import com.google.zxing.Result;
 
 import java.util.ArrayList;
 
+import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse;
+import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
+import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.barcode.manual.ManualBarcodeFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
+import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.barcode.AutoFocusMode;
 import za.co.woolworths.financial.services.android.util.barcode.CodeScanner;
@@ -215,13 +220,13 @@ public class BarcodeFragment extends BaseFragment<BarcodeMainLayoutBinding, Barc
 	}
 
 	@Override
-	public void onLoadProductSuccess(WProduct wProduct, String detailProduct) {
+	public void onLoadProductSuccess(ProductDetailResponse productDetailResponse, String detailProduct) {
 		Activity activity = getActivity();
 		showLoadingProgressBar(false);
 		if (activity != null) {
 			try {
-				ArrayList<WProductDetail> mProductList;
-				WProductDetail productList = wProduct.product;
+				ArrayList<ProductDetails> mProductList;
+				ProductDetails productList = productDetailResponse.product;
 				mProductList = new ArrayList<>();
 				if (productList != null) {
 					mProductList.add(productList);
@@ -229,17 +234,13 @@ public class BarcodeFragment extends BaseFragment<BarcodeMainLayoutBinding, Barc
 				if (mProductList.size() > 0 && mProductList.get(0).productId != null) {
 					GsonBuilder builder = new GsonBuilder();
 					Gson gson = builder.create();
-					ProductDetailFragment productDetailFragment = new ProductDetailFragment();
 					String strProductList = gson.toJson(mProductList.get(0));
 					Bundle bundle = new Bundle();
 					bundle.putString("strProductList", strProductList);
 					bundle.putString("strProductCategory", mProductList.get(0).productName);
 					bundle.putString("productResponse", detailProduct);
 					bundle.putBoolean("fetchFromJson", true);
-					productDetailFragment.setArguments(bundle);
-					FragmentTransaction transaction = ((AppCompatActivity) activity).getSupportFragmentManager().beginTransaction();
-					transaction.replace(R.id.fragment_bottom_container, productDetailFragment).commit();
-					slideBottomPanel();
+					ScreenManager.presentProductDetails(getActivity(),bundle);
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();

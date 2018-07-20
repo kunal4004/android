@@ -301,6 +301,7 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 					// TODO: go back to cart if no items removed from cart, else go to list of removed items
 					if (activity != null) {
 						activity.setResult(SUBURB_SET_RESULT);
+						activity.setResult(Activity.RESULT_OK);
 					}
 					closeActivity();
 					break;

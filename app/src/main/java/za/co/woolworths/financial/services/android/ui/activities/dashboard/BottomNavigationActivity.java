@@ -35,6 +35,7 @@ import java.util.List;
 import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
+import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
@@ -44,6 +45,7 @@ import za.co.woolworths.financial.services.android.models.service.event.LoadStat
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
+import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment;
@@ -51,6 +53,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.barcode.BarcodeF
 import za.co.woolworths.financial.services.android.ui.fragments.barcode.manual.ManualBarcodeFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.category.CategoryFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragmentNew;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.ShoppingListFragment;
@@ -123,6 +126,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	private boolean singleOrMultipleItemSelector;
 	public static final int LOCK_REQUEST_CODE_ACCOUNTS = 444;
 	private int mListItemCount = 0;
+	public static final int PDP_REQUEST_CODE = 18;
 
 	@Override
 	public int getLayoutId() {
@@ -226,8 +230,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 		if (SessionUtilities.getInstance().isUserAuthenticated()) {
 			badgeCount();
-		}
-	}
+		}	}
+
 
 	private void setToast() {
 		mToastUtils = new ToastUtils(BottomNavigationActivity.this);
@@ -419,15 +423,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void openProductDetailFragment(String productName, ProductList productList) {
-		ProductDetailFragment productDetailFragment = new ProductDetailFragment();
 		Gson gson = new Gson();
 		String strProductList = gson.toJson(productList);
 		Bundle bundle = new Bundle();
 		bundle.putString("strProductList", strProductList);
 		bundle.putString("strProductCategory", productName);
-		productDetailFragment.setArguments(bundle);
-		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-		transaction.replace(R.id.fragment_bottom_container, productDetailFragment).commitAllowingStateLoss();
+		ScreenManager.presentProductDetails(BottomNavigationActivity.this,bundle);
 	}
 
 	@Override
@@ -858,6 +859,19 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					return;
 				}
 			}
+		}
+
+		if(requestCode == PDP_REQUEST_CODE && resultCode == RESULT_OK){
+			boolean isItemAddToCart = data.getBooleanExtra("addedToCart",false);
+			boolean isItemAddToShoppingList = data.getBooleanExtra("addedToShoppingList",false);
+			if(isItemAddToCart){
+				setToast();
+			}else if(isItemAddToShoppingList){
+				// call back when Toast clicked after adding item to shopping list
+				List<ShoppingList> shoppingList = getGlobalState().getShoppingListRequest();
+				getViewModel().openShoppingListOnToastClick(shoppingList,this);
+			}
+			return;
 		}
 
 		// navigate to product section

@@ -25,7 +25,7 @@ import za.co.woolworths.financial.services.android.models.dto.AddItemToCartRespo
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
-import za.co.woolworths.financial.services.android.models.dto.ProductDetail;
+import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
@@ -95,7 +95,7 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 		return new GetProductDetail(productRequest, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
-				ProductDetail productDetail = (ProductDetail) object;
+				ProductDetailResponse productDetail = (ProductDetailResponse) object;
 				String detailProduct = Utils.objectToJson(productDetail);
 				switch (productDetail.httpCode) {
 					case 200:

@@ -3,11 +3,11 @@ package za.co.woolworths.financial.services.android.models.rest.product;
 import android.text.TextUtils;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.dto.ProductDetail;
+import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 
-public class GetProductDetail extends HttpAsyncTask<String, String, ProductDetail> {
+public class GetProductDetail extends HttpAsyncTask<String, String, ProductDetailResponse> {
 
 	private ProductRequest productRequest;
 	private OnEventListener mCallBack;
@@ -19,24 +19,24 @@ public class GetProductDetail extends HttpAsyncTask<String, String, ProductDetai
 	}
 
 	@Override
-	protected ProductDetail httpDoInBackground(String... params) {
+	protected ProductDetailResponse httpDoInBackground(String... params) {
 		return WoolworthsApplication.getInstance().getApi().productDetail(productRequest.getProductId(), productRequest.getSkuId());
 	}
 
 	@Override
-	protected ProductDetail httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+	protected ProductDetailResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
 		mException = errorMessage;
 		mCallBack.onFailure(errorMessage);
-		return new ProductDetail();
+		return new ProductDetailResponse();
 	}
 
 	@Override
-	protected Class<ProductDetail> httpDoInBackgroundReturnType() {
-		return ProductDetail.class;
+	protected Class<ProductDetailResponse> httpDoInBackgroundReturnType() {
+		return ProductDetailResponse.class;
 	}
 
 	@Override
-	protected void onPostExecute(ProductDetail productDetail) {
+	protected void onPostExecute(ProductDetailResponse productDetail) {
 		super.onPostExecute(productDetail);
 		if (mCallBack != null) {
 			if (TextUtils.isEmpty(mException)) {

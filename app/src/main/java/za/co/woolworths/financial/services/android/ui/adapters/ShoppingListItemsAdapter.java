@@ -219,7 +219,7 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 		productList.productId = shoppingListItem.productId;
 		productList.productName = shoppingListItem.displayName;
 		productList.fromPrice = Float.valueOf((TextUtils.isEmpty(shoppingListItem.price) ? "0.0" : shoppingListItem.price));
-		productList.sku = shoppingListItem.Id;
+		productList.sku = shoppingListItem.catalogRefId;
 		productList.externalImageRef = Utils.getExternalImageRef() + shoppingListItem.externalImageURL;
 		OtherSkus otherSku = new OtherSkus();
 		otherSku.price = String.valueOf(shoppingListItem.price);

@@ -620,6 +620,31 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 		}
 	}
 
+	public void startExitAnimationForAddToListResult() {
+		if (!viewWasClicked) { // prevent more than one click
+			viewWasClicked = true;
+			TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
+			animation.setFillAfter(true);
+			animation.setDuration(ANIM_DOWN_DURATION);
+			animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
+
+				@Override
+				public void onAnimationStart(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationRepeat(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationEnd(Animation animation) {
+					dismissLayout();
+				}
+			});
+			mRelRootContainer.startAnimation(animation);
+		}
+	}
+
 	private void cliDeclineAnimation() {
 		if (!viewWasClicked) { // prevent more tan one click
 			viewWasClicked = true;
