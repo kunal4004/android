@@ -59,4 +59,6 @@ public interface ProductDetailNavigatorNew {
 	void onInventoryResponseForAllSKUs(SkusInventoryForStoreResponse inventoryResponse);
 
 	void onProductDetailedFailed(Response response);
+
+	void showOutOfStockInStores();
 }

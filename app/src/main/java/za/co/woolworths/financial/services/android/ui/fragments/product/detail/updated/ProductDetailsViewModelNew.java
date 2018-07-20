@@ -83,7 +83,7 @@ public class ProductDetailsViewModelNew extends BaseViewModel<ProductDetailNavig
 					if (location != null && location.size() > 0) {
 						getNavigator().onLocationItemSuccess(location);
 					} else {
-						getNavigator().outOfStockDialog();
+						getNavigator().showOutOfStockInStores();
 					}
 				}
 				getNavigator().dismissFindInStoreProgress();

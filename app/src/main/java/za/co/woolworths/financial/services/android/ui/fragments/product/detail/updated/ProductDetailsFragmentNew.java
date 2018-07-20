@@ -381,6 +381,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		}else {
 			getViewDataBinding().llLoadingColorSize.setVisibility(View.GONE);
 			getViewDataBinding().loadingInfoView.setVisibility(View.GONE);
+			Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.CLI_ERROR,getString(R.string.statement_send_email_false_desc));
 		}
 	}
 
@@ -397,6 +398,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		this.setProductCode(productDetails.productId);
 		this.setProductDescription(getViewModel().getProductDescription(getActivity(), productDetails));
 		this.configureUIForOtherSKU(defaultSku);
+		this.displayIngredients();
 	}
 
 	public void configureButtonsAndSelectors() {
@@ -525,9 +527,13 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	}
 
 	private void configureUIForOtherSKU(OtherSkus otherSku) {
-		txtFromPrice.setText(otherSku.price);
-		if (!TextUtils.isEmpty(otherSku.wasPrice))
-			txtActualPrice.setText(otherSku.wasPrice);
+
+		try {
+			// set price list
+			ProductUtils.gridPriceList(txtFromPrice, txtActualPrice, otherSku.price, String.valueOf(otherSku.wasPrice));
+		} catch (Exception ignored) {
+		}
+
 		if (hasColor)
 			this.setSelectedColorIcon();
 	}
@@ -576,12 +582,17 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 			startActivity(intentInStoreFinder);
 			getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 		} else {
-			outOfStockDialog();
+			this.showOutOfStockInStores();
 		}
 	}
 
 	@Override
 	public void outOfStockDialog() {
+		Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC, getString(R.string.out_of_stock), getString(R.string.out_of_stock_desc));
+	}
+
+	@Override
+	public void showOutOfStockInStores(){
 		Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.NO_STOCK, "");
 	}
 
@@ -1140,5 +1151,12 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		getActivity().setResult(RESULT_OK, intent);
 		getActivity().onBackPressed();
 
+	}
+
+	public void displayIngredients(){
+		if(!TextUtils.isEmpty(this.productDetails.ingredients)){
+			getViewDataBinding().linIngredient.setVisibility(View.VISIBLE);
+			getViewDataBinding().ingredientList.setText(this.productDetails.ingredients);
+		}
 	}
 }

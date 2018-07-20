@@ -180,10 +180,6 @@
 
                     </LinearLayout>
 
-                    <include
-                        android:id="@+id/loadingColorDivider"
-                        layout="@layout/line" />
-
                     <za.co.woolworths.financial.services.android.ui.views.WButton
                         android:id="@+id/btnAddShoppingList"
                         style="@style/whiteWButtonStyle"
