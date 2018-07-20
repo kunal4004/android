@@ -946,6 +946,8 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 					break;
 				case SSO_REQUEST_ADD_TO_SHOPPING_LIST:
 					addItemToShoppingList();
+					//One time biometricsWalkthrough
+					ScreenManager.presentBiometricWalkthrough(getActivity());
 					break;
 			}
 		} else if (resultCode == RESULT_OK) {
@@ -1002,6 +1004,9 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		confirmDeliveryLocationDialog.setCanceledOnTouchOutside(false);
 		confirmDeliveryLocationDialog.setContentView(view);
 		confirmDeliveryLocationDialog.show();
+
+		//One time biometricsWalkthrough
+		ScreenManager.presentBiometricWalkthrough(getActivity());
 	}
 
 	private void openAddToListFragment(Activity activity) {
