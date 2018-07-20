@@ -193,8 +193,17 @@ public class ManualBarcodeFragment extends BaseFragment<ManualBarcodeLayoutBindi
 	public void onResume() {
 		super.onResume();
 		registerReceiver();
-		if (mEditBarcodeNumber != null)
-			showSoftKeyboard(mEditBarcodeNumber);
+		showKeyboard();
+	}
+
+	private void showKeyboard() {
+		Activity activity = getActivity();
+		if (activity == null) return;
+		BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
+		if (bottomNavigationActivity.getSlidingLayout().getPanelState() != SlidingUpPanelLayout.PanelState.EXPANDED) {
+			if (mEditBarcodeNumber != null)
+				showSoftKeyboard(mEditBarcodeNumber);
+		}
 	}
 
 	@Override
@@ -258,7 +267,7 @@ public class ManualBarcodeFragment extends BaseFragment<ManualBarcodeLayoutBindi
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		showLoadingProgressBar(false);
-		showSoftKeyboard();
+		showKeyboard();
 	}
 
 	@Override
