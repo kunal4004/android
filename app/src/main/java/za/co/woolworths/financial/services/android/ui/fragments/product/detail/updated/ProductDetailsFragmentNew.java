@@ -398,6 +398,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		this.setProductCode(productDetails.productId);
 		this.setProductDescription(getViewModel().getProductDescription(getActivity(), productDetails));
 		this.configureUIForOtherSKU(defaultSku);
+		this.displayIngredients();
 	}
 
 	public void configureButtonsAndSelectors() {
@@ -1145,5 +1146,12 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		getActivity().setResult(RESULT_OK, intent);
 		getActivity().onBackPressed();
 
+	}
+
+	public void displayIngredients(){
+		if(!TextUtils.isEmpty(this.productDetails.ingredients)){
+			getViewDataBinding().linIngredient.setVisibility(View.VISIBLE);
+			getViewDataBinding().ingredientList.setText(this.productDetails.ingredients);
+		}
 	}
 }
