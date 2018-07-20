@@ -150,17 +150,21 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 						if (shoppingListItem.inventoryCallCompleted) {
 							int inventoryQueryStatus = shoppingListItem.quantityInStock;
 							if (inventoryQueryStatus == -1) {
-								holder.llQuantity.setAlpha(0.5f);
-								holder.tvQuantity.setAlpha(0.5f);
+								holder.llQuantity.setAlpha(0f);
 								holder.select.setAlpha(0.0f);
 								holder.imPrice.setAlpha(0.5f);
+								holder.tvColorSize.setVisibility(View.GONE);
+								holder.tvQuantity.setVisibility(View.GONE);
+								holder.tvProductAvailability.setVisibility(View.VISIBLE);
+								holder.price.setAlpha(0f);
+								Utils.setBackgroundColor(holder.tvProductAvailability, R.drawable.round_red_corner, R.string.product_unavailable);
 							} else {
 								holder.llQuantity.setVisibility((shoppingListItem.quantityInStock == 0) ? View.GONE : View.VISIBLE);
 								holder.tvProductAvailability.setVisibility((shoppingListItem.quantityInStock == 0) ? View.VISIBLE : View.GONE);
-								holder.select.setAlpha((shoppingListItem.quantityInStock == 0) ? 0f : 1f);
-								holder.price.setAlpha((shoppingListItem.quantityInStock == 0) ? 0f : 1f);
-								holder.tvColorSize.setVisibility(shoppingListItem.quantityInStock == 0 ? View.GONE : View.VISIBLE);
-								Utils.setBackgroundColor(holder.tvProductAvailability, R.drawable.round_red_corner, R.string.product_unavailable);
+								holder.select.setAlpha(1f);
+								holder.price.setAlpha(1f);
+								holder.tvColorSize.setVisibility(View.VISIBLE);
+								Utils.setBackgroundColor(holder.tvProductAvailability, R.drawable.round_amber_corner, R.string.out_of_stock);
 							}
 						} else {
 							holder.llQuantity.setVisibility(View.VISIBLE);

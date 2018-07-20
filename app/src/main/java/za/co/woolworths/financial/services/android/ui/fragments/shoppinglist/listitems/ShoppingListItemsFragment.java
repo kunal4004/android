@@ -791,7 +791,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 						if (TextUtils.isEmpty(inventoryItems.fulfillmentType)) continue;
 						if (inventoryItems.fulfillmentType.equalsIgnoreCase(fulFillmentType)) {
 							inventoryItems.inventoryCallCompleted = true;
-							inventoryItems.quantityInStock = 0;
+							inventoryItems.quantityInStock = -1;
 						}
 					}
 				}
