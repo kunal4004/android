@@ -581,12 +581,17 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 			startActivity(intentInStoreFinder);
 			getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 		} else {
-			outOfStockDialog();
+			this.showOutOfStockInStores();
 		}
 	}
 
 	@Override
 	public void outOfStockDialog() {
+		Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC, getString(R.string.out_of_stock), getString(R.string.out_of_stock_desc));
+	}
+
+	@Override
+	public void showOutOfStockInStores(){
 		Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.NO_STOCK, "");
 	}
 
