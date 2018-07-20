@@ -525,9 +525,13 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	}
 
 	private void configureUIForOtherSKU(OtherSkus otherSku) {
-		txtFromPrice.setText(otherSku.price);
-		if (!TextUtils.isEmpty(otherSku.wasPrice))
-			txtActualPrice.setText(otherSku.wasPrice);
+
+		try {
+			// set price list
+			ProductUtils.gridPriceList(txtFromPrice, txtActualPrice, otherSku.price, String.valueOf(otherSku.wasPrice));
+		} catch (Exception ignored) {
+		}
+
 		if (hasColor)
 			this.setSelectedColorIcon();
 	}
