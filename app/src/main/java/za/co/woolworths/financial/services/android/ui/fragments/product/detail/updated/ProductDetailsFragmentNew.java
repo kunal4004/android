@@ -381,6 +381,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		}else {
 			getViewDataBinding().llLoadingColorSize.setVisibility(View.GONE);
 			getViewDataBinding().loadingInfoView.setVisibility(View.GONE);
+			Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.CLI_ERROR,getString(R.string.statement_send_email_false_desc));
 		}
 	}
 
