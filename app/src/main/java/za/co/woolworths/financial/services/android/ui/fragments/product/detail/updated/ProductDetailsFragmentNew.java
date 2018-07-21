@@ -346,7 +346,14 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		if (this.otherSKUForCart != null) {
 			this.enableAddToCartButton(true);
 			String storeId = Utils.retrieveStoreId(productDetails.fulfillmentType);
-			getViewModel().queryInventoryForSKUs(storeId, this.otherSKUForCart.sku, false).execute();
+			if (TextUtils.isEmpty(storeId)) {
+				this.otherSKUForCart = null;
+				String message = "Unfortunately this item is unavailable in "+deliveryLocation.suburb.name+". Try changing your delivery location and try again.";
+				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC, getString(R.string.product_unavailable), message);
+				enableAddToCartButton(false);
+			} else {
+				getViewModel().queryInventoryForSKUs(storeId, this.otherSKUForCart.sku, false).execute();
+			}
 			return;
 		} else if (this.selectedOtherSku != null) {
 			this.otherSKUForCart = this.selectedOtherSku;
@@ -529,8 +536,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	private void configureUIForOtherSKU(OtherSkus otherSku) {
 
 		try {
-			// set price list
-			ProductUtils.gridPriceList(txtFromPrice, txtActualPrice, otherSku.price, String.valueOf(otherSku.wasPrice));
+			ProductUtils.gridPriceList(txtFromPrice, txtActualPrice, otherSku.price, otherSku.wasPrice);
 		} catch (Exception ignored) {
 		}
 
@@ -778,7 +784,8 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	public List<String> getAuxiliaryImagesByGroupKey(String groupKey) {
 
 		List<String> updatedAuxiliaryImages = new ArrayList<>();
-		if (this.productDetails.otherSkus.size() > 0)
+		String imageFromOtherSku = this.otherSKUsByGroupKey.get(groupKey).get(0).externalImageRef;
+		if (this.productDetails.otherSkus.size() > 0 && imageFromOtherSku != null)
 			updatedAuxiliaryImages.add(this.otherSKUsByGroupKey.get(groupKey).get(0).externalImageRef);
 
 		Map<String, AuxiliaryImage> allAuxImages = new Gson().fromJson(this.productDetails.auxiliaryImages, new TypeToken<Map<String, AuxiliaryImage>>() {
