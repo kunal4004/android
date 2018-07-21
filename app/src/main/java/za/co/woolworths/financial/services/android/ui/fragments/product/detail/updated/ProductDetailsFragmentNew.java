@@ -346,7 +346,14 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		if (this.otherSKUForCart != null) {
 			this.enableAddToCartButton(true);
 			String storeId = Utils.retrieveStoreId(productDetails.fulfillmentType);
-			getViewModel().queryInventoryForSKUs(storeId, this.otherSKUForCart.sku, false).execute();
+			if (TextUtils.isEmpty(storeId)) {
+				this.otherSKUForCart = null;
+				String message = "Unfortunately this item is unavailable in "+deliveryLocation.suburb.name+". Try changing your delivery location and try again.";
+				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC, getString(R.string.product_unavailable), message);
+				enableAddToCartButton(false);
+			} else {
+				getViewModel().queryInventoryForSKUs(storeId, this.otherSKUForCart.sku, false).execute();
+			}
 			return;
 		} else if (this.selectedOtherSku != null) {
 			this.otherSKUForCart = this.selectedOtherSku;
@@ -530,7 +537,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
 		try {
 			// set price list
-			ProductUtils.gridPriceList(txtFromPrice, txtActualPrice, otherSku.price, String.valueOf(otherSku.wasPrice));
+			ProductUtils.gridPriceList(txtFromPrice, txtActualPrice, String.valueOf(otherSku.price), String.valueOf(otherSku.wasPrice));
 		} catch (Exception ignored) {
 		}
 
