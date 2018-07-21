@@ -64,6 +64,7 @@ import za.co.woolworths.financial.services.android.ui.activities.CartCheckoutAct
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity;
+import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CartProductAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -901,12 +902,16 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			activity.overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
 			return;
 		}
-		if (requestCode == CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY ) {
-			loadShoppingCart(false).execute();
-			ShoppingDeliveryLocation lastDeliveryLocation = Utils.getPreferredDeliveryLocation();
-			if (lastDeliveryLocation != null) {
-				mSuburbName = lastDeliveryLocation.suburb.name;
-				mProvinceName = lastDeliveryLocation.province.name;
+		if (requestCode == CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY  || requestCode == SSOActivity.SSOActivityResult.LAUNCH.rawValue()) {
+			if(SessionUtilities.getInstance().isUserAuthenticated()) {
+				loadShoppingCart(false).execute();
+				ShoppingDeliveryLocation lastDeliveryLocation = Utils.getPreferredDeliveryLocation();
+				if (lastDeliveryLocation != null) {
+					mSuburbName = lastDeliveryLocation.suburb.name;
+					mProvinceName = lastDeliveryLocation.province.name;
+				}
+			}else {
+				getActivity().onBackPressed();
 			}
 		}
 
