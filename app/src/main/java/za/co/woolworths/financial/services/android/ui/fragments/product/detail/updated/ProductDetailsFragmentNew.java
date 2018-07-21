@@ -536,8 +536,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	private void configureUIForOtherSKU(OtherSkus otherSku) {
 
 		try {
-			// set price list
-			ProductUtils.gridPriceList(txtFromPrice, txtActualPrice, String.valueOf(otherSku.price), String.valueOf(otherSku.wasPrice));
+			ProductUtils.gridPriceList(txtFromPrice, txtActualPrice, otherSku.price, otherSku.wasPrice);
 		} catch (Exception ignored) {
 		}
 
@@ -785,7 +784,8 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	public List<String> getAuxiliaryImagesByGroupKey(String groupKey) {
 
 		List<String> updatedAuxiliaryImages = new ArrayList<>();
-		if (this.productDetails.otherSkus.size() > 0)
+		String imageFromOtherSku = this.otherSKUsByGroupKey.get(groupKey).get(0).externalImageRef;
+		if (this.productDetails.otherSkus.size() > 0 && imageFromOtherSku != null)
 			updatedAuxiliaryImages.add(this.otherSKUsByGroupKey.get(groupKey).get(0).externalImageRef);
 
 		Map<String, AuxiliaryImage> allAuxImages = new Gson().fromJson(this.productDetails.auxiliaryImages, new TypeToken<Map<String, AuxiliaryImage>>() {
