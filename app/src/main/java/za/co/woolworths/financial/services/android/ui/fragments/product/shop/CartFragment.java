@@ -78,11 +78,13 @@ import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 
+import static android.app.Activity.RESULT_OK;
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT_TEMP;
 import static za.co.woolworths.financial.services.android.models.service.event.CartState.CHANGE_QUANTITY;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_DIALOG_TAPPED;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CLOSE_PDP_FROM_ADD_TO_LIST;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL;
 
 public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick, View.OnClickListener, NetworkChangeListener, ToastUtils.ToastInterface {
@@ -899,7 +901,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			activity.overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
 			return;
 		}
-		if (requestCode == CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY || requestCode == REQUEST_SUBURB_CHANGE) {
+		if (requestCode == CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY ) {
 			loadShoppingCart(false).execute();
 			ShoppingDeliveryLocation lastDeliveryLocation = Utils.getPreferredDeliveryLocation();
 			if (lastDeliveryLocation != null) {
@@ -908,10 +910,20 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			}
 		}
 
-		if (resultCode == RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL) {
-			if (requestCode == RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL) {
-				if (getActivity() == null) return;
-				loadShoppingCart(false).execute();
+		if(resultCode == RESULT_OK){
+			switch (requestCode)
+			{
+				case PDP_REQUEST_CODE:
+				case REQUEST_SUBURB_CHANGE:
+					loadShoppingCart(false).execute();
+					ShoppingDeliveryLocation lastDeliveryLocation = Utils.getPreferredDeliveryLocation();
+					if (lastDeliveryLocation != null) {
+						mSuburbName = lastDeliveryLocation.suburb.name;
+						mProvinceName = lastDeliveryLocation.province.name;
+					}
+					break;
+				default:
+					break;
 			}
 		}
 	}
