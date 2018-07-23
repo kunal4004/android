@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
+import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 
 public enum SessionExpiredUtilities {
 	INSTANCE;
@@ -16,7 +17,7 @@ public enum SessionExpiredUtilities {
 		args.putSerializable("key", CustomPopUpWindow.MODAL_LAYOUT.SESSION_EXPIRED);
 		args.putString("description", SessionUtilities.getInstance().getSTSParameters());
 		openMsg.putExtras(args);
-		activity.startActivityForResult(openMsg, 0);
+		activity.startActivityForResult(openMsg, SSOActivity.SSOActivityResult.LAUNCH.rawValue());
 		activity.overridePendingTransition(0, 0);
 	}
 }
