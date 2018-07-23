@@ -865,8 +865,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			boolean isItemAddToShoppingList = data.getBooleanExtra("addedToShoppingList", false);
 			if (isItemAddToCart) {
 				setToast();
-				if (mQueryBadgeCounter != null)
-					mQueryBadgeCounter.queryCartCount();
 			} else if (isItemAddToShoppingList) {
 				// call back when Toast clicked after adding item to shopping list
 				List<ShoppingList> shoppingList = getGlobalState().getShoppingListRequest();
