@@ -55,6 +55,7 @@ import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForSt
 import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.rest.product.GetInventorySkusForStore;
+import za.co.woolworths.financial.services.android.models.rest.product.GetShoppingCart;
 import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
@@ -509,57 +510,24 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		cartProductAdapter.onChangeQuantityLoad();
 	}
 
-	private HttpAsyncTask<String, String, ShoppingCartResponse> loadShoppingCart(final boolean onItemRemove) {
-		mErrorHandlerView.hideErrorHandler();
-		return new HttpAsyncTask<String, String, ShoppingCartResponse>() {
 
+	private GetShoppingCart loadShoppingCart(final boolean onItemRemove) {
+		Utils.deliveryLocationEnabled(getActivity(), false, rlLocationSelectedLayout);
+		rlCheckOut.setEnabled(onItemRemove ? false : true);
+		rlCheckOut.setVisibility(onItemRemove ? View.VISIBLE : View.GONE);
+		pBar.setVisibility(View.VISIBLE);
+		if (cartProductAdapter != null) {
+			cartProductAdapter.clear();
+		}
+		Activity activity = getActivity();
+		if (activity != null) {
+			CartActivity cartActivity = (CartActivity) activity;
+			cartActivity.hideEditCart();
+		}
+		return new GetShoppingCart(new OnEventListener() {
 			@Override
-			protected void onPreExecute() {
-				Utils.deliveryLocationEnabled(getActivity(), false, rlLocationSelectedLayout);
-				rlCheckOut.setEnabled(onItemRemove ? false : true);
-				rlCheckOut.setVisibility(onItemRemove ? View.VISIBLE : View.GONE);
-				pBar.setVisibility(View.VISIBLE);
-				if (cartProductAdapter != null) {
-					cartProductAdapter.clear();
-				}
-				Activity activity = getActivity();
-				if (activity != null) {
-					CartActivity cartActivity = (CartActivity) activity;
-					cartActivity.hideEditCart();
-				}
-			}
-
-			@Override
-			protected Class<ShoppingCartResponse> httpDoInBackgroundReturnType() {
-				return ShoppingCartResponse.class;
-			}
-
-			@Override
-			protected ShoppingCartResponse httpDoInBackground(String... params) {
-				return ((WoolworthsApplication) getActivity().getApplication()).getApi().getShoppingCart();
-			}
-
-			@Override
-			protected ShoppingCartResponse httpError(final String errorMessage, HttpErrorCode httpErrorCode) {
-				Activity activity = getActivity();
-				if (activity != null) {
-					activity.runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							if (!onItemRemove) {
-								Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
-								rvCartList.setVisibility(View.GONE);
-								rlCheckOut.setVisibility(View.GONE);
-								mErrorHandlerView.showErrorHandler();
-							}
-						}
-					});
-				}
-				return new ShoppingCartResponse();
-			}
-
-			@Override
-			protected void onPostExecute(ShoppingCartResponse shoppingCartResponse) {
+			public void onSuccess(Object object) {
+				ShoppingCartResponse shoppingCartResponse = (ShoppingCartResponse) object;
 				try {
 					pBar.setVisibility(View.GONE);
 					switch (shoppingCartResponse.httpCode) {
@@ -591,7 +559,25 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					ex.printStackTrace();
 				}
 			}
-		};
+
+			@Override
+			public void onFailure(String e) {
+				Activity activity = getActivity();
+				if (activity != null) {
+					activity.runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							if (!onItemRemove) {
+								Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
+								rvCartList.setVisibility(View.GONE);
+								rlCheckOut.setVisibility(View.GONE);
+								mErrorHandlerView.showErrorHandler();
+							}
+						}
+					});
+				}
+			}
+		});
 	}
 
 	private HttpAsyncTask<String, String, ShoppingCartResponse> changeQuantityAPI(final ChangeQuantity changeQuantity) {

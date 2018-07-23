@@ -249,7 +249,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 	private void showToastMessage(Activity activity, ProductState productState, BottomNavigationActivity bottomNavigationActivity) {
 		switch (bottomNavigationActivity.getCurrentSection()) {
-			case R.id.navigation_account:
+			case R.id.navigate_to_account:
 				closeSlideUpPanel();
 				getBottomNavigator().closeSlideUpPanelFromList(productState.getCount());
 				break;

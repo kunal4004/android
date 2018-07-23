@@ -1,6 +1,9 @@
 package za.co.woolworths.financial.services.android.util;
 
+import android.util.Log;
+
 import java.util.List;
+import java.util.Observable;
 
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
@@ -11,17 +14,67 @@ import za.co.woolworths.financial.services.android.models.rest.message.GetMessag
 import za.co.woolworths.financial.services.android.models.rest.product.GetCartSummary;
 import za.co.woolworths.financial.services.android.models.rest.reward.GetVoucher;
 
-public abstract class QueryBadgeCounters {
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_ACCOUNT;
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART;
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_REWARD;
 
-	public abstract void messageCount(int number);
+public class QueryBadgeCounter extends Observable {
 
-	public abstract void voucherCount(int number);
-
-	public abstract void cartCount(int number);
+	private int cartCount;
+	private int voucherCount;
+	private int messageCount;
+	private int updateAtPosition;
 
 	private GetMessage mGetMessage;
 	private GetVoucher mGetVoucher;
 	private GetCartSummary mGetCartCount;
+
+	private static QueryBadgeCounter INSTANCE = null;
+
+	// Returns a single instance of this class, creating it if necessary.
+	public static QueryBadgeCounter getInstance() {
+		if (INSTANCE == null) {
+			INSTANCE = new QueryBadgeCounter();
+		}
+		return INSTANCE;
+	}
+
+	public void setCartCount(int count, int updateAtPosition) {
+		this.cartCount = count;
+		this.updateAtPosition = updateAtPosition;
+		setChanged();
+		notifyObservers();
+	}
+
+	private void setVoucherCount(int count, int updateAtPosition) {
+		this.voucherCount = count;
+		this.updateAtPosition = updateAtPosition;
+		setChanged();
+		notifyObservers();
+	}
+
+	private void setMessageCount(int count, int updateAtPosition) {
+		this.messageCount = count;
+		this.updateAtPosition = updateAtPosition;
+		setChanged();
+		notifyObservers();
+	}
+
+	public int getCartCount() {
+		return cartCount;
+	}
+
+	public int getVoucherCount() {
+		return voucherCount;
+	}
+
+	public int getMessageCount() {
+		return messageCount;
+	}
+
+	public int getUpdateAtPosition() {
+		return updateAtPosition;
+	}
 
 	public void queryAllBadgeCounters() {
 		queryVoucherCount();
@@ -59,7 +112,8 @@ public abstract class QueryBadgeCounters {
 						VoucherCollection voucherCollection = voucherResponse.voucherCollection;
 						if (voucherCollection != null) {
 							if (voucherCollection.vouchers != null) {
-								voucherCount(voucherCollection.vouchers.size());
+								Log.e("badgeVoucher", "loadVoucherCount" + voucherCollection.vouchers.size());
+								setVoucherCount(voucherCollection.vouchers.size(), INDEX_REWARD);
 							}
 						}
 						break;
@@ -85,8 +139,10 @@ public abstract class QueryBadgeCounters {
 					case 200:
 						if (cartSummaryResponse.data == null) return;
 						List<CartSummary> cartSummary = cartSummaryResponse.data;
-						if (cartSummary.get(0) != null)
-							cartCount(cartSummary.get(0).totalItemsCount);
+						if (cartSummary.get(0) != null) {
+							setCartCount(cartSummary.get(0).totalItemsCount, INDEX_CART);
+							Log.e("badgeVoucher", "loadShoppingCartCount" + cartSummary.get(0).totalItemsCount);
+						}
 						break;
 					case 400:
 						break;
@@ -108,7 +164,8 @@ public abstract class QueryBadgeCounters {
 			@Override
 			public void onSuccess(Object object) {
 				MessageResponse messageResponse = (MessageResponse) object;
-				messageCount(messageResponse.unreadCount);
+				setMessageCount(messageResponse.unreadCount, INDEX_ACCOUNT);
+				Log.e("badgeVoucher", "loadMessageCount" + messageResponse.unreadCount);
 			}
 
 			@Override
@@ -137,5 +194,10 @@ public abstract class QueryBadgeCounters {
 				httpAsyncTask.cancel(true);
 			}
 		}
+	}
+
+	@Override
+	public boolean hasChanged() {
+		return true; //super.hasChanged();
 	}
 }
