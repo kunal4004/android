@@ -82,6 +82,20 @@
             app:flexWrap="wrap">
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/textWasPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginEnd="@dimen/two_dp"
+                android:layout_toEndOf="@+id/textAmount"
+                android:gravity="bottom|start"
+                android:letterSpacing="0.03"
+                android:textColor="@color/red"
+                android:textSize="14sp"
+                app:WTextView_font="medium_bold"
+                app:layout_alignSelf="flex_end"/>
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/textAmount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -93,19 +107,6 @@
                 android:textSize="14sp"
                 app:WTextView_font="medium_bold"
                 app:layout_alignSelf="flex_start"/>
-
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/textWasPrice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_toEndOf="@+id/textAmount"
-                android:gravity="bottom|start"
-                android:letterSpacing="0.03"
-                android:textColor="@color/red"
-                android:textSize="14sp"
-                app:WTextView_font="medium_bold"
-                app:layout_alignSelf="flex_end"/>
         </com.google.android.flexbox.FlexboxLayout>
 
     </com.google.android.flexbox.FlexboxLayout>

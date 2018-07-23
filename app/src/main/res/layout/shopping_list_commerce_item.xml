@@ -177,22 +177,32 @@
 
                                 </RelativeLayout>
 
-                                <za.co.woolworths.financial.services.android.ui.views.WTextView
-                                    android:id="@+id/tvWasPrice"
-                                    style="@style/style_cart_item_price"
+                                <LinearLayout
+                                    android:id="@+id/llPriceLayout"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentBottom="true"
-                                    android:layout_marginEnd="@dimen/four_dp"
-                                    android:layout_toStartOf="@+id/tvPrice"/>
+                                    android:layout_alignParentEnd="true"
+                                    android:orientation="vertical">
 
-                                <za.co.woolworths.financial.services.android.ui.views.WTextView
-                                    android:id="@+id/tvPrice"
-                                    style="@style/style_cart_item_price"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_alignParentBottom="true"
-                                    android:layout_alignParentEnd="true"/>
+                                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                                        android:id="@+id/tvWasPrice"
+                                        style="@style/style_cart_item_price"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="end"
+                                        android:textColor="@color/was_price_color"/>
+
+                                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                                        android:id="@+id/tvPrice"
+                                        style="@style/style_cart_item_price"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="end"
+                                        android:textColor="@color/black"
+                                        />
+
+                                </LinearLayout>
 
                             </RelativeLayout>
 

@@ -215,7 +215,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
 		try {
 			// set price list
-			ProductUtils.gridPriceList(txtFromPrice, txtActualPrice, String.valueOf(mDefaultProduct.fromPrice), getViewModel().maxWasPrice(mDefaultProduct.otherSkus));
+			ProductUtils.displayPrice(txtFromPrice, txtActualPrice, String.valueOf(mDefaultProduct.fromPrice), getViewModel().maxWasPrice(mDefaultProduct.otherSkus));
 		} catch (Exception ignored) {
 		}
 
@@ -530,7 +530,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
 		try {
 			// set price list
-			ProductUtils.gridPriceList(txtFromPrice, txtActualPrice, otherSku.price, String.valueOf(otherSku.wasPrice));
+			ProductUtils.displayPrice(txtFromPrice, txtActualPrice, otherSku.price, String.valueOf(otherSku.wasPrice));
 		} catch (Exception ignored) {
 		}
 
