@@ -28,7 +28,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
-import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.ProductDetailViewBinding;
 import com.google.gson.Gson;
@@ -37,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import com.awfs.coordination.BR;
 
 import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;

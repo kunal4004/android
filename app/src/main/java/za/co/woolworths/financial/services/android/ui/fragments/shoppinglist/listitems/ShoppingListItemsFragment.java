@@ -801,7 +801,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 						if (shoppingListItem.fulfillmentType.equalsIgnoreCase(fulFillmentType)) {
 							String otherSkuId = shoppingListItem.catalogRefId;
 							shoppingListItem.inventoryCallCompleted = true;
-							shoppingListItem.quantityInStock = 0;
+							shoppingListItem.quantityInStock = -1;
 							for (SkuInventory inventorySku : skusInventoryForStoreResponse.skuInventory) {
 								if (otherSkuId.equalsIgnoreCase(inventorySku.sku)) {
 									shoppingListItem.quantityInStock = inventorySku.quantity;
