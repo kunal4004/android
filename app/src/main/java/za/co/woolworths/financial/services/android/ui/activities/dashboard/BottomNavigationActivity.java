@@ -12,7 +12,6 @@ import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.Toolbar;
@@ -123,6 +122,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	public static final int LOCK_REQUEST_CODE_ACCOUNTS = 444;
 	private int mListItemCount = 0;
 	private QueryBadgeCounter mQueryBadgeCounter;
+	public static final int PDP_REQUEST_CODE = 18;
 
 	@Override
 	public int getLayoutId() {
@@ -226,6 +226,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			badgeCount();
 		}
 	}
+
 
 	private void initBadgeCounter() {
 		mQueryBadgeCounter = QueryBadgeCounter.getInstance();
@@ -422,15 +423,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void openProductDetailFragment(String productName, ProductList productList) {
-		ProductDetailFragment productDetailFragment = new ProductDetailFragment();
 		Gson gson = new Gson();
 		String strProductList = gson.toJson(productList);
 		Bundle bundle = new Bundle();
 		bundle.putString("strProductList", strProductList);
 		bundle.putString("strProductCategory", productName);
-		productDetailFragment.setArguments(bundle);
-		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-		transaction.replace(R.id.fragment_bottom_container, productDetailFragment).commitAllowingStateLoss();
+		ScreenManager.presentProductDetails(BottomNavigationActivity.this, bundle);
 	}
 
 	@Override
@@ -860,6 +858,19 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					return;
 				}
 			}
+		}
+
+		if (requestCode == PDP_REQUEST_CODE && resultCode == RESULT_OK) {
+			boolean isItemAddToCart = data.getBooleanExtra("addedToCart", false);
+			boolean isItemAddToShoppingList = data.getBooleanExtra("addedToShoppingList", false);
+			if (isItemAddToCart) {
+				setToast();
+			} else if (isItemAddToShoppingList) {
+				// call back when Toast clicked after adding item to shopping list
+				List<ShoppingList> shoppingList = getGlobalState().getShoppingListRequest();
+				getViewModel().openShoppingListOnToastClick(shoppingList, this);
+			}
+			return;
 		}
 
 		// navigate to product section

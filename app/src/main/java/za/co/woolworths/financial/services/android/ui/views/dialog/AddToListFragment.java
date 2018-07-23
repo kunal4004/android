@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.views.dialog;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -55,6 +56,7 @@ import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.Utils;
 
+import static android.app.Activity.RESULT_OK;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CLOSE_PDP_FROM_ADD_TO_LIST;
 
 public class AddToListFragment extends Fragment implements View.OnClickListener, AddToListInterface, NetworkChangeListener, EmptyCartView.EmptyCartInterface {
@@ -352,8 +354,9 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 					switch (addToListResponse.httpCode) {
 						case 200:
 							if (sizeOfList == 1) {
-								((CustomPopUpWindow) activity).startExitAnimation();
-								Utils.sendBus(new ProductState(sizeOfList, CLOSE_PDP_FROM_ADD_TO_LIST));
+								((CustomPopUpWindow) activity).startExitAnimationForAddToListResult();
+								getActivity().setResult(RESULT_OK, new Intent().putExtra("sizeOfList", sizeOfList));
+								//Utils.sendBus(new ProductState(sizeOfList, CLOSE_PDP_FROM_ADD_TO_LIST));
 								onLoad(false);
 								return;
 							} else {
@@ -364,8 +367,9 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 									PostAddToList postAddToList = addToList(addToListRequestList, currentKey);
 									postAddToList.execute();
 								} else {
-									((CustomPopUpWindow) activity).startExitAnimation();
-									Utils.sendBus(new ProductState(sizeOfList, CLOSE_PDP_FROM_ADD_TO_LIST));
+									((CustomPopUpWindow) activity).startExitAnimationForAddToListResult();
+									//Utils.sendBus(new ProductState(sizeOfList, CLOSE_PDP_FROM_ADD_TO_LIST));
+									getActivity().setResult(RESULT_OK, new Intent().putExtra("sizeOfList", sizeOfList));
 									onLoad(false);
 								}
 							}

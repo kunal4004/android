@@ -72,7 +72,7 @@ public class PermissionUtils {
 	 * @return
 	 */
 
-	private boolean checkAndRequestPermissions(ArrayList<String> permissions, int request_code) {
+	public boolean checkAndRequestPermissions(ArrayList<String> permissions, int request_code) {
 
 		if (permissions.size() > 0) {
 			listPermissionsNeeded = new ArrayList<>();

@@ -144,6 +144,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		view.findViewById(R.id.btnRetry).setOnClickListener(this);
 		EmptyCartView emptyCartView = new EmptyCartView(view, this);
 		emptyCartView.setView(getString(R.string.title_empty_shopping_list), getString(R.string.description_empty_shopping_list), getString(R.string.button_empty_shopping_list), R.drawable.emptyshoppinglist);
+
 		showToolbar(listName);
 		observableOn(new Consumer() {
 			@Override
@@ -254,7 +255,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		if (shoppingDeliveryLocation == null) {
 			if (mShoppingListItems == null)
 				mShoppingListItems = new ArrayList<>();
-			cancelQuantityLoad();
 			updateList(mShoppingListItems);
 			enableAdapterClickEvent(true);
 			return;
@@ -293,6 +293,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				mToastUtils.build();
 				return;
 			}
+			if (mOpenShoppingListItem.quantityInStock == -1) return;
 			Intent editQuantityIntent = new Intent(activity, ConfirmColorSizeActivity.class);
 			editQuantityIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, ConfirmColorSizeActivity.QUANTITY);
 			editQuantityIntent.putExtra("CART_QUANTITY_In_STOCK", mOpenShoppingListItem.quantityInStock);
@@ -332,7 +333,9 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				mMapStoreFulFillmentKeyValue.put(fulFillmentTypeIdCollection, mFulFillmentStoreId);
 				executeGetInventoryForStore(mFulFillmentStoreId, multiSKUS);
 			} else {
-				cancelQuantityLoad();
+				for (ShoppingListItem inventoryItems : mShoppingListItems) {
+					inventoryItems.inventoryCallCompleted = true;
+				}
 				enableAdapterClickEvent(true);
 			}
 		}
@@ -781,25 +784,30 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 						fulFillmentType = mapFulfillmentStore.getKey();
 					}
 				}
+				List<SkuInventory> skuInventory = skusInventoryForStoreResponse.skuInventory;
 				// skuInventory is empty or null
-				if (skusInventoryForStoreResponse.skuInventory.isEmpty()) {
-					for (ShoppingListItem inventoryItems : mShoppingListItems) {
-						if (TextUtils.isEmpty(inventoryItems.fulfillmentType)) continue;
-						inventoryItems.inventoryCallCompleted = true;
-						inventoryItems.userShouldSetSuburb = false;
-					}
-				}
-
-				for (SkuInventory skuInventory : skusInventoryForStoreResponse.skuInventory) {
-					String sku = skuInventory.sku;
-					int quantity = skuInventory.quantity;
+				if (skuInventory.isEmpty()) {
 					for (ShoppingListItem inventoryItems : mShoppingListItems) {
 						if (TextUtils.isEmpty(inventoryItems.fulfillmentType)) continue;
 						if (inventoryItems.fulfillmentType.equalsIgnoreCase(fulFillmentType)) {
-							if (sku.equalsIgnoreCase(inventoryItems.catalogRefId)) {
-								inventoryItems.quantityInStock = quantity;
-							}
 							inventoryItems.inventoryCallCompleted = true;
+							inventoryItems.quantityInStock = -1;
+						}
+					}
+				}
+
+				if (skuInventory.size() > 0) {
+					for (ShoppingListItem shoppingListItem : mShoppingListItems) {
+						if (shoppingListItem.fulfillmentType.equalsIgnoreCase(fulFillmentType)) {
+							String otherSkuId = shoppingListItem.catalogRefId;
+							shoppingListItem.inventoryCallCompleted = true;
+							shoppingListItem.quantityInStock = 0;
+							for (SkuInventory inventorySku : skusInventoryForStoreResponse.skuInventory) {
+								if (otherSkuId.equalsIgnoreCase(inventorySku.sku)) {
+									shoppingListItem.quantityInStock = inventorySku.quantity;
+									break;
+								}
+							}
 						}
 					}
 				}
@@ -944,12 +952,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		if (mMapStoreFulFillmentKeyValue == null) return null;
 		List<String> listOfFulfillmentValue = Collections.list(Collections.enumeration(mMapStoreFulFillmentKeyValue.values()));
 		return listOfFulfillmentValue.get(listOfFulfillmentValue.size() - 1);
-	}
-
-	private void cancelQuantityLoad() {
-		for (ShoppingListItem inventoryItems : mShoppingListItems) {
-			inventoryItems.userShouldSetSuburb = true;
-		}
 	}
 
 	private boolean shouldUserSetSuburb() {

@@ -155,6 +155,7 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
 					if (activity != null) {
 						Utils.savePreferredDeliveryLocation(location);
 						activity.setResult(SUBURB_SET_RESULT);
+						activity.setResult(Activity.RESULT_OK);
 						Utils.sendBus(new CartState(location.suburb.name + ", " + location.province.name));
 						activity.finish();
 						activity.overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);

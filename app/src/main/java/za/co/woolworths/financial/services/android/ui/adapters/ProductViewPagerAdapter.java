@@ -65,4 +65,11 @@ public class ProductViewPagerAdapter extends PagerAdapter {
 	public boolean isViewFromObject(View view, Object object) {
 		return view == object;
 	}
+
+	public void updatePagerItems(List<String> mAuxiliaryImage){
+		this.mExternalImageRefList.clear();
+		this.notifyDataSetChanged();
+		this.mExternalImageRefList = mAuxiliaryImage;
+		this.notifyDataSetChanged();
+	}
 }

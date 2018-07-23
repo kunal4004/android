@@ -150,7 +150,7 @@ public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.V
 		int position = vh.getAdapterPosition();
 		ProductList selectedProduct = mProductList.get(position);
 		int otherSkuSize = getOtherSkuSize(selectedProduct);
-		// Product of type clothing or OtherSkus > 0
+		// ProductDetails of type clothing or OtherSkus > 0
 		if (clothingTypeProduct(selectedProduct)) {
 			selectedProduct.viewIsLoading = !selectedProduct.viewIsLoading;
 			if (selectedProduct.itemWasChecked) selectedProduct.viewIsLoading = false;
@@ -173,7 +173,7 @@ public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.V
 		int position = vh.getAdapterPosition();
 		ProductList selectedProduct = mProductList.get(position);
 		int otherSkuSize = getOtherSkuSize(selectedProduct);
-		// Product of type clothing or OtherSkus > 0
+		// ProductDetails of type clothing or OtherSkus > 0
 		if (clothingTypeProduct(selectedProduct)) {
 			mSearchResultNavigator.onClothingTypeSelect(selectedProduct);
 		} else {

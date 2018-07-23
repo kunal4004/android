@@ -11,7 +11,6 @@ import android.widget.ProgressBar;
 
 import com.awfs.coordination.R;
 
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
@@ -97,7 +96,7 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
 
 	@Override
 	public void onBackPressed() {
-		// close expanded Product detail page
+		// close expanded ProductDetails detail page
 		if (getSlidingLayout().getPanelState().equals(SlidingUpPanelLayout.PanelState.EXPANDED)) {
 			closeSlideUpPanel();
 			return;
@@ -171,6 +170,11 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
 
 		if (requestCode == RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL) {
 			if (resultCode == RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL) {
+
+				if (fragment instanceof CartFragment) {
+					fragment.onActivityResult(requestCode, resultCode, null);
+				}
+
 				ToastUtils mToastUtils = new ToastUtils(this);
 				mToastUtils.setActivity(this);
 				mToastUtils.setGravity(Gravity.BOTTOM);

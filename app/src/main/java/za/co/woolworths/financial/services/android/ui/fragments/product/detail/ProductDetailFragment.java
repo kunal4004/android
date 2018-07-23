@@ -394,7 +394,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 		if (mFetchFromJson) { // display product through json string
 			getViewModel().setProduct(mDefaultProductResponse);
-			onSuccessResponse(Utils.stringToJson(getActivity(), mDefaultProductResponse));
+			//onSuccessResponse(Utils.stringToJson(getActivity(), mDefaultProductResponse)); =================
 			onLoadComplete();
 		} else {
 			getViewModel().productDetail(new ProductRequest(mDefaultProduct.productId, mDefaultProduct.sku)).execute();
@@ -895,7 +895,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	@Override
 	public void colorSizeContainerVisibility(List<OtherSkus> otherSkuList) {
 
-		// Product item has no colour
+		// ProductDetails item has no colour
 		if (!productHasColour()) {
 			hideView(getViewDataBinding().llColorSize.relColorSelector);
 			getViewDataBinding().llColorSize.relSizeSelector.setPadding(Utils.dp2px(getActivity(), 16), 0, 0, 0);
@@ -903,7 +903,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 			hideView(getViewDataBinding().llColorSize.vwSeparator);
 		}
 
-		// Product item has no size
+		// ProductDetails item has no size
 		if (!productHasSize()) {
 			hideView(getViewDataBinding().llColorSize.relSizeSelector);
 			getViewDataBinding().llColorSize.relColorSelector.setPadding(Utils.dp2px(getActivity(), 16), 0, 0, 0);

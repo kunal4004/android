@@ -449,7 +449,7 @@
     <string name="color">color</string>
     <string name="size">size</string>
     <string name="not_found">Unfortunately not found</string>
-    <string name="stock_available_product">Stores in this area are out of your item (or have very little stock). How about searching our online store</string>
+    <string name="stock_available_product">Stores in this area are out of your item (or have very little stock).</string>
     <string name="back_to_product">back to products</string>
     <string name="no_stock_title">UNFORTUNATELY NOT FOUND</string>
     <string name="location_disable_title">Location Services</string>
@@ -608,7 +608,7 @@
     <string name="total_item">Total*</string>
     <string name="rlOtherDiscounts"><![CDATA[WRewards Savings & Other Discounts]]></string>
     <string name="out_of_stock">out of stock</string>
-    <string name="out_of_stock_desc">Unfortunately this item is currently out of stock online, please try to find in-store or consider an alternative item.</string>
+    <string name="out_of_stock_desc">Unfortunately this item is currently out of stock.</string>
     <string name="out_of_stock_err">some of the products chosen are out of stock, please come back later!!</string>
     <string name="promotional_text">You saved </string>
     <string name="enter_list_name">Enter list name</string>
