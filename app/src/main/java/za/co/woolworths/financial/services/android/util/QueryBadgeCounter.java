@@ -1,7 +1,5 @@
 package za.co.woolworths.financial.services.android.util;
 
-import android.util.Log;
-
 import java.util.List;
 import java.util.Observable;
 
@@ -112,7 +110,6 @@ public class QueryBadgeCounter extends Observable {
 						VoucherCollection voucherCollection = voucherResponse.voucherCollection;
 						if (voucherCollection != null) {
 							if (voucherCollection.vouchers != null) {
-								Log.e("badgeVoucher", "loadVoucherCount" + voucherCollection.vouchers.size());
 								setVoucherCount(voucherCollection.vouchers.size(), INDEX_REWARD);
 							}
 						}
@@ -141,7 +138,6 @@ public class QueryBadgeCounter extends Observable {
 						List<CartSummary> cartSummary = cartSummaryResponse.data;
 						if (cartSummary.get(0) != null) {
 							setCartCount(cartSummary.get(0).totalItemsCount, INDEX_CART);
-							Log.e("badgeVoucher", "loadShoppingCartCount" + cartSummary.get(0).totalItemsCount);
 						}
 						break;
 					case 400:
@@ -165,7 +161,6 @@ public class QueryBadgeCounter extends Observable {
 			public void onSuccess(Object object) {
 				MessageResponse messageResponse = (MessageResponse) object;
 				setMessageCount(messageResponse.unreadCount, INDEX_ACCOUNT);
-				Log.e("badgeVoucher", "loadMessageCount" + messageResponse.unreadCount);
 			}
 
 			@Override
