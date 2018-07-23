@@ -224,7 +224,7 @@ public class NewListFragment extends BaseFragment<NewListFragmentBinding, NewLis
 			messageLabelErrorDisplay(true, response.desc);
 		} else {
 			displayVirtualKeyboard(false);
-			Utils.displayDialog(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
+			Utils.displayDialog(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc, 1001);
 		}
 		loadView(false);
 	}

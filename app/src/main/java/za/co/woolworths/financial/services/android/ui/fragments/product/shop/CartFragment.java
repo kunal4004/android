@@ -45,6 +45,7 @@ import za.co.woolworths.financial.services.android.models.dto.CommerceItem;
 import za.co.woolworths.financial.services.android.models.dto.CommerceItemInfo;
 import za.co.woolworths.financial.services.android.models.dto.Data;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
+import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse;
@@ -82,6 +83,7 @@ import static za.co.woolworths.financial.services.android.models.service.event.C
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_DIALOG_TAPPED;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CLOSE_PDP_FROM_ADD_TO_LIST;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL;
 
 public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick, View.OnClickListener, NetworkChangeListener, ToastUtils.ToastInterface {
 
@@ -329,7 +331,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	@Override
 	public void onOpenProductDetail(CommerceItem commerceItem) {
 		CartActivity cartActivity = (CartActivity) getActivity();
-		ProductList productList = new ProductList();
+		ProductDetails productList = new ProductDetails();
 		CommerceItemInfo commerceItemInfo = commerceItem.commerceItemInfo;
 		productList.externalImageRef = commerceItemInfo.externalImageURL;
 		productList.productName = commerceItemInfo.productDisplayName;
@@ -903,6 +905,13 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			if (lastDeliveryLocation != null) {
 				mSuburbName = lastDeliveryLocation.suburb.name;
 				mProvinceName = lastDeliveryLocation.province.name;
+			}
+		}
+
+		if (resultCode == RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL) {
+			if (requestCode == RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL) {
+				if (getActivity() == null) return;
+				loadShoppingCart(false).execute();
 			}
 		}
 	}

@@ -38,7 +38,7 @@ public class ShoppingListItem {
 
 	public String fulfillmentType;
 	//quantityInStock amount value is set from Inventory stock call
-	public int quantityInStock;
+	public int quantityInStock = -1;
 
 	//Grey out the quantity counter so it cannot be clicked until inventory call done
 	public boolean inventoryCallCompleted = false;
@@ -46,6 +46,4 @@ public class ShoppingListItem {
 	//select your delivery location address
 	public String delivery_location;
 
-	// Prevent quantity layout to remain greyed out
-	public boolean userShouldSetSuburb = false;
 }
