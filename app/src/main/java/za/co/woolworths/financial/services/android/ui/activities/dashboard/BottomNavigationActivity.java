@@ -1168,7 +1168,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				default:
 					break;
 			}
-			;
 		}
 	}
 
