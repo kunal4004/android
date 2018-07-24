@@ -164,7 +164,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 				if (commerceItem.isStockChecked) {
 					productHolder.llQuantity.setAlpha((commerceItem.quantityInStock == 0) ? 0.0f : 1.0f);
 					productHolder.tvProductAvailability.setVisibility((commerceItem.quantityInStock == 0) ? View.VISIBLE : View.GONE);
-					Utils.setBackgroundColor(productHolder.tvProductAvailability, R.drawable.round_red_corner, R.string.product_unavailable);
+					Utils.setBackgroundColor(productHolder.tvProductAvailability, R.drawable.round_amber_corner, R.string.out_of_stock);
 					productHolder.price.setVisibility((commerceItem.quantityInStock == 0) ? View.GONE : View.VISIBLE);
 					if (commerceItem.quantityInStock == 0)
 						productHolder.llPromotionalText.setVisibility(View.GONE);
