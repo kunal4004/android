@@ -377,7 +377,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 		try {
 			// set price list
-			ProductUtils.gridPriceList(getViewDataBinding().textPrice,
+			ProductUtils.displayPrice(getViewDataBinding().textPrice,
 					getViewDataBinding().textActualPrice, String.valueOf(mDefaultProduct.fromPrice),
 					getViewModel().maxWasPrice(mDefaultProduct.otherSkus));
 		} catch (Exception ignored) {
