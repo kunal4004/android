@@ -167,7 +167,7 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 	}
 
 	@Override
-	public void onLoadProductSuccess(List<ProductList> productLists, boolean loadMoreData) {
+	public void onLoadProductSuccess(final List<ProductList> productLists, boolean loadMoreData) {
 		if (mProductList == null) {
 			mProductList = new ArrayList<>();
 		}
@@ -180,8 +180,9 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 			}
 			bindRecyclerViewWithUI(mProductList);
 		} else if (productLists.size() == 1) {
+			getBottomNavigator().popFragmentNoAnim();
 			onGridItemSelected(productLists.get(0));
-			popFragment();
+
 		} else {
 			if (listContainFooter()) {
 				removeFooter();
@@ -322,7 +323,7 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 	}
 
 	@Override
-	public void onGridItemSelected(ProductList productList) {
+	public void onGridItemSelected(final ProductList productList) {
 		if (!isEmpty(mSearchProduct)) {
 			mSubCategoryName = mSearchProduct;
 		}
