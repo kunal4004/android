@@ -181,7 +181,7 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 			bindRecyclerViewWithUI(mProductList);
 		} else if (productLists.size() == 1) {
 			getBottomNavigator().popFragmentNoAnim();
-			onGridItemSelected(productLists.get(0));
+			getBottomNavigator().openProductDetailFragment(mSubCategoryName, productLists.get(0));
 
 		} else {
 			if (listContainFooter()) {
