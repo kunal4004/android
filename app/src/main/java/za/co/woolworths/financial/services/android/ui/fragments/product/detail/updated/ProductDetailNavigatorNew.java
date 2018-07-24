@@ -52,7 +52,7 @@ public interface ProductDetailNavigatorNew {
 
 	void onAddItemToCartFailure(String error);
 
-	void onSessionTokenExpired(Response response);
+	void onSessionTokenExpired();
 
 	void onInventoryResponseForSelectedSKU(SkusInventoryForStoreResponse inventoryResponse);
 

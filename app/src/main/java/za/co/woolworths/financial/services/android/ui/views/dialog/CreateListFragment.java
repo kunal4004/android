@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.views.dialog;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -54,6 +55,7 @@ import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.Utils;
 
+import static android.app.Activity.RESULT_OK;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CLOSE_PDP_FROM_ADD_TO_LIST;
 
 public class CreateListFragment extends Fragment implements View.OnClickListener, NetworkChangeListener {
@@ -323,6 +325,8 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 							break;
 
 						case 440:
+							((CustomPopUpWindow) activity).startExitAnimationForAddToListResult();
+							getActivity().setResult(RESULT_OK,new Intent().putExtra("sessionExpired", true));
 						case 400:
 							//TODO:: HANDLE SESSION TIMEOUT
 							break;

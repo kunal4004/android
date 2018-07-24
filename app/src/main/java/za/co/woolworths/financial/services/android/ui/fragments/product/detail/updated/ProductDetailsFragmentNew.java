@@ -129,8 +129,8 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	private ProductColorPickerAdapter quantityPickerAdapter;
 	private final int VIEW_SWITCHER_QUANTITY_PICKER = 1;
 	private final int VIEW_SWITCHER_SIZE_PICKER = 0;
-	private final int SSO_REQUEST_ADD_TO_CART = 1;
-	private final int SSO_REQUEST_ADD_TO_SHOPPING_LIST = 2;
+	private final int SSO_REQUEST_ADD_TO_CART = 1010;
+	private final int SSO_REQUEST_ADD_TO_SHOPPING_LIST = 1011;
 	private static final int REQUEST_SUBURB_CHANGE = 153;
 	private BottomSheetDialog confirmDeliveryLocationDialog;
 	private WButton btnAddToShoppingList;
@@ -649,7 +649,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	}
 
 	@Override
-	public void onSessionTokenExpired(final Response response) {
+	public void onSessionTokenExpired() {
 
 		SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
 		final Activity activity = getActivity();
@@ -659,11 +659,8 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 				if (activity != null) {
 					enableAddToCartButton(false);
 					otherSKUForCart = null;
-					if (response != null) {
-						if (response.message != null) {
-							ScreenManager.presentSSOSignin(activity);
-						}
-					}
+					otherSKUForList = null;
+					ScreenManager.presentSSOSignin(activity);
 				}
 			}
 		});
@@ -976,6 +973,11 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 					break;
 				case ADD_TO_SHOPPING_LIST_REQUEST_CODE:
 					int listSize = data.getIntExtra("sizeOfList", 0);
+					boolean isSessionExpired = data.getBooleanExtra("sessionExpired",false);
+					if(isSessionExpired){
+						onSessionTokenExpired();
+						return;
+					}
 					showToastMessage(getActivity(), listSize);
 					break;
 			}

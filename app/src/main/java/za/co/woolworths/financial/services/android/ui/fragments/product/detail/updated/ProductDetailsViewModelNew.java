@@ -167,7 +167,7 @@ public class ProductDetailsViewModelNew extends BaseViewModel<ProductDetailNavig
 
 							case 440:
 								if (cartSummaryResponse.response != null)
-									getNavigator().onSessionTokenExpired(cartSummaryResponse.response);
+									getNavigator().onSessionTokenExpired();
 								break;
 
 							default:
@@ -199,7 +199,7 @@ public class ProductDetailsViewModelNew extends BaseViewModel<ProductDetailNavig
 
 							case 440:
 								if (addItemToCartResponse.response != null)
-									getNavigator().onSessionTokenExpired(addItemToCartResponse.response);
+									getNavigator().onSessionTokenExpired();
 								break;
 
 							default:
