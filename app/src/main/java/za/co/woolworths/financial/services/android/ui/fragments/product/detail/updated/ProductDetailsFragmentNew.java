@@ -388,7 +388,8 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		}else {
 			getViewDataBinding().llLoadingColorSize.setVisibility(View.GONE);
 			getViewDataBinding().loadingInfoView.setVisibility(View.GONE);
-			Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.CLI_ERROR,getString(R.string.statement_send_email_false_desc));
+			if (isAdded())
+				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.CLI_ERROR, getString(R.string.statement_send_email_false_desc));
 		}
 	}
 
@@ -554,7 +555,8 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	public void responseFailureHandler(Response response) {
 		enableAddToCartButton(false);
 		enableFindInStoreButton(false);
-		Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
+		if (isAdded())
+			Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
 	}
 
 	@Override
@@ -595,12 +597,14 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
 	@Override
 	public void outOfStockDialog() {
-		Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC, getString(R.string.out_of_stock), getString(R.string.out_of_stock_desc));
+		if (isAdded())
+			Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC, getString(R.string.out_of_stock), getString(R.string.out_of_stock_desc));
 	}
 
 	@Override
 	public void showOutOfStockInStores(){
-		Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.NO_STOCK, "");
+		if (isAdded())
+			Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.NO_STOCK, "");
 	}
 
 	@Override
@@ -718,7 +722,8 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	public void onProductDetailedFailed(Response response) {
 		getViewDataBinding().llLoadingColorSize.setVisibility(View.GONE);
 		getViewDataBinding().loadingInfoView.setVisibility(View.GONE);
-		Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
+		if (isAdded())
+			Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
 	}
 
 	@Override
