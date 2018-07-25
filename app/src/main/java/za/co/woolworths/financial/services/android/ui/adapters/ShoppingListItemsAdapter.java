@@ -150,11 +150,10 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 						if (shoppingListItem.inventoryCallCompleted) {
 							int inventoryQueryStatus = shoppingListItem.quantityInStock;
 							if (inventoryQueryStatus == -1) {
-								holder.llQuantity.setAlpha(0f);
-								holder.select.setAlpha(0.0f);
+								holder.llQuantity.setVisibility(View.GONE);
+								holder.select.setVisibility(View.GONE);
 								holder.imPrice.setAlpha(0.5f);
 								holder.tvColorSize.setVisibility(View.GONE);
-								holder.tvQuantity.setVisibility(View.GONE);
 								holder.tvProductAvailability.setVisibility(View.VISIBLE);
 								holder.price.setAlpha(0f);
 								Utils.setBackgroundColor(holder.tvProductAvailability, R.drawable.round_amber_corner, R.string.out_of_stock);
@@ -211,8 +210,6 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 				holder.delete.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View view) {
-						ShoppingListItem shoppingListItem = getItem(position);
-						if (enableClickEvent(shoppingListItem)) return;
 						if (!mAdapterIsClickable) return;
 						holder.delete.setVisibility(View.INVISIBLE);
 						holder.progressBar.setVisibility(View.VISIBLE);
