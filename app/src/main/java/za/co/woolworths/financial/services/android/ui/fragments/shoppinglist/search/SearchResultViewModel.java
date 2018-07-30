@@ -12,7 +12,7 @@ import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
 import za.co.woolworths.financial.services.android.models.dto.LoadProduct;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.PagingResponse;
-import za.co.woolworths.financial.services.android.models.dto.ProductDetail;
+import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
@@ -23,7 +23,6 @@ import za.co.woolworths.financial.services.android.models.rest.product.SearchPro
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostAddToList;
 import za.co.woolworths.financial.services.android.ui.base.BaseViewModel;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
-import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.rx.SchedulerProvider;
 
@@ -214,7 +213,7 @@ public class SearchResultViewModel extends BaseViewModel<SearchResultNavigator> 
 		return new GetProductDetail(productRequest, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
-				ProductDetail productDetail = (ProductDetail) object;
+				ProductDetailResponse productDetail = (ProductDetailResponse) object;
 				String detailProduct = Utils.objectToJson(productDetail);
 				switch (productDetail.httpCode) {
 					case 200:

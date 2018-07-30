@@ -4,6 +4,7 @@ import android.text.TextUtils;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
+import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 
 public class LocationItemTask extends HttpAsyncTask<String, String, LocationResponse> {
@@ -12,6 +13,7 @@ public class LocationItemTask extends HttpAsyncTask<String, String, LocationResp
 	private WoolworthsApplication mWoolworthApplication;
 	private OnEventListener<LocationResponse> mCallBack;
 	public String mException;
+	public OtherSkus otherSkus;
 
 	public LocationItemTask(OnEventListener callback) {
 		mCallBack = callback;
@@ -19,9 +21,19 @@ public class LocationItemTask extends HttpAsyncTask<String, String, LocationResp
 		mWGlobalState = mWoolworthApplication.getWGlobalState();
 	}
 
+	public LocationItemTask(OnEventListener callback, OtherSkus otherSkus) {
+		mCallBack = callback;
+		mWoolworthApplication = WoolworthsApplication.getInstance();
+		mWGlobalState = mWoolworthApplication.getWGlobalState();
+		this.otherSkus = otherSkus;
+	}
+
 	@Override
 	protected LocationResponse httpDoInBackground(String... params) {
-		return mWoolworthApplication.getApi().getLocationsItem(mWGlobalState.getSelectedSKUId().sku, String.valueOf(mWGlobalState.getStartRadius()), String.valueOf(mWGlobalState.getEndRadius()));
+		if (otherSkus != null)
+			return mWoolworthApplication.getApi().getLocationsItem(otherSkus.sku, String.valueOf(mWGlobalState.getStartRadius()), String.valueOf(mWGlobalState.getEndRadius()));
+		else
+			return mWoolworthApplication.getApi().getLocationsItem(mWGlobalState.getSelectedSKUId().sku, String.valueOf(mWGlobalState.getStartRadius()), String.valueOf(mWGlobalState.getEndRadius()));
 	}
 
 	@Override

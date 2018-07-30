@@ -82,7 +82,7 @@ android {
         qa {
             applicationId "com.awfs.coordination.qa"
             signingConfig signingConfigs.woneappQa
-            versionCode 177
+            versionCode 182
         }
 
         staging {
@@ -94,7 +94,7 @@ android {
         production {
             applicationId "com.awfs.coordination"
             signingConfig signingConfigs.woolworths
-            versionCode 79
+            versionCode 80
         }
         dexOptions {
             javaMaxHeapSize "2560M"
@@ -157,5 +157,6 @@ dependencies {
     api 'com.google.zxing:android-core:3.3.0'
     annotationProcessor "android.arch.lifecycle:compiler:1.1.0"
     implementation 'com.squareup.picasso:picasso:2.71828'
+    compile 'me.relex:circleindicator:1.2.2@aar'
 }
 apply plugin: 'com.google.gms.google-services'

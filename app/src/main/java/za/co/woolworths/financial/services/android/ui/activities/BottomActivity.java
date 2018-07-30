@@ -17,13 +17,17 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
+import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
+import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
 import za.co.woolworths.financial.services.android.util.PermissionUtils;
+import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SHOW_ADDED_TO_SHOPPING_LIST_TOAST;
@@ -138,17 +142,13 @@ public abstract class BottomActivity extends AppCompatActivity implements Permis
 		});
 	}
 
-	public void openProductDetailFragment(String productName, ProductList productList) {
-		ProductDetailFragment productDetailFragment = new ProductDetailFragment();
+	public void openProductDetailFragment(String productName, ProductDetails productList) {
 		Gson gson = new Gson();
 		String strProductList = gson.toJson(productList);
 		Bundle bundle = new Bundle();
 		bundle.putString("strProductList", strProductList);
 		bundle.putString("strProductCategory", productName);
-		productDetailFragment.setArguments(bundle);
-		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		ft.replace(R.id.fragment_bottom_container, productDetailFragment).commitAllowingStateLoss();
-		slideUpBottomView();
+		ScreenManager.presentProductDetails(BottomActivity.this,bundle);
 	}
 
 	public void scrollableViewHelper(NestedScrollView nsv) {

@@ -1,11 +1,16 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.utils;
 
+import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.View;
 
+import com.awfs.coordination.R;
 import com.facebook.drawee.view.SimpleDraweeView;
 
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.DrawImage;
@@ -13,27 +18,26 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
 
 public class ProductUtils {
 
-	public static void gridPriceList(WTextView wPrice, WTextView WwasPrice,
-									 String fromPrice, String wasPrice) throws NumberFormatException, NullPointerException {
+	public static void displayPrice(WTextView tvPrice, WTextView tvWasPrice,
+									String fromPrice, String wasPrice) throws NumberFormatException, NullPointerException {
 		if (TextUtils.isEmpty(wasPrice)) {
-			if (!TextUtils.isEmpty(fromPrice)) {
-				if (fromPrice == null) {
-					wPrice.setText("");
-					return;
-				}
-				wPrice.setText(WFormatter.formatAmount(fromPrice));
-			} else {
-				wPrice.setText("");
-			}
-			WwasPrice.setText("");
+			tvPrice.setText(TextUtils.isEmpty(fromPrice) ? "" : WFormatter.formatAmount(fromPrice));
+			tvWasPrice.setText("");
+			tvPrice.setTextColor(Color.BLACK);
 		} else {
-			if (wasPrice.equalsIgnoreCase(fromPrice)) { //wasPrice equals currentPrice
-				wPrice.setText(WFormatter.formatAmount(fromPrice));
-				WwasPrice.setText("");
+			if (wasPrice.equalsIgnoreCase(fromPrice)) {//wasPrice equals currentPrice
+				tvPrice.setText(TextUtils.isEmpty(fromPrice) ? WFormatter.formatAmount(wasPrice) : WFormatter.formatAmount(fromPrice));
+				tvPrice.setTextColor(Color.BLACK);
+				tvWasPrice.setText("");
 			} else {
-				wPrice.setText(WFormatter.formatAmount(wasPrice));
-				wPrice.setPaintFlags(wPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-				WwasPrice.setText(WFormatter.formatAmount(fromPrice));
+				tvPrice.setText(WFormatter.formatAmount(fromPrice));
+				tvWasPrice.setText(WFormatter.formatAmount(wasPrice));
+				tvWasPrice.setPaintFlags(tvWasPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+				tvWasPrice.setTextColor(Color.BLACK);
+				Context context = WoolworthsApplication.getAppContext();
+				if (context == null) return;
+				tvPrice.setTextColor(ContextCompat.getColor(context, R.color.was_price_color));
+
 			}
 		}
 	}
