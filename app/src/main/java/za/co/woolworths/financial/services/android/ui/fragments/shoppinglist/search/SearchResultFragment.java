@@ -188,8 +188,8 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 	public void onLoadProductSuccess(List<ProductList> productLists, boolean loadMoreData) {
 		if (productLists != null) {
 			if (productLists.size() == 1) {
-				onClothingTypeSelect(productLists.get(0));
-				popFragment();
+				getBottomNavigator().popFragmentNoAnim();
+				getBottomNavigator().openProductDetailFragment(mSearchText, productLists.get(0));
 			} else {
 				if (!loadMoreData) {
 					bindRecyclerViewWithUI(productLists);
