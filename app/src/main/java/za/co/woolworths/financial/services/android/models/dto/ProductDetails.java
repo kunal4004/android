@@ -7,7 +7,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Product {
+public class ProductDetails {
 
 	@SerializedName("productId")
 	@Expose
@@ -60,5 +60,8 @@ public class Product {
 	@SerializedName("fulfillmentType")
 	@Expose
 	public String fulfillmentType;
+	@SerializedName("ingredients")
+	@Expose
+	public String ingredients;
 
 }

@@ -42,7 +42,7 @@ import za.co.woolworths.financial.services.android.models.dto.LoginResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageReadRequest;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
-import za.co.woolworths.financial.services.android.models.dto.ProductDetail;
+import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.PromotionsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProvincesResponse;
@@ -292,7 +292,7 @@ public class WfsApi {
 		return mApiInterface.removeAllCartItems(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken());
 	}
 
-	public ProductDetail productDetail(String productId, String skuId) {
+	public ProductDetailResponse productDetail(String productId, String skuId) {
 		getMyLocation();
 		if (Utils.isLocationEnabled(mContext)) {
 			return mApiInterface.productDetail(getOsVersion(), getDeviceModel(), getOsVersion(),

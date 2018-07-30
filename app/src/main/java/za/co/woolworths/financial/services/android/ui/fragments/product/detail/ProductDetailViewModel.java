@@ -25,9 +25,8 @@ import za.co.woolworths.financial.services.android.models.dto.AddItemToCartRespo
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
-import za.co.woolworths.financial.services.android.models.dto.ProductDetail;
+import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
@@ -35,7 +34,6 @@ import za.co.woolworths.financial.services.android.models.rest.product.GetCartSu
 import za.co.woolworths.financial.services.android.models.rest.product.GetProductDetail;
 import za.co.woolworths.financial.services.android.models.rest.product.PostAddItemToCart;
 import za.co.woolworths.financial.services.android.models.rest.product.ProductRequest;
-import za.co.woolworths.financial.services.android.models.rest.shop.SetDeliveryLocationSuburb;
 import za.co.woolworths.financial.services.android.ui.base.BaseViewModel;
 import za.co.woolworths.financial.services.android.util.LocationItemTask;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
@@ -97,7 +95,7 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 		return new GetProductDetail(productRequest, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
-				ProductDetail productDetail = (ProductDetail) object;
+				ProductDetailResponse productDetail = (ProductDetailResponse) object;
 				String detailProduct = Utils.objectToJson(productDetail);
 				switch (productDetail.httpCode) {
 					case 200:
@@ -553,21 +551,6 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 			public void onFailure(String e) {
 				setAddedToCart(false);
 				getNavigator().onAddItemToCartFailure(e);
-			}
-		});
-	}
-
-	protected SetDeliveryLocationSuburb setSuburb(ShoppingDeliveryLocation shoppingDeliveryLocation) {
-		// TODO: confirm loading when doing this request
-		return new SetDeliveryLocationSuburb(shoppingDeliveryLocation.suburb.id, new OnEventListener() {
-			@Override
-			public void onSuccess(Object object) {
-				getNavigator().handleSetSuburbResponse(object);
-			}
-
-			@Override
-			public void onFailure(final String errorMessage) {
-				getNavigator().onTokenFailure(errorMessage);
 			}
 		});
 	}

@@ -79,7 +79,7 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 			}
 
 			String fromPrice = String.valueOf(productList.fromPrice);
-			ProductUtils.gridPriceList(vh.tvAmount, vh.tvWasPrice,
+			ProductUtils.displayPrice(vh.tvAmount, vh.tvWasPrice,
 					fromPrice, wasPrice);
 
 			productImage(vh.imProductImage, externalImageRef);

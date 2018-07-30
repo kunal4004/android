@@ -52,6 +52,8 @@ import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
+import za.co.woolworths.financial.services.android.models.dto.SkuInventory;
+import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
@@ -144,6 +146,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	private LinearLayout llStoreFinder;
 	private OtherSkus selectedFindInStoreOtherSkus;
 	public static int DELIVERY_LOCATION_FROM_PDP_REQUEST = 2553;
+	private InventoryForStore mInventoryForStore;
 
 	@Override
 	public ProductDetailViewModel getViewModel() {
@@ -374,7 +377,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 		try {
 			// set price list
-			ProductUtils.gridPriceList(getViewDataBinding().textPrice,
+			ProductUtils.displayPrice(getViewDataBinding().textPrice,
 					getViewDataBinding().textActualPrice, String.valueOf(mDefaultProduct.fromPrice),
 					getViewModel().maxWasPrice(mDefaultProduct.otherSkus));
 		} catch (Exception ignored) {
@@ -395,7 +398,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 		if (mFetchFromJson) { // display product through json string
 			getViewModel().setProduct(mDefaultProductResponse);
-			onSuccessResponse(Utils.stringToJson(getActivity(), mDefaultProductResponse));
+			//onSuccessResponse(Utils.stringToJson(getActivity(), mDefaultProductResponse)); =================
 			onLoadComplete();
 		} else {
 			getViewModel().productDetail(new ProductRequest(mDefaultProduct.productId, mDefaultProduct.sku)).execute();
@@ -642,8 +645,10 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 					break;
 
 				case R.id.llAddToCart:
-					getGlobalState().saveButtonClicked(INDEX_ADD_TO_CART);
-					apiIdentifyTokenValidation();
+					if (isNetworkConnected()) {
+						getGlobalState().saveButtonClicked(INDEX_ADD_TO_CART);
+						apiIdentifyTokenValidation();
+					}
 					break;
 
 				default:
@@ -898,7 +903,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	@Override
 	public void colorSizeContainerVisibility(List<OtherSkus> otherSkuList) {
 
-		// Product item has no colour
+		// ProductDetails item has no colour
 		if (!productHasColour()) {
 			hideView(getViewDataBinding().llColorSize.relColorSelector);
 			getViewDataBinding().llColorSize.relSizeSelector.setPadding(Utils.dp2px(getActivity(), 16), 0, 0, 0);
@@ -906,7 +911,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 			hideView(getViewDataBinding().llColorSize.vwSeparator);
 		}
 
-		// Product item has no size
+		// ProductDetails item has no size
 		if (!productHasSize()) {
 			hideView(getViewDataBinding().llColorSize.relSizeSelector);
 			getViewDataBinding().llColorSize.relColorSelector.setPadding(Utils.dp2px(getActivity(), 16), 0, 0, 0);
@@ -947,6 +952,8 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 		cancelRequest(mLocationItemTask);
 		cancelRequest(mPostAddItemToCart);
 		cancelRequest(mGetCartSummary);
+		if (mInventoryForStore != null)
+			mInventoryForStore.cancelInventoryForStoreCall();
 	}
 
 	/*****************************
@@ -1453,6 +1460,15 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 								!addedToCart) {
 							getViewDataBinding().llAddToCart.performClick();
 						}
+
+						/***
+						 * Auto-connect on inventory connection failure
+						 */
+						if (mInventoryForStore != null) {
+							if (mInventoryForStore.getOnConnectFailure()) {
+								getViewDataBinding().llAddToCart.performClick();
+							}
+						}
 					}
 				}
 			});
@@ -1477,7 +1493,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	}
 
 	private void cartSummaryAPI() {
-		Activity activity = getActivity();
+		final Activity activity = getActivity();
 		if (activity != null) {
 			ShoppingDeliveryLocation shoppingDeliveryLocation = Utils.getPreferredDeliveryLocation();
 			if (shoppingDeliveryLocation == null) {
@@ -1498,22 +1514,71 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 					/***
 					 * Determine whether to display colour size box
-					 * if product type is of type clothing or otherSkuList size is greater than 0
-					 * size > 0 product i.e. perfume productType of type food but sku can be > 0
+					 * if product type is of type clothing or otherSkuList size is greater than 1
+					 * size > 1 product i.e. perfume productType of type food but sku can be > 1
 					 * next step become colour/size process
 					 * else run through food step
 					 */
 					if (getViewModel().getProductType() != null) {
 						smoothScrollToTop();
-						if (getViewModel().getProductType().equalsIgnoreCase(CLOTHING_PRODUCT) || getViewModel().otherSkuList().size() > 0) {
+						if (getViewModel().getProductType().equalsIgnoreCase(CLOTHING_PRODUCT)) {
 							onAddToCartLoadComplete();
 							onPermissionGranted();
 						} else {
 							onAddToCartLoadComplete();
-							Intent editQuantityIntent = new Intent(activity, ConfirmColorSizeActivity.class);
-							editQuantityIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, ConfirmColorSizeActivity.QUANTITY);
-							activity.startActivity(editQuantityIntent);
-							activity.overridePendingTransition(0, 0);
+							WProductDetail product = getViewModel().getProduct();
+							if (product == null) return;
+							if (product.otherSkus == null) return;
+							if (product.otherSkus.get(0) == null) return;
+							getGlobalState().setSelectedSKUId(product.otherSkus.get(0));
+							onAddToCartLoad();
+							mInventoryForStore = new InventoryForStore(product.fulfillmentType, product.sku) {
+								@Override
+								public void onInventoryForStoreSuccess(SkusInventoryForStoreResponse skusInventoryForStoreResponse) {
+									if (skusInventoryForStoreResponse == null) return;
+									switch (skusInventoryForStoreResponse.httpCode) {
+										case 200:
+											List<SkuInventory> skuInventoryList = skusInventoryForStoreResponse.skuInventory;
+											// If no quantity is found, display the out of stock message
+											if (skuInventoryList.size() == 0) {
+												outOfStockDialog();
+												return;
+											}
+											SkuInventory skuInventory = skuInventoryList.get(0);
+											int quantity = skuInventory.quantity;
+											if (quantity == 0) {
+												outOfStockDialog();
+											} else {
+												// If quantity is found, perform default add to cart flow
+												openQuantityPopup(quantity);
+											}
+											break;
+
+										case 440:
+											SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, skusInventoryForStoreResponse.response.stsParams);
+											break;
+
+										default:
+											if (skusInventoryForStoreResponse.response == null)
+												return;
+											if (skusInventoryForStoreResponse.response.desc == null)
+												return;
+											Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, skusInventoryForStoreResponse.response.desc);
+											break;
+									}
+								}
+
+								@Override
+								public void onInventoryForStoreFailure(String message) {
+									onAddToCartLoadComplete();
+								}
+
+								@Override
+								public void onNoMatchFoundForStoreId() {
+									onAddToCartLoadComplete();
+									outOfStockDialog();
+								}
+							};
 						}
 					}
 				} else {
@@ -1523,6 +1588,16 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 				}
 			}
 		}
+	}
+
+	private void openQuantityPopup(int quantity) {
+		Activity activity = getActivity();
+		if (activity == null) return;
+		Intent editQuantityIntent = new Intent(activity, ConfirmColorSizeActivity.class);
+		editQuantityIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, ConfirmColorSizeActivity.QUANTITY);
+		editQuantityIntent.putExtra("CART_QUANTITY_In_STOCK", quantity);
+		activity.startActivity(editQuantityIntent);
+		activity.overridePendingTransition(0, 0);
 	}
 
 	private void executeCartSummary() {

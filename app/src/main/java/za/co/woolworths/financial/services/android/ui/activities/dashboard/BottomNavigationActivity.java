@@ -12,7 +12,6 @@ import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.Toolbar;
@@ -84,12 +83,8 @@ import static za.co.woolworths.financial.services.android.models.service.event.B
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.MESSAGE_COUNT;
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.REWARD_COUNT;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SHOW_ADDED_TO_SHOPPING_LIST_TOAST;
-import static za.co.woolworths.financial.services.android.ui.activities.BottomActivity.NAVIGATE_TO_SHOPPING_LIST_FRAGMENT;
-import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.RESULT_TAP_FIND_INSTORE_BTN;
 import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.RESULT_TAP_FIND_INSTORE_BTN;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
-import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.DELIVERY_LOCATION_FROM_PDP_REQUEST;
-import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_ADD_TO_CART;
 import static za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity.DELIVERY_LOCATION_CLOSE_CLICKED;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.DELIVERY_LOCATION_FROM_PDP_REQUEST;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_ADD_TO_CART;
@@ -127,6 +122,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	private boolean singleOrMultipleItemSelector;
 	public static final int LOCK_REQUEST_CODE_ACCOUNTS = 444;
 	private int mListItemCount = 0;
+	public static final int PDP_REQUEST_CODE = 18;
 
 	@Override
 	public int getLayoutId() {
@@ -232,6 +228,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			badgeCount();
 		}
 	}
+
 
 	private void setToast() {
 		mToastUtils = new ToastUtils(BottomNavigationActivity.this);
@@ -423,15 +420,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void openProductDetailFragment(String productName, ProductList productList) {
-		ProductDetailFragment productDetailFragment = new ProductDetailFragment();
 		Gson gson = new Gson();
 		String strProductList = gson.toJson(productList);
 		Bundle bundle = new Bundle();
 		bundle.putString("strProductList", strProductList);
 		bundle.putString("strProductCategory", productName);
-		productDetailFragment.setArguments(bundle);
-		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-		transaction.replace(R.id.fragment_bottom_container, productDetailFragment).commitAllowingStateLoss();
+		ScreenManager.presentProductDetails(BottomNavigationActivity.this, bundle);
 	}
 
 	@Override
@@ -768,7 +762,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	@Override
 	public void popFragmentNoAnim() {
 		if (!mNavController.isRootFragment()) {
-			mNavController.popFragment(new FragNavTransactionOptions.Builder().customAnimations(R.anim.stay, R.anim.stay).build());
+			mNavController.popFragment(new FragNavTransactionOptions.Builder().customAnimations(R.anim.stay_short_anim, R.anim.stay_short_anim).build());
 		}
 	}
 
@@ -862,6 +856,19 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					return;
 				}
 			}
+		}
+
+		if (requestCode == PDP_REQUEST_CODE && resultCode == RESULT_OK) {
+			boolean isItemAddToCart = data.getBooleanExtra("addedToCart", false);
+			boolean isItemAddToShoppingList = data.getBooleanExtra("addedToShoppingList", false);
+			if (isItemAddToCart) {
+				setToast();
+			} else if (isItemAddToShoppingList) {
+				// call back when Toast clicked after adding item to shopping list
+				List<ShoppingList> shoppingList = getGlobalState().getShoppingListRequest();
+				getViewModel().openShoppingListOnToastClick(shoppingList, this);
+			}
+			return;
 		}
 
 		// navigate to product section

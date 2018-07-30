@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -30,6 +31,7 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingListsRespo
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.DeleteShoppingList;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.GetShoppingLists;
 import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity;
+import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.ShoppingListAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.list.NewListFragment;
@@ -40,6 +42,7 @@ import za.co.woolworths.financial.services.android.util.EmptyCartView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
+import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -59,6 +62,7 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 	private RelativeLayout rlLocationSelectedLayout;
 	private WTextView tvDeliveryLocation;
 	private WTextView tvDeliveringToText;
+	private final int SSO_FOR_SHOPPING_LIST = 2020;
 
 
 	@Override
@@ -191,13 +195,18 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 			case 440:
 				SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE,
 						shoppingListsResponse.response.stsParams);
+				ScreenManager.presentSSOSignin(getActivity(), SSO_FOR_SHOPPING_LIST);
 				break;
 
 			default:
 				displayErrorMessage("");
 				break;
 		}
-		Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
+		try {
+			Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
+		} catch (NullPointerException ex) {
+			Log.d("onDeliveryLocation", ex.getMessage());
+		}
 	}
 
 	@Override
@@ -312,22 +321,32 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		if (requestCode == REQUEST_SUBURB_CHANGE) {
-			showToolbar(R.string.title_my_list);
-			ShoppingDeliveryLocation lastDeliveryLocation = Utils.getPreferredDeliveryLocation();
-			if (lastDeliveryLocation != null) {
-				mSuburbName = lastDeliveryLocation.suburb.name;
-				mProvinceName = lastDeliveryLocation.province.name;
-				manageDeliveryLocationUI(mSuburbName + ", " + mProvinceName);
-			}
-			initGetShoppingList();
-			return;
-		}
-
-		if (requestCode == OPEN_CART_REQUEST) {
-			if (resultCode == DISMISS_POP_WINDOW_CLICKED) {
+		switch (requestCode){
+			case REQUEST_SUBURB_CHANGE:
 				showToolbar(R.string.title_my_list);
-			}
+				ShoppingDeliveryLocation lastDeliveryLocation = Utils.getPreferredDeliveryLocation();
+				if (lastDeliveryLocation != null) {
+					mSuburbName = lastDeliveryLocation.suburb.name;
+					mProvinceName = lastDeliveryLocation.province.name;
+					manageDeliveryLocationUI(mSuburbName + ", " + mProvinceName);
+				}
+				initGetShoppingList();
+				break;
+			case OPEN_CART_REQUEST:
+				if (resultCode == DISMISS_POP_WINDOW_CLICKED) {
+					showToolbar(R.string.title_my_list);
+				}
+				break;
+			case SSO_FOR_SHOPPING_LIST:
+				if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
+					initGetShoppingList();
+				} else {
+					getActivity().onBackPressed();
+				}
+				break;
+			default:
+				break;
+
 		}
 	}
 
