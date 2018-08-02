@@ -140,19 +140,21 @@ public class ProductDetailsViewModelNew extends BaseViewModel<ProductDetailNavig
 			public void onSuccess(Object object) {
 				if (object != null) {
 					CartSummaryResponse cartSummaryResponse = (CartSummaryResponse) object;
-					switch (cartSummaryResponse.httpCode) {
-						case 200:
-							getNavigator().onCartSummarySuccess(cartSummaryResponse);
-							break;
+					if (cartSummaryResponse != null) {
+						switch (cartSummaryResponse.httpCode) {
+							case 200:
+								getNavigator().onCartSummarySuccess(cartSummaryResponse);
+								break;
 
-						case 440:
-							if (cartSummaryResponse.response != null)
-								getNavigator().onSessionTokenExpired(cartSummaryResponse.response);
-							break;
+							case 440:
+								if (cartSummaryResponse.response != null)
+									getNavigator().onSessionTokenExpired();
+								break;
 
-						default:
-							getNavigator().responseFailureHandler(cartSummaryResponse.response);
-							break;
+							default:
+								getNavigator().responseFailureHandler(cartSummaryResponse.response);
+								break;
+						}
 					}
 				}
 			}
@@ -170,20 +172,22 @@ public class ProductDetailsViewModelNew extends BaseViewModel<ProductDetailNavig
 			public void onSuccess(Object object) {
 				if (object != null) {
 					AddItemToCartResponse addItemToCartResponse = (AddItemToCartResponse) object;
-					switch (addItemToCartResponse.httpCode) {
-						case 200:
-							getNavigator().addItemToCartResponse(addItemToCartResponse);
-							break;
+					if (addItemToCartResponse != null) {
+						switch (addItemToCartResponse.httpCode) {
+							case 200:
+								getNavigator().addItemToCartResponse(addItemToCartResponse);
+								break;
 
-						case 440:
-							if (addItemToCartResponse.response != null)
-								getNavigator().onSessionTokenExpired(addItemToCartResponse.response);
-							break;
+							case 440:
+								if (addItemToCartResponse.response != null)
+									getNavigator().onSessionTokenExpired();
+								break;
 
-						default:
-							if (addItemToCartResponse.response != null)
-								getNavigator().responseFailureHandler(addItemToCartResponse.response);
-							break;
+							default:
+								if (addItemToCartResponse.response != null)
+									getNavigator().responseFailureHandler(addItemToCartResponse.response);
+								break;
+						}
 					}
 				}
 			}

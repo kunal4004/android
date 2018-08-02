@@ -227,7 +227,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		}
 	}
 
-
 	private void initBadgeCounter() {
 		mQueryBadgeCounter = QueryBadgeCounter.getInstance();
 		mQueryBadgeCounter.addObserver(this);
@@ -765,7 +764,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	@Override
 	public void popFragmentNoAnim() {
 		if (!mNavController.isRootFragment()) {
-			mNavController.popFragment(new FragNavTransactionOptions.Builder().customAnimations(R.anim.stay, R.anim.stay).build());
+			mNavController.popFragment(new FragNavTransactionOptions.Builder().customAnimations(R.anim.stay_short_anim, R.anim.stay_short_anim).build());
 		}
 	}
 

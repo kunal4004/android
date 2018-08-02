@@ -311,7 +311,7 @@
     <string name="contact_us_customer_service_desc">General enquiries, Online, WRewards, MySchool</string>
     <string name="general_enquiry_desc">Products and instore</string>
     <string name="woolworths_online">Woolworths online</string>
-    <string name="website_and_online_shoppping">Website and online shopping</string>
+    <string name="website_and_online_shoppping">Website and App shopping</string>
     <string name="email_black_credit_card_query">woolworthsblack@wfs.co.za</string>
     <string name="email_complaints">complaints@wfs.co.za</string>
     <string name="email_credicard_query">creditcard@wfs.co.za</string>
@@ -632,7 +632,7 @@
     <string name="favourite_delivery_location_description">In order to improve your shopping experience you can set your favourite delivery location. We will use this as your default delivery location.</string>
     <string name="product_unavailable_desc">Sorry, this product is unavailable in your delivery location</string>
     <string name="delivering_to">Delivering to</string>
-    <string name="delivering_location_popup_message">Your delivery location must match your delivery address. Changing your delivery location can affect the product availability of items in your cart.</string>
+    <string name="delivering_location_popup_message">Your Delivery Location must match your Delivery Address in Checkout. Changing your Delivery Location can affect the product availability of items in your cart.</string>
     <string name="confirm_size_range_desc">size range</string>
     <string name="set_up_device_biometrics_title">BIOMETRICS&#47;PIN</string>
     <string name="set_up_device_biometrics_desc">You need to set up Biometrics on your device in order to activate this feature.</string>

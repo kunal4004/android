@@ -130,8 +130,8 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	private ProductColorPickerAdapter quantityPickerAdapter;
 	private final int VIEW_SWITCHER_QUANTITY_PICKER = 1;
 	private final int VIEW_SWITCHER_SIZE_PICKER = 0;
-	private final int SSO_REQUEST_ADD_TO_CART = 1;
-	private final int SSO_REQUEST_ADD_TO_SHOPPING_LIST = 2;
+	private final int SSO_REQUEST_ADD_TO_CART = 1010;
+	private final int SSO_REQUEST_ADD_TO_SHOPPING_LIST = 1011;
 	private static final int REQUEST_SUBURB_CHANGE = 153;
 	private BottomSheetDialog confirmDeliveryLocationDialog;
 	private WButton btnAddToShoppingList;
@@ -216,7 +216,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
 		try {
 			// set price list
-			ProductUtils.gridPriceList(txtFromPrice, txtActualPrice, String.valueOf(mDefaultProduct.fromPrice), getViewModel().maxWasPrice(mDefaultProduct.otherSkus));
+			ProductUtils.displayPrice(txtFromPrice, txtActualPrice, String.valueOf(mDefaultProduct.fromPrice), getViewModel().maxWasPrice(mDefaultProduct.otherSkus));
 		} catch (Exception ignored) {
 		}
 
@@ -389,7 +389,9 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		} else {
 			getViewDataBinding().llLoadingColorSize.setVisibility(View.GONE);
 			getViewDataBinding().loadingInfoView.setVisibility(View.GONE);
-			Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.CLI_ERROR, getString(R.string.statement_send_email_false_desc));
+
+			if (isAdded())
+				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.CLI_ERROR, getString(R.string.statement_send_email_false_desc));
 		}
 	}
 
@@ -537,7 +539,8 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	private void configureUIForOtherSKU(OtherSkus otherSku) {
 
 		try {
-			ProductUtils.gridPriceList(txtFromPrice, txtActualPrice, otherSku.price, otherSku.wasPrice);
+			// set price list
+			ProductUtils.displayPrice(txtFromPrice, txtActualPrice, otherSku.price, String.valueOf(otherSku.wasPrice));
 		} catch (Exception ignored) {
 		}
 
@@ -554,7 +557,8 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	public void responseFailureHandler(Response response) {
 		enableAddToCartButton(false);
 		enableFindInStoreButton(false);
-		Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
+		if (isAdded())
+			Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
 	}
 
 	@Override
@@ -595,12 +599,14 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
 	@Override
 	public void outOfStockDialog() {
-		Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC, getString(R.string.out_of_stock), getString(R.string.out_of_stock_desc));
+		if (isAdded())
+			Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC, getString(R.string.out_of_stock), getString(R.string.out_of_stock_desc));
 	}
 
 	@Override
 	public void showOutOfStockInStores() {
-		Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.NO_STOCK, "");
+		if (isAdded())
+			Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.NO_STOCK, "");
 	}
 
 	@Override
@@ -649,7 +655,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	}
 
 	@Override
-	public void onSessionTokenExpired(final Response response) {
+	public void onSessionTokenExpired() {
 
 		SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
 		final Activity activity = getActivity();
@@ -659,11 +665,8 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 				if (activity != null) {
 					enableAddToCartButton(false);
 					otherSKUForCart = null;
-					if (response != null) {
-						if (response.message != null) {
-							ScreenManager.presentSSOSignin(activity);
-						}
-					}
+					otherSKUForList = null;
+					ScreenManager.presentSSOSignin(activity);
 				}
 			}
 		});
@@ -721,7 +724,8 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	public void onProductDetailedFailed(Response response) {
 		getViewDataBinding().llLoadingColorSize.setVisibility(View.GONE);
 		getViewDataBinding().loadingInfoView.setVisibility(View.GONE);
-		Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
+		if (isAdded())
+			Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
 	}
 
 	@Override
@@ -976,6 +980,11 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 					break;
 				case ADD_TO_SHOPPING_LIST_REQUEST_CODE:
 					int listSize = data.getIntExtra("sizeOfList", 0);
+					boolean isSessionExpired = data.getBooleanExtra("sessionExpired", false);
+					if (isSessionExpired) {
+						onSessionTokenExpired();
+						return;
+					}
 					showToastMessage(getActivity(), listSize);
 					break;
 			}

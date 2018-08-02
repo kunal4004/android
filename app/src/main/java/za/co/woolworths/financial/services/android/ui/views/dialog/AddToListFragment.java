@@ -374,6 +374,10 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 								}
 							}
 							break;
+						case 440:
+							((CustomPopUpWindow) activity).startExitAnimationForAddToListResult();
+							getActivity().setResult(RESULT_OK,new Intent().putExtra("sessionExpired", true));
+							break;
 						default:
 							Response response = addToListResponse.response;
 							if (response.desc != null) {
@@ -481,6 +485,10 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 					case 200:
 						recyclerViewHeight(rcvShoppingLists, shoppingListsResponse);
 						setAdapter(rcvShoppingLists, shoppingListsResponse);
+						break;
+					case 440:
+						((CustomPopUpWindow) getActivity()).startExitAnimationForAddToListResult();
+						getActivity().setResult(RESULT_OK,new Intent().putExtra("sessionExpired", true));
 						break;
 					default:
 						recyclerViewVisibility(false);
