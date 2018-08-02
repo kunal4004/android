@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.models.dao;
 
-import android.content.Context;
 import android.util.Log;
 
 import java.util.HashMap;
@@ -14,6 +13,7 @@ import za.co.woolworths.financial.services.android.util.PersistenceLayer;
 
 public class SessionDao extends BaseDao {
 	private final String TAG = "SessionDao";
+	private final String tableName = "Session";
 	public KEY key;
 	public String value;
 
@@ -24,18 +24,24 @@ public class SessionDao extends BaseDao {
 		STORES_LATEST_PAYLOAD("STORES_LATEST_PAYLOAD"),
 		UNREAD_MESSAGE_COUNT("UNREAD_MESSAGE_COUNT"),
 		STORE_SHOPPING_LIST("STORE_SHOPPING_LIST"),
-		REWARD_IS_ACTIVE("REWARD_IS_ACTIVE"),
-		ACCOUNT_IS_ACTIVE("ACCOUNT_IS_ACTIVE"),
 		USER_TOKEN("USER_TOKEN"),
 		STORE_FINDER_ONE_TIME_POPUP("STORE_FINDER_ONE_TIME_POPUP"),
-		PRODUCTS_ONE_TIME_POPUP("PRODUCTS_ONE_TIME_POPUP"),
+		CART_FIRST_ORDER_FREE_DELIVERY("CART_FIRST_ORDER_FREE_DELIVERY"),
 		ON_BOARDING_SCREEN("ON_BOARDING_SCREEN"),
 		SPLASH_VIDEO("SPLASH_VIDEO"),
 		APP_VERSION("APP_VERSION"),
 		LAST_KNOWN_LOCATION("LAST_KNOWN_LOCATION"),
 		NOTIFICATION_ID("NOTIFICATION_ID"),
 		CLI_SLIDE_EDIT_AMOUNT_TOOLTIP("CLI_SLIDE_EDIT_AMOUNT_TOOLTIP"),
-		DEVICE_ID("DEVICE_ID");
+		DEVICE_ID("DEVICE_ID"),
+		DELIVERY_LOCATION_HISTORY("DELIVERY_LOCATION_HISTORY"),
+		PRODUCT_IS_ACTIVE("PRODUCT_IS_ACTIVE"),
+		ACCOUNT_AUTHENTICATION_STATE("ACCOUNT_AUTHENTICATION_STATE"),
+		SESSION_STATE("SESSION_STATE"),
+		STS_PARAMS("STS_PARAMS"),
+		BIOMETRIC_AUTHENTICATION_STATE("BIOMETRIC_AUTHENTICATION_STATE"),
+		BIOMETRIC_AUTHENTICATION_SESSION("BIOMETRIC_AUTHENTICATION_SESSION"),
+		APP_INSTANCE_OBJECT("APP_INSTANCE_OBJECT");
 
 		private final String text;
 
@@ -52,97 +58,123 @@ public class SessionDao extends BaseDao {
 		}
 	}
 
-	private SessionDao() {
+	public enum SESSION_STATE {
+		ACTIVE(1),
+		INACTIVE(0);
+		/**
+		 * @param sessionState
+		 */
+		private final Integer sessionState;
+
+		private SESSION_STATE(final Integer sessionState) {
+			this.sessionState = sessionState;
+		}
 	}
 
-	public SessionDao(Context mContext) {
-		super(mContext);
-	}
 
-	public SessionDao(Context mContext, KEY key) {
-		super(mContext);
+	public SessionDao(String id, KEY key, String value, String dateCreated, String dateUpdated) {
+		super();
+
+		this.id = id;
 		this.key = key;
+		this.value = value;
+		this.dateCreated = dateCreated;
+		this.dateUpdated = dateUpdated;
+	}
+
+	public SessionDao() {
+		super();
 	}
 
 	@Override
 	public String getTableName() {
-		return "Session";
+		return this.tableName;
 	}
 
-	public void save() throws Exception {
-		try {
-			//perform update first. If update fails, perform insert
-			this.update();
-			return;
-
-		} catch (Exception e) {
-			Log.e(TAG, e.getMessage());
-		}
+	public static SessionDao getByKey(final KEY key) {
+		SessionDao sessionDao;
 
 		try {
-			//perform insert
-			this.insert();
-			return;
+			String query = "SELECT * FROM Session WHERE [key] = ? ORDER BY id ASC LIMIT 1;";
+			Map<String, String> result = PersistenceLayer.getInstance().executeReturnableQuery(query, new String[]{
+					key.toString()
+			});
 
-		} catch (Exception e) {
-			Log.e(TAG, e.getMessage());
-		}
-	}
+			String id = null;
+			String value = null;
+			String dateCreated = null;
+			String dateUpdated = null;
 
-	public SessionDao get() throws Exception {
-		String query = "SELECT * FROM Session WHERE [key] = ? ORDER BY id ASC LIMIT 1;";
-		Map<String, String> result = PersistenceLayer.getInstance(mContext).executeReturnableQuery(query, new String[]{
-				this.key.toString()
-		});
+			for (Map.Entry<String, String> entry : result.entrySet()) {
 
-		for (Map.Entry<String, String> entry : result.entrySet()) {
-
-			if (entry.getKey().equals("id")) {
-				this.id = entry.getValue();
-			} else if (entry.getKey().equals("key")) {
-				this.key = KEY.valueOf(entry.getValue());
-			} else if (entry.getKey().equals("value")) {
-				this.value = entry.getValue();
-			} else if (entry.getKey().equals("dateCreated")) {
-				this.dateCreated = entry.getValue();
-			} else if (entry.getKey().equals("dateUpdated")) {
-				this.dateUpdated = entry.getValue();
+				if (entry.getKey().equals("id")) {
+					id = entry.getValue();
+				} else if (entry.getKey().equals("value")) {
+					value = entry.getValue();
+				} else if (entry.getKey().equals("dateCreated")) {
+					dateCreated = entry.getValue();
+				} else if (entry.getKey().equals("dateUpdated")) {
+					dateUpdated = entry.getValue();
+				}
 			}
+
+			sessionDao = new SessionDao(id, key, value, dateCreated, dateUpdated);
+		} catch (Exception e) {
+
+			Log.d("", "Unable to retrieve entry for " + key.toString());
+
+			sessionDao = new SessionDao();
+			sessionDao.key = key;
 		}
 
-		return this;
+		return sessionDao;
 	}
 
 	public void delete() throws Exception {
 		String query = "DELETE FROM Session" +
 				" WHERE [key] = ?";
 
-		PersistenceLayer.getInstance(mContext).executeVoidQuery(query, new String[]{
+		PersistenceLayer.getInstance().executeVoidQuery(query, new String[]{
 				this.key.toString()
 		});
 	}
 
-	private void insert() throws Exception {
+	@Override
+	public void insert() throws Exception {
 		String query = "INSERT INTO Session ([key], value) VALUES (?, ?);";
 
 		Map<String, String> arguments = new HashMap<>();
 		arguments.put("key", this.key.toString());
 		arguments.put("value", this.value);
 
-		long rowid = PersistenceLayer.getInstance(mContext).executeInsertQuery(this.getTableName(), arguments);
+		long rowid = PersistenceLayer.getInstance().executeInsertQuery(this.getTableName(), arguments);
 		if (rowid == 0 || rowid == -1) {
 			throw new RuntimeException("You Attempted to insert a new SessionDao record but not row id was returned. Insert failed!");
 		}
 	}
 
-	private void update() throws Exception {
+	@Override
+	public void update() throws Exception {
 		String query = "UPDATE Session" +
 				" SET value = ?," +
 				" dateUpdated = datetime()" +
 				" WHERE [key] = ?";
 
-		PersistenceLayer.getInstance(mContext).executeVoidQuery(query, new String[]{
+		PersistenceLayer.getInstance().executeVoidQuery(query, new String[]{
 				this.value, this.key.toString()
 		});
+	}
+
+	public enum BIOMETRIC_AUTHENTICATION_STATE{
+		ON(1),
+		OFF(0);
+		/**
+		 * @param sessionState
+		 */
+		private final Integer state;
+
+		private BIOMETRIC_AUTHENTICATION_STATE(final Integer state) {
+			this.state = state;
+		}
 	}
 }

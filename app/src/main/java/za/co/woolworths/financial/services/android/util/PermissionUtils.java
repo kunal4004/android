@@ -72,7 +72,7 @@ public class PermissionUtils {
 	 * @return
 	 */
 
-	private boolean checkAndRequestPermissions(ArrayList<String> permissions, int request_code) {
+	public boolean checkAndRequestPermissions(ArrayList<String> permissions, int request_code) {
 
 		if (permissions.size() > 0) {
 			listPermissionsNeeded = new ArrayList<>();
@@ -103,6 +103,7 @@ public class PermissionUtils {
 	public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
 		switch (requestCode) {
 			case 1:
+			case 2:
 				if (grantResults.length > 0) {
 					Map<String, Integer> perms = new HashMap<>();
 

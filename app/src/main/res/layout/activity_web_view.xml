@@ -60,6 +60,13 @@
                 android:id="@+id/webview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"></WebView>
+
+            <ProgressBar
+                android:id="@+id/loadingProgressBar"
+                android:layout_width="@dimen/twenty_four_dp"
+                android:layout_height="@dimen/twenty_four_dp"
+                android:layout_centerInParent="true"
+                android:visibility="gone"/>
         </RelativeLayout>
     </LinearLayout>
 

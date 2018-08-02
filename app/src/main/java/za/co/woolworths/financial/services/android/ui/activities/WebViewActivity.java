@@ -2,32 +2,41 @@ package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
 import java.lang.reflect.Method;
 
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.SessionUtilities;
 
 public class WebViewActivity extends AppCompatActivity {
 
 	WebView webView;
 	public Toolbar toolbar;
 	public WTextView toolbarTextView;
+	private ProgressBar loadingProgressBar;
+	private ErrorHandlerView mErrorView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +47,9 @@ public class WebViewActivity extends AppCompatActivity {
 		b = getIntent().getBundleExtra("Bundle");
 		toolbar = (Toolbar) findViewById(R.id.toolbar);
 		toolbarTextView = (WTextView) findViewById(R.id.toolbar_title);
+		loadingProgressBar = findViewById(R.id.loadingProgressBar);
+		mErrorView = new ErrorHandlerView(WebViewActivity.this, (RelativeLayout) findViewById
+				(R.id.no_connection_layout));
 		setSupportActionBar(toolbar);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setTitle(null);
@@ -50,15 +62,13 @@ public class WebViewActivity extends AppCompatActivity {
 		webView.setWebViewClient(new WebViewController());
 		try {
 			Method m = WebSettings.class.getMethod("setMixedContentMode", int.class);
-			if ( m == null ) {
+			if (m == null) {
 				Log.d("WebSettings", "Error getting setMixedContentMode method");
-			}
-			else {
+			} else {
 				m.invoke(webView.getSettings(), 2); // 2 = MIXED_CONTENT_COMPATIBILITY_MODE
 				Log.d("WebSettings", "Successfully set MIXED_CONTENT_COMPATIBILITY_MODE");
 			}
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			Log.e("WebSettings", "Error calling setMixedContentMode: " + ex.getMessage(), ex);
 		}
 		webView.clearCache(true);
@@ -67,9 +77,22 @@ public class WebViewActivity extends AppCompatActivity {
 			webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
 		}
 		clearCookies(this);
+		if (TextUtils.isEmpty(url)) mErrorView.networkFailureHandler("");
 		webView.loadUrl(url);
 	}
 
+	public void toggleLoading(boolean show) {
+		if (show) {
+			// show progress
+			loadingProgressBar.getIndeterminateDrawable().setColorFilter(null);
+			loadingProgressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
+			loadingProgressBar.setVisibility(View.VISIBLE);
+		} else {
+			// hide progress
+			loadingProgressBar.setVisibility(View.GONE);
+			loadingProgressBar.getIndeterminateDrawable().setColorFilter(null);
+		}
+	}
 
 	protected class WebViewController extends WebViewClient {
 
@@ -129,8 +152,8 @@ public class WebViewActivity extends AppCompatActivity {
 	}
 
 	public void finishActivity() {
-		SessionExpiredUtilities.INSTANCE
-				.getGlobalState(WebViewActivity.this).setNewSTSParams("");
+		SessionUtilities.getInstance().setSTSParameters(null);
+		setResult(DEFAULT_KEYS_SEARCH_GLOBAL);
 		finish();
 		overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
 	}

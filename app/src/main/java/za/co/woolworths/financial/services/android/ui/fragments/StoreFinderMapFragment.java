@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -17,7 +18,6 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -45,7 +45,7 @@ import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.StoreOfferings;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
-import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator;
 import za.co.woolworths.financial.services.android.ui.adapters.MapWindowAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.StockFinderCardsOnMapAdapter;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
@@ -119,7 +119,10 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 		mFragment = this;
 
 		try {
-			slidePanelEvent = (SlidePanelEvent) getActivity();
+			Activity activity = getActivity();
+			if (activity != null) {
+				slidePanelEvent = (SlidePanelEvent) activity;
+			}
 		} catch (ClassCastException ignored) {
 		}
 
@@ -309,9 +312,9 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 		return true;
 	}
 
+
 	public void backToAllStoresPage(int position) {
 		googleMap.getUiSettings().setScrollGesturesEnabled(true);
-		WOneAppBaseActivity.mToolbar.animate().translationY(WOneAppBaseActivity.mToolbar.getTop()).setInterpolator(new AccelerateInterpolator()).start();
 		showAllMarkers(markers);
 	}
 
@@ -326,7 +329,6 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 		googleMap.animateCamera(centerCam, CAMERA_ANIMATION_SPEED, null);
 		googleMap.getUiSettings().setScrollGesturesEnabled(false);
 		if (mLayout.getAnchorPoint() == 1.0f) {
-			WOneAppBaseActivity.mToolbar.animate().translationY(-WOneAppBaseActivity.mToolbar.getBottom()).setInterpolator(new AccelerateInterpolator()).start();
 			mLayout.setAnchorPoint(0.7f);
 			mLayout.setPanelState(SlidingUpPanelLayout.PanelState.ANCHORED);
 

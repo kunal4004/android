@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.models.service.event;
 
-
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 
 public class BusStation {

@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.ui.fragments.BalanceInsuranceFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.list.NewListFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -65,7 +66,7 @@ public class BalanceProtectionActivity extends AppCompatActivity {
 			mActionBar.setDisplayUseLogoEnabled(false);
 			mActionBar.setHomeAsUpIndicator(R.drawable.back24);
 		}
-	}
+		}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {

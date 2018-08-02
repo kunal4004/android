@@ -95,6 +95,7 @@ public class MyAccountCardsActivity extends AppCompatActivity
 		changeButtonColor(currentPosition);
 		getScreenResolution();
 
+
 		cardsHasAccount = getIntent().hasExtra("accounts");
 		if (cardsHasAccount) {
 			accountsResponse = new Gson().fromJson(getIntent().getExtras().getString("accounts"), AccountsResponse.class);
@@ -203,7 +204,7 @@ public class MyAccountCardsActivity extends AppCompatActivity
 		pager.setOnTouchListener(new View.OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-				return mWoolworthsApplication.getWGlobalState().cardGestureIsEnabled();
+				return false;
 			}
 		});
 	}
@@ -366,17 +367,6 @@ public class MyAccountCardsActivity extends AppCompatActivity
 				break;
 			default:
 				break;
-		}
-	}
-
-
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-
-		if (resultCode == SSOActivity.SSOActivityResult.EXPIRED.rawValue()) {
-			setResult(resultCode);
-			finish();
 		}
 	}
 

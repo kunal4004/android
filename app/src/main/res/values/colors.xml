@@ -12,7 +12,7 @@
     <color name="indicator_border">#00000000</color>
     <color name="black_off">#343434</color>
     <color name="black_overlay">#66000000</color>
-    <color name="recent_search_bg">#EFEFEF</color>
+    <color name="recent_search_bg">#efefef</color>
     <color name="cli_store_card">#4f5051</color>
     <color name="cli_credit_card">#2e353b</color>
     <color name="cli_personal_loan">#312439</color>
@@ -24,6 +24,8 @@
     <color name="black_desc_opacity_light">#85000000</color>
     <color name="press_bg">#05000000</color>
     <color name="charcoal_grey">#4F5051</color>
+    <color name="bg_overlay">#20000000</color>
+    <color name="bg_light_overlay">#10000000</color>
 
     <!-- step indicator -->
     <color name="horizontal_line">#10000000</color>
@@ -35,6 +37,7 @@
     <color name="barcode_button">#40ffffff</color>
     <color name="barcode_button_light">#20ffffff</color>
     <color name="red">#ff0000</color>
+    <color name="dark_divider">#dadada</color>
 
     <!-- Android standard ICS color -->
     <!-- Android standard ICS color -->
@@ -55,5 +58,14 @@
     <color name="offer_active_desc">#7f030303</color>
     <color name="account_amount_color">#030303</color>
     <color name="view_statement_black">#1F1F1F</color>
-
+    <color name="promotional_text_red">#FFD0021B</color>
+    <color name="delete_red_bg">#D10B23</color>
+    <color name="toast_background">#dd030303</color>
+    <color name="was_price_color">#D0021B</color>
+    <color name="unavailable_color">#F9F9F9</color>
+    <color name="disabled_text">#212B36</color>
+    <color name="expandable_title_color">#FF212B36</color>
+    <color name="expandable_gradient_color">#09000000</color>
+    <color name="dark_gray">#4A4A4A</color>
+    <color name="violet">#7A4183</color>
 </resources>

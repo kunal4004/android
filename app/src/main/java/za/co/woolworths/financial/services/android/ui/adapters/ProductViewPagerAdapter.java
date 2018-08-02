@@ -1,70 +1,75 @@
 package za.co.woolworths.financial.services.android.ui.adapters;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.v4.view.PagerAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.awfs.coordination.R;
-import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.List;
 
-import za.co.woolworths.financial.services.android.util.DrawImage;
+import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
 
 public class ProductViewPagerAdapter extends PagerAdapter {
 
-    public interface MultipleImageInterface {
-        void SelectedImage(int position,View view);
-    }
-    private MultipleImageInterface multipleImageInterface;
+	public interface MultipleImageInterface {
+		void SelectedImage(String otherSkus);
+	}
 
-    private final Context mContext;
-    private List<String> mViewPager;
+	private MultipleImageInterface multipleImageInterface;
 
-    public ProductViewPagerAdapter(Context mContext, List<String> mViewPager,
-                                   MultipleImageInterface multipleImageInterface) {
-        this.mContext = mContext;
-        this.multipleImageInterface = multipleImageInterface;
-        this.mViewPager = mViewPager;
-    }
+	private final Context mContext;
+	private List<String> mExternalImageRefList;
 
-    @Override
-    public Object instantiateItem(ViewGroup collection, final int position) {
-        LayoutInflater inflater = LayoutInflater.from(mContext);
-        ViewGroup v = (ViewGroup) inflater.inflate(R.layout.product_view,
-                collection, false);
-        String image = mViewPager.get(position);
-        Log.e("imageSize",image);
-        SimpleDraweeView mProductImage = (SimpleDraweeView) v.findViewById(R.id.imProductView);
-        DrawImage drawImage = new DrawImage(mContext);
-        drawImage.displayImage(mProductImage, image);
-        collection.addView(v, 0);
+	public ProductViewPagerAdapter(Context mContext, List<String> externalImageRefList,
+								   MultipleImageInterface multipleImageInterface) {
+		this.mContext = mContext;
+		this.multipleImageInterface = multipleImageInterface;
+		this.mExternalImageRefList = externalImageRefList;
+	}
 
-        v.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("imageSelector","rear");
-                multipleImageInterface.SelectedImage(position,v);
-            }
-        });
-        return v;
-    }
+	@Override
+	public Object instantiateItem(ViewGroup collection, final int position) {
+		LayoutInflater inflater = LayoutInflater.from(mContext);
+		ViewGroup v = (ViewGroup) inflater.inflate(R.layout.product_view,
+				collection, false);
+		String image = mExternalImageRefList.get(position);
+		WrapContentDraweeView mProductImage = v.findViewById(R.id.imProductView);
+		mProductImage.setResizeImage(true);
+		mProductImage.setImageURI(Uri.parse(image), mProductImage.getContext());
+		collection.addView(v, 0);
 
-    @Override
-    public void destroyItem(ViewGroup collection, int position, Object view) {
-        collection.removeView((View) view);
-    }
+		v.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				multipleImageInterface.SelectedImage(mExternalImageRefList.get(position));
+			}
+		});
+		return v;
+	}
 
-    @Override
-    public int getCount() {
-        return mViewPager.size();
-    }
+	@Override
+	public void destroyItem(ViewGroup collection, int position, Object view) {
+		collection.removeView((View) view);
+	}
 
-    @Override
-    public boolean isViewFromObject(View view, Object object) {
-        return view == object;
-    }
+	@Override
+	public int getCount() {
+		return mExternalImageRefList.size();
+	}
+
+	@Override
+	public boolean isViewFromObject(View view, Object object) {
+		return view == object;
+	}
+
+	public void updatePagerItems(List<String> mAuxiliaryImage){
+		this.mExternalImageRefList.clear();
+		this.notifyDataSetChanged();
+		this.mExternalImageRefList = mAuxiliaryImage;
+		this.notifyDataSetChanged();
+	}
 }

@@ -32,13 +32,15 @@ import za.co.woolworths.financial.services.android.models.dto.MessageReadRequest
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MesssagesListAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
-import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
+import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class MessagesActivity extends AppCompatActivity {
@@ -70,8 +72,8 @@ public class MessagesActivity extends AppCompatActivity {
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setTitle(null);
 		mLayoutManager = new LinearLayoutManager(MessagesActivity.this);
-		messsageListview = (RecyclerView) findViewById(R.id.messsageListView);
-		swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeToRefresh);
+		messsageListview = findViewById(R.id.messsageListView);
+		swipeRefreshLayout = findViewById(R.id.swipeToRefresh);
 		mErrorHandlerView = new ErrorHandlerView(this, woolWorthsApplication,
 				(RelativeLayout) findViewById(R.id.relEmptyStateHandler),
 				(ImageView) findViewById(R.id.imgEmpyStateIcon),
@@ -233,7 +235,7 @@ public class MessagesActivity extends AppCompatActivity {
 						}
 						break;
 					case 440:
-						SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(MessagesActivity.this, messageResponse.response.stsParams);
+						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, messageResponse.response.stsParams);
 						break;
 
 					default:
@@ -276,6 +278,9 @@ public class MessagesActivity extends AppCompatActivity {
 			@Override
 			protected void onPostExecute(ReadMessagesResponse readmessageResponse) {
 				super.onPostExecute(readmessageResponse);
+				if (readmessageResponse != null) {
+					Utils.sendBus(new BadgeState(BadgeState.MESSAGE_COUNT, BadgeState.MESSAGE_COUNT));
+				}
 
 
 			}
@@ -319,7 +324,7 @@ public class MessagesActivity extends AppCompatActivity {
 		if (getIntent().hasExtra("fromNotification"))
 			fromNotification = getIntent().getExtras().getBoolean("fromNotification");
 		if (fromNotification) {
-			startActivityForResult(new Intent(MessagesActivity.this, WOneAppBaseActivity.class), 0);
+			startActivityForResult(new Intent(MessagesActivity.this, BottomNavigationActivity.class), 0);
 			finish();
 			overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
 		} else {
@@ -366,17 +371,17 @@ public class MessagesActivity extends AppCompatActivity {
 						assert messageResponse.messagesList != null;
 						if (messageResponse.messagesList.size() == 0) {
 							messsageListview.setVisibility(View.GONE);
-							mErrorHandlerView.hideTitle();
-							mErrorHandlerView.hideIcon();
-							mErrorHandlerView.textDescription(getString(R.string.no_messages_to_display));
+							mErrorHandlerView.setEmptyState(5);
+							mErrorHandlerView.showErrorView();
 						}
 					}
 					break;
 				case 440:
-					SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(MessagesActivity.this, messageResponse.response.stsParams);
+					SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, messageResponse.response.stsParams);
 					break;
 				default:
-					Utils.alertErrorMessage(MessagesActivity.this, messageResponse.response.desc);
+					mErrorHandlerView.networkFailureHandler("");
+					Utils.displayValidationMessage(MessagesActivity.this, CustomPopUpWindow.MODAL_LAYOUT.ERROR,messageResponse.response.desc);
 					break;
 			}
 		} catch (Exception ignored) {

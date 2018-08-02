@@ -1,55 +1,31 @@
 package za.co.woolworths.financial.services.android.models.dto;
 
-import android.content.Context;
-import android.text.TextUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import za.co.woolworths.financial.services.android.models.dao.SessionDao;
-import za.co.woolworths.financial.services.android.util.Utils;
-
-
 public class WGlobalState {
 
-	private final Context mContext;
-
-	public WGlobalState(Context context) {
-		this.mContext = context;
-	}
+	private boolean toolbarIsDisplayed;
+	private int mSaveButtonClick;
+	private boolean determineLocationPopUpEnabled;
+	private String section;
+	private int navigateFromQuantity;
 
 	public static final String EMPTY_FIELD = "";
-	public static final String ON_CANCEL = "CANCEL";
-	public static final String ON_SIGN_IN = "SIGNIN";
 
 	public static final int SYNC_FIND_IN_STORE = 3401;
 
-	private boolean clothingProducts, foodProducts;
 	private int startRadius, endRadius, mLatestSelectedPicker;
 
-	private boolean cardGestureIsEnabled, onBackPressed, accountHasExpired, rewardHasExpired,
-			FragmentIsReward, defaultPopupState, colorWasPopup, sizeWasPopup;
-	private String pressState, newSTSParams, storeLocatorJson, selectedSKUId, creditLimit;
+	private boolean onBackPressed,
+			colorWasPopup, sizeWasPopup;
+	private String creditLimit;
 	private List<StoreDetails> storeDetailsArrayList;
-	private ArrayList<OtherSku> colourSKUArrayList;
-	private OtherSku colorPopUpValue, sizePopUpValue;
-	public CLIOfferDecision mDeclineDecision;
-
-	public void setAccountSignInState(boolean accountSignInState) {
-		setPersistentValue(SessionDao.KEY.ACCOUNT_IS_ACTIVE, accountSignInState);
-	}
-
-	public boolean getAccountSignInState() {
-		return getPersistentValue(SessionDao.KEY.ACCOUNT_IS_ACTIVE);
-	}
-
-	public void setRewardSignInState(boolean rewardSignInState) {
-		setPersistentValue(SessionDao.KEY.REWARD_IS_ACTIVE, rewardSignInState);
-	}
-
-	public boolean getRewardSignInState() {
-		return getPersistentValue(SessionDao.KEY.REWARD_IS_ACTIVE);
-	}
+	private ArrayList<OtherSkus> colourSKUArrayList;
+	private OtherSkus colorPopUpValue, sizePopUpValue;
+	private CLIOfferDecision mDeclineDecision;
+	private OtherSkus selectedSKUId;
+	private List<ShoppingList> shoppingListRequest;
 
 	public boolean getOnBackPressed() {
 		return onBackPressed;
@@ -57,107 +33,6 @@ public class WGlobalState {
 
 	public void setOnBackPressed(boolean pOnBackPressed) {
 		onBackPressed = pOnBackPressed;
-	}
-
-	public boolean cardGestureIsEnabled() {
-		return cardGestureIsEnabled;
-	}
-
-	public void setCardGestureIsEnabled(boolean pCardGestureIsEnabled) {
-		cardGestureIsEnabled = pCardGestureIsEnabled;
-	}
-
-	private void setPersistentValue(SessionDao.KEY key, boolean value) {
-		Utils.sessionDaoSave(mContext,
-				key, String.valueOf(value));
-	}
-
-	private boolean getPersistentValue(SessionDao.KEY key) {
-		String value = Utils.getSessionDaoValue(mContext, key);
-		if (TextUtils.isEmpty(value)) {
-			return false;
-		}
-		return Boolean.valueOf(value);
-	}
-
-	public boolean accountHasExpired() {
-		return accountHasExpired;
-	}
-
-	public void setAccountHasExpired(boolean pAccountHasExpired) {
-		accountHasExpired = pAccountHasExpired;
-	}
-
-	public String getPressState() {
-		return pressState;
-	}
-
-	public void setPressState(String pPressState) {
-		pressState = pPressState;
-	}
-
-	public boolean rewardHasExpired() {
-		return rewardHasExpired;
-	}
-
-	public void setRewardHasExpired(boolean pRewardHasExpired) {
-		rewardHasExpired = pRewardHasExpired;
-	}
-
-	public boolean fragmentIsReward() {
-		return FragmentIsReward;
-	}
-
-	public void setFragmentIsReward(boolean pFragmentIsReward) {
-		FragmentIsReward = pFragmentIsReward;
-	}
-
-	public String getNewSTSParams() {
-		return newSTSParams;
-	}
-
-	public void setNewSTSParams(String pNewSTSParams) {
-		newSTSParams = pNewSTSParams;
-	}
-
-	public void resetStsParams() {
-		setNewSTSParams(EMPTY_FIELD);
-	}
-
-	public void resetPressState() {
-		setPressState(EMPTY_FIELD);
-	}
-
-	public boolean getDefaultPopupState() {
-		return defaultPopupState;
-	}
-
-	public void setDefaultPopupState(boolean pDefaultPopupState) {
-		defaultPopupState = pDefaultPopupState;
-	}
-
-	public String getStoreLocatorJson() {
-		return storeLocatorJson;
-	}
-
-	public void setStoreLocatorJson(String storeLocatorJson) {
-		this.storeLocatorJson = storeLocatorJson;
-	}
-
-	public boolean clothingIsEnabled() {
-		return clothingProducts;
-	}
-
-	public void setClothingProducts(boolean clothingProducts) {
-		this.clothingProducts = clothingProducts;
-	}
-
-	public boolean isFoodProducts() {
-		return foodProducts;
-	}
-
-	public void setFoodProducts(boolean foodProducts) {
-		this.foodProducts = foodProducts;
 	}
 
 	public int getStartRadius() {
@@ -176,11 +51,11 @@ public class WGlobalState {
 		this.endRadius = endRadius;
 	}
 
-	public String getSelectedSKUId() {
+	public OtherSkus getSelectedSKUId() {
 		return selectedSKUId;
 	}
 
-	public void setSelectedSKUId(String selectedSKUId) {
+	public void setSelectedSKUId(OtherSkus selectedSKUId) {
 		this.selectedSKUId = selectedSKUId;
 	}
 
@@ -192,11 +67,11 @@ public class WGlobalState {
 		this.storeDetailsArrayList = storeDetailsArrayList;
 	}
 
-	public ArrayList<OtherSku> getColourSKUArrayList() {
+	public ArrayList<OtherSkus> getColourSKUArrayList() {
 		return colourSKUArrayList;
 	}
 
-	public void setColourSKUArrayList(ArrayList<OtherSku> colourSKUArrayList) {
+	public void setColourSKUArrayList(ArrayList<OtherSkus> colourSKUArrayList) {
 		this.colourSKUArrayList = colourSKUArrayList;
 	}
 
@@ -216,16 +91,16 @@ public class WGlobalState {
 		this.sizeWasPopup = sizeWasPopup;
 	}
 
-	public OtherSku getColorPickerSku() {
+	public OtherSkus getColorPickerSku() {
 		return colorPopUpValue;
 	}
 
-	public void setColorPickerSku(OtherSku colorPopUpValue) {
+	public void setColorPickerSku(OtherSkus colorPopUpValue) {
 		this.colorPopUpValue = colorPopUpValue;
 		this.mLatestSelectedPicker = 1;
 	}
 
-	public OtherSku getSizePickerSku() {
+	public OtherSkus getSizePickerSku() {
 		return sizePopUpValue;
 	}
 
@@ -233,7 +108,7 @@ public class WGlobalState {
 		return mLatestSelectedPicker;
 	}
 
-	public void setSizePickerSku(OtherSku sizePopUpValue) {
+	public void setSizePickerSku(OtherSkus sizePopUpValue) {
 		this.sizePopUpValue = sizePopUpValue;
 		this.mLatestSelectedPicker = 2;
 	}
@@ -252,5 +127,53 @@ public class WGlobalState {
 
 	public void setCreditLimit(String creditLimit) {
 		this.creditLimit = creditLimit;
+	}
+
+	public boolean toolbarIsShown() {
+		return toolbarIsDisplayed;
+	}
+
+	public void setToolbarIsDisplayed(boolean toolbarIsDisplayed) {
+		this.toolbarIsDisplayed = toolbarIsDisplayed;
+	}
+
+	public void saveButtonClicked(int saveButtonClick) {
+		this.mSaveButtonClick = saveButtonClick;
+	}
+
+	public int getSaveButtonClick() {
+		return mSaveButtonClick;
+	}
+
+	public boolean determineLocationPopUpEnabled() {
+		return determineLocationPopUpEnabled;
+	}
+
+	public void setDetermineLocationPopUpEnabled(boolean determineLocationPopUpEnabled) {
+		this.determineLocationPopUpEnabled = determineLocationPopUpEnabled;
+	}
+
+	public void setSection(String section) {
+		this.section = section;
+	}
+
+	public String getSection() {
+		return section;
+	}
+
+	public void navigateFromQuantity(int screen) {
+		this.navigateFromQuantity = screen;
+	}
+
+	public int getNavigateFromQuantity() {
+		return navigateFromQuantity;
+	}
+
+	public List<ShoppingList> getShoppingListRequest() {
+		return shoppingListRequest;
+	}
+
+	public void setShoppingListRequest(List<ShoppingList> shoppingListRequest) {
+		this.shoppingListRequest = shoppingListRequest;
 	}
 }

@@ -4,103 +4,113 @@ package za.co.woolworths.financial.services.android.models.dto;
  * Created by denysvera on 2016/04/29.
  */
 public class Defaults {
-	private String GCM;
-	private String analitics;
-	private String server_down_msg;
-	private String supportNumber;
-	private String applyNowLink;
-	private String registerTCLink;
-	private String faqLink;
-	private String wrewardsLink;
-	private String rewardingLink;
-	private String howtosaveLink;
-	private String wrewardsTCLink;
+    private String GCM;
+    private String analitics;
+    private String server_down_msg;
+    private String supportNumber;
+    private String applyNowLink;
+    private String registerTCLink;
+    private String faqLink;
+    private String wrewardsLink;
+    private String rewardingLink;
+    private String howtosaveLink;
+    private String wrewardsTCLink;
+    private String cartCheckoutLink;
 
-	public String getAnalitics() {
-		return analitics;
-	}
 
-	public String getApplyNowLink() {
-		return applyNowLink;
-	}
+    public String getAnalitics() {
+        return analitics;
+    }
 
-	public String getFaqLink() {
-		return faqLink;
-	}
+    public String getApplyNowLink() {
+        return applyNowLink;
+    }
 
-	public String getGCM() {
-		return GCM;
-	}
+    public String getFaqLink() {
+        return faqLink;
+    }
 
-	public String getHowtosaveLink() {
-		return howtosaveLink;
-	}
+    public String getGCM() {
+        return GCM;
+    }
 
-	public String getRegisterTCLink() {
-		return registerTCLink;
-	}
+    public String getHowtosaveLink() {
+        return howtosaveLink;
+    }
 
-	public String getRewardingLink() {
-		return rewardingLink;
-	}
+    public String getRegisterTCLink() {
+        return registerTCLink;
+    }
 
-	public String getServer_down_msg() {
-		return server_down_msg;
-	}
+    public String getRewardingLink() {
+        return rewardingLink;
+    }
 
-	public String getSupportNumber() {
-		return supportNumber;
-	}
+    public String getServer_down_msg() {
+        return server_down_msg;
+    }
 
-	public String getWrewardsLink() {
-		return wrewardsLink;
-	}
+    public String getSupportNumber() {
+        return supportNumber;
+    }
 
-	public String getWrewardsTCLink() {
-		return wrewardsTCLink;
-	}
+    public String getWrewardsLink() {
+        return wrewardsLink;
+    }
 
-	public void setAnalitics(String analitics) {
-		this.analitics = analitics;
-	}
+    public String getWrewardsTCLink() {
+        return wrewardsTCLink;
+    }
 
-	public void setApplyNowLink(String applyNowLink) {
-		this.applyNowLink = applyNowLink;
-	}
+    public void setAnalitics(String analitics) {
+        this.analitics = analitics;
+    }
 
-	public void setFaqLink(String faqLink) {
-		this.faqLink = faqLink;
-	}
+    public void setApplyNowLink(String applyNowLink) {
+        this.applyNowLink = applyNowLink;
+    }
 
-	public void setGCM(String GCM) {
-		this.GCM = GCM;
-	}
+    public void setFaqLink(String faqLink) {
+        this.faqLink = faqLink;
+    }
 
-	public void setHowtosaveLink(String howtosaveLink) {
-		this.howtosaveLink = howtosaveLink;
-	}
+    public void setGCM(String GCM) {
+        this.GCM = GCM;
+    }
 
-	public void setRegisterTCLink(String registerTCLink) {
-		this.registerTCLink = registerTCLink;
-	}
+    public void setHowtosaveLink(String howtosaveLink) {
+        this.howtosaveLink = howtosaveLink;
+    }
 
-	public void setRewardingLink(String rewardingLink) {
-		this.rewardingLink = rewardingLink;
-	}
+    public void setRegisterTCLink(String registerTCLink) {
+        this.registerTCLink = registerTCLink;
+    }
 
-	public void setServer_down_msg(String server_down_msg) {
-		this.server_down_msg = server_down_msg;
-	}
+    public void setRewardingLink(String rewardingLink) {
+        this.rewardingLink = rewardingLink;
+    }
 
-	public void setSupportNumber(String supportNumber) {
-		this.supportNumber = supportNumber;
-	}
+    public void setServer_down_msg(String server_down_msg) {
+        this.server_down_msg = server_down_msg;
+    }
 
-	public void setWrewardsLink(String wrewardsLink) {
-		this.wrewardsLink = wrewardsLink;
-	}
+    public void setSupportNumber(String supportNumber) {
+        this.supportNumber = supportNumber;
+    }
 
-	public void setWrewardsTCLink(String wrewardsTCLink) {
-		this.wrewardsTCLink = wrewardsTCLink;
-	}
+    public void setWrewardsLink(String wrewardsLink) {
+        this.wrewardsLink = wrewardsLink;
+    }
+
+    public void setWrewardsTCLink(String wrewardsTCLink) {
+        this.wrewardsTCLink = wrewardsTCLink;
+    }
+
+    public void setCartCheckoutLink(String cartCheckoutLink) {
+        this.cartCheckoutLink = cartCheckoutLink;
+    }
+
+    public String getCartCheckoutLink() {
+        return cartCheckoutLink;
+    }
 }

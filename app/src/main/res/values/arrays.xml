@@ -12,7 +12,6 @@
     <string-array name="nav_drawer_labels">
         <item>@string/nav_item_today</item>
         <item>@string/nav_item_products</item>
-        <item>@string/nav_item_store</item>
         <item>@string/nav_item_wrewards</item>
         <item>@string/nav_item_accounts</item>
     </string-array>
@@ -39,7 +38,6 @@
     <integer-array name="nav_drawer_images">
         <item>@drawable/ic_drw_tww</item>
         <item>@drawable/ic_drw_products</item>
-        <item>@drawable/ic_drw_stores</item>
         <item>@drawable/ic_drw_wrewards</item>
         <item>@drawable/ic_drw_accounts</item>
     </integer-array>

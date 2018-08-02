@@ -1,31 +1,39 @@
 package za.co.woolworths.financial.services.android.util;
 
-import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
+import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 
 public class LocationItemTask extends HttpAsyncTask<String, String, LocationResponse> {
 
 	private final WGlobalState mWGlobalState;
-	private WoolworthsApplication mWoolworthsApp;
+	private WoolworthsApplication mWoolworthApplication;
 	private OnEventListener<LocationResponse> mCallBack;
-	private Context mContext;
 	public String mException;
+	public OtherSkus otherSkus;
 
-	public LocationItemTask(Context context, OnEventListener callback) {
+	public LocationItemTask(OnEventListener callback) {
 		mCallBack = callback;
-		mContext = context;
-		mWoolworthsApp = ((WoolworthsApplication) ((AppCompatActivity) mContext).getApplication());
-		mWGlobalState = mWoolworthsApp.getWGlobalState();
+		mWoolworthApplication = WoolworthsApplication.getInstance();
+		mWGlobalState = mWoolworthApplication.getWGlobalState();
+	}
+
+	public LocationItemTask(OnEventListener callback, OtherSkus otherSkus) {
+		mCallBack = callback;
+		mWoolworthApplication = WoolworthsApplication.getInstance();
+		mWGlobalState = mWoolworthApplication.getWGlobalState();
+		this.otherSkus = otherSkus;
 	}
 
 	@Override
 	protected LocationResponse httpDoInBackground(String... params) {
-		return mWoolworthsApp.getApi().getLocationsItem(mWGlobalState.getSelectedSKUId(), String.valueOf(mWGlobalState.getStartRadius()), String.valueOf(mWGlobalState.getEndRadius()));
+		if (otherSkus != null)
+			return mWoolworthApplication.getApi().getLocationsItem(otherSkus.sku, String.valueOf(mWGlobalState.getStartRadius()), String.valueOf(mWGlobalState.getEndRadius()));
+		else
+			return mWoolworthApplication.getApi().getLocationsItem(mWGlobalState.getSelectedSKUId().sku, String.valueOf(mWGlobalState.getStartRadius()), String.valueOf(mWGlobalState.getEndRadius()));
 	}
 
 	@Override
