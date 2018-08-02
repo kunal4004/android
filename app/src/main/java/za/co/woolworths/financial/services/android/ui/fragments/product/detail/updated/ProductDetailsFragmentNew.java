@@ -343,25 +343,28 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 			return;
 		}
 
-		if (this.otherSKUForCart != null) {
-			this.enableAddToCartButton(true);
-			String storeId = Utils.retrieveStoreId(productDetails.fulfillmentType);
-			if (TextUtils.isEmpty(storeId)) {
-				this.otherSKUForCart = null;
-				String message = "Unfortunately this item is unavailable in "+deliveryLocation.suburb.name+". Try changing your delivery location and try again.";
-				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC, getString(R.string.product_unavailable), message);
-				enableAddToCartButton(false);
-			} else {
-				getViewModel().queryInventoryForSKUs(storeId, this.otherSKUForCart.sku, false).execute();
-			}
-			return;
-		} else if (this.selectedOtherSku != null) {
+		if (this.selectedOtherSku != null && this.otherSKUForCart == null) {
 			this.otherSKUForCart = this.selectedOtherSku;
 			addItemToCart();
 			return;
 		} else {
-			openSizePicker(this.selectedGroupKey, true, false, false);
-			return;
+			this.enableAddToCartButton(true);
+			String storeId = Utils.retrieveStoreId(productDetails.fulfillmentType);
+			if (TextUtils.isEmpty(storeId)) {
+				this.otherSKUForCart = null;
+				String message = "Unfortunately this item is unavailable in " + deliveryLocation.suburb.name + ". Try changing your delivery location and try again.";
+				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC, getString(R.string.product_unavailable), message);
+				enableAddToCartButton(false);
+				return;
+			}
+
+			if (this.otherSKUForCart != null)
+				getViewModel().queryInventoryForSKUs(storeId, this.otherSKUForCart.sku, false).execute();
+			else {
+				String multiSKUs = getViewModel().getMultiSKUsStringForInventory(this.otherSKUsByGroupKey.get(this.selectedGroupKey));
+				getViewModel().queryInventoryForSKUs(storeId, multiSKUs, true).execute();
+			}
+
 		}
 
 	}
@@ -690,13 +693,10 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 				return;
 			}
 
-			List<String> skuIds = new ArrayList<>();
-			for (OtherSkus otherSkus : this.otherSKUsByGroupKey.get(this.selectedGroupKey)) {
-				skuIds.add(otherSkus.sku);
-			}
-			String multiSKUS = TextUtils.join("-", skuIds);
+			String multiSKUS = getViewModel().getMultiSKUsStringForInventory(this.otherSKUsByGroupKey.get(this.selectedGroupKey));
 			String storeId = Utils.retrieveStoreId(productDetails.fulfillmentType);
 			getViewModel().queryInventoryForSKUs(storeId, multiSKUS, true).execute();
+
 		} else {
 			openQuantityPicker(quantityInStock, false);
 		}
