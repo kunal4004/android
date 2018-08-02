@@ -7,6 +7,7 @@ import android.support.multidex.MultiDex;
 import android.support.v7.app.AppCompatDelegate;
 
 import com.awfs.coordination.R;
+import com.crashlytics.android.Crashlytics;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.drawee.backends.pipeline.Fresco;
@@ -14,6 +15,7 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.FirebaseApp;
 
+import io.fabric.sdk.android.Fabric;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
@@ -187,6 +189,7 @@ public class WoolworthsApplication extends Application {
 		mInstance = this;
 		StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
 		StrictMode.setVmPolicy(builder.build());
+		Fabric.with(WoolworthsApplication.this, new Crashlytics());
 		Fresco.initialize(this);
 		AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 		FirebaseApp.initializeApp(WoolworthsApplication.this);
