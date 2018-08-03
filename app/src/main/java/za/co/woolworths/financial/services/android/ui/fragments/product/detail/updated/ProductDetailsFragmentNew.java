@@ -269,7 +269,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 				colorPickerDialog.show();
 				break;
 			case R.id.relSizeSelector:
-				openSizePicker(selectedGroupKey, false, false, false);
+				openSizePicker(selectedGroupKey, false, false);
 				break;
 			case R.id.rlAddToCart:
 				addItemToCart();
@@ -302,7 +302,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 			this.findItemInStore();
 			return;
 		} else {
-			openSizePicker(this.selectedGroupKey, false, false, true);
+			openSizePicker(this.selectedGroupKey, false, true);
 			return;
 		}
 
@@ -324,7 +324,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 			this.addItemToShoppingList();
 			return;
 		} else {
-			openSizePicker(this.selectedGroupKey, false, true, false);
+			openSizePicker(this.selectedGroupKey,true,false);
 			return;
 		}
 
@@ -508,12 +508,12 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		multiPickerDialog.setContentView(view);
 	}
 
-	public void openSizePicker(String groupKey, boolean isForInventory, boolean isForShoppingList, boolean isForFindInStore) {
+	public void openSizePicker(String groupKey, boolean isForShoppingList, boolean isForFindInStore) {
 
 		//if (isForInventory = true) - color picker is used for select size to check inventory
 
 		ArrayList<OtherSkus> selectedOtherSKUsForGroupKey = this.otherSKUsByGroupKey.get(groupKey);
-		sizePickerAdapter = new ProductSizePickerAdapter(selectedOtherSKUsForGroupKey, this, isForInventory, isForShoppingList, isForFindInStore);
+		sizePickerAdapter = new ProductSizePickerAdapter(selectedOtherSKUsForGroupKey, this, isForShoppingList, isForFindInStore);
 		rcvSizePicker.setAdapter(sizePickerAdapter);
 		sizePickerDialog.show();
 	}
@@ -897,13 +897,6 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		this.tvSelectedSize.setText(this.selectedOtherSku.size);
 		this.configureUIForOtherSKU(selectedOtherSku);
 		sizePickerDialog.dismiss();
-	}
-
-	@Override
-	public void onSizeSelectedToCheckInventory(OtherSkus selectedSizeSku) {
-		sizePickerDialog.dismiss();
-		this.otherSKUForCart = selectedSizeSku;
-		addItemToCart();
 	}
 
 	@Override
