@@ -81,21 +81,29 @@ public class QueryBadgeCounter extends Observable {
 	}
 
 	public void queryMessageCount() {
-		isUserAuthenticated();
-		isC2User();
+		if (isUserAuthenticated()) return;
+		if (isC2User()) return;
 		mGetMessage = loadMessageCount();
 		mGetMessage.execute();
 	}
 
+	private boolean isC2User() {
+		return !SessionUtilities.getInstance().isC2User();
+	}
+
 	public void queryVoucherCount() {
-		isUserAuthenticated();
-		isC2User();
+		if (isUserAuthenticated()) return;
+		if (isC2User()) return;
 		mGetVoucher = loadVoucherCount();
 		mGetVoucher.execute();
 	}
 
+	private boolean isUserAuthenticated() {
+		return !SessionUtilities.getInstance().isUserAuthenticated();
+	}
+
 	public void queryCartCount() {
-		isUserAuthenticated();
+		if (isUserAuthenticated()) return;
 		mGetCartCount = loadShoppingCartCount();
 		mGetCartCount.execute();
 	}
@@ -167,14 +175,6 @@ public class QueryBadgeCounter extends Observable {
 			public void onFailure(String errorMessage) {
 			}
 		});
-	}
-
-	private void isUserAuthenticated() {
-		if (!SessionUtilities.getInstance().isUserAuthenticated()) return;
-	}
-
-	private void isC2User() {
-		if (!SessionUtilities.getInstance().isC2User()) return;
 	}
 
 	public void cancelCounterRequest() {

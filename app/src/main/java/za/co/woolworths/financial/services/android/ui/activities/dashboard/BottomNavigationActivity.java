@@ -1181,10 +1181,11 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		}
 	}
 
-
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+		if (mQueryBadgeCounter == null) return;
 		mQueryBadgeCounter.deleteObserver(this);
+		mQueryBadgeCounter.cancelCounterRequest();
 	}
 }
