@@ -8,7 +8,7 @@
         android:title="@string/bottom_title_today"/>
 
     <item
-        android:id="@+id/navigation_product"
+        android:id="@+id/navigate_to_shop"
         android:icon="@drawable/ic_drw_products"
         android:title="@string/bottom_title_product"/>
 

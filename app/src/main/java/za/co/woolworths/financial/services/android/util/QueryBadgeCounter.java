@@ -58,6 +58,12 @@ public class QueryBadgeCounter extends Observable {
 		notifyObservers();
 	}
 
+	public void requestAPICall(int updateAtPosition) {
+		this.updateAtPosition = updateAtPosition;
+		setChanged();
+		notifyObservers();
+	}
+
 	public int getCartCount() {
 		return cartCount;
 	}

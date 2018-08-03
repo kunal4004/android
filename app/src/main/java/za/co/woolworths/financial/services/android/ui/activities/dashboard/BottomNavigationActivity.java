@@ -547,8 +547,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					hideToolbar();
 					return true;
 
-				case R.id.navigation_product:
-					setCurrentSection(R.id.navigation_product);
+				case R.id.navigate_to_shop:
+					setCurrentSection(R.id.navigate_to_shop);
 					switchTab(INDEX_PRODUCT);
 					return true;
 
@@ -593,7 +593,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					currentWTodayFragment.scrollToTop();
 					break;
 
-				case R.id.navigation_product:
+				case R.id.navigate_to_shop:
 					clearStack();
 					CategoryFragment currentProductCategoryFragment = (CategoryFragment) mNavController.getCurrentFrag();
 					currentProductCategoryFragment.scrollToTop();
@@ -1142,6 +1142,19 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				mQueryBadgeCounter.queryCartCount();
 				mQueryBadgeCounter.queryVoucherCount();
 				break;
+
+			case R.id.navigate_to_shop:
+				/***
+				 * Trigger cart count when delivery location address was set
+				 * if delivery location is empty or null, cart summary call will occur
+				 * in ProductDetailActivity.
+				 * It ensure only one cart count call is made on sign in
+				 */
+				if (Utils.getPreferredDeliveryLocation() != null)
+					mQueryBadgeCounter.queryCartCount();
+				mQueryBadgeCounter.queryMessageCount();
+				mQueryBadgeCounter.queryVoucherCount();
+				break;
 			case R.id.navigate_to_wreward:
 				mQueryBadgeCounter.queryCartCount();
 				mQueryBadgeCounter.queryMessageCount();
@@ -1173,6 +1186,11 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 				case INDEX_REWARD:
 					addBadge(bottomNavigationIndex, queryBadgeCounter.getVoucherCount());
+					break;
+
+				case R.id.navigate_to_shop:
+					setCurrentSection(R.id.navigate_to_shop);
+					badgeCount();
 					break;
 
 				default:

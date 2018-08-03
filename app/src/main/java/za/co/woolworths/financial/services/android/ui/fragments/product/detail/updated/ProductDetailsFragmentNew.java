@@ -963,6 +963,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
+			QueryBadgeCounter.getInstance().requestAPICall(R.id.navigate_to_shop);
 			switch (requestCode) {
 				case SSO_REQUEST_ADD_TO_CART:
 					addItemToCart();
