@@ -876,6 +876,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		if (requestCode == OPEN_CART_REQUEST) {
 			//Handling error 500 from cart
 			if (resultCode == CART_DEFAULT_ERROR_TAPPED) {
+				Fragment fragmentById = getCurrentFragment();
+				if (fragmentById != null)
+					fragmentById.onActivityResult(requestCode, resultCode, null);
 				return;
 			}
 			switch (resultCode) {
