@@ -237,6 +237,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		}
 	}
 
+
 	private void loadPromotionalImages(PromotionImages promotionalImage) {
 		LinearLayout promotionalImagesLayout = getViewDataBinding().priceLayout.promotionalImages;
 		List<String> images = new ArrayList<>();
@@ -348,7 +349,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 			String storeId = Utils.retrieveStoreId(productDetails.fulfillmentType);
 			if (TextUtils.isEmpty(storeId)) {
 				this.otherSKUForCart = null;
-				String message = "Unfortunately this item is unavailable in "+deliveryLocation.suburb.name+". Try changing your delivery location and try again.";
+				String message = "Unfortunately this item is unavailable in " + deliveryLocation.suburb.name + ". Try changing your delivery location and try again.";
 				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC, getString(R.string.product_unavailable), message);
 				enableAddToCartButton(false);
 			} else {
@@ -382,10 +383,10 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	@Override
 	public void onSuccessResponse(ProductDetails productDetails) {
 		this.productDetails = productDetails;
-		if(this.productDetails.otherSkus!=null && this.productDetails.otherSkus.size()>0) {
+		if (this.productDetails.otherSkus != null && this.productDetails.otherSkus.size() > 0) {
 			this.otherSKUsByGroupKey = groupOtherSKUsByColor(productDetails.otherSkus);
 			this.updateDefaultUI();
-		}else {
+		} else {
 			getViewDataBinding().llLoadingColorSize.setVisibility(View.GONE);
 			getViewDataBinding().loadingInfoView.setVisibility(View.GONE);
 			if (isAdded())
@@ -403,7 +404,9 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		getViewDataBinding().loadingInfoView.setVisibility(View.GONE);
 		this.configureButtonsAndSelectors();
 		this.updateViewPagerWithAuxiliaryImages();
+		this.setPromotionalText(productDetails);
 		this.setProductCode(productDetails.productId);
+		this.loadPromotionalImages(productDetails.promotionImages);
 		this.setProductDescription(getViewModel().getProductDescription(getActivity(), productDetails));
 		this.configureUIForOtherSKU(defaultSku);
 		this.displayIngredients();
@@ -602,7 +605,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	}
 
 	@Override
-	public void showOutOfStockInStores(){
+	public void showOutOfStockInStores() {
 		if (isAdded())
 			Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.NO_STOCK, "");
 	}
@@ -978,8 +981,8 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 					break;
 				case ADD_TO_SHOPPING_LIST_REQUEST_CODE:
 					int listSize = data.getIntExtra("sizeOfList", 0);
-					boolean isSessionExpired = data.getBooleanExtra("sessionExpired",false);
-					if(isSessionExpired){
+					boolean isSessionExpired = data.getBooleanExtra("sessionExpired", false);
+					if (isSessionExpired) {
 						onSessionTokenExpired();
 						return;
 					}
@@ -1168,10 +1171,17 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
 	}
 
-	public void displayIngredients(){
-		if(!TextUtils.isEmpty(this.productDetails.ingredients)){
+	public void displayIngredients() {
+		if (!TextUtils.isEmpty(this.productDetails.ingredients)) {
 			getViewDataBinding().linIngredient.setVisibility(View.VISIBLE);
 			getViewDataBinding().ingredientList.setText(this.productDetails.ingredients);
+		}
+	}
+
+	public void setPromotionalText(ProductDetails productDetails) {
+		if (!TextUtils.isEmpty(productDetails.saveText)) {
+			txtSaveText.setVisibility(View.VISIBLE);
+			txtSaveText.setText(productDetails.saveText);
 		}
 	}
 }
