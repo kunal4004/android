@@ -269,7 +269,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 				colorPickerDialog.show();
 				break;
 			case R.id.relSizeSelector:
-				openSizePicker(selectedGroupKey, false, false, false);
+				openSizePicker(selectedGroupKey, false, false);
 				break;
 			case R.id.rlAddToCart:
 				addItemToCart();
@@ -302,7 +302,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 			this.findItemInStore();
 			return;
 		} else {
-			openSizePicker(this.selectedGroupKey, false, false, true);
+			openSizePicker(this.selectedGroupKey, false, true);
 			return;
 		}
 
@@ -324,7 +324,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 			this.addItemToShoppingList();
 			return;
 		} else {
-			openSizePicker(this.selectedGroupKey, false, true, false);
+			openSizePicker(this.selectedGroupKey,true,false);
 			return;
 		}
 
@@ -343,25 +343,28 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 			return;
 		}
 
-		if (this.otherSKUForCart != null) {
-			this.enableAddToCartButton(true);
-			String storeId = Utils.retrieveStoreId(productDetails.fulfillmentType);
-			if (TextUtils.isEmpty(storeId)) {
-				this.otherSKUForCart = null;
-				String message = "Unfortunately this item is unavailable in "+deliveryLocation.suburb.name+". Try changing your delivery location and try again.";
-				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC, getString(R.string.product_unavailable), message);
-				enableAddToCartButton(false);
-			} else {
-				getViewModel().queryInventoryForSKUs(storeId, this.otherSKUForCart.sku, false).execute();
-			}
-			return;
-		} else if (this.selectedOtherSku != null) {
+		if (this.selectedOtherSku != null && this.otherSKUForCart == null) {
 			this.otherSKUForCart = this.selectedOtherSku;
 			addItemToCart();
 			return;
 		} else {
-			openSizePicker(this.selectedGroupKey, true, false, false);
-			return;
+			this.enableAddToCartButton(true);
+			String storeId = Utils.retrieveStoreId(productDetails.fulfillmentType);
+			if (TextUtils.isEmpty(storeId)) {
+				this.otherSKUForCart = null;
+				String message = "Unfortunately this item is unavailable in " + deliveryLocation.suburb.name + ". Try changing your delivery location and try again.";
+				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC, getString(R.string.product_unavailable), message);
+				enableAddToCartButton(false);
+				return;
+			}
+
+			if (this.otherSKUForCart != null)
+				getViewModel().queryInventoryForSKUs(storeId, this.otherSKUForCart.sku, false).execute();
+			else {
+				String multiSKUs = getViewModel().getMultiSKUsStringForInventory(this.otherSKUsByGroupKey.get(this.selectedGroupKey));
+				getViewModel().queryInventoryForSKUs(storeId, multiSKUs, true).execute();
+			}
+
 		}
 
 	}
@@ -505,12 +508,12 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		multiPickerDialog.setContentView(view);
 	}
 
-	public void openSizePicker(String groupKey, boolean isForInventory, boolean isForShoppingList, boolean isForFindInStore) {
+	public void openSizePicker(String groupKey, boolean isForShoppingList, boolean isForFindInStore) {
 
 		//if (isForInventory = true) - color picker is used for select size to check inventory
 
 		ArrayList<OtherSkus> selectedOtherSKUsForGroupKey = this.otherSKUsByGroupKey.get(groupKey);
-		sizePickerAdapter = new ProductSizePickerAdapter(selectedOtherSKUsForGroupKey, this, isForInventory, isForShoppingList, isForFindInStore);
+		sizePickerAdapter = new ProductSizePickerAdapter(selectedOtherSKUsForGroupKey, this, isForShoppingList, isForFindInStore);
 		rcvSizePicker.setAdapter(sizePickerAdapter);
 		sizePickerDialog.show();
 	}
@@ -690,13 +693,10 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 				return;
 			}
 
-			List<String> skuIds = new ArrayList<>();
-			for (OtherSkus otherSkus : this.otherSKUsByGroupKey.get(this.selectedGroupKey)) {
-				skuIds.add(otherSkus.sku);
-			}
-			String multiSKUS = TextUtils.join("-", skuIds);
+			String multiSKUS = getViewModel().getMultiSKUsStringForInventory(this.otherSKUsByGroupKey.get(this.selectedGroupKey));
 			String storeId = Utils.retrieveStoreId(productDetails.fulfillmentType);
 			getViewModel().queryInventoryForSKUs(storeId, multiSKUS, true).execute();
+
 		} else {
 			openQuantityPicker(quantityInStock, false);
 		}
@@ -897,13 +897,6 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		this.tvSelectedSize.setText(this.selectedOtherSku.size);
 		this.configureUIForOtherSKU(selectedOtherSku);
 		sizePickerDialog.dismiss();
-	}
-
-	@Override
-	public void onSizeSelectedToCheckInventory(OtherSkus selectedSizeSku) {
-		sizePickerDialog.dismiss();
-		this.otherSKUForCart = selectedSizeSku;
-		addItemToCart();
 	}
 
 	@Override

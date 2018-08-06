@@ -243,4 +243,13 @@ public class ProductDetailsViewModelNew extends BaseViewModel<ProductDetailNavig
 			}
 		});
 	}
+
+	public String getMultiSKUsStringForInventory(ArrayList<OtherSkus> otherSKUsList) {
+		List<String> skuIds = new ArrayList<>();
+		for (OtherSkus otherSkus : otherSKUsList) {
+			skuIds.add(otherSkus.sku);
+		}
+		String multiSKUS = TextUtils.join("-", skuIds);
+		return multiSKUS;
+	}
 }
