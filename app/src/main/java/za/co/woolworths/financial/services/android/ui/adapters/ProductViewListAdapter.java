@@ -64,7 +64,14 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 			PromotionImages promo = productList.promotionImages;
 			vh.tvProductName.setText(Html.fromHtml(productName));
 
-			vh.tvSaveText.setText(isEmpty(saveText) ? "" : saveText);
+			if (!isEmpty(saveText))
+				vh.tvSaveText.setText(saveText);
+			else{
+				final String currentText = vh.tvSaveText.getText().toString();
+				if (currentText != null && !currentText.isEmpty()){
+					vh.tvSaveText.setText("");
+				}
+			}
 
 			ArrayList<Double> priceList = new ArrayList<>();
 			for (OtherSkus os : productList.otherSkus) {
