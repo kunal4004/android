@@ -30,6 +30,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
@@ -47,7 +49,6 @@ import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.barcode.BarcodeFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.barcode.manual.ManualBarcodeFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.category.CategoryFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
@@ -69,6 +70,7 @@ import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
 import za.co.woolworths.financial.services.android.util.PermissionUtils;
+import za.co.woolworths.financial.services.android.util.QueryBadgeCounter;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
@@ -80,22 +82,19 @@ import za.co.woolworths.financial.services.android.util.nav.tabhistory.FragNavTa
 
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT;
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT_TEMP;
-import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.MESSAGE_COUNT;
-import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.REWARD_COUNT;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SHOW_ADDED_TO_SHOPPING_LIST_TOAST;
 import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.RESULT_TAP_FIND_INSTORE_BTN;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
 import static za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity.DELIVERY_LOCATION_CLOSE_CLICKED;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.DELIVERY_LOCATION_FROM_PDP_REQUEST;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_ADD_TO_CART;
-import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_ADD_TO_SHOPPING_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment.MOVE_TO_LIST_ON_TOAST_VIEW_CLICKED;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.SuburbSelectionFragment.SUBURB_SET_RESULT;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsFragment.ADD_TO_CART_SUCCESS_RESULT;
 import static za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment.LOCK_REQUEST_CODE_WREWARDS;
 import static za.co.woolworths.financial.services.android.util.ScreenManager.CART_LAUNCH_VALUE;
 
-public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigationBinding, BottomNavigationViewModel> implements BottomNavigator, FragNavController.TransactionListener, FragNavController.RootFragmentListener, PermissionResultCallback, ToastUtils.ToastInterface {
+public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigationBinding, BottomNavigationViewModel> implements BottomNavigator, FragNavController.TransactionListener, FragNavController.RootFragmentListener, PermissionResultCallback, ToastUtils.ToastInterface, Observer {
 
 	public static final int INDEX_TODAY = FragNavController.TAB1;
 	public static final int INDEX_PRODUCT = FragNavController.TAB2;
@@ -122,6 +121,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	private boolean singleOrMultipleItemSelector;
 	public static final int LOCK_REQUEST_CODE_ACCOUNTS = 444;
 	private int mListItemCount = 0;
+	private QueryBadgeCounter mQueryBadgeCounter;
 	public static final int PDP_REQUEST_CODE = 18;
 
 	@Override
@@ -174,6 +174,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				.rootFragmentListener(this, 5)
 				.build();
 		renderUI();
+
+		/***
+		 * Update bottom navigation view counter
+		 */
+		initBadgeCounter();
+
 		observableOn(new Consumer<Object>() {
 			@Override
 			public void accept(Object object) {
@@ -209,14 +215,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 						case CART_COUNT:
 							cartSummaryAPI();
 							break;
-
-						case REWARD_COUNT:
-							getViewModel().getVoucherCount().execute();
-							break;
-
-						case MESSAGE_COUNT:
-							getViewModel().getMessageResponse().execute();
-							break;
 						default:
 							break;
 					}
@@ -229,6 +227,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		}
 	}
 
+	private void initBadgeCounter() {
+		mQueryBadgeCounter = QueryBadgeCounter.getInstance();
+		mQueryBadgeCounter.addObserver(this);
+	}
 
 	private void setToast() {
 		mToastUtils = new ToastUtils(BottomNavigationActivity.this);
@@ -545,23 +547,23 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					hideToolbar();
 					return true;
 
-				case R.id.navigation_product:
-					setCurrentSection(R.id.navigation_product);
+				case R.id.navigate_to_shop:
+					setCurrentSection(R.id.navigate_to_shop);
 					switchTab(INDEX_PRODUCT);
 					return true;
 
-				case R.id.navigation_cart:
-					setCurrentSection(R.id.navigation_cart);
+				case R.id.navigate_to_cart:
+					setCurrentSection(R.id.navigate_to_cart);
 					identifyTokenValidationAPI();
 					return false;
 
-				case R.id.navigation_reward:
-					currentSection = R.id.navigation_reward;
+				case R.id.navigate_to_wreward:
+					currentSection = R.id.navigate_to_wreward;
 					setToolbarBackgroundColor(R.color.white);
 					switchTab(INDEX_REWARD);
 					return true;
 
-				case R.id.navigation_account:
+				case R.id.navigate_to_account:
 					if (AuthenticateUtils.getInstance(BottomNavigationActivity.this).isBiometricAuthenticationRequired()) {
 						try {
 							AuthenticateUtils.getInstance(BottomNavigationActivity.this).startAuthenticateApp(LOCK_REQUEST_CODE_ACCOUNTS);
@@ -569,7 +571,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 							e.printStackTrace();
 						}
 					} else {
-						setCurrentSection(R.id.navigation_account);
+						setCurrentSection(R.id.navigate_to_account);
 						setToolbarBackgroundColor(R.color.white);
 						switchTab(INDEX_ACCOUNT);
 						return true;
@@ -591,17 +593,17 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					currentWTodayFragment.scrollToTop();
 					break;
 
-				case R.id.navigation_product:
+				case R.id.navigate_to_shop:
 					clearStack();
 					CategoryFragment currentProductCategoryFragment = (CategoryFragment) mNavController.getCurrentFrag();
 					currentProductCategoryFragment.scrollToTop();
 					break;
 
-				case R.id.navigation_cart:
+				case R.id.navigate_to_cart:
 					clearStack();
 					break;
 
-				case R.id.navigation_reward:
+				case R.id.navigate_to_wreward:
 					clearStack();
 					WRewardsFragment wRewardsFragment = (WRewardsFragment) mNavController.getCurrentFrag();
 					Fragment currentChildFragment = wRewardsFragment.getWRewardContentFrame();
@@ -614,7 +616,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					}
 					break;
 
-				case R.id.navigation_account:
+				case R.id.navigate_to_account:
 					clearStack();
 					MyAccountsFragment currentAccountFragment = (MyAccountsFragment) mNavController.getCurrentFrag();
 					currentAccountFragment.scrollToTop();
@@ -791,7 +793,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void cartSummaryAPI() {
-		getViewModel().getCartSummary(BottomNavigationActivity.this).execute();
 	}
 
 	@Override
@@ -882,10 +883,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
 					break;
 				case 0:
-					//load count on login success
-					badgeCount();
 					switch (getCurrentSection()) {
-						case R.id.navigation_cart:
+						case R.id.navigate_to_cart:
 							Intent openCartActivity = new Intent(this, CartActivity.class);
 							startActivityForResult(openCartActivity, OPEN_CART_REQUEST);
 							overridePendingTransition(0, 0);
@@ -903,7 +902,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			//load count on login success
 			badgeCount();
 			switch (getCurrentSection()) {
-				case R.id.navigation_cart:
+				case R.id.navigate_to_cart:
 					//open cart activity after login from cart only
 					if (requestCode == CART_LAUNCH_VALUE) {
 						Intent openCartActivity = new Intent(this, CartActivity.class);
@@ -913,62 +912,21 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					}
 					break;
 				default:
+					Fragment fragmentById = getBottomFragmentById();
+					if (fragmentById == null) break;
+					if (fragmentById instanceof ProductDetailFragment)
+						fragmentById.onActivityResult(requestCode, resultCode, data);
 					break;
 			}
 
-			switch (getBottomNavigationById().getCurrentItem()) {
-				case 1:
-					switch (getGlobalState().getSaveButtonClick()) {
-						// TODO:: add INDEX_ADD_TO_SHOPPING_LIST to product detail instead of
-						// parent activity
-						case INDEX_ADD_TO_SHOPPING_LIST:
-							try {
-								Fragment fragmentById = getBottomFragmentById();
-								if (fragmentById instanceof ProductDetailFragment) {
-									ProductDetailFragment productDetailFragment = (ProductDetailFragment) fragmentById;
-									productDetailFragment.reloadGetListAPI();
-								}
-							} catch (ClassCastException e) {
-								// not that fragment
-							}
-					}
-					break;
-				default:
-					break;
-			}
 
 		}
 
 		Fragment fragment = mNavController.getCurrentFrag();
-		//trigger reward and account call
-		switch (getBottomNavigationById().getCurrentItem()) {
-			case 0:
-				break;
-			case 1:
-				if (fragment instanceof CategoryFragment) // camera runtime permission successfully granted
-					if (fragment != null) {
-						fragment.onActivityResult(requestCode, resultCode, data);
-					}
-				if (fragment instanceof BarcodeFragment)
-					if (fragment != null) {
-						fragment.onActivityResult(requestCode, resultCode, data);
-					}
-				if (fragment instanceof ManualBarcodeFragment)
-					if (fragment != null) {
-						fragment.onActivityResult(requestCode, resultCode, data);
-					}
-				break;
-			case 2:
-				break;
-			default:
-				/**
-				 * Trigger onActivityResult() from current visible fragment
-				 */
-				if (fragment != null) {
-					fragment.onActivityResult(requestCode, resultCode, data);
-				}
-				break;
+		if (fragment != null)
 
+		{
+			fragment.onActivityResult(requestCode, resultCode, data);
 		}
 
 		//Call product detail onActivityResult
@@ -979,7 +937,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 		}
 		// Biometric Authentication check
-		if (resultCode == RESULT_OK) {
+		if (resultCode == RESULT_OK)
+
+		{
 			switch (requestCode) {
 				case LOCK_REQUEST_CODE_ACCOUNTS:
 					AuthenticateUtils.getInstance(BottomNavigationActivity.this).enableBiometricForCurrentSession(false);
@@ -993,7 +953,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			}
 		}
 
-		if (requestCode == DELIVERY_LOCATION_FROM_PDP_REQUEST) {
+		if (requestCode == DELIVERY_LOCATION_FROM_PDP_REQUEST)
+
+		{
 			/***
 			 * Activated when set delivery location process is successfully set
 			 */
@@ -1017,19 +979,24 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			}
 		}
 
-		if (requestCode == ADD_TO_CART_SUCCESS_RESULT) {
+		if (requestCode == ADD_TO_CART_SUCCESS_RESULT)
+
+		{
 			if (resultCode == ADD_TO_CART_SUCCESS_RESULT) {
 				setToast();
 			}
 		}
 
-		if (requestCode == BOTTOM_FRAGMENT_REQUEST_CODE) {
+		if (requestCode == BOTTOM_FRAGMENT_REQUEST_CODE)
+
+		{
 			if (resultCode == RESULT_OK) {
 				if (getBottomFragmentById() instanceof ProductDetailFragment) {
 					getBottomFragmentById().onActivityResult(requestCode, resultCode, data);
 				}
 			}
 		}
+
 	}
 
 	private Fragment getBottomFragmentById() {
@@ -1050,13 +1017,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	public int getCurrentSection() {
 		return currentSection;
-	}
-
-	@Override
-	public void badgeCount() {
-		getViewModel().getCartSummary(BottomNavigationActivity.this).execute();
-		getViewModel().getVoucherCount().execute();
-		getViewModel().getMessageResponse().execute();
 	}
 
 	@Override
@@ -1173,5 +1133,77 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	public Fragment getCurrentFragment() {
 		return mNavController.getCurrentFrag();
+	}
+
+	@Override
+	public void badgeCount() {
+		switch (getCurrentSection()) {
+			case R.id.navigate_to_account:
+				mQueryBadgeCounter.queryCartCount();
+				mQueryBadgeCounter.queryVoucherCount();
+				break;
+
+			case R.id.navigate_to_shop:
+				/***
+				 * Trigger cart count when delivery location address was set
+				 * if delivery location is empty or null, cart summary call will occur
+				 * in ProductDetailActivity.
+				 * It ensure only one cart count call is made on sign in
+				 */
+				if (Utils.getPreferredDeliveryLocation() != null)
+					mQueryBadgeCounter.queryCartCount();
+				mQueryBadgeCounter.queryMessageCount();
+				mQueryBadgeCounter.queryVoucherCount();
+				break;
+			case R.id.navigate_to_wreward:
+				mQueryBadgeCounter.queryCartCount();
+				mQueryBadgeCounter.queryMessageCount();
+				break;
+			case R.id.navigate_to_cart:
+				mQueryBadgeCounter.queryMessageCount();
+				mQueryBadgeCounter.queryVoucherCount();
+				break;
+			default:
+				mQueryBadgeCounter.queryAllBadgeCounters();
+				break;
+		}
+	}
+
+	@Override
+	public void update(Observable observable, Object o) {
+		if (observable instanceof QueryBadgeCounter) {
+			QueryBadgeCounter queryBadgeCounter = (QueryBadgeCounter) observable;
+			int bottomNavigationIndex = queryBadgeCounter.getUpdateAtPosition();
+			switch (mQueryBadgeCounter.getUpdateAtPosition()) {
+
+				case INDEX_ACCOUNT:
+					addBadge(bottomNavigationIndex, queryBadgeCounter.getMessageCount());
+					break;
+
+				case INDEX_CART:
+					addBadge(bottomNavigationIndex, queryBadgeCounter.getCartCount());
+					break;
+
+				case INDEX_REWARD:
+					addBadge(bottomNavigationIndex, queryBadgeCounter.getVoucherCount());
+					break;
+
+				case R.id.navigate_to_shop:
+					setCurrentSection(R.id.navigate_to_shop);
+					badgeCount();
+					break;
+
+				default:
+					break;
+			}
+		}
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		if (mQueryBadgeCounter == null) return;
+		mQueryBadgeCounter.deleteObserver(this);
+		mQueryBadgeCounter.cancelCounterRequest();
 	}
 }

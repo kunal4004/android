@@ -12,18 +12,15 @@ import za.co.woolworths.financial.services.android.util.OnEventListener;
 public class ProductCategoryRequest extends HttpAsyncTask<String, String, RootCategories> {
 	private WoolworthsApplication mWoolworthsApp;
 	private OnEventListener<RootCategories> mCallBack;
-	private Context mContext;
 	public String mException;
 
-	public ProductCategoryRequest(Context context, OnEventListener callback) {
-		this.mContext = context;
+	public ProductCategoryRequest(OnEventListener callback) {
 		this.mCallBack = callback;
-		this.mWoolworthsApp = ((WoolworthsApplication) ((AppCompatActivity) mContext).getApplication());
 	}
 
 	@Override
 	protected RootCategories httpDoInBackground(String... params) {
-		return mWoolworthsApp.getApi().getRootCategory();
+		return WoolworthsApplication.getInstance().getApi().getRootCategory();
 	}
 
 	@Override

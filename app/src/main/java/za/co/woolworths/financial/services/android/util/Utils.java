@@ -369,6 +369,10 @@ public class Utils {
 
 	public static void setBadgeCounter(Context context, int badgeCount) {
 		try {
+			if (badgeCount == 0) {
+				removeBadgeCounter(context);
+				return;
+			}
 			ShortcutBadger.applyCount(context, badgeCount);
 			sessionDaoSave(context, SessionDao.KEY.UNREAD_MESSAGE_COUNT, String.valueOf(badgeCount));
 		} catch (NullPointerException ex) {

@@ -67,6 +67,7 @@ import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSiz
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity;
+import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator;
@@ -205,11 +206,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 								}
 								break;
 
-							case DETERMINE_LOCATION_POPUP:
-								activate_location_popup = true;
-								cartSummaryAPI();
-								break;
-
 							case SET_SUBURB:
 								onAddToCartLoadComplete();
 								deliverySelectionIntent(activity);
@@ -253,7 +249,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 	private void showToastMessage(Activity activity, ProductState productState, BottomNavigationActivity bottomNavigationActivity) {
 		switch (bottomNavigationActivity.getCurrentSection()) {
-			case R.id.navigation_account:
+			case R.id.navigate_to_account:
 				closeSlideUpPanel();
 				getBottomNavigator().closeSlideUpPanelFromList(productState.getCount());
 				break;
@@ -407,10 +403,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 	public WButton getBtnAddShoppingList() {
 		return getViewDataBinding().btnAddShoppingList;
-	}
-
-	public void reloadGetListAPI() {
-		getBtnAddShoppingList().performClick();
 	}
 
 	private void setSubCategoryTitle(String mSubCategoryTitle) {
@@ -1606,7 +1598,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 			onAddToCartLoadComplete();
 			return;
 		}
-		mGetCartSummary = getViewModel().getCartSummary(activity);
+		mGetCartSummary = getViewModel().getCartSummary();
 		mGetCartSummary.execute();
 	}
 
@@ -1768,6 +1760,26 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
+
+		if (requestCode == SSOActivity.SSOActivityResult.LAUNCH.rawValue()) {
+			if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
+				switch (getGlobalState().getSaveButtonClick()) {
+					case INDEX_ADD_TO_SHOPPING_LIST:
+						getBtnAddShoppingList().performClick();
+						break;
+
+					case INDEX_ADD_TO_CART:
+						activate_location_popup = true;
+						cartSummaryAPI();
+						break;
+
+					default:
+						break;
+				}
+				return;
+			}
+		}
+
 		/***
 		 * perform add to cart call for first time user
 		 */

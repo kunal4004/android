@@ -78,6 +78,7 @@ import za.co.woolworths.financial.services.android.util.DrawImage;
 import za.co.woolworths.financial.services.android.util.FusedLocationSingleton;
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
 import za.co.woolworths.financial.services.android.util.PermissionUtils;
+import za.co.woolworths.financial.services.android.util.QueryBadgeCounter;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
@@ -339,7 +340,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		ShoppingDeliveryLocation deliveryLocation = Utils.getPreferredDeliveryLocation();
 		if (deliveryLocation == null) {
 			enableAddToCartButton(true);
-			getViewModel().getCartSummary(getActivity()).execute();
+			getViewModel().getCartSummary().execute();
 			return;
 		}
 
@@ -385,12 +386,13 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	@Override
 	public void onSuccessResponse(ProductDetails productDetails) {
 		this.productDetails = productDetails;
-		if(this.productDetails.otherSkus!=null && this.productDetails.otherSkus.size()>0) {
+		if (this.productDetails.otherSkus != null && this.productDetails.otherSkus.size() > 0) {
 			this.otherSKUsByGroupKey = groupOtherSKUsByColor(productDetails.otherSkus);
 			this.updateDefaultUI();
-		}else {
+		} else {
 			getViewDataBinding().llLoadingColorSize.setVisibility(View.GONE);
 			getViewDataBinding().loadingInfoView.setVisibility(View.GONE);
+
 			if (isAdded())
 				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.CLI_ERROR, getString(R.string.statement_send_email_false_desc));
 		}
@@ -605,7 +607,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	}
 
 	@Override
-	public void showOutOfStockInStores(){
+	public void showOutOfStockInStores() {
 		if (isAdded())
 			Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.NO_STOCK, "");
 	}
@@ -642,6 +644,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
 	@Override
 	public void addItemToCartResponse(AddItemToCartResponse addItemToCartResponse) {
+		QueryBadgeCounter.getInstance().queryCartCount();
 		this.enableAddToCartButton(false);
 		Intent intent = new Intent();
 		intent.putExtra("addedToCart", true);
@@ -652,7 +655,6 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	@Override
 	public void onAddItemToCartFailure(String error) {
 		enableAddToCartButton(false);
-
 	}
 
 	@Override
@@ -954,6 +956,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
+			QueryBadgeCounter.getInstance().requestAPICall(R.id.navigate_to_shop);
 			switch (requestCode) {
 				case SSO_REQUEST_ADD_TO_CART:
 					addItemToCart();
@@ -971,8 +974,8 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 					break;
 				case ADD_TO_SHOPPING_LIST_REQUEST_CODE:
 					int listSize = data.getIntExtra("sizeOfList", 0);
-					boolean isSessionExpired = data.getBooleanExtra("sessionExpired",false);
-					if(isSessionExpired){
+					boolean isSessionExpired = data.getBooleanExtra("sessionExpired", false);
+					if (isSessionExpired) {
 						onSessionTokenExpired();
 						return;
 					}
@@ -1161,8 +1164,8 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
 	}
 
-	public void displayIngredients(){
-		if(!TextUtils.isEmpty(this.productDetails.ingredients)){
+	public void displayIngredients() {
+		if (!TextUtils.isEmpty(this.productDetails.ingredients)) {
 			getViewDataBinding().linIngredient.setVisibility(View.VISIBLE);
 			getViewDataBinding().ingredientList.setText(this.productDetails.ingredients);
 		}
