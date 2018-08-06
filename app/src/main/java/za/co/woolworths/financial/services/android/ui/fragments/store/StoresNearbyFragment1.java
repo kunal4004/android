@@ -19,6 +19,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -440,9 +441,8 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 		timeingsLayout.removeAllViews();
 		brandsLayout.removeAllViews();
 		storeName.setText(storeDetail.name);
-		storeAddress.setText(storeDetail.address);
-		if (storeDetail.phoneNumber != null)
-			storeNumber.setText(storeDetail.phoneNumber);
+		storeAddress.setText(TextUtils.isEmpty(storeDetail.address) ? "" : storeDetail.address);
+		storeNumber.setText(TextUtils.isEmpty(storeDetail.phoneNumber) ? "" : storeDetail.phoneNumber);
 		storeDistance.setText(WFormatter.formatMeter(storeDetail.distance) + getActivity().getResources().getString(R.string.distance_in_km));
 		if (storeDetail.offerings != null) {
 			storeOfferings.setText(WFormatter.formatOfferingString(getOfferingByType(storeDetail.offerings, "Department")));
@@ -495,6 +495,8 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 		direction.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				if (TextUtils.isEmpty(storeDetail.address))
+					return;
 				mPopWindowValidationMessage.setmName(storeDetail.name);
 				mPopWindowValidationMessage.setmLatitude(storeDetail.latitude);
 				mPopWindowValidationMessage.setmLongiude(storeDetail.longitude);
