@@ -19,8 +19,6 @@ import android.view.inputmethod.InputMethodManager;
 import com.awfs.coordination.R;
 
 import java.util.ArrayList;
-import java.util.Observable;
-import java.util.Observer;
 
 import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
@@ -57,14 +55,14 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {            // Inflate and populate
-		mViewDataBinding = DataBindingUtil.inflate(inflater, getLayoutId(), container, false);
-		mRootView = mViewDataBinding.getRoot();
-		Activity activity = getActivity();
-		if (activity != null) {
-			try {
+		try {
+			mViewDataBinding = DataBindingUtil.inflate(inflater, getLayoutId(), container, false);
+			mRootView = mViewDataBinding.getRoot();
+			Activity activity = getActivity();
+			if (activity != null) {
 				bottomNavigator = (BottomNavigator) activity;
-			} catch (Exception ex) {
 			}
+		} catch (Exception ex) {
 		}
 		return mRootView;
 	}
@@ -118,6 +116,7 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 		void onFragmentAttached();
 
 		void onFragmentDetached(String tag);
+
 	}
 
 	/**
@@ -386,5 +385,13 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 				}
 			});
 		}
+	}
+
+	public BottomNavigationActivity getBottomNavigationActivity() {
+		Activity activity = getActivity();
+		if (activity instanceof BottomNavigationActivity) {
+			return (BottomNavigationActivity) activity;
+		}
+		return null;
 	}
 }

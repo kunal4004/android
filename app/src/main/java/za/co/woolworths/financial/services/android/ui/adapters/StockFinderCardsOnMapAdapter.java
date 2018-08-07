@@ -46,7 +46,8 @@ public class StockFinderCardsOnMapAdapter extends PagerAdapter {
 
 		StoreDetails storeDetails = storeDetailsList.get(position);
 		storeName.setText(storeDetails.name);
-		storeAddress.setText(storeDetails.address);
+		if (!TextUtils.isEmpty(storeDetails.address))
+			storeAddress.setText(storeDetails.address);
 		String status = storeDetails.status;
 		Utils.setRagRating(storeDistance.getContext(), offerings, storeDetails.status);
 		int mKmDistance = mContext.getResources().getDimensionPixelSize(R.dimen.distance_km);

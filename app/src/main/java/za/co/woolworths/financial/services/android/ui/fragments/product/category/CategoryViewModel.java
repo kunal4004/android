@@ -26,9 +26,9 @@ public class CategoryViewModel extends BaseViewModel<CategoryNavigator> {
 		super(schedulerProvider);
 	}
 
-	public ProductCategoryRequest categoryRequest(final LinearLayout llCategory) {
+	public ProductCategoryRequest categoryRequest() {
 		setIsLoading(true);
-		return new ProductCategoryRequest(llCategory.getContext(), new OnEventListener() {
+		return new ProductCategoryRequest(new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
 				RootCategories rootCategories = (RootCategories) object;

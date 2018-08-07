@@ -23,6 +23,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.grid.Gri
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ProductUtils;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
+import za.co.woolworths.financial.services.android.util.Utils;
 
 public class ProductViewListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -98,14 +99,6 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 				}
 			});
 
-			holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-				@Override
-				public boolean onLongClick(View v) {
-					//mSelectedProductView.onLongPressState(v, position);
-					return false;
-				}
-			});
-
 		}
 	}
 
@@ -115,10 +108,6 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 		switch (viewType) {
 			case ITEM_VIEW_TYPE_HEADER:
 				vh = getHeaderViewHolder(parent);
-				break;
-
-			case ITEM_VIEW_TYPE_BASIC:
-				vh = getSimpleViewHolder(parent);
 				break;
 
 			case ITEM_VIEW_TYPE_FOOTER:
@@ -163,31 +152,19 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 	}
 
 	private void promoImages(SimpleViewHolder holder, PromotionImages imPromo) {
-		if (imPromo == null)
-			return;
-
-		String saveUrl = imPromo.save;
-		String rewardUrl = imPromo.wRewards;
-		String vitalityUrl = imPromo.vitality;
-		String newImageUrl = imPromo.newImage;
-
-		setPromotionalImage(holder.imSave, saveUrl);
-		setPromotionalImage(holder.imReward, rewardUrl);
-		setPromotionalImage(holder.imVitality, vitalityUrl);
-		setPromotionalImage(holder.imNewImage, newImageUrl);
-
-		if (!isEmpty(saveUrl)) holder.imSave.setImageURI(saveUrl);
-		if (!isEmpty(rewardUrl)) holder.imReward.setImageURI(rewardUrl);
-		if (!isEmpty(vitalityUrl)) holder.imVitality.setImageURI(vitalityUrl);
-		if (!isEmpty(newImageUrl)) holder.imNewImage.setImageURI(newImageUrl);
+		setPromotionalImage(holder.imSave, (imPromo == null) ? "" : imPromo.save);
+		setPromotionalImage(holder.imReward, (imPromo == null) ? "" : imPromo.wRewards);
+		setPromotionalImage(holder.imVitality, (imPromo == null) ? "" : imPromo.vitality);
+		setPromotionalImage(holder.imNewImage, (imPromo == null) ? "" : imPromo.newImage);
 	}
 
 	private void setPromotionalImage(WrapContentDraweeView image, String url) {
 		image.setVisibility(isEmpty(url) ? View.GONE : View.VISIBLE);
+		image.setImageURI((isEmpty(url) ? Utils.getExternalImageRef() : url));
 	}
 
-	private boolean isEmpty(String wSave) {
-		return TextUtils.isEmpty(wSave);
+	private boolean isEmpty(String text) {
+		return TextUtils.isEmpty(text);
 	}
 
 	private class ProgressViewHolder extends RecyclerView.ViewHolder {
@@ -245,10 +222,15 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 			return ITEM_VIEW_TYPE_HEADER;
 		} else if (mProductList.get(position).viewTypeFooter) {
 			return ITEM_VIEW_TYPE_FOOTER;
-		} else if (!mProductList.get(position).viewTypeFooter && !mProductList.get(position).viewTypeHeader) {
-			return ITEM_VIEW_TYPE_BASIC;
 		} else {
 			return ITEM_VIEW_TYPE_BASIC;
 		}
 	}
+
+
+	@Override
+	public long getItemId(int position) {
+		return position;
+	}
+
 }
