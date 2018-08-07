@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.models.dto;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by denysvera on 2016/04/29.
  */
@@ -17,6 +19,13 @@ public class Environment {
 	public boolean storeStockLocatorConfigFoodProducts;
 	public boolean storeStockLocatorConfigClothingProducts;
 	public long emailSizeKB;
+
+	@SerializedName("splashScreen.display")
+	public boolean splashScreenDisplay;
+	@SerializedName("splashScreen.persist")
+	public boolean splashScreenPersist;
+	@SerializedName("splashScreen.text")
+	public String splashScreenText;
 
 
 	public String getApiId() {
@@ -117,5 +126,17 @@ public class Environment {
 
 	public void setEmailSizeKB(long emailSizeKB) {
 		this.emailSizeKB = emailSizeKB;
+	}
+
+	public boolean isSplashScreenDisplay() {
+		return splashScreenDisplay;
+	}
+
+	public boolean isSplashScreenPersist() {
+		return splashScreenPersist;
+	}
+
+	public String getSplashScreenText() {
+		return splashScreenText;
 	}
 }
