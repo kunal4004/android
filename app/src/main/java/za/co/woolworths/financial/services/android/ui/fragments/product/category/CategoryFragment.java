@@ -27,16 +27,14 @@ import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.ProductSearchFragmentBinding;
 import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
 import java.util.List;
-
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.RootCategory;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.barcode.BarcodeFragment;
+import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -57,6 +55,7 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 	private List<RootCategory> mRootCategories;
 	private Toolbar mProductToolbar;
 	private CategoryViewModel mViewModel;
+	WMaterialShowcaseView wMaterialShowcaseView;
 
 	public CategoryFragment() {
 		setRetainInstance(true);
@@ -112,6 +111,7 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 			getViewDataBinding().imBurgerButtonPressed.setOnClickListener(this);
 			getViewDataBinding().textTBProductSearch.setOnClickListener(this);
 			getViewDataBinding().imTBBarcodeScanner.setOnClickListener(this);
+
 		}
 	}
 
@@ -329,6 +329,9 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 					fadeOutToolbar(R.color.recent_search_bg);
 					showBackNavigationIcon(false);
 					onRetryConnectionClicked();
+					if (getBottomNavigationActivity().getCurrentFragment() instanceof CategoryFragment) {
+						presentShowcaseView(2000);
+					}
 				}
 			}
 		}, 10);
@@ -368,4 +371,21 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 		ObjectAnimator anim = ObjectAnimator.ofInt(getViewDataBinding().mNestedScrollview, "scrollY", getViewDataBinding().mNestedScrollview.getScrollY(), 0);
 		anim.setDuration(500).start();
 	}
+
+	private void presentShowcaseView(int withDelay) {
+
+		WMaterialShowcaseView materialShowcaseView = null;
+		if (materialShowcaseView != null)
+			return;
+		materialShowcaseView = new WMaterialShowcaseView.Builder(getActivity())
+				.setTarget(getViewDataBinding().llBarcodeScanner)
+				.setDelay(withDelay) // optional but starting animations immediately in onCreate can make them choppy
+				//.singleUse(SHOWCASE_ID) // provide a unique ID used to ensure it is only shown once
+//                .useFadeAnimation() // remove comment if you want to use fade animations for Lollipop & up
+				.setDismissOnTouch(true)
+				.setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
+		materialShowcaseView.show(getActivity());
+
+	}
+
 }
