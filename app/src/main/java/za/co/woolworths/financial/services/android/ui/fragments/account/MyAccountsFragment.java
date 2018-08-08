@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableString;
 import android.util.Log;
 import android.view.View;
@@ -823,7 +824,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		Utils.setBadgeCounter(getActivity(), 0);
 		removeAllBottomNavigationIconBadgeCount();
 		SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
-		SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(activity);
+		SessionExpiredUtilities.getInstance().showSessionExpireDialog((AppCompatActivity) activity);
 		initialize();
 	}
 

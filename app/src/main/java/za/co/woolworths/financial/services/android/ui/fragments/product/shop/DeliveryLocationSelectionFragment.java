@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -18,11 +19,12 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
+
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.rest.shop.SetDeliveryLocationSuburb;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
 import za.co.woolworths.financial.services.android.ui.adapters.DeliveryLocationAdapter;
@@ -164,7 +166,7 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
 				case 440:
 
 					SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.response.stsParams);
-					SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(getActivity());
+					SessionExpiredUtilities.getInstance().showSessionExpireDialog((AppCompatActivity) getActivity());
 
 					// hide loading
 					toggleLoading(false);

@@ -10,14 +10,14 @@ import com.awfs.coordination.R;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 
-public class SessionExpiredFragment extends ActionSheetDialogFragment implements View.OnClickListener {
+public class SessionExpiredDialogFragment extends ActionSheetDialogFragment implements View.OnClickListener {
 
-	public static SessionExpiredFragment newInstance(String stsParams) {
-		SessionExpiredFragment sessionExpiredFragment = new SessionExpiredFragment();
+	public static SessionExpiredDialogFragment newInstance(String stsParams) {
+		SessionExpiredDialogFragment sessionExpiredDialogFragment = new SessionExpiredDialogFragment();
 		Bundle bundle = new Bundle();
 		bundle.putString("stsParams", stsParams);
-		sessionExpiredFragment.setArguments(bundle);
-		return sessionExpiredFragment;
+		sessionExpiredDialogFragment.setArguments(bundle);
+		return sessionExpiredDialogFragment;
 	}
 
 	private String mStsParams;
