@@ -238,6 +238,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		}
 	}
 
+
 	private void loadPromotionalImages(PromotionImages promotionalImage) {
 		LinearLayout promotionalImagesLayout = getViewDataBinding().priceLayout.promotionalImages;
 		List<String> images = new ArrayList<>();
@@ -408,7 +409,9 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		getViewDataBinding().loadingInfoView.setVisibility(View.GONE);
 		this.configureButtonsAndSelectors();
 		this.updateViewPagerWithAuxiliaryImages();
+		this.setPromotionalText(productDetails);
 		this.setProductCode(productDetails.productId);
+		this.loadPromotionalImages(productDetails.promotionImages);
 		this.setProductDescription(getViewModel().getProductDescription(getActivity(), productDetails));
 		this.configureUIForOtherSKU(defaultSku);
 		this.displayIngredients();
@@ -1168,6 +1171,13 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		if (!TextUtils.isEmpty(this.productDetails.ingredients)) {
 			getViewDataBinding().linIngredient.setVisibility(View.VISIBLE);
 			getViewDataBinding().ingredientList.setText(this.productDetails.ingredients);
+		}
+	}
+
+	public void setPromotionalText(ProductDetails productDetails) {
+		if (!TextUtils.isEmpty(productDetails.saveText)) {
+			txtSaveText.setVisibility(View.VISIBLE);
+			txtSaveText.setText(productDetails.saveText);
 		}
 	}
 }
