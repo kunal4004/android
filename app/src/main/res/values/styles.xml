@@ -1174,4 +1174,14 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:background">@color/default_background</item>
     </style>
+
+    <!-- Define your custom dialog theme here extending from base -->
+
+    <style name="AppDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowCloseOnTouchOutside">true</item>
+    </style>
 </resources>
