@@ -31,6 +31,8 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.ui.views.WButton;
+import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WVideoView;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
@@ -43,10 +45,17 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 
 	private boolean mVideoPlayerShouldPlay = true;
 	private boolean isMinimized = false;
+
+	private boolean splashScreenDisplay = false;
+	private boolean splashScreenPersist = false;
+	private String splashScreenText = "";
+
 	private WVideoView videoView;
 	private String TAG = this.getClass().getSimpleName();
 	private LinearLayout errorLayout;
 	private View noVideoView;
+	private View serverMessageView;
+	private WTextView serverMessageLabel;
 	private RelativeLayout videoViewLayout;
 	private ProgressBar pBar;
 	private WGlobalState mWGlobalState;
@@ -76,6 +85,8 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 		videoView = (WVideoView) findViewById(R.id.activity_wsplash_screen_videoview);
 		errorLayout = (LinearLayout) findViewById(R.id.errorLayout);
 		noVideoView = (View) findViewById(R.id.splashNoVideoView);
+		serverMessageView = (View) findViewById(R.id.splashServerMessageView);
+		serverMessageLabel = (WTextView) findViewById(R.id.messageLabel);
 		videoViewLayout = (RelativeLayout) findViewById(R.id.videoViewLayout);
 		pBar = (ProgressBar) findViewById(R.id.progressBar);
 
@@ -99,6 +110,7 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 			}
 
 		});
+
 		//Remove old usage of SharedPreferences data.
 		Utils.clearSharedPreferences(WSplashScreenActivity.this);
 		AuthenticateUtils.getInstance(WSplashScreenActivity.this).enableBiometricForCurrentSession(true);
@@ -161,7 +173,7 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 				try {
 					WSplashScreenActivity.this.mVideoPlayerShouldPlay = false;
 
-					if(configResponse.enviroment.stsURI == null || configResponse.enviroment.stsURI.isEmpty()) {
+					if (configResponse.enviroment.stsURI == null || configResponse.enviroment.stsURI.isEmpty()) {
 						showNonVideoViewWithErrorLayout();
 						return;
 					}
@@ -184,8 +196,15 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 					WoolworthsApplication.setCartCheckoutLink(configResponse.defaults.getCartCheckoutLink());
 					mWGlobalState.setStartRadius(configResponse.enviroment.getStoreStockLocatorConfigStartRadius());
 					mWGlobalState.setEndRadius(configResponse.enviroment.getStoreStockLocatorConfigEndRadius());
-					if (!isFirstTime())
-						presentNextScreen();
+
+					splashScreenText = configResponse.enviroment.splashScreenText;
+					splashScreenDisplay = configResponse.enviroment.splashScreenDisplay;
+					splashScreenPersist = configResponse.enviroment.splashScreenPersist;
+
+					if (!isFirstTime()) {
+						presentNextScreenOrServerMessage();
+					}
+
 				} catch (NullPointerException ignored) {
 				}
 			}
@@ -198,7 +217,7 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 
 		if (!WSplashScreenActivity.this.mVideoPlayerShouldPlay) {
 
-			presentNextScreen();
+			presentNextScreenOrServerMessage();
 			mp.stop();
 
 		} else {
@@ -242,6 +261,7 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 
 	private void showVideoView() {
 		noVideoView.setVisibility(View.GONE);
+		serverMessageView.setVisibility(View.GONE);
 		videoViewLayout.setVisibility(View.VISIBLE);
 		String randomVideo = getRandomVideos();
 		Log.d("randomVideo", randomVideo);
@@ -258,6 +278,7 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 				pBar.setVisibility(View.GONE);
 				videoViewLayout.setVisibility(View.GONE);
 				noVideoView.setVisibility(View.VISIBLE);
+				serverMessageView.setVisibility(View.GONE);
 				errorLayout.setVisibility(View.VISIBLE);
 			}
 		});
@@ -269,6 +290,32 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 		videoViewLayout.setVisibility(View.GONE);
 		errorLayout.setVisibility(View.GONE);
 		noVideoView.setVisibility(View.VISIBLE);
+		serverMessageView.setVisibility(View.GONE);
+	}
+
+	private void showServerMessage(String label, boolean persist) {
+
+		pBar.setVisibility(View.GONE);
+		videoViewLayout.setVisibility(View.GONE);
+		errorLayout.setVisibility(View.GONE);
+		noVideoView.setVisibility(View.GONE);
+
+		serverMessageLabel.setText(label);
+		WButton proceedButton = findViewById(R.id.proceedButton);
+		if (persist) {
+			proceedButton.setVisibility(View.GONE);
+		} else {
+			proceedButton.setVisibility(View.VISIBLE);
+			proceedButton.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					presentNextScreen();
+				}
+
+			});
+		}
+
+		serverMessageView.setVisibility(View.VISIBLE);
 	}
 
 	private boolean isFirstTime() {
@@ -283,6 +330,14 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 			showVideoView();
 		} else {
 			showNonVideoViewWithOutErrorLayout();
+		}
+	}
+
+	private void presentNextScreenOrServerMessage() {
+		if (splashScreenDisplay) {
+			showServerMessage(splashScreenText, splashScreenPersist);
+		} else {
+			presentNextScreen();
 		}
 	}
 

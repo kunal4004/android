@@ -36,4 +36,9 @@
         android:visibility="gone"
         android:id="@+id/splashNoVideoView"
         layout="@layout/activity_wsplash_screen_without_video"/>
+
+    <include
+        android:visibility="gone"
+        android:id="@+id/splashServerMessageView"
+        layout="@layout/activity_wsplash_screen_with_message"/>
 </FrameLayout>

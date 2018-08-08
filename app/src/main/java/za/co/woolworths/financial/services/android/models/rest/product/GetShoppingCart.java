@@ -43,9 +43,10 @@ public class GetShoppingCart extends HttpAsyncTask<String, String, ShoppingCartR
 		 * Update cart count even if CartActivity close down
 		 */
 		if (shoppingCartResponse != null)
-			if (shoppingCartResponse.data[0] != null)
-				if (shoppingCartResponse.data[0].orderSummary != null)
-					QueryBadgeCounter.getInstance().setCartCount(shoppingCartResponse.data[0].orderSummary.totalItemsCount, INDEX_CART);
+			if (shoppingCartResponse.data != null)
+				if (shoppingCartResponse.data[0] != null)
+					if (shoppingCartResponse.data[0].orderSummary != null)
+						QueryBadgeCounter.getInstance().setCartCount(shoppingCartResponse.data[0].orderSummary.totalItemsCount, INDEX_CART);
 
 		if (mCallBack != null) {
 			if (TextUtils.isEmpty(mException)) {
