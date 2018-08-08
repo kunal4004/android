@@ -31,6 +31,7 @@ import java.util.Map;
 
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
@@ -247,7 +248,8 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	@Override
 	public void onResume() {
 		super.onResume();
-		messageCounterRequest();
+		if (!AppInstanceObject.biometricWalkthroughIsPresented(getActivity()))
+			messageCounterRequest();
 	}
 
 	//To remove negative signs from negative balance and add "CR" after the negative balance
