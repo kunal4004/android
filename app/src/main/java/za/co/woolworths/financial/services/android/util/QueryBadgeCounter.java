@@ -201,4 +201,10 @@ public class QueryBadgeCounter extends Observable {
 	public boolean hasChanged() {
 		return true; //super.hasChanged();
 	}
+
+	public void queryBadgeCount() {
+		updateAtPosition = 10;
+		setChanged();
+		notifyObservers();
+	}
 }
