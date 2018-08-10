@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.views.actionsheet;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.view.View;
 
 import com.awfs.coordination.R;
@@ -37,6 +38,7 @@ public class SessionExpiredDialogFragment extends ActionSheetDialogFragment impl
 
 		btnSECancel.setOnClickListener(this);
 		btnSESignIn.setOnClickListener(this);
+
 	}
 
 	@Override
@@ -69,7 +71,9 @@ public class SessionExpiredDialogFragment extends ActionSheetDialogFragment impl
 
 		Activity activity = getActivity();
 		if (activity == null) return;
-		activity.setResult(ACTION_SHEET_WAS_DISMISSED_RESULT_CODE);
+		Fragment targetFragment = getTargetFragment();
+		if (targetFragment != null)
+			targetFragment.onActivityResult(getTargetRequestCode(), getTargetRequestCode(), null);
 		dismissDialog();
 	}
 }

@@ -23,7 +23,7 @@ public class ActionSheetDialogFragment extends DialogFragment implements Animate
 	public LinearLayout mFrameAlertContainer;
 	private AnimateLayout mAnimationUtils;
 
-	public static int ACTION_SHEET_WAS_DISMISSED_RESULT_CODE = 1111;
+	public static int DIALOG_REQUEST_CODE = 1211;
 
 	public ActionSheetDialogFragment() {
 	}
@@ -79,7 +79,6 @@ public class ActionSheetDialogFragment extends DialogFragment implements Animate
 		mAnimationUtils.setAnimation(mFrameAlertContainer, this);
 	}
 
-
 	public void onDialogBackPressed(boolean positiveResultSelected) {
 		mAnimationUtils.animateDismissView(mFrameAlertContainer, positiveResultSelected);
 	}
@@ -93,7 +92,7 @@ public class ActionSheetDialogFragment extends DialogFragment implements Animate
 	public void onAnimationCompleted(boolean positiveResultSelected) {
 		Activity activity = getActivity();
 		if (activity == null) return;
-		activity.setResult(ACTION_SHEET_WAS_DISMISSED_RESULT_CODE);
+		activity.setResult(DIALOG_REQUEST_CODE);
 		dismissDialog();
 	}
 

@@ -87,6 +87,7 @@ import static za.co.woolworths.financial.services.android.models.service.event.P
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
+import static za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment.DIALOG_REQUEST_CODE;
 
 
 public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick, View.OnClickListener, NetworkChangeListener, ToastUtils.ToastInterface {
@@ -550,7 +551,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 						case 440:
 							//TODO:: improve error handling
 							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
-							SessionExpiredUtilities.getInstance().showSessionExpireDialog((AppCompatActivity) getActivity());
+							SessionExpiredUtilities.getInstance().showSessionExpireDialog((AppCompatActivity) getActivity(), CartFragment.this);
 							onChangeQuantityComplete();
 							break;
 						default:
@@ -877,7 +878,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (resultCode == CART_DEFAULT_ERROR_TAPPED) {
+		if (resultCode == CART_DEFAULT_ERROR_TAPPED || resultCode == DIALOG_REQUEST_CODE) {
 			Activity activity = getActivity();
 			activity.setResult(CART_DEFAULT_ERROR_TAPPED);
 			activity.finish();

@@ -1,10 +1,13 @@
 package za.co.woolworths.financial.services.android.util;
 
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SessionExpiredDialogFragment;
+
+import static za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment.DIALOG_REQUEST_CODE;
 
 public class SessionExpiredUtilities {
 
@@ -22,6 +25,17 @@ public class SessionExpiredUtilities {
 		try {
 			FragmentManager fm = activity.getSupportFragmentManager();
 			SessionExpiredDialogFragment sessionExpiredDialogFragment = SessionExpiredDialogFragment.newInstance(SessionUtilities.getInstance().getSTSParameters());
+			sessionExpiredDialogFragment.show(fm, SessionExpiredDialogFragment.class.getSimpleName());
+		} catch (NullPointerException ex) {
+			Log.d(TAG, ex.getMessage());
+		}
+	}
+
+	public void showSessionExpireDialog(AppCompatActivity activity, Fragment fragment) {
+		try {
+			FragmentManager fm = activity.getSupportFragmentManager();
+			SessionExpiredDialogFragment sessionExpiredDialogFragment = SessionExpiredDialogFragment.newInstance(SessionUtilities.getInstance().getSTSParameters());
+			sessionExpiredDialogFragment.setTargetFragment(fragment, DIALOG_REQUEST_CODE);
 			sessionExpiredDialogFragment.show(fm, SessionExpiredDialogFragment.class.getSimpleName());
 		} catch (NullPointerException ex) {
 			Log.d(TAG, ex.getMessage());
