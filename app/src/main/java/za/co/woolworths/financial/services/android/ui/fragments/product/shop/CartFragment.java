@@ -47,13 +47,11 @@ import za.co.woolworths.financial.services.android.models.dto.CommerceItemInfo;
 import za.co.woolworths.financial.services.android.models.dto.Data;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
-import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.SkuInventory;
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
-import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.rest.product.GetInventorySkusForStore;
 import za.co.woolworths.financial.services.android.models.rest.product.GetShoppingCart;
@@ -792,18 +790,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				Activity activity = getActivity();
 				mSuburbName = data.suburbName;
 				mProvinceName = data.provinceName;
-				if (activity != null) {
-					String suburbId = String.valueOf(data.suburbId);
-					Province province = new Province();
-					province.name = data.provinceName;
-					province.id = suburbId;
-					Suburb suburb = new Suburb();
-					suburb.name = data.suburbName;
-					suburb.id = suburbId;
-					suburb.fulfillmentStores = data.orderSummary.suburb.fulfillmentStores;
-					Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(province, suburb));
+				if (activity != null)
 					setDeliveryLocation(mSuburbName + ", " + mProvinceName);
-				}
 			}
 			JSONObject itemsObject = new JSONObject(new Gson().toJson(data.items));
 			Iterator<String> keys = itemsObject.keys();
