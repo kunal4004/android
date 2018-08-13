@@ -512,6 +512,9 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		});
 		multiPickerDialog.setContentView(view);
 
+		// ViewSwitcher setMeasureAllChildren to true will occupy the space of the largest child
+		// false attribute will discard setting largest height as default height
+		viewSwitcher.setMeasureAllChildren(false);
 
 		viewSwitcher.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
 			@Override
