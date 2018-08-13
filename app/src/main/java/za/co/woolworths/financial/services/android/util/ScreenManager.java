@@ -57,10 +57,7 @@ public class ScreenManager {
 	}
 
 	public static void presentExpiredTokenSSOSignIn(Activity activity, String stsParams) {
-		WoolworthsApplication woolworthsApplication = (WoolworthsApplication) activity
-				.getApplication();
 		SessionUtilities.getInstance().setSTSParameters(stsParams);
-
 		Intent intent = new Intent(activity, SSOActivity.class);
 		intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue());
 		intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue());
