@@ -511,6 +511,30 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 			}
 		});
 		multiPickerDialog.setContentView(view);
+
+
+		viewSwitcher.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+			@Override
+			public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+
+				switch (viewSwitcher.getDisplayedChild()) {
+					case VIEW_SWITCHER_SIZE_PICKER:
+						rcvQuantityPicker.setVisibility(View.GONE);
+						rcvSizePickerForInventory.setVisibility(View.VISIBLE);
+						tvMultiPickerTitle.setText(getString(R.string.available_sizes));
+						break;
+
+					case VIEW_SWITCHER_QUANTITY_PICKER:
+						rcvQuantityPicker.setVisibility(View.VISIBLE);
+						rcvSizePickerForInventory.setVisibility(View.GONE);
+						tvMultiPickerTitle.setText(getString(R.string.edit_quantity));
+						break;
+
+					default:
+						break;
+				}
+			}
+		});
 	}
 
 	public void openSizePicker(String groupKey, boolean isForShoppingList, boolean isForFindInStore) {
