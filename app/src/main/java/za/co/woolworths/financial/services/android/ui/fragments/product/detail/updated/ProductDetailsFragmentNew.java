@@ -678,8 +678,10 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		this.enableAddToCartButton(false);
 		Intent intent = new Intent();
 		intent.putExtra("addedToCart", true);
-		getActivity().setResult(RESULT_OK, intent);
-		getActivity().onBackPressed();
+		Activity activity = getActivity();
+		if (activity == null) return;
+		activity.setResult(RESULT_OK, intent);
+		activity.onBackPressed();
 	}
 
 	@Override
