@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.activities.splash;
+package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -9,6 +9,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -19,13 +20,20 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
+import com.awfs.coordination.BuildConfig;
 import com.awfs.coordination.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
 import retrofit.RestAdapter;
 import za.co.wigroup.androidutils.Util;
+import za.co.woolworths.financial.services.android.contracts.RootActivityInterface;
 import za.co.woolworths.financial.services.android.models.ApiInterface;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -41,7 +49,17 @@ import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class WSplashScreenActivity extends AppCompatActivity implements MediaPlayer.OnCompletionListener {
+public class StartupActivity extends AppCompatActivity implements MediaPlayer.OnCompletionListener, RootActivityInterface {
+
+	private FirebaseRemoteConfig mFirebaseRemoteConfig = null;
+	private FirebaseAnalytics mFirebaseAnalytics = null;
+
+	private String appVersion = "";
+	private String environment = "";
+
+	private static final String APP_IS_EXPIRED_KEY = "app_isExpired";
+	private static final String APP_SERVER_ENVIRONMENT_KEY = "app_server_environment";
+	private static final String APP_VERSION_KEY = "app_version";
 
 	private boolean mVideoPlayerShouldPlay = true;
 	private boolean isMinimized = false;
@@ -67,7 +85,7 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 		super.onCreate(savedInstanceState);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		setContentView(R.layout.activity_wsplash_screen);
+		setContentView(R.layout.activity_startup);
 		Toolbar toolbar = findViewById(R.id.mToolbar);
 		setSupportActionBar(toolbar);
 		ActionBar actionBar = getSupportActionBar();
@@ -75,12 +93,23 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 			actionBar.hide();
 		}
 
+		try {
+			this.appVersion = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+			this.environment = com.awfs.coordination.BuildConfig.FLAVOR;
+		} catch (PackageManager.NameNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		if (mFirebaseAnalytics == null)
+			mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+
+
 		Bundle bundle = getIntent().getExtras();
 		if (bundle != null) {
 			mPushNotificationUpdate = bundle.getString(NotificationUtils.PUSH_NOTIFICATION_INTENT);
 		}
 
-		WoolworthsApplication woolworthsApplication = (WoolworthsApplication) WSplashScreenActivity.this.getApplication();
+		WoolworthsApplication woolworthsApplication = (WoolworthsApplication) StartupActivity.this.getApplication();
 		mWGlobalState = woolworthsApplication.getWGlobalState();
 
 		videoView = (WVideoView) findViewById(R.id.activity_wsplash_screen_videoview);
@@ -93,18 +122,25 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 
 		pBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
 		//Mobile Config Server
-		if (new ConnectionDetector().isOnline(WSplashScreenActivity.this)) {
+		if (new ConnectionDetector().isOnline(StartupActivity.this)) {
+			mFirebaseAnalytics.setUserProperty(APP_SERVER_ENVIRONMENT_KEY, StartupActivity.this.environment.isEmpty() ? "prod": StartupActivity.this.environment.toLowerCase());
+			mFirebaseAnalytics.setUserProperty(APP_VERSION_KEY, StartupActivity.this.appVersion);
+
 			setUpScreen();
-			executeConfigServer();
+			notifyIfNeeded();
 		} else {
 			showNonVideoViewWithErrorLayout();
 		}
 		findViewById(R.id.retry).setOnClickListener(new View.OnClickListener() {
+
 			@Override
 			public void onClick(View v) {
-				if (new ConnectionDetector().isOnline(WSplashScreenActivity.this)) {
+				if (new ConnectionDetector().isOnline(StartupActivity.this)) {
+					mFirebaseAnalytics.setUserProperty(APP_SERVER_ENVIRONMENT_KEY, StartupActivity.this.environment.isEmpty() ? "prod": StartupActivity.this.environment.toLowerCase());
+					mFirebaseAnalytics.setUserProperty(APP_VERSION_KEY, StartupActivity.this.appVersion);
+
 					setUpScreen();
-					executeConfigServer();
+					notifyIfNeeded();
 				} else {
 					showNonVideoViewWithErrorLayout();
 				}
@@ -113,11 +149,16 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 		});
 
 		//Remove old usage of SharedPreferences data.
-		Utils.clearSharedPreferences(WSplashScreenActivity.this);
-		AuthenticateUtils.getInstance(WSplashScreenActivity.this).enableBiometricForCurrentSession(true);
+		Utils.clearSharedPreferences(StartupActivity.this);
+		AuthenticateUtils.getInstance(StartupActivity.this).enableBiometricForCurrentSession(true);
 	}
 
 	private void executeConfigServer() {
+		if(mFirebaseRemoteConfig.getBoolean(APP_IS_EXPIRED_KEY)){
+			this.notifyIfNeeded();
+			return;
+		}
+
 		mobileConfigServer().execute();
 	}
 
@@ -136,15 +177,7 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 
 			@Override
 			protected ConfigResponse httpDoInBackground(String... params) {
-				final String appName = "woneapp";
-				String appVersion = "5.0.0";//default to 5.0.0
-				String environment = "";//default to PROD
-				try {
-					appVersion = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
-					environment = com.awfs.coordination.BuildConfig.FLAVOR;
-				} catch (PackageManager.NameNotFoundException e) {
-					e.printStackTrace();
-				}
+				final String appName = mFirebaseRemoteConfig.getString("mcs_appName");
 
 				//MCS expects empty value for PROD
 				//woneapp-5.0 = PROD
@@ -156,11 +189,11 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 
 				ApiInterface mApiInterface = new RestAdapter.Builder()
 						.setEndpoint(getString(R.string.config_endpoint))
-						.setLogLevel(Util.isDebug(WSplashScreenActivity.this) ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.NONE)
+						.setLogLevel(Util.isDebug(StartupActivity.this) ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.NONE)
 						.build()
 						.create(ApiInterface.class);
 
-				return mApiInterface.getConfig(getString(R.string.app_token), getDeviceID(), mcsAppVersion);
+				return mApiInterface.getConfig(mFirebaseRemoteConfig.getString("mcs_appApiKey"), getDeviceID(), mcsAppVersion);
 			}
 
 			@Override
@@ -172,7 +205,7 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 			@Override
 			protected void onPostExecute(ConfigResponse configResponse) {
 				try {
-					WSplashScreenActivity.this.mVideoPlayerShouldPlay = false;
+					StartupActivity.this.mVideoPlayerShouldPlay = false;
 
 					if (configResponse.enviroment.stsURI == null || configResponse.enviroment.stsURI.isEmpty()) {
 						showNonVideoViewWithErrorLayout();
@@ -216,7 +249,7 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 	@Override
 	public void onCompletion(MediaPlayer mp) {
 
-		if (!WSplashScreenActivity.this.mVideoPlayerShouldPlay) {
+		if (!StartupActivity.this.mVideoPlayerShouldPlay) {
 
 			presentNextScreenOrServerMessage();
 			mp.stop();
@@ -228,11 +261,7 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 
 	@SuppressLint("HardwareIds")
 	private String getDeviceID() {
-		try {
-			return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-		} catch (Exception e) {
-			return null;
-		}
+		return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 	}
 
 	@Override
@@ -245,7 +274,7 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 	protected void onStart() {
 		super.onStart();
 		if (isMinimized && !isServerMessageShown) {
-			startActivity(new Intent(this, WSplashScreenActivity.class));
+			startActivity(new Intent(this, StartupActivity.class));
 			isMinimized = false;
 			finish();
 		}
@@ -322,7 +351,7 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 	}
 
 	private boolean isFirstTime() {
-		if (Utils.getSessionDaoValue(WSplashScreenActivity.this, SessionDao.KEY.SPLASH_VIDEO) == null) {
+		if (Utils.getSessionDaoValue(StartupActivity.this, SessionDao.KEY.SPLASH_VIDEO) == null) {
 			return true;
 		} else
 			return false;
@@ -346,18 +375,18 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 
 	private void presentNextScreen() {
 		try {
-			String isFirstTime = Utils.getSessionDaoValue(WSplashScreenActivity.this, SessionDao.KEY.ON_BOARDING_SCREEN);
+			String isFirstTime = Utils.getSessionDaoValue(StartupActivity.this, SessionDao.KEY.ON_BOARDING_SCREEN);
 			if (isFirstTime == null || isAppUpdated())
-				ScreenManager.presentOnboarding(WSplashScreenActivity.this);
+				ScreenManager.presentOnboarding(StartupActivity.this);
 			else {
-				ScreenManager.presentMain(WSplashScreenActivity.this, mPushNotificationUpdate);
+				ScreenManager.presentMain(StartupActivity.this, mPushNotificationUpdate);
 			}
 		} catch (NullPointerException ignored) {
 		}
 	}
 
 	private boolean isAppUpdated() {
-		String appVersionFromDB = Utils.getSessionDaoValue(WSplashScreenActivity.this, SessionDao.KEY.APP_VERSION);
+		String appVersionFromDB = Utils.getSessionDaoValue(StartupActivity.this, SessionDao.KEY.APP_VERSION);
 		String appLatestVersion = null;
 		try {
 			appLatestVersion = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
@@ -373,6 +402,33 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 
 	protected void onResume() {
 		super.onResume();
-		NotificationUtils.clearNotifications(WSplashScreenActivity.this);
+		NotificationUtils.clearNotifications(StartupActivity.this);
+	}
+
+	@Override
+	public void notifyIfNeeded() {
+
+		if (mFirebaseRemoteConfig == null){
+			mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
+			FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
+					.setDeveloperModeEnabled(BuildConfig.DEBUG)
+					.build();
+			mFirebaseRemoteConfig.setConfigSettings(configSettings);
+
+			mFirebaseRemoteConfig.fetch().addOnCompleteListener(new OnCompleteListener<Void>() {
+				@Override
+				public void onComplete(@NonNull Task<Void> task) {
+					if (task.isSuccessful())
+						mFirebaseRemoteConfig.activateFetched();
+					else
+						mFirebaseRemoteConfig.setDefaults(R.xml.remote_config_defaults);
+
+					executeConfigServer();
+				}
+			});
+		}
+		else if (mFirebaseRemoteConfig.getBoolean(APP_IS_EXPIRED_KEY)){
+			throw new RuntimeException("Something awful happened...");
+		}
 	}
 }
