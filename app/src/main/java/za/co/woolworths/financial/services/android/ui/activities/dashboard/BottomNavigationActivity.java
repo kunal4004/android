@@ -903,7 +903,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		// prevent firing reward and account api on every activity resume
 		if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
 			//load count on login success
-			badgeCount();
 			switch (getCurrentSection()) {
 				case R.id.navigate_to_cart:
 					//open cart activity after login from cart only
@@ -1197,6 +1196,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					break;
 
 				default:
+					badgeCount();
 					break;
 			}
 		}

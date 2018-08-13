@@ -155,7 +155,7 @@ dependencies {
     implementation 'es.voghdev.pdfviewpager:library:1.0.3'
     api 'com.google.zxing:core:3.3.2'
     api 'com.google.zxing:android-core:3.3.0'
-    annotationProcessor "android.arch.lifecycle:compiler:1.1.0"
+    annotationProcessor "android.arch.lifecycle:compiler:1.1.1"
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'me.relex:circleindicator:1.2.2@aar'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.4'
