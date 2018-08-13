@@ -475,6 +475,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				cartActivity.resetToolBarIcons();
 			}
 			rlCheckOut.setVisibility(View.GONE);
+			rvCartList.setVisibility(View.GONE);
 			relEmptyStateHandler.setVisibility(View.VISIBLE);
 		}
 		onChangeQuantityComplete();

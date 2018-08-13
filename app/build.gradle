@@ -83,7 +83,7 @@ android {
         qa {
             applicationId "com.awfs.coordination.qa"
             signingConfig signingConfigs.woneappQa
-            versionCode 185
+            versionCode 186
         }
 
         staging {
@@ -127,6 +127,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-analytics:11.8.0'
     implementation 'com.google.firebase:firebase-messaging:11.8.0'
     implementation 'com.google.firebase:firebase-core:11.8.0'
+    implementation 'com.google.firebase:firebase-config:11.8.0'
     implementation 'com.google.android:flexbox:0.2.5'
     //noinspection GradleCompatible
     implementation 'com.android.support:design:26.1.0'
