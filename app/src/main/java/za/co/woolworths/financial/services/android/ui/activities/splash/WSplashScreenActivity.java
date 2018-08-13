@@ -45,6 +45,7 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 
 	private boolean mVideoPlayerShouldPlay = true;
 	private boolean isMinimized = false;
+	private boolean isServerMessageShown = false;
 
 	private boolean splashScreenDisplay = false;
 	private boolean splashScreenPersist = false;
@@ -243,7 +244,7 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 	@Override
 	protected void onStart() {
 		super.onStart();
-		if (isMinimized) {
+		if (isMinimized && !isServerMessageShown) {
 			startActivity(new Intent(this, WSplashScreenActivity.class));
 			isMinimized = false;
 			finish();
@@ -316,6 +317,8 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 		}
 
 		serverMessageView.setVisibility(View.VISIBLE);
+
+		isServerMessageShown = true;
 	}
 
 	private boolean isFirstTime() {
