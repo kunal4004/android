@@ -101,6 +101,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	public static final int INDEX_CART = FragNavController.TAB3;
 	public static final int INDEX_REWARD = FragNavController.TAB4;
 	public static final int INDEX_ACCOUNT = FragNavController.TAB5;
+	public static final int REMOVE_ALL_BADGE_COUNTER = FragNavController.TAB6;
+
 	public static final int OPEN_CART_REQUEST = 12346;
 	public static final int SLIDE_UP_COLLAPSE_REQUEST_CODE = 13;
 	public static final int SLIDE_UP_COLLAPSE_RESULT_CODE = 12345;
@@ -197,7 +199,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				} else if (object instanceof AuthenticationState) {
 					AuthenticationState auth = ((AuthenticationState) object);
 					if (auth.getAuthStateTypeDef() == AuthenticationState.SIGN_OUT) {
-						onSignOut();
+						clearBadgeCount();
 						ScreenManager.presentSSOLogout(BottomNavigationActivity.this);
 					}
 				} else if (object instanceof CartSummaryResponse) {
@@ -1062,7 +1064,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		addBadge(INDEX_ACCOUNT, unreadCount);
 	}
 
-	public void onSignOut() {
+	public void clearBadgeCount() {
 		addBadge(INDEX_CART, 0);
 		addBadge(INDEX_ACCOUNT, 0);
 		addBadge(INDEX_REWARD, 0);
@@ -1193,6 +1195,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				case R.id.navigate_to_shop:
 					setCurrentSection(R.id.navigate_to_shop);
 					badgeCount();
+					break;
+
+				case REMOVE_ALL_BADGE_COUNTER:
+					clearBadgeCount();
 					break;
 
 				default:

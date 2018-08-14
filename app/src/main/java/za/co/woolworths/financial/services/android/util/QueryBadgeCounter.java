@@ -58,7 +58,7 @@ public class QueryBadgeCounter extends Observable {
 		notifyObservers();
 	}
 
-	public void requestAPICall(int updateAtPosition) {
+	public void notifyBadgeCounterUpdate(int updateAtPosition) {
 		this.updateAtPosition = updateAtPosition;
 		setChanged();
 		notifyObservers();
