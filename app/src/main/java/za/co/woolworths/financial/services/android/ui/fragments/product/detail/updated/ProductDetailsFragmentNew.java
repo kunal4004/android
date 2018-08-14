@@ -78,7 +78,6 @@ import za.co.woolworths.financial.services.android.util.DrawImage;
 import za.co.woolworths.financial.services.android.util.FusedLocationSingleton;
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
 import za.co.woolworths.financial.services.android.util.PermissionUtils;
-import za.co.woolworths.financial.services.android.util.QueryBadgeCounter;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
@@ -649,7 +648,6 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
 	@Override
 	public void addItemToCartResponse(AddItemToCartResponse addItemToCartResponse) {
-		QueryBadgeCounter.getInstance().queryCartCount();
 		this.enableAddToCartButton(false);
 		Intent intent = new Intent();
 		intent.putExtra("addedToCart", true);

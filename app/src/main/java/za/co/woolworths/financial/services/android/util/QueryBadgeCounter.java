@@ -82,7 +82,7 @@ public class QueryBadgeCounter extends Observable {
 
 	public void queryAllBadgeCounters() {
 		queryVoucherCount();
-		queryCartCount();
+		queryCartSummaryCount();
 		queryMessageCount();
 	}
 
@@ -108,7 +108,7 @@ public class QueryBadgeCounter extends Observable {
 		return !SessionUtilities.getInstance().isUserAuthenticated();
 	}
 
-	public void queryCartCount() {
+	public void queryCartSummaryCount() {
 		if (isUserAuthenticated()) return;
 		mGetCartCount = loadShoppingCartCount();
 		mGetCartCount.execute();
