@@ -253,7 +253,9 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		promotionalImagesLayout.removeAllViews();
 		DrawImage drawImage = new DrawImage(getActivity());
 		for (String image : images) {
-			View view = getActivity().getLayoutInflater().inflate(R.layout.promotional_image, null);
+			Activity activity = getActivity();
+			if (activity == null) return;
+			View view = activity.getLayoutInflater().inflate(R.layout.promotional_image, null);
 			SimpleDraweeView simpleDraweeView = view.findViewById(R.id.promotionImage);
 			drawImage.displaySmallImage(simpleDraweeView, image);
 			promotionalImagesLayout.addView(view);
