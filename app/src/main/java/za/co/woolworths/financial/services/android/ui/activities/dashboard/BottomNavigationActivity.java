@@ -85,6 +85,7 @@ import static za.co.woolworths.financial.services.android.models.service.event.B
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SHOW_ADDED_TO_SHOPPING_LIST_TOAST;
 import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.RESULT_TAP_FIND_INSTORE_BTN;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
+import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED;
 import static za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity.DELIVERY_LOCATION_CLOSE_CLICKED;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.DELIVERY_LOCATION_FROM_PDP_REQUEST;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_ADD_TO_CART;
@@ -101,6 +102,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	public static final int INDEX_CART = FragNavController.TAB3;
 	public static final int INDEX_REWARD = FragNavController.TAB4;
 	public static final int INDEX_ACCOUNT = FragNavController.TAB5;
+	public static final int REMOVE_ALL_BADGE_COUNTER = FragNavController.TAB6;
+
 	public static final int OPEN_CART_REQUEST = 12346;
 	public static final int SLIDE_UP_COLLAPSE_REQUEST_CODE = 13;
 	public static final int SLIDE_UP_COLLAPSE_RESULT_CODE = 12345;
@@ -197,7 +200,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				} else if (object instanceof AuthenticationState) {
 					AuthenticationState auth = ((AuthenticationState) object);
 					if (auth.getAuthStateTypeDef() == AuthenticationState.SIGN_OUT) {
-						onSignOut();
+						clearBadgeCount();
 						ScreenManager.presentSSOLogout(BottomNavigationActivity.this);
 					}
 				} else if (object instanceof CartSummaryResponse) {
@@ -885,6 +888,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				case RESULT_OK:
 					getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
 					break;
+				case DISMISS_POP_WINDOW_CLICKED:
+					//ensure counter is refresh when user cart activity is closed
+					QueryBadgeCounter.getInstance().queryCartSummaryCount();
+					break;
 				case 0:
 					switch (getCurrentSection()) {
 						case R.id.navigate_to_cart:
@@ -1062,7 +1069,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		addBadge(INDEX_ACCOUNT, unreadCount);
 	}
 
-	public void onSignOut() {
+	public void clearBadgeCount() {
 		addBadge(INDEX_CART, 0);
 		addBadge(INDEX_ACCOUNT, 0);
 		addBadge(INDEX_REWARD, 0);
@@ -1141,7 +1148,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	public void badgeCount() {
 		switch (getCurrentSection()) {
 			case R.id.navigate_to_account:
-				mQueryBadgeCounter.queryCartCount();
+				mQueryBadgeCounter.queryCartSummaryCount();
 				mQueryBadgeCounter.queryVoucherCount();
 				break;
 
@@ -1153,12 +1160,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				 * It ensure only one cart count call is made on sign in
 				 */
 				if (Utils.getPreferredDeliveryLocation() != null)
-					mQueryBadgeCounter.queryCartCount();
+					mQueryBadgeCounter.queryCartSummaryCount();
 				mQueryBadgeCounter.queryMessageCount();
 				mQueryBadgeCounter.queryVoucherCount();
 				break;
 			case R.id.navigate_to_wreward:
-				mQueryBadgeCounter.queryCartCount();
+				mQueryBadgeCounter.queryCartSummaryCount();
 				mQueryBadgeCounter.queryMessageCount();
 				break;
 			case R.id.navigate_to_cart:
@@ -1193,6 +1200,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				case R.id.navigate_to_shop:
 					setCurrentSection(R.id.navigate_to_shop);
 					badgeCount();
+					break;
+
+				case REMOVE_ALL_BADGE_COUNTER:
+					clearBadgeCount();
 					break;
 
 				default:
