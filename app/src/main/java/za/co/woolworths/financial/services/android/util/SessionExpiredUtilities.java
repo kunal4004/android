@@ -33,6 +33,7 @@ public class SessionExpiredUtilities {
 
 	public void showSessionExpireDialog(AppCompatActivity activity, Fragment fragment) {
 		try {
+			Utils.clearCacheHistory(activity);
 			FragmentManager fm = activity.getSupportFragmentManager();
 			SessionExpiredDialogFragment sessionExpiredDialogFragment = SessionExpiredDialogFragment.newInstance(SessionUtilities.getInstance().getSTSParameters());
 			sessionExpiredDialogFragment.setTargetFragment(fragment, DIALOG_REQUEST_CODE);

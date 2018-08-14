@@ -78,7 +78,6 @@ import za.co.woolworths.financial.services.android.util.DrawImage;
 import za.co.woolworths.financial.services.android.util.FusedLocationSingleton;
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
 import za.co.woolworths.financial.services.android.util.PermissionUtils;
-import za.co.woolworths.financial.services.android.util.QueryBadgeCounter;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
@@ -253,7 +252,9 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		promotionalImagesLayout.removeAllViews();
 		DrawImage drawImage = new DrawImage(getActivity());
 		for (String image : images) {
-			View view = getActivity().getLayoutInflater().inflate(R.layout.promotional_image, null);
+			Activity activity = getActivity();
+			if (activity == null) return;
+			View view = activity.getLayoutInflater().inflate(R.layout.promotional_image, null);
 			SimpleDraweeView simpleDraweeView = view.findViewById(R.id.promotionImage);
 			drawImage.displaySmallImage(simpleDraweeView, image);
 			promotionalImagesLayout.addView(view);
@@ -647,7 +648,6 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
 	@Override
 	public void addItemToCartResponse(AddItemToCartResponse addItemToCartResponse) {
-		QueryBadgeCounter.getInstance().queryCartCount();
 		this.enableAddToCartButton(false);
 		Intent intent = new Intent();
 		intent.putExtra("addedToCart", true);

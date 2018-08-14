@@ -692,7 +692,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 					try {
 						Activity activity = getActivity();
 						if (activity != null) {
-							Utils.clearSQLLiteSearchHistory(activity);
+							Utils.clearCacheHistory(activity);
 						}
 					} catch (Exception pE) {
 						Log.d(TAG, pE.getMessage());
