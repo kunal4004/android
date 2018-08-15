@@ -65,6 +65,7 @@ import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocatio
 import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity;
+import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.AvailableSizePickerAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductColorPickerAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductSizePickerAdapter;
@@ -72,6 +73,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerA
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ProductUtils;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
+import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
 import za.co.woolworths.financial.services.android.util.DrawImage;
@@ -437,6 +439,9 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		btnAddToCart.setAlpha(1f);
 		btnAddToCart.setEnabled(true);
 		this.configureMultiPickerDialog();
+		if (Boolean.valueOf(productDetails.isnAvailable)) {
+			presentShowcaseView();
+		}
 	}
 
 	private void configureColorPicker() {
@@ -1169,5 +1174,21 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 			getViewDataBinding().linIngredient.setVisibility(View.VISIBLE);
 			getViewDataBinding().ingredientList.setText(this.productDetails.ingredients);
 		}
+	}
+
+	public void presentShowcaseView(){
+		ProductDetailsActivity.walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity())
+				.setTarget(btnFindInStore)
+				.setDelay(2000) // optional but starting animations immediately in onCreate can make them choppy
+				//.singleUse(SHOWCASE_ID) // provide a unique ID used to ensure it is only shown once
+//                .useFadeAnimation() // remove comment if you want to use fade animations for Lollipop & up
+				.setTitle(R.string.walkthrough_barcode_title)
+				.setDescription(R.string.walkthrough_barcode_desc)
+				.setImage(R.drawable.touch_id)
+//				.setAction(this)
+				.setDismissOnTouch(true)
+				.withRectangleShape()
+				.setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
+		ProductDetailsActivity.walkThroughPromtView.show(getActivity());
 	}
 }
