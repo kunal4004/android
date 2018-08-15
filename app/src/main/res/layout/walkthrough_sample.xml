@@ -30,9 +30,9 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/icon"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="24dp"
-            android:background="@drawable/touch_id" />
+            android:layout_marginTop="24dp" />
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:layout_width="40dp"
@@ -52,11 +52,11 @@
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/title"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="16dp"
             android:gravity="center"
             android:letterSpacing="0.14"
-            android:text="BARCODE SCANNER"
             android:textAllCaps="true"
             android:textColor="@color/black"
             android:textSize="14sp"
@@ -65,10 +65,10 @@
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/description"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="16dp"
             android:gravity="center"
-            android:text="Scan a product barcode to view the product information or seamlessly add it to your shopping list."
             android:textColor="@color/black_50"
             android:textSize="15sp"
             app:WTextView_font="myriadpro_regular" />
@@ -76,6 +76,7 @@
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:layout_width="match_parent"
             android:layout_height="50dp"
+            android:id="@+id/actionButton"
             android:layout_marginTop="24dp"
             android:layout_marginBottom="24dp"
             android:gravity="center"

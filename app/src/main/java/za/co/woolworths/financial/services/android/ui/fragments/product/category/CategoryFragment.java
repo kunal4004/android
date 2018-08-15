@@ -43,7 +43,7 @@ import za.co.woolworths.financial.services.android.util.ScrollState;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding, CategoryViewModel>
-		implements CategoryNavigator, ObservableScrollViewCallbacks, View.OnClickListener {
+		implements CategoryNavigator, ObservableScrollViewCallbacks, View.OnClickListener, WMaterialShowcaseView.IWalkthroughActionListener {
 
 	private static final float HIDE_ALPHA_VALUE = 0;
 	private static final float SHOW_ALPHA_VALUE = 1;
@@ -374,18 +374,23 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 
 	private void presentShowcaseView(int withDelay) {
 
-		WMaterialShowcaseView materialShowcaseView = null;
-		if (materialShowcaseView != null)
-			return;
-		materialShowcaseView = new WMaterialShowcaseView.Builder(getActivity())
+		getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity())
 				.setTarget(getViewDataBinding().llBarcodeScanner)
 				.setDelay(withDelay) // optional but starting animations immediately in onCreate can make them choppy
 				//.singleUse(SHOWCASE_ID) // provide a unique ID used to ensure it is only shown once
 //                .useFadeAnimation() // remove comment if you want to use fade animations for Lollipop & up
-				.setDismissOnTouch(true)
+				.setTitle(R.string.walkthrough_barcode_title)
+				.setDescription(R.string.walkthrough_barcode_desc)
+				.setImage(R.drawable.touch_id)
+				.setAction(this)
 				.setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
-		materialShowcaseView.show(getActivity());
+		getBottomNavigationActivity().walkThroughPromtView.show(getActivity());
 
+	}
+
+	@Override
+	public void onWalkthroughActionButtonClick() {
+		checkLocationPermission(getBottomNavigator(), getBottomNavigator().getPermissionType(Manifest.permission.CAMERA), 2);
 	}
 
 }

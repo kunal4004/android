@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 
 import com.awfs.coordination.R;
 
@@ -58,6 +59,9 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
 		void onShowcaseDetached(WMaterialShowcaseView showcaseView, boolean wasDismissed);
 	}
 
+	public interface IWalkthroughActionListener {
+		void onWalkthroughActionButtonClick();
+	}
 	private int mOldHeight;
 	private int mOldWidth;
 	private Bitmap mBitmap;// = new WeakReference<>(null);
@@ -92,6 +96,12 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
 	private IDetachedListener mDetachedListener;
 	private boolean mTargetTouchable = false;
 	private boolean mDismissOnTargetTouch = true;
+	private ImageView mDismissButton;
+	private ImageView mWalkThroughIcon;
+	private WTextView mWalkThroughTitle;
+	private WTextView mWalkThroughDesc;
+	private WTextView mWalkThroughAction;
+	private IWalkthroughActionListener actionListener;
 
 	public WMaterialShowcaseView(Context context) {
 		super(context);
@@ -133,6 +143,13 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
 
 		View contentView = LayoutInflater.from(getContext()).inflate(R.layout.walkthrough_sample, this, true);
 		mContentBox = contentView.findViewById(R.id.content_box);
+		mDismissButton = contentView.findViewById(R.id.close);
+		mWalkThroughIcon = contentView.findViewById(R.id.icon);
+		mWalkThroughTitle = contentView.findViewById(R.id.title);
+		mWalkThroughDesc = contentView.findViewById(R.id.description);
+		mWalkThroughAction = contentView.findViewById(R.id.actionButton);
+		mDismissButton.setOnClickListener(this);
+		mWalkThroughAction.setOnClickListener(this);
 	}
 
 
@@ -259,7 +276,19 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
 	 */
 	@Override
 	public void onClick(View v) {
-		hide();
+		switch (v.getId()){
+			case R.id.close:
+				hide();
+				break;
+			case R.id.actionButton:
+				if (actionListener == null)
+					return;
+				hide();
+				actionListener.onWalkthroughActionButtonClick();
+				break;
+			default:
+				break;
+		}
 	}
 
 	/**
@@ -363,17 +392,22 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
 		mYPosition = y;
 	}
 
-	private void setTitleText(CharSequence contentText) {
-		/*if (mTitleTextView != null && !contentText.equals("")) {
-			mContentTextView.setAlpha(0.5F);
-			mTitleTextView.setText(contentText);
-		}*/
+	private void setTitle(CharSequence contentText) {
+		if (mWalkThroughTitle != null && !contentText.equals("")) {
+			mWalkThroughTitle.setText(contentText);
+		}
 	}
 
-	private void setContentText(CharSequence contentText) {
-		/*if (mContentTextView != null) {
-			mContentTextView.setText(contentText);
-		}*/
+	private void setDescription(CharSequence contentText) {
+		if (mWalkThroughDesc != null) {
+			mWalkThroughDesc.setText(contentText);
+		}
+	}
+
+	private void setImage(int resId) {
+		if (mWalkThroughIcon != null) {
+			mWalkThroughIcon.setBackgroundResource(resId);
+		}
 	}
 
 	private void setDismissText(CharSequence dismissText) {
@@ -450,6 +484,10 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
 
 		if (mListeners != null)
 			mListeners.add(showcaseListener);
+	}
+
+	public void setActionListener(IWalkthroughActionListener actionListener) {
+		this.actionListener = actionListener;
 	}
 
 	public void removeShowcaseListener(MaterialShowcaseSequence showcaseListener) {
@@ -566,30 +604,45 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
 		/**
 		 * Set the content text shown on the ShowcaseView.
 		 */
-		public WMaterialShowcaseView.Builder setContentText(int resId) {
-			return setContentText(activity.getString(resId));
+		public WMaterialShowcaseView.Builder setDescription(int resId) {
+			return setDescription(activity.getString(resId));
 		}
 
 		/**
 		 * Set the descriptive text shown on the ShowcaseView.
 		 */
-		public WMaterialShowcaseView.Builder setContentText(CharSequence text) {
-			showcaseView.setContentText(text);
+		public WMaterialShowcaseView.Builder setDescription(CharSequence text) {
+			showcaseView.setDescription(text);
 			return this;
 		}
 
 		/**
 		 * Set the title text shown on the ShowcaseView.
 		 */
-		public WMaterialShowcaseView.Builder setTitleText(int resId) {
-			return setTitleText(activity.getString(resId));
+		public WMaterialShowcaseView.Builder setTitle(int resId) {
+			return setTitle(activity.getString(resId));
 		}
 
 		/**
 		 * Set the descriptive text shown on the ShowcaseView as the title.
 		 */
-		public WMaterialShowcaseView.Builder setTitleText(CharSequence text) {
-			showcaseView.setTitleText(text);
+		public WMaterialShowcaseView.Builder setTitle(CharSequence text) {
+			showcaseView.setTitle(text);
+			return this;
+		}
+
+		/**
+		 * Set the icon shown on the ShowcaseView.
+		 */
+		public WMaterialShowcaseView.Builder setImage(int resId) {
+			return setIcon(resId);
+		}
+
+		/**
+		 * Set the icon shown on the ShowcaseView as the icon.
+		 */
+		public WMaterialShowcaseView.Builder setIcon(int resId) {
+			showcaseView.setImage(resId);
 			return this;
 		}
 
@@ -650,6 +703,11 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
 
 		public WMaterialShowcaseView.Builder setListener(IShowcaseListener listener) {
 			showcaseView.addShowcaseListener(listener);
+			return this;
+		}
+
+		public WMaterialShowcaseView.Builder setAction(IWalkthroughActionListener listener) {
+			showcaseView.setActionListener(listener);
 			return this;
 		}
 
@@ -825,6 +883,10 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
 		} else {
 			removeFromWindow();
 		}
+	}
+
+	public boolean isDismissed() {
+		return mWasDismissed;
 	}
 
 	public void animateIn() {

@@ -64,6 +64,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.wtoday.WTodayFra
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
+import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
@@ -123,6 +124,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	private int mListItemCount = 0;
 	private QueryBadgeCounter mQueryBadgeCounter;
 	public static final int PDP_REQUEST_CODE = 18;
+	public WMaterialShowcaseView walkThroughPromtView = null;
 
 	@Override
 	public int getLayoutId() {
@@ -633,6 +635,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void onBackPressed() {
+
+		if (walkThroughPromtView != null && !walkThroughPromtView.isDismissed()) {
+			walkThroughPromtView.hide();
+			return;
+		}
+
 		/**
 		 *  Close slide up panel when expanded
 		 */
