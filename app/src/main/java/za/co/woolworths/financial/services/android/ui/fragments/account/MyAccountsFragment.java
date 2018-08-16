@@ -41,6 +41,7 @@ import za.co.woolworths.financial.services.android.ui.activities.MessagesActivit
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
+import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity;
 import za.co.woolworths.financial.services.android.ui.activities.UserDetailActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountOverViewPagerAdapter;
@@ -517,7 +518,8 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 				pushFragment(new ContactUsFragment());
 				break;
 			case R.id.relFAQ:
-				pushFragment(new FAQFragment());
+				//pushFragment(new FAQFragment());
+				getActivity().startActivity(new Intent(getActivity(), TipsAndTricksViewPagerActivity.class));
 				break;
 			case R.id.signOutBtn:
 				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.SIGN_OUT, "");

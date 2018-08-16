@@ -162,3 +162,5 @@ dependencies {
     compile 'com.github.deano2390:MaterialShowcaseView:1.2.0'
 }
 apply plugin: 'com.google.gms.google-services'
+
+apply plugin: 'kotlin-android-extensions'

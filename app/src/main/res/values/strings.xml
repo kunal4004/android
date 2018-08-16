@@ -646,4 +646,5 @@
     <string name="walkthrough_biometrics_desc">You can now easily access secure features in the app by using the biometrics reader on your device.</string>
     <string name="walkthrough_barcode_title">BARCODE SCANNER</string>
     <string name="walkthrough_barcode_desc">Scan a product barcode to view the product information or seamlessly add it to your shopping list.</string>
+    <string name="previous">previous</string>
 </resources>
