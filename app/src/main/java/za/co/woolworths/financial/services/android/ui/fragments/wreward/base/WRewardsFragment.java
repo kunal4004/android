@@ -132,7 +132,7 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 		}
 		if (resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue()) {
 			onSessionExpired(getActivity());
-		}else if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
+		} else if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
 			//One time biometricsWalkthrough
 			ScreenManager.presentBiometricWalkthrough(getActivity());
 		}
@@ -158,7 +158,7 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 
 		if (SessionUtilities.getInstance().isUserAuthenticated()) {
 			SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
-			SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(activity);
+			SessionExpiredUtilities.getInstance().showSessionExpireDialog((AppCompatActivity) activity);
 		}
 
 		initialize();

@@ -63,5 +63,8 @@ public class ProductDetails {
 	@SerializedName("ingredients")
 	@Expose
 	public String ingredients;
+	@SerializedName("saveText")
+	@Expose
+	public String saveText;
 
 }

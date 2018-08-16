@@ -31,6 +31,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,17 +43,14 @@ import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
-import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
-import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
+import za.co.woolworths.financial.services.android.util.QueryBadgeCounter;
 import za.co.woolworths.financial.services.android.util.SSORequiredParameter;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
-
-import static za.co.woolworths.financial.services.android.models.service.event.ProductState.DETERMINE_LOCATION_POPUP;
 
 public class SSOActivity extends WebViewActivity {
 
@@ -96,6 +94,7 @@ public class SSOActivity extends WebViewActivity {
 
 	private final String state;
 	private final String nonce;
+	private String stsParams;
 
 	public SSOActivity() {
 		this.state = UUID.randomUUID().toString();
@@ -371,7 +370,7 @@ public class SSOActivity extends WebViewActivity {
 			super.onPageStarted(view, url, favicon);
 			if (!url.contains("logout"))
 				showProgressBar();
-			final String stsParams = SessionUtilities.getInstance().getSTSParameters();
+			stsParams = SessionUtilities.getInstance().getSTSParameters();
 
 			if (SSOActivity.this.path == Path.SIGNIN || SSOActivity.this.path == Path.REGISTER) {
 				view.evaluateJavascript("(function(){return {'content': [document.forms[0].state.value.toString(), document.forms[0].id_token.value.toString()]}})();", new ValueCallback<String>() {
@@ -409,6 +408,7 @@ public class SSOActivity extends WebViewActivity {
 
 							NotificationUtils.getInstance().sendRegistrationToServer();
 							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.ACTIVE);
+							QueryBadgeCounter.getInstance().queryBadgeCount();
 							setResult(SSOActivityResult.SUCCESS.rawValue(), intent);
 						} else {
 							setResult(SSOActivityResult.STATE_MISMATCH.rawValue(), intent);
@@ -514,6 +514,8 @@ public class SSOActivity extends WebViewActivity {
 
 	};
 
+
+
 	private void unknownNetworkFailure(WebView webView, String description) {
 		if (!new ConnectionDetector().isOnline(SSOActivity.this)) {
 			mErrorHandlerView.webViewBlankPage(webView);
@@ -560,12 +562,6 @@ public class SSOActivity extends WebViewActivity {
 	}
 
 	public void closeActivity() {
-		// Call the popup message to confirm user location
-		//or set new location in ProductDetailFragment
-		if (mGlobalState.determineLocationPopUpEnabled()) {
-			Utils.sendBus(new ProductState(DETERMINE_LOCATION_POPUP));
-			mGlobalState.setDetermineLocationPopUpEnabled(false);
-		}
 		finish();
 		overridePendingTransition(0, 0);
 	}

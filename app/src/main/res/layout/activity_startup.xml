@@ -20,7 +20,7 @@
         android:paddingRight="0dp"
         android:paddingTop="0dp"
         android:visibility="gone"
-        tools:context="za.co.woolworths.financial.services.android.ui.activities.splash.WSplashScreenActivity">
+        tools:context="za.co.woolworths.financial.services.android.ui.activities.StartupActivity">
 
         <za.co.woolworths.financial.services.android.ui.views.WVideoView
             android:id="@+id/activity_wsplash_screen_videoview"
@@ -35,5 +35,10 @@
     <include
         android:visibility="gone"
         android:id="@+id/splashNoVideoView"
-        layout="@layout/activity_wsplash_screen_without_video"/>
+        layout="@layout/activity_startup_without_video"/>
+
+    <include
+        android:visibility="gone"
+        android:id="@+id/splashServerMessageView"
+        layout="@layout/activity_startup_with_message"/>
 </FrameLayout>

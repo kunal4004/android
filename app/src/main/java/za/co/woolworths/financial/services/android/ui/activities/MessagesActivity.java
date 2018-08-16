@@ -32,7 +32,6 @@ import za.co.woolworths.financial.services.android.models.dto.MessageReadRequest
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
-import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MesssagesListAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -60,6 +59,7 @@ public class MessagesActivity extends AppCompatActivity {
 	private final ThreadLocal<FragmentManager> fm = new ThreadLocal<>();
 	private ErrorHandlerView mErrorHandlerView;
 	private boolean paginationIsEnabled = false;
+	private int unreadMessageCount = 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -278,10 +278,6 @@ public class MessagesActivity extends AppCompatActivity {
 			@Override
 			protected void onPostExecute(ReadMessagesResponse readmessageResponse) {
 				super.onPostExecute(readmessageResponse);
-				if (readmessageResponse != null) {
-					Utils.sendBus(new BadgeState(BadgeState.MESSAGE_COUNT, BadgeState.MESSAGE_COUNT));
-				}
-
 
 			}
 		}.execute();
@@ -354,6 +350,7 @@ public class MessagesActivity extends AppCompatActivity {
 					messageList = new ArrayList<>();
 					if (messageResponse.messagesList != null && messageResponse.messagesList.size() != 0) {
 						messageList = messageResponse.messagesList;
+						unreadMessageCount = messageResponse.unreadCount;
 						bindDataWithUI(messageList);
 						String unreadCountValue = Utils.getSessionDaoValue(MessagesActivity.this,
 								SessionDao.KEY.UNREAD_MESSAGE_COUNT);
@@ -381,7 +378,7 @@ public class MessagesActivity extends AppCompatActivity {
 					break;
 				default:
 					mErrorHandlerView.networkFailureHandler("");
-					Utils.displayValidationMessage(MessagesActivity.this, CustomPopUpWindow.MODAL_LAYOUT.ERROR,messageResponse.response.desc);
+					Utils.displayValidationMessage(MessagesActivity.this, CustomPopUpWindow.MODAL_LAYOUT.ERROR, messageResponse.response.desc);
 					break;
 			}
 		} catch (Exception ignored) {

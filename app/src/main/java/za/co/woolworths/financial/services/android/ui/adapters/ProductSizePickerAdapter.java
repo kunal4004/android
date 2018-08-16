@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.WFormatter;
 
 /**
  * Created by W7099877 on 2018/07/16.
@@ -22,8 +23,6 @@ public class ProductSizePickerAdapter extends RecyclerView.Adapter<ProductSizePi
 	public interface OnSizeSelection {
 		void onSizeSelected(OtherSkus selectedSizeSku);
 
-		void onSizeSelectedToCheckInventory(OtherSkus selectedSizeSku);
-
 		void onSizeSelectedForShoppingList(OtherSkus selectedSizeSku);
 
 		void onSizeSelectedForFindInStore(OtherSkus selectedSizeSku);
@@ -31,7 +30,6 @@ public class ProductSizePickerAdapter extends RecyclerView.Adapter<ProductSizePi
 
 	private ProductSizePickerAdapter.OnSizeSelection onSizeSelection;
 	private ArrayList<OtherSkus> otherSkuses;
-	private boolean isForInventory;
 	private boolean isForShoppingList;
 	boolean isForFindInStore;
 
@@ -40,10 +38,9 @@ public class ProductSizePickerAdapter extends RecyclerView.Adapter<ProductSizePi
 		this.otherSkuses = otherSkuses;
 	}*/
 
-	public ProductSizePickerAdapter(ArrayList<OtherSkus> otherSkuses, OnSizeSelection onSizeSelection, boolean isForInventory, boolean isForShoppingList, boolean isForFindInStore) {
+	public ProductSizePickerAdapter(ArrayList<OtherSkus> otherSkuses, OnSizeSelection onSizeSelection, boolean isForShoppingList, boolean isForFindInStore) {
 		this.onSizeSelection = onSizeSelection;
 		this.otherSkuses = otherSkuses;
-		this.isForInventory = isForInventory;
 		this.isForShoppingList = isForShoppingList;
 		this.isForFindInStore = isForFindInStore;
 	}
@@ -66,14 +63,12 @@ public class ProductSizePickerAdapter extends RecyclerView.Adapter<ProductSizePi
 		//skipping the filling of the view
 		//holder.productName.setText(colorArray.get(position));
 		holder.productSize.setText(otherSkuses.get(position).size);
-		holder.productPrice.setText(otherSkuses.get(position).price);
+		holder.productPrice.setText(WFormatter.formatAmount(otherSkuses.get(position).price));
 		holder.itemView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				int position = holder.getAdapterPosition();
-				if (isForInventory)
-					onSizeSelection.onSizeSelectedToCheckInventory(otherSkuses.get(position));
-				else if (isForShoppingList)
+				if (isForShoppingList)
 					onSizeSelection.onSizeSelectedForShoppingList(otherSkuses.get(position));
 				else if (isForFindInStore)
 					onSizeSelection.onSizeSelectedForFindInStore(otherSkuses.get(position));

@@ -1,17 +1,14 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'io.fabric'
 
 android {
 
     def major = "5"
     def minor = "6"
-    def fix = "1"
+    def fix = "2"
 
     def env = System.getenv()
-    def job = env['BUILD_NUMBER']
-    if (job == null) {
-        job = "65";
-    }
 
     flavorDimensions "default"
 
@@ -82,7 +79,7 @@ android {
         qa {
             applicationId "com.awfs.coordination.qa"
             signingConfig signingConfigs.woneappQa
-            versionCode 182
+            versionCode 187
         }
 
         staging {
@@ -94,7 +91,7 @@ android {
         production {
             applicationId "com.awfs.coordination"
             signingConfig signingConfigs.woolworths
-            versionCode 81
+            versionCode 82
         }
         dexOptions {
             javaMaxHeapSize "2560M"
@@ -125,8 +122,8 @@ dependencies {
     implementation 'com.google.android.gms:play-services-tagmanager:11.8.0'
     implementation 'com.google.android.gms:play-services-analytics:11.8.0'
     implementation 'com.google.firebase:firebase-messaging:11.8.0'
-    implementation 'com.google.firebase:firebase-crash:11.8.0'
     implementation 'com.google.firebase:firebase-core:11.8.0'
+    implementation 'com.google.firebase:firebase-config:11.8.0'
     implementation 'com.google.android:flexbox:0.2.5'
     //noinspection GradleCompatible
     implementation 'com.android.support:design:26.1.0'
@@ -155,8 +152,9 @@ dependencies {
     implementation 'es.voghdev.pdfviewpager:library:1.0.3'
     api 'com.google.zxing:core:3.3.2'
     api 'com.google.zxing:android-core:3.3.0'
-    annotationProcessor "android.arch.lifecycle:compiler:1.1.0"
+    annotationProcessor "android.arch.lifecycle:compiler:1.1.1"
     implementation 'com.squareup.picasso:picasso:2.71828'
-    compile 'me.relex:circleindicator:1.2.2@aar'
+    implementation 'me.relex:circleindicator:1.2.2@aar'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.4'
 }
 apply plugin: 'com.google.gms.google-services'
