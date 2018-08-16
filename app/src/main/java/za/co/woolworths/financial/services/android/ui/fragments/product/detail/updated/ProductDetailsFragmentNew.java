@@ -237,6 +237,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		}
 	}
 
+
 	private void loadPromotionalImages(PromotionImages promotionalImage) {
 		LinearLayout promotionalImagesLayout = getViewDataBinding().priceLayout.promotionalImages;
 		List<String> images = new ArrayList<>();
@@ -251,7 +252,9 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		promotionalImagesLayout.removeAllViews();
 		DrawImage drawImage = new DrawImage(getActivity());
 		for (String image : images) {
-			View view = getActivity().getLayoutInflater().inflate(R.layout.promotional_image, null);
+			Activity activity = getActivity();
+			if (activity == null) return;
+			View view = activity.getLayoutInflater().inflate(R.layout.promotional_image, null);
 			SimpleDraweeView simpleDraweeView = view.findViewById(R.id.promotionImage);
 			drawImage.displaySmallImage(simpleDraweeView, image);
 			promotionalImagesLayout.addView(view);
@@ -269,7 +272,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 				colorPickerDialog.show();
 				break;
 			case R.id.relSizeSelector:
-				openSizePicker(selectedGroupKey, false, false, false);
+				openSizePicker(selectedGroupKey, false, false);
 				break;
 			case R.id.rlAddToCart:
 				addItemToCart();
@@ -302,7 +305,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 			this.findItemInStore();
 			return;
 		} else {
-			openSizePicker(this.selectedGroupKey, false, false, true);
+			openSizePicker(this.selectedGroupKey, false, true);
 			return;
 		}
 
@@ -324,7 +327,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 			this.addItemToShoppingList();
 			return;
 		} else {
-			openSizePicker(this.selectedGroupKey, false, true, false);
+			openSizePicker(this.selectedGroupKey, true, false);
 			return;
 		}
 
@@ -339,29 +342,32 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		ShoppingDeliveryLocation deliveryLocation = Utils.getPreferredDeliveryLocation();
 		if (deliveryLocation == null) {
 			enableAddToCartButton(true);
-			getViewModel().getCartSummary(getActivity()).execute();
+			getViewModel().getCartSummary().execute();
 			return;
 		}
 
-		if (this.otherSKUForCart != null) {
-			this.enableAddToCartButton(true);
-			String storeId = Utils.retrieveStoreId(productDetails.fulfillmentType);
-			if (TextUtils.isEmpty(storeId)) {
-				this.otherSKUForCart = null;
-				String message = "Unfortunately this item is unavailable in "+deliveryLocation.suburb.name+". Try changing your delivery location and try again.";
-				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC, getString(R.string.product_unavailable), message);
-				enableAddToCartButton(false);
-			} else {
-				getViewModel().queryInventoryForSKUs(storeId, this.otherSKUForCart.sku, false).execute();
-			}
-			return;
-		} else if (this.selectedOtherSku != null) {
+		if (this.selectedOtherSku != null && this.otherSKUForCart == null) {
 			this.otherSKUForCart = this.selectedOtherSku;
 			addItemToCart();
 			return;
 		} else {
-			openSizePicker(this.selectedGroupKey, true, false, false);
-			return;
+			this.enableAddToCartButton(true);
+			String storeId = Utils.retrieveStoreId(productDetails.fulfillmentType);
+			if (TextUtils.isEmpty(storeId)) {
+				this.otherSKUForCart = null;
+				String message = "Unfortunately this item is unavailable in " + deliveryLocation.suburb.name + ". Try changing your delivery location and try again.";
+				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC, getString(R.string.product_unavailable), message);
+				enableAddToCartButton(false);
+				return;
+			}
+
+			if (this.otherSKUForCart != null)
+				getViewModel().queryInventoryForSKUs(storeId, this.otherSKUForCart.sku, false).execute();
+			else {
+				String multiSKUs = getViewModel().getMultiSKUsStringForInventory(this.otherSKUsByGroupKey.get(this.selectedGroupKey));
+				getViewModel().queryInventoryForSKUs(storeId, multiSKUs, true).execute();
+			}
+
 		}
 
 	}
@@ -382,12 +388,13 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	@Override
 	public void onSuccessResponse(ProductDetails productDetails) {
 		this.productDetails = productDetails;
-		if(this.productDetails.otherSkus!=null && this.productDetails.otherSkus.size()>0) {
+		if (this.productDetails.otherSkus != null && this.productDetails.otherSkus.size() > 0) {
 			this.otherSKUsByGroupKey = groupOtherSKUsByColor(productDetails.otherSkus);
 			this.updateDefaultUI();
-		}else {
+		} else {
 			getViewDataBinding().llLoadingColorSize.setVisibility(View.GONE);
 			getViewDataBinding().loadingInfoView.setVisibility(View.GONE);
+
 			if (isAdded())
 				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.CLI_ERROR, getString(R.string.statement_send_email_false_desc));
 		}
@@ -403,7 +410,9 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		getViewDataBinding().loadingInfoView.setVisibility(View.GONE);
 		this.configureButtonsAndSelectors();
 		this.updateViewPagerWithAuxiliaryImages();
+		this.setPromotionalText(productDetails);
 		this.setProductCode(productDetails.productId);
+		this.loadPromotionalImages(productDetails.promotionImages);
 		this.setProductDescription(getViewModel().getProductDescription(getActivity(), productDetails));
 		this.configureUIForOtherSKU(defaultSku);
 		this.displayIngredients();
@@ -503,14 +512,41 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 			}
 		});
 		multiPickerDialog.setContentView(view);
+
+		// ViewSwitcher setMeasureAllChildren to true will occupy the space of the largest child
+		// false attribute will discard setting largest height as default height
+		viewSwitcher.setMeasureAllChildren(false);
+
+		viewSwitcher.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+			@Override
+			public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+
+				switch (viewSwitcher.getDisplayedChild()) {
+					case VIEW_SWITCHER_SIZE_PICKER:
+						rcvQuantityPicker.setVisibility(View.GONE);
+						rcvSizePickerForInventory.setVisibility(View.VISIBLE);
+						tvMultiPickerTitle.setText(getString(R.string.available_sizes));
+						break;
+
+					case VIEW_SWITCHER_QUANTITY_PICKER:
+						rcvQuantityPicker.setVisibility(View.VISIBLE);
+						rcvSizePickerForInventory.setVisibility(View.GONE);
+						tvMultiPickerTitle.setText(getString(R.string.edit_quantity));
+						break;
+
+					default:
+						break;
+				}
+			}
+		});
 	}
 
-	public void openSizePicker(String groupKey, boolean isForInventory, boolean isForShoppingList, boolean isForFindInStore) {
+	public void openSizePicker(String groupKey, boolean isForShoppingList, boolean isForFindInStore) {
 
 		//if (isForInventory = true) - color picker is used for select size to check inventory
 
 		ArrayList<OtherSkus> selectedOtherSKUsForGroupKey = this.otherSKUsByGroupKey.get(groupKey);
-		sizePickerAdapter = new ProductSizePickerAdapter(selectedOtherSKUsForGroupKey, this, isForInventory, isForShoppingList, isForFindInStore);
+		sizePickerAdapter = new ProductSizePickerAdapter(selectedOtherSKUsForGroupKey, this, isForShoppingList, isForFindInStore);
 		rcvSizePicker.setAdapter(sizePickerAdapter);
 		sizePickerDialog.show();
 	}
@@ -602,7 +638,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	}
 
 	@Override
-	public void showOutOfStockInStores(){
+	public void showOutOfStockInStores() {
 		if (isAdded())
 			Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.NO_STOCK, "");
 	}
@@ -642,14 +678,15 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		this.enableAddToCartButton(false);
 		Intent intent = new Intent();
 		intent.putExtra("addedToCart", true);
-		getActivity().setResult(RESULT_OK, intent);
-		getActivity().onBackPressed();
+		Activity activity = getActivity();
+		if (activity == null) return;
+		activity.setResult(RESULT_OK, intent);
+		activity.onBackPressed();
 	}
 
 	@Override
 	public void onAddItemToCartFailure(String error) {
 		enableAddToCartButton(false);
-
 	}
 
 	@Override
@@ -690,13 +727,10 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 				return;
 			}
 
-			List<String> skuIds = new ArrayList<>();
-			for (OtherSkus otherSkus : this.otherSKUsByGroupKey.get(this.selectedGroupKey)) {
-				skuIds.add(otherSkus.sku);
-			}
-			String multiSKUS = TextUtils.join("-", skuIds);
+			String multiSKUS = getViewModel().getMultiSKUsStringForInventory(this.otherSKUsByGroupKey.get(this.selectedGroupKey));
 			String storeId = Utils.retrieveStoreId(productDetails.fulfillmentType);
 			getViewModel().queryInventoryForSKUs(storeId, multiSKUS, true).execute();
+
 		} else {
 			openQuantityPicker(quantityInStock, false);
 		}
@@ -900,13 +934,6 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	}
 
 	@Override
-	public void onSizeSelectedToCheckInventory(OtherSkus selectedSizeSku) {
-		sizePickerDialog.dismiss();
-		this.otherSKUForCart = selectedSizeSku;
-		addItemToCart();
-	}
-
-	@Override
 	public void onSizeSelectedForShoppingList(OtherSkus selectedSizeSku) {
 		sizePickerDialog.dismiss();
 		this.otherSKUForList = selectedSizeSku;
@@ -978,8 +1005,8 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 					break;
 				case ADD_TO_SHOPPING_LIST_REQUEST_CODE:
 					int listSize = data.getIntExtra("sizeOfList", 0);
-					boolean isSessionExpired = data.getBooleanExtra("sessionExpired",false);
-					if(isSessionExpired){
+					boolean isSessionExpired = data.getBooleanExtra("sessionExpired", false);
+					if (isSessionExpired) {
 						onSessionTokenExpired();
 						return;
 					}
@@ -1168,10 +1195,17 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
 	}
 
-	public void displayIngredients(){
-		if(!TextUtils.isEmpty(this.productDetails.ingredients)){
+	public void displayIngredients() {
+		if (!TextUtils.isEmpty(this.productDetails.ingredients)) {
 			getViewDataBinding().linIngredient.setVisibility(View.VISIBLE);
 			getViewDataBinding().ingredientList.setText(this.productDetails.ingredients);
+		}
+	}
+
+	public void setPromotionalText(ProductDetails productDetails) {
+		if (!TextUtils.isEmpty(productDetails.saveText)) {
+			txtSaveText.setVisibility(View.VISIBLE);
+			txtSaveText.setText(productDetails.saveText);
 		}
 	}
 }

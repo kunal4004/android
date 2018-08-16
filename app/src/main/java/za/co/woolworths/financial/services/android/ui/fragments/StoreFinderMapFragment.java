@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -366,10 +367,9 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 		timeingsLayout.removeAllViews();
 		brandsLayout.removeAllViews();
 		storeName.setText(storeDetail.name);
-		storeAddress.setText(storeDetail.address);
+		storeAddress.setText(TextUtils.isEmpty(storeDetail.address) ? "" : storeDetail.address);
 		Utils.setRagRating(getActivity(), storeOfferings, storeDetail.status);
-		if (storeDetail.phoneNumber != null)
-			storeNumber.setText(storeDetail.phoneNumber);
+		storeNumber.setText(TextUtils.isEmpty(storeDetail.phoneNumber) ? "" : storeDetail.phoneNumber);
 		storeDistance.setText(WFormatter.formatMeter(storeDetail.distance) + getActivity().getResources().getString(R.string.distance_in_km));
 		if (storeDetail.offerings != null) {
 			List<StoreOfferings> brandslist = getOfferingByType(storeDetail.offerings, "Brand");
@@ -421,6 +421,8 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 		direction.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				if (TextUtils.isEmpty(storeDetail.address))
+					return;
 				mPopWindowValidationMessage.setmName(storeDetail.name);
 				mPopWindowValidationMessage.setmLatitude(storeDetail.latitude);
 				mPopWindowValidationMessage.setmLongiude(storeDetail.longitude);

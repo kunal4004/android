@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -46,17 +47,14 @@ import za.co.woolworths.financial.services.android.models.dto.CommerceItemInfo;
 import za.co.woolworths.financial.services.android.models.dto.Data;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
-import za.co.woolworths.financial.services.android.models.dto.ProductList;
-import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.SkuInventory;
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
-import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.rest.product.GetInventorySkusForStore;
-import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
+import za.co.woolworths.financial.services.android.models.rest.product.GetShoppingCart;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
@@ -74,19 +72,21 @@ import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.MultiMap;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
+import za.co.woolworths.financial.services.android.util.QueryBadgeCounter;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 import static android.app.Activity.RESULT_OK;
-import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT_TEMP;
 import static za.co.woolworths.financial.services.android.models.service.event.CartState.CHANGE_QUANTITY;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_DIALOG_TAPPED;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CLOSE_PDP_FROM_ADD_TO_LIST;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
-import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL;
+import static za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment.DIALOG_REQUEST_CODE;
+
 
 public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick, View.OnClickListener, NetworkChangeListener, ToastUtils.ToastInterface {
 
@@ -475,6 +475,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				cartActivity.resetToolBarIcons();
 			}
 			rlCheckOut.setVisibility(View.GONE);
+			rvCartList.setVisibility(View.GONE);
 			relEmptyStateHandler.setVisibility(View.VISIBLE);
 		}
 		onChangeQuantityComplete();
@@ -491,7 +492,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	private void updateCartSummary(int cartCount) {
-		Utils.sendBus(new BadgeState(CART_COUNT_TEMP, cartCount));
+		QueryBadgeCounter.getInstance().setCartCount(INDEX_CART, cartCount);
 	}
 
 	private void onChangeQuantityComplete() {
@@ -514,57 +515,24 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		cartProductAdapter.onChangeQuantityLoad();
 	}
 
-	private HttpAsyncTask<String, String, ShoppingCartResponse> loadShoppingCart(final boolean onItemRemove) {
-		mErrorHandlerView.hideErrorHandler();
-		return new HttpAsyncTask<String, String, ShoppingCartResponse>() {
 
+	private GetShoppingCart loadShoppingCart(final boolean onItemRemove) {
+		Utils.deliveryLocationEnabled(getActivity(), false, rlLocationSelectedLayout);
+		rlCheckOut.setEnabled(onItemRemove ? false : true);
+		rlCheckOut.setVisibility(onItemRemove ? View.VISIBLE : View.GONE);
+		pBar.setVisibility(View.VISIBLE);
+		if (cartProductAdapter != null) {
+			cartProductAdapter.clear();
+		}
+		Activity activity = getActivity();
+		if (activity != null) {
+			CartActivity cartActivity = (CartActivity) activity;
+			cartActivity.hideEditCart();
+		}
+		return new GetShoppingCart(new OnEventListener() {
 			@Override
-			protected void onPreExecute() {
-				Utils.deliveryLocationEnabled(getActivity(), false, rlLocationSelectedLayout);
-				rlCheckOut.setEnabled(onItemRemove ? false : true);
-				rlCheckOut.setVisibility(onItemRemove ? View.VISIBLE : View.GONE);
-				pBar.setVisibility(View.VISIBLE);
-				if (cartProductAdapter != null) {
-					cartProductAdapter.clear();
-				}
-				Activity activity = getActivity();
-				if (activity != null) {
-					CartActivity cartActivity = (CartActivity) activity;
-					cartActivity.hideEditCart();
-				}
-			}
-
-			@Override
-			protected Class<ShoppingCartResponse> httpDoInBackgroundReturnType() {
-				return ShoppingCartResponse.class;
-			}
-
-			@Override
-			protected ShoppingCartResponse httpDoInBackground(String... params) {
-				return ((WoolworthsApplication) getActivity().getApplication()).getApi().getShoppingCart();
-			}
-
-			@Override
-			protected ShoppingCartResponse httpError(final String errorMessage, HttpErrorCode httpErrorCode) {
-				Activity activity = getActivity();
-				if (activity != null) {
-					activity.runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							if (!onItemRemove) {
-								Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
-								rvCartList.setVisibility(View.GONE);
-								rlCheckOut.setVisibility(View.GONE);
-								mErrorHandlerView.showErrorHandler();
-							}
-						}
-					});
-				}
-				return new ShoppingCartResponse();
-			}
-
-			@Override
-			protected void onPostExecute(ShoppingCartResponse shoppingCartResponse) {
+			public void onSuccess(Object object) {
+				ShoppingCartResponse shoppingCartResponse = (ShoppingCartResponse) object;
 				try {
 					pBar.setVisibility(View.GONE);
 					switch (shoppingCartResponse.httpCode) {
@@ -582,7 +550,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 						case 440:
 							//TODO:: improve error handling
 							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
-							SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(getActivity());
+							SessionExpiredUtilities.getInstance().showSessionExpireDialog((AppCompatActivity) getActivity(), CartFragment.this);
 							onChangeQuantityComplete();
 							break;
 						default:
@@ -596,7 +564,25 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					ex.printStackTrace();
 				}
 			}
-		};
+
+			@Override
+			public void onFailure(String e) {
+				Activity activity = getActivity();
+				if (activity != null) {
+					activity.runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							if (!onItemRemove) {
+								Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
+								rvCartList.setVisibility(View.GONE);
+								rlCheckOut.setVisibility(View.GONE);
+								mErrorHandlerView.showErrorHandler();
+							}
+						}
+					});
+				}
+			}
+		});
 	}
 
 	private HttpAsyncTask<String, String, ShoppingCartResponse> changeQuantityAPI(final ChangeQuantity changeQuantity) {
@@ -800,27 +786,13 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			cartResponse.httpCode = response.httpCode;
 			Data data = response.data[0];
 			cartResponse.orderSummary = data.orderSummary;
-			//Update Cart Counter
-			if (cartResponse.orderSummary != null) {
-				updateCartSummary(cartResponse.orderSummary.totalItemsCount);
-			}
 			// set delivery location
 			if (!TextUtils.isEmpty(data.suburbName) && !TextUtils.isEmpty(data.provinceName)) {
 				Activity activity = getActivity();
 				mSuburbName = data.suburbName;
 				mProvinceName = data.provinceName;
-				if (activity != null) {
-					String suburbId = String.valueOf(data.suburbId);
-					Province province = new Province();
-					province.name = data.provinceName;
-					province.id = suburbId;
-					Suburb suburb = new Suburb();
-					suburb.name = data.suburbName;
-					suburb.id = suburbId;
-					suburb.fulfillmentStores = data.orderSummary.suburb.fulfillmentStores;
-					Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(province, suburb));
+				if (activity != null)
 					setDeliveryLocation(mSuburbName + ", " + mProvinceName);
-				}
 			}
 			JSONObject itemsObject = new JSONObject(new Gson().toJson(data.items));
 			Iterator<String> keys = itemsObject.keys();
@@ -895,29 +867,28 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (resultCode == CART_DEFAULT_ERROR_TAPPED) {
+		if (resultCode == CART_DEFAULT_ERROR_TAPPED || resultCode == DIALOG_REQUEST_CODE) {
 			Activity activity = getActivity();
 			activity.setResult(CART_DEFAULT_ERROR_TAPPED);
 			activity.finish();
 			activity.overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
 			return;
 		}
-		if (requestCode == CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY  || requestCode == SSOActivity.SSOActivityResult.LAUNCH.rawValue()) {
-			if(SessionUtilities.getInstance().isUserAuthenticated()) {
+		if (requestCode == CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY || requestCode == SSOActivity.SSOActivityResult.LAUNCH.rawValue()) {
+			if (SessionUtilities.getInstance().isUserAuthenticated()) {
 				loadShoppingCart(false).execute();
 				ShoppingDeliveryLocation lastDeliveryLocation = Utils.getPreferredDeliveryLocation();
 				if (lastDeliveryLocation != null) {
 					mSuburbName = lastDeliveryLocation.suburb.name;
 					mProvinceName = lastDeliveryLocation.province.name;
 				}
-			}else {
+			} else {
 				getActivity().onBackPressed();
 			}
 		}
 
-		if(resultCode == RESULT_OK){
-			switch (requestCode)
-			{
+		if (resultCode == RESULT_OK) {
+			switch (requestCode) {
 				case PDP_REQUEST_CODE:
 				case REQUEST_SUBURB_CHANGE:
 					loadShoppingCart(false).execute();

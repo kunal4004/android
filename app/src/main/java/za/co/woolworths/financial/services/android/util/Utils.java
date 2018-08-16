@@ -82,14 +82,11 @@ import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse;
-import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.Transaction;
 import za.co.woolworths.financial.services.android.models.dto.TransactionParentObj;
-import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
-import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
@@ -105,7 +102,7 @@ import za.co.woolworths.financial.services.android.util.tooltip.ViewTooltip;
 import static android.Manifest.permission_group.STORAGE;
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.WHITE;
-import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT_TEMP;
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.REMOVE_ALL_BADGE_COUNTER;
 
 public class Utils {
 
@@ -369,6 +366,10 @@ public class Utils {
 
 	public static void setBadgeCounter(Context context, int badgeCount) {
 		try {
+			if (badgeCount == 0) {
+				removeBadgeCounter(context);
+				return;
+			}
 			ShortcutBadger.applyCount(context, badgeCount);
 			sessionDaoSave(context, SessionDao.KEY.UNREAD_MESSAGE_COUNT, String.valueOf(badgeCount));
 		} catch (NullPointerException ex) {
@@ -1039,9 +1040,9 @@ public class Utils {
 		SessionDao.getByKey(key).delete();
 	}
 
-	public static void clearSQLLiteSearchHistory(Activity context) {
+	public static void clearCacheHistory(Activity context) {
 		try {
-			Utils.sendBus(new BadgeState(CART_COUNT_TEMP, 0));
+			QueryBadgeCounter.getInstance().notifyBadgeCounterUpdate(REMOVE_ALL_BADGE_COUNTER);
 			Utils.removeFromDb(SessionDao.KEY.DELIVERY_LOCATION_HISTORY, context);
 			Utils.removeFromDb(SessionDao.KEY.STORES_USER_SEARCH, context);
 			Utils.removeFromDb(SessionDao.KEY.STORES_USER_LAST_LOCATION, context);
