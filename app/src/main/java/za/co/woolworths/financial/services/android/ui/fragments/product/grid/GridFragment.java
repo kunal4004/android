@@ -38,7 +38,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.ProductViewListAd
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.ShoppingListFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsFragment;
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.DefaultErrorFragment;
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -58,7 +58,6 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 	private int lastVisibleItem;
 	int totalItemCount;
 	private boolean isLoading;
-	private boolean scrollingUpEnabled;
 
 	@Override
 	public GridViewModel getViewModel() {
@@ -209,11 +208,10 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 		// check if dialog is being displayed
 		if (hasOpenedDialogs((AppCompatActivity) activity)) return;
 
-		if (scrollingUpEnabled) {
-			//dialog is not showing
-			DefaultErrorFragment defaultErrorFragment = DefaultErrorFragment.newInstance(response.desc);
-			defaultErrorFragment.show(fm, DefaultErrorFragment.class.getSimpleName());
-		}
+		// show dialog
+		SingleButtonDialogFragment singleButtonDialogFragment = SingleButtonDialogFragment.newInstance(response.desc);
+		singleButtonDialogFragment.show(fm, SingleButtonDialogFragment.class.getSimpleName());
+
 	}
 
 	private boolean hasOpenedDialogs(AppCompatActivity activity) {
@@ -285,12 +283,9 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 				totalItemCount = mRecyclerViewLayoutManager.getItemCount();
 				lastVisibleItem = mRecyclerViewLayoutManager.findLastVisibleItemPosition();
 
+				// Detect scrolling up
 				if (dy > 0)
-					scrollingUpEnabled = true;
-				else
-					scrollingUpEnabled = false;
-
-				loadData();
+					loadData();
 			}
 		});
 	}

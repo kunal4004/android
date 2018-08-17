@@ -10,25 +10,25 @@ import com.awfs.coordination.R;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
-public class DefaultErrorFragment extends ActionSheetDialogFragment implements View.OnClickListener {
+public class SingleButtonDialogFragment extends ActionSheetDialogFragment implements View.OnClickListener {
 
 	private WButton btnCancel;
 	private String mResponseDesc;
 	private WTextView tvResponseDesc;
 
-	public static DefaultErrorFragment newInstance(String responseDesc) {
-		DefaultErrorFragment defaultErrorFragment = new DefaultErrorFragment();
+	public static SingleButtonDialogFragment newInstance(String responseDesc) {
+		SingleButtonDialogFragment singleButtonDialogFragment = new SingleButtonDialogFragment();
 		Bundle bundle = new Bundle();
 		bundle.putString("responseDesc", responseDesc);
-		defaultErrorFragment.setArguments(bundle);
-		return defaultErrorFragment;
+		singleButtonDialogFragment.setArguments(bundle);
+		return singleButtonDialogFragment;
 	}
 
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		mResponseDesc = getArguments().getString("responseDesc");
-		addContentView(R.layout.default_error_fragment);
+		addContentView(R.layout.single_button_dialog_fragment);
 
 		tvResponseDesc = view.findViewById(R.id.tvResponseDesc);
 		if (!TextUtils.isEmpty(mResponseDesc))
