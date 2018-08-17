@@ -12,10 +12,6 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
 public class SingleButtonDialogFragment extends ActionSheetDialogFragment implements View.OnClickListener {
 
-	private WButton btnCancel;
-	private String mResponseDesc;
-	private WTextView tvResponseDesc;
-
 	public static SingleButtonDialogFragment newInstance(String responseDesc) {
 		SingleButtonDialogFragment singleButtonDialogFragment = new SingleButtonDialogFragment();
 		Bundle bundle = new Bundle();
@@ -27,15 +23,16 @@ public class SingleButtonDialogFragment extends ActionSheetDialogFragment implem
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		mResponseDesc = getArguments().getString("responseDesc");
+		String mResponseDesc = getArguments().getString("responseDesc");
 		addContentView(R.layout.single_button_dialog_fragment);
 
-		tvResponseDesc = view.findViewById(R.id.tvResponseDesc);
+		WTextView tvResponseDesc = view.findViewById(R.id.tvResponseDesc);
 		if (!TextUtils.isEmpty(mResponseDesc))
 			tvResponseDesc.setText(mResponseDesc);
 
-		btnCancel = view.findViewById(R.id.btnCancel);
+		WButton btnCancel = view.findViewById(R.id.btnCancel);
 		btnCancel.setOnClickListener(this);
+
 		mRootActionSheetConstraint.setOnClickListener(this);
 	}
 
