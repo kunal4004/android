@@ -665,7 +665,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		onAddToCartPreExecute();
 		List<AddItemToCart> selectedItems = new ArrayList<>();
 		for (ShoppingListItem item : items) {
-			if (item.isSelected)
+			if (item.isSelected && item.quantityInStock > 0)
 				selectedItems.add(new AddItemToCart(item.productId, item.catalogRefId, item.userQuantity));
 		}
 
