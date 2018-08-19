@@ -81,7 +81,11 @@ public class SessionUtilities {
 		}
 
 		sessionDao = SessionDao.getByKey(SessionDao.KEY.STS_PARAMS);
-		sessionDao.value = stsParams;
+		try {
+			sessionDao.value = decodeSTSParams(stsParams);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 
 		try {
 			sessionDao.save();
