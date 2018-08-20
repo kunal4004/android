@@ -472,7 +472,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		Activity activity = getActivity();
 		if (activity == null) return;
 		BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
-		bottomNavigationActivity.cartSummaryAPI();
 		bottomNavigationActivity.onActivityResult(ADD_TO_CART_SUCCESS_RESULT, ADD_TO_CART_SUCCESS_RESULT, null);
 		popFragmentSlideDown();
 	}
