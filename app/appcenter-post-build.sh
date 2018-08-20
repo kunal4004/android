@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
 
-if [ "$APPCENTER_BRANCH" == "cug" ];
+if [ "$APPCENTER_BRANCH" == "cug" ]
 then
     gradle --debug publishApkProductionRelease
-else if [ "$APPCENTER_BRANCH" == "qa" ];
+elif [ "$APPCENTER_BRANCH" == "qa" ]
 then
     curl -v \
     -F "status=2" \
