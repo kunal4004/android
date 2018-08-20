@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 
-if [ "$APPCENTER_BRANCH" == "Release_QA_5.6.2.189" ];
-then
-    rm $(ls -R |grep "\.apk$" |grep -v "app-qa-release.apk")
 
+if [ "$APPCENTER_BRANCH" == "cug" ];
+then
+    gradle --debug publishApkProductionRelease
+else if [ "$APPCENTER_BRANCH" == "qa" ];
+then
     curl -v \
     -F "status=2" \
     -F "ipa=@$APPCENTER_OUTPUT_DIRECTORY/app-qa-release.apk" \

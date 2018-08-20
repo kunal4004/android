@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.github.triplet.play'
 apply plugin: 'kotlin-android'
 apply plugin: 'io.fabric'
 
@@ -91,7 +92,7 @@ android {
         production {
             applicationId "com.awfs.coordination"
             signingConfig signingConfigs.woolworths
-            versionCode 82
+            versionCode 83
         }
         dexOptions {
             javaMaxHeapSize "2560M"
@@ -108,8 +109,15 @@ android {
         exclude 'META-INF/notice.txt'
         exclude 'META-INF/ASL2.0'
     }
-}
 
+    play {
+        serviceAccountEmail = 'gradle-play-publisher@api-8582057611245189702-23971.iam.gserviceaccount.com'
+        pk12File = file('api-8582057611245189702-23971-38821af8cacd.p12')
+
+        // ...
+        track = 'internal' // Or any of 'rollout', 'beta', 'alpha' or 'internal'
+    }
+}
 
 repositories {
     mavenCentral()
