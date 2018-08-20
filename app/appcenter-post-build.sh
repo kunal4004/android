@@ -4,7 +4,7 @@
 if [ "$APPCENTER_BRANCH" == "cug" ]
 then
     gradle --debug publishApkProductionRelease
-elif [ "$APPCENTER_BRANCH" == "Release_QA_5.6.2.189" ]
+elif [ "$APPCENTER_BRANCH" == "qa" ]
 then
     curl -v \
     -F "status=2" \
