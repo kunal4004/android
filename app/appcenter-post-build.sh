@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if [ "$APPCENTER_BRANCH" == "qa" ];
+if [ "$APPCENTER_BRANCH" == "Release_QA_5.6.2.189" ];
 then
     curl -v \
     -F "status=2" \
