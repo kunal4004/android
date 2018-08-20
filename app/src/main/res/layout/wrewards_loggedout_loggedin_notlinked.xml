@@ -41,9 +41,9 @@
             android:layout_marginTop="40dp"
             android:gravity="center"
             android:lineSpacingExtra="4sp"
-            android:textColor="#e6000000"
-            android:textSize="17.5sp"
-            app:WTextView_font="medium"
+            android:textColor="#80000000"
+            android:textSize="15sp"
+            app:WTextView_font="myriadpro_regular"
             />
 
         <LinearLayout
