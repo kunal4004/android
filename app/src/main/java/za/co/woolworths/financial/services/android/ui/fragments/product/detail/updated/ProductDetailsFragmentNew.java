@@ -1184,7 +1184,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 //                .useFadeAnimation() // remove comment if you want to use fade animations for Lollipop & up
 				.setTitle(R.string.walkthrough_barcode_title)
 				.setDescription(R.string.walkthrough_barcode_desc)
-				.setImage(R.drawable.touch_id)
+				.setImage(R.drawable.tips_tricks_ic_stores)
 //				.setAction(this)
 				.setDismissOnTouch(true)
 				.withRectangleShape()

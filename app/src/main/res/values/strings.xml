@@ -647,4 +647,18 @@
     <string name="walkthrough_barcode_title">BARCODE SCANNER</string>
     <string name="walkthrough_barcode_desc">Scan a product barcode to view the product information or seamlessly add it to your shopping list.</string>
     <string name="previous">previous</string>
+    <string name="need_help">Need Help</string>
+    <string name="tips_tricks">Tips &amp; Tricks</string>
+    <string name="tips_tricks_titles_vouchers">vouchers</string>
+    <string name="tips_tricks_titles_stores">Find a Product in-Store</string>
+    <string name="tips_tricks_titles_barcode">Barcode Scanner</string>
+    <string name="tips_tricks_titles_delivery">Delivery Location</string>
+    <string name="tips_tricks_desc_vouchers">View your latest vouchers and redeem them in-store. Make sure you use them before the expiry date.</string>
+    <string name="tips_tricks_desc_stores">Want to know if a product is available in-store before you jump in your car to go shop?</string>
+    <string name="tips_tricks_desc_barcode">Scan a product barcode to view the product information or seamlessly add it to your shopping list.</string>
+    <string name="tips_tricks_desc_delivery">The location at the top is your default delivery location. If you need products delivered elsewhere be sure to change this.</string>
+    <string name="tips_tricks_button_vouchers">redeem a voucher today</string>
+    <string name="tips_tricks_button_stores">check in-Store availability</string>
+    <string name="tips_tricks_button_barcode">Scan a product</string>
+    <string name="tips_tricks_button_delivery">Set Your Delivery Location</string>
 </resources>

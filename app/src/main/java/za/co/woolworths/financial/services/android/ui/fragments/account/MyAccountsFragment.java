@@ -48,6 +48,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.MyAccountOverView
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.main_list.ContactUsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.faq.FAQFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.help.NeedHelpFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.ShoppingListFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -184,7 +185,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			messageCounter = view.findViewById(R.id.messageCounter);
 			userName = view.findViewById(R.id.user_name);
 			imgCreditCard = view.findViewById(R.id.imgCreditCard);
-			RelativeLayout relFAQ = view.findViewById(R.id.relFAQ);
+			RelativeLayout needHelp = view.findViewById(R.id.needHelp);
 			RelativeLayout relNoConnectionLayout = view.findViewById(R.id.no_connection_layout);
 			mErrorHandlerView = new ErrorHandlerView(getActivity(), relNoConnectionLayout);
 			mErrorHandlerView.setMargin(relNoConnectionLayout, 0, 0, 0, 0);
@@ -202,7 +203,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			openShoppingList.setOnClickListener(this);
 			signOutBtn.setOnClickListener(this);
 			myDetailBtn.setOnClickListener(this);
-			relFAQ.setOnClickListener(this);
+			needHelp.setOnClickListener(this);
 			storeLocator.setOnClickListener(this);
 			relMyList.setOnClickListener(this);
 			adapter = new MyAccountOverViewPagerAdapter(getActivity());
@@ -517,9 +518,8 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			case R.id.contactUs:
 				pushFragment(new ContactUsFragment());
 				break;
-			case R.id.relFAQ:
-				//pushFragment(new FAQFragment());
-				getActivity().startActivity(new Intent(getActivity(), TipsAndTricksViewPagerActivity.class));
+			case R.id.needHelp:
+				pushFragment(new NeedHelpFragment());
 				break;
 			case R.id.signOutBtn:
 				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.SIGN_OUT, "");

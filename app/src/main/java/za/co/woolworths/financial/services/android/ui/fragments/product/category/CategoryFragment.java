@@ -381,7 +381,7 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 //                .useFadeAnimation() // remove comment if you want to use fade animations for Lollipop & up
 				.setTitle(R.string.walkthrough_barcode_title)
 				.setDescription(R.string.walkthrough_barcode_desc)
-				.setImage(R.drawable.touch_id)
+				.setImage(R.drawable.tips_tricks_ic_scan)
 				.setAction(this)
 				.setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
 		getBottomNavigationActivity().walkThroughPromtView.show(getActivity());

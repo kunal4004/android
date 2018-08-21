@@ -17,7 +17,7 @@ class TipsAndTricksViewPagerAdapter(context: Activity) : PagerAdapter() {
 
     init {
         this.mContext = context
-        this.images = mContext.resources.obtainTypedArray(R.array.on_boarding_walkthrough_images)
+        this.images = mContext.resources.obtainTypedArray(R.array.tips_tricks_images)
     }
 
     override fun getCount(): Int {
