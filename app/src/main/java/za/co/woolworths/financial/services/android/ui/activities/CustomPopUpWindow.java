@@ -1069,7 +1069,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 							exitStatementConfirmAnimation(emailResponse);
 							break;
 						case 440:
-							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.stsParams);
+							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.stsParams,CustomPopUpWindow.this);
 							break;
 						default:
 							break;

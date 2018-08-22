@@ -65,7 +65,6 @@ import za.co.woolworths.financial.services.android.util.EmptyCartView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.MultiMap;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
-import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -408,7 +407,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				loadShoppingListItems(shoppingListItemsResponse);
 				break;
 			case 440:
-				enableAdapterClickEvent(true);
+				SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, shoppingListItemsResponse.response.stsParams, getActivity());
 				break;
 			default:
 				enableAdapterClickEvent(true);
@@ -478,21 +477,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 
 	@Override
 	public void onSessionTokenExpired(final Response response) {
-		SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
-		final Activity activity = getBaseActivity();
-		activity.runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				if (activity != null) {
-					if (response != null) {
-						if (response.message != null) {
-							getGlobalState().setDetermineLocationPopUpEnabled(true);
-							ScreenManager.presentSSOSignin(activity);
-						}
-					}
-				}
-			}
-		});
+		SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.stsParams, getActivity());
 	}
 
 	@Override

@@ -228,7 +228,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 						break;
 
 					case 440:
-						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, mObjOffer.response.stsParams);
+						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, mObjOffer.response.stsParams, getActivity());
 						break;
 
 					default:
@@ -270,7 +270,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 						break;
 
 					case 440:
-						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, mObjOffer.response.stsParams);
+						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, mObjOffer.response.stsParams, getActivity());
 						break;
 
 					default:
@@ -310,7 +310,8 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 						finishActivity();
 						break;
 					case 440:
-						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, mObjOffer.response.stsParams);;
+						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, mObjOffer.response.stsParams, getActivity());
+						;
 						break;
 					default:
 						Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, mObjOffer.response.desc);
@@ -533,7 +534,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 										}
 										break;
 									case 440:
-										SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, mObjOffer.response.stsParams);
+										SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, mObjOffer.response.stsParams, getActivity());
 										break;
 									default:
 										if (mObjOffer != null) {
@@ -649,7 +650,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 					}
 					break;
 				case 440:
-					SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, mObjOffer.response.stsParams);
+					SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, mObjOffer.response.stsParams, getActivity());
 					break;
 
 				default:

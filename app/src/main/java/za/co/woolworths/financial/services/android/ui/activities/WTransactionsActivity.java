@@ -129,7 +129,7 @@ public class WTransactionsActivity extends AppCompatActivity {
 						case 440:
 							if (!(WTransactionsActivity.this.isFinishing())) {
 								SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, transactionHistoryResponse
-										.response.stsParams);
+										.response.stsParams, WTransactionsActivity.this);
 							}
 							break;
 						default:

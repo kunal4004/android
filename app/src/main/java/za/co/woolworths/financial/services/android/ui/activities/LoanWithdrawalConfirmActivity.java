@@ -179,7 +179,7 @@ public class LoanWithdrawalConfirmActivity extends BaseActivity implements View.
 							break;
 
 						case 440:
-							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, authoriseLoanResponse.response.stsParams);
+							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, authoriseLoanResponse.response.stsParams, LoanWithdrawalConfirmActivity.this);
 							break;
 
 						default:
