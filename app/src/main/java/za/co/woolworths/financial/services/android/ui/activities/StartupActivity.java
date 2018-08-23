@@ -62,6 +62,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 	private static final String APP_VERSION_KEY = "app_version";
 
 	private boolean mVideoPlayerShouldPlay = true;
+	private boolean isVideoPlaying = false;
 	private boolean isMinimized = false;
 	private boolean isServerMessageShown = false;
 
@@ -235,7 +236,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 					splashScreenDisplay = configResponse.enviroment.splashScreenDisplay;
 					splashScreenPersist = configResponse.enviroment.splashScreenPersist;
 
-					if (!isFirstTime()) {
+					if (!isVideoPlaying) {
 						presentNextScreenOrServerMessage();
 					}
 
@@ -248,6 +249,8 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 	//video player on completion
 	@Override
 	public void onCompletion(MediaPlayer mp) {
+
+		isVideoPlaying = false;
 
 		if (!StartupActivity.this.mVideoPlayerShouldPlay) {
 
@@ -273,10 +276,15 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 	@Override
 	protected void onStart() {
 		super.onStart();
-		if (isMinimized && !isServerMessageShown) {
-			startActivity(new Intent(this, StartupActivity.class));
+		if (isMinimized) {
 			isMinimized = false;
-			finish();
+			if (isServerMessageShown) {
+				showNonVideoViewWithOutErrorLayout();
+				executeConfigServer();
+			} else{
+				startActivity(new Intent(this, StartupActivity.class));
+				finish();
+			}
 		}
 	}
 
@@ -300,6 +308,8 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 		videoView.setVideoURI(videoUri);
 		videoView.start();
 		videoView.setOnCompletionListener(this);
+
+		isVideoPlaying = true;
 	}
 
 	private void showNonVideoViewWithErrorLayout() {
