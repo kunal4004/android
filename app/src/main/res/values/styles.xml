@@ -596,15 +596,18 @@
 
     </style>
 
-    <style name="style_loan_logo_img">
+    <style name="style_loan_logo_img" parent="style_account_logo_img">
+        <item name="android:src">@drawable/ic_caret_black</item>
+
+    </style>
+
+    <style name="style_account_logo_img">
         <item name="android:layout_centerInParent">true</item>
         <item name="android:layout_marginStart">2dp</item>
         <item name="android:layout_alignParentStart">true</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:alpha">0.3</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:src">@drawable/ic_caret_black</item>
-
     </style>
 
     <style name="balance_insurance_overview_title">
