@@ -619,13 +619,15 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
 	@Override
 	public void onLocationItemSuccess(List<StoreDetails> location) {
+		Activity activity = getActivity();
+		if (activity == null) return;
 		this.enableFindInStoreButton(false);
 		if (location.size() > 0) {
 			getGlobalState().setStoreDetailsArrayList(location);
-			Intent intentInStoreFinder = new Intent(getActivity(), WStockFinderActivity.class);
+			Intent intentInStoreFinder = new Intent(activity, WStockFinderActivity.class);
 			intentInStoreFinder.putExtra("PRODUCT_NAME", mSubCategoryTitle);
 			startActivity(intentInStoreFinder);
-			getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+			activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 		} else {
 			this.showOutOfStockInStores();
 		}
