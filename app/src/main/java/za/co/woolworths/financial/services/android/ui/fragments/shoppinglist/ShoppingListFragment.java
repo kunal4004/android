@@ -10,7 +10,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -204,8 +203,8 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 		}
 		try {
 			Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
-		} catch (NullPointerException ex) {
-			Log.d("onDeliveryLocation", ex.getMessage());
+		} catch (NullPointerException ignored) {
+
 		}
 	}
 
@@ -321,7 +320,7 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		switch (requestCode){
+		switch (requestCode) {
 			case REQUEST_SUBURB_CHANGE:
 				showToolbar(R.string.title_my_list);
 				ShoppingDeliveryLocation lastDeliveryLocation = Utils.getPreferredDeliveryLocation();
