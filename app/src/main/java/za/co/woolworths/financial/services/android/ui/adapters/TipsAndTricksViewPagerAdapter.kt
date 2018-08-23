@@ -12,13 +12,8 @@ import kotlin.properties.Delegates
 
 class TipsAndTricksViewPagerAdapter(context: Activity) : PagerAdapter() {
 
-    var mContext: Activity by Delegates.notNull();
-    var images: TypedArray by Delegates.notNull()
-
-    init {
-        this.mContext = context
-        this.images = mContext.resources.obtainTypedArray(R.array.tips_tricks_images)
-    }
+    var mContext: Activity = context
+    var images: TypedArray = context.resources.obtainTypedArray(R.array.tips_tricks_images)
 
     override fun getCount(): Int {
         return images.length()
