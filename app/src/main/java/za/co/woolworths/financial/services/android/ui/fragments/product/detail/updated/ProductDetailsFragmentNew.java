@@ -813,19 +813,23 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	}
 
 	private void updateViewPagerWithAuxiliaryImages() {
+		Activity activity = getActivity();
+		if (activity == null) return;
 		this.mAuxiliaryImage = this.getAuxiliaryImagesByGroupKey(this.selectedGroupKey);
 		//mProductViewPagerAdapter.updatePagerItems(this.mAuxiliaryImage);
-		mProductViewPagerAdapter = new ProductViewPagerAdapter(getActivity(), this.mAuxiliaryImage, this);
+		mProductViewPagerAdapter = new ProductViewPagerAdapter(activity, this.mAuxiliaryImage, this);
 		mImageViewPager.setAdapter(mProductViewPagerAdapter);
 		circleindicator.setViewPager(this.mImageViewPager);
 	}
 
 	public List<String> getAuxiliaryImagesByGroupKey(String groupKey) {
-
 		List<String> updatedAuxiliaryImages = new ArrayList<>();
-		String imageFromOtherSku = this.otherSKUsByGroupKey.get(groupKey).get(0).externalImageRef;
-		if (this.productDetails.otherSkus.size() > 0 && imageFromOtherSku != null)
-			updatedAuxiliaryImages.add(this.otherSKUsByGroupKey.get(groupKey).get(0).externalImageRef);
+		ArrayList<OtherSkus> otherSkusArrayList = this.otherSKUsByGroupKey.get(groupKey);
+		if (otherSkusArrayList != null) {
+			String imageFromOtherSku = otherSkusArrayList.get(0).externalImageRef;
+			if (this.productDetails.otherSkus.size() > 0 && imageFromOtherSku != null)
+				updatedAuxiliaryImages.add(imageFromOtherSku);
+		}
 
 		Map<String, AuxiliaryImage> allAuxImages = new Gson().fromJson(this.productDetails.auxiliaryImages, new TypeToken<Map<String, AuxiliaryImage>>() {
 		}.getType());
