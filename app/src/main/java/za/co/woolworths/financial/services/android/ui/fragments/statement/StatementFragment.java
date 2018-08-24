@@ -250,7 +250,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 
 						case 440:
 
-							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.stsParams);
+							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.stsParams, getActivity());
 							break;
 
 						default:

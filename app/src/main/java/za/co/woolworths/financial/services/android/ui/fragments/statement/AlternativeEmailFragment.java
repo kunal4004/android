@@ -27,7 +27,6 @@ import com.google.gson.Gson;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
-import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.statement.EmailStatementResponse;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementResponse;
@@ -255,7 +254,6 @@ public class AlternativeEmailFragment extends Fragment implements View.OnClickLi
 			public void onSuccess(Object object) {
 				SendUserStatementResponse statementResponse = (SendUserStatementResponse) object;
 				if (statementResponse != null) {
-					Response response = statementResponse.response;
 					switch (statementResponse.httpCode) {
 						case 200:
 							List<EmailStatementResponse> data = statementResponse.data;
@@ -274,7 +272,7 @@ public class AlternativeEmailFragment extends Fragment implements View.OnClickLi
 							}
 							break;
 						case 440:
-							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.stsParams);
+							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, statementResponse.response.stsParams, getActivity());
 							break;
 						default:
 							break;

@@ -235,11 +235,10 @@ public class MessagesActivity extends AppCompatActivity {
 						}
 						break;
 					case 440:
-						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, messageResponse.response.stsParams);
+						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, messageResponse.response.stsParams, MessagesActivity.this);
 						break;
 
-					default:
-						if (messageResponse.response != null) {
+					default: if (messageResponse.response != null) {
 							Utils.alertErrorMessage(MessagesActivity.this, messageResponse.response.desc);
 						}
 						break;
@@ -374,7 +373,7 @@ public class MessagesActivity extends AppCompatActivity {
 					}
 					break;
 				case 440:
-					SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, messageResponse.response.stsParams);
+					SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, messageResponse.response.stsParams, MessagesActivity.this);
 					break;
 				default:
 					mErrorHandlerView.networkFailureHandler("");

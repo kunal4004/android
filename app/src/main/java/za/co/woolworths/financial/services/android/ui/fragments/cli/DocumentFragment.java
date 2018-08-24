@@ -213,8 +213,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 
 						break;
 					case 440:
-						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, deaBankList
-								.response.stsParams);
+						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, deaBankList.response.stsParams,getActivity());
 						break;
 
 					default:
@@ -261,8 +260,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 						loadBankAccountTypesView(bankAccountTypesList);
 						break;
 					case 440:
-						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, bankAccountTypes
-								.response.stsParams);
+						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, bankAccountTypes.response.stsParams,getActivity());
 						break;
 					default:
 						mErrorHandlerView.responseError(view, "");

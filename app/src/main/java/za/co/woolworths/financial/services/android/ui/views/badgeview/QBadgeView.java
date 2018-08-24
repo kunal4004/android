@@ -618,7 +618,7 @@ public class QBadgeView extends View implements Badge {
 			mBadgeText = mExact ? String.valueOf(mBadgeNumber) : "99+";
 		} else if (mBadgeNumber > 0 && mBadgeNumber <= 99) {
 			mBadgeText = String.valueOf(mBadgeNumber);
-		} else if (mBadgeNumber == 0) {
+		} else {
 			mBadgeText = null;
 		}
 		measureText();

@@ -336,8 +336,8 @@
 
         <ImageView
             android:id="@+id/imViewStatementLogo"
-            style="@style/style_loan_logo_img"
-            android:src="@drawable/view_statement_logo"
+            style="@style/style_account_logo_img"
+            app:srcCompat="@drawable/view_statement_logo"
             />
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView

@@ -28,8 +28,8 @@ public class SessionExpiredDialogFragment extends ActionSheetDialogFragment impl
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		View sessionExpiredView = getLayoutInflater().inflate(R.layout.session_expired_fragment, null);
-		mFrameAlertContainer.addView(sessionExpiredView);
+
+		addContentView(R.layout.session_expired_fragment);
 
 		mStsParams = getArguments().getString("stsParams");
 
