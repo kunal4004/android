@@ -41,7 +41,6 @@ import za.co.woolworths.financial.services.android.util.EmptyCartView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
-import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -193,8 +192,7 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 
 			case 440:
 				SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE,
-						shoppingListsResponse.response.stsParams);
-				ScreenManager.presentSSOSignin(getActivity(), SSO_FOR_SHOPPING_LIST);
+						shoppingListsResponse.response.stsParams, getActivity());
 				break;
 
 			default:

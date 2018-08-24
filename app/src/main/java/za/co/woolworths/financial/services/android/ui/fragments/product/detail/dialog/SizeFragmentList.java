@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem;
 import za.co.woolworths.financial.services.android.models.dto.SkuInventory;
@@ -33,6 +34,7 @@ import za.co.woolworths.financial.services.android.util.CenterLayoutManager;
 import za.co.woolworths.financial.services.android.util.ColorInterface;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
+import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.RESULT_LOADING_INVENTORY_FAILURE;
@@ -160,7 +162,7 @@ public class SizeFragmentList extends Fragment implements StockFinderSizeColorAd
 						setSizeAdapter(mOtherSKUList);
 						break;
 					case 440:
-
+						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, skusInventoryForStoreResponse.response.stsParams, getActivity());
 						break;
 					default:
 						/***

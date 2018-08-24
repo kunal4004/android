@@ -326,7 +326,7 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 							finish();
 							break;
 						case 440:
-							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, issueLoanResponse.response.stsParams);
+							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, issueLoanResponse.response.stsParams, LoanWithdrawalActivity.this);
 							break;
 
 						default:

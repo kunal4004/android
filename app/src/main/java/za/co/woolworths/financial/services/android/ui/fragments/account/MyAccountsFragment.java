@@ -611,7 +611,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 							List<Account> accountList = accountsResponse.accountList;
 							for (Account p : accountList) {
 								accounts.put(p.productGroupCode.toUpperCase(), p);
-
 								int indexOfUnavailableAccount = unavailableAccounts.indexOf(p.productGroupCode.toUpperCase());
 								if (indexOfUnavailableAccount > -1) {
 									try {
@@ -624,7 +623,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 							configureView();
 							break;
 						case 440:
-
 							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, accountsResponse.response.stsParams);
 							onSessionExpired(getActivity());
 							initialize();
