@@ -26,98 +26,100 @@ import za.co.woolworths.financial.services.android.util.AnimationUtils;
 
 public class SwipeHelper implements View.OnTouchListener {
 
-    private final SwipeStack mSwipeStack;
-    private View mObservedView;
+	private final SwipeStack mSwipeStack;
+	private View mObservedView;
 
-    private boolean mListenForTouchEvents;
-    private float mDownX;
-    private float mDownY;
-    private float mInitialX;
-    private float mInitialY;
-    private int mPointerId;
+	private boolean mListenForTouchEvents;
+	private float mDownX;
+	private float mDownY;
+	private float mInitialX;
+	private float mInitialY;
+	private int mPointerId;
 
-    private float mRotateDegrees = SwipeStack.DEFAULT_SWIPE_ROTATION;
-    private float mOpacityEnd = SwipeStack.DEFAULT_SWIPE_OPACITY;
-    private int mAnimationDuration = SwipeStack.DEFAULT_ANIMATION_DURATION;
+	private float mRotateDegrees = SwipeStack.DEFAULT_SWIPE_ROTATION;
+	private float mOpacityEnd = SwipeStack.DEFAULT_SWIPE_OPACITY;
+	private int mAnimationDuration = SwipeStack.DEFAULT_ANIMATION_DURATION;
 
-    public SwipeHelper(SwipeStack swipeStack) {
-        mSwipeStack = swipeStack;
-    }
+	public SwipeHelper(SwipeStack swipeStack) {
+		mSwipeStack = swipeStack;
+	}
 
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
+	@Override
+	public boolean onTouch(View v, MotionEvent event) {
+		try {
+			switch (event.getAction()) {
+				case MotionEvent.ACTION_DOWN:
+					if (!mListenForTouchEvents || !mSwipeStack.isEnabled()) {
+						return false;
+					}
 
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                if(!mListenForTouchEvents || !mSwipeStack.isEnabled()) {
-                    return false;
-                }
+					v.getParent().requestDisallowInterceptTouchEvent(true);
+					mSwipeStack.onSwipeStart();
+					mPointerId = event.getPointerId(0);
+					mDownX = event.getX(mPointerId);
+					mDownY = event.getY(mPointerId);
 
-                v.getParent().requestDisallowInterceptTouchEvent(true);
-                mSwipeStack.onSwipeStart();
-                mPointerId = event.getPointerId(0);
-                mDownX = event.getX(mPointerId);
-                mDownY = event.getY(mPointerId);
+					return true;
 
-                return true;
+				case MotionEvent.ACTION_MOVE:
+					int pointerIndex = event.findPointerIndex(mPointerId);
+					if (pointerIndex < 0) return false;
 
-            case MotionEvent.ACTION_MOVE:
-                int pointerIndex = event.findPointerIndex(mPointerId);
-                if (pointerIndex < 0) return false;
+					float dx = event.getX(pointerIndex) - mDownX;
+					float dy = event.getY(pointerIndex) - mDownY;
 
-                float dx = event.getX(pointerIndex) - mDownX;
-                float dy = event.getY(pointerIndex) - mDownY;
+					float newX = mObservedView.getX() + dx;
+					float newY = mObservedView.getY() + dy;
 
-                float newX = mObservedView.getX() + dx;
-                float newY = mObservedView.getY() + dy;
+					mObservedView.setX(newX);
+					mObservedView.setY(newY);
 
-                mObservedView.setX(newX);
-                mObservedView.setY(newY);
+					float dragDistanceY = newY - mInitialY;
+					float swipeProgress = Math.min(Math.max(
+							dragDistanceY / mSwipeStack.getHeight(), -1), 1);
 
-                float dragDistanceY = newY - mInitialY;
-                float swipeProgress = Math.min(Math.max(
-                        dragDistanceY / mSwipeStack.getHeight(), -1), 1);
+					mSwipeStack.onSwipeProgress(swipeProgress);
 
-                mSwipeStack.onSwipeProgress(swipeProgress);
+					if (mRotateDegrees > 0) {
+						float rotation = mRotateDegrees * swipeProgress;
+						mObservedView.setRotation(rotation);
+					}
 
-                if (mRotateDegrees > 0) {
-                    float rotation = mRotateDegrees * swipeProgress;
-                    mObservedView.setRotation(rotation);
-                }
+					if (mOpacityEnd < 1f) {
+						float alpha = 1 - Math.min(Math.abs(swipeProgress * 2), 1);
+						mObservedView.setAlpha(alpha);
+					}
 
-                if (mOpacityEnd < 1f) {
-                    float alpha = 1 - Math.min(Math.abs(swipeProgress * 2), 1);
-                    mObservedView.setAlpha(alpha);
-                }
+					return true;
 
-                return true;
+				case MotionEvent.ACTION_UP:
+					v.getParent().requestDisallowInterceptTouchEvent(false);
+					mSwipeStack.onSwipeEnd();
+					checkViewPosition();
 
-            case MotionEvent.ACTION_UP:
-                v.getParent().requestDisallowInterceptTouchEvent(false);
-                mSwipeStack.onSwipeEnd();
-                checkViewPosition();
+					return true;
 
-                return true;
+			}
+		} catch (IllegalArgumentException ignored) {
+		}
 
-        }
+		return false;
+	}
 
-        return false;
-    }
+	private void checkViewPosition() {
+		if (!mSwipeStack.isEnabled()) {
+			resetViewPosition();
+			return;
+		}
 
-    private void checkViewPosition() {
-        if(!mSwipeStack.isEnabled()) {
-            resetViewPosition();
-            return;
-        }
+		float viewCenterHorizontal = mObservedView.getX() + (mObservedView.getWidth() / 2);
+		float parentFirstThird = mSwipeStack.getWidth() / 3f;
+		float parentLastThird = parentFirstThird * 2;
 
-        float viewCenterHorizontal = mObservedView.getX() + (mObservedView.getWidth() / 2);
-        float parentFirstThird = mSwipeStack.getWidth() / 3f;
-        float parentLastThird = parentFirstThird * 2;
-
-        //Fot Top and buttom
-        float viewCenterVertical=mObservedView.getY()+(mObservedView.getHeight()/2);
-        float parentVerticalFirstThird=mSwipeStack.getHeight()/3f;
-        float parentVerticalLastThird=parentVerticalFirstThird*2;
+		//Fot Top and buttom
+		float viewCenterVertical = mObservedView.getY() + (mObservedView.getHeight() / 2);
+		float parentVerticalFirstThird = mSwipeStack.getHeight() / 3f;
+		float parentVerticalLastThird = parentVerticalFirstThird * 2;
 
        /* if (viewCenterHorizontal < parentFirstThird &&
                 mSwipeStack.getAllowedSwipeDirections() != SwipeStack.SWIPE_DIRECTION_ONLY_RIGHT) {
@@ -130,129 +132,130 @@ public class SwipeHelper implements View.OnTouchListener {
         {
             swipeViewToTop(mAnimationDuration / 2);
         }
-        else */if(viewCenterVertical>parentVerticalLastThird &&
-                mSwipeStack.getAllowedSwipeDirections() != SwipeStack.SWIPE_DIRECTION_ONLY_BOTTOM)
-        {
-            swipeViewToBottom(mAnimationDuration / 2);
-        }
-        else {
-            resetViewPosition();
-        }
-    }
+        else */
+		if (viewCenterVertical > parentVerticalLastThird &&
+				mSwipeStack.getAllowedSwipeDirections() != SwipeStack.SWIPE_DIRECTION_ONLY_BOTTOM) {
+			swipeViewToBottom(mAnimationDuration / 2);
+		} else {
+			resetViewPosition();
+		}
+	}
 
-    private void resetViewPosition() {
-        mObservedView.animate()
-                .x(mInitialX)
-                .y(mInitialY)
-                .rotation(0)
-                .alpha(1)
-                .setDuration(mAnimationDuration)
-                .setInterpolator(new OvershootInterpolator(1.4f))
-                .setListener(null);
-    }
+	private void resetViewPosition() {
+		mObservedView.animate()
+				.x(mInitialX)
+				.y(mInitialY)
+				.rotation(0)
+				.alpha(1)
+				.setDuration(mAnimationDuration)
+				.setInterpolator(new OvershootInterpolator(1.4f))
+				.setListener(null);
+	}
 
-    private void swipeViewToLeft(int duration) {
-        if (!mListenForTouchEvents) return;
-        mListenForTouchEvents = false;
-        mObservedView.animate().cancel();
-        mObservedView.animate()
-                .x(-mSwipeStack.getWidth() + mObservedView.getX())
-                .rotation(-mRotateDegrees)
-                .alpha(0f)
-                .setDuration(duration)
-                .setListener(new AnimationUtils.AnimationEndListener() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        mSwipeStack.onViewSwipedToLeft();
-                    }
-                });
-    }
+	private void swipeViewToLeft(int duration) {
+		if (!mListenForTouchEvents) return;
+		mListenForTouchEvents = false;
+		mObservedView.animate().cancel();
+		mObservedView.animate()
+				.x(-mSwipeStack.getWidth() + mObservedView.getX())
+				.rotation(-mRotateDegrees)
+				.alpha(0f)
+				.setDuration(duration)
+				.setListener(new AnimationUtils.AnimationEndListener() {
+					@Override
+					public void onAnimationEnd(Animator animation) {
+						mSwipeStack.onViewSwipedToLeft();
+					}
+				});
+	}
 
 
-    private void swipeViewToRight(int duration) {
-        if (!mListenForTouchEvents) return;
-        mListenForTouchEvents = false;
-        mObservedView.animate().cancel();
-        mObservedView.animate()
-                .x(mSwipeStack.getWidth() + mObservedView.getX())
-                .rotation(mRotateDegrees)
-                .alpha(0f)
-                .setDuration(duration)
-                .setListener(new AnimationUtils.AnimationEndListener() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        mSwipeStack.onViewSwipedToRight();
-                    }
-                });
-    }
-    private void swipeViewToTop(int duration) {
-        if (!mListenForTouchEvents) return;
-        mListenForTouchEvents = false;
-        mObservedView.animate().cancel();
-        mObservedView.animate()
-                .x(-mSwipeStack.getHeight() + mObservedView.getY())
-                .rotation(-mRotateDegrees)
-                .alpha(0f)
-                .setDuration(duration)
-                .setListener(new AnimationUtils.AnimationEndListener() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        mSwipeStack.onViewSwipedToTop();
-                    }
-                });
-    }
-    private void swipeViewToBottom(int duration) {
-        if (!mListenForTouchEvents) return;
-        mListenForTouchEvents = false;
-        mObservedView.animate().cancel();
-        mObservedView.animate()
-                .y(mSwipeStack.getHeight() + mObservedView.getY())
-                .rotation(mRotateDegrees)
-                .alpha(0f)
-                .setDuration(duration)
-                .setListener(new AnimationUtils.AnimationEndListener() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        mSwipeStack.onViewSwipedToBottom();
-                    }
-                });
-    }
+	private void swipeViewToRight(int duration) {
+		if (!mListenForTouchEvents) return;
+		mListenForTouchEvents = false;
+		mObservedView.animate().cancel();
+		mObservedView.animate()
+				.x(mSwipeStack.getWidth() + mObservedView.getX())
+				.rotation(mRotateDegrees)
+				.alpha(0f)
+				.setDuration(duration)
+				.setListener(new AnimationUtils.AnimationEndListener() {
+					@Override
+					public void onAnimationEnd(Animator animation) {
+						mSwipeStack.onViewSwipedToRight();
+					}
+				});
+	}
 
-    public void registerObservedView(View view, float initialX, float initialY) {
-        if (view == null) return;
-        mObservedView = view;
-        mObservedView.setOnTouchListener(this);
-        mInitialX = initialX;
-        mInitialY = initialY;
-        mListenForTouchEvents = true;
-    }
+	private void swipeViewToTop(int duration) {
+		if (!mListenForTouchEvents) return;
+		mListenForTouchEvents = false;
+		mObservedView.animate().cancel();
+		mObservedView.animate()
+				.x(-mSwipeStack.getHeight() + mObservedView.getY())
+				.rotation(-mRotateDegrees)
+				.alpha(0f)
+				.setDuration(duration)
+				.setListener(new AnimationUtils.AnimationEndListener() {
+					@Override
+					public void onAnimationEnd(Animator animation) {
+						mSwipeStack.onViewSwipedToTop();
+					}
+				});
+	}
 
-    public void unregisterObservedView() {
-        if (mObservedView != null) {
-            mObservedView.setOnTouchListener(null);
-        }
-        mObservedView = null;
-        mListenForTouchEvents = false;
-    }
+	private void swipeViewToBottom(int duration) {
+		if (!mListenForTouchEvents) return;
+		mListenForTouchEvents = false;
+		mObservedView.animate().cancel();
+		mObservedView.animate()
+				.y(mSwipeStack.getHeight() + mObservedView.getY())
+				.rotation(mRotateDegrees)
+				.alpha(0f)
+				.setDuration(duration)
+				.setListener(new AnimationUtils.AnimationEndListener() {
+					@Override
+					public void onAnimationEnd(Animator animation) {
+						mSwipeStack.onViewSwipedToBottom();
+					}
+				});
+	}
 
-    public void setAnimationDuration(int duration) {
-        mAnimationDuration = duration;
-    }
+	public void registerObservedView(View view, float initialX, float initialY) {
+		if (view == null) return;
+		mObservedView = view;
+		mObservedView.setOnTouchListener(this);
+		mInitialX = initialX;
+		mInitialY = initialY;
+		mListenForTouchEvents = true;
+	}
 
-    public void setRotation(float rotation) {
-        mRotateDegrees = rotation;
-    }
+	public void unregisterObservedView() {
+		if (mObservedView != null) {
+			mObservedView.setOnTouchListener(null);
+		}
+		mObservedView = null;
+		mListenForTouchEvents = false;
+	}
 
-    public void setOpacityEnd(float alpha) {
-        mOpacityEnd = alpha;
-    }
+	public void setAnimationDuration(int duration) {
+		mAnimationDuration = duration;
+	}
 
-    public void swipeViewToLeft() {
-        swipeViewToLeft(mAnimationDuration);
-    }
+	public void setRotation(float rotation) {
+		mRotateDegrees = rotation;
+	}
 
-    public void swipeViewToRight() {
-        swipeViewToRight(mAnimationDuration);
-    }
+	public void setOpacityEnd(float alpha) {
+		mOpacityEnd = alpha;
+	}
+
+	public void swipeViewToLeft() {
+		swipeViewToLeft(mAnimationDuration);
+	}
+
+	public void swipeViewToRight() {
+		swipeViewToRight(mAnimationDuration);
+	}
 
 }
