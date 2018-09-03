@@ -441,4 +441,9 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 			throw new RuntimeException("Something awful happened...");
 		}
 	}
+
+	//used for testing
+	public FirebaseRemoteConfig getmFirebaseRemoteConfig() {
+		return mFirebaseRemoteConfig;
+	}
 }
