@@ -160,6 +160,7 @@ dependencies {
     implementation 'me.relex:circleindicator:1.2.2@aar'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.4'
     compile 'com.github.deano2390:MaterialShowcaseView:1.2.0'
+    compile 'com.daasuu:BubbleLayout:1.2.0'
 }
 apply plugin: 'com.google.gms.google-services'
 

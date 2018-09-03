@@ -28,6 +28,8 @@ import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.ProductSearchFragmentBinding;
 import com.squareup.picasso.Picasso;
 import java.util.List;
+
+import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.RootCategory;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
@@ -330,7 +332,7 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 					showBackNavigationIcon(false);
 					onRetryConnectionClicked();
 					if (getBottomNavigationActivity().getCurrentFragment() instanceof CategoryFragment) {
-						presentShowcaseView(2000);
+						showFeatureWalkthrough();
 					}
 				}
 			}
@@ -372,17 +374,17 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 		anim.setDuration(500).start();
 	}
 
-	private void presentShowcaseView(int withDelay) {
+	private void showFeatureWalkthrough() {
+		if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.barcodeScan)
+			return;
 
-		getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity())
+		getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.BARCODE_SCAN)
 				.setTarget(getViewDataBinding().llBarcodeScanner)
-				.setDelay(withDelay) // optional but starting animations immediately in onCreate can make them choppy
-				//.singleUse(SHOWCASE_ID) // provide a unique ID used to ensure it is only shown once
-//                .useFadeAnimation() // remove comment if you want to use fade animations for Lollipop & up
 				.setTitle(R.string.walkthrough_barcode_title)
 				.setDescription(R.string.walkthrough_barcode_desc)
 				.setImage(R.drawable.tips_tricks_ic_scan)
 				.setAction(this)
+				.setArrowPosition(WMaterialShowcaseView.Arrow.TOP_RIGHT)
 				.setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
 		getBottomNavigationActivity().walkThroughPromtView.show(getActivity());
 
@@ -391,6 +393,11 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 	@Override
 	public void onWalkthroughActionButtonClick() {
 		checkLocationPermission(getBottomNavigator(), getBottomNavigator().getPermissionType(Manifest.permission.CAMERA), 2);
+	}
+
+	@Override
+	public void onHideTutorialClick() {
+
 	}
 
 }

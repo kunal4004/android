@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.Map;
 
 import me.relex.circleindicator.CircleIndicator;
+import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
@@ -92,7 +93,7 @@ import static android.app.Activity.RESULT_OK;
  * Created by W7099877 on 2018/07/14.
  */
 
-public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragmentNewBinding, ProductDetailsViewModelNew> implements ProductDetailNavigatorNew, ProductViewPagerAdapter.MultipleImageInterface, View.OnClickListener, ProductColorPickerAdapter.OnItemSelection, ProductSizePickerAdapter.OnSizeSelection, AvailableSizePickerAdapter.OnAvailableSizeSelection, PermissionResultCallback, ToastUtils.ToastInterface {
+public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragmentNewBinding, ProductDetailsViewModelNew> implements ProductDetailNavigatorNew, ProductViewPagerAdapter.MultipleImageInterface, View.OnClickListener, ProductColorPickerAdapter.OnItemSelection, ProductSizePickerAdapter.OnSizeSelection, AvailableSizePickerAdapter.OnAvailableSizeSelection, PermissionResultCallback, ToastUtils.ToastInterface, WMaterialShowcaseView.IWalkthroughActionListener {
 	public ProductDetailsViewModelNew productDetailsViewModelNew;
 	private String mSubCategoryTitle;
 	private boolean mFetchFromJson;
@@ -440,7 +441,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		btnAddToCart.setEnabled(true);
 		this.configureMultiPickerDialog();
 		if (Boolean.valueOf(productDetails.isnAvailable)) {
-			presentShowcaseView();
+			showFeatureWalkthrough();
 		}
 	}
 
@@ -1176,19 +1177,28 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		}
 	}
 
-	public void presentShowcaseView(){
-		ProductDetailsActivity.walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity())
+	public void showFeatureWalkthrough(){
+		if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.findInStore)
+			return;
+		ProductDetailsActivity.walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.FIND_IN_STORE)
 				.setTarget(btnFindInStore)
-				.setDelay(2000) // optional but starting animations immediately in onCreate can make them choppy
-				//.singleUse(SHOWCASE_ID) // provide a unique ID used to ensure it is only shown once
-//                .useFadeAnimation() // remove comment if you want to use fade animations for Lollipop & up
 				.setTitle(R.string.walkthrough_barcode_title)
 				.setDescription(R.string.walkthrough_barcode_desc)
 				.setImage(R.drawable.tips_tricks_ic_stores)
-//				.setAction(this)
-				.setDismissOnTouch(true)
+				.setAction(this)
 				.withRectangleShape()
+				.setArrowPosition(WMaterialShowcaseView.Arrow.BOTTOM_LEFT)
 				.setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
 		ProductDetailsActivity.walkThroughPromtView.show(getActivity());
+	}
+
+	@Override
+	public void onWalkthroughActionButtonClick() {
+
+	}
+
+	@Override
+	public void onHideTutorialClick() {
+
 	}
 }

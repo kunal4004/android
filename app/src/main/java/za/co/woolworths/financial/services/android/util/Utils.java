@@ -96,6 +96,7 @@ import za.co.woolworths.financial.services.android.ui.activities.StatementActivi
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
+import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.badgeview.Badge;
 import za.co.woolworths.financial.services.android.ui.views.badgeview.QBadgeView;
@@ -1226,5 +1227,18 @@ public class Utils {
 		}
 
 		return newSentence;
+	}
+
+	public static void saveFeatureWalkthoughShowcase(WMaterialShowcaseView.Feature feature){
+		AppInstanceObject appInstanceObject = AppInstanceObject.get();
+		switch (feature){
+			case BARCODE_SCAN:
+				appInstanceObject.featureWalkThrough.barcodeScan = true;
+				break;
+			case FIND_IN_STORE:
+				appInstanceObject.featureWalkThrough.findInStore = true;
+				break;
+		}
+		appInstanceObject.save();
 	}
 }
