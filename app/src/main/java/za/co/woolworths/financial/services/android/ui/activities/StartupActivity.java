@@ -457,7 +457,11 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 	}
 
 	//used for testing
-	public FirebaseRemoteConfig getmFirebaseRemoteConfig() {
+	public FirebaseRemoteConfig testGetmFirebaseRemoteConfig() {
 		return mFirebaseRemoteConfig;
+	}
+
+	public boolean testIsFirstTime(){
+		return this.isFirstTime();
 	}
 }
