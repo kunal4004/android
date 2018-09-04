@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.base;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.app.Activity;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
@@ -23,8 +22,8 @@ import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public abstract class BaseActivity<T extends ViewDataBinding, V extends BaseViewModel> extends AppCompatActivity implements BaseFragment.Callback {
@@ -165,7 +164,7 @@ public abstract class BaseActivity<T extends ViewDataBinding, V extends BaseView
 	}
 
 	public boolean isNetworkConnected() {
-		return new ConnectionDetector().isOnline(this);
+		return NetworkManager.getInstance().isConnectedToNetwork(this);
 	}
 
 	public T getViewDataBinding() {

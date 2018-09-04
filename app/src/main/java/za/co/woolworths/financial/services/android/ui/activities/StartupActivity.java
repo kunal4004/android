@@ -44,8 +44,8 @@ import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WVideoView;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -124,7 +124,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 
 		pBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
 		//Mobile Config Server
-		if (new ConnectionDetector().isOnline(StartupActivity.this)) {
+		if (NetworkManager.getInstance().isConnectedToNetwork(StartupActivity.this)) {
 			mFirebaseAnalytics.setUserProperty(APP_SERVER_ENVIRONMENT_KEY, StartupActivity.this.environment.isEmpty() ? "prod": StartupActivity.this.environment.toLowerCase());
 			mFirebaseAnalytics.setUserProperty(APP_VERSION_KEY, StartupActivity.this.appVersion);
 
@@ -137,7 +137,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 
 			@Override
 			public void onClick(View v) {
-				if (new ConnectionDetector().isOnline(StartupActivity.this)) {
+				if (NetworkManager.getInstance().isConnectedToNetwork(StartupActivity.this)) {
 					mFirebaseAnalytics.setUserProperty(APP_SERVER_ENVIRONMENT_KEY, StartupActivity.this.environment.isEmpty() ? "prod": StartupActivity.this.environment.toLowerCase());
 					mFirebaseAnalytics.setUserProperty(APP_VERSION_KEY, StartupActivity.this.appVersion);
 

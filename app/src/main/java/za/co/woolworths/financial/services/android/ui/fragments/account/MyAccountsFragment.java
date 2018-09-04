@@ -52,10 +52,10 @@ import za.co.woolworths.financial.services.android.ui.fragments.faq.FAQFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.ShoppingListFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
@@ -218,7 +218,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					if (new ConnectionDetector().isOnline(getActivity())) {
+					if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
 						loadAccounts();
 					}
 				}

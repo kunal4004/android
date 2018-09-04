@@ -27,11 +27,11 @@ import za.co.woolworths.financial.services.android.models.dto.AuthoriseLoanReque
 import za.co.woolworths.financial.services.android.models.dto.AuthoriseLoanResponse;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.BaseActivity;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -296,7 +296,7 @@ public class LoanWithdrawalConfirmActivity extends BaseActivity implements View.
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				if (new ConnectionDetector().isOnline(LoanWithdrawalConfirmActivity.this)) {
+				if (NetworkManager.getInstance().isConnectedToNetwork(LoanWithdrawalConfirmActivity.this)) {
 					if (isLoanWithdrawalClicked()) {
 						hideKeyboard();
 						authoriseLoanWithdrawal();

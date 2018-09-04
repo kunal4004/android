@@ -16,6 +16,7 @@ import org.junit.runner.RunWith
 import za.co.woolworths.financial.services.android.models.dao.ApiResponseHandler
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask
+import za.co.woolworths.financial.services.android.util.NetworkManager
 
 @RunWith(AndroidJUnit4::class)
 public class StartupActivityInstrumentedTest {
@@ -25,12 +26,20 @@ public class StartupActivityInstrumentedTest {
 
     @Before
     fun setup(){
+        //tried this in attempt to keep the same
+        //activity open for all tests in this class
         if (activityRule.activity == null)
             activityRule.launchActivity(null)
     }
 
     @Test
     fun testSplashScreen(){
+        val isConnectedToNetwork = NetworkManager.getInstance().isConnectedToNetwork(activityRule.activity)
+        if (!isConnectedToNetwork){
+
+        }
+
+
         if (activityRule.activity.testIsFirstTime()){
             Espresso.onView(withId(R.id.videoViewLayout)).check(matches(isDisplayed()))
         }else{
