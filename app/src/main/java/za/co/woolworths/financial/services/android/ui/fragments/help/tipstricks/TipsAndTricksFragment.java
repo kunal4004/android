@@ -93,6 +93,6 @@ public class TipsAndTricksFragment extends BaseFragment<TipsTricksFragmentBindin
         Intent intent = new Intent(getActivity(), TipsAndTricksViewPagerActivity.class);
         intent.putExtra("position", position);
         getActivity().startActivity(intent);
-        getActivity().overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
+        getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
     }
 }

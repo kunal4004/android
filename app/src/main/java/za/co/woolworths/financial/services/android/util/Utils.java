@@ -1238,7 +1238,16 @@ public class Utils {
 			case FIND_IN_STORE:
 				appInstanceObject.featureWalkThrough.findInStore = true;
 				break;
+			case DELIVERY_LOCATION:
+				appInstanceObject.featureWalkThrough.deliveryLocation = true;
+				break;
 		}
+		appInstanceObject.save();
+	}
+
+	public static void hideFeatureWalkThroughTutorials(){
+		AppInstanceObject appInstanceObject = AppInstanceObject.get();
+		appInstanceObject.featureWalkThrough.showTutorials = false;
 		appInstanceObject.save();
 	}
 }

@@ -1197,8 +1197,4 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
 	}
 
-	@Override
-	public void onHideTutorialClick() {
-
-	}
 }

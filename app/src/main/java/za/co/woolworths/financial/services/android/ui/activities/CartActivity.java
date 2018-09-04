@@ -14,6 +14,7 @@ import com.awfs.coordination.R;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
+import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
@@ -29,6 +30,7 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
 	private ImageView btnCloseCart;
 	private CartFragment cartFragment;
 	private ProgressBar pbRemoveAllItem;
+	public static WMaterialShowcaseView walkThroughPromtView = null;
 
 	@Override
 	protected int getLayoutResourceId() {

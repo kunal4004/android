@@ -45,7 +45,6 @@ import uk.co.deanwild.materialshowcaseview.shape.RectangleShape;
 import uk.co.deanwild.materialshowcaseview.shape.Shape;
 import uk.co.deanwild.materialshowcaseview.target.Target;
 import uk.co.deanwild.materialshowcaseview.target.ViewTarget;
-import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 /**
@@ -66,7 +65,6 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
 
     public interface IWalkthroughActionListener {
         void onWalkthroughActionButtonClick();
-        void onHideTutorialClick();
     }
 
     private int mOldHeight;
@@ -304,7 +302,7 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
                 if (actionListener == null)
                     return;
                 hide();
-                actionListener.onHideTutorialClick();
+                Utils.hideFeatureWalkThroughTutorials();
                 break;
             default:
                 break;
@@ -1055,7 +1053,8 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
 
     public enum Feature{
         BARCODE_SCAN(1),
-        FIND_IN_STORE(2);
+        FIND_IN_STORE(2),
+        DELIVERY_LOCATION(3);
 
         private int value;
 

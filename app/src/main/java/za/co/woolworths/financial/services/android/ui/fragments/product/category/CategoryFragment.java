@@ -395,9 +395,4 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 		checkLocationPermission(getBottomNavigator(), getBottomNavigator().getPermissionType(Manifest.permission.CAMERA), 2);
 	}
 
-	@Override
-	public void onHideTutorialClick() {
-
-	}
-
 }
