@@ -36,6 +36,7 @@ import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.contracts.RootActivityInterface;
 import za.co.woolworths.financial.services.android.models.ApiInterface;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.ApiResponseHandler;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
@@ -160,51 +161,11 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 			return;
 		}
 
-		mobileConfigServer().execute();
-	}
-
-	private HttpAsyncTask<String, String, ConfigResponse> mobileConfigServer() {
-		return new HttpAsyncTask<String, String, ConfigResponse>() {
-
+		this.queryServiceGetConfig(new ApiResponseHandler() {
 			@Override
-			protected void onPreExecute() {
+			public void success(Object responseObject) {
 
-			}
-
-			@Override
-			protected Class<ConfigResponse> httpDoInBackgroundReturnType() {
-				return ConfigResponse.class;
-			}
-
-			@Override
-			protected ConfigResponse httpDoInBackground(String... params) {
-				final String appName = mFirebaseRemoteConfig.getString("mcs_appName");
-
-				//MCS expects empty value for PROD
-				//woneapp-5.0 = PROD
-				//woneapp-5.0-qa = QA
-				//woneapp-5.0-dev = DEV
-				String majorMinorVersion = appVersion.substring(0, 3);
-				final String mcsAppVersion = (appName + "-" + majorMinorVersion + (environment.equals("production") ? "" : ("-" + environment)));
-				Log.d("MCS", mcsAppVersion);
-
-				ApiInterface mApiInterface = new RestAdapter.Builder()
-						.setEndpoint(getString(R.string.config_endpoint))
-						.setLogLevel(Util.isDebug(StartupActivity.this) ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.NONE)
-						.build()
-						.create(ApiInterface.class);
-
-				return mApiInterface.getConfig(mFirebaseRemoteConfig.getString("mcs_appApiKey"), getDeviceID(), mcsAppVersion);
-			}
-
-			@Override
-			public ConfigResponse httpError(final String errorMessage, final HttpErrorCode httpErrorCode) {
-				showNonVideoViewWithErrorLayout();
-				return new ConfigResponse();
-			}
-
-			@Override
-			protected void onPostExecute(ConfigResponse configResponse) {
+				final ConfigResponse configResponse = (ConfigResponse)responseObject;
 				try {
 					StartupActivity.this.mVideoPlayerShouldPlay = false;
 
@@ -243,7 +204,60 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 				} catch (NullPointerException ignored) {
 				}
 			}
+
+			@Override
+			public void failure(String errorMessage, HttpAsyncTask.HttpErrorCode httpErrorCode) {
+				showNonVideoViewWithErrorLayout();
+			}
+		});
+	}
+
+	private void queryServiceGetConfig(final ApiResponseHandler apiResponseHandler){
+
+		HttpAsyncTask<String, String, ConfigResponse> task = new HttpAsyncTask<String, String, ConfigResponse>() {
+			@Override
+			protected ConfigResponse httpDoInBackground(String... strings) {
+				final String appName = mFirebaseRemoteConfig.getString("mcs_appName");
+
+				//MCS expects empty value for PROD
+				//appName-5.0 = PROD
+				//appName-5.0-qa = QA
+				//appName-5.0-dev = DEV
+				String majorMinorVersion = appVersion.substring(0, 3);
+				final String mcsAppVersion = (appName + "-" + majorMinorVersion + (environment.equals("production") ? "" : ("-" + environment)));
+
+				ApiInterface mApiInterface = new RestAdapter.Builder()
+						.setEndpoint(getString(R.string.config_endpoint))
+						.setLogLevel(Util.isDebug(StartupActivity.this) ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.NONE)
+						.build()
+						.create(ApiInterface.class);
+
+				return mApiInterface.getConfig(mFirebaseRemoteConfig.getString("mcs_appApiKey"), getDeviceID(), mcsAppVersion);
+			}
+
+			@Override
+			protected ConfigResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+				apiResponseHandler.failure(errorMessage, httpErrorCode);
+				return new ConfigResponse();
+			}
+
+			@Override
+			protected Class<ConfigResponse> httpDoInBackgroundReturnType() {
+				return ConfigResponse.class;
+			}
+
+			@Override
+			protected void onPostExecute(ConfigResponse configResponse) {
+				apiResponseHandler.success(configResponse);
+			}
 		};
+
+		task.execute();
+	}
+
+	//for unit tests
+	public void testQueryServiceGetConfig(final ApiResponseHandler apiResponseHandler){
+		this.queryServiceGetConfig(apiResponseHandler);
 	}
 
 	//video player on completion

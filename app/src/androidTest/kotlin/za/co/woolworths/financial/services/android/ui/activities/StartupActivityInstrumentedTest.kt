@@ -1,39 +1,41 @@
 package za.co.woolworths.financial.services.android.ui.activities
 
-import android.content.Intent
 import android.support.test.InstrumentationRegistry
-import android.support.test.filters.SmallTest
 import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
 import org.junit.Assert
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import za.co.woolworths.financial.services.android.models.dao.ApiResponseHandler
+import za.co.woolworths.financial.services.android.models.dto.ConfigResponse
+import za.co.woolworths.financial.services.android.util.HttpAsyncTask
 
-
-
-@SmallTest
 @RunWith(AndroidJUnit4::class)
 public class StartupActivityInstrumentedTest {
 
     @Rule @JvmField
     val activityRule = ActivityTestRule(StartupActivity::class.java)
 
-    private val appPackageName: String = "com.awfs.coordination.qa"
-
     @Test
     fun testAppContext(){
+        val appPackageName = "com.awfs.coordination.qa"
+
         val appContext = InstrumentationRegistry.getTargetContext()
-        Assert.assertEquals(this.appPackageName, appContext.packageName)
+        Assert.assertEquals(appPackageName, appContext.packageName)
     }
 
     @Test
-    fun testIntent(){
-        val intent = Intent()
+    fun testMobileConfigServer(){
+        activityRule.activity.testQueryServiceGetConfig(object: ApiResponseHandler {
+            override fun success(responseObject: Any) {
 
-        activityRule.launchActivity(intent)
+                Assert.assertTrue(responseObject is ConfigResponse)
+            }
 
-        Assert.assertNotNull(activityRule.activity)
-
+            override fun failure(errorMessage: String?, httpErrorCode: HttpAsyncTask.HttpErrorCode?) {
+                Assert.fail()
+            }
+        });
     }
 }
