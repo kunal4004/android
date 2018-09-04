@@ -121,5 +121,6 @@ public class AppInstanceObject {
         public boolean barcodeScan;
         public boolean findInStore;
 		public boolean deliveryLocation;
+		public boolean vouchers;
     }
 }

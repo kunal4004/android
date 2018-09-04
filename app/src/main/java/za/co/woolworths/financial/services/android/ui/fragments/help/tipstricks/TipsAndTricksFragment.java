@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
+import android.widget.CompoundButton;
 
 import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
@@ -14,12 +15,13 @@ import com.awfs.coordination.databinding.TipsTricksFragmentBinding;
 
 import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
+import za.co.woolworths.financial.services.android.util.Utils;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class TipsAndTricksFragment extends BaseFragment<TipsTricksFragmentBinding, TipsAndTricksViewModel> implements TipsAndTricksNavigator, View.OnClickListener {
+public class TipsAndTricksFragment extends BaseFragment<TipsTricksFragmentBinding, TipsAndTricksViewModel> implements TipsAndTricksNavigator, View.OnClickListener, CompoundButton.OnCheckedChangeListener {
     TipsAndTricksViewModel tipsAndTricksViewModel;
 
     @Override
@@ -40,6 +42,8 @@ public class TipsAndTricksFragment extends BaseFragment<TipsTricksFragmentBindin
         getViewDataBinding().stores.setOnClickListener(this);
         getViewDataBinding().barcode.setOnClickListener(this);
         getViewDataBinding().delivery.setOnClickListener(this);
+        getViewDataBinding().featureSwitch.setOnCheckedChangeListener(this);
+        getViewDataBinding().featureSwitch.setChecked(Utils.isFeatureWalkThroughTutorialsEnabled());
     }
 
     @Override
@@ -94,5 +98,10 @@ public class TipsAndTricksFragment extends BaseFragment<TipsTricksFragmentBindin
         intent.putExtra("position", position);
         getActivity().startActivity(intent);
         getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        Utils.enableFeatureWalkThroughTutorials(isChecked);
     }
 }

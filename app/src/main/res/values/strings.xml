@@ -662,4 +662,8 @@
     <string name="tips_tricks_button_barcode">Scan a product</string>
     <string name="tips_tricks_button_delivery">Set Your Delivery Location</string>
     <string name="hide_feature_tutorials">hide feature tutorials</string>
+    <string name="new_feature_tutorials">New Feature Tutorials</string>
+    <string name="scan_your_first_product">SCAN your first PRODUCT</string>
+    <string name="check_in_store_availability">check in-store availability</string>
+    <string name="redeem_voucher_today">REDEEM A VOUCHER TODAY</string>
 </resources>

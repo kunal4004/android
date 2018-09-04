@@ -1241,13 +1241,22 @@ public class Utils {
 			case DELIVERY_LOCATION:
 				appInstanceObject.featureWalkThrough.deliveryLocation = true;
 				break;
+			case VOUCHERS:
+				appInstanceObject.featureWalkThrough.vouchers = true;
+				break;
+			default:
+				break;
 		}
 		appInstanceObject.save();
 	}
 
-	public static void hideFeatureWalkThroughTutorials(){
+	public static void enableFeatureWalkThroughTutorials(boolean enable) {
 		AppInstanceObject appInstanceObject = AppInstanceObject.get();
-		appInstanceObject.featureWalkThrough.showTutorials = false;
+		appInstanceObject.featureWalkThrough.showTutorials = enable;
 		appInstanceObject.save();
+	}
+
+	public static boolean isFeatureWalkThroughTutorialsEnabled() {
+		return AppInstanceObject.get().featureWalkThrough.showTutorials;
 	}
 }

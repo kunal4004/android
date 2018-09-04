@@ -302,7 +302,7 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
                 if (actionListener == null)
                     return;
                 hide();
-                Utils.hideFeatureWalkThroughTutorials();
+                Utils.enableFeatureWalkThroughTutorials(false);
                 break;
             default:
                 break;
@@ -459,12 +459,10 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
     }
 
 
-    private void setDismissText(CharSequence dismissText) {
-		/*if (mDismissButton != null) {
-			mDismissButton.setText(dismissText);
-
-			updateDismissButton();
-		}*/
+    private void setActionText(CharSequence actionText) {
+        if (mWalkThroughAction != null) {
+            mWalkThroughAction.setText(actionText);
+        }
     }
 
     private void setDismissStyle(Typeface dismissStyle) {
@@ -636,12 +634,12 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
         /**
          * Set the title text shown on the ShowcaseView.
          */
-        public WMaterialShowcaseView.Builder setDismissText(int resId) {
-            return setDismissText(activity.getString(resId));
+        public WMaterialShowcaseView.Builder setActionText(int resId) {
+            return setActionText(activity.getString(resId));
         }
 
-        public WMaterialShowcaseView.Builder setDismissText(CharSequence dismissText) {
-            showcaseView.setDismissText(dismissText);
+        public WMaterialShowcaseView.Builder setActionText(CharSequence dismissText) {
+            showcaseView.setActionText(dismissText);
             return this;
         }
 
@@ -1054,7 +1052,8 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
     public enum Feature{
         BARCODE_SCAN(1),
         FIND_IN_STORE(2),
-        DELIVERY_LOCATION(3);
+        DELIVERY_LOCATION(3),
+        VOUCHERS(4);
 
         private int value;
 

@@ -1182,8 +1182,9 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 			return;
 		ProductDetailsActivity.walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.FIND_IN_STORE)
 				.setTarget(btnFindInStore)
-				.setTitle(R.string.walkthrough_barcode_title)
+				.setTitle(R.string.tips_tricks_titles_stores)
 				.setDescription(R.string.walkthrough_barcode_desc)
+				.setActionText(R.string.check_in_store_availability)
 				.setImage(R.drawable.tips_tricks_ic_stores)
 				.setAction(this)
 				.withRectangleShape()
@@ -1194,7 +1195,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
 	@Override
 	public void onWalkthroughActionButtonClick() {
-
+			this.onClick(btnFindInStore);
 	}
 
 }

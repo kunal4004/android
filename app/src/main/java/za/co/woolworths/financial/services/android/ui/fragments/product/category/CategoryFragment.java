@@ -382,6 +382,7 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 				.setTarget(getViewDataBinding().llBarcodeScanner)
 				.setTitle(R.string.walkthrough_barcode_title)
 				.setDescription(R.string.walkthrough_barcode_desc)
+				.setActionText(R.string.scan_your_first_product)
 				.setImage(R.drawable.tips_tricks_ic_scan)
 				.setAction(this)
 				.setArrowPosition(WMaterialShowcaseView.Arrow.TOP_RIGHT)
