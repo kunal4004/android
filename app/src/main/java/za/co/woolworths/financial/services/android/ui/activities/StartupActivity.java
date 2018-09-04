@@ -124,7 +124,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 
 		pBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
 		//Mobile Config Server
-		if (NetworkManager.getInstance().isConnectedToNetwork(StartupActivity.this)) {
+		if (NetworkManager.getInstance().isConnectedToNetwork(this)) {
 			mFirebaseAnalytics.setUserProperty(APP_SERVER_ENVIRONMENT_KEY, StartupActivity.this.environment.isEmpty() ? "prod": StartupActivity.this.environment.toLowerCase());
 			mFirebaseAnalytics.setUserProperty(APP_VERSION_KEY, StartupActivity.this.appVersion);
 

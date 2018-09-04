@@ -1,7 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.activities
 
 import android.support.test.InstrumentationRegistry
-import android.support.test.espresso.Espresso
+import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.matcher.ViewMatchers.isDisplayed
 import android.support.test.espresso.matcher.ViewMatchers.withId
@@ -34,16 +34,20 @@ public class StartupActivityInstrumentedTest {
 
     @Test
     fun testSplashScreen(){
+        //1. When not connected to network, error screen is presented
+        //2. When connected and first time, a splash video is displayed
+        //3. When connected and not first time, loading dialog is displayed
+
         val isConnectedToNetwork = NetworkManager.getInstance().isConnectedToNetwork(activityRule.activity)
         if (!isConnectedToNetwork){
-
+            //expected error layout
+            //errorLayout
+            onView(withId(R.id.errorLayout)).check(matches(isDisplayed()))
         }
-
-
-        if (activityRule.activity.testIsFirstTime()){
-            Espresso.onView(withId(R.id.videoViewLayout)).check(matches(isDisplayed()))
+        else if (activityRule.activity.testIsFirstTime()){
+            onView(withId(R.id.videoViewLayout)).check(matches(isDisplayed()))
         }else{
-            Espresso.onView(withId(R.id.splashNoVideoView)).check(matches(isDisplayed()))
+            onView(withId(R.id.splashNoVideoView)).check(matches(isDisplayed()))
         }
     }
 
