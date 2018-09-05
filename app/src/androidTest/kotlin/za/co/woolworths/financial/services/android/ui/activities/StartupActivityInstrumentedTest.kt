@@ -18,12 +18,15 @@ import za.co.woolworths.financial.services.android.models.dao.MobileConfigServer
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask
 import za.co.woolworths.financial.services.android.util.NetworkManager
+import java.util.concurrent.CountDownLatch
 
 @RunWith(AndroidJUnit4::class)
 public class StartupActivityInstrumentedTest {
 
     @Rule @JvmField
     var activityRule = ActivityTestRule(StartupActivity::class.java, false, false)
+
+    val countDownLatch = CountDownLatch(1)
 
     @Before
     fun setup(){
@@ -60,16 +63,22 @@ public class StartupActivityInstrumentedTest {
 
     @Test
     fun testMobileConfigServer(){
+        var success = false
 
-        //TODO: Wait for a response
         MobileConfigServerDao.queryServiceGetConfig(activityRule.activity, object :OnApiCompletionListener<ConfigResponse>{
             override fun success(responseObject: ConfigResponse) {
                 Assert.assertTrue(responseObject is ConfigResponse)
+                success = true
+                countDownLatch.countDown()
             }
 
             override fun failure(errorMessage: String?, httpErrorCode: HttpAsyncTask.HttpErrorCode?) {
-                Assert.fail("MCS api failed.")
+                success = false
+                countDownLatch.countDown()
             }
         })
+
+        this.countDownLatch.await()
+        Assert.assertTrue(success)
     }
 }

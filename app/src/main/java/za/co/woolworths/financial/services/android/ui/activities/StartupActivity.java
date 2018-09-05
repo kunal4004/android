@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import za.co.woolworths.financial.services.android.contracts.OnApiCompletionListener;
-import za.co.woolworths.financial.services.android.contracts.OnCompletiontListener;
+import za.co.woolworths.financial.services.android.contracts.OnCompletionListener;
 import za.co.woolworths.financial.services.android.contracts.RootActivityInterface;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.MobileConfigServerDao;
@@ -373,14 +373,9 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 		FirebaseRemoteConfig mFirebaseRemoteConfig = FirebaseManager.Companion.getInstance().getRemoteConfig();
 		if (mFirebaseRemoteConfig == null){
 
-			FirebaseManager.Companion.getInstance().setupRemoteConfig(new OnCompletiontListener<FirebaseRemoteConfig>(){
+			FirebaseManager.Companion.getInstance().setupRemoteConfig(new OnCompletionListener(){
 				@Override
-				public void success(FirebaseRemoteConfig object) {
-					executeConfigServer();
-				}
-
-				@Override
-				public void failure(String e) {
+				public void complete() {
 					executeConfigServer();
 				}
 			});

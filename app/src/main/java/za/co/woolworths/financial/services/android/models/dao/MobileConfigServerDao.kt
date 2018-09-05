@@ -4,9 +4,11 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.provider.Settings
 import com.awfs.coordination.R
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import retrofit.RestAdapter
 import za.co.wigroup.androidutils.Util
 import za.co.woolworths.financial.services.android.contracts.OnApiCompletionListener
+import za.co.woolworths.financial.services.android.contracts.OnResultListener
 import za.co.woolworths.financial.services.android.models.ApiInterface
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse
 import za.co.woolworths.financial.services.android.util.FirebaseManager
@@ -25,7 +27,16 @@ class MobileConfigServerDao {
             if (firebaseRemoteConfig == null){
                 //this ensures we're using defaults while the remote config
                 //is yet to be retrieved.
-                FirebaseManager.getInstance().setupRemoteConfig()
+                FirebaseManager.getInstance().setupRemoteConfig(object :OnResultListener<FirebaseRemoteConfig>{
+                    override fun success(`object`: FirebaseRemoteConfig?) { }
+
+                    override fun failure(errorMessage: String?) { }
+
+                    override fun complete() {
+                        queryServiceGetConfig(context, completionListener)
+                    }
+                })
+                return
             }
 
             val task = object : HttpAsyncTask<String, String, ConfigResponse>() {

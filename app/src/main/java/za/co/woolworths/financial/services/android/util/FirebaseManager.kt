@@ -4,12 +4,13 @@ import com.awfs.coordination.BuildConfig
 import com.awfs.coordination.R
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
-import za.co.woolworths.financial.services.android.contracts.OnCompletiontListener
+import za.co.woolworths.financial.services.android.contracts.OnCompletionListener
+import za.co.woolworths.financial.services.android.contracts.OnResultListener
 
 class FirebaseManager {
 
     companion object {
-        private lateinit var instance: FirebaseManager
+        private var instance: FirebaseManager? = null
 
         fun getInstance(): FirebaseManager{
 
@@ -17,30 +18,46 @@ class FirebaseManager {
                 instance = FirebaseManager()
             }
 
-            return instance
+            return instance!!
         }
     }
 
 
     private var remoteConfig: FirebaseRemoteConfig? = null
 
-    fun setupRemoteConfig(completiontListener: OnCompletiontListener<FirebaseRemoteConfig>): FirebaseRemoteConfig{
-        if (remoteConfig == null){
-            this.setupRemoteConfig()
+    fun setupRemoteConfig(completiontListener: OnResultListener<FirebaseRemoteConfig>): FirebaseRemoteConfig{
+        this.setupRemoteConfig()
 
-            remoteConfig!!.fetch().addOnCompleteListener { task ->
-                if (task.isSuccessful){
-                    remoteConfig!!.activateFetched()
-                    completiontListener.success(remoteConfig)
-                }
+        remoteConfig!!.fetch().addOnCompleteListener { task ->
+            if (task.isSuccessful){
+                remoteConfig!!.activateFetched()
+                completiontListener.success(remoteConfig)
+            }
 
-                else{
-                    completiontListener.failure("")
-                }
+            else{
+                remoteConfig!!.setDefaults(R.xml.remote_config_defaults)
+                completiontListener.failure("")
             }
         }
 
         return remoteConfig!!
+    }
+
+    fun setupRemoteConfig(onCompletionListener: OnCompletionListener){
+        this.setupRemoteConfig(object :OnResultListener<FirebaseRemoteConfig>{
+
+            override fun success(`object`: FirebaseRemoteConfig?) {
+
+            }
+
+            override fun failure(errorMessage: String?) {
+
+            }
+
+            override fun complete() {
+                onCompletionListener.complete()
+            }
+        })
     }
 
     fun setupRemoteConfig(){
@@ -50,7 +67,6 @@ class FirebaseManager {
                     .setDeveloperModeEnabled(BuildConfig.DEBUG)
                     .build()
             remoteConfig!!.setConfigSettings(configSettings)
-            remoteConfig!!.setDefaults(R.xml.remote_config_defaults)
         }
     }
 
