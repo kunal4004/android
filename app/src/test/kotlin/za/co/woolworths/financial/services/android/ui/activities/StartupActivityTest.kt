@@ -1,9 +1,11 @@
 package za.co.woolworths.financial.services.android.ui.activities
 
+import com.awfs.coordination.R
 import junit.framework.Assert
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
+import java.util.*
 import org.mockito.Mockito.`when` as _when
 
 class StartupActivityTest {
@@ -34,8 +36,21 @@ class StartupActivityTest {
         //execution
         var random = this.startupActivity.testGetRandomVideos()
 
+        //test setup
+        val listOfVideo = ArrayList<String>()
+        listOfVideo.add(R.raw.food_broccoli.toString())
+        listOfVideo.add(R.raw.food_chocolate.toString())
+
         //tests
-        Assert.assertTrue(random.contains("//$mockPackageName"))
+        var videoResourceName = ""
+        for (s: String in listOfVideo){
+            if (random.contains(s)){
+                videoResourceName = s
+                break
+            }
+        }
+
+        Assert.assertEquals("android.resource://$mockPackageName/$videoResourceName", random)
     }
 
 
