@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.activities
 
 import junit.framework.Assert
 import org.junit.Before
+import org.junit.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.`when` as _when
 
@@ -19,6 +20,21 @@ class StartupActivityTest {
 
         //usage of startupActivity should work now
         Assert.assertNotNull(this.startupActivity)
+    }
+
+    @Test
+    fun testRandomVideos(){
+        val mockPackageName = "OneApp.Awesome"
+
+        //expectations
+        _when(this.startupActivity.packageName).thenReturn(mockPackageName)
+        _when(this.startupActivity.testGetRandomVideos()).thenCallRealMethod()
+
+        //execution
+        var random = this.startupActivity.testGetRandomVideos()
+
+        //tests
+        Assert.assertTrue(random.contains("//$mockPackageName"))
     }
 
 

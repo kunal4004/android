@@ -4,10 +4,9 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.provider.Settings
 import com.awfs.coordination.R
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import retrofit.RestAdapter
 import za.co.wigroup.androidutils.Util
-import za.co.woolworths.financial.services.android.contracts.OnApiCompletionListener
+import za.co.woolworths.financial.services.android.contracts.OnCompletionListener
 import za.co.woolworths.financial.services.android.contracts.OnResultListener
 import za.co.woolworths.financial.services.android.models.ApiInterface
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse
@@ -17,9 +16,10 @@ import za.co.woolworths.financial.services.android.util.HttpAsyncTask
 class MobileConfigServerDao {
 
     //static vars & functions
+
     companion object {
 
-        fun queryServiceGetConfig(context: Context, completionListener: OnApiCompletionListener<ConfigResponse>) {
+        fun getConfig(context: Context, onResultListener: OnResultListener<ConfigResponse>) {
 
             var firebaseRemoteConfig = FirebaseManager.getInstance().getRemoteConfig()
             val deviceID = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -27,13 +27,10 @@ class MobileConfigServerDao {
             if (firebaseRemoteConfig == null){
                 //this ensures we're using defaults while the remote config
                 //is yet to be retrieved.
-                FirebaseManager.getInstance().setupRemoteConfig(object :OnResultListener<FirebaseRemoteConfig>{
-                    override fun success(`object`: FirebaseRemoteConfig?) { }
-
-                    override fun failure(errorMessage: String?) { }
+                FirebaseManager.getInstance().setupRemoteConfig(object :OnCompletionListener{
 
                     override fun complete() {
-                        queryServiceGetConfig(context, completionListener)
+                        getConfig(context, onResultListener)
                     }
                 })
                 return
@@ -69,7 +66,7 @@ class MobileConfigServerDao {
                 }
 
                 override fun httpError(errorMessage: String, httpErrorCode: HttpAsyncTask.HttpErrorCode): ConfigResponse {
-                    completionListener.failure(errorMessage, httpErrorCode)
+                    onResultListener.failure(errorMessage, httpErrorCode)
                     return ConfigResponse()
                 }
 
@@ -78,7 +75,8 @@ class MobileConfigServerDao {
                 }
 
                 override fun onPostExecute(configResponse: ConfigResponse) {
-                    completionListener.success(configResponse)
+                    onResultListener.success(configResponse)
+                    onResultListener.complete()
                 }
             }
 

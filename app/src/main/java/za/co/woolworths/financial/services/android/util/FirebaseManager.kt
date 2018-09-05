@@ -25,42 +25,11 @@ class FirebaseManager {
 
     private var remoteConfig: FirebaseRemoteConfig? = null
 
-    fun setupRemoteConfig(completiontListener: OnResultListener<FirebaseRemoteConfig>): FirebaseRemoteConfig{
-        this.setupRemoteConfig()
-
-        remoteConfig!!.fetch().addOnCompleteListener { task ->
-            if (task.isSuccessful){
-                remoteConfig!!.activateFetched()
-                completiontListener.success(remoteConfig)
-            }
-
-            else{
-                remoteConfig!!.setDefaults(R.xml.remote_config_defaults)
-                completiontListener.failure("")
-            }
-        }
-
-        return remoteConfig!!
+    fun getRemoteConfig() :FirebaseRemoteConfig?{
+        return remoteConfig
     }
 
-    fun setupRemoteConfig(onCompletionListener: OnCompletionListener){
-        this.setupRemoteConfig(object :OnResultListener<FirebaseRemoteConfig>{
-
-            override fun success(`object`: FirebaseRemoteConfig?) {
-
-            }
-
-            override fun failure(errorMessage: String?) {
-
-            }
-
-            override fun complete() {
-                onCompletionListener.complete()
-            }
-        })
-    }
-
-    fun setupRemoteConfig(){
+    private fun setupRemoteConfig(){
         if (remoteConfig == null){
             remoteConfig = FirebaseRemoteConfig.getInstance()
             val configSettings = FirebaseRemoteConfigSettings.Builder()
@@ -70,7 +39,42 @@ class FirebaseManager {
         }
     }
 
-    fun getRemoteConfig() :FirebaseRemoteConfig?{
-        return remoteConfig
+    fun setupRemoteConfig(onResultListener: OnResultListener<FirebaseRemoteConfig>): FirebaseRemoteConfig{
+        this.setupRemoteConfig()
+
+        remoteConfig!!.fetch().addOnCompleteListener { task ->
+            if (task.isSuccessful){
+                remoteConfig!!.activateFetched()
+                onResultListener.success(remoteConfig)
+            }
+
+            else{
+                remoteConfig!!.setDefaults(R.xml.remote_config_defaults)
+                onResultListener.failure(task.exception?.message, HttpAsyncTask.HttpErrorCode.UNKOWN_ERROR)
+            }
+        }
+
+        return remoteConfig!!
+    }
+
+    fun setupRemoteConfig(onCompletionListener: OnCompletionListener){
+        //in this overloaded method,
+        //we're not concerned with the status
+        //but rather the completion of the request.
+
+        this.setupRemoteConfig(object :OnResultListener<FirebaseRemoteConfig>{
+
+            override fun success(`object`: FirebaseRemoteConfig?) {
+
+            }
+
+            override fun failure(errorMessage: String?, httpErrorCode: HttpAsyncTask.HttpErrorCode?) {
+
+            }
+
+            override fun complete() {
+                onCompletionListener.complete()
+            }
+        })
     }
 }

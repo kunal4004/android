@@ -24,8 +24,8 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import za.co.woolworths.financial.services.android.contracts.OnApiCompletionListener;
 import za.co.woolworths.financial.services.android.contracts.OnCompletionListener;
+import za.co.woolworths.financial.services.android.contracts.OnResultListener;
 import za.co.woolworths.financial.services.android.contracts.RootActivityInterface;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.MobileConfigServerDao;
@@ -154,7 +154,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 			return;
 		}
 
-		MobileConfigServerDao.Companion.queryServiceGetConfig(this, new OnApiCompletionListener<ConfigResponse>() {
+		MobileConfigServerDao.Companion.getConfig(this, new OnResultListener<ConfigResponse>() {
 			@Override
 			public void success(ConfigResponse configResponse) {
 				try {
@@ -199,6 +199,11 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 			@Override
 			public void failure(String errorMessage, HttpAsyncTask.HttpErrorCode httpErrorCode) {
 				showNonVideoViewWithErrorLayout();
+			}
+
+			@Override
+			public void complete() {
+
 			}
 		});
 	}
@@ -387,5 +392,9 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 
 	public boolean testIsFirstTime(){
 		return this.isFirstTime();
+	}
+
+	public String testGetRandomVideos(){
+		return getRandomVideos();
 	}
 }
