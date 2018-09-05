@@ -918,7 +918,7 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
         }, mDelayInMillis);
 
         updateDismissButton();
-
+        Utils.saveFeatureWalkthoughShowcase(feature);
         return true;
     }
 
@@ -935,7 +935,6 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
         } else {
             removeFromWindow();
         }
-        Utils.saveFeatureWalkthoughShowcase(feature);
     }
 
     public boolean isDismissed() {

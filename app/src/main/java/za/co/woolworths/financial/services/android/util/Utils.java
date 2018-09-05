@@ -1259,4 +1259,11 @@ public class Utils {
 	public static boolean isFeatureWalkThroughTutorialsEnabled() {
 		return AppInstanceObject.get().featureWalkThrough.showTutorials;
 	}
+
+	public static boolean isFeatureTutorialsDismissed(WMaterialShowcaseView wMaterialShowcaseView) {
+		if (wMaterialShowcaseView == null)
+			return true;
+		else
+			return wMaterialShowcaseView.isDismissed() ? true : false;
+	}
 }

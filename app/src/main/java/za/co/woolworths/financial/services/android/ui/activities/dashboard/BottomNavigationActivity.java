@@ -539,6 +539,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		@Override
 		public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
+			// To avoid clicks while feature tutorial popup showing
+			if (!Utils.isFeatureTutorialsDismissed(walkThroughPromtView))
+				return false;
+
 			statusBarColor(R.color.white);
 			MultiClickPreventer.preventMultiClick(getViewDataBinding().wBottomNavigation);
 			switch (item.getItemId()) {

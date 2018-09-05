@@ -265,6 +265,11 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
 	@Override
 	public void onClick(View view) {
+
+		// To avoid clicks while feature tutorial popup showing
+		if (!Utils.isFeatureTutorialsDismissed(ProductDetailsActivity.walkThroughPromtView))
+			return;
+
 		switch (view.getId()) {
 			case R.id.imClose:
 				getActivity().onBackPressed();
