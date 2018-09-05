@@ -24,7 +24,8 @@ class StartupActivityTest {
 
     @Test
     fun testRandomVideos(){
-        val mockPackageName = "OneApp.Awesome"
+        val environment = com.awfs.coordination.BuildConfig.FLAVOR
+        val mockPackageName = "com.awfs.coordination" + (if (environment == "production") "" else ".$environment")
 
         //expectations
         _when(this.startupActivity.packageName).thenReturn(mockPackageName)
