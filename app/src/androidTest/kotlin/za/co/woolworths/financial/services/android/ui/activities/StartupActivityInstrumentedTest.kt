@@ -13,7 +13,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import za.co.woolworths.financial.services.android.models.dao.ApiResponseHandler
+import za.co.woolworths.financial.services.android.contracts.OnApiCompletionListener
+import za.co.woolworths.financial.services.android.models.dao.MobileConfigServerDao
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask
 import za.co.woolworths.financial.services.android.util.NetworkManager
@@ -38,10 +39,7 @@ public class StartupActivityInstrumentedTest {
         //2. When connected and first time, a splash video is displayed
         //3. When connected and not first time, loading dialog is displayed
 
-        val isConnectedToNetwork = NetworkManager.getInstance().isConnectedToNetwork(activityRule.activity)
-        if (!isConnectedToNetwork){
-            //expected error layout
-            //errorLayout
+        if (!NetworkManager.getInstance().isConnectedToNetwork(activityRule.activity)){
             onView(withId(R.id.errorLayout)).check(matches(isDisplayed()))
         }
         else if (activityRule.activity.testIsFirstTime()){
@@ -62,14 +60,16 @@ public class StartupActivityInstrumentedTest {
 
     @Test
     fun testMobileConfigServer(){
-        activityRule.activity.testQueryServiceGetConfig(object: ApiResponseHandler {
-            override fun success(responseObject: Any) {
+
+        //TODO: Wait for a response
+        MobileConfigServerDao.queryServiceGetConfig(activityRule.activity, object :OnApiCompletionListener<ConfigResponse>{
+            override fun success(responseObject: ConfigResponse) {
                 Assert.assertTrue(responseObject is ConfigResponse)
             }
 
             override fun failure(errorMessage: String?, httpErrorCode: HttpAsyncTask.HttpErrorCode?) {
                 Assert.fail("MCS api failed.")
             }
-        });
+        })
     }
 }

@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.activities
 
 import junit.framework.Assert
 import org.junit.Before
-import org.junit.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.`when` as _when
 
@@ -23,7 +22,7 @@ class StartupActivityTest {
     }
 
 
-    @Test
+    /*@Test
     fun testFirebaseRemoteConfig(){
 
         //real methods to execute
@@ -41,5 +40,5 @@ class StartupActivityTest {
     fun testAppIsExpired(){
 
         //startupActivity
-    }
+    }*/
 }
