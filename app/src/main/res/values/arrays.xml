@@ -179,24 +179,36 @@
     </integer-array>
 
     <string-array name="tips_tricks_descriptions">
-        <item>@string/tips_tricks_desc_vouchers</item>
-        <item>@string/tips_tricks_desc_stores</item>
+        <item>@string/tips_tricks_desc_navigation</item>
         <item>@string/tips_tricks_desc_barcode</item>
+        <item>@string/tips_tricks_desc_stores</item>
         <item>@string/tips_tricks_desc_delivery</item>
+        <item>@string/tips_tricks_desc_vouchers</item>
+        <item>@string/tips_tricks_desc_my_accounts</item>
+        <item>@string/tips_tricks_desc_statements</item>
+        <item>@string/tips_tricks_desc_shopping_list</item>
     </string-array>
 
     <string-array name="tips_tricks_titles">
-        <item>@string/tips_tricks_titles_vouchers</item>
-        <item>@string/tips_tricks_titles_stores</item>
+        <item>@string/tips_tricks_titles_navigation</item>
         <item>@string/tips_tricks_titles_barcode</item>
+        <item>@string/tips_tricks_titles_stores</item>
         <item>@string/tips_tricks_titles_delivery</item>
+        <item>@string/tips_tricks_titles_vouchers</item>
+        <item>@string/tips_tricks_titles_my_accounts</item>
+        <item>@string/tips_tricks_titles_statements</item>
+        <item>@string/tips_tricks_titles_shopping_list</item>
     </string-array>
 
     <string-array name="tips_tricks_buttons">
-        <item>@string/tips_tricks_button_vouchers</item>
-        <item>@string/tips_tricks_button_stores</item>
+        <item>@string/tips_tricks_button_navigation</item>
         <item>@string/tips_tricks_button_barcode</item>
+        <item>@string/tips_tricks_button_stores</item>
         <item>@string/tips_tricks_button_delivery</item>
+        <item>@string/tips_tricks_titles_vouchers</item>
+        <item>@string/tips_tricks_titles_my_accounts</item>
+        <item>@string/tips_tricks_titles_statements</item>
+        <item>@string/tips_tricks_titles_shopping_list</item>
     </string-array>
 
     <integer-array name="tips_tricks_icons">
@@ -204,12 +216,42 @@
         <item>@drawable/tips_tricks_ic_stores</item>
         <item>@drawable/tips_tricks_ic_scan</item>
         <item>@drawable/tips_tricks_ic_delivery</item>
+        <item>@drawable/tips_tricks_ic_coupon</item>
+        <item>@drawable/tips_tricks_ic_stores</item>
+        <item>@drawable/tips_tricks_ic_scan</item>
+        <item>@drawable/tips_tricks_ic_delivery</item>
     </integer-array>
 
     <integer-array name="tips_tricks_images">
-        <item>@drawable/tips_tricks_vouchers</item>
-        <item>@drawable/tips_tricks_stores</item>
+        <item>@drawable/tips_tricks_navigation</item>
         <item>@drawable/tips_tricks_barcode</item>
+        <item>@drawable/tips_tricks_stores</item>
         <item>@drawable/tips_tricks_delivery_location</item>
+        <item>@drawable/tips_tricks_vouchers</item>
+        <item>@drawable/tips_tricks_my_accounts</item>
+        <item>@drawable/tips_tricks_statements</item>
+        <item>@drawable/tips_tricks_shopping_list</item>
     </integer-array>
+
+    <integer-array name="tips_tricks_list_item_icons">
+        <item>@drawable/ic_drw_tww</item>
+        <item>@drawable/barcode</item>
+        <item>@drawable/mapview</item>
+        <item>@drawable/ic_delivery_truck</item>
+        <item>@drawable/icon_wreward</item>
+        <item>@drawable/barcode</item>
+        <item>@drawable/mapview</item>
+        <item>@drawable/ic_delivery_truck</item>
+    </integer-array>
+
+    <string-array name="tips_tricks_item_names">
+        <item>@string/navigation</item>
+        <item>@string/tips_tricks_titles_barcode</item>
+        <item>@string/tips_tricks_titles_stores</item>
+        <item>@string/tips_tricks_titles_delivery</item>
+        <item>@string/tips_tricks_titles_vouchers</item>
+        <item>@string/my_accounts</item>
+        <item>@string/tips_tricks_titles_statements</item>
+        <item>@string/tips_tricks_titles_shopping_list</item>
+    </string-array>
 </resources>
