@@ -212,14 +212,14 @@
     </string-array>
 
     <integer-array name="tips_tricks_icons">
-        <item>@drawable/tips_tricks_ic_coupon</item>
-        <item>@drawable/tips_tricks_ic_stores</item>
+        <item>@drawable/tips_tricks_ic_navigation</item>
         <item>@drawable/tips_tricks_ic_scan</item>
+        <item>@drawable/tips_tricks_ic_stores</item>
         <item>@drawable/tips_tricks_ic_delivery</item>
         <item>@drawable/tips_tricks_ic_coupon</item>
-        <item>@drawable/tips_tricks_ic_stores</item>
-        <item>@drawable/tips_tricks_ic_scan</item>
-        <item>@drawable/tips_tricks_ic_delivery</item>
+        <item>@drawable/tips_tricks_ic_my_accounts</item>
+        <item>@drawable/tips_tricks_ic_statements</item>
+        <item>@drawable/tips_tricks_ic_shopping_list</item>
     </integer-array>
 
     <integer-array name="tips_tricks_images">
