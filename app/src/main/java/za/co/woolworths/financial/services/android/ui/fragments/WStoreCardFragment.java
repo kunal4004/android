@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.SpannableString;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import com.awfs.coordination.R;
 import com.google.gson.Gson;
 
 import java.text.ParseException;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -37,6 +39,7 @@ import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.rest.cli.CLIGetOfferActive;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
@@ -55,6 +58,8 @@ import za.co.woolworths.financial.services.android.util.controller.IncreaseLimit
 
 public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle, NetworkChangeListener {
 
+	public static int RESULT_CODE_FUNDS_INFO = 50;
+
 	public WTextView availableBalance;
 	public WTextView creditLimit;
 	public WTextView dueDate;
@@ -63,6 +68,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	public WTextView tvViewTransaction;
 	public WTextView tvIncreaseLimit;
 	public WTextView tvIncreaseLimitDescription;
+
+	private ImageView iconAvailableFundsInfo;
 
 	String productOfferingId;
 	WoolworthsApplication woolworthsApplication;
@@ -145,6 +152,9 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		tvIncreaseLimitDescription = (WTextView) view.findViewById(R.id.tvIncreaseLimitDescription);
 		relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
 		rlViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
+
+		iconAvailableFundsInfo = view.findViewById(R.id.iconAvailableFundsInfo);
+		iconAvailableFundsInfo.setOnClickListener(this);
 
 		mRelFindOutMore = (RelativeLayout) view.findViewById(R.id.relFindOutMore);
 		mRelIncreaseMyLimit = (RelativeLayout) view.findViewById(R.id.relIncreaseMyLimit);
@@ -261,6 +271,14 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 					startActivity(openStatement);
 					activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				}
+				break;
+			case R.id.iconAvailableFundsInfo:
+				Utils.displayValidationMessageForResult(
+						getActivity(),
+						CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC,
+						"YOUR ACCOUNT IS IN ARREARS",
+						"Your Woolies Store Card is in arrears, please make an immediate minimum payment of Rxxx.xx in order to continue shopping.\n\nFor assistance, call us on 0861 50 20 20",
+						RESULT_CODE_FUNDS_INFO);
 				break;
 			default:
 				break;

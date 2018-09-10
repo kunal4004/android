@@ -10,6 +10,13 @@
     <string name="credit_limit">Credit Limit:</string>
     <string name="available_funds">Available funds</string>
     <string name="next_payment_date">Next Payment Due:</string>
+    <string name="total_amount_due">Total Amount Due:</string>
+    <string name="amount_overdue">Amount Overdue:</string>
+    <string name="balance_at_statement_date">Balance At Statement Date:</string>
+    <string name="account_status">ACCOUNT STATUS</string>
+    <string name="how_to_pay">HOW TO PAY</string>
+    <string name="account_in_arrears">ACCOUNT IN ARREARS</string>
+    <string name="account_in_arrears_6_months">YOUR ACCOUNT IS MORE THAN 6 MONTHS IN ARREARS.</string>
     <string name="minimum_payment">Amount Due</string>
     <string name="next">NEXT</string>
     <string name="current_balance">Current Balance:</string>
@@ -437,6 +444,7 @@
     <string name="partner_spouse_desc">Balance protection insurance for your spouse or partner can also be arranged. An additional monthly premium will be charged.</string>
 
     <string name="instore_withdraw_cash_now">Withdraw Cash Now</string>
+    <string name="debit_orders">Debit Orders</string>
 
     <string name="stock_finder_map_view">map view</string>
     <string name="stock_finder_list_view">list view</string>

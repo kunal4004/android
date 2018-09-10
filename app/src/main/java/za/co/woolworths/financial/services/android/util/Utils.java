@@ -1213,6 +1213,17 @@ public class Utils {
 		((AppCompatActivity) context).overridePendingTransition(0, 0);
 	}
 
+	public static void displayValidationMessageForResult(Activity context, CustomPopUpWindow.MODAL_LAYOUT key, String title, String description, int requestCode) {
+		Intent openMsg = new Intent(context, CustomPopUpWindow.class);
+		Bundle args = new Bundle();
+		args.putSerializable("key", key);
+		args.putString("title", title);
+		args.putString("description", description);
+		openMsg.putExtras(args);
+		context.startActivityForResult(openMsg, requestCode);
+		((AppCompatActivity) context).overridePendingTransition(0, 0);
+	}
+
 	public static String toTitleCase(String givenString) {
 		String words[] = givenString.replaceAll("\\s+", " ").trim().split(" ");
 		String newSentence = "";
