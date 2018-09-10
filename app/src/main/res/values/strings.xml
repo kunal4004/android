@@ -694,5 +694,6 @@
     <string name="how_to_pay_3">At any Woolworths store</string>
     <string name="how_to_pay_4">At any Absa Bank branch</string>
     <string name="how_to_pay_bank_details">BANKING DETAILS (EFT &amp; Direct Deposits)</string>
+    <string name="title_how_to_pay">How To Pay</string>
 
 </resources>
