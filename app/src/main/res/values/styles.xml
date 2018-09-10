@@ -1209,4 +1209,23 @@
         <item name="android:windowIsFloating">false</item>
         <item name="android:windowCloseOnTouchOutside">true</item>
     </style>
+
+    <style name="black_circle_with_number">
+        <item name="android:layout_width">@dimen/twenty_four_dp</item>
+        <item name="android:layout_height">@dimen/twenty_four_dp</item>
+        <item name="android:background">@drawable/circle_black</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_marginRight">@dimen/sixteen_dp</item>
+        <item name="WTextView_font">medium_bold</item>
+    </style>
+
+    <style name="layout_with_top_border">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/fifty_dp</item>
+        <item name="android:background">@drawable/top_border</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
 </resources>
