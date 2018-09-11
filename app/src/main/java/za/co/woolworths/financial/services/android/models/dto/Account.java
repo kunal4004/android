@@ -17,9 +17,9 @@ public class Account {
     public String productGroupCode;
     public String accountNumberBin;
     public String productOfferingStatus;
-    public String productOfferingGoodStanding;
-    public String totalAmountDue;
-    public String amountOverdue;
+    public boolean productOfferingGoodStanding;
+    public int totalAmountDue;
+    public int amountOverdue;
     public String insuranceCovered;
     public List<PaymentMethod> paymentMethods;
     public JsonElement bankingDetails;

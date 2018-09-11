@@ -36,6 +36,7 @@ import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.rest.cli.CLIGetOfferActive;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -72,6 +73,12 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	private final CompositeDisposable disposables = new CompositeDisposable();
 	private CLIGetOfferActive cliGetOfferActive;
 	private AccountsResponse accountsResponse;
+	private LinearLayout accountInArrearsLayout;
+	private WTextView tvHowToPayAccountStatus;
+    private WTextView tvAmountOverdue;
+    private WTextView tvTotalAmountDue;
+	private ImageView iconAvailableFundsInfo;
+	public static int RESULT_CODE_FUNDS_INFO = 70;
 
 	@Nullable
 	@Override
@@ -138,6 +145,11 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		llCommonLayer = (LinearLayout) view.findViewById(R.id.llCommonLayer);
 		llIncreaseLimitContainer = (LinearLayout) view.findViewById(R.id.llIncreaseLimitContainer);
 		logoIncreaseLimit = (ImageView) view.findViewById(R.id.logoIncreaseLimit);
+		accountInArrearsLayout = view.findViewById(R.id.llAccountInArrearsParentContainer);
+		tvHowToPayAccountStatus = view.findViewById(R.id.howToPayAccountStatus);
+        tvAmountOverdue = view.findViewById(R.id.amountOverdue);
+        tvTotalAmountDue = view.findViewById(R.id.totalAmountDue);
+		iconAvailableFundsInfo = view.findViewById(R.id.iconAvailableFundsInfo);
 
 		RelativeLayout relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
 		RelativeLayout rlViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
@@ -151,6 +163,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		llIncreaseLimitContainer.setOnClickListener(this);
 		mRelIncreaseMyLimit.setOnClickListener(this);
 		mRelFindOutMore.setOnClickListener(this);
+		iconAvailableFundsInfo.setOnClickListener(this);
 	}
 
 	private void addListener() {
@@ -196,6 +209,15 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 						dueDate.setText(p.paymentDueDate);
 						WiGroupLogger.e(getActivity(), "TAG", e.getMessage(), e);
 					}
+					iconAvailableFundsInfo.setVisibility(p.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
+                    availableBalance.setTextColor(getResources().getColor(p.productOfferingGoodStanding ? R.color.black : R.color.bg_overlay));
+                    accountInArrearsLayout.setVisibility(p.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
+					llIncreaseLimitContainer.setVisibility(p.productOfferingGoodStanding ? View.VISIBLE : View.GONE);
+					tvHowToPayAccountStatus.setVisibility(p.productOfferingGoodStanding ? View.VISIBLE : View.INVISIBLE);
+                    if(!p.productOfferingGoodStanding){
+                        tvAmountOverdue.setText(WFormatter.newAmountFormat(p.amountOverdue));
+                        tvTotalAmountDue.setText(WFormatter.newAmountFormat(p.totalAmountDue));
+                    }
 				}
 			}
 		}
@@ -228,7 +250,14 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 					mIncreaseLimitController.nextStep(offerActive, productOfferingId);
 				}
 				break;
-
+			case R.id.iconAvailableFundsInfo:
+				Utils.displayValidationMessageForResult(
+						getActivity(),
+						CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC,
+						"YOUR ACCOUNT IS IN ARREARS",
+						"Your Woolies Store Card is in arrears, please make an immediate minimum payment of Rxxx.xx in order to continue shopping.\n\nFor assistance, call us on 0861 50 20 20",
+						RESULT_CODE_FUNDS_INFO);
+				break;
 			case R.id.relFindOutMore:
 				if (controllerNotNull())
 					mIncreaseLimitController.intentFindOutMore(getActivity(), offerActive);

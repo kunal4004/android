@@ -94,6 +94,10 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	private final CompositeDisposable disposables = new CompositeDisposable();
 	private RelativeLayout rlViewStatement;
 	private AccountsResponse accountsResponse;
+	private LinearLayout accountInArrearsLayout;
+	private WTextView tvHowToPayAccountStatus;
+	private WTextView tvAmountOverdue;
+	private WTextView tvTotalAmountDue;
 
 	@Nullable
 	@Override
@@ -162,6 +166,10 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		llCommonLayer = (LinearLayout) view.findViewById(R.id.llCommonLayer);
 		llIncreaseLimitContainer = (LinearLayout) view.findViewById(R.id.llIncreaseLimitContainer);
 		logoIncreaseLimit = (ImageView) view.findViewById(R.id.logoIncreaseLimit);
+		accountInArrearsLayout = view.findViewById(R.id.llAccountInArrearsParentContainer);
+		tvHowToPayAccountStatus = view.findViewById(R.id.howToPayAccountStatus);
+		tvAmountOverdue = view.findViewById(R.id.amountOverdue);
+		tvTotalAmountDue = view.findViewById(R.id.totalAmountDue);
 	}
 
 	//To remove negative signs from negative balance and add "CR" after the negative balance
@@ -199,6 +207,15 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 					} catch (ParseException e) {
 						dueDate.setText(p.paymentDueDate);
 						WiGroupLogger.e(getActivity(), "TAG", e.getMessage(), e);
+					}
+					iconAvailableFundsInfo.setVisibility(p.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
+					availableBalance.setTextColor(getResources().getColor(p.productOfferingGoodStanding ? R.color.black : R.color.bg_overlay));
+					accountInArrearsLayout.setVisibility(p.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
+					llIncreaseLimitContainer.setVisibility(p.productOfferingGoodStanding ? View.VISIBLE : View.GONE);
+					tvHowToPayAccountStatus.setVisibility(p.productOfferingGoodStanding ? View.VISIBLE : View.INVISIBLE);
+					if(!p.productOfferingGoodStanding){
+						tvAmountOverdue.setText(WFormatter.newAmountFormat(p.amountOverdue));
+						tvTotalAmountDue.setText(WFormatter.newAmountFormat(p.totalAmountDue));
 					}
 				}
 			}

@@ -36,6 +36,7 @@ import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.rest.cli.CLIGetOfferActive;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.LoanWithdrawalActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
@@ -80,6 +81,12 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	private final CompositeDisposable disposables = new CompositeDisposable();
 	private RelativeLayout rlViewStatement;
 	private AccountsResponse accountsResponse;
+	private LinearLayout accountInArrearsLayout;
+	private WTextView tvHowToPayAccountStatus;
+	private WTextView tvAmountOverdue;
+	private WTextView tvTotalAmountDue;
+	private ImageView iconAvailableFundsInfo;
+	public static int RESULT_CODE_FUNDS_INFO = 60;
 
 	@Nullable
 	@Override
@@ -150,6 +157,11 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 
 		relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
 		relViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
+		accountInArrearsLayout = view.findViewById(R.id.llAccountInArrearsParentContainer);
+		tvHowToPayAccountStatus = view.findViewById(R.id.howToPayAccountStatus);
+		tvAmountOverdue = view.findViewById(R.id.amountOverdue);
+		tvTotalAmountDue = view.findViewById(R.id.totalAmountDue);
+		iconAvailableFundsInfo = view.findViewById(R.id.iconAvailableFundsInfo);
 	}
 
 	private void addListener() {
@@ -162,6 +174,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		mRelIncreaseMyLimit.setOnClickListener(this);
 		llIncreaseLimitContainer.setOnClickListener(this);
 		rlViewStatement.setOnClickListener(this);
+		iconAvailableFundsInfo.setOnClickListener(this);
 		connectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
 	}
 
@@ -225,6 +238,15 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 					} catch (ParseException ex) {
 						dueDate.setText(p.paymentDueDate);
 					}
+                    iconAvailableFundsInfo.setVisibility(p.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
+                    availableBalance.setTextColor(getResources().getColor(p.productOfferingGoodStanding ? R.color.black : R.color.bg_overlay));
+					accountInArrearsLayout.setVisibility(p.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
+					llIncreaseLimitContainer.setVisibility(p.productOfferingGoodStanding ? View.VISIBLE : View.GONE);
+					tvHowToPayAccountStatus.setVisibility(p.productOfferingGoodStanding ? View.VISIBLE : View.INVISIBLE);
+					if(!p.productOfferingGoodStanding){
+						tvAmountOverdue.setText(WFormatter.newAmountFormat(p.amountOverdue));
+						tvTotalAmountDue.setText(WFormatter.newAmountFormat(p.totalAmountDue));
+					}
 				}
 			}
 		}
@@ -278,7 +300,14 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 				if (controllerNotNull())
 					mIncreaseLimitController.nextStep(offerActive, productOfferingId);
 				break;
-
+			case R.id.iconAvailableFundsInfo:
+				Utils.displayValidationMessageForResult(
+						getActivity(),
+						CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC,
+						"YOUR ACCOUNT IS IN ARREARS",
+						"Your Woolies Store Card is in arrears, please make an immediate minimum payment of Rxxx.xx in order to continue shopping.\n\nFor assistance, call us on 0861 50 20 20",
+						RESULT_CODE_FUNDS_INFO);
+				break;
 			default:
 				break;
 		}

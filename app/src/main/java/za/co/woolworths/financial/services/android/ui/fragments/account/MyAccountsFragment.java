@@ -273,7 +273,8 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 					linkedStoreCardView.setVisibility(View.VISIBLE);
 					applyStoreCardView.setVisibility(View.GONE);
 					sc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
-					break;
+                    sc_available_funds.setTextColor(getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
+                    break;
 				case "CC":
 					linkedCreditCardView.setVisibility(View.VISIBLE);
 					applyCreditCardView.setVisibility(View.GONE);
@@ -285,13 +286,13 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 					} else if (account.accountNumberBin.equalsIgnoreCase(Utils.BLACK_CARD)) {
 						imgCreditCard.setBackgroundResource(R.drawable.small_3);
 					}
-
+                    cc_available_funds.setTextColor(getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
 					cc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
 					break;
 				case "PL":
 					linkedPersonalCardView.setVisibility(View.VISIBLE);
 					applyPersonalCardView.setVisibility(View.GONE);
-
+                    pl_available_funds.setTextColor(getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
 					pl_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
 					break;
 			}
