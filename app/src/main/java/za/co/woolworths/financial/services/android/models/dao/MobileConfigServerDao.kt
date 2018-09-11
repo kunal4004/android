@@ -21,13 +21,14 @@ class MobileConfigServerDao {
 
         fun getConfig(context: Context, onResultListener: OnResultListener<ConfigResponse>) {
 
-            var firebaseRemoteConfig = FirebaseManager.getInstance().getRemoteConfig()
+            val firebaseManager = FirebaseManager.getInstance()
+            var firebaseRemoteConfig = firebaseManager.getRemoteConfig()
             val deviceID = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
 
             if (firebaseRemoteConfig == null){
                 //this ensures we're using defaults while the remote config
                 //is yet to be retrieved.
-                FirebaseManager.getInstance().setupRemoteConfig(object :OnCompletionListener{
+                firebaseManager.setupRemoteConfig(object :OnCompletionListener{
 
                     override fun complete() {
                         getConfig(context, onResultListener)
@@ -38,7 +39,7 @@ class MobileConfigServerDao {
 
             val task = object : HttpAsyncTask<String, String, ConfigResponse>() {
                 override fun httpDoInBackground(vararg strings: String): ConfigResponse {
-                    val appName = firebaseRemoteConfig?.getString("mcs_appName")
+                    val appName = firebaseRemoteConfig.getString("mcs_appName")
                     var appVersion = ""
                     var environment = ""
 
@@ -62,7 +63,7 @@ class MobileConfigServerDao {
                             .build()
                             .create(ApiInterface::class.java)
 
-                    return mApiInterface.getConfig(firebaseRemoteConfig?.getString("mcs_appApiKey"), deviceID, mcsAppVersion)
+                    return mApiInterface.getConfig(firebaseRemoteConfig.getString("mcs_appApiKey"), deviceID, mcsAppVersion)
                 }
 
                 override fun httpError(errorMessage: String, httpErrorCode: HttpAsyncTask.HttpErrorCode): ConfigResponse {

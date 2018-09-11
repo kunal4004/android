@@ -7,6 +7,7 @@ import android.graphics.PorterDuff;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -24,6 +25,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import za.co.woolworths.financial.services.android.contracts.IFirebaseManager;
 import za.co.woolworths.financial.services.android.contracts.OnCompletionListener;
 import za.co.woolworths.financial.services.android.contracts.OnResultListener;
 import za.co.woolworths.financial.services.android.contracts.RootActivityInterface;
@@ -375,7 +377,8 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 	@Override
 	public void notifyIfNeeded() {
 
-		FirebaseRemoteConfig mFirebaseRemoteConfig = FirebaseManager.Companion.getInstance().getRemoteConfig();
+		final IFirebaseManager firebaseManager = this.getFirebaseManager();
+		FirebaseRemoteConfig mFirebaseRemoteConfig = firebaseManager.getRemoteConfig();
 		if (mFirebaseRemoteConfig == null){
 
 			FirebaseManager.Companion.getInstance().setupRemoteConfig(new OnCompletionListener(){
@@ -390,10 +393,17 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 		}
 	}
 
+	@VisibleForTesting
+	public IFirebaseManager getFirebaseManager(){
+		return FirebaseManager.Companion.getInstance();
+	}
+
+	@VisibleForTesting
 	public boolean testIsFirstTime(){
 		return this.isFirstTime();
 	}
 
+	@VisibleForTesting
 	public String testGetRandomVideos(){
 		return getRandomVideos();
 	}
