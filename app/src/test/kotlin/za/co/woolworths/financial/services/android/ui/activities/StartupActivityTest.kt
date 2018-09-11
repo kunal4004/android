@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.activities
 
 import android.content.Context
 import com.awfs.coordination.R
+import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseApp
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import junit.framework.Assert
@@ -89,34 +90,29 @@ class StartupActivityTest {
 
     @Test
     fun testFirebaseRemoteConfig(){
-        var startupActivity = mock(StartupActivity::class.java, Mockito.withSettings().verboseLogging())
-        val firebaseManager = mock(FirebaseManager::class.java)
+        //mocks
+        var startupActivityMock = mock(StartupActivity::class.java, Mockito.withSettings().verboseLogging())
+        val firebaseManagerMock = mock(FirebaseManager::class.java)
+        val taskMock = mock(Task::class.java) as Task<Void>
 
-        //real methods to execute
-        _when(startupActivity.notifyIfNeeded()).thenCallRealMethod()
-        _when(firebaseManager.getRemoteConfig()).thenCallRealMethod()
-        _when(firebaseManager.setupRemoteConfig(any())).thenCallRealMethod()
+        //real methods to execute and expectations
+        _when(startupActivityMock.notifyIfNeeded()).thenCallRealMethod()
+        _when(firebaseManagerMock.getRemoteConfig()).thenCallRealMethod()
+        _when(firebaseManagerMock.setupRemoteConfig(any())).thenCallRealMethod()
 
-        _when(startupActivity.getFirebaseManager()).thenReturn(firebaseManager)
-
-
+        _when(startupActivityMock.getFirebaseManager()).thenReturn(firebaseManagerMock)
+        _when(firebaseRemoteConfigMock.fetch()).thenReturn(taskMock)
 
         //by default, remote config should be null
-        Assert.assertNull(firebaseManager.getRemoteConfig())
+        Assert.assertNull(firebaseManagerMock.getRemoteConfig())
+        Assert.assertEquals(firebaseManagerMock, startupActivityMock.getFirebaseManager())
+        Assert.assertEquals(taskMock, firebaseRemoteConfigMock.fetch())
 
-        //_when(this.firebaseManager.getRemoteConfig()).thenCallRealMethod()
-        //
+        //execution
+        startupActivityMock.notifyIfNeeded()
 
-
-        //_when(FirebaseManager.getInstance()).thenReturn(firebaseManager)
-
-        //Assert.assertNotNull(startupActivity)
-        //this.startupActivity.notifyIfNeeded()
-
-        //startupActivity
-        //expect firebaseManager.setupRemoteConfig() to be
-        //executed in notifyIfNeeded()
-        startupActivity.notifyIfNeeded()
+        //verifications
+        Mockito.verify(taskMock, Mockito.times(1)).addOnCompleteListener(any())
     }
 
     @Test
