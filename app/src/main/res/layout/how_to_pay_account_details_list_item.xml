@@ -15,10 +15,13 @@
             android:layout_marginRight="@dimen/five_dp"
             android:layout_weight="1"
             android:text="Account Holder:"
-            android:textColor="@color/black_50" />
+            android:textColor="@color/black_50"
+            android:id="@+id/paymentName"
+            />
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             style="@style/contact_us_item_header_textview"
+            android:id="@+id/paymentvalue"
             android:layout_width="0dp"
             android:layout_marginLeft="@dimen/five_dp"
             android:layout_weight="1.1"
