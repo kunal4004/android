@@ -9,8 +9,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -27,14 +25,9 @@ import java.util.ArrayList;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
 import za.co.woolworths.financial.services.android.models.dto.Response;
-import za.co.woolworths.financial.services.android.models.dto.WProduct;
-import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
-import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.barcode.manual.ManualBarcodeFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
@@ -71,7 +64,7 @@ public class BarcodeFragment extends BaseFragment<BarcodeMainLayoutBinding, Barc
 		super.onViewCreated(view, savedInstanceState);
 		final Activity activity = getActivity();
 		getViewDataBinding().btnManual.setOnClickListener(this);
-		mConnectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
+		mConnectionBroadcast = Utils.connectionBroadCast(activity, this);
 		Handler handler = new Handler();
 		handler.postDelayed(new Runnable() {
 			@Override
@@ -86,7 +79,7 @@ public class BarcodeFragment extends BaseFragment<BarcodeMainLayoutBinding, Barc
 						.onDecoded(new DecodeCallback() {
 							@Override
 							public void onDecoded(@NonNull final Result result) {
-								getActivity().runOnUiThread(new Runnable() {
+								activity.runOnUiThread(new Runnable() {
 									@Override
 									public void run() {
 										setBarcodeId(result.getText());
@@ -98,11 +91,6 @@ public class BarcodeFragment extends BaseFragment<BarcodeMainLayoutBinding, Barc
 						.onError(new ErrorCallback() {
 							@Override
 							public void onError(@NonNull final Exception error) {
-								getActivity().runOnUiThread(new Runnable() {
-									@Override
-									public void run() {
-									}
-								});
 							}
 						}).build(activity, scannerView);
 
@@ -211,12 +199,15 @@ public class BarcodeFragment extends BaseFragment<BarcodeMainLayoutBinding, Barc
 	public void unhandledResponseCode(Response response) {
 		showLoadingProgressBar(false);
 		hideKeyboard();
-		if (response.desc != null)
-			Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
+		Activity activity = getActivity();
+		if (response.desc != null && activity != null)
+			Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
 	}
 
 	private void hideKeyboard() {
-		KeyboardUtil.hideSoftKeyboard(getActivity());
+		Activity activity = getActivity();
+		if (activity == null) return;
+		KeyboardUtil.hideSoftKeyboard(activity);
 	}
 
 	@Override
@@ -240,7 +231,7 @@ public class BarcodeFragment extends BaseFragment<BarcodeMainLayoutBinding, Barc
 					bundle.putString("strProductCategory", mProductList.get(0).productName);
 					bundle.putString("productResponse", detailProduct);
 					bundle.putBoolean("fetchFromJson", true);
-					ScreenManager.presentProductDetails(getActivity(),bundle);
+					ScreenManager.presentProductDetails(activity, bundle);
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
@@ -261,7 +252,9 @@ public class BarcodeFragment extends BaseFragment<BarcodeMainLayoutBinding, Barc
 	private void executeBarcodeProduct(String barcodeId) {
 		if (TextUtils.isEmpty(barcodeId)) return;
 		getViewModel().setProductRequestBody(true, barcodeId);
-		getViewModel().executeGetBarcodeProduct(getActivity());
+		Activity activity = getActivity();
+		if (activity == null) return;
+		getViewModel().executeGetBarcodeProduct(activity);
 	}
 
 	private void showLoadingProgressBar(boolean visible) {
