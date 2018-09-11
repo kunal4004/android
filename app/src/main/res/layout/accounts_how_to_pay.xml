@@ -81,50 +81,13 @@
                     android:paddingTop="24dp"
                     android:text="@string/ways_to_pay_your_account"
                     android:textColor="@color/black_50" />
-
-                <LinearLayout style="@style/layout_with_top_border">
-
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        style="@style/black_circle_with_number"
-                        android:text="1" />
-
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        style="@style/contact_us_item_header_textview"
-                        android:text="@string/how_to_pay_1" />
-                </LinearLayout>
-
-                <LinearLayout style="@style/layout_with_top_border">
-
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        style="@style/black_circle_with_number"
-                        android:text="2" />
-
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        style="@style/contact_us_item_header_textview"
-                        android:text="@string/how_to_pay_2" />
-                </LinearLayout>
-
-                <LinearLayout style="@style/layout_with_top_border">
-
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        style="@style/black_circle_with_number"
-                        android:text="3" />
-
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        style="@style/contact_us_item_header_textview"
-                        android:text="@string/how_to_pay_3" />
-                </LinearLayout>
-
-                <LinearLayout style="@style/layout_with_top_border">
-
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        style="@style/black_circle_with_number"
-                        android:text="4" />
-
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        style="@style/contact_us_item_header_textview"
-                        android:text="@string/how_to_pay_4" />
-                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/howToPayOptionsList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:orientation="vertical"
+                    />
 
             </LinearLayout>
 
@@ -144,12 +107,12 @@
                 android:singleLine="true"
                 app:WTextView_font="bold" />
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/bankDetailsList"
+            <LinearLayout
+                android:id="@+id/howToPayAccountDetails"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                android:orientation="vertical"
                 />
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
