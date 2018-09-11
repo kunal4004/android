@@ -98,6 +98,9 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	private WTextView tvHowToPayAccountStatus;
 	private WTextView tvAmountOverdue;
 	private WTextView tvTotalAmountDue;
+	private LinearLayout llActiveAccount;
+	private RelativeLayout llChargedOffAccount;
+	private boolean productOfferingGoodStanding;
 
 	@Nullable
 	@Override
@@ -170,6 +173,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		tvHowToPayAccountStatus = view.findViewById(R.id.howToPayAccountStatus);
 		tvAmountOverdue = view.findViewById(R.id.amountOverdue);
 		tvTotalAmountDue = view.findViewById(R.id.totalAmountDue);
+		llActiveAccount = view.findViewById(R.id.llActiveAccount);
+		llChargedOffAccount = view.findViewById(R.id.llChargedOffAccount);
 	}
 
 	//To remove negative signs from negative balance and add "CR" after the negative balance
@@ -196,6 +201,17 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		if (accountList != null) {
 			for (Account p : accountList) {
 				if ("SC".equals(p.productGroupCode)) {
+
+					if(!p.productOfferingGoodStanding && p.productOfferingStatus.equalsIgnoreCase(Utils.ACCOUNT_CHARGED_OFF))
+					{
+						llActiveAccount.setVisibility(View.GONE);
+						llChargedOffAccount.setVisibility(View.VISIBLE);
+						return;
+					}else {
+						llActiveAccount.setVisibility(View.VISIBLE);
+						llChargedOffAccount.setVisibility(View.GONE);
+					}
+					productOfferingGoodStanding = p.productOfferingGoodStanding;
 					productOfferingId = String.valueOf(p.productOfferingId);
 					woolworthsApplication.setProductOfferingId(p.productOfferingId);
 					availableBalance.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.availableFunds), 1, getActivity())));
@@ -303,6 +319,10 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	}
 
 	private void getActiveOffer() {
+
+		if(!productOfferingGoodStanding)
+			return;
+
 		onLoad();
 		cliGetOfferActive = new CLIGetOfferActive(getActivity(), productOfferingId, new OnEventListener() {
 			@Override

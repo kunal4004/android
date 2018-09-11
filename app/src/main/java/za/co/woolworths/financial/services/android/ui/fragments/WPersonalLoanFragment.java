@@ -87,6 +87,9 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	private WTextView tvTotalAmountDue;
 	private ImageView iconAvailableFundsInfo;
 	public static int RESULT_CODE_FUNDS_INFO = 60;
+    private LinearLayout llActiveAccount;
+    private RelativeLayout llChargedOffAccount;
+	private boolean productOfferingGoodStanding;
 
 	@Nullable
 	@Override
@@ -162,6 +165,8 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		tvAmountOverdue = view.findViewById(R.id.amountOverdue);
 		tvTotalAmountDue = view.findViewById(R.id.totalAmountDue);
 		iconAvailableFundsInfo = view.findViewById(R.id.iconAvailableFundsInfo);
+        llActiveAccount = view.findViewById(R.id.llActiveAccount);
+        llChargedOffAccount = view.findViewById(R.id.llChargedOffAccount);
 	}
 
 	private void addListener() {
@@ -219,6 +224,17 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		if (accountList != null) {
 			for (Account p : accountList) {
 				if ("PL".equals(p.productGroupCode)) {
+
+                    if(!p.productOfferingGoodStanding && p.productOfferingStatus.equalsIgnoreCase(Utils.ACCOUNT_CHARGED_OFF))
+                    {
+                        llActiveAccount.setVisibility(View.GONE);
+                        llChargedOffAccount.setVisibility(View.VISIBLE);
+                        return;
+                    }else {
+                        llActiveAccount.setVisibility(View.VISIBLE);
+                        llChargedOffAccount.setVisibility(View.GONE);
+                    }
+					productOfferingGoodStanding = p.productOfferingGoodStanding;
 					productOfferingId = String.valueOf(p.productOfferingId);
 					woolworthsApplication.setProductOfferingId(p.productOfferingId);
 					mSharePreferenceHelper.save(String.valueOf(p.productOfferingId), "lw_product_offering_id");
@@ -314,6 +330,10 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	}
 
 	private void getActiveOffer() {
+
+		if(!productOfferingGoodStanding)
+			return;
+
 		onLoad();
 		cliGetOfferActive = new CLIGetOfferActive(getActivity(), productOfferingId, new OnEventListener() {
 			@Override

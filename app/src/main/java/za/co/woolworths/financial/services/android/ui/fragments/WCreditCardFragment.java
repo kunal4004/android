@@ -79,6 +79,9 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
     private WTextView tvTotalAmountDue;
 	private ImageView iconAvailableFundsInfo;
 	public static int RESULT_CODE_FUNDS_INFO = 70;
+    private LinearLayout llActiveAccount;
+    private RelativeLayout llChargedOffAccount;
+	private boolean productOfferingGoodStanding;
 
 	@Nullable
 	@Override
@@ -150,6 +153,8 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         tvAmountOverdue = view.findViewById(R.id.amountOverdue);
         tvTotalAmountDue = view.findViewById(R.id.totalAmountDue);
 		iconAvailableFundsInfo = view.findViewById(R.id.iconAvailableFundsInfo);
+        llActiveAccount = view.findViewById(R.id.llActiveAccount);
+        llChargedOffAccount = view.findViewById(R.id.llChargedOffAccount);
 
 		RelativeLayout relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
 		RelativeLayout rlViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
@@ -196,6 +201,18 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		if (accountList != null) {
 			for (Account p : accountList) {
 				if ("CC".equals(p.productGroupCode)) {
+
+                    if(!p.productOfferingGoodStanding && p.productOfferingStatus.equalsIgnoreCase(Utils.ACCOUNT_CHARGED_OFF))
+                    {
+                        llActiveAccount.setVisibility(View.GONE);
+                        llChargedOffAccount.setVisibility(View.VISIBLE);
+                        return;
+                    }else {
+                        llActiveAccount.setVisibility(View.VISIBLE);
+                        llChargedOffAccount.setVisibility(View.GONE);
+                    }
+
+					productOfferingGoodStanding = p.productOfferingGoodStanding;
 					productOfferingId = String.valueOf(p.productOfferingId);
 					woolworthsApplication.setProductOfferingId(p.productOfferingId);
 					availableBalance.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.availableFunds), 1, getActivity())));
@@ -266,6 +283,10 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	}
 
 	private void getActiveOffer() {
+
+		if(!productOfferingGoodStanding)
+			return;
+
 		onLoad();
 		cliGetOfferActive = new CLIGetOfferActive(getActivity(), productOfferingId, new OnEventListener() {
 			@Override
