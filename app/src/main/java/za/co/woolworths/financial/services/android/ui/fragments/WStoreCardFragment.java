@@ -40,6 +40,7 @@ import za.co.woolworths.financial.services.android.models.rest.cli.CLIGetOfferAc
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
+import za.co.woolworths.financial.services.android.ui.activities.HowToPayActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
@@ -51,6 +52,7 @@ import za.co.woolworths.financial.services.android.util.FragmentLifecycle;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
+import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
@@ -101,6 +103,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	private LinearLayout llActiveAccount;
 	private RelativeLayout llChargedOffAccount;
 	private boolean productOfferingGoodStanding;
+	private Account account;
+	private WTextView tvHowToPayArrears;
 
 	@Nullable
 	@Override
@@ -171,6 +175,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		logoIncreaseLimit = (ImageView) view.findViewById(R.id.logoIncreaseLimit);
 		accountInArrearsLayout = view.findViewById(R.id.llAccountInArrearsParentContainer);
 		tvHowToPayAccountStatus = view.findViewById(R.id.howToPayAccountStatus);
+		tvHowToPayArrears = view.findViewById(R.id.howToPayArrears);
 		tvAmountOverdue = view.findViewById(R.id.amountOverdue);
 		tvTotalAmountDue = view.findViewById(R.id.totalAmountDue);
 		llActiveAccount = view.findViewById(R.id.llActiveAccount);
@@ -194,12 +199,15 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		mRelIncreaseMyLimit.setOnClickListener(this);
 		mRelFindOutMore.setOnClickListener(this);
 		rlViewStatement.setOnClickListener(this);
+		tvHowToPayArrears.setOnClickListener(this);
+		tvHowToPayAccountStatus.setOnClickListener(this);
 	}
 
 	public void bindData(AccountsResponse response) {
 		List<Account> accountList = response.accountList;
 		if (accountList != null) {
 			for (Account p : accountList) {
+				this.account = p;
 				if ("SC".equals(p.productGroupCode)) {
 
 					if(!p.productOfferingGoodStanding && p.productOfferingStatus.equalsIgnoreCase(Utils.ACCOUNT_CHARGED_OFF))
@@ -312,6 +320,10 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 						"YOUR ACCOUNT IS IN ARREARS",
 						"Your Woolies Store Card is in arrears, please make an immediate minimum payment of Rxxx.xx in order to continue shopping.\n\nFor assistance, call us on 0861 50 20 20",
 						RESULT_CODE_FUNDS_INFO);
+				break;
+			case R.id.howToPayAccountStatus:
+			case R.id.howToPayArrears:
+				ScreenManager.presentHowToPayActivity(getActivity(),account);
 				break;
 			default:
 				break;

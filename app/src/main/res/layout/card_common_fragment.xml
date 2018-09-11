@@ -118,6 +118,7 @@
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     style="@style/style_how_to_pay_label"
+                    android:id="@+id/howToPayArrears"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="24dp"

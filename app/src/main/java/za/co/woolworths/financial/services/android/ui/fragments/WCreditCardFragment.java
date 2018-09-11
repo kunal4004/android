@@ -47,6 +47,7 @@ import za.co.woolworths.financial.services.android.util.FragmentLifecycle;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
+import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
@@ -82,6 +83,8 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
     private LinearLayout llActiveAccount;
     private RelativeLayout llChargedOffAccount;
 	private boolean productOfferingGoodStanding;
+	private Account account;
+	private WTextView tvHowToPayArrears;
 
 	@Nullable
 	@Override
@@ -155,6 +158,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		iconAvailableFundsInfo = view.findViewById(R.id.iconAvailableFundsInfo);
         llActiveAccount = view.findViewById(R.id.llActiveAccount);
         llChargedOffAccount = view.findViewById(R.id.llChargedOffAccount);
+		tvHowToPayArrears = view.findViewById(R.id.howToPayArrears);
 
 		RelativeLayout relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
 		RelativeLayout rlViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
@@ -169,6 +173,8 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		mRelIncreaseMyLimit.setOnClickListener(this);
 		mRelFindOutMore.setOnClickListener(this);
 		iconAvailableFundsInfo.setOnClickListener(this);
+		tvHowToPayArrears.setOnClickListener(this);
+		tvHowToPayAccountStatus.setOnClickListener(this);
 	}
 
 	private void addListener() {
@@ -201,7 +207,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		if (accountList != null) {
 			for (Account p : accountList) {
 				if ("CC".equals(p.productGroupCode)) {
-
+					this.account = p;
                     if(!p.productOfferingGoodStanding && p.productOfferingStatus.equalsIgnoreCase(Utils.ACCOUNT_CHARGED_OFF))
                     {
                         llActiveAccount.setVisibility(View.GONE);
@@ -274,6 +280,10 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 						"YOUR ACCOUNT IS IN ARREARS",
 						"Your Woolies Store Card is in arrears, please make an immediate minimum payment of Rxxx.xx in order to continue shopping.\n\nFor assistance, call us on 0861 50 20 20",
 						RESULT_CODE_FUNDS_INFO);
+				break;
+			case R.id.howToPayAccountStatus:
+			case R.id.howToPayArrears:
+				ScreenManager.presentHowToPayActivity(getActivity(),account);
 				break;
 			case R.id.relFindOutMore:
 				if (controllerNotNull())

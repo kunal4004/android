@@ -12,7 +12,9 @@ import java.util.HashMap;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
+import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.ui.activities.BiometricsWalkthrough;
+import za.co.woolworths.financial.services.android.ui.activities.HowToPayActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
@@ -168,5 +170,12 @@ public class ScreenManager {
 		intent.putExtras(bundle);
 		activity.startActivityForResult(intent,PDP_REQUEST_CODE);
 		activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
+	}
+
+	public static void presentHowToPayActivity(Activity activity, Account account) {
+		Intent howToPayIntent = new Intent(activity, HowToPayActivity.class);
+		howToPayIntent.putExtra("account",Utils.objectToJson(account));
+		activity.startActivity(howToPayIntent);
+		activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 	}
 }
