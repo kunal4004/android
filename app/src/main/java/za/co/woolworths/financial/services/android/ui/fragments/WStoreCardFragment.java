@@ -41,12 +41,12 @@ import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsA
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.FragmentLifecycle;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -212,7 +212,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		onLoadComplete();
 		mErrorHandlerView = new ErrorHandlerView(getActivity());
 		viewWasCreated = true;
-		if (!new ConnectionDetector().isOnline(getActivity()))
+		if (!NetworkManager.getInstance().isConnectedToNetwork(getActivity()))
 			mErrorHandlerView.showToast();
 	}
 
@@ -361,7 +361,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 			@Override
 			public void run() {
 				if (!storeWasAlreadyRunOnce) {
-					if (new ConnectionDetector().isOnline(getActivity()))
+					if (NetworkManager.getInstance().isConnectedToNetwork(getActivity()))
 						getActiveOffer();
 					else {
 						mErrorHandlerView.showToast();
@@ -395,7 +395,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	public void onConnectionChanged() {
 		//connection changed
 		if (!storeWasAlreadyRunOnce) {
-			if (new ConnectionDetector().isOnline(getActivity()))
+			if (NetworkManager.getInstance().isConnectedToNetwork(getActivity()))
 				getActiveOffer();
 		}
 	}
@@ -408,7 +408,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 
 	private void retryConnect() {
 		if (!storeWasAlreadyRunOnce) {
-			if (new ConnectionDetector().isOnline(getActivity()))
+			if (NetworkManager.getInstance().isConnectedToNetwork(getActivity()))
 				getActiveOffer();
 			else {
 				mErrorHandlerView.showToast();

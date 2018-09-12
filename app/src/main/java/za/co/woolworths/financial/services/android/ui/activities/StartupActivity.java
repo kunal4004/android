@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -8,8 +7,7 @@ import android.graphics.PorterDuff;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -20,22 +18,19 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
-import com.awfs.coordination.BuildConfig;
 import com.awfs.coordination.R;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
-import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
-import retrofit.RestAdapter;
-import za.co.wigroup.androidutils.Util;
+import za.co.woolworths.financial.services.android.contracts.IFirebaseManager;
+import za.co.woolworths.financial.services.android.contracts.OnCompletionListener;
+import za.co.woolworths.financial.services.android.contracts.OnResultListener;
 import za.co.woolworths.financial.services.android.contracts.RootActivityInterface;
-import za.co.woolworths.financial.services.android.models.ApiInterface;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.MobileConfigServerDao;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
@@ -43,15 +38,15 @@ import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WVideoView;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
+import za.co.woolworths.financial.services.android.util.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class StartupActivity extends AppCompatActivity implements MediaPlayer.OnCompletionListener, RootActivityInterface {
 
-	private FirebaseRemoteConfig mFirebaseRemoteConfig = null;
 	private FirebaseAnalytics mFirebaseAnalytics = null;
 
 	private String appVersion = "";
@@ -123,7 +118,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 
 		pBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
 		//Mobile Config Server
-		if (new ConnectionDetector().isOnline(StartupActivity.this)) {
+		if (NetworkManager.getInstance().isConnectedToNetwork(this)) {
 			mFirebaseAnalytics.setUserProperty(APP_SERVER_ENVIRONMENT_KEY, StartupActivity.this.environment.isEmpty() ? "prod": StartupActivity.this.environment.toLowerCase());
 			mFirebaseAnalytics.setUserProperty(APP_VERSION_KEY, StartupActivity.this.appVersion);
 
@@ -136,7 +131,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 
 			@Override
 			public void onClick(View v) {
-				if (new ConnectionDetector().isOnline(StartupActivity.this)) {
+				if (NetworkManager.getInstance().isConnectedToNetwork(StartupActivity.this)) {
 					mFirebaseAnalytics.setUserProperty(APP_SERVER_ENVIRONMENT_KEY, StartupActivity.this.environment.isEmpty() ? "prod": StartupActivity.this.environment.toLowerCase());
 					mFirebaseAnalytics.setUserProperty(APP_VERSION_KEY, StartupActivity.this.appVersion);
 
@@ -155,56 +150,20 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 	}
 
 	private void executeConfigServer() {
-		if(mFirebaseRemoteConfig.getBoolean(APP_IS_EXPIRED_KEY)){
+		//if app is expired, don't execute MCS.
+		if(FirebaseManager.Companion.getInstance().getRemoteConfig().getBoolean(APP_IS_EXPIRED_KEY)){
 			this.notifyIfNeeded();
 			return;
 		}
 
-		mobileConfigServer().execute();
-	}
+		//x.x = PROD
+		//x.x-qa = QA
+		//x.x-dev = DEV
+		String mcsAppVersion = appVersion.substring(0, 3) + (environment == "production" ? "" : "-" + environment);
 
-	private HttpAsyncTask<String, String, ConfigResponse> mobileConfigServer() {
-		return new HttpAsyncTask<String, String, ConfigResponse>() {
-
+		MobileConfigServerDao.Companion.getConfig(mcsAppVersion, Utils.getUniqueDeviceID(this), new OnResultListener<ConfigResponse>() {
 			@Override
-			protected void onPreExecute() {
-
-			}
-
-			@Override
-			protected Class<ConfigResponse> httpDoInBackgroundReturnType() {
-				return ConfigResponse.class;
-			}
-
-			@Override
-			protected ConfigResponse httpDoInBackground(String... params) {
-				final String appName = mFirebaseRemoteConfig.getString("mcs_appName");
-
-				//MCS expects empty value for PROD
-				//woneapp-5.0 = PROD
-				//woneapp-5.0-qa = QA
-				//woneapp-5.0-dev = DEV
-				String majorMinorVersion = appVersion.substring(0, 3);
-				final String mcsAppVersion = (appName + "-" + majorMinorVersion + (environment.equals("production") ? "" : ("-" + environment)));
-				Log.d("MCS", mcsAppVersion);
-
-				ApiInterface mApiInterface = new RestAdapter.Builder()
-						.setEndpoint(getString(R.string.config_endpoint))
-						.setLogLevel(Util.isDebug(StartupActivity.this) ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.NONE)
-						.build()
-						.create(ApiInterface.class);
-
-				return mApiInterface.getConfig(mFirebaseRemoteConfig.getString("mcs_appApiKey"), getDeviceID(), mcsAppVersion);
-			}
-
-			@Override
-			public ConfigResponse httpError(final String errorMessage, final HttpErrorCode httpErrorCode) {
-				showNonVideoViewWithErrorLayout();
-				return new ConfigResponse();
-			}
-
-			@Override
-			protected void onPostExecute(ConfigResponse configResponse) {
+			public void success(ConfigResponse configResponse) {
 				try {
 					StartupActivity.this.mVideoPlayerShouldPlay = false;
 
@@ -243,7 +202,17 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 				} catch (NullPointerException ignored) {
 				}
 			}
-		};
+
+			@Override
+			public void failure(String errorMessage, HttpAsyncTask.HttpErrorCode httpErrorCode) {
+				showNonVideoViewWithErrorLayout();
+			}
+
+			@Override
+			public void complete() {
+
+			}
+		});
 	}
 
 	//video player on completion
@@ -260,11 +229,6 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 		} else {
 			showNonVideoViewWithOutErrorLayout();
 		}
-	}
-
-	@SuppressLint("HardwareIds")
-	private String getDeviceID() {
-		return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 	}
 
 	@Override
@@ -418,21 +382,13 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 	@Override
 	public void notifyIfNeeded() {
 
+		final IFirebaseManager firebaseManager = this.getFirebaseManager();
+		FirebaseRemoteConfig mFirebaseRemoteConfig = firebaseManager.getRemoteConfig();
 		if (mFirebaseRemoteConfig == null){
-			mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
-			FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
-					.setDeveloperModeEnabled(BuildConfig.DEBUG)
-					.build();
-			mFirebaseRemoteConfig.setConfigSettings(configSettings);
 
-			mFirebaseRemoteConfig.fetch().addOnCompleteListener(new OnCompleteListener<Void>() {
+			FirebaseManager.Companion.getInstance().setupRemoteConfig(new OnCompletionListener(){
 				@Override
-				public void onComplete(@NonNull Task<Void> task) {
-					if (task.isSuccessful())
-						mFirebaseRemoteConfig.activateFetched();
-					else
-						mFirebaseRemoteConfig.setDefaults(R.xml.remote_config_defaults);
-
+				public void complete() {
 					executeConfigServer();
 				}
 			});
@@ -440,5 +396,20 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 		else if (mFirebaseRemoteConfig.getBoolean(APP_IS_EXPIRED_KEY)){
 			throw new RuntimeException("Something awful happened...");
 		}
+	}
+
+	@VisibleForTesting
+	public IFirebaseManager getFirebaseManager(){
+		return FirebaseManager.Companion.getInstance();
+	}
+
+	@VisibleForTesting
+	public boolean testIsFirstTime(){
+		return this.isFirstTime();
+	}
+
+	@VisibleForTesting
+	public String testGetRandomVideos(){
+		return getRandomVideos();
 	}
 }

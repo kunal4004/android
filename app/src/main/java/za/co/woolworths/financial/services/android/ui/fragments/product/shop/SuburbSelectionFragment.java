@@ -36,8 +36,8 @@ import za.co.woolworths.financial.services.android.models.rest.shop.SetDeliveryL
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
 import za.co.woolworths.financial.services.android.ui.adapters.SuburbSelectionAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
@@ -145,7 +145,7 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 						btnRetry.setOnClickListener(new View.OnClickListener() {
 							@Override
 							public void onClick(View v) {
-								if (new ConnectionDetector().isOnline(getActivity())) {
+								if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
 									loadSuburbItems();
 								}
 							}
@@ -173,7 +173,7 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 					btnRetry.setOnClickListener(new View.OnClickListener() {
 						@Override
 						public void onClick(View v) {
-							if (new ConnectionDetector().isOnline(getActivity())) {
+							if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
 								loadSuburbItems();
 							}
 						}
@@ -190,7 +190,7 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 						btnRetry.setOnClickListener(new View.OnClickListener() {
 							@Override
 							public void onClick(View v) {
-								if (new ConnectionDetector().isOnline(getActivity())) {
+								if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
 									loadSuburbItems();
 								}
 							}
@@ -269,7 +269,7 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 						btnRetry.setOnClickListener(new View.OnClickListener() {
 							@Override
 							public void onClick(View v) {
-								if (new ConnectionDetector().isOnline(getActivity())) {
+								if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
 									setSuburbRequest(province, suburb);
 								}
 							}
@@ -308,7 +308,7 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 					btnRetry.setOnClickListener(new View.OnClickListener() {
 						@Override
 						public void onClick(View v) {
-							if (new ConnectionDetector().isOnline(getActivity())) {
+							if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
 								setSuburbRequest(province, suburb);
 							}
 						}
@@ -325,7 +325,7 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 						btnRetry.setOnClickListener(new View.OnClickListener() {
 							@Override
 							public void onClick(View v) {
-								if (new ConnectionDetector().isOnline(getActivity())) {
+								if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
 									setSuburbRequest(province, suburb);
 								}
 							}
