@@ -8,17 +8,13 @@
     android:orientation="vertical"
     tools:context="za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity">
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:orientation="vertical"
         android:background="@color/unavailable_color">
 
-        <android.support.v4.view.ViewPager
-            android:id="@+id/viewPager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center" />
 
         <android.support.design.widget.AppBarLayout
             android:id="@+id/appbar"
@@ -54,7 +50,12 @@
             </android.support.v7.widget.Toolbar>
 
         </android.support.design.widget.AppBarLayout>
-    </FrameLayout>
+        <android.support.v4.view.ViewPager
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center" />
+    </LinearLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
