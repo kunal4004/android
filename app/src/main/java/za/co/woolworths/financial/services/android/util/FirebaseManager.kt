@@ -24,7 +24,8 @@ class FirebaseManager: IFirebaseManager {
     }
 
     constructor(){
-        FirebaseApp.initializeApp(WoolworthsApplication.getInstance())
+        val context = WoolworthsApplication.getInstance()
+        FirebaseApp.initializeApp(context)
     }
 
     private var remoteConfig: FirebaseRemoteConfig? = null
@@ -56,6 +57,8 @@ class FirebaseManager: IFirebaseManager {
                 remoteConfig!!.setDefaults(R.xml.remote_config_defaults)
                 onResultListener.failure(task.exception?.message, HttpAsyncTask.HttpErrorCode.UNKOWN_ERROR)
             }
+
+            onResultListener.complete()
         }
 
         return remoteConfig!!
