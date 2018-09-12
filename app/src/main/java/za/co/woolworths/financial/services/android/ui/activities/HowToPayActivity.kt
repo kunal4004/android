@@ -27,6 +27,7 @@ class HowToPayActivity : AppCompatActivity(), View.OnClickListener {
     private fun initViews() {
         this.accountDetails = Gson().fromJson(intent.getStringExtra("account"), Account::class.java)
         btnClose.setOnClickListener(this)
+        setHowToPayLogo()
         loadPaymentOptions()
         loadAccountDetails()
 
@@ -71,6 +72,14 @@ class HowToPayActivity : AppCompatActivity(), View.OnClickListener {
             count.text = (index + 1).toString()
             howToPayOption.text = paymentMethod.description
             howToPayOptionsList.addView(v)
+        }
+    }
+
+    fun setHowToPayLogo(){
+        when (accountDetails.productGroupCode){
+            "SC"->howToPayLogo.setBackgroundResource(R.drawable.how_to_pay_store_card)
+            "CC"->howToPayLogo.setBackgroundResource(R.drawable.how_to_pay_credit_card)
+            "PL"->howToPayLogo.setBackgroundResource(R.drawable.how_to_pay_p_loan)
         }
     }
 }
