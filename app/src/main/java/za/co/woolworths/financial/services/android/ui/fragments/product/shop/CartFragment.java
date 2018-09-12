@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -47,13 +48,11 @@ import za.co.woolworths.financial.services.android.models.dto.CommerceItemInfo;
 import za.co.woolworths.financial.services.android.models.dto.Data;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
-import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.SkuInventory;
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
-import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.rest.product.GetInventorySkusForStore;
 import za.co.woolworths.financial.services.android.models.rest.product.GetShoppingCart;
@@ -69,11 +68,11 @@ import za.co.woolworths.financial.services.android.ui.adapters.CartProductAdapte
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.MultiMap;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
@@ -88,6 +87,7 @@ import static za.co.woolworths.financial.services.android.models.service.event.P
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
+import static za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment.DIALOG_REQUEST_CODE;
 
 
 public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick, View.OnClickListener, NetworkChangeListener, ToastUtils.ToastInterface, WMaterialShowcaseView.IWalkthroughActionListener {
@@ -285,7 +285,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				}
 				break;
 			case R.id.btnRetry:
-				if (new ConnectionDetector().isOnline(getActivity())) {
+				if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
 					errorMessageWasPopUp = false;
 					rvCartList.setVisibility(View.VISIBLE);
 					loadShoppingCart(false).execute();
@@ -480,6 +480,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				cartActivity.resetToolBarIcons();
 			}
 			rlCheckOut.setVisibility(View.GONE);
+			rvCartList.setVisibility(View.GONE);
 			relEmptyStateHandler.setVisibility(View.VISIBLE);
 		}
 		onChangeQuantityComplete();
@@ -533,10 +534,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			CartActivity cartActivity = (CartActivity) activity;
 			cartActivity.hideEditCart();
 		}
-		return new GetShoppingCart(new OnEventListener() {
+
+		return new GetShoppingCart(new OnEventListener<ShoppingCartResponse>(){
 			@Override
-			public void onSuccess(Object object) {
-				ShoppingCartResponse shoppingCartResponse = (ShoppingCartResponse) object;
+			public void onSuccess(ShoppingCartResponse shoppingCartResponse) {
 				try {
 					pBar.setVisibility(View.GONE);
 					switch (shoppingCartResponse.httpCode) {
@@ -554,7 +555,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 						case 440:
 							//TODO:: improve error handling
 							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
-							SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(getActivity());
+							SessionExpiredUtilities.getInstance().showSessionExpireDialog((AppCompatActivity) getActivity(), CartFragment.this);
 							onChangeQuantityComplete();
 							break;
 						default:
@@ -795,18 +796,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				Activity activity = getActivity();
 				mSuburbName = data.suburbName;
 				mProvinceName = data.provinceName;
-				if (activity != null) {
-					String suburbId = String.valueOf(data.suburbId);
-					Province province = new Province();
-					province.name = data.provinceName;
-					province.id = suburbId;
-					Suburb suburb = new Suburb();
-					suburb.name = data.suburbName;
-					suburb.id = suburbId;
-					suburb.fulfillmentStores = data.orderSummary.suburb.fulfillmentStores;
-					Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(province, suburb));
+				if (activity != null)
 					setDeliveryLocation(mSuburbName + ", " + mProvinceName);
-				}
 			}
 			JSONObject itemsObject = new JSONObject(new Gson().toJson(data.items));
 			Iterator<String> keys = itemsObject.keys();
@@ -881,7 +872,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (resultCode == CART_DEFAULT_ERROR_TAPPED) {
+		if (resultCode == CART_DEFAULT_ERROR_TAPPED || resultCode == DIALOG_REQUEST_CODE) {
 			Activity activity = getActivity();
 			activity.setResult(CART_DEFAULT_ERROR_TAPPED);
 			activity.finish();

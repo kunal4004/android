@@ -1,23 +1,45 @@
 package za.co.woolworths.financial.services.android.util;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
-import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.SessionExpiredDialogFragment;
 
-public enum SessionExpiredUtilities {
-	INSTANCE;
+import static za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment.DIALOG_REQUEST_CODE;
 
-	public void showSessionExpireDialog(Activity activity) {
-		Utils.clearSQLLiteSearchHistory(activity);
-		Intent openMsg = new Intent(activity, CustomPopUpWindow.class);
-		Bundle args = new Bundle();
-		args.putSerializable("key", CustomPopUpWindow.MODAL_LAYOUT.SESSION_EXPIRED);
-		args.putString("description", SessionUtilities.getInstance().getSTSParameters());
-		openMsg.putExtras(args);
-		activity.startActivityForResult(openMsg, SSOActivity.SSOActivityResult.LAUNCH.rawValue());
-		activity.overridePendingTransition(0, 0);
+public class SessionExpiredUtilities {
+
+	private static SessionExpiredUtilities instance;
+	private String TAG = this.getClass().getSimpleName();
+
+	public static synchronized SessionExpiredUtilities getInstance() {
+		if (instance == null) {
+			instance = new SessionExpiredUtilities();
+		}
+		return instance;
+	}
+
+	public void showSessionExpireDialog(AppCompatActivity activity) {
+		try {
+			FragmentManager fm = activity.getSupportFragmentManager();
+			SessionExpiredDialogFragment sessionExpiredDialogFragment = SessionExpiredDialogFragment.newInstance(SessionUtilities.getInstance().getSTSParameters());
+			sessionExpiredDialogFragment.show(fm, SessionExpiredDialogFragment.class.getSimpleName());
+		} catch (NullPointerException ex) {
+			Log.d(TAG, ex.getMessage());
+		}
+	}
+
+	public void showSessionExpireDialog(AppCompatActivity activity, Fragment fragment) {
+		try {
+			Utils.clearCacheHistory(activity);
+			FragmentManager fm = activity.getSupportFragmentManager();
+			SessionExpiredDialogFragment sessionExpiredDialogFragment = SessionExpiredDialogFragment.newInstance(SessionUtilities.getInstance().getSTSParameters());
+			sessionExpiredDialogFragment.setTargetFragment(fragment, DIALOG_REQUEST_CODE);
+			sessionExpiredDialogFragment.show(fm, SessionExpiredDialogFragment.class.getSimpleName());
+		} catch (NullPointerException ex) {
+			Log.d(TAG, ex.getMessage());
+		}
 	}
 }

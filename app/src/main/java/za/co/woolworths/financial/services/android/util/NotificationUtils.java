@@ -25,7 +25,7 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDeviceResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
-import za.co.woolworths.financial.services.android.ui.activities.splash.WSplashScreenActivity;
+import za.co.woolworths.financial.services.android.ui.activities.StartupActivity;
 
 public class NotificationUtils {
 
@@ -57,7 +57,7 @@ public class NotificationUtils {
         }
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(safeContext);
 
-        Intent myIntent = new Intent(safeContext, WSplashScreenActivity.class);
+        Intent myIntent = new Intent(safeContext, StartupActivity.class);
         myIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         myIntent.setAction(Intent.ACTION_MAIN);
         myIntent.addCategory(Intent.CATEGORY_LAUNCHER);

@@ -39,12 +39,12 @@ import za.co.woolworths.financial.services.android.ui.activities.BalanceProtecti
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.FragmentLifecycle;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -165,7 +165,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		bindData(accountsResponse);
 		onLoadComplete();
 		mErrorHandlerView = new ErrorHandlerView(getActivity());
-		if (!new ConnectionDetector().isOnline(getActivity()))
+		if (!NetworkManager.getInstance().isConnectedToNetwork(getActivity()))
 			mErrorHandlerView.showToast();
 	}
 
@@ -276,7 +276,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 				break;
 
 			case 440:
-				SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, offerActive.response.stsParams);
+				SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, offerActive.response.stsParams, getActivity());
 				break;
 			default:
 				break;
@@ -311,7 +311,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 			@Override
 			public void run() {
 				if (!creditWasAlreadyRunOnce) {
-					if (new ConnectionDetector().isOnline(getActivity()))
+					if (NetworkManager.getInstance().isConnectedToNetwork(getActivity()))
 						getActiveOffer();
 					else {
 						mErrorHandlerView.showToast();
@@ -345,7 +345,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	public void onConnectionChanged() {
 		//connection changed
 		if (!creditWasAlreadyRunOnce) {
-			if (new ConnectionDetector().isOnline(getActivity()))
+			if (NetworkManager.getInstance().isConnectedToNetwork(getActivity()))
 				getActiveOffer();
 
 		}
@@ -359,7 +359,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 
 	private void retryConnect() {
 		if (!creditWasAlreadyRunOnce) {
-			if (new ConnectionDetector().isOnline(getActivity()))
+			if (NetworkManager.getInstance().isConnectedToNetwork(getActivity()))
 				getActiveOffer();
 			else {
 				mErrorHandlerView.showToast();

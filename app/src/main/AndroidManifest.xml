@@ -118,7 +118,7 @@
             android:value="false"/>
 
         <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.splash.WSplashScreenActivity"
+            android:name="za.co.woolworths.financial.services.android.ui.activities.StartupActivity"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
             <intent-filter>

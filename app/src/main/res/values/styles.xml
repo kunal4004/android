@@ -596,15 +596,18 @@
 
     </style>
 
-    <style name="style_loan_logo_img">
+    <style name="style_loan_logo_img" parent="style_account_logo_img">
+        <item name="android:src">@drawable/ic_caret_black</item>
+
+    </style>
+
+    <style name="style_account_logo_img">
         <item name="android:layout_centerInParent">true</item>
         <item name="android:layout_marginStart">2dp</item>
         <item name="android:layout_alignParentStart">true</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:alpha">0.3</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:src">@drawable/ic_caret_black</item>
-
     </style>
 
     <style name="balance_insurance_overview_title">
@@ -1173,5 +1176,15 @@
         <item name="android:layout_height">@dimen/sixteen_dp</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:background">@color/default_background</item>
+    </style>
+
+    <!-- Define your custom dialog theme here extending from base -->
+
+    <style name="AppDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowCloseOnTouchOutside">true</item>
     </style>
 </resources>

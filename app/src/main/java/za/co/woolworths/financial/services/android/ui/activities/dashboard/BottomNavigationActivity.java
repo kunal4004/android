@@ -73,6 +73,7 @@ import za.co.woolworths.financial.services.android.util.PermissionResultCallback
 import za.co.woolworths.financial.services.android.util.PermissionUtils;
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
+import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -86,6 +87,7 @@ import static za.co.woolworths.financial.services.android.models.service.event.B
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SHOW_ADDED_TO_SHOPPING_LIST_TOAST;
 import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.RESULT_TAP_FIND_INSTORE_BTN;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
+import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED;
 import static za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity.DELIVERY_LOCATION_CLOSE_CLICKED;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.DELIVERY_LOCATION_FROM_PDP_REQUEST;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_ADD_TO_CART;
@@ -102,6 +104,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	public static final int INDEX_CART = FragNavController.TAB3;
 	public static final int INDEX_REWARD = FragNavController.TAB4;
 	public static final int INDEX_ACCOUNT = FragNavController.TAB5;
+	public static final int REMOVE_ALL_BADGE_COUNTER = FragNavController.TAB6;
+
 	public static final int OPEN_CART_REQUEST = 12346;
 	public static final int SLIDE_UP_COLLAPSE_REQUEST_CODE = 13;
 	public static final int SLIDE_UP_COLLAPSE_RESULT_CODE = 12345;
@@ -125,6 +129,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	private QueryBadgeCounter mQueryBadgeCounter;
 	public static final int PDP_REQUEST_CODE = 18;
 	public WMaterialShowcaseView walkThroughPromtView = null;
+	private String mSessionExpiredAtTabSection;
 
 	@Override
 	public int getLayoutId() {
@@ -199,7 +204,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				} else if (object instanceof AuthenticationState) {
 					AuthenticationState auth = ((AuthenticationState) object);
 					if (auth.getAuthStateTypeDef() == AuthenticationState.SIGN_OUT) {
-						onSignOut();
+						clearBadgeCount();
 						ScreenManager.presentSSOLogout(BottomNavigationActivity.this);
 					}
 				} else if (object instanceof CartSummaryResponse) {
@@ -254,9 +259,15 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		if (mBundle != null) {
 			if (!TextUtils.isEmpty(mBundle.getString(NotificationUtils.PUSH_NOTIFICATION_INTENT))) {
 				getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
-				mBundle = null;
+			}
+
+			mSessionExpiredAtTabSection = mBundle.getString("sessionExpiredAtTabSection");
+			if (!TextUtils.isEmpty(mSessionExpiredAtTabSection)) {
+				getBottomNavigationById().setCurrentItem(Integer.valueOf(mSessionExpiredAtTabSection));
+				SessionExpiredUtilities.getInstance().showSessionExpireDialog(BottomNavigationActivity.this);
 			}
 		}
+		mBundle = null;
 	}
 
 	@Override
@@ -795,6 +806,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	@Override
 	public void switchTab(int number) {
 		mNavController.switchTab(number);
+		SessionUtilities.getInstance().setBottomNavigationPosition(String.valueOf(number));
 	}
 
 	@Override
@@ -888,11 +900,18 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		if (requestCode == OPEN_CART_REQUEST) {
 			//Handling error 500 from cart
 			if (resultCode == CART_DEFAULT_ERROR_TAPPED) {
+				Fragment fragmentById = getCurrentFragment();
+				if (fragmentById != null)
+					fragmentById.onActivityResult(requestCode, resultCode, null);
 				return;
 			}
 			switch (resultCode) {
 				case RESULT_OK:
 					getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
+					break;
+				case DISMISS_POP_WINDOW_CLICKED:
+					//ensure counter is refresh when user cart activity is closed
+					QueryBadgeCounter.getInstance().queryCartSummaryCount();
 					break;
 				case 0:
 					switch (getCurrentSection()) {
@@ -912,7 +931,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		// prevent firing reward and account api on every activity resume
 		if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
 			//load count on login success
-			badgeCount();
 			switch (getCurrentSection()) {
 				case R.id.navigate_to_cart:
 					//open cart activity after login from cart only
@@ -1072,7 +1090,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		addBadge(INDEX_ACCOUNT, unreadCount);
 	}
 
-	public void onSignOut() {
+	public void clearBadgeCount() {
 		addBadge(INDEX_CART, 0);
 		addBadge(INDEX_ACCOUNT, 0);
 		addBadge(INDEX_REWARD, 0);
@@ -1151,7 +1169,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	public void badgeCount() {
 		switch (getCurrentSection()) {
 			case R.id.navigate_to_account:
-				mQueryBadgeCounter.queryCartCount();
+				mQueryBadgeCounter.queryCartSummaryCount();
 				mQueryBadgeCounter.queryVoucherCount();
 				break;
 
@@ -1163,12 +1181,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				 * It ensure only one cart count call is made on sign in
 				 */
 				if (Utils.getPreferredDeliveryLocation() != null)
-					mQueryBadgeCounter.queryCartCount();
+					mQueryBadgeCounter.queryCartSummaryCount();
 				mQueryBadgeCounter.queryMessageCount();
 				mQueryBadgeCounter.queryVoucherCount();
 				break;
 			case R.id.navigate_to_wreward:
-				mQueryBadgeCounter.queryCartCount();
+				mQueryBadgeCounter.queryCartSummaryCount();
 				mQueryBadgeCounter.queryMessageCount();
 				break;
 			case R.id.navigate_to_cart:
@@ -1205,7 +1223,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					badgeCount();
 					break;
 
+				case REMOVE_ALL_BADGE_COUNTER:
+					clearBadgeCount();
+					break;
+
 				default:
+					badgeCount();
 					break;
 			}
 		}

@@ -1,6 +1,5 @@
-package za.co.woolworths.financial.services.android.ui.activities.splash;
+package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -8,7 +7,7 @@ import android.graphics.PorterDuff;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Settings;
+import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -20,33 +19,58 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
-import retrofit.RestAdapter;
-import za.co.wigroup.androidutils.Util;
-import za.co.woolworths.financial.services.android.models.ApiInterface;
+import za.co.woolworths.financial.services.android.contracts.IFirebaseManager;
+import za.co.woolworths.financial.services.android.contracts.OnCompletionListener;
+import za.co.woolworths.financial.services.android.contracts.OnResultListener;
+import za.co.woolworths.financial.services.android.contracts.RootActivityInterface;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.MobileConfigServerDao;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.ui.views.WButton;
+import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WVideoView;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
+import za.co.woolworths.financial.services.android.util.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class WSplashScreenActivity extends AppCompatActivity implements MediaPlayer.OnCompletionListener {
+public class StartupActivity extends AppCompatActivity implements MediaPlayer.OnCompletionListener, RootActivityInterface {
+
+	private FirebaseAnalytics mFirebaseAnalytics = null;
+
+	private String appVersion = "";
+	private String environment = "";
+
+	private static final String APP_IS_EXPIRED_KEY = "app_isExpired";
+	private static final String APP_SERVER_ENVIRONMENT_KEY = "app_server_environment";
+	private static final String APP_VERSION_KEY = "app_version";
 
 	private boolean mVideoPlayerShouldPlay = true;
+	private boolean isVideoPlaying = false;
 	private boolean isMinimized = false;
+	private boolean isServerMessageShown = false;
+
+	private boolean splashScreenDisplay = false;
+	private boolean splashScreenPersist = false;
+	private String splashScreenText = "";
+
 	private WVideoView videoView;
 	private String TAG = this.getClass().getSimpleName();
 	private LinearLayout errorLayout;
 	private View noVideoView;
+	private View serverMessageView;
+	private WTextView serverMessageLabel;
 	private RelativeLayout videoViewLayout;
 	private ProgressBar pBar;
 	private WGlobalState mWGlobalState;
@@ -57,7 +81,7 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 		super.onCreate(savedInstanceState);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		setContentView(R.layout.activity_wsplash_screen);
+		setContentView(R.layout.activity_startup);
 		Toolbar toolbar = findViewById(R.id.mToolbar);
 		setSupportActionBar(toolbar);
 		ActionBar actionBar = getSupportActionBar();
@@ -65,103 +89,85 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 			actionBar.hide();
 		}
 
+		try {
+			this.appVersion = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+			this.environment = com.awfs.coordination.BuildConfig.FLAVOR;
+		} catch (PackageManager.NameNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		if (mFirebaseAnalytics == null)
+			mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+
+
 		Bundle bundle = getIntent().getExtras();
 		if (bundle != null) {
 			mPushNotificationUpdate = bundle.getString(NotificationUtils.PUSH_NOTIFICATION_INTENT);
 		}
 
-		WoolworthsApplication woolworthsApplication = (WoolworthsApplication) WSplashScreenActivity.this.getApplication();
+		WoolworthsApplication woolworthsApplication = (WoolworthsApplication) StartupActivity.this.getApplication();
 		mWGlobalState = woolworthsApplication.getWGlobalState();
 
 		videoView = (WVideoView) findViewById(R.id.activity_wsplash_screen_videoview);
 		errorLayout = (LinearLayout) findViewById(R.id.errorLayout);
 		noVideoView = (View) findViewById(R.id.splashNoVideoView);
+		serverMessageView = (View) findViewById(R.id.splashServerMessageView);
+		serverMessageLabel = (WTextView) findViewById(R.id.messageLabel);
 		videoViewLayout = (RelativeLayout) findViewById(R.id.videoViewLayout);
 		pBar = (ProgressBar) findViewById(R.id.progressBar);
 
 		pBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
 		//Mobile Config Server
-		if (new ConnectionDetector().isOnline(WSplashScreenActivity.this)) {
+		if (NetworkManager.getInstance().isConnectedToNetwork(this)) {
+			mFirebaseAnalytics.setUserProperty(APP_SERVER_ENVIRONMENT_KEY, StartupActivity.this.environment.isEmpty() ? "prod": StartupActivity.this.environment.toLowerCase());
+			mFirebaseAnalytics.setUserProperty(APP_VERSION_KEY, StartupActivity.this.appVersion);
+
 			setUpScreen();
-			executeConfigServer();
+			notifyIfNeeded();
 		} else {
 			showNonVideoViewWithErrorLayout();
 		}
 		findViewById(R.id.retry).setOnClickListener(new View.OnClickListener() {
+
 			@Override
 			public void onClick(View v) {
-				if (new ConnectionDetector().isOnline(WSplashScreenActivity.this)) {
+				if (NetworkManager.getInstance().isConnectedToNetwork(StartupActivity.this)) {
+					mFirebaseAnalytics.setUserProperty(APP_SERVER_ENVIRONMENT_KEY, StartupActivity.this.environment.isEmpty() ? "prod": StartupActivity.this.environment.toLowerCase());
+					mFirebaseAnalytics.setUserProperty(APP_VERSION_KEY, StartupActivity.this.appVersion);
+
 					setUpScreen();
-					executeConfigServer();
+					notifyIfNeeded();
 				} else {
 					showNonVideoViewWithErrorLayout();
 				}
 			}
 
 		});
+
 		//Remove old usage of SharedPreferences data.
-		Utils.clearSharedPreferences(WSplashScreenActivity.this);
-		AuthenticateUtils.getInstance(WSplashScreenActivity.this).enableBiometricForCurrentSession(true);
+		Utils.clearSharedPreferences(StartupActivity.this);
+		AuthenticateUtils.getInstance(StartupActivity.this).enableBiometricForCurrentSession(true);
 	}
 
 	private void executeConfigServer() {
-		mobileConfigServer().execute();
-	}
+		//if app is expired, don't execute MCS.
+		if(FirebaseManager.Companion.getInstance().getRemoteConfig().getBoolean(APP_IS_EXPIRED_KEY)){
+			this.notifyIfNeeded();
+			return;
+		}
 
-	private HttpAsyncTask<String, String, ConfigResponse> mobileConfigServer() {
-		return new HttpAsyncTask<String, String, ConfigResponse>() {
+		//x.x = PROD
+		//x.x-qa = QA
+		//x.x-dev = DEV
+		String mcsAppVersion = appVersion.substring(0, 3) + (environment == "production" ? "" : "-" + environment);
 
+		MobileConfigServerDao.Companion.getConfig(mcsAppVersion, Utils.getUniqueDeviceID(this), new OnResultListener<ConfigResponse>() {
 			@Override
-			protected void onPreExecute() {
-
-			}
-
-			@Override
-			protected Class<ConfigResponse> httpDoInBackgroundReturnType() {
-				return ConfigResponse.class;
-			}
-
-			@Override
-			protected ConfigResponse httpDoInBackground(String... params) {
-				final String appName = "woneapp";
-				String appVersion = "5.0.0";//default to 5.0.0
-				String environment = "";//default to PROD
+			public void success(ConfigResponse configResponse) {
 				try {
-					appVersion = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
-					environment = com.awfs.coordination.BuildConfig.FLAVOR;
-				} catch (PackageManager.NameNotFoundException e) {
-					e.printStackTrace();
-				}
+					StartupActivity.this.mVideoPlayerShouldPlay = false;
 
-				//MCS expects empty value for PROD
-				//woneapp-5.0 = PROD
-				//woneapp-5.0-qa = QA
-				//woneapp-5.0-dev = DEV
-				String majorMinorVersion = appVersion.substring(0, 3);
-				final String mcsAppVersion = (appName + "-" + majorMinorVersion + (environment.equals("production") ? "" : ("-" + environment)));
-				Log.d("MCS", mcsAppVersion);
-
-				ApiInterface mApiInterface = new RestAdapter.Builder()
-						.setEndpoint(getString(R.string.config_endpoint))
-						.setLogLevel(Util.isDebug(WSplashScreenActivity.this) ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.NONE)
-						.build()
-						.create(ApiInterface.class);
-
-				return mApiInterface.getConfig(getString(R.string.app_token), getDeviceID(), mcsAppVersion);
-			}
-
-			@Override
-			public ConfigResponse httpError(final String errorMessage, final HttpErrorCode httpErrorCode) {
-				showNonVideoViewWithErrorLayout();
-				return new ConfigResponse();
-			}
-
-			@Override
-			protected void onPostExecute(ConfigResponse configResponse) {
-				try {
-					WSplashScreenActivity.this.mVideoPlayerShouldPlay = false;
-
-					if(configResponse.enviroment.stsURI == null || configResponse.enviroment.stsURI.isEmpty()) {
+					if (configResponse.enviroment.stsURI == null || configResponse.enviroment.stsURI.isEmpty()) {
 						showNonVideoViewWithErrorLayout();
 						return;
 					}
@@ -184,34 +190,44 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 					WoolworthsApplication.setCartCheckoutLink(configResponse.defaults.getCartCheckoutLink());
 					mWGlobalState.setStartRadius(configResponse.enviroment.getStoreStockLocatorConfigStartRadius());
 					mWGlobalState.setEndRadius(configResponse.enviroment.getStoreStockLocatorConfigEndRadius());
-					if (!isFirstTime())
-						presentNextScreen();
+
+					splashScreenText = configResponse.enviroment.splashScreenText;
+					splashScreenDisplay = configResponse.enviroment.splashScreenDisplay;
+					splashScreenPersist = configResponse.enviroment.splashScreenPersist;
+
+					if (!isVideoPlaying) {
+						presentNextScreenOrServerMessage();
+					}
+
 				} catch (NullPointerException ignored) {
 				}
 			}
-		};
+
+			@Override
+			public void failure(String errorMessage, HttpAsyncTask.HttpErrorCode httpErrorCode) {
+				showNonVideoViewWithErrorLayout();
+			}
+
+			@Override
+			public void complete() {
+
+			}
+		});
 	}
 
 	//video player on completion
 	@Override
 	public void onCompletion(MediaPlayer mp) {
 
-		if (!WSplashScreenActivity.this.mVideoPlayerShouldPlay) {
+		isVideoPlaying = false;
 
-			presentNextScreen();
+		if (!StartupActivity.this.mVideoPlayerShouldPlay) {
+
+			presentNextScreenOrServerMessage();
 			mp.stop();
 
 		} else {
 			showNonVideoViewWithOutErrorLayout();
-		}
-	}
-
-	@SuppressLint("HardwareIds")
-	private String getDeviceID() {
-		try {
-			return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-		} catch (Exception e) {
-			return null;
 		}
 	}
 
@@ -225,9 +241,14 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 	protected void onStart() {
 		super.onStart();
 		if (isMinimized) {
-			startActivity(new Intent(this, WSplashScreenActivity.class));
 			isMinimized = false;
-			finish();
+			if (isServerMessageShown) {
+				showNonVideoViewWithOutErrorLayout();
+				executeConfigServer();
+			} else{
+				startActivity(new Intent(this, StartupActivity.class));
+				finish();
+			}
 		}
 	}
 
@@ -242,6 +263,7 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 
 	private void showVideoView() {
 		noVideoView.setVisibility(View.GONE);
+		serverMessageView.setVisibility(View.GONE);
 		videoViewLayout.setVisibility(View.VISIBLE);
 		String randomVideo = getRandomVideos();
 		Log.d("randomVideo", randomVideo);
@@ -250,6 +272,8 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 		videoView.setVideoURI(videoUri);
 		videoView.start();
 		videoView.setOnCompletionListener(this);
+
+		isVideoPlaying = true;
 	}
 
 	private void showNonVideoViewWithErrorLayout() {
@@ -258,6 +282,7 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 				pBar.setVisibility(View.GONE);
 				videoViewLayout.setVisibility(View.GONE);
 				noVideoView.setVisibility(View.VISIBLE);
+				serverMessageView.setVisibility(View.GONE);
 				errorLayout.setVisibility(View.VISIBLE);
 			}
 		});
@@ -269,10 +294,38 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 		videoViewLayout.setVisibility(View.GONE);
 		errorLayout.setVisibility(View.GONE);
 		noVideoView.setVisibility(View.VISIBLE);
+		serverMessageView.setVisibility(View.GONE);
+	}
+
+	private void showServerMessage(String label, boolean persist) {
+
+		pBar.setVisibility(View.GONE);
+		videoViewLayout.setVisibility(View.GONE);
+		errorLayout.setVisibility(View.GONE);
+		noVideoView.setVisibility(View.GONE);
+
+		serverMessageLabel.setText(label);
+		WButton proceedButton = findViewById(R.id.proceedButton);
+		if (persist) {
+			proceedButton.setVisibility(View.GONE);
+		} else {
+			proceedButton.setVisibility(View.VISIBLE);
+			proceedButton.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					presentNextScreen();
+				}
+
+			});
+		}
+
+		serverMessageView.setVisibility(View.VISIBLE);
+
+		isServerMessageShown = true;
 	}
 
 	private boolean isFirstTime() {
-		if (Utils.getSessionDaoValue(WSplashScreenActivity.this, SessionDao.KEY.SPLASH_VIDEO) == null) {
+		if (Utils.getSessionDaoValue(StartupActivity.this, SessionDao.KEY.SPLASH_VIDEO) == null) {
 			return true;
 		} else
 			return false;
@@ -286,20 +339,28 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 		}
 	}
 
+	private void presentNextScreenOrServerMessage() {
+		if (splashScreenDisplay) {
+			showServerMessage(splashScreenText, splashScreenPersist);
+		} else {
+			presentNextScreen();
+		}
+	}
+
 	private void presentNextScreen() {
 		try {
-			String isFirstTime = Utils.getSessionDaoValue(WSplashScreenActivity.this, SessionDao.KEY.ON_BOARDING_SCREEN);
+			String isFirstTime = Utils.getSessionDaoValue(StartupActivity.this, SessionDao.KEY.ON_BOARDING_SCREEN);
 			if (isFirstTime == null || isAppUpdated())
-				ScreenManager.presentOnboarding(WSplashScreenActivity.this);
+				ScreenManager.presentOnboarding(StartupActivity.this);
 			else {
-				ScreenManager.presentMain(WSplashScreenActivity.this, mPushNotificationUpdate);
+				ScreenManager.presentMain(StartupActivity.this, mPushNotificationUpdate);
 			}
 		} catch (NullPointerException ignored) {
 		}
 	}
 
 	private boolean isAppUpdated() {
-		String appVersionFromDB = Utils.getSessionDaoValue(WSplashScreenActivity.this, SessionDao.KEY.APP_VERSION);
+		String appVersionFromDB = Utils.getSessionDaoValue(StartupActivity.this, SessionDao.KEY.APP_VERSION);
 		String appLatestVersion = null;
 		try {
 			appLatestVersion = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
@@ -315,6 +376,40 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 
 	protected void onResume() {
 		super.onResume();
-		NotificationUtils.clearNotifications(WSplashScreenActivity.this);
+		NotificationUtils.clearNotifications(StartupActivity.this);
+	}
+
+	@Override
+	public void notifyIfNeeded() {
+
+		final IFirebaseManager firebaseManager = this.getFirebaseManager();
+		FirebaseRemoteConfig mFirebaseRemoteConfig = firebaseManager.getRemoteConfig();
+		if (mFirebaseRemoteConfig == null){
+
+			FirebaseManager.Companion.getInstance().setupRemoteConfig(new OnCompletionListener(){
+				@Override
+				public void complete() {
+					executeConfigServer();
+				}
+			});
+		}
+		else if (mFirebaseRemoteConfig.getBoolean(APP_IS_EXPIRED_KEY)){
+			throw new RuntimeException("Something awful happened...");
+		}
+	}
+
+	@VisibleForTesting
+	public IFirebaseManager getFirebaseManager(){
+		return FirebaseManager.Companion.getInstance();
+	}
+
+	@VisibleForTesting
+	public boolean testIsFirstTime(){
+		return this.isFirstTime();
+	}
+
+	@VisibleForTesting
+	public String testGetRandomVideos(){
+		return getRandomVideos();
 	}
 }

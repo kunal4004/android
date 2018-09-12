@@ -41,12 +41,12 @@ import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsA
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.FragmentLifecycle;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
@@ -171,7 +171,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
 		onLoadComplete();
 		mErrorHandlerView = new ErrorHandlerView(getActivity());
-		if (!new ConnectionDetector().isOnline(getActivity()))
+		if (!NetworkManager.getInstance().isConnectedToNetwork(getActivity()))
 			mErrorHandlerView.showToast();
 		if (accountsResponse != null)
 			bindData(accountsResponse);
@@ -317,7 +317,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 				break;
 
 			case 440:
-				SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, offerActive.response.stsParams);
+				SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, offerActive.response.stsParams,getActivity());
 				break;
 
 			default:
@@ -385,7 +385,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 			@Override
 			public void run() {
 				if (!personalWasAlreadyRunOnce) {
-					if (new ConnectionDetector().isOnline(getActivity()))
+					if (NetworkManager.getInstance().isConnectedToNetwork(getActivity()))
 						getActiveOffer();
 					else {
 						mErrorHandlerView.showToast();
@@ -419,7 +419,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	public void onConnectionChanged() {
 		//connection changed
 		if (!personalWasAlreadyRunOnce) {
-			if (new ConnectionDetector().isOnline(getActivity()))
+			if (NetworkManager.getInstance().isConnectedToNetwork(getActivity()))
 				getActiveOffer();
 		}
 	}
@@ -432,7 +432,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 
 	private void retryConnect() {
 		if (!personalWasAlreadyRunOnce) {
-			if (new ConnectionDetector().isOnline(getActivity()))
+			if (NetworkManager.getInstance().isConnectedToNetwork(getActivity()))
 				getActiveOffer();
 			else {
 				mErrorHandlerView.showToast();

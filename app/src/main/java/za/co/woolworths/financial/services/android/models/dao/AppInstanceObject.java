@@ -1,10 +1,13 @@
 package za.co.woolworths.financial.services.android.models.dao;
 
+import android.app.Activity;
+
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
+import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 
 /**
@@ -43,10 +46,9 @@ public class AppInstanceObject {
 
 		if (this.users.size() == 0) {
 			return new User();
-		}else {
-			for (User user : this.users)
-			{
-				if(user.id.equalsIgnoreCase(getCurrentUsersID())){
+		} else {
+			for (User user : this.users) {
+				if (user.id.equalsIgnoreCase(getCurrentUsersID())) {
 					return user;
 				}
 			}
@@ -88,12 +90,11 @@ public class AppInstanceObject {
 						break;
 					}
 				}
-				if (index == -1){
+				if (index == -1) {
 					appInstanceObject.users.add(this);
-					if(appInstanceObject.users.size() > AppInstanceObject.MAX_USERS)
+					if (appInstanceObject.users.size() > AppInstanceObject.MAX_USERS)
 						appInstanceObject.users.remove(0);
-				}
-				else
+				} else
 					appInstanceObject.users.set(index, this);
 
 			}
@@ -101,6 +102,7 @@ public class AppInstanceObject {
 		}
 
 	}
+
 	public static String getCurrentUsersID() {
 		return SessionUtilities.getInstance().getJwt().email.get(0);
 	}
@@ -123,4 +125,10 @@ public class AppInstanceObject {
 		public boolean deliveryLocation;
 		public boolean vouchers;
     }
+	/***
+	 * Check to determine if biometric custom popup should be displayed
+	 */
+	public static boolean biometricWalkthroughIsPresented(Activity activity) {
+		return activity != null && !get().isBiometricWalkthroughPresented() && AuthenticateUtils.getInstance(activity).isAppSupportsAuthentication() && !AuthenticateUtils.getInstance(activity).isAuthenticationEnabled();
+	}
 }

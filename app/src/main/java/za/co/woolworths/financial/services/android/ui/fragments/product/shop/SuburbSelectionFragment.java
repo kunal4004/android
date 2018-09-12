@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -21,11 +22,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -37,18 +34,15 @@ import za.co.woolworths.financial.services.android.models.dto.SuburbsResponse;
 import za.co.woolworths.financial.services.android.models.rest.shop.GetSuburbs;
 import za.co.woolworths.financial.services.android.models.rest.shop.SetDeliveryLocationSuburb;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
-import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.adapters.SuburbSelectionAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.binder.DeliveryLocationSelectionFragmentChange;
-
-import static za.co.woolworths.financial.services.android.models.service.event.ProductState.USE_MY_LOCATION;
 
 public class SuburbSelectionFragment extends Fragment implements SuburbSelectionAdapter.SuburbSelectionCallback, View.OnTouchListener {
 
@@ -151,7 +145,7 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 						btnRetry.setOnClickListener(new View.OnClickListener() {
 							@Override
 							public void onClick(View v) {
-								if (new ConnectionDetector().isOnline(getActivity())) {
+								if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
 									loadSuburbItems();
 								}
 							}
@@ -172,14 +166,14 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 				case 440:
 
 					SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.response.stsParams);
-					SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(getActivity());
+					SessionExpiredUtilities.getInstance().showSessionExpireDialog((AppCompatActivity) getActivity());
 
 					// hide loading
 					toggleLoading(false);
 					btnRetry.setOnClickListener(new View.OnClickListener() {
 						@Override
 						public void onClick(View v) {
-							if (new ConnectionDetector().isOnline(getActivity())) {
+							if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
 								loadSuburbItems();
 							}
 						}
@@ -196,7 +190,7 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 						btnRetry.setOnClickListener(new View.OnClickListener() {
 							@Override
 							public void onClick(View v) {
-								if (new ConnectionDetector().isOnline(getActivity())) {
+								if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
 									loadSuburbItems();
 								}
 							}
@@ -275,7 +269,7 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 						btnRetry.setOnClickListener(new View.OnClickListener() {
 							@Override
 							public void onClick(View v) {
-								if (new ConnectionDetector().isOnline(getActivity())) {
+								if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
 									setSuburbRequest(province, suburb);
 								}
 							}
@@ -296,8 +290,8 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 					Activity activity = getActivity();
 					if (activity == null) return;
 					Utils.sendBus(new CartState(suburb.name + ", " + province.name));
-					Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(province,suburb));
-					Utils.addToShoppingDeliveryLocationHistory(new ShoppingDeliveryLocation(province,suburb));
+					Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(province, suburb));
+					Utils.addToShoppingDeliveryLocationHistory(new ShoppingDeliveryLocation(province, suburb));
 					// TODO: go back to cart if no items removed from cart, else go to list of removed items
 					if (activity != null) {
 						activity.setResult(SUBURB_SET_RESULT);
@@ -307,14 +301,14 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 					break;
 				case 440:
 					SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.response.stsParams);
-					SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(getActivity());
+					SessionExpiredUtilities.getInstance().showSessionExpireDialog((AppCompatActivity) getActivity());
 
 					// hide loading
 					toggleLoading(false);
 					btnRetry.setOnClickListener(new View.OnClickListener() {
 						@Override
 						public void onClick(View v) {
-							if (new ConnectionDetector().isOnline(getActivity())) {
+							if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
 								setSuburbRequest(province, suburb);
 							}
 						}
@@ -331,7 +325,7 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 						btnRetry.setOnClickListener(new View.OnClickListener() {
 							@Override
 							public void onClick(View v) {
-								if (new ConnectionDetector().isOnline(getActivity())) {
+								if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
 									setSuburbRequest(province, suburb);
 								}
 							}

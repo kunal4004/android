@@ -81,7 +81,6 @@ import za.co.woolworths.financial.services.android.util.DrawImage;
 import za.co.woolworths.financial.services.android.util.FusedLocationSingleton;
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
 import za.co.woolworths.financial.services.android.util.PermissionUtils;
-import za.co.woolworths.financial.services.android.util.QueryBadgeCounter;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
@@ -241,6 +240,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		}
 	}
 
+
 	private void loadPromotionalImages(PromotionImages promotionalImage) {
 		LinearLayout promotionalImagesLayout = getViewDataBinding().priceLayout.promotionalImages;
 		List<String> images = new ArrayList<>();
@@ -255,7 +255,9 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		promotionalImagesLayout.removeAllViews();
 		DrawImage drawImage = new DrawImage(getActivity());
 		for (String image : images) {
-			View view = getActivity().getLayoutInflater().inflate(R.layout.promotional_image, null);
+			Activity activity = getActivity();
+			if (activity == null) return;
+			View view = activity.getLayoutInflater().inflate(R.layout.promotional_image, null);
 			SimpleDraweeView simpleDraweeView = view.findViewById(R.id.promotionImage);
 			drawImage.displaySmallImage(simpleDraweeView, image);
 			promotionalImagesLayout.addView(view);
@@ -333,7 +335,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 			this.addItemToShoppingList();
 			return;
 		} else {
-			openSizePicker(this.selectedGroupKey,true,false);
+			openSizePicker(this.selectedGroupKey, true, false);
 			return;
 		}
 
@@ -416,7 +418,9 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		getViewDataBinding().loadingInfoView.setVisibility(View.GONE);
 		this.configureButtonsAndSelectors();
 		this.updateViewPagerWithAuxiliaryImages();
+		this.setPromotionalText(productDetails);
 		this.setProductCode(productDetails.productId);
+		this.loadPromotionalImages(productDetails.promotionImages);
 		this.setProductDescription(getViewModel().getProductDescription(getActivity(), productDetails));
 		this.configureUIForOtherSKU(defaultSku);
 		this.displayIngredients();
@@ -519,6 +523,33 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 			}
 		});
 		multiPickerDialog.setContentView(view);
+
+		// ViewSwitcher setMeasureAllChildren to true will occupy the space of the largest child
+		// false attribute will discard setting largest height as default height
+		viewSwitcher.setMeasureAllChildren(false);
+
+		viewSwitcher.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+			@Override
+			public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+
+				switch (viewSwitcher.getDisplayedChild()) {
+					case VIEW_SWITCHER_SIZE_PICKER:
+						rcvQuantityPicker.setVisibility(View.GONE);
+						rcvSizePickerForInventory.setVisibility(View.VISIBLE);
+						tvMultiPickerTitle.setText(getString(R.string.available_sizes));
+						break;
+
+					case VIEW_SWITCHER_QUANTITY_PICKER:
+						rcvQuantityPicker.setVisibility(View.VISIBLE);
+						rcvSizePickerForInventory.setVisibility(View.GONE);
+						tvMultiPickerTitle.setText(getString(R.string.edit_quantity));
+						break;
+
+					default:
+						break;
+				}
+			}
+		});
 	}
 
 	public void openSizePicker(String groupKey, boolean isForShoppingList, boolean isForFindInStore) {
@@ -599,13 +630,15 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
 	@Override
 	public void onLocationItemSuccess(List<StoreDetails> location) {
+		Activity activity = getActivity();
+		if (activity == null) return;
 		this.enableFindInStoreButton(false);
 		if (location.size() > 0) {
 			getGlobalState().setStoreDetailsArrayList(location);
-			Intent intentInStoreFinder = new Intent(getActivity(), WStockFinderActivity.class);
+			Intent intentInStoreFinder = new Intent(activity, WStockFinderActivity.class);
 			intentInStoreFinder.putExtra("PRODUCT_NAME", mSubCategoryTitle);
 			startActivity(intentInStoreFinder);
-			getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+			activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 		} else {
 			this.showOutOfStockInStores();
 		}
@@ -655,12 +688,13 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
 	@Override
 	public void addItemToCartResponse(AddItemToCartResponse addItemToCartResponse) {
-		QueryBadgeCounter.getInstance().queryCartCount();
 		this.enableAddToCartButton(false);
 		Intent intent = new Intent();
 		intent.putExtra("addedToCart", true);
-		getActivity().setResult(RESULT_OK, intent);
-		getActivity().onBackPressed();
+		Activity activity = getActivity();
+		if (activity == null) return;
+		activity.setResult(RESULT_OK, intent);
+		activity.onBackPressed();
 	}
 
 	@Override
@@ -790,19 +824,23 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	}
 
 	private void updateViewPagerWithAuxiliaryImages() {
+		Activity activity = getActivity();
+		if (activity == null) return;
 		this.mAuxiliaryImage = this.getAuxiliaryImagesByGroupKey(this.selectedGroupKey);
 		//mProductViewPagerAdapter.updatePagerItems(this.mAuxiliaryImage);
-		mProductViewPagerAdapter = new ProductViewPagerAdapter(getActivity(), this.mAuxiliaryImage, this);
+		mProductViewPagerAdapter = new ProductViewPagerAdapter(activity, this.mAuxiliaryImage, this);
 		mImageViewPager.setAdapter(mProductViewPagerAdapter);
 		circleindicator.setViewPager(this.mImageViewPager);
 	}
 
 	public List<String> getAuxiliaryImagesByGroupKey(String groupKey) {
-
 		List<String> updatedAuxiliaryImages = new ArrayList<>();
-		String imageFromOtherSku = this.otherSKUsByGroupKey.get(groupKey).get(0).externalImageRef;
-		if (this.productDetails.otherSkus.size() > 0 && imageFromOtherSku != null)
-			updatedAuxiliaryImages.add(this.otherSKUsByGroupKey.get(groupKey).get(0).externalImageRef);
+		ArrayList<OtherSkus> otherSkusArrayList = this.otherSKUsByGroupKey.get(groupKey);
+		if (otherSkusArrayList != null) {
+			String imageFromOtherSku = otherSkusArrayList.get(0).externalImageRef;
+			if (this.productDetails.otherSkus.size() > 0 && imageFromOtherSku != null)
+				updatedAuxiliaryImages.add(imageFromOtherSku);
+		}
 
 		Map<String, AuxiliaryImage> allAuxImages = new Gson().fromJson(this.productDetails.auxiliaryImages, new TypeToken<Map<String, AuxiliaryImage>>() {
 		}.getType());
@@ -967,7 +1005,6 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
-			QueryBadgeCounter.getInstance().requestAPICall(R.id.navigate_to_shop);
 			switch (requestCode) {
 				case SSO_REQUEST_ADD_TO_CART:
 					addItemToCart();
@@ -1203,4 +1240,10 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 			this.onClick(btnFindInStore);
 	}
 
+	public void setPromotionalText(ProductDetails productDetails) {
+		if (!TextUtils.isEmpty(productDetails.saveText)) {
+			txtSaveText.setVisibility(View.VISIBLE);
+			txtSaveText.setText(productDetails.saveText);
+		}
+	}
 }

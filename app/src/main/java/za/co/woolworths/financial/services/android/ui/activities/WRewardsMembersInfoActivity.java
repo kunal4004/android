@@ -56,7 +56,7 @@ public class WRewardsMembersInfoActivity extends AppCompatActivity {
         if (getIntent().hasExtra("type"))
             viewPager.setCurrentItem(getIntent().getIntExtra("type", 0));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            toolbarTextView.setLetterSpacing(0.1f);
+            toolbarTextView.setLetterSpacing(0.2f);
         }
         appBar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             @Override

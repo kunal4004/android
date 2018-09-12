@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableString;
 import android.util.Log;
 import android.view.View;
@@ -31,6 +32,7 @@ import java.util.Map;
 
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
@@ -52,10 +54,10 @@ import za.co.woolworths.financial.services.android.ui.fragments.help.NeedHelpFra
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.ShoppingListFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
@@ -218,7 +220,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					if (new ConnectionDetector().isOnline(getActivity())) {
+					if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
 						loadAccounts();
 					}
 				}
@@ -249,7 +251,8 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	@Override
 	public void onResume() {
 		super.onResume();
-		messageCounterRequest();
+		if (!AppInstanceObject.biometricWalkthroughIsPresented(getActivity()))
+			messageCounterRequest();
 	}
 
 	//To remove negative signs from negative balance and add "CR" after the negative balance
@@ -610,7 +613,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 							List<Account> accountList = accountsResponse.accountList;
 							for (Account p : accountList) {
 								accounts.put(p.productGroupCode.toUpperCase(), p);
-
 								int indexOfUnavailableAccount = unavailableAccounts.indexOf(p.productGroupCode.toUpperCase());
 								if (indexOfUnavailableAccount > -1) {
 									try {
@@ -623,7 +625,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 							configureView();
 							break;
 						case 440:
-
 							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, accountsResponse.response.stsParams);
 							onSessionExpired(getActivity());
 							initialize();
@@ -691,7 +692,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 					try {
 						Activity activity = getActivity();
 						if (activity != null) {
-							Utils.clearSQLLiteSearchHistory(activity);
+							Utils.clearCacheHistory(activity);
 						}
 					} catch (Exception pE) {
 						Log.d(TAG, pE.getMessage());
@@ -825,7 +826,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		Utils.setBadgeCounter(getActivity(), 0);
 		removeAllBottomNavigationIconBadgeCount();
 		SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
-		SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(activity);
+		SessionExpiredUtilities.getInstance().showSessionExpireDialog((AppCompatActivity) activity);
 		initialize();
 	}
 

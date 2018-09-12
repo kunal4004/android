@@ -55,12 +55,11 @@ import za.co.woolworths.financial.services.android.ui.fragments.statement.Statem
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.dialog.AddToListFragment;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
-import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.StatementUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -88,8 +87,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 	protected WTextView mTvStatementSendTo;
 	private WButton mNegativeActionButton;
 	private WButton mPositiveActionButton;
-	private WButton mBtnSessionExpiredCancel;
-	private WButton mBtnSignIn;
 	private boolean mCloseView;
 	public static final int DISMISS_POP_WINDOW_CLICKED = 123400;
 	public static int CART_DEFAULT_ERROR_TAPPED = 1234567;
@@ -97,7 +94,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 	public enum MODAL_LAYOUT {
 		CONFIDENTIAL, INSOLVENCY, INFO, EMAIL, ERROR, MANDATORY_FIELD,
 		HIGH_LOAN_AMOUNT, LOW_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION, SIGN_OUT, BARCODE_ERROR,
-		SHOPPING_LIST_INFO, SESSION_EXPIRED, INSTORE_AVAILABILITY, NO_STOCK, LOCATION_OFF, SUPPLY_DETAIL_INFO,
+		SHOPPING_LIST_INFO, INSTORE_AVAILABILITY, NO_STOCK, LOCATION_OFF, SUPPLY_DETAIL_INFO,
 		CLI_DANGER_ACTION_MESSAGE_VALIDATION, AMOUNT_STOCK, UPLOAD_DOCUMENT_MODAL, PROOF_OF_INCOME,
 		STATEMENT_SENT_TO, CLI_DECLINE, CLI_ERROR, DETERMINE_LOCATION_POPUP, STATEMENT_ERROR, SHOPPING_ADD_TO_LIST, ERROR_TITLE_DESC, SET_UP_BIOMETRICS_ON_DEVICE, BIOMETRICS_SECURITY_INFO
 	}
@@ -316,19 +313,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				mRelPopContainer = findViewById(R.id.relPopContainer);
 				WButton btnConfidentialOk = findViewById(R.id.btnConfidentialOk);
 				btnConfidentialOk.setOnClickListener(this);
-				break;
-
-			case SESSION_EXPIRED:
-				mWGlobalState.setOnBackPressed(true);
-				setContentView(R.layout.session_expired);
-				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
-				mRelPopContainer = findViewById(R.id.relPopContainer);
-				WTextView tvSessionExpiredDesc = findViewById(R.id.tvSessionExpiredDesc);
-				tvSessionExpiredDesc.setText(getString(R.string.session_expired_desc));
-				mBtnSessionExpiredCancel = findViewById(R.id.btnSECancel);
-				mBtnSignIn = findViewById(R.id.btnSESignIn);
-				mBtnSessionExpiredCancel.setOnClickListener(this);
-				mBtnSignIn.setOnClickListener(this);
 				break;
 
 			case INSTORE_AVAILABILITY:
@@ -903,14 +887,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 			getSupportFragmentManager().popBackStack();
 		} else {
 			switch (current_view) {
-				/***
-				 * @method: startExitAnimation() dismisses session expired popup
-				 * with setResult(CART_DEFAULT_ERROR_TAPPED) enabled to prevent activity loop
-				 */
-				case SESSION_EXPIRED:
-					startExitAnimation();
-					break;
-
 				default:
 					finishActivity();
 					break;
@@ -969,28 +945,10 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				confidentialAnimation();
 				break;
 
-			case R.id.btnSECancel:
-				whiteEffectClick(mBtnSessionExpiredCancel);
-				exitSessionAnimation();
-				break;
-
 			case R.id.btnConfirmDecline:
 				cliDeclineAnimation();
 				break;
 
-			case R.id.btnSESignIn:
-				whiteEffectClick(mBtnSignIn);
-				String mSTSParams = description;
-
-				if (TextUtils.isEmpty(mSTSParams)) {
-					mSTSParams = "";
-				} else {
-					mSTSParams = Utils.getScope(mSTSParams);
-				}
-				ScreenManager.presentExpiredTokenSSOSignIn(CustomPopUpWindow.this, mSTSParams);
-				overridePendingTransition(0, 0);
-				finish();
-				break;
 
 			case R.id.tvAlternativeEmail:
 				exitStatementAnimation();
@@ -1053,34 +1011,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 		overridePendingTransition(0, 0);
 	}
 
-	private void exitSessionAnimation() {
-		if (!viewWasClicked) { // prevent more than one click
-			viewWasClicked = true;
-			TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
-			animation.setFillAfter(true);
-			animation.setDuration(ANIM_DOWN_DURATION);
-			animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
-
-				@Override
-				public void onAnimationStart(Animation animation) {
-				}
-
-				@Override
-				public void onAnimationRepeat(Animation animation) {
-				}
-
-				@Override
-				public void onAnimationEnd(Animation animation) {
-					mWGlobalState.setOnBackPressed(false);
-					SessionUtilities.getInstance().setSTSParameters(null);
-					setResult(DISMISS_POP_WINDOW_CLICKED);
-					dismissLayout();
-				}
-			});
-			mRelRootContainer.startAnimation(animation);
-		}
-	}
-
 	private void populateDocument(WTextView textView) {
 		String email = userEmailAddress();
 		textView.setText(email);
@@ -1139,7 +1069,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 							exitStatementConfirmAnimation(emailResponse);
 							break;
 						case 440:
-							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.stsParams);
+							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.stsParams,CustomPopUpWindow.this);
 							break;
 						default:
 							break;
@@ -1192,7 +1122,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				if (new ConnectionDetector().isOnline(CustomPopUpWindow.this)) {
+				if (NetworkManager.getInstance().isConnectedToNetwork(CustomPopUpWindow.this)) {
 					if (!loadState.onLoanCompleted()) {
 						sendStatement();
 					}
@@ -1227,36 +1157,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 			}
 		} catch (Exception ex) {
 			Log.e("whiteEffectClick", ex.toString());
-		}
-	}
-
-	public void startExitAnimation(final String desc) {
-		if (!viewWasClicked) { // prevent more than one click
-			viewWasClicked = true;
-			TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
-			animation.setFillAfter(true);
-			animation.setDuration(ANIM_DOWN_DURATION);
-			animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
-
-				@Override
-				public void onAnimationStart(Animation animation) {
-				}
-
-				@Override
-				public void onAnimationRepeat(Animation animation) {
-				}
-
-				@Override
-				public void onAnimationEnd(Animation animation) {
-					if (!TextUtils.isEmpty(desc)) {
-						Utils.displayValidationMessage(CustomPopUpWindow.this, CustomPopUpWindow.MODAL_LAYOUT.ERROR, desc);
-					}
-					setResult(CART_DEFAULT_ERROR_TAPPED);
-					finish();
-					overridePendingTransition(0, 0);
-				}
-			});
-			mRelRootContainer.startAnimation(animation);
 		}
 	}
 

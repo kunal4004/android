@@ -11,7 +11,6 @@ import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,12 +45,12 @@ import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWind
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -218,7 +217,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 				if (strCancel.equalsIgnoreCase("ok")) {
 					String listName = mEtNewList.getText().toString().trim();
 					mCreateList = new CreateList(listName, getItems());
-					if ((new ConnectionDetector().isOnline(activity))) {
+					if ((NetworkManager.getInstance().isConnectedToNetwork(activity))) {
 						setCreateListFailed(false);
 						executeCreateList();
 					} else {
