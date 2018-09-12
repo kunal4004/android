@@ -324,10 +324,14 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 				break;
 			case R.id.iconAvailableFundsInfo:
 				Utils.displayValidationMessageForResult(
+						this,
 						getActivity(),
 						CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC,
-						"YOUR ACCOUNT IS IN ARREARS",
-						"Your Woolies Store Card is in arrears, please make an immediate minimum payment of Rxxx.xx in order to continue shopping.\n\nFor assistance, call us on 0861 50 20 20",
+						getActivity().getResources().getString(R.string.account_in_arrears_info_title),
+						getActivity().getResources().getString(R.string.account_in_arrears_info_description)
+								.replace("minimum_payment", removeNegativeSymbol(WFormatter.newAmountFormat(account.amountOverdue)))
+                                .replace("card_name", "Personal Loan"),
+						getActivity().getResources().getString(R.string.how_to_pay),
 						RESULT_CODE_FUNDS_INFO);
 				break;
 			case R.id.howToPayAccountStatus:
@@ -486,6 +490,9 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
+		if(requestCode == RESULT_CODE_FUNDS_INFO) {
+			ScreenManager.presentHowToPayActivity(getActivity(),account);
+		}
 		retryConnect();
 	}
 
