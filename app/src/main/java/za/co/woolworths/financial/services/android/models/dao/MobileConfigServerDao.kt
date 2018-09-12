@@ -1,11 +1,6 @@
 package za.co.woolworths.financial.services.android.models.dao
 
-import android.content.Context
-import android.content.pm.PackageManager
-import android.provider.Settings
-import com.awfs.coordination.R
 import retrofit.RestAdapter
-import za.co.wigroup.androidutils.Util
 import za.co.woolworths.financial.services.android.contracts.OnCompletionListener
 import za.co.woolworths.financial.services.android.contracts.OnResultListener
 import za.co.woolworths.financial.services.android.models.ApiInterface
@@ -18,20 +13,19 @@ class MobileConfigServerDao {
     //static vars & functions
 
     companion object {
+        private val mcsUrl = "https://mobileconfig.wigroup.co/config-server/rest/mobile/android/"
 
-        fun getConfig(context: Context, onResultListener: OnResultListener<ConfigResponse>) {
+        fun getConfig(mcsAppVersion: String, deviceID: String, onResultListener: OnResultListener<ConfigResponse>) {
 
             val firebaseManager = FirebaseManager.getInstance()
             var firebaseRemoteConfig = firebaseManager.getRemoteConfig()
-            val deviceID = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
 
             if (firebaseRemoteConfig == null){
                 //this ensures we're using defaults while the remote config
                 //is yet to be retrieved.
                 firebaseManager.setupRemoteConfig(object :OnCompletionListener{
-
                     override fun complete() {
-                        getConfig(context, onResultListener)
+                        getConfig(mcsAppVersion, deviceID, onResultListener)
                     }
                 })
                 return
@@ -40,30 +34,19 @@ class MobileConfigServerDao {
             val task = object : HttpAsyncTask<String, String, ConfigResponse>() {
                 override fun httpDoInBackground(vararg strings: String): ConfigResponse {
                     val appName = firebaseRemoteConfig.getString("mcs_appName")
-                    var appVersion = ""
-                    var environment = ""
-
-                    try {
-                        appVersion = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName
-                        environment = com.awfs.coordination.BuildConfig.FLAVOR
-                    } catch (e: PackageManager.NameNotFoundException) {
-                        e.printStackTrace()
-                    }
+                    val apiKey = firebaseRemoteConfig.getString("mcs_appApiKey")
 
                     //MCS expects empty value for PROD
                     //appName-5.0 = PROD
                     //appName-5.0-qa = QA
                     //appName-5.0-dev = DEV
-                    val majorMinorVersion = appVersion.substring(0, 3)
-                    val mcsAppVersion = appName + "-" + majorMinorVersion + if (environment == "production") "" else "-$environment"
 
                     val mApiInterface = RestAdapter.Builder()
-                            .setEndpoint(context.getString(R.string.config_endpoint))
-                            .setLogLevel(if (Util.isDebug(context)) RestAdapter.LogLevel.FULL else RestAdapter.LogLevel.NONE)
+                            .setEndpoint(mcsUrl)
                             .build()
                             .create(ApiInterface::class.java)
 
-                    return mApiInterface.getConfig(firebaseRemoteConfig.getString("mcs_appApiKey"), deviceID, mcsAppVersion)
+                    return mApiInterface.getConfig(apiKey, deviceID, "$appName-$mcsAppVersion")
                 }
 
                 override fun httpError(errorMessage: String, httpErrorCode: HttpAsyncTask.HttpErrorCode): ConfigResponse {

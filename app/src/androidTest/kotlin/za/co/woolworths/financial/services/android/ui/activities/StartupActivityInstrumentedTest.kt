@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities
 
+import android.content.pm.PackageManager
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.matcher.ViewMatchers.isDisplayed
@@ -17,6 +18,7 @@ import za.co.woolworths.financial.services.android.models.dao.MobileConfigServer
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask
 import za.co.woolworths.financial.services.android.util.NetworkManager
+import za.co.woolworths.financial.services.android.util.Utils
 import java.util.concurrent.CountDownLatch
 
 @RunWith(AndroidJUnit4::class)
@@ -55,7 +57,19 @@ public class StartupActivityInstrumentedTest {
     fun testMobileConfigServer(){
         var success = false
 
-        MobileConfigServerDao.getConfig(activityRule.activity, object :OnResultListener<ConfigResponse> {
+        var appVersion = ""
+        var environment = ""
+
+        try {
+            appVersion = activityRule.activity.getPackageManager().getPackageInfo(activityRule.activity.getPackageName(), 0).versionName
+            environment = com.awfs.coordination.BuildConfig.FLAVOR
+        } catch (e: PackageManager.NameNotFoundException) {
+            e.printStackTrace()
+        }
+
+        val mcsAppVersion = appVersion.substring(0, 3) + if (environment === "production") "" else "-$environment"
+
+        MobileConfigServerDao.getConfig(mcsAppVersion, Utils.getUniqueDeviceID(activityRule.activity), object :OnResultListener<ConfigResponse> {
             override fun success(responseObject: ConfigResponse) {
                 Assert.assertTrue(responseObject is ConfigResponse)
                 success = true

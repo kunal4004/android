@@ -156,7 +156,12 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 			return;
 		}
 
-		MobileConfigServerDao.Companion.getConfig(this, new OnResultListener<ConfigResponse>() {
+		//x.x = PROD
+		//x.x-qa = QA
+		//x.x-dev = DEV
+		String mcsAppVersion = appVersion.substring(0, 3) + (environment == "production" ? "" : "-" + environment);
+
+		MobileConfigServerDao.Companion.getConfig(mcsAppVersion, Utils.getUniqueDeviceID(this), new OnResultListener<ConfigResponse>() {
 			@Override
 			public void success(ConfigResponse configResponse) {
 				try {
