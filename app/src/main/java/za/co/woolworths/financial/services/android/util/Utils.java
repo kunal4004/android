@@ -21,6 +21,7 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.design.internal.BottomNavigationItemView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -1215,15 +1216,16 @@ public class Utils {
 		((AppCompatActivity) context).overridePendingTransition(0, 0);
 	}
 
-	public static void displayValidationMessageForResult(Activity context, CustomPopUpWindow.MODAL_LAYOUT key, String title, String description, int requestCode) {
-		Intent openMsg = new Intent(context, CustomPopUpWindow.class);
+	public static void displayValidationMessageForResult(Fragment fragment, Activity activity, CustomPopUpWindow.MODAL_LAYOUT key, String title, String description, String buttonTitle, int requestCode) {
+		Intent openMsg = new Intent(activity, CustomPopUpWindow.class);
 		Bundle args = new Bundle();
 		args.putSerializable("key", key);
 		args.putString("title", title);
 		args.putString("description", description);
+		args.putString("buttonTitle", buttonTitle);
 		openMsg.putExtras(args);
-		context.startActivityForResult(openMsg, requestCode);
-		((AppCompatActivity) context).overridePendingTransition(0, 0);
+		fragment.startActivityForResult(openMsg, requestCode);
+		((AppCompatActivity) activity).overridePendingTransition(0, 0);
 	}
 
 	public static String toTitleCase(String givenString) {

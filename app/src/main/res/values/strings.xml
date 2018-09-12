@@ -27,6 +27,8 @@
     <string name="valid_until">VALID UNTIL</string>
     <string name="ok">OK</string>
     <string name="retry">RETRY</string>
+    <string name="account_in_arrears_info_title">YOUR ACCOUNT IS IN ARREARS</string>
+    <string name="account_in_arrears_info_description">Your Woolies card_name is in arrears, please make an immediate minimum payment of minimum_payment in order to continue shopping.\n\nFor assistance, call us on 0861 50 20 20</string>
 
     <string name="valued">VALUED</string>
     <string name="loyal">LOYAL</string>
