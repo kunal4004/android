@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -102,6 +103,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 	MODAL_LAYOUT current_view;
 	private String description;
 	private String title;
+	private String buttonTitle;
 	private String userStatement = "";
 
 	@Override
@@ -119,6 +121,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 			current_view = (MODAL_LAYOUT) mBundle.getSerializable("key");
 			title = getText(mBundle.getString("title"));
 			description = getText(mBundle.getString("description"));
+			buttonTitle = getText(mBundle.getString("buttonTitle"));
 			mCloseView = mBundle.getBoolean("closeSlideUpPanel");
 			userStatement = mBundle.getString(StatementActivity.SEND_USER_STATEMENT);
 			displayView(current_view);
@@ -346,6 +349,9 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				mTextDesc = findViewById(R.id.textProofIncome);
 				mTextTitle.setText(title);
 				mTextDesc.setText(description);
+				if (buttonTitle != null) {
+					mLowLoanAmount.setText(buttonTitle);
+				}
 				mLowLoanAmount.setOnClickListener(this);
 				mRelPopContainer.setOnClickListener(this);
 				break;
@@ -877,6 +883,8 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 	}
 
 	private void dismissLayout() {
+		Intent returnIntent = new Intent();
+		setResult(Activity.RESULT_OK, returnIntent);
 		finish();
 		overridePendingTransition(0, 0);
 	}
