@@ -11,6 +11,7 @@ import com.crashlytics.android.Crashlytics;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.FirebaseApp;
@@ -187,17 +188,21 @@ public class WoolworthsApplication extends Application {
 	public void onCreate() {
 		super.onCreate();
 		mInstance = this;
+		WoolworthsApplication.context = this.getApplicationContext();
 		StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
 		StrictMode.setVmPolicy(builder.build());
 		Fabric.with(WoolworthsApplication.this, new Crashlytics());
-		Fresco.initialize(this);
 		AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+
+		ImagePipelineConfig config = ImagePipelineConfig.newBuilder(context)
+				.setDownsampleEnabled(true)
+				.build();
+		Fresco.initialize(this, config);
 		FirebaseApp.initializeApp(WoolworthsApplication.this);
 		FacebookSdk.sdkInitialize(WoolworthsApplication.this);
 		AppEventsLogger.activateApp(WoolworthsApplication.this);
 		mWGlobalState = new WGlobalState();
 		updateBankDetail = new UpdateBankDetail();
-		WoolworthsApplication.context = this.getApplicationContext();
 		// set app context
 		mContextApplication = getApplicationContext();
 		//Crittercism.initialize(getApplicationContext(), getResources().getString(R.string.crittercism_app_id));
