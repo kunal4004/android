@@ -1,44 +1,27 @@
 package za.co.woolworths.financial.services.android.ui.activities
 
 import android.os.Bundle
-import android.app.Activity
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
-import android.view.View
+import android.view.MenuItem
 import com.awfs.coordination.R
-
 import kotlinx.android.synthetic.main.activity_debit_order.*
 import za.co.woolworths.financial.services.android.models.dto.DebitOrder
-import za.co.woolworths.financial.services.android.ui.views.WTextView
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
 import kotlin.math.absoluteValue
 
 class DebitOrderActivity : AppCompatActivity() {
 
-    lateinit var toolbar: Toolbar
-    lateinit var tvDebitOrderTitle: WTextView
-    lateinit var tvDebitOrderDescription: WTextView
-    lateinit var tvDeductionDay: WTextView
-    lateinit var tvAmountToBeDebited: WTextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_debit_order)
-
-        toolbar = findViewById(R.id.toolbar)
+        Utils.updateStatusBarBackground(this)
         setSupportActionBar(toolbar)
-        supportActionBar!!.elevation = 0f
-        supportActionBar!!.setTitle(null)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
         supportActionBar!!.setDisplayUseLogoEnabled(false)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.back24)
-        toolbar.setNavigationOnClickListener { arrow -> onBackPressed()}
-
-        tvDebitOrderTitle = findViewById(R.id.tvDebitOrderTitle)
-        tvDebitOrderDescription = findViewById(R.id.tvDebitOrderDescription)
-        tvDeductionDay = findViewById(R.id.tvDeductionDay)
-        tvAmountToBeDebited = findViewById(R.id.tvAmountToBeDebited)
 
         var debitOrder: DebitOrder = intent.extras.getSerializable("DebitOrder") as DebitOrder
 
@@ -54,8 +37,19 @@ class DebitOrderActivity : AppCompatActivity() {
 
     }
 
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            android.R.id.home -> {
+                onBackPressed();
+                return true
+            }
+
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
     override fun onBackPressed() {
-        super.onBackPressed()
+        finish()
         overridePendingTransition(
                 R.anim.slide_in_from_left,
                 R.anim.slide_out_to_right
