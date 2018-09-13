@@ -50,14 +50,14 @@ android {
 
     defaultConfig {
         minSdkVersion 19 //kitkat 4.4
-        targetSdkVersion 26
+        targetSdkVersion 27
         multiDexEnabled true
         versionName(major + "." + minor + "." + fix)
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
-    compileSdkVersion 26
+    compileSdkVersion 27
     buildToolsVersion '27.0.3'
     buildTypes {
         debug {

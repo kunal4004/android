@@ -20,7 +20,6 @@ import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -382,25 +381,16 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 	@Override
 	public void notifyIfNeeded() {
 
-		final IFirebaseManager firebaseManager = this.getFirebaseManager();
-		FirebaseRemoteConfig mFirebaseRemoteConfig = firebaseManager.getRemoteConfig();
-		if (mFirebaseRemoteConfig == null){
-
-			FirebaseManager.Companion.getInstance().setupRemoteConfig(new OnCompletionListener(){
-				@Override
-				public void complete() {
-					executeConfigServer();
+		final IFirebaseManager firebaseManager = FirebaseManager.Companion.getInstance();
+		firebaseManager.setupRemoteConfig(new OnCompletionListener(){
+			@Override
+			public void complete() {
+				if (firebaseManager.getRemoteConfig().getBoolean(APP_IS_EXPIRED_KEY)){
+					throw new RuntimeException("Something awful happened...");
 				}
-			});
-		}
-		else if (mFirebaseRemoteConfig.getBoolean(APP_IS_EXPIRED_KEY)){
-			throw new RuntimeException("Something awful happened...");
-		}
-	}
-
-	@VisibleForTesting
-	public IFirebaseManager getFirebaseManager(){
-		return FirebaseManager.Companion.getInstance();
+				executeConfigServer();
+			}
+		});
 	}
 
 	@VisibleForTesting
