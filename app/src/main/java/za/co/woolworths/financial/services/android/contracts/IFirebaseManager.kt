@@ -4,7 +4,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 
 interface IFirebaseManager {
 
-    fun getRemoteConfig(): FirebaseRemoteConfig?
+    fun getRemoteConfig(): FirebaseRemoteConfig
     fun setupRemoteConfig(onCompletionListener: OnCompletionListener)
     fun setupRemoteConfig(onResultListener: OnResultListener<FirebaseRemoteConfig>): FirebaseRemoteConfig
 }
