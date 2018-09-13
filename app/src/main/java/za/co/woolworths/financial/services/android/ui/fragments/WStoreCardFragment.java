@@ -40,6 +40,7 @@ import za.co.woolworths.financial.services.android.models.rest.cli.CLIGetOfferAc
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
+import za.co.woolworths.financial.services.android.ui.activities.DebitOrderActivity;
 import za.co.woolworths.financial.services.android.ui.activities.HowToPayActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
@@ -105,6 +106,10 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	private boolean productOfferingGoodStanding;
 	private Account account;
 	private WTextView tvHowToPayArrears;
+
+	private RelativeLayout relDebitOrders;
+	private WTextView tvDebitOrdersStatus;
+	private ImageView iconArrowDebitOrders;
 
 	@Nullable
 	@Override
@@ -180,6 +185,11 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		tvTotalAmountDue = view.findViewById(R.id.totalAmountDue);
 		llActiveAccount = view.findViewById(R.id.llActiveAccount);
 		llChargedOffAccount = view.findViewById(R.id.llChargedOffAccount);
+
+		relDebitOrders = view.findViewById(R.id.relDebitOrders);
+		relDebitOrders.setOnClickListener(this);
+		tvDebitOrdersStatus = view.findViewById(R.id.tvDebitOrdersStatus);
+		iconArrowDebitOrders = view.findViewById(R.id.iconArrowDebitOrders);
 	}
 
 	//To remove negative signs from negative balance and add "CR" after the negative balance
@@ -239,6 +249,14 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 					if(!p.productOfferingGoodStanding){
 						tvAmountOverdue.setText(WFormatter.newAmountFormat(p.amountOverdue));
 						tvTotalAmountDue.setText(WFormatter.newAmountFormat(p.totalAmountDue));
+					}
+
+					tvDebitOrdersStatus.setText(p.debitOrder.debitOrderActive ? "ACTIVE" : "EXPIRED");
+					iconArrowDebitOrders.setVisibility(p.debitOrder.debitOrderActive ? View.VISIBLE : View.GONE);
+					if(!p.debitOrder.debitOrderActive) {
+						RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) tvDebitOrdersStatus.getLayoutParams();
+						params.addRule(RelativeLayout.ALIGN_PARENT_END);
+						tvDebitOrdersStatus.setLayoutParams(params);
 					}
 				}
 			}
@@ -327,6 +345,14 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 			case R.id.howToPayAccountStatus:
 			case R.id.howToPayArrears:
 				ScreenManager.presentHowToPayActivity(getActivity(),account);
+				break;
+			case R.id.relDebitOrders:
+				if (account.debitOrder.debitOrderActive) {
+					Intent debitOrderIntent = new Intent(getActivity(), DebitOrderActivity.class);
+					debitOrderIntent.putExtra("DebitOrder", account.debitOrder);
+					startActivity(debitOrderIntent);
+					getActivity().overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+				}
 				break;
 			default:
 				break;

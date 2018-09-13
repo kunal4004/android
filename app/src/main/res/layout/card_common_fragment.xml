@@ -199,29 +199,6 @@
                 android:text="1000" />
         </RelativeLayout>
 
-        <LinearLayout
-            android:id="@+id/llBalanceAtStatementDateContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <View style="@style/bottom_line" />
-
-            <RelativeLayout style="@style/card_item_style">
-
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    android:id="@+id/tvBalanceAtStatementDateLabel"
-                    style="@style/style_loan_label"
-                    android:text="@string/balance_at_statement_date" />
-
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    android:id="@+id/balanceAtStatementDate"
-                    style="@style/style_loan_amount"
-                    android:text="1000" />
-            </RelativeLayout>
-
-        </LinearLayout>
-
         <View style="@style/bottom_line" />
 
         <RelativeLayout
@@ -520,7 +497,9 @@
 
         </RelativeLayout>
 
-        <RelativeLayout style="@style/card_item_click_style">
+        <RelativeLayout
+            android:id="@+id/relDebitOrders"
+            style="@style/card_item_click_style">
 
             <ImageView
                 android:id="@+id/logoDebitOrders"
@@ -543,9 +522,9 @@
                 android:layout_toLeftOf="@+id/iconArrowDebitOrders"
                 android:gravity="center|start"
                 android:lineSpacingExtra="0.1sp"
-                android:text="ACTIVE"
                 android:textColor="#343434"
                 android:textSize="13sp"
+                android:letterSpacing="0.1"
                 app:WTextView_font="medium" />
 
             <ImageView

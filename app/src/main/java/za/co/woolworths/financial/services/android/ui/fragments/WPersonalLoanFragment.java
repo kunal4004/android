@@ -37,6 +37,7 @@ import za.co.woolworths.financial.services.android.models.rest.cli.CLIGetOfferAc
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
+import za.co.woolworths.financial.services.android.ui.activities.DebitOrderActivity;
 import za.co.woolworths.financial.services.android.ui.activities.LoanWithdrawalActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
@@ -93,6 +94,10 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	private boolean productOfferingGoodStanding;
 	private Account account;
 	private WTextView tvHowToPayArrears;
+
+    private RelativeLayout relDebitOrders;
+	private WTextView tvDebitOrdersStatus;
+	private ImageView iconArrowDebitOrders;
 
 	@Nullable
 	@Override
@@ -171,6 +176,11 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
         llActiveAccount = view.findViewById(R.id.llActiveAccount);
         llChargedOffAccount = view.findViewById(R.id.llChargedOffAccount);
 		tvHowToPayArrears = view.findViewById(R.id.howToPayArrears);
+
+        relDebitOrders = view.findViewById(R.id.relDebitOrders);
+        relDebitOrders.setOnClickListener(this);
+		tvDebitOrdersStatus = view.findViewById(R.id.tvDebitOrdersStatus);
+		iconArrowDebitOrders = view.findViewById(R.id.iconArrowDebitOrders);
 	}
 
 	private void addListener() {
@@ -269,6 +279,14 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 						tvAmountOverdue.setText(WFormatter.newAmountFormat(p.amountOverdue));
 						tvTotalAmountDue.setText(WFormatter.newAmountFormat(p.totalAmountDue));
 					}
+
+					tvDebitOrdersStatus.setText(p.debitOrder.debitOrderActive ? "ACTIVE" : "EXPIRED");
+					iconArrowDebitOrders.setVisibility(p.debitOrder.debitOrderActive ? View.VISIBLE : View.GONE);
+					if(!p.debitOrder.debitOrderActive) {
+						RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) tvDebitOrdersStatus.getLayoutParams();
+						params.addRule(RelativeLayout.ALIGN_PARENT_END);
+						tvDebitOrdersStatus.setLayoutParams(params);
+					}
 				}
 			}
 		}
@@ -337,6 +355,12 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 			case R.id.howToPayAccountStatus:
 			case R.id.howToPayArrears:
 				ScreenManager.presentHowToPayActivity(getActivity(),account);
+				break;
+			case R.id.relDebitOrders:
+				Intent debitOrderIntent = new Intent(getActivity(), DebitOrderActivity.class);
+				debitOrderIntent.putExtra("DebitOrder", account.debitOrder);
+				startActivity(debitOrderIntent);
+				getActivity().overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
 				break;
 			default:
 				break;

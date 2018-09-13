@@ -112,10 +112,9 @@
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
-
         <meta-data
             android:name="firebase_crashlytics_collection_enabled"
-            android:value="false"/>
+            android:value="false" />
 
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.StartupActivity"
@@ -328,20 +327,22 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.MyPreferencesActivity"
             android:screenOrientation="portrait"
             android:theme="@style/FaqStyle" />
-        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity"
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
-            />
-
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.BiometricsWalkthrough"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
-
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.HowToPayActivity"
             android:screenOrientation="portrait"
             android:theme="@style/FaqStyle" />
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.DebitOrderActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/DebitOrder"></activity>
     </application>
 
 </manifest>
