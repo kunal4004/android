@@ -52,8 +52,7 @@
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        >
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -72,8 +71,7 @@
                 <ImageView
                     android:id="@+id/howToPayLogo"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/wrewardshero" />
+                    android:layout_height="wrap_content" />
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     style="@style/contact_us_item_header_textview"
@@ -81,13 +79,13 @@
                     android:paddingTop="24dp"
                     android:text="@string/ways_to_pay_your_account"
                     android:textColor="@color/black_50" />
+
                 <LinearLayout
                     android:id="@+id/howToPayOptionsList"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/white"
-                    android:orientation="vertical"
-                    />
+                    android:orientation="vertical" />
 
             </LinearLayout>
 
@@ -100,11 +98,11 @@
                 android:letterSpacing="0.1"
                 android:paddingLeft="@dimen/twenty_four_dp"
                 android:paddingRight="@dimen/twenty_four_dp"
+                android:singleLine="true"
                 android:text="@string/how_to_pay_bank_details"
                 android:textAllCaps="true"
                 android:textColor="@color/black"
                 android:textSize="12sp"
-                android:singleLine="true"
                 app:WTextView_font="bold" />
 
             <LinearLayout
@@ -113,8 +111,7 @@
                 android:layout_height="wrap_content"
                 android:background="@color/white"
                 android:orientation="vertical"
-                android:paddingBottom="16dp"
-                />
+                android:paddingBottom="16dp" />
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 </LinearLayout>
