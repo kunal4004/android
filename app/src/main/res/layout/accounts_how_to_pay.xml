@@ -111,6 +111,7 @@
                 android:layout_height="wrap_content"
                 android:background="@color/white"
                 android:orientation="vertical"
+                android:layout_marginBottom="@dimen/sixteen_sp"
                 android:paddingBottom="16dp" />
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
