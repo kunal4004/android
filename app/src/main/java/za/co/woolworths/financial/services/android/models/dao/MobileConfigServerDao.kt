@@ -51,6 +51,7 @@ class MobileConfigServerDao {
 
                 override fun httpError(errorMessage: String, httpErrorCode: HttpAsyncTask.HttpErrorCode): ConfigResponse {
                     onResultListener.failure(errorMessage, httpErrorCode)
+                    onResultListener.complete()
                     return ConfigResponse()
                 }
 

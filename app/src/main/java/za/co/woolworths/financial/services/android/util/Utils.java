@@ -21,6 +21,7 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.design.internal.BottomNavigationItemView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -134,6 +135,8 @@ public class Utils {
 	public static final String BLACK_CARD = "410375";
 	public static final int ACCOUNTS_PROGRESS_BAR_MAX_VALUE = 10000;
 	private static final int POPUP_DELAY_MILLIS = 3000;
+	public static  final String ACCOUNT_CHARGED_OFF = "CHARGED OFF";
+	public static  final String ACCOUNT_ACTIVE = "ACTIVE";
 
 	public static final String[] CLI_POI_ACCEPT_MIME_TYPES = {
 			"application/pdf",
@@ -1212,6 +1215,18 @@ public class Utils {
 		openMsg.putExtras(args);
 		context.startActivityForResult(openMsg, requestCode);
 		((AppCompatActivity) context).overridePendingTransition(0, 0);
+	}
+
+	public static void displayValidationMessageForResult(Fragment fragment, Activity activity, CustomPopUpWindow.MODAL_LAYOUT key, String title, String description, String buttonTitle, int requestCode) {
+		Intent openMsg = new Intent(activity, CustomPopUpWindow.class);
+		Bundle args = new Bundle();
+		args.putSerializable("key", key);
+		args.putString("title", title);
+		args.putString("description", description);
+		args.putString("buttonTitle", buttonTitle);
+		openMsg.putExtras(args);
+		fragment.startActivityForResult(openMsg, requestCode);
+		((AppCompatActivity) activity).overridePendingTransition(0, 0);
 	}
 
 	public static String toTitleCase(String givenString) {

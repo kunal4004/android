@@ -10,6 +10,15 @@
     <string name="credit_limit">Credit Limit:</string>
     <string name="available_funds">Available funds</string>
     <string name="next_payment_date">Next Payment Due:</string>
+    <string name="total_amount_due">Total Amount Due:</string>
+    <string name="amount_overdue">Amount Overdue:</string>
+    <string name="balance_at_statement_date">Balance At Statement Date:</string>
+    <string name="deduction_day">Deduction Day:</string>
+    <string name="amount_to_be_debited">Amount to be Debited:</string>
+    <string name="account_status">ACCOUNT STATUS</string>
+    <string name="how_to_pay">HOW TO PAY</string>
+    <string name="account_in_arrears">ACCOUNT IN ARREARS</string>
+    <string name="account_in_arrears_6_months">YOUR ACCOUNT IS MORE THAN 6 MONTHS IN ARREARS.</string>
     <string name="minimum_payment">Amount Due</string>
     <string name="next">NEXT</string>
     <string name="current_balance">Current Balance:</string>
@@ -20,6 +29,10 @@
     <string name="valid_until">VALID UNTIL</string>
     <string name="ok">OK</string>
     <string name="retry">RETRY</string>
+    <string name="debit_order_title">DEBIT ORDER debit_order_status</string>
+    <string name="debit_order_description">Your Debit Order is currently debit_order_status. See your debit order details below.</string>
+    <string name="account_in_arrears_info_title">YOUR ACCOUNT IS IN ARREARS</string>
+    <string name="account_in_arrears_info_description">Your Woolies card_name is in arrears, please make an immediate minimum payment of minimum_payment in order to continue shopping.\n\nFor assistance, call us on 0861 50 20 20</string>
 
     <string name="valued">VALUED</string>
     <string name="loyal">LOYAL</string>
@@ -437,6 +450,7 @@
     <string name="partner_spouse_desc">Balance protection insurance for your spouse or partner can also be arranged. An additional monthly premium will be charged.</string>
 
     <string name="instore_withdraw_cash_now">Withdraw Cash Now</string>
+    <string name="debit_orders">Debit Orders</string>
 
     <string name="stock_finder_map_view">map view</string>
     <string name="stock_finder_list_view">list view</string>
@@ -680,5 +694,15 @@
     <string name="redeem_voucher_today">REDEEM A VOUCHER TODAY</string>
     <string name="navigation">Navigation</string>
     <string name="my_accounts">My Accounts</string>
+    <string name="ways_to_pay_your_account">There are 4 easy ways to pay your account:</string>
+    <string name="how_to_pay_1">By Debit Order</string>
+    <string name="how_to_pay_2">By Electronic Funds Transfer (EFT)</string>
+    <string name="how_to_pay_3">At any Woolworths store</string>
+    <string name="how_to_pay_4">At any Absa Bank branch</string>
+    <string name="how_to_pay_bank_details">BANKING DETAILS (EFT &amp; Direct Deposits)</string>
+    <string name="title_how_to_pay">How To Pay</string>
+    <string name="account_charged_of_title">YOUR ACCOUNT IS MORE THAN 6 MONTHS IN ARREARS.</string>
+    <string name="account_charged_of_description">Your account has been handed over to an external collections agency.</string>
+    <string name="title_activity_debit_order">DebitOrderActivity</string>
 
 </resources>

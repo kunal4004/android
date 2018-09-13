@@ -114,6 +114,9 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	private LinearLayout loginUserOptionsLayout;
 	private GetShoppingLists mGetShoppingLists;
 	private ShoppingListsResponse shoppingListsResponse;
+	ImageView imgStoreCardStatusIndicator;
+	ImageView imgCreditCardStatusIndicator;
+	ImageView imgPersonalLoanStatusIndicator;
 
 	public MyAccountsFragment() {
 		// Required empty public constructor
@@ -194,6 +197,9 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			RelativeLayout storeLocator = view.findViewById(R.id.storeLocator);
 			allUserOptionsLayout = view.findViewById(R.id.parentOptionsLayout);
 			loginUserOptionsLayout = view.findViewById(R.id.loginUserOptionsLayout);
+			imgStoreCardStatusIndicator = view.findViewById(R.id.storeCardStatusIndicator);
+			imgCreditCardStatusIndicator = view.findViewById(R.id.creditCardStatusIndicator);
+			imgPersonalLoanStatusIndicator = view.findViewById(R.id.personalLoanStatusIndicator);
 			openMessageActivity.setOnClickListener(this);
 			contactUs.setOnClickListener(this);
 			applyPersonalCardView.setOnClickListener(this);
@@ -274,8 +280,10 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 				case "SC":
 					linkedStoreCardView.setVisibility(View.VISIBLE);
 					applyStoreCardView.setVisibility(View.GONE);
+					imgStoreCardStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
 					sc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
-					break;
+                    sc_available_funds.setTextColor(getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
+                    break;
 				case "CC":
 					linkedCreditCardView.setVisibility(View.VISIBLE);
 					applyCreditCardView.setVisibility(View.GONE);
@@ -287,13 +295,15 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 					} else if (account.accountNumberBin.equalsIgnoreCase(Utils.BLACK_CARD)) {
 						imgCreditCard.setBackgroundResource(R.drawable.small_3);
 					}
-
+					imgCreditCardStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
+                    cc_available_funds.setTextColor(getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
 					cc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
 					break;
 				case "PL":
 					linkedPersonalCardView.setVisibility(View.VISIBLE);
 					applyPersonalCardView.setVisibility(View.GONE);
-
+					imgPersonalLoanStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
+                    pl_available_funds.setTextColor(getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
 					pl_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
 					break;
 			}

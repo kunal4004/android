@@ -23,45 +23,40 @@ class FirebaseManager: IFirebaseManager {
         }
     }
 
+    private var remoteConfig: FirebaseRemoteConfig? = null
+
     constructor(){
         val context = WoolworthsApplication.getInstance()
         FirebaseApp.initializeApp(context)
     }
 
-    private var remoteConfig: FirebaseRemoteConfig? = null
+    override fun getRemoteConfig(): FirebaseRemoteConfig {
 
-    override fun getRemoteConfig(): FirebaseRemoteConfig? {
-        return remoteConfig;
-    }
-
-    private fun setupRemoteConfig(){
         if (remoteConfig == null){
             remoteConfig = FirebaseRemoteConfig.getInstance()
-            val configSettings = FirebaseRemoteConfigSettings.Builder()
-                    .setDeveloperModeEnabled(BuildConfig.DEBUG)
-                    .build()
+            val configSettings = FirebaseRemoteConfigSettings.Builder().setDeveloperModeEnabled(BuildConfig.DEBUG).build()
             remoteConfig!!.setConfigSettings(configSettings)
         }
+        return remoteConfig!!;
     }
 
     override fun setupRemoteConfig(onResultListener: OnResultListener<FirebaseRemoteConfig>): FirebaseRemoteConfig{
-        this.setupRemoteConfig()
 
-        remoteConfig!!.fetch().addOnCompleteListener { task ->
+        getRemoteConfig().fetch().addOnCompleteListener { task ->
             if (task.isSuccessful){
-                remoteConfig!!.activateFetched()
-                onResultListener.success(remoteConfig)
+                getRemoteConfig().activateFetched()
+                onResultListener.success(getRemoteConfig())
             }
 
             else{
-                remoteConfig!!.setDefaults(R.xml.remote_config_defaults)
+                getRemoteConfig().setDefaults(R.xml.remote_config_defaults)
                 onResultListener.failure(task.exception?.message, HttpAsyncTask.HttpErrorCode.UNKOWN_ERROR)
             }
 
             onResultListener.complete()
         }
 
-        return remoteConfig!!
+        return getRemoteConfig()
     }
 
     override fun setupRemoteConfig(onCompletionListener: OnCompletionListener){
