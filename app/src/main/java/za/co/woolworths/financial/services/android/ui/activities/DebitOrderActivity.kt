@@ -33,7 +33,12 @@ class DebitOrderActivity : AppCompatActivity() {
         tvDebitOrderTitle.setText(title)
         tvDebitOrderDescription.setText(description)
         tvDeductionDay.setText(debitOrder.debitOrderDeductionDay)
-        tvAmountToBeDebited.setText(WFormatter.formatAmount(debitOrder.debitOrderProjectedAmount.toDouble().absoluteValue))
+        var amountToBeDebitedStr = ""
+        if (debitOrder.debitOrderProjectedAmount < 0) {
+            amountToBeDebitedStr = "- "
+        }
+        amountToBeDebitedStr += WFormatter.formatAmount(debitOrder.debitOrderProjectedAmount.toDouble().absoluteValue)
+        tvAmountToBeDebited.setText(amountToBeDebitedStr)
 
     }
 
