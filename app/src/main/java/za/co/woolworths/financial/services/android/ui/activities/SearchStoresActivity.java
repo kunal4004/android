@@ -40,9 +40,9 @@ import za.co.woolworths.financial.services.android.models.dto.SearchHistory;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.ui.adapters.StoreSearchListAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.RecycleViewClickListner;
 import za.co.woolworths.financial.services.android.util.SpannableMenuOption;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -126,7 +126,7 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
 		findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (new ConnectionDetector().isOnline(SearchStoresActivity.this)) {
+				if (NetworkManager.getInstance().isConnectedToNetwork(SearchStoresActivity.this)) {
 					if (mSearchText.length() >= 2)
 						startSearch(mSearchText).execute();
 				}

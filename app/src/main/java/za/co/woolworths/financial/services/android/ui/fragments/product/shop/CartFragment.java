@@ -66,11 +66,11 @@ import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CartProductAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.MultiMap;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
@@ -281,7 +281,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				}
 				break;
 			case R.id.btnRetry:
-				if (new ConnectionDetector().isOnline(getActivity())) {
+				if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
 					errorMessageWasPopUp = false;
 					rvCartList.setVisibility(View.VISIBLE);
 					loadShoppingCart(false).execute();
@@ -529,10 +529,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			CartActivity cartActivity = (CartActivity) activity;
 			cartActivity.hideEditCart();
 		}
-		return new GetShoppingCart(new OnEventListener() {
+
+		return new GetShoppingCart(new OnEventListener<ShoppingCartResponse>(){
 			@Override
-			public void onSuccess(Object object) {
-				ShoppingCartResponse shoppingCartResponse = (ShoppingCartResponse) object;
+			public void onSuccess(ShoppingCartResponse shoppingCartResponse) {
 				try {
 					pBar.setVisibility(View.GONE);
 					switch (shoppingCartResponse.httpCode) {

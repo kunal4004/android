@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout style="@style/layout_with_top_border">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            style="@style/black_circle_with_number"
+            android:text="1"
+            android:id="@+id/count"
+            />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            style="@style/contact_us_item_header_textview"
+            android:text="@string/how_to_pay_1"
+            android:id="@+id/howToPayOption"
+            />
+    </LinearLayout>
+</LinearLayout>

@@ -620,10 +620,8 @@ class FragNavController internal constructor(builder: Builder, savedInstanceStat
             ft.setTransition(transactionOptions.transition)
 
 
-            if (transactionOptions.sharedElements != null) {
-                for (sharedElement in transactionOptions.sharedElements) {
-                    ft.addSharedElement(sharedElement.first, sharedElement.second)
-                }
+            for (sharedElement in transactionOptions.sharedElements) {
+                ft.addSharedElement(sharedElement.first, sharedElement.second)
             }
 
             if (transactionOptions.breadCrumbTitle != null) {

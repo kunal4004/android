@@ -36,18 +36,21 @@ import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.rest.cli.CLIGetOfferActive;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
+import za.co.woolworths.financial.services.android.ui.activities.DebitOrderActivity;
 import za.co.woolworths.financial.services.android.ui.activities.LoanWithdrawalActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.FragmentLifecycle;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
+import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -80,6 +83,21 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	private final CompositeDisposable disposables = new CompositeDisposable();
 	private RelativeLayout rlViewStatement;
 	private AccountsResponse accountsResponse;
+	private LinearLayout accountInArrearsLayout;
+	private WTextView tvHowToPayAccountStatus;
+	private WTextView tvAmountOverdue;
+	private WTextView tvTotalAmountDue;
+	private ImageView iconAvailableFundsInfo;
+	public static int RESULT_CODE_FUNDS_INFO = 60;
+    private LinearLayout llActiveAccount;
+    private RelativeLayout llChargedOffAccount;
+	private boolean productOfferingGoodStanding;
+	private Account account;
+	private WTextView tvHowToPayArrears;
+
+    private RelativeLayout relDebitOrders;
+	private WTextView tvDebitOrdersStatus;
+	private ImageView iconArrowDebitOrders;
 
 	@Nullable
 	@Override
@@ -150,6 +168,19 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 
 		relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
 		relViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
+		accountInArrearsLayout = view.findViewById(R.id.llAccountInArrearsParentContainer);
+		tvHowToPayAccountStatus = view.findViewById(R.id.howToPayAccountStatus);
+		tvAmountOverdue = view.findViewById(R.id.amountOverdue);
+		tvTotalAmountDue = view.findViewById(R.id.totalAmountDue);
+		iconAvailableFundsInfo = view.findViewById(R.id.iconAvailableFundsInfo);
+        llActiveAccount = view.findViewById(R.id.llActiveAccount);
+        llChargedOffAccount = view.findViewById(R.id.llChargedOffAccount);
+		tvHowToPayArrears = view.findViewById(R.id.howToPayArrears);
+
+        relDebitOrders = view.findViewById(R.id.relDebitOrders);
+        relDebitOrders.setOnClickListener(this);
+		tvDebitOrdersStatus = view.findViewById(R.id.tvDebitOrdersStatus);
+		iconArrowDebitOrders = view.findViewById(R.id.iconArrowDebitOrders);
 	}
 
 	private void addListener() {
@@ -162,6 +193,9 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		mRelIncreaseMyLimit.setOnClickListener(this);
 		llIncreaseLimitContainer.setOnClickListener(this);
 		rlViewStatement.setOnClickListener(this);
+		iconAvailableFundsInfo.setOnClickListener(this);
+		tvHowToPayArrears.setOnClickListener(this);
+		tvHowToPayAccountStatus.setOnClickListener(this);
 		connectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
 	}
 
@@ -171,7 +205,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
 		onLoadComplete();
 		mErrorHandlerView = new ErrorHandlerView(getActivity());
-		if (!new ConnectionDetector().isOnline(getActivity()))
+		if (!NetworkManager.getInstance().isConnectedToNetwork(getActivity()))
 			mErrorHandlerView.showToast();
 		if (accountsResponse != null)
 			bindData(accountsResponse);
@@ -206,6 +240,17 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		if (accountList != null) {
 			for (Account p : accountList) {
 				if ("PL".equals(p.productGroupCode)) {
+					this.account = p;
+                    if(!p.productOfferingGoodStanding && p.productOfferingStatus.equalsIgnoreCase(Utils.ACCOUNT_CHARGED_OFF))
+                    {
+                        llActiveAccount.setVisibility(View.GONE);
+                        llChargedOffAccount.setVisibility(View.VISIBLE);
+                        return;
+                    }else {
+                        llActiveAccount.setVisibility(View.VISIBLE);
+                        llChargedOffAccount.setVisibility(View.GONE);
+                    }
+					productOfferingGoodStanding = p.productOfferingGoodStanding;
 					productOfferingId = String.valueOf(p.productOfferingId);
 					woolworthsApplication.setProductOfferingId(p.productOfferingId);
 					mSharePreferenceHelper.save(String.valueOf(p.productOfferingId), "lw_product_offering_id");
@@ -224,6 +269,23 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 						dueDate.setText(WFormatter.addSpaceToDate(WFormatter.newDateFormat(p.paymentDueDate)));
 					} catch (ParseException ex) {
 						dueDate.setText(p.paymentDueDate);
+					}
+                    iconAvailableFundsInfo.setVisibility(p.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
+                    availableBalance.setTextColor(getResources().getColor(p.productOfferingGoodStanding ? R.color.black : R.color.bg_overlay));
+					accountInArrearsLayout.setVisibility(p.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
+					llIncreaseLimitContainer.setVisibility(p.productOfferingGoodStanding ? View.VISIBLE : View.GONE);
+					tvHowToPayAccountStatus.setVisibility(p.productOfferingGoodStanding ? View.VISIBLE : View.INVISIBLE);
+					if(!p.productOfferingGoodStanding){
+						tvAmountOverdue.setText(WFormatter.newAmountFormat(p.amountOverdue));
+						tvTotalAmountDue.setText(WFormatter.newAmountFormat(p.totalAmountDue));
+					}
+
+					tvDebitOrdersStatus.setText(p.debitOrder.debitOrderActive ? "ACTIVE" : "EXPIRED");
+					iconArrowDebitOrders.setVisibility(p.debitOrder.debitOrderActive ? View.VISIBLE : View.GONE);
+					if(!p.debitOrder.debitOrderActive) {
+						RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) tvDebitOrdersStatus.getLayoutParams();
+						params.addRule(RelativeLayout.ALIGN_PARENT_END);
+						tvDebitOrdersStatus.setLayoutParams(params);
 					}
 				}
 			}
@@ -278,13 +340,38 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 				if (controllerNotNull())
 					mIncreaseLimitController.nextStep(offerActive, productOfferingId);
 				break;
-
+			case R.id.iconAvailableFundsInfo:
+				Utils.displayValidationMessageForResult(
+						this,
+						getActivity(),
+						CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC,
+						getActivity().getResources().getString(R.string.account_in_arrears_info_title),
+						getActivity().getResources().getString(R.string.account_in_arrears_info_description)
+								.replace("minimum_payment", removeNegativeSymbol(WFormatter.newAmountFormat(account.amountOverdue)))
+                                .replace("card_name", "Personal Loan"),
+						getActivity().getResources().getString(R.string.how_to_pay),
+						RESULT_CODE_FUNDS_INFO);
+				break;
+			case R.id.howToPayAccountStatus:
+			case R.id.howToPayArrears:
+				ScreenManager.presentHowToPayActivity(getActivity(),account);
+				break;
+			case R.id.relDebitOrders:
+				Intent debitOrderIntent = new Intent(getActivity(), DebitOrderActivity.class);
+				debitOrderIntent.putExtra("DebitOrder", account.debitOrder);
+				startActivity(debitOrderIntent);
+				getActivity().overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+				break;
 			default:
 				break;
 		}
 	}
 
 	private void getActiveOffer() {
+
+		if(!productOfferingGoodStanding)
+			return;
+
 		onLoad();
 		cliGetOfferActive = new CLIGetOfferActive(getActivity(), productOfferingId, new OnEventListener() {
 			@Override
@@ -385,7 +472,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 			@Override
 			public void run() {
 				if (!personalWasAlreadyRunOnce) {
-					if (new ConnectionDetector().isOnline(getActivity()))
+					if (NetworkManager.getInstance().isConnectedToNetwork(getActivity()))
 						getActiveOffer();
 					else {
 						mErrorHandlerView.showToast();
@@ -419,7 +506,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	public void onConnectionChanged() {
 		//connection changed
 		if (!personalWasAlreadyRunOnce) {
-			if (new ConnectionDetector().isOnline(getActivity()))
+			if (NetworkManager.getInstance().isConnectedToNetwork(getActivity()))
 				getActiveOffer();
 		}
 	}
@@ -427,12 +514,15 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
+		if(requestCode == RESULT_CODE_FUNDS_INFO) {
+			ScreenManager.presentHowToPayActivity(getActivity(),account);
+		}
 		retryConnect();
 	}
 
 	private void retryConnect() {
 		if (!personalWasAlreadyRunOnce) {
-			if (new ConnectionDetector().isOnline(getActivity()))
+			if (NetworkManager.getInstance().isConnectedToNetwork(getActivity()))
 				getActiveOffer();
 			else {
 				mErrorHandlerView.showToast();

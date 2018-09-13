@@ -28,8 +28,8 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLo
 import za.co.woolworths.financial.services.android.models.rest.shop.SetDeliveryLocationSuburb;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
 import za.co.woolworths.financial.services.android.ui.adapters.DeliveryLocationAdapter;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
@@ -133,7 +133,7 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
 						btnRetry.setOnClickListener(new View.OnClickListener() {
 							@Override
 							public void onClick(View v) {
-								if (new ConnectionDetector().isOnline(getActivity())) {
+								if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
 									setSuburb(location);
 								}
 							}
@@ -173,7 +173,7 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
 					btnRetry.setOnClickListener(new View.OnClickListener() {
 						@Override
 						public void onClick(View v) {
-							if (new ConnectionDetector().isOnline(getActivity())) {
+							if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
 								setSuburb(location);
 							}
 						}
@@ -190,7 +190,7 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
 						btnRetry.setOnClickListener(new View.OnClickListener() {
 							@Override
 							public void onClick(View v) {
-								if (new ConnectionDetector().isOnline(getActivity())) {
+								if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
 									setSuburb(location);
 								}
 							}

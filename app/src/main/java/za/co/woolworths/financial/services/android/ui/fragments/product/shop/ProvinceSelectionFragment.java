@@ -27,8 +27,8 @@ import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.ProvincesResponse;
 import za.co.woolworths.financial.services.android.models.rest.shop.GetProvinces;
 import za.co.woolworths.financial.services.android.ui.adapters.ProvinceSelectionAdapter;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
@@ -113,7 +113,7 @@ public class ProvinceSelectionFragment extends Fragment implements ProvinceSelec
 						btnRetry.setOnClickListener(new View.OnClickListener() {
 							@Override
 							public void onClick(View v) {
-								if (new ConnectionDetector().isOnline(getActivity())) {
+								if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
 									loadProvinceItems();
 								}
 							}
@@ -142,7 +142,7 @@ public class ProvinceSelectionFragment extends Fragment implements ProvinceSelec
 					btnRetry.setOnClickListener(new View.OnClickListener() {
 						@Override
 						public void onClick(View v) {
-							if (new ConnectionDetector().isOnline(getActivity())) {
+							if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
 								loadProvinceItems();
 							}
 						}
@@ -159,7 +159,7 @@ public class ProvinceSelectionFragment extends Fragment implements ProvinceSelec
 						btnRetry.setOnClickListener(new View.OnClickListener() {
 							@Override
 							public void onClick(View v) {
-								if (new ConnectionDetector().isOnline(getActivity())) {
+								if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
 									loadProvinceItems();
 								}
 							}
