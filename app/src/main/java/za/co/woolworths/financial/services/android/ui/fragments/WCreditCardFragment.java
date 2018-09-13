@@ -89,8 +89,6 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	private WTextView tvHowToPayArrears;
 
 	private RelativeLayout relDebitOrders;
-	private WTextView tvDebitOrdersStatus;
-	private ImageView iconArrowDebitOrders;
 
 	@Nullable
 	@Override
@@ -167,9 +165,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		tvHowToPayArrears = view.findViewById(R.id.howToPayArrears);
 
 		relDebitOrders = view.findViewById(R.id.relDebitOrders);
-		relDebitOrders.setOnClickListener(this);
-		tvDebitOrdersStatus = view.findViewById(R.id.tvDebitOrdersStatus);
-		iconArrowDebitOrders = view.findViewById(R.id.iconArrowDebitOrders);
+		relDebitOrders.setVisibility(View.GONE);
 
 		RelativeLayout relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
 		RelativeLayout rlViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
@@ -252,14 +248,6 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
                         tvAmountOverdue.setText(WFormatter.newAmountFormat(p.amountOverdue));
                         tvTotalAmountDue.setText(WFormatter.newAmountFormat(p.totalAmountDue));
                     }
-
-					tvDebitOrdersStatus.setText(p.debitOrder.debitOrderActive ? "ACTIVE" : "EXPIRED");
-					iconArrowDebitOrders.setVisibility(p.debitOrder.debitOrderActive ? View.VISIBLE : View.GONE);
-					if(!p.debitOrder.debitOrderActive) {
-						RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) tvDebitOrdersStatus.getLayoutParams();
-						params.addRule(RelativeLayout.ALIGN_PARENT_END);
-						tvDebitOrdersStatus.setLayoutParams(params);
-					}
 				}
 			}
 		}
@@ -311,12 +299,6 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 			case R.id.relFindOutMore:
 				if (controllerNotNull())
 					mIncreaseLimitController.intentFindOutMore(getActivity(), offerActive);
-				break;
-			case R.id.relDebitOrders:
-				Intent debitOrderIntent = new Intent(getActivity(), DebitOrderActivity.class);
-				debitOrderIntent.putExtra("DebitOrder", account.debitOrder);
-				startActivity(debitOrderIntent);
-				getActivity().overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
 				break;
 		}
 	}
