@@ -1,6 +1,7 @@
 
 import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseApp
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import org.junit.Assert
 import org.junit.Before
@@ -18,12 +19,15 @@ import org.powermock.api.mockito.PowerMockito.`when` as _when
 
 
 @RunWith(PowerMockRunner::class)
-@PrepareForTest(WoolworthsApplication::class, FirebaseApp::class, FirebaseRemoteConfig::class, FirebaseManager::class)
+@PrepareForTest(WoolworthsApplication::class, FirebaseApp::class, FirebaseRemoteConfig::class, FirebaseManager::class, FirebaseAnalytics::class)
 class FirebaseManagerTest {
 
     @Before
     fun setup(){
         MockitoAnnotations.initMocks(this)
+
+        //mocks statics
+        PowerMockito.mockStatic(WoolworthsApplication::class.java, FirebaseApp::class.java)
     }
 
     /**
@@ -33,9 +37,8 @@ class FirebaseManagerTest {
     fun <T> any(): T = Mockito.any<T>()
 
     @Test
-    fun testFirebaseRemoteConfig(){
-        //mocks statics
-        PowerMockito.mockStatic(WoolworthsApplication::class.java, FirebaseApp::class.java, FirebaseRemoteConfig::class.java)
+    fun testRemoteConfig(){
+        PowerMockito.mockStatic(FirebaseRemoteConfig::class.java)
 
         //mocks
         val woolworthsApplicationMock = PowerMockito.mock(WoolworthsApplication::class.java, Mockito.withSettings().verboseLogging())
@@ -67,5 +70,23 @@ class FirebaseManagerTest {
 
         //verifications
         Mockito.verify(taskMock, Mockito.times(1)).addOnCompleteListener(any())
+    }
+
+    @Test
+    fun testAnalytics(){
+        PowerMockito.mockStatic(FirebaseAnalytics::class.java)
+        //mocks
+        var firebaseAnalyticsMock = PowerMockito.mock(FirebaseAnalytics::class.java, Mockito.withSettings().verboseLogging())
+        val firebaseManagerMock = PowerMockito.mock(FirebaseManager::class.java, Mockito.withSettings().verboseLogging())
+
+        _when(FirebaseAnalytics.getInstance(any())).thenReturn(firebaseAnalyticsMock)
+        _when(firebaseManagerMock.getAnalytics()).thenCallRealMethod()
+
+        //assertions + execution
+        Assert.assertEquals(firebaseManagerMock.getAnalytics(), FirebaseManager.getInstance().getAnalytics())
+
+        //verify
+        PowerMockito.verifyStatic(Mockito.times(2))
+        FirebaseAnalytics.getInstance(any())
     }
 }
