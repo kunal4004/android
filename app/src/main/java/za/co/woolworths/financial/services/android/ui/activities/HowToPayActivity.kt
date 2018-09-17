@@ -76,10 +76,19 @@ class HowToPayActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     fun setHowToPayLogo(){
-        when (accountDetails.productGroupCode){
-            "SC"->howToPayLogo.setBackgroundResource(R.drawable.how_to_pay_store_card)
-            "CC"->howToPayLogo.setBackgroundResource(R.drawable.how_to_pay_credit_card)
-            "PL"->howToPayLogo.setBackgroundResource(R.drawable.how_to_pay_p_loan)
+        when (accountDetails.productGroupCode) {
+            "SC" -> {
+                howToPayLogo.setBackgroundResource(R.drawable.how_to_pay_store_card)
+                howToPayTitle.text = resources.getString(R.string.ways_to_pay_your_account_cc_sc)
+            }
+            "CC" -> {
+                howToPayLogo.setBackgroundResource(R.drawable.how_to_pay_credit_card)
+                howToPayTitle.text = resources.getString(R.string.ways_to_pay_your_account_cc_sc)
+            }
+            "PL" -> {
+                howToPayLogo.setBackgroundResource(R.drawable.how_to_pay_p_loan)
+                howToPayTitle.text = resources.getString(R.string.ways_to_pay_your_account_pl)
+            }
         }
     }
 }
