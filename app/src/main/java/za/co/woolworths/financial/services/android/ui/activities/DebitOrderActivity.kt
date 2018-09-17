@@ -29,11 +29,15 @@ class DebitOrderActivity : AppCompatActivity() {
                 .replace("debit_order_status", if (debitOrder.debitOrderActive) "ACTIVE" else "EXPIRED")
         var description = getResources().getString(R.string.debit_order_description)
                 .replace("debit_order_status", if (debitOrder.debitOrderActive) "active" else "expired")
+        var amountToBeDebited = WFormatter.formatAmount(debitOrder.debitOrderProjectedAmount.toInt())
+        if (amountToBeDebited.contains("-")) {
+            amountToBeDebited = "- " + amountToBeDebited.replace("-", "")
+        }
 
         tvDebitOrderTitle.setText(title)
         tvDebitOrderDescription.setText(description)
         tvDeductionDay.setText(debitOrder.debitOrderDeductionDay)
-        tvAmountToBeDebited.setText(WFormatter.formatAmount(debitOrder.debitOrderProjectedAmount.toDouble().absoluteValue))
+        tvAmountToBeDebited.setText(amountToBeDebited)
 
     }
 
