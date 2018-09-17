@@ -5,14 +5,17 @@ import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.SpannableString;
 import android.text.TextUtils;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -99,6 +102,8 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	private WTextView tvDebitOrdersStatus;
 	private ImageView iconArrowDebitOrders;
 
+    private View fakeView;
+
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -181,6 +186,8 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
         relDebitOrders.setOnClickListener(this);
 		tvDebitOrdersStatus = view.findViewById(R.id.tvDebitOrdersStatus);
 		iconArrowDebitOrders = view.findViewById(R.id.iconArrowDebitOrders);
+
+        fakeView = view.findViewById(R.id.fakeView);
 	}
 
 	private void addListener() {
@@ -245,6 +252,33 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
                     {
                         llActiveAccount.setVisibility(View.GONE);
                         llChargedOffAccount.setVisibility(View.VISIBLE);
+
+                        fakeView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener()
+                        {
+                            @Override
+                            public boolean onPreDraw()
+                            {
+                                if (view.getViewTreeObserver().isAlive())
+                                    view.getViewTreeObserver().removeOnPreDrawListener(this);
+
+                                int[] locations = new int[2];
+                                fakeView.getLocationOnScreen(locations);
+                                int fakeViewYPositionOnScreen = locations[1];
+
+                                if(getActivity() != null) {
+                                    Display display = getActivity().getWindowManager().getDefaultDisplay();
+                                    Point size = new Point();
+                                    display.getSize(size);
+                                    int screenHeight = size.y;
+
+                                    ViewGroup.LayoutParams params = fakeView.getLayoutParams();
+                                    params.height = screenHeight - fakeViewYPositionOnScreen;
+                                    fakeView.setLayoutParams(params);
+                                }
+
+                                return false;
+                            }
+                        });
                         return;
                     }else {
                         llActiveAccount.setVisibility(View.VISIBLE);
