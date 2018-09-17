@@ -504,7 +504,7 @@
             <ImageView
                 android:id="@+id/logoDebitOrders"
                 style="@style/style_loan_logo_img"
-                android:src="@drawable/money" />
+                android:src="@drawable/ic_debit_order" />
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/tvDebitOrders"
