@@ -1253,7 +1253,7 @@ public class Utils {
 
 				int[] locations = new int[2];
 				view.getLocationOnScreen(locations);
-				int fakeViewYPositionOnScreen = locations[1];
+				int viewYPositionOnScreen = locations[1];
 
 				if(activity != null) {
 					Display display = activity.getWindowManager().getDefaultDisplay();
@@ -1262,7 +1262,7 @@ public class Utils {
 					int screenHeight = size.y;
 
 					ViewGroup.LayoutParams params = view.getLayoutParams();
-					params.height = screenHeight - fakeViewYPositionOnScreen;
+					params.height = screenHeight - viewYPositionOnScreen;
 					view.setLayoutParams(params);
 				}
 
