@@ -694,7 +694,7 @@
     <string name="redeem_voucher_today">REDEEM A VOUCHER TODAY</string>
     <string name="navigation">Navigation</string>
     <string name="my_accounts">My Accounts</string>
-    <string name="ways_to_pay_your_account">There are 4 easy ways to pay your account:</string>
+    <string name="ways_to_pay_your_account_cc_sc">There are 4 easy ways to pay your account:</string>
     <string name="how_to_pay_1">By Debit Order</string>
     <string name="how_to_pay_2">By Electronic Funds Transfer (EFT)</string>
     <string name="how_to_pay_3">At any Woolworths store</string>
@@ -704,5 +704,5 @@
     <string name="account_charged_of_title">YOUR ACCOUNT IS MORE THAN 6 MONTHS IN ARREARS.</string>
     <string name="account_charged_of_description">Your account has been handed over to an external collections agency.</string>
     <string name="title_activity_debit_order">DebitOrderActivity</string>
-
+    <string name="ways_to_pay_your_account_pl">You can pay your Woolworths Personal Loan in any of the following ways:</string>
 </resources>

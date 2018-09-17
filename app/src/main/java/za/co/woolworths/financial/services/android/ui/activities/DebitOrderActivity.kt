@@ -38,7 +38,6 @@ class DebitOrderActivity : AppCompatActivity() {
         tvDebitOrderDescription.setText(description)
         tvDeductionDay.setText(debitOrder.debitOrderDeductionDay)
         tvAmountToBeDebited.setText(amountToBeDebited)
-
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {

@@ -171,7 +171,7 @@ public class WebAppInterface {
 															Map<String, String> arguments = new HashMap<>();
 															arguments.put(skuId, "NO PRICE INFO");
 															arguments.put(skuId, "From WToday Promotions");
-															Utils.triggerFireBaseEvents(mContext, FirebaseAnalytics.Event.VIEW_ITEM, arguments);
+															Utils.triggerFireBaseEvents(FirebaseAnalytics.Event.VIEW_ITEM, arguments);
 															return;
 														}
 													}

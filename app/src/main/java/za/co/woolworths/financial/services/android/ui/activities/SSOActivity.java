@@ -403,7 +403,7 @@ public class SSOActivity extends WebViewActivity {
 							JWTDecodedModel jwtDecodedModel = SessionUtilities.getInstance().getJwt();
 							Map<String, String> arguments = new HashMap<>();
 							arguments.put("c2_id", (jwtDecodedModel.C2Id != null) ? jwtDecodedModel.C2Id : "");
-							Utils.triggerFireBaseEvents(getApplicationContext(), FirebaseAnalytics.Event.LOGIN, arguments);
+							Utils.triggerFireBaseEvents(FirebaseAnalytics.Event.LOGIN, arguments);
 
 							NotificationUtils.getInstance().sendRegistrationToServer();
 							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.ACTIVE);

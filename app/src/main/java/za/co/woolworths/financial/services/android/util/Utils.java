@@ -586,8 +586,8 @@ public class Utils {
 		}
 	}
 
-	public static void triggerFireBaseEvents(Context mContext, String eventName, Map<String, String> arguments) {
-		FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(mContext);
+	public static void triggerFireBaseEvents(String eventName, Map<String, String> arguments) {
+		FirebaseAnalytics mFirebaseAnalytics = FirebaseManager.Companion.getInstance().getAnalytics();
 
 		Bundle params = new Bundle();
 		for (Map.Entry<String, String> entry : arguments.entrySet()) {
