@@ -75,10 +75,13 @@
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     style="@style/contact_us_item_header_textview"
+                    android:id="@+id/howToPayTitle"
                     android:paddingBottom="24dp"
                     android:paddingTop="24dp"
-                    android:text="@string/ways_to_pay_your_account"
-                    android:textColor="@color/black_50" />
+                    android:text="@string/ways_to_pay_your_account_cc_sc"
+                    android:textColor="@color/black_50"
+                    android:singleLine="false"
+                    />
 
                 <LinearLayout
                     android:id="@+id/howToPayOptionsList"
