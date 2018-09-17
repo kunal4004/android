@@ -11,6 +11,7 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationManager;
@@ -30,6 +31,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -1238,5 +1240,34 @@ public class Utils {
 		}
 
 		return newSentence;
+	}
+
+	public static void setViewHeightToRemainingBottomSpace(final Activity activity, final View view) {
+		view.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener()
+		{
+			@Override
+			public boolean onPreDraw()
+			{
+				if (view.getViewTreeObserver().isAlive())
+					view.getViewTreeObserver().removeOnPreDrawListener(this);
+
+				int[] locations = new int[2];
+				view.getLocationOnScreen(locations);
+				int fakeViewYPositionOnScreen = locations[1];
+
+				if(activity != null) {
+					Display display = activity.getWindowManager().getDefaultDisplay();
+					Point size = new Point();
+					display.getSize(size);
+					int screenHeight = size.y;
+
+					ViewGroup.LayoutParams params = view.getLayoutParams();
+					params.height = screenHeight - fakeViewYPositionOnScreen;
+					view.setLayoutParams(params);
+				}
+
+				return false;
+			}
+		});
 	}
 }
