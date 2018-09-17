@@ -25,9 +25,9 @@ import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWind
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
 import za.co.woolworths.financial.services.android.ui.views.ProductProgressDialogFrag;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.MyRunnable;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.PauseHandlerFragment;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -85,7 +85,7 @@ public class WebAppInterface {
 
 	@JavascriptInterface
 	public void showProduct(String productId, String skuId) {
-		if (new ConnectionDetector().isOnline(mContext))
+		if (NetworkManager.getInstance().isConnectedToNetwork(mContext))
 			onPauseHandler(productId, skuId);
 		else
 			mErrorHandlerView.showToast();

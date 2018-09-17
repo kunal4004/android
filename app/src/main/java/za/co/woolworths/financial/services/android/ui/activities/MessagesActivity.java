@@ -35,9 +35,9 @@ import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MesssagesListAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -124,7 +124,7 @@ public class MessagesActivity extends AppCompatActivity {
 		findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (new ConnectionDetector().isOnline(MessagesActivity.this)) {
+				if (NetworkManager.getInstance().isConnectedToNetwork(MessagesActivity.this)) {
 					loadMessages();
 				}
 			}

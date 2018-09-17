@@ -14,7 +14,6 @@ import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
-import com.google.firebase.FirebaseApp;
 
 import io.fabric.sdk.android.Fabric;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
@@ -22,6 +21,7 @@ import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.service.RxBus;
+import za.co.woolworths.financial.services.android.util.FirebaseManager;
 
 
 public class WoolworthsApplication extends Application {
@@ -198,7 +198,9 @@ public class WoolworthsApplication extends Application {
 				.setDownsampleEnabled(true)
 				.build();
 		Fresco.initialize(this, config);
-		FirebaseApp.initializeApp(WoolworthsApplication.this);
+		//wake up FirebaseManager that will instantiate
+		//FirebaseApp
+		FirebaseManager.Companion.getInstance();
 		FacebookSdk.sdkInitialize(WoolworthsApplication.this);
 		AppEventsLogger.activateApp(WoolworthsApplication.this);
 		mWGlobalState = new WGlobalState();

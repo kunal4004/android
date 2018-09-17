@@ -29,9 +29,9 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.KeyboardUtil;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseViewModel> extends Fragment {
@@ -99,7 +99,7 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 
 	public boolean isNetworkConnected() {
 		Activity activity = getActivity();
-		return (activity == null) ? false : new ConnectionDetector().isOnline(activity);
+		return (activity == null) ? false : NetworkManager.getInstance().isConnectedToNetwork(activity);
 	}
 
 	public void hideToolbar() {

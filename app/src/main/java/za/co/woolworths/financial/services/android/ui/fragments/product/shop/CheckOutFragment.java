@@ -36,8 +36,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 
 public class CheckOutFragment extends Fragment {
@@ -237,7 +237,7 @@ public class CheckOutFragment extends Fragment {
 		view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (new ConnectionDetector().isOnline(getActivity())) {
+				if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
 					mErrorHandlerView.hideErrorHandler();
 					mProgressLayout.setVisibility(View.VISIBLE);
 					mWebCheckOut.loadUrl(getUrl(), getExtraHeader());

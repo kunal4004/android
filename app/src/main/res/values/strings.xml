@@ -10,6 +10,15 @@
     <string name="credit_limit">Credit Limit:</string>
     <string name="available_funds">Available funds</string>
     <string name="next_payment_date">Next Payment Due:</string>
+    <string name="total_amount_due">Total Amount Due:</string>
+    <string name="amount_overdue">Amount Overdue:</string>
+    <string name="balance_at_statement_date">Balance At Statement Date:</string>
+    <string name="deduction_day">Deduction Day:</string>
+    <string name="amount_to_be_debited">Amount to be Debited:</string>
+    <string name="account_status">ACCOUNT STATUS</string>
+    <string name="how_to_pay">HOW TO PAY</string>
+    <string name="account_in_arrears">ACCOUNT IN ARREARS</string>
+    <string name="account_in_arrears_6_months">YOUR ACCOUNT IS MORE THAN 6 MONTHS IN ARREARS.</string>
     <string name="minimum_payment">Amount Due</string>
     <string name="next">NEXT</string>
     <string name="current_balance">Current Balance:</string>
@@ -20,6 +29,10 @@
     <string name="valid_until">VALID UNTIL</string>
     <string name="ok">OK</string>
     <string name="retry">RETRY</string>
+    <string name="debit_order_title">DEBIT ORDER debit_order_status</string>
+    <string name="debit_order_description">Your Debit Order is currently debit_order_status. See your debit order details below.</string>
+    <string name="account_in_arrears_info_title">YOUR ACCOUNT IS IN ARREARS</string>
+    <string name="account_in_arrears_info_description">Your Woolies card_name is in arrears, please make an immediate minimum payment of minimum_payment in order to continue shopping.\n\nFor assistance, call us on 0861 50 20 20</string>
 
     <string name="valued">VALUED</string>
     <string name="loyal">LOYAL</string>
@@ -437,6 +450,7 @@
     <string name="partner_spouse_desc">Balance protection insurance for your spouse or partner can also be arranged. An additional monthly premium will be charged.</string>
 
     <string name="instore_withdraw_cash_now">Withdraw Cash Now</string>
+    <string name="debit_orders">Debit Orders</string>
 
     <string name="stock_finder_map_view">map view</string>
     <string name="stock_finder_list_view">list view</string>
@@ -644,4 +658,51 @@
     <string name="text_new">NEW</string>
     <string name="walkthrough_biometrics_title">we’ve added \n biometrics authentication</string>
     <string name="walkthrough_biometrics_desc">You can now easily access secure features in the app by using the biometrics reader on your device.</string>
+    <string name="walkthrough_barcode_title">BARCODE SCANNER</string>
+    <string name="walkthrough_barcode_desc">Scan a product barcode to view the product information or seamlessly add it to your shopping list.</string>
+    <string name="previous">previous</string>
+    <string name="need_help">Need Help</string>
+    <string name="tips_tricks">Tips &amp; Tricks</string>
+    <string name="tips_tricks_titles_vouchers">Vouchers</string>
+    <string name="tips_tricks_titles_stores">Find a Product in-Store</string>
+    <string name="tips_tricks_titles_barcode">Barcode Scanner</string>
+    <string name="tips_tricks_titles_delivery">Delivery Location</string>
+    <string name="tips_tricks_titles_navigation">My Cart</string>
+    <string name="tips_tricks_titles_my_accounts">Accounts</string>
+    <string name="tips_tricks_titles_statements">Statements</string>
+    <string name="tips_tricks_titles_shopping_list">Shopping Lists</string>
+    <string name="tips_tricks_desc_vouchers">View your latest vouchers and redeem them in-store. Make sure you use them before the expiry date.</string>
+    <string name="tips_tricks_desc_stores">Want to know if a product is available in-store before you jump in your car to go shop?</string>
+    <string name="tips_tricks_desc_barcode">Scan a product barcode to view the product information or seamlessly add it to your shopping list.</string>
+    <string name="tips_tricks_desc_delivery">The location at the top is your default delivery location. If you need products delivered elsewhere be sure to change this.</string>
+    <string name="tips_tricks_desc_navigation">Simply click the cart icon in the navigation to view your basket.</string>
+    <string name="tips_tricks_desc_my_accounts">See all your active financial products available balance, amount due and credit limit.</string>
+    <string name="tips_tricks_desc_statements">Select, send and view your latest statements.</string>
+    <string name="tips_tricks_desc_shopping_list">Create and manage shopping lists and easily add a list to your cart.</string>
+    <string name="tips_tricks_button_vouchers">redeem a voucher today</string>
+    <string name="tips_tricks_button_stores">check in-Store availability</string>
+    <string name="tips_tricks_button_barcode">Scan a product</string>
+    <string name="tips_tricks_button_delivery">Set Your Delivery Location</string>
+    <string name="tips_tricks_button_navigation">START SHOPPING</string>
+    <string name="tips_tricks_button_my_accounts">check your account status</string>
+    <string name="tips_tricks_button_statements">view your statements</string>
+    <string name="tips_tricks_button_shopping_list">start creating shopping lists</string>
+    <string name="hide_feature_tutorials">hide feature tutorials</string>
+    <string name="new_feature_tutorials">New Feature Tutorials</string>
+    <string name="scan_your_first_product">SCAN your first PRODUCT</string>
+    <string name="check_in_store_availability">check in-store availability</string>
+    <string name="redeem_voucher_today">REDEEM A VOUCHER TODAY</string>
+    <string name="navigation">Navigation</string>
+    <string name="my_accounts">My Accounts</string>
+    <string name="ways_to_pay_your_account">There are 4 easy ways to pay your account:</string>
+    <string name="how_to_pay_1">By Debit Order</string>
+    <string name="how_to_pay_2">By Electronic Funds Transfer (EFT)</string>
+    <string name="how_to_pay_3">At any Woolworths store</string>
+    <string name="how_to_pay_4">At any Absa Bank branch</string>
+    <string name="how_to_pay_bank_details">BANKING DETAILS (EFT &amp; Direct Deposits)</string>
+    <string name="title_how_to_pay">How To Pay</string>
+    <string name="account_charged_of_title">YOUR ACCOUNT IS MORE THAN 6 MONTHS IN ARREARS.</string>
+    <string name="account_charged_of_description">Your account has been handed over to an external collections agency.</string>
+    <string name="title_activity_debit_order">DebitOrderActivity</string>
+
 </resources>

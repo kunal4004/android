@@ -36,11 +36,11 @@ import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.list.NewListFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.EmptyCartView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -298,7 +298,7 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 	public void onClick(View view) {
 		switch (view.getId()) {
 			case R.id.btnRetry:
-				if (new ConnectionDetector().isOnline(getActivity())) {
+				if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
 					initGetShoppingList();
 				}
 				break;

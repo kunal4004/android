@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        style="@style/layout_with_top_border"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/twenty_four_dp"
+        android:paddingRight="@dimen/twenty_four_dp">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            style="@style/contact_us_item_header_textview"
+            android:layout_width="0dp"
+            android:layout_marginRight="@dimen/five_dp"
+            android:layout_weight="1"
+            android:text="Account Holder:"
+            android:textColor="@color/black_50"
+            android:id="@+id/paymentName"
+            />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            style="@style/contact_us_item_header_textview"
+            android:id="@+id/paymentvalue"
+            android:layout_width="0dp"
+            android:layout_marginLeft="@dimen/five_dp"
+            android:layout_weight="1.1"
+            android:singleLine="false"
+            android:text="Woolworths Credit Card" />
+    </LinearLayout>
+
+</LinearLayout>
