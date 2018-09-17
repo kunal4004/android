@@ -28,6 +28,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
@@ -301,6 +302,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		switch (v.getId()) {
 			case R.id.rlViewTransactions:
 			case R.id.tvViewTransaction:
+				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANTRANSACTIONS);
 				Intent intent = new Intent(getActivity(), WTransactionsActivity.class);
 				intent.putExtra("productOfferingId", productOfferingId);
 				startActivity(intent);
@@ -309,6 +311,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 				break;
 
 			case R.id.relBalanceProtection:
+				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDBPI);
 				Intent intBalanceProtection = new Intent(getActivity(), BalanceProtectionActivity.class);
 				startActivity(intBalanceProtection);
 				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
@@ -326,6 +329,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 			case R.id.rlViewStatement:
 				Activity activity = getActivity();
 				if (activity != null) {
+					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANSTATEMENTS);
 					Intent openStatement = new Intent(getActivity(), StatementActivity.class);
 					startActivity(openStatement);
 					activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
@@ -337,8 +341,10 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 				break;
 			case R.id.relIncreaseMyLimit:
 			case R.id.llIncreaseLimitContainer:
-				if (controllerNotNull())
+				if (controllerNotNull()) {
+					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANINCREASE);
 					mIncreaseLimitController.nextStep(offerActive, productOfferingId);
+				}
 				break;
 			case R.id.iconAvailableFundsInfo:
 				Utils.displayValidationMessageForResult(

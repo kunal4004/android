@@ -597,6 +597,11 @@ public class Utils {
 		mFirebaseAnalytics.logEvent(eventName, params);
 	}
 
+	public static void triggerFireBaseEvents(String eventName) {
+		FirebaseAnalytics mFirebaseAnalytics = FirebaseManager.Companion.getInstance().getAnalytics();
+		mFirebaseAnalytics.logEvent(eventName, null);
+	}
+
 	public static void sendEmail(String emailId, String subject, Context mContext) {
 		Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
 		emailIntent.setData(Uri.parse(emailId +

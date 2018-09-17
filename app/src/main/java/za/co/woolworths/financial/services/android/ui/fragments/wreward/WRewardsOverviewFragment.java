@@ -22,6 +22,7 @@ import com.google.gson.Gson;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.CardDetailsResponse;
 import za.co.woolworths.financial.services.android.models.dto.PromotionsResponse;
@@ -71,6 +72,7 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.wrewards_overview_fragment, container, false);
+		Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSOVERVIEW);
 		noTireHistory = (WTextView) view.findViewById(R.id.noTireHistory);
 		overviewLayout = (LinearLayout) view.findViewById(R.id.overviewLayout);
 		infoImage = (ImageView) view.findViewById(R.id.infoImage);
@@ -220,6 +222,7 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 	}
 
 	public void flipCard() {
+		Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSFLIP);
 		if (!mIsBackVisible) {
 			mSetRightOut.setTarget(flipCardFrontLayout);
 			mSetLeftIn.setTarget(flipCardBackLayout);

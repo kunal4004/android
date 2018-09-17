@@ -31,6 +31,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import za.co.wigroup.logger.lib.WiGroupLogger;
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
@@ -293,6 +294,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		switch (v.getId()) {
 			case R.id.rlViewTransactions:
 			case R.id.tvViewTransaction:
+				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDTRANSACTIONS);
 				Intent intent = new Intent(getActivity(), WTransactionsActivity.class);
 				intent.putExtra("productOfferingId", productOfferingId);
 				startActivityForResult(intent, 0);
@@ -301,6 +303,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 				break;
 
 			case R.id.relBalanceProtection:
+				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDBPI);
 				Intent intBalanceProtection = new Intent(getActivity(), BalanceProtectionActivity.class);
 				startActivity(intBalanceProtection);
 				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
@@ -321,6 +324,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 			case R.id.rlViewStatement:
 				Activity activity = getActivity();
 				if (activity != null) {
+					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDSTATEMENTS);
 					((WoolworthsApplication) WStoreCardFragment.this.getActivity().getApplication())
 							.getUserManager
 									().getAccounts();
