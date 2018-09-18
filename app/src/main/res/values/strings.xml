@@ -17,6 +17,7 @@
     <string name="amount_to_be_debited">Amount to be Debited:</string>
     <string name="account_status">ACCOUNT STATUS</string>
     <string name="how_to_pay">HOW TO PAY</string>
+    <string name="active">ACTIVE</string>
     <string name="account_in_arrears">ACCOUNT IN ARREARS</string>
     <string name="account_in_arrears_6_months">YOUR ACCOUNT IS MORE THAN 6 MONTHS IN ARREARS.</string>
     <string name="minimum_payment">Total Amount Due</string>

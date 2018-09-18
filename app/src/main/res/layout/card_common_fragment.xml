@@ -525,7 +525,8 @@
                 android:textColor="#343434"
                 android:textSize="13sp"
                 android:letterSpacing="0.1"
-                app:WTextView_font="medium" />
+                app:WTextView_font="medium"
+                android:text="@string/active"/>
 
             <ImageView
                 android:id="@+id/iconArrowDebitOrders"
