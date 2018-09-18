@@ -576,9 +576,9 @@
             android:textColor="@color/description_color"
             android:textSize="15sp"
             app:WTextView_font="myriadpro_regular" />
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
+        <View
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="0dp"
             android:id="@+id/fakeView"
             android:layout_below="@+id/description"
             android:background="@color/white"

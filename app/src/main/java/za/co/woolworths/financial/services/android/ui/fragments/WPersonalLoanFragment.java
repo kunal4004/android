@@ -97,6 +97,8 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 
     private RelativeLayout relDebitOrders;
 
+    private View fakeView;
+
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -177,6 +179,8 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 
         relDebitOrders = view.findViewById(R.id.relDebitOrders);
         relDebitOrders.setOnClickListener(this);
+        
+        fakeView = view.findViewById(R.id.fakeView);
 	}
 
 	private void addListener() {
@@ -241,6 +245,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
                     {
                         llActiveAccount.setVisibility(View.GONE);
                         llChargedOffAccount.setVisibility(View.VISIBLE);
+                        Utils.setViewHeightToRemainingBottomSpace(getActivity(), fakeView);
                         return;
                     }else {
                         llActiveAccount.setVisibility(View.VISIBLE);
