@@ -19,7 +19,7 @@
     <string name="how_to_pay">HOW TO PAY</string>
     <string name="account_in_arrears">ACCOUNT IN ARREARS</string>
     <string name="account_in_arrears_6_months">YOUR ACCOUNT IS MORE THAN 6 MONTHS IN ARREARS.</string>
-    <string name="minimum_payment">Amount Due</string>
+    <string name="minimum_payment">Total Amount Due</string>
     <string name="next">NEXT</string>
     <string name="current_balance">Current Balance:</string>
     <string name="cancel" tools:ignore="ButtonCase">CANCEL</string>
