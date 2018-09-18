@@ -99,6 +99,8 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	private WTextView tvDebitOrdersStatus;
 	private ImageView iconArrowDebitOrders;
 
+    private View fakeView;
+
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -181,6 +183,8 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
         relDebitOrders.setOnClickListener(this);
 		tvDebitOrdersStatus = view.findViewById(R.id.tvDebitOrdersStatus);
 		iconArrowDebitOrders = view.findViewById(R.id.iconArrowDebitOrders);
+
+        fakeView = view.findViewById(R.id.fakeView);
 	}
 
 	private void addListener() {
@@ -245,6 +249,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
                     {
                         llActiveAccount.setVisibility(View.GONE);
                         llChargedOffAccount.setVisibility(View.VISIBLE);
+                        Utils.setViewHeightToRemainingBottomSpace(getActivity(), fakeView);
                         return;
                     }else {
                         llActiveAccount.setVisibility(View.VISIBLE);
