@@ -96,8 +96,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	private WTextView tvHowToPayArrears;
 
     private RelativeLayout relDebitOrders;
-	private WTextView tvDebitOrdersStatus;
-	private ImageView iconArrowDebitOrders;
 
 	@Nullable
 	@Override
@@ -179,8 +177,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 
         relDebitOrders = view.findViewById(R.id.relDebitOrders);
         relDebitOrders.setOnClickListener(this);
-		tvDebitOrdersStatus = view.findViewById(R.id.tvDebitOrdersStatus);
-		iconArrowDebitOrders = view.findViewById(R.id.iconArrowDebitOrders);
 	}
 
 	private void addListener() {
@@ -280,13 +276,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 						tvTotalAmountDue.setText(WFormatter.newAmountFormat(p.totalAmountDue));
 					}
 
-					tvDebitOrdersStatus.setText(p.debitOrder.debitOrderActive ? "ACTIVE" : "EXPIRED");
-					iconArrowDebitOrders.setVisibility(p.debitOrder.debitOrderActive ? View.VISIBLE : View.GONE);
-					if(!p.debitOrder.debitOrderActive) {
-						RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) tvDebitOrdersStatus.getLayoutParams();
-						params.addRule(RelativeLayout.ALIGN_PARENT_END);
-						tvDebitOrdersStatus.setLayoutParams(params);
-					}
+                    relDebitOrders.setVisibility(p.debitOrder.debitOrderActive ? View.VISIBLE : View.GONE);
 				}
 			}
 		}
