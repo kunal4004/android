@@ -585,6 +585,10 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 	}
 
 	public void startExitAnimation() {
+		startExitAnimation(Activity.RESULT_OK);
+	}
+
+	public void startExitAnimation(final int result) {
 		if (!viewWasClicked) { // prevent more than one click
 			viewWasClicked = true;
 			TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
@@ -603,7 +607,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				@Override
 				public void onAnimationEnd(Animation animation) {
 					setResult(CART_DEFAULT_ERROR_TAPPED);
-					dismissLayout();
+					dismissLayout(result);
 				}
 			});
 			mRelRootContainer.startAnimation(animation);
@@ -883,8 +887,12 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 	}
 
 	private void dismissLayout() {
+		dismissLayout(Activity.RESULT_OK);
+	}
+
+	private void dismissLayout(int result) {
 		Intent returnIntent = new Intent();
-		setResult(Activity.RESULT_OK, returnIntent);
+		setResult(result, returnIntent);
 		finish();
 		overridePendingTransition(0, 0);
 	}
@@ -916,7 +924,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 			case R.id.btnOverlay:
 			case R.id.btnSignOutCancel:
 			case R.id.btnBarcodeOk:
-			case R.id.relPopContainer:
 			case R.id.btnUploadDocuments:
 			case R.id.btnShopOk:
 			case R.id.btnMandatoryOK:
@@ -929,6 +936,17 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 					}
 
 					startExitAnimation();
+				}
+				break;
+			case R.id.relPopContainer:
+				if (current_view == BIOMETRICS_SECURITY_INFO) {
+					exitSetupBiometricsAnimation();
+				} else {
+					if (v != mRelPopContainer) {
+						whiteEffectClick(mNegativeActionButton);
+					}
+
+					startExitAnimation(Activity.RESULT_CANCELED);
 				}
 				break;
 

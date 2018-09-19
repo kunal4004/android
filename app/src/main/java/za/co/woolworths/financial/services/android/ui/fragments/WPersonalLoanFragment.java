@@ -57,6 +57,8 @@ import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
 
+import static android.app.Activity.RESULT_OK;
+
 public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle, NetworkChangeListener {
 
 	public WTextView tvIncreaseLimitDescription, availableBalance, creditLimit, dueDate, minAmountDue, currentBalance, tvViewTransaction, tvIncreaseLimit, tvProtectionInsurance;
@@ -509,7 +511,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		if(requestCode == RESULT_CODE_FUNDS_INFO) {
+		if(requestCode == RESULT_CODE_FUNDS_INFO && resultCode == RESULT_OK) {
 			ScreenManager.presentHowToPayActivity(getActivity(),account);
 		}
 		retryConnect();
