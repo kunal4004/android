@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+echo "$APPCENTER_BUILD_ID"
+echo "$APPCENTER_ANDROID_VARIANT"
+echo "$APPCENTER_ANDROID_MODULE"
