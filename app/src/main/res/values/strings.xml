@@ -706,4 +706,10 @@
     <string name="account_charged_of_description">Your account has been handed over to an external collections agency.</string>
     <string name="title_activity_debit_order">DebitOrderActivity</string>
     <string name="ways_to_pay_your_account_pl">You can pay your Woolworths Personal Loan in any of the following ways:</string>
+    <string name="account_details_account_holder">Account Holder:</string>
+    <string name="account_details_account_number">Account Number:</string>
+    <string name="account_details_bank">Bank:</string>
+    <string name="account_details_branch_code">Branch Code:</string>
+    <string name="account_details_reference_number">Reference Number:</string>
+    <string name="account_details_swift_code">Swift Code:</string>
 </resources>
