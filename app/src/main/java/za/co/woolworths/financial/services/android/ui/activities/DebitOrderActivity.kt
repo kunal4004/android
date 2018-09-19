@@ -29,17 +29,15 @@ class DebitOrderActivity : AppCompatActivity() {
                 .replace("debit_order_status", if (debitOrder.debitOrderActive) "ACTIVE" else "EXPIRED")
         var description = getResources().getString(R.string.debit_order_description)
                 .replace("debit_order_status", if (debitOrder.debitOrderActive) "active" else "expired")
+        var amountToBeDebited = WFormatter.formatAmount(debitOrder.debitOrderProjectedAmount.toInt())
+        if (amountToBeDebited.contains("-")) {
+            amountToBeDebited = "- " + amountToBeDebited.replace("-", "")
+        }
 
         tvDebitOrderTitle.setText(title)
         tvDebitOrderDescription.setText(description)
         tvDeductionDay.setText(debitOrder.debitOrderDeductionDay)
-        var amountToBeDebitedStr = ""
-        if (debitOrder.debitOrderProjectedAmount < 0) {
-            amountToBeDebitedStr = "- "
-        }
-        amountToBeDebitedStr += WFormatter.formatAmount(debitOrder.debitOrderProjectedAmount.toDouble().absoluteValue)
-        tvAmountToBeDebited.setText(amountToBeDebitedStr)
-
+        tvAmountToBeDebited.setText(amountToBeDebited)
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {

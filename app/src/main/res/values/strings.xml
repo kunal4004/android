@@ -17,9 +17,10 @@
     <string name="amount_to_be_debited">Amount to be Debited:</string>
     <string name="account_status">ACCOUNT STATUS</string>
     <string name="how_to_pay">HOW TO PAY</string>
+    <string name="active">ACTIVE</string>
     <string name="account_in_arrears">ACCOUNT IN ARREARS</string>
     <string name="account_in_arrears_6_months">YOUR ACCOUNT IS MORE THAN 6 MONTHS IN ARREARS.</string>
-    <string name="minimum_payment">Amount Due</string>
+    <string name="minimum_payment">Total Amount Due</string>
     <string name="next">NEXT</string>
     <string name="current_balance">Current Balance:</string>
     <string name="cancel" tools:ignore="ButtonCase">CANCEL</string>
@@ -705,4 +706,10 @@
     <string name="account_charged_of_description">Your account has been handed over to an external collections agency.</string>
     <string name="title_activity_debit_order">DebitOrderActivity</string>
     <string name="ways_to_pay_your_account_pl">You can pay your Woolworths Personal Loan in any of the following ways:</string>
+    <string name="account_details_account_holder">Account Holder:</string>
+    <string name="account_details_account_number">Account Number:</string>
+    <string name="account_details_bank">Bank:</string>
+    <string name="account_details_branch_code">Branch Code:</string>
+    <string name="account_details_reference_number">Reference Number:</string>
+    <string name="account_details_swift_code">Swift Code:</string>
 </resources>

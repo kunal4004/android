@@ -47,6 +47,7 @@ class HowToPayActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun loadAccountDetails() {
+        val accountDetailValues: HashMap<String, String> = hashMapOf("accountHolder" to getString(R.string.account_details_account_holder), "accountNumber" to getString(R.string.account_details_account_number), "bank" to getString(R.string.account_details_bank), "branchCode" to getString(R.string.account_details_branch_code), "referenceNumber" to getString(R.string.account_details_reference_number), "swiftCode" to getString(R.string.account_details_swift_code))
         howToPayAccountDetails.removeAllViews()
         val inflater: LayoutInflater = LayoutInflater.from(this)
         var paymentDetails: Map<String, String> = Gson().fromJson(accountDetails.bankingDetails, object : TypeToken<Map<String, String>>() {}.type)
@@ -55,7 +56,7 @@ class HowToPayActivity : AppCompatActivity(), View.OnClickListener {
             val v: View = inflater.inflate(R.layout.how_to_pay_account_details_list_item, howToPayAccountDetails, false)
             var paymentName: WTextView = v.findViewById(R.id.paymentName)
             var paymentValue: WTextView = v.findViewById(R.id.paymentvalue)
-            paymentName.text = i.key
+            paymentName.text = accountDetailValues[i.key]
             paymentValue.text = i.value
             howToPayAccountDetails.addView(v)
         }
