@@ -48,7 +48,8 @@ public class FAQAdapter extends RecyclerView.Adapter<FAQAdapter.SimpleViewHolder
 			@Override
 			public void onClick(View v) {
 				selectedIndex = position;
-				mSelectedQuestion.onQuestionSelected(mDataSet.get(holder.getAdapterPosition()));
+				if (selectedIndex < getItemCount())
+					mSelectedQuestion.onQuestionSelected(mDataSet.get(selectedIndex));
 				notifyDataSetChanged();
 			}
 		});
@@ -69,7 +70,7 @@ public class FAQAdapter extends RecyclerView.Adapter<FAQAdapter.SimpleViewHolder
 
 	@Override
 	public int getItemCount() {
-		return mDataSet.size();
+		return (mDataSet != null) ? mDataSet.size() : 0;
 	}
 
 	public void resetIndex() {
