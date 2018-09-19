@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.util;
 
 import android.app.ActivityManager;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ComponentName;
@@ -10,7 +11,6 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
@@ -31,13 +31,14 @@ public class NotificationUtils {
 
     private static String TAG = NotificationUtils.class.getSimpleName();
     public static final String PUSH_NOTIFICATION_INTENT = "PUSH_NOTIFICATION_INTENT";
+    public static final String CHANNEL_ID = "com.awfs.coordination_channel_id_01";
 
 
     public Context mContext;
 
     private static final String GROUP_KEY = "Woolworths";
     private static final int SUMMARY_ID = 0;
-    private final NotificationManagerCompat notificationManager;
+    private final NotificationManager notificationManager;
     private final PendingIntent contentIntent;
 
     private static NotificationUtils instance;//singleton
@@ -55,7 +56,7 @@ public class NotificationUtils {
         if (safeContext == null) {
             safeContext = appContext;
         }
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(safeContext);
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         Intent myIntent = new Intent(safeContext, StartupActivity.class);
         myIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -69,7 +70,7 @@ public class NotificationUtils {
     }
 
     private NotificationUtils(Context context,
-                              NotificationManagerCompat notificationManager,
+                              NotificationManager notificationManager,
                               PendingIntent contentIntent) {
         this.mContext = context.getApplicationContext();
         this.notificationManager = notificationManager;
@@ -81,13 +82,20 @@ public class NotificationUtils {
             Notification notification = buildKitKatNotification(title, body);
             notificationManager.notify(getNotificationId(), notification);
         } else {
-            Notification notification = buildNotification(title, body, GROUP_KEY);
-            notificationManager.notify(getNotificationId(), notification);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+                NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
+                        "ANDROID",
+                        NotificationManager.IMPORTANCE_HIGH);
+                notificationManager.createNotificationChannel(channel);
+            }
+            NotificationCompat.Builder notification = buildNotification(title, body, GROUP_KEY);
+            notificationManager.notify(getNotificationId(), notification.build());
         }
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
-            Notification summary = buildSummary(GROUP_KEY);
-            notificationManager.notify(SUMMARY_ID, summary);
+            NotificationCompat.Builder summary = buildSummary(GROUP_KEY);
+            notificationManager.notify(SUMMARY_ID, summary.build());
         }
     }
 
@@ -105,8 +113,8 @@ public class NotificationUtils {
                 .build();
     }
 
-    private Notification buildNotification(String title, String body, String groupKey) {
-        Notification notification = new NotificationCompat.Builder(mContext)
+    private NotificationCompat.Builder buildNotification(String title, String body, String groupKey) {
+        NotificationCompat.Builder notification = new NotificationCompat.Builder(mContext, CHANNEL_ID)
                 .setContentTitle(title)
                 .setContentText(body)
                 .setWhen(System.currentTimeMillis())
@@ -116,15 +124,14 @@ public class NotificationUtils {
                 .setShowWhen(true)
                 .setAutoCancel(true)
                 .setGroup(groupKey)
-                .setPriority(Notification.PRIORITY_HIGH)
-                .setDefaults(NotificationCompat.DEFAULT_VIBRATE)
-                .build();
+                .setPriority(NotificationManager.IMPORTANCE_HIGH)
+                .setDefaults(NotificationCompat.DEFAULT_VIBRATE);
 
         return notification;
     }
 
-    private Notification buildSummary(String groupKey) {
-        return new NotificationCompat.Builder(mContext)
+    private NotificationCompat.Builder buildSummary(String groupKey) {
+        return new NotificationCompat.Builder(mContext,CHANNEL_ID)
                 .setWhen(System.currentTimeMillis())
                 .setSmallIcon(R.drawable.ic_notification)
                 .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.appicon))
@@ -134,8 +141,7 @@ public class NotificationUtils {
                 .setShowWhen(true)
                 .setGroup(groupKey)
                 .setAutoCancel(true)
-                .setGroupSummary(true)
-                .build();
+                .setGroupSummary(true);
     }
 
     private int getNotificationId() {
