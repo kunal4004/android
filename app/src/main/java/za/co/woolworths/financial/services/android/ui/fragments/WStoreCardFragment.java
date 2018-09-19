@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.SpannableString;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +22,6 @@ import com.awfs.coordination.R;
 import com.google.gson.Gson;
 
 import java.text.ParseException;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -41,7 +39,6 @@ import za.co.woolworths.financial.services.android.models.service.event.BusStati
 import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.DebitOrderActivity;
-import za.co.woolworths.financial.services.android.ui.activities.HowToPayActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
@@ -108,8 +105,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	private WTextView tvHowToPayArrears;
 
 	private RelativeLayout relDebitOrders;
-	private WTextView tvDebitOrdersStatus;
-	private ImageView iconArrowDebitOrders;
+
+	private View fakeView;
 
 	@Nullable
 	@Override
@@ -188,8 +185,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 
 		relDebitOrders = view.findViewById(R.id.relDebitOrders);
 		relDebitOrders.setOnClickListener(this);
-		tvDebitOrdersStatus = view.findViewById(R.id.tvDebitOrdersStatus);
-		iconArrowDebitOrders = view.findViewById(R.id.iconArrowDebitOrders);
+
+		fakeView = view.findViewById(R.id.fakeView);
 	}
 
 	//To remove negative signs from negative balance and add "CR" after the negative balance
@@ -223,6 +220,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 					{
 						llActiveAccount.setVisibility(View.GONE);
 						llChargedOffAccount.setVisibility(View.VISIBLE);
+						Utils.setViewHeightToRemainingBottomSpace(getActivity(), fakeView);
 						return;
 					}else {
 						llActiveAccount.setVisibility(View.VISIBLE);
@@ -251,13 +249,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 						tvTotalAmountDue.setText(WFormatter.newAmountFormat(p.totalAmountDue));
 					}
 
-					tvDebitOrdersStatus.setText(p.debitOrder.debitOrderActive ? "ACTIVE" : "EXPIRED");
-					iconArrowDebitOrders.setVisibility(p.debitOrder.debitOrderActive ? View.VISIBLE : View.GONE);
-					if(!p.debitOrder.debitOrderActive) {
-						RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) tvDebitOrdersStatus.getLayoutParams();
-						params.addRule(RelativeLayout.ALIGN_PARENT_END);
-						tvDebitOrdersStatus.setLayoutParams(params);
-					}
+					relDebitOrders.setVisibility(p.debitOrder.debitOrderActive ? View.VISIBLE : View.GONE);
 				}
 			}
 		}

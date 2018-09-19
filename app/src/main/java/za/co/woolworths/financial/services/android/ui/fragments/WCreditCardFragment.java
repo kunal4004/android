@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.SpannableString;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,7 +37,6 @@ import za.co.woolworths.financial.services.android.models.rest.cli.CLIGetOfferAc
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
-import za.co.woolworths.financial.services.android.ui.activities.DebitOrderActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -89,6 +87,8 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	private WTextView tvHowToPayArrears;
 
 	private RelativeLayout relDebitOrders;
+
+	private View fakeView;
 
 	@Nullable
 	@Override
@@ -182,6 +182,8 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		iconAvailableFundsInfo.setOnClickListener(this);
 		tvHowToPayArrears.setOnClickListener(this);
 		tvHowToPayAccountStatus.setOnClickListener(this);
+
+		fakeView = view.findViewById(R.id.fakeView);
 	}
 
 	private void addListener() {
@@ -219,6 +221,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
                     {
                         llActiveAccount.setVisibility(View.GONE);
                         llChargedOffAccount.setVisibility(View.VISIBLE);
+						Utils.setViewHeightToRemainingBottomSpace(getActivity(), fakeView);
                         return;
                     }else {
                         llActiveAccount.setVisibility(View.VISIBLE);

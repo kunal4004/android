@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.util
 import com.awfs.coordination.BuildConfig
 import com.awfs.coordination.R
 import com.google.firebase.FirebaseApp
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import za.co.woolworths.financial.services.android.contracts.IFirebaseManager
@@ -24,9 +25,10 @@ class FirebaseManager: IFirebaseManager {
     }
 
     private var remoteConfig: FirebaseRemoteConfig? = null
+    private var analytics: FirebaseAnalytics? = null
 
     constructor(){
-        val context = WoolworthsApplication.getInstance()
+        val context = WoolworthsApplication.getAppContext()
         FirebaseApp.initializeApp(context)
     }
 
@@ -37,7 +39,7 @@ class FirebaseManager: IFirebaseManager {
             val configSettings = FirebaseRemoteConfigSettings.Builder().setDeveloperModeEnabled(BuildConfig.DEBUG).build()
             remoteConfig!!.setConfigSettings(configSettings)
         }
-        return remoteConfig!!;
+        return remoteConfig!!
     }
 
     override fun setupRemoteConfig(onResultListener: OnResultListener<FirebaseRemoteConfig>): FirebaseRemoteConfig{
@@ -78,5 +80,14 @@ class FirebaseManager: IFirebaseManager {
                 onCompletionListener.complete()
             }
         })
+    }
+
+    override fun getAnalytics(): FirebaseAnalytics {
+
+        if (analytics == null){
+            val context = WoolworthsApplication.getAppContext()
+            analytics = FirebaseAnalytics.getInstance(context)
+        }
+        return analytics!!
     }
 }
