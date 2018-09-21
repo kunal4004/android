@@ -32,7 +32,7 @@ public class NotificationUtils {
     private static String TAG = NotificationUtils.class.getSimpleName();
     public static final String PUSH_NOTIFICATION_INTENT = "PUSH_NOTIFICATION_INTENT";
     public static final String CHANNEL_ID = "com.awfs.coordination_channel_id_01";
-    public static final String CHANNEL_NAME = "Woolworths";
+    public static final String CHANNEL_NAME = "Inbox Messages";
 
     public Context mContext;
 
