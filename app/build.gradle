@@ -6,8 +6,8 @@ apply plugin: 'io.fabric'
 android {
 
     def major = "5"
-    def minor = "6"
-    def fix = "2"
+    def minor = "7"
+    def fix = "0"
 
     def env = System.getenv()
 
@@ -81,7 +81,7 @@ android {
         qa {
             applicationId "com.awfs.coordination.qa"
             signingConfig signingConfigs.woneappQa
-            versionCode 192
+            versionCode 193
         }
 
         staging {
