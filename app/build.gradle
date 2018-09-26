@@ -10,6 +10,12 @@ android {
     def fix = "0"
 
     def env = System.getenv()
+    def job = env['BUILD_NUMBER']
+    if (job == null) {
+        job = "193";
+    }
+
+    def versionCode = env
 
     flavorDimensions "default"
 
@@ -55,6 +61,7 @@ android {
         versionName(major + "." + minor + "." + fix)
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        versionCode job
     }
 
     compileSdkVersion 27
@@ -81,19 +88,16 @@ android {
         qa {
             applicationId "com.awfs.coordination.qa"
             signingConfig signingConfigs.woneappQa
-            versionCode 193
         }
 
         staging {
             applicationId "com.awfs.coordination.staging"
             signingConfig signingConfigs.woneappStaging
-            versionCode 13
         }
 
         production {
             applicationId "com.awfs.coordination"
             signingConfig signingConfigs.woolworths
-            versionCode 84
         }
         dexOptions {
             javaMaxHeapSize "2560M"
