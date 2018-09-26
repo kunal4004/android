@@ -15,12 +15,6 @@ android {
         job = "193";
     }
 
-    def versionCode = env
-
-    flavorDimensions "default"
-
-    def buildNumber = major + "." + minor + "." + fix
-
     dataBinding {
         enabled = true
     }
@@ -82,7 +76,6 @@ android {
         dev {
             applicationId "com.awfs.coordination.dev"
             signingConfig signingConfigs.woneappDev
-            versionCode 1
         }
 
         qa {
