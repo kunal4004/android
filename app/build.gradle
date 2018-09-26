@@ -55,7 +55,7 @@ android {
         versionName(major + "." + minor + "." + fix)
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        versionCode job
+        versionCode job.toInteger()
     }
 
     compileSdkVersion 27
