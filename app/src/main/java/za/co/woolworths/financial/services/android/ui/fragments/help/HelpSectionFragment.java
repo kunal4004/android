@@ -21,7 +21,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.help.tipstricks.
 /**
  * A simple {@link Fragment} subclass.
  */
-public class NeedHelpFragment extends BaseFragment<NeedHelpFragmentBinding, NeedHelpViewModel> implements NeedHelpNavigator, View.OnClickListener {
+public class HelpSectionFragment extends BaseFragment<NeedHelpFragmentBinding, NeedHelpViewModel> implements NeedHelpNavigator, View.OnClickListener {
 
     RelativeLayout btnTipsAndTricks;
     RelativeLayout btnFAQ;

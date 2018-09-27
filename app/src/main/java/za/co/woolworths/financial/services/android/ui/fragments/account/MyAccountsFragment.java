@@ -43,14 +43,12 @@ import za.co.woolworths.financial.services.android.ui.activities.MessagesActivit
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
-import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity;
 import za.co.woolworths.financial.services.android.ui.activities.UserDetailActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountOverViewPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.main_list.ContactUsFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.faq.FAQFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.help.NeedHelpFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.help.HelpSectionFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.ShoppingListFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -190,7 +188,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			messageCounter = view.findViewById(R.id.messageCounter);
 			userName = view.findViewById(R.id.user_name);
 			imgCreditCard = view.findViewById(R.id.imgCreditCard);
-			RelativeLayout needHelp = view.findViewById(R.id.needHelp);
+			RelativeLayout helpSection = view.findViewById(R.id.helpSection);
 			RelativeLayout relNoConnectionLayout = view.findViewById(R.id.no_connection_layout);
 			mErrorHandlerView = new ErrorHandlerView(getActivity(), relNoConnectionLayout);
 			mErrorHandlerView.setMargin(relNoConnectionLayout, 0, 0, 0, 0);
@@ -211,7 +209,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			openShoppingList.setOnClickListener(this);
 			signOutBtn.setOnClickListener(this);
 			myDetailBtn.setOnClickListener(this);
-			needHelp.setOnClickListener(this);
+			helpSection.setOnClickListener(this);
 			storeLocator.setOnClickListener(this);
 			relMyList.setOnClickListener(this);
 			adapter = new MyAccountOverViewPagerAdapter(getActivity());
@@ -531,8 +529,8 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			case R.id.contactUs:
 				pushFragment(new ContactUsFragment());
 				break;
-			case R.id.needHelp:
-				pushFragment(new NeedHelpFragment());
+			case R.id.helpSection:
+				pushFragment(new HelpSectionFragment());
 				break;
 			case R.id.signOutBtn:
 				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.SIGN_OUT, "");

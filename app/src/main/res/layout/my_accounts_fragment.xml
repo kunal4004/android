@@ -268,7 +268,7 @@
                             </RelativeLayout>
 
                             <RelativeLayout
-                                android:id="@+id/needHelp"
+                                android:id="@+id/helpSection"
                                 style="@style/listStyle"
                                 android:background="@drawable/stores_details_background">
 
