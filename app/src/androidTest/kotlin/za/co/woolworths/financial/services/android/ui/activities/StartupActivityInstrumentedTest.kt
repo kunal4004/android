@@ -8,10 +8,8 @@ import android.support.test.espresso.matcher.ViewMatchers.withId
 import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
 import com.awfs.coordination.R
-import org.junit.Assert
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
+import com.microsoft.appcenter.espresso.Factory
+import org.junit.*
 import org.junit.runner.RunWith
 import za.co.woolworths.financial.services.android.contracts.OnResultListener
 import za.co.woolworths.financial.services.android.models.dao.MobileConfigServerDao
@@ -26,6 +24,7 @@ public class StartupActivityInstrumentedTest {
 
     @Rule @JvmField
     var activityRule = ActivityTestRule(StartupActivity::class.java, false, false)
+    var reportHelper = Factory.getReportHelper()
 
     val countDownLatch = CountDownLatch(1)
 
@@ -35,6 +34,11 @@ public class StartupActivityInstrumentedTest {
         //activity open for all tests in this class
         if (activityRule.activity == null)
             activityRule.launchActivity(null)
+    }
+
+    @After
+    fun tearDown(){
+        reportHelper.label("Stopping App");
     }
 
     @Test
