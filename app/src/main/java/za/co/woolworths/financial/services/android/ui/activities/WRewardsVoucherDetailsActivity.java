@@ -12,8 +12,11 @@ import com.awfs.coordination.R;
 import com.google.gson.Gson;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Voucher;
 import za.co.woolworths.financial.services.android.models.dto.VoucherCollection;
@@ -58,6 +61,7 @@ public class WRewardsVoucherDetailsActivity extends AppCompatActivity implements
 		}
 
 		mSwipeStack.setListener(this);
+		this.tagVoucherDescription(mSwipeStack.getCurrentPosition());
 		termsAndCondtions.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -108,10 +112,16 @@ public class WRewardsVoucherDetailsActivity extends AppCompatActivity implements
 	public void onViewSwipedToBottom(int position) {
 		vouchers.add(vouchers.get(position));
 		mAdapter.notifyDataSetChanged();
-
+		this.tagVoucherDescription(position + 1);
 	}
 
 	@Override
 	public void onStackEmpty() {
+	}
+
+	public void tagVoucherDescription(int position){
+		Map<String, String> arguments = new HashMap<>();
+		arguments.put(FirebaseManagerAnalyticsProperties.VOUCHERDESCRIPTION,vouchers.get(position).description);
+		Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSDESCRIPTION_VOUCHERDESCRIPTION, arguments);
 	}
 }

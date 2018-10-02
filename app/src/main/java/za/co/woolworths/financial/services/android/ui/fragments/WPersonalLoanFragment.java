@@ -311,7 +311,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 				break;
 
 			case R.id.relBalanceProtection:
-				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDBPI);
+				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANBPI);
 				Intent intBalanceProtection = new Intent(getActivity(), BalanceProtectionActivity.class);
 				startActivity(intBalanceProtection);
 				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
@@ -336,8 +336,10 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 				}
 				break;
 			case R.id.relFindOutMore:
-				if (controllerNotNull())
+				if (controllerNotNull()){
+					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANMORE);
 					mIncreaseLimitController.intentFindOutMore(getActivity(), offerActive);
+				}
 				break;
 			case R.id.relIncreaseMyLimit:
 			case R.id.llIncreaseLimitContainer:

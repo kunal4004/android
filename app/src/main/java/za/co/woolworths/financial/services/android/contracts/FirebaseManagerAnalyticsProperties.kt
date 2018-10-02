@@ -18,7 +18,7 @@ class FirebaseManagerAnalyticsProperties {
         const val MYCARTDELIVERY: String = "GA-Event-ONE-MYCARTDELIVERY-<SUBURBNAME>"
         const val SHOPADDTOLIST: String = "GA-Event-ONE-SHOPADDTOLIST"
         const val SHOPNEWLIST: String = "GA-Event-ONE-SHOPNEWLIST"
-        const val SHOPSHOPPINGLIST: String = "GA-Event-ONE-SHOPSHOPPINGLIST"
+        //const val SHOPSHOPPINGLIST: String = "GA-Event-ONE-SHOPSHOPPINGLIST"
         const val MYACCOUNTSSHOPPINGLIST: String = "GA-Event-ONE-MYACCOUNTSSHOPPINGLIST"
         const val MYCARTADDTOLIST: String = "GA-Event-ONE-MYCARTADDTOLIST"
         const val MYCARTCHECKOUT: String = "GA-Event-ONE-MYCARTCHECKOUT"
@@ -40,6 +40,8 @@ class FirebaseManagerAnalyticsProperties {
         const val MYACCOUNTSCREDITCARDBPI: String = "GA-Event-ONE-MYACCOUNTSCREDITCARDBPI"
         const val MYACCOUNTSSTORECARDBPI: String = "GA-Event-ONE-MYACCOUNTSSTORECARDBPI"
         const val MYACCOUNTSPERSONALLOANBPI: String = "GA-Event-ONE-MYACCOUNTSPERSONALLOANBPI"
+        const val SUBURBNAME: String = "SUBURBNAME"
+        const val VOUCHERDESCRIPTION: String = "VOUCHERDESCRIPTION"
 
     }
 }

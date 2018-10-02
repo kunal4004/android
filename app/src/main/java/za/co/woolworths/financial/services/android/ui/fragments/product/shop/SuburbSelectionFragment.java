@@ -23,8 +23,11 @@ import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
@@ -292,6 +295,9 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 					Utils.sendBus(new CartState(suburb.name + ", " + province.name));
 					Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(province, suburb));
 					Utils.addToShoppingDeliveryLocationHistory(new ShoppingDeliveryLocation(province, suburb));
+					Map<String, String> arguments = new HashMap<>();
+					arguments.put(FirebaseManagerAnalyticsProperties.SUBURBNAME, suburb.name);
+					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTDELIVERY, arguments);
 					// TODO: go back to cart if no items removed from cart, else go to list of removed items
 					if (activity != null) {
 						activity.setResult(SUBURB_SET_RESULT);

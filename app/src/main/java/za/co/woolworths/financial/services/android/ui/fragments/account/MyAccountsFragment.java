@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
@@ -481,6 +482,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	private View.OnClickListener btnSignin_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
+			Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSIGNIN);
 			ScreenManager.presentSSOSignin(getActivity());
 		}
 	};
@@ -488,6 +490,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	private View.OnClickListener btnRegister_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
+			Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSREGISTER);
 			ScreenManager.presentSSORegister(getActivity());
 		}
 	};
@@ -509,12 +512,15 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				break;
 			case R.id.applyStoreCard:
+				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDAPPLYNOW);
 				redirectToMyAccountsCardsActivity(0);
 				break;
 			case R.id.applyCrediCard:
+				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDAPPLYNOW);
 				redirectToMyAccountsCardsActivity(1);
 				break;
 			case R.id.applyPersonalLoan:
+				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANAPPLYNOW);
 				redirectToMyAccountsCardsActivity(2);
 				break;
 			case R.id.linkedStoreCard:
@@ -547,6 +553,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			case R.id.myLists:
 				Bundle bundle = new Bundle();
 				if (shoppingListsResponse != null) {
+					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSHOPPINGLIST);
 					bundle.putString("ShoppingList", Utils.objectToJson(shoppingListsResponse));
 					ShoppingListFragment shoppingListFragment = new ShoppingListFragment();
 					shoppingListFragment.setArguments(bundle);
