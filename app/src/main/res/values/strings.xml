@@ -712,4 +712,20 @@
     <string name="account_details_branch_code">Branch Code:</string>
     <string name="account_details_reference_number">Reference Number:</string>
     <string name="account_details_swift_code">Swift Code:</string>
+
+    <!-- MyAccount - Balance Protection Insurance -->
+    <string name="bpi_toolbar_title">Overview</string>
+    <string name="bpi_claim_toolbar_title">Claim</string>
+    <string name="bpi_covered">Covered</string>
+    <string name="bpi_balance_protection_title">Balance Protection</string>
+    <string name="bpi_balance_protection_desc">Cover in the event of your death, retrenchment, disability or a critical illness.</string>
+    <string name="bpi_partner_cover_title">Partner Cover</string>
+    <string name="bpi_partner_cover_desc">Covers you in the event of your partners death, permanent disability or a critical illness.</string>
+    <string name="bpi_additional_death_cover_title">Additional Death Cover</string>
+    <string name="bpi_additional_death_cover_desc">Helps pay for unforeseen expenses in the event of your death.</string>
+    <string name="bpi_additional_death_cover_for_partner_title">Additional Death Cover for Partner</string>
+    <string name="bpi_additional_death_cover_for_partner_desc">Covers you in the event of your partners death, permanent disability or a critical illness.</string>
+
+
+
 </resources>
