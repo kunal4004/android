@@ -632,7 +632,8 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 				@Override
 				public void onAnimationEnd(Animation animation) {
-					dismissLayout();
+					finish();
+					overridePendingTransition(0, 0);
 				}
 			});
 			mRelRootContainer.startAnimation(animation);
