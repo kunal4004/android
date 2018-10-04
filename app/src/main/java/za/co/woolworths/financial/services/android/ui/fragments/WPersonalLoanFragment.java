@@ -218,7 +218,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	//add negative sign before currency value
 	public String removeNegativeSymbol(SpannableString amount) {
 		String currentAmount = amount.toString();
-		if (currentAmount.contains("-")) {
+		if (currentAmount.contains("-")){
 			currentAmount = currentAmount.replace("R-", "- R");
 		}
 		return currentAmount;
