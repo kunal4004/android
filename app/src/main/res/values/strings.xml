@@ -10,7 +10,7 @@
     <string name="credit_limit">Credit Limit:</string>
     <string name="available_funds">Available Funds</string>
     <string name="next_payment_date">Next Payment Due:</string>
-    <string name="total_amount_due">Total Amount Due:</string>
+    <string name="total_amount_due">Min Amount Due:</string>
     <string name="amount_overdue">Amount Overdue:</string>
     <string name="balance_at_statement_date">Balance At Statement Date:</string>
     <string name="deduction_day">Deduction Day:</string>
