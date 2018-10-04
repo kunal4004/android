@@ -212,11 +212,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		if (accountsResponse != null)
 			bindData(accountsResponse);
 
-		{
-			if (controllerNotNull())
-				mIncreaseLimitController.showView(mRelDrawnDownAmount);
-			mIncreaseLimitController.defaultIncreaseLimitView(logoIncreaseLimit, llCommonLayer, tvIncreaseLimit);
-		}
+		mIncreaseLimitController.defaultIncreaseLimitView(logoIncreaseLimit, llCommonLayer, tvIncreaseLimit);
 	}
 
 	//To remove negative signs from negative balance and add "CR" after the negative balance
@@ -284,6 +280,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 					}
 
                     relDebitOrders.setVisibility(p.debitOrder.debitOrderActive ? View.VISIBLE : View.GONE);
+					mRelDrawnDownAmount.setVisibility(p.productOfferingGoodStanding ? View.VISIBLE : View.GONE);
 				}
 			}
 		}
