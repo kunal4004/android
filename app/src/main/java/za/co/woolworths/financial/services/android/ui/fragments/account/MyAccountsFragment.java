@@ -803,6 +803,10 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			setToolbarBackgroundColor(R.color.white);
 			shoppingListRequest();
 			messageCounterRequest();
+
+			//Fixes WOP-3407
+			BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) getActivity();
+			bottomNavigationActivity.showBottomNavigationMenu();
 		}
 	}
 
