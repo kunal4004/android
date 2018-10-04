@@ -215,20 +215,20 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		mIncreaseLimitController.defaultIncreaseLimitView(logoIncreaseLimit, llCommonLayer, tvIncreaseLimit);
 	}
 
-	//To remove negative signs from negative balance and add "CR" after the negative balance
+	//add negative sign before currency value
 	public String removeNegativeSymbol(SpannableString amount) {
 		String currentAmount = amount.toString();
-		if (currentAmount.contains("-")) {
-			currentAmount = currentAmount.replace("-", "") + " CR";
+		if (currentAmount.contains("-")){
+			currentAmount = currentAmount.replace("R-", "- R");
 		}
 		return currentAmount;
 	}
 
-	//To remove negative signs from negative balance and add "CR" after the negative balance
+	//add negative sign before currency value
 	public String removeNegativeSymbol(String amount) {
 		String currentAmount = amount;
 		if (currentAmount.contains("-")) {
-			currentAmount = currentAmount.replace("-", "") + " CR";
+			currentAmount = currentAmount.replace("R-", "- R") + "";
 		}
 		return currentAmount;
 	}
