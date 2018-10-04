@@ -259,11 +259,11 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			messageCounterRequest();
 	}
 
-	// add negative sign before currency value
+	//To remove negative signs from negative balance and add "CR" after the negative balance
 	public String removeNegativeSymbol(SpannableString amount) {
 		String currentAmount = amount.toString();
 		if (currentAmount.contains("-")) {
-			currentAmount = currentAmount.replace("R - ","- R ");
+			currentAmount = currentAmount.replace("-", "") + " CR";
 		}
 		return currentAmount;
 	}
