@@ -349,7 +349,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				mTextDesc = findViewById(R.id.textProofIncome);
 				mTextTitle.setText(title);
 				mTextDesc.setText(description);
-				if (buttonTitle != null) {
+				if (buttonTitle != null && !buttonTitle.isEmpty()) {
 					mLowLoanAmount.setText(buttonTitle);
 				}
 				mLowLoanAmount.setOnClickListener(this);
