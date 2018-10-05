@@ -42,6 +42,7 @@ import za.co.woolworths.financial.services.android.ui.activities.LoanWithdrawalA
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
+import za.co.woolworths.financial.services.android.ui.activities.bpi.BalanceProtectionInsuranceActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
@@ -253,6 +254,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
                         llActiveAccount.setVisibility(View.VISIBLE);
                         llChargedOffAccount.setVisibility(View.GONE);
                     }
+                    relBalanceProtection.setVisibility(p.insuranceCovered ? View.VISIBLE:View.GONE);
 					productOfferingGoodStanding = p.productOfferingGoodStanding;
 					productOfferingId = String.valueOf(p.productOfferingId);
 					woolworthsApplication.setProductOfferingId(p.productOfferingId);
@@ -306,7 +308,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 				break;
 
 			case R.id.relBalanceProtection:
-				Intent intBalanceProtection = new Intent(getActivity(), BalanceProtectionActivity.class);
+				Intent intBalanceProtection = new Intent(getActivity(), BalanceProtectionInsuranceActivity.class);
 				startActivity(intBalanceProtection);
 				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				break;

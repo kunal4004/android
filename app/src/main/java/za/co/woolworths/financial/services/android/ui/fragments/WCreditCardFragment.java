@@ -39,6 +39,7 @@ import za.co.woolworths.financial.services.android.ui.activities.BalanceProtecti
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
+import za.co.woolworths.financial.services.android.ui.activities.bpi.BalanceProtectionInsuranceActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
@@ -91,6 +92,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	private RelativeLayout relDebitOrders;
 
 	private View fakeView;
+	private RelativeLayout relBalanceProtection;
 
 	@Nullable
 	@Override
@@ -169,7 +171,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		relDebitOrders = view.findViewById(R.id.relDebitOrders);
 		relDebitOrders.setVisibility(View.GONE);
 
-		RelativeLayout relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
+		relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
 		RelativeLayout rlViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
 
 		if (controllerNotNull()) {
@@ -233,6 +235,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 					productOfferingGoodStanding = p.productOfferingGoodStanding;
 					productOfferingId = String.valueOf(p.productOfferingId);
 					woolworthsApplication.setProductOfferingId(p.productOfferingId);
+					relBalanceProtection.setVisibility(p.insuranceCovered?View.VISIBLE:View.GONE);
 					availableBalance.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.availableFunds), 1, getActivity())));
 					creditLimit.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.creditLimit), 1, getActivity())));
 					minAmountDue.setText(removeNegativeSymbol(WFormatter.newAmountFormat(p.minimumAmountDue)));
@@ -274,7 +277,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 				break;
 
 			case R.id.relBalanceProtection:
-				Intent intBalanceProtection = new Intent(getActivity(), BalanceProtectionActivity.class);
+				Intent intBalanceProtection = new Intent(getActivity(), BalanceProtectionInsuranceActivity.class);
 				startActivity(intBalanceProtection);
 				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				break;

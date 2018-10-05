@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -42,6 +43,7 @@ import za.co.woolworths.financial.services.android.ui.activities.DebitOrderActiv
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
+import za.co.woolworths.financial.services.android.ui.activities.bpi.BalanceProtectionInsuranceActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
@@ -92,7 +94,6 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	private boolean viewWasCreated = false;
 	private RelativeLayout rlViewTransactions, relBalanceProtection, mRelFindOutMore;
 	private CLIGetOfferActive cliGetOfferActive;
-
 	private final CompositeDisposable disposables = new CompositeDisposable();
 	private RelativeLayout rlViewStatement;
 	private AccountsResponse accountsResponse;
@@ -228,6 +229,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 						llActiveAccount.setVisibility(View.VISIBLE);
 						llChargedOffAccount.setVisibility(View.GONE);
 					}
+					relBalanceProtection.setVisibility(p.insuranceCovered ? View.VISIBLE:View.GONE);
 					productOfferingGoodStanding = p.productOfferingGoodStanding;
 					productOfferingId = String.valueOf(p.productOfferingId);
 					woolworthsApplication.setProductOfferingId(p.productOfferingId);
@@ -295,7 +297,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 				break;
 
 			case R.id.relBalanceProtection:
-				Intent intBalanceProtection = new Intent(getActivity(), BalanceProtectionActivity.class);
+				Intent intBalanceProtection = new Intent(getActivity(), BalanceProtectionInsuranceActivity.class);
 				startActivity(intBalanceProtection);
 				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				break;
