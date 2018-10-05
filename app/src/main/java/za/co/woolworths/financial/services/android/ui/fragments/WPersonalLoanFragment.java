@@ -215,20 +215,20 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		mIncreaseLimitController.defaultIncreaseLimitView(logoIncreaseLimit, llCommonLayer, tvIncreaseLimit);
 	}
 
-	//add negative sign before currency value
+	//To remove negative signs from negative balance and add "CR" after the negative balance
 	public String removeNegativeSymbol(SpannableString amount) {
 		String currentAmount = amount.toString();
 		if (currentAmount.contains("-")){
-			currentAmount = currentAmount.replace("R-", "- R");
+			currentAmount = currentAmount.replace("-", "") + " CR";
 		}
 		return currentAmount;
 	}
 
-	//add negative sign before currency value
+	//To remove negative signs from negative balance and add "CR" after the negative balance
 	public String removeNegativeSymbol(String amount) {
 		String currentAmount = amount;
 		if (currentAmount.contains("-")) {
-			currentAmount = currentAmount.replace("R-", "- R") + "";
+			currentAmount = currentAmount.replace("-", "") + " CR";
 		}
 		return currentAmount;
 	}
@@ -257,7 +257,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 					if (TextUtils.isEmpty(String.valueOf(minDrawnAmount))) {
 						minDrawnAmount = 0;
 					}
-					availableBalance.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.availableFunds), 1, getActivity())));
+					availableBalance.setText(Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.availableFunds), 1, getActivity())));
 					mSharePreferenceHelper.save(availableBalance.getText().toString(), "lw_available_fund");
 					creditLimit.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.creditLimit), 1, getActivity())));
 					mSharePreferenceHelper.save(creditLimit.getText().toString(), "lw_credit_limit");

@@ -28,6 +28,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableString;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -1287,5 +1288,25 @@ public class Utils {
 		}
 		return 0;
 	}
+
+
+	//add negative sign before currency value
+	public static String removeNegativeSymbol(String amount) {
+		String currentAmount = amount;
+		if (currentAmount.contains("-")) {
+			currentAmount = currentAmount.replace("R-", "- R") + "";
+		}
+		return currentAmount;
+	}
+
+	//add negative sign before currency value
+	public static String removeNegativeSymbol(SpannableString amount) {
+		String currentAmount = amount.toString();
+		if (currentAmount.contains("-")){
+			currentAmount = currentAmount.replace("R-", "- R") + "";
+		}
+		return currentAmount;
+	}
+
 
 }
