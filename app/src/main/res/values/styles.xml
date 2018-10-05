@@ -1268,4 +1268,27 @@
         <item name="android:gravity">center_vertical</item>
         <item name="android:orientation">horizontal</item>
     </style>
+
+    <style name="refinements_textview_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:textColor">@color/offer_title</item>
+        <item name="android:textSize">17sp</item>
+        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:layout_alignParentLeft">true</item>
+    </style>
+
+    <style name="refinements_textview_style_with_margin_left" parent="@style/refinements_textview_style">
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:layout_alignParentLeft">false</item>
+    </style>
+
+    <style name="refinements_textview_style_breadcrumbs" parent="@style/refinements_textview_style_with_margin_left">
+        <item name="android:textSize">12sp</item>
+        <item name="WTextView_font">medium</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/offer_title_50</item>
+        <item name="android:letterSpacing">0.08</item>
+    </style>
 </resources>
