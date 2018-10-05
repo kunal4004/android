@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.text.SpannableString;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -215,24 +214,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		mIncreaseLimitController.defaultIncreaseLimitView(logoIncreaseLimit, llCommonLayer, tvIncreaseLimit);
 	}
 
-	//add negative sign before currency value
-	public String removeNegativeSymbol(SpannableString amount) {
-		String currentAmount = amount.toString();
-		if (currentAmount.contains("-")){
-			currentAmount = currentAmount.replace("R-", "- R");
-		}
-		return currentAmount;
-	}
-
-	//add negative sign before currency value
-	public String removeNegativeSymbol(String amount) {
-		String currentAmount = amount;
-		if (currentAmount.contains("-")) {
-			currentAmount = currentAmount.replace("R-", "- R") + "";
-		}
-		return currentAmount;
-	}
-
 	public void bindData(AccountsResponse response) {
 		List<Account> accountList = response.accountList;
 		if (accountList != null) {
@@ -257,13 +238,13 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 					if (TextUtils.isEmpty(String.valueOf(minDrawnAmount))) {
 						minDrawnAmount = 0;
 					}
-					availableBalance.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.availableFunds), 1, getActivity())));
+					availableBalance.setText(Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.availableFunds), 1, getActivity())));
 					mSharePreferenceHelper.save(availableBalance.getText().toString(), "lw_available_fund");
-					creditLimit.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.creditLimit), 1, getActivity())));
+					creditLimit.setText(Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.creditLimit), 1, getActivity())));
 					mSharePreferenceHelper.save(creditLimit.getText().toString(), "lw_credit_limit");
 
-					minAmountDue.setText(removeNegativeSymbol(WFormatter.newAmountFormat(p.minimumAmountDue)));
-					currentBalance.setText(removeNegativeSymbol(WFormatter.newAmountFormat(p.currentBalance)));
+					minAmountDue.setText(Utils.removeNegativeSymbol(WFormatter.newAmountFormat(p.minimumAmountDue)));
+					currentBalance.setText(Utils.removeNegativeSymbol(WFormatter.newAmountFormat(p.currentBalance)));
 					try {
 						dueDate.setText(WFormatter.addSpaceToDate(WFormatter.newDateFormat(p.paymentDueDate)));
 					} catch (ParseException ex) {
@@ -341,7 +322,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 						CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC,
 						getActivity().getResources().getString(R.string.account_in_arrears_info_title),
 						getActivity().getResources().getString(R.string.account_in_arrears_info_description)
-								.replace("minimum_payment", removeNegativeSymbol(WFormatter.newAmountFormat(account.amountOverdue)))
+								.replace("minimum_payment", Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account.amountOverdue)))
                                 .replace("card_name", "Personal Loan"),
 						getActivity().getResources().getString(R.string.how_to_pay),
 						RESULT_CODE_FUNDS_INFO);
