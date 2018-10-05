@@ -5,7 +5,7 @@
 
     <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/promotionImage"
-        android:layout_width="15dp"
-        android:layout_height="15dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:layout_marginLeft="2dp" />
 </LinearLayout>
