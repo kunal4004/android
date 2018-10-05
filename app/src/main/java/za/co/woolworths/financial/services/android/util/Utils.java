@@ -20,6 +20,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.internal.BottomNavigationItemView;
 import android.support.v4.app.Fragment;
@@ -1292,18 +1293,19 @@ public class Utils {
 
 	//add negative sign before currency value
 	public static String removeNegativeSymbol(String amount) {
-		String currentAmount = amount;
-		if (currentAmount.contains("-")) {
-			currentAmount = currentAmount.replace("R-", "- R") + "";
-		}
-		return currentAmount;
+		return  formatAmount(amount);
 	}
 
 	//add negative sign before currency value
 	public static String removeNegativeSymbol(SpannableString amount) {
-		String currentAmount = amount.toString();
-		if (currentAmount.contains("-")){
-			currentAmount = currentAmount.replace("R-", "- R") + "";
+		return  formatAmount(amount.toString());
+	}
+
+	@NonNull
+	private static String formatAmount(String currentAmount) {
+		if (currentAmount.contains("-")) {
+			currentAmount = currentAmount.replaceAll("-", "");
+			currentAmount = currentAmount.replace("R", "- R ");
 		}
 		return currentAmount;
 	}
