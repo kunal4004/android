@@ -169,6 +169,7 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'me.relex:circleindicator:1.2.2@aar'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.4'
+    implementation 'com.google.code.gson:gson:2.8.0'
 
     //
     testImplementation 'junit:junit:4.12'

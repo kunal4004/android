@@ -349,7 +349,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				mTextDesc = findViewById(R.id.textProofIncome);
 				mTextTitle.setText(title);
 				mTextDesc.setText(description);
-				if (buttonTitle != null) {
+				if (buttonTitle != null && !buttonTitle.isEmpty()) {
 					mLowLoanAmount.setText(buttonTitle);
 				}
 				mLowLoanAmount.setOnClickListener(this);
@@ -632,7 +632,8 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 				@Override
 				public void onAnimationEnd(Animation animation) {
-					dismissLayout();
+					finish();
+					overridePendingTransition(0, 0);
 				}
 			});
 			mRelRootContainer.startAnimation(animation);
