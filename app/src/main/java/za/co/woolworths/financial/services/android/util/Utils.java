@@ -1244,4 +1244,11 @@ public class Utils {
 
 		return newSentence;
 	}
+
+	public static String ellipsizeVoucherDescription(String input) {
+		if (input.length() > 99)
+			return input.substring(0, 96) + "...";
+		else
+			return input;
+	}
 }

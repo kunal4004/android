@@ -1,9 +1,9 @@
 {
 
-"fingerprint":"Mw$0",
+"fingerprint":"NA$0",
 
 "resource": {
-  "version":"3",
+  "version":"4",
   "macros":[{
       "function":"__e",
       "instance_name":"Event Name"
@@ -72,23 +72,23 @@
     },{
       "function":"_eq",
       "arg0":["macro",0],
-      "arg1":"GA-Event-ONE-MYCARTMENU"
+      "arg1":"GA_Event_ONE_MYCARTMENU"
     },{
       "function":"_eq",
       "arg0":["macro",0],
-      "arg1":"GA-Event-ONE-MYACCOUNTSMENU"
+      "arg1":"GA_Event_ONE_MYACCOUNTSMENU"
     },{
       "function":"_eq",
       "arg0":["macro",0],
-      "arg1":"GA-Event-ONE-WREWARDSMENU"
+      "arg1":"GA_Event_ONE_WREWARDSMENU"
     },{
       "function":"_eq",
       "arg0":["macro",0],
-      "arg1":"GA-Event-ONE-WTODAYMENU"
+      "arg1":"GA_Event_ONE_WTODAYMENU"
     },{
       "function":"_eq",
       "arg0":["macro",0],
-      "arg1":"GA-Event-ONE-SHOPMENU"
+      "arg1":"GA_Event_ONE_SHOPMENU"
     }],
   "rules":[
     [["if",0],["add",0]],
