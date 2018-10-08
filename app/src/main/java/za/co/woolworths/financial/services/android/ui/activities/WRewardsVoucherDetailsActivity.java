@@ -121,7 +121,7 @@ public class WRewardsVoucherDetailsActivity extends AppCompatActivity implements
 
 	public void tagVoucherDescription(int position){
 		Map<String, String> arguments = new HashMap<>();
-		arguments.put(FirebaseManagerAnalyticsProperties.VOUCHERDESCRIPTION,vouchers.get(position).description);
+		arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.VOUCHERDESCRIPTION,vouchers.get(position).description);
 		Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSDESCRIPTION_VOUCHERDESCRIPTION, arguments);
 	}
 }

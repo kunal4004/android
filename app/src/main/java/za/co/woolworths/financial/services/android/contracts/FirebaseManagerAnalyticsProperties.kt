@@ -15,7 +15,7 @@ class FirebaseManagerAnalyticsProperties {
         const val SHOPSEARCHBAR: String = "GA_Event_ONE_SHOPSEARCHBAR"
         const val SHOPBARCODE: String = "GA_Event_ONE_SHOPBARCODE"
         const val MYCARTEXIT: String = "GA_Event_ONE_MYCARTEXIT"
-        const val MYCARTDELIVERY: String = "GA_Event_ONE_MYCARTDELIVERY_<SUBURBNAME>"
+        const val MYCARTDELIVERY: String = "GA_Event_ONE_MYCARTDELIVERY"
         const val SHOPADDTOLIST: String = "GA_Event_ONE_SHOPADDTOLIST"
         const val SHOPNEWLIST: String = "GA_Event_ONE_SHOPNEWLIST"
         //const val SHOPSHOPPINGLIST: String = "GA_Event_ONE_SHOPSHOPPINGLIST"
@@ -27,7 +27,7 @@ class FirebaseManagerAnalyticsProperties {
         const val WREWARDSVOUCHERS: String = "GA_Event_ONE_WREWARDSVOUCHERS"
         const val WREWARDSSAVINGS: String = "GA_Event_ONE_WREWARDSSAVINGS"
         const val WREWARDSFLIP: String = "GA_Event_ONE_WREWARDSFLIP"
-        const val WREWARDSDESCRIPTION_VOUCHERDESCRIPTION: String = "GA_Event_ONE_WREWARDSDESCRIPTION<VOUCHERDESCRIPTION>"
+        const val WREWARDSDESCRIPTION_VOUCHERDESCRIPTION: String = "GA_Event_ONE_WREWARDSDESCRIPTION"
         const val MYACCOUNTSSTORECARDAPPLYNOW: String = "GA_Event_ONE_MYACCOUNTS_SC_APPLYNOW"
         const val MYACCOUNTSCREDITCARDAPPLYNOW: String = "GA_Event_ONE_MYACCOUNTS_CC_APPLYNOW"
         const val MYACCOUNTSPERSONALLOANAPPLYNOW: String = "GA_Event_ONE_MYACCOUNTS_PL_APPLYNOW"
@@ -40,8 +40,15 @@ class FirebaseManagerAnalyticsProperties {
         const val MYACCOUNTSCREDITCARDBPI: String = "GA_Event_ONE_MYACCOUNTS_CC_BPI"
         const val MYACCOUNTSSTORECARDBPI: String = "GA_Event_ONE_MYACCOUNTS_SC_BPI"
         const val MYACCOUNTSPERSONALLOANBPI: String = "GA_Event_ONE_MYACCOUNTS_PL_BPI"
-        const val SUBURBNAME: String = "SUBURBNAME"
-        const val VOUCHERDESCRIPTION: String = "VOUCHERDESCRIPTION"
+        const val ACCOUNTSEVENTSAPPEARED: String = "accounts_event_appeared"
+        const val LOGIN: String = "login"
+    }
 
+    class PropertyNames {
+        companion object {
+            const val SUBURBNAME: String = "SUBURBNAME"
+            const val VOUCHERDESCRIPTION: String = "VOUCHERDESCRIPTION"
+            const val C2ID: String = "c2_id"
+        }
     }
 }

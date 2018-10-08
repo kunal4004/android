@@ -296,7 +296,7 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 					Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(province, suburb));
 					Utils.addToShoppingDeliveryLocationHistory(new ShoppingDeliveryLocation(province, suburb));
 					Map<String, String> arguments = new HashMap<>();
-					arguments.put(FirebaseManagerAnalyticsProperties.SUBURBNAME, suburb.name);
+					arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.SUBURBNAME, suburb.name);
 					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTDELIVERY, arguments);
 					// TODO: go back to cart if no items removed from cart, else go to list of removed items
 					if (activity != null) {

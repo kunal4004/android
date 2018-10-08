@@ -148,8 +148,8 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 
 		JWTDecodedModel jwtDecodedModel = SessionUtilities.getInstance().getJwt();
 		Map<String, String> arguments = new HashMap<>();
-		arguments.put("c2_id", (jwtDecodedModel.C2Id != null) ? jwtDecodedModel.C2Id : "");
-		Utils.triggerFireBaseEvents("accounts_event_appeared", arguments);
+		arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, (jwtDecodedModel.C2Id != null) ? jwtDecodedModel.C2Id : "");
+		Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ACCOUNTSEVENTSAPPEARED, arguments);
 		myAccountsViewModel = ViewModelProviders.of(this).get(MyAccountsViewModel.class);
 		myAccountsViewModel.setNavigator(this);
 		setHasOptionsMenu(false);
