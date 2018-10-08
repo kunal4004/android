@@ -1268,4 +1268,95 @@
         <item name="android:gravity">center_vertical</item>
         <item name="android:orientation">horizontal</item>
     </style>
+
+    <style name="BalanceProtectionInsuranceStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowIsTranslucent">false</item>
+    </style>
+
+    <style name="styleBPIOverviewConstraint">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@color/white</item>
+    </style>
+
+    <style name="styleBPIBorderGuideLine">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="styleBPIOrangeBar">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:background">@color/bpi_orange</item>
+    </style>
+
+    <style name="styleBPIOverviewTitle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">@dimen/twenty_four_dp</item>
+        <item name="android:layout_marginTop">@dimen/twenty_two_dp</item>
+        <item name="android:lineSpacingMultiplier">1.20</item>
+        <item name="android:paddingBottom">@dimen/nineteen_dp</item>
+        <item name="android:text">@string/bpi_balance_protection_title</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="WTextView_font">myriadpro_semibold</item>
+        <item name="android:textSize">@dimen/fifteen_sp</item>
+    </style>
+
+    <style name="styleBPIOVerViewCoverText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">@dimen/twenty_four_dp</item>
+        <item name="android:layout_marginTop">@dimen/sixteen_dp</item>
+        <item name="android:lineSpacingMultiplier">2.40</item>
+        <item name="android:layout_marginEnd">@dimen/twenty_three_dp</item>
+        <item name="android:letterSpacing">0.083</item>
+        <item name="android:text">@string/bpi_covered</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="WTextView_font">medium_bold</item>
+        <item name="android:textSize">@dimen/ten_sp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:background">@drawable/round_orange_bg</item>
+    </style>
+
+    <style name="styleBPICoverHorizontalDivider">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:layout_marginStart">@dimen/eight_dp</item>
+        <item name="android:background">@color/default_background</item>
+        <item name="android:paddingBottom">@dimen/seventeen_dp</item>
+    </style>
+
+    <style name="styleBPIDescText">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/eighteen_dp</item>
+        <item name="android:layout_marginStart">@dimen/twenty_four_dp</item>
+        <item name="android:paddingBottom">@dimen/seventeen_dp</item>
+        <item name="android:text">@string/bpi_balance_protection_desc</item>
+        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:alpha">0.7</item>
+        <item name="android:textColor">@color/black</item>
+
+    </style>
+
+    <style name="styleDescriptionGuideline">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="styleBPIDescImage">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/seventeen_dp</item>
+        <item name="android:layout_marginEnd">@dimen/seventeen_dp</item>
+        <item name="android:contentDescription">@string/bpi_toolbar_title</item>
+        <item name="android:paddingBottom">@dimen/eighteen_dp</item>
+    </style>
+
 </resources>

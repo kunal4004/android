@@ -724,8 +724,28 @@
     <string name="bpi_additional_death_cover_title">Additional Death Cover</string>
     <string name="bpi_additional_death_cover_desc">Helps pay for unforeseen expenses in the event of your death.</string>
     <string name="bpi_additional_death_cover_for_partner_title">Additional Death Cover for Partner</string>
-    <string name="bpi_additional_death_cover_for_partner_desc">Covers you in the event of your partners death, permanent disability or a critical illness.</string>
+    <string name="bpi_additional_death_cover_for_partner_desc">Helps pay for unforeseen expenses in the event of your partners death.</string>
+
+    <!-- Balance protection detail -->
+    <string name="bpi_effective_date">Effective date</string>
+    <string name="bpi_benefits">Benefits</string>
+    <string name="bpi_how_to_claim">how to claim</string>
 
 
+    <string name="bpi_balance_protection_benefit_1">Pays the outstanding balance on your account (provided it is not in arrears) in the event of your death, permanent disability, or if you are diagnosed with a critical illness.</string>
+    <string name="bpi_balance_protection_benefit_2">Pays your instalments for up to 12 months from the date you are retrenched or temporarily disabled.</string>
+    <string name="bpi_balance_protection_benefit_3">All cover ceases at the age of 65, except death and critical illness.</string>
+
+
+    <string name="bpi_partner_cover_benefit_1">Pays the outstanding balance on your account (provided it is not in arrears) if your partner passes away, becomes permanently disabled, or is diagnosed with a critical illness.</string>
+    <string name="bpi_partner_cover_benefit_2">Pays your instalments for up to 12 months starting from the date your partner is retrenched or temporarily disabled.</string>
+    <string name="bpi_partner_cover_benefit_3">All cover ceases at the age of 65, except death and a critical illness.</string>
+
+    <string name="bpi_additional_death_cover_1">Pays R20 000 cash to a nominated beneficiary when you pass away.</string>
+    <string name="bpi_additional_death_cover_2">Helps your family handle any unforeseen expenses in the event of your passing.</string>
+
+    <string name="bpi_additional_death_cover_for_partner_1">Pays R20 000 cash to you or a nominated beneficiary when your partner or spouse passes away.</string>
+    <string name="bpi_additional_death_cover_for_partner_2">Helps your family handle any unforeseen expenses in the event of the passing of your partner or spouse.</string>
+    <string name="bpi_bullet">•</string>
 
 </resources>
