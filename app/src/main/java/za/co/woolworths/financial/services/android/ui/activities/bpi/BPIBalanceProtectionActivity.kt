@@ -11,7 +11,7 @@ class BPIBalanceProtectionActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.bpi_activity)
+        setContentView(R.layout.bpi_balance_protection_insurance_layout)
         Utils.updateStatusBarBackground(this)
 
         val bundle = intent.extras
