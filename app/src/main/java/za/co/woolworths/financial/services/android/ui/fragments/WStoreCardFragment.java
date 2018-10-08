@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -37,13 +36,12 @@ import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.rest.cli.CLIGetOfferActive;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
-import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.DebitOrderActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
-import za.co.woolworths.financial.services.android.ui.activities.bpi.BalanceProtectionInsuranceActivity;
+import za.co.woolworths.financial.services.android.ui.activities.bpi.BPIBalanceProtectionActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
@@ -283,23 +281,30 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	@Override
 	public void onClick(View v) {
 		MultiClickPreventer.preventMultiClick(v);
+		Activity activity = getActivity();
 		if (accountsResponse != null) {
 			productOfferingId = Utils.getProductOfferingId(accountsResponse, "SC");
 		}
 		switch (v.getId()) {
 			case R.id.rlViewTransactions:
 			case R.id.tvViewTransaction:
-				Intent intent = new Intent(getActivity(), WTransactionsActivity.class);
-				intent.putExtra("productOfferingId", productOfferingId);
-				startActivityForResult(intent, 0);
-				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim
-						.stay);
+				if (activity!=null) {
+					Intent intent = new Intent(getActivity(), WTransactionsActivity.class);
+					intent.putExtra("productOfferingId", productOfferingId);
+					startActivityForResult(intent, 0);
+					activity.overridePendingTransition(R.anim.slide_up_anim, R.anim
+							.stay);
+				}
 				break;
 
 			case R.id.relBalanceProtection:
-				Intent intBalanceProtection = new Intent(getActivity(), BalanceProtectionInsuranceActivity.class);
-				startActivity(intBalanceProtection);
-				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+				if (activity!=null) {
+					String accountInfo = Utils.getAccountInfo(accountsResponse, "SC");
+					Intent intBalanceProtection = new Intent(getActivity(), BPIBalanceProtectionActivity.class);
+					intBalanceProtection.putExtra("account_info", accountInfo);
+					startActivity(intBalanceProtection);
+					getActivity().overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+				}
 				break;
 
 			case R.id.tvIncreaseLimit:
@@ -315,13 +320,11 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 				break;
 
 			case R.id.rlViewStatement:
-				Activity activity = getActivity();
 				if (activity != null) {
 					((WoolworthsApplication) WStoreCardFragment.this.getActivity().getApplication())
 							.getUserManager
 									().getAccounts();
 					Intent openStatement = new Intent(getActivity(), StatementActivity.class);
-					//UserStatement statement = new UserStatement(productOfferingId);
 					startActivity(openStatement);
 					activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				}

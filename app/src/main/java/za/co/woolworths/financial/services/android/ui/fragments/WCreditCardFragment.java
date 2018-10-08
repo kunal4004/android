@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -35,11 +36,10 @@ import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.rest.cli.CLIGetOfferActive;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
-import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
-import za.co.woolworths.financial.services.android.ui.activities.bpi.BalanceProtectionInsuranceActivity;
+import za.co.woolworths.financial.services.android.ui.activities.bpi.BPIBalanceProtectionActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
@@ -263,6 +263,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 
 	@Override
 	public void onClick(View v) {
+		Activity activity = getActivity();
 		MultiClickPreventer.preventMultiClick(v);
 		if (accountsResponse != null) {
 			productOfferingId = Utils.getProductOfferingId(accountsResponse, "CC");
@@ -277,9 +278,13 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 				break;
 
 			case R.id.relBalanceProtection:
-				Intent intBalanceProtection = new Intent(getActivity(), BalanceProtectionInsuranceActivity.class);
-				startActivity(intBalanceProtection);
-				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+				if (activity!=null) {
+					String accountInfo = Utils.getAccountInfo(accountsResponse, "CC");
+					Intent intBalanceProtection = new Intent(getActivity(), BPIBalanceProtectionActivity.class);
+					intBalanceProtection.putExtra("account_info", accountInfo);
+					startActivity(intBalanceProtection);
+					getActivity().overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+				}
 				break;
 
 			case R.id.relIncreaseMyLimit:

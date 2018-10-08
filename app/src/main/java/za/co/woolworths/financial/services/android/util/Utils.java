@@ -136,8 +136,8 @@ public class Utils {
 	public static final String BLACK_CARD = "410375";
 	public static final int ACCOUNTS_PROGRESS_BAR_MAX_VALUE = 10000;
 	private static final int POPUP_DELAY_MILLIS = 3000;
-	public static  final String ACCOUNT_CHARGED_OFF = "CHARGED OFF";
-	public static  final String ACCOUNT_ACTIVE = "ACTIVE";
+	public static final String ACCOUNT_CHARGED_OFF = "CHARGED OFF";
+	public static final String ACCOUNT_ACTIVE = "ACTIVE";
 
 	public static final String[] CLI_POI_ACCEPT_MIME_TYPES = {
 			"application/pdf",
@@ -1243,11 +1243,9 @@ public class Utils {
 	}
 
 	public static void setViewHeightToRemainingBottomSpace(final Activity activity, final View view) {
-		view.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener()
-		{
+		view.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
 			@Override
-			public boolean onPreDraw()
-			{
+			public boolean onPreDraw() {
 				if (view.getViewTreeObserver().isAlive())
 					view.getViewTreeObserver().removeOnPreDrawListener(this);
 
@@ -1255,7 +1253,7 @@ public class Utils {
 				view.getLocationOnScreen(locations);
 				int viewYPositionOnScreen = locations[1];
 
-				if(activity != null) {
+				if (activity != null) {
 					Display display = activity.getWindowManager().getDefaultDisplay();
 					Point size = new Point();
 					display.getSize(size);
@@ -1269,5 +1267,18 @@ public class Utils {
 				return false;
 			}
 		});
+
+	}
+
+	public static String getAccountInfo(AccountsResponse accountsResponse, String desiredSection) {
+		List<Account> accountList = accountsResponse.accountList;
+		if (accountList != null) {
+			for (Account account : accountList) {
+				if (desiredSection.equals(account.productGroupCode)) {
+					return new Gson().toJson(account);
+				}
+			}
+		}
+		return "";
 	}
 }
