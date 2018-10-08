@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/clBalanceOverview"
+    style="@style/styleBPIOverviewConstraint"
+    android:layout_marginStart="@dimen/sixteen_dp"
+    android:layout_marginTop="@dimen/fifteen_dp"
+    android:layout_marginEnd="@dimen/sixteen_dp">
+
+    <android.support.constraint.Guideline
+        android:id="@+id/glVerticalOrangeDeco"
+        style="@style/styleBPIBorderGuideLine"
+        app:layout_constraintGuide_begin="@dimen/four_dp"/>
+
+    <View
+        android:id="@+id/spVerticalOrangeDeco"
+        style="@style/styleBPIOrangeBar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/glVerticalOrangeDeco"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/tvTitle"
+        style="@style/styleBPIOverviewTitle"
+        android:layout_width="0dp"
+        android:layout_marginStart="@dimen/twenty_two_dp"
+        android:layout_marginEnd="@dimen/eight_dp"
+        app:layout_constraintEnd_toStartOf="@+id/flRightContainer"
+        app:layout_constraintStart_toEndOf="@+id/spVerticalOrangeDeco"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <View
+        android:id="@+id/spHorizontalDivider"
+        style="@style/styleBPICoverHorizontalDivider"
+        app:layout_constraintBottom_toBottomOf="@+id/tvTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/tvDescription"
+        style="@style/styleBPIDescText"
+        app:layout_constraintEnd_toEndOf="@+id/gDescription"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spHorizontalDivider"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/gDescription"
+        style="@style/styleDescriptionGuideline"
+        app:layout_constraintGuide_percent="0.60"
+        />
+
+    <ImageView
+        android:id="@+id/imOverViewDescImage"
+        style="@style/styleBPIDescImage"
+        android:contentDescription="@string/bpi_covered"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spHorizontalDivider"
+        app:srcCompat="@drawable/icon_balance_protection_overview"/>
+
+    <RelativeLayout
+        android:id="@+id/flRightContainer"
+        android:gravity="end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/tvCover"
+            style="@style/styleBPIOVerViewCoverText"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="@dimen/twenty_two_dp"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+        <ImageView
+            android:id="@+id/imRightArrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sixteen_dp"
+            android:layout_marginEnd="@dimen/twenty_three_dp"
+            android:contentDescription="@string/bpi_covered"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_caret_black"/>
+    </RelativeLayout>
+</android.support.constraint.ConstraintLayout>
