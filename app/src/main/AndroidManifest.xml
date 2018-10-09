@@ -343,6 +343,9 @@
             android:theme="@style/DebitOrder"></activity>
         <activity android:name="za.co.woolworths.financial.services.android.ui.activities.PortraitAppCompatActivity">
         </activity>
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.product.refine.ProductsRefineActivity"
+            android:theme="@style/FaqStyle" />
     </application>
 
 </manifest>

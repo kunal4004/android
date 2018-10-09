@@ -13,18 +13,9 @@
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:id="@+id/sortProducts"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:drawableRight="@drawable/path_3"
-            android:gravity="center_vertical"
-            android:padding="16dp"
-            android:text="SORT BY"
-            android:textColor="@color/black_50"
-            android:textSize="12sp"
-            app:WTextView_font="medium"
-            android:letterSpacing="0.15"
-            />
+            style="@style/sort_and_filter_selection_text_style"
+            android:text="@string/sort_by" />
+        />
 
         <View
             android:layout_width="1dp"
@@ -35,17 +26,7 @@
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:id="@+id/refineProducts"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:drawableRight="@drawable/path_3"
-            android:gravity="center_vertical"
-            android:padding="16dp"
-            android:text="REFINE"
-            android:textColor="@color/black_50"
-            android:textSize="12sp"
-            app:WTextView_font="medium"
-            android:letterSpacing="0.15"
-            />
+            style="@style/sort_and_filter_selection_text_style"
+            android:text="@string/refine" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

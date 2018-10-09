@@ -712,4 +712,8 @@
     <string name="account_details_branch_code">Branch Code:</string>
     <string name="account_details_reference_number">Reference Number:</string>
     <string name="account_details_swift_code">Swift Code:</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="refine">REFINE</string>
+    <string name="sort_by">SORT BY</string>
+    <string name="refine_reset">reset</string>
 </resources>
