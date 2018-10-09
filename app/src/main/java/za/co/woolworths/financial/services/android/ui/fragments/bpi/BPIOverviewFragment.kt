@@ -13,9 +13,9 @@ import kotlinx.android.synthetic.main.bpi_overview_fragment.*
 import za.co.woolworths.financial.services.android.models.dto.BPIOverview
 import za.co.woolworths.financial.services.android.ui.activities.bpi.BPIBalanceProtectionActivity
 import za.co.woolworths.financial.services.android.ui.adapters.BPIOverviewAdapter
-import za.co.woolworths.financial.services.android.util.createBPIList
 import za.co.woolworths.financial.services.android.util.navigateToBalanceProtectionActivity
 import za.co.woolworths.financial.services.android.util.replaceFragment
+import za.co.woolworths.financial.services.android.util.updateBPIList
 
 
 class BPIOverviewFragment : Fragment(), BPIOverviewAdapter.OnBPIAdapterClickListener, View.OnClickListener {
@@ -42,12 +42,12 @@ class BPIOverviewFragment : Fragment(), BPIOverviewAdapter.OnBPIAdapterClickList
         initialize()
         setupList()
         listener()
-        setClaimButtonVisibility(createBPIList())
+        setClaimButtonVisibility(updateBPIList())
     }
 
     private fun initialize() {
         mLayoutManager = LinearLayoutManager(this.activity!!, LinearLayout.VERTICAL, false)
-        mBPIOverviewAdapter = BPIOverviewAdapter(createBPIList(), this)
+        mBPIOverviewAdapter = BPIOverviewAdapter(updateBPIList(), this)
     }
 
     private fun listener() {

@@ -54,7 +54,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twenty_four_dp"
         android:layout_marginEnd="@dimen/thirty_two_dp"
-        android:layout_marginBottom="@dimen/six_dp"
+        android:layout_marginBottom="@dimen/twenty_one_dp"
         android:lineSpacingExtra="0.17dp"
         android:text="@string/bpi_balance_protection_title"
         android:textAllCaps="true"

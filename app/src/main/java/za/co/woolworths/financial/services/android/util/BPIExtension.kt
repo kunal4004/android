@@ -99,12 +99,11 @@ fun View.setOverviewConstraint(position: Int, topMargin: Int?, bottomMargin: Int
 }
 
 fun Fragment.createBPIList(): ArrayList<BPIOverview> {
-    val mInsuranceType = getInsuranceType()
     val bpiList = arrayListOf<BPIOverview>()
-    bpiList.add(BPIOverview(getString(R.string.bpi_balance_protection_desc), R.drawable.icon_balance_protection_overview, resources.getStringArray(R.array.bpi_balance_protection_benefits), mInsuranceType!![0], R.drawable.bg_header_balance_protection))
-    bpiList.add(BPIOverview(getString(R.string.bpi_partner_cover_desc), R.drawable.icon_partner_cover, resources.getStringArray(R.array.bpi_partner_cover_benefits), mInsuranceType[1], R.drawable.bg_header_partner_cover))
-    bpiList.add(BPIOverview(getString(R.string.bpi_additional_death_cover_desc), R.drawable.icon_additional_death_cover, resources.getStringArray(R.array.bpi_additional_death_cover), mInsuranceType[2], R.drawable.bg_header_additional_death_cover))
-    bpiList.add(BPIOverview(getString(R.string.bpi_additional_death_cover_for_partner_desc), R.drawable.icon_additional_death_cover_for_partner, resources.getStringArray(R.array.bpi_additional_death_cover_for_partner), mInsuranceType[3], R.drawable.bg_header_additional_death_cover_for_partner))
+    bpiList.add(BPIOverview(getString(R.string.bpi_balance_protection_title), getString(R.string.bpi_balance_protection_desc), R.drawable.icon_balance_protection_overview, resources.getStringArray(R.array.bpi_balance_protection_benefits), InsuranceType(), R.drawable.bg_header_balance_protection))
+    bpiList.add(BPIOverview(getString(R.string.bpi_partner_cover_title), getString(R.string.bpi_partner_cover_desc), R.drawable.icon_partner_cover, resources.getStringArray(R.array.bpi_partner_cover_benefits), InsuranceType(), R.drawable.bg_header_partner_cover))
+    bpiList.add(BPIOverview(getString(R.string.bpi_additional_death_cover_title), getString(R.string.bpi_additional_death_cover_desc), R.drawable.icon_additional_death_cover, resources.getStringArray(R.array.bpi_additional_death_cover), InsuranceType(), R.drawable.bg_header_additional_death_cover))
+    bpiList.add(BPIOverview(getString(R.string.bpi_additional_death_cover_for_partner_title), getString(R.string.bpi_additional_death_cover_for_partner_desc), R.drawable.icon_additional_death_cover_for_partner, resources.getStringArray(R.array.bpi_additional_death_cover_for_partner), InsuranceType(), R.drawable.bg_header_additional_death_cover_for_partner))
     return bpiList
 }
 
@@ -116,4 +115,21 @@ fun Fragment.getInsuranceType(): MutableList<InsuranceType>? {
         }
     }
     return null
+}
+
+fun Fragment.updateBPIList(): ArrayList<BPIOverview> {
+    val bpiList = createBPIList()
+    val insuranceType = getInsuranceType()
+    val insuranceListType = getInsuranceType()!!
+    for (insuranceType in insuranceListType) {
+        for (bpi in bpiList) {
+            if (bpi.overviewTitle == insuranceType.description) {
+                val type: InsuranceType = bpi.insuranceType!!
+                type.covered = insuranceType.covered
+                type.description = insuranceType.description
+                type.effectiveDate = insuranceType.effectiveDate
+            }
+        }
+    }
+    return bpiList
 }

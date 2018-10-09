@@ -43,7 +43,7 @@ class BPIOverviewDetailFragment : Fragment(), View.OnClickListener {
             setBenefitDetail(bpiOverview)
             val insuranceType: InsuranceType = bpiOverview.insuranceType!!
             claimVisibility(insuranceType)
-            setBenefitTitle(insuranceType)
+            setBenefitTitle(bpiOverview)
             imBackgroundHeader.setImageResource(bpiOverview.benefitHeaderDrawable!!)
         }
 
@@ -52,9 +52,9 @@ class BPIOverviewDetailFragment : Fragment(), View.OnClickListener {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun setBenefitTitle(insuranceType: InsuranceType) {
-        tvTitle.text = insuranceType.description
-        tvEffectiveDate.text = getString(R.string.bpi_effective_date) + " " + insuranceType.effectiveDate
+    private fun setBenefitTitle(bpiOverview: BPIOverview) {
+        tvTitle.text = bpiOverview.overviewTitle
+        tvEffectiveDate.text = getString(R.string.bpi_effective_date) + " " + bpiOverview.insuranceType!!.effectiveDate
     }
 
     private fun setBenefitDetail(bpiOverview: BPIOverview) {
@@ -70,6 +70,7 @@ class BPIOverviewDetailFragment : Fragment(), View.OnClickListener {
     private fun claimVisibility(insuranceType: InsuranceType) {
         tvCover.visibility = if (insuranceType.covered) VISIBLE else GONE
         btnHowToClaim.visibility = if (insuranceType.covered) VISIBLE else GONE
+        tvEffectiveDate.visibility = if (insuranceType.covered) VISIBLE else GONE
     }
 
     override fun onClick(view: View?) {

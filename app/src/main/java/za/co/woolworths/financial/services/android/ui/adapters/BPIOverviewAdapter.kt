@@ -44,7 +44,7 @@ internal class BPIOverviewAdapter(private val bpiOverviewList: ArrayList<BPIOver
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bindItems(bpiOverview: BPIOverview) {
             itemView.clBalanceOverview.setOverviewConstraint(adapterPosition, R.dimen.seventeen_dp, R.dimen.sixteen_dp)
-            itemView.tvTitle.text = bpiOverview.insuranceType!!.description
+            itemView.tvTitle.text = bpiOverview.overviewTitle
             itemView.tvDescription.text = bpiOverview.overviewDescription
             itemView.imOverViewDescImage.setImageResource(bpiOverview.overviewDrawable!!)
         }
