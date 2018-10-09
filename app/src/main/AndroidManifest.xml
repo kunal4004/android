@@ -215,7 +215,6 @@
             android:theme="@style/WRewardsInfo" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WRewardsVoucherDetailsActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/WRewardsVoucherDetails" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WRewardsVoucherTermAndConditions"
@@ -228,11 +227,9 @@
             android:windowSoftInputMode="adjustResize|stateAlwaysVisible" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow"
-            android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.UserDetailActivity"
@@ -333,7 +330,6 @@
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.BiometricsWalkthrough"
-            android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.HowToPayActivity"
@@ -343,6 +339,8 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.DebitOrderActivity"
             android:screenOrientation="portrait"
             android:theme="@style/DebitOrder"></activity>
+        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.PortraitAppCompatActivity">
+        </activity>
     </application>
 
 </manifest>

@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.text.SpannableString;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,6 +57,8 @@ import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
 
+import static android.app.Activity.RESULT_OK;
+
 public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle, NetworkChangeListener {
 
 	public WTextView tvIncreaseLimitDescription, availableBalance, creditLimit, dueDate, minAmountDue, currentBalance, tvViewTransaction, tvIncreaseLimit, tvProtectionInsurance;
@@ -97,8 +98,8 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	private WTextView tvHowToPayArrears;
 
     private RelativeLayout relDebitOrders;
-	private WTextView tvDebitOrdersStatus;
-	private ImageView iconArrowDebitOrders;
+
+    private View fakeView;
 
 	@Nullable
 	@Override
@@ -180,8 +181,8 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 
         relDebitOrders = view.findViewById(R.id.relDebitOrders);
         relDebitOrders.setOnClickListener(this);
-		tvDebitOrdersStatus = view.findViewById(R.id.tvDebitOrdersStatus);
-		iconArrowDebitOrders = view.findViewById(R.id.iconArrowDebitOrders);
+        
+        fakeView = view.findViewById(R.id.fakeView);
 	}
 
 	private void addListener() {
@@ -211,29 +212,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		if (accountsResponse != null)
 			bindData(accountsResponse);
 
-		{
-			if (controllerNotNull())
-				mIncreaseLimitController.showView(mRelDrawnDownAmount);
-			mIncreaseLimitController.defaultIncreaseLimitView(logoIncreaseLimit, llCommonLayer, tvIncreaseLimit);
-		}
-	}
-
-	//To remove negative signs from negative balance and add "CR" after the negative balance
-	public String removeNegativeSymbol(SpannableString amount) {
-		String currentAmount = amount.toString();
-		if (currentAmount.contains("-")) {
-			currentAmount = currentAmount.replace("-", "") + " CR";
-		}
-		return currentAmount;
-	}
-
-	//To remove negative signs from negative balance and add "CR" after the negative balance
-	public String removeNegativeSymbol(String amount) {
-		String currentAmount = amount;
-		if (currentAmount.contains("-")) {
-			currentAmount = currentAmount.replace("-", "") + " CR";
-		}
-		return currentAmount;
+		mIncreaseLimitController.defaultIncreaseLimitView(logoIncreaseLimit, llCommonLayer, tvIncreaseLimit);
 	}
 
 	public void bindData(AccountsResponse response) {
@@ -246,6 +225,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
                     {
                         llActiveAccount.setVisibility(View.GONE);
                         llChargedOffAccount.setVisibility(View.VISIBLE);
+                        Utils.setViewHeightToRemainingBottomSpace(getActivity(), fakeView);
                         return;
                     }else {
                         llActiveAccount.setVisibility(View.VISIBLE);
@@ -259,13 +239,13 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 					if (TextUtils.isEmpty(String.valueOf(minDrawnAmount))) {
 						minDrawnAmount = 0;
 					}
-					availableBalance.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.availableFunds), 1, getActivity())));
+					availableBalance.setText(Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.availableFunds), 1, getActivity())));
 					mSharePreferenceHelper.save(availableBalance.getText().toString(), "lw_available_fund");
-					creditLimit.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.creditLimit), 1, getActivity())));
+					creditLimit.setText(Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.creditLimit), 1, getActivity())));
 					mSharePreferenceHelper.save(creditLimit.getText().toString(), "lw_credit_limit");
 
-					minAmountDue.setText(removeNegativeSymbol(WFormatter.newAmountFormat(p.minimumAmountDue)));
-					currentBalance.setText(removeNegativeSymbol(WFormatter.newAmountFormat(p.currentBalance)));
+					minAmountDue.setText(Utils.removeNegativeSymbol(WFormatter.newAmountFormat(p.minimumAmountDue)));
+					currentBalance.setText(Utils.removeNegativeSymbol(WFormatter.newAmountFormat(p.currentBalance)));
 					try {
 						dueDate.setText(WFormatter.addSpaceToDate(WFormatter.newDateFormat(p.paymentDueDate)));
 					} catch (ParseException ex) {
@@ -281,13 +261,8 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 						tvTotalAmountDue.setText(WFormatter.newAmountFormat(p.totalAmountDue));
 					}
 
-					tvDebitOrdersStatus.setText(p.debitOrder.debitOrderActive ? "ACTIVE" : "EXPIRED");
-					iconArrowDebitOrders.setVisibility(p.debitOrder.debitOrderActive ? View.VISIBLE : View.GONE);
-					if(!p.debitOrder.debitOrderActive) {
-						RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) tvDebitOrdersStatus.getLayoutParams();
-						params.addRule(RelativeLayout.ALIGN_PARENT_END);
-						tvDebitOrdersStatus.setLayoutParams(params);
-					}
+                    relDebitOrders.setVisibility(p.debitOrder.debitOrderActive ? View.VISIBLE : View.GONE);
+					mRelDrawnDownAmount.setVisibility(p.productOfferingGoodStanding ? View.VISIBLE : View.GONE);
 				}
 			}
 		}
@@ -355,7 +330,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 						CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC,
 						getActivity().getResources().getString(R.string.account_in_arrears_info_title),
 						getActivity().getResources().getString(R.string.account_in_arrears_info_description)
-								.replace("minimum_payment", removeNegativeSymbol(WFormatter.newAmountFormat(account.amountOverdue)))
+								.replace("minimum_payment", Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account.amountOverdue)))
                                 .replace("card_name", "Personal Loan"),
 						getActivity().getResources().getString(R.string.how_to_pay),
 						RESULT_CODE_FUNDS_INFO);
@@ -522,7 +497,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		if(requestCode == RESULT_CODE_FUNDS_INFO) {
+		if(requestCode == RESULT_CODE_FUNDS_INFO && resultCode == RESULT_OK) {
 			ScreenManager.presentHowToPayActivity(getActivity(),account);
 		}
 		retryConnect();

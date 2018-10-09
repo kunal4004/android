@@ -580,6 +580,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					return true;
 
 				case R.id.navigate_to_account:
+					setCurrentSection(R.id.navigate_to_account);
 					if (AuthenticateUtils.getInstance(BottomNavigationActivity.this).isBiometricAuthenticationRequired()) {
 						try {
 							AuthenticateUtils.getInstance(BottomNavigationActivity.this).startAuthenticateApp(LOCK_REQUEST_CODE_ACCOUNTS);
@@ -587,7 +588,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 							e.printStackTrace();
 						}
 					} else {
-						setCurrentSection(R.id.navigate_to_account);
 						setToolbarBackgroundColor(R.color.white);
 						switchTab(INDEX_ACCOUNT);
 						Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSMENU);

@@ -81,7 +81,7 @@
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         android:id="@+id/tvMinimumAmountDueLabel"
                         style="@style/account_card_style"
-                        android:text="@string/minimum_payment"
+                        android:text="@string/minimum_amount_due"
                         app:WTextView_font="myriadpro_regular" />
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -504,7 +504,7 @@
             <ImageView
                 android:id="@+id/logoDebitOrders"
                 style="@style/style_loan_logo_img"
-                android:src="@drawable/money" />
+                android:src="@drawable/ic_debit_order" />
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/tvDebitOrders"
@@ -525,7 +525,8 @@
                 android:textColor="#343434"
                 android:textSize="13sp"
                 android:letterSpacing="0.1"
-                app:WTextView_font="medium" />
+                app:WTextView_font="medium"
+                android:text="@string/active"/>
 
             <ImageView
                 android:id="@+id/iconArrowDebitOrders"
@@ -575,9 +576,9 @@
             android:textColor="@color/description_color"
             android:textSize="15sp"
             app:WTextView_font="myriadpro_regular" />
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
+        <View
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="0dp"
             android:id="@+id/fakeView"
             android:layout_below="@+id/description"
             android:background="@color/white"

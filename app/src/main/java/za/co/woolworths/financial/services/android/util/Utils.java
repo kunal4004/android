@@ -11,6 +11,7 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationManager;
@@ -19,6 +20,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.internal.BottomNavigationItemView;
 import android.support.v4.app.Fragment;
@@ -27,9 +29,12 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableString;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -1251,4 +1256,70 @@ public class Utils {
 		else
 			return input;
 	}
+
+	public static void setViewHeightToRemainingBottomSpace(final Activity activity, final View view) {
+		view.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener()
+		{
+			@Override
+			public boolean onPreDraw()
+			{
+				if (view.getViewTreeObserver().isAlive())
+					view.getViewTreeObserver().removeOnPreDrawListener(this);
+
+				int[] locations = new int[2];
+				view.getLocationOnScreen(locations);
+				int viewYPositionOnScreen = locations[1];
+
+				if(activity != null) {
+					Display display = activity.getWindowManager().getDefaultDisplay();
+					Point size = new Point();
+					display.getSize(size);
+					int screenHeight = size.y;
+
+					ViewGroup.LayoutParams params = view.getLayoutParams();
+					params.height = screenHeight - viewYPositionOnScreen + getSoftButtonsBarHeight(activity);
+					view.setLayoutParams(params);
+				}
+
+				return false;
+			}
+		});
+	}
+
+	public static int getSoftButtonsBarHeight(Activity activity) {
+		// getRealMetrics is only available with API 17 and +
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+			DisplayMetrics metrics = new DisplayMetrics();
+			activity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+			int usableHeight = metrics.heightPixels;
+			activity.getWindowManager().getDefaultDisplay().getRealMetrics(metrics);
+			int realHeight = metrics.heightPixels;
+			if (realHeight > usableHeight)
+				return realHeight - usableHeight;
+			else
+				return 0;
+		}
+		return 0;
+	}
+
+
+	//add negative sign before currency value
+	public static String removeNegativeSymbol(String amount) {
+		return  formatAmount(amount);
+	}
+
+	//add negative sign before currency value
+	public static String removeNegativeSymbol(SpannableString amount) {
+		return  formatAmount(amount.toString());
+	}
+
+	@NonNull
+	private static String formatAmount(String currentAmount) {
+		if (currentAmount.contains("-")) {
+			currentAmount = currentAmount.replaceAll("-", "");
+			currentAmount = currentAmount.replace("R", "- R");
+		}
+		return currentAmount;
+	}
+
 }

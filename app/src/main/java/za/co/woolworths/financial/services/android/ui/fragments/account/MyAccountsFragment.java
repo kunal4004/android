@@ -260,11 +260,11 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			messageCounterRequest();
 	}
 
-	//To remove negative signs from negative balance and add "CR" after the negative balance
+	// add negative sign before currency value
 	public String removeNegativeSymbol(SpannableString amount) {
 		String currentAmount = amount.toString();
 		if (currentAmount.contains("-")) {
-			currentAmount = currentAmount.replace("-", "") + " CR";
+			currentAmount = currentAmount.replace("R - ","- R ");
 		}
 		return currentAmount;
 	}
@@ -810,6 +810,10 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			setToolbarBackgroundColor(R.color.white);
 			shoppingListRequest();
 			messageCounterRequest();
+
+			//Fixes WOP-3407
+			BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) getActivity();
+			bottomNavigationActivity.showBottomNavigationMenu();
 		}
 	}
 

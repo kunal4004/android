@@ -129,25 +129,25 @@
 
             <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
                 android:id="@+id/imNewImage"
-                android:layout_width="15dp"
+                android:layout_width="24dp"
                 android:layout_height="wrap_content"
                 fresco:viewAspectRatio="1.0"/>
 
             <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
                 android:id="@+id/imSave"
-                android:layout_width="15dp"
+                android:layout_width="24dp"
                 android:layout_height="wrap_content"
                 fresco:viewAspectRatio="1.0"/>
 
             <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
                 android:id="@+id/imReward"
-                android:layout_width="15dp"
+                android:layout_width="24dp"
                 android:layout_height="wrap_content"
                 fresco:viewAspectRatio="1.0"/>
 
             <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
                 android:id="@+id/imVitality"
-                android:layout_width="15dp"
+                android:layout_width="24dp"
                 android:layout_height="wrap_content"
                 fresco:viewAspectRatio="1.0"/>
         </LinearLayout>
