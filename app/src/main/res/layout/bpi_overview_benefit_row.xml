@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/twenty_four_dp"
         android:layout_marginTop="@dimen/eight_dp"
-        android:alpha="0.5"
+        android:alpha="0.8"
         android:lineSpacingMultiplier="1.60"
         android:text="@string/bpi_balance_protection_benefit_1"
         android:textSize="@dimen/fifteen_sp"
