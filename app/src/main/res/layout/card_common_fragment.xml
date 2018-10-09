@@ -81,7 +81,7 @@
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         android:id="@+id/tvMinimumAmountDueLabel"
                         style="@style/account_card_style"
-                        android:text="@string/minimum_payment"
+                        android:text="@string/minimum_amount_due"
                         app:WTextView_font="myriadpro_regular" />
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView

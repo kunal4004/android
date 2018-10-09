@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.text.SpannableString;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -190,15 +189,6 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		fakeView = view.findViewById(R.id.fakeView);
 	}
 
-	//To remove negative signs from negative balance and add "CR" after the negative balance
-	public String removeNegativeSymbol(SpannableString amount) {
-		String currentAmount = amount.toString();
-		if (currentAmount.contains("-")) {
-			currentAmount = currentAmount.replace("-", "") + " CR";
-		}
-		return currentAmount;
-	}
-
 	private void addListener() {
 		relBalanceProtection.setOnClickListener(this);
 		tvViewTransaction.setOnClickListener(this);
@@ -231,10 +221,10 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 					productOfferingGoodStanding = p.productOfferingGoodStanding;
 					productOfferingId = String.valueOf(p.productOfferingId);
 					woolworthsApplication.setProductOfferingId(p.productOfferingId);
-					availableBalance.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.availableFunds), 1, getActivity())));
-					creditLimit.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.creditLimit), 1, getActivity())));
-					minAmountDue.setText(removeNegativeSymbol(WFormatter.newAmountFormat(p.minimumAmountDue)));
-					currentBalance.setText(removeNegativeSymbol(WFormatter.newAmountFormat(p.currentBalance)));
+					availableBalance.setText(Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.availableFunds), 1, getActivity())));
+					creditLimit.setText(Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.creditLimit), 1, getActivity())));
+					minAmountDue.setText(Utils.removeNegativeSymbol(WFormatter.newAmountFormat(p.minimumAmountDue)));
+					currentBalance.setText(Utils.removeNegativeSymbol(WFormatter.newAmountFormat(p.currentBalance)));
 					try {
 						dueDate.setText(WFormatter.addSpaceToDate(WFormatter.newDateFormat(p.paymentDueDate)));
 					} catch (ParseException e) {
@@ -336,7 +326,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 						CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC,
 						getActivity().getResources().getString(R.string.account_in_arrears_info_title),
 						getActivity().getResources().getString(R.string.account_in_arrears_info_description)
-								.replace("minimum_payment", removeNegativeSymbol(WFormatter.newAmountFormat(account.amountOverdue)))
+								.replace("minimum_payment", Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account.amountOverdue)))
 								.replace("card_name", "Store Card"),
 						getActivity().getResources().getString(R.string.how_to_pay),
 						RESULT_CODE_FUNDS_INFO);
@@ -434,15 +424,6 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 
 			cliOfferStatus(offerActive);
 		}
-	}
-
-	//To remove negative signs from negative balance and add "CR" after the negative balance
-	public String removeNegativeSymbol(String amount) {
-		String currentAmount = amount;
-		if (currentAmount.contains("-")) {
-			currentAmount = currentAmount.replace("-", "") + " CR";
-		}
-		return currentAmount;
 	}
 
 	@Override

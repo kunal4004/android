@@ -8,9 +8,9 @@
     <string name="credit_card">CREDIT CARD</string>
     <string name="personal_loan">PERSONAL LOAN</string>
     <string name="credit_limit">Credit Limit:</string>
-    <string name="available_funds">Available funds</string>
+    <string name="available_funds">Available Funds</string>
     <string name="next_payment_date">Next Payment Due:</string>
-    <string name="total_amount_due">Total Amount Due:</string>
+    <string name="total_amount_due">Min Amount Due:</string>
     <string name="amount_overdue">Amount Overdue:</string>
     <string name="balance_at_statement_date">Balance At Statement Date:</string>
     <string name="deduction_day">Deduction Day:</string>
@@ -20,7 +20,7 @@
     <string name="active">ACTIVE</string>
     <string name="account_in_arrears">ACCOUNT IN ARREARS</string>
     <string name="account_in_arrears_6_months">YOUR ACCOUNT IS MORE THAN 6 MONTHS IN ARREARS.</string>
-    <string name="minimum_payment">Total Amount Due</string>
+    <string name="minimum_amount_due">Min Amount Due</string>
     <string name="next">NEXT</string>
     <string name="current_balance">Current Balance:</string>
     <string name="cancel" tools:ignore="ButtonCase">CANCEL</string>
