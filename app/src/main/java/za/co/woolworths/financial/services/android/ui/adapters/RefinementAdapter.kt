@@ -8,8 +8,10 @@ import android.view.ViewGroup
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.dto.RefinementSelectableItem
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RefinementBaseViewHolder
+import kotlinx.android.synthetic.main.refinements_options_layout.view.*
+import za.co.woolworths.financial.services.android.ui.fragments.product.utils.RefinementSelection
 
-class RefinementAdapter(val context: Context) : RecyclerView.Adapter<RefinementBaseViewHolder>() {
+class RefinementAdapter(val context: Context, val listner: RefinementSelection) : RecyclerView.Adapter<RefinementBaseViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RefinementBaseViewHolder? {
         when (viewType) {
@@ -52,9 +54,11 @@ class RefinementAdapter(val context: Context) : RecyclerView.Adapter<RefinementB
         }
     }
 
-    class OptionsHolder(itemView: View) : RefinementBaseViewHolder(itemView) {
+    inner class OptionsHolder(itemView: View) : RefinementBaseViewHolder(itemView) {
         override fun bind(position: Int) {
-
+            itemView.refinementOptions.setOnClickListener {
+                listner.onRefinementOptionSelected(position)
+            }
         }
     }
 

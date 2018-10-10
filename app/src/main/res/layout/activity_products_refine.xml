@@ -28,7 +28,6 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingLeft="@dimen/sixteen_dp"
                 android:paddingRight="@dimen/sixteen_dp">
 
                 <ImageView

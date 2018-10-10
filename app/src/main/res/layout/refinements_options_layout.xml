@@ -5,6 +5,7 @@
     android:layout_height="wrap_content">
 
     <RelativeLayout
+        android:id="@+id/refinementOptions"
         android:layout_width="match_parent"
         android:layout_height="@dimen/sixty_dp"
         android:background="@drawable/refine_item_background">

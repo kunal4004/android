@@ -23,7 +23,7 @@ class RefinementFragment : Fragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         refinementList.layoutManager = LinearLayoutManager(activity)
-        refinementList.adapter = RefinementAdapter(activity)
+        //refinementList.adapter = RefinementAdapter(activity)
     }
 
 }
