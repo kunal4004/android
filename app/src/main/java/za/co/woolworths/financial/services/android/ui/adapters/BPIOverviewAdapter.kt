@@ -11,7 +11,7 @@ import za.co.woolworths.financial.services.android.models.dto.BPIOverview
 import za.co.woolworths.financial.services.android.models.dto.InsuranceType
 import za.co.woolworths.financial.services.android.util.setOverviewConstraint
 
-internal class BPIOverviewAdapter(private val bpiOverviewList: ArrayList<BPIOverview>, val onBPIAdapterClickListener: OnBPIAdapterClickListener)
+internal class BPIOverviewAdapter(private val bpiOverviewList: MutableList<BPIOverview>?, private val onBPIAdapterClickListener: OnBPIAdapterClickListener)
     : RecyclerView.Adapter<BPIOverviewAdapter.ViewHolder>() {
 
     companion object {
@@ -28,7 +28,7 @@ internal class BPIOverviewAdapter(private val bpiOverviewList: ArrayList<BPIOver
     }
 
     override fun onBindViewHolder(holder: BPIOverviewAdapter.ViewHolder, position: Int) {
-        val bpiOverview: BPIOverview = bpiOverviewList[position]
+        val bpiOverview: BPIOverview = bpiOverviewList!![position]
         val insuranceType: InsuranceType = bpiOverview.insuranceType!!
         mOnBPIOverviewAdapter = onBPIAdapterClickListener
         holder.bindItems(bpiOverview)
@@ -38,7 +38,7 @@ internal class BPIOverviewAdapter(private val bpiOverviewList: ArrayList<BPIOver
     }
 
     override fun getItemCount(): Int {
-        return bpiOverviewList.size
+        return bpiOverviewList?.size ?: 0
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

@@ -13,6 +13,7 @@ import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.BPIOverview
 import za.co.woolworths.financial.services.android.models.dto.InsuranceType
 import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity
+import java.util.*
 
 /**
  * Method to add the fragment. The [fragment] is added to the container view with id
@@ -98,13 +99,8 @@ fun View.setOverviewConstraint(position: Int, topMargin: Int?, bottomMargin: Int
     layoutParams = params
 }
 
-fun Fragment.createBPIList(): ArrayList<BPIOverview> {
-    val bpiList = arrayListOf<BPIOverview>()
-    bpiList.add(BPIOverview(getString(R.string.bpi_balance_protection_title), getString(R.string.bpi_balance_protection_desc), R.drawable.icon_balance_protection_overview, resources.getStringArray(R.array.bpi_balance_protection_benefits), InsuranceType(), R.drawable.bg_header_balance_protection))
-    bpiList.add(BPIOverview(getString(R.string.bpi_partner_cover_title), getString(R.string.bpi_partner_cover_desc), R.drawable.icon_partner_cover, resources.getStringArray(R.array.bpi_partner_cover_benefits), InsuranceType(), R.drawable.bg_header_partner_cover))
-    bpiList.add(BPIOverview(getString(R.string.bpi_additional_death_cover_title), getString(R.string.bpi_additional_death_cover_desc), R.drawable.icon_additional_death_cover, resources.getStringArray(R.array.bpi_additional_death_cover), InsuranceType(), R.drawable.bg_header_additional_death_cover))
-    bpiList.add(BPIOverview(getString(R.string.bpi_additional_death_cover_for_partner_title), getString(R.string.bpi_additional_death_cover_for_partner_desc), R.drawable.icon_additional_death_cover_for_partner, resources.getStringArray(R.array.bpi_additional_death_cover_for_partner), InsuranceType(), R.drawable.bg_header_additional_death_cover_for_partner))
-    return bpiList
+fun Fragment.createBPIList(): MutableList<BPIOverview>? {
+    return Arrays.asList(BPIOverview(resources.getString(R.string.bpi_balance_protection_title), resources.getString(R.string.bpi_balance_protection_desc), R.drawable.icon_balance_protection_overview, resources.getStringArray(R.array.bpi_balance_protection_benefits), InsuranceType(), R.drawable.bg_header_balance_protection), BPIOverview(resources.getString(R.string.bpi_partner_cover_title), resources.getString(R.string.bpi_partner_cover_desc), R.drawable.icon_partner_cover, resources.getStringArray(R.array.bpi_partner_cover_benefits), InsuranceType(), R.drawable.bg_header_partner_cover), BPIOverview(resources.getString(R.string.bpi_additional_death_cover_title), resources.getString(R.string.bpi_additional_death_cover_desc), R.drawable.icon_additional_death_cover, resources.getStringArray(R.array.bpi_additional_death_cover), InsuranceType(), R.drawable.bg_header_additional_death_cover), BPIOverview(resources.getString(R.string.bpi_additional_death_cover_for_partner_title), resources.getString(R.string.bpi_additional_death_cover_for_partner_desc), R.drawable.icon_additional_death_cover_for_partner, resources.getStringArray(R.array.bpi_additional_death_cover_for_partner), InsuranceType(), R.drawable.bg_header_additional_death_cover_for_partner))
 }
 
 fun Fragment.getInsuranceType(): MutableList<InsuranceType>? {
@@ -117,12 +113,11 @@ fun Fragment.getInsuranceType(): MutableList<InsuranceType>? {
     return null
 }
 
-fun Fragment.updateBPIList(): ArrayList<BPIOverview> {
+fun Fragment.updateBPIList(): MutableList<BPIOverview>? {
     val bpiList = createBPIList()
-    val insuranceType = getInsuranceType()
     val insuranceListType = getInsuranceType()!!
     for (insuranceType in insuranceListType) {
-        for (bpi in bpiList) {
+        for (bpi in bpiList!!) {
             if (bpi.overviewTitle == insuranceType.description) {
                 val type: InsuranceType = bpi.insuranceType!!
                 type.covered = insuranceType.covered

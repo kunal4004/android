@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.bpi
 
 import android.os.Bundle
+import android.support.annotation.VisibleForTesting
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -11,11 +12,10 @@ import android.widget.LinearLayout
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.bpi_overview_fragment.*
 import za.co.woolworths.financial.services.android.models.dto.BPIOverview
+import za.co.woolworths.financial.services.android.models.dto.InsuranceType
 import za.co.woolworths.financial.services.android.ui.activities.bpi.BPIBalanceProtectionActivity
 import za.co.woolworths.financial.services.android.ui.adapters.BPIOverviewAdapter
-import za.co.woolworths.financial.services.android.util.navigateToBalanceProtectionActivity
-import za.co.woolworths.financial.services.android.util.replaceFragment
-import za.co.woolworths.financial.services.android.util.updateBPIList
+import za.co.woolworths.financial.services.android.util.*
 
 
 class BPIOverviewFragment : Fragment(), BPIOverviewAdapter.OnBPIAdapterClickListener, View.OnClickListener {
@@ -60,10 +60,12 @@ class BPIOverviewFragment : Fragment(), BPIOverviewAdapter.OnBPIAdapterClickList
         rvBPIOverview!!.adapter = mBPIOverviewAdapter
     }
 
-    private fun setClaimButtonVisibility(bpiOverviewList: ArrayList<BPIOverview>) {
+    private fun setClaimButtonVisibility(bpiOverviewList: MutableList<BPIOverview>?) {
         val insuranceCoveredList = arrayListOf<Boolean>()
-        for (overview in bpiOverviewList) {
-            insuranceCoveredList.add(overview.insuranceType!!.covered)
+        if (bpiOverviewList != null) {
+            for (overview in bpiOverviewList) {
+                insuranceCoveredList.add(overview.insuranceType!!.covered)
+            }
         }
 
         tvBPIOverviewClaim.visibility = if (insuranceCoveredList.contains(true)) View.VISIBLE else View.GONE
@@ -95,5 +97,25 @@ class BPIOverviewFragment : Fragment(), BPIOverviewAdapter.OnBPIAdapterClickList
                 }
             }
         }
+    }
+
+    @VisibleForTesting
+    public fun testUpdateBPIList(): MutableList<BPIOverview>? {
+        return updateBPIList()
+    }
+
+    @VisibleForTesting
+    public fun testCreateBPIList(): MutableList<BPIOverview>? {
+        return createBPIList()
+    }
+
+    @VisibleForTesting
+    public fun testGetInsuranceType():  MutableList<InsuranceType>? {
+        return getInsuranceType()
+    }
+
+    @VisibleForTesting
+    public fun testClaimButtonVisibility(){
+        setClaimButtonVisibility(updateBPIList())
     }
 }
