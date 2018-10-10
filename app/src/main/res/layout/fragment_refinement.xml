@@ -1,13 +1,45 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingBottom="@dimen/twenty_four_dp"
+    android:paddingLeft="@dimen/twenty_four_dp"
+    android:paddingRight="@dimen/twenty_four_dp"
+    android:background="@color/white"
     tools:context="za.co.woolworths.financial.services.android.ui.fragments.product.refine.RefinementFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/refinementList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_above="@+id/refinementSeeResult"
+        android:clipToPadding="true"
+        android:paddingBottom="@dimen/twenty_four_dp" />
 
-</FrameLayout>
+    <RelativeLayout
+        android:id="@+id/refinementSeeResult"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/fifty_dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/black">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/refinementSectionHeader"
+            style="@style/toolbar_menu_text_style"
+            android:layout_centerInParent="true"
+            android:letterSpacing="0.1"
+            android:text="SEE RESULT (44)"
+            android:textColor="@color/white"
+            android:textSize="13sp" />
+
+        <ProgressBar
+            android:id="@+id/loadingBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_centerInParent="true"
+            android:indeterminateTint="@color/black"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+</RelativeLayout>

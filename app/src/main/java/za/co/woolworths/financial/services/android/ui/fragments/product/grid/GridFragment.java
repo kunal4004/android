@@ -34,6 +34,7 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingListsRespo
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
+import za.co.woolworths.financial.services.android.ui.activities.product.refine.ProductsRefineActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewListAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.ShoppingListFragment;
@@ -116,6 +117,7 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 		setTitle();
 		startProductRequest();
 		getViewDataBinding().incNoConnectionHandler.btnRetry.setOnClickListener(this);
+		getViewDataBinding().sortAndRefineLayout.refineProducts.setOnClickListener(this);
 
 		observableOn(new Consumer() {
 			@Override
@@ -439,6 +441,9 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 					mErrorHandlerView.hideErrorHandler();
 					startProductRequest();
 				}
+				break;
+			case R.id.refineProducts:
+				startActivity(new Intent(getActivity(), ProductsRefineActivity.class));
 				break;
 		}
 	}

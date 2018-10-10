@@ -2,9 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingLeft="@dimen/twenty_four_dp"
-    android:paddingRight="@dimen/twenty_four_dp">
+    android:layout_height="wrap_content">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -13,6 +11,7 @@
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             style="@style/refinements_textview_style"
+            android:layout_margin="1dp"
             android:text="Category" />
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
