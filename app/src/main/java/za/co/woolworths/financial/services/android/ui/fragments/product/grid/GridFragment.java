@@ -444,6 +444,7 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 				break;
 			case R.id.refineProducts:
 				startActivity(new Intent(getActivity(), ProductsRefineActivity.class));
+				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				break;
 		}
 	}
