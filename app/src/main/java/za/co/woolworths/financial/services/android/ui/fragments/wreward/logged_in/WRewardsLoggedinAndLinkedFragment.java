@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -22,9 +21,7 @@ import com.awfs.coordination.databinding.WrewardsLoggedinAndLinkedFragmentBindin
 
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CardDetailsResponse;
-import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
-import za.co.woolworths.financial.services.android.models.rest.message.GetMessage;
 import za.co.woolworths.financial.services.android.models.rest.reward.GetVoucher;
 import za.co.woolworths.financial.services.android.models.rest.reward.WRewardsCardDetails;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
@@ -113,8 +110,6 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 				}
 			}
 		});
-
-		getMessageResponse().execute();
 	}
 
 	private void setupViewPager(ViewPager viewPager, VoucherResponse voucherResponse, CardDetailsResponse cardResponse) {
@@ -265,32 +260,6 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 		super.onDetach();
 	}
 
-	private GetMessage getMessageResponse() {
-		return new GetMessage(new OnEventListener() {
-			@Override
-			public void onSuccess(Object object) {
-				try {
-					MessageResponse messageResponse = (MessageResponse) object;
-					if (messageResponse.unreadCount > 0) {
-						int unreadCount = messageResponse.unreadCount;
-						if (TextUtils.isEmpty(String.valueOf(unreadCount)))
-							unreadCount = 0;
-						Utils.setBadgeCounter(getActivity(), unreadCount);
-						addBadge(BottomNavigationActivity.INDEX_ACCOUNT, unreadCount);
-					} else {
-						Utils.removeBadgeCounter(getActivity());
-						addBadge(BottomNavigationActivity.INDEX_ACCOUNT, 0);
-					}
-				} catch (Exception ignored) {
-				}
-			}
-
-			@Override
-			public void onFailure(String errorMessage) {
-			}
-		});
-	}
-
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
@@ -305,18 +274,24 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 			Fragment page = getChildFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + viewPager.getCurrentItem());
 			switch (viewPager.getCurrentItem()) {
 				case 0:
-					WRewardsOverviewFragment wRewardsOverviewFragment = (WRewardsOverviewFragment) page;
-					wRewardsOverviewFragment.scrollToTop();
+					if (page instanceof WRewardsOverviewFragment) {
+						WRewardsOverviewFragment wRewardsOverviewFragment = (WRewardsOverviewFragment) page;
+						wRewardsOverviewFragment.scrollToTop();
+					}
 					break;
 
 				case 1:
-					WRewardsVouchersFragment wRewardsVouchersFragment = (WRewardsVouchersFragment) page;
-					wRewardsVouchersFragment.scrollToTop();
+					if (page instanceof WRewardsVouchersFragment) {
+						WRewardsVouchersFragment wRewardsVouchersFragment = (WRewardsVouchersFragment) page;
+						wRewardsVouchersFragment.scrollToTop();
+					}
 					break;
 
 				case 2:
-					WRewardsSavingsFragment wRewardsSavingsFragment = (WRewardsSavingsFragment) page;
-					wRewardsSavingsFragment.scrollToTop();
+					if (page instanceof WRewardsSavingsFragment) {
+						WRewardsSavingsFragment wRewardsSavingsFragment = (WRewardsSavingsFragment) page;
+						wRewardsSavingsFragment.scrollToTop();
+					}
 					break;
 
 				default:

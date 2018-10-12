@@ -2,23 +2,12 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.detail.
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Point;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.Display;
-import android.view.WindowManager;
-
-import com.google.gson.Gson;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
@@ -26,23 +15,16 @@ import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
-import za.co.woolworths.financial.services.android.models.dto.ProductList;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
-import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.models.rest.product.GetCartSummary;
 import za.co.woolworths.financial.services.android.models.rest.product.GetInventorySkusForStore;
 import za.co.woolworths.financial.services.android.models.rest.product.GetProductDetail;
 import za.co.woolworths.financial.services.android.models.rest.product.PostAddItemToCart;
 import za.co.woolworths.financial.services.android.models.rest.product.ProductRequest;
-import za.co.woolworths.financial.services.android.models.rest.shop.SetDeliveryLocationSuburb;
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.base.BaseViewModel;
 import za.co.woolworths.financial.services.android.util.LocationItemTask;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
-import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.rx.SchedulerProvider;
 
 /**
  * Created by W7099877 on 2018/07/14.
@@ -74,7 +56,7 @@ public class ProductDetailsViewModelNew extends BaseViewModel<ProductDetailNavig
 		});
 	}
 
-	public LocationItemTask locationItemTask(final Context context,OtherSkus otherSkus) {
+	public LocationItemTask locationItemTask(final Context context, OtherSkus otherSkus) {
 		return new LocationItemTask(new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
@@ -98,7 +80,7 @@ public class ProductDetailsViewModelNew extends BaseViewModel<ProductDetailNavig
 					}
 				}
 			}
-		},otherSkus);
+		}, otherSkus);
 	}
 
 	public String getProductDescription(Context context, ProductDetails productDetails) {
@@ -138,7 +120,6 @@ public class ProductDetailsViewModelNew extends BaseViewModel<ProductDetailNavig
 	}
 
 
-
 	public String maxWasPrice(List<OtherSkus> otherSku) {
 		ArrayList<Double> priceList = new ArrayList<>();
 		for (OtherSkus os : otherSku) {
@@ -153,8 +134,8 @@ public class ProductDetailsViewModelNew extends BaseViewModel<ProductDetailNavig
 		return wasPrice;
 	}
 
-	protected GetCartSummary getCartSummary(Activity activity) {
-		return new GetCartSummary(activity, new OnEventListener() {
+	protected GetCartSummary getCartSummary() {
+		return new GetCartSummary(new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
 				if (object != null) {
@@ -242,5 +223,14 @@ public class ProductDetailsViewModelNew extends BaseViewModel<ProductDetailNavig
 
 			}
 		});
+	}
+
+	public String getMultiSKUsStringForInventory(ArrayList<OtherSkus> otherSKUsList) {
+		List<String> skuIds = new ArrayList<>();
+		for (OtherSkus otherSkus : otherSKUsList) {
+			skuIds.add(otherSkus.sku);
+		}
+		String multiSKUS = TextUtils.join("-", skuIds);
+		return multiSKUS;
 	}
 }

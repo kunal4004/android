@@ -49,7 +49,8 @@ public class CardsOnMapAdapter extends PagerAdapter {
         WTextView storeAddress = (WTextView) cView.findViewById(R.id.storeAddress);
         WTextView storeTimeing = (WTextView) cView.findViewById(R.id.timeing);
         storeName.setText(storeDetailsList.get(position).name);
-        storeAddress.setText(storeDetailsList.get(position).address);
+        if (!TextUtils.isEmpty(storeDetailsList.get(position).address))
+            storeAddress.setText(storeDetailsList.get(position).address);
 
         int mKmDistance = mContext.getResources().getDimensionPixelSize(R.dimen.distance_km);
         SpannableString ssDistance = new SpannableString(WFormatter.formatMeter(storeDetailsList.get(position).distance));

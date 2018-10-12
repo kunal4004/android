@@ -472,7 +472,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		Activity activity = getActivity();
 		if (activity == null) return;
 		BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
-		bottomNavigationActivity.cartSummaryAPI();
 		bottomNavigationActivity.onActivityResult(ADD_TO_CART_SUCCESS_RESULT, ADD_TO_CART_SUCCESS_RESULT, null);
 		popFragmentSlideDown();
 	}
@@ -666,7 +665,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		onAddToCartPreExecute();
 		List<AddItemToCart> selectedItems = new ArrayList<>();
 		for (ShoppingListItem item : items) {
-			if (item.isSelected)
+			if (item.isSelected && item.quantityInStock > 0)
 				selectedItems.add(new AddItemToCart(item.productId, item.catalogRefId, item.userQuantity));
 		}
 

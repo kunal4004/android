@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -134,7 +135,7 @@ public class ProvinceSelectionFragment extends Fragment implements ProvinceSelec
 				case 440:
 
 					SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.response.stsParams);
-					SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(getActivity());
+					SessionExpiredUtilities.getInstance().showSessionExpireDialog((AppCompatActivity) getActivity());
 
 					// hide loading
 					toggleLoading(false);
