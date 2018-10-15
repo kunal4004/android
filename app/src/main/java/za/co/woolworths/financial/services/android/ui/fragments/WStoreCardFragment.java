@@ -272,29 +272,26 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	public void onClick(View v) {
 		MultiClickPreventer.preventMultiClick(v);
 		Activity activity = getActivity();
+		if (activity == null)return;
 		if (accountsResponse != null) {
 			productOfferingId = Utils.getProductOfferingId(accountsResponse, "SC");
 		}
 		switch (v.getId()) {
 			case R.id.rlViewTransactions:
 			case R.id.tvViewTransaction:
-				if (activity!=null) {
 					Intent intent = new Intent(getActivity(), WTransactionsActivity.class);
 					intent.putExtra("productOfferingId", productOfferingId);
 					startActivityForResult(intent, 0);
 					activity.overridePendingTransition(R.anim.slide_up_anim, R.anim
 							.stay);
-				}
 				break;
 
 			case R.id.relBalanceProtection:
-				if (activity!=null) {
 					String accountInfo = Utils.getAccountInfo(accountsResponse, "SC");
 					Intent intBalanceProtection = new Intent(getActivity(), BPIBalanceProtectionActivity.class);
 					intBalanceProtection.putExtra("account_info", accountInfo);
 					startActivity(intBalanceProtection);
 					getActivity().overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
-				}
 				break;
 
 			case R.id.tvIncreaseLimit:
@@ -310,19 +307,17 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 				break;
 
 			case R.id.rlViewStatement:
-				if (activity != null) {
 					((WoolworthsApplication) WStoreCardFragment.this.getActivity().getApplication())
 							.getUserManager
 									().getAccounts();
 					Intent openStatement = new Intent(getActivity(), StatementActivity.class);
 					startActivity(openStatement);
 					activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
-				}
 				break;
 			case R.id.iconAvailableFundsInfo:
 				Utils.displayValidationMessageForResult(
 						this,
-						getActivity(),
+						activity,
 						CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC,
 						getActivity().getResources().getString(R.string.account_in_arrears_info_title),
 						getActivity().getResources().getString(R.string.account_in_arrears_info_description)
@@ -340,7 +335,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 					Intent debitOrderIntent = new Intent(getActivity(), DebitOrderActivity.class);
 					debitOrderIntent.putExtra("DebitOrder", account.debitOrder);
 					startActivity(debitOrderIntent);
-					getActivity().overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+					activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
 				}
 				break;
 			default:

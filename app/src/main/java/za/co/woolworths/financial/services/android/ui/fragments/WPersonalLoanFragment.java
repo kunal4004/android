@@ -271,6 +271,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	public void onClick(View v) {
 		MultiClickPreventer.preventMultiClick(v);
 		Activity activity = getActivity();
+		if (activity == null) return;
 		if (accountsResponse != null) {
 			productOfferingId = Utils.getProductOfferingId(accountsResponse, "PL");
 		}
@@ -280,17 +281,15 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 				Intent intent = new Intent(getActivity(), WTransactionsActivity.class);
 				intent.putExtra("productOfferingId", productOfferingId);
 				startActivity(intent);
-				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+				activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				break;
 
 			case R.id.relBalanceProtection:
-				if (activity != null) {
 					String accountInfo = Utils.getAccountInfo(accountsResponse, "PL");
 					Intent intBalanceProtection = new Intent(getActivity(), BPIBalanceProtectionActivity.class);
 					intBalanceProtection.putExtra("account_info", accountInfo);
 					startActivity(intBalanceProtection);
 					activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
-				}
 				break;
 
 			case R.id.relDrawnDownAmount:
@@ -303,11 +302,9 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 				break;
 
 			case R.id.rlViewStatement:
-				if (activity != null) {
 					Intent openStatement = new Intent(getActivity(), StatementActivity.class);
 					startActivity(openStatement);
 					activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
-				}
 				break;
 			case R.id.relFindOutMore:
 				if (controllerNotNull())
@@ -321,7 +318,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 			case R.id.iconAvailableFundsInfo:
 				Utils.displayValidationMessageForResult(
 						this,
-						getActivity(),
+						activity,
 						CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC,
 						getActivity().getResources().getString(R.string.account_in_arrears_info_title),
 						getActivity().getResources().getString(R.string.account_in_arrears_info_description)
@@ -338,7 +335,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 				Intent debitOrderIntent = new Intent(getActivity(), DebitOrderActivity.class);
 				debitOrderIntent.putExtra("DebitOrder", account.debitOrder);
 				startActivity(debitOrderIntent);
-				getActivity().overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+				activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
 				break;
 			default:
 				break;

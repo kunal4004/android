@@ -254,6 +254,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	@Override
 	public void onClick(View v) {
 		Activity activity = getActivity();
+		if (activity==null) return;
 		MultiClickPreventer.preventMultiClick(v);
 		if (accountsResponse != null) {
 			productOfferingId = Utils.getProductOfferingId(accountsResponse, "CC");
@@ -264,17 +265,15 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 				Intent intent = new Intent(getActivity(), WTransactionsActivity.class);
 				intent.putExtra("productOfferingId", productOfferingId);
 				startActivity(intent);
-				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+				activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				break;
 
 			case R.id.relBalanceProtection:
-				if (activity!=null) {
 					String accountInfo = Utils.getAccountInfo(accountsResponse, "CC");
 					Intent intBalanceProtection = new Intent(getActivity(), BPIBalanceProtectionActivity.class);
 					intBalanceProtection.putExtra("account_info", accountInfo);
 					startActivity(intBalanceProtection);
-					getActivity().overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
-				}
+					activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
 				break;
 
 			case R.id.relIncreaseMyLimit:
@@ -286,9 +285,9 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 			case R.id.iconAvailableFundsInfo:
 				Utils.displayValidationMessageForResult(
 						this,
-						getActivity(),
+						activity,
 						CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC,
-						getActivity().getResources().getString(R.string.account_in_arrears_info_title),
+						activity.getResources().getString(R.string.account_in_arrears_info_title),
 						getActivity().getResources().getString(R.string.account_in_arrears_info_description)
 								.replace("minimum_payment", Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account.amountOverdue)))
 								.replace("card_name", "Credit Card"),
