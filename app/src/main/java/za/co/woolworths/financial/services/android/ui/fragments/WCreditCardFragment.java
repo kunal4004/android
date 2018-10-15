@@ -254,7 +254,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	@Override
 	public void onClick(View v) {
 		Activity activity = getActivity();
-		if (activity==null) return;
+		if (activity == null) return;
 		MultiClickPreventer.preventMultiClick(v);
 		if (accountsResponse != null) {
 			productOfferingId = Utils.getProductOfferingId(accountsResponse, "CC");
