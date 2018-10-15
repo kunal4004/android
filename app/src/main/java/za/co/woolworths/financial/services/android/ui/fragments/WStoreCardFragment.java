@@ -46,6 +46,7 @@ import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.FragmentLifecycle;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
+import za.co.woolworths.financial.services.android.util.MyAccountHelper;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
@@ -287,11 +288,12 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 				break;
 
 			case R.id.relBalanceProtection:
-					String accountInfo = Utils.getAccountInfo(accountsResponse, "SC");
-					Intent intBalanceProtection = new Intent(getActivity(), BPIBalanceProtectionActivity.class);
-					intBalanceProtection.putExtra("account_info", accountInfo);
-					startActivity(intBalanceProtection);
-					getActivity().overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+				MyAccountHelper myAccountHelper = new MyAccountHelper();
+				String accountInfo = myAccountHelper.getAccountInfo(accountsResponse, "SC");
+				Intent intBalanceProtection = new Intent(getActivity(), BPIBalanceProtectionActivity.class);
+				intBalanceProtection.putExtra("account_info", accountInfo);
+				startActivity(intBalanceProtection);
+				activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
 				break;
 
 			case R.id.tvIncreaseLimit:

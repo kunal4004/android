@@ -1273,18 +1273,6 @@ public class Utils {
 
 	}
 
-	public static String getAccountInfo(AccountsResponse accountsResponse, String desiredSection) {
-		List<Account> accountList = accountsResponse.accountList;
-		if (accountList != null) {
-			for (Account account : accountList) {
-				if (desiredSection.equals(account.productGroupCode)) {
-					return new Gson().toJson(account);
-				}
-			}
-		}
-		return "";
-	}
-
 	public static int getSoftButtonsBarHeight(Activity activity) {
 		// getRealMetrics is only available with API 17 and +
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
