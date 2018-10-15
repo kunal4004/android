@@ -13,9 +13,9 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.bpi_overview_fragment.*
 import za.co.woolworths.financial.services.android.models.dto.BPIOverview
 import za.co.woolworths.financial.services.android.models.dto.InsuranceType
-import za.co.woolworths.financial.services.android.ui.activities.bpi.BPIBalanceProtectionActivity
+import za.co.woolworths.financial.services.android.ui.activities.bpi.*
 import za.co.woolworths.financial.services.android.ui.adapters.BPIOverviewAdapter
-import za.co.woolworths.financial.services.android.util.*
+import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 
 
 class BPIOverviewFragment : Fragment(), BPIOverviewAdapter.OnBPIAdapterClickListener, View.OnClickListener {

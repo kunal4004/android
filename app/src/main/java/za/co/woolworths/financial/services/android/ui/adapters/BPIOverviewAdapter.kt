@@ -9,7 +9,7 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.bpi_overview_row.view.*
 import za.co.woolworths.financial.services.android.models.dto.BPIOverview
 import za.co.woolworths.financial.services.android.models.dto.InsuranceType
-import za.co.woolworths.financial.services.android.util.setOverviewConstraint
+import za.co.woolworths.financial.services.android.ui.activities.bpi.setOverviewConstraint
 
 internal class BPIOverviewAdapter(private val bpiOverviewList: MutableList<BPIOverview>?, private val onBPIAdapterClickListener: OnBPIAdapterClickListener)
     : RecyclerView.Adapter<BPIOverviewAdapter.ViewHolder>() {
