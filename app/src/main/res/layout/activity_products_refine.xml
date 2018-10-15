@@ -51,6 +51,7 @@
                     app:WTextView_font="medium_bold" />
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:id="@+id/resetRefinement"
                     style="@style/toolbar_menu_text_style"
                     android:layout_alignParentRight="true"
                     android:text="@string/refine_reset" />

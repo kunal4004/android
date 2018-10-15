@@ -9,6 +9,7 @@ import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.dto.RefinementSelectableItem
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RefinementBaseViewHolder
 import kotlinx.android.synthetic.main.refinements_options_layout.view.*
+import kotlinx.android.synthetic.main.refinements_single_selection_layout.view.*
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.OnRefinementOptionSelected
 
 class RefinementAdapter(val context: Context, val listner: OnRefinementOptionSelected, var dataList: ArrayList<RefinementSelectableItem>) : RecyclerView.Adapter<RefinementBaseViewHolder>() {
@@ -42,13 +43,13 @@ class RefinementAdapter(val context: Context, val listner: OnRefinementOptionSel
         holder.bind(position)
     }
 
-    class SectionHeaderHolder(itemView: View) : RefinementBaseViewHolder(itemView) {
+    inner class SectionHeaderHolder(itemView: View) : RefinementBaseViewHolder(itemView) {
         override fun bind(position: Int) {
 
         }
     }
 
-    class PromotionHolder(itemView: View) : RefinementBaseViewHolder(itemView) {
+    inner class PromotionHolder(itemView: View) : RefinementBaseViewHolder(itemView) {
         override fun bind(position: Int) {
 
         }
@@ -62,20 +63,29 @@ class RefinementAdapter(val context: Context, val listner: OnRefinementOptionSel
         }
     }
 
-    class SingleSelectorHolder(itemView: View) : RefinementBaseViewHolder(itemView) {
+    inner class SingleSelectorHolder(itemView: View) : RefinementBaseViewHolder(itemView) {
         override fun bind(position: Int) {
-
+            itemView.singleSelector.isChecked = dataList[position].isSelected
+            itemView.setOnClickListener {
+                dataList.forEachIndexed { index, refinementSelectableItem ->
+                    if (index == position) {
+                        refinementSelectableItem.isSelected = true
+                    } else if (refinementSelectableItem.type == RefinementSelectableItem.ViewType.SINGLE_SELECTOR) {
+                        refinementSelectableItem.isSelected = false
+                    }
+                }
+                notifyDataSetChanged()
+            }
         }
     }
 
-    class MultiSelectorHolder(itemView: View) : RefinementBaseViewHolder(itemView) {
+    inner class MultiSelectorHolder(itemView: View) : RefinementBaseViewHolder(itemView) {
         override fun bind(position: Int) {
 
         }
     }
 
     override fun getItemViewType(position: Int): Int {
-        // get viewtype from list[position]
         return dataList[position].type.value
     }
 }

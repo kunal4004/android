@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_refinement.*
 import za.co.woolworths.financial.services.android.models.dto.RefinementSelectableItem
@@ -19,8 +20,9 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.utils.On
 class RefinementOptionsFragment : Fragment() {
 
     private lateinit var listener: OnRefinementOptionSelected
-    var dataList = arrayListOf<RefinementSelectableItem>()
-
+    private var dataList = arrayListOf<RefinementSelectableItem>()
+    private var refinementAdapter: RefinementAdapter? = null
+    private var resetRefinement: TextView? = null
 
     companion object {
         fun getInstance(): RefinementOptionsFragment {
@@ -35,10 +37,23 @@ class RefinementOptionsFragment : Fragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initViews()
+    }
+
+    private fun initViews() {
         activity.findViewById<ImageView>(R.id.btnClose).setImageResource(R.drawable.close_24)
+        resetRefinement = activity.findViewById(R.id.resetRefinement)
+        resetRefinement?.text = getString(R.string.refine_reset)
         refinementList.layoutManager = LinearLayoutManager(activity)
-        dataList.addAll(listOf(RefinementSelectableItem("Test",RefinementSelectableItem.ViewType.SECTION_HEADER),RefinementSelectableItem("Test",RefinementSelectableItem.ViewType.PROMOTION),RefinementSelectableItem("Test",RefinementSelectableItem.ViewType.SECTION_HEADER),RefinementSelectableItem("Test",RefinementSelectableItem.ViewType.OPTIONS)))
-        refinementList.adapter = RefinementAdapter(activity, listener,dataList)
+        loadData()
+    }
+
+    private fun loadData() {
+        dataList.clear()
+        refinementAdapter?.notifyDataSetChanged()
+        dataList.addAll(listOf(RefinementSelectableItem("Test", RefinementSelectableItem.ViewType.SECTION_HEADER), RefinementSelectableItem("Test", RefinementSelectableItem.ViewType.PROMOTION), RefinementSelectableItem("Test", RefinementSelectableItem.ViewType.SECTION_HEADER), RefinementSelectableItem("Test", RefinementSelectableItem.ViewType.OPTIONS)))
+        refinementAdapter = RefinementAdapter(activity, listener, dataList)
+        refinementList.adapter = refinementAdapter
     }
 
     override fun onAttach(context: Context?) {

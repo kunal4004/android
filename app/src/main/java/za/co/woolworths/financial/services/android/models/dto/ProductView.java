@@ -20,5 +20,8 @@ public class ProductView {
     @SerializedName("httpCode")
     @Expose
     public Integer httpCode;
+    public ArrayList<SortOption> sortOptions;
+    public ArrayList<RefinementNavigation> navigation;
+    public RefinementHistory history;
 
 }
