@@ -1272,7 +1272,6 @@ public class Utils {
 				return false;
 			}
 		});
-
 	}
 
 	public static int getSoftButtonsBarHeight(Activity activity) {
@@ -1310,7 +1309,6 @@ public class Utils {
 		}
 		return currentAmount;
 	}
-
 
 
 }
