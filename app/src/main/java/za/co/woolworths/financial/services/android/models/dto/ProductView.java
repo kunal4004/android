@@ -20,8 +20,14 @@ public class ProductView {
     @SerializedName("httpCode")
     @Expose
     public Integer httpCode;
+    @SerializedName("sortOptions")
+    @Expose
     public ArrayList<SortOption> sortOptions;
+    @SerializedName("navigation")
+    @Expose
     public ArrayList<RefinementNavigation> navigation;
+    @SerializedName("history")
+    @Expose
     public RefinementHistory history;
 
 }
