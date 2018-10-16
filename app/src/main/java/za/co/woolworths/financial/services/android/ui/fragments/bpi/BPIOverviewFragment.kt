@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.fragments.bpi
 
 import android.os.Bundle
 import android.support.annotation.VisibleForTesting
-import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -18,7 +17,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.BPIOverviewAdapte
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 
 
-class BPIOverviewFragment : Fragment(), BPIOverviewAdapter.OnBPIAdapterClickListener, View.OnClickListener {
+class BPIOverviewFragment : BPIFragment(), BPIOverviewAdapter.OnBPIAdapterClickListener, View.OnClickListener {
 
     companion object {
         fun newInstance(accountInfo: String?): BPIOverviewFragment {

@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.fragments.bpi
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -16,9 +15,8 @@ import kotlinx.android.synthetic.main.bpi_overview_detail_fragment.*
 import za.co.woolworths.financial.services.android.models.dto.BPIOverview
 import za.co.woolworths.financial.services.android.models.dto.InsuranceType
 import za.co.woolworths.financial.services.android.ui.views.WTextView
-import za.co.woolworths.financial.services.android.ui.activities.bpi.navigateToBalanceProtectionActivity
 
-class BPIOverviewDetailFragment : Fragment(), View.OnClickListener {
+class BPIOverviewDetailFragment : BPIFragment(), View.OnClickListener {
 
     companion object {
         fun newInstance(bpiOverview: BPIOverview): BPIOverviewDetailFragment {
