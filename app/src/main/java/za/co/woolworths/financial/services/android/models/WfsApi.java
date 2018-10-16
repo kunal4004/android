@@ -44,6 +44,7 @@ import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
+import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
 import za.co.woolworths.financial.services.android.models.dto.PromotionsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProvincesResponse;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
@@ -239,19 +240,20 @@ public class WfsApi {
 		}
 	}
 
-	public ProductView getProductSearchList(String search_item, boolean isBarcode, int pageSize, int pageNumber) {
+	public ProductView getProducts(ProductsRequestParams requestParams) {
 		getMyLocation();
 		try {
-			search_item = URLEncoder.encode(search_item, "UTF-8");
+			requestParams.setSearchTerm(URLEncoder.encode(requestParams.getSearchTerm(), "UTF-8"));
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-
-		if (Utils.isLocationEnabled(mContext)) {// should we implement location update here ?
-			return mApiInterface.getProductSearch(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLatitude(), loc.getLongitude(), isBarcode, search_item, pageSize, pageNumber);
-		} else {
-			return mApiInterface.getProductSearch(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), isBarcode, search_item, pageSize, pageNumber);
+		double latitude = 0;
+		double longitude = 0;
+		if (loc != null) {
+			latitude = loc.getLatitude();
+			longitude = loc.getLongitude();
 		}
+		return mApiInterface.getProducts(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), latitude, longitude, requestParams.getSearchTerm(), requestParams.getSearchType().getValue(), requestParams.getResponseType().getValue(), requestParams.getPageOffset(), Utils.PAGE_SIZE, requestParams.getSortOption(), requestParams.getRefinement());
 	}
 
 	public FAQ getFAQ() {
