@@ -594,7 +594,7 @@ public class SSOActivity extends WebViewActivity {
 		SessionUtilities.getInstance().setSTSParameters(null);
 		setResult(DEFAULT_KEYS_SEARCH_GLOBAL);
 		finish();
-		if (this.path!=null &&(this.path==SSOActivity.Path.UPDATE_PASSWORD||this.path==SSOActivity.Path.UPDATE_PROFILE))
+		if (this.path != null && (this.path == SSOActivity.Path.UPDATE_PASSWORD || this.path == SSOActivity.Path.UPDATE_PROFILE))
 			overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
 		else
 			overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
