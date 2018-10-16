@@ -35,7 +35,6 @@ import za.co.woolworths.financial.services.android.models.dto.DeleteMessageRespo
 import za.co.woolworths.financial.services.android.models.dto.FAQ;
 import za.co.woolworths.financial.services.android.models.dto.IssueLoanRequest;
 import za.co.woolworths.financial.services.android.models.dto.IssueLoanResponse;
-import za.co.woolworths.financial.services.android.models.dto.LoadProduct;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.LoginRequest;
 import za.co.woolworths.financial.services.android.models.dto.LoginResponse;
@@ -213,31 +212,6 @@ public class WfsApi {
 	public SetDeliveryLocationSuburbResponse setSuburb(String suburbId) {
 		SetDeliveryLocationSuburbRequest request = new SetDeliveryLocationSuburbRequest(suburbId);
 		return mApiInterface.setDeliveryLocationSuburb(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), request);
-	}
-
-	public ProductView productViewRequest(LoadProduct lp) {
-		getMyLocation();
-		if (Utils.isLocationEnabled(mContext)) {
-			return mApiInterface.getProduct(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLatitude(), loc.getLongitude(), lp.getPageOffset(), lp.getPageSize(), lp.getProductId());
-		} else {
-			return mApiInterface.getProduct(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), lp.getPageOffset(), lp.getPageSize(), lp.getProductId());
-		}
-	}
-
-	public ProductView getProductSearchList(LoadProduct loadProduct) {
-		getMyLocation();
-		String search_item = "";
-		try {
-			search_item = URLEncoder.encode(loadProduct.getProductId(), "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-
-		if (Utils.isLocationEnabled(mContext)) {// should we implement location update here ?
-			return mApiInterface.getProductSearch(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLatitude(), loc.getLongitude(), loadProduct.isBarcode(), search_item, loadProduct.getPageOffset(), Utils.PAGE_SIZE);
-		} else {
-			return mApiInterface.getProductSearch(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loadProduct.isBarcode(), search_item, loadProduct.getPageOffset(), Utils.PAGE_SIZE);
-		}
 	}
 
 	public ProductView getProducts(ProductsRequestParams requestParams) {

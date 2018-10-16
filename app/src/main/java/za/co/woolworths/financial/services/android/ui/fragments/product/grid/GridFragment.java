@@ -28,6 +28,7 @@ import java.util.List;
 
 import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
+import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
@@ -251,7 +252,6 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 	public void cancelAPIRequest() {
 		if (mGridViewModel != null) {
 			mGridViewModel.cancelRequest(mGridViewModel.getLoadProductRequest());
-			mGridViewModel.cancelRequest(mGridViewModel.getSearchProductRequest());
 		}
 	}
 
@@ -368,7 +368,7 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 		if (isEmpty(mSearchProduct)) {
 			getViewModel().executeLoadProduct(getActivity(), getViewModel().getProductRequestBody());
 		} else {
-			getViewModel().executeSearchProduct(getActivity(), getViewModel().getProductRequestBody());
+			getViewModel().executeLoadProduct(getActivity(), getViewModel().getProductRequestBody());
 		}
 	}
 
@@ -389,9 +389,9 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 	@Override
 	public void setProductBody() {
 		if (isEmpty(mSearchProduct)) {
-			getViewModel().setProductRequestBody(false, mSubCategoryId);
+			getViewModel().setProductRequestBody(ProductsRequestParams.SearchType.NAVIGATE, mSubCategoryId);
 		} else {
-			getViewModel().setProductRequestBody(mSearchProduct, false);
+			getViewModel().setProductRequestBody(ProductsRequestParams.SearchType.SEARCH, mSearchProduct);
 		}
 	}
 

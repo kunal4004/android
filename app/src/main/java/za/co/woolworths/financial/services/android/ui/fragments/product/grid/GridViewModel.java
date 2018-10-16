@@ -6,12 +6,11 @@ import android.util.Log;
 
 import java.util.List;
 
-import za.co.woolworths.financial.services.android.models.dto.LoadProduct;
 import za.co.woolworths.financial.services.android.models.dto.PagingResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
-import za.co.woolworths.financial.services.android.models.rest.product.LoadProductRequest;
-import za.co.woolworths.financial.services.android.models.rest.product.SearchProductRequest;
+import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
+import za.co.woolworths.financial.services.android.models.rest.product.GetProductsRequest;
 import za.co.woolworths.financial.services.android.ui.base.BaseViewModel;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -19,221 +18,161 @@ import za.co.woolworths.financial.services.android.util.rx.SchedulerProvider;
 
 public class GridViewModel extends BaseViewModel<GridNavigator> {
 
-	private LoadProduct mLoadProduct;
-	private LoadProductRequest mProductRequest;
-	private SearchProductRequest mSearchProductRequest;
-	private int mNumItemsInTotal;
-	private boolean loadMoreData = false;
-	private int pageOffset = 0;
-	private boolean mIsLoading = false;
-	private boolean mIsLastPage = false;
-	private int mLoadStatus;
-	private boolean productIsLoading = false;
+    private int mNumItemsInTotal;
+    private boolean loadMoreData = false;
+    private int pageOffset = 0;
+    private boolean mIsLoading = false;
+    private boolean mIsLastPage = false;
+    private int mLoadStatus;
+    private boolean productIsLoading = false;
+    private ProductsRequestParams productsRequestParams;
+    private GetProductsRequest mGetProductsRequest;
 
-	public void setLoadStatus(int status) {
-		this.mLoadStatus = status;
-	}
+    public void setLoadStatus(int status) {
+        this.mLoadStatus = status;
+    }
 
-	public int getLoadStatus() {
-		return mLoadStatus;
-	}
+    public int getLoadStatus() {
+        return mLoadStatus;
+    }
 
-	public GridViewModel() {
-		super();
-	}
+    public GridViewModel() {
+        super();
+    }
 
-	public GridViewModel(SchedulerProvider schedulerProvider) {
-		super(schedulerProvider);
-	}
+    public GridViewModel(SchedulerProvider schedulerProvider) {
+        super(schedulerProvider);
+    }
 
-	public void setPageOffset(int pageOffset) {
-		this.pageOffset = pageOffset;
-	}
+    public void setPageOffset(int pageOffset) {
+        this.pageOffset = pageOffset;
+    }
 
-	public void setIsLastPage(boolean mIsLastPage) {
-		this.mIsLastPage = mIsLastPage;
-	}
+    public void setIsLastPage(boolean mIsLastPage) {
+        this.mIsLastPage = mIsLastPage;
+    }
 
-	public void setIsLoading(boolean mIsLoading) {
-		this.mIsLoading = mIsLoading;
-	}
+    public void setIsLoading(boolean mIsLoading) {
+        this.mIsLoading = mIsLoading;
+    }
 
-	public boolean isLastPage() {
-		return mIsLastPage;
-	}
+    public boolean isLastPage() {
+        return mIsLastPage;
+    }
 
-	public boolean isLoading() {
-		return mIsLoading;
-	}
+    public boolean isLoading() {
+        return mIsLoading;
+    }
 
-	public void setProductRequestBody(boolean isBarcode, String productId) {
-		this.mLoadProduct = new LoadProduct(isBarcode, productId);
-	}
-
-	public void setProductRequestBody(String searchProduct, boolean isBarcode) {
-		this.mLoadProduct = new LoadProduct(isBarcode, searchProduct);
-	}
+    public void setProductRequestBody(ProductsRequestParams.SearchType searchType, String searchTerm) {
+        this.productsRequestParams = new ProductsRequestParams(searchTerm, searchType, ProductsRequestParams.ResponseType.DETAIL, pageOffset);
+    }
 
 
-	public LoadProduct getProductRequestBody() {
-		return mLoadProduct;
-	}
+    public ProductsRequestParams getProductRequestBody() {
+        return productsRequestParams;
+    }
 
-	public void executeLoadProduct(Context context, LoadProduct lp) {
-		this.mProductRequest = loadProduct(context, lp);
-		this.mProductRequest.execute();
-	}
+    public void executeLoadProduct(Context context, ProductsRequestParams lp) {
+        this.mGetProductsRequest = loadProducts(context, lp);
+        this.mGetProductsRequest.execute();
+    }
 
-	public LoadProductRequest getLoadProductRequest() {
-		return mProductRequest;
-	}
+    public GetProductsRequest getLoadProductRequest() {
+        return mGetProductsRequest;
+    }
 
-	public void executeSearchProduct(Context context, LoadProduct lp) {
-		this.mSearchProductRequest = searchProduct(context, lp);
-		this.mSearchProductRequest.execute();
-	}
 
-	public SearchProductRequest getSearchProductRequest() {
-		return mSearchProductRequest;
-	}
+    GetProductsRequest loadProducts(final Context context, final ProductsRequestParams requestParams) {
+        getNavigator().onLoadStart(getLoadMoreData());
+        setProductIsLoading(true);
+        return new GetProductsRequest(context, requestParams, new OnEventListener<ProductView>() {
+            @Override
+            public void onSuccess(ProductView object) {
+                ProductView productView = (ProductView) object;
+                switch (productView.httpCode) {
+                    case 200:
+                        List<ProductList> productLists = productView.products;
+                        if (productLists != null) {
+                            numItemsInTotal(productView);
+                            calculatePageOffset();
+                            getNavigator().onLoadProductSuccess(productLists, getLoadMoreData());
+                            getNavigator().onLoadComplete(getLoadMoreData());
+                            setLoadMoreData(true);
+                        }
+                        break;
 
-	public LoadProductRequest loadProduct(final Context context, final LoadProduct loadProduct) {
-		getNavigator().onLoadStart(getLoadMoreData());
-		setProductIsLoading(true);
-		return new LoadProductRequest(context, loadProduct, new OnEventListener() {
-			@Override
-			public void onSuccess(Object object) {
-				ProductView productView = (ProductView) object;
-				switch (productView.httpCode) {
-					case 200:
-						List<ProductList> productLists = productView.products;
-						if (productLists != null) {
-							numItemsInTotal(productView);
-							calculatePageOffset();
-							getNavigator().onLoadProductSuccess(productLists, getLoadMoreData());
-							getNavigator().onLoadComplete(getLoadMoreData());
-							setLoadMoreData(true);
-						}
-						break;
+                    default:
+                        if (productView.response != null) {
+                            getNavigator().onLoadComplete(getLoadMoreData());
+                            getNavigator().unhandledResponseCode(productView.response);
+                        }
+                        break;
+                }
+                setProductIsLoading(false);
+            }
 
-					default:
-						if (productView.response != null) {
-							getNavigator().onLoadComplete(getLoadMoreData());
-							getNavigator().unhandledResponseCode(productView.response);
-						}
-						break;
-				}
-				setProductIsLoading(false);
-			}
+            @Override
+            public void onFailure(final String e) {
+                if (context != null) {
+                    Activity activity = (Activity) context;
+                    if (activity != null) {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                getNavigator().failureResponseHandler(e);
+                                getNavigator().onLoadComplete(getLoadMoreData());
+                                setProductIsLoading(false);
+                            }
+                        });
+                    }
+                }
+            }
+        });
+    }
 
-			@Override
-			public void onFailure(final String e) {
-				if (context != null) {
-					Activity activity = (Activity) context;
-					if (activity != null) {
-						activity.runOnUiThread(new Runnable() {
-							@Override
-							public void run() {
-								getNavigator().failureResponseHandler(e);
-								getNavigator().onLoadComplete(getLoadMoreData());
-								setProductIsLoading(false);
-							}
-						});
-					}
-				}
-			}
-		});
-	}
 
-	public void setLoadMoreData(boolean loadMoreData) {
-		this.loadMoreData = loadMoreData;
-	}
+    public void setLoadMoreData(boolean loadMoreData) {
+        this.loadMoreData = loadMoreData;
+    }
 
-	public boolean getLoadMoreData() {
-		return loadMoreData;
-	}
+    public boolean getLoadMoreData() {
+        return loadMoreData;
+    }
 
-	private int numItemsInTotal(ProductView productView) {
-		PagingResponse pagingResponse = productView.pagingResponse;
-		if (pagingResponse.numItemsInTotal != null) {
-			mNumItemsInTotal = pagingResponse.numItemsInTotal;
-			Log.e("paginationResponse", "pageOffset " + productView.pagingResponse.pageOffset + " mNumItemsInTotal " + mNumItemsInTotal);
-			if (productView.pagingResponse.pageOffset > mNumItemsInTotal) {
-				setIsLastPage(true);
-			}
-			return mNumItemsInTotal;
-		}
-		return 0;
-	}
+    private int numItemsInTotal(ProductView productView) {
+        PagingResponse pagingResponse = productView.pagingResponse;
+        if (pagingResponse.numItemsInTotal != null) {
+            mNumItemsInTotal = pagingResponse.numItemsInTotal;
+            Log.e("paginationResponse", "pageOffset " + productView.pagingResponse.pageOffset + " mNumItemsInTotal " + mNumItemsInTotal);
+            if (productView.pagingResponse.pageOffset > mNumItemsInTotal) {
+                setIsLastPage(true);
+            }
+            return mNumItemsInTotal;
+        }
+        return 0;
+    }
 
-	public void canLoadMore(int totalItem, int sizeOfList) {
-		if (sizeOfList >= totalItem) {
-			setLoadMoreData(false);
-		}
-	}
+    public void canLoadMore(int totalItem, int sizeOfList) {
+        if (sizeOfList >= totalItem) {
+            setLoadMoreData(false);
+        }
+    }
 
-	public int getNumItemsInTotal() {
-		return mNumItemsInTotal;
-	}
+    public int getNumItemsInTotal() {
+        return mNumItemsInTotal;
+    }
 
-	private void calculatePageOffset() {
-		pageOffset = pageOffset + Utils.PAGE_SIZE;
-		getProductRequestBody().setPageOffset(pageOffset);
-	}
+    private void calculatePageOffset() {
+        pageOffset = pageOffset + Utils.PAGE_SIZE;
+        getProductRequestBody().setPageOffset(pageOffset);
+    }
 
-	public SearchProductRequest searchProduct(final Context context, final LoadProduct loadProduct) {
-		getNavigator().onLoadStart(getLoadMoreData());
-		setProductIsLoading(true);
-		return new SearchProductRequest(context, loadProduct, new OnEventListener() {
-			@Override
-			public void onSuccess(Object object) {
-				ProductView productView = (ProductView) object;
-				switch (productView.httpCode) {
-					case 200:
-						List<ProductList> productLists = productView.products;
-						if (productLists != null) {
-							numItemsInTotal(productView);
-							calculatePageOffset();
-							getNavigator().onLoadProductSuccess(productLists, getLoadMoreData());
-							getNavigator().onLoadComplete(getLoadMoreData());
-							setLoadMoreData(true);
-						}
-						break;
+    public void setProductIsLoading(boolean productIsLoading) {
+        this.productIsLoading = productIsLoading;
+    }
 
-					default:
-						if (productView.response != null) {
-							getNavigator().onLoadComplete(getLoadMoreData());
-							getNavigator().unhandledResponseCode(productView.response);
-						}
-						break;
-				}
-				setProductIsLoading(false);
-			}
-
-			@Override
-			public void onFailure(final String e) {
-				if (context != null) {
-					Activity activity = (Activity) context;
-					if (activity != null) {
-						activity.runOnUiThread(new Runnable() {
-							@Override
-							public void run() {
-								getNavigator().failureResponseHandler(e);
-								setProductIsLoading(false);
-								getNavigator().onLoadComplete(getLoadMoreData());
-							}
-						});
-					}
-				}
-			}
-		});
-	}
-
-	public void setProductIsLoading(boolean productIsLoading) {
-		this.productIsLoading = productIsLoading;
-	}
-
-	public boolean productIsLoading() {
-		return productIsLoading;
-	}
+    public boolean productIsLoading() {
+        return productIsLoading;
+    }
 }

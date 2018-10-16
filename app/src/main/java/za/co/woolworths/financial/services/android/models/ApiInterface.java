@@ -485,41 +485,6 @@ public interface ApiInterface {
 
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip"})
-	@GET("/categories/{cat}/products")
-	ProductView getProduct(
-			@Header("osVersion") String osVersion,
-			@Header("deviceModel") String deviceModel,
-			@Header("deviceVersion") String deviceVersion,
-			@Header("os") String os,
-			@Header("network") String network,
-			@Header("apiId") String apiId,
-			@Header("userAgent") String userAgent,
-			@Header("userAgentVersion") String userAgentVersion,
-			@Header("sha1Password") String sha1Password,
-			@Header("longitude") double longitude,
-			@Header("latitude") double latitude,
-			@Query("pageOffset") int pageOffset,
-			@Query("pageSize") int pageSize,
-			@Path("cat") String category);
-
-
-	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip"})
-	@GET("/categories/{cat}/products")
-	ProductView getProduct(
-			@Header("osVersion") String osVersion,
-			@Header("deviceModel") String deviceModel,
-			@Header("deviceVersion") String deviceVersion,
-			@Header("os") String os,
-			@Header("network") String network,
-			@Header("apiId") String apiId,
-			@Header("userAgent") String userAgent,
-			@Header("userAgentVersion") String userAgentVersion,
-			@Header("sha1Password") String sha1Password,
-			@Query("pageOffset") int pageOffset,
-			@Query("pageSize") int pageSize,
-			@Path("cat") String category);
-
-	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip"})
 	@GET("/categories/{cat}")
 	SubCategories getSubCategory(
 			@Header("osVersion") String osVersion,
@@ -531,43 +496,6 @@ public interface ApiInterface {
 			@Header("deviceVersion") String deviceVersion,
 			@Header("apiKey") String apiKey,
 			@Path("cat") String category);
-
-
-	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip"})
-	@GET("/search")
-	ProductView getProductSearch(
-			@Header("osVersion") String osVersion,
-			@Header("deviceModel") String deviceModel,
-			@Header("deviceVersion") String deviceVersion,
-			@Header("os") String os,
-			@Header("network") String network,
-			@Header("apiId") String apiId,
-			@Header("userAgent") String userAgent,
-			@Header("userAgentVersion") String userAgentVersion,
-			@Header("sha1Password") String sha1Password,
-			@Header("longitude") double longitude,
-			@Header("latitude") double latitude,
-			@Query("isBarCode") boolean isBarcode,
-			@Query(value = "searchTerm", encodeValue = false) String searchTerm,
-			@Query("pageOffset") int pageOffset,
-			@Query("pageSize") int pageSize);
-
-	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip"})
-	@GET("/search")
-	ProductView getProductSearch(
-			@Header("osVersion") String osVersion,
-			@Header("deviceModel") String deviceModel,
-			@Header("deviceVersion") String deviceVersion,
-			@Header("os") String os,
-			@Header("network") String network,
-			@Header("apiId") String apiId,
-			@Header("userAgent") String userAgent,
-			@Header("userAgentVersion") String userAgentVersion,
-			@Header("sha1Password") String sha1Password,
-			@Query("isBarCode") boolean isBarcode,
-			@Query(value = "searchTerm", encodeValue = false) String searchTerm,
-			@Query("pageOffset") int pageOffset,
-			@Query("pageSize") int pageSize);
 
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:30", "Accept-Encoding: gzip"})
@@ -970,7 +898,7 @@ public interface ApiInterface {
 			@Path("multipleSku") String multipleSku);
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip"})
-	@GET("/search")
+	@GET("/searchSortAndFilter")
 	ProductView getProducts(
 			@Header("osVersion") String osVersion,
 			@Header("deviceModel") String deviceModel,
