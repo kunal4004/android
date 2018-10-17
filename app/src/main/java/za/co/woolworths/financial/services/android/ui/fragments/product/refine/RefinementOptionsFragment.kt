@@ -12,21 +12,39 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_refinement.*
+import za.co.woolworths.financial.services.android.models.dto.ProductView
+import za.co.woolworths.financial.services.android.models.dto.RefinementNavigation
 import za.co.woolworths.financial.services.android.models.dto.RefinementSelectableItem
-import za.co.woolworths.financial.services.android.ui.adapters.RefinementAdapter
+import za.co.woolworths.financial.services.android.ui.adapters.RefinementNavigationAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.OnRefinementOptionSelected
+import za.co.woolworths.financial.services.android.util.Utils
 
 
 class RefinementOptionsFragment : Fragment() {
 
     private lateinit var listener: OnRefinementOptionSelected
-    private var dataList = arrayListOf<RefinementSelectableItem>()
-    private var refinementAdapter: RefinementAdapter? = null
+    private var refinementNavigationAdapter: RefinementNavigationAdapter? = null
     private var resetRefinement: TextView? = null
+    private var productView: ProductView? = null
 
     companion object {
-        fun getInstance(): RefinementOptionsFragment {
-            return RefinementOptionsFragment()
+        private val ARG_PARAM = "productViewObject"
+        val ON_PROMOTION: String = "On Promotion"
+        val CATEGORY: String = "Category"
+
+        fun getInstance(productView: ProductView): RefinementOptionsFragment {
+            val fragment = RefinementOptionsFragment()
+            val args = Bundle()
+            args.putString(ARG_PARAM, Utils.toJson(productView))
+            fragment.arguments = args
+            return fragment
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (arguments != null) {
+            productView = Utils.jsonStringToObject(arguments.getString(ARG_PARAM), ProductView::class.java) as ProductView
         }
     }
 
@@ -49,11 +67,8 @@ class RefinementOptionsFragment : Fragment() {
     }
 
     private fun loadData() {
-        dataList.clear()
-        refinementAdapter?.notifyDataSetChanged()
-        dataList.addAll(listOf(RefinementSelectableItem("Test", RefinementSelectableItem.ViewType.SECTION_HEADER), RefinementSelectableItem("Test", RefinementSelectableItem.ViewType.PROMOTION), RefinementSelectableItem("Test", RefinementSelectableItem.ViewType.SECTION_HEADER), RefinementSelectableItem("Test", RefinementSelectableItem.ViewType.OPTIONS)))
-        refinementAdapter = RefinementAdapter(activity, listener, dataList)
-        refinementList.adapter = refinementAdapter
+        refinementNavigationAdapter = RefinementNavigationAdapter(activity, listener, getRefinementSelectableItems(productView?.navigation!!), productView?.history!!)
+        refinementList.adapter = refinementNavigationAdapter!!
     }
 
     override fun onAttach(context: Context?) {
@@ -63,6 +78,24 @@ class RefinementOptionsFragment : Fragment() {
         } else {
             throw ClassCastException(context.toString() + " must implement OnRefinementOptionSelected.")
         }
+    }
+
+    private fun getRefinementSelectableItems(navigationList: ArrayList<RefinementNavigation>): ArrayList<RefinementSelectableItem> {
+        var dataList = arrayListOf<RefinementSelectableItem>()
+        var isHeaderAddedForCategory: Boolean = false
+        navigationList.forEach {
+            if (it.displayName.contentEquals(ON_PROMOTION)) {
+                dataList.add(0, RefinementSelectableItem(it, RefinementSelectableItem.ViewType.SECTION_HEADER))
+                dataList.add(1, RefinementSelectableItem(it, RefinementSelectableItem.ViewType.PROMOTION))
+            } else {
+                if (!isHeaderAddedForCategory) {
+                    dataList.add(RefinementSelectableItem(it, RefinementSelectableItem.ViewType.SECTION_HEADER))
+                    isHeaderAddedForCategory = true
+                }
+                dataList.add(RefinementSelectableItem(it, RefinementSelectableItem.ViewType.OPTIONS))
+            }
+        }
+        return dataList
     }
 
 }

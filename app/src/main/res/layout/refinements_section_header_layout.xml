@@ -10,7 +10,7 @@
         style="@style/toolbar_menu_text_style"
         android:layout_gravity="bottom"
         android:letterSpacing="0.1"
-        android:text="show me"
+        android:text="@string/refinement_show_me"
         android:textColor="@color/offer_title" />
 
 </LinearLayout>

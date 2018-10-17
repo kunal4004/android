@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.models.dto
 
-data class RefinementSelectableItem(var obj: String, var type: ViewType) {
+data class RefinementSelectableItem(val item: Any?, val type: ViewType) {
+
     var isSelected: Boolean = false
 
     enum class ViewType(val value: Int) {

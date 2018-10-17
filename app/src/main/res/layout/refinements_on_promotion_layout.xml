@@ -30,6 +30,7 @@
             android:text="On Promotion" />
 
         <Switch
+            android:id="@+id/promotionSwitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"

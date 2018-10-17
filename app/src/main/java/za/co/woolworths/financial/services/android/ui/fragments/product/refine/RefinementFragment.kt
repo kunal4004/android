@@ -12,19 +12,34 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_refinement.*
+import za.co.woolworths.financial.services.android.models.dto.Refinement
+import za.co.woolworths.financial.services.android.models.dto.RefinementNavigation
 import za.co.woolworths.financial.services.android.models.dto.RefinementSelectableItem
-import za.co.woolworths.financial.services.android.ui.adapters.RefinementAdapter
+import za.co.woolworths.financial.services.android.ui.adapters.holder.RefinementAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.OnRefinementOptionSelected
+import za.co.woolworths.financial.services.android.util.Utils
 
 class RefinementFragment : Fragment() {
     private lateinit var listener: OnRefinementOptionSelected
-    private var dataList = arrayListOf<RefinementSelectableItem>()
     private var refinementAdapter: RefinementAdapter? = null
     private var clearRefinement: TextView? = null
+    private var refinementNavigation: RefinementNavigation? = null
 
     companion object {
-        fun getInstance(): RefinementFragment {
-            return RefinementFragment()
+        private val ARG_PARAM = "refinementNavigationObject"
+        fun getInstance(refinementNavigation: RefinementNavigation): RefinementFragment {
+            val fragment = RefinementFragment()
+            val args = Bundle()
+            args.putString(ARG_PARAM, Utils.toJson(refinementNavigation))
+            fragment.arguments = args
+            return fragment
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (arguments != null) {
+            refinementNavigation = Utils.jsonStringToObject(arguments.getString(ARG_PARAM), RefinementNavigation::class.java) as RefinementNavigation
         }
     }
 
@@ -47,10 +62,7 @@ class RefinementFragment : Fragment() {
     }
 
     private fun loadData() {
-        dataList.clear()
-        refinementAdapter?.notifyDataSetChanged()
-        dataList.addAll(listOf(RefinementSelectableItem("Test", RefinementSelectableItem.ViewType.OPTIONS), RefinementSelectableItem("Test", RefinementSelectableItem.ViewType.SINGLE_SELECTOR), RefinementSelectableItem("Test", RefinementSelectableItem.ViewType.SINGLE_SELECTOR), RefinementSelectableItem("Test", RefinementSelectableItem.ViewType.MULTI_SELECTOR), RefinementSelectableItem("Test", RefinementSelectableItem.ViewType.SINGLE_SELECTOR)))
-        refinementAdapter = RefinementAdapter(activity, listener, dataList)
+        refinementAdapter = RefinementAdapter(activity, listener, getRefinementSelectableItems(refinementNavigation!!), refinementNavigation!!)
         refinementList.adapter = refinementAdapter
     }
 
@@ -61,6 +73,26 @@ class RefinementFragment : Fragment() {
         } else {
             throw ClassCastException(context.toString() + " must implement OnRefinementOptionSelected.")
         }
+    }
+
+    private fun getRefinementSelectableItems(refinementNavigation: RefinementNavigation): ArrayList<RefinementSelectableItem> {
+        var dataList = arrayListOf<RefinementSelectableItem>()
+        if (refinementNavigation.refinements != null && refinementNavigation.refinements.size > 0) {
+            refinementNavigation.refinements.forEach {
+
+                if (it.subRefinements != null && it.subRefinements.size > 0) {
+                    dataList.add(RefinementSelectableItem(it, RefinementSelectableItem.ViewType.OPTIONS))
+                } else {
+                    dataList.add(RefinementSelectableItem(it, if (it.multiSelect) RefinementSelectableItem.ViewType.MULTI_SELECTOR else RefinementSelectableItem.ViewType.SINGLE_SELECTOR))
+                }
+
+            }
+        } else if (refinementNavigation.refinementCrumbs != null && refinementNavigation.refinementCrumbs.size > 0) {
+            refinementNavigation.refinementCrumbs.forEach {
+                dataList.add(RefinementSelectableItem(it, if (it.multiSelect) RefinementSelectableItem.ViewType.MULTI_SELECTOR else RefinementSelectableItem.ViewType.SINGLE_SELECTOR))
+            }
+        }
+        return dataList
     }
 
 }

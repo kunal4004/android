@@ -11,15 +11,15 @@
         android:background="@drawable/refine_item_background">
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/displayName"
             style="@style/refinements_textview_style"
             android:layout_margin="1dp"
             android:text="Category" />
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:id="@+id/breadcrumbs"
+            android:id="@+id/label"
             style="@style/refinements_textview_style_breadcrumbs"
-            android:layout_toLeftOf="@+id/rightArrow"
-            android:text="Condiments" />
+            android:layout_toLeftOf="@+id/rightArrow" />
 
         <ImageView
             android:id="@+id/rightArrow"

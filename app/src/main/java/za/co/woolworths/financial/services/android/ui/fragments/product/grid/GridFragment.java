@@ -28,6 +28,7 @@ import java.util.List;
 
 import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
+import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
@@ -60,6 +61,7 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 	private int lastVisibleItem;
 	int totalItemCount;
 	private boolean isLoading;
+    private ProductView productView;
 
 	@Override
 	public GridViewModel getViewModel() {
@@ -174,7 +176,8 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 	}
 
 	@Override
-	public void onLoadProductSuccess(final List<ProductList> productLists, boolean loadMoreData) {
+	public void onLoadProductSuccess(ProductView response, boolean loadMoreData) {
+        List<ProductList> productLists = response.products;
 		if (mProductList == null) {
 			mProductList = new ArrayList<>();
 		}
@@ -191,8 +194,10 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 			getBottomNavigator().openProductDetailFragment(mSubCategoryName, productLists.get(0));
 
 		} else {
+            this.productView = response;
 			hideFooterView();
 			if (!loadMoreData) {
+                getViewDataBinding().sortAndRefineLayout.parentLayout.setVisibility(View.VISIBLE);
 				bindRecyclerViewWithUI(productLists);
 			} else {
 				loadMoreData(productLists);
@@ -443,7 +448,9 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 				}
 				break;
 			case R.id.refineProducts:
-				startActivity(new Intent(getActivity(), ProductsRefineActivity.class));
+                Intent intent = new Intent(getActivity(), ProductsRefineActivity.class);
+                intent.putExtra("REFINEMENT_DATA", Utils.toJson(productView));
+                startActivity(intent);
 				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				break;
 		}

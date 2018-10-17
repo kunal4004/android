@@ -96,7 +96,7 @@ public class GridViewModel extends BaseViewModel<GridNavigator> {
                         if (productLists != null) {
                             numItemsInTotal(productView);
                             calculatePageOffset();
-                            getNavigator().onLoadProductSuccess(productLists, getLoadMoreData());
+                            getNavigator().onLoadProductSuccess(productView, getLoadMoreData());
                             getNavigator().onLoadComplete(getLoadMoreData());
                             setLoadMoreData(true);
                         }

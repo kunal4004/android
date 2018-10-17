@@ -2,17 +2,25 @@ package za.co.woolworths.financial.services.android.ui.adapters
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.refinements_on_promotion_layout.view.*
 import za.co.woolworths.financial.services.android.models.dto.RefinementSelectableItem
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RefinementBaseViewHolder
 import kotlinx.android.synthetic.main.refinements_options_layout.view.*
+import kotlinx.android.synthetic.main.refinements_section_header_layout.view.*
 import kotlinx.android.synthetic.main.refinements_single_selection_layout.view.*
+import za.co.woolworths.financial.services.android.models.dto.BreadCrumb
+import za.co.woolworths.financial.services.android.models.dto.RefinementHistory
+import za.co.woolworths.financial.services.android.models.dto.RefinementNavigation
+import za.co.woolworths.financial.services.android.ui.activities.product.refine.ProductsRefineActivity
+import za.co.woolworths.financial.services.android.ui.fragments.product.refine.RefinementOptionsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.OnRefinementOptionSelected
 
-class RefinementAdapter(val context: Context, val listner: OnRefinementOptionSelected, var dataList: ArrayList<RefinementSelectableItem>) : RecyclerView.Adapter<RefinementBaseViewHolder>() {
+class RefinementNavigationAdapter(val context: Context, val listner: OnRefinementOptionSelected, var dataList: ArrayList<RefinementSelectableItem>, var history: RefinementHistory) : RecyclerView.Adapter<RefinementBaseViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RefinementBaseViewHolder? {
         when (viewType) {
@@ -45,20 +53,44 @@ class RefinementAdapter(val context: Context, val listner: OnRefinementOptionSel
 
     inner class SectionHeaderHolder(itemView: View) : RefinementBaseViewHolder(itemView) {
         override fun bind(position: Int) {
-
+            var item = dataList[position].item as RefinementNavigation
+            itemView.refinementSectionHeader.text = if (item.displayName.contentEquals(RefinementOptionsFragment.ON_PROMOTION)) context.resources.getString(R.string.refine) else context.resources.getString(R.string.refinement_filter_by)
         }
     }
 
     inner class PromotionHolder(itemView: View) : RefinementBaseViewHolder(itemView) {
         override fun bind(position: Int) {
-
+            var item = dataList[position].item as RefinementNavigation
+            itemView.promotionSwitch.isChecked = item.refinementCrumbs == null
         }
     }
 
     inner class OptionsHolder(itemView: View) : RefinementBaseViewHolder(itemView) {
         override fun bind(position: Int) {
+            var item = dataList[position].item as RefinementNavigation
+            var isBreadCrumbsExist = history.categoryDimensions.size > 0 && history.categoryDimensions[0].breadCrumbs.size > 0
+            if ((item.displayName.contentEquals(RefinementOptionsFragment.CATEGORY) && isBreadCrumbsExist) || (TextUtils.isEmpty(item.displayName) && isBreadCrumbsExist)) {
+                val breadCrumbs: ArrayList<BreadCrumb>? = history.categoryDimensions[0].breadCrumbs
+                itemView.label.text = breadCrumbs!![breadCrumbs.size - 1].label
+                if (item.refinements.size > 0) {
+                    itemView.displayName.text = item.displayName
+                    itemView.rightArrow.visibility = View.VISIBLE
+                    itemView.isClickable = true
+                } else {
+                    itemView.displayName.text = RefinementOptionsFragment.CATEGORY
+                    itemView.rightArrow.visibility = View.GONE
+                    itemView.isClickable = false
+                }
+
+            } else {
+                itemView.displayName.text = item.displayName
+                itemView.rightArrow.visibility = View.VISIBLE
+                if (item.refinementCrumbs.size > 0) {
+                    ProductsRefineActivity.getAllLabelsFromRefinementCrumbs(item.refinementCrumbs)
+                }
+            }
             itemView.refinementOptions.setOnClickListener {
-                listner.onRefinementOptionSelected(position)
+                listner.onRefinementOptionSelected(item)
             }
         }
     }

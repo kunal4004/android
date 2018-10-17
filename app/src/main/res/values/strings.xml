@@ -717,4 +717,6 @@
     <string name="sort_by">SORT BY</string>
     <string name="refine_reset">reset</string>
     <string name="refinement_clear">clear</string>
+    <string name="refinement_show_me">show me</string>
+    <string name="refinement_filter_by">filter by</string>
 </resources>
