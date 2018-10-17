@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.grid;
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -10,18 +11,25 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ListPopupWindow;
+import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.GridLayoutBinding;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,11 +41,13 @@ import za.co.woolworths.financial.services.android.models.dto.ProductsRequestPar
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
+import za.co.woolworths.financial.services.android.models.dto.SortOption;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.refine.ProductsRefineActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewListAdapter;
+import za.co.woolworths.financial.services.android.ui.adapters.SortOptionsAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.ShoppingListFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsFragment;
@@ -47,7 +57,7 @@ import za.co.woolworths.financial.services.android.util.Utils;
 
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.OPEN_GET_LIST_SCREEN;
 
-public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel> implements GridNavigator, View.OnClickListener {
+public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel> implements GridNavigator, View.OnClickListener,SortOptionsAdapter.OnSortOptionSelected {
 
 	private GridViewModel mGridViewModel;
 	private ErrorHandlerView mErrorHandlerView;
@@ -121,6 +131,7 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 		startProductRequest();
 		getViewDataBinding().incNoConnectionHandler.btnRetry.setOnClickListener(this);
 		getViewDataBinding().sortAndRefineLayout.refineProducts.setOnClickListener(this);
+        getViewDataBinding().sortAndRefineLayout.sortProducts.setOnClickListener(this);
 
 		observableOn(new Consumer() {
 			@Override
@@ -182,6 +193,7 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 			mProductList = new ArrayList<>();
 		}
 		if (productLists.isEmpty()) {
+			getViewDataBinding().sortAndRefineLayout.parentLayout.setVisibility(View.GONE);
 			if (!listContainHeader()) {
 				ProductList headerProduct = new ProductList();
 				headerProduct.viewTypeHeader = true;
@@ -453,6 +465,9 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
                 startActivity(intent);
 				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				break;
+            case R.id.sortProducts:
+                this.showShortOptions(productView.sortOptions);
+                break;
 		}
 	}
 
@@ -466,4 +481,25 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 			setTitle();
 		}
 	}
+
+    @Override
+    public void onSortOptionSelected(@NotNull SortOption sortOption) {
+
+    }
+
+    public void showShortOptions(ArrayList<SortOption> sortOptions) {
+        View view = getLayoutInflater().inflate(R.layout.sort_options_view, null);
+        RecyclerView rcvSortOptions = view.findViewById(R.id.sortOptionsList);
+        rcvSortOptions.setLayoutManager(new LinearLayoutManager(getActivity()));
+        rcvSortOptions.setAdapter(new SortOptionsAdapter(getActivity(), sortOptions, this));
+        PopupWindow popupWindow = new PopupWindow(getActivity());
+        popupWindow.setContentView(view);
+		popupWindow.setWidth(ListPopupWindow.MATCH_PARENT);
+		popupWindow.setHeight(ListPopupWindow.MATCH_PARENT);
+        popupWindow.setOutsideTouchable(false);
+		popupWindow.showAsDropDown(getViewDataBinding().sortAndRefineLayout.sortProducts, Gravity.CLIP_HORIZONTAL, // Exact position of layout to display popup
+				0,
+				0);
+
+    }
 }

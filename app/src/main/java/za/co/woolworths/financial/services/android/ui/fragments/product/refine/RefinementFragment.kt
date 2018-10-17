@@ -12,7 +12,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_refinement.*
-import za.co.woolworths.financial.services.android.models.dto.Refinement
 import za.co.woolworths.financial.services.android.models.dto.RefinementNavigation
 import za.co.woolworths.financial.services.android.models.dto.RefinementSelectableItem
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RefinementAdapter
