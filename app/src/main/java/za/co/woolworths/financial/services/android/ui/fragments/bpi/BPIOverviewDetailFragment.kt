@@ -19,12 +19,10 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView
 class BPIOverviewDetailFragment : BPIFragment(), View.OnClickListener {
 
     companion object {
-        fun newInstance(bpiOverview: BPIOverview): BPIOverviewDetailFragment {
-            val bpiOverviewDetailFragment = BPIOverviewDetailFragment()
-            val bundle = Bundle()
-            bundle.putString("bpiOverview", Gson().toJson(bpiOverview))
-            bpiOverviewDetailFragment.arguments = bundle
-            return bpiOverviewDetailFragment
+        fun newInstance(bpiOverview: BPIOverview) = BPIOverviewDetailFragment().apply {
+            arguments = Bundle(1).apply {
+                putString("bpiOverview", Gson().toJson(bpiOverview))
+            }
         }
     }
 
