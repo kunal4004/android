@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.adapters.holder
+package za.co.woolworths.financial.services.android.ui.adapters
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
@@ -6,26 +6,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.refinements_options_layout.view.*
+import kotlinx.android.synthetic.main.refinements_multiple_selection_layout.view.*
 import kotlinx.android.synthetic.main.refinements_single_selection_layout.view.*
-import za.co.woolworths.financial.services.android.models.dto.Refinement
-import za.co.woolworths.financial.services.android.models.dto.RefinementNavigation
 import za.co.woolworths.financial.services.android.models.dto.RefinementSelectableItem
+import za.co.woolworths.financial.services.android.models.dto.SubRefinement
+import za.co.woolworths.financial.services.android.ui.adapters.holder.RefinementBaseViewHolder
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.OnRefinementOptionSelected
 
-class RefinementAdapter(val context: Context, val listner: OnRefinementOptionSelected, var dataList: ArrayList<RefinementSelectableItem>, refinementNavigation: RefinementNavigation) : RecyclerView.Adapter<RefinementBaseViewHolder>() {
+class SubRefinementAdapter(val context: Context, val listner: OnRefinementOptionSelected, var dataList: ArrayList<RefinementSelectableItem>) : RecyclerView.Adapter<RefinementBaseViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RefinementBaseViewHolder? {
         when (viewType) {
-            RefinementSelectableItem.ViewType.SECTION_HEADER.value -> {
-                return SectionHeaderHolder(LayoutInflater.from(context).inflate(R.layout.refinements_section_header_layout, parent, false))
-            }
-            RefinementSelectableItem.ViewType.PROMOTION.value -> {
-                return PromotionHolder(LayoutInflater.from(context).inflate(R.layout.refinements_on_promotion_layout, parent, false))
-            }
-            RefinementSelectableItem.ViewType.OPTIONS.value -> {
-                return OptionsHolder(LayoutInflater.from(context).inflate(R.layout.refinements_options_layout, parent, false))
-            }
             RefinementSelectableItem.ViewType.SINGLE_SELECTOR.value -> {
                 return SingleSelectorHolder(LayoutInflater.from(context).inflate(R.layout.refinements_single_selection_layout, parent, false))
             }
@@ -44,28 +35,11 @@ class RefinementAdapter(val context: Context, val listner: OnRefinementOptionSel
         holder.bind(position)
     }
 
-    inner class SectionHeaderHolder(itemView: View) : RefinementBaseViewHolder(itemView) {
-        override fun bind(position: Int) {
-        }
-    }
-
-    inner class PromotionHolder(itemView: View) : RefinementBaseViewHolder(itemView) {
-        override fun bind(position: Int) {
-        }
-    }
-
-    inner class OptionsHolder(itemView: View) : RefinementBaseViewHolder(itemView) {
-        override fun bind(position: Int) {
-            var item = dataList[position].item as Refinement
-            itemView.displayName.text = item.label
-            itemView.refinementOptions.setOnClickListener {
-                listner.onRefinementSelected(item)
-            }
-        }
-    }
-
     inner class SingleSelectorHolder(itemView: View) : RefinementBaseViewHolder(itemView) {
         override fun bind(position: Int) {
+            var item = dataList[position].item as SubRefinement
+            itemView.labelSingleSelector.text = item.label
+            itemView.countSingleSelector.text = item.count.toString()
             itemView.singleSelector.isChecked = dataList[position].isSelected
             itemView.setOnClickListener {
                 dataList.forEachIndexed { index, refinementSelectableItem ->
@@ -82,7 +56,9 @@ class RefinementAdapter(val context: Context, val listner: OnRefinementOptionSel
 
     inner class MultiSelectorHolder(itemView: View) : RefinementBaseViewHolder(itemView) {
         override fun bind(position: Int) {
-
+            var item = dataList[position].item as SubRefinement
+            itemView.labelMultiSelector.text = item.label
+            itemView.countMultiSelector.text = item.count.toString()
         }
     }
 

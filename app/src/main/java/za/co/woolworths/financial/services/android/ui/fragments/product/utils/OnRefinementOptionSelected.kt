@@ -8,4 +8,7 @@ interface OnRefinementOptionSelected {
     fun onRefinementOptionSelected(refinementNavigation: RefinementNavigation)
     fun onRefinementSelected(refinement: Refinement)
     fun onSubRefinementSelected(subRefinement: SubRefinement)
+    fun onBackPressedWithRefinement(navigationState: String)
+    fun onBackPressedWithOutRefinement()
+    fun onSeeResultClicked(navigationState: String)
 }

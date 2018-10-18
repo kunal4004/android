@@ -1,21 +1,33 @@
 package za.co.woolworths.financial.services.android.ui.activities.product.refine
 
+import android.app.Activity
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
+import android.view.View
+import android.view.WindowManager
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.activity_products_refine.*
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.ui.extensions.addFragmentSafelfy
+import za.co.woolworths.financial.services.android.ui.extensions.refineProducts
 import za.co.woolworths.financial.services.android.ui.extensions.replaceFragmentSafely
+import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment.PRODUCTS_REQUEST_PARAMS
+import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment.REFINEMENT_DATA
+import za.co.woolworths.financial.services.android.ui.fragments.product.refine.RefinementBaseFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.refine.RefinementFragment
-import za.co.woolworths.financial.services.android.ui.fragments.product.refine.RefinementOptionsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.refine.RefinementNavigationFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.refine.SubRefinementFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.utils.OnRefineProductsResult
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.OnRefinementOptionSelected
 import za.co.woolworths.financial.services.android.util.Utils
 
-class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected {
+class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, OnRefineProductsResult {
 
     private var productsResponse: ProductView? = null
+    private var productsRequestParams: ProductsRequestParams? = null
 
     companion object {
         const val OPTIONS_FRAGMENT_TAG: String = "OptionsFragment"
@@ -35,18 +47,18 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_products_refine)
         Utils.updateStatusBarBackground(this)
-        productsResponse = Utils.jsonStringToObject(intent.getStringExtra("REFINEMENT_DATA"), ProductView::class.java) as ProductView?
+        productsResponse = Utils.jsonStringToObject(intent.getStringExtra(REFINEMENT_DATA), ProductView::class.java) as ProductView?
+        productsRequestParams = Utils.jsonStringToObject(intent.getStringExtra(PRODUCTS_REQUEST_PARAMS), ProductsRequestParams::class.java) as ProductsRequestParams?
         initViews()
     }
 
-    fun initViews() {
-        btnClose.setOnClickListener { onBackPressed() }
+    private fun initViews() {
         addRefinementOptionsFragment()
 
     }
 
     private fun addRefinementOptionsFragment() {
-        addFragmentSafelfy(RefinementOptionsFragment.getInstance(productsResponse!!), OPTIONS_FRAGMENT_TAG, false, R.id.refinement_fragment_container)
+        addFragmentSafelfy(RefinementNavigationFragment.getInstance(productsResponse!!), OPTIONS_FRAGMENT_TAG, false, R.id.refinement_fragment_container)
     }
 
     override fun onRefinementOptionSelected(refinementNavigation: RefinementNavigation) {
@@ -54,7 +66,7 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected {
     }
 
     override fun onRefinementSelected(refinement: Refinement) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        pushFragment(SubRefinementFragment.getInstance(refinement), SUB_REFINEMENT_FRAGMENT_TAG)
     }
 
     override fun onSubRefinementSelected(subRefinement: SubRefinement) {
@@ -71,12 +83,63 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected {
     }
 
     override fun onBackPressed() {
+        var currentFragment: Fragment = supportFragmentManager.findFragmentById(R.id.refinement_fragment_container)!!
+        if (currentFragment != null && currentFragment is RefinementBaseFragment)
+            currentFragment.onBackPressed()
+
+    }
+
+    override fun onBackPressedWithRefinement(navigationState: String) {
+
+    }
+
+    override fun onBackPressedWithOutRefinement() {
+        if (loadingBar.visibility == View.VISIBLE)
+            return
         if (supportFragmentManager.backStackEntryCount > 0) {
             supportFragmentManager.popBackStack()
         } else {
             super.onBackPressed()
             overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
         }
+    }
+
+    private fun executeRefineProducts(refinement: String) {
+        productsRequestParams?.refinement = refinement
+        refineProducts(this, productsRequestParams!!).execute()
+    }
+
+    override fun onProductRefineSuccess(productView: ProductView) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onProductRefineFailure(message: String) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onSeeResultClicked(navigationState: String) {
+        intent = Intent()
+        intent.putExtra("", "")
+        setResult(Activity.RESULT_OK, intent)
+    }
+
+    fun hideProgressBar() {
+        window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        if (Build.VERSION.SDK_INT >= 21) {
+            window.navigationBarColor = resources.getColor(R.color.transparent)
+            window.statusBarColor = resources.getColor(R.color.transparent)
+        }
+        loadingBar.visibility = View.GONE
+    }
+
+    fun showProgressBar() {
+        window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        if (Build.VERSION.SDK_INT >= 21) {
+            window.navigationBarColor = resources.getColor(R.color.semi_transparent_black)
+            window.statusBarColor = resources.getColor(R.color.semi_transparent_black)
+        }
+        loadingBar.visibility = View.VISIBLE
     }
 
 }

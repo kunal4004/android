@@ -72,7 +72,9 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 	int totalItemCount;
 	private boolean isLoading;
     private ProductView productView;
-
+    public static final String REFINEMENT_DATA = "REFINEMENT_DATA";
+	public static final String PRODUCTS_REQUEST_PARAMS = "PRODUCTS_REQUEST_PARAMS";
+	public static final int REFINE_REQUEST_CODE = 77;
 	@Override
 	public GridViewModel getViewModel() {
 		return mGridViewModel;
@@ -461,8 +463,9 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 				break;
 			case R.id.refineProducts:
                 Intent intent = new Intent(getActivity(), ProductsRefineActivity.class);
-                intent.putExtra("REFINEMENT_DATA", Utils.toJson(productView));
-                startActivity(intent);
+                intent.putExtra(REFINEMENT_DATA, Utils.toJson(productView));
+                intent.putExtra(PRODUCTS_REQUEST_PARAMS,Utils.toJson(getViewModel().getProductRequestBody()));
+                startActivityForResult(intent,REFINE_REQUEST_CODE);
 				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				break;
             case R.id.sortProducts:

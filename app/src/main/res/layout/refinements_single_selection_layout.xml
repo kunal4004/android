@@ -20,12 +20,12 @@
             android:clickable="false" />
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/labelSingleSelector"
             style="@style/refinements_textview_style_with_margin_left"
-            android:layout_toRightOf="@+id/singleSelector"
-            android:text="On Promotion" />
+            android:layout_toRightOf="@+id/singleSelector" />
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:id="@+id/count"
+            android:id="@+id/countSingleSelector"
             style="@style/refinements_textview_style_breadcrumbs"
             android:layout_alignParentRight="true"
             android:text="07" />

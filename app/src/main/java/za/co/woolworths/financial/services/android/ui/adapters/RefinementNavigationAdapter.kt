@@ -17,7 +17,7 @@ import za.co.woolworths.financial.services.android.models.dto.BreadCrumb
 import za.co.woolworths.financial.services.android.models.dto.RefinementHistory
 import za.co.woolworths.financial.services.android.models.dto.RefinementNavigation
 import za.co.woolworths.financial.services.android.ui.activities.product.refine.ProductsRefineActivity
-import za.co.woolworths.financial.services.android.ui.fragments.product.refine.RefinementOptionsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.refine.RefinementNavigationFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.OnRefinementOptionSelected
 
 class RefinementNavigationAdapter(val context: Context, val listner: OnRefinementOptionSelected, var dataList: ArrayList<RefinementSelectableItem>, var history: RefinementHistory) : RecyclerView.Adapter<RefinementBaseViewHolder>() {
@@ -54,7 +54,7 @@ class RefinementNavigationAdapter(val context: Context, val listner: OnRefinemen
     inner class SectionHeaderHolder(itemView: View) : RefinementBaseViewHolder(itemView) {
         override fun bind(position: Int) {
             var item = dataList[position].item as RefinementNavigation
-            itemView.refinementSectionHeader.text = if (item.displayName.contentEquals(RefinementOptionsFragment.ON_PROMOTION)) context.resources.getString(R.string.refine) else context.resources.getString(R.string.refinement_filter_by)
+            itemView.refinementSectionHeader.text = if (item.displayName.contentEquals(RefinementNavigationFragment.ON_PROMOTION)) context.resources.getString(R.string.refine) else context.resources.getString(R.string.refinement_filter_by)
         }
     }
 
@@ -69,7 +69,7 @@ class RefinementNavigationAdapter(val context: Context, val listner: OnRefinemen
         override fun bind(position: Int) {
             var item = dataList[position].item as RefinementNavigation
             var isBreadCrumbsExist = history.categoryDimensions.size > 0 && history.categoryDimensions[0].breadCrumbs.size > 0
-            if ((item.displayName.contentEquals(RefinementOptionsFragment.CATEGORY) && isBreadCrumbsExist) || (TextUtils.isEmpty(item.displayName) && isBreadCrumbsExist)) {
+            if ((item.displayName.contentEquals(RefinementNavigationFragment.CATEGORY) && isBreadCrumbsExist) || (TextUtils.isEmpty(item.displayName) && isBreadCrumbsExist)) {
                 val breadCrumbs: ArrayList<BreadCrumb>? = history.categoryDimensions[0].breadCrumbs
                 itemView.label.text = breadCrumbs!![breadCrumbs.size - 1].label
                 if (item.refinements.size > 0) {
@@ -77,7 +77,7 @@ class RefinementNavigationAdapter(val context: Context, val listner: OnRefinemen
                     itemView.rightArrow.visibility = View.VISIBLE
                     itemView.isClickable = true
                 } else {
-                    itemView.displayName.text = RefinementOptionsFragment.CATEGORY
+                    itemView.displayName.text = RefinementNavigationFragment.CATEGORY
                     itemView.rightArrow.visibility = View.GONE
                     itemView.isClickable = false
                 }
