@@ -118,4 +118,9 @@ class RefinementNavigationFragment : BaseRefinementFragment(), RefinementOnBackP
 
     }
 
+    fun updateData(productView: ProductView) {
+        this.productView = productView
+        loadData()
+    }
+
 }

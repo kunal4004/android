@@ -59,6 +59,12 @@ class SubRefinementAdapter(val context: Context, val listner: OnRefinementOption
             var item = dataList[position].item as SubRefinement
             itemView.labelMultiSelector.text = item.label
             itemView.countMultiSelector.text = item.count.toString()
+            itemView.multiSelector.isChecked = dataList[position].isSelected
+            itemView.setOnClickListener {
+                dataList[position].isSelected = !dataList[position].isSelected
+                notifyDataSetChanged()
+            }
+
         }
     }
 

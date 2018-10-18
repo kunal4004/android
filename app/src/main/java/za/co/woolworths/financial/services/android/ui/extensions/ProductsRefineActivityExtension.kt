@@ -9,6 +9,7 @@ import za.co.woolworths.financial.services.android.util.OnEventListener
 
 fun refineProducts(context: Context, productsRequestParams: ProductsRequestParams): GetProductsRequest {
     var resultListner: OnRefineProductsResult = context as OnRefineProductsResult
+    productsRequestParams.responseType = ProductsRequestParams.ResponseType.SUMMARY
     return GetProductsRequest(context, productsRequestParams, object : OnEventListener<ProductView> {
         override fun onSuccess(`object`: ProductView?) {
             resultListner.onProductRefineSuccess(`object`!!)

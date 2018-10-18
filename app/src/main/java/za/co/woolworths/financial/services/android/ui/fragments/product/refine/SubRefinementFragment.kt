@@ -4,6 +4,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.refine
 import android.content.Context
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.text.TextUtils
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -17,12 +18,13 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.utils.On
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.RefinementOnBackPressed
 import za.co.woolworths.financial.services.android.util.Utils
 
-class SubRefinementFragment : BaseRefinementFragment(),RefinementOnBackPressed {
+class SubRefinementFragment : BaseRefinementFragment(), RefinementOnBackPressed {
     private lateinit var listener: OnRefinementOptionSelected
     private var subRefinementAdapter: SubRefinementAdapter? = null
     private var clearRefinement: TextView? = null
     private var refinement: Refinement? = null
     private var backButton: ImageView? = null
+    private var dataList = arrayListOf<RefinementSelectableItem>()
 
     companion object {
         private val ARG_PARAM = "refinementObject"
@@ -60,7 +62,8 @@ class SubRefinementFragment : BaseRefinementFragment(),RefinementOnBackPressed {
 
     private fun loadData() {
         setResultCount(refinement!!.subRefinements)
-        subRefinementAdapter = SubRefinementAdapter(activity, listener, getSubRefinementSelectableItems(refinement!!.subRefinements))
+        dataList = getSubRefinementSelectableItems(refinement!!.subRefinements)
+        subRefinementAdapter = SubRefinementAdapter(activity, listener, dataList)
         refinementList.adapter = subRefinementAdapter
     }
 
@@ -94,11 +97,13 @@ class SubRefinementFragment : BaseRefinementFragment(),RefinementOnBackPressed {
         seeResultCount.text = getString(R.string.see_results_count_start) + resultCount.toString() + getString(R.string.see_results_count_end)
     }
 
-    /*private fun onBackPressed() {
-        listener.onBackPressedWithOutRefinement()
-    }*/
     override fun onBackPressed() {
-        listener.onBackPressedWithOutRefinement()
+        var navigationState = ""
+        dataList.forEach {
+            if (it.isSelected)
+                navigationState = navigationState.plus((it.item as SubRefinement).navigationState)
+        }
+        if (TextUtils.isEmpty(navigationState)) listener.onBackPressedWithOutRefinement() else listener.onBackPressedWithRefinement(navigationState)
     }
 
     private fun seeResults() {

@@ -53,12 +53,12 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
     }
 
     private fun initViews() {
-        addRefinementOptionsFragment()
+        addRefinementOptionsFragment(productsResponse!!)
 
     }
 
-    private fun addRefinementOptionsFragment() {
-        addFragmentSafelfy(RefinementNavigationFragment.getInstance(productsResponse!!), OPTIONS_FRAGMENT_TAG, false, R.id.refinement_fragment_container)
+    private fun addRefinementOptionsFragment(productsResponse: ProductView) {
+        addFragmentSafelfy(RefinementNavigationFragment.getInstance(productsResponse), OPTIONS_FRAGMENT_TAG, false, R.id.refinement_fragment_container)
     }
 
     override fun onRefinementOptionSelected(refinementNavigation: RefinementNavigation) {
@@ -90,11 +90,12 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
     }
 
     override fun onBackPressedWithRefinement(navigationState: String) {
-
+        showProgressBar()
+        executeRefineProducts(navigationState)
     }
 
     override fun onBackPressedWithOutRefinement() {
-        if (loadingBar.visibility == View.VISIBLE)
+        if (progressBar.visibility == View.VISIBLE)
             return
         if (supportFragmentManager.backStackEntryCount > 0) {
             supportFragmentManager.popBackStack()
@@ -110,11 +111,19 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
     }
 
     override fun onProductRefineSuccess(productView: ProductView) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        for (fragment in supportFragmentManager.fragments) {
+            if (fragment is RefinementFragment || fragment is RefinementFragment) {
+                supportFragmentManager.popBackStack()
+            } else if (fragment is RefinementNavigationFragment) {
+                fragment.updateData(productView)
+            }
+        }
+
+        hideProgressBar()
     }
 
     override fun onProductRefineFailure(message: String) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        hideProgressBar()
     }
 
     override fun onSeeResultClicked(navigationState: String) {
@@ -123,23 +132,19 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
         setResult(Activity.RESULT_OK, intent)
     }
 
-    fun hideProgressBar() {
+    private fun hideProgressBar() {
         window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-        if (Build.VERSION.SDK_INT >= 21) {
-            window.navigationBarColor = resources.getColor(R.color.transparent)
-            window.statusBarColor = resources.getColor(R.color.transparent)
+        runOnUiThread {
+            progressBar.visibility = View.INVISIBLE
         }
-        loadingBar.visibility = View.GONE
     }
 
-    fun showProgressBar() {
+    private fun showProgressBar() {
         window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-        if (Build.VERSION.SDK_INT >= 21) {
-            window.navigationBarColor = resources.getColor(R.color.semi_transparent_black)
-            window.statusBarColor = resources.getColor(R.color.semi_transparent_black)
+        runOnUiThread {
+            progressBar.visibility = View.VISIBLE
         }
-        loadingBar.visibility = View.VISIBLE
     }
 
 }
