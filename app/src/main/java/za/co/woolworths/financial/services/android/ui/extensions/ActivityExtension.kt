@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity
 fun AppCompatActivity.replaceFragmentSafely(fragment: Fragment,
                                             tag: String,
                                             allowStateLoss: Boolean = false,
+                                            allowBackStack: Boolean,
                                             @IdRes containerViewId: Int,
                                             @AnimRes enterAnimation: Int = 0,
                                             @AnimRes exitAnimation: Int = 0,
@@ -21,7 +22,8 @@ fun AppCompatActivity.replaceFragmentSafely(fragment: Fragment,
             .beginTransaction()
             .setCustomAnimations(enterAnimation, exitAnimation, popEnterAnimation, popExitAnimation)
             .replace(containerViewId, fragment, tag)
-            .addToBackStack(null)
+    if (allowBackStack)
+        ft.addToBackStack(null)
     if (!supportFragmentManager.isStateSaved) {
         ft.commit()
     } else if (allowStateLoss) {

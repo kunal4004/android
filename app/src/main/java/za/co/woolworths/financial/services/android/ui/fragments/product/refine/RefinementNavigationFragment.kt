@@ -58,6 +58,7 @@ class RefinementNavigationFragment : BaseRefinementFragment(), RefinementOnBackP
         resetRefinement = activity.findViewById(R.id.resetRefinement)
         resetRefinement?.text = getString(R.string.refine_reset)
         backButton?.setOnClickListener { onBackPressed() }
+        resetRefinement?.setOnClickListener { listener.onResetClicked() }
         refinementSeeResult.setOnClickListener { seeResults() }
         refinementList.layoutManager = LinearLayoutManager(activity)
         loadData()
@@ -116,11 +117,6 @@ class RefinementNavigationFragment : BaseRefinementFragment(), RefinementOnBackP
 
     private fun seeResults() {
 
-    }
-
-    fun updateData(productView: ProductView) {
-        this.productView = productView
-        loadData()
     }
 
 }

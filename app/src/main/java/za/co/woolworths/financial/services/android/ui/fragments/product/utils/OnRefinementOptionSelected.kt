@@ -11,4 +11,5 @@ interface OnRefinementOptionSelected {
     fun onBackPressedWithRefinement(navigationState: String)
     fun onBackPressedWithOutRefinement()
     fun onSeeResultClicked(navigationState: String)
+    fun onResetClicked()
 }

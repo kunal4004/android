@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.refinements_multiple_selection_layout.view.*
 import kotlinx.android.synthetic.main.refinements_options_layout.view.*
 import kotlinx.android.synthetic.main.refinements_single_selection_layout.view.*
 import za.co.woolworths.financial.services.android.models.dto.Refinement
@@ -81,13 +82,13 @@ class RefinementAdapter(val context: Context, val listner: OnRefinementOptionSel
         override fun bind(position: Int) {
             var item = dataList[position].item
             if (item is RefinementCrumb) {
-                itemView.labelSingleSelector.text = item.label
-                itemView.countSingleSelector.text = item.count.toString()
+                itemView.labelMultiSelector.text = item.label
+                itemView.countMultiSelector.text = item.count.toString()
                 itemView.singleSelector.isChecked = item.isMultiSelectTrueForRefinementCrumbs
             } else {
                 item = item as Refinement
-                itemView.labelSingleSelector.text = item.label
-                itemView.countSingleSelector.text = item.count.toString()
+                itemView.labelMultiSelector.text = item.label
+                itemView.countMultiSelector.text = item.count.toString()
             }
         }
     }
