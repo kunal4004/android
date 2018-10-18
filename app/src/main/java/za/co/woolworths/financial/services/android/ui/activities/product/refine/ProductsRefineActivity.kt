@@ -16,7 +16,7 @@ import za.co.woolworths.financial.services.android.ui.extensions.refineProducts
 import za.co.woolworths.financial.services.android.ui.extensions.replaceFragmentSafely
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment.PRODUCTS_REQUEST_PARAMS
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment.REFINEMENT_DATA
-import za.co.woolworths.financial.services.android.ui.fragments.product.refine.RefinementBaseFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.refine.BaseRefinementFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.refine.RefinementFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.refine.RefinementNavigationFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.refine.SubRefinementFragment
@@ -84,7 +84,7 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
 
     override fun onBackPressed() {
         var currentFragment: Fragment = supportFragmentManager.findFragmentById(R.id.refinement_fragment_container)!!
-        if (currentFragment != null && currentFragment is RefinementBaseFragment)
+        if (currentFragment != null && currentFragment is BaseRefinementFragment)
             currentFragment.onBackPressed()
 
     }

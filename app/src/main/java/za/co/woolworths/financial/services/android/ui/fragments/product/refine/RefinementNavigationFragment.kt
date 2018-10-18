@@ -3,11 +3,8 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.refine
 
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.awfs.coordination.R
@@ -21,7 +18,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.utils.Re
 import za.co.woolworths.financial.services.android.util.Utils
 
 
-class RefinementNavigationFragment : RefinementBaseFragment(), RefinementOnBackPressed {
+class RefinementNavigationFragment : BaseRefinementFragment(), RefinementOnBackPressed {
 
     private lateinit var listener: OnRefinementOptionSelected
     private var refinementNavigationAdapter: RefinementNavigationAdapter? = null

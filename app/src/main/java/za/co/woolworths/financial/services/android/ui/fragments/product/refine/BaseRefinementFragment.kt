@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.RefinementOnBackPressed
 
-open class RefinementBaseFragment : Fragment(), RefinementOnBackPressed {
+open class BaseRefinementFragment : Fragment(), RefinementOnBackPressed {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
