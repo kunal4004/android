@@ -372,7 +372,7 @@ public class WfsApi {
 	private String getSessionToken() {
 		String sessionToken = SessionUtilities.getInstance().getSessionToken();
 		if (sessionToken.isEmpty())
-			return "";
+			return ".";
 		else
 			return sessionToken;
 	}

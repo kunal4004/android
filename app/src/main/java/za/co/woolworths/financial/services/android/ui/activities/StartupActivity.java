@@ -155,44 +155,39 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 			return;
 		}
 
-		//x.x = PROD
-		//x.x-qa = QA
-		//x.x-dev = DEV
-		String mcsAppVersion = appVersion.substring(0, 3) + (environment == "production" ? "" : "-" + environment);
-
-		MobileConfigServerDao.Companion.getConfig(mcsAppVersion, Utils.getUniqueDeviceID(this), new OnResultListener<ConfigResponse>() {
+		MobileConfigServerDao.Companion.getConfig(WoolworthsApplication.getInstance(), new OnResultListener<ConfigResponse>() {
 			@Override
 			public void success(ConfigResponse configResponse) {
 				try {
 					StartupActivity.this.mVideoPlayerShouldPlay = false;
 
-					if (configResponse.enviroment.stsURI == null || configResponse.enviroment.stsURI.isEmpty()) {
+					if (configResponse.configs.enviroment.stsURI == null || configResponse.configs.enviroment.stsURI.isEmpty()) {
 						showNonVideoViewWithErrorLayout();
 						return;
 					}
 
-					WoolworthsApplication.setBaseURL(configResponse.enviroment.getBase_url());
-					WoolworthsApplication.setApiKey(configResponse.enviroment.getApiId());
-					WoolworthsApplication.setSha1Password(configResponse.enviroment.getApiPassword());
-					WoolworthsApplication.setSsoRedirectURI(configResponse.enviroment.getSsoRedirectURI());
-					WoolworthsApplication.setStsURI(configResponse.enviroment.getStsURI());
-					WoolworthsApplication.setSsoRedirectURILogout(configResponse.enviroment.getSsoRedirectURILogout());
-					WoolworthsApplication.setSsoUpdateDetailsRedirectUri(configResponse.enviroment.getSsoUpdateDetailsRedirectUri());
-					WoolworthsApplication.setWwTodayURI(configResponse.enviroment.getWwTodayURI());
-					WoolworthsApplication.setApplyNowLink(configResponse.defaults.getApplyNowLink());
-					WoolworthsApplication.setRegistrationTCLink(configResponse.defaults.getRegisterTCLink());
-					WoolworthsApplication.setFaqLink(configResponse.defaults.getFaqLink());
-					WoolworthsApplication.setWrewardsLink(configResponse.defaults.getWrewardsLink());
-					WoolworthsApplication.setRewardingLink(configResponse.defaults.getRewardingLink());
-					WoolworthsApplication.setHowToSaveLink(configResponse.defaults.getHowtosaveLink());
-					WoolworthsApplication.setWrewardsTCLink(configResponse.defaults.getWrewardsTCLink());
-					WoolworthsApplication.setCartCheckoutLink(configResponse.defaults.getCartCheckoutLink());
-					mWGlobalState.setStartRadius(configResponse.enviroment.getStoreStockLocatorConfigStartRadius());
-					mWGlobalState.setEndRadius(configResponse.enviroment.getStoreStockLocatorConfigEndRadius());
+					WoolworthsApplication.setBaseURL(configResponse.configs.enviroment.getBase_url());
+					WoolworthsApplication.setApiKey(configResponse.configs.enviroment.getApiId());
+					WoolworthsApplication.setSha1Password(configResponse.configs.enviroment.getApiPassword());
+					WoolworthsApplication.setSsoRedirectURI(configResponse.configs.enviroment.getSsoRedirectURI());
+					WoolworthsApplication.setStsURI(configResponse.configs.enviroment.getStsURI());
+					WoolworthsApplication.setSsoRedirectURILogout(configResponse.configs.enviroment.getSsoRedirectURILogout());
+					WoolworthsApplication.setSsoUpdateDetailsRedirectUri(configResponse.configs.enviroment.getSsoUpdateDetailsRedirectUri());
+					WoolworthsApplication.setWwTodayURI(configResponse.configs.enviroment.getWwTodayURI());
+					WoolworthsApplication.setApplyNowLink(configResponse.configs.defaults.getApplyNowLink());
+					WoolworthsApplication.setRegistrationTCLink(configResponse.configs.defaults.getRegisterTCLink());
+					WoolworthsApplication.setFaqLink(configResponse.configs.defaults.getFaqLink());
+					WoolworthsApplication.setWrewardsLink(configResponse.configs.defaults.getWrewardsLink());
+					WoolworthsApplication.setRewardingLink(configResponse.configs.defaults.getRewardingLink());
+					WoolworthsApplication.setHowToSaveLink(configResponse.configs.defaults.getHowtosaveLink());
+					WoolworthsApplication.setWrewardsTCLink(configResponse.configs.defaults.getWrewardsTCLink());
+					WoolworthsApplication.setCartCheckoutLink(configResponse.configs.defaults.getCartCheckoutLink());
+					mWGlobalState.setStartRadius(configResponse.configs.enviroment.getStoreStockLocatorConfigStartRadius());
+					mWGlobalState.setEndRadius(configResponse.configs.enviroment.getStoreStockLocatorConfigEndRadius());
 
-					splashScreenText = configResponse.enviroment.splashScreenText;
-					splashScreenDisplay = configResponse.enviroment.splashScreenDisplay;
-					splashScreenPersist = configResponse.enviroment.splashScreenPersist;
+					splashScreenText = configResponse.configs.enviroment.splashScreenText;
+					splashScreenDisplay = configResponse.configs.enviroment.splashScreenDisplay;
+					splashScreenPersist = configResponse.configs.enviroment.splashScreenPersist;
 
 					if (!isVideoPlaying) {
 						presentNextScreenOrServerMessage();
