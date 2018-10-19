@@ -89,10 +89,11 @@ class RefinementAdapter(val context: Context, val listner: OnRefinementOptionSel
                 item = item as Refinement
                 itemView.labelMultiSelector.text = item.label
                 itemView.countMultiSelector.text = item.count.toString()
+                itemView.multiSelector.isChecked = dataList[position].isSelected
             }
 
             itemView.setOnClickListener {
-                itemView.multiSelector.isChecked = !dataList[position].isSelected
+                dataList[position].isSelected = !dataList[position].isSelected
                 notifyDataSetChanged()
             }
         }
