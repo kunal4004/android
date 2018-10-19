@@ -1,11 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.grid;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Dialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -23,9 +21,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.LinearLayout;
-import android.widget.ListPopupWindow;
-import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
@@ -79,6 +74,7 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
     public static final String REFINEMENT_DATA = "REFINEMENT_DATA";
 	public static final String PRODUCTS_REQUEST_PARAMS = "PRODUCTS_REQUEST_PARAMS";
 	public static final int REFINE_REQUEST_CODE = 77;
+	private Dialog sortOptionDialog;
 	@Override
 	public GridViewModel getViewModel() {
 		return mGridViewModel;
@@ -231,10 +227,10 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 		if (response.desc == null) return;
 		hideFooterView();
 		FragmentManager fm = ((AppCompatActivity) activity).getSupportFragmentManager();
-		// check if dialog is being displayed
+		// check if sortOptionDialog is being displayed
 		if (hasOpenedDialogs((AppCompatActivity) activity)) return;
 
-		// show dialog
+		// show sortOptionDialog
 		SingleButtonDialogFragment singleButtonDialogFragment = SingleButtonDialogFragment.newInstance(response.desc);
 		singleButtonDialogFragment.show(fm, SingleButtonDialogFragment.class.getSimpleName());
 
@@ -493,24 +489,30 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 
     @Override
     public void onSortOptionSelected(@NotNull SortOption sortOption) {
-
+		if(sortOptionDialog!=null && sortOptionDialog.isShowing()){
+			sortOptionDialog.dismiss();
+			getViewModel().updateProductRequestBodyForSort(sortOption.getSortOption());
+			reloadProductsWithSortAndFilter();
+		}
     }
 
     public void showShortOptions(ArrayList<SortOption> sortOptions) {
-		Dialog dialog = new Dialog(getActivity());
-		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		sortOptionDialog = new Dialog(getActivity());
+		sortOptionDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         View view = getLayoutInflater().inflate(R.layout.sort_options_view, null);
         RecyclerView rcvSortOptions = view.findViewById(R.id.sortOptionsList);
         rcvSortOptions.setLayoutManager(new LinearLayoutManager(getActivity()));
         rcvSortOptions.setAdapter(new SortOptionsAdapter(getActivity(), sortOptions, this));
-        dialog.setContentView(view);
-		Window window = dialog.getWindow();
-		window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
-		window.setBackgroundDrawableResource(R.color.transparent);
-		window.setGravity(Gravity.TOP);
-		dialog.setTitle(null);
-		dialog.setCancelable(true);
-		dialog.show();
+        sortOptionDialog.setContentView(view);
+		Window window = sortOptionDialog.getWindow();
+		if (window != null) {
+			window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+			window.setBackgroundDrawableResource(R.color.transparent);
+			window.setGravity(Gravity.TOP);
+		}
+		sortOptionDialog.setTitle(null);
+		sortOptionDialog.setCancelable(true);
+		sortOptionDialog.show();
 
     }
 
@@ -521,13 +523,13 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 			case REFINE_REQUEST_CODE:
 				if(resultCode == Activity.RESULT_OK){
 					String navigationState = data.getStringExtra(ProductsRefineActivity.NAVIGATION_STATE);
-					reloadProductsWithRefinement(navigationState);
+					getViewModel().updateProductRequestBodyForRefinement(navigationState);
+					reloadProductsWithSortAndFilter();
 				}
 		}
 	}
 
-	public void reloadProductsWithRefinement(String navigationState){
-		getViewModel().updateProductRequestBody(navigationState);
+	public void reloadProductsWithSortAndFilter(){
 		getViewDataBinding().productList.setVisibility(View.INVISIBLE);
 		getViewDataBinding().sortAndRefineLayout.parentLayout.setVisibility(View.GONE);
 		startProductRequest();

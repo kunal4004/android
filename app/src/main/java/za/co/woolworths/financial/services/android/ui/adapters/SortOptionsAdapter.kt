@@ -20,12 +20,18 @@ class SortOptionsAdapter(val context: Context, var sortOptions: ArrayList<SortOp
 
     override fun onBindViewHolder(holder: SortOptionViewHolder?, position: Int) {
         holder!!.tvSortOption.text = sortOptions[position].label
-        holder.view!!.setOnClickListener { listner.onSortOptionSelected(sortOptions[position]) }
+        holder!!.rbsortSelector.isChecked = sortOptions[position].selected
+        holder.view!!.setOnClickListener {
+            sortOptions[position].selected = true
+            listner.onSortOptionSelected(sortOptions[position])
+            notifyDataSetChanged()
+        }
     }
 
     inner class SortOptionViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
         val tvSortOption = itemView!!.sortOptionType
         val view = itemView
+        val rbsortSelector = itemView!!.sortSelector
     }
 
     interface OnSortOptionSelected {

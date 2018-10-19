@@ -176,7 +176,7 @@ public class GridViewModel extends BaseViewModel<GridNavigator> {
         return productIsLoading;
     }
 
-    public void updateProductRequestBody(String navigationState){
+    public void updateProductRequestBodyForRefinement(String navigationState){
         this.pageOffset = 0;
         this.loadMoreData = false;
         this.mIsLoading = false;
@@ -184,6 +184,17 @@ public class GridViewModel extends BaseViewModel<GridNavigator> {
         this.productIsLoading = false;
         getProductRequestBody().setPageOffset(pageOffset);
         getProductRequestBody().setRefinement(navigationState);
+
+    }
+
+    public void updateProductRequestBodyForSort(String sortOption){
+        this.pageOffset = 0;
+        this.loadMoreData = false;
+        this.mIsLoading = false;
+        this.mIsLastPage = false;
+        this.productIsLoading = false;
+        getProductRequestBody().setPageOffset(pageOffset);
+        getProductRequestBody().setSortOption(sortOption);
 
     }
 }
