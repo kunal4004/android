@@ -135,5 +135,6 @@
     <dimen name="twenty_eight_sp">28sp</dimen>
     <dimen name="exr_margin">16dp</dimen>
     <dimen name="fourteen_sp">14sp</dimen>
+    <dimen name="ten_sp">10sp</dimen>
 </resources>
 
