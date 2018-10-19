@@ -72,7 +72,7 @@ public class RetrofitAsyncClient {
 	}
 
 	private String getApiId() {
-		return WoolworthsApplication.getApiKey();
+		return WoolworthsApplication.getApiId();
 	}
 
 	public String getSessionToken() {

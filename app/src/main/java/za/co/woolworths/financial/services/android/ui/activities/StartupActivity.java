@@ -167,8 +167,6 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 					}
 
 					WoolworthsApplication.setBaseURL(configResponse.configs.enviroment.getBase_url());
-					WoolworthsApplication.setApiKey(configResponse.configs.enviroment.getApiId());
-					WoolworthsApplication.setSha1Password(configResponse.configs.enviroment.getApiPassword());
 					WoolworthsApplication.setSsoRedirectURI(configResponse.configs.enviroment.getSsoRedirectURI());
 					WoolworthsApplication.setStsURI(configResponse.configs.enviroment.getStsURI());
 					WoolworthsApplication.setSsoRedirectURILogout(configResponse.configs.enviroment.getSsoRedirectURILogout());

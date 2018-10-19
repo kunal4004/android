@@ -42,20 +42,6 @@ class MobileConfigServerDao {
                 return
             }
 
-            var pinfo: PackageInfo? = null
-            try {
-                pinfo = appInstance.packageManager.getPackageInfo(appInstance.packageName, 0)
-            } catch (e: PackageManager.NameNotFoundException) {
-                e.printStackTrace()
-            }
-
-            var apiId = "iOS_v" // TODO: Prefix needs to be changed
-            if (pinfo!!.versionName.length > 3) {
-                apiId += pinfo!!.versionName.substring(0, 3)
-            } else {
-                apiId += pinfo!!.versionName
-            }
-
             val task = object : HttpAsyncTask<String, String, ConfigResponse>() {
                 override fun httpDoInBackground(vararg strings: String): ConfigResponse {
 
@@ -65,15 +51,15 @@ class MobileConfigServerDao {
                             .create(ApiInterface::class.java)
 
                     return mApiInterface.getConfig(
-                            apiId,
-                            "aa78ee62cf4f89b6efc63689848fd36eb0680148",
+                            WoolworthsApplication.getApiId(),
+                            WoolworthsApplication.getSha1Password(),
                             getDeviceManufacturer(),
                             getDeviceModel(),
                             getNetworkCarrier(appInstance),
                             getOS(),
                             getOsVersion(),
                             getSessionToken(),
-                            pinfo!!.versionName
+                            WoolworthsApplication.getAppVersionName()
                     )
                 }
 
@@ -128,7 +114,7 @@ class MobileConfigServerDao {
         }
 
         private fun getApiId(): String {
-            return WoolworthsApplication.getApiKey()
+            return WoolworthsApplication.getApiId()
         }
 
         private fun getSessionToken(): String {

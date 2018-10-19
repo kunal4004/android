@@ -366,7 +366,7 @@ public class WfsApi {
 	}
 
 	private String getApiId() {
-		return WoolworthsApplication.getApiKey();
+		return WoolworthsApplication.getApiId();
 	}
 
 	private String getSessionToken() {
