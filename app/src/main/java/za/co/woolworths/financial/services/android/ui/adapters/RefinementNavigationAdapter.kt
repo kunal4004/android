@@ -60,8 +60,12 @@ class RefinementNavigationAdapter(val context: Context, val listner: OnRefinemen
 
     inner class PromotionHolder(itemView: View) : RefinementBaseViewHolder(itemView) {
         override fun bind(position: Int) {
-            var item = dataList[position].item as RefinementNavigation
-            itemView.promotionSwitch.isChecked = item.refinementCrumbs == null
+            var item = dataList[position]
+            itemView.promotionSwitch.isChecked = item.isSelected
+            itemView.promotionSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
+                item.isSelected = isChecked
+                notifyDataSetChanged()
+            }
         }
     }
 

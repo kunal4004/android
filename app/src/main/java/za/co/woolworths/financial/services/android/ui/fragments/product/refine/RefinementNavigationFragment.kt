@@ -25,6 +25,7 @@ class RefinementNavigationFragment : BaseRefinementFragment(), RefinementOnBackP
     private var resetRefinement: TextView? = null
     private var productView: ProductView? = null
     private var backButton: ImageView? = null
+    private var dataList = arrayListOf<RefinementSelectableItem>()
 
     companion object {
         private val ARG_PARAM = "productViewObject"
@@ -66,7 +67,8 @@ class RefinementNavigationFragment : BaseRefinementFragment(), RefinementOnBackP
 
     private fun loadData() {
         setResultCount(productView!!.navigation)
-        refinementNavigationAdapter = RefinementNavigationAdapter(activity, listener, getRefinementSelectableItems(productView?.navigation!!), productView?.history!!)
+        dataList = getRefinementSelectableItems(productView?.navigation!!)
+        refinementNavigationAdapter = RefinementNavigationAdapter(activity, listener, dataList, productView?.history!!)
         refinementList.adapter = refinementNavigationAdapter!!
     }
 
@@ -85,7 +87,9 @@ class RefinementNavigationFragment : BaseRefinementFragment(), RefinementOnBackP
         navigationList.forEach {
             if (it.displayName.contentEquals(ON_PROMOTION)) {
                 dataList.add(0, RefinementSelectableItem(it, RefinementSelectableItem.ViewType.SECTION_HEADER))
-                dataList.add(1, RefinementSelectableItem(it, RefinementSelectableItem.ViewType.PROMOTION))
+                var refinementSelectableItem = RefinementSelectableItem(it, RefinementSelectableItem.ViewType.PROMOTION)
+                refinementSelectableItem.isSelected = (it.refinementCrumbs != null && it.refinementCrumbs.size > 0)
+                dataList.add(1, refinementSelectableItem)
             } else {
                 if (!isHeaderAddedForCategory) {
                     dataList.add(RefinementSelectableItem(it, RefinementSelectableItem.ViewType.SECTION_HEADER))
@@ -112,11 +116,25 @@ class RefinementNavigationFragment : BaseRefinementFragment(), RefinementOnBackP
     }
 
     override fun onBackPressed() {
-        listener.onBackPressedWithOutRefinement()
+        this.seeResults()
     }
 
     private fun seeResults() {
+        listener.onSeeResults(getNavigationState())
+    }
 
+    private fun getNavigationState(): String {
+        var navigationState = ""
+        dataList.forEach {
+            if (it.type == RefinementSelectableItem.ViewType.PROMOTION) {
+                it.item as RefinementNavigation
+                if (it.isSelected != (it.item.refinementCrumbs != null && it.item.refinementCrumbs.size > 0)) {
+                    navigationState = it.item.refinements[0].navigationState
+                    return navigationState
+                }
+            }
+        }
+        return navigationState
     }
 
 }

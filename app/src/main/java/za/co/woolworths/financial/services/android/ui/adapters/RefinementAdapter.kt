@@ -57,7 +57,7 @@ class RefinementAdapter(val context: Context, val listner: OnRefinementOptionSel
             if (item is RefinementCrumb) {
                 itemView.labelSingleSelector.text = item.label
                 itemView.countSingleSelector.text = item.count.toString()
-                itemView.singleSelector.isChecked = item.isMultiSelectTrueForRefinementCrumbs
+                itemView.singleSelector.isChecked = dataList[position].isSelected
             } else {
                 item = item as Refinement
                 itemView.labelSingleSelector.text = item.label
@@ -84,11 +84,16 @@ class RefinementAdapter(val context: Context, val listner: OnRefinementOptionSel
             if (item is RefinementCrumb) {
                 itemView.labelMultiSelector.text = item.label
                 itemView.countMultiSelector.text = item.count.toString()
-                itemView.singleSelector.isChecked = item.isMultiSelectTrueForRefinementCrumbs
+                itemView.multiSelector.isChecked = dataList[position].isSelected
             } else {
                 item = item as Refinement
                 itemView.labelMultiSelector.text = item.label
                 itemView.countMultiSelector.text = item.count.toString()
+            }
+
+            itemView.setOnClickListener {
+                itemView.multiSelector.isChecked = !dataList[position].isSelected
+                notifyDataSetChanged()
             }
         }
     }

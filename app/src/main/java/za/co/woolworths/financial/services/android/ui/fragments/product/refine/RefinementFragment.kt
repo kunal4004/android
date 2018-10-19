@@ -86,8 +86,9 @@ class RefinementFragment : BaseRefinementFragment(), RefinementOnBackPressed {
             }
         } else if (refinementNavigation.refinementCrumbs != null && refinementNavigation.refinementCrumbs.size > 0) {
             refinementNavigation.refinementCrumbs.forEach {
-                it.isMultiSelectTrueForRefinementCrumbs = true
-                dataList.add(RefinementSelectableItem(it, if (it.multiSelect) RefinementSelectableItem.ViewType.MULTI_SELECTOR else RefinementSelectableItem.ViewType.SINGLE_SELECTOR))
+                var refinementSelectableItem = RefinementSelectableItem(it, if (it.multiSelect) RefinementSelectableItem.ViewType.MULTI_SELECTOR else RefinementSelectableItem.ViewType.SINGLE_SELECTOR)
+                refinementSelectableItem.isSelected = true
+                dataList.add(refinementSelectableItem)
             }
         }
         return dataList

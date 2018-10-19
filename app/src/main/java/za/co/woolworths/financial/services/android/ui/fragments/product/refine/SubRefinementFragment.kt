@@ -54,6 +54,7 @@ class SubRefinementFragment : BaseRefinementFragment(), RefinementOnBackPressed 
         backButton?.setImageResource(R.drawable.back24)
         clearRefinement = activity.findViewById(R.id.resetRefinement)
         clearRefinement?.text = getString(R.string.refinement_clear)
+        clearRefinement?.setOnClickListener { subRefinementAdapter?.clearRefinement() }
         backButton?.setOnClickListener { onBackPressed() }
         refinementSeeResult.setOnClickListener { seeResults() }
         refinementList.layoutManager = LinearLayoutManager(activity)
