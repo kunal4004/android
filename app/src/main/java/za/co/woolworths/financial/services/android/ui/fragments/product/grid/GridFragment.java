@@ -295,6 +295,8 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 			}
 		});
 		final RecyclerView rcvProductList = getViewDataBinding().productList;
+		if (rcvProductList.getVisibility() == View.INVISIBLE)
+			rcvProductList.setVisibility(View.VISIBLE);
 		rcvProductList.setLayoutManager(mRecyclerViewLayoutManager);
 		rcvProductList.setAdapter(mProductAdapter);
 		rcvProductList.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -520,6 +522,8 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 
 	public void reloadProductsWithRefinement(String navigationState){
 		getViewModel().updateProductRequestBody(navigationState);
+		getViewDataBinding().productList.setVisibility(View.INVISIBLE);
+		getViewDataBinding().sortAndRefineLayout.parentLayout.setVisibility(View.GONE);
 		startProductRequest();
 	}
 }

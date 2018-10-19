@@ -177,7 +177,11 @@ public class GridViewModel extends BaseViewModel<GridNavigator> {
     }
 
     public void updateProductRequestBody(String navigationState){
-        pageOffset = 0;
+        this.pageOffset = 0;
+        this.loadMoreData = false;
+        this.mIsLoading = false;
+        this.mIsLastPage = false;
+        this.productIsLoading = false;
         getProductRequestBody().setPageOffset(pageOffset);
         getProductRequestBody().setRefinement(navigationState);
 
