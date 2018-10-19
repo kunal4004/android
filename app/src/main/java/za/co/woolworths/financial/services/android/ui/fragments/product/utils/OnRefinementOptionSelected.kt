@@ -10,6 +10,6 @@ interface OnRefinementOptionSelected {
     fun onSubRefinementSelected(subRefinement: SubRefinement)
     fun onBackPressedWithRefinement(navigationState: String)
     fun onBackPressedWithOutRefinement()
-    fun onSeeResultClicked(navigationState: String)
+    fun onSeeResults(navigationState: String)
     fun onResetClicked()
 }

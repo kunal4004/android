@@ -98,16 +98,20 @@ class SubRefinementFragment : BaseRefinementFragment(), RefinementOnBackPressed 
     }
 
     override fun onBackPressed() {
+        var navigationState = getNavigationState()
+        if (TextUtils.isEmpty(navigationState)) listener.onBackPressedWithOutRefinement() else listener.onBackPressedWithRefinement(navigationState)
+    }
+
+    private fun seeResults() {
+        listener.onSeeResults(getNavigationState())
+    }
+
+    private fun getNavigationState(): String {
         var navigationState = ""
         dataList.forEach {
             if (it.isSelected)
                 navigationState = navigationState.plus((it.item as SubRefinement).navigationState)
         }
-        if (TextUtils.isEmpty(navigationState)) listener.onBackPressedWithOutRefinement() else listener.onBackPressedWithRefinement(navigationState)
+        return navigationState
     }
-
-    private fun seeResults() {
-
-    }
-
 }

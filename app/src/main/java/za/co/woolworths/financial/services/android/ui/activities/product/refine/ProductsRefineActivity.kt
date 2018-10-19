@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
+import android.text.TextUtils
 import android.view.View
 import android.view.WindowManager
 import com.awfs.coordination.R
@@ -31,6 +32,7 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
         const val TAG_NAVIGATION_FRAGMENT: String = "OptionsFragment"
         const val TAG_REFINEMENT_FRAGMENT: String = "RefinementFragment"
         const val TAG_SUB_REFINEMENT_FRAGMENT: String = "SubRefinementFragment"
+        const val NAVIGATION_STATE = "NAVIGATION_STATE"
         fun getAllLabelsFromRefinementCrumbs(refinementCrumbs: ArrayList<RefinementCrumb>): String {
             var result = ""
             refinementCrumbs.forEach {
@@ -117,10 +119,14 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
         hideProgressBar()
     }
 
-    override fun onSeeResultClicked(navigationState: String) {
-        intent = Intent()
-        intent.putExtra("", "")
-        setResult(Activity.RESULT_OK, intent)
+    override fun onSeeResults(navigationState: String) {
+        if (!TextUtils.isEmpty(navigationState)) {
+            intent = Intent()
+            intent.putExtra(NAVIGATION_STATE, navigationState)
+            setResult(Activity.RESULT_OK, intent)
+        }
+        finish()
+        overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
     }
 
     private fun hideProgressBar() {
