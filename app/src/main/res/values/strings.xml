@@ -721,4 +721,5 @@
     <string name="refinement_filter_by">filter by</string>
     <string name="see_results_count_start">SEE RESULTS (</string>
     <string name="see_results_count_end">)</string>
+    <string name="see_results">SEE RESULTS</string>
 </resources>

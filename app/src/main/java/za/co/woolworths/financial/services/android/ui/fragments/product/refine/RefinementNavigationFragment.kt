@@ -66,10 +66,12 @@ class RefinementNavigationFragment : BaseRefinementFragment(), RefinementOnBackP
     }
 
     private fun loadData() {
-        setResultCount(productView!!.navigation)
-        dataList = getRefinementSelectableItems(productView?.navigation!!)
-        refinementNavigationAdapter = RefinementNavigationAdapter(activity, listener, dataList, productView?.history!!)
-        refinementList.adapter = refinementNavigationAdapter!!
+        if (productView!!.navigation != null && productView!!.navigation.size > 0) {
+            setResultCount(productView!!.navigation)
+            dataList = getRefinementSelectableItems(productView?.navigation!!)
+            refinementNavigationAdapter = RefinementNavigationAdapter(activity, listener, dataList, productView?.history!!)
+            refinementList.adapter = refinementNavigationAdapter!!
+        }
     }
 
     override fun onAttach(context: Context?) {

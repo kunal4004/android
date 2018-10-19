@@ -62,7 +62,6 @@ class SubRefinementFragment : BaseRefinementFragment(), RefinementOnBackPressed 
     }
 
     private fun loadData() {
-        setResultCount(refinement!!.subRefinements)
         dataList = getSubRefinementSelectableItems(refinement!!.subRefinements)
         subRefinementAdapter = SubRefinementAdapter(activity, listener, dataList)
         refinementList.adapter = subRefinementAdapter
@@ -84,18 +83,6 @@ class SubRefinementFragment : BaseRefinementFragment(), RefinementOnBackPressed 
             dataList.add(RefinementSelectableItem(it, if (it.multiSelect) RefinementSelectableItem.ViewType.MULTI_SELECTOR else RefinementSelectableItem.ViewType.SINGLE_SELECTOR))
         }
         return dataList
-    }
-
-    private fun setResultCount(subRefinements: ArrayList<SubRefinement>) {
-        var totalCount = 0
-        subRefinements.forEach {
-            totalCount += it.count
-        }
-        setResultCount(totalCount)
-    }
-
-    private fun setResultCount(resultCount: Int) {
-        seeResultCount.text = getString(R.string.see_results_count_start) + resultCount.toString() + getString(R.string.see_results_count_end)
     }
 
     override fun onBackPressed() {

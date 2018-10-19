@@ -102,4 +102,11 @@ class RefinementAdapter(val context: Context, val listner: OnRefinementOptionSel
     override fun getItemViewType(position: Int): Int {
         return dataList[position].type.value
     }
+
+    fun clearRefinement() {
+        dataList.forEach {
+            it.isSelected = it.item is RefinementCrumb
+        }
+        notifyDataSetChanged()
+    }
 }
