@@ -27,6 +27,7 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
 
     private var productsResponse: ProductView? = null
     private var productsRequestParams: ProductsRequestParams? = null
+    private var updatedProductsRequestParams: ProductsRequestParams? = null
 
     companion object {
         const val TAG_NAVIGATION_FRAGMENT: String = "OptionsFragment"
@@ -106,8 +107,9 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
     }
 
     private fun executeRefineProducts(refinement: String) {
-        productsRequestParams?.refinement = refinement
-        refineProducts(this, productsRequestParams!!).execute()
+        updatedProductsRequestParams = ProductsRequestParams(productsRequestParams?.searchTerm!!, productsRequestParams?.searchType!!, productsRequestParams?.responseType!!, productsRequestParams?.pageOffset!!)
+        updatedProductsRequestParams?.refinement = refinement
+        refineProducts(this, updatedProductsRequestParams!!).execute()
     }
 
     override fun onProductRefineSuccess(productView: ProductView) {
@@ -123,6 +125,10 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
         if (!TextUtils.isEmpty(navigationState)) {
             intent = Intent()
             intent.putExtra(NAVIGATION_STATE, navigationState)
+            setResult(Activity.RESULT_OK, intent)
+        } else if (!TextUtils.isEmpty(updatedProductsRequestParams?.refinement)) {
+            intent = Intent()
+            intent.putExtra(NAVIGATION_STATE, updatedProductsRequestParams?.refinement)
             setResult(Activity.RESULT_OK, intent)
         }
         finish()
@@ -156,6 +162,7 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
     }
 
     override fun onResetClicked() {
+        updatedProductsRequestParams?.refinement = ""
         reloadFragment(productsResponse!!)
     }
 
