@@ -1,6 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.grid;
 
+import android.app.ActionBar;
 import android.app.Activity;
+import android.app.Dialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
@@ -19,6 +21,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.ListPopupWindow;
 import android.widget.PopupWindow;
@@ -493,18 +497,20 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
     }
 
     public void showShortOptions(ArrayList<SortOption> sortOptions) {
+		Dialog dialog = new Dialog(getActivity());
+		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         View view = getLayoutInflater().inflate(R.layout.sort_options_view, null);
         RecyclerView rcvSortOptions = view.findViewById(R.id.sortOptionsList);
         rcvSortOptions.setLayoutManager(new LinearLayoutManager(getActivity()));
         rcvSortOptions.setAdapter(new SortOptionsAdapter(getActivity(), sortOptions, this));
-        PopupWindow popupWindow = new PopupWindow(getActivity());
-        popupWindow.setContentView(view);
-		popupWindow.setWidth(ListPopupWindow.MATCH_PARENT);
-		popupWindow.setHeight(ListPopupWindow.MATCH_PARENT);
-        popupWindow.setOutsideTouchable(false);
-		popupWindow.showAsDropDown(getViewDataBinding().sortAndRefineLayout.sortProducts, Gravity.CLIP_HORIZONTAL, // Exact position of layout to display popup
-				0,
-				0);
+        dialog.setContentView(view);
+		Window window = dialog.getWindow();
+		window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+		window.setBackgroundDrawableResource(R.color.transparent);
+		window.setGravity(Gravity.TOP);
+		dialog.setTitle(null);
+		dialog.setCancelable(true);
+		dialog.show();
 
     }
 
