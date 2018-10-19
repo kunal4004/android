@@ -505,4 +505,21 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 				0);
 
     }
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		switch (requestCode){
+			case REFINE_REQUEST_CODE:
+				if(resultCode == Activity.RESULT_OK){
+					String navigationState = data.getStringExtra(ProductsRefineActivity.NAVIGATION_STATE);
+					reloadProductsWithRefinement(navigationState);
+				}
+		}
+	}
+
+	public void reloadProductsWithRefinement(String navigationState){
+		getViewModel().updateProductRequestBody(navigationState);
+		startProductRequest();
+	}
 }
