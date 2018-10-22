@@ -1,20 +1,15 @@
 package za.co.woolworths.financial.services.android.models.dao
 
+import android.content.Context
+import android.text.TextUtils
+import com.awfs.coordination.BuildConfig
 import retrofit.RestAdapter
-import za.co.woolworths.financial.services.android.contracts.OnCompletionListener
+import za.co.wigroup.androidutils.Util
 import za.co.woolworths.financial.services.android.contracts.OnResultListener
 import za.co.woolworths.financial.services.android.models.ApiInterface
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse
-import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask
-import android.content.pm.PackageManager
-import android.R.attr.versionName
-import android.content.Context
-import android.content.pm.PackageInfo
-import android.text.TextUtils
-import com.awfs.coordination.BuildConfig
-import za.co.wigroup.androidutils.Util
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -24,29 +19,14 @@ class MobileConfigServerDao {
     //static vars & functions
 
     companion object {
-        private val mcsUrl = "http://wfs-appserver-qa.wigroup.co:8080/wfs/app/v4"
 
         fun getConfig(appInstance: WoolworthsApplication, onResultListener: OnResultListener<ConfigResponse>) {
-
-            val firebaseManager = FirebaseManager.getInstance()
-            var firebaseRemoteConfig = firebaseManager.getRemoteConfig()
-
-            if (firebaseRemoteConfig == null){
-                //this ensures we're using defaults while the remote config
-                //is yet to be retrieved.
-                firebaseManager.setupRemoteConfig(object :OnCompletionListener{
-                    override fun complete() {
-                        getConfig(appInstance, onResultListener)
-                    }
-                })
-                return
-            }
 
             val task = object : HttpAsyncTask<String, String, ConfigResponse>() {
                 override fun httpDoInBackground(vararg strings: String): ConfigResponse {
 
                     val mApiInterface = RestAdapter.Builder()
-                            .setEndpoint(mcsUrl)
+                            .setEndpoint(BuildConfig.HOST)
                             .build()
                             .create(ApiInterface::class.java)
 

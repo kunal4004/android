@@ -24,8 +24,6 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import za.co.woolworths.financial.services.android.contracts.IFirebaseManager;
-import za.co.woolworths.financial.services.android.contracts.OnCompletionListener;
 import za.co.woolworths.financial.services.android.contracts.OnResultListener;
 import za.co.woolworths.financial.services.android.contracts.RootActivityInterface;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
@@ -37,7 +35,6 @@ import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WVideoView;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
-import za.co.woolworths.financial.services.android.util.FirebaseManager;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
@@ -150,10 +147,6 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 
 	private void executeConfigServer() {
 		//if app is expired, don't execute MCS.
-		if(FirebaseManager.Companion.getInstance().getRemoteConfig().getBoolean(APP_IS_EXPIRED_KEY)){
-			this.notifyIfNeeded();
-			return;
-		}
 
 		MobileConfigServerDao.Companion.getConfig(WoolworthsApplication.getInstance(), new OnResultListener<ConfigResponse>() {
 			@Override
@@ -241,6 +234,8 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 				startActivity(new Intent(this, StartupActivity.class));
 				finish();
 			}
+		}else{
+			executeConfigServer();
 		}
 	}
 
@@ -373,17 +368,6 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 
 	@Override
 	public void notifyIfNeeded() {
-
-		final IFirebaseManager firebaseManager = FirebaseManager.Companion.getInstance();
-		firebaseManager.setupRemoteConfig(new OnCompletionListener(){
-			@Override
-			public void complete() {
-				if (firebaseManager.getRemoteConfig().getBoolean(APP_IS_EXPIRED_KEY)){
-					throw new RuntimeException("Something awful happened...");
-				}
-				executeConfigServer();
-			}
-		});
 	}
 
 	@VisibleForTesting

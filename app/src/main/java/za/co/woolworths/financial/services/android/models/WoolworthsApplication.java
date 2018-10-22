@@ -46,7 +46,7 @@ public class WoolworthsApplication extends Application {
 	private WGlobalState mWGlobalState;
 
 	private static String baseURL;
-	private static String sha1Password = "aa78ee62cf4f89b6efc63689848fd36eb0680148";
+	private static String sha1Password = "ac68acf5df23ac3bc418569bfc0984ad3f6006e0";
 	private static String ssoRedirectURI;
 	private static String stsURI;
 	private static String ssoRedirectURILogout;
@@ -81,7 +81,7 @@ public class WoolworthsApplication extends Application {
 			e.printStackTrace();
 		}
 
-		String apiId = "iOS_v"; // TODO: Prefix needs to be changed
+		String apiId = "Android_v";
 		if (packageInfo.versionName.length() > 3) {
 			apiId += packageInfo.versionName.substring(0, 3);
 		} else {
