@@ -123,7 +123,7 @@ public class ScreenManager {
 		intent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.UPDATE_PROFILE.rawValue());
 		Log.e("updateDetail_PROFILE", SSOActivity.Path.UPDATE_PROFILE.rawValue());
 		activity.startActivityForResult(intent, SSOActivity.SSOActivityResult.LAUNCH.rawValue());
-		activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+		activity.overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
 	}
 
 	public static void presentSSOUpdatePassword(Activity activity) {
@@ -132,7 +132,7 @@ public class ScreenManager {
 		intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue());
 		intent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.UPDATE_PASSWORD.rawValue());
 		activity.startActivityForResult(intent, SSOActivity.SSOActivityResult.LAUNCH.rawValue());
-		activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+		activity.overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
 	}
 
 	public static void presentBiometricWalkthrough(final Activity activity){

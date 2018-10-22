@@ -36,17 +36,18 @@ import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.rest.cli.CLIGetOfferActive;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
-import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.DebitOrderActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
+import za.co.woolworths.financial.services.android.ui.activities.bpi.BPIBalanceProtectionActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.FragmentLifecycle;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
+import za.co.woolworths.financial.services.android.util.MyAccountHelper;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
@@ -92,7 +93,6 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	private boolean viewWasCreated = false;
 	private RelativeLayout rlViewTransactions, relBalanceProtection, mRelFindOutMore;
 	private CLIGetOfferActive cliGetOfferActive;
-
 	private final CompositeDisposable disposables = new CompositeDisposable();
 	private RelativeLayout rlViewStatement;
 	private AccountsResponse accountsResponse;
@@ -219,6 +219,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 						llActiveAccount.setVisibility(View.VISIBLE);
 						llChargedOffAccount.setVisibility(View.GONE);
 					}
+					relBalanceProtection.setVisibility(p.insuranceCovered ? View.VISIBLE:View.GONE);
 					productOfferingGoodStanding = p.productOfferingGoodStanding;
 					productOfferingId = String.valueOf(p.productOfferingId);
 					woolworthsApplication.setProductOfferingId(p.productOfferingId);
@@ -272,6 +273,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	@Override
 	public void onClick(View v) {
 		MultiClickPreventer.preventMultiClick(v);
+		Activity activity = getActivity();
+		if (activity == null)return;
 		if (accountsResponse != null) {
 			productOfferingId = Utils.getProductOfferingId(accountsResponse, "SC");
 		}
@@ -285,12 +288,13 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim
 						.stay);
 				break;
-
 			case R.id.relBalanceProtection:
-				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDBPI);
-				Intent intBalanceProtection = new Intent(getActivity(), BalanceProtectionActivity.class);
+				MyAccountHelper myAccountHelper = new MyAccountHelper();
+				String accountInfo = myAccountHelper.getAccountInfo(accountsResponse, "SC");
+				Intent intBalanceProtection = new Intent(getActivity(), BPIBalanceProtectionActivity.class);
+				intBalanceProtection.putExtra("account_info", accountInfo);
 				startActivity(intBalanceProtection);
-				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+				activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
 				break;
 
 			case R.id.tvIncreaseLimit:
@@ -306,22 +310,18 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 				break;
 
 			case R.id.rlViewStatement:
-				Activity activity = getActivity();
-				if (activity != null) {
 					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDSTATEMENTS);
 					((WoolworthsApplication) WStoreCardFragment.this.getActivity().getApplication())
 							.getUserManager
 									().getAccounts();
 					Intent openStatement = new Intent(getActivity(), StatementActivity.class);
-					//UserStatement statement = new UserStatement(productOfferingId);
 					startActivity(openStatement);
 					activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
-				}
 				break;
 			case R.id.iconAvailableFundsInfo:
 				Utils.displayValidationMessageForResult(
 						this,
-						getActivity(),
+						activity,
 						CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC,
 						getActivity().getResources().getString(R.string.account_in_arrears_info_title),
 						getActivity().getResources().getString(R.string.account_in_arrears_info_description)
@@ -339,7 +339,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 					Intent debitOrderIntent = new Intent(getActivity(), DebitOrderActivity.class);
 					debitOrderIntent.putExtra("DebitOrder", account.debitOrder);
 					startActivity(debitOrderIntent);
-					getActivity().overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+					activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
 				}
 				break;
 			default:

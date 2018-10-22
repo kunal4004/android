@@ -543,9 +543,12 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 				break;
 
 			case R.id.rlMyDetails:
-				Intent openMyDetail = new Intent(getActivity(), UserDetailActivity.class);
-				startActivity(openMyDetail);
-				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+				Activity activity = getActivity();
+				if (activity!=null) {
+					Intent openMyDetail = new Intent(getActivity(), UserDetailActivity.class);
+					startActivity(openMyDetail);
+					activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+				}
 				break;
 			case R.id.storeLocator:
 				pushFragment(new StoresNearbyFragment1());
