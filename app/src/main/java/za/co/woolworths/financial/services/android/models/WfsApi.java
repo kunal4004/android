@@ -342,13 +342,13 @@ public class WfsApi {
 	}
 
 	private String getApiId() {
-		return WoolworthsApplication.getApiKey();
+		return WoolworthsApplication.getApiId();
 	}
 
 	private String getSessionToken() {
 		String sessionToken = SessionUtilities.getInstance().getSessionToken();
 		if (sessionToken.isEmpty())
-			return "";
+			return ".";
 		else
 			return sessionToken;
 	}

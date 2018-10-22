@@ -189,11 +189,17 @@ public interface ApiInterface {
 			@Header("userAgentVersion") String userAgentVersion);
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
-	@GET("/{appVersion}")
+	@GET("/mobileconfigs")
 	ConfigResponse getConfig(
-			@Header("Authorization-X") String AuthorizationX,
-			@Header("UUID") String UUID,
-			@Path("appVersion") String appVersion
+			@Header("apiId") String apiId,
+			@Header("sha1Password") String sha1Password,
+			@Header("deviceVersion") String deviceVersion,
+			@Header("deviceModel") String deviceModel,
+			@Header("network") String network,
+			@Header("os") String os,
+			@Header("osVersion") String osVersion,
+			@Header("sessionToken") String sessionToken,
+			@Header("appVersion") String appVersion
 	);
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})

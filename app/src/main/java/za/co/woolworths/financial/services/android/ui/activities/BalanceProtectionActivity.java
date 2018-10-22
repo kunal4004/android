@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.ui.fragments.BalanceInsuranceFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.SubmitClaimFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.list.NewListFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -29,7 +30,7 @@ public class BalanceProtectionActivity extends AppCompatActivity {
 		Utils.updateStatusBarBackground(this);
 		init();
 		setActionBar();
-		addFragment(new BalanceInsuranceFragment());
+		addFragment(new SubmitClaimFragment());
 		setTitle(getString(R.string.balance_protection_title));
 	}
 
@@ -92,7 +93,7 @@ public class BalanceProtectionActivity extends AppCompatActivity {
 			getSupportFragmentManager().popBackStack();
 		} else {
 			finish();
-			overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
+			overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
 		}
 	}
 }

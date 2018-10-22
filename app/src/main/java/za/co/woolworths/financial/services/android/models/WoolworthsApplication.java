@@ -2,6 +2,8 @@ package za.co.woolworths.financial.services.android.models;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.StrictMode;
 import android.support.multidex.MultiDex;
 import android.support.v7.app.AppCompatDelegate;
@@ -44,8 +46,7 @@ public class WoolworthsApplication extends Application {
 	private WGlobalState mWGlobalState;
 
 	private static String baseURL;
-	private static String apiKey;
-	private static String sha1Password;
+	private static String sha1Password = "ac68acf5df23ac3bc418569bfc0984ad3f6006e0";
 	private static String ssoRedirectURI;
 	private static String stsURI;
 	private static String ssoRedirectURILogout;
@@ -67,16 +68,38 @@ public class WoolworthsApplication extends Application {
 		return sha1Password;
 	}
 
-	public static void setApiKey(String apiKey) {
-		WoolworthsApplication.apiKey = apiKey;
-	}
-
 	public static void setBaseURL(String baseURL) {
 		WoolworthsApplication.baseURL = baseURL;
 	}
 
-	public static String getApiKey() {
-		return apiKey;
+	public static String getApiId() {
+		PackageInfo packageInfo = null;
+		try {
+
+			packageInfo = WoolworthsApplication.getInstance().getPackageManager().getPackageInfo(WoolworthsApplication.getInstance().getPackageName(), 0);
+		} catch (PackageManager.NameNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		String apiId = "Android_v";
+		if (packageInfo.versionName.length() > 3) {
+			apiId += packageInfo.versionName.substring(0, 3);
+		} else {
+			apiId += packageInfo.versionName;
+		}
+		return apiId;
+	}
+
+	public static String getAppVersionName() {
+		PackageInfo packageInfo = null;
+		try {
+
+			packageInfo = WoolworthsApplication.getInstance().getPackageManager().getPackageInfo(WoolworthsApplication.getInstance().getPackageName(), 0);
+		} catch (PackageManager.NameNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		return packageInfo.versionName;
 	}
 
 	public static String getBaseURL() {

@@ -259,11 +259,11 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			messageCounterRequest();
 	}
 
-	//To remove negative signs from negative balance and add "CR" after the negative balance
+	// add negative sign before currency value
 	public String removeNegativeSymbol(SpannableString amount) {
 		String currentAmount = amount.toString();
 		if (currentAmount.contains("-")) {
-			currentAmount = currentAmount.replace("-", "") + " CR";
+			currentAmount = currentAmount.replace("R - ","- R ");
 		}
 		return currentAmount;
 	}
@@ -537,9 +537,12 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 				break;
 
 			case R.id.rlMyDetails:
-				Intent openMyDetail = new Intent(getActivity(), UserDetailActivity.class);
-				startActivity(openMyDetail);
-				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+				Activity activity = getActivity();
+				if (activity!=null) {
+					Intent openMyDetail = new Intent(getActivity(), UserDetailActivity.class);
+					startActivity(openMyDetail);
+					activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+				}
 				break;
 			case R.id.storeLocator:
 				pushFragment(new StoresNearbyFragment1());
@@ -803,6 +806,10 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			setToolbarBackgroundColor(R.color.white);
 			shoppingListRequest();
 			messageCounterRequest();
+
+			//Fixes WOP-3407
+			BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) getActivity();
+			bottomNavigationActivity.showBottomNavigationMenu();
 		}
 	}
 

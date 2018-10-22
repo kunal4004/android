@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -9,17 +8,13 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.RelativeLayout;
-import android.widget.Switch;
 
 import com.awfs.coordination.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.ui.adapters.UserDetailAdapter;
-import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -80,7 +75,7 @@ public class UserDetailActivity extends AppCompatActivity implements UserDetailA
 
 	private void finishActivity() {
 		finish();
-		overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
+		overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
 	}
 
 	private List<String> getItem() {

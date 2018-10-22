@@ -78,21 +78,25 @@ android {
         dev {
             applicationId "com.awfs.coordination.dev"
             signingConfig signingConfigs.woneappDev
+            buildConfigField("String", "HOST", '"http://wfs-appserver-dev.wigroup.co:8080/wfs/app/v4"')
         }
 
         qa {
             applicationId "com.awfs.coordination.qa"
             signingConfig signingConfigs.woneappQa
+            buildConfigField("String", "HOST", '"http://wfs-appserver-qa.wigroup.co:8080/wfs/app/v4"')
         }
 
         staging {
             applicationId "com.awfs.coordination.staging"
             signingConfig signingConfigs.woneappStaging
+            buildConfigField("String", "HOST", '"https://wfs-appserver.wigroup.co:8080/wfs/app/v4"')
         }
 
         production {
             applicationId "com.awfs.coordination"
             signingConfig signingConfigs.woolworths
+            buildConfigField("String", "HOST", '"https://wfs-appserver.wigroup.co:8080/wfs/app/v4"')
         }
         dexOptions {
             javaMaxHeapSize "2560M"
@@ -170,6 +174,7 @@ dependencies {
     implementation 'me.relex:circleindicator:1.2.2@aar'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.4'
     compile 'com.daasuu:BubbleLayout:1.2.0'
+    implementation 'com.google.code.gson:gson:2.8.0'
 
     //
     testImplementation 'junit:junit:4.12'

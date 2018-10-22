@@ -411,6 +411,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	public void updateCart(CartResponse cartResponse, CommerceItem commerceItemToRemove) {
 		this.orderSummary = cartResponse.orderSummary;
 		if (cartResponse.cartItems.size() > 0 && cartProductAdapter != null && commerceItemToRemove != null) {
+			ArrayList<CartItemGroup> emptyCartItemGroups = new ArrayList<>();
 			for (CartItemGroup cartItemGroup : cartItems) {
 				for (CommerceItem commerceItem : cartItemGroup.commerceItems) {
 					if (commerceItem.commerceItemInfo.commerceId.equalsIgnoreCase(commerceItemToRemove.commerceItemInfo.commerceId)) {
@@ -422,9 +423,14 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				 * Remove header when commerceItems is empty
 				 */
 				if (cartItemGroup.commerceItems.size() == 0) {
-					cartItems.remove(cartItemGroup);
+					emptyCartItemGroups.add(cartItemGroup);// Gather all the empty groups after deleting item.
 				}
 			}
+			//remove all the empty groups
+			for (CartItemGroup cartItemGroup : emptyCartItemGroups) {
+				cartItems.remove(cartItemGroup);
+			}
+
 			cartProductAdapter.notifyAdapter(cartItems, orderSummary);
 		} else {
 
