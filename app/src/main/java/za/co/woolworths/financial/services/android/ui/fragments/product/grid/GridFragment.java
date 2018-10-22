@@ -212,6 +212,7 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 			hideFooterView();
 			if (!loadMoreData) {
                 getViewDataBinding().sortAndRefineLayout.parentLayout.setVisibility(View.VISIBLE);
+				getViewDataBinding().sortAndRefineLayout.refineProducts.setClickable(productView.navigation.size() > 0);
 				bindRecyclerViewWithUI(productLists);
 			} else {
 				loadMoreData(productLists);
