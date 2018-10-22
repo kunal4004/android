@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.Map;
 
 import me.relex.circleindicator.CircleIndicator;
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
@@ -278,6 +279,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 				addItemToCart();
 				break;
 			case R.id.btnAddShoppingList:
+				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPADDTOLIST);
 				addItemToShoppingList();
 				break;
 			case R.id.rlStoreFinder:
