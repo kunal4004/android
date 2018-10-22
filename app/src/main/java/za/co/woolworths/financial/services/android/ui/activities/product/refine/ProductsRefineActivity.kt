@@ -55,11 +55,10 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
 
     private fun initViews() {
         replaceRefinementOptionsFragment(productsResponse!!)
-
     }
 
     private fun replaceRefinementOptionsFragment(productsResponse: ProductView) {
-        replaceFragmentSafely(RefinementNavigationFragment.getInstance(productsResponse), TAG_NAVIGATION_FRAGMENT, false, false, R.id.refinement_fragment_container)
+        replaceFragmentSafely(RefinementNavigationFragment.getInstance(productsResponse, isResetButtonEnabled()), TAG_NAVIGATION_FRAGMENT, false, false, R.id.refinement_fragment_container)
     }
 
     override fun onRefinementOptionSelected(refinementNavigation: RefinementNavigation) {
@@ -70,17 +69,8 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
         pushFragment(SubRefinementFragment.getInstance(refinement), TAG_SUB_REFINEMENT_FRAGMENT)
     }
 
-    override fun onSubRefinementSelected(subRefinement: SubRefinement) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-
     fun pushFragment(fragment: Fragment, tag: String) {
         replaceFragmentSafely(fragment, tag, false, true, R.id.refinement_fragment_container, R.anim.slide_in_from_right, R.anim.slide_out_to_left, R.anim.slide_in_from_left, R.anim.slide_out_to_right)
-    }
-
-    fun popFragment(fragment: Fragment, tag: String) {
-        replaceFragmentSafely(fragment, tag, false, true, R.id.refinement_fragment_container, R.anim.slide_in_from_left, R.anim.slide_out_to_right)
     }
 
     override fun onBackPressed() {
@@ -117,22 +107,33 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
         hideProgressBar()
     }
 
+    override fun onProductRefineResetSuccess(productView: ProductView) {
+        productsResponse = productView
+        reloadFragment(productView)
+        hideProgressBar()
+    }
+
     override fun onProductRefineFailure(message: String) {
         hideProgressBar()
     }
 
     override fun onSeeResults(navigationState: String) {
         if (!TextUtils.isEmpty(navigationState)) {
-            intent = Intent()
-            intent.putExtra(NAVIGATION_STATE, navigationState)
-            setResult(Activity.RESULT_OK, intent)
+            setResultForProductListing(navigationState)
         } else if (!TextUtils.isEmpty(updatedProductsRequestParams?.refinement)) {
-            intent = Intent()
-            intent.putExtra(NAVIGATION_STATE, updatedProductsRequestParams?.refinement)
-            setResult(Activity.RESULT_OK, intent)
+            setResultForProductListing(updatedProductsRequestParams?.refinement!!)
+        } else if (!TextUtils.isEmpty(productsRequestParams?.refinement) && TextUtils.isEmpty(updatedProductsRequestParams?.refinement)) {
+            val emptyNavigationState = ""
+            setResultForProductListing(emptyNavigationState)
         }
         finish()
         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+    }
+
+    private fun setResultForProductListing(navigationState: String) {
+        intent = Intent()
+        intent.putExtra(NAVIGATION_STATE, navigationState)
+        setResult(Activity.RESULT_OK, intent)
     }
 
     private fun hideProgressBar() {
@@ -150,18 +151,7 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
         }
     }
 
-    private fun refreshActivity(productView: ProductView) {
-        val intent = intent
-        intent.putExtra(REFINEMENT_DATA, Utils.toJson(productView))
-        intent.putExtra(PRODUCTS_REQUEST_PARAMS, Utils.toJson(productsRequestParams))
-        overridePendingTransition(0, 0)
-        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
-        finish()
-        overridePendingTransition(0, 0)
-        startActivity(intent)
-    }
-
-    override fun onResetClicked() {
+    override fun onRefinementClear() {
         updatedProductsRequestParams?.refinement = ""
         reloadFragment(productsResponse!!)
     }
@@ -185,6 +175,19 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
             }
         }
         replaceRefinementOptionsFragment(productView)
+    }
+
+    override fun onRefinementReset() {
+        val navigationState = ""
+        executeRefineProducts(navigationState)
+    }
+
+    private fun isResetButtonEnabled(): Boolean {
+        var isResetEnabled = false
+        if (!TextUtils.isEmpty(productsRequestParams?.refinement) && TextUtils.isEmpty(updatedProductsRequestParams?.refinement))
+            isResetEnabled = true
+
+        return isResetEnabled
     }
 
 }

@@ -7,9 +7,9 @@ import za.co.woolworths.financial.services.android.models.dto.SubRefinement
 interface OnRefinementOptionSelected {
     fun onRefinementOptionSelected(refinementNavigation: RefinementNavigation)
     fun onRefinementSelected(refinement: Refinement)
-    fun onSubRefinementSelected(subRefinement: SubRefinement)
     fun onBackPressedWithRefinement(navigationState: String)
     fun onBackPressedWithOutRefinement()
     fun onSeeResults(navigationState: String)
-    fun onResetClicked()
+    fun onRefinementClear()
+    fun onRefinementReset()
 }

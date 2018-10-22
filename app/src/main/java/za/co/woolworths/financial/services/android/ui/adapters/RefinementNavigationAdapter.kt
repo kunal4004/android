@@ -20,7 +20,7 @@ import za.co.woolworths.financial.services.android.ui.activities.product.refine.
 import za.co.woolworths.financial.services.android.ui.fragments.product.refine.RefinementNavigationFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.OnRefinementOptionSelected
 
-class RefinementNavigationAdapter(val context: Context, val listner: OnRefinementOptionSelected, var dataList: ArrayList<RefinementSelectableItem>, var history: RefinementHistory) : RecyclerView.Adapter<RefinementBaseViewHolder>() {
+class RefinementNavigationAdapter(val context: Context, val promotionChangeListner: OnPromotionSelectionChanged, val listner: OnRefinementOptionSelected, var dataList: ArrayList<RefinementSelectableItem>, var history: RefinementHistory) : RecyclerView.Adapter<RefinementBaseViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RefinementBaseViewHolder? {
         when (viewType) {
@@ -65,6 +65,7 @@ class RefinementNavigationAdapter(val context: Context, val listner: OnRefinemen
             itemView.promotionSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
                 item.isSelected = isChecked
                 notifyDataSetChanged()
+                promotionChangeListner.onPromotionSelectionChanged()
             }
         }
     }
@@ -123,5 +124,9 @@ class RefinementNavigationAdapter(val context: Context, val listner: OnRefinemen
 
     override fun getItemViewType(position: Int): Int {
         return dataList[position].type.value
+    }
+
+    interface OnPromotionSelectionChanged {
+        fun onPromotionSelectionChanged()
     }
 }

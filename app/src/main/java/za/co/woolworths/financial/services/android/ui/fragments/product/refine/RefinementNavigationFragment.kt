@@ -4,6 +4,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.refine
 import android.content.Context
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.text.TextUtils
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -18,24 +19,26 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.utils.Re
 import za.co.woolworths.financial.services.android.util.Utils
 
 
-class RefinementNavigationFragment : BaseRefinementFragment(), RefinementOnBackPressed {
+class RefinementNavigationFragment : BaseRefinementFragment(), RefinementOnBackPressed, RefinementNavigationAdapter.OnPromotionSelectionChanged {
 
     private lateinit var listener: OnRefinementOptionSelected
     private var refinementNavigationAdapter: RefinementNavigationAdapter? = null
-    private var resetRefinement: TextView? = null
+    private var clearOrRresetRefinement: TextView? = null
     private var productView: ProductView? = null
     private var backButton: ImageView? = null
     private var dataList = arrayListOf<RefinementSelectableItem>()
+    private var isResetEnabled = false
 
     companion object {
         private val ARG_PARAM = "productViewObject"
         val ON_PROMOTION: String = "On Promotion"
         val CATEGORY: String = "Category"
 
-        fun getInstance(productView: ProductView): RefinementNavigationFragment {
+        fun getInstance(productView: ProductView, isResetEnabled: Boolean): RefinementNavigationFragment {
             val fragment = RefinementNavigationFragment()
             val args = Bundle()
             args.putString(ARG_PARAM, Utils.toJson(productView))
+            args.putBoolean("isResetEnabled", isResetEnabled)
             fragment.arguments = args
             return fragment
         }
@@ -45,6 +48,7 @@ class RefinementNavigationFragment : BaseRefinementFragment(), RefinementOnBackP
         super.onCreate(savedInstanceState)
         if (arguments != null) {
             productView = Utils.jsonStringToObject(arguments.getString(ARG_PARAM), ProductView::class.java) as ProductView
+            isResetEnabled = arguments.getBoolean("isResetEnabled")
         }
     }
 
@@ -56,12 +60,12 @@ class RefinementNavigationFragment : BaseRefinementFragment(), RefinementOnBackP
     private fun initViews() {
         backButton = activity.findViewById(R.id.btnClose)
         backButton?.setImageResource(R.drawable.close_24)
-        resetRefinement = activity.findViewById(R.id.resetRefinement)
-        resetRefinement?.text = getString(R.string.refine_reset)
+        clearOrRresetRefinement = activity.findViewById(R.id.resetRefinement)
         backButton?.setOnClickListener { onBackPressed() }
-        resetRefinement?.setOnClickListener { listener.onResetClicked() }
+        clearOrRresetRefinement?.setOnClickListener { if (TextUtils.isEmpty(getNavigationState()) && isResetEnabled) listener.onRefinementReset() else listener.onRefinementClear() }
         refinementSeeResult.setOnClickListener { seeResults() }
         refinementList.layoutManager = LinearLayoutManager(activity)
+        updateToolBarMenuText()
         loadData()
     }
 
@@ -69,7 +73,7 @@ class RefinementNavigationFragment : BaseRefinementFragment(), RefinementOnBackP
         if (productView!!.navigation != null && productView!!.navigation.size > 0) {
             setResultCount(productView!!.navigation)
             dataList = getRefinementSelectableItems(productView?.navigation!!)
-            refinementNavigationAdapter = RefinementNavigationAdapter(activity, listener, dataList, productView?.history!!)
+            refinementNavigationAdapter = RefinementNavigationAdapter(activity, this, listener, dataList, productView?.history!!)
             refinementList.adapter = refinementNavigationAdapter!!
         }
     }
@@ -137,6 +141,18 @@ class RefinementNavigationFragment : BaseRefinementFragment(), RefinementOnBackP
             }
         }
         return navigationState
+    }
+
+    private fun updateToolBarMenuText() {
+        if (TextUtils.isEmpty(getNavigationState()) && isResetEnabled) {
+            clearOrRresetRefinement?.text = getString(R.string.refine_reset)
+        } else {
+            clearOrRresetRefinement?.text = getString(R.string.refinement_clear)
+        }
+    }
+
+    override fun onPromotionSelectionChanged() {
+        updateToolBarMenuText()
     }
 
 }
