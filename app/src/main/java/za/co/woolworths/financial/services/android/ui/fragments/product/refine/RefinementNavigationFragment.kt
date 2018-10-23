@@ -15,11 +15,11 @@ import za.co.woolworths.financial.services.android.models.dto.RefinementNavigati
 import za.co.woolworths.financial.services.android.models.dto.RefinementSelectableItem
 import za.co.woolworths.financial.services.android.ui.adapters.RefinementNavigationAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.OnRefinementOptionSelected
-import za.co.woolworths.financial.services.android.ui.fragments.product.utils.RefinementOnBackPressed
+import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseFragmentListner
 import za.co.woolworths.financial.services.android.util.Utils
 
 
-class RefinementNavigationFragment : BaseRefinementFragment(), RefinementOnBackPressed, RefinementNavigationAdapter.OnPromotionSelectionChanged {
+class RefinementNavigationFragment : BaseRefinementFragment(), BaseFragmentListner {
 
     private lateinit var listener: OnRefinementOptionSelected
     private var refinementNavigationAdapter: RefinementNavigationAdapter? = null
@@ -28,16 +28,22 @@ class RefinementNavigationFragment : BaseRefinementFragment(), RefinementOnBackP
     private var backButton: ImageView? = null
     private var dataList = arrayListOf<RefinementSelectableItem>()
     private var isResetEnabled = false
+    private var baseNavigationState = ""
+    private var updatedNavigationState = ""
 
     companion object {
         private val ARG_PARAM = "productViewObject"
         val ON_PROMOTION: String = "On Promotion"
         val CATEGORY: String = "Category"
+        val NAVIGATION_STATE = "NAVIGATION_STATE"
+        val UPDATED_NAVIGATION_STATE = "UPDATED_NAVIGATION_STATE"
 
-        fun getInstance(productView: ProductView, isResetEnabled: Boolean): RefinementNavigationFragment {
+        fun getInstance(productView: ProductView, navigationState: String, updatedNavigationState: String, isResetEnabled: Boolean): RefinementNavigationFragment {
             val fragment = RefinementNavigationFragment()
             val args = Bundle()
             args.putString(ARG_PARAM, Utils.toJson(productView))
+            args.putString(NAVIGATION_STATE, navigationState)
+            args.putString(UPDATED_NAVIGATION_STATE, updatedNavigationState)
             args.putBoolean("isResetEnabled", isResetEnabled)
             fragment.arguments = args
             return fragment
@@ -49,6 +55,8 @@ class RefinementNavigationFragment : BaseRefinementFragment(), RefinementOnBackP
         if (arguments != null) {
             productView = Utils.jsonStringToObject(arguments.getString(ARG_PARAM), ProductView::class.java) as ProductView
             isResetEnabled = arguments.getBoolean("isResetEnabled")
+            baseNavigationState = arguments.getString(NAVIGATION_STATE, "")
+            updatedNavigationState = arguments.getString(UPDATED_NAVIGATION_STATE, "")
         }
     }
 
@@ -71,7 +79,7 @@ class RefinementNavigationFragment : BaseRefinementFragment(), RefinementOnBackP
 
     private fun loadData() {
         if (productView!!.navigation != null && productView!!.navigation.size > 0) {
-            setResultCount(productView!!.navigation)
+            setResultCount(productView?.pagingResponse?.numItemsInTotal)
             dataList = getRefinementSelectableItems(productView?.navigation!!)
             refinementNavigationAdapter = RefinementNavigationAdapter(activity, this, listener, dataList, productView?.history!!)
             refinementList.adapter = refinementNavigationAdapter!!
@@ -107,18 +115,8 @@ class RefinementNavigationFragment : BaseRefinementFragment(), RefinementOnBackP
         return dataList
     }
 
-    private fun setResultCount(navigationList: ArrayList<RefinementNavigation>) {
-        var totalCount = 0
-        navigationList.forEach {
-            it.refinements.forEach {
-                totalCount += it.count
-            }
-        }
-        setResultCount(totalCount)
-    }
-
-    private fun setResultCount(resultCount: Int) {
-        seeResultCount.text = getString(R.string.see_results_count_start) + resultCount.toString() + getString(R.string.see_results_count_end)
+    private fun setResultCount(count: Int?) {
+        seeResultCount.text = getString(R.string.see_results_count_start) + count.toString() + getString(R.string.see_results_count_end)
     }
 
     override fun onBackPressed() {
@@ -144,15 +142,22 @@ class RefinementNavigationFragment : BaseRefinementFragment(), RefinementOnBackP
     }
 
     private fun updateToolBarMenuText() {
-        if (TextUtils.isEmpty(getNavigationState()) && isResetEnabled) {
+        if (TextUtils.isEmpty(getNavigationState()) && !TextUtils.isEmpty(baseNavigationState) && TextUtils.isEmpty(updatedNavigationState)) {
             clearOrRresetRefinement?.text = getString(R.string.refine_reset)
+            clearOrRresetRefinement?.isEnabled = !TextUtils.isEmpty(baseNavigationState)
         } else {
             clearOrRresetRefinement?.text = getString(R.string.refinement_clear)
+            clearOrRresetRefinement?.isEnabled = (!TextUtils.isEmpty(getNavigationState()) || !TextUtils.isEmpty(updatedNavigationState))
         }
     }
 
-    override fun onPromotionSelectionChanged() {
-        updateToolBarMenuText()
+    override fun onSelectionChanged() {
     }
+
+    override fun onPromotionToggled(count: Int, isEnabled: Boolean) {
+        updateToolBarMenuText()
+        if (isEnabled) setResultCount(count) else setResultCount(productView?.pagingResponse?.numItemsInTotal)
+    }
+
 
 }

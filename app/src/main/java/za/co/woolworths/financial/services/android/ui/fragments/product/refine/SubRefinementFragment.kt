@@ -15,10 +15,10 @@ import za.co.woolworths.financial.services.android.models.dto.RefinementSelectab
 import za.co.woolworths.financial.services.android.models.dto.SubRefinement
 import za.co.woolworths.financial.services.android.ui.adapters.SubRefinementAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.OnRefinementOptionSelected
-import za.co.woolworths.financial.services.android.ui.fragments.product.utils.RefinementOnBackPressed
+import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseFragmentListner
 import za.co.woolworths.financial.services.android.util.Utils
 
-class SubRefinementFragment : BaseRefinementFragment(), RefinementOnBackPressed {
+class SubRefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     private lateinit var listener: OnRefinementOptionSelected
     private var subRefinementAdapter: SubRefinementAdapter? = null
     private var clearRefinement: TextView? = null
@@ -58,12 +58,13 @@ class SubRefinementFragment : BaseRefinementFragment(), RefinementOnBackPressed 
         backButton?.setOnClickListener { onBackPressed() }
         refinementSeeResult.setOnClickListener { seeResults() }
         refinementList.layoutManager = LinearLayoutManager(activity)
+        onSelectionChanged()
         loadData()
     }
 
     private fun loadData() {
         dataList = getSubRefinementSelectableItems(refinement!!.subRefinements)
-        subRefinementAdapter = SubRefinementAdapter(activity, listener, dataList)
+        subRefinementAdapter = SubRefinementAdapter(activity, this, listener, dataList)
         refinementList.adapter = subRefinementAdapter
     }
 
@@ -107,5 +108,12 @@ class SubRefinementFragment : BaseRefinementFragment(), RefinementOnBackPressed 
             }
         }
         return navigationState
+    }
+
+    override fun onSelectionChanged() {
+        clearRefinement?.isEnabled = !TextUtils.isEmpty(getNavigationState())
+    }
+
+    override fun onPromotionToggled(count: Int, isEnabled: Boolean) {
     }
 }

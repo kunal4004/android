@@ -53,7 +53,7 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
     }
 
     private fun replaceRefinementOptionsFragment(productsResponse: ProductView) {
-        replaceFragmentSafely(RefinementNavigationFragment.getInstance(productsResponse, isResetButtonEnabled()), TAG_NAVIGATION_FRAGMENT, false, false, R.id.refinement_fragment_container)
+        replaceFragmentSafely(RefinementNavigationFragment.getInstance(productsResponse, getBaseNavigationState(), getRefinedNavigationState(), isResetButtonEnabled()), TAG_NAVIGATION_FRAGMENT, false, false, R.id.refinement_fragment_container)
     }
 
     override fun onRefinementOptionSelected(refinementNavigation: RefinementNavigation) {
@@ -102,8 +102,10 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
         if (productView.navigation == null || productView.navigation.size == 0) {
             setResultForProductListing(navigationState)
         } else {
-            if (TextUtils.isEmpty(navigationState))
+            if (TextUtils.isEmpty(navigationState)) {
+                this.productsRequestParams?.refinement = navigationState
                 this.productsResponse = productView
+            }
             reloadFragment(productView)
         }
 
@@ -196,5 +198,13 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
         when (requestCode) {
             ERROR_REQUEST_CODE -> closeDownPage()
         }
+    }
+
+    private fun getBaseNavigationState(): String {
+        return productsRequestParams?.refinement!!
+    }
+
+    private fun getRefinedNavigationState(): String {
+        return if (updatedProductsRequestParams != null) updatedProductsRequestParams?.refinement!! else emptyNavigationState
     }
 }

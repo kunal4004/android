@@ -16,10 +16,10 @@ import za.co.woolworths.financial.services.android.models.dto.RefinementNavigati
 import za.co.woolworths.financial.services.android.models.dto.RefinementSelectableItem
 import za.co.woolworths.financial.services.android.ui.adapters.RefinementAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.OnRefinementOptionSelected
-import za.co.woolworths.financial.services.android.ui.fragments.product.utils.RefinementOnBackPressed
+import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseFragmentListner
 import za.co.woolworths.financial.services.android.util.Utils
 
-class RefinementFragment : BaseRefinementFragment(), RefinementOnBackPressed {
+class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     private lateinit var listener: OnRefinementOptionSelected
     private var refinementAdapter: RefinementAdapter? = null
     private var clearRefinement: TextView? = null
@@ -59,12 +59,13 @@ class RefinementFragment : BaseRefinementFragment(), RefinementOnBackPressed {
         backButton?.setOnClickListener { onBackPressed() }
         refinementSeeResult.setOnClickListener { seeResults() }
         refinementList.layoutManager = LinearLayoutManager(activity)
+        onSelectionChanged()
         loadData()
     }
 
     private fun loadData() {
         dataList = getRefinementSelectableItems(refinementNavigation!!)
-        refinementAdapter = RefinementAdapter(activity, listener, dataList, refinementNavigation!!)
+        refinementAdapter = RefinementAdapter(activity, this, listener, dataList, refinementNavigation!!)
         refinementList.adapter = refinementAdapter
     }
 
@@ -127,6 +128,13 @@ class RefinementFragment : BaseRefinementFragment(), RefinementOnBackPressed {
             }
         }
         return navigationState
+    }
+
+    override fun onSelectionChanged() {
+        clearRefinement?.isEnabled = !TextUtils.isEmpty(getNavigationState())
+    }
+
+    override fun onPromotionToggled(count: Int, isEnabled: Boolean) {
     }
 
 }

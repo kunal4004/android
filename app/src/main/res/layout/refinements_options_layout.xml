@@ -19,9 +19,11 @@
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:id="@+id/label"
             style="@style/refinements_textview_style_breadcrumbs"
+            android:layout_width="match_parent"
             android:layout_marginLeft="@dimen/sixteen_dp"
             android:layout_toLeftOf="@+id/rightArrow"
             android:layout_toRightOf="@+id/displayName"
+            android:gravity="end"
             android:ellipsize="end"
             android:singleLine="true" />
 

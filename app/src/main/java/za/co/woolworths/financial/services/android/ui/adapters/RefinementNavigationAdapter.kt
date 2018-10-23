@@ -8,19 +8,19 @@ import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.refinements_on_promotion_layout.view.*
-import za.co.woolworths.financial.services.android.models.dto.RefinementSelectableItem
-import za.co.woolworths.financial.services.android.ui.adapters.holder.RefinementBaseViewHolder
 import kotlinx.android.synthetic.main.refinements_options_layout.view.*
 import kotlinx.android.synthetic.main.refinements_section_header_layout.view.*
 import kotlinx.android.synthetic.main.refinements_single_selection_layout.view.*
 import za.co.woolworths.financial.services.android.models.dto.BreadCrumb
 import za.co.woolworths.financial.services.android.models.dto.RefinementHistory
 import za.co.woolworths.financial.services.android.models.dto.RefinementNavigation
-import za.co.woolworths.financial.services.android.ui.activities.product.refine.ProductsRefineActivity
+import za.co.woolworths.financial.services.android.models.dto.RefinementSelectableItem
+import za.co.woolworths.financial.services.android.ui.adapters.holder.RefinementBaseViewHolder
 import za.co.woolworths.financial.services.android.ui.fragments.product.refine.RefinementNavigationFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseFragmentListner
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.OnRefinementOptionSelected
 
-class RefinementNavigationAdapter(val context: Context, val promotionChangeListner: OnPromotionSelectionChanged, val listner: OnRefinementOptionSelected, var dataList: ArrayList<RefinementSelectableItem>, var history: RefinementHistory) : RecyclerView.Adapter<RefinementBaseViewHolder>() {
+class RefinementNavigationAdapter(val context: Context, val baseListner: BaseFragmentListner, val listner: OnRefinementOptionSelected, var dataList: ArrayList<RefinementSelectableItem>, var history: RefinementHistory) : RecyclerView.Adapter<RefinementBaseViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RefinementBaseViewHolder? {
         when (viewType) {
@@ -59,7 +59,7 @@ class RefinementNavigationAdapter(val context: Context, val promotionChangeListn
             itemView.promotionSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
                 item.isSelected = isChecked
                 notifyDataSetChanged()
-                promotionChangeListner.onPromotionSelectionChanged()
+                baseListner.onPromotionToggled((item.item as RefinementNavigation).refinements[0].count, isChecked)
             }
         }
     }
@@ -94,33 +94,7 @@ class RefinementNavigationAdapter(val context: Context, val promotionChangeListn
         }
     }
 
-    inner class SingleSelectorHolder(itemView: View) : RefinementBaseViewHolder(itemView) {
-        override fun bind(position: Int) {
-            itemView.singleSelector.isChecked = dataList[position].isSelected
-            itemView.setOnClickListener {
-                dataList.forEachIndexed { index, refinementSelectableItem ->
-                    if (index == position) {
-                        refinementSelectableItem.isSelected = true
-                    } else if (refinementSelectableItem.type == RefinementSelectableItem.ViewType.SINGLE_SELECTOR) {
-                        refinementSelectableItem.isSelected = false
-                    }
-                }
-                notifyDataSetChanged()
-            }
-        }
-    }
-
-    inner class MultiSelectorHolder(itemView: View) : RefinementBaseViewHolder(itemView) {
-        override fun bind(position: Int) {
-
-        }
-    }
-
     override fun getItemViewType(position: Int): Int {
         return dataList[position].type.value
-    }
-
-    interface OnPromotionSelectionChanged {
-        fun onPromotionSelectionChanged()
     }
 }

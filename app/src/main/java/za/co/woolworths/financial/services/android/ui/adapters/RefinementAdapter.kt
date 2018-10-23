@@ -14,9 +14,10 @@ import za.co.woolworths.financial.services.android.models.dto.RefinementCrumb
 import za.co.woolworths.financial.services.android.models.dto.RefinementNavigation
 import za.co.woolworths.financial.services.android.models.dto.RefinementSelectableItem
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RefinementBaseViewHolder
+import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseFragmentListner
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.OnRefinementOptionSelected
 
-class RefinementAdapter(val context: Context, val listner: OnRefinementOptionSelected, var dataList: ArrayList<RefinementSelectableItem>, refinementNavigation: RefinementNavigation) : RecyclerView.Adapter<RefinementBaseViewHolder>() {
+class RefinementAdapter(val context: Context, val baseListner: BaseFragmentListner, val listner: OnRefinementOptionSelected, var dataList: ArrayList<RefinementSelectableItem>, refinementNavigation: RefinementNavigation) : RecyclerView.Adapter<RefinementBaseViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RefinementBaseViewHolder? {
         when (viewType) {
@@ -74,6 +75,7 @@ class RefinementAdapter(val context: Context, val listner: OnRefinementOptionSel
                     }
                 }
                 notifyDataSetChanged()
+                baseListner.onSelectionChanged()
             }
         }
     }
@@ -95,6 +97,7 @@ class RefinementAdapter(val context: Context, val listner: OnRefinementOptionSel
             itemView.setOnClickListener {
                 dataList[position].isSelected = !dataList[position].isSelected
                 notifyDataSetChanged()
+                baseListner.onSelectionChanged()
             }
         }
     }
@@ -108,5 +111,6 @@ class RefinementAdapter(val context: Context, val listner: OnRefinementOptionSel
             it.isSelected = it.item is RefinementCrumb
         }
         notifyDataSetChanged()
+        baseListner.onSelectionChanged()
     }
 }

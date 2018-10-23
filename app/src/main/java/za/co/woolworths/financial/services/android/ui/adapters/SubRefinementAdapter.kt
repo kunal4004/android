@@ -11,9 +11,10 @@ import kotlinx.android.synthetic.main.refinements_single_selection_layout.view.*
 import za.co.woolworths.financial.services.android.models.dto.RefinementSelectableItem
 import za.co.woolworths.financial.services.android.models.dto.SubRefinement
 import za.co.woolworths.financial.services.android.ui.adapters.holder.RefinementBaseViewHolder
+import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseFragmentListner
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.OnRefinementOptionSelected
 
-class SubRefinementAdapter(val context: Context, val listner: OnRefinementOptionSelected, var dataList: ArrayList<RefinementSelectableItem>) : RecyclerView.Adapter<RefinementBaseViewHolder>() {
+class SubRefinementAdapter(val context: Context, val baseListner: BaseFragmentListner, val listner: OnRefinementOptionSelected, var dataList: ArrayList<RefinementSelectableItem>) : RecyclerView.Adapter<RefinementBaseViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RefinementBaseViewHolder? {
         when (viewType) {
@@ -50,6 +51,7 @@ class SubRefinementAdapter(val context: Context, val listner: OnRefinementOption
                     }
                 }
                 notifyDataSetChanged()
+                baseListner.onSelectionChanged()
             }
         }
     }
@@ -63,6 +65,7 @@ class SubRefinementAdapter(val context: Context, val listner: OnRefinementOption
             itemView.setOnClickListener {
                 dataList[position].isSelected = !dataList[position].isSelected
                 notifyDataSetChanged()
+                baseListner.onSelectionChanged()
             }
 
         }
@@ -77,5 +80,6 @@ class SubRefinementAdapter(val context: Context, val listner: OnRefinementOption
             it.isSelected = false
         }
         notifyDataSetChanged()
+        baseListner.onSelectionChanged()
     }
 }

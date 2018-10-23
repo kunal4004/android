@@ -54,7 +54,8 @@
                     android:id="@+id/resetRefinement"
                     style="@style/toolbar_menu_text_style"
                     android:layout_alignParentRight="true"
-                    android:text="@string/refine_reset" />
+                    android:text="@string/refine_reset"
+                    android:textColor="@drawable/refine_toolbar_menu_text_color" />
 
             </RelativeLayout>
 
