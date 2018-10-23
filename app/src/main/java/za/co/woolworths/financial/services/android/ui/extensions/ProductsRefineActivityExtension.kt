@@ -13,10 +13,7 @@ fun refineProducts(context: Context, productsRequestParams: ProductsRequestParam
     productsRequestParams.responseType = ProductsRequestParams.ResponseType.SUMMARY
     return GetProductsRequest(context, productsRequestParams, object : OnEventListener<ProductView> {
         override fun onSuccess(`object`: ProductView?) {
-            if (TextUtils.isEmpty(productsRequestParams.refinement))
-                resultListner.onProductRefineResetSuccess(`object`!!)
-            else
-                resultListner.onProductRefineSuccess(`object`!!)
+            resultListner.onProductRefineSuccess(`object`!!, productsRequestParams.refinement)
         }
 
         override fun onFailure(e: String?) {

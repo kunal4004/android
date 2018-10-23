@@ -28,20 +28,13 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
     private var productsResponse: ProductView? = null
     private var productsRequestParams: ProductsRequestParams? = null
     private var updatedProductsRequestParams: ProductsRequestParams? = null
+    private val emptyNavigationState = ""
 
     companion object {
         const val TAG_NAVIGATION_FRAGMENT: String = "OptionsFragment"
         const val TAG_REFINEMENT_FRAGMENT: String = "RefinementFragment"
         const val TAG_SUB_REFINEMENT_FRAGMENT: String = "SubRefinementFragment"
         const val NAVIGATION_STATE = "NAVIGATION_STATE"
-        fun getAllLabelsFromRefinementCrumbs(refinementCrumbs: ArrayList<RefinementCrumb>): String {
-            var result = ""
-            refinementCrumbs.forEach {
-                result.plus(it.label)
-                result.plus(",")
-            }
-            return result
-        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,7 +74,6 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
     }
 
     override fun onBackPressedWithRefinement(navigationState: String) {
-        showProgressBar()
         executeRefineProducts(navigationState)
     }
 
@@ -97,20 +89,22 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
     }
 
     private fun executeRefineProducts(refinement: String) {
+        showProgressBar()
         updatedProductsRequestParams = ProductsRequestParams(productsRequestParams?.searchTerm!!, productsRequestParams?.searchType!!, productsRequestParams?.responseType!!, productsRequestParams?.pageOffset!!)
         updatedProductsRequestParams?.refinement = refinement
         refineProducts(this, updatedProductsRequestParams!!).execute()
     }
 
-    override fun onProductRefineSuccess(productView: ProductView) {
-        reloadFragment(productView)
+    override fun onProductRefineSuccess(productView: ProductView, navigationState: String) {
         hideProgressBar()
-    }
+        if (productView.navigation == null || productView.navigation.size == 0) {
+            setResultForProductListing(navigationState)
+        } else {
+            if (TextUtils.isEmpty(navigationState))
+                this.productsResponse = productView
+            reloadFragment(productView)
+        }
 
-    override fun onProductRefineResetSuccess(productView: ProductView) {
-        productsResponse = productView
-        reloadFragment(productView)
-        hideProgressBar()
     }
 
     override fun onProductRefineFailure(message: String) {
@@ -123,17 +117,17 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
         } else if (!TextUtils.isEmpty(updatedProductsRequestParams?.refinement)) {
             setResultForProductListing(updatedProductsRequestParams?.refinement!!)
         } else if (!TextUtils.isEmpty(productsRequestParams?.refinement) && TextUtils.isEmpty(updatedProductsRequestParams?.refinement)) {
-            val emptyNavigationState = ""
             setResultForProductListing(emptyNavigationState)
         }
-        finish()
-        overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+        this.closeDownPage()
     }
 
     private fun setResultForProductListing(navigationState: String) {
         intent = Intent()
         intent.putExtra(NAVIGATION_STATE, navigationState)
         setResult(Activity.RESULT_OK, intent)
+        this.closeDownPage()
+        return
     }
 
     private fun hideProgressBar() {
@@ -152,7 +146,7 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
     }
 
     override fun onRefinementClear() {
-        updatedProductsRequestParams?.refinement = ""
+        updatedProductsRequestParams?.refinement = emptyNavigationState
         reloadFragment(productsResponse!!)
     }
 
@@ -178,8 +172,7 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
     }
 
     override fun onRefinementReset() {
-        val navigationState = ""
-        executeRefineProducts(navigationState)
+        executeRefineProducts(emptyNavigationState)
     }
 
     private fun isResetButtonEnabled(): Boolean {
@@ -190,4 +183,8 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
         return isResetEnabled
     }
 
+    fun closeDownPage() {
+        finish()
+        overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+    }
 }

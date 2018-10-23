@@ -91,7 +91,7 @@ class RefinementNavigationAdapter(val context: Context, val promotionChangeListn
                 itemView.displayName.text = item.displayName
                 itemView.rightArrow.visibility = View.VISIBLE
                 if (item.refinementCrumbs.size > 0) {
-                    ProductsRefineActivity.getAllLabelsFromRefinementCrumbs(item.refinementCrumbs)
+                    itemView.label.text = item.refinementCrumbs.joinToString(",")
                 }
             }
             itemView.refinementOptions.setOnClickListener {
