@@ -33,12 +33,6 @@ class RefinementNavigationAdapter(val context: Context, val promotionChangeListn
             RefinementSelectableItem.ViewType.OPTIONS.value -> {
                 return OptionsHolder(LayoutInflater.from(context).inflate(R.layout.refinements_options_layout, parent, false))
             }
-            RefinementSelectableItem.ViewType.SINGLE_SELECTOR.value -> {
-                return SingleSelectorHolder(LayoutInflater.from(context).inflate(R.layout.refinements_single_selection_layout, parent, false))
-            }
-            RefinementSelectableItem.ViewType.MULTI_SELECTOR.value -> {
-                return MultiSelectorHolder(LayoutInflater.from(context).inflate(R.layout.refinements_multiple_selection_layout, parent, false))
-            }
         }
         return null
     }
