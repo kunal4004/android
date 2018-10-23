@@ -97,8 +97,14 @@ class SubRefinementFragment : BaseRefinementFragment(), RefinementOnBackPressed 
     private fun getNavigationState(): String {
         var navigationState = ""
         dataList.forEach {
-            if (it.isSelected)
-                navigationState = navigationState.plus((it.item as SubRefinement).navigationState)
+            if (it.isSelected) {
+                var item = it.item as SubRefinement
+                if (TextUtils.isEmpty(navigationState))
+                    navigationState = navigationState.plus(item.navigationState)
+                else
+                    navigationState = navigationState.plus("Z").plus(item.navigationState.substringAfterLast("Z"))
+
+            }
         }
         return navigationState
     }

@@ -44,7 +44,7 @@ class SubRefinementAdapter(val context: Context, val listner: OnRefinementOption
             itemView.setOnClickListener {
                 dataList.forEachIndexed { index, refinementSelectableItem ->
                     if (index == position) {
-                        refinementSelectableItem.isSelected = true
+                        refinementSelectableItem.isSelected = !refinementSelectableItem.isSelected
                     } else if (refinementSelectableItem.type == RefinementSelectableItem.ViewType.SINGLE_SELECTOR) {
                         refinementSelectableItem.isSelected = false
                     }
