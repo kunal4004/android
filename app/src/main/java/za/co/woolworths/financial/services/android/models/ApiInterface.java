@@ -924,4 +924,24 @@ public interface ApiInterface {
 			@Query("pageSize") int pageSize,
 			@Query("sortOption") String sortOption,
 			@Query("refinement") String refinement);
+
+	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip"})
+	@GET("/searchSortAndFilter")
+	ProductView getProductsWithoutLocation(
+			@Header("osVersion") String osVersion,
+			@Header("deviceModel") String deviceModel,
+			@Header("deviceVersion") String deviceVersion,
+			@Header("os") String os,
+			@Header("network") String network,
+			@Header("apiId") String apiId,
+			@Header("userAgent") String userAgent,
+			@Header("userAgentVersion") String userAgentVersion,
+			@Header("sha1Password") String sha1Password,
+			@Query("searchTerm") String searchTerm,
+			@Query("searchType") String searchType,
+			@Query("responseType") String responseType,
+			@Query("pageOffset") int pageOffset,
+			@Query("pageSize") int pageSize,
+			@Query("sortOption") String sortOption,
+			@Query("refinement") String refinement);
 }

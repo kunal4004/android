@@ -11,6 +11,7 @@ import android.view.WindowManager
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.activity_products_refine.*
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.extensions.refineProducts
 import za.co.woolworths.financial.services.android.ui.extensions.replaceFragmentSafely
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment.PRODUCTS_REQUEST_PARAMS
@@ -29,6 +30,7 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
     private var productsRequestParams: ProductsRequestParams? = null
     private var updatedProductsRequestParams: ProductsRequestParams? = null
     private val emptyNavigationState = ""
+    private val ERROR_REQUEST_CODE = 755
 
     companion object {
         const val TAG_NAVIGATION_FRAGMENT: String = "OptionsFragment"
@@ -109,6 +111,7 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
 
     override fun onProductRefineFailure(message: String) {
         hideProgressBar()
+        Utils.displayDialog(this, CustomPopUpWindow.MODAL_LAYOUT.ERROR, message, ERROR_REQUEST_CODE)
     }
 
     override fun onSeeResults(navigationState: String) {
@@ -183,8 +186,15 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
         return isResetEnabled
     }
 
-    fun closeDownPage() {
+    private fun closeDownPage() {
         finish()
         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            ERROR_REQUEST_CODE -> closeDownPage()
+        }
     }
 }
