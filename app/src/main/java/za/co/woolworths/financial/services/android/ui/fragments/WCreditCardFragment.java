@@ -293,7 +293,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 						CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC,
 						activity.getResources().getString(R.string.account_in_arrears_info_title),
 						getActivity().getResources().getString(R.string.account_in_arrears_info_description)
-								.replace("minimum_payment", Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account.amountOverdue)))
+								.replace("minimum_payment", Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account.totalAmountDue)))
 								.replace("card_name", "Credit Card"),
 						getActivity().getResources().getString(R.string.how_to_pay),
 						RESULT_CODE_FUNDS_INFO);
