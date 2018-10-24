@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="220dp"
     android:background="@color/bpi_orange"
-    android:paddingBottom="@dimen/twenty_one_dp"
     app:layout_collapseMode="parallax"
     app:layout_collapseParallaxMultiplier="0.5">
 
@@ -13,16 +12,19 @@
         android:id="@+id/imBackgroundHeader"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_marginEnd="8dp"
         android:alpha="0.08"
+        android:contentDescription="@string/app_label"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/bg_header_balance_protection"/>
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/tvEffectiveDate"
-        android:layout_width="wrap_content"
-        android:layout_height="15dp"
-        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="@dimen/twenty_one_dp"
         android:alpha="0.7"
         android:letterSpacing="0.05"
         android:text="Effective date 01/05/2018"
@@ -30,15 +32,38 @@
         android:textSize="@dimen/fourteen_sp"
         app:WTextView_font="medium"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/tvCover"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_goneMarginStart="@dimen/twenty_four_dp"/>
+        app:layout_constraintTop_toBottomOf="@+id/tvTitle"/>
+
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/tvTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
+        android:layout_marginBottom="@dimen/forty_four_dp"
+        android:lineSpacingExtra="0.17dp"
+        android:text="@string/bpi_balance_protection_title"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="@dimen/eighteen_sp"
+        app:WTextView_font="medium_bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/tvCover"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/thirty_dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
+        android:layout_marginBottom="@dimen/twenty_dp"
         android:background="@drawable/round_white_bg"
+        android:gravity="center"
         android:letterSpacing="0.083"
         android:text="@string/bpi_covered"
         android:textAllCaps="true"
@@ -46,23 +71,8 @@
         android:textSize="@dimen/ten_sp"
         app:WTextView_font="medium_bold"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
-        android:id="@+id/tvTitle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/twenty_four_dp"
-        android:layout_marginEnd="@dimen/thirty_two_dp"
-        android:lineSpacingExtra="0.17dp"
-        android:text="@string/bpi_balance_protection_title"
-        android:textAllCaps="true"
-        android:textColor="@color/white"
-        android:textSize="@dimen/eighteen_sp"
-        app:WTextView_font="medium_bold"
-        app:layout_constraintBottom_toTopOf="@+id/tvEffectiveDate"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
-
+        app:layout_constraintTop_toBottomOf="@+id/tvTitle"
+        app:layout_constraintVertical_bias="0.0"/>
 
 </android.support.constraint.ConstraintLayout>
