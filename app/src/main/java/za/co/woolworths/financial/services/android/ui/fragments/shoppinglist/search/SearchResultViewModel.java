@@ -9,17 +9,17 @@ import java.util.Comparator;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
-import za.co.woolworths.financial.services.android.models.dto.LoadProduct;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.PagingResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
+import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.rest.product.GetProductDetail;
+import za.co.woolworths.financial.services.android.models.rest.product.GetProductsRequest;
 import za.co.woolworths.financial.services.android.models.rest.product.ProductRequest;
-import za.co.woolworths.financial.services.android.models.rest.product.SearchProductRequest;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostAddToList;
 import za.co.woolworths.financial.services.android.ui.base.BaseViewModel;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
@@ -28,8 +28,6 @@ import za.co.woolworths.financial.services.android.util.rx.SchedulerProvider;
 
 public class SearchResultViewModel extends BaseViewModel<SearchResultNavigator> {
 
-	private LoadProduct mLoadProduct;
-	private SearchProductRequest mSearchProductRequest;
 	private int mNumItemsInTotal;
 	private boolean loadMoreData = false;
 	private int pageOffset = 0;
@@ -38,6 +36,8 @@ public class SearchResultViewModel extends BaseViewModel<SearchResultNavigator> 
 	private int mLoadStatus;
 	private ArrayList<OtherSkus> otherSkus;
 	private boolean productIsLoading;
+	private ProductsRequestParams productsRequestParams;
+	private GetProductsRequest mGetProductsRequest;
 
 	public void setLoadStatus(int status) {
 		this.mLoadStatus = status;
@@ -75,26 +75,22 @@ public class SearchResultViewModel extends BaseViewModel<SearchResultNavigator> 
 		return mIsLoading;
 	}
 
-	public void setProductRequestBody(boolean isBarcode, String productId) {
-		this.mLoadProduct = new LoadProduct(isBarcode, productId);
-	}
-
-	public void setProductRequestBody(String searchProduct, boolean isBarcode) {
-		this.mLoadProduct = new LoadProduct(isBarcode, searchProduct);
+	public void setProductRequestBody(ProductsRequestParams.SearchType searchType, String searchTerm) {
+		this.productsRequestParams = new ProductsRequestParams(searchTerm, searchType, ProductsRequestParams.ResponseType.DETAIL, pageOffset);
 	}
 
 
-	public LoadProduct getProductRequestBody() {
-		return mLoadProduct;
+	public ProductsRequestParams getProductRequestBody() {
+		return productsRequestParams;
 	}
 
-	public void executeSearchProduct(Context context, LoadProduct lp) {
-		this.mSearchProductRequest = searchProduct(context, lp);
-		this.mSearchProductRequest.execute();
+	public void executeSearchProduct(Context context, ProductsRequestParams lp) {
+		this.mGetProductsRequest = searchProduct(context, lp);
+		this.mGetProductsRequest.execute();
 	}
 
-	public SearchProductRequest getSearchProductRequest() {
-		return mSearchProductRequest;
+	public GetProductsRequest getSearchProductRequest() {
+		return mGetProductsRequest;
 	}
 
 	public void setLoadMoreData(boolean loadMoreData) {
@@ -132,12 +128,12 @@ public class SearchResultViewModel extends BaseViewModel<SearchResultNavigator> 
 		getProductRequestBody().setPageOffset(pageOffset);
 	}
 
-	public SearchProductRequest searchProduct(final Context context, final LoadProduct loadProduct) {
+	GetProductsRequest searchProduct(final Context context, final ProductsRequestParams requestParams) {
 		getNavigator().onLoadStart(getLoadMoreData());
 		setProductIsLoading(true);
-		return new SearchProductRequest(context, loadProduct, new OnEventListener() {
+		return new GetProductsRequest(context, requestParams, new OnEventListener<ProductView>() {
 			@Override
-			public void onSuccess(Object object) {
+			public void onSuccess(ProductView object) {
 				ProductView productView = (ProductView) object;
 				switch (productView.httpCode) {
 					case 200:

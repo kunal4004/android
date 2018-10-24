@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.grid;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,12 +11,16 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
@@ -23,18 +28,25 @@ import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.GridLayoutBinding;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
+import za.co.woolworths.financial.services.android.models.dto.ProductView;
+import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
+import za.co.woolworths.financial.services.android.models.dto.SortOption;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
+import za.co.woolworths.financial.services.android.ui.activities.product.refine.ProductsRefineActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewListAdapter;
+import za.co.woolworths.financial.services.android.ui.adapters.SortOptionsAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.ShoppingListFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsFragment;
@@ -44,7 +56,7 @@ import za.co.woolworths.financial.services.android.util.Utils;
 
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.OPEN_GET_LIST_SCREEN;
 
-public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel> implements GridNavigator, View.OnClickListener {
+public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel> implements GridNavigator, View.OnClickListener,SortOptionsAdapter.OnSortOptionSelected {
 
 	private GridViewModel mGridViewModel;
 	private ErrorHandlerView mErrorHandlerView;
@@ -58,7 +70,11 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 	private int lastVisibleItem;
 	int totalItemCount;
 	private boolean isLoading;
-
+    private ProductView productView;
+    public static final String REFINEMENT_DATA = "REFINEMENT_DATA";
+	public static final String PRODUCTS_REQUEST_PARAMS = "PRODUCTS_REQUEST_PARAMS";
+	public static final int REFINE_REQUEST_CODE = 77;
+	private Dialog sortOptionDialog;
 	@Override
 	public GridViewModel getViewModel() {
 		return mGridViewModel;
@@ -116,6 +132,8 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 		setTitle();
 		startProductRequest();
 		getViewDataBinding().incNoConnectionHandler.btnRetry.setOnClickListener(this);
+		getViewDataBinding().sortAndRefineLayout.refineProducts.setOnClickListener(this);
+        getViewDataBinding().sortAndRefineLayout.sortProducts.setOnClickListener(this);
 
 		observableOn(new Consumer() {
 			@Override
@@ -171,11 +189,13 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 	}
 
 	@Override
-	public void onLoadProductSuccess(final List<ProductList> productLists, boolean loadMoreData) {
+	public void onLoadProductSuccess(ProductView response, boolean loadMoreData) {
+        List<ProductList> productLists = response.products;
 		if (mProductList == null) {
 			mProductList = new ArrayList<>();
 		}
 		if (productLists.isEmpty()) {
+			getViewDataBinding().sortAndRefineLayout.parentLayout.setVisibility(View.GONE);
 			if (!listContainHeader()) {
 				ProductList headerProduct = new ProductList();
 				headerProduct.viewTypeHeader = true;
@@ -188,8 +208,11 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 			getBottomNavigator().openProductDetailFragment(mSubCategoryName, productLists.get(0));
 
 		} else {
+            this.productView = response;
 			hideFooterView();
 			if (!loadMoreData) {
+                getViewDataBinding().sortAndRefineLayout.parentLayout.setVisibility(View.VISIBLE);
+				getViewDataBinding().sortAndRefineLayout.refineProducts.setClickable(productView.navigation.size() > 0);
 				bindRecyclerViewWithUI(productLists);
 			} else {
 				loadMoreData(productLists);
@@ -205,10 +228,10 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 		if (response.desc == null) return;
 		hideFooterView();
 		FragmentManager fm = ((AppCompatActivity) activity).getSupportFragmentManager();
-		// check if dialog is being displayed
+		// check if sortOptionDialog is being displayed
 		if (hasOpenedDialogs((AppCompatActivity) activity)) return;
 
-		// show dialog
+		// show sortOptionDialog
 		SingleButtonDialogFragment singleButtonDialogFragment = SingleButtonDialogFragment.newInstance(response.desc);
 		singleButtonDialogFragment.show(fm, SingleButtonDialogFragment.class.getSimpleName());
 
@@ -249,7 +272,6 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 	public void cancelAPIRequest() {
 		if (mGridViewModel != null) {
 			mGridViewModel.cancelRequest(mGridViewModel.getLoadProductRequest());
-			mGridViewModel.cancelRequest(mGridViewModel.getSearchProductRequest());
 		}
 	}
 
@@ -274,6 +296,8 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 			}
 		});
 		final RecyclerView rcvProductList = getViewDataBinding().productList;
+		if (rcvProductList.getVisibility() == View.INVISIBLE)
+			rcvProductList.setVisibility(View.VISIBLE);
 		rcvProductList.setLayoutManager(mRecyclerViewLayoutManager);
 		rcvProductList.setAdapter(mProductAdapter);
 		rcvProductList.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -366,7 +390,7 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 		if (isEmpty(mSearchProduct)) {
 			getViewModel().executeLoadProduct(getActivity(), getViewModel().getProductRequestBody());
 		} else {
-			getViewModel().executeSearchProduct(getActivity(), getViewModel().getProductRequestBody());
+			getViewModel().executeLoadProduct(getActivity(), getViewModel().getProductRequestBody());
 		}
 	}
 
@@ -387,9 +411,9 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 	@Override
 	public void setProductBody() {
 		if (isEmpty(mSearchProduct)) {
-			getViewModel().setProductRequestBody(false, mSubCategoryId);
+			getViewModel().setProductRequestBody(ProductsRequestParams.SearchType.NAVIGATE, mSubCategoryId);
 		} else {
-			getViewModel().setProductRequestBody(mSearchProduct, false);
+			getViewModel().setProductRequestBody(ProductsRequestParams.SearchType.SEARCH, mSearchProduct);
 		}
 	}
 
@@ -440,6 +464,16 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 					startProductRequest();
 				}
 				break;
+			case R.id.refineProducts:
+                Intent intent = new Intent(getActivity(), ProductsRefineActivity.class);
+                intent.putExtra(REFINEMENT_DATA, Utils.toJson(productView));
+                intent.putExtra(PRODUCTS_REQUEST_PARAMS,Utils.toJson(getViewModel().getProductRequestBody()));
+                startActivityForResult(intent,REFINE_REQUEST_CODE);
+				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+				break;
+            case R.id.sortProducts:
+                this.showShortOptions(productView.sortOptions);
+                break;
 		}
 	}
 
@@ -452,5 +486,53 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 			setToolbarBackgroundDrawable(R.drawable.appbar_background);
 			setTitle();
 		}
+	}
+
+    @Override
+    public void onSortOptionSelected(@NotNull SortOption sortOption) {
+		if(sortOptionDialog!=null && sortOptionDialog.isShowing()){
+			sortOptionDialog.dismiss();
+			getViewModel().updateProductRequestBodyForSort(sortOption.getSortOption());
+			reloadProductsWithSortAndFilter();
+		}
+    }
+
+    public void showShortOptions(ArrayList<SortOption> sortOptions) {
+		sortOptionDialog = new Dialog(getActivity());
+		sortOptionDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        View view = getLayoutInflater().inflate(R.layout.sort_options_view, null);
+        RecyclerView rcvSortOptions = view.findViewById(R.id.sortOptionsList);
+        rcvSortOptions.setLayoutManager(new LinearLayoutManager(getActivity()));
+        rcvSortOptions.setAdapter(new SortOptionsAdapter(getActivity(), sortOptions, this));
+        sortOptionDialog.setContentView(view);
+		Window window = sortOptionDialog.getWindow();
+		if (window != null) {
+			window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+			window.setBackgroundDrawableResource(R.color.transparent);
+			window.setGravity(Gravity.TOP);
+		}
+		sortOptionDialog.setTitle(null);
+		sortOptionDialog.setCancelable(true);
+		sortOptionDialog.show();
+
+    }
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		switch (requestCode){
+			case REFINE_REQUEST_CODE:
+				if(resultCode == Activity.RESULT_OK){
+					String navigationState = data.getStringExtra(ProductsRefineActivity.NAVIGATION_STATE);
+					getViewModel().updateProductRequestBodyForRefinement(navigationState);
+					reloadProductsWithSortAndFilter();
+				}
+		}
+	}
+
+	public void reloadProductsWithSortAndFilter(){
+		getViewDataBinding().productList.setVisibility(View.INVISIBLE);
+		getViewDataBinding().sortAndRefineLayout.parentLayout.setVisibility(View.GONE);
+		startProductRequest();
 	}
 }

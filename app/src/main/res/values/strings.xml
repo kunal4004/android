@@ -712,7 +712,16 @@
     <string name="account_details_branch_code">Branch Code:</string>
     <string name="account_details_reference_number">Reference Number:</string>
     <string name="account_details_swift_code">Swift Code:</string>
-
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="refine">REFINE</string>
+    <string name="sort_by">SORT BY</string>
+    <string name="refine_reset">reset</string>
+    <string name="refinement_clear">clear</string>
+    <string name="refinement_show_me">show me</string>
+    <string name="refinement_filter_by">filter by</string>
+    <string name="see_results_count_start">SEE RESULTS (</string>
+    <string name="see_results_count_end">)</string>
+    <string name="see_results">SEE RESULTS</string>
     <!-- MyAccount - Balance Protection Insurance -->
     <string name="bpi_toolbar_title">Overview</string>
     <string name="bpi_claim_toolbar_title">Claim</string>

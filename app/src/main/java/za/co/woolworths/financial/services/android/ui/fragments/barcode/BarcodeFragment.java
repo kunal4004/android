@@ -26,6 +26,7 @@ import java.util.ArrayList;
 
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
+import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
@@ -260,7 +261,7 @@ public class BarcodeFragment extends BaseFragment<BarcodeMainLayoutBinding, Barc
 
 	private void executeBarcodeProduct(String barcodeId) {
 		if (TextUtils.isEmpty(barcodeId)) return;
-		getViewModel().setProductRequestBody(true, barcodeId);
+		getViewModel().setProductRequestBody(ProductsRequestParams.SearchType.BARCODE, barcodeId);
 		getViewModel().executeGetBarcodeProduct(getActivity());
 	}
 
