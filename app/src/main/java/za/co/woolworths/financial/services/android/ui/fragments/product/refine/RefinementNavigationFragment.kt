@@ -27,7 +27,6 @@ class RefinementNavigationFragment : BaseRefinementFragment(), BaseFragmentListn
     private var productView: ProductView? = null
     private var backButton: ImageView? = null
     private var dataList = arrayListOf<RefinementSelectableItem>()
-    private var isResetEnabled = false
     private var baseNavigationState = ""
     private var updatedNavigationState = ""
 
@@ -38,13 +37,12 @@ class RefinementNavigationFragment : BaseRefinementFragment(), BaseFragmentListn
         val NAVIGATION_STATE = "NAVIGATION_STATE"
         val UPDATED_NAVIGATION_STATE = "UPDATED_NAVIGATION_STATE"
 
-        fun getInstance(productView: ProductView, navigationState: String, updatedNavigationState: String, isResetEnabled: Boolean): RefinementNavigationFragment {
+        fun getInstance(productView: ProductView, navigationState: String, updatedNavigationState: String): RefinementNavigationFragment {
             val fragment = RefinementNavigationFragment()
             val args = Bundle()
             args.putString(ARG_PARAM, Utils.toJson(productView))
             args.putString(NAVIGATION_STATE, navigationState)
             args.putString(UPDATED_NAVIGATION_STATE, updatedNavigationState)
-            args.putBoolean("isResetEnabled", isResetEnabled)
             fragment.arguments = args
             return fragment
         }
@@ -54,7 +52,6 @@ class RefinementNavigationFragment : BaseRefinementFragment(), BaseFragmentListn
         super.onCreate(savedInstanceState)
         if (arguments != null) {
             productView = Utils.jsonStringToObject(arguments.getString(ARG_PARAM), ProductView::class.java) as ProductView
-            isResetEnabled = arguments.getBoolean("isResetEnabled")
             baseNavigationState = arguments.getString(NAVIGATION_STATE, "")
             updatedNavigationState = arguments.getString(UPDATED_NAVIGATION_STATE, "")
         }
@@ -70,7 +67,7 @@ class RefinementNavigationFragment : BaseRefinementFragment(), BaseFragmentListn
         backButton?.setImageResource(R.drawable.close_24)
         clearOrRresetRefinement = activity.findViewById(R.id.resetRefinement)
         backButton?.setOnClickListener { onBackPressed() }
-        clearOrRresetRefinement?.setOnClickListener { if (TextUtils.isEmpty(getNavigationState()) && isResetEnabled) listener.onRefinementReset() else listener.onRefinementClear() }
+        clearOrRresetRefinement?.setOnClickListener { if (TextUtils.isEmpty(getNavigationState()) && showReset()) listener.onRefinementReset() else listener.onRefinementClear() }
         refinementSeeResult.setOnClickListener { seeResults() }
         refinementList.layoutManager = LinearLayoutManager(activity)
         updateToolBarMenuText()
@@ -133,7 +130,7 @@ class RefinementNavigationFragment : BaseRefinementFragment(), BaseFragmentListn
             if (it.type == RefinementSelectableItem.ViewType.PROMOTION) {
                 it.item as RefinementNavigation
                 if (it.isSelected != (it.item.refinementCrumbs != null && it.item.refinementCrumbs.size > 0)) {
-                    navigationState = it.item.refinements[0].navigationState
+                    navigationState = if (it.item.multiSelect) it.item.refinements[0].navigationState else it.item.refinementCrumbs[0].navigationState
                     return navigationState
                 }
             }
@@ -142,7 +139,7 @@ class RefinementNavigationFragment : BaseRefinementFragment(), BaseFragmentListn
     }
 
     private fun updateToolBarMenuText() {
-        if (TextUtils.isEmpty(getNavigationState()) && !TextUtils.isEmpty(baseNavigationState) && TextUtils.isEmpty(updatedNavigationState)) {
+        if (showReset()) {
             clearOrRresetRefinement?.text = getString(R.string.refine_reset)
             clearOrRresetRefinement?.isEnabled = !TextUtils.isEmpty(baseNavigationState)
         } else {
@@ -159,5 +156,8 @@ class RefinementNavigationFragment : BaseRefinementFragment(), BaseFragmentListn
         if (isEnabled) setResultCount(count) else setResultCount(productView?.pagingResponse?.numItemsInTotal)
     }
 
+    private fun showReset(): Boolean {
+        return (TextUtils.isEmpty(getNavigationState()) && !TextUtils.isEmpty(baseNavigationState) && TextUtils.isEmpty(updatedNavigationState))
+    }
 
 }

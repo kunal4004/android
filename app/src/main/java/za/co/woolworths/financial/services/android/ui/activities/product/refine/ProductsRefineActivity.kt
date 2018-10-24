@@ -53,7 +53,7 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
     }
 
     private fun replaceRefinementOptionsFragment(productsResponse: ProductView) {
-        replaceFragmentSafely(RefinementNavigationFragment.getInstance(productsResponse, getBaseNavigationState(), getRefinedNavigationState(), isResetButtonEnabled()), TAG_NAVIGATION_FRAGMENT, false, false, R.id.refinement_fragment_container)
+        replaceFragmentSafely(RefinementNavigationFragment.getInstance(productsResponse, getBaseNavigationState(), getRefinedNavigationState()), TAG_NAVIGATION_FRAGMENT, false, false, R.id.refinement_fragment_container)
     }
 
     override fun onRefinementOptionSelected(refinementNavigation: RefinementNavigation) {
@@ -93,7 +93,7 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
     private fun executeRefineProducts(refinement: String) {
         showProgressBar()
         updatedProductsRequestParams = ProductsRequestParams(productsRequestParams?.searchTerm!!, productsRequestParams?.searchType!!, productsRequestParams?.responseType!!, productsRequestParams?.pageOffset!!)
-        updatedProductsRequestParams?.refinement = refinement
+        setRefinedNavigationState(refinement)
         refineProducts(this, updatedProductsRequestParams!!).execute()
     }
 
@@ -103,7 +103,8 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
             setResultForProductListing(navigationState)
         } else {
             if (TextUtils.isEmpty(navigationState)) {
-                this.productsRequestParams?.refinement = navigationState
+                setBaseNavigationState(navigationState)
+                setRefinedNavigationState(navigationState)
                 this.productsResponse = productView
             }
             reloadFragment(productView)
@@ -119,9 +120,9 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
     override fun onSeeResults(navigationState: String) {
         if (!TextUtils.isEmpty(navigationState)) {
             setResultForProductListing(navigationState)
-        } else if (!TextUtils.isEmpty(updatedProductsRequestParams?.refinement)) {
-            setResultForProductListing(updatedProductsRequestParams?.refinement!!)
-        } else if (!TextUtils.isEmpty(productsRequestParams?.refinement) && TextUtils.isEmpty(updatedProductsRequestParams?.refinement)) {
+        } else if (!TextUtils.isEmpty(getRefinedNavigationState())) {
+            setResultForProductListing(getRefinedNavigationState())
+        } else if (TextUtils.isEmpty(getBaseNavigationState()) && TextUtils.isEmpty(getRefinedNavigationState())) {
             setResultForProductListing(emptyNavigationState)
         }
         this.closeDownPage()
@@ -151,7 +152,7 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
     }
 
     override fun onRefinementClear() {
-        updatedProductsRequestParams?.refinement = emptyNavigationState
+        setRefinedNavigationState(emptyNavigationState)
         reloadFragment(productsResponse!!)
     }
 
@@ -180,14 +181,6 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
         executeRefineProducts(emptyNavigationState)
     }
 
-    private fun isResetButtonEnabled(): Boolean {
-        var isResetEnabled = false
-        if (!TextUtils.isEmpty(productsRequestParams?.refinement) && TextUtils.isEmpty(updatedProductsRequestParams?.refinement))
-            isResetEnabled = true
-
-        return isResetEnabled
-    }
-
     private fun closeDownPage() {
         finish()
         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
@@ -206,5 +199,13 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
 
     private fun getRefinedNavigationState(): String {
         return if (updatedProductsRequestParams != null) updatedProductsRequestParams?.refinement!! else emptyNavigationState
+    }
+
+    private fun setBaseNavigationState(navigationState: String) {
+        this.productsRequestParams?.refinement = navigationState
+    }
+
+    private fun setRefinedNavigationState(navigationState: String) {
+        this.updatedProductsRequestParams?.refinement = navigationState
     }
 }

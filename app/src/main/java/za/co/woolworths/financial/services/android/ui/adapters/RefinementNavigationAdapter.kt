@@ -10,7 +10,6 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.refinements_on_promotion_layout.view.*
 import kotlinx.android.synthetic.main.refinements_options_layout.view.*
 import kotlinx.android.synthetic.main.refinements_section_header_layout.view.*
-import kotlinx.android.synthetic.main.refinements_single_selection_layout.view.*
 import za.co.woolworths.financial.services.android.models.dto.BreadCrumb
 import za.co.woolworths.financial.services.android.models.dto.RefinementHistory
 import za.co.woolworths.financial.services.android.models.dto.RefinementNavigation
@@ -54,12 +53,14 @@ class RefinementNavigationAdapter(val context: Context, val baseListner: BaseFra
 
     inner class PromotionHolder(itemView: View) : RefinementBaseViewHolder(itemView) {
         override fun bind(position: Int) {
-            var item = dataList[position]
-            itemView.promotionSwitch.isChecked = item.isSelected
+            val refinementSelectableItem = dataList[position]
+            itemView.promotionSwitch.isChecked = refinementSelectableItem.isSelected
             itemView.promotionSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
-                item.isSelected = isChecked
+                refinementSelectableItem.isSelected = isChecked
                 notifyDataSetChanged()
-                baseListner.onPromotionToggled((item.item as RefinementNavigation).refinements[0].count, isChecked)
+                val navigationItem = refinementSelectableItem.item as RefinementNavigation
+                val count: Int = if (navigationItem.multiSelect) navigationItem.refinements[0].count else navigationItem.refinementCrumbs[0].count
+                baseListner.onPromotionToggled(count, isChecked)
             }
         }
     }
