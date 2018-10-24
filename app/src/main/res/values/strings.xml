@@ -511,6 +511,7 @@
 
     <string name="status_in_progress">In Progress</string>
     <string name="status_poi_required">POI Required</string>
+    <string name="status_no_poi_required">No POI Required</string>
     <string name="status_poi_problem">POI Problem</string>
     <string name="decline">Decline</string>
     <string name="decline_title">Decline offer?</string>
@@ -547,6 +548,8 @@
     <string name="process_complete_title">Thanks for your application.</string>
     <string name="process_complete_desc">Please check on the app to get regular updates as to your application progress.</string>
     <string name="process_complete_back_account">back to my account</string>
+    <string name="process_complete_no_poi_title">CONGRATULATIONS</string>
+    <string name="process_complete_no_poi_desc">Your credit limit increase for :approvedValue has been approved and is now available.</string>
     <string name="back_to_my_account">back to my account</string>
     <string name="account_type">### account type</string>
     <string name="account_saving_title">### savings account</string>
