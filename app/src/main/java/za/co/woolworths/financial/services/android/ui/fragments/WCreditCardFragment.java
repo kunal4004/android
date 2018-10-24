@@ -28,6 +28,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import za.co.wigroup.logger.lib.WiGroupLogger;
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
@@ -270,6 +271,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 				break;
 
 			case R.id.relBalanceProtection:
+				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDBPI);
 				MyAccountHelper myAccountHelper = new MyAccountHelper();
 				String accountInfo = myAccountHelper.getAccountInfo(accountsResponse, "CC");
 				Intent intBalanceProtection = new Intent(getActivity(), BPIBalanceProtectionActivity.class);
@@ -291,7 +293,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 						CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC,
 						activity.getResources().getString(R.string.account_in_arrears_info_title),
 						getActivity().getResources().getString(R.string.account_in_arrears_info_description)
-								.replace("minimum_payment", Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account.amountOverdue)))
+								.replace("minimum_payment", Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account.totalAmountDue)))
 								.replace("card_name", "Credit Card"),
 						getActivity().getResources().getString(R.string.how_to_pay),
 						RESULT_CODE_FUNDS_INFO);

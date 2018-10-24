@@ -28,6 +28,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import za.co.wigroup.logger.lib.WiGroupLogger;
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
@@ -280,13 +281,13 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		switch (v.getId()) {
 			case R.id.rlViewTransactions:
 			case R.id.tvViewTransaction:
-					Intent intent = new Intent(getActivity(), WTransactionsActivity.class);
-					intent.putExtra("productOfferingId", productOfferingId);
-					startActivityForResult(intent, 0);
-					activity.overridePendingTransition(R.anim.slide_up_anim, R.anim
-							.stay);
+				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDTRANSACTIONS);
+				Intent intent = new Intent(getActivity(), WTransactionsActivity.class);
+				intent.putExtra("productOfferingId", productOfferingId);
+				startActivityForResult(intent, 0);
+				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim
+						.stay);
 				break;
-
 			case R.id.relBalanceProtection:
 				MyAccountHelper myAccountHelper = new MyAccountHelper();
 				String accountInfo = myAccountHelper.getAccountInfo(accountsResponse, "SC");
@@ -309,6 +310,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 				break;
 
 			case R.id.rlViewStatement:
+					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDSTATEMENTS);
 					((WoolworthsApplication) WStoreCardFragment.this.getActivity().getApplication())
 							.getUserManager
 									().getAccounts();
@@ -323,7 +325,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 						CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC,
 						getActivity().getResources().getString(R.string.account_in_arrears_info_title),
 						getActivity().getResources().getString(R.string.account_in_arrears_info_description)
-								.replace("minimum_payment", Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account.amountOverdue)))
+								.replace("minimum_payment", Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account.totalAmountDue)))
 								.replace("card_name", "Store Card"),
 						getActivity().getResources().getString(R.string.how_to_pay),
 						RESULT_CODE_FUNDS_INFO);

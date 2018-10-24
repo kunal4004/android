@@ -23,6 +23,7 @@ import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.CartItemGroup;
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem;
@@ -362,6 +363,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 					if (woolworthsApplication != null) {
 						woolworthsApplication.getWGlobalState().setSelectedSKUId(null);
 					}
+					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTADDTOLIST);
 					Utils.displayValidationMessage(context, CustomPopUpWindow.MODAL_LAYOUT.SHOPPING_ADD_TO_LIST, Utils.toJson(commerceItems));
 				}
 			});

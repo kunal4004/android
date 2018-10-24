@@ -14,6 +14,7 @@ import android.widget.ScrollView;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.ui.activities.WRewardsMembersInfoActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator;
@@ -72,9 +73,11 @@ public class WRewardsLoggedOutFragment extends Fragment implements View.OnClickL
 	public void onClick(View v) {
 		switch (v.getId()) {
 			case R.id.wRewars_login:
+				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSSIGNIN);
 				ScreenManager.presentSSOSignin(getActivity());
 				break;
 			case R.id.wRewars_register:
+				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSREGISTER);
 				ScreenManager.presentSSORegister(getActivity());
 				break;
 			case R.id.layoutValuedMember:
