@@ -748,4 +748,9 @@
     <string name="bpi_additional_death_cover_for_partner_2">Helps your family handle any unforeseen expenses in the event of the passing of your partner or spouse.</string>
     <string name="bpi_bullet">•</string>
 
+    <string name="balance_protection_sixty_five_plus_title">Balance Protection (65+)</string>
+    <string name="balance_protection_sixty_five_plus_desc">Cover in the event of your death or a critical illness.</string>
+    <string name="partner_cover_sixty_five_plus_title">Partner Cover (65+)</string>
+    <string name="partner_cover_sixty_five_plus_desc">Covers you in the event of your partners death or a critical illness.</string>
+
 </resources>
