@@ -142,7 +142,7 @@ public class GridViewModel extends BaseViewModel<GridNavigator> {
 
     private int numItemsInTotal(ProductView productView) {
         PagingResponse pagingResponse = productView.pagingResponse;
-        if (pagingResponse.numItemsInTotal != null) {
+        if (pagingResponse.numItemsInTotal != null && productView.pagingResponse.pageOffset != null) {
             mNumItemsInTotal = pagingResponse.numItemsInTotal;
             Log.e("paginationResponse", "pageOffset " + productView.pagingResponse.pageOffset + " mNumItemsInTotal " + mNumItemsInTotal);
             if (productView.pagingResponse.pageOffset > mNumItemsInTotal) {
