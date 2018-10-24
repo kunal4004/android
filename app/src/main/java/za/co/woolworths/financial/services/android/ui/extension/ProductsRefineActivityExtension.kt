@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.extensions
+package za.co.woolworths.financial.services.android.ui.extension
 
 import android.content.Context
 import za.co.woolworths.financial.services.android.models.dto.ProductView

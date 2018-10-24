@@ -14,6 +14,7 @@ import za.co.woolworths.financial.services.android.models.dto.ProductView
 import za.co.woolworths.financial.services.android.models.dto.RefinementNavigation
 import za.co.woolworths.financial.services.android.models.dto.RefinementSelectableItem
 import za.co.woolworths.financial.services.android.ui.adapters.RefinementNavigationAdapter
+import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.OnRefinementOptionSelected
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseFragmentListner
 import za.co.woolworths.financial.services.android.util.Utils
@@ -37,14 +38,10 @@ class RefinementNavigationFragment : BaseRefinementFragment(), BaseFragmentListn
         val NAVIGATION_STATE = "NAVIGATION_STATE"
         val UPDATED_NAVIGATION_STATE = "UPDATED_NAVIGATION_STATE"
 
-        fun getInstance(productView: ProductView, navigationState: String, updatedNavigationState: String): RefinementNavigationFragment {
-            val fragment = RefinementNavigationFragment()
-            val args = Bundle()
-            args.putString(ARG_PARAM, Utils.toJson(productView))
-            args.putString(NAVIGATION_STATE, navigationState)
-            args.putString(UPDATED_NAVIGATION_STATE, updatedNavigationState)
-            fragment.arguments = args
-            return fragment
+        fun getInstance(productView: ProductView, navigationState: String, updatedNavigationState: String) = RefinementNavigationFragment().withArgs {
+            putString(ARG_PARAM, Utils.toJson(productView))
+            putString(NAVIGATION_STATE, navigationState)
+            putString(UPDATED_NAVIGATION_STATE, updatedNavigationState)
         }
     }
 
