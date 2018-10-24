@@ -325,7 +325,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 						CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC,
 						getActivity().getResources().getString(R.string.account_in_arrears_info_title),
 						getActivity().getResources().getString(R.string.account_in_arrears_info_description)
-								.replace("minimum_payment", Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account.amountOverdue)))
+								.replace("minimum_payment", Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account.totalAmountDue)))
 								.replace("card_name", "Store Card"),
 						getActivity().getResources().getString(R.string.how_to_pay),
 						RESULT_CODE_FUNDS_INFO);
