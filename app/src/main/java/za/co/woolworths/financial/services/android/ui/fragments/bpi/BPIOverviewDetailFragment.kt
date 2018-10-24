@@ -39,8 +39,7 @@ class BPIOverviewDetailFragment : BPIFragment(), View.OnClickListener {
         super.onViewCreated(view, savedInstanceState)
         if (arguments.containsKey("bpiOverview")) {
             val strOverview: String = arguments.getString("bpiOverview")
-            val
-                    bpiOverview = Gson().fromJson(strOverview, BPIOverview::class.java)
+            val bpiOverview = Gson().fromJson(strOverview, BPIOverview::class.java)
             setBenefitDetail(bpiOverview)
             val insuranceType: InsuranceType = bpiOverview.insuranceType!!
             claimVisibility(insuranceType)
