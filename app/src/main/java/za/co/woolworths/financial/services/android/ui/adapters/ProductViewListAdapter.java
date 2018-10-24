@@ -147,7 +147,7 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private void productImage(WrapContentDraweeView image, String imgUrl) {
         if (!isEmpty(imgUrl)) {
             image.setResizeImage(true);
-            image.setImageURI(imgUrl + "w=" + 300 + "&q=" + 85);
+            image.setImageURI(imgUrl + ((imgUrl.indexOf("?") > 0) ? "w=" + 300 + "&q=" + 85 : "?w=" + 300 + "&q=" + 85));
         }
     }
 

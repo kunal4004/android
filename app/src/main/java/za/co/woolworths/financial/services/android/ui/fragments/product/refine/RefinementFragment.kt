@@ -15,6 +15,7 @@ import za.co.woolworths.financial.services.android.models.dto.RefinementCrumb
 import za.co.woolworths.financial.services.android.models.dto.RefinementNavigation
 import za.co.woolworths.financial.services.android.models.dto.RefinementSelectableItem
 import za.co.woolworths.financial.services.android.ui.adapters.RefinementAdapter
+import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.OnRefinementOptionSelected
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseFragmentListner
 import za.co.woolworths.financial.services.android.util.Utils
@@ -29,12 +30,8 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
 
     companion object {
         private val ARG_PARAM = "refinementNavigationObject"
-        fun getInstance(refinementNavigation: RefinementNavigation): RefinementFragment {
-            val fragment = RefinementFragment()
-            val args = Bundle()
-            args.putString(ARG_PARAM, Utils.toJson(refinementNavigation))
-            fragment.arguments = args
-            return fragment
+        fun getInstance(refinementNavigation: RefinementNavigation) = RefinementFragment().withArgs {
+            putString(ARG_PARAM, Utils.toJson(refinementNavigation))
         }
     }
 

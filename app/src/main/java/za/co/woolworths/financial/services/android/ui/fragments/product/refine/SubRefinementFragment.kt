@@ -17,6 +17,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.SubRefinementAdap
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.OnRefinementOptionSelected
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseFragmentListner
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.ui.extension.withArgs
 
 class SubRefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     private lateinit var listener: OnRefinementOptionSelected
@@ -28,12 +29,8 @@ class SubRefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
 
     companion object {
         private val ARG_PARAM = "refinementObject"
-        fun getInstance(refinement: Refinement): SubRefinementFragment {
-            val fragment = SubRefinementFragment()
-            val args = Bundle()
-            args.putString(ARG_PARAM, Utils.toJson(refinement))
-            fragment.arguments = args
-            return fragment
+        fun getInstance(refinement: Refinement) = SubRefinementFragment().withArgs {
+            putString(ARG_PARAM, Utils.toJson(refinement))
         }
     }
 

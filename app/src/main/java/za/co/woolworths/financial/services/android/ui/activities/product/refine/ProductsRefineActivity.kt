@@ -12,8 +12,8 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.activity_products_refine.*
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
-import za.co.woolworths.financial.services.android.ui.extensions.refineProducts
-import za.co.woolworths.financial.services.android.ui.extensions.replaceFragmentSafely
+import za.co.woolworths.financial.services.android.ui.extension.refineProducts
+import za.co.woolworths.financial.services.android.ui.extension.replaceFragmentSafely
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment.PRODUCTS_REQUEST_PARAMS
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment.REFINEMENT_DATA
 import za.co.woolworths.financial.services.android.ui.fragments.product.refine.BaseRefinementFragment

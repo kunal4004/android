@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.extension
 
+import android.os.Bundle
 import android.support.annotation.AnimRes
 import android.support.annotation.IdRes
 import android.support.v4.app.Fragment
@@ -29,3 +30,9 @@ fun Fragment.replaceFragment(fragment: Fragment,
         }
     }
 }
+
+inline fun <T : Fragment> T.withArgs(
+        argsBuilder: Bundle.() -> Unit): T =
+        this.apply {
+            arguments = Bundle().apply(argsBuilder)
+        }
