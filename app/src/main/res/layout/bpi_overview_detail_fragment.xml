@@ -59,12 +59,17 @@
     </android.support.design.widget.AppBarLayout>
 
     <include layout="@layout/bpi_overview_detail_content"/>
-
+    <LinearLayout
+        android:id="@+id/llHowToClaim"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/default_background"
+        android:paddingTop="@dimen/eight_dp">
     <za.co.woolworths.financial.services.android.ui.views.WButton
         android:id="@+id/btnHowToClaim"
         android:layout_width="match_parent"
         android:layout_height="@dimen/fifty_dp"
-        android:layout_gravity="bottom"
         android:layout_marginStart="@dimen/eight_dp"
         android:layout_marginEnd="@dimen/eight_dp"
         android:layout_marginBottom="8dp"
@@ -75,5 +80,5 @@
         android:textColor="@color/white"
         android:textSize="@dimen/thirteen_sp"
         app:WButton_font="medium_bold"/>
-
+    </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>

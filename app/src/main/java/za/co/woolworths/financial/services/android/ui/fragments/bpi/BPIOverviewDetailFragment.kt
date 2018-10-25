@@ -2,6 +2,8 @@ package za.co.woolworths.financial.services.android.ui.fragments.bpi
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.text.TextUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -15,6 +17,8 @@ import kotlinx.android.synthetic.main.bpi_overview_detail_fragment.*
 import za.co.woolworths.financial.services.android.models.dto.BPIOverview
 import za.co.woolworths.financial.services.android.models.dto.InsuranceType
 import za.co.woolworths.financial.services.android.ui.views.WTextView
+import java.text.ParseException
+import java.text.SimpleDateFormat
 
 class BPIOverviewDetailFragment : BPIFragment(), View.OnClickListener {
 
@@ -47,12 +51,11 @@ class BPIOverviewDetailFragment : BPIFragment(), View.OnClickListener {
         imNavigateBack.setOnClickListener(this)
     }
 
-    @SuppressLint("SetTextI18n")
     private fun setBenefitTitle(bpiOverview: BPIOverview) {
         tvTitle.text = bpiOverview.overviewTitle
-        tvEffectiveDate.text = getString(R.string.bpi_effective_date) + " " + bpiOverview.insuranceType!!.effectiveDate
     }
 
+    @SuppressLint("InflateParams")
     private fun setBenefitDetail(bpiOverview: BPIOverview) {
         val layoutInflater = LayoutInflater.from(context)
         for (desc in bpiOverview.benfitDescription!!) {
@@ -63,10 +66,19 @@ class BPIOverviewDetailFragment : BPIFragment(), View.OnClickListener {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun claimVisibility(insuranceType: InsuranceType) {
         tvCover.visibility = if (insuranceType.covered) VISIBLE else GONE
-        btnHowToClaim.visibility = if (insuranceType.covered) VISIBLE else GONE
+        llHowToClaim.visibility = if (insuranceType.covered) VISIBLE else GONE
         tvEffectiveDate.visibility = if (insuranceType.covered) VISIBLE else GONE
+        // Hide EffectiveDate if insuranceType.effectiveDate is empty
+
+        if (TextUtils.isEmpty(insuranceType.effectiveDate)) {
+            tvEffectiveDate.visibility = GONE
+            return
+        }
+
+        tvEffectiveDate.text = getString(R.string.bpi_effective_date) + " " + formatEffectiveDate(insuranceType.effectiveDate)
     }
 
     override fun onClick(view: View?) {
@@ -80,5 +92,15 @@ class BPIOverviewDetailFragment : BPIFragment(), View.OnClickListener {
                 activity.supportFragmentManager.popBackStack()
             }
         }
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    private fun formatEffectiveDate(effectiveDate: String): String {
+        try {
+            return SimpleDateFormat("dd/MM/yyyy").format(SimpleDateFormat("yyyy-MM-dd").parse(effectiveDate))
+        } catch (ex: ParseException) {
+            Log.d("dateParserEx", ex.message)
+        }
+        return ""
     }
 }

@@ -30,7 +30,7 @@ internal class BPIOverviewAdapter(private val bpiOverviewList: MutableList<BPIOv
         val bpiOverview: BPIOverview = bpiOverviewList!![position]
         val insuranceType: InsuranceType = bpiOverview.insuranceType!!
         mOnBPIOverviewAdapter = onBPIAdapterClickListener
-        holder.bindItems(bpiOverview)
+        holder.bindItems(bpiOverview,itemCount)
         holder.verticalBarBackground(insuranceType)
         holder.itemIsCovered(insuranceType)
         holder.onItemClick(bpiOverview)
@@ -41,8 +41,8 @@ internal class BPIOverviewAdapter(private val bpiOverviewList: MutableList<BPIOv
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bindItems(bpiOverview: BPIOverview) {
-            setOverviewConstraint(itemView.clBalanceOverview,adapterPosition, R.dimen.seventeen_dp, R.dimen.sixteen_dp)
+        fun bindItems(bpiOverview: BPIOverview, itemCount: Int) {
+            setOverviewConstraint(itemCount,itemView.clBalanceOverview,adapterPosition, R.dimen.seventeen_dp, R.dimen.sixteen_dp)
             itemView.tvTitle.text = bpiOverview.overviewTitle
             itemView.tvDescription.text = bpiOverview.overviewDescription
             itemView.imOverViewDescImage.setImageResource(bpiOverview.overviewDrawable!!)
@@ -71,13 +71,13 @@ internal class BPIOverviewAdapter(private val bpiOverviewList: MutableList<BPIOv
         }
 
         // Set top and bottom margin for bpi overview adapter row
-        fun setOverviewConstraint(view: View, position: Int, topMargin: Int?, bottomMargin: Int?) {
+        private fun setOverviewConstraint(itemCount: Int,view: View, position: Int, topMargin: Int?, bottomMargin: Int?) {
             if (view.context == null) return
             val context = view.context
             val marginTop = context.resources.getDimension(topMargin!!).toInt()
             val marginBottom = context.resources.getDimension(bottomMargin!!).toInt()
             val params = view.layoutParams as ViewGroup.MarginLayoutParams
-            params.setMargins(params.leftMargin, if (position == 0) marginTop else params.topMargin, params.rightMargin, if (position == 3) marginBottom else params.bottomMargin)
+            params.setMargins(params.leftMargin, if (position == 0) marginTop else params.topMargin, params.rightMargin, if (position == (itemCount-1)) marginBottom else params.bottomMargin)
             view.layoutParams = params
         }
     }
