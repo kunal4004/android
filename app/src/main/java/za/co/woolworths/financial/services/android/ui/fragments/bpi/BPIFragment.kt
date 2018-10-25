@@ -36,7 +36,8 @@ open class BPIFragment : Fragment() {
 
     fun updateBPIList(): MutableList<BPIOverview>? {
         val bpiList = createBPIList()
-        val insuranceBPIList : MutableList<BPIOverview> = mutableListOf()
+        val coveredList: MutableList<BPIOverview> = mutableListOf()
+        val uncoveredList: MutableList<BPIOverview> = mutableListOf()
         val insuranceListType = getInsuranceType()!!
         for (insuranceType in insuranceListType) {
             for (bpi in bpiList!!) {
@@ -46,11 +47,15 @@ open class BPIFragment : Fragment() {
                     type.description = insuranceType.description
                     type.effectiveDate = insuranceType.effectiveDate
 
-                    insuranceBPIList.add(bpi)
+                    if (type.covered) {
+                        coveredList.add(bpi)
+                    } else {
+                        uncoveredList.add(bpi)
+                    }
                 }
             }
         }
-        return insuranceBPIList
+        return (coveredList + uncoveredList).toMutableList()
     }
 
     fun getInsuranceType(): MutableList<InsuranceType>? {
