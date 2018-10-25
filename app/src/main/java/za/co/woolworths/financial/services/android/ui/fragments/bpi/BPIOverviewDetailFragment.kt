@@ -69,7 +69,7 @@ class BPIOverviewDetailFragment : BPIFragment(), View.OnClickListener {
     @SuppressLint("SetTextI18n")
     private fun claimVisibility(insuranceType: InsuranceType) {
         tvCover.visibility = if (insuranceType.covered) VISIBLE else GONE
-        btnHowToClaim.visibility = if (insuranceType.covered) VISIBLE else GONE
+        llHowToClaim.visibility = if (insuranceType.covered) VISIBLE else GONE
         tvEffectiveDate.visibility = if (insuranceType.covered) VISIBLE else GONE
         // Hide EffectiveDate if insuranceType.effectiveDate is empty
 
