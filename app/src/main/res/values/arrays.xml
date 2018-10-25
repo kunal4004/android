@@ -204,6 +204,7 @@
         <item>@string/bpi_card_balance_protection_benefits_1</item>
         <item>@string/bpi_card_balance_protection_benefits_2</item>
         <item>@string/bpi_card_balance_protection_benefits_3</item>
+        <item>@string/bpi_card_balance_protection_benefits_4</item>
     </string-array>
 
     <string-array name="bpi_loan_balance_benefits">

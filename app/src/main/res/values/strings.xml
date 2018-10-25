@@ -766,8 +766,9 @@
 
 
     <string name="bpi_card_balance_protection_benefits_1">Pays the outstanding balance on your account (provided it is not in arrears) in the event of your death, permanent disability, or if you are diagnosed with a critical illness.</string>
-    <string name="bpi_card_balance_protection_benefits_2">Pays R2500 cash to a nominated beneficiary when you pass away due to natural causes or R5000 cash if your passing is accidental.</string>
-    <string name="bpi_card_balance_protection_benefits_3">Helps your family handle any unforeseen expenses in the event of your passing.</string>
+    <string name="bpi_card_balance_protection_benefits_2">Pays your instalments for up to 12 months from the date you are retrenched or temporarily disabled.</string>
+    <string name="bpi_card_balance_protection_benefits_3">Pays R2500 cash to a nominated beneficiary when you pass away due to natural causes or R5000 cash if your passing is accidental.</string>
+    <string name="bpi_card_balance_protection_benefits_4">Helps your family handle any unforeseen expenses in the event of your passing.</string>
 
     <string name="bpi_loan_balance_protection_benefits_1">Pays the outstanding balance on your account (provided it is not in arrears) in the event of your death, permanent disability, or if you are diagnosed with a critical illness.</string>
     <string name="bpi_loan_balance_protection_benefits_2">Pays your instalments for up to 12 months from the date you are retrenched or temporarily disabled.</string>
