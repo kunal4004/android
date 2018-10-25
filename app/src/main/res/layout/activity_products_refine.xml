@@ -11,7 +11,7 @@
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/FaqStyle"
+        android:theme="@style/RefineActivityStyle"
         app:elevation="0dp">
 
         <android.support.v7.widget.Toolbar
@@ -22,8 +22,8 @@
             android:gravity="center"
             android:minHeight="?attr/actionBarSize"
             app:layout_scrollFlags="scroll|enterAlways"
-            app:popupTheme="@style/FaqStyle"
-            app:theme="@style/FaqStyle">
+            app:popupTheme="@style/RefineActivityStyle"
+            app:theme="@style/RefineActivityStyle">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -48,6 +48,8 @@
                     android:textAllCaps="true"
                     android:textColor="@color/black"
                     android:textSize="12sp"
+                    android:singleLine="true"
+                    android:ellipsize="end"
                     app:WTextView_font="medium_bold" />
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView

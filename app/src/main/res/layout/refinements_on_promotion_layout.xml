@@ -21,7 +21,7 @@
             android:textColor="@color/white"
             android:textSize="5sp"
             app:WTextView_font="medium_bold"
-            android:layout_margin="1dp"
+            android:layout_margin="2dp"
             />
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView

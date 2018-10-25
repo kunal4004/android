@@ -69,7 +69,7 @@ class RefinementAdapter(val context: Context, val baseListner: BaseFragmentListn
             itemView.setOnClickListener {
                 dataList.forEachIndexed { index, refinementSelectableItem ->
                     if (index == position) {
-                        refinementSelectableItem.isSelected = !refinementSelectableItem.isSelected
+                        refinementSelectableItem.isSelected = if (item is RefinementCrumb) !refinementSelectableItem.isSelected else true
                     } else if (refinementSelectableItem.type == RefinementSelectableItem.ViewType.SINGLE_SELECTOR) {
                         refinementSelectableItem.isSelected = false
                     }

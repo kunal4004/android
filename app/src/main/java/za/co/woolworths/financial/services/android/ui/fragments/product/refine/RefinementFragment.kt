@@ -27,6 +27,7 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     private var refinementNavigation: RefinementNavigation? = null
     private var backButton: ImageView? = null
     private var dataList = arrayListOf<RefinementSelectableItem>()
+    private var pageTitle: TextView? = null
 
     companion object {
         private val ARG_PARAM = "refinementNavigationObject"
@@ -51,6 +52,8 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
         backButton = activity.findViewById(R.id.btnClose)
         backButton?.setImageResource(R.drawable.back24)
         clearRefinement = activity.findViewById(R.id.resetRefinement)
+        pageTitle = activity.findViewById(R.id.toolbarText)
+        pageTitle?.text = refinementNavigation?.displayName
         clearRefinement?.text = getString(R.string.refinement_clear)
         clearRefinement?.setOnClickListener { refinementAdapter?.clearRefinement() }
         backButton?.setOnClickListener { onBackPressed() }

@@ -15,6 +15,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
+            android:layout_marginLeft="2dp"
+            android:button="@drawable/refine_multi_selector"
             android:clickable="false" />
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
