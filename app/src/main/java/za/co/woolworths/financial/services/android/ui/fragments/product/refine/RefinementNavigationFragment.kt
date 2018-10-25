@@ -30,6 +30,7 @@ class RefinementNavigationFragment : BaseRefinementFragment(), BaseFragmentListn
     private var dataList = arrayListOf<RefinementSelectableItem>()
     private var baseNavigationState = ""
     private var updatedNavigationState = ""
+    private var pageTitle: TextView? = null
 
     companion object {
         private val ARG_PARAM = "productViewObject"
@@ -63,6 +64,8 @@ class RefinementNavigationFragment : BaseRefinementFragment(), BaseFragmentListn
         backButton = activity.findViewById(R.id.btnClose)
         backButton?.setImageResource(R.drawable.close_24)
         clearOrRresetRefinement = activity.findViewById(R.id.resetRefinement)
+        pageTitle = activity.findViewById(R.id.toolbarText)
+        pageTitle?.text = resources.getString(R.string.refine)
         backButton?.setOnClickListener { onBackPressed() }
         clearOrRresetRefinement?.setOnClickListener { if (TextUtils.isEmpty(getNavigationState()) && showReset()) listener.onRefinementReset() else listener.onRefinementClear() }
         refinementSeeResult.setOnClickListener { seeResults() }
