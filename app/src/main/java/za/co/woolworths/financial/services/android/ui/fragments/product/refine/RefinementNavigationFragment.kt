@@ -20,7 +20,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.utils.Ba
 import za.co.woolworths.financial.services.android.util.Utils
 
 
-class RefinementNavigationFragment : BaseRefinementFragment(), BaseFragmentListner {
+class RefinementNavigationFragment : BaseRefinementFragment() {
 
     private lateinit var listener: OnRefinementOptionSelected
     private var refinementNavigationAdapter: RefinementNavigationAdapter? = null
@@ -31,6 +31,7 @@ class RefinementNavigationFragment : BaseRefinementFragment(), BaseFragmentListn
     private var baseNavigationState = ""
     private var updatedNavigationState = ""
     private var pageTitle: TextView? = null
+    private val emptyNavigationState = ""
 
     companion object {
         private val ARG_PARAM = "productViewObject"
@@ -67,7 +68,7 @@ class RefinementNavigationFragment : BaseRefinementFragment(), BaseFragmentListn
         pageTitle = activity.findViewById(R.id.toolbarText)
         pageTitle?.text = resources.getString(R.string.refine)
         backButton?.setOnClickListener { onBackPressed() }
-        clearOrRresetRefinement?.setOnClickListener { if (TextUtils.isEmpty(getNavigationState()) && showReset()) listener.onRefinementReset() else listener.onRefinementClear() }
+        clearOrRresetRefinement?.setOnClickListener { if (showReset()) listener.onRefinementReset() else listener.onRefinementClear() }
         refinementSeeResult.setOnClickListener { seeResults() }
         refinementList.layoutManager = LinearLayoutManager(activity)
         updateToolBarMenuText()
@@ -78,7 +79,7 @@ class RefinementNavigationFragment : BaseRefinementFragment(), BaseFragmentListn
         if (productView!!.navigation != null && productView!!.navigation.size > 0) {
             setResultCount(productView?.pagingResponse?.numItemsInTotal)
             dataList = getRefinementSelectableItems(productView?.navigation!!)
-            refinementNavigationAdapter = RefinementNavigationAdapter(activity, this, listener, dataList, productView?.history!!)
+            refinementNavigationAdapter = RefinementNavigationAdapter(activity, listener, dataList, productView?.history!!)
             refinementList.adapter = refinementNavigationAdapter!!
         }
     }
@@ -121,21 +122,7 @@ class RefinementNavigationFragment : BaseRefinementFragment(), BaseFragmentListn
     }
 
     private fun seeResults() {
-        listener.onSeeResults(getNavigationState())
-    }
-
-    private fun getNavigationState(): String {
-        var navigationState = ""
-        dataList.forEach {
-            if (it.type == RefinementSelectableItem.ViewType.PROMOTION) {
-                it.item as RefinementNavigation
-                if (it.isSelected != (it.item.refinementCrumbs != null && it.item.refinementCrumbs.size > 0)) {
-                    navigationState = if (it.item.multiSelect) it.item.refinements[0].navigationState else it.item.refinementCrumbs[0].navigationState
-                    return navigationState
-                }
-            }
-        }
-        return navigationState
+        listener.onSeeResults(emptyNavigationState)
     }
 
     private fun updateToolBarMenuText() {
@@ -144,20 +131,12 @@ class RefinementNavigationFragment : BaseRefinementFragment(), BaseFragmentListn
             clearOrRresetRefinement?.isEnabled = !TextUtils.isEmpty(baseNavigationState)
         } else {
             clearOrRresetRefinement?.text = getString(R.string.refinement_clear)
-            clearOrRresetRefinement?.isEnabled = (!TextUtils.isEmpty(getNavigationState()) || !TextUtils.isEmpty(updatedNavigationState))
+            clearOrRresetRefinement?.isEnabled = !TextUtils.isEmpty(updatedNavigationState)
         }
     }
 
-    override fun onSelectionChanged() {
-    }
-
-    override fun onPromotionToggled(count: Int, isEnabled: Boolean) {
-        updateToolBarMenuText()
-        if (isEnabled) setResultCount(count) else setResultCount(productView?.pagingResponse?.numItemsInTotal)
-    }
-
     private fun showReset(): Boolean {
-        return (TextUtils.isEmpty(getNavigationState()) && !TextUtils.isEmpty(baseNavigationState) && TextUtils.isEmpty(updatedNavigationState))
+        return (!TextUtils.isEmpty(baseNavigationState) && TextUtils.isEmpty(updatedNavigationState))
     }
 
 }

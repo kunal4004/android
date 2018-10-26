@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.models.dao
 
 import android.content.Context
 import android.text.TextUtils
-import com.awfs.coordination.BuildConfig
 import retrofit.RestAdapter
 import za.co.wigroup.androidutils.Util
 import za.co.woolworths.financial.services.android.contracts.OnResultListener
@@ -26,7 +25,7 @@ class MobileConfigServerDao {
                 override fun httpDoInBackground(vararg strings: String): ConfigResponse {
 
                     val mApiInterface = RestAdapter.Builder()
-                            .setEndpoint(BuildConfig.HOST)
+                            .setEndpoint(com.awfs.coordination.BuildConfig.HOST)
                             .build()
                             .create(ApiInterface::class.java)
 

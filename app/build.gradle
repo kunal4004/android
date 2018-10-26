@@ -58,6 +58,7 @@ android {
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         versionCode BUILD_NUMBER.toInteger()
+        buildConfigField("String", "HOST", '"https://wfs-appserver.wigroup.co:8080/wfs/app/v4"')
     }
 
     compileSdkVersion 27
@@ -90,13 +91,11 @@ android {
         staging {
             applicationId "com.awfs.coordination.staging"
             signingConfig signingConfigs.woneappStaging
-            buildConfigField("String", "HOST", '"https://wfs-appserver.wigroup.co:8080/wfs/app/v4"')
         }
 
         production {
             applicationId "com.awfs.coordination"
             signingConfig signingConfigs.woolworths
-            buildConfigField("String", "HOST", '"https://wfs-appserver.wigroup.co:8080/wfs/app/v4"')
         }
         dexOptions {
             javaMaxHeapSize "2560M"
