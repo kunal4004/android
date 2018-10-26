@@ -15,6 +15,7 @@ import java.util.List;
 
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import za.co.woolworths.financial.services.android.ui.activities.maintenance.RuntimeExceptionActivity;
 import za.co.woolworths.financial.services.android.ui.activities.maintenance.RuntimeExceptionHelper;
 
 /**
@@ -49,7 +50,9 @@ public abstract class HttpAsyncTask<Params, Progress, Result> extends AsyncTask<
         RuntimeExceptionHelper runtimeHelper = new RuntimeExceptionHelper();
         String httpCode = runtimeHelper.getHttpCode(result);
         if (httpCode.equalsIgnoreCase("404")) {
-          runtimeHelper.navigateToRuntimeExceptionActivity();
+            if(!runtimeHelper.isActivityRunning(RuntimeExceptionActivity.class)){
+                runtimeHelper.navigateToRuntimeExceptionActivity();
+            }
         } else {
             super.onPostExecute(result);
         }

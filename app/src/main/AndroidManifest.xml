@@ -350,9 +350,10 @@
             android:screenOrientation="portrait"
             android:theme="@style/BalanceProtectionInsuranceStyle" />
 
-        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.maintenance.RuntimeExceptionActivity"
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.maintenance.RuntimeExceptionActivity"
             android:screenOrientation="portrait"
-                  android:theme="@style/RuntimeExceptionActivityStyle"/>
+            android:theme="@style/RuntimeExceptionActivityStyle"/>
 
     </application>
 
