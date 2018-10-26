@@ -5,10 +5,6 @@ import android.util.Log
 import org.json.JSONObject
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.util.Utils
-import android.app.ActivityManager
-import android.content.Context
-
-
 
 open class RuntimeExceptionHelper {
 
@@ -30,17 +26,4 @@ open class RuntimeExceptionHelper {
         }
         return ""
     }
-
-    open fun isActivityRunning(activityClass: Class<*>): Boolean? {
-        val woolworthsApplication = WoolworthsApplication.getInstance() ?: return true
-        val activityManager = woolworthsApplication.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-        val tasks = activityManager.getRunningTasks(Integer.MAX_VALUE)
-        for (task in tasks) {
-            if (activityClass.canonicalName.equals(task.baseActivity.className, ignoreCase = true))
-                return true
-        }
-
-        return false
-    }
-
 }
