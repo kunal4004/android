@@ -118,7 +118,8 @@ class RefinementNavigationFragment : BaseRefinementFragment() {
     }
 
     override fun onBackPressed() {
-        this.seeResults()
+        activity?.finish()
+        activity?.overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
     }
 
     private fun seeResults() {
