@@ -134,7 +134,4 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
         clearRefinement?.isEnabled = !TextUtils.isEmpty(getNavigationState())
     }
 
-    override fun onPromotionToggled(count: Int, isEnabled: Boolean) {
-    }
-
 }

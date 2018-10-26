@@ -20,8 +20,4 @@ open class BaseRefinementFragment : Fragment(), BaseFragmentListner {
 
     override fun onSelectionChanged() {
     }
-
-    override fun onPromotionToggled(count: Int, isEnabled: Boolean) {
-    }
-
 }

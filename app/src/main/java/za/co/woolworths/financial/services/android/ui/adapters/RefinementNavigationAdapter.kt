@@ -19,7 +19,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.refine.R
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseFragmentListner
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.OnRefinementOptionSelected
 
-class RefinementNavigationAdapter(val context: Context, val baseListner: BaseFragmentListner, val listner: OnRefinementOptionSelected, var dataList: ArrayList<RefinementSelectableItem>, var history: RefinementHistory) : RecyclerView.Adapter<RefinementBaseViewHolder>() {
+class RefinementNavigationAdapter(val context: Context, val listner: OnRefinementOptionSelected, var dataList: ArrayList<RefinementSelectableItem>, var history: RefinementHistory) : RecyclerView.Adapter<RefinementBaseViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RefinementBaseViewHolder? {
         when (viewType) {
@@ -47,7 +47,7 @@ class RefinementNavigationAdapter(val context: Context, val baseListner: BaseFra
     inner class SectionHeaderHolder(itemView: View) : RefinementBaseViewHolder(itemView) {
         override fun bind(position: Int) {
             var item = dataList[position].item as RefinementNavigation
-            itemView.refinementSectionHeader.text = if (item.displayName.contentEquals(RefinementNavigationFragment.ON_PROMOTION)) context.resources.getString(R.string.refine) else context.resources.getString(R.string.refinement_filter_by)
+            itemView.refinementSectionHeader.text = if (item.displayName.contentEquals(RefinementNavigationFragment.ON_PROMOTION)) context.resources.getString(R.string.refinement_show_me) else context.resources.getString(R.string.refinement_filter_by)
         }
     }
 
@@ -59,8 +59,8 @@ class RefinementNavigationAdapter(val context: Context, val baseListner: BaseFra
                 refinementSelectableItem.isSelected = isChecked
                 notifyDataSetChanged()
                 val navigationItem = refinementSelectableItem.item as RefinementNavigation
-                val count: Int = if (navigationItem.multiSelect) navigationItem.refinements[0].count else navigationItem.refinementCrumbs[0].count
-                baseListner.onPromotionToggled(count, isChecked)
+                val navigationState = if (navigationItem.multiSelect) navigationItem.refinements[0].navigationState else navigationItem.refinementCrumbs[0].navigationState
+                listner.onBackPressedWithRefinement(navigationState)
             }
         }
     }
