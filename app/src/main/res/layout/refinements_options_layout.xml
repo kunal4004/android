@@ -13,19 +13,24 @@
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:id="@+id/displayName"
             style="@style/refinements_textview_style"
-            android:layout_margin="1dp"
-            android:text="Category" />
+            android:layout_margin="1dp" />
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:id="@+id/label"
-            style="@style/refinements_textview_style_breadcrumbs"
+        <RelativeLayout
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/sixteen_dp"
             android:layout_toLeftOf="@+id/rightArrow"
-            android:layout_toRightOf="@+id/displayName"
-            android:gravity="end"
-            android:ellipsize="end"
-            android:singleLine="true" />
+            android:layout_toRightOf="@+id/displayName">
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/label"
+                style="@style/refinements_textview_style_breadcrumbs"
+                android:layout_width="wrap_content"
+                android:layout_alignParentRight="true"
+                android:ellipsize="end"
+                android:singleLine="true" />
+        </RelativeLayout>
 
         <ImageView
             android:id="@+id/rightArrow"
