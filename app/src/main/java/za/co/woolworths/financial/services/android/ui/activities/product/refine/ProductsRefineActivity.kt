@@ -57,7 +57,7 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
     }
 
     override fun onRefinementOptionSelected(refinementNavigation: RefinementNavigation) {
-        pushFragment(RefinementFragment.getInstance(refinementNavigation), TAG_REFINEMENT_FRAGMENT)
+        pushFragment(RefinementFragment.getInstance(refinementNavigation,getRefinedNavigationState()), TAG_REFINEMENT_FRAGMENT)
     }
 
     override fun onRefinementSelected(refinement: Refinement) {
