@@ -6,7 +6,7 @@ apply plugin: 'io.fabric'
 android {
 
     def major = "5"
-    def minor = "8"
+    def minor = "7"
     def fix = "0"
 
     //placeholder will be temporarily updated by build server during a build.
@@ -14,7 +14,7 @@ android {
     def BUILD_NUMBER = "{BUILD_NUMBER}"
 
     if (!BUILD_NUMBER.isNumber()){
-        BUILD_NUMBER = "1"
+        BUILD_NUMBER = "85"
     }
 
     dataBinding {
