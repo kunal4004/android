@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.text.SpannableString;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,20 +35,24 @@ import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.rest.cli.CLIGetOfferActive;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.FragmentLifecycle;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
+import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
+
+import static android.app.Activity.RESULT_OK;
 
 public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle, NetworkChangeListener {
 
@@ -72,6 +75,21 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	private final CompositeDisposable disposables = new CompositeDisposable();
 	private CLIGetOfferActive cliGetOfferActive;
 	private AccountsResponse accountsResponse;
+	private LinearLayout accountInArrearsLayout;
+	private WTextView tvHowToPayAccountStatus;
+    private WTextView tvAmountOverdue;
+    private WTextView tvTotalAmountDue;
+	private ImageView iconAvailableFundsInfo;
+	public static int RESULT_CODE_FUNDS_INFO = 70;
+    private LinearLayout llActiveAccount;
+    private RelativeLayout llChargedOffAccount;
+	private boolean productOfferingGoodStanding;
+	private Account account;
+	private WTextView tvHowToPayArrears;
+
+	private RelativeLayout relDebitOrders;
+
+	private View fakeView;
 
 	@Nullable
 	@Override
@@ -138,6 +156,17 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		llCommonLayer = (LinearLayout) view.findViewById(R.id.llCommonLayer);
 		llIncreaseLimitContainer = (LinearLayout) view.findViewById(R.id.llIncreaseLimitContainer);
 		logoIncreaseLimit = (ImageView) view.findViewById(R.id.logoIncreaseLimit);
+		accountInArrearsLayout = view.findViewById(R.id.llAccountInArrearsParentContainer);
+		tvHowToPayAccountStatus = view.findViewById(R.id.howToPayAccountStatus);
+        tvAmountOverdue = view.findViewById(R.id.amountOverdue);
+        tvTotalAmountDue = view.findViewById(R.id.totalAmountDue);
+		iconAvailableFundsInfo = view.findViewById(R.id.iconAvailableFundsInfo);
+        llActiveAccount = view.findViewById(R.id.llActiveAccount);
+        llChargedOffAccount = view.findViewById(R.id.llChargedOffAccount);
+		tvHowToPayArrears = view.findViewById(R.id.howToPayArrears);
+
+		relDebitOrders = view.findViewById(R.id.relDebitOrders);
+		relDebitOrders.setVisibility(View.GONE);
 
 		RelativeLayout relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
 		RelativeLayout rlViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
@@ -151,6 +180,11 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		llIncreaseLimitContainer.setOnClickListener(this);
 		mRelIncreaseMyLimit.setOnClickListener(this);
 		mRelFindOutMore.setOnClickListener(this);
+		iconAvailableFundsInfo.setOnClickListener(this);
+		tvHowToPayArrears.setOnClickListener(this);
+		tvHowToPayAccountStatus.setOnClickListener(this);
+
+		fakeView = view.findViewById(R.id.fakeView);
 	}
 
 	private void addListener() {
@@ -165,17 +199,8 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		bindData(accountsResponse);
 		onLoadComplete();
 		mErrorHandlerView = new ErrorHandlerView(getActivity());
-		if (!new ConnectionDetector().isOnline(getActivity()))
+		if (!NetworkManager.getInstance().isConnectedToNetwork(getActivity()))
 			mErrorHandlerView.showToast();
-	}
-
-	//To remove negative signs from negative balance and add "CR" after the negative balance
-	public String removeNegativeSymbol(SpannableString amount) {
-		String currentAmount = amount.toString();
-		if (currentAmount.contains("-")) {
-			currentAmount = currentAmount.replace("-", "") + " CR";
-		}
-		return currentAmount;
 	}
 
 	public void bindData(AccountsResponse response) {
@@ -183,12 +208,25 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		if (accountList != null) {
 			for (Account p : accountList) {
 				if ("CC".equals(p.productGroupCode)) {
+					this.account = p;
+                    if(!p.productOfferingGoodStanding && p.productOfferingStatus.equalsIgnoreCase(Utils.ACCOUNT_CHARGED_OFF))
+                    {
+                        llActiveAccount.setVisibility(View.GONE);
+                        llChargedOffAccount.setVisibility(View.VISIBLE);
+						Utils.setViewHeightToRemainingBottomSpace(getActivity(), fakeView);
+                        return;
+                    }else {
+                        llActiveAccount.setVisibility(View.VISIBLE);
+                        llChargedOffAccount.setVisibility(View.GONE);
+                    }
+
+					productOfferingGoodStanding = p.productOfferingGoodStanding;
 					productOfferingId = String.valueOf(p.productOfferingId);
 					woolworthsApplication.setProductOfferingId(p.productOfferingId);
-					availableBalance.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.availableFunds), 1, getActivity())));
-					creditLimit.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.creditLimit), 1, getActivity())));
-					minAmountDue.setText(removeNegativeSymbol(WFormatter.newAmountFormat(p.minimumAmountDue)));
-					currentBalance.setText(removeNegativeSymbol(WFormatter.newAmountFormat(p.currentBalance)));
+					availableBalance.setText(Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.availableFunds), 1, getActivity())));
+					creditLimit.setText(Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.creditLimit), 1, getActivity())));
+					minAmountDue.setText(Utils.removeNegativeSymbol(WFormatter.newAmountFormat(p.minimumAmountDue)));
+					currentBalance.setText(Utils.removeNegativeSymbol(WFormatter.newAmountFormat(p.currentBalance)));
 					WoolworthsApplication.setCreditCardType(p.accountNumberBin);
 					try {
 						dueDate.setText(WFormatter.addSpaceToDate(WFormatter.newDateFormat(p.paymentDueDate)));
@@ -196,6 +234,15 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 						dueDate.setText(p.paymentDueDate);
 						WiGroupLogger.e(getActivity(), "TAG", e.getMessage(), e);
 					}
+					iconAvailableFundsInfo.setVisibility(p.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
+                    availableBalance.setTextColor(getResources().getColor(p.productOfferingGoodStanding ? R.color.black : R.color.bg_overlay));
+                    accountInArrearsLayout.setVisibility(p.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
+					llIncreaseLimitContainer.setVisibility(p.productOfferingGoodStanding ? View.VISIBLE : View.GONE);
+					tvHowToPayAccountStatus.setVisibility(p.productOfferingGoodStanding ? View.VISIBLE : View.INVISIBLE);
+                    if(!p.productOfferingGoodStanding){
+                        tvAmountOverdue.setText(WFormatter.newAmountFormat(p.amountOverdue));
+                        tvTotalAmountDue.setText(WFormatter.newAmountFormat(p.totalAmountDue));
+                    }
 				}
 			}
 		}
@@ -228,7 +275,22 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 					mIncreaseLimitController.nextStep(offerActive, productOfferingId);
 				}
 				break;
-
+			case R.id.iconAvailableFundsInfo:
+				Utils.displayValidationMessageForResult(
+						this,
+						getActivity(),
+						CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC,
+						getActivity().getResources().getString(R.string.account_in_arrears_info_title),
+						getActivity().getResources().getString(R.string.account_in_arrears_info_description)
+								.replace("minimum_payment", Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account.amountOverdue)))
+								.replace("card_name", "Credit Card"),
+						getActivity().getResources().getString(R.string.how_to_pay),
+						RESULT_CODE_FUNDS_INFO);
+				break;
+			case R.id.howToPayAccountStatus:
+			case R.id.howToPayArrears:
+				ScreenManager.presentHowToPayActivity(getActivity(),account);
+				break;
 			case R.id.relFindOutMore:
 				if (controllerNotNull())
 					mIncreaseLimitController.intentFindOutMore(getActivity(), offerActive);
@@ -237,6 +299,10 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	}
 
 	private void getActiveOffer() {
+
+		if(!productOfferingGoodStanding)
+			return;
+
 		onLoad();
 		cliGetOfferActive = new CLIGetOfferActive(getActivity(), productOfferingId, new OnEventListener() {
 			@Override
@@ -276,7 +342,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 				break;
 
 			case 440:
-				SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, offerActive.response.stsParams);
+				SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, offerActive.response.stsParams, getActivity());
 				break;
 			default:
 				break;
@@ -292,15 +358,6 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		tvIncreaseLimit.setVisibility(View.VISIBLE);
 	}
 
-	//To remove negative signs from negative balance and add "CR" after the negative balance
-	public String removeNegativeSymbol(String amount) {
-		String currentAmount = amount;
-		if (currentAmount.contains("-")) {
-			currentAmount = currentAmount.replace("-", "") + " CR";
-		}
-		return currentAmount;
-	}
-
 	@Override
 	public void onPauseFragment() {
 	}
@@ -311,7 +368,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 			@Override
 			public void run() {
 				if (!creditWasAlreadyRunOnce) {
-					if (new ConnectionDetector().isOnline(getActivity()))
+					if (NetworkManager.getInstance().isConnectedToNetwork(getActivity()))
 						getActiveOffer();
 					else {
 						mErrorHandlerView.showToast();
@@ -345,7 +402,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	public void onConnectionChanged() {
 		//connection changed
 		if (!creditWasAlreadyRunOnce) {
-			if (new ConnectionDetector().isOnline(getActivity()))
+			if (NetworkManager.getInstance().isConnectedToNetwork(getActivity()))
 				getActiveOffer();
 
 		}
@@ -354,12 +411,15 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
+		if(requestCode == RESULT_CODE_FUNDS_INFO && resultCode == RESULT_OK) {
+			ScreenManager.presentHowToPayActivity(getActivity(),account);
+		}
 		retryConnect();
 	}
 
 	private void retryConnect() {
 		if (!creditWasAlreadyRunOnce) {
-			if (new ConnectionDetector().isOnline(getActivity()))
+			if (NetworkManager.getInstance().isConnectedToNetwork(getActivity()))
 				getActiveOffer();
 			else {
 				mErrorHandlerView.showToast();

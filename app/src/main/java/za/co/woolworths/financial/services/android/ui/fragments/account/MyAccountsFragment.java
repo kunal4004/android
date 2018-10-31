@@ -52,10 +52,10 @@ import za.co.woolworths.financial.services.android.ui.fragments.faq.FAQFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.ShoppingListFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
@@ -112,6 +112,9 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	private LinearLayout loginUserOptionsLayout;
 	private GetShoppingLists mGetShoppingLists;
 	private ShoppingListsResponse shoppingListsResponse;
+	ImageView imgStoreCardStatusIndicator;
+	ImageView imgCreditCardStatusIndicator;
+	ImageView imgPersonalLoanStatusIndicator;
 
 	public MyAccountsFragment() {
 		// Required empty public constructor
@@ -145,7 +148,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		JWTDecodedModel jwtDecodedModel = SessionUtilities.getInstance().getJwt();
 		Map<String, String> arguments = new HashMap<>();
 		arguments.put("c2_id", (jwtDecodedModel.C2Id != null) ? jwtDecodedModel.C2Id : "");
-		Utils.triggerFireBaseEvents(getActivity(), "accounts_event_appeared", arguments);
+		Utils.triggerFireBaseEvents("accounts_event_appeared", arguments);
 		myAccountsViewModel = ViewModelProviders.of(this).get(MyAccountsViewModel.class);
 		myAccountsViewModel.setNavigator(this);
 		setHasOptionsMenu(false);
@@ -192,6 +195,9 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			RelativeLayout storeLocator = view.findViewById(R.id.storeLocator);
 			allUserOptionsLayout = view.findViewById(R.id.parentOptionsLayout);
 			loginUserOptionsLayout = view.findViewById(R.id.loginUserOptionsLayout);
+			imgStoreCardStatusIndicator = view.findViewById(R.id.storeCardStatusIndicator);
+			imgCreditCardStatusIndicator = view.findViewById(R.id.creditCardStatusIndicator);
+			imgPersonalLoanStatusIndicator = view.findViewById(R.id.personalLoanStatusIndicator);
 			openMessageActivity.setOnClickListener(this);
 			contactUs.setOnClickListener(this);
 			applyPersonalCardView.setOnClickListener(this);
@@ -218,7 +224,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					if (new ConnectionDetector().isOnline(getActivity())) {
+					if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
 						loadAccounts();
 					}
 				}
@@ -253,11 +259,11 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			messageCounterRequest();
 	}
 
-	//To remove negative signs from negative balance and add "CR" after the negative balance
+	// add negative sign before currency value
 	public String removeNegativeSymbol(SpannableString amount) {
 		String currentAmount = amount.toString();
 		if (currentAmount.contains("-")) {
-			currentAmount = currentAmount.replace("-", "") + " CR";
+			currentAmount = currentAmount.replace("R - ","- R ");
 		}
 		return currentAmount;
 	}
@@ -272,8 +278,10 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 				case "SC":
 					linkedStoreCardView.setVisibility(View.VISIBLE);
 					applyStoreCardView.setVisibility(View.GONE);
+					imgStoreCardStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
 					sc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
-					break;
+                    sc_available_funds.setTextColor(getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
+                    break;
 				case "CC":
 					linkedCreditCardView.setVisibility(View.VISIBLE);
 					applyCreditCardView.setVisibility(View.GONE);
@@ -285,13 +293,15 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 					} else if (account.accountNumberBin.equalsIgnoreCase(Utils.BLACK_CARD)) {
 						imgCreditCard.setBackgroundResource(R.drawable.small_3);
 					}
-
+					imgCreditCardStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
+                    cc_available_funds.setTextColor(getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
 					cc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
 					break;
 				case "PL":
 					linkedPersonalCardView.setVisibility(View.VISIBLE);
 					applyPersonalCardView.setVisibility(View.GONE);
-
+					imgPersonalLoanStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
+                    pl_available_funds.setTextColor(getResources().getColor(account.productOfferingGoodStanding ? R.color.black : R.color.black30));
 					pl_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
 					break;
 			}
@@ -611,7 +621,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 							List<Account> accountList = accountsResponse.accountList;
 							for (Account p : accountList) {
 								accounts.put(p.productGroupCode.toUpperCase(), p);
-
 								int indexOfUnavailableAccount = unavailableAccounts.indexOf(p.productGroupCode.toUpperCase());
 								if (indexOfUnavailableAccount > -1) {
 									try {
@@ -624,7 +633,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 							configureView();
 							break;
 						case 440:
-
 							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, accountsResponse.response.stsParams);
 							onSessionExpired(getActivity());
 							initialize();
@@ -795,6 +803,10 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			setToolbarBackgroundColor(R.color.white);
 			shoppingListRequest();
 			messageCounterRequest();
+
+			//Fixes WOP-3407
+			BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) getActivity();
+			bottomNavigationActivity.showBottomNavigationMenu();
 		}
 	}
 

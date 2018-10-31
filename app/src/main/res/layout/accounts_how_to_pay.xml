@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/default_background"
+    android:orientation="vertical">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:elevation="0dp">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/mToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:background="@drawable/appbar_background"
+            android:gravity="center"
+            android:minHeight="?attr/actionBarSize"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:popupTheme="@style/StoreSearch"
+            app:theme="@style/StoreSearch">
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/toolbarText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|center_vertical"
+                android:letterSpacing="0.2"
+                android:text="@string/title_how_to_pay"
+                android:textAllCaps="true"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:WTextView_font="medium_bold" />
+
+            <ImageView
+                android:id="@+id/btnClose"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginRight="@dimen/sixteen_dp"
+                android:src="@drawable/close_24" />
+
+        </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:descendantFocusability="blocksDescendants"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sixteen_sp"
+                android:background="@color/white"
+                android:orientation="vertical"
+                android:padding="@dimen/twenty_four_dp">
+
+                <ImageView
+                    android:id="@+id/howToPayLogo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    style="@style/contact_us_item_header_textview"
+                    android:id="@+id/howToPayTitle"
+                    android:paddingBottom="24dp"
+                    android:paddingTop="24dp"
+                    android:text="@string/ways_to_pay_your_account_cc_sc"
+                    android:textColor="@color/black_50"
+                    android:singleLine="false"
+                    />
+
+                <LinearLayout
+                    android:id="@+id/howToPayOptionsList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:orientation="vertical" />
+
+            </LinearLayout>
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/fifty_dp"
+                android:layout_marginTop="@dimen/sixteen_dp"
+                android:background="@color/white"
+                android:gravity="center_vertical"
+                android:letterSpacing="0.1"
+                android:paddingLeft="@dimen/twenty_four_dp"
+                android:paddingRight="@dimen/twenty_four_dp"
+                android:singleLine="true"
+                android:text="@string/how_to_pay_bank_details"
+                android:textAllCaps="true"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:WTextView_font="bold" />
+
+            <LinearLayout
+                android:id="@+id/howToPayAccountDetails"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="vertical"
+                android:layout_marginBottom="@dimen/sixteen_sp"
+                android:paddingBottom="16dp" />
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+</LinearLayout>

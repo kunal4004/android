@@ -66,7 +66,6 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 	}
 
 	public void initialize() {
-		Activity activity = getActivity();
 
 		removeAllChildFragments((AppCompatActivity) getActivity());
 
@@ -130,8 +129,11 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 		if (requestCode == WRewardsVouchersFragment.LOCK_REQUEST_CODE_WREWARDS) {
 			return;
 		}
-		if (resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue()) {
-			onSessionExpired(getActivity());
+		if ((resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue())) {
+			if (data != null) {
+				String stsParams = data.getStringExtra("stsParams");
+				onSessionExpired(getActivity(), stsParams);
+			}
 		} else if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
 			//One time biometricsWalkthrough
 			ScreenManager.presentBiometricWalkthrough(getActivity());
@@ -149,15 +151,21 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 		setTitle(getString(R.string.wrewards));
 	}
 
-	private void onSessionExpired(Activity activity) {
+	private void onSessionExpired(Activity activity, String stsParams) {
+		if (activity == null) return;
+
 		addBadge(INDEX_REWARD, 0);
 		addBadge(INDEX_ACCOUNT, 0);
 		addBadge(INDEX_CART, 0);
 
+		// R.id.navigate_to_wreward) prevent session dialog expired popup
+		// to appear when switching tab on an ongoing voucher call.
+		// R.id.navigate_to_cart enable expired popup display when CartActivity is finished.
 		Utils.setBadgeCounter(getActivity(), 0);
-
-		if (SessionUtilities.getInstance().isUserAuthenticated()) {
-			SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
+		if (SessionUtilities.getInstance().isUserAuthenticated()
+				&& ((getBottomNavigationActivity().getCurrentSection() == R.id.navigate_to_wreward)
+				|| getBottomNavigationActivity().getCurrentSection() == R.id.navigate_to_cart)) {
+			SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, stsParams);
 			SessionExpiredUtilities.getInstance().showSessionExpireDialog((AppCompatActivity) activity);
 		}
 

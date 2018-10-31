@@ -72,6 +72,7 @@ import za.co.woolworths.financial.services.android.util.PermissionResultCallback
 import za.co.woolworths.financial.services.android.util.PermissionUtils;
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
+import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -126,6 +127,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	private int mListItemCount = 0;
 	private QueryBadgeCounter mQueryBadgeCounter;
 	public static final int PDP_REQUEST_CODE = 18;
+	private String mSessionExpiredAtTabSection;
 
 	@Override
 	public int getLayoutId() {
@@ -255,9 +257,15 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		if (mBundle != null) {
 			if (!TextUtils.isEmpty(mBundle.getString(NotificationUtils.PUSH_NOTIFICATION_INTENT))) {
 				getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
-				mBundle = null;
+			}
+
+			mSessionExpiredAtTabSection = mBundle.getString("sessionExpiredAtTabSection");
+			if (!TextUtils.isEmpty(mSessionExpiredAtTabSection)) {
+				getBottomNavigationById().setCurrentItem(Integer.valueOf(mSessionExpiredAtTabSection));
+				SessionExpiredUtilities.getInstance().showSessionExpireDialog(BottomNavigationActivity.this);
 			}
 		}
+		mBundle = null;
 	}
 
 	@Override
@@ -567,6 +575,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					return true;
 
 				case R.id.navigate_to_account:
+					setCurrentSection(R.id.navigate_to_account);
 					if (AuthenticateUtils.getInstance(BottomNavigationActivity.this).isBiometricAuthenticationRequired()) {
 						try {
 							AuthenticateUtils.getInstance(BottomNavigationActivity.this).startAuthenticateApp(LOCK_REQUEST_CODE_ACCOUNTS);
@@ -574,7 +583,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 							e.printStackTrace();
 						}
 					} else {
-						setCurrentSection(R.id.navigate_to_account);
 						setToolbarBackgroundColor(R.color.white);
 						switchTab(INDEX_ACCOUNT);
 						return true;
@@ -786,6 +794,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	@Override
 	public void switchTab(int number) {
 		mNavController.switchTab(number);
+		SessionUtilities.getInstance().setBottomNavigationPosition(String.valueOf(number));
 	}
 
 	@Override

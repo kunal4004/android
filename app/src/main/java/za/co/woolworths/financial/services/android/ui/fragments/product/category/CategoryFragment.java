@@ -28,7 +28,6 @@ import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.ProductSearchFragmentBinding;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.Response;
@@ -38,8 +37,8 @@ import za.co.woolworths.financial.services.android.ui.activities.product.Product
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.barcode.BarcodeFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.ObservableScrollViewCallbacks;
 import za.co.woolworths.financial.services.android.util.ScrollState;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -196,7 +195,7 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 				//Show no connection toast instead of opening sub category
 				Activity activity = getActivity();
 				if (activity != null) {
-					if (!new ConnectionDetector().isOnline(activity)) {
+					if (!NetworkManager.getInstance().isConnectedToNetwork(activity)) {
 						mErrorHandlerView.showToast();
 						Utils.toggleStatusBarColor(activity, R.color.red);
 						return;

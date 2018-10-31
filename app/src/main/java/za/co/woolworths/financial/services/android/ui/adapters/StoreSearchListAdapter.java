@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.adapters;
 
 import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -48,7 +49,8 @@ public class StoreSearchListAdapter extends RecyclerView.Adapter<StoreSearchList
 	@Override
 	public void onBindViewHolder(SearchViewHolder holder, int position) {
 		holder.storeName.setText(storeDetailsList.get(position).name);
-		holder.storeAddress.setText(storeDetailsList.get(position).address);
+		if (!TextUtils.isEmpty(storeDetailsList.get(position).address))
+			holder.storeAddress.setText(storeDetailsList.get(position).address);
 		holder.storeDistance.setText(WFormatter.formatMeter(storeDetailsList.get(position).distance));
 		if (getItemViewType(position) == 0) {
 			// Inflate padded layout

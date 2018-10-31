@@ -43,10 +43,10 @@ import za.co.woolworths.financial.services.android.ui.activities.StatementActivi
 import za.co.woolworths.financial.services.android.ui.adapters.StatementAdapter;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FragmentUtils;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.StatementUtils;
@@ -202,7 +202,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 				break;
 
 			case R.id.btnRetry:
-				if (new ConnectionDetector().isOnline(getActivity()))
+				if (NetworkManager.getInstance().isConnectedToNetwork(getActivity()))
 					getStatement();
 				break;
 
@@ -250,7 +250,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 
 						case 440:
 
-							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.stsParams);
+							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.stsParams, getActivity());
 							break;
 
 						default:
@@ -402,7 +402,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 			activity.runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					if (new ConnectionDetector().isOnline(getActivity())) {
+					if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
 						if (!loadState.onLoanCompleted()) {
 							getPDFFile();
 						}
