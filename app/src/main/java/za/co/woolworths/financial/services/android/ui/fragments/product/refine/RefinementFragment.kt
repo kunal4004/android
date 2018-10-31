@@ -59,8 +59,8 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
         backButton?.setOnClickListener { onBackPressed() }
         refinementSeeResult.setOnClickListener { seeResults() }
         refinementList.layoutManager = LinearLayoutManager(activity)
-        onSelectionChanged()
         loadData()
+        onSelectionChanged()
     }
 
     private fun loadData() {
@@ -131,7 +131,15 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     }
 
     override fun onSelectionChanged() {
-        clearRefinement?.isEnabled = !TextUtils.isEmpty(getNavigationState())
+        clearRefinement?.isEnabled = isAnyRefinementSelected()
+    }
+
+    private fun isAnyRefinementSelected(): Boolean {
+        dataList.forEach {
+            if (it.isSelected)
+                return true
+        }
+        return false
     }
 
 }
