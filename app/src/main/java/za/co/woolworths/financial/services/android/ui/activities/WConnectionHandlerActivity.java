@@ -10,7 +10,7 @@ import android.view.View;
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.ui.views.WButton;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class WConnectionHandlerActivity extends AppCompatActivity {
@@ -29,7 +29,7 @@ public class WConnectionHandlerActivity extends AppCompatActivity {
         btnRetry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (new ConnectionDetector().isOnline(WConnectionHandlerActivity.this)) {
+                if (NetworkManager.getInstance().isConnectedToNetwork(WConnectionHandlerActivity.this)) {
                     finish();
                     overridePendingTransition(0, 0);
                 }

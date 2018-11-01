@@ -674,7 +674,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 		if (activity != null) {
 			if (shoppingCartResponse.response != null) {
 				if (shoppingCartResponse.response.stsParams != null) {
-					SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, shoppingCartResponse.response.stsParams);
+					SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, shoppingCartResponse.response.stsParams,getActivity());
 				}
 			}
 		}

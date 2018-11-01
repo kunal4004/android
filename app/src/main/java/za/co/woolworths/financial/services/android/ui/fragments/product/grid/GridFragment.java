@@ -5,6 +5,10 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -28,13 +32,13 @@ import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewListAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.ShoppingListFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsFragment;
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -184,9 +188,7 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 			getBottomNavigator().openProductDetailFragment(mSubCategoryName, productLists.get(0));
 
 		} else {
-			if (listContainFooter()) {
-				removeFooter();
-			}
+			hideFooterView();
 			if (!loadMoreData) {
 				bindRecyclerViewWithUI(productLists);
 			} else {
@@ -201,7 +203,33 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 		Activity activity = getActivity();
 		if (activity == null) return;
 		if (response.desc == null) return;
-		Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
+		hideFooterView();
+		FragmentManager fm = ((AppCompatActivity) activity).getSupportFragmentManager();
+		// check if dialog is being displayed
+		if (hasOpenedDialogs((AppCompatActivity) activity)) return;
+
+		// show dialog
+		SingleButtonDialogFragment singleButtonDialogFragment = SingleButtonDialogFragment.newInstance(response.desc);
+		singleButtonDialogFragment.show(fm, SingleButtonDialogFragment.class.getSimpleName());
+
+	}
+
+	private boolean hasOpenedDialogs(AppCompatActivity activity) {
+		List<Fragment> fragments = activity.getSupportFragmentManager().getFragments();
+		if (fragments != null) {
+			for (Fragment fragment : fragments) {
+				if (fragment instanceof DialogFragment) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	private void hideFooterView() {
+		if (listContainFooter())
+			removeFooter();
 	}
 
 	@Override
@@ -254,7 +282,10 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 				super.onScrolled(recyclerView, dx, dy);
 				totalItemCount = mRecyclerViewLayoutManager.getItemCount();
 				lastVisibleItem = mRecyclerViewLayoutManager.findLastVisibleItemPosition();
-				loadData();
+
+				// Detect scrolling up
+				if (dy > 0)
+					loadData();
 			}
 		});
 	}
@@ -345,9 +376,7 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 		mProductList.addAll(productLists);
 		int sizeOfList = mProductList.size();
 		try {
-			if (listContainFooter()) {
-				removeFooter();
-			}
+			hideFooterView();
 		} catch (Exception ex) {
 			Log.e("containFooter", ex.getMessage());
 		}

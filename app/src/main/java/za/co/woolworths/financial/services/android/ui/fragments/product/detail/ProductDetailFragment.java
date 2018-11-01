@@ -28,6 +28,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
+import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.ProductDetailViewBinding;
 import com.google.gson.Gson;
@@ -36,7 +37,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import com.awfs.coordination.BR;
 
 import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -1547,7 +1547,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 											break;
 
 										case 440:
-											SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, skusInventoryForStoreResponse.response.stsParams);
+											SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, skusInventoryForStoreResponse.response.stsParams, getActivity());
 											break;
 
 										default:

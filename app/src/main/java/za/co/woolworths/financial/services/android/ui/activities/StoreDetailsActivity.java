@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -193,7 +194,7 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
 		timeingsLayout.removeAllViews();
 		brandsLayout.removeAllViews();
 		storeName.setText(storeDetail.name);
-		storeAddress.setText(storeDetail.address);
+		storeAddress.setText(TextUtils.isEmpty(storeDetail.address) ? "" : storeDetail.address);
 		if (storeDetail.phoneNumber != null)
 			storeNumber.setText(storeDetail.phoneNumber);
 		SpannableMenuOption spannableMenuOption = new SpannableMenuOption(this);
@@ -254,6 +255,8 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
 		direction.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				if (TextUtils.isEmpty(storeDetail.address))
+					return;
 				mPopWindowValidationMessage.setmLatitude(storeDetail.latitude);
 				mPopWindowValidationMessage.setmLongiude(storeDetail.longitude);
 				mPopWindowValidationMessage.displayValidationMessage("",

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/default_background"
+    tools:context="za.co.woolworths.financial.services.android.ui.activities.DebitOrderActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:minHeight="?attr/actionBarSize"
+        app:elevation="0dp">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/toolbarText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:letterSpacing="0.1"
+            android:text="@string/debit_orders"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            app:WTextView_font="medium_bold"/>
+    </android.support.v7.widget.Toolbar>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="@dimen/sixteen_dp"
+        android:background="@color/white">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/tvDebitOrderTitle"
+            style="@style/style_debit_order_title"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="24dp"
+            android:text="@string/debit_order_title" />
+
+    </RelativeLayout>
+
+    <View style="@style/horizontal_divider_bold_style" />
+
+    <RelativeLayout
+        style="@style/card_item_style">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/tvDebitOrderDescription"
+            style="@style/style_debit_order_description"
+            android:text="@string/debit_order_description" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        style="@style/card_item_style"
+        android:layout_marginTop="16dp" >
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            style="@style/style_debit_order_labels"
+            android:layout_alignParentStart="true"
+            android:text="@string/deduction_day" />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/tvDeductionDay"
+            style="@style/style_debit_order_labels"
+            android:layout_alignParentEnd="true"/>
+    </RelativeLayout>
+
+    <View style="@style/horizontal_divider_bold_style" />
+
+    <RelativeLayout
+        style="@style/card_item_style">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            style="@style/style_debit_order_labels"
+            android:layout_alignParentStart="true"
+            android:text="@string/amount_to_be_debited" />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/tvAmountToBeDebited"
+            style="@style/style_debit_order_labels"
+            android:layout_alignParentEnd="true" />
+    </RelativeLayout>
+</LinearLayout>

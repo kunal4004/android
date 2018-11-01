@@ -11,6 +11,7 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationManager;
@@ -19,16 +20,21 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.internal.BottomNavigationItemView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableString;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -133,6 +139,8 @@ public class Utils {
 	public static final String BLACK_CARD = "410375";
 	public static final int ACCOUNTS_PROGRESS_BAR_MAX_VALUE = 10000;
 	private static final int POPUP_DELAY_MILLIS = 3000;
+	public static  final String ACCOUNT_CHARGED_OFF = "CHARGED OFF";
+	public static  final String ACCOUNT_ACTIVE = "ACTIVE";
 
 	public static final String[] CLI_POI_ACCEPT_MIME_TYPES = {
 			"application/pdf",
@@ -583,8 +591,8 @@ public class Utils {
 		}
 	}
 
-	public static void triggerFireBaseEvents(Context mContext, String eventName, Map<String, String> arguments) {
-		FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(mContext);
+	public static void triggerFireBaseEvents(String eventName, Map<String, String> arguments) {
+		FirebaseAnalytics mFirebaseAnalytics = FirebaseManager.Companion.getInstance().getAnalytics();
 
 		Bundle params = new Bundle();
 		for (Map.Entry<String, String> entry : arguments.entrySet()) {
@@ -1213,6 +1221,18 @@ public class Utils {
 		((AppCompatActivity) context).overridePendingTransition(0, 0);
 	}
 
+	public static void displayValidationMessageForResult(Fragment fragment, Activity activity, CustomPopUpWindow.MODAL_LAYOUT key, String title, String description, String buttonTitle, int requestCode) {
+		Intent openMsg = new Intent(activity, CustomPopUpWindow.class);
+		Bundle args = new Bundle();
+		args.putSerializable("key", key);
+		args.putString("title", title);
+		args.putString("description", description);
+		args.putString("buttonTitle", buttonTitle);
+		openMsg.putExtras(args);
+		fragment.startActivityForResult(openMsg, requestCode);
+		((AppCompatActivity) activity).overridePendingTransition(0, 0);
+	}
+
 	public static String toTitleCase(String givenString) {
 		String words[] = givenString.replaceAll("\\s+", " ").trim().split(" ");
 		String newSentence = "";
@@ -1224,4 +1244,71 @@ public class Utils {
 
 		return newSentence;
 	}
+
+	public static void setViewHeightToRemainingBottomSpace(final Activity activity, final View view) {
+		view.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener()
+		{
+			@Override
+			public boolean onPreDraw()
+			{
+				if (view.getViewTreeObserver().isAlive())
+					view.getViewTreeObserver().removeOnPreDrawListener(this);
+
+				int[] locations = new int[2];
+				view.getLocationOnScreen(locations);
+				int viewYPositionOnScreen = locations[1];
+
+				if(activity != null) {
+					Display display = activity.getWindowManager().getDefaultDisplay();
+					Point size = new Point();
+					display.getSize(size);
+					int screenHeight = size.y;
+
+					ViewGroup.LayoutParams params = view.getLayoutParams();
+					params.height = screenHeight - viewYPositionOnScreen + getSoftButtonsBarHeight(activity);
+					view.setLayoutParams(params);
+				}
+
+				return false;
+			}
+		});
+	}
+
+	public static int getSoftButtonsBarHeight(Activity activity) {
+		// getRealMetrics is only available with API 17 and +
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+			DisplayMetrics metrics = new DisplayMetrics();
+			activity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+			int usableHeight = metrics.heightPixels;
+			activity.getWindowManager().getDefaultDisplay().getRealMetrics(metrics);
+			int realHeight = metrics.heightPixels;
+			if (realHeight > usableHeight)
+				return realHeight - usableHeight;
+			else
+				return 0;
+		}
+		return 0;
+	}
+
+
+	//add negative sign before currency value
+	public static String removeNegativeSymbol(String amount) {
+		return  formatAmount(amount);
+	}
+
+	//add negative sign before currency value
+	public static String removeNegativeSymbol(SpannableString amount) {
+		return  formatAmount(amount.toString());
+	}
+
+	@NonNull
+	private static String formatAmount(String currentAmount) {
+		if (currentAmount.contains("-")) {
+			currentAmount = currentAmount.replaceAll("-", "");
+			currentAmount = currentAmount.replace("R", "- R");
+		}
+		return currentAmount;
+	}
+
+
 }

@@ -1,7 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.wreward.logged_in;
 
-import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,7 +19,6 @@ import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.WrewardsLoggedinAndLinkedFragmentBinding;
 
-import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CardDetailsResponse;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.models.rest.reward.GetVoucher;
@@ -32,10 +31,9 @@ import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsOverviewFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsSavingsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
-import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 
@@ -85,7 +83,6 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		Activity activity = getActivity();
 
 		viewPager = getViewDataBinding().viewpager;
 		progressBar = getViewDataBinding().progressBar;
@@ -104,7 +101,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 		view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (new ConnectionDetector().isOnline(getActivity())) {
+				if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
 					mErrorHandlerView.hideErrorHandler();
 					loadReward();
 				}
@@ -191,11 +188,13 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 					fragmentView.setVisibility(View.VISIBLE);
 
 					String stsParams = null;
-					if (response.response != null) {
+					if (response.response != null)
 						stsParams = response.response.stsParams;
-					}
-					SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, stsParams);
-					getParentFragment().onActivityResult(0, SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue(), null);
+					Intent stsParamsIntent = new Intent();
+					stsParamsIntent.putExtra("stsParams", stsParams);
+					Fragment parentFragment = getParentFragment();
+					if (parentFragment != null)
+						parentFragment.onActivityResult(0, SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue(), stsParamsIntent);
 					break;
 				default:
 					progressBar.setVisibility(View.GONE);
