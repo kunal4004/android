@@ -57,7 +57,7 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
     }
 
     override fun onRefinementOptionSelected(refinementNavigation: RefinementNavigation) {
-        pushFragment(RefinementFragment.getInstance(refinementNavigation,getRefinedNavigationState()), TAG_REFINEMENT_FRAGMENT)
+        pushFragment(RefinementFragment.getInstance(refinementNavigation, getRefinementState()), TAG_REFINEMENT_FRAGMENT)
     }
 
     override fun onRefinementSelected(refinement: Refinement) {
@@ -207,5 +207,10 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
 
     private fun setRefinedNavigationState(navigationState: String) {
         this.updatedProductsRequestParams?.refinement = navigationState
+    }
+
+    // will return BaseNavigationState if RefinedNavigationState is empty
+    private fun getRefinementState(): String {
+        return if (TextUtils.isEmpty(getRefinedNavigationState())) getBaseNavigationState() else getRefinedNavigationState()
     }
 }
