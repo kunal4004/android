@@ -28,11 +28,14 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     private var backButton: ImageView? = null
     private var dataList = arrayListOf<RefinementSelectableItem>()
     private var pageTitle: TextView? = null
+    private var refinedNavigateState = ""
 
     companion object {
         private val ARG_PARAM = "refinementNavigationObject"
-        fun getInstance(refinementNavigation: RefinementNavigation) = RefinementFragment().withArgs {
+        private val REFINED_NAVIGATION_STATE = "refinementNavigationState"
+        fun getInstance(refinementNavigation: RefinementNavigation, refinedNavigationState: String) = RefinementFragment().withArgs {
             putString(ARG_PARAM, Utils.toJson(refinementNavigation))
+            putString(REFINED_NAVIGATION_STATE, refinedNavigationState)
         }
     }
 
@@ -40,6 +43,7 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
         super.onCreate(savedInstanceState)
         if (arguments != null) {
             refinementNavigation = Utils.jsonStringToObject(arguments.getString(ARG_PARAM), RefinementNavigation::class.java) as RefinementNavigation
+            refinedNavigateState = arguments.getString(REFINED_NAVIGATION_STATE, "")
         }
     }
 
@@ -59,8 +63,8 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
         backButton?.setOnClickListener { onBackPressed() }
         refinementSeeResult.setOnClickListener { seeResults() }
         refinementList.layoutManager = LinearLayoutManager(activity)
-        onSelectionChanged()
         loadData()
+        onSelectionChanged()
     }
 
     private fun loadData() {
@@ -111,6 +115,7 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
 
     private fun getNavigationState(): String {
         var navigationState = ""
+        var isRefinementCrumb = false
         dataList.forEach {
             if (it.type == RefinementSelectableItem.ViewType.SINGLE_SELECTOR || it.type == RefinementSelectableItem.ViewType.MULTI_SELECTOR) {
                 var item = it.item
@@ -120,18 +125,34 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
                     else
                         navigationState = navigationState.plus("Z").plus(item.navigationState.substringAfterLast("Z"))
                 } else if (item is RefinementCrumb && !it.isSelected) {
-                    if (TextUtils.isEmpty(navigationState))
-                        navigationState = navigationState.plus(item.navigationState)
-                    else
-                        navigationState = navigationState.plus("Z").plus(item.navigationState.substringAfterLast("Z"))
+                    isRefinementCrumb = true
+                    refinedNavigateState = refinedNavigateState.replace(getNavigationStateForRefinementCrumb(item.navigationState), "")
                 }
             }
         }
-        return navigationState
+        if (isRefinementCrumb) return refinedNavigateState else return navigationState
     }
 
     override fun onSelectionChanged() {
-        clearRefinement?.isEnabled = !TextUtils.isEmpty(getNavigationState())
+        clearRefinement?.isEnabled = isAnyRefinementSelected()
     }
+
+    private fun isAnyRefinementSelected(): Boolean {
+        dataList.forEach {
+            if (it.isSelected)
+                return true
+        }
+        return false
+    }
+
+    private fun getNavigationStateForRefinementCrumb(navigationState: String): String {
+        val list = navigationState.split("Z")
+        var navigation = refinedNavigateState
+        list.forEachIndexed { index, it ->
+            if (index == 0) navigation = navigation.replace(it, "") else navigation = navigation.replace("Z".plus(it), "")
+        }
+        return navigation
+    }
+
 
 }

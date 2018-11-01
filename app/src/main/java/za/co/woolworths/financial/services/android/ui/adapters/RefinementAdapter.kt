@@ -108,7 +108,7 @@ class RefinementAdapter(val context: Context, val baseListner: BaseFragmentListn
 
     fun clearRefinement() {
         dataList.forEach {
-            it.isSelected = it.item is RefinementCrumb
+            it.isSelected = false
         }
         notifyDataSetChanged()
         baseListner.onSelectionChanged()
