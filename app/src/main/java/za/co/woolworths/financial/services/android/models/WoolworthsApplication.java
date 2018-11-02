@@ -81,7 +81,7 @@ public class WoolworthsApplication extends Application {
 			e.printStackTrace();
 		}
 
-		String apiId = "Android_v";
+		String apiId = "ANDROID_V";
 		if (packageInfo.versionName.length() > 3) {
 			apiId += packageInfo.versionName.substring(0, 3);
 		} else {
