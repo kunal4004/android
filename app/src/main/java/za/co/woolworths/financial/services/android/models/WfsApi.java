@@ -216,15 +216,16 @@ public class WfsApi {
 
     public ProductView getProducts(ProductsRequestParams requestParams) {
         getMyLocation();
-        try {
-            requestParams.setSearchTerm(URLEncoder.encode(requestParams.getSearchTerm(), "UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+		String searchTerm = "";
+		try {
+			searchTerm = URLEncoder.encode(requestParams.getSearchTerm(), "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
         if (Utils.isLocationEnabled(mContext)) {
-            return mApiInterface.getProducts(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLatitude(), loc.getLongitude(), requestParams.getSearchTerm(), requestParams.getSearchType().getValue(), requestParams.getResponseType().getValue(), requestParams.getPageOffset(), Utils.PAGE_SIZE, requestParams.getSortOption(), requestParams.getRefinement());
+            return mApiInterface.getProducts(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLatitude(), loc.getLongitude(), searchTerm, requestParams.getSearchType().getValue(), requestParams.getResponseType().getValue(), requestParams.getPageOffset(), Utils.PAGE_SIZE, requestParams.getSortOption(), requestParams.getRefinement());
         } else {
-            return mApiInterface.getProductsWithoutLocation(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), requestParams.getSearchTerm(), requestParams.getSearchType().getValue(), requestParams.getResponseType().getValue(), requestParams.getPageOffset(), Utils.PAGE_SIZE, requestParams.getSortOption(), requestParams.getRefinement());
+            return mApiInterface.getProductsWithoutLocation(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), searchTerm, requestParams.getSearchType().getValue(), requestParams.getResponseType().getValue(), requestParams.getPageOffset(), Utils.PAGE_SIZE, requestParams.getSortOption(), requestParams.getRefinement());
         }
     }
 

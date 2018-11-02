@@ -200,9 +200,9 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 				ProductList headerProduct = new ProductList();
 				headerProduct.viewTypeHeader = true;
 				headerProduct.numberOfItems = getViewModel().getNumItemsInTotal();
-				mProductList.add(0, headerProduct);
+				productLists.add(0, headerProduct);
 			}
-			bindRecyclerViewWithUI(mProductList);
+			bindRecyclerViewWithUI(productLists);
 		} else if (productLists.size() == 1) {
 			getBottomNavigator().popFragmentNoAnim();
 			getBottomNavigator().openProductDetailFragment(mSubCategoryName, productLists.get(0));
