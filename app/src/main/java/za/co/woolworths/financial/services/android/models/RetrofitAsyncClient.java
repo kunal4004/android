@@ -67,10 +67,6 @@ public class RetrofitAsyncClient {
 		return Util.getDeviceModel();
 	}
 
-	private String getSha1Password() {
-		return WoolworthsApplication.getSha1Password();
-	}
-
 	private String getApiId() {
 		return WoolworthsApplication.getApiId();
 	}
@@ -88,11 +84,11 @@ public class RetrofitAsyncClient {
 		if (Utils.isLocationEnabled(mContext)) {
 			mApiInterface.getProductDetail(getOsVersion(), getDeviceModel(), getOsVersion(),
 					getOS(), getNetworkCarrier(), getApiId(), "", "",
-					getSha1Password(), loc.getLongitude(), loc.getLatitude(), productId, skuId, callback);
+					com.awfs.coordination.BuildConfig.SHA1, loc.getLongitude(), loc.getLatitude(), productId, skuId, callback);
 		} else {
 			mApiInterface.getProductDetail(getOsVersion(), getDeviceModel(), getOsVersion(),
 					getOS(), getNetworkCarrier(), getApiId(), "", "",
-					getSha1Password(), productId, skuId, callback);
+					com.awfs.coordination.BuildConfig.SHA1, productId, skuId, callback);
 		}
 	}
 
@@ -114,7 +110,7 @@ public class RetrofitAsyncClient {
 
 
 	public void getPDFResponse(GetStatement getStatement, Callback<Response> callback) {
-		mApiInterface.getStatement(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), getStatement.getDocId(), getStatement.getProductOfferingId(), getStatement.getDocDesc(), callback);
+		mApiInterface.getStatement(getApiId(), com.awfs.coordination.BuildConfig.SHA1, getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), getStatement.getDocId(), getStatement.getProductOfferingId(), getStatement.getDocDesc(), callback);
 	}
 
 
