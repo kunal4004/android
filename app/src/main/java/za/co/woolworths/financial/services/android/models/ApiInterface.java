@@ -189,11 +189,17 @@ public interface ApiInterface {
 			@Header("userAgentVersion") String userAgentVersion);
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
-	@GET("/{appVersion}")
+	@GET("/mobileconfigs")
 	ConfigResponse getConfig(
-			@Header("Authorization-X") String AuthorizationX,
-			@Header("UUID") String UUID,
-			@Path("appVersion") String appVersion
+			@Header("apiId") String apiId,
+			@Header("sha1Password") String sha1Password,
+			@Header("deviceVersion") String deviceVersion,
+			@Header("deviceModel") String deviceModel,
+			@Header("network") String network,
+			@Header("os") String os,
+			@Header("osVersion") String osVersion,
+			@Header("sessionToken") String sessionToken,
+			@Header("appVersion") String appVersion
 	);
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
@@ -485,41 +491,6 @@ public interface ApiInterface {
 
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip"})
-	@GET("/categories/{cat}/products")
-	ProductView getProduct(
-			@Header("osVersion") String osVersion,
-			@Header("deviceModel") String deviceModel,
-			@Header("deviceVersion") String deviceVersion,
-			@Header("os") String os,
-			@Header("network") String network,
-			@Header("apiId") String apiId,
-			@Header("userAgent") String userAgent,
-			@Header("userAgentVersion") String userAgentVersion,
-			@Header("sha1Password") String sha1Password,
-			@Header("longitude") double longitude,
-			@Header("latitude") double latitude,
-			@Query("pageOffset") int pageOffset,
-			@Query("pageSize") int pageSize,
-			@Path("cat") String category);
-
-
-	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip"})
-	@GET("/categories/{cat}/products")
-	ProductView getProduct(
-			@Header("osVersion") String osVersion,
-			@Header("deviceModel") String deviceModel,
-			@Header("deviceVersion") String deviceVersion,
-			@Header("os") String os,
-			@Header("network") String network,
-			@Header("apiId") String apiId,
-			@Header("userAgent") String userAgent,
-			@Header("userAgentVersion") String userAgentVersion,
-			@Header("sha1Password") String sha1Password,
-			@Query("pageOffset") int pageOffset,
-			@Query("pageSize") int pageSize,
-			@Path("cat") String category);
-
-	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip"})
 	@GET("/categories/{cat}")
 	SubCategories getSubCategory(
 			@Header("osVersion") String osVersion,
@@ -531,43 +502,6 @@ public interface ApiInterface {
 			@Header("deviceVersion") String deviceVersion,
 			@Header("apiKey") String apiKey,
 			@Path("cat") String category);
-
-
-	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip"})
-	@GET("/search")
-	ProductView getProductSearch(
-			@Header("osVersion") String osVersion,
-			@Header("deviceModel") String deviceModel,
-			@Header("deviceVersion") String deviceVersion,
-			@Header("os") String os,
-			@Header("network") String network,
-			@Header("apiId") String apiId,
-			@Header("userAgent") String userAgent,
-			@Header("userAgentVersion") String userAgentVersion,
-			@Header("sha1Password") String sha1Password,
-			@Header("longitude") double longitude,
-			@Header("latitude") double latitude,
-			@Query("isBarCode") boolean isBarcode,
-			@Query(value = "searchTerm", encodeValue = false) String searchTerm,
-			@Query("pageOffset") int pageOffset,
-			@Query("pageSize") int pageSize);
-
-	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip"})
-	@GET("/search")
-	ProductView getProductSearch(
-			@Header("osVersion") String osVersion,
-			@Header("deviceModel") String deviceModel,
-			@Header("deviceVersion") String deviceVersion,
-			@Header("os") String os,
-			@Header("network") String network,
-			@Header("apiId") String apiId,
-			@Header("userAgent") String userAgent,
-			@Header("userAgentVersion") String userAgentVersion,
-			@Header("sha1Password") String sha1Password,
-			@Query("isBarCode") boolean isBarcode,
-			@Query(value = "searchTerm", encodeValue = false) String searchTerm,
-			@Query("pageOffset") int pageOffset,
-			@Query("pageSize") int pageSize);
 
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:30", "Accept-Encoding: gzip"})
@@ -968,4 +902,46 @@ public interface ApiInterface {
 			@Header("sessionToken") String sessionToken,
 			@Path("store_id") String store_id,
 			@Path("multipleSku") String multipleSku);
+
+	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip"})
+	@GET("/searchSortAndFilter")
+	ProductView getProducts(
+			@Header("osVersion") String osVersion,
+			@Header("deviceModel") String deviceModel,
+			@Header("deviceVersion") String deviceVersion,
+			@Header("os") String os,
+			@Header("network") String network,
+			@Header("apiId") String apiId,
+			@Header("userAgent") String userAgent,
+			@Header("userAgentVersion") String userAgentVersion,
+			@Header("sha1Password") String sha1Password,
+			@Header("longitude") double longitude,
+			@Header("latitude") double latitude,
+			@Query("searchTerm") String searchTerm,
+			@Query("searchType") String searchType,
+			@Query("responseType") String responseType,
+			@Query("pageOffset") int pageOffset,
+			@Query("pageSize") int pageSize,
+			@Query("sortOption") String sortOption,
+			@Query("refinement") String refinement);
+
+	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip"})
+	@GET("/searchSortAndFilter")
+	ProductView getProductsWithoutLocation(
+			@Header("osVersion") String osVersion,
+			@Header("deviceModel") String deviceModel,
+			@Header("deviceVersion") String deviceVersion,
+			@Header("os") String os,
+			@Header("network") String network,
+			@Header("apiId") String apiId,
+			@Header("userAgent") String userAgent,
+			@Header("userAgentVersion") String userAgentVersion,
+			@Header("sha1Password") String sha1Password,
+			@Query("searchTerm") String searchTerm,
+			@Query("searchType") String searchType,
+			@Query("responseType") String responseType,
+			@Query("pageOffset") int pageOffset,
+			@Query("pageSize") int pageSize,
+			@Query("sortOption") String sortOption,
+			@Query("refinement") String refinement);
 }

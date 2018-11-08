@@ -23,6 +23,7 @@ import com.awfs.coordination.databinding.ShoppinglistFragmentBinding;
 
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
@@ -154,6 +155,7 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 		// Handle item selection
 		switch (item.getItemId()) {
 			case R.id.action_create_list:
+				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPNEWLIST);
 				pushFragmentSlideUp(new NewListFragment());
 				return true;
 			default:

@@ -236,7 +236,7 @@ public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.V
 		}
 
 		private void setCartImage(ProductList productItem) {
-			cartProductImage.setImageURI(productItem.externalImageRef + "?w=" + 85 + "&q=" + 85);
+			cartProductImage.setImageURI(productItem.externalImageRef + ((productItem.externalImageRef.indexOf("?") > 0) ? "w=" + 85 + "&q=" + 85 : "?w=" + 85 + "&q=" + 85));
 		}
 
 		public void setProductName(ProductList productItem) {

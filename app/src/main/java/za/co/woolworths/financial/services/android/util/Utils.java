@@ -20,6 +20,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.internal.BottomNavigationItemView;
 import android.support.v4.app.Fragment;
@@ -28,7 +29,9 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableString;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
@@ -597,6 +600,11 @@ public class Utils {
 		}
 
 		mFirebaseAnalytics.logEvent(eventName, params);
+	}
+
+	public static void triggerFireBaseEvents(String eventName) {
+		FirebaseAnalytics mFirebaseAnalytics = FirebaseManager.Companion.getInstance().getAnalytics();
+		mFirebaseAnalytics.logEvent(eventName, null);
 	}
 
 	public static void sendEmail(String emailId, String subject, Context mContext) {
@@ -1242,6 +1250,13 @@ public class Utils {
 		return newSentence;
 	}
 
+	public static String ellipsizeVoucherDescription(String input) {
+		if (input.length() > 99)
+			return input.substring(0, 96) + "...";
+		else
+			return input;
+	}
+
 	public static void setViewHeightToRemainingBottomSpace(final Activity activity, final View view) {
 		view.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener()
 		{
@@ -1262,7 +1277,7 @@ public class Utils {
 					int screenHeight = size.y;
 
 					ViewGroup.LayoutParams params = view.getLayoutParams();
-					params.height = screenHeight - viewYPositionOnScreen;
+					params.height = screenHeight - viewYPositionOnScreen + getSoftButtonsBarHeight(activity);
 					view.setLayoutParams(params);
 				}
 
@@ -1270,4 +1285,41 @@ public class Utils {
 			}
 		});
 	}
+
+	public static int getSoftButtonsBarHeight(Activity activity) {
+		// getRealMetrics is only available with API 17 and +
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+			DisplayMetrics metrics = new DisplayMetrics();
+			activity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+			int usableHeight = metrics.heightPixels;
+			activity.getWindowManager().getDefaultDisplay().getRealMetrics(metrics);
+			int realHeight = metrics.heightPixels;
+			if (realHeight > usableHeight)
+				return realHeight - usableHeight;
+			else
+				return 0;
+		}
+		return 0;
+	}
+
+
+	//add negative sign before currency value
+	public static String removeNegativeSymbol(String amount) {
+		return  formatAmount(amount);
+	}
+
+	//add negative sign before currency value
+	public static String removeNegativeSymbol(SpannableString amount) {
+		return  formatAmount(amount.toString());
+	}
+
+	@NonNull
+	private static String formatAmount(String currentAmount) {
+		if (currentAmount.contains("-")) {
+			currentAmount = currentAmount.replaceAll("-", "");
+			currentAmount = currentAmount.replace("R", "- R");
+		}
+		return currentAmount;
+	}
+
 }

@@ -37,6 +37,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CartItemGroup;
@@ -290,6 +291,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			case R.id.btnCheckOut:
 				Activity checkOutActivity = getActivity();
 				if ((checkOutActivity != null) && btnCheckOut.isEnabled()) {
+					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTCHECKOUT);
 					Intent openCheckOutActivity = new Intent(getContext(), CartCheckoutActivity.class);
 					startActivityForResult(openCheckOutActivity, CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY);
 					checkOutActivity.overridePendingTransition(0, 0);
@@ -411,6 +413,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	public void updateCart(CartResponse cartResponse, CommerceItem commerceItemToRemove) {
 		this.orderSummary = cartResponse.orderSummary;
 		if (cartResponse.cartItems.size() > 0 && cartProductAdapter != null && commerceItemToRemove != null) {
+			ArrayList<CartItemGroup> emptyCartItemGroups = new ArrayList<>();
 			for (CartItemGroup cartItemGroup : cartItems) {
 				for (CommerceItem commerceItem : cartItemGroup.commerceItems) {
 					if (commerceItem.commerceItemInfo.commerceId.equalsIgnoreCase(commerceItemToRemove.commerceItemInfo.commerceId)) {
@@ -422,9 +425,14 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				 * Remove header when commerceItems is empty
 				 */
 				if (cartItemGroup.commerceItems.size() == 0) {
-					cartItems.remove(cartItemGroup);
+					emptyCartItemGroups.add(cartItemGroup);// Gather all the empty groups after deleting item.
 				}
 			}
+			//remove all the empty groups
+			for (CartItemGroup cartItemGroup : emptyCartItemGroups) {
+				cartItems.remove(cartItemGroup);
+			}
+
 			cartProductAdapter.notifyAdapter(cartItems, orderSummary);
 		} else {
 
