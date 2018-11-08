@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem;
@@ -216,6 +217,7 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 								onOkButtonClicked();
 								break;
 							default:
+								Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPNEWLIST);
 								navigateToCreateNewListFragment();
 								break;
 						}

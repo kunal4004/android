@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/refinementOptions"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sixty_dp"
+        android:background="@drawable/refine_item_background">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/displayName"
+            style="@style/refinements_textview_style"
+            android:layout_margin="1dp" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/sixteen_dp"
+            android:layout_toLeftOf="@+id/rightArrow"
+            android:layout_toRightOf="@+id/displayName">
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/label"
+                style="@style/refinements_textview_style_breadcrumbs"
+                android:layout_width="wrap_content"
+                android:layout_alignParentRight="true"
+                android:ellipsize="end"
+                android:singleLine="true" />
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/rightArrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/ic_caret_black" />
+
+    </RelativeLayout>
+</LinearLayout>

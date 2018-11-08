@@ -6,14 +6,13 @@ import android.support.v7.app.AppCompatActivity;
 
 import java.util.List;
 
-import za.co.woolworths.financial.services.android.models.dto.LoadProduct;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
-import za.co.woolworths.financial.services.android.models.dto.WProduct;
+import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
 import za.co.woolworths.financial.services.android.models.rest.product.GetProductDetail;
+import za.co.woolworths.financial.services.android.models.rest.product.GetProductsRequest;
 import za.co.woolworths.financial.services.android.models.rest.product.ProductRequest;
-import za.co.woolworths.financial.services.android.models.rest.product.SearchProductRequest;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.base.BaseViewModel;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
@@ -23,11 +22,11 @@ import za.co.woolworths.financial.services.android.util.rx.SchedulerProvider;
 public class BarcodeViewModel extends BaseViewModel<BarcodeNavigator> {
 
 	private boolean productIsLoading;
-	private LoadProduct mLoadProduct;
 	private ProductRequest mProductRequest;
 	private GetProductDetail mGetProductDetail;
-	private SearchProductRequest mGetBarcodeProduct;
 	private boolean connectionHasFailed = false;
+	private ProductsRequestParams productsRequestParams;
+	private GetProductsRequest mGetProductsRequest;
 
 	public BarcodeViewModel() {
 		super();
@@ -38,16 +37,15 @@ public class BarcodeViewModel extends BaseViewModel<BarcodeNavigator> {
 	}
 
 	public void executeGetBarcodeProduct(Context context) {
-		mGetBarcodeProduct = getBarcodeProduct(context, getProductRequestBody());
-		mGetBarcodeProduct.execute();
+		mGetProductsRequest = getBarcodeProduct(context, getProductRequestBody());
+		mGetProductsRequest.execute();
 	}
-
-	public SearchProductRequest getBarcodeProduct(final Context context, final LoadProduct loadProduct) {
+	GetProductsRequest getBarcodeProduct(final Context context, final ProductsRequestParams requestParams) {
 		setProductIsLoading(true);
 		getNavigator().onLoadStart();
-		return new SearchProductRequest(context, loadProduct, new OnEventListener() {
+		return new GetProductsRequest(context, requestParams, new OnEventListener<ProductView>() {
 			@Override
-			public void onSuccess(Object object) {
+			public void onSuccess(ProductView object) {
 				ProductView productView = (ProductView) object;
 				switch (productView.httpCode) {
 					case 200:
@@ -147,12 +145,12 @@ public class BarcodeViewModel extends BaseViewModel<BarcodeNavigator> {
 		});
 	}
 
-	public void setProductRequestBody(boolean isBarcode, String productId) {
-		this.mLoadProduct = new LoadProduct(isBarcode, productId);
+	public void setProductRequestBody(ProductsRequestParams.SearchType searchType, String searchTerm) {
+		this.productsRequestParams = new ProductsRequestParams(searchTerm, searchType, ProductsRequestParams.ResponseType.DETAIL, 0);
 	}
 
-	private LoadProduct getProductRequestBody() {
-		return mLoadProduct;
+	private ProductsRequestParams getProductRequestBody() {
+		return productsRequestParams;
 	}
 
 	public void setConnectionHasFailed(boolean connectionHasFailed) {
@@ -165,7 +163,7 @@ public class BarcodeViewModel extends BaseViewModel<BarcodeNavigator> {
 
 	public void cancelRequest() {
 		cancelRequest(mGetProductDetail);
-		cancelRequest(mGetBarcodeProduct);
+		cancelRequest(mGetProductsRequest);
 	}
 
 	private void errorScanCode(Activity activity) {

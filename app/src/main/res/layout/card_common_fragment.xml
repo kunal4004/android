@@ -446,7 +446,6 @@
                 android:layout_toEndOf="@+id/imViewStatementLogo"
                 android:text="@string/view_statements" />
 
-
             <ImageView
                 android:id="@+id/imgViewStatementArrow"
                 style="@style/style_loan_img" />
@@ -461,15 +460,40 @@
             <ImageView
                 android:id="@+id/logoProtectionInsurance"
                 style="@style/style_loan_logo_img"
-                android:src="@drawable/insurance" />
+                android:src="@drawable/insurance"/>
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/tvProtectionInsurance"
                 style="@style/style_loan_title"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/fourteen_dp"
                 android:layout_alignTop="@+id/logoProtectionInsurance"
                 android:layout_toEndOf="@+id/logoProtectionInsurance"
-                android:text="@string/balance_protection_insurance" />
+                android:layout_toStartOf="@+id/tvBPIProtectInsurance"
+                android:text="@string/balance_protection_insurance"/>
 
+
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/tvBPIProtectInsurance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="4dp"
+                android:layout_toLeftOf="@+id/iconBalanceInsurance"
+                android:gravity="center|start"
+                android:lineSpacingExtra="0.1sp"
+                android:textColor="#343434"
+                android:textSize="13sp"
+                android:textAllCaps="true"
+                android:letterSpacing="0.1"
+                app:WTextView_font="medium"
+                android:text="@string/bpi_covered"/>
+
+            <ImageView
+                android:id="@+id/iconBalanceInsurance"
+                style="@style/style_loan_img"
+                android:src="@drawable/ic_caret_black" />
 
         </RelativeLayout>
 

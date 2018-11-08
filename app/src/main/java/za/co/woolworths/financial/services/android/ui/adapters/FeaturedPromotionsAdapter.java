@@ -52,9 +52,8 @@ public class FeaturedPromotionsAdapter extends PagerAdapter {
 			public void onClick(View v) {
 				GridFragment gridFragment = new GridFragment();
 				Bundle bundle = new Bundle();
-				bundle.putString("sub_category_id", "");
 				bundle.putString("sub_category_name", image.getContext().getResources().getString(R.string.featured_promotions));
-				bundle.putString("str_search_product", promotions.get(position).path);
+				bundle.putString("sub_category_id", promotions.get(position).path);
 				gridFragment.setArguments(bundle);
 				mBottomNavigator.setSelectedIconPosition(BottomNavigationActivity.INDEX_ACCOUNT);
 				mBottomNavigator.pushFragment(gridFragment);

@@ -602,6 +602,11 @@ public class Utils {
 		mFirebaseAnalytics.logEvent(eventName, params);
 	}
 
+	public static void triggerFireBaseEvents(String eventName) {
+		FirebaseAnalytics mFirebaseAnalytics = FirebaseManager.Companion.getInstance().getAnalytics();
+		mFirebaseAnalytics.logEvent(eventName, null);
+	}
+
 	public static void sendEmail(String emailId, String subject, Context mContext) {
 		Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
 		emailIntent.setData(Uri.parse(emailId +
@@ -1245,6 +1250,13 @@ public class Utils {
 		return newSentence;
 	}
 
+	public static String ellipsizeVoucherDescription(String input) {
+		if (input.length() > 99)
+			return input.substring(0, 96) + "...";
+		else
+			return input;
+	}
+
 	public static void setViewHeightToRemainingBottomSpace(final Activity activity, final View view) {
 		view.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener()
 		{
@@ -1309,6 +1321,5 @@ public class Utils {
 		}
 		return currentAmount;
 	}
-
 
 }
