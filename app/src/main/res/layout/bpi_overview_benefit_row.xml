@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/tvBullet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/eight_dp"
+        android:layout_marginTop="@dimen/eight_dp"
+        android:alpha="0.5"
+        android:text="@string/bpi_bullet"
+        android:textSize="@dimen/fifteen_sp"
+        app:WTextView_font="myriadpro_regular"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/tvDescription"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginTop="@dimen/eight_dp"
+        android:alpha="0.8"
+        android:lineSpacingMultiplier="1.60"
+        android:text="@string/bpi_balance_protection_benefit_1"
+        android:textSize="@dimen/fifteen_sp"
+        app:WTextView_font="myriadpro_regular"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tvBullet"
+        app:layout_constraintTop_toTopOf="parent"/>
+</android.support.constraint.ConstraintLayout>

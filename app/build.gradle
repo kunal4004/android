@@ -6,7 +6,7 @@ apply plugin: 'io.fabric'
 android {
 
     def major = "5"
-    def minor = "7"
+    def minor = "8"
     def fix = "0"
 
     //placeholder will be temporarily updated by build server during a build.
@@ -14,7 +14,7 @@ android {
     def BUILD_NUMBER = "{BUILD_NUMBER}"
 
     if (!BUILD_NUMBER.isNumber()){
-        BUILD_NUMBER = "85"
+        BUILD_NUMBER = "86"
     }
 
     dataBinding {
@@ -58,6 +58,8 @@ android {
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         versionCode BUILD_NUMBER.toInteger()
+        buildConfigField("String", "HOST", '"https://wfs-appserver.wigroup.co/wfs/app/v4"')
+        buildConfigField("String", "SHA1", '"9fc9aa4879781857f6c54f7b08e017ea3cef285c"')
     }
 
     compileSdkVersion 27
@@ -78,11 +80,15 @@ android {
         dev {
             applicationId "com.awfs.coordination.dev"
             signingConfig signingConfigs.woneappDev
+            buildConfigField("String", "HOST", '"http://wfs-appserver-dev.wigroup.co:8080/wfs/app/v4"')
+            buildConfigField("String", "SHA1", '"b178db51c10886eeeca7faebc5e03e5db3285f4b"')
         }
 
         qa {
             applicationId "com.awfs.coordination.qa"
             signingConfig signingConfigs.woneappQa
+            buildConfigField("String", "HOST", '"http://wfs-appserver-qa.wigroup.co:8080/wfs/app/v4"')
+            buildConfigField("String", "SHA1", '"ac68acf5df23ac3bc418569bfc0984ad3f6006e0"')
         }
 
         staging {
@@ -169,6 +175,7 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'me.relex:circleindicator:1.2.2@aar'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.4'
+    compile 'com.daasuu:BubbleLayout:1.2.0'
     implementation 'com.google.code.gson:gson:2.8.0'
 
     //

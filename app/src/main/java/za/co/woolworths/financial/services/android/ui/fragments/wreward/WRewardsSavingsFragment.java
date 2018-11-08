@@ -17,6 +17,7 @@ import com.google.gson.Gson;
 
 import java.text.ParseException;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.adapters.WRewardsSavingsHorizontalScrollAdapter;
@@ -51,6 +52,7 @@ public class WRewardsSavingsFragment extends Fragment implements View.OnClickLis
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.wrewards_savings_fragment, container, false);
+		Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSSAVINGS);
 		recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
 		tireStatus = (WTextView) view.findViewById(R.id.tireStatus);
 		wRewardsInstantSaving = (WTextView) view.findViewById(R.id.wrewardsInstantSavings);

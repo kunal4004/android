@@ -712,4 +712,82 @@
     <string name="account_details_branch_code">Branch Code:</string>
     <string name="account_details_reference_number">Reference Number:</string>
     <string name="account_details_swift_code">Swift Code:</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="refine">REFINE</string>
+    <string name="sort_by">SORT BY</string>
+    <string name="refine_reset">reset</string>
+    <string name="refinement_clear">clear</string>
+    <string name="refinement_show_me">show me</string>
+    <string name="refinement_filter_by">filter by</string>
+    <string name="see_results_count_start">SEE RESULTS (</string>
+    <string name="see_results_count_end">)</string>
+    <string name="see_results">SEE RESULTS</string>
+    <!-- MyAccount - Balance Protection Insurance -->
+    <string name="bpi_toolbar_title">Overview</string>
+    <string name="bpi_claim_toolbar_title">Claim</string>
+    <string name="bpi_covered">Covered</string>
+    <string name="bpi_balance_protection_title">Balance Protection</string>
+    <string name="bpi_balance_protection_desc">Cover in the event of your death, retrenchment, disability or a critical illness.</string>
+    <string name="bpi_partner_cover_title">Partner Cover</string>
+    <string name="bpi_partner_cover_desc">Covers you in the event of your partners death, permanent disability or a critical illness.</string>
+    <string name="bpi_additional_death_cover_title">Additional Death Cover</string>
+    <string name="bpi_additional_death_cover_desc">Helps pay for unforeseen expenses in the event of your death.</string>
+    <string name="bpi_additional_death_cover_for_partner_title">Additional Death Cover for Partner</string>
+    <string name="bpi_additional_death_cover_for_partner_desc">Helps pay for unforeseen expenses in the event of your partners death.</string>
+
+    <!-- Balance protection detail -->
+    <string name="bpi_effective_date">Effective date</string>
+    <string name="bpi_benefits">Benefits</string>
+    <string name="bpi_how_to_claim">how to claim</string>
+
+
+    <string name="bpi_balance_protection_benefit_1">Pays the outstanding balance on your account (provided it is not in arrears) in the event of your death, permanent disability, or if you are diagnosed with a critical illness.</string>
+    <string name="bpi_balance_protection_benefit_2">Pays your instalments for up to 12 months from the date you are retrenched or temporarily disabled.</string>
+    <string name="bpi_balance_protection_benefit_3">All cover ceases at the age of 65, except death and critical illness.</string>
+
+
+    <string name="bpi_partner_cover_benefit_1">Pays the outstanding balance on your account (provided it is not in arrears) if your partner passes away, becomes permanently disabled, or is diagnosed with a critical illness.</string>
+    <string name="bpi_partner_cover_benefit_2">Pays your instalments for up to 12 months starting from the date your partner is retrenched or temporarily disabled.</string>
+    <string name="bpi_partner_cover_benefit_3">All cover ceases at the age of 65, except death and a critical illness.</string>
+
+    <string name="bpi_additional_death_cover_1">Pays R20 000 cash to a nominated beneficiary when you pass away.</string>
+    <string name="bpi_additional_death_cover_2">Helps your family handle any unforeseen expenses in the event of your passing.</string>
+
+    <string name="bpi_additional_death_cover_for_partner_1">Pays R20 000 cash to you or a nominated beneficiary when your partner or spouse passes away.</string>
+    <string name="bpi_additional_death_cover_for_partner_2">Helps your family handle any unforeseen expenses in the event of the passing of your partner or spouse.</string>
+    <string name="bpi_bullet">•</string>
+
+
+    <string name="bpi_card_balance_protection_title">Card Balance Protection</string>
+    <string name="bpi_card_balance_protection_desc">Cover in the event of your death, retrenchments, disability or a critical illness.</string>
+
+    <string name="bpi_loan_balance_protection_title">Loan Balance Protection</string>
+    <string name="bpi_loan_balance_protection_desc">Cover in the event of your death, disability, retrenchment or a critical illness.</string>
+
+    <string name="bpi_companion_care_title">Companion Care</string>
+    <string name="bpi_companion_care_desc">Covers you in the event of your partners death.</string>
+
+    <string name="bpi_balance_protection_65_above_title">Balance Protection (65+)</string>
+    <string name="bpi_balance_protection_sixty_65_above_desc">Cover in the event of your death or a critical illness.</string>
+
+    <string name="bpi_partner_cover_65_above_title">Partner Cover (65+)</string>
+    <string name="bpi_partner_cover_65_above_desc">Covers you in the event of your partners death or a critical illness.</string>
+
+
+    <string name="bpi_card_balance_protection_benefits_1">Pays the outstanding balance on your account (provided it is not in arrears) in the event of your death, permanent disability, or if you are diagnosed with a critical illness.</string>
+    <string name="bpi_card_balance_protection_benefits_2">Pays your instalments for up to 12 months from the date you are retrenched or temporarily disabled.</string>
+    <string name="bpi_card_balance_protection_benefits_3">Pays R2500 cash to a nominated beneficiary when you pass away due to natural causes or R5000 cash if your passing is accidental.</string>
+    <string name="bpi_card_balance_protection_benefits_4">Helps your family handle any unforeseen expenses in the event of your passing.</string>
+
+    <string name="bpi_loan_balance_protection_benefits_1">Pays the outstanding balance on your account (provided it is not in arrears) in the event of your death, permanent disability, or if you are diagnosed with a critical illness.</string>
+    <string name="bpi_loan_balance_protection_benefits_2">Pays your instalments for up to 12 months from the date you are retrenched or temporarily disabled.</string>
+
+
+    <string name="bpi_companion_care_benefits_1">Pays the outstanding balance on your account (provided it is not in arrears) in the event of your partner’s death.</string>
+
+    <string name="bpi_partner_cover_65_years_benefit_1">Pays the outstanding balance on your account (provided it is not in arrears) if your partner passes away or if your partner is diagnosed with a critical illness.</string>
+
+    <string name="bpi_balance_protection_65_years_benefit_1">Pays the outstanding balance on your account (provided it is not in arrears) in the event of your death, or if you are diagnosed with a critical illness.></string>
+
+
 </resources>

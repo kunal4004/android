@@ -178,5 +178,50 @@
         <item>@drawable/cli_walkthrough_creditbureau</item>
     </integer-array>
 
+    <string-array name="bpi_balance_protection_benefits">
+        <item>@string/bpi_balance_protection_benefit_1</item>
+        <item>@string/bpi_balance_protection_benefit_2</item>
+        <item>@string/bpi_balance_protection_benefit_3</item>
+    </string-array>
+
+    <string-array name="bpi_partner_cover_benefits">
+        <item>@string/bpi_partner_cover_benefit_1</item>
+        <item>@string/bpi_partner_cover_benefit_2</item>
+        <item>@string/bpi_partner_cover_benefit_3</item>
+    </string-array>
+
+    <string-array name="bpi_additional_death_cover">
+        <item>@string/bpi_additional_death_cover_1</item>
+        <item>@string/bpi_additional_death_cover_2</item>
+    </string-array>
+
+    <string-array name="bpi_additional_death_cover_for_partner">
+        <item>@string/bpi_additional_death_cover_for_partner_1</item>
+        <item>@string/bpi_additional_death_cover_for_partner_2</item>
+    </string-array>
+
+    <string-array name="bpi_card_balance_protection_benefits">
+        <item>@string/bpi_card_balance_protection_benefits_1</item>
+        <item>@string/bpi_card_balance_protection_benefits_2</item>
+        <item>@string/bpi_card_balance_protection_benefits_3</item>
+        <item>@string/bpi_card_balance_protection_benefits_4</item>
+    </string-array>
+
+    <string-array name="bpi_loan_balance_benefits">
+        <item>@string/bpi_loan_balance_protection_benefits_1</item>
+        <item>@string/bpi_loan_balance_protection_benefits_2</item>
+    </string-array>
+
+    <string-array name="bpi_companion_care_benefits">
+        <item>@string/bpi_companion_care_benefits_1</item>
+    </string-array>
+
+    <string-array name="bpi_balance_protection_above_65_benefits">
+        <item>@string/bpi_balance_protection_65_years_benefit_1</item>
+    </string-array>
+
+    <string-array name="bpi_partner_cover_above_65_benefits">
+        <item>@string/bpi_partner_cover_65_years_benefit_1</item>
+    </string-array>
 
 </resources>
