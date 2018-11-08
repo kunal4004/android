@@ -58,7 +58,7 @@ android {
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         versionCode BUILD_NUMBER.toInteger()
-        buildConfigField("String", "HOST", '"https://wfs-appserver.wigroup.co:8080/wfs/app/v4"')
+        buildConfigField("String", "HOST", '"https://wfs-appserver.wigroup.co/wfs/app/v4"')
         buildConfigField("String", "SHA1", '"9fc9aa4879781857f6c54f7b08e017ea3cef285c"')
     }
 

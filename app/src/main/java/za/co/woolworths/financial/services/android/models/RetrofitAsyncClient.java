@@ -37,7 +37,7 @@ public class RetrofitAsyncClient {
 
 		mApiInterface = new RestAdapter.Builder()
 				.setClient(new Ok3Client(httpBuilder.build()))
-				.setEndpoint(WoolworthsApplication.getBaseURL())
+				.setEndpoint(com.awfs.coordination.BuildConfig.HOST)
 				.setLogLevel(Util.isDebug(mContext) ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.NONE)
 				.setConverter(new StringConverter())
 				.build()
