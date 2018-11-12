@@ -45,8 +45,6 @@ public class WoolworthsApplication extends Application {
 
 	private WGlobalState mWGlobalState;
 
-	private static String baseURL;
-	private static String sha1Password = "ac68acf5df23ac3bc418569bfc0984ad3f6006e0";
 	private static String ssoRedirectURI;
 	private static String stsURI;
 	private static String ssoRedirectURILogout;
@@ -59,18 +57,6 @@ public class WoolworthsApplication extends Application {
 	public UpdateBankDetail updateBankDetail;
 
 	private RxBus bus;
-
-	public static void setSha1Password(String sha1Password) {
-		WoolworthsApplication.sha1Password = sha1Password;
-	}
-
-	public static String getSha1Password() {
-		return sha1Password;
-	}
-
-	public static void setBaseURL(String baseURL) {
-		WoolworthsApplication.baseURL = baseURL;
-	}
 
 	public static String getApiId() {
 		PackageInfo packageInfo = null;
@@ -100,10 +86,6 @@ public class WoolworthsApplication extends Application {
 		}
 
 		return packageInfo.versionName;
-	}
-
-	public static String getBaseURL() {
-		return baseURL;
 	}
 
 	public static String getRegistrationTCLink() {
