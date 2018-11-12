@@ -133,7 +133,7 @@
             style="@style/cli_step_indicator_text"
             android:id="@+id/documentText"
             android:gravity="end"
-            android:text="@string/cli_step_indicator_documents" />
+            android:text="@string/cli_step_indicator_complete" />
     </LinearLayout>
 
 </LinearLayout>
