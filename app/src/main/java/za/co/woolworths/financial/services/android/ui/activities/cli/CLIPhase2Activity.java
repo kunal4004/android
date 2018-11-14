@@ -181,6 +181,7 @@ public class CLIPhase2Activity extends AppCompatActivity implements View.OnClick
 			processCompleteNoPOIFragment.setStepIndicatorListener(cliStepIndicatorListener);
 			processCompleteNoPOIFragment.setApprovedIncreaseValue(mCLICreateOfferResponse.offer.creditAccepted);
 			openFragment(processCompleteNoPOIFragment);
+			hideDeclineOffer();
 			return;
 		}
 	}
