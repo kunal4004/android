@@ -15,96 +15,101 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         app:bl_arrowDirection="top"
-        app:bl_arrowPosition="24dp"
         app:bl_arrowHeight="10dp"
-        app:bl_arrowWidth="12dp"
-        >
+        app:bl_arrowPosition="24dp"
+        app:bl_arrowWidth="12dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:orientation="vertical"
-            android:paddingLeft="24dp"
-            android:paddingRight="24dp"
-            android:paddingTop="24dp">
+            android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/close"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:background="@drawable/close_24" />
-
-            <ImageView
-                android:id="@+id/icon"
-                android:layout_width="72dp"
-                android:layout_height="72dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="24dp" />
-
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:layout_width="40dp"
-                android:layout_height="18dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="24dp"
-                android:background="@color/violet"
-                android:gravity="center"
-                android:letterSpacing="0.075"
-                android:text="@string/text_new"
-                android:textAllCaps="true"
-                android:textColor="@color/white"
-                android:textSize="9sp"
-                android:visibility="gone"
-                app:WTextView_font="medium_bold" />
-
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="16dp"
-                android:gravity="center"
-                android:letterSpacing="0.14"
-                android:textAllCaps="true"
-                android:textColor="@color/black"
-                android:textSize="14sp"
-                app:WTextView_font="bold" />
-
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="16dp"
-                android:gravity="center"
-                android:textColor="@color/black_50"
-                android:textSize="15sp"
-                app:WTextView_font="myriadpro_regular" />
-
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/actionButton"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginBottom="24dp"
-                android:layout_marginTop="24dp"
-                android:background="@color/black"
-                android:gravity="center"
-                android:letterSpacing="0.14"
-                android:text="SCAN your first PRODUCT"
-                android:textAllCaps="true"
-                android:textColor="@color/white"
-                android:textSize="12sp"
-                app:WTextView_font="bold" />
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="vertical"
+                android:paddingLeft="24dp"
+                android:paddingRight="24dp"
+                android:paddingTop="24dp">
+
+                <ImageView
+                    android:id="@+id/close"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:background="@drawable/close_24" />
+
+                <ImageView
+                    android:id="@+id/icon"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="24dp" />
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:layout_width="40dp"
+                    android:layout_height="18dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="24dp"
+                    android:background="@color/violet"
+                    android:gravity="center"
+                    android:letterSpacing="0.075"
+                    android:text="@string/text_new"
+                    android:textAllCaps="true"
+                    android:textColor="@color/white"
+                    android:textSize="9sp"
+                    android:visibility="gone"
+                    app:WTextView_font="medium_bold" />
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:id="@+id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="16dp"
+                    android:gravity="center"
+                    android:letterSpacing="0.14"
+                    android:textAllCaps="true"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    app:WTextView_font="bold" />
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:id="@+id/description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="16dp"
+                    android:gravity="center"
+                    android:textColor="@color/black_50"
+                    android:textSize="15sp"
+                    app:WTextView_font="myriadpro_regular" />
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:id="@+id/actionButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginBottom="24dp"
+                    android:layout_marginTop="24dp"
+                    android:background="@color/black"
+                    android:gravity="center"
+                    android:letterSpacing="0.14"
+                    android:text="SCAN your first PRODUCT"
+                    android:textAllCaps="true"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    app:WTextView_font="bold" />
+            </LinearLayout>
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/hideFeatureTutorials"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:background="@color/white"
+                android:background="@drawable/border_top_only"
                 android:gravity="center"
                 android:letterSpacing="0.1"
-                android:text="@string/hide_feature_tutorials"
+                android:text="@string/Dont_show_these_tips"
                 android:textAllCaps="true"
                 android:textColor="@color/semi_transparent_black"
                 android:textSize="12sp"
