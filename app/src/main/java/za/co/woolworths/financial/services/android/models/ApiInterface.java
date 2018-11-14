@@ -188,7 +188,7 @@ public interface ApiInterface {
 			@Header("userAgent") String userAgent,
 			@Header("userAgentVersion") String userAgentVersion);
 
-	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600"})
 	@GET("/mobileconfigs")
 	ConfigResponse getConfig(
 			@Header("apiId") String apiId,
