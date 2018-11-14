@@ -151,6 +151,7 @@
     <string name="skip">SKIP</string>
 
     <string name="cli_continue">continue</string>
+    <string name="cli_status_concluded">cli-concluded</string>
     <string name="cli_credit_limit_increase">CREDIT LIMIT INCREASE</string>
     <string name="cli_before_we_get_started">before we get started</string>
 
@@ -511,7 +512,6 @@
 
     <string name="status_in_progress">In Progress</string>
     <string name="status_poi_required">POI Required</string>
-    <string name="status_no_poi_required">No POI Required</string>
     <string name="status_poi_problem">POI Problem</string>
     <string name="decline">Decline</string>
     <string name="decline_title">Decline offer?</string>

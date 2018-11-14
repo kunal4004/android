@@ -176,7 +176,7 @@ public class CLIPhase2Activity extends AppCompatActivity implements View.OnClick
 			return;
 		}
 
-		if (nextStep.equalsIgnoreCase(getString(R.string.status_no_poi_required))) {
+		if (nextStep.equalsIgnoreCase(getString(R.string.status_complete))) {
 			ProcessCompleteNoPOIFragment processCompleteNoPOIFragment = new ProcessCompleteNoPOIFragment();
 			processCompleteNoPOIFragment.setStepIndicatorListener(cliStepIndicatorListener);
 			processCompleteNoPOIFragment.setApprovedIncreaseValue(mCLICreateOfferResponse.offer.creditAccepted);
