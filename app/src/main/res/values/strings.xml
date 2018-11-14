@@ -8,9 +8,9 @@
     <string name="credit_card">CREDIT CARD</string>
     <string name="personal_loan">PERSONAL LOAN</string>
     <string name="credit_limit">Credit Limit:</string>
-    <string name="available_funds">Available funds</string>
+    <string name="available_funds">Available Funds</string>
     <string name="next_payment_date">Next Payment Due:</string>
-    <string name="total_amount_due">Total Amount Due:</string>
+    <string name="total_amount_due">Min Amount Due:</string>
     <string name="amount_overdue">Amount Overdue:</string>
     <string name="balance_at_statement_date">Balance At Statement Date:</string>
     <string name="deduction_day">Deduction Day:</string>
@@ -20,7 +20,7 @@
     <string name="active">ACTIVE</string>
     <string name="account_in_arrears">ACCOUNT IN ARREARS</string>
     <string name="account_in_arrears_6_months">YOUR ACCOUNT IS MORE THAN 6 MONTHS IN ARREARS.</string>
-    <string name="minimum_payment">Total Amount Due</string>
+    <string name="minimum_amount_due">Min Amount Due</string>
     <string name="next">NEXT</string>
     <string name="current_balance">Current Balance:</string>
     <string name="cancel" tools:ignore="ButtonCase">CANCEL</string>
@@ -236,7 +236,7 @@
     <string name="sign_out_desc">Are you sure you want to sign out? You will need to re-enter your username and password to sign in again.</string>
     <string name="bullet">\u2022</string>
     <string name="sc_points_bring_following_while_collecting_1">A valid South African ID</string>
-    <string name="sc_points_bring_following_while_collecting_2">Your latest three payslips or your last three months’ bank statements</string>
+    <string name="sc_points_bring_following_while_collecting_2">Provide your latest payslip or bank statements</string>
     <string name="sc_points_to_qualify_1">Be 18 or older</string>
     <string name="sc_points_to_qualify_2">Have a valid RSA ID number</string>
     <string name="sc_points_to_qualify_3">Earn a minimum of R2000 per month</string>
@@ -262,13 +262,13 @@
     <string name="personal_loan_points_to_qualify_1">Be 18 years of age or older</string>
     <string name="personal_loan_points_to_qualify_2">Have a valid South African ID</string>
     <string name="personal_loan_points_to_qualify_3">Earn a minimum of R2,000.00 per month</string>
-    <string name="personal_loan_points_to_qualify_4">Provide your latest three payslips or your last three months’ bank statements</string>
+    <string name="personal_loan_points_to_qualify_4">Provide your latest payslip or bank statements</string>
     <string name="personal_loan_points_to_qualify_5">Have a bank account in your own name</string>
     <string name="points_to_qualify_1">Be 18 or older</string>
     <string name="points_to_qualify_2">Have a valid RSA ID number</string>
     <string name="points_to_qualify_3">Earn in excess of R3,000.00 per month</string>
 
-    <string name="points_bring_following_while_collecting_2">Your latest three payslips or your last three months’ bank statements</string>
+    <string name="points_bring_following_while_collecting_2">Provide your latest payslip or bank statements</string>
     <string name="points_bring_following_while_collecting_3">Proof of residence in the form of a recent utility bill or your original bank statements dated within the last three months</string>
     <string name="terms_conditions">terms &amp; conditions</string>
     <string name="view_general_terms_conditions">view general terms &amp; conditions</string>
@@ -490,6 +490,7 @@
     <string name="cli_step_indicator_expense">Expenses</string>
     <string name="cli_step_indicator_offer">Offer</string>
     <string name="cli_step_indicator_documents">Documents</string>
+    <string name="cli_step_indicator_complete">Complete</string>
     <string name="increase_limit_supply_detail">please supply your income details</string>
     <string name="increase_supply_supply_detail">please supply your expense details</string>
     <string name="increase_my_limit">Increase My Limit</string>
@@ -510,6 +511,7 @@
 
     <string name="status_in_progress">In Progress</string>
     <string name="status_poi_required">POI Required</string>
+    <string name="status_no_poi_required">No POI Required</string>
     <string name="status_poi_problem">POI Problem</string>
     <string name="decline">Decline</string>
     <string name="decline_title">Decline offer?</string>
@@ -540,13 +542,14 @@
     <string name="credit_bureau">Credit bureau</string>
     <string name="credit_bureau_desc">We will try our best to ensure that you can afford the increased instalments of your new your credit limit. As such we obtain your credit information from various credit bureaus, who maintains the personal details related to your credit history (repayment behaviour, amount of credit you have available, outstanding debt collections and other).</string>
     <string name="txt_proof_of_income">Proof of income</string>
-    <string name="txt_proof_of_income_desc">With all credit applications, we are required to verify your income. To do so, we need to obtain your three latest pay slips or your last three months’ bank statements (that reflects your income).</string>
+    <string name="txt_proof_of_income_desc">With all credit applications, we are required to verify your income. To do so we need to obtain your latest payslip or bank statements reflecting your income.</string>
 
     <!-- Cli carousel: Complete process title -->
-    <string name="process_complete_title">Thank you, Your application is being processed.</string>
-    <string name="process_complete_desc">We will be in contact with you within
-        two working days. Please watch the app for updates on the progress of your application.</string>
+    <string name="process_complete_title">Thanks for your application.</string>
+    <string name="process_complete_desc">Please check on the app to get regular updates as to your application progress.</string>
     <string name="process_complete_back_account">back to my account</string>
+    <string name="process_complete_no_poi_title">CONGRATULATIONS</string>
+    <string name="process_complete_no_poi_desc">Your credit limit increase for :approvedValue has been approved and is now available. Happy shopping!</string>
     <string name="back_to_my_account">back to my account</string>
     <string name="account_type">### account type</string>
     <string name="account_saving_title">### savings account</string>
@@ -583,7 +586,7 @@
     <string name="no_statements">No Statements</string>
     <string name="no_statements_desc">We have no data for the current period.</string>
     <string name="account_statement">account statement</string>
-    <string name="account_type_info_desc">I agree that Woolworths Financial Services may request my latest 3 months bank statement directly from my bank.</string>
+    <string name="account_type_info_desc">I agree that Woolworths Financial Services may request my bank statement directly from my bank.</string>
     <string name="cli_declined_popup_title">APPLICATION DECLINED</string>
     <string name="cli_declined_popup_description">Oh no - your limit increase application has been declined at this time. Feel free to apply again.</string>
     <string name="store_locator">Store Locator</string>
@@ -602,7 +605,7 @@
     <string name="bottom_title_reward">WRewards</string>
     <string name="bottom_title_account">Accounts</string>
     <string name="title_activity_main">ShoppingListActivity</string>
-    <string name="lets_make_it_easy_for_you">Let us make it easy for you - we can request your latest 3 months bank statements directly from your bank, at no cost to you.</string>
+    <string name="lets_make_it_easy_for_you">Let us make it easy for you – we can request your electronic bank statement directly from your bank at no cost to you.</string>
     <string name="statement_send_email_false_desc">Oops, There seems to be a problem. Please try again later. </string>
     <string name="edit_quantity">edit your quantity</string>
     <string name="delivery_location_title">delivery location</string>
@@ -712,4 +715,82 @@
     <string name="account_details_branch_code">Branch Code:</string>
     <string name="account_details_reference_number">Reference Number:</string>
     <string name="account_details_swift_code">Swift Code:</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="refine">REFINE</string>
+    <string name="sort_by">SORT BY</string>
+    <string name="refine_reset">reset</string>
+    <string name="refinement_clear">clear</string>
+    <string name="refinement_show_me">show me</string>
+    <string name="refinement_filter_by">filter by</string>
+    <string name="see_results_count_start">SEE RESULTS (</string>
+    <string name="see_results_count_end">)</string>
+    <string name="see_results">SEE RESULTS</string>
+    <!-- MyAccount - Balance Protection Insurance -->
+    <string name="bpi_toolbar_title">Overview</string>
+    <string name="bpi_claim_toolbar_title">Claim</string>
+    <string name="bpi_covered">Covered</string>
+    <string name="bpi_balance_protection_title">Balance Protection</string>
+    <string name="bpi_balance_protection_desc">Cover in the event of your death, retrenchment, disability or a critical illness.</string>
+    <string name="bpi_partner_cover_title">Partner Cover</string>
+    <string name="bpi_partner_cover_desc">Covers you in the event of your partners death, permanent disability or a critical illness.</string>
+    <string name="bpi_additional_death_cover_title">Additional Death Cover</string>
+    <string name="bpi_additional_death_cover_desc">Helps pay for unforeseen expenses in the event of your death.</string>
+    <string name="bpi_additional_death_cover_for_partner_title">Additional Death Cover for Partner</string>
+    <string name="bpi_additional_death_cover_for_partner_desc">Helps pay for unforeseen expenses in the event of your partners death.</string>
+
+    <!-- Balance protection detail -->
+    <string name="bpi_effective_date">Effective date</string>
+    <string name="bpi_benefits">Benefits</string>
+    <string name="bpi_how_to_claim">how to claim</string>
+
+
+    <string name="bpi_balance_protection_benefit_1">Pays the outstanding balance on your account (provided it is not in arrears) in the event of your death, permanent disability, or if you are diagnosed with a critical illness.</string>
+    <string name="bpi_balance_protection_benefit_2">Pays your instalments for up to 12 months from the date you are retrenched or temporarily disabled.</string>
+    <string name="bpi_balance_protection_benefit_3">All cover ceases at the age of 65, except death and critical illness.</string>
+
+
+    <string name="bpi_partner_cover_benefit_1">Pays the outstanding balance on your account (provided it is not in arrears) if your partner passes away, becomes permanently disabled, or is diagnosed with a critical illness.</string>
+    <string name="bpi_partner_cover_benefit_2">Pays your instalments for up to 12 months starting from the date your partner is retrenched or temporarily disabled.</string>
+    <string name="bpi_partner_cover_benefit_3">All cover ceases at the age of 65, except death and a critical illness.</string>
+
+    <string name="bpi_additional_death_cover_1">Pays R20 000 cash to a nominated beneficiary when you pass away.</string>
+    <string name="bpi_additional_death_cover_2">Helps your family handle any unforeseen expenses in the event of your passing.</string>
+
+    <string name="bpi_additional_death_cover_for_partner_1">Pays R20 000 cash to you or a nominated beneficiary when your partner or spouse passes away.</string>
+    <string name="bpi_additional_death_cover_for_partner_2">Helps your family handle any unforeseen expenses in the event of the passing of your partner or spouse.</string>
+    <string name="bpi_bullet">•</string>
+
+
+    <string name="bpi_card_balance_protection_title">Card Balance Protection</string>
+    <string name="bpi_card_balance_protection_desc">Cover in the event of your death, retrenchments, disability or a critical illness.</string>
+
+    <string name="bpi_loan_balance_protection_title">Loan Balance Protection</string>
+    <string name="bpi_loan_balance_protection_desc">Cover in the event of your death, disability, retrenchment or a critical illness.</string>
+
+    <string name="bpi_companion_care_title">Companion Care</string>
+    <string name="bpi_companion_care_desc">Covers you in the event of your partners death.</string>
+
+    <string name="bpi_balance_protection_65_above_title">Balance Protection (65+)</string>
+    <string name="bpi_balance_protection_sixty_65_above_desc">Cover in the event of your death or a critical illness.</string>
+
+    <string name="bpi_partner_cover_65_above_title">Partner Cover (65+)</string>
+    <string name="bpi_partner_cover_65_above_desc">Covers you in the event of your partners death or a critical illness.</string>
+
+
+    <string name="bpi_card_balance_protection_benefits_1">Pays the outstanding balance on your account (provided it is not in arrears) in the event of your death, permanent disability, or if you are diagnosed with a critical illness.</string>
+    <string name="bpi_card_balance_protection_benefits_2">Pays your instalments for up to 12 months from the date you are retrenched or temporarily disabled.</string>
+    <string name="bpi_card_balance_protection_benefits_3">Pays R2500 cash to a nominated beneficiary when you pass away due to natural causes or R5000 cash if your passing is accidental.</string>
+    <string name="bpi_card_balance_protection_benefits_4">Helps your family handle any unforeseen expenses in the event of your passing.</string>
+
+    <string name="bpi_loan_balance_protection_benefits_1">Pays the outstanding balance on your account (provided it is not in arrears) in the event of your death, permanent disability, or if you are diagnosed with a critical illness.</string>
+    <string name="bpi_loan_balance_protection_benefits_2">Pays your instalments for up to 12 months from the date you are retrenched or temporarily disabled.</string>
+
+
+    <string name="bpi_companion_care_benefits_1">Pays the outstanding balance on your account (provided it is not in arrears) in the event of your partner’s death.</string>
+
+    <string name="bpi_partner_cover_65_years_benefit_1">Pays the outstanding balance on your account (provided it is not in arrears) if your partner passes away or if your partner is diagnosed with a critical illness.</string>
+
+    <string name="bpi_balance_protection_65_years_benefit_1">Pays the outstanding balance on your account (provided it is not in arrears) in the event of your death, or if you are diagnosed with a critical illness.></string>
+
+
 </resources>

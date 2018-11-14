@@ -11,6 +11,7 @@ import android.widget.ProgressBar;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
@@ -79,6 +80,7 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
 				finishActivity();
 				break;
 			case R.id.btnClearCart:
+				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTREMOVEALL);
 				cartFragment.removeAllCartItem(null).execute();
 				break;
 		}
@@ -112,6 +114,7 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
 
 	public void finishActivity() {
 		setResult(DISMISS_POP_WINDOW_CLICKED);
+		Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTEXIT);
 		finish();
 		overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
 	}

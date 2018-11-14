@@ -1,52 +1,45 @@
 package za.co.woolworths.financial.services.android.models.dao
 
+import android.content.Context
+import android.text.TextUtils
 import retrofit.RestAdapter
-import za.co.woolworths.financial.services.android.contracts.OnCompletionListener
+import za.co.wigroup.androidutils.Util
 import za.co.woolworths.financial.services.android.contracts.OnResultListener
 import za.co.woolworths.financial.services.android.models.ApiInterface
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse
-import za.co.woolworths.financial.services.android.util.FirebaseManager
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask
+import za.co.woolworths.financial.services.android.util.SessionUtilities
+import za.co.woolworths.financial.services.android.util.Utils
+
 
 class MobileConfigServerDao {
 
     //static vars & functions
 
     companion object {
-        private val mcsUrl = "https://mobileconfig.wigroup.co/config-server/rest/mobile/android/"
 
-        fun getConfig(mcsAppVersion: String, deviceID: String, onResultListener: OnResultListener<ConfigResponse>) {
-
-            val firebaseManager = FirebaseManager.getInstance()
-            var firebaseRemoteConfig = firebaseManager.getRemoteConfig()
-
-            if (firebaseRemoteConfig == null){
-                //this ensures we're using defaults while the remote config
-                //is yet to be retrieved.
-                firebaseManager.setupRemoteConfig(object :OnCompletionListener{
-                    override fun complete() {
-                        getConfig(mcsAppVersion, deviceID, onResultListener)
-                    }
-                })
-                return
-            }
+        fun getConfig(appInstance: WoolworthsApplication, onResultListener: OnResultListener<ConfigResponse>) {
 
             val task = object : HttpAsyncTask<String, String, ConfigResponse>() {
                 override fun httpDoInBackground(vararg strings: String): ConfigResponse {
-                    val appName = firebaseRemoteConfig.getString("mcs_appName")
-                    val apiKey = firebaseRemoteConfig.getString("mcs_appApiKey")
-
-                    //MCS expects empty value for PROD
-                    //appName-5.0 = PROD
-                    //appName-5.0-qa = QA
-                    //appName-5.0-dev = DEV
 
                     val mApiInterface = RestAdapter.Builder()
-                            .setEndpoint(mcsUrl)
+                            .setEndpoint(com.awfs.coordination.BuildConfig.HOST)
                             .build()
                             .create(ApiInterface::class.java)
 
-                    return mApiInterface.getConfig(apiKey, deviceID, "$appName-$mcsAppVersion")
+                    return mApiInterface.getConfig(
+                            WoolworthsApplication.getApiId(),
+                            com.awfs.coordination.BuildConfig.SHA1,
+                            getDeviceManufacturer(),
+                            getDeviceModel(),
+                            getNetworkCarrier(appInstance),
+                            getOS(),
+                            getOsVersion(),
+                            getSessionToken(),
+                            WoolworthsApplication.getAppVersionName()
+                    )
                 }
 
                 override fun httpError(errorMessage: String, httpErrorCode: HttpAsyncTask.HttpErrorCode): ConfigResponse {
@@ -66,6 +59,45 @@ class MobileConfigServerDao {
             }
 
             task.execute()
+        }
+
+
+        private fun getOsVersion(): String {
+            var osVersion = Util.getOsVersion()
+            if (TextUtils.isEmpty(osVersion)) {
+                val sdkVersion = android.os.Build.VERSION.SDK_INT // e.g. sdkVersion := 8;
+                osVersion = sdkVersion.toString()
+            }
+            return osVersion
+        }
+
+        fun getOS(): String {
+            return "Android"
+        }
+
+        private fun getNetworkCarrier(context: Context): String {
+            val networkCarrier = Util.getNetworkCarrier(context)
+            return if (networkCarrier.isEmpty()) "Unavailable" else Utils.removeUnicodesFromString(networkCarrier)
+        }
+
+        private fun getDeviceModel(): String {
+            return Util.getDeviceModel()
+        }
+
+        private fun getDeviceManufacturer(): String {
+            return Util.getDeviceManufacturer()
+        }
+
+        private fun getApiId(): String {
+            return WoolworthsApplication.getApiId()
+        }
+
+        private fun getSessionToken(): String {
+            val sessionToken = SessionUtilities.getInstance().sessionToken
+            return if (sessionToken.isEmpty())
+                "."
+            else
+                sessionToken
         }
     }
 }

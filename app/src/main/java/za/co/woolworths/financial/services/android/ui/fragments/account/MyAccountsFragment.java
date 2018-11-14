@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
@@ -147,8 +148,8 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 
 		JWTDecodedModel jwtDecodedModel = SessionUtilities.getInstance().getJwt();
 		Map<String, String> arguments = new HashMap<>();
-		arguments.put("c2_id", (jwtDecodedModel.C2Id != null) ? jwtDecodedModel.C2Id : "");
-		Utils.triggerFireBaseEvents("accounts_event_appeared", arguments);
+		arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, (jwtDecodedModel.C2Id != null) ? jwtDecodedModel.C2Id : "");
+		Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ACCOUNTSEVENTSAPPEARED, arguments);
 		myAccountsViewModel = ViewModelProviders.of(this).get(MyAccountsViewModel.class);
 		myAccountsViewModel.setNavigator(this);
 		setHasOptionsMenu(false);
@@ -259,11 +260,11 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			messageCounterRequest();
 	}
 
-	//To remove negative signs from negative balance and add "CR" after the negative balance
+	// add negative sign before currency value
 	public String removeNegativeSymbol(SpannableString amount) {
 		String currentAmount = amount.toString();
 		if (currentAmount.contains("-")) {
-			currentAmount = currentAmount.replace("-", "") + " CR";
+			currentAmount = currentAmount.replace("R - ","- R ");
 		}
 		return currentAmount;
 	}
@@ -481,6 +482,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	private View.OnClickListener btnSignin_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
+			Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSIGNIN);
 			ScreenManager.presentSSOSignin(getActivity());
 		}
 	};
@@ -488,6 +490,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	private View.OnClickListener btnRegister_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
+			Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSREGISTER);
 			ScreenManager.presentSSORegister(getActivity());
 		}
 	};
@@ -509,12 +512,15 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				break;
 			case R.id.applyStoreCard:
+				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDAPPLYNOW);
 				redirectToMyAccountsCardsActivity(0);
 				break;
 			case R.id.applyCrediCard:
+				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDAPPLYNOW);
 				redirectToMyAccountsCardsActivity(1);
 				break;
 			case R.id.applyPersonalLoan:
+				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANAPPLYNOW);
 				redirectToMyAccountsCardsActivity(2);
 				break;
 			case R.id.linkedStoreCard:
@@ -537,9 +543,12 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 				break;
 
 			case R.id.rlMyDetails:
-				Intent openMyDetail = new Intent(getActivity(), UserDetailActivity.class);
-				startActivity(openMyDetail);
-				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+				Activity activity = getActivity();
+				if (activity!=null) {
+					Intent openMyDetail = new Intent(getActivity(), UserDetailActivity.class);
+					startActivity(openMyDetail);
+					activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+				}
 				break;
 			case R.id.storeLocator:
 				pushFragment(new StoresNearbyFragment1());
@@ -547,6 +556,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			case R.id.myLists:
 				Bundle bundle = new Bundle();
 				if (shoppingListsResponse != null) {
+					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSHOPPINGLIST);
 					bundle.putString("ShoppingList", Utils.objectToJson(shoppingListsResponse));
 					ShoppingListFragment shoppingListFragment = new ShoppingListFragment();
 					shoppingListFragment.setArguments(bundle);
@@ -803,6 +813,10 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			setToolbarBackgroundColor(R.color.white);
 			shoppingListRequest();
 			messageCounterRequest();
+
+			//Fixes WOP-3407
+			BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) getActivity();
+			bottomNavigationActivity.showBottomNavigationMenu();
 		}
 	}
 

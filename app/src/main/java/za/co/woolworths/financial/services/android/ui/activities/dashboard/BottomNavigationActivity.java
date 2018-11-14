@@ -34,6 +34,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import io.reactivex.functions.Consumer;
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
@@ -562,22 +563,26 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					setToolbarBackgroundColor(R.color.white);
 					switchTab(INDEX_TODAY);
 					hideToolbar();
+					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WTODAYMENU);
 					return true;
 
 				case R.id.navigate_to_shop:
 					setCurrentSection(R.id.navigate_to_shop);
 					switchTab(INDEX_PRODUCT);
+					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMENU);
 					return true;
 
 				case R.id.navigate_to_cart:
 					setCurrentSection(R.id.navigate_to_cart);
 					identifyTokenValidationAPI();
+					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTMENU);
 					return false;
 
 				case R.id.navigate_to_wreward:
 					currentSection = R.id.navigate_to_wreward;
 					setToolbarBackgroundColor(R.color.white);
 					switchTab(INDEX_REWARD);
+					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSMENU);
 					return true;
 
 				case R.id.navigate_to_account:
@@ -591,6 +596,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					} else {
 						setToolbarBackgroundColor(R.color.white);
 						switchTab(INDEX_ACCOUNT);
+						Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSMENU);
 						return true;
 					}
 			}
@@ -608,12 +614,14 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					clearStack();
 					WTodayFragment currentWTodayFragment = (WTodayFragment) mNavController.getCurrentFrag();
 					currentWTodayFragment.scrollToTop();
+					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WTODAYMENU);
 					break;
 
 				case R.id.navigate_to_shop:
 					clearStack();
 					CategoryFragment currentProductCategoryFragment = (CategoryFragment) mNavController.getCurrentFrag();
 					currentProductCategoryFragment.scrollToTop();
+					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMENU);
 					break;
 
 				case R.id.navigate_to_cart:
@@ -631,12 +639,14 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					} else {
 						((WRewardsLoggedOutFragment) currentChildFragment).scrollToTop();
 					}
+					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSMENU);
 					break;
 
 				case R.id.navigate_to_account:
 					clearStack();
 					MyAccountsFragment currentAccountFragment = (MyAccountsFragment) mNavController.getCurrentFrag();
 					currentAccountFragment.scrollToTop();
+					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSMENU);
 					break;
 			}
 		}

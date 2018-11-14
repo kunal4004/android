@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -7,7 +8,6 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.text.SpannableString;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +28,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import za.co.wigroup.logger.lib.WiGroupLogger;
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
@@ -35,15 +36,16 @@ import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.rest.cli.CLIGetOfferActive;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
-import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
+import za.co.woolworths.financial.services.android.ui.activities.bpi.BPIBalanceProtectionActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.FragmentLifecycle;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
+import za.co.woolworths.financial.services.android.util.MyAccountHelper;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
@@ -52,6 +54,8 @@ import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
+
+import static android.app.Activity.RESULT_OK;
 
 public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle, NetworkChangeListener {
 
@@ -89,6 +93,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	private RelativeLayout relDebitOrders;
 
 	private View fakeView;
+	private RelativeLayout relBalanceProtection;
 
 	@Nullable
 	@Override
@@ -167,7 +172,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		relDebitOrders = view.findViewById(R.id.relDebitOrders);
 		relDebitOrders.setVisibility(View.GONE);
 
-		RelativeLayout relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
+		relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
 		RelativeLayout rlViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
 
 		if (controllerNotNull()) {
@@ -202,15 +207,6 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 			mErrorHandlerView.showToast();
 	}
 
-	//To remove negative signs from negative balance and add "CR" after the negative balance
-	public String removeNegativeSymbol(SpannableString amount) {
-		String currentAmount = amount.toString();
-		if (currentAmount.contains("-")) {
-			currentAmount = currentAmount.replace("-", "") + " CR";
-		}
-		return currentAmount;
-	}
-
 	public void bindData(AccountsResponse response) {
 		List<Account> accountList = response.accountList;
 		if (accountList != null) {
@@ -231,10 +227,11 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 					productOfferingGoodStanding = p.productOfferingGoodStanding;
 					productOfferingId = String.valueOf(p.productOfferingId);
 					woolworthsApplication.setProductOfferingId(p.productOfferingId);
-					availableBalance.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.availableFunds), 1, getActivity())));
-					creditLimit.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.creditLimit), 1, getActivity())));
-					minAmountDue.setText(removeNegativeSymbol(WFormatter.newAmountFormat(p.minimumAmountDue)));
-					currentBalance.setText(removeNegativeSymbol(WFormatter.newAmountFormat(p.currentBalance)));
+					relBalanceProtection.setVisibility(p.insuranceCovered?View.VISIBLE:View.GONE);
+					availableBalance.setText(Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.availableFunds), 1, getActivity())));
+					creditLimit.setText(Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.creditLimit), 1, getActivity())));
+					minAmountDue.setText(Utils.removeNegativeSymbol(WFormatter.newAmountFormat(p.minimumAmountDue)));
+					currentBalance.setText(Utils.removeNegativeSymbol(WFormatter.newAmountFormat(p.currentBalance)));
 					WoolworthsApplication.setCreditCardType(p.accountNumberBin);
 					try {
 						dueDate.setText(WFormatter.addSpaceToDate(WFormatter.newDateFormat(p.paymentDueDate)));
@@ -258,6 +255,8 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 
 	@Override
 	public void onClick(View v) {
+		Activity activity = getActivity();
+		if (activity == null) return;
 		MultiClickPreventer.preventMultiClick(v);
 		if (accountsResponse != null) {
 			productOfferingId = Utils.getProductOfferingId(accountsResponse, "CC");
@@ -268,13 +267,17 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 				Intent intent = new Intent(getActivity(), WTransactionsActivity.class);
 				intent.putExtra("productOfferingId", productOfferingId);
 				startActivity(intent);
-				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+				activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				break;
 
 			case R.id.relBalanceProtection:
-				Intent intBalanceProtection = new Intent(getActivity(), BalanceProtectionActivity.class);
+				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDBPI);
+				MyAccountHelper myAccountHelper = new MyAccountHelper();
+				String accountInfo = myAccountHelper.getAccountInfo(accountsResponse, "CC");
+				Intent intBalanceProtection = new Intent(getActivity(), BPIBalanceProtectionActivity.class);
+				intBalanceProtection.putExtra("account_info", accountInfo);
 				startActivity(intBalanceProtection);
-				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+				activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
 				break;
 
 			case R.id.relIncreaseMyLimit:
@@ -286,11 +289,11 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 			case R.id.iconAvailableFundsInfo:
 				Utils.displayValidationMessageForResult(
 						this,
-						getActivity(),
+						activity,
 						CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC,
-						getActivity().getResources().getString(R.string.account_in_arrears_info_title),
+						activity.getResources().getString(R.string.account_in_arrears_info_title),
 						getActivity().getResources().getString(R.string.account_in_arrears_info_description)
-								.replace("minimum_payment", removeNegativeSymbol(WFormatter.newAmountFormat(account.amountOverdue)))
+								.replace("minimum_payment", Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account.totalAmountDue)))
 								.replace("card_name", "Credit Card"),
 						getActivity().getResources().getString(R.string.how_to_pay),
 						RESULT_CODE_FUNDS_INFO);
@@ -366,15 +369,6 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		tvIncreaseLimit.setVisibility(View.VISIBLE);
 	}
 
-	//To remove negative signs from negative balance and add "CR" after the negative balance
-	public String removeNegativeSymbol(String amount) {
-		String currentAmount = amount;
-		if (currentAmount.contains("-")) {
-			currentAmount = currentAmount.replace("-", "") + " CR";
-		}
-		return currentAmount;
-	}
-
 	@Override
 	public void onPauseFragment() {
 	}
@@ -428,7 +422,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		if(requestCode == RESULT_CODE_FUNDS_INFO) {
+		if(requestCode == RESULT_CODE_FUNDS_INFO && resultCode == RESULT_OK) {
 			ScreenManager.presentHowToPayActivity(getActivity(),account);
 		}
 		retryConnect();

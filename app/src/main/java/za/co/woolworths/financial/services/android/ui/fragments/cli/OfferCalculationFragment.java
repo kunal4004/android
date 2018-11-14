@@ -529,6 +529,12 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 											documentFragment.setStepIndicatorListener(mCliStepIndicatorListener);
 											FragmentUtils fragmentUtils = new FragmentUtils();
 											fragmentUtils.nextFragment((AppCompatActivity) OfferCalculationFragment.this.getActivity(), getFragmentManager().beginTransaction(), documentFragment, R.id.cli_steps_container);
+										} else if (nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_no_poi_required))) {
+											ProcessCompleteNoPOIFragment processCompleteNoPOIFragment = new ProcessCompleteNoPOIFragment();
+											processCompleteNoPOIFragment.setStepIndicatorListener(mCliStepIndicatorListener);
+											processCompleteNoPOIFragment.setApprovedIncreaseValue(mObjOffer.offer.creditAccepted);
+											FragmentUtils fragmentUtils = new FragmentUtils();
+											fragmentUtils.nextFragment((AppCompatActivity) OfferCalculationFragment.this.getActivity(), getFragmentManager().beginTransaction(), processCompleteNoPOIFragment, R.id.cli_steps_container);
 										} else {
 											finishActivity();
 										}
@@ -630,7 +636,8 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 					mCurrentCredit -= mCurrentCredit % 100;
 					String nextStep = mObjOffer.nextStep;
 					if (nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_offer).toLowerCase())
-							|| nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_poi_required).toLowerCase())) {
+							|| nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_poi_required).toLowerCase())
+							|| nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_no_poi_required).toLowerCase())) {
 						mCreditRequestMax = offer.creditRequestMax;
 						int mDifferenceCreditLimit = (mCreditRequestMax - mCurrentCredit);
 						mCLiId = mObjOffer.cliId;

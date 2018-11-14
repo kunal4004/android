@@ -22,14 +22,13 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-
 import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.ProductSearchFragmentBinding;
 import com.squareup.picasso.Picasso;
 import java.util.List;
-
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.RootCategory;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
@@ -345,10 +344,12 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 			case R.id.imBurgerButtonPressed:
 			case R.id.textTBProductSearch:
 			case R.id.textProductSearch:
+				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPSEARCHBAR);
 				navigateToProductSearch();
 				break;
 			case R.id.imTBBarcodeScanner:
 			case R.id.llBarcodeScanner:
+				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPBARCODE);
 				checkLocationPermission(getBottomNavigator(), getBottomNavigator().getPermissionType(Manifest.permission.CAMERA), 2);
 				break;
 
