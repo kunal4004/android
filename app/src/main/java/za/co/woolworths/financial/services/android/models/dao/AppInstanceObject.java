@@ -124,6 +124,7 @@ public class AppInstanceObject {
         public boolean findInStore;
 		public boolean deliveryLocation;
 		public boolean vouchers;
+		public boolean refineProducts;
     }
 	/***
 	 * Check to determine if biometric custom popup should be displayed

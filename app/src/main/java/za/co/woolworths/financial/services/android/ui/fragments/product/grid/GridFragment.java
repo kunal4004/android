@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.functions.Consumer;
+import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
@@ -50,13 +51,14 @@ import za.co.woolworths.financial.services.android.ui.adapters.SortOptionsAdapte
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.ShoppingListFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsFragment;
+import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.OPEN_GET_LIST_SCREEN;
 
-public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel> implements GridNavigator, View.OnClickListener,SortOptionsAdapter.OnSortOptionSelected {
+public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel> implements GridNavigator, View.OnClickListener,SortOptionsAdapter.OnSortOptionSelected, WMaterialShowcaseView.IWalkthroughActionListener {
 
 	private GridViewModel mGridViewModel;
 	private ErrorHandlerView mErrorHandlerView;
@@ -214,6 +216,7 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
                 getViewDataBinding().sortAndRefineLayout.parentLayout.setVisibility(View.VISIBLE);
 				getViewDataBinding().sortAndRefineLayout.refineProducts.setClickable(productView.navigation.size() > 0);
 				bindRecyclerViewWithUI(productLists);
+				showFeatureWalkthrough();
 			} else {
 				loadMoreData(productLists);
 			}
@@ -534,5 +537,26 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 		getViewDataBinding().productList.setVisibility(View.INVISIBLE);
 		getViewDataBinding().sortAndRefineLayout.parentLayout.setVisibility(View.GONE);
 		startProductRequest();
+	}
+
+	private void showFeatureWalkthrough() {
+		if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.refineProducts)
+			return;
+
+		getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.BARCODE_SCAN)
+				.setTarget(getViewDataBinding().sortAndRefineLayout.refineDownArrow)
+				.setTitle(R.string.walkthrough_refine_title)
+				.setDescription(R.string.walkthrough_refine_desc)
+				.setActionText(R.string.walkthrough_refine_action)
+				.setImage(R.drawable.tips_tricks_ic_scan)
+				.setAction(this)
+				.setArrowPosition(WMaterialShowcaseView.Arrow.TOP_RIGHT)
+				.setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
+		getBottomNavigationActivity().walkThroughPromtView.show(getActivity());
+
+	}
+
+	@Override
+	public void onWalkthroughActionButtonClick() {
 	}
 }

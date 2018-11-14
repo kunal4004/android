@@ -791,6 +791,8 @@
     <string name="bpi_partner_cover_65_years_benefit_1">Pays the outstanding balance on your account (provided it is not in arrears) if your partner passes away or if your partner is diagnosed with a critical illness.</string>
 
     <string name="bpi_balance_protection_65_years_benefit_1">Pays the outstanding balance on your account (provided it is not in arrears) in the event of your death, or if you are diagnosed with a critical illness.></string>
-
+    <string name="walkthrough_refine_title">NARROW LISTING RESULTS</string>
+    <string name="walkthrough_refine_desc">Want to get to products faster? You can now refine results by brands, size , colour and style to mention a few.</string>
+    <string name="walkthrough_refine_action">REFINE NOW</string>
 
 </resources>
