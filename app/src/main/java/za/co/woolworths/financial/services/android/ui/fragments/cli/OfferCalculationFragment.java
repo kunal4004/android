@@ -534,6 +534,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 											processCompleteNoPOIFragment.setStepIndicatorListener(mCliStepIndicatorListener);
 											FragmentUtils fragmentUtils = new FragmentUtils();
 											fragmentUtils.nextFragment((AppCompatActivity) OfferCalculationFragment.this.getActivity(), getFragmentManager().beginTransaction(), processCompleteNoPOIFragment, R.id.cli_steps_container);
+											hideDeclineButton();
 										} else {
 											finishActivity();
 										}
