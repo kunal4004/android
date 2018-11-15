@@ -15,6 +15,7 @@ import java.util.List;
 
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import za.co.woolworths.financial.services.android.ui.activities.maintenance.RuntimeExceptionHelper;
 
 /**
  * Created by eesajacobs on 2016/07/25.
@@ -45,7 +46,14 @@ public abstract class HttpAsyncTask<Params, Progress, Result> extends AsyncTask<
 
     @Override
     protected void onPostExecute(Result result) {
-        super.onPostExecute(result);
+        RuntimeExceptionHelper runtimeHelper = new RuntimeExceptionHelper();
+        String httpCode = runtimeHelper.getHttpCode(result);
+        String[] maintenanceHttpCodes = {"404", "500", "502", "503", "504"};
+        if (Arrays.asList(maintenanceHttpCodes).contains(httpCode)) {
+            runtimeHelper.navigateToRuntimeExceptionActivity();
+        } else {
+            super.onPostExecute(result);
+        }
     }
 
     @Override

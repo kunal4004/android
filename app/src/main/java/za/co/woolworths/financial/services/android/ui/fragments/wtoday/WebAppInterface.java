@@ -23,6 +23,7 @@ import za.co.woolworths.financial.services.android.models.dto.ProductDetailRespo
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator;
+import za.co.woolworths.financial.services.android.ui.activities.maintenance.RuntimeExceptionHelper;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
 import za.co.woolworths.financial.services.android.ui.views.ProductProgressDialogFrag;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -185,6 +186,15 @@ public class WebAppInterface {
 											dismissFragmentDialog();
 										}
 									});
+									break;
+
+								case 404:
+								case 500:
+								case 502:
+								case 503:
+								case 504:
+									RuntimeExceptionHelper runtimeExceptionHelper = new RuntimeExceptionHelper();
+									runtimeExceptionHelper.navigateToRuntimeExceptionActivity();
 									break;
 
 								default:
