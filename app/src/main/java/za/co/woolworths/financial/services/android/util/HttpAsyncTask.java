@@ -48,7 +48,7 @@ public abstract class HttpAsyncTask<Params, Progress, Result> extends AsyncTask<
     protected void onPostExecute(Result result) {
         RuntimeExceptionHelper runtimeHelper = new RuntimeExceptionHelper();
         String httpCode = runtimeHelper.getHttpCode(result);
-        String[] maintenanceHttpCodes = {"404", "500", "502", "503", "504"};
+        String[] maintenanceHttpCodes = {"404", "500", "503", "504"};
         if (Arrays.asList(maintenanceHttpCodes).contains(httpCode)) {
             runtimeHelper.navigateToRuntimeExceptionActivity();
         } else {
