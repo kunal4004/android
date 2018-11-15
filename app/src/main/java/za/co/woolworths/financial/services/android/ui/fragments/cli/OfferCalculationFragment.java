@@ -532,9 +532,9 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 										} else if (nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_complete)) && mObjOffer.cliStatus.equalsIgnoreCase(getString(R.string.cli_status_concluded))) {
 											ProcessCompleteNoPOIFragment processCompleteNoPOIFragment = new ProcessCompleteNoPOIFragment();
 											processCompleteNoPOIFragment.setStepIndicatorListener(mCliStepIndicatorListener);
-											processCompleteNoPOIFragment.setApprovedIncreaseValue(mObjOffer.offer.creditAccepted);
 											FragmentUtils fragmentUtils = new FragmentUtils();
 											fragmentUtils.nextFragment((AppCompatActivity) OfferCalculationFragment.this.getActivity(), getFragmentManager().beginTransaction(), processCompleteNoPOIFragment, R.id.cli_steps_container);
+											hideDeclineButton();
 										} else {
 											finishActivity();
 										}
