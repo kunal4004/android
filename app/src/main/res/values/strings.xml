@@ -74,7 +74,7 @@
     <string name="apply_now">APPLY NOW</string>
     <string name="the_benefits">The benefits:</string>
     <string name="shop_anywhere">Shop anywhere</string>
-    <string name="shop_any_where_description">Your Woolworths Credit Card is internationally recognised and accepted at 29 million outlets around the world wherever you see the Visa sign.</string>
+    <string name="shop_any_where_description">Your Woolworths Credit Card is internationally recognised and accepted at 29 million merchants around the world, wherever you see the Visa sign.</string>
     <string name="cc_to_qualify">To qualify, you have to:</string>
     <string name="bring_following_while_collecting">Bring the following when you collect your Store Card:</string>
     <string name="cash_when_you_need_it">Cash when you need it:</string>
@@ -262,15 +262,15 @@
 
     <string name="personal_loan_points_to_qualify_1">Be 18 years of age or older</string>
     <string name="personal_loan_points_to_qualify_2">Have a valid South African ID</string>
-    <string name="personal_loan_points_to_qualify_3">Earn a minimum of R2,000.00 per month</string>
+    <string name="personal_loan_points_to_qualify_3">Earn a minimum of R2 000 per month</string>
     <string name="personal_loan_points_to_qualify_4">Provide your latest payslip or bank statements</string>
     <string name="personal_loan_points_to_qualify_5">Have a bank account in your own name</string>
-    <string name="points_to_qualify_1">Be 18 or older</string>
+    <string name="points_to_qualify_1">Be 18 years of age or older</string>
     <string name="points_to_qualify_2">Have a valid RSA ID number</string>
     <string name="points_to_qualify_3">Earn in excess of R3,000.00 per month</string>
 
     <string name="points_bring_following_while_collecting_2">Provide your latest payslip or bank statements</string>
-    <string name="points_bring_following_while_collecting_3">Proof of residence in the form of a recent utility bill or your original bank statements dated within the last three months</string>
+    <string name="points_bring_following_while_collecting_3">Utility bill or original bank statement dates within the last three months, as proof of residence.</string>
     <string name="terms_conditions">terms &amp; conditions</string>
     <string name="view_general_terms_conditions">view general terms &amp; conditions</string>
     <string name="wrewards_monthly_spend">Monthly Spend</string>
@@ -310,11 +310,11 @@
     <string name="product_colour">Colour</string>
     <string name="unlinked_account_copy">We see that your Woolies Card is not yet linked. To conveniently view your available funds, next payment due, recent transactions and so much more, please link your Woolies Card now.</string>
     <string name="get_more_back_at_woolies">Get more back at Woolies</string>
-    <string name="get_more_description">Get up to 3\%% back in WRewards quarterly vouchers when shopping at Woolies.</string>
+    <string name="get_more_description">Get up to 3\% back in WRewards quarterly vouchers when shopping at Woolies.</string>
     <string name="cc_cash_when_you_need_it">Cash When You Need It</string>
     <string name="cc_cash_when_you_need_it_description">Use your Woolworths Credit Card to draw cash at any ATM displaying the Visa logo, worldwide.</string>
     <string name="pay_for_fuel">Pay for Fuel</string>
-    <string name="pay_fuel_description">Pay for your fuel with your Woolies Credit Card and get up to 1\%% back in WRewards quarterly vouchers.</string>
+    <string name="pay_fuel_description">Pay for your fuel with your Woolies Credit Card and get up to 1\% back in WRewards quarterly vouchers.</string>
     <string name="plus_for_black_credit_card_only">PLUS (for Black Credit Card only)</string>
     <string name="cc_plus_1">Free Taste magazine vouchers monthly</string>
     <string name="cc_plus_2">2 free coffee vouchers monthly that can be used at any Woolworths Cafe, To Go or Tapas Bar.</string>
