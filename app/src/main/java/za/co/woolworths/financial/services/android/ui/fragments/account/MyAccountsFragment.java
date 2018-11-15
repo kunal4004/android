@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableString;
 import android.util.Log;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -52,6 +53,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.contact_us.main_
 import za.co.woolworths.financial.services.android.ui.fragments.help.HelpSectionFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.ShoppingListFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
+import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
@@ -100,6 +102,9 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	WTextView messageCounter;
 	WTextView userName;
 	private ImageView imgCreditCard;
+	private FrameLayout imgStoreCardContainer;
+	private FrameLayout imgPersonalLoanCardContainer;
+	private FrameLayout imgCreditCardContainer;
 
 	Map<String, Account> accounts;
 	List<String> unavailableAccounts;
@@ -116,6 +121,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	ImageView imgStoreCardStatusIndicator;
 	ImageView imgCreditCardStatusIndicator;
 	ImageView imgPersonalLoanStatusIndicator;
+	ImageView imgStoreCardApplyNow;
 
 	public MyAccountsFragment() {
 		// Required empty public constructor
@@ -199,6 +205,10 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			imgStoreCardStatusIndicator = view.findViewById(R.id.storeCardStatusIndicator);
 			imgCreditCardStatusIndicator = view.findViewById(R.id.creditCardStatusIndicator);
 			imgPersonalLoanStatusIndicator = view.findViewById(R.id.personalLoanStatusIndicator);
+			imgStoreCardApplyNow = view.findViewById(R.id.imgStoreCardApply);
+			imgStoreCardContainer = view.findViewById(R.id.imgStoreCard);
+			imgCreditCardContainer = view.findViewById(R.id.imgCreditCardLayout);
+			imgPersonalLoanCardContainer = view.findViewById(R.id.imgPersonalLoan);
 			openMessageActivity.setOnClickListener(this);
 			contactUs.setOnClickListener(this);
 			applyPersonalCardView.setOnClickListener(this);
@@ -344,6 +354,8 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		allUserOptionsLayout.setVisibility(View.VISIBLE);
 		viewPager.setAdapter(adapter);
 		viewPager.setCurrentItem(0);
+		if (SessionUtilities.getInstance().isUserAuthenticated() && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment)
+			showFeatureWalkthrough(unavailableAccounts);
 	}
 
 	private void configureSignInNoC2ID() {
@@ -864,5 +876,35 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	public void scrollToTop() {
 		ObjectAnimator anim = ObjectAnimator.ofInt(mScrollView, "scrollY", mScrollView.getScrollY(), 0);
 		anim.setDuration(500).start();
+	}
+
+	private void showFeatureWalkthrough(List<String> unavailableAccounts) {
+		if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.account)
+			return;
+		View target = null;
+		if(unavailableAccounts.size() == 3)
+			target = imgStoreCardApplyNow;
+		else {
+			if(!unavailableAccounts.contains("SC")){
+				target=imgStoreCardContainer;
+			}else if(!unavailableAccounts.contains("CC")){
+				target=imgCreditCard;
+			}else if(!unavailableAccounts.contains("PL")){
+				target=imgPersonalLoanCardContainer;
+			}
+		}
+
+		getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.ACCOUNTS)
+				.setTarget(target)
+				.setTitle(R.string.walkthrough_account_title)
+				.setDescription(R.string.walkthrough_account_desc)
+				.setActionText(R.string.walkthrough_account_action)
+				.setImage(R.drawable.tips_tricks_ic_my_accounts)
+				//.setAction(this)
+				.setAsNewFeature()
+				.setArrowPosition(WMaterialShowcaseView.Arrow.TOP_LEFT)
+				.setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
+		getBottomNavigationActivity().walkThroughPromtView.show(getActivity());
+
 	}
 }

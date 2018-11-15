@@ -1068,7 +1068,9 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
         BARCODE_SCAN(1),
         FIND_IN_STORE(2),
         DELIVERY_LOCATION(3),
-        VOUCHERS(4);
+        VOUCHERS(4),
+        REFINE(5),
+        ACCOUNTS(6);
 
         private int value;
 

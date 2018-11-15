@@ -543,7 +543,7 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 		if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.refineProducts)
 			return;
 
-		getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.BARCODE_SCAN)
+		getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.REFINE)
 				.setTarget(getViewDataBinding().sortAndRefineLayout.refineDownArrow)
 				.setTitle(R.string.walkthrough_refine_title)
 				.setDescription(R.string.walkthrough_refine_desc)

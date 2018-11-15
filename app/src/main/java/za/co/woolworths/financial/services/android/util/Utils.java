@@ -1266,6 +1266,12 @@ public class Utils {
 			case VOUCHERS:
 				appInstanceObject.featureWalkThrough.vouchers = true;
 				break;
+			case REFINE:
+				appInstanceObject.featureWalkThrough.refineProducts = true;
+				break;
+			case ACCOUNTS:
+				appInstanceObject.featureWalkThrough.account = true;
+				break;
 			default:
 				break;
 		}
