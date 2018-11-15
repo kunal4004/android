@@ -548,8 +548,10 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 				.setTitle(R.string.walkthrough_refine_title)
 				.setDescription(R.string.walkthrough_refine_desc)
 				.setActionText(R.string.walkthrough_refine_action)
-				.setImage(R.drawable.tips_tricks_ic_scan)
+				.setImage(R.drawable.tips_tricks_ic_refine)
+				.setShapePadding(48)
 				.setAction(this)
+				.setAsNewFeature()
 				.setArrowPosition(WMaterialShowcaseView.Arrow.TOP_RIGHT)
 				.setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
 		getBottomNavigationActivity().walkThroughPromtView.show(getActivity());
@@ -558,5 +560,7 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 
 	@Override
 	public void onWalkthroughActionButtonClick() {
+		if (getViewDataBinding().sortAndRefineLayout.refineProducts.isClickable())
+			onClick(getViewDataBinding().sortAndRefineLayout.refineProducts);
 	}
 }

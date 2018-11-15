@@ -105,7 +105,7 @@
                         android:textSize="12sp"
                         app:WTextView_font="bold" />
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        android:id="@+id/actionNew"
+                        android:id="@+id/newFeature"
                         android:layout_width="40dp"
                         android:layout_height="18dp"
                         android:layout_marginRight="9dp"
@@ -118,6 +118,7 @@
                         android:textSize="9sp"
                         app:WTextView_font="bold"
                         android:letterSpacing="0.075"
+                        android:visibility="invisible"
                         />
                 </FrameLayout>
             </LinearLayout>

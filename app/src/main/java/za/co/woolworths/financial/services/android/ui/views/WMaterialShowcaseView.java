@@ -110,6 +110,7 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
     private BubbleLayout windowContainer;
     private WTextView mHideTutorialAction;
     public Feature feature;
+    private WTextView mNewFeature;
 
     public WMaterialShowcaseView(Context context, Feature feature) {
         super(context);
@@ -159,6 +160,7 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
         mWalkThroughAction = contentView.findViewById(R.id.actionButton);
         windowContainer = contentView.findViewById(R.id.windowContainer);
         mHideTutorialAction = contentView.findViewById(R.id.hideFeatureTutorials);
+        mNewFeature = contentView.findViewById(R.id.newFeature);
         mDismissButton.setOnClickListener(this);
         mWalkThroughAction.setOnClickListener(this);
         mHideTutorialAction.setOnClickListener(this);
@@ -425,6 +427,12 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
     private void setImage(int resId) {
         if (mWalkThroughIcon != null) {
             mWalkThroughIcon.setBackgroundResource(resId);
+        }
+    }
+
+    private void setAsNewFeature() {
+        if (mNewFeature != null) {
+            mNewFeature.setVisibility(VISIBLE);
         }
     }
 
@@ -695,6 +703,14 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
          */
         public WMaterialShowcaseView.Builder setIcon(int resId) {
             showcaseView.setImage(resId);
+            return this;
+        }
+
+        /**
+         * Set AsNewFeature on the ShowcaseView.
+         */
+        public WMaterialShowcaseView.Builder setAsNewFeature() {
+            showcaseView.setAsNewFeature();
             return this;
         }
 
