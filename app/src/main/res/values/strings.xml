@@ -276,7 +276,7 @@
     <string name="wrewards_monthly_spend">Monthly Spend</string>
 
     <string name="collect_credit_card_title">When collecting your credit card, bring the following:</string>
-    <string name="collect_credit_card_desc_1">A valid South African ID </string>
+    <string name="collect_credit_card_desc_1">Valid South African ID </string>
 
     <string name="product_search_hint">Search products, brands</string>
     <string name="no_product_found">0 ITEMS FOUND</string>
