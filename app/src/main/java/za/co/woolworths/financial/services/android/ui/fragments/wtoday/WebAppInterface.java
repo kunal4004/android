@@ -189,6 +189,10 @@ public class WebAppInterface {
 									break;
 
 								case 404:
+								case 500:
+								case 502:
+								case 503:
+								case 504:
 									RuntimeExceptionHelper runtimeExceptionHelper = new RuntimeExceptionHelper();
 									runtimeExceptionHelper.navigateToRuntimeExceptionActivity();
 									break;
