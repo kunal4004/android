@@ -6,11 +6,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.Rect;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.v4.widget.NestedScrollView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -100,12 +97,10 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	private boolean productOfferingGoodStanding;
 	private Account account;
 	private WTextView tvHowToPayArrears;
-	private ImageView imViewStatementLogo;
 
 	private RelativeLayout relDebitOrders;
 
 	private View fakeView;
-    private NestedScrollView mScrollAccountCard;
 
 	@Nullable
 	@Override
@@ -186,11 +181,9 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		tvHowToPayArrears = view.findViewById(R.id.howToPayArrears);
 
 		relDebitOrders = view.findViewById(R.id.relDebitOrders);
-		imViewStatementLogo = view.findViewById(R.id.imViewStatementLogo);
 		relDebitOrders.setOnClickListener(this);
 
 		fakeView = view.findViewById(R.id.fakeView);
-        mScrollAccountCard = getActivity().findViewById(R.id.nest_scrollview);
 	}
 
 	private void addListener() {
@@ -437,22 +430,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 				}
 				cliOfferStatus(offerActive);
 			}
-			//imViewStatementLogo.getParent().requestChildFocus(imViewStatementLogo,imViewStatementLogo);
-            //Utils.scrollToView(mScrollAccountCard, tvViewTransaction);
-			/*mScrollAccountCard.post(new Runnable() {
-				@Override
-				public void run() {
-					mScrollAccountCard.scrollTo(0, imViewStatementLogo.getBottom());
-				}
-			});*/
-			new Handler().postDelayed(new Runnable(){
-				@Override
-				public void run() {
-					final Rect rect = new Rect(0, 0, rlViewStatement.getWidth(), rlViewStatement.getHeight());
-					rlViewStatement.requestRectangleOnScreen(rect, false);
-				}
-			},3000);
-
 		} catch (IllegalStateException ignored) {
 		}
 	}
