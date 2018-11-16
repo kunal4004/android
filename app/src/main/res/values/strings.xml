@@ -562,7 +562,7 @@
     <string name="proof_of_income_document">proof of income documents</string>
     <string name="take_clear_photo">Take clear photos of your documents and email them to us at cliproofofincome@wfs.co.za. Your ID number will be your reference.</string>
     <string name="proof_of_income_requirement">Proof of income Requirements:</string>
-    <string name="proof_of_income_statement_description">In order to complete your application, we require your latest 3 months’ bank statements or last 3 months payslips.</string>
+    <string name="proof_of_income_statement_description">In order to complete your application, we require your latest 1 months’ bank statements or last months payslips.</string>
     <string name="cli_proceed_description">Don’t have the required documents right now or need more detailed instructions?  Simply click below and we will send an email to you, so you can complete the process</string>
     <string name="cli_email_sent_document_title">documents sent to:</string>
     <string name="cli_email_sent_description">Please follow the instructions we’ve sent to your email. If you didn’t receive the email, please check your spam folder.</string>
