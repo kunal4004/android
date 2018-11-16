@@ -32,6 +32,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.cli.CLIPOIProble
 import za.co.woolworths.financial.services.android.ui.fragments.cli.DocumentFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.cli.OfferCalculationFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.SupplyIncomeDetailFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.cli.ProcessCompleteNoPOIFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.DeclineOfferInterface;
 import za.co.woolworths.financial.services.android.util.FragmentUtils;
@@ -122,6 +123,7 @@ public class CLIPhase2Activity extends AppCompatActivity implements View.OnClick
 		boolean offerActive = mOfferActive;
 		IncreaseLimitController increaseLimitController = new IncreaseLimitController(CLIPhase2Activity.this);
 		Bundle offerBundle = new Bundle();
+
 		if (nextStep.equalsIgnoreCase(getString(R.string.status_consents))) {
 			SupplyIncomeDetailFragment cLIEligibilityAndPermissionFragment = new SupplyIncomeDetailFragment();
 			cLIEligibilityAndPermissionFragment.setStepIndicatorListener(cliStepIndicatorListener);
@@ -171,6 +173,15 @@ public class CLIPhase2Activity extends AppCompatActivity implements View.OnClick
 			documentFragment.setArguments(bundle);
 			documentFragment.setStepIndicatorListener(cliStepIndicatorListener);
 			openFragment(documentFragment);
+			return;
+		}
+
+		if (nextStep.equalsIgnoreCase(getString(R.string.status_complete))) {
+			ProcessCompleteNoPOIFragment processCompleteNoPOIFragment = new ProcessCompleteNoPOIFragment();
+			processCompleteNoPOIFragment.setStepIndicatorListener(cliStepIndicatorListener);
+			openFragment(processCompleteNoPOIFragment);
+			hideDeclineOffer();
+			return;
 		}
 	}
 
