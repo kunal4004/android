@@ -37,6 +37,7 @@ import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
+import za.co.woolworths.financial.services.android.models.dto.RefinementNavigation;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
@@ -212,7 +213,7 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 			hideFooterView();
 			if (!loadMoreData) {
                 getViewDataBinding().sortAndRefineLayout.parentLayout.setVisibility(View.VISIBLE);
-				getViewDataBinding().sortAndRefineLayout.refineProducts.setClickable(productView.navigation.size() > 0);
+				getViewDataBinding().sortAndRefineLayout.refineProducts.setEnabled(getRefinementViewState(productView.navigation));
 				bindRecyclerViewWithUI(productLists);
 			} else {
 				loadMoreData(productLists);
@@ -534,5 +535,18 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 		getViewDataBinding().productList.setVisibility(View.INVISIBLE);
 		getViewDataBinding().sortAndRefineLayout.parentLayout.setVisibility(View.GONE);
 		startProductRequest();
+	}
+
+	public boolean getRefinementViewState(ArrayList<RefinementNavigation> navigationList) {
+		if (navigationList.size() == 0)
+			return false;
+		for (RefinementNavigation navigation : navigationList) {
+			if (navigation.getDisplayName().equalsIgnoreCase("On Promotion"))
+				return true;
+			else if (navigation.getRefinements().size() > 0 || navigation.getRefinementCrumbs().size() > 0)
+				return true;
+		}
+
+		return false;
 	}
 }

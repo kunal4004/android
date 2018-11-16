@@ -48,6 +48,7 @@ import za.co.woolworths.financial.services.android.models.dto.CommerceItemInfo;
 import za.co.woolworths.financial.services.android.models.dto.Data;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
+import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
@@ -56,6 +57,7 @@ import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForSt
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.rest.product.GetInventorySkusForStore;
 import za.co.woolworths.financial.services.android.models.rest.product.GetShoppingCart;
+import za.co.woolworths.financial.services.android.models.rest.shop.SetDeliveryLocationSuburb;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
@@ -884,12 +886,55 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		}
 		if (requestCode == CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY || requestCode == SSOActivity.SSOActivityResult.LAUNCH.rawValue()) {
 			if (SessionUtilities.getInstance().isUserAuthenticated()) {
-				loadShoppingCart(false).execute();
-				ShoppingDeliveryLocation lastDeliveryLocation = Utils.getPreferredDeliveryLocation();
-				if (lastDeliveryLocation != null) {
-					mSuburbName = lastDeliveryLocation.suburb.name;
-					mProvinceName = lastDeliveryLocation.province.name;
-				}
+				if (resultCode == Activity.RESULT_OK) {
+					// Checkout completed successfully
+                    final ShoppingDeliveryLocation lastDeliveryLocation = Utils.getPreferredDeliveryLocation();
+                    if (lastDeliveryLocation != null) {
+                        SetDeliveryLocationSuburb setDeliveryLocationSuburb = new SetDeliveryLocationSuburb(lastDeliveryLocation.suburb.id, new OnEventListener() {
+                            @Override
+                            public void onSuccess(Object object) {
+                                SetDeliveryLocationSuburbResponse response = (SetDeliveryLocationSuburbResponse) object;
+                                if(response.httpCode == 200) {
+                                    Utils.savePreferredDeliveryLocation(lastDeliveryLocation);
+                                    Utils.sendBus(new CartState(lastDeliveryLocation.suburb.name + ", " + lastDeliveryLocation.province.name));
+                                }
+
+                                loadShoppingCartAndSetDeliveryLocation();
+                            }
+
+                            @Override
+                            public void onFailure(final String errorMessage) {
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        loadShoppingCartAndSetDeliveryLocation();
+                                    }
+                                });
+
+                            }
+                        });
+
+						// Show loading state
+						rlCheckOut.setVisibility(View.GONE);
+						pBar.setVisibility(View.VISIBLE);
+						if (cartProductAdapter != null) {
+							cartProductAdapter.clear();
+						}
+						Activity activity = getActivity();
+						if (activity != null) {
+							CartActivity cartActivity = (CartActivity) activity;
+							cartActivity.hideEditCart();
+						}
+
+                        setDeliveryLocationSuburb.execute();
+                    } else {
+                    	// Fallback if there is no cached location
+                        loadShoppingCartAndSetDeliveryLocation();
+                    }
+                } else {
+					// Checkout was cancelled
+                    loadShoppingCartAndSetDeliveryLocation();
+                }
 			} else {
 				getActivity().onBackPressed();
 			}
@@ -899,18 +944,22 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			switch (requestCode) {
 				case PDP_REQUEST_CODE:
 				case REQUEST_SUBURB_CHANGE:
-					loadShoppingCart(false).execute();
-					ShoppingDeliveryLocation lastDeliveryLocation = Utils.getPreferredDeliveryLocation();
-					if (lastDeliveryLocation != null) {
-						mSuburbName = lastDeliveryLocation.suburb.name;
-						mProvinceName = lastDeliveryLocation.province.name;
-					}
+                    loadShoppingCartAndSetDeliveryLocation();
 					break;
 				default:
 					break;
 			}
 		}
 	}
+
+	private void loadShoppingCartAndSetDeliveryLocation() {
+        loadShoppingCart(false).execute();
+        ShoppingDeliveryLocation lastDeliveryLocation = Utils.getPreferredDeliveryLocation();
+        if (lastDeliveryLocation != null) {
+            mSuburbName = lastDeliveryLocation.suburb.name;
+            mProvinceName = lastDeliveryLocation.province.name;
+        }
+    }
 
 	@Override
 	public void onConnectionChanged() {

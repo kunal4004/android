@@ -15,7 +15,7 @@ done <"$file"
 tags=""
 if [ "$APPCENTER_BRANCH" == "build_qa" ];
 then
-    tags="qa,dev"
+    tags="qa,dev,internal,design"
 fi
 
 if [ "$APPCENTER_BRANCH" == "cug" ]

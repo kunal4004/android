@@ -168,17 +168,8 @@ public class CheckOutFragment extends Fragment {
 
 			public void onPageFinished(WebView view, String url) {
 				mProgressLayout.setVisibility(View.GONE);
-				Activity activity = getActivity();
-				if (activity != null) {
-					if (closeOnNextPage != null && !url.contains(closeOnNextPage.getValue())) {
-						Intent returnIntent = new Intent();
-						if (closeOnNextPage == QueryString.COMPLETE) {
-							activity.setResult(Activity.RESULT_OK, returnIntent);
-						} else if (closeOnNextPage == QueryString.ABANDON) {
-							activity.setResult(Activity.RESULT_CANCELED, returnIntent);
-						}
-						finishCartActivity();
-					}
+				if (closeOnNextPage != null && !url.contains(closeOnNextPage.getValue())) {
+					finishCartActivity();
 				}
 			}
 		});
@@ -187,6 +178,12 @@ public class CheckOutFragment extends Fragment {
 	private void finishCartActivity() {
 		Activity activity = getActivity();
 		if (activity != null) {
+			Intent returnIntent = new Intent();
+			if (closeOnNextPage == QueryString.COMPLETE) {
+				activity.setResult(Activity.RESULT_OK, returnIntent);
+			} else if (closeOnNextPage == QueryString.ABANDON) {
+				activity.setResult(Activity.RESULT_CANCELED, returnIntent);
+			}
 			activity.finish();
 			activity.overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
 		}
