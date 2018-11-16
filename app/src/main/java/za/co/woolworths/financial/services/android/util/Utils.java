@@ -26,6 +26,7 @@ import android.support.design.internal.BottomNavigationItemView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -38,12 +39,14 @@ import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.awfs.coordination.R;
@@ -1365,6 +1368,24 @@ public class Utils {
 			currentAmount = currentAmount.replace("R", "- R");
 		}
 		return currentAmount;
+	}
+
+	public static void scrollToView(final NestedScrollView scrollViewParent, final View view) {
+		// Get deepChild Offset
+		Point childOffset = new Point();
+		getDeepChildOffset(scrollViewParent, view.getParent(), view, childOffset);
+		// Scroll to child.
+		scrollViewParent.smoothScrollTo(0, childOffset.y);
+	}
+
+	private static void getDeepChildOffset(final ViewGroup mainParent, final ViewParent parent, final View child, final Point accumulatedOffset) {
+		ViewGroup parentGroup = (ViewGroup) parent;
+		accumulatedOffset.x += child.getLeft();
+		accumulatedOffset.y += child.getTop();
+		if (parentGroup.equals(mainParent)) {
+			return;
+		}
+		getDeepChildOffset(mainParent, parentGroup.getParent(), parentGroup, accumulatedOffset);
 	}
 
 }
