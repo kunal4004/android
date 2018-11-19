@@ -31,7 +31,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,13 +38,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter;
 import za.co.woolworths.financial.services.android.util.SSORequiredParameter;
@@ -145,7 +145,7 @@ public class SSOActivity extends WebViewActivity {
 		findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (new ConnectionDetector().isOnline(SSOActivity.this)) {
+				if (NetworkManager.getInstance().isConnectedToNetwork(SSOActivity.this)) {
 					WebBackForwardList history = webView.copyBackForwardList();
 					int index = -1;
 					String url;
@@ -403,8 +403,8 @@ public class SSOActivity extends WebViewActivity {
 							//Trigger Firebase Tag.
 							JWTDecodedModel jwtDecodedModel = SessionUtilities.getInstance().getJwt();
 							Map<String, String> arguments = new HashMap<>();
-							arguments.put("c2_id", (jwtDecodedModel.C2Id != null) ? jwtDecodedModel.C2Id : "");
-							Utils.triggerFireBaseEvents(getApplicationContext(), FirebaseAnalytics.Event.LOGIN, arguments);
+							arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, (jwtDecodedModel.C2Id != null) ? jwtDecodedModel.C2Id : "");
+							Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.LOGIN, arguments);
 
 							NotificationUtils.getInstance().sendRegistrationToServer();
 							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.ACTIVE);
@@ -517,7 +517,7 @@ public class SSOActivity extends WebViewActivity {
 
 
 	private void unknownNetworkFailure(WebView webView, String description) {
-		if (!new ConnectionDetector().isOnline(SSOActivity.this)) {
+		if (!NetworkManager.getInstance().isConnectedToNetwork(SSOActivity.this)) {
 			mErrorHandlerView.webViewBlankPage(webView);
 			mErrorHandlerView.networkFailureHandler(description);
 		}
@@ -587,7 +587,17 @@ public class SSOActivity extends WebViewActivity {
 	}
 
 	private void showFailureView(String s) {
-		if (!new ConnectionDetector().isOnline(SSOActivity.this))
+		if (!NetworkManager.getInstance().isConnectedToNetwork(SSOActivity.this))
 			mErrorHandlerView.networkFailureHandler(s);
+	}
+
+	public void finishActivity() {
+		SessionUtilities.getInstance().setSTSParameters(null);
+		setResult(DEFAULT_KEYS_SEARCH_GLOBAL);
+		finish();
+		if (this.path != null && (this.path == SSOActivity.Path.UPDATE_PASSWORD || this.path == SSOActivity.Path.UPDATE_PROFILE))
+			overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
+		else
+			overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
 	}
 }

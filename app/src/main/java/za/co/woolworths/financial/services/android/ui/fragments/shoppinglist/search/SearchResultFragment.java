@@ -28,6 +28,7 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
+import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
@@ -346,7 +347,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 
 	@Override
 	public void setProductBody() {
-		getViewModel().setProductRequestBody(mSearchText, false);
+		getViewModel().setProductRequestBody(ProductsRequestParams.SearchType.SEARCH,mSearchText);
 	}
 
 	@Override
@@ -674,7 +675,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
 		if (activity != null) {
 			if (shoppingCartResponse.response != null) {
 				if (shoppingCartResponse.response.stsParams != null) {
-					SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, shoppingCartResponse.response.stsParams);
+					SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, shoppingCartResponse.response.stsParams,getActivity());
 				}
 			}
 		}

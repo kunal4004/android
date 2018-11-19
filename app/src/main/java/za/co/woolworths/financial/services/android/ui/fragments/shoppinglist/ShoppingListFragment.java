@@ -10,7 +10,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,6 +23,7 @@ import com.awfs.coordination.databinding.ShoppinglistFragmentBinding;
 
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
@@ -37,12 +37,11 @@ import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.list.NewListFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.EmptyCartView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
-import za.co.woolworths.financial.services.android.util.ScreenManager;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -156,6 +155,7 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 		// Handle item selection
 		switch (item.getItemId()) {
 			case R.id.action_create_list:
+				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPNEWLIST);
 				pushFragmentSlideUp(new NewListFragment());
 				return true;
 			default:
@@ -194,8 +194,7 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 
 			case 440:
 				SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE,
-						shoppingListsResponse.response.stsParams);
-				ScreenManager.presentSSOSignin(getActivity(), SSO_FOR_SHOPPING_LIST);
+						shoppingListsResponse.response.stsParams, getActivity());
 				break;
 
 			default:
@@ -204,8 +203,8 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 		}
 		try {
 			Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
-		} catch (NullPointerException ex) {
-			Log.d("onDeliveryLocation", ex.getMessage());
+		} catch (NullPointerException ignored) {
+
 		}
 	}
 
@@ -301,7 +300,7 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 	public void onClick(View view) {
 		switch (view.getId()) {
 			case R.id.btnRetry:
-				if (new ConnectionDetector().isOnline(getActivity())) {
+				if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
 					initGetShoppingList();
 				}
 				break;
@@ -321,7 +320,7 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		switch (requestCode){
+		switch (requestCode) {
 			case REQUEST_SUBURB_CHANGE:
 				showToolbar(R.string.title_my_list);
 				ShoppingDeliveryLocation lastDeliveryLocation = Utils.getPreferredDeliveryLocation();

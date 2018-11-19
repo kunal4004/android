@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
@@ -24,6 +25,7 @@ public class ActionSheetDialogFragment extends DialogFragment implements Animate
 	private AnimateLayout mAnimationUtils;
 
 	public static int DIALOG_REQUEST_CODE = 1211;
+	public RelativeLayout mRootActionSheetConstraint;
 
 	public ActionSheetDialogFragment() {
 	}
@@ -66,7 +68,13 @@ public class ActionSheetDialogFragment extends DialogFragment implements Animate
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		mFrameAlertContainer = view.findViewById(R.id.frameAlertContainer);
+		mRootActionSheetConstraint = view.findViewById(R.id.rootActionSheetConstraint);
 		setAnimation();
+	}
+
+	public void addContentView(int layoutResourceId) {
+		View sessionExpiredView = getLayoutInflater().inflate(layoutResourceId, null);
+		mFrameAlertContainer.addView(sessionExpiredView);
 	}
 
 	/****
@@ -101,4 +109,5 @@ public class ActionSheetDialogFragment extends DialogFragment implements Animate
 		if (dialog != null)
 			dialog.dismiss();
 	}
+
 }

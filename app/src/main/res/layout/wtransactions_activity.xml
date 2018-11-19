@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:id="@+id/wtransactions_activity"
@@ -12,30 +12,30 @@
         android:orientation="vertical">
 
         <android.support.design.widget.AppBarLayout
-            app:elevation="0dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:elevation="0dp"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:elevation="0dp">
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
-                app:elevation="0dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
-                android:minHeight="?attr/actionBarSize">
+                android:minHeight="?attr/actionBarSize"
+                app:elevation="0dp">
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     android:id="@+id/toolbarText"
-                    app:WTextView_font="medium_bold"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:letterSpacing="0.1"
                     android:text="transactions"
                     android:textAllCaps="true"
                     android:textColor="@color/black"
-                    android:textSize="12sp"/>
+                    android:textSize="12sp"
+                    app:WTextView_font="medium_bold"/>
             </android.support.v7.widget.Toolbar>
 
 
@@ -56,6 +56,15 @@
         <include layout="@layout/empty_state_template"/>
 
     </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/pbTransaction"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        android:indeterminateTint="@color/black"
+        android:visibility="gone"/>
 
     <include layout="@layout/no_connection_handler"/>
 </FrameLayout>

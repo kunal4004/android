@@ -46,7 +46,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.WStoreCardFragme
 import za.co.woolworths.financial.services.android.ui.views.WCustomPager;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WViewPager;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.PersonalLoanAmount;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -184,7 +184,7 @@ public class MyAccountCardsActivity extends AppCompatActivity
 		findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (new ConnectionDetector().isOnline(MyAccountCardsActivity.this)) {
+				if (NetworkManager.getInstance().isConnectedToNetwork(MyAccountCardsActivity.this)) {
 					Intent openAccount = new Intent(MyAccountCardsActivity.this,
 							MyAccountCardsActivity.class);
 					openAccount.putExtra("position", currentPosition);

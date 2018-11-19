@@ -53,12 +53,12 @@ import za.co.woolworths.financial.services.android.ui.adapters.POIDocumentSubmit
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FragmentUtils;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -213,8 +213,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 
 						break;
 					case 440:
-						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, deaBankList
-								.response.stsParams);
+						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, deaBankList.response.stsParams,getActivity());
 						break;
 
 					default:
@@ -261,8 +260,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 						loadBankAccountTypesView(bankAccountTypesList);
 						break;
 					case 440:
-						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, bankAccountTypes
-								.response.stsParams);
+						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, bankAccountTypes.response.stsParams,getActivity());
 						break;
 					default:
 						mErrorHandlerView.responseError(view, "");
@@ -404,7 +402,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			activity.runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					if (new ConnectionDetector().isOnline(getActivity())) {
+					if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
 						if (!loadState.onLoanCompleted()) {
 							if (submitType != null) {
 								btnSubmit.performClick();
@@ -472,7 +470,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				break;
 
 			case R.id.btnRetry:
-				if (new ConnectionDetector().isOnline(getActivity())) {
+				if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
 					mErrorHandlerView.hideErrorHandler();
 					switch (getNetworkFailureRequest()) {
 						case DEA_BANK:

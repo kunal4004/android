@@ -50,7 +50,6 @@ import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWind
 import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.DeclineOfferInterface;
 import za.co.woolworths.financial.services.android.util.DrawImage;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -58,6 +57,7 @@ import za.co.woolworths.financial.services.android.util.FragmentUtils;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -228,7 +228,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 						break;
 
 					case 440:
-						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, mObjOffer.response.stsParams);
+						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, mObjOffer.response.stsParams, getActivity());
 						break;
 
 					default:
@@ -270,7 +270,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 						break;
 
 					case 440:
-						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, mObjOffer.response.stsParams);
+						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, mObjOffer.response.stsParams, getActivity());
 						break;
 
 					default:
@@ -310,7 +310,8 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 						finishActivity();
 						break;
 					case 440:
-						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, mObjOffer.response.stsParams);;
+						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, mObjOffer.response.stsParams, getActivity());
+						;
 						break;
 					default:
 						Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, mObjOffer.response.desc);
@@ -528,12 +529,18 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 											documentFragment.setStepIndicatorListener(mCliStepIndicatorListener);
 											FragmentUtils fragmentUtils = new FragmentUtils();
 											fragmentUtils.nextFragment((AppCompatActivity) OfferCalculationFragment.this.getActivity(), getFragmentManager().beginTransaction(), documentFragment, R.id.cli_steps_container);
+										} else if (nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_complete)) && mObjOffer.cliStatus.equalsIgnoreCase(getString(R.string.cli_status_concluded))) {
+											ProcessCompleteNoPOIFragment processCompleteNoPOIFragment = new ProcessCompleteNoPOIFragment();
+											processCompleteNoPOIFragment.setStepIndicatorListener(mCliStepIndicatorListener);
+											FragmentUtils fragmentUtils = new FragmentUtils();
+											fragmentUtils.nextFragment((AppCompatActivity) OfferCalculationFragment.this.getActivity(), getFragmentManager().beginTransaction(), processCompleteNoPOIFragment, R.id.cli_steps_container);
+											hideDeclineButton();
 										} else {
 											finishActivity();
 										}
 										break;
 									case 440:
-										SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, mObjOffer.response.stsParams);
+										SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, mObjOffer.response.stsParams, getActivity());
 										break;
 									default:
 										if (mObjOffer != null) {
@@ -584,7 +591,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 				break;
 
 			case R.id.btnRetry:
-				if (new ConnectionDetector().isOnline(getActivity())) {
+				if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
 					showView(llNextButtonLayout);
 					mErrorHandlerView.hideErrorHandlerLayout();
 					cliApplicationRequest(mEventStatus);
@@ -629,7 +636,8 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 					mCurrentCredit -= mCurrentCredit % 100;
 					String nextStep = mObjOffer.nextStep;
 					if (nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_offer).toLowerCase())
-							|| nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_poi_required).toLowerCase())) {
+							|| nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_poi_required).toLowerCase())
+							|| (nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_complete)) && mObjOffer.cliStatus.equalsIgnoreCase(getString(R.string.cli_status_concluded)))) {
 						mCreditRequestMax = offer.creditRequestMax;
 						int mDifferenceCreditLimit = (mCreditRequestMax - mCurrentCredit);
 						mCLiId = mObjOffer.cliId;
@@ -649,7 +657,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 					}
 					break;
 				case 440:
-					SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, mObjOffer.response.stsParams);
+					SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, mObjOffer.response.stsParams, getActivity());
 					break;
 
 				default:
@@ -719,7 +727,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 				@Override
 				public void run() {
 
-					if (new ConnectionDetector().isOnline(getActivity())) {
+					if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
 						if (!loadState.onLoanCompleted()) {
 							if (latest_background_call != null) {
 								switch (latest_background_call) {

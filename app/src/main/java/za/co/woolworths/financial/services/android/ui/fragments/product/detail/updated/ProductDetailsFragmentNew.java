@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.Map;
 
 import me.relex.circleindicator.CircleIndicator;
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
@@ -278,6 +279,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 				addItemToCart();
 				break;
 			case R.id.btnAddShoppingList:
+				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPADDTOLIST);
 				addItemToShoppingList();
 				break;
 			case R.id.rlStoreFinder:
@@ -619,13 +621,15 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
 	@Override
 	public void onLocationItemSuccess(List<StoreDetails> location) {
+		Activity activity = getActivity();
+		if (activity == null) return;
 		this.enableFindInStoreButton(false);
 		if (location.size() > 0) {
 			getGlobalState().setStoreDetailsArrayList(location);
-			Intent intentInStoreFinder = new Intent(getActivity(), WStockFinderActivity.class);
+			Intent intentInStoreFinder = new Intent(activity, WStockFinderActivity.class);
 			intentInStoreFinder.putExtra("PRODUCT_NAME", mSubCategoryTitle);
 			startActivity(intentInStoreFinder);
-			getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+			activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 		} else {
 			this.showOutOfStockInStores();
 		}
@@ -811,19 +815,23 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	}
 
 	private void updateViewPagerWithAuxiliaryImages() {
+		Activity activity = getActivity();
+		if (activity == null) return;
 		this.mAuxiliaryImage = this.getAuxiliaryImagesByGroupKey(this.selectedGroupKey);
 		//mProductViewPagerAdapter.updatePagerItems(this.mAuxiliaryImage);
-		mProductViewPagerAdapter = new ProductViewPagerAdapter(getActivity(), this.mAuxiliaryImage, this);
+		mProductViewPagerAdapter = new ProductViewPagerAdapter(activity, this.mAuxiliaryImage, this);
 		mImageViewPager.setAdapter(mProductViewPagerAdapter);
 		circleindicator.setViewPager(this.mImageViewPager);
 	}
 
 	public List<String> getAuxiliaryImagesByGroupKey(String groupKey) {
-
 		List<String> updatedAuxiliaryImages = new ArrayList<>();
-		String imageFromOtherSku = this.otherSKUsByGroupKey.get(groupKey).get(0).externalImageRef;
-		if (this.productDetails.otherSkus.size() > 0 && imageFromOtherSku != null)
-			updatedAuxiliaryImages.add(this.otherSKUsByGroupKey.get(groupKey).get(0).externalImageRef);
+		ArrayList<OtherSkus> otherSkusArrayList = this.otherSKUsByGroupKey.get(groupKey);
+		if (otherSkusArrayList != null) {
+			String imageFromOtherSku = otherSkusArrayList.get(0).externalImageRef;
+			if (this.productDetails.otherSkus.size() > 0 && imageFromOtherSku != null)
+				updatedAuxiliaryImages.add(imageFromOtherSku);
+		}
 
 		Map<String, AuxiliaryImage> allAuxImages = new Gson().fromJson(this.productDetails.auxiliaryImages, new TypeToken<Map<String, AuxiliaryImage>>() {
 		}.getType());
