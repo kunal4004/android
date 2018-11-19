@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities
 
+import android.content.Intent
 import android.content.res.TypedArray
 import android.os.Bundle
 import android.support.v4.view.ViewPager
@@ -10,6 +11,7 @@ import android.view.View
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.activity_tips_and_trics_view_pager.*
 import za.co.woolworths.financial.services.android.ui.adapters.TipsAndTricksViewPagerAdapter
+import za.co.woolworths.financial.services.android.ui.fragments.product.category.BarcodeScanActivity
 import za.co.woolworths.financial.services.android.util.Utils
 import kotlin.properties.Delegates
 
@@ -43,6 +45,7 @@ class TipsAndTricksViewPagerActivity : AppCompatActivity(), View.OnClickListener
         next.setOnClickListener(this)
         previous.setOnClickListener(this)
         viewPager.addOnPageChangeListener(this)
+        featureActionButton.setOnClickListener(this)
         titles = resources.getStringArray(R.array.tips_tricks_titles)
         descriptions = resources.getStringArray(R.array.tips_tricks_descriptions)
         icons = resources.obtainTypedArray(R.array.tips_tricks_icons)
@@ -67,6 +70,10 @@ class TipsAndTricksViewPagerActivity : AppCompatActivity(), View.OnClickListener
             R.id.previous -> {
                 var current: Int = viewPager.currentItem
                 viewPager.setCurrentItem(current - 1)
+            }
+            R.id.featureActionButton -> {
+                startActivity(Intent(this, BarcodeScanActivity::class.java))
+                overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
             }
         }
     }
