@@ -437,14 +437,13 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 				}
 				cliOfferStatus(offerActive);
 			}
-			/*//final NestedScrollView nestedScrollView = getActivity().findViewById(R.id.nest_scrollview);
 			new Handler().postDelayed(new Runnable(){
 				@Override
 				public void run() {
 					final Rect rect = new Rect(0, 0, rlViewStatement.getWidth(), rlViewStatement.getHeight());
 					rlViewStatement.requestRectangleOnScreen(rect, false);
 				}
-			},3000);*/
+			},1000);
 
 		} catch (IllegalStateException ignored) {
 		}
