@@ -10,8 +10,10 @@ import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.tips_and_tricks_list_item.view.*
 import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
+import za.co.woolworths.financial.services.android.ui.fragments.help.tipstricks.TipsAndTricksNavigator
 
-class TipsAndTricksListAdapter(val context: Activity) : RecyclerView.Adapter<TipsAndTricksListAdapter.ViewHolder>() {
+class TipsAndTricksListAdapter(val context: Activity, val listner: TipsAndTricksNavigator) : RecyclerView.Adapter<TipsAndTricksListAdapter.ViewHolder>() {
 
     var icons: TypedArray = context.resources.obtainTypedArray(R.array.tips_tricks_list_item_icons)
     var names: Array<String> = context.resources.getStringArray(R.array.tips_tricks_item_names)
@@ -23,7 +25,7 @@ class TipsAndTricksListAdapter(val context: Activity) : RecyclerView.Adapter<Tip
     override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
         holder?.tvTipName?.text = names[position]
         holder?.tvTipName?.setCompoundDrawablesRelativeWithIntrinsicBounds(icons.getResourceId(position, -1), 0, 0, 0)
-        holder?.container?.setOnClickListener {openTipsAndTricksActivity(position)}
+        holder?.container?.setOnClickListener { listner.onListItemSelected(position) }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
@@ -34,13 +36,6 @@ class TipsAndTricksListAdapter(val context: Activity) : RecyclerView.Adapter<Tip
         // Holds the TextView that will add each animal to
         val tvTipName = view.name
         val container = view
-    }
-
-    fun openTipsAndTricksActivity(position: Int) {
-        val intent = Intent(context, TipsAndTricksViewPagerActivity::class.java)
-        intent.putExtra("position", position)
-        context.startActivity(intent)
-        context.overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
     }
 
 }

@@ -548,7 +548,13 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 				pushFragment(new ContactUsFragment());
 				break;
 			case R.id.helpSection:
-				pushFragment(new HelpSectionFragment());
+				HelpSectionFragment helpSectionFragment = new HelpSectionFragment();
+				if (accountsResponse != null) {
+					Bundle bundle = new Bundle();
+					bundle.putString("accounts", Utils.objectToJson(accountsResponse));
+					helpSectionFragment.setArguments(bundle);
+				}
+				pushFragment(helpSectionFragment);
 				break;
 			case R.id.signOutBtn:
 				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.SIGN_OUT, "");

@@ -16,6 +16,7 @@ import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.TipsTricksFragmentBinding;
 
 import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.TipsAndTricksListAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -49,7 +50,7 @@ public class TipsAndTricksFragment extends BaseFragment<TipsTricksFragmentBindin
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         rcvTipsAndTricks.setLayoutManager(mLayoutManager);
         rcvTipsAndTricks.setNestedScrollingEnabled(false);
-        rcvTipsAndTricks.setAdapter(new TipsAndTricksListAdapter(getActivity()));
+        rcvTipsAndTricks.setAdapter(new TipsAndTricksListAdapter(getActivity(), this));
     }
 
     @Override
@@ -82,5 +83,16 @@ public class TipsAndTricksFragment extends BaseFragment<TipsTricksFragmentBindin
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         Utils.enableFeatureWalkThroughTutorials(isChecked);
+    }
+
+    @Override
+    public void onListItemSelected(int position) {
+        Bundle bundle = this.getArguments();
+        Intent intent = new Intent(getActivity(), TipsAndTricksViewPagerActivity.class);
+        intent.putExtra("position", position);
+        if (bundle != null)
+            intent.putExtra("", bundle.getString("accounts"));
+        getActivity().startActivityForResult(intent, BottomNavigationActivity.TIPS_AND_TRICKS_CTA_REQUEST_CODE);
+        getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
     }
 }

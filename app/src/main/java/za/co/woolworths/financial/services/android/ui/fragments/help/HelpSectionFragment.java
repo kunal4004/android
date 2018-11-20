@@ -69,7 +69,11 @@ public class HelpSectionFragment extends BaseFragment<NeedHelpFragmentBinding, N
                 pushFragment(new FAQFragment());
                 break;
             case R.id.tipsAndTricks:
-                pushFragment(new TipsAndTricksFragment());
+                TipsAndTricksFragment tipsAndTricksFragment = new TipsAndTricksFragment();
+                Bundle bundle = this.getArguments();
+                if(bundle!=null)
+                    tipsAndTricksFragment.setArguments(bundle);
+                pushFragment(tipsAndTricksFragment);
                 break;
             default:
                 break;

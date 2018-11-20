@@ -670,14 +670,17 @@
     <string name="tips_tricks_titles_vouchers">Vouchers</string>
     <string name="tips_tricks_titles_stores">Find a Product in-Store</string>
     <string name="tips_tricks_titles_barcode">Barcode Scanner</string>
+    <string name="tips_tricks_titles_refine">Filter Your Search</string>
     <string name="tips_tricks_titles_delivery">Delivery Location</string>
     <string name="tips_tricks_titles_navigation">My Cart</string>
     <string name="tips_tricks_titles_my_accounts">Accounts</string>
     <string name="tips_tricks_titles_statements">Statements</string>
     <string name="tips_tricks_titles_shopping_list">Shopping Lists</string>
+    <string name="tips_tricks_titles_refine_search">Refine Search</string>
     <string name="tips_tricks_desc_vouchers">View your latest vouchers and redeem them in-store. Make sure you use them before the expiry date.</string>
     <string name="tips_tricks_desc_stores">Want to know if a product is available in-store before you jump in your car to go shop?</string>
     <string name="tips_tricks_desc_barcode">Scan a product barcode to view the product information or seamlessly add it to your shopping list.</string>
+    <string name="tips_tricks_desc_refine">Find your item faster using filters e.g. Country Road, size 10, vegetarian, organic, Carb Clever.</string>
     <string name="tips_tricks_desc_delivery">The location at the top is your default delivery location. If you need products delivered elsewhere be sure to change this.</string>
     <string name="tips_tricks_desc_navigation">Simply click the cart icon in the navigation to view your basket.</string>
     <string name="tips_tricks_desc_my_accounts">See all your active financial products available balance, amount due and credit limit.</string>
@@ -686,6 +689,7 @@
     <string name="tips_tricks_button_vouchers">redeem a voucher today</string>
     <string name="tips_tricks_button_stores">check in-Store availability</string>
     <string name="tips_tricks_button_barcode">Scan a product</string>
+    <string name="tips_tricks_button_refine">Refine</string>
     <string name="tips_tricks_button_delivery">Set Your Delivery Location</string>
     <string name="tips_tricks_button_navigation">START SHOPPING</string>
     <string name="tips_tricks_button_my_accounts">check your account status</string>

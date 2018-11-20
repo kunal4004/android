@@ -46,6 +46,7 @@ import za.co.woolworths.financial.services.android.models.service.event.LoadStat
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
+import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment;
@@ -111,6 +112,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	public static final int SLIDE_UP_COLLAPSE_REQUEST_CODE = 13;
 	public static final int SLIDE_UP_COLLAPSE_RESULT_CODE = 12345;
 	public static final int BOTTOM_FRAGMENT_REQUEST_CODE = 3401;
+	public static final int TIPS_AND_TRICKS_CTA_REQUEST_CODE = 3627;
 
 	public final String TAG = this.getClass().getSimpleName();
 	private PermissionUtils permissionUtils;
@@ -1034,6 +1036,20 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				if (getBottomFragmentById() instanceof ProductDetailFragment) {
 					getBottomFragmentById().onActivityResult(requestCode, resultCode, data);
 				}
+			}
+		}
+
+		if (requestCode == TIPS_AND_TRICKS_CTA_REQUEST_CODE) {
+			switch (resultCode) {
+				case TipsAndTricksViewPagerActivity.RESULT_OK_PRODUCTS:
+					getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
+					break;
+				case TipsAndTricksViewPagerActivity.RESULT_OK_ACCOUNTS:
+					getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
+					break;
+				case TipsAndTricksViewPagerActivity.RESULT_OK_REWARDS:
+					getBottomNavigationById().setCurrentItem(INDEX_REWARD);
+					break;
 			}
 		}
 
