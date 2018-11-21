@@ -73,4 +73,6 @@
     <color name="bpi_orange">#f3662d</color>
     <color name="bpi_background_divider">#BEBEB9</color>
     <color name="bpi_background">#D8D8D8</color>
+
+    <color name="swatch_border_color">#E5E5E5</color>
 </resources>

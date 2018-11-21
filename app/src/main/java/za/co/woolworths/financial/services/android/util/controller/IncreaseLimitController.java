@@ -253,8 +253,8 @@ public class IncreaseLimitController {
 					|| nextStep.equalsIgnoreCase(getString(R.string.status_decline))
 					|| nextStep.equalsIgnoreCase(getString(R.string.status_unavailable))
 					|| nextStep.equalsIgnoreCase(getString(R.string.status_contact_us))
-					|| nextStep.equalsIgnoreCase(getString(R.string.status_complete))) {
-
+					|| (nextStep.equalsIgnoreCase(getString(R.string.status_complete)) && !offerActive.cliStatus.equalsIgnoreCase(getString(R.string.cli_status_concluded)))) {
+				// Do nothing
 			} else {
 				moveToCLIPhase(offerActive, productOfferingId);
 			}

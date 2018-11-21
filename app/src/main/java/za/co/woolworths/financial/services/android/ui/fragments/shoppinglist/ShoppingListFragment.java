@@ -201,11 +201,9 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 				displayErrorMessage("");
 				break;
 		}
-		try {
-			Utils.deliveryLocationEnabled(getActivity(), true, rlLocationSelectedLayout);
-		} catch (NullPointerException ignored) {
-
-		}
+		Activity activity = getActivity();
+		if (activity == null) return;
+		Utils.deliveryLocationEnabled(activity, true, rlLocationSelectedLayout);
 	}
 
 	@Override

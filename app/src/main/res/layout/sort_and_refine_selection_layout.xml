@@ -51,6 +51,7 @@
             android:padding="@dimen/sixteen_dp">
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/refinementText"
                 style="@style/sort_and_filter_selection_text_style"
                 android:text="@string/refine" />
 
@@ -60,7 +61,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:background="@drawable/path_3" />
+                android:background="@drawable/refinement_down_arrow_selector" />
         </RelativeLayout>
     </LinearLayout>
 </layout>

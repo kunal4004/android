@@ -21,7 +21,6 @@ public class ProcessCompleteNoPOIFragment extends CLIFragment implements View.On
 
 	private View view;
 	private WTextView tvProcessCompleteDesc;
-	private Integer approvedIncreaseValue;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -38,7 +37,6 @@ public class ProcessCompleteNoPOIFragment extends CLIFragment implements View.On
 		super.onViewCreated(view, savedInstanceState);
 		initUI(view);
 		mCliStepIndicatorListener.onStepSelected(5);
-		tvProcessCompleteDesc.setText(getResources().getText(R.string.process_complete_no_poi_desc).toString().replace(":approvedValue", WFormatter.formatAmountNoDecimal(approvedIncreaseValue)));
 	}
 
 	private void initUI(View view) {
@@ -61,13 +59,5 @@ public class ProcessCompleteNoPOIFragment extends CLIFragment implements View.On
 				}
 				break;
 		}
-	}
-
-	public Integer getApprovedIncreaseValue() {
-		return approvedIncreaseValue;
-	}
-
-	public void setApprovedIncreaseValue(Integer approvedIncreaseValue) {
-		this.approvedIncreaseValue = approvedIncreaseValue;
 	}
 }

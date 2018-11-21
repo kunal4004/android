@@ -85,6 +85,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	private IncreaseLimitController mIncreaseLimitController;
 	private boolean viewWasCreated = false;
 	private RelativeLayout relBalanceProtection, relViewTransactions;
+	private WTextView tvBPIProtectInsurance;
 	private CLIGetOfferActive cliGetOfferActive;
 	private final CompositeDisposable disposables = new CompositeDisposable();
 	private RelativeLayout rlViewStatement;
@@ -175,6 +176,8 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		llIncreaseLimitContainer = (LinearLayout) view.findViewById(R.id.llIncreaseLimitContainer);
 
 		relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
+		tvBPIProtectInsurance = view.findViewById(R.id.tvBPIProtectInsurance);
+
 		relViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
 		accountInArrearsLayout = view.findViewById(R.id.llAccountInArrearsParentContainer);
 		tvHowToPayAccountStatus = view.findViewById(R.id.howToPayAccountStatus);
@@ -238,7 +241,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 						llActiveAccount.setVisibility(View.VISIBLE);
 						llChargedOffAccount.setVisibility(View.GONE);
 					}
-					relBalanceProtection.setVisibility(p.insuranceCovered ? View.VISIBLE : View.GONE);
+					tvBPIProtectInsurance.setVisibility(p.insuranceCovered ? View.VISIBLE : View.GONE);
 					productOfferingGoodStanding = p.productOfferingGoodStanding;
 					productOfferingId = String.valueOf(p.productOfferingId);
 					woolworthsApplication.setProductOfferingId(p.productOfferingId);

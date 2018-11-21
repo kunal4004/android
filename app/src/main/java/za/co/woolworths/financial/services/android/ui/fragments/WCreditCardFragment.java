@@ -94,6 +94,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 
 	private View fakeView;
 	private RelativeLayout relBalanceProtection;
+	private WTextView tvBPIProtectInsurance;
 
 	@Nullable
 	@Override
@@ -173,6 +174,8 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		relDebitOrders.setVisibility(View.GONE);
 
 		relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
+		tvBPIProtectInsurance = view.findViewById(R.id.tvBPIProtectInsurance);
+
 		RelativeLayout rlViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
 
 		if (controllerNotNull()) {
@@ -227,7 +230,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 					productOfferingGoodStanding = p.productOfferingGoodStanding;
 					productOfferingId = String.valueOf(p.productOfferingId);
 					woolworthsApplication.setProductOfferingId(p.productOfferingId);
-					relBalanceProtection.setVisibility(p.insuranceCovered?View.VISIBLE:View.GONE);
+					tvBPIProtectInsurance.setVisibility(p.insuranceCovered ? View.VISIBLE : View.GONE);
 					availableBalance.setText(Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.availableFunds), 1, getActivity())));
 					creditLimit.setText(Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.creditLimit), 1, getActivity())));
 					minAmountDue.setText(Utils.removeNegativeSymbol(WFormatter.newAmountFormat(p.minimumAmountDue)));
