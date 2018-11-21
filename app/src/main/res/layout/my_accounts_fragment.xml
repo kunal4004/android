@@ -268,14 +268,14 @@
                             </RelativeLayout>
 
                             <RelativeLayout
-                                android:id="@+id/relFAQ"
+                                android:id="@+id/helpSection"
                                 style="@style/listStyle"
                                 android:background="@drawable/stores_details_background">
 
                                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                                     style="@style/accountsItem"
                                     android:drawableLeft="@{@drawable/ic_faq}"
-                                    android:text="@string/drawer_faq"/>
+                                    android:text="@string/need_help" />
 
                                 <ImageView
                                     android:layout_width="wrap_content"

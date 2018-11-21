@@ -21,7 +21,7 @@
             style="@style/accountsCardStyle">
 
             <ImageView
-                android:id="@+id/imgStoreCard"
+                android:id="@+id/imgStoreCardApply"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
@@ -32,7 +32,7 @@
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 style="@style/sectionCardLight"
-                android:layout_toRightOf="@+id/imgStoreCard"
+                android:layout_toRightOf="@+id/imgStoreCardApply"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
                 android:text="@string/store_card"
@@ -61,7 +61,7 @@
             style="@style/accountsCardStyle">
 
             <ImageView
-                android:id="@+id/imgCreditCard"
+                android:id="@+id/imgCreditCardApply"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
@@ -72,7 +72,7 @@
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 style="@style/sectionCardLight"
-                android:layout_toRightOf="@+id/imgCreditCard"
+                android:layout_toRightOf="@+id/imgCreditCardApply"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
                 android:text="@string/credit_card"
@@ -100,7 +100,7 @@
             style="@style/accountsCardStyle">
 
             <ImageView
-                android:id="@+id/imgPersonalLoan"
+                android:id="@+id/imgPersonalLoanApply"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
@@ -112,7 +112,7 @@
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 style="@style/sectionCardLight"
                 android:layout_marginBottom="16dp"
-                android:layout_toRightOf="@+id/imgPersonalLoan"
+                android:layout_toRightOf="@+id/imgPersonalLoanApply"
                 android:layout_weight="6"
                 android:focusable="false"
                 android:focusableInTouchMode="false"

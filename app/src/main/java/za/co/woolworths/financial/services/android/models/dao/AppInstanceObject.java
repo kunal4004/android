@@ -21,9 +21,12 @@ public class AppInstanceObject {
 	public static final int MAX_DELIVERY_LOCATION_HISTORY = 5;
 	public static final int MAX_USERS = 3;
 	public boolean biometric;
+	public FeatureWalkThrough featureWalkThrough;
+
 
 	public AppInstanceObject() {
 		users = new ArrayList<>();
+		featureWalkThrough =  new FeatureWalkThrough();
 	}
 
 	public static AppInstanceObject get() {
@@ -113,6 +116,18 @@ public class AppInstanceObject {
 		this.biometric = biometric;
 	}
 
+    public class FeatureWalkThrough {
+        //Show Tutorials
+        public boolean showTutorials = true; // Default to show
+
+        //features
+        public boolean barcodeScan;
+        public boolean findInStore;
+		public boolean deliveryLocation;
+		public boolean vouchers;
+		public boolean refineProducts;
+		public boolean account;
+    }
 	/***
 	 * Check to determine if biometric custom popup should be displayed
 	 */

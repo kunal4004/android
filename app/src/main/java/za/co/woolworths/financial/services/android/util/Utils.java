@@ -99,6 +99,7 @@ import za.co.woolworths.financial.services.android.ui.activities.StatementActivi
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
+import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.badgeview.Badge;
 import za.co.woolworths.financial.services.android.ui.views.badgeview.QBadgeView;
@@ -1248,6 +1249,50 @@ public class Utils {
 		}
 
 		return newSentence;
+	}
+
+	public static void saveFeatureWalkthoughShowcase(WMaterialShowcaseView.Feature feature){
+		AppInstanceObject appInstanceObject = AppInstanceObject.get();
+		switch (feature){
+			case BARCODE_SCAN:
+				appInstanceObject.featureWalkThrough.barcodeScan = true;
+				break;
+			case FIND_IN_STORE:
+				appInstanceObject.featureWalkThrough.findInStore = true;
+				break;
+			case DELIVERY_LOCATION:
+				appInstanceObject.featureWalkThrough.deliveryLocation = true;
+				break;
+			case VOUCHERS:
+				appInstanceObject.featureWalkThrough.vouchers = true;
+				break;
+			case REFINE:
+				appInstanceObject.featureWalkThrough.refineProducts = true;
+				break;
+			case ACCOUNTS:
+				appInstanceObject.featureWalkThrough.account = true;
+				break;
+			default:
+				break;
+		}
+		appInstanceObject.save();
+	}
+
+	public static void enableFeatureWalkThroughTutorials(boolean enable) {
+		AppInstanceObject appInstanceObject = AppInstanceObject.get();
+		appInstanceObject.featureWalkThrough.showTutorials = enable;
+		appInstanceObject.save();
+	}
+
+	public static boolean isFeatureWalkThroughTutorialsEnabled() {
+		return AppInstanceObject.get().featureWalkThrough.showTutorials;
+	}
+
+	public static boolean isFeatureTutorialsDismissed(WMaterialShowcaseView wMaterialShowcaseView) {
+		if (wMaterialShowcaseView == null)
+			return true;
+		else
+			return wMaterialShowcaseView.isDismissed() ? true : false;
 	}
 
 	public static String ellipsizeVoucherDescription(String input) {

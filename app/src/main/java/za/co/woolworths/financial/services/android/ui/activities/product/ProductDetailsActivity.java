@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities.product;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
@@ -10,11 +11,13 @@ import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragmentNew;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment;
+import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class ProductDetailsActivity extends AppCompatActivity {
 
 	ProductDetailsFragmentNew productDetailsFragmentNew;
+	public static WMaterialShowcaseView walkThroughPromtView = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +41,10 @@ public class ProductDetailsActivity extends AppCompatActivity {
 
 	@Override
 	public void onBackPressed() {
-		super.onBackPressed();
+		if (walkThroughPromtView != null && !walkThroughPromtView.isDismissed()) {
+			walkThroughPromtView.hide();
+			return;
+		}
 		finish();
 		overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
 	}
@@ -50,4 +56,5 @@ public class ProductDetailsActivity extends AppCompatActivity {
 			productDetailsFragmentNew.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
 	}
+
 }
