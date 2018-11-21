@@ -466,8 +466,10 @@
                 android:id="@+id/tvProtectionInsurance"
                 style="@style/style_loan_title"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/fourteen_dp"
                 android:layout_alignTop="@+id/logoProtectionInsurance"
                 android:layout_toEndOf="@+id/logoProtectionInsurance"
+                android:layout_toStartOf="@+id/tvBPIProtectInsurance"
                 android:text="@string/balance_protection_insurance"/>
 
 

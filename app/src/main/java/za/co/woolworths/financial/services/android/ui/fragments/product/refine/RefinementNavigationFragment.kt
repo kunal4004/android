@@ -102,7 +102,7 @@ class RefinementNavigationFragment : BaseRefinementFragment() {
                 var refinementSelectableItem = RefinementSelectableItem(it, RefinementSelectableItem.ViewType.PROMOTION)
                 refinementSelectableItem.isSelected = (it.refinementCrumbs != null && it.refinementCrumbs.size > 0)
                 dataList.add(1, refinementSelectableItem)
-            } else {
+            } else if ((it.refinements != null && it.refinements.size > 0) || (it.refinementCrumbs != null && it.refinementCrumbs.size > 0)) {
                 if (!isHeaderAddedForCategory) {
                     dataList.add(RefinementSelectableItem(it, RefinementSelectableItem.ViewType.SECTION_HEADER))
                     isHeaderAddedForCategory = true
@@ -118,7 +118,8 @@ class RefinementNavigationFragment : BaseRefinementFragment() {
     }
 
     override fun onBackPressed() {
-        this.seeResults()
+        activity?.finish()
+        activity?.overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
     }
 
     private fun seeResults() {

@@ -31,7 +31,7 @@ class MobileConfigServerDao {
 
                     return mApiInterface.getConfig(
                             WoolworthsApplication.getApiId(),
-                            WoolworthsApplication.getSha1Password(),
+                            com.awfs.coordination.BuildConfig.SHA1,
                             getDeviceManufacturer(),
                             getDeviceModel(),
                             getNetworkCarrier(appInstance),
@@ -86,10 +86,6 @@ class MobileConfigServerDao {
 
         private fun getDeviceManufacturer(): String {
             return Util.getDeviceManufacturer()
-        }
-
-        private fun getSha1Password(): String {
-            return WoolworthsApplication.getSha1Password()
         }
 
         private fun getApiId(): String {

@@ -40,7 +40,6 @@ import za.co.woolworths.financial.services.android.models.rest.statement.GetStat
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
-import za.co.woolworths.financial.services.android.ui.activities.maintenance.MaintenanceMessageViewController;
 import za.co.woolworths.financial.services.android.ui.adapters.StatementAdapter;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WButton;

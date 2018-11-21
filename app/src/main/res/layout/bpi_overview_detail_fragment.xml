@@ -2,83 +2,60 @@
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/default_background"
     android:fitsSystemWindows="true">
 
-    <android.support.design.widget.AppBarLayout
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/bpi_orange"
-        android:fitsSystemWindows="true"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:elevation="0dp">
+        android:layout_height="match_parent">
 
-        <android.support.design.widget.CollapsingToolbarLayout
-            android:id="@+id/collapsing_toolbar"
+        <android.support.v4.widget.NestedScrollView
+            android:id="@+id/scrollContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fitsSystemWindows="true"
-            app:contentScrim="@color/bpi_orange"
-            app:elevation="0dp"
-            app:expandedTitleMarginEnd="64dp"
-            app:expandedTitleMarginStart="48dp"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <include layout="@layout/bpi_detail_header"/>
+            <include
+                layout="@layout/bpi_overview_detail_content"/>
+        </android.support.v4.widget.NestedScrollView>
 
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
+        <LinearLayout
+            android:id="@+id/llHowToClaim"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@color/default_background"
+            android:paddingTop="@dimen/eight_dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <za.co.woolworths.financial.services.android.ui.views.WButton
+                android:id="@+id/btnHowToClaim"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:contentInsetEnd="0dp"
-                app:contentInsetLeft="0dp"
-                app:contentInsetRight="0dp"
-                app:contentInsetStart="0dp"
-                app:elevation="0dp"
-                app:layout_collapseMode="pin"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+                android:layout_height="@dimen/fifty_dp"
+                android:layout_marginStart="@dimen/eight_dp"
+                android:layout_marginEnd="@dimen/eight_dp"
+                android:layout_marginBottom="8dp"
+                android:background="@color/black"
+                android:letterSpacing="0.2"
+                android:text="@string/bpi_how_to_claim"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textSize="@dimen/thirteen_sp"
+                app:WButton_font="medium_bold"/>
+        </LinearLayout>
 
-                <ImageView
-                    android:id="@+id/imNavigateBack"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="start"
-                    android:paddingStart="@dimen/eight_dp"
-                    app:srcCompat="@drawable/back_white"
-                    tools:ignore="RtlSymmetry"
-                    android:contentDescription="@string/bpi_covered"/>
-
-
-            </android.support.v7.widget.Toolbar>
-
-        </android.support.design.widget.CollapsingToolbarLayout>
-    </android.support.design.widget.AppBarLayout>
-
-    <include layout="@layout/bpi_overview_detail_content"/>
-    <LinearLayout
-        android:id="@+id/llHowToClaim"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:background="@color/default_background"
-        android:paddingTop="@dimen/eight_dp">
-    <za.co.woolworths.financial.services.android.ui.views.WButton
-        android:id="@+id/btnHowToClaim"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/fifty_dp"
-        android:layout_marginStart="@dimen/eight_dp"
-        android:layout_marginEnd="@dimen/eight_dp"
-        android:layout_marginBottom="8dp"
-        android:background="@color/black"
-        android:letterSpacing="0.2"
-        android:text="@string/bpi_how_to_claim"
-        android:textAllCaps="true"
-        android:textColor="@color/white"
-        android:textSize="@dimen/thirteen_sp"
-        app:WButton_font="medium_bold"/>
-    </LinearLayout>
+        <ImageView
+            android:id="@+id/imNavigateBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/bpi_covered"
+            android:padding="@dimen/eight_dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/back_white"/>
+    </android.support.constraint.ConstraintLayout>
 </android.support.design.widget.CoordinatorLayout>
