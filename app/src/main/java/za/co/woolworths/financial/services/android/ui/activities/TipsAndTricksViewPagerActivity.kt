@@ -8,7 +8,9 @@ import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import android.view.View
 import com.awfs.coordination.R
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_tips_and_trics_view_pager.*
+import za.co.woolworths.financial.services.android.models.dto.AccountsResponse
 import za.co.woolworths.financial.services.android.ui.adapters.TipsAndTricksViewPagerAdapter
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter
 import za.co.woolworths.financial.services.android.util.ScreenManager
@@ -24,14 +26,15 @@ class TipsAndTricksViewPagerActivity : AppCompatActivity(), View.OnClickListener
     private var actionButtonTexts: Array<String>? = null
     private var icons: TypedArray by Delegates.notNull()
     private var mCurrentItem: Int = 0
+    private var accountsResponse: AccountsResponse? = null
+    private var availableAccounts: ArrayList<String> = arrayListOf()
 
     companion object {
         const val RESULT_OK_PRODUCTS = 123
         const val RESULT_OK_ACCOUNTS = 234
         const val RESULT_OK_REWARDS = 345
         const val REQUEST_CODE_DELIVERY_LOCATION = 456
-        const val REQUEST_CODE_STATEMENTS = 567
-        const val REQUEST_CODE_SHOPPING_LIST = 678
+        const val REQUEST_CODE_SHOPPING_LIST = 567
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,6 +68,8 @@ class TipsAndTricksViewPagerActivity : AppCompatActivity(), View.OnClickListener
 
     private fun bindDataToViews() {
         mCurrentItem = intent.getIntExtra("position", 0)
+        if (intent.hasExtra("accounts"))
+            accountsResponse = Gson().fromJson(intent.extras!!.getString("accounts"), AccountsResponse::class.java)
         tricksViewPagerAdapter = TipsAndTricksViewPagerAdapter(this)
         viewPager.adapter = tricksViewPagerAdapter
         viewPager.currentItem = mCurrentItem
@@ -106,19 +111,9 @@ class TipsAndTricksViewPagerActivity : AppCompatActivity(), View.OnClickListener
                         setResult(RESULT_OK_REWARDS)
                         onBackPressed()
                     }
-                //MY ACCOUNTS
-                    6 -> {
-                        val intent = Intent(this, MyAccountCardsActivity::class.java)
-                        intent.putExtra("position", 0)
-                        /*if (accountsResponse != null) {
-                            intent.putExtra("accounts", Utils.objectToJson(accountsResponse))
-                        }*/
-                        startActivityForResult(intent, 0)
-                        overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
-                    }
-                //STATEMENTS
-                    7 -> {
-                        presentAccountStatements()
+                //MY ACCOUNTS == //STATEMENTS
+                    6, 7 -> {
+                        presentAccounts()
                     }
                 //SHOPPING LIST
                     8 -> {
@@ -149,8 +144,8 @@ class TipsAndTricksViewPagerActivity : AppCompatActivity(), View.OnClickListener
             5 -> {
                 featureActionButton.visibility = if (SessionUtilities.getInstance().isUserAuthenticated() && QueryBadgeCounter.getInstance().voucherCount > 0) View.VISIBLE else View.INVISIBLE
             }
-            6 -> {
-                featureActionButton.visibility = if (SessionUtilities.getInstance().isUserAuthenticated()) View.VISIBLE else View.INVISIBLE
+            6, 7 -> {
+                featureActionButton.visibility = if (SessionUtilities.getInstance().isUserAuthenticated() && accountsResponse != null) View.VISIBLE else View.INVISIBLE
             }
             2, 3 -> {
                 featureActionButton.visibility = View.INVISIBLE
@@ -179,9 +174,6 @@ class TipsAndTricksViewPagerActivity : AppCompatActivity(), View.OnClickListener
                 REQUEST_CODE_DELIVERY_LOCATION -> {
                     presentEditDeliveryLocation()
                 }
-                REQUEST_CODE_STATEMENTS -> {
-                    presentAccountStatements()
-                }
                 REQUEST_CODE_SHOPPING_LIST -> {
                     presentShoppingList()
                 }
@@ -198,19 +190,6 @@ class TipsAndTricksViewPagerActivity : AppCompatActivity(), View.OnClickListener
         }
     }
 
-    private fun presentAccountStatements() {
-        if (SessionUtilities.getInstance().isUserAuthenticated()) {
-            val intent = Intent(this, MyAccountCardsActivity::class.java)
-            intent.putExtra("position", 0)
-            /*if (accountsResponse != null) {
-                intent.putExtra("accounts", Utils.objectToJson(accountsResponse))
-            }*/
-            startActivityForResult(intent, 0)
-            overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
-        } else {
-            ScreenManager.presentSSOSignin(this, REQUEST_CODE_STATEMENTS)
-        }
-    }
 
     private fun presentShoppingList() {
         if (SessionUtilities.getInstance().isUserAuthenticated()) {
@@ -219,5 +198,32 @@ class TipsAndTricksViewPagerActivity : AppCompatActivity(), View.OnClickListener
         } else {
             ScreenManager.presentSSOSignin(this, REQUEST_CODE_SHOPPING_LIST)
         }
+    }
+
+    private fun presentAccounts() {
+        availableAccounts.clear()
+        accountsResponse?.accountList?.forEach() {
+            availableAccounts.add(it.productGroupCode.toUpperCase())
+        }
+        if (availableAccounts.size == 0) {
+            redirectToMyAccountsCardsActivity(0)
+        } else {
+            if (availableAccounts.contains("SC"))
+                redirectToMyAccountsCardsActivity(0)
+            else if (availableAccounts.contains("CC"))
+                redirectToMyAccountsCardsActivity(1)
+            else if (availableAccounts.contains("PL"))
+                redirectToMyAccountsCardsActivity(2)
+        }
+    }
+
+    fun redirectToMyAccountsCardsActivity(position: Int) {
+        val intent = Intent(this, MyAccountCardsActivity::class.java)
+        intent.putExtra("position", position)
+        if (accountsResponse != null) {
+            intent.putExtra("accounts", Utils.objectToJson(accountsResponse))
+        }
+        startActivity(intent)
+        overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
     }
 }

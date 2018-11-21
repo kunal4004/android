@@ -91,7 +91,7 @@ public class TipsAndTricksFragment extends BaseFragment<TipsTricksFragmentBindin
         Intent intent = new Intent(getActivity(), TipsAndTricksViewPagerActivity.class);
         intent.putExtra("position", position);
         if (bundle != null)
-            intent.putExtra("", bundle.getString("accounts"));
+            intent.putExtra("accounts", bundle.getString("accounts"));
         getActivity().startActivityForResult(intent, BottomNavigationActivity.TIPS_AND_TRICKS_CTA_REQUEST_CODE);
         getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
     }
