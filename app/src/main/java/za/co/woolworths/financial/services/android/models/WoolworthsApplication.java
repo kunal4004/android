@@ -1,29 +1,29 @@
 package za.co.woolworths.financial.services.android.models;
 
-import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
-import android.os.Bundle;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.StrictMode;
 import android.support.multidex.MultiDex;
+import android.support.v7.app.AppCompatDelegate;
 
 import com.awfs.coordination.R;
-import com.crittercism.app.Crittercism;
+import com.crashlytics.android.Crashlytics;
+import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 
-import org.json.JSONObject;
-
+import io.fabric.sdk.android.Fabric;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.service.RxBus;
-import za.co.woolworths.financial.services.android.ui.activities.YoutubePlayerActivity;
+import za.co.woolworths.financial.services.android.util.FirebaseManager;
 
 
 public class WoolworthsApplication extends Application {
@@ -41,12 +41,11 @@ public class WoolworthsApplication extends Application {
 	private static String rewardingLink;
 	private static String howToSaveLink;
 	private static String wrewardsTCLink;
+	private static String cartCheckoutLink;
+
 
 	private WGlobalState mWGlobalState;
 
-	private static String baseURL;
-	private static String apiKey;
-	private static String sha1Password;
 	private static String ssoRedirectURI;
 	private static String stsURI;
 	private static String ssoRedirectURILogout;
@@ -56,44 +55,38 @@ public class WoolworthsApplication extends Application {
 	private boolean isOther = false;
 	private static int productOfferingId;
 
-	private static int NumVouchers = 0;
-
 	public UpdateBankDetail updateBankDetail;
 
 	private RxBus bus;
 
-	private static long poiDocumentSizeLimit;
+	public static String getApiId() {
+		PackageInfo packageInfo = null;
+		try {
 
-	public static void setSha1Password(String sha1Password) {
-		WoolworthsApplication.sha1Password = sha1Password;
+			packageInfo = WoolworthsApplication.getInstance().getPackageManager().getPackageInfo(WoolworthsApplication.getInstance().getPackageName(), 0);
+		} catch (PackageManager.NameNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		String apiId = "ANDROID_V";
+		if (packageInfo.versionName.length() > 3) {
+			apiId += packageInfo.versionName.substring(0, 3);
+		} else {
+			apiId += packageInfo.versionName;
+		}
+		return apiId;
 	}
 
-	public static String getSha1Password() {
-		return sha1Password;
-	}
+	public static String getAppVersionName() {
+		PackageInfo packageInfo = null;
+		try {
 
-	public static void setApiKey(String apiKey) {
-		WoolworthsApplication.apiKey = apiKey;
-	}
+			packageInfo = WoolworthsApplication.getInstance().getPackageManager().getPackageInfo(WoolworthsApplication.getInstance().getPackageName(), 0);
+		} catch (PackageManager.NameNotFoundException e) {
+			e.printStackTrace();
+		}
 
-	public static void setBaseURL(String baseURL) {
-		WoolworthsApplication.baseURL = baseURL;
-	}
-
-	public static String getApiKey() {
-		return apiKey;
-	}
-
-	public static String getBaseURL() {
-		return baseURL;
-	}
-
-	public static void setNumVouchers(int numVouchers) {
-		NumVouchers = numVouchers;
-	}
-
-	public static int getNumVouchers() {
-		return NumVouchers;
+		return packageInfo.versionName;
 	}
 
 	public static String getRegistrationTCLink() {
@@ -196,71 +189,37 @@ public class WoolworthsApplication extends Application {
 
 	private static WoolworthsApplication mInstance;
 
-	public static long getPoiDocumentSizeLimit() {
-		return poiDocumentSizeLimit;
-	}
-
-	public static void setPoiDocumentSizeLimit(long poiDocumentSizeLimit) {
-		WoolworthsApplication.poiDocumentSizeLimit = poiDocumentSizeLimit;
-	}
-
 	@Override
 	public void onCreate() {
 		super.onCreate();
 		mInstance = this;
-		Fresco.initialize(this);
-		AppEventsLogger.activateApp(this);
+		WoolworthsApplication.context = this.getApplicationContext();
 		StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
 		StrictMode.setVmPolicy(builder.build());
-		mWGlobalState = new WGlobalState(WoolworthsApplication.this);
+		Fabric.with(WoolworthsApplication.this, new Crashlytics());
+		AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+
+		ImagePipelineConfig config = ImagePipelineConfig.newBuilder(context)
+				.setDownsampleEnabled(true)
+				.build();
+		Fresco.initialize(this, config);
+		//wake up FirebaseManager that will instantiate
+		//FirebaseApp
+		FirebaseManager.Companion.getInstance();
+		FacebookSdk.sdkInitialize(WoolworthsApplication.this);
+		AppEventsLogger.activateApp(WoolworthsApplication.this);
+		mWGlobalState = new WGlobalState();
 		updateBankDetail = new UpdateBankDetail();
-		WoolworthsApplication.context = this.getApplicationContext();
 		// set app context
 		mContextApplication = getApplicationContext();
-		Crittercism.initialize(getApplicationContext(), getResources().getString(R.string.crittercism_app_id));
-		CalligraphyConfig.initDefault("fonts/WFutura-medium.ttf", R.attr.fontPath);
+		//Crittercism.initialize(getApplicationContext(), getResources().getString(R.string.crittercism_app_id));
+		CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
+				.setDefaultFontPath("fonts/WFutura-medium.ttf")
+				.setFontAttrId(R.attr.fontPath)
+				.build()
+		);
 		getTracker();
 		bus = new RxBus();
-		registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
-
-			@Override
-			public void onActivityCreated(Activity activity,
-										  Bundle savedInstanceState) {
-
-				// new activity created; force its orientation to portrait
-				if (!(activity instanceof YoutubePlayerActivity)) {
-					activity.setRequestedOrientation(
-							ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-				}
-
-			}
-
-			@Override
-			public void onActivityStarted(Activity activity) {
-			}
-
-			@Override
-			public void onActivityResumed(Activity activity) {
-			}
-
-			@Override
-			public void onActivityPaused(Activity activity) {
-			}
-
-			@Override
-			public void onActivityStopped(Activity activity) {
-			}
-
-			@Override
-			public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
-			}
-
-			@Override
-			public void onActivityDestroyed(Activity activity) {
-			}
-
-
-		});
 	}
 
 	public UserManager getUserManager() {
@@ -303,46 +262,6 @@ public class WoolworthsApplication extends Application {
 			mTracker = instance.newTracker(R.xml.global_tracker);
 		}
 		return mTracker;
-	}
-
-	public static void setConfig(JSONObject config) {
-
-		SharedPreferences settings = context.getSharedPreferences("config_file", 0);
-		SharedPreferences.Editor editor = settings.edit();
-		editor.putString("jsondata", config.toString());
-		editor.commit();
-
-	}
-
-	public static JSONObject config() {
-
-		SharedPreferences settings = context.getSharedPreferences("config_file", 0);
-		try {
-			return new JSONObject(settings.getString("jsondata", ""));
-		} catch (Exception e) {
-			return null;
-		}
-
-	}
-
-	public static long getConfig_expireLastNotify() {
-
-		SharedPreferences settings = context.getSharedPreferences("config", 0);
-		try {
-			return Long.parseLong(settings.getString("Config_expireLastNotify", "").toString());
-		} catch (Exception e) {
-			return Long.parseLong("0");
-		}
-
-
-	}
-
-	public static void setConfig_expireLastNotify() {
-
-		SharedPreferences settings = context.getSharedPreferences("config", 0);
-		SharedPreferences.Editor editor = settings.edit();
-		editor.putString("Config_expireLastNotify", Long.toString(System.currentTimeMillis()));
-		editor.commit();
 	}
 
 	@Override
@@ -394,5 +313,13 @@ public class WoolworthsApplication extends Application {
 
 	public static synchronized WoolworthsApplication getInstance() {
 		return mInstance;
+	}
+
+	public static void setCartCheckoutLink(String link) {
+		cartCheckoutLink = link;
+	}
+
+	public static String getCartCheckoutLink() {
+		return cartCheckoutLink;
 	}
 }

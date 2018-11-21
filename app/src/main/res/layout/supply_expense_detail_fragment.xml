@@ -20,8 +20,12 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:text="@string/only_rands_no_cents"
+                style="@style/cli_only_cents_banner" />
+
             <View
-                style="@style/top_view_style"/>
+                style="@style/top_view_style_income_expenses"/>
 
             <RelativeLayout style="@style/increase_limit_relative_style">
 

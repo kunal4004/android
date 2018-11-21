@@ -23,8 +23,8 @@ import java.util.HashMap;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Application;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
-import za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity;
-import za.co.woolworths.financial.services.android.ui.activities.FindOutMoreActivity;
+import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity;
+import za.co.woolworths.financial.services.android.ui.activities.cli.FindOutMoreActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -78,7 +78,7 @@ public class IncreaseLimitController {
 		editTextView.setSelection(editTextView.getText().length());
 	}
 
-	public void cliDefaultView(LinearLayout llCommonLayer, WTextView tvIncreaseLimitDescription){
+	public void cliDefaultView(LinearLayout llCommonLayer, WTextView tvIncreaseLimitDescription) {
 		hideView(llCommonLayer);
 		hideView(tvIncreaseLimitDescription);
 	}
@@ -253,8 +253,8 @@ public class IncreaseLimitController {
 					|| nextStep.equalsIgnoreCase(getString(R.string.status_decline))
 					|| nextStep.equalsIgnoreCase(getString(R.string.status_unavailable))
 					|| nextStep.equalsIgnoreCase(getString(R.string.status_contact_us))
-					|| nextStep.equalsIgnoreCase(getString(R.string.status_complete))) {
-
+					|| (nextStep.equalsIgnoreCase(getString(R.string.status_complete)) && !offerActive.cliStatus.equalsIgnoreCase(getString(R.string.cli_status_concluded)))) {
+				// Do nothing
 			} else {
 				moveToCLIPhase(offerActive, productOfferingId);
 			}

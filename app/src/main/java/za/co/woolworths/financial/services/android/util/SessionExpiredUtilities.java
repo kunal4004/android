@@ -1,50 +1,45 @@
 package za.co.woolworths.financial.services.android.util;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
-import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
-import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.SessionExpiredDialogFragment;
 
-public enum SessionExpiredUtilities {
-	INSTANCE;
+import static za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment.DIALOG_REQUEST_CODE;
 
-	public void setAccountSessionExpired(Activity activity, String token) {
-		onSessionExpired(activity, token);
-		Intent i = new Intent(activity, WOneAppBaseActivity.class);
-		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-		activity.setResult(SSOActivity.SSOActivityResult.EXPIRED.rawValue(), i);
-		activity.startActivity(i);
-		activity.overridePendingTransition(0, 0);
+public class SessionExpiredUtilities {
+
+	private static SessionExpiredUtilities instance;
+	private String TAG = this.getClass().getSimpleName();
+
+	public static synchronized SessionExpiredUtilities getInstance() {
+		if (instance == null) {
+			instance = new SessionExpiredUtilities();
+		}
+		return instance;
 	}
 
-	public void setWRewardSessionExpired(Activity activity, String token) {
-		onSessionExpired(activity, token);
+	public void showSessionExpireDialog(AppCompatActivity activity) {
+		try {
+			FragmentManager fm = activity.getSupportFragmentManager();
+			SessionExpiredDialogFragment sessionExpiredDialogFragment = SessionExpiredDialogFragment.newInstance(SessionUtilities.getInstance().getSTSParameters());
+			sessionExpiredDialogFragment.show(fm, SessionExpiredDialogFragment.class.getSimpleName());
+		} catch (NullPointerException ex) {
+			Log.d(TAG, ex.getMessage());
+		}
 	}
 
-	public void showSessionExpireDialog(Activity activity) {
-		getGlobalState(activity).setAccountHasExpired(true);
-		Intent openMsg = new Intent(activity, CustomPopUpWindow.class);
-		Bundle args = new Bundle();
-		args.putSerializable("key", CustomPopUpWindow.MODAL_LAYOUT.SESSION_EXPIRED);
-		args.putString("description", getGlobalState(activity).getNewSTSParams());
-		openMsg.putExtras(args);
-		activity.startActivity(openMsg);
-		activity.overridePendingTransition(0, 0);
+	public void showSessionExpireDialog(AppCompatActivity activity, Fragment fragment) {
+		try {
+			Utils.clearCacheHistory(activity);
+			FragmentManager fm = activity.getSupportFragmentManager();
+			SessionExpiredDialogFragment sessionExpiredDialogFragment = SessionExpiredDialogFragment.newInstance(SessionUtilities.getInstance().getSTSParameters());
+			sessionExpiredDialogFragment.setTargetFragment(fragment, DIALOG_REQUEST_CODE);
+			sessionExpiredDialogFragment.show(fm, SessionExpiredDialogFragment.class.getSimpleName());
+		} catch (NullPointerException ex) {
+			Log.d(TAG, ex.getMessage());
+		}
 	}
-
-	private void onSessionExpired(Activity activity, String stsParams) {
-		getGlobalState(activity).setNewSTSParams(stsParams);
-	}
-
-	public WGlobalState getGlobalState(Activity activity) {
-		return ((WoolworthsApplication) activity.getApplication()).getWGlobalState();
-	}
-
 }

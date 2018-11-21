@@ -15,6 +15,7 @@ import android.widget.RelativeLayout;
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.OnBoardingViewPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -35,7 +36,7 @@ public class OnBoardingActivity extends AppCompatActivity implements ViewPager.O
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Utils.updateStatusBarBackground(OnBoardingActivity.this, R.color.drawer_color);
+		Utils.updateStatusBarBackground(OnBoardingActivity.this, R.color.drawer_color,true);
 		setContentView(R.layout.on_boarding_activity);
 		pager = (ViewPager) findViewById(R.id.onBoardingPager);
 		pager_indicator = (LinearLayout) findViewById(R.id.viewPagerCountDots);
@@ -117,9 +118,10 @@ public class OnBoardingActivity extends AppCompatActivity implements ViewPager.O
 	private void navigateToMain() {
 		try {
 			Utils.sessionDaoSave(OnBoardingActivity.this, SessionDao.KEY.ON_BOARDING_SCREEN, "1");
-			startActivityForResult(new Intent(OnBoardingActivity.this, WOneAppBaseActivity.class)
+			startActivityForResult(new Intent(OnBoardingActivity.this, BottomNavigationActivity.class)
 					, 0);
 			finish();
+			overridePendingTransition(R.anim.stay,R.anim.fade_out);
 		} catch (Exception e) {
 			Log.i(TAG, e.getMessage());
 		}

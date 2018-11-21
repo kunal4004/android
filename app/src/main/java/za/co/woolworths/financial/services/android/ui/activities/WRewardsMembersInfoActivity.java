@@ -18,9 +18,9 @@ import android.widget.TextView;
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.ui.adapters.ContactUsFragmentPagerAdapter;
-import za.co.woolworths.financial.services.android.ui.fragments.WRewardsLoyalMembersInfoFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.WRewardsValuedMembersInfoFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.WRewardsVipMembersInfoFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsLoyalMembersInfoFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsValuedMembersInfoFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVipMembersInfoFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -56,7 +56,7 @@ public class WRewardsMembersInfoActivity extends AppCompatActivity {
         if (getIntent().hasExtra("type"))
             viewPager.setCurrentItem(getIntent().getIntExtra("type", 0));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            toolbarTextView.setLetterSpacing(0.1f);
+            toolbarTextView.setLetterSpacing(0.2f);
         }
         appBar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             @Override

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/popup_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/relAddToList"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@drawable/bottom_divider">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/tvTitle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:letterSpacing="0.2"
+            android:lineSpacingMultiplier="1.50"
+            android:text="@string/add_to_list"
+            android:textColor="@color/black"
+            android:textSize="@dimen/twelve_sp"
+            app:WTextView_font="medium_bold"/>
+
+        <ImageView
+            android:id="@+id/imCreateList"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_centerInParent="true"
+            android:layout_marginEnd="@dimen/twenty_one_dp"
+            app:srcCompat="@drawable/add_black"/>
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/relProgressBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/thirty_three_dp"
+        android:layout_marginTop="@dimen/thirty_three_dp"
+        android:gravity="center">
+
+        <ProgressBar
+            android:id="@+id/pbLoadShoppingList"
+            android:layout_width="@dimen/twenty_four_dp"
+            android:layout_height="@dimen/twenty_four_dp"
+            android:indeterminateTint="@color/black"/>
+
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rclAddToList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <RelativeLayout
+        android:id="@+id/relEmptyView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/recent_search_bg"
+        android:gravity="center"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/imgEmpyStateIcon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:layout_marginTop="@dimen/sixteen_dp"
+            android:alpha="0.4"/>
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/txtEmptyStateTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/imgEmpyStateIcon"
+            android:layout_marginBottom="@dimen/eight_dp"
+            android:layout_marginTop="@dimen/eight_dp"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:letterSpacing="0.03"
+            android:lineSpacingExtra="2sp"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:WTextView_font="medium_bold"/>
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/txtEmptyStateDesc"
+            style="@style/TableLeft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txtEmptyStateTitle"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/sixteen_dp"
+            android:gravity="center"
+            android:textColor="@color/semi_transparent_black"
+            app:WTextView_font="myriadpro_regular"/>
+
+
+        <za.co.woolworths.financial.services.android.ui.views.WButton
+            android:id="@+id/btnGoToProduct"
+            style="@style/whiteButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_below="@+id/txtEmptyStateDesc"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/sixteen_dp"
+            android:layout_marginEnd="@dimen/sixteen_dp"
+            android:layout_marginStart="@dimen/sixteen_dp"
+            android:clickable="true"
+            android:letterSpacing="0.15"
+            android:paddingEnd="@dimen/thirty_two_dp"
+            android:paddingStart="@dimen/thirty_two_dp"
+            android:text="@string/go_to_products"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:WButton_font="myriadpro_regular"/>
+
+
+    </RelativeLayout>
+
+    <include
+        layout="@layout/no_connection"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="0dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.8dp"
+        android:layout_marginEnd="@dimen/sixteen_dp"
+        android:layout_marginStart="@dimen/sixteen_dp"
+        android:background="@color/grey_bg"/>
+
+    <FrameLayout
+        android:id="@+id/flCancelButton"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/seventy_five_dp">
+
+        <za.co.woolworths.financial.services.android.ui.views.WButton
+            android:id="@+id/btnCancel"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/custom_bg"
+            android:letterSpacing="0.1"
+            android:lineSpacingMultiplier="1.67"
+            android:text="@string/cancel"
+            app:WButton_font="myriadpro_regular"/>
+
+        <ProgressBar
+            android:id="@+id/pbAddToList"
+            android:layout_width="@dimen/thirty_two_dp"
+            android:layout_height="@dimen/thirty_two_dp"
+            android:layout_gravity="center"
+            android:indeterminateTint="@color/black"
+            android:visibility="gone"
+            />
+
+    </FrameLayout>
+
+</LinearLayout>

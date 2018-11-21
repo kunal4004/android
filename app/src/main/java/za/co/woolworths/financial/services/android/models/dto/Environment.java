@@ -1,12 +1,12 @@
 package za.co.woolworths.financial.services.android.models.dto;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by denysvera on 2016/04/29.
  */
 public class Environment {
 	public String base_url;
-	public String apiKey;
-	public String sha1Password;
 	public String ssoRedirectURI;
 	public String stsURI;
 	public String ssoRedirectURILogout;
@@ -18,14 +18,12 @@ public class Environment {
 	public boolean storeStockLocatorConfigClothingProducts;
 	public long emailSizeKB;
 
-
-	public String getApiId() {
-		return apiKey;
-	}
-
-	public String getApiPassword() {
-		return sha1Password;
-	}
+	@SerializedName("splashScreen.display")
+	public boolean splashScreenDisplay;
+	@SerializedName("splashScreen.persist")
+	public boolean splashScreenPersist;
+	@SerializedName("splashScreen.text")
+	public String splashScreenText;
 
 	public String getBase_url() {
 		return base_url;
@@ -37,14 +35,6 @@ public class Environment {
 
 	public void setStsURI(String stsURI) {
 		this.stsURI = stsURI;
-	}
-
-	public void setApiId(String apiId) {
-		this.apiKey = apiId;
-	}
-
-	public void setApiPassword(String sha1Password) {
-		this.sha1Password = sha1Password;
 	}
 
 	public void setBase_url(String base_url) {
@@ -117,5 +107,17 @@ public class Environment {
 
 	public void setEmailSizeKB(long emailSizeKB) {
 		this.emailSizeKB = emailSizeKB;
+	}
+
+	public boolean isSplashScreenDisplay() {
+		return splashScreenDisplay;
+	}
+
+	public boolean isSplashScreenPersist() {
+		return splashScreenPersist;
+	}
+
+	public String getSplashScreenText() {
+		return splashScreenText;
 	}
 }

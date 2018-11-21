@@ -14,7 +14,7 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
-import android.support.v13.app.ActivityCompat;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -25,6 +25,7 @@ import android.webkit.URLUtil;
 import android.webkit.WebBackForwardList;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
@@ -34,8 +35,8 @@ import android.widget.Toast;
 
 import com.awfs.coordination.R;
 
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class WInternalWebPageActivity extends AppCompatActivity implements View.OnClickListener {
@@ -84,6 +85,9 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 	private void webSetting() {
 		showProgressBar();
 		webInternalPage.getSettings().setJavaScriptEnabled(true);
+		webInternalPage.getSettings().setDomStorageEnabled(true);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+			webInternalPage.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
 		webInternalPage.setWebViewClient(new WebViewClient() {
 			@TargetApi(android.os.Build.VERSION_CODES.M)
 			@Override
@@ -156,7 +160,7 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 		findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (new ConnectionDetector().isOnline(WInternalWebPageActivity.this)) {
+				if (NetworkManager.getInstance().isConnectedToNetwork(WInternalWebPageActivity.this)) {
 					hideAppBar();
 					showProgressBar();
 					WebBackForwardList history = webInternalPage.copyBackForwardList();
@@ -211,7 +215,7 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 	}
 
 	public void goBackInWebView() {
-		if (new ConnectionDetector().isOnline(WInternalWebPageActivity.this)) {
+		if (NetworkManager.getInstance().isConnectedToNetwork(WInternalWebPageActivity.this)) {
 			WebBackForwardList history = webInternalPage.copyBackForwardList();
 			int index = -1;
 			String url = null;

@@ -1,7 +1,5 @@
 <resources>
     <dimen name="acc_thirteen_sp">12.0sp</dimen>
-    <dimen name="account_margin">5.0dp</dimen>
-    <dimen name="card_padding_margin">16dp</dimen>
     <dimen name="acc_fifteen_dp">10sp</dimen>
     <dimen name="card_margin">50.0dp</dimen>
     <dimen name="activity_horizontal_margin">16dp</dimen>

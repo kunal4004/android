@@ -1,72 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<layout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/relEmptyStateHandler"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/recent_search_bg"
-    android:gravity="center"
-    android:visibility="visible">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <ImageView
-        android:id="@+id/imgEmpyStateIcon"
+    <data></data>
+
+    <RelativeLayout
+        android:id="@+id/relEmptyStateHandler"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top"
-        android:alpha="0.4"/>
-
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
-        android:id="@+id/txtEmptyStateTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/imgEmpyStateIcon"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="@dimen/bank_spacing_width"
-        android:layout_weight="1"
-        android:gravity="center_horizontal"
-        android:letterSpacing="0.03"
-        android:lineSpacingExtra="2sp"
-        android:textAllCaps="true"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:WTextView_font="medium_bold"/>
-
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
-        android:id="@+id/txtEmptyStateDesc"
-        style="@style/TableLeft"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/txtEmptyStateTitle"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="44dp"
+        android:layout_height="match_parent"
+        android:background="@color/recent_search_bg"
         android:gravity="center"
-        android:textColor="@color/semi_transparent_black"
-        app:WTextView_font="myriadpro_regular"/>
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/imgEmpyStateIcon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:alpha="0.4"/>
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/txtEmptyStateTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/imgEmpyStateIcon"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="@dimen/bank_spacing_width"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:letterSpacing="0.03"
+            android:lineSpacingExtra="2sp"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:WTextView_font="medium_bold"/>
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/txtEmptyStateDesc"
+            style="@style/TableLeft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txtEmptyStateTitle"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/sixteen_dp"
+            android:gravity="center"
+            android:textColor="@color/semi_transparent_black"
+            app:WTextView_font="myriadpro_regular"/>
 
 
-    <za.co.woolworths.financial.services.android.ui.views.WButton
-        android:id="@+id/btnGoToProduct"
-        style="@style/whiteButtonStyle"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_below="@+id/txtEmptyStateDesc"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="18dp"
-        android:layout_marginLeft="@dimen/bank_spacing_width"
-        android:layout_marginRight="@dimen/bank_spacing_width"
-        android:layout_marginTop="20dp"
-        android:clickable="true"
-        android:letterSpacing="0.15"
-        android:text="@string/go_to_products"
-        android:textColor="@color/black"
-        android:textSize="12sp"
-        android:textStyle="bold"
-        android:visibility="gone"
-        app:WButton_font="medium_bold"/>
+        <za.co.woolworths.financial.services.android.ui.views.WButton
+            android:id="@+id/btnGoToProduct"
+            style="@style/whiteButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_below="@+id/txtEmptyStateDesc"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="18dp"
+            android:layout_marginEnd="@dimen/fourty_five_dp"
+            android:layout_marginStart="@dimen/fourty_five_dp"
+            android:clickable="true"
+            android:letterSpacing="0.15"
+            android:paddingEnd="@dimen/thirty_two_dp"
+            android:paddingStart="@dimen/thirty_two_dp"
+            android:text="@string/go_to_products"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:WButton_font="medium_bold"/>
 
 
-</RelativeLayout>
-
+    </RelativeLayout>
+</layout>

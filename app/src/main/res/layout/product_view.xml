@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:fresco="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+                xmlns:fresco="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-    <com.facebook.drawee.view.SimpleDraweeView
+    <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
         android:id="@+id/imProductView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:adjustViewBounds="false"
-        fresco:fadeDuration="50"
-        fresco:placeholderImage="@drawable/rectangle"
-        fresco:viewAspectRatio="0.5" />
+        android:layout_centerInParent="true"
+        android:adjustViewBounds="true"
+        fresco:placeholderImage="@drawable/woolworth_logo_icon"/>
 
     <RelativeLayout
         android:id="@+id/productOverlay"
@@ -26,7 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:background="@drawable/productfade" />
+            android:background="@drawable/productfade"/>
 
     </RelativeLayout>
 </RelativeLayout>

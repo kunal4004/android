@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:clickable="true"
+        android:focusable="true"
+        tools:context="za.co.woolworths.financial.services.android.ui.fragments.barcode.BarcodeFragment">
+
+    <data>
+
+        <import type="android.view.View"/>
+
+        <variable
+            name="viewModel"
+            type="za.co.woolworths.financial.services.android.ui.fragments.barcode.BarcodeViewModel"/>
+    </data>
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <za.co.woolworths.financial.services.android.util.barcode.CodeScannerView
+            android:id="@+id/scanner_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:autoFocusButtonColor="@android:color/white"
+            app:autoFocusButtonVisible="false"
+            app:flashButtonColor="@android:color/white"
+            app:flashButtonVisible="false"
+            app:frameAspectRatioHeight="1"
+            app:frameAspectRatioWidth="1"
+            app:frameColor="@android:color/white"
+            app:frameCornersSize="18dp"
+            app:frameSize="0.60"
+            app:frameThickness="2.2dp"
+            app:maskColor="@color/mask_opacity"/>
+
+        <LinearLayout
+            android:id="@+id/rlBarcodeOverlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:weightSum="1">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.21"
+                android:gravity="bottom|center">
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:id="@+id/textInfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:letterSpacing="0.17"
+                    android:lineSpacingExtra="5sp"
+                    android:paddingLeft="@dimen/bank_spacing_width"
+                    android:paddingRight="@dimen/bank_spacing_width"
+                    android:text="@string/set_info_detail"
+                    android:textAllCaps="true"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    android:visibility="visible"
+                    app:WTextView_font="medium"/>
+
+                <ProgressBar
+                    android:id="@+id/ppBar"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginTop="120dp"
+                    android:gravity="center"
+                    android:indeterminateTint="@color/white"
+                    android:visibility="gone"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.60"
+                android:background="@color/transparent">
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.215"
+                android:gravity="center"
+                >
+
+                <za.co.woolworths.financial.services.android.ui.views.WButton
+                    android:id="@+id/btnManual"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginBottom="@dimen/thirty_two_dp"
+                    android:layout_marginLeft="@dimen/bank_spacing_width"
+                    android:layout_marginRight="@dimen/bank_spacing_width"
+                    android:background="@drawable/barcode_btn_bg"
+                    android:letterSpacing="0.12"
+                    android:text="@string/set_manually_enter_barcode"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    app:WButton_font="medium"/>
+
+            </RelativeLayout>
+        </LinearLayout>
+    </FrameLayout>
+</layout>

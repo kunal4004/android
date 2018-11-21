@@ -75,7 +75,7 @@ public class UserDetailActivity extends AppCompatActivity implements UserDetailA
 
 	private void finishActivity() {
 		finish();
-		overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
+		overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
 	}
 
 	private List<String> getItem() {
@@ -111,4 +111,5 @@ public class UserDetailActivity extends AppCompatActivity implements UserDetailA
 		super.onResume();
 		mUserDetailApdater.resetIndex();
 	}
+
 }

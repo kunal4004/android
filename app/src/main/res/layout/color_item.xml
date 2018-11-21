@@ -1,27 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:orientation="vertical">
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/custom_bg">
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/name"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:letterSpacing="0.15"
-        android:paddingBottom="31dp"
-        android:paddingTop="31dp"
+        android:paddingBottom="@dimen/thirty_one_dp"
+        android:paddingStart="@dimen/twenty_four_dp"
+        android:paddingTop="@dimen/thirty_one_dp"
+        android:text="@string/size"
         android:textAllCaps="true"
         android:textColor="@color/black"
-        android:textSize="13sp"
-        app:WTextView_font="medium"/>
+        android:textSize="@dimen/twelve_sp"
+        app:WTextView_font="medium"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
 
-    <include
-        layout="@layout/divider"
-        android:layout_width="match_parent"
-        android:layout_height="0.1dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginStart="32dp"/>
-</LinearLayout>
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@color/recent_search_bg"
+        app:layout_constraintBottom_toBottomOf="@+id/name"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+</android.support.constraint.ConstraintLayout>

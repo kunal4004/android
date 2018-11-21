@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:clickable="true"
+    android:focusable="true">
+
+    <data>
+
+        <import type="android.view.View" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/email_height_50"
+        android:id="@+id/parentLayout"
+        android:background="@color/white"
+        android:visibility="gone"
+        android:orientation="horizontal">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/sortProducts"
+            style="@style/sort_and_filter_selection_text_style"
+            android:text="@string/sort_by" />
+        />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:background="#e4e4e4" />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/refineProducts"
+            style="@style/sort_and_filter_selection_text_style"
+            android:text="@string/refine" />
+    </LinearLayout>
+</layout>

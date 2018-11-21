@@ -1,26 +1,26 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.TransactionHistoryResponse;
 import za.co.woolworths.financial.services.android.ui.adapters.WTransactionsAdapter;
-import za.co.woolworths.financial.services.android.ui.views.ProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
-import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
+import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class WTransactionsActivity extends AppCompatActivity {
@@ -28,8 +28,8 @@ public class WTransactionsActivity extends AppCompatActivity {
 	public Toolbar toolbar;
 	public ExpandableListView transactionListview;
 	public String productOfferingId;
-	private ProgressDialogFragment mGetTransactionProgressDialog;
 	private ErrorHandlerView mErrorHandlerView;
+	private ProgressBar pbTransaction;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -50,12 +50,13 @@ public class WTransactionsActivity extends AppCompatActivity {
 		getSupportActionBar().setTitle(null);
 		getSupportActionBar().setElevation(0);
 		transactionListview = (ExpandableListView) findViewById(R.id.transactionListView);
+		pbTransaction = findViewById(R.id.pbTransaction);
 		productOfferingId = getIntent().getStringExtra("productOfferingId");
 		loadTransactionHistory(productOfferingId);
 		findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (new ConnectionDetector().isOnline(WTransactionsActivity.this)) {
+				if (NetworkManager.getInstance().isConnectedToNetwork(WTransactionsActivity.this)) {
 					loadTransactionHistory(productOfferingId);
 				}
 			}
@@ -64,19 +65,9 @@ public class WTransactionsActivity extends AppCompatActivity {
 	}
 
 	public void loadTransactionHistory(final String prOfferId) {
-		final FragmentManager fm = getSupportFragmentManager();
-		mGetTransactionProgressDialog = ProgressDialogFragment.newInstance();
 		try {
-			if (!mGetTransactionProgressDialog.isAdded()) {
-				mGetTransactionProgressDialog.show(fm, "v");
-			} else {
-				mGetTransactionProgressDialog.dismiss();
-				mGetTransactionProgressDialog = ProgressDialogFragment.newInstance();
-				mGetTransactionProgressDialog.show(fm, "v");
-			}
-
+			pbTransaction.setVisibility(View.VISIBLE);
 			transactionAsyncAPI(prOfferId).execute();
-
 		} catch (NullPointerException ignored) {
 		}
 	}
@@ -127,7 +118,8 @@ public class WTransactionsActivity extends AppCompatActivity {
 							break;
 						case 440:
 							if (!(WTransactionsActivity.this.isFinishing())) {
-								SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(WTransactionsActivity.this, transactionHistoryResponse.response.stsParams);
+								SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, transactionHistoryResponse
+										.response.stsParams, WTransactionsActivity.this);
 							}
 							break;
 						default:
@@ -161,9 +153,9 @@ public class WTransactionsActivity extends AppCompatActivity {
 	}
 
 	private void dismissProgress() {
-		if (mGetTransactionProgressDialog != null && mGetTransactionProgressDialog.isVisible()) {
-			mGetTransactionProgressDialog.dismiss();
-		}
+		if (pbTransaction != null)
+			pbTransaction.setVisibility(View.GONE);
+
 	}
 
 	public void networkFailureHandler(final String errorMessage) {
@@ -171,6 +163,7 @@ public class WTransactionsActivity extends AppCompatActivity {
 			@Override
 			public void run() {
 				mErrorHandlerView.networkFailureHandler(errorMessage);
+				dismissProgress();
 			}
 		});
 	}

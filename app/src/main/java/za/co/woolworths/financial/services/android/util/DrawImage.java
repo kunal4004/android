@@ -20,6 +20,8 @@ import com.facebook.imagepipeline.request.ImageRequestBuilder;
 
 import java.io.IOException;
 
+import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
+
 public class DrawImage {
 
 	private Context mContext;
@@ -28,8 +30,9 @@ public class DrawImage {
 		mContext = context;
 	}
 
-	public void displayImage(final SimpleDraweeView image, String imgUrl) {
+	public void displayImage(final WrapContentDraweeView image, String imgUrl) {
 		if (imgUrl != null) {
+			image.setLegacyVisibilityHandlingEnabled(true);
 			try {
 				ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(imgUrl))
 						.build();

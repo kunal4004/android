@@ -1,28 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:app="http://schemas.android.com/apk/res-auto"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:background="@color/white"
+        android:clickable="true"
+        android:focusable="true"
+        tools:context="za.co.woolworths.financial.services.android.ui.fragments.CategoryFragment">
 
-    <RelativeLayout
+    <data>
+
+        <import type="android.view.View"/>
+
+        <variable
+            name="handlers"
+            type="za.co.woolworths.financial.services.android.ui.fragments.product.category.CategoryFragment"/>
+
+        <variable
+            name="viewModel"
+            type="za.co.woolworths.financial.services.android.ui.fragments.product.category.CategoryViewModel"/>
+    </data>
+
+    <FrameLayout
+        android:id="@+id/fragment_mainLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/recent_search_bg">
 
-        <LinearLayout
-            android:id="@+id/linStepIndicator"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_alignParentTop="true"
-            android:layout_below="@+id/productToolbar"
-            android:clipToPadding="false"
-            android:orientation="vertical">
+            android:background="@color/recent_search_bg">
 
             <za.co.woolworths.financial.services.android.util.ObservableScrollView
                 android:id="@+id/mNestedScrollview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fillViewport="true"
+                android:scrollbars="none"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
                 <LinearLayout
@@ -32,15 +46,69 @@
                     android:descendantFocusability="blocksDescendants"
                     android:orientation="vertical">
 
-                    <LinearLayout
+                    <RelativeLayout
+                        android:id="@+id/relSearchRowLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:paddingTop="@dimen/default_margin">
+                        android:layout_marginBottom="4dp"
+                        android:layout_marginLeft="@dimen/ten_dp"
+                        android:layout_marginRight="@dimen/ten_dp"
+                        android:layout_marginTop="@dimen/fourty_five_dp"
+                        android:background="@drawable/card_shadow"
+                        android:gravity="center_vertical">
 
-                        <include layout="@layout/search_layout_row"/>
+                        <ImageView
+                            android:id="@+id/imProductSearch"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_alignBottom="@+id/textProductSearch"
+                            android:layout_alignParentStart="true"
+                            android:layout_alignParentTop="true"
+                            android:layout_margin="18dp"
+                            android:src="@drawable/ic_search"/>
 
-                    </LinearLayout>
+                        <LinearLayout
+                            android:id="@+id/llBarcodeScanner"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignBottom="@+id/textProductSearch"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentTop="true"
+                            android:orientation="horizontal">
+
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="match_parent"
+                                android:background="@color/recent_search_bg"/>
+
+                            <ImageView
+                                android:id="@+id/imBarcodeScanner"
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:layout_margin="18dp"
+                                android:src="@drawable/barcode"/>
+
+                        </LinearLayout>
+
+                        <za.co.woolworths.financial.services.android.ui.views.WTextView
+                            android:id="@+id/textProductSearch"
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp"
+                            android:layout_alignParentTop="true"
+                            android:layout_toStartOf="@+id/llBarcodeScanner"
+                            android:background="@android:color/transparent"
+                            android:gravity="start|center"
+                            android:hint="@string/product_search_hint"
+                            android:inputType="textNoSuggestions"
+                            android:maxLines="1"
+                            android:paddingLeft="50dp"
+                            android:paddingRight="@dimen/default_margin"
+                            android:textColor="@color/black"
+                            android:textColorHint="@color/product_search_hint"
+                            android:textSize="16sp"
+                            app:WTextView_font="myriadpro_regular"/>
+
+                    </RelativeLayout>
 
                     <LinearLayout
                         android:id="@+id/llCustomViews"
@@ -51,72 +119,59 @@
                     </LinearLayout>
 
                 </LinearLayout>
-
             </za.co.woolworths.financial.services.android.util.ObservableScrollView>
-        </LinearLayout>
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/productToolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@drawable/appbar_background"
-            android:visibility="visible">
-
-            <RelativeLayout
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/productToolbar"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="?attr/actionBarSize"
+                android:background="@drawable/appbar_background"
+                android:visibility="gone">
 
-                <ImageView
-                    android:id="@+id/imBurgerButtonPressed"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
-                    android:contentDescription="@string/app_name"
-                    android:src="@drawable/ic_drawer_menu"/>
-
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    android:id="@+id/toolbarText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="@dimen/bank_spacing_width"
-                    android:layout_toRightOf="@+id/imBurgerButtonPressed"
-                    android:gravity="left"
-                    android:letterSpacing="0.2"
-                    android:text="@string/nav_item_products"
-                    android:textAllCaps="true"
-                    android:textColor="@color/black"
-                    android:textSize="12sp"
-                    app:WTextView_font="medium_bold"/>
-
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    android:id="@+id/textTBProductSearch"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="38dp"
-                    android:background="@android:color/transparent"
-                    android:gravity="start|center"
-                    android:paddingStart="@dimen/recent_search_margin"
-                    android:text="@string/product_search_hint"
-                    android:textColor="@color/product_search_hint"
-                    android:textSize="16sp"
-                    android:visibility="gone"
-                    app:WTextView_font="myriadpro_regular"/>
+                    android:layout_height="match_parent">
 
-                <ImageView
-                    android:id="@+id/imTBBarcodeScanner"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="@dimen/default_margin"
-                    android:contentDescription="@string/app_name"
-                    android:src="@drawable/barcode"/>
-            </RelativeLayout>
-        </android.support.v7.widget.Toolbar>
-    </RelativeLayout>
+                    <ImageView
+                        android:id="@+id/imBurgerButtonPressed"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:contentDescription="@string/app_name"
+                        android:src="@drawable/ic_search"/>
 
-    <include layout="@layout/no_connection_handler"/>
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        android:id="@+id/textTBProductSearch"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="@dimen/sixteen_dp"
+                        android:background="@android:color/transparent"
+                        android:gravity="start|center"
+                        android:paddingStart="@dimen/recent_search_margin"
+                        android:text="@string/product_search_hint"
+                        android:textColor="@color/product_search_hint"
+                        android:textSize="16sp"
+                        android:visibility="visible"
+                        app:WTextView_font="myriadpro_regular"/>
 
-</FrameLayout>
+                    <ImageView
+                        android:id="@+id/imTBBarcodeScanner"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="@dimen/default_margin"
+                        android:contentDescription="@string/app_name"
+                        android:src="@drawable/barcode"/>
+                </RelativeLayout>
+            </android.support.v7.widget.Toolbar>
+        </RelativeLayout>
+
+        <include
+            android:id="@+id/incNoConnectionHandler"
+            layout="@layout/no_connection_handler"/>
+
+    </FrameLayout>
+
+</layout>

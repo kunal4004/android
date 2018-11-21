@@ -22,16 +22,17 @@ import android.widget.ScrollView;
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AuthoriseLoanRequest;
 import za.co.woolworths.financial.services.android.models.dto.AuthoriseLoanResponse;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.BaseActivity;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
-import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
+import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
@@ -178,9 +179,7 @@ public class LoanWithdrawalConfirmActivity extends BaseActivity implements View.
 							break;
 
 						case 440:
-							SessionExpiredUtilities.INSTANCE.setAccountSessionExpired
-									(LoanWithdrawalConfirmActivity.this,
-											authoriseLoanResponse.response.stsParams);
+							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, authoriseLoanResponse.response.stsParams, LoanWithdrawalConfirmActivity.this);
 							break;
 
 						default:
@@ -297,7 +296,7 @@ public class LoanWithdrawalConfirmActivity extends BaseActivity implements View.
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				if (new ConnectionDetector().isOnline(LoanWithdrawalConfirmActivity.this)) {
+				if (NetworkManager.getInstance().isConnectedToNetwork(LoanWithdrawalConfirmActivity.this)) {
 					if (isLoanWithdrawalClicked()) {
 						hideKeyboard();
 						authoriseLoanWithdrawal();

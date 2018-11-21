@@ -1,17 +1,16 @@
 package za.co.woolworths.financial.services.android.ui.adapters;
 
-
 import android.app.Activity;
-import android.graphics.Paint;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.awfs.coordination.R;
-import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,174 +19,218 @@ import java.util.List;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
+import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridNavigator;
+import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ProductUtils;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.DrawImage;
-import za.co.woolworths.financial.services.android.util.SelectedProductView;
-import za.co.woolworths.financial.services.android.util.WFormatter;
+import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
+import za.co.woolworths.financial.services.android.util.Utils;
 
-public class ProductViewListAdapter extends RecyclerView.Adapter<ProductViewListAdapter.SimpleViewHolder> {
-	private final DrawImage drawImage;
-	public Activity mContext;
-	private List<ProductList> mProductList;
-	private SelectedProductView mSelectedProductView;
+public class ProductViewListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-	public ProductViewListAdapter(Activity mContext, List<ProductList> mProductList,
-								  SelectedProductView selectedProductView) {
-		this.mContext = mContext;
-		this.mProductList = mProductList;
-		this.mSelectedProductView = selectedProductView;
-		drawImage = new DrawImage(mContext);
-	}
+    private final int ITEM_VIEW_TYPE_HEADER = 0;
+    private final int ITEM_VIEW_TYPE_BASIC = 1;
+    private final int ITEM_VIEW_TYPE_FOOTER = 2;
 
-	class SimpleViewHolder extends RecyclerView.ViewHolder {
+    public Activity mContext;
+    private List<ProductList> mProductList;
 
-		WTextView tvSaveText;
-		WTextView tvProductName;
-		WTextView tvAmount;
-		WTextView tvWasPrice;
-		SimpleDraweeView imProductImage;
-		SimpleDraweeView imNewImage;
-		SimpleDraweeView imSave;
-		SimpleDraweeView imReward;
-		SimpleDraweeView imVitality;
+    private GridNavigator mGridNavigator;
+    private boolean value;
 
-		SimpleViewHolder(View view) {
-			super(view);
-			tvProductName = (WTextView) view.findViewById(R.id.tvProductName);
-			tvSaveText = (WTextView) view.findViewById(R.id.tvSaveText);
-			tvAmount = (WTextView) view.findViewById(R.id.textAmount);
-			tvWasPrice = (WTextView) view.findViewById(R.id.textWasPrice);
-			imProductImage = (SimpleDraweeView) view.findViewById(R.id.imProduct);
-			imNewImage = (SimpleDraweeView) view.findViewById(R.id.imNewImage);
-			imSave = (SimpleDraweeView) view.findViewById(R.id.imSave);
-			imReward = (SimpleDraweeView) view.findViewById(R.id.imReward);
-			imVitality = (SimpleDraweeView) view.findViewById(R.id.imVitality);
-		}
-	}
+    public ProductViewListAdapter(Activity mContext, List<ProductList> mProductList,
+                                  GridNavigator gridNavigator) {
+        this.mContext = mContext;
+        this.mProductList = mProductList;
+        this.mGridNavigator = gridNavigator;
+    }
 
-	@Override
-	public void onBindViewHolder(final SimpleViewHolder holder, final int position) {
-		ProductList productItem = mProductList.get(position);
-		if (productItem != null) {
-			String productName = productItem.productName;
-			String externalImageRef = productItem.externalImageRef;
-			String saveText = productItem.saveText;
-			PromotionImages promo = productItem.promotionImages;
-			holder.tvProductName.setText(Html.fromHtml(productName));
+    @Override
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
+        ProductList productList = mProductList.get(position);
+        if (productList.viewTypeHeader) {
+            HeaderViewHolder hvh = (HeaderViewHolder) holder;
+            hvh.setTotalItem(productList);
+        } else if (productList.viewTypeFooter) {
+            ProgressViewHolder pvh = ((ProgressViewHolder) holder);
+            if (!value) {
+                pvh.pbFooterProgress.setVisibility(View.VISIBLE);
+                pvh.pbFooterProgress.setIndeterminate(true);
+            } else pvh.pbFooterProgress.setVisibility(View.GONE);
+        } else {
+            final SimpleViewHolder vh = (SimpleViewHolder) holder;
+            String productName = productList.productName;
+            String externalImageRef = productList.externalImageRef;
+            String saveText = productList.saveText;
+            PromotionImages promo = productList.promotionImages;
+            vh.tvProductName.setText(Html.fromHtml(productName));
 
-			if (!TextUtils.isEmpty(saveText))
-				holder.tvSaveText.setText(saveText);
+            if (!isEmpty(saveText))
+                vh.tvSaveText.setText(saveText);
+            else {
+                final String currentText = vh.tvSaveText.getText().toString();
+                if (currentText != null && !currentText.isEmpty()) {
+                    vh.tvSaveText.setText("");
+                }
+            }
 
-			ArrayList<Double> priceList = new ArrayList<>();
-			for (OtherSkus os : productItem.otherSkus) {
-				if (!TextUtils.isEmpty(os.wasPrice)) {
-					priceList.add(Double.valueOf(os.wasPrice));
-				}
-			}
+            ArrayList<Double> priceList = new ArrayList<>();
+            for (OtherSkus os : productList.otherSkus) {
+                if (!isEmpty(os.wasPrice)) {
+                    priceList.add(Double.valueOf(os.wasPrice));
+                }
+            }
 
-			String wasPrice = "";
-			if (priceList.size() > 0) {
-				wasPrice = String.valueOf(Collections.max(priceList));
-			}
+            String wasPrice = "";
+            if (priceList.size() > 0) {
+                wasPrice = String.valueOf(Collections.max(priceList));
+            }
 
-			String fromPrice = String.valueOf(productItem.fromPrice);
-			productPriceList(holder.tvAmount, holder.tvWasPrice,
-					fromPrice, wasPrice);
+            String fromPrice = String.valueOf(productList.fromPrice);
+            ProductUtils.displayPrice(vh.tvAmount, vh.tvWasPrice,
+                    fromPrice, wasPrice);
 
-			productImage(holder.imProductImage, externalImageRef);
-			promoImages(holder, promo);
-		}
+            productImage(vh.imProductImage, externalImageRef);
+            promoImages(vh, promo);
 
-		holder.itemView.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				mSelectedProductView.onSelectedProduct(v, holder.getAdapterPosition());
-			}
-		});
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mGridNavigator.onGridItemSelected(mProductList.get(holder.getAdapterPosition()));
+                }
+            });
 
-		holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-			@Override
-			public boolean onLongClick(View v) {
-				mSelectedProductView.onLongPressState(v, position);
-				return false;
-			}
-		});
-	}
+        }
+    }
 
-	@Override
-	public SimpleViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-		return new SimpleViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_grid_product, parent, false));
-	}
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        RecyclerView.ViewHolder vh;
+        switch (viewType) {
+            case ITEM_VIEW_TYPE_HEADER:
+                vh = getHeaderViewHolder(parent);
+                break;
 
-	@Override
-	public int getItemCount() {
-		return mProductList.size();
-	}
+            case ITEM_VIEW_TYPE_FOOTER:
+                vh = getProgressViewHolder(parent);
+                break;
 
-	private void productPriceList(WTextView wPrice, WTextView WwasPrice,
-								  String price, String wasPrice) {
-		if (TextUtils.isEmpty(wasPrice)) {
-			wPrice.setText(WFormatter.formatAmount(price));
-			WwasPrice.setText("");
-		} else {
-			if (wasPrice.equalsIgnoreCase(price)) { //wasPrice equals currentPrice
-				wPrice.setText(WFormatter.formatAmount(price));
-				WwasPrice.setText("");
-			} else {
-				wPrice.setText(WFormatter.formatAmount(wasPrice));
-				wPrice.setPaintFlags(wPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-				WwasPrice.setText(WFormatter.formatAmount(price));
-			}
-		}
-	}
+            default:
+                vh = getSimpleViewHolder(parent);
+                break;
+        }
+        return vh;
+    }
 
-	private void productImage(final SimpleDraweeView image, String imgUrl) {
-		if (imgUrl != null) {
-			try {
-				imgUrl = imgUrl + "?w=" + 300 + "&q=" + 85;
-				drawImage.displayImage(image, imgUrl);
-			} catch (IllegalArgumentException ignored) {
-			}
-		}
-	}
+    @NonNull
+    private ProgressViewHolder getProgressViewHolder(ViewGroup parent) {
+        return new ProgressViewHolder(LayoutInflater.from(parent.getContext()).inflate(
+                R.layout.bottom_progress_bar, parent, false));
+    }
 
-	private void promoImages(SimpleViewHolder holder, PromotionImages imPromo) {
+    @NonNull
+    private SimpleViewHolder getSimpleViewHolder(ViewGroup parent) {
+        return new SimpleViewHolder(LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_grid_product, parent, false));
+    }
 
-		DrawImage drawImage = new DrawImage(mContext);
-		if (imPromo != null) {
-			String wSave = imPromo.save;
-			String wReward = imPromo.wRewards;
-			String wVitality = imPromo.vitality;
-			String wNewImage = imPromo.newImage;
+    @NonNull
+    private HeaderViewHolder getHeaderViewHolder(ViewGroup parent) {
+        return new HeaderViewHolder(LayoutInflater.from(parent.getContext()).inflate(
+                R.layout.item_found_layout, parent, false));
+    }
 
-			if (!TextUtils.isEmpty(wSave)) {
-				holder.imSave.setVisibility(View.VISIBLE);
-				drawImage.displaySmallImage(holder.imSave, wSave);
-			} else {
-				holder.imSave.setVisibility(View.GONE);
-			}
+    @Override
+    public int getItemCount() {
+        return mProductList.size();
+    }
 
-			if (!TextUtils.isEmpty(wReward)) {
-				holder.imReward.setVisibility(View.VISIBLE);
-				drawImage.displaySmallImage(holder.imReward, wReward);
-			} else {
-				holder.imReward.setVisibility(View.GONE);
-			}
+    private void productImage(WrapContentDraweeView image, String imgUrl) {
+        if (!isEmpty(imgUrl)) {
+            image.setResizeImage(true);
+            image.setImageURI(imgUrl + ((imgUrl.indexOf("?") > 0) ? "w=" + 300 + "&q=" + 85 : "?w=" + 300 + "&q=" + 85));
+        }
+    }
 
-			if (!TextUtils.isEmpty(wVitality)) {
-				holder.imVitality.setVisibility(View.VISIBLE);
-				drawImage.displaySmallImage(holder.imVitality, wVitality);
-			} else {
-				holder.imVitality.setVisibility(View.GONE);
-			}
+    private void promoImages(SimpleViewHolder holder, PromotionImages imPromo) {
+        setPromotionalImage(holder.imSave, (imPromo == null) ? "" : imPromo.save);
+        setPromotionalImage(holder.imReward, (imPromo == null) ? "" : imPromo.wRewards);
+        setPromotionalImage(holder.imVitality, (imPromo == null) ? "" : imPromo.vitality);
+        setPromotionalImage(holder.imNewImage, (imPromo == null) ? "" : imPromo.newImage);
+    }
 
-			if (!TextUtils.isEmpty(wNewImage)) {
-				holder.imNewImage.setVisibility(View.VISIBLE);
-				drawImage.displaySmallImage(holder.imNewImage, wNewImage);
+    private void setPromotionalImage(WrapContentDraweeView image, String url) {
+        image.setVisibility(isEmpty(url) ? View.GONE : View.VISIBLE);
+        image.setImageURI((isEmpty(url) ? Utils.getExternalImageRef() : url));
+    }
 
-			} else {
-				holder.imNewImage.setVisibility(View.GONE);
-			}
-		}
-	}
+    private boolean isEmpty(String text) {
+        return TextUtils.isEmpty(text);
+    }
+
+    private class ProgressViewHolder extends RecyclerView.ViewHolder {
+        private ProgressBar pbFooterProgress;
+
+        private ProgressViewHolder(View v) {
+            super(v);
+            pbFooterProgress = v.findViewById(R.id.pbFooterProgress);
+        }
+    }
+
+    private class HeaderViewHolder extends RecyclerView.ViewHolder {
+        private WTextView tvNumberOfItem;
+
+        private HeaderViewHolder(View v) {
+            super(v);
+            tvNumberOfItem = v.findViewById(R.id.tvNumberOfItem);
+        }
+
+        private void setTotalItem(ProductList productList) {
+            if (productList.numberOfItems != null)
+                tvNumberOfItem.setText(String.valueOf(productList.numberOfItems));
+        }
+    }
+
+    private class SimpleViewHolder extends RecyclerView.ViewHolder {
+
+        WTextView tvSaveText;
+        WTextView tvProductName;
+        WTextView tvAmount;
+        WTextView tvWasPrice;
+        WrapContentDraweeView imProductImage;
+        WrapContentDraweeView imNewImage;
+        WrapContentDraweeView imSave;
+        WrapContentDraweeView imReward;
+        WrapContentDraweeView imVitality;
+
+        SimpleViewHolder(View view) {
+            super(view);
+            tvProductName = view.findViewById(R.id.tvProductName);
+            tvSaveText = view.findViewById(R.id.tvSaveText);
+            tvAmount = view.findViewById(R.id.textAmount);
+            tvWasPrice = view.findViewById(R.id.textWasPrice);
+            imProductImage = view.findViewById(R.id.imProduct);
+            imNewImage = view.findViewById(R.id.imNewImage);
+            imSave = view.findViewById(R.id.imSave);
+            imReward = view.findViewById(R.id.imReward);
+            imVitality = view.findViewById(R.id.imVitality);
+        }
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (mProductList.get(position).viewTypeHeader) {
+            return ITEM_VIEW_TYPE_HEADER;
+        } else if (mProductList.get(position).viewTypeFooter) {
+            return ITEM_VIEW_TYPE_FOOTER;
+        } else {
+            return ITEM_VIEW_TYPE_BASIC;
+        }
+    }
+
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
 }

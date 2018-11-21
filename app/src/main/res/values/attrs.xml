@@ -108,7 +108,6 @@
     <declare-styleable name="QRCodeView">
         <attr name="boxViewWidth" format="dimension"></attr>
         <attr name="boxViewHeight" format="dimension"></attr>
-        <attr name="maskColor" format="color"></attr>
         <attr name="boxViewCornerColor" format="color"></attr>
         <attr name="boxViewBorderColor" format="color"></attr>
         <attr name="boxViewCornerSize" format="dimension"></attr>
@@ -152,5 +151,17 @@
         <attr name="startAngle" format="integer"/>
         <attr name="textProgressEnable" format="boolean"/>
     </declare-styleable>
-
+    <declare-styleable name="CodeScannerView">
+        <attr name="maskColor" format="color"/>
+        <attr name="frameColor" format="color"/>
+        <attr name="autoFocusButtonColor" format="color"/>
+        <attr name="flashButtonColor" format="color"/>
+        <attr name="autoFocusButtonVisible" format="boolean"/>
+        <attr name="flashButtonVisible" format="boolean"/>
+        <attr name="frameThickness" format="dimension"/>
+        <attr name="frameCornersSize" format="dimension"/>
+        <attr name="frameAspectRatioWidth" format="float"/>
+        <attr name="frameAspectRatioHeight" format="float"/>
+        <attr name="frameSize" format="float"/>
+    </declare-styleable>
 </resources>

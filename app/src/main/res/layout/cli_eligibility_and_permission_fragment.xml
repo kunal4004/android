@@ -6,7 +6,7 @@
             android:background="@color/default_background"
             android:orientation="vertical"
             android:scrollbars="none"
-            tools:context="za.co.woolworths.financial.services.android.ui.fragments.CLIEligibilityAndPermissionFragment">
+            tools:context="za.co.woolworths.financial.services.android.ui.fragments.cli.CLIEligibilityAndPermissionFragment">
 
     <LinearLayout
         android:layout_width="match_parent"

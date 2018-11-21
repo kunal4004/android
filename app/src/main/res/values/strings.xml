@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-
     <string name="app_name">WOOLWORTHS</string>
     <string name="drawer_faq">FAQ</string>
     <string name="log_in">Sign in</string>
@@ -8,11 +7,20 @@
 
     <string name="credit_card">CREDIT CARD</string>
     <string name="personal_loan">PERSONAL LOAN</string>
-    <string name="my_accounts">MY ACCOUNTS</string>
     <string name="credit_limit">Credit Limit:</string>
-    <string name="available_funds">Available funds</string>
+    <string name="available_funds">Available Funds</string>
     <string name="next_payment_date">Next Payment Due:</string>
-    <string name="minimum_payment">Amount Due</string>
+    <string name="total_amount_due">Min Amount Due:</string>
+    <string name="amount_overdue">Amount Overdue:</string>
+    <string name="balance_at_statement_date">Balance At Statement Date:</string>
+    <string name="deduction_day">Deduction Day:</string>
+    <string name="amount_to_be_debited">Amount to be Debited:</string>
+    <string name="account_status">ACCOUNT STATUS</string>
+    <string name="how_to_pay">HOW TO PAY</string>
+    <string name="active">ACTIVE</string>
+    <string name="account_in_arrears">ACCOUNT IN ARREARS</string>
+    <string name="account_in_arrears_6_months">YOUR ACCOUNT IS MORE THAN 6 MONTHS IN ARREARS.</string>
+    <string name="minimum_amount_due">Min Amount Due</string>
     <string name="next">NEXT</string>
     <string name="current_balance">Current Balance:</string>
     <string name="cancel" tools:ignore="ButtonCase">CANCEL</string>
@@ -22,6 +30,10 @@
     <string name="valid_until">VALID UNTIL</string>
     <string name="ok">OK</string>
     <string name="retry">RETRY</string>
+    <string name="debit_order_title">DEBIT ORDER debit_order_status</string>
+    <string name="debit_order_description">Your Debit Order is currently debit_order_status. See your debit order details below.</string>
+    <string name="account_in_arrears_info_title">YOUR ACCOUNT IS IN ARREARS</string>
+    <string name="account_in_arrears_info_description">Your Woolies card_name is in arrears, please make an immediate minimum payment of minimum_payment in order to continue shopping.\n\nFor assistance, call us on 0861 50 20 20</string>
 
     <string name="valued">VALUED</string>
     <string name="loyal">LOYAL</string>
@@ -40,30 +52,29 @@
     <string name="google_maps">GOOGLE MAPS</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="km">km</string>
-    <string name="linked_cards">LINKED CARDS</string>
-    <string name="contact_us">Contact us</string>
-    <string name="submit_query">Submit Query</string>
-    <string name="faqs">FAQs</string>
+    <string name="contact_us">Contact Us</string>
+    <string name="cart">Cart</string>
+    <string name="delivery_location">Delivery Location</string>
+    <string name="previously_selected_locations">Previously Selected Locations</string>
+    <string name="select_your_province">Select your Province</string>
+    <string name="select_your_suburb">Select your Suburb</string>
+    <string name="set_your_delivery_location">Set your Delivery Location</string>
     <string name="sign_out">Sign Out</string>
     <string name="brands">Brands</string>
-    <string name="why_we_need_location_services">Location Services</string>
+    <string name="why_we_need_location_services">WHY WE NEED LOCATION SERVICES</string>
     <string name="location_off_message">Location services allow us to provide store information like opening hours, contact details and directions.</string>
     <string name="go_to_settings">ENABLE LOCATION SERVICES</string>
-
+    <string name="off_instantly">OFF</string>
 
     <string name="nav_item_today">TODAY</string>
-    <string name="nw_today_title">W TODAY</string>
     <string name="nav_item_products">PRODUCTS</string>
-    <string name="nav_item_store">STORES</string>
-    <string name="screen_title_store">STORES NEARBY</string>
     <string name="nav_item_wrewards">WREWARDS</string>
     <string name="nav_item_accounts">MY ACCOUNTS</string>
     <string name="increase_limit">Increase Limit</string>
     <string name="apply_now">APPLY NOW</string>
-    <string name="woolworths_financial_services">Woolworths financial services</string>
     <string name="the_benefits">The benefits:</string>
     <string name="shop_anywhere">Shop anywhere</string>
-    <string name="shop_any_where_description">Your Woolworths Credit Card is internationally recognised and accepted at 29 million outlets around the world wherever you see the Visa sign.</string>
+    <string name="shop_any_where_description">Your Woolworths Credit Card is internationally recognised and accepted at 29 million merchants around the world, wherever you see the Visa sign.</string>
     <string name="cc_to_qualify">To qualify, you have to:</string>
     <string name="bring_following_while_collecting">Bring the following when you collect your Store Card:</string>
     <string name="cash_when_you_need_it">Cash when you need it:</string>
@@ -92,7 +103,7 @@
     <string name="fs_call_center_opening_hours">Daily 7.30am - 9pm</string>
     <string name="email_us">email us</string>
     <string name="txt_black_credit_card_query">Black Credit Card query</string>
-    <string name="txt_complaint">Complaints</string>
+    <string name="txt_complaint">Complaint</string>
     <string name="txt_cc_query">Credit Card query</string>
     <string name="txt_wrewards_query">WRewards query</string>
     <string name="txt_insurance_claim">Insurance claim</string>
@@ -140,10 +151,10 @@
     <string name="skip">SKIP</string>
 
     <string name="cli_continue">continue</string>
+    <string name="cli_status_concluded">cli-concluded</string>
     <string name="cli_credit_limit_increase">CREDIT LIMIT INCREASE</string>
     <string name="cli_before_we_get_started">before we get started</string>
 
-    <string name="cli_credit_limit_amount">Credit Limit Amount</string>
     <string name="cli_select_your_bank">Select your bank</string>
     <string name="cli_other_expenses">Other Expenses</string>
     <string name="expense_monthly_credit_payment">Monthly Credit Payments</string>
@@ -156,8 +167,6 @@
     <string name="cli_yes">YES</string>
     <string name="cli_no">No</string>
     <string name="cli_account_type">ACCOUNT TYPE</string>
-    <string name="cli_option_two">FAX US</string>
-    <string name="cli_option_two_desc">Simply fax your documents to us at 021 407 9343. Your ID number will be your reference.</string>
     <string name="loading">LOADING…</string>
     <string name="cli_cancel_application">UNFORTUNATELY WE CANNOT PROCEED</string>
     <string name="cli_lorem_ipsum">Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum </string>
@@ -174,7 +183,7 @@
     <string name="cli_solvency_error">All fields are mandatory.\nIf not applicable, please enter R0.</string>
 
     <string name="cli_pop_confidential_title">UNFORTUNATELY WE CANNOT PROCEED</string>
-    <string name="cli_pop_confidential_desc">You may only apply for a limit increase if your credit profile is in good standing</string>
+    <string name="cli_pop_confidential_desc">We can only continue with your application once you’ve granted us permission to access your consumer credit information.</string>
 
     <string name="cli_pop_insolvency_title">SORRY, WE CANNOT PROCEED WITH YOUR APPLICATION</string>
     <string name="cli_pop_insolvency_desc">Unfortunately we can’t proceed until you no longer have any of these conditions in place.</string>
@@ -228,8 +237,7 @@
     <string name="sign_out_desc">Are you sure you want to sign out? You will need to re-enter your username and password to sign in again.</string>
     <string name="bullet">\u2022</string>
     <string name="sc_points_bring_following_while_collecting_1">A valid South African ID</string>
-    <string name="sc_points_bring_following_while_collecting_2">Your latest three payslips or your last three months’ bank statements</string>
-
+    <string name="sc_points_bring_following_while_collecting_2">Provide your latest payslip or bank statements</string>
     <string name="sc_points_to_qualify_1">Be 18 or older</string>
     <string name="sc_points_to_qualify_2">Have a valid RSA ID number</string>
     <string name="sc_points_to_qualify_3">Earn a minimum of R2000 per month</string>
@@ -254,21 +262,21 @@
 
     <string name="personal_loan_points_to_qualify_1">Be 18 years of age or older</string>
     <string name="personal_loan_points_to_qualify_2">Have a valid South African ID</string>
-    <string name="personal_loan_points_to_qualify_3">Earn a minimum of R2,000.00 per month</string>
-    <string name="personal_loan_points_to_qualify_4">Provide your latest three payslips or your last three months’ bank statements</string>
+    <string name="personal_loan_points_to_qualify_3">Earn a minimum of R2 000 per month</string>
+    <string name="personal_loan_points_to_qualify_4">Provide your latest payslip or bank statements</string>
     <string name="personal_loan_points_to_qualify_5">Have a bank account in your own name</string>
-    <string name="points_to_qualify_1">Be 18 or older</string>
+    <string name="points_to_qualify_1">Be 18 years of age or older</string>
     <string name="points_to_qualify_2">Have a valid RSA ID number</string>
     <string name="points_to_qualify_3">Earn in excess of R3,000.00 per month</string>
 
-    <string name="points_bring_following_while_collecting_2">Your latest three payslips or your last three months’ bank statements</string>
-    <string name="points_bring_following_while_collecting_3">Proof of residence in the form of a recent utility bill or your original bank statements dated within the last three months</string>
+    <string name="points_bring_following_while_collecting_2">Provide your latest payslip or bank statements</string>
+    <string name="points_bring_following_while_collecting_3">Utility bill or original bank statement dates within the last three months, as proof of residence.</string>
     <string name="terms_conditions">terms &amp; conditions</string>
     <string name="view_general_terms_conditions">view general terms &amp; conditions</string>
     <string name="wrewards_monthly_spend">Monthly Spend</string>
 
     <string name="collect_credit_card_title">When collecting your credit card, bring the following:</string>
-    <string name="collect_credit_card_desc_1">A valid South African ID </string>
+    <string name="collect_credit_card_desc_1">Valid South African ID </string>
 
     <string name="product_search_hint">Search products, brands</string>
     <string name="no_product_found">0 ITEMS FOUND</string>
@@ -291,23 +299,26 @@
     <string name="ssl_error">SSL certificate invalid</string>
     <string name="product_item_found">items found</string>
     <string name="product_size">Size</string>
-    <string name="shop_online_woolies">Shop online</string>
+    <string name="add_to_cart">add to cart</string>
     <string name="add_to_shopping_list">Add to shopping list</string>
+    <string name="add_to_list">ADD TO LIST</string>
+    <string name="edit">EDIT</string>
+    <string name="done">DONE</string>
+    <string name="remove_all">REMOVE ALL</string>
+    <string name="checkout">CHECKOUT</string>
     <string name="product_code">Product Code</string>
     <string name="product_colour">Colour</string>
     <string name="unlinked_account_copy">We see that your Woolies Card is not yet linked. To conveniently view your available funds, next payment due, recent transactions and so much more, please link your Woolies Card now.</string>
     <string name="get_more_back_at_woolies">Get more back at Woolies</string>
-    <string name="get_more_description">Get up to 3\%% back in WRewards quarterly vouchers when shopping at Woolies.</string>
+    <string name="get_more_description">Get up to 3\% back in WRewards quarterly vouchers when shopping at Woolies.</string>
     <string name="cc_cash_when_you_need_it">Cash When You Need It</string>
     <string name="cc_cash_when_you_need_it_description">Use your Woolworths Credit Card to draw cash at any ATM displaying the Visa logo, worldwide.</string>
     <string name="pay_for_fuel">Pay for Fuel</string>
-    <string name="pay_fuel_description">Pay for your fuel with your Woolies Credit Card and get up to 1\%% back in WRewards quarterly vouchers.</string>
+    <string name="pay_fuel_description">Pay for your fuel with your Woolies Credit Card and get up to 1\% back in WRewards quarterly vouchers.</string>
     <string name="plus_for_black_credit_card_only">PLUS (for Black Credit Card only)</string>
     <string name="cc_plus_1">Free Taste magazine vouchers monthly</string>
     <string name="cc_plus_2">2 free coffee vouchers monthly that can be used at any Woolworths Cafe, To Go or Tapas Bar.</string>
     <string name="cc_plus_3">Automatic VIP tier status for the first 12 months and free online delivery for Woolies online purchases (when you pay with your Woolies Black credit card).</string>
-    <string name="checked_item">checked items</string>
-    <string name="shopping_list_header">shopping list</string>
     <string name="added_to_shopping_list">added to shopping list</string>
     <string name="added_to_shopping_list_desc">Your shopping list items can be found in Accounts</string>
     <string name="view_shopping_list">view shopping list</string>
@@ -315,7 +326,7 @@
     <string name="contact_us_customer_service_desc">General enquiries, Online, WRewards, MySchool</string>
     <string name="general_enquiry_desc">Products and instore</string>
     <string name="woolworths_online">Woolworths online</string>
-    <string name="website_and_online_shoppping">Website and online shopping</string>
+    <string name="website_and_online_shoppping">Website and App shopping</string>
     <string name="email_black_credit_card_query">woolworthsblack@wfs.co.za</string>
     <string name="email_complaints">complaints@wfs.co.za</string>
     <string name="email_credicard_query">creditcard@wfs.co.za</string>
@@ -338,7 +349,7 @@
     <string name="wrewards_logout_tag_line">WRewards is our way of rewarding customers INSTANTLY. WRewards members save millions every week.</string>
 
     <string name="contact_us_no_email_error">In order for us to process your query, please send an email to email_address with \"subject_line\" entered in the subject line. Remember to include your ID number in the body of the email.</string>
-    <string name="loading_product_info">Loading product info</string>
+    <string name="loading_product_info">Loading info</string>
 
     <string name="services_unavailable">Services Unavailable</string>
     <string name="please_check_back_later">Please check back later.</string>
@@ -364,7 +375,7 @@
         <item>We have no data for the current year.</item>
         <item>We have no transaction data to show.</item>
         <item>You have no items in your  shopping list yet.</item>
-        <item>When you receive messages you will see them here.</item>
+        <item>When you receive messages you will\n see them here.</item>
     </string-array>
 
     <string name="on_boarding_title_1">WELCOME</string>
@@ -375,14 +386,12 @@
     <string name="please_ensure_connection">Please ensure that you are connected \nto the internet.</string>
     <string name="sso_title_text_submit_this_form">SUBMIT THIS FORM</string>
 
-    <string name="acc_my_detail">My details</string>
+    <string name="acc_my_detail">My Details</string>
     <string name="acc_profile">Profile</string>
     <string name="acc_update_password">Update password</string>
 
     <string name="session_expired_title">SESSION EXPIRED</string>
-    <string name="session_expired_account_desc">Your Accounts session expired. To continue please
-        sign in or cancel to return to the rest of the app.</string>
-    <string name="session_expired_reward_desc">Your WRewards session expired. To continue please
+    <string name="session_expired_desc">Your session expired. To continue please
         sign in or cancel to return to the rest of the app.</string>
     <string name="session_expired_sign_in">sign in</string>
     <string name="view_transactions">View Transactions</string>
@@ -443,19 +452,20 @@
     <string name="partner_spouse_desc">Balance protection insurance for your spouse or partner can also be arranged. An additional monthly premium will be charged.</string>
 
     <string name="instore_withdraw_cash_now">Withdraw Cash Now</string>
+    <string name="debit_orders">Debit Orders</string>
 
     <string name="stock_finder_map_view">map view</string>
     <string name="stock_finder_list_view">list view</string>
     <string name="stock_finder_btn_label">find in-store</string>
     <string name="product_loading_color_size">Loading size &amp; colour</string>
     <string name="find_in_store_info">We update these numbers every few hours. Stock moves quickly, so items may have sold since the last count.</string>
-    <string name="confirm_color_desc">Please confirm your colour</string>
-    <string name="confirm_size_desc">Please confirm your size</string>
+    <string name="confirm_color_desc">select your colour</string>
+    <string name="confirm_size_desc">select your size</string>
     <string name="sf_instore_availability_title">In-Store Availability</string>
     <string name="color">color</string>
     <string name="size">size</string>
     <string name="not_found">Unfortunately not found</string>
-    <string name="stock_available_product">Stores in this area are out of your item (or have very little stock). How about searching our online store</string>
+    <string name="stock_available_product">Stores in this area are out of your item (or have very little stock).</string>
     <string name="back_to_product">back to products</string>
     <string name="no_stock_title">UNFORTUNATELY NOT FOUND</string>
     <string name="location_disable_title">Location Services</string>
@@ -481,6 +491,7 @@
     <string name="cli_step_indicator_expense">Expenses</string>
     <string name="cli_step_indicator_offer">Offer</string>
     <string name="cli_step_indicator_documents">Documents</string>
+    <string name="cli_step_indicator_complete">Complete</string>
     <string name="increase_limit_supply_detail">please supply your income details</string>
     <string name="increase_supply_supply_detail">please supply your expense details</string>
     <string name="increase_my_limit">Increase My Limit</string>
@@ -500,8 +511,6 @@
     <string name="increase_limit_desc">You can apply for a limit increase whenever you need to xxxxx xxxx</string>
 
     <string name="status_in_progress">In Progress</string>
-    <string name="status_offer_available">Offer Available</string>
-    <string name="status_please_try_again">please try again</string>
     <string name="status_poi_required">POI Required</string>
     <string name="status_poi_problem">POI Problem</string>
     <string name="decline">Decline</string>
@@ -509,15 +518,11 @@
     <string name="decline_desc">Are you sure you would like to decline the offer of  #R?</string>
     <string name="find_out_more">Find Out More</string>
     <string name="status_unavailable">unavailable</string>
-    <string name="status_retry">Retry</string>
-    <string name="status_poi">POI</string>
     <string name="status_i_n_e">I \u0026 E</string>
     <string name="status_offer">Offer</string>
     <string name="status_consents">Consents</string>
     <string name="status_decline">Decline</string>
     <string name="status_contact_us">Contact Us</string>
-    <string name="select_from_gallery">select from gallery</string>
-    <string name="status_apply_now">Apply Now</string>
     <string name="poi_income_detail_problem">There is a problem with the income details you submitted.</string>
     <string name="poi_problem_phone_no">+27 21 411 5000</string>
     <string name="request_loan_amount">Current Credit Limit:</string>
@@ -532,27 +537,22 @@
     <string name="uploading_name_address">Name and address must be visible</string>
     <string name="uploading_statement_period">Statement period must be visible</string>
     <string name="uploading_older_month">Can’t be older than 3 months</string>
-    <string name="from_camera">Camera</string>
-    <string name="drawer_open">Open</string>
-    <string name="drawer_close">Close</string>
 
     <!-- Cli carousel: Find Out More -->
     <string name="credit_bureau">Credit bureau</string>
-    <string name="credit_bureau_desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium.</string>
+    <string name="credit_bureau_desc">We will try our best to ensure that you can afford the increased instalments of your new your credit limit. As such we obtain your credit information from various credit bureaus, who maintains the personal details related to your credit history (repayment behaviour, amount of credit you have available, outstanding debt collections and other).</string>
     <string name="txt_proof_of_income">Proof of income</string>
-    <string name="txt_proof_of_income_desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium.</string>
+    <string name="txt_proof_of_income_desc">With all credit applications, we are required to verify your income. To do so we need to obtain your latest payslip or bank statements reflecting your income.</string>
 
     <!-- Cli carousel: Complete process title -->
-    <string name="process_complete_title">Thank you, Your application is being processed.</string>
-    <string name="process_complete_desc">We will be in contact with you within
-        two working days. Please watch the app for updates on the progress of your application.</string>
+    <string name="process_complete_title">Thanks for your application.</string>
+    <string name="process_complete_desc">Please check on the app to get regular updates as to your application progress.</string>
     <string name="process_complete_back_account">back to my account</string>
-    <string name="status_document_required">Documents Required</string>
+    <string name="process_complete_no_poi_title">CONGRATULATIONS</string>
+    <string name="process_complete_no_poi_desc">Your credit limit increase has been approved and is now available. Happy shopping!</string>
     <string name="back_to_my_account">back to my account</string>
     <string name="account_type">### account type</string>
     <string name="account_saving_title">### savings account</string>
-    <string name="cli_poi_email_decription">Please submit POI documents to the email address listed below.</string>
-    <string name="cli_poi_email_id">poi@woolworths.co.za</string>
 
     <string name="no_internet_title">OOPS. SOMETHING WENT WRONG!</string>
     <string name="no_internet_subtitle">Please try again.</string>
@@ -562,12 +562,10 @@
     <string name="proof_of_income_document">proof of income documents</string>
     <string name="take_clear_photo">Take clear photos of your documents and email them to us at cliproofofincome@wfs.co.za. Your ID number will be your reference.</string>
     <string name="proof_of_income_requirement">Proof of income Requirements:</string>
-    <string name="proof_of_income_statement_description">In order to complete your application, we require your latest 3 months’ bank statements or last 3 months payslips.</string>
+    <string name="proof_of_income_statement_description">In order to complete your application, we require your latest 1 months’ bank statements or last months payslips.</string>
     <string name="cli_proceed_description">Don’t have the required documents right now or need more detailed instructions?  Simply click below and we will send an email to you, so you can complete the process</string>
     <string name="cli_email_sent_document_title">documents sent to:</string>
     <string name="cli_email_sent_description">Please follow the instructions we’ve sent to your email. If you didn’t receive the email, please check your spam folder.</string>
-    <string name="read_more">Read more...</string>
-    <string name="read_less">\n\nLess.</string>
     <string name="proceed">proceed</string>
     <string name="status_complete">complete</string>
     <string name="proof_of_income_popup_desc">Your credit limit increase is subject to the condition that proof of income is provided within 30 (thirty) days from the date of accepting the credit limit increase. Submission outside this period will result in the lapse of the offer.\n\nIf your proof of income is lower than the amount you disclosed, we will re-calculate your credit limit increase amount and notify you accordingly. You will only have access to the credit limit increase once proof of income is received.</string>
@@ -588,8 +586,213 @@
     <string name="no_statements">No Statements</string>
     <string name="no_statements_desc">We have no data for the current period.</string>
     <string name="account_statement">account statement</string>
-    <string name="account_type_info_desc">I agree that Woolworths Financial Services may request my latest 3 months bank statement directly from my bank.</string>
+    <string name="account_type_info_desc">I agree that Woolworths Financial Services may request my bank statement directly from my bank.</string>
     <string name="cli_declined_popup_title">APPLICATION DECLINED</string>
     <string name="cli_declined_popup_description">Oh no - your limit increase application has been declined at this time. Feel free to apply again.</string>
-    <string name="cli_create_application_error_message">Unfortunately we cannot proceed with your application</string>
+    <string name="store_locator">Store Locator</string>
+    <string name="my_lists">My Shopping Lists</string>
+    <string name="messages">Messages</string>
+    <string name="order_history">Order History</string>
+    <string name="link_your_woolies_card_today">Link Your Woolies Card Today</string>
+    <string name="cart_free_delivery_first_order">WRewards members get instant savings on selected items. Pay with your Woolies Store or Credit Card and get an extra 5% off</string>
+
+    <!-- Bottom navigation activity -->
+
+    <string name="title_activity_bottom_navigation">BottomNavigationActivity</string>
+    <string name="bottom_title_today">Today</string>
+    <string name="bottom_title_product">Shop</string>
+    <string name="bottom_title_cart">My Cart</string>
+    <string name="bottom_title_reward">WRewards</string>
+    <string name="bottom_title_account">Accounts</string>
+    <string name="title_activity_main">ShoppingListActivity</string>
+    <string name="lets_make_it_easy_for_you">Let us make it easy for you – we can request your electronic bank statement directly from your bank at no cost to you.</string>
+    <string name="statement_send_email_false_desc">Oops, There seems to be a problem. Please try again later. </string>
+    <string name="edit_quantity">edit your quantity</string>
+    <string name="delivery_location_title">delivery location</string>
+    <string name="your_delivery_location_is_set_to">Your delivery location is set to:</string>
+    <string name="confirm_your_location">Confirm location</string>
+    <string name="edit_delivery_location"><u>edit delivery location</u></string>
+    <string name="added_to">added to </string>
+    <string name="empty_cart_desc">We see that you currently have no items in\n your cart. Would you like to start shopping?</string>
+    <string name="start_shopping">start shopping</string>
+    <string name="delete">delete</string>
+    <string name="title_my_list">My Shopping Lists</string>
+
+    <!-- new list item-->
+    <string name="create_list">create list</string>
+    <string name="new_list">new list</string>
+    <string name="shopping_search_hint">Search products to add to your list</string>
+    <string name="delivery_confirmation_desc">* Delivery cost to be confirmed before payment</string>
+    <string name="total_item">Total*</string>
+    <string name="rlOtherDiscounts"><![CDATA[WRewards Savings & Other Discounts]]></string>
+    <string name="out_of_stock">out of stock</string>
+    <string name="out_of_stock_desc">Unfortunately this item is currently out of stock.</string>
+    <string name="out_of_stock_err">some of the products chosen are out of stock, please come back later!!</string>
+    <string name="promotional_text">You saved </string>
+    <string name="enter_list_name">Enter list name</string>
+    <string name="select_all">SELECT ALL</string>
+    <string name="deselect_all">DESELECT ALL</string>
+    <string name="title_empty_shopping_list">Shopping list is empty</string>
+    <string name="description_empty_shopping_list">Search for products to start adding \n items to this list.</string>
+    <string name="button_empty_shopping_list">Search Products</string>
+    <string name="title_no_shopping_lists">You have no lists</string>
+    <string name="description_no_shopping_lists">Shopping lists makes it easier and faster to get \n your favourite Woolworths products.</string>
+    <string name="button_no_shopping_lists">create a list</string>
+    <string name="single_item_text">item</string>
+    <string name="multiple_item_text">items</string>
+    <string name="shopping_list">shopping list</string>
+    <string name="select">select</string>
+    <string name="product_unavailable">product unavailable</string>
+    <string name="acc_my_preferences">My Preferences</string>
+    <string name="authenticate_with_touch_id">Authenticate using Biometrics</string>
+    <string name="biometrics_authentication">BIOMETRICS/PIN</string>
+    <string name="biometrics_description">This allows you to easily access secure features in the app by using the biometric reader on your device.</string>
+    <string name="favourite_delivery_location_description">In order to improve your shopping experience you can set your favourite delivery location. We will use this as your default delivery location.</string>
+    <string name="product_unavailable_desc">Sorry, this product is unavailable in your delivery location</string>
+    <string name="delivering_to">Delivering to</string>
+    <string name="delivering_location_popup_message">Your Delivery Location must match your Delivery Address in Checkout. Changing your Delivery Location can affect the product availability of items in your cart.</string>
+    <string name="confirm_size_range_desc">size range</string>
+    <string name="set_up_device_biometrics_title">BIOMETRICS&#47;PIN</string>
+    <string name="set_up_device_biometrics_desc">You need to set up Biometrics on your device in order to activate this feature.</string>
+    <string name="enter_password">ENTER PASSWORD</string>
+    <string name="biometrics_security_info">Please remember that the security of your phone is your responsibility. See our terms and conditions for more.</string>
+    <string name="available_sizes">available sizes</string>
+    <string name="only_rands_no_cents">Please only enter Rand values and no cents.</string>
+    <string name="favourite_delivery_location">Favourite Delivery Location</string>
+    <string name="text_new">NEW</string>
+    <string name="walkthrough_biometrics_title">we’ve added \n biometrics authentication</string>
+    <string name="walkthrough_biometrics_desc">You can now easily access secure features in the app by using the biometrics reader on your device.</string>
+    <string name="walkthrough_barcode_title">BARCODE SCANNER</string>
+    <string name="walkthrough_barcode_desc">Scan a product barcode to view the product information or seamlessly add it to your shopping list.</string>
+    <string name="previous">previous</string>
+    <string name="need_help">Need Help</string>
+    <string name="tips_tricks">Tips &amp; Tricks</string>
+    <string name="tips_tricks_titles_vouchers">Vouchers</string>
+    <string name="tips_tricks_titles_stores">Find a Product in-Store</string>
+    <string name="tips_tricks_titles_barcode">Barcode Scanner</string>
+    <string name="tips_tricks_titles_delivery">Delivery Location</string>
+    <string name="tips_tricks_titles_navigation">My Cart</string>
+    <string name="tips_tricks_titles_my_accounts">Accounts</string>
+    <string name="tips_tricks_titles_statements">Statements</string>
+    <string name="tips_tricks_titles_shopping_list">Shopping Lists</string>
+    <string name="tips_tricks_desc_vouchers">View your latest vouchers and redeem them in-store. Make sure you use them before the expiry date.</string>
+    <string name="tips_tricks_desc_stores">Want to know if a product is available in-store before you jump in your car to go shop?</string>
+    <string name="tips_tricks_desc_barcode">Scan a product barcode to view the product information or seamlessly add it to your shopping list.</string>
+    <string name="tips_tricks_desc_delivery">The location at the top is your default delivery location. If you need products delivered elsewhere be sure to change this.</string>
+    <string name="tips_tricks_desc_navigation">Simply click the cart icon in the navigation to view your basket.</string>
+    <string name="tips_tricks_desc_my_accounts">See all your active financial products available balance, amount due and credit limit.</string>
+    <string name="tips_tricks_desc_statements">Select, send and view your latest statements.</string>
+    <string name="tips_tricks_desc_shopping_list">Create and manage shopping lists and easily add a list to your cart.</string>
+    <string name="tips_tricks_button_vouchers">redeem a voucher today</string>
+    <string name="tips_tricks_button_stores">check in-Store availability</string>
+    <string name="tips_tricks_button_barcode">Scan a product</string>
+    <string name="tips_tricks_button_delivery">Set Your Delivery Location</string>
+    <string name="tips_tricks_button_navigation">START SHOPPING</string>
+    <string name="tips_tricks_button_my_accounts">check your account status</string>
+    <string name="tips_tricks_button_statements">view your statements</string>
+    <string name="tips_tricks_button_shopping_list">start creating shopping lists</string>
+    <string name="hide_feature_tutorials">hide feature tutorials</string>
+    <string name="new_feature_tutorials">New Feature Tutorials</string>
+    <string name="scan_your_first_product">SCAN your first PRODUCT</string>
+    <string name="check_in_store_availability">check in-store availability</string>
+    <string name="redeem_voucher_today">REDEEM A VOUCHER TODAY</string>
+    <string name="navigation">Navigation</string>
+    <string name="my_accounts">My Accounts</string>
+    <string name="ways_to_pay_your_account_cc_sc">There are 4 easy ways to pay your account:</string>
+    <string name="how_to_pay_1">By Debit Order</string>
+    <string name="how_to_pay_2">By Electronic Funds Transfer (EFT)</string>
+    <string name="how_to_pay_3">At any Woolworths store</string>
+    <string name="how_to_pay_4">At any Absa Bank branch</string>
+    <string name="how_to_pay_bank_details">BANKING DETAILS (EFT &amp; Direct Deposits)</string>
+    <string name="title_how_to_pay">How To Pay</string>
+    <string name="account_charged_of_title">YOUR ACCOUNT IS MORE THAN 6 MONTHS IN ARREARS.</string>
+    <string name="account_charged_of_description">Your account has been handed over to an external collections agency.</string>
+    <string name="title_activity_debit_order">DebitOrderActivity</string>
+    <string name="ways_to_pay_your_account_pl">You can pay your Woolworths Personal Loan in any of the following ways:</string>
+    <string name="account_details_account_holder">Account Holder:</string>
+    <string name="account_details_account_number">Account Number:</string>
+    <string name="account_details_bank">Bank:</string>
+    <string name="account_details_branch_code">Branch Code:</string>
+    <string name="account_details_reference_number">Reference Number:</string>
+    <string name="account_details_swift_code">Swift Code:</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="refine">REFINE</string>
+    <string name="sort_by">SORT BY</string>
+    <string name="refine_reset">reset</string>
+    <string name="refinement_clear">clear</string>
+    <string name="refinement_show_me">show me</string>
+    <string name="refinement_filter_by">filter by</string>
+    <string name="see_results_count_start">SEE RESULTS (</string>
+    <string name="see_results_count_end">)</string>
+    <string name="see_results">SEE RESULTS</string>
+    <!-- MyAccount - Balance Protection Insurance -->
+    <string name="bpi_toolbar_title">Overview</string>
+    <string name="bpi_claim_toolbar_title">Claim</string>
+    <string name="bpi_covered">Covered</string>
+    <string name="bpi_balance_protection_title">Balance Protection</string>
+    <string name="bpi_balance_protection_desc">Cover in the event of your death, retrenchment, disability or a critical illness.</string>
+    <string name="bpi_partner_cover_title">Partner Cover</string>
+    <string name="bpi_partner_cover_desc">Covers you in the event of your partners death, permanent disability or a critical illness.</string>
+    <string name="bpi_additional_death_cover_title">Additional Death Cover</string>
+    <string name="bpi_additional_death_cover_desc">Helps pay for unforeseen expenses in the event of your death.</string>
+    <string name="bpi_additional_death_cover_for_partner_title">Additional Death Cover for Partner</string>
+    <string name="bpi_additional_death_cover_for_partner_desc">Helps pay for unforeseen expenses in the event of your partners death.</string>
+
+    <!-- Balance protection detail -->
+    <string name="bpi_effective_date">Effective date</string>
+    <string name="bpi_benefits">Benefits</string>
+    <string name="bpi_how_to_claim">how to claim</string>
+
+
+    <string name="bpi_balance_protection_benefit_1">Pays the outstanding balance on your account (provided it is not in arrears) in the event of your death, permanent disability, or if you are diagnosed with a critical illness.</string>
+    <string name="bpi_balance_protection_benefit_2">Pays your instalments for up to 12 months from the date you are retrenched or temporarily disabled.</string>
+    <string name="bpi_balance_protection_benefit_3">All cover ceases at the age of 65, except death and critical illness.</string>
+
+
+    <string name="bpi_partner_cover_benefit_1">Pays the outstanding balance on your account (provided it is not in arrears) if your partner passes away, becomes permanently disabled, or is diagnosed with a critical illness.</string>
+    <string name="bpi_partner_cover_benefit_2">Pays your instalments for up to 12 months starting from the date your partner is retrenched or temporarily disabled.</string>
+    <string name="bpi_partner_cover_benefit_3">All cover ceases at the age of 65, except death and a critical illness.</string>
+
+    <string name="bpi_additional_death_cover_1">Pays R20 000 cash to a nominated beneficiary when you pass away.</string>
+    <string name="bpi_additional_death_cover_2">Helps your family handle any unforeseen expenses in the event of your passing.</string>
+
+    <string name="bpi_additional_death_cover_for_partner_1">Pays R20 000 cash to you or a nominated beneficiary when your partner or spouse passes away.</string>
+    <string name="bpi_additional_death_cover_for_partner_2">Helps your family handle any unforeseen expenses in the event of the passing of your partner or spouse.</string>
+    <string name="bpi_bullet">•</string>
+
+
+    <string name="bpi_card_balance_protection_title">Card Balance Protection</string>
+    <string name="bpi_card_balance_protection_desc">Cover in the event of your death, retrenchments, disability or a critical illness.</string>
+
+    <string name="bpi_loan_balance_protection_title">Loan Balance Protection</string>
+    <string name="bpi_loan_balance_protection_desc">Cover in the event of your death, disability, retrenchment or a critical illness.</string>
+
+    <string name="bpi_companion_care_title">Companion Care</string>
+    <string name="bpi_companion_care_desc">Covers you in the event of your partners death.</string>
+
+    <string name="bpi_balance_protection_65_above_title">Balance Protection (65+)</string>
+    <string name="bpi_balance_protection_sixty_65_above_desc">Cover in the event of your death or a critical illness.</string>
+
+    <string name="bpi_partner_cover_65_above_title">Partner Cover (65+)</string>
+    <string name="bpi_partner_cover_65_above_desc">Covers you in the event of your partners death or a critical illness.</string>
+
+
+    <string name="bpi_card_balance_protection_benefits_1">Pays the outstanding balance on your account (provided it is not in arrears) in the event of your death, permanent disability, or if you are diagnosed with a critical illness.</string>
+    <string name="bpi_card_balance_protection_benefits_2">Pays your instalments for up to 12 months from the date you are retrenched or temporarily disabled.</string>
+    <string name="bpi_card_balance_protection_benefits_3">Pays R2500 cash to a nominated beneficiary when you pass away due to natural causes or R5000 cash if your passing is accidental.</string>
+    <string name="bpi_card_balance_protection_benefits_4">Helps your family handle any unforeseen expenses in the event of your passing.</string>
+
+    <string name="bpi_loan_balance_protection_benefits_1">Pays the outstanding balance on your account (provided it is not in arrears) in the event of your death, permanent disability, or if you are diagnosed with a critical illness.</string>
+    <string name="bpi_loan_balance_protection_benefits_2">Pays your instalments for up to 12 months from the date you are retrenched or temporarily disabled.</string>
+
+
+    <string name="bpi_companion_care_benefits_1">Pays the outstanding balance on your account (provided it is not in arrears) in the event of your partner’s death.</string>
+
+    <string name="bpi_partner_cover_65_years_benefit_1">Pays the outstanding balance on your account (provided it is not in arrears) if your partner passes away or if your partner is diagnosed with a critical illness.</string>
+
+    <string name="bpi_balance_protection_65_years_benefit_1">Pays the outstanding balance on your account (provided it is not in arrears) in the event of your death, or if you are diagnosed with a critical illness.></string>
+    <string name="app_maintenance_message">Oops… something went wrong.\nPlease try again later</string>
+
+
+
 </resources>

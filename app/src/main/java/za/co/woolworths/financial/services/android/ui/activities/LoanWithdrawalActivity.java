@@ -34,16 +34,17 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.IssueLoanRequest;
 import za.co.woolworths.financial.services.android.models.dto.IssueLoanResponse;
 import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.BaseActivity;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
-import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
+import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -188,7 +189,7 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 				previousScreen();
 				return true;
 			case R.id.itemNextArrow:
-				if (new ConnectionDetector().isOnline(this)) {
+				if (NetworkManager.getInstance().isConnectedToNetwork(this)) {
 					showSoftKeyboard();
 				}
 				setLoanWithdrawalClick(true);
@@ -325,9 +326,7 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 							finish();
 							break;
 						case 440:
-							SessionExpiredUtilities.INSTANCE.setAccountSessionExpired
-									(LoanWithdrawalActivity.this, issueLoanResponse
-											.response.stsParams);
+							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, issueLoanResponse.response.stsParams, LoanWithdrawalActivity.this);
 							break;
 
 						default:
@@ -346,6 +345,7 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 								showSoftKeyboard();
 							}
 							break;
+
 					}
 				} catch (
 						Exception ignored)
@@ -562,7 +562,7 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				if (new ConnectionDetector().isOnline(LoanWithdrawalActivity.this)) {
+				if (NetworkManager.getInstance().isConnectedToNetwork(LoanWithdrawalActivity.this)) {
 					try {
 						if (loanAmount() && getLoanWithdrawalClick()) {
 							setAmount();

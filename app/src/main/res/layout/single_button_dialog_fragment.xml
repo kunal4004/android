@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/tvResponseDesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="@dimen/thirty_two_dp"
+        android:background="@color/white"
+        android:gravity="center"
+        android:lineSpacingExtra="1.4dp"
+        android:textColor="@color/semi_transparent_black"
+        android:textSize="15sp"
+        app:WTextView_font="myriadpro_regular"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <View
+        android:id="@+id/vHorizontalDivider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="@dimen/thirty_two_dp"
+        android:background="@color/recent_search_bg"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvResponseDesc"/>
+
+
+    <za.co.woolworths.financial.services.android.ui.views.WButton
+        android:id="@+id/btnCancel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginStart="32dp"
+        android:layout_weight="0.8"
+        android:background="?android:attr/selectableItemBackground"
+        android:gravity="center"
+        android:letterSpacing="0.12"
+        android:paddingBottom="@dimen/bank_spacing_width"
+        android:paddingTop="@dimen/bank_spacing_width"
+        android:text="@string/ok"
+        android:textColor="@color/black"
+        android:textSize="12sp"
+        app:WButton_font="medium_bold"
+        app:WTextView_font="medium_bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/vHorizontalDivider"/>
+
+</android.support.constraint.ConstraintLayout>

@@ -104,13 +104,13 @@ public class WFragmentDrawer extends Fragment {
     }
     public void notifyNavigationDrawer(int voucherCount)
     {
-        mMenuList.get(3).setCount(voucherCount);
+        mMenuList.get(2).setCount(voucherCount);
         adapter.notifyDataSetChanged();
     }
     public void setUp(int fragmentId, final DrawerLayout drawerLayout, final Toolbar toolbar) {
         containerView = getActivity().findViewById(fragmentId);
         mDrawerLayout = drawerLayout;
-        mDrawerToggle = new ActionBarDrawerToggle(getActivity(), drawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close) {
+        mDrawerToggle = new ActionBarDrawerToggle(getActivity(), drawerLayout, toolbar, R.string.app_label, R.string.app_label) {
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);

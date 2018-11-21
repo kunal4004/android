@@ -9,7 +9,7 @@
 
             <stroke
                 android:width="1dp"
-                android:color="@color/outside_border"/>
+                android:color="@color/unavailable"/>
         </shape>
     </item>
 </layer-list>

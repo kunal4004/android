@@ -2,7 +2,10 @@ package za.co.woolworths.financial.services.android.ui.fragments.statement;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
+import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -18,32 +21,34 @@ import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.statement.GetStatement;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
+import za.co.woolworths.financial.services.android.models.dto.statement.StatementResponse;
 import za.co.woolworths.financial.services.android.models.dto.statement.USDocument;
 import za.co.woolworths.financial.services.android.models.dto.statement.USDocuments;
 import za.co.woolworths.financial.services.android.models.dto.statement.UserStatement;
-import za.co.woolworths.financial.services.android.models.dto.statement.StatementResponse;
-import za.co.woolworths.financial.services.android.models.rest.GetStatements;
+import za.co.woolworths.financial.services.android.models.rest.statement.GetStatements;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.StatementAdapter;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FragmentUtils;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
-import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
+import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.StatementUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -106,7 +111,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 	private void showSlideUpPanel() {
 		mSlideUpPanelLayout.setAnchorPoint(1.0f);
 		mSlideUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.ANCHORED);
-		//mSlideUpPanelLayout.setScrollableViewHelper(new NestedScrollableViewHelper(mScrollProductDetail));
+		mSlideUpPanelLayout.setTouchEnabled(false);
 	}
 
 	private void setAdapter() {
@@ -197,7 +202,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 				break;
 
 			case R.id.btnRetry:
-				if (new ConnectionDetector().isOnline(getActivity()))
+				if (NetworkManager.getInstance().isConnectedToNetwork(getActivity()))
 					getStatement();
 				break;
 
@@ -244,7 +249,8 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 							break;
 
 						case 440:
-							SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), response.stsParams);
+
+							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.stsParams, getActivity());
 							break;
 
 						default:
@@ -293,34 +299,41 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 		WoolworthsApplication mWoolWorthsApplication = ((WoolworthsApplication) StatementFragment.this.getActivity().getApplication());
 		showViewProgress();
 
-		mWoolWorthsApplication.getAsyncApi().getPDFResponse(mGetStatementFile, new Callback<String>() {
+		mWoolWorthsApplication.getAsyncApi().getPDFResponse(mGetStatementFile, new Callback<retrofit.client.Response>() {
 
 			@Override
-			public void success(String responseBody, retrofit.client.Response response) {
+			public void success(retrofit.client.Response response, retrofit.client.Response response2) {
 				switch (response.getStatus()) {
 					case 200:
 						try {
 							StatementUtils statementUtils = new StatementUtils(getActivity());
-							statementUtils.savePDF(response.getBody().in());
-							PreviewStatement previewStatement = new PreviewStatement();
-							FragmentUtils fragmentUtils = new FragmentUtils(getActivity());
-							FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-							fragmentUtils.openFragment(fragmentManager,
-									previewStatement, R.id.flAccountStatement);
-							showSlideUpPanel();
+							statementUtils.savePDF(response2.getBody().in());
+							if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+								// Call some material design APIs here
+								PreviewStatement previewStatement = new PreviewStatement();
+								FragmentUtils fragmentUtils = new FragmentUtils(getActivity());
+								FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+								fragmentUtils.openFragment(fragmentManager,
+										previewStatement, R.id.flAccountStatement);
+								showSlideUpPanel();
+							} else {
+								launchOpenPDFIntent();
+							}
 						} catch (Exception ignored) {
 						}
+
 						break;
 					default:
 						break;
 				}
+
 				loadSuccess();
+
 				hideViewProgress();
 			}
 
 			@Override
 			public void failure(RetrofitError error) {
-				Log.e("errorfail", error.toString());
 				if (error.getKind().name().equalsIgnoreCase("NETWORK")) {
 					mErrorHandlerView.showToast();
 					loadFailure();
@@ -394,7 +407,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 			activity.runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					if (new ConnectionDetector().isOnline(getActivity())) {
+					if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
 						if (!loadState.onLoanCompleted()) {
 							getPDFFile();
 						}
@@ -469,6 +482,24 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 		sendUserStatementRequest.documents = usDocuments;
 		sendUserStatementRequest.productOfferingId = String.valueOf(WoolworthsApplication.getProductOfferingId());
 		return sendUserStatementRequest;
+	}
+
+	private void launchOpenPDFIntent() {
+		File file = new File(getActivity().getExternalFilesDir("woolworth") + "/Files/" + "statement.pdf");
+		Intent intent = new Intent(Intent.ACTION_VIEW);
+		intent.setDataAndType(Uri.fromFile(file), "application/pdf");
+		intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+		startActivity(intent);
+	}
+
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		try {
+			Utils.deleteDirectory(new File(getActivity().getExternalFilesDir("woolworth") + "/Files/" + "statement.pdf"));
+		} catch (Exception ex) {
+			Log.d("deleteDirectoryErr", ex.toString());
+		}
 	}
 }
 

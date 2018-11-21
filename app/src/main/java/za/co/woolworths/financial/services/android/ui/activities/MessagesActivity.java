@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -26,22 +27,24 @@ import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
+import za.co.woolworths.financial.services.android.models.dto.DeleteMessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageDetails;
 import za.co.woolworths.financial.services.android.models.dto.MessageRead;
 import za.co.woolworths.financial.services.android.models.dto.MessageReadRequest;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MesssagesListAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
-import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
+import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class MessagesActivity extends AppCompatActivity {
+public class MessagesActivity extends AppCompatActivity implements MesssagesListAdapter.MessageClickListener {
 	public RecyclerView messsageListview;
 	public MesssagesListAdapter adapter = null;
 	public LinearLayoutManager mLayoutManager;
@@ -58,6 +61,8 @@ public class MessagesActivity extends AppCompatActivity {
 	private final ThreadLocal<FragmentManager> fm = new ThreadLocal<>();
 	private ErrorHandlerView mErrorHandlerView;
 	private boolean paginationIsEnabled = false;
+	private int unreadMessageCount = 0;
+	private HttpAsyncTask<String, String, DeleteMessageResponse> mDeleteMessageRequest;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -70,8 +75,8 @@ public class MessagesActivity extends AppCompatActivity {
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setTitle(null);
 		mLayoutManager = new LinearLayoutManager(MessagesActivity.this);
-		messsageListview = (RecyclerView) findViewById(R.id.messsageListView);
-		swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeToRefresh);
+		messsageListview = findViewById(R.id.messsageListView);
+		swipeRefreshLayout = findViewById(R.id.swipeToRefresh);
 		mErrorHandlerView = new ErrorHandlerView(this, woolWorthsApplication,
 				(RelativeLayout) findViewById(R.id.relEmptyStateHandler),
 				(ImageView) findViewById(R.id.imgEmpyStateIcon),
@@ -122,7 +127,7 @@ public class MessagesActivity extends AppCompatActivity {
 		findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (new ConnectionDetector().isOnline(MessagesActivity.this)) {
+				if (NetworkManager.getInstance().isConnectedToNetwork(MessagesActivity.this)) {
 					loadMessages();
 				}
 			}
@@ -233,7 +238,7 @@ public class MessagesActivity extends AppCompatActivity {
 						}
 						break;
 					case 440:
-						SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(MessagesActivity.this, messageResponse.response.stsParams);
+						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, messageResponse.response.stsParams, MessagesActivity.this);
 						break;
 
 					default:
@@ -277,7 +282,6 @@ public class MessagesActivity extends AppCompatActivity {
 			protected void onPostExecute(ReadMessagesResponse readmessageResponse) {
 				super.onPostExecute(readmessageResponse);
 
-
 			}
 		}.execute();
 	}
@@ -319,7 +323,7 @@ public class MessagesActivity extends AppCompatActivity {
 		if (getIntent().hasExtra("fromNotification"))
 			fromNotification = getIntent().getExtras().getBoolean("fromNotification");
 		if (fromNotification) {
-			startActivityForResult(new Intent(MessagesActivity.this, WOneAppBaseActivity.class), 0);
+			startActivityForResult(new Intent(MessagesActivity.this, BottomNavigationActivity.class), 0);
 			finish();
 			overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
 		} else {
@@ -349,6 +353,7 @@ public class MessagesActivity extends AppCompatActivity {
 					messageList = new ArrayList<>();
 					if (messageResponse.messagesList != null && messageResponse.messagesList.size() != 0) {
 						messageList = messageResponse.messagesList;
+						unreadMessageCount = messageResponse.unreadCount;
 						bindDataWithUI(messageList);
 						String unreadCountValue = Utils.getSessionDaoValue(MessagesActivity.this,
 								SessionDao.KEY.UNREAD_MESSAGE_COUNT);
@@ -363,24 +368,29 @@ public class MessagesActivity extends AppCompatActivity {
 						mCurrentPage = 1;
 						mIsLoading = false;
 					} else {
-						assert messageResponse.messagesList != null;
-						if (messageResponse.messagesList.size() == 0) {
-							messsageListview.setVisibility(View.GONE);
-							mErrorHandlerView.hideTitle();
-							mErrorHandlerView.hideIcon();
-							mErrorHandlerView.textDescription(getString(R.string.no_messages_to_display));
+						if (messageResponse.messagesList != null) {
+							if (messageResponse.messagesList.size() == 0) {
+								emptyList();
+							}
 						}
 					}
 					break;
 				case 440:
-					SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(MessagesActivity.this, messageResponse.response.stsParams);
+					SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, messageResponse.response.stsParams, MessagesActivity.this);
 					break;
 				default:
-					Utils.alertErrorMessage(MessagesActivity.this, messageResponse.response.desc);
+					mErrorHandlerView.networkFailureHandler("");
+					Utils.displayValidationMessage(MessagesActivity.this, CustomPopUpWindow.MODAL_LAYOUT.ERROR, messageResponse.response.desc);
 					break;
 			}
 		} catch (Exception ignored) {
 		}
+	}
+
+	private void emptyList() {
+		messsageListview.setVisibility(View.GONE);
+		mErrorHandlerView.setEmptyState(5);
+		mErrorHandlerView.showErrorView();
 	}
 
 	public void networkFailureHandler(final String errorMessage, final int type) {
@@ -404,6 +414,54 @@ public class MessagesActivity extends AppCompatActivity {
 			loadMoreMessages();
 		} else {
 			loadMessages();
+		}
+	}
+
+	@Override
+	public void onDeleteItemClicked(String id) {
+		mDeleteMessageRequest = deleteMessage(id);
+		mDeleteMessageRequest.execute();
+	}
+
+	@Override
+	public void messageInboxIsEmpty(int sizeOfList) {
+		if (sizeOfList == 0) {
+			emptyList();
+		}
+	}
+
+	@SuppressLint("StaticFieldLeak")
+	public HttpAsyncTask<String, String, DeleteMessageResponse> deleteMessage(final String id) {
+		return new HttpAsyncTask<String, String, DeleteMessageResponse>() {
+			@Override
+			protected void onPreExecute() {
+				super.onPreExecute();
+			}
+
+			@Override
+			protected DeleteMessageResponse httpDoInBackground(String... params) {
+				return (WoolworthsApplication.getInstance()).getApi().getDeleteMessagesResponse(id);
+			}
+
+			@Override
+			protected Class<DeleteMessageResponse> httpDoInBackgroundReturnType() {
+				return DeleteMessageResponse.class;
+			}
+
+			@Override
+			protected DeleteMessageResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+				DeleteMessageResponse deleteMessageResponse = new DeleteMessageResponse();
+				deleteMessageResponse.response = new Response();
+				return deleteMessageResponse;
+			}
+		};
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		if (mDeleteMessageRequest != null && !mDeleteMessageRequest.isCancelled()) {
+			mDeleteMessageRequest.cancel(true);
 		}
 	}
 }

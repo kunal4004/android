@@ -14,10 +14,10 @@
         android:layout_height="75dp"
         android:layout_marginBottom="28dp"
         android:contentDescription="@string/no_statements"
-        android:src="@drawable/no_statement_icon"
         app:layout_constraintBottom_toTopOf="@+id/tvNoStatementTitle"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/no_statement_icon"/>
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/tvNoStatementTitle"

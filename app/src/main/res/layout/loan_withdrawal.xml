@@ -141,6 +141,7 @@
                 android:hint=" "
                 android:imeOptions="actionDone"
                 android:inputType="numberDecimal|numberSigned"
+                android:maxLength="13"
                 android:maxLines="1"
                 android:paddingLeft="8dp"
                 android:textColor="@color/white"
