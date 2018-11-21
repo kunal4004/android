@@ -15,7 +15,7 @@ import java.util.List;
 
 import retrofit.RetrofitError;
 import retrofit.client.Response;
-import za.co.woolworths.financial.services.android.ui.activities.maintenance.RuntimeExceptionHelper;
+import za.co.woolworths.financial.services.android.ui.activities.maintenance.MaintenanceMessageViewController;
 
 /**
  * Created by eesajacobs on 2016/07/25.
@@ -46,13 +46,7 @@ public abstract class HttpAsyncTask<Params, Progress, Result> extends AsyncTask<
 
     @Override
     protected void onPostExecute(Result result) {
-        RuntimeExceptionHelper runtimeHelper = new RuntimeExceptionHelper();
-        String httpCode = runtimeHelper.getHttpCode(result);
-        if (httpCode.equalsIgnoreCase("404")) {
-                runtimeHelper.navigateToRuntimeExceptionActivity();
-        } else {
-            super.onPostExecute(result);
-        }
+        super.onPostExecute(result);
     }
 
     @Override
@@ -111,7 +105,11 @@ public abstract class HttpAsyncTask<Params, Progress, Result> extends AsyncTask<
                     }
                 }
             } else {
-                throw new SocketTimeoutException("SocketTimeoutException");
+                if (response.getStatus() == 404 || response.getStatus() == 503) {
+                    MaintenanceMessageViewController maintenanceMessageViewController = new MaintenanceMessageViewController();
+                    maintenanceMessageViewController.presentModal();
+                    return null;
+                }
             }
         }
         return result;
