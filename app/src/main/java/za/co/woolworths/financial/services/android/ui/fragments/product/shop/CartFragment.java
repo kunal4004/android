@@ -1184,4 +1184,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		this.onClick(rlLocationSelectedLayout);
 	}
 
+	@Override
+	public void onPromptDismiss() {
+
+	}
+
 }

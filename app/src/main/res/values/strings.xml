@@ -799,6 +799,12 @@
     <string name="walkthrough_account_action_no_products">apply for an account today</string>
     <string name="walkthrough_account_action">check account status</string>
     <string name="app_maintenance_message">Oops… something went wrong.\nPlease try again later</string>
+    <string name="walkthrough_shopping_list_title">Shopping lists</string>
+    <string name="walkthrough_shopping_list_desc">Create and manage your shopping lists, and add a list to your cart.</string>
+    <string name="walkthrough_shopping_list_action">create a shopping list</string>
+    <string name="walkthrough_statement_title">Access Your Statements</string>
+    <string name="walkthrough_statement_desc">View and send your latest statements for your Woolworths accounts.</string>
+    <string name="walkthrough_statement_action">TAKE ME THERE</string>
 
 
 </resources>

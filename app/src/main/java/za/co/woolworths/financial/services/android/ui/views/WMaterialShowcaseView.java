@@ -65,6 +65,7 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
 
     public interface IWalkthroughActionListener {
         void onWalkthroughActionButtonClick();
+        void onPromptDismiss();
     }
 
     private int mOldHeight;
@@ -292,7 +293,10 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.close:
+                if (actionListener == null)
+                    return;
                 hide();
+                actionListener.onPromptDismiss();
                 break;
             case R.id.actionButton:
                 if (actionListener == null)
@@ -1070,7 +1074,9 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
         DELIVERY_LOCATION(3),
         VOUCHERS(4),
         REFINE(5),
-        ACCOUNTS(6);
+        ACCOUNTS(6),
+        SHOPPING_LIST(7),
+        STATEMENTS(8);
 
         private int value;
 

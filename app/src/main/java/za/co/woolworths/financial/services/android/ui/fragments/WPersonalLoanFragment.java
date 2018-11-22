@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
@@ -7,6 +8,7 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -32,6 +34,7 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
@@ -45,6 +48,7 @@ import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsA
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.bpi.BPIBalanceProtectionActivity;
+import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
@@ -63,7 +67,7 @@ import za.co.woolworths.financial.services.android.util.controller.IncreaseLimit
 
 import static android.app.Activity.RESULT_OK;
 
-public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle, NetworkChangeListener {
+public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle, NetworkChangeListener, WMaterialShowcaseView.IWalkthroughActionListener {
 
 	public WTextView tvIncreaseLimitDescription, availableBalance, creditLimit, dueDate, minAmountDue, currentBalance, tvViewTransaction, tvIncreaseLimit, tvProtectionInsurance;
 	private String productOfferingId;
@@ -440,14 +444,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 				}
 				cliOfferStatus(offerActive);
 			}
-			new Handler().postDelayed(new Runnable(){
-				@Override
-				public void run() {
-					final Rect rect = new Rect(0, 0, rlViewStatement.getWidth(), rlViewStatement.getHeight());
-					rlViewStatement.requestRectangleOnScreen(rect, false);
-				}
-			},1000);
-
+			showFeatureWalkthroughStatements();
 		} catch (IllegalStateException ignored) {
 		}
 	}
@@ -558,5 +555,54 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		mIncreaseLimitController.cliDefaultView(llCommonLayer, tvIncreaseLimitDescription);
 	}
 
+	@SuppressLint("StaticFieldLeak")
+    private void showFeatureWalkthroughStatements() {
+		if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.statements)
+			return;
+		new Handler().postDelayed(new Runnable(){
+			@Override
+			public void run() {
+				final Rect rect = new Rect(0, 0, rlViewStatement.getWidth(), rlViewStatement.getHeight());
+				rlViewStatement.requestRectangleOnScreen(rect, false);
+			}
+		},500);
+        final WMaterialShowcaseView.IWalkthroughActionListener listener = this;
+        new AsyncTask<Void, Void, Void>(){
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+                imViewStatementLogo.invalidate();
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                MyAccountCardsActivity.walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.STATEMENTS)
+                        .setTarget(getActivity().getWindow().getDecorView().findViewById(R.id.imViewStatementLogo))
+                        .setTitle(R.string.walkthrough_statement_title)
+                        .setDescription(R.string.walkthrough_statement_desc)
+                        .setActionText(R.string.walkthrough_statement_action)
+                        .setImage(R.drawable.tips_tricks_statements)
+                        .setAction(listener)
+                        .setAsNewFeature()
+                        .setShapePadding(48)
+                        .setArrowPosition(WMaterialShowcaseView.Arrow.BOTTOM_LEFT)
+                        .setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
+                MyAccountCardsActivity.walkThroughPromtView.show(getActivity());
+            }
+        }.execute();
+
+	}
+
+	@Override
+	public void onWalkthroughActionButtonClick() {
+		onClick(rlViewStatement);
+	}
+
+	@Override
+	public void onPromptDismiss() {
+
+	}
 }
 
