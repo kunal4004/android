@@ -32,6 +32,7 @@ import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsOverviewFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsSavingsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.base.WRewardsFragment;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
@@ -146,7 +147,8 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 		if (pos == 1 && activeVoucherCount > 0) {
 			tv_count.setVisibility(View.VISIBLE);
 			tv_count.setText("" + activeVoucherCount);
-			showFeatureWalkthrough(tv_count);
+			if (getBottomNavigationActivity().getCurrentFragment() instanceof WRewardsFragment)
+				showFeatureWalkthrough(tv_count);
 		} else {
 			tv_count.setVisibility(View.GONE);
 		}
@@ -331,5 +333,10 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 				viewPager.setCurrentItem(1);
 			}
 		});
+	}
+
+	@Override
+	public void onPromptDismiss() {
+
 	}
 }

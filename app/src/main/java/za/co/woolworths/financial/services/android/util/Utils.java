@@ -1272,6 +1272,12 @@ public class Utils {
 			case ACCOUNTS:
 				appInstanceObject.featureWalkThrough.account = true;
 				break;
+			case SHOPPING_LIST:
+				appInstanceObject.featureWalkThrough.shoppingList = true;
+				break;
+			case STATEMENTS:
+				appInstanceObject.featureWalkThrough.statements = true;
+				break;
 			default:
 				break;
 		}

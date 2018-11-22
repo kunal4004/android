@@ -275,7 +275,7 @@
     <integer-array name="tips_tricks_images">
         <item>@drawable/tips_tricks_navigation</item>
         <item>@drawable/tips_tricks_barcode</item>
-        <item>@drawable/tips_tricks_barcode</item>
+        <item>@drawable/tips_tricks_refine</item>
         <item>@drawable/tips_tricks_stores</item>
         <item>@drawable/tips_tricks_delivery_location</item>
         <item>@drawable/tips_tricks_vouchers</item>
@@ -291,9 +291,9 @@
         <item>@drawable/mapview</item>
         <item>@drawable/ic_delivery_truck</item>
         <item>@drawable/icon_wreward</item>
-        <item>@drawable/barcode</item>
-        <item>@drawable/mapview</item>
-        <item>@drawable/ic_delivery_truck</item>
+        <item>@drawable/ic_profile</item>
+        <item>@drawable/ic_statements</item>
+        <item>@drawable/ic_lists</item>
     </integer-array>
 
     <string-array name="tips_tricks_item_names">

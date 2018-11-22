@@ -565,6 +565,11 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 			onClick(getViewDataBinding().sortAndRefineLayout.refineProducts);
 	}
 
+	@Override
+	public void onPromptDismiss() {
+
+	}
+
 	public boolean getRefinementViewState(ArrayList<RefinementNavigation> navigationList) {
 		if (navigationList.size() == 0)
 			return false;

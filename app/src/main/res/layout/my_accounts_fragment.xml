@@ -109,10 +109,12 @@
                         android:visibility="visible"/>
 
                     <include
+                        android:id="@+id/linkedLayout"
                         layout="@layout/account_linked_layout"
                         android:visibility="visible"/>
 
                     <include
+                        android:id="@+id/applyNowLayout"
                         layout="@layout/account_apply_layout"
                         android:visibility="visible"/>
 
@@ -158,10 +160,20 @@
                                 style="@style/listStyle"
                                 android:background="@drawable/stores_details_background">
 
+                                <ImageView
+                                    android:id="@+id/myListIcon"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentLeft="true"
+                                    android:layout_centerVertical="true"
+                                    android:background="@{@drawable/shopping_list_icon}" />
+
                                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                                     style="@style/accountsItem"
-                                    android:drawableLeft="@{@drawable/shopping_list_icon}"
-                                    android:text="@string/my_lists"/>
+                                    android:layout_toRightOf="@id/myListIcon"
+                                    android:drawablePadding="0dp"
+                                    android:paddingLeft="@dimen/sixteen_dp"
+                                    android:text="@string/my_lists" />
 
                                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                                     android:id="@+id/listsCounter"

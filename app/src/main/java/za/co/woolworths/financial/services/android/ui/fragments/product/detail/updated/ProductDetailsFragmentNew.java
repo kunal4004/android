@@ -1239,6 +1239,11 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 			this.onClick(btnFindInStore);
 	}
 
+	@Override
+	public void onPromptDismiss() {
+
+	}
+
 	public void setPromotionalText(ProductDetails productDetails) {
 		if (!TextUtils.isEmpty(productDetails.saveText)) {
 			txtSaveText.setVisibility(View.VISIBLE);

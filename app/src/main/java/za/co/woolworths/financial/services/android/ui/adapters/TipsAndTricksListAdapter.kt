@@ -24,7 +24,7 @@ class TipsAndTricksListAdapter(val context: Activity, val listner: TipsAndTricks
 
     override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
         holder?.tvTipName?.text = names[position]
-        holder?.tvTipName?.setCompoundDrawablesRelativeWithIntrinsicBounds(icons.getResourceId(position, -1), 0, 0, 0)
+        holder?.imgIcon?.setBackgroundResource(icons.getResourceId(position, -1))
         holder?.container?.setOnClickListener { listner.onListItemSelected(position) }
     }
 
@@ -35,6 +35,7 @@ class TipsAndTricksListAdapter(val context: Activity, val listner: TipsAndTricks
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         // Holds the TextView that will add each animal to
         val tvTipName = view.name
+        val imgIcon = view.listIcon
         val container = view
     }
 

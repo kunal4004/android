@@ -7,6 +7,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -69,7 +70,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.dashboar
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_REWARD;
 
-public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, MyAccountsViewModel> implements View.OnClickListener, ViewPager.OnPageChangeListener, MyAccountsNavigator {
+public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, MyAccountsViewModel> implements View.OnClickListener, ViewPager.OnPageChangeListener, MyAccountsNavigator, WMaterialShowcaseView.IWalkthroughActionListener {
 
 	private final String TAG = this.getClass().getSimpleName();
 
@@ -122,6 +123,8 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	ImageView imgCreditCardStatusIndicator;
 	ImageView imgPersonalLoanStatusIndicator;
 	ImageView imgStoreCardApplyNow;
+	RelativeLayout relMyList;
+	int promptsActionListener;
 
 	public MyAccountsFragment() {
 		// Required empty public constructor
@@ -183,7 +186,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			loggedOutHeaderLayout = view.findViewById(R.id.loggedOutHeaderLayout);
 			loggedInHeaderLayout = view.findViewById(R.id.loggedInHeaderLayout);
 			unlinkedLayout = view.findViewById(R.id.llUnlinkedAccount);
-			RelativeLayout relMyList = view.findViewById(R.id.myLists);
+			relMyList = view.findViewById(R.id.myLists);
 			signOutBtn = view.findViewById(R.id.signOutBtn);
 			myDetailBtn = view.findViewById(R.id.rlMyDetails);
 			myPreferences = view.findViewById(R.id.rlMyPreferences);
@@ -355,7 +358,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		viewPager.setAdapter(adapter);
 		viewPager.setCurrentItem(0);
 		if (SessionUtilities.getInstance().isUserAuthenticated() && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment)
-			showFeatureWalkthrough(unavailableAccounts);
+			showFeatureWalkthroughAccounts(unavailableAccounts);
 	}
 
 	private void configureSignInNoC2ID() {
@@ -884,33 +887,131 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		anim.setDuration(500).start();
 	}
 
-	private void showFeatureWalkthrough(List<String> unavailableAccounts) {
-		if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.account)
+	@SuppressLint("StaticFieldLeak")
+	private void showFeatureWalkthroughAccounts(List<String> unavailableAccounts) {
+		if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.account) {
+			showFeatureWalkthroughShoppingList();
 			return;
-		View target = null;
-		if(unavailableAccounts.size() == 3)
-			target = imgStoreCardApplyNow;
-		else {
-			if(!unavailableAccounts.contains("SC")){
-				target=imgStoreCardContainer;
-			}else if(!unavailableAccounts.contains("CC")){
-				target=imgCreditCard;
-			}else if(!unavailableAccounts.contains("PL")){
-				target=imgPersonalLoanCardContainer;
+		}
+		View viewToScrollUp = null;
+		String actionText = getActivity().getResources().getString(R.string.walkthrough_account_action);
+		if (unavailableAccounts.size() == 3) {
+			viewToScrollUp = imgStoreCardApplyNow;
+			actionText = getActivity().getResources().getString(R.string.walkthrough_account_action_no_products);
+		} else {
+			if (!unavailableAccounts.contains("SC")) {
+				viewToScrollUp = imgStoreCardContainer;
+			} else if (!unavailableAccounts.contains("CC")) {
+				viewToScrollUp = imgCreditCard;
+			} else if (!unavailableAccounts.contains("PL")) {
+				viewToScrollUp = imgPersonalLoanCardContainer;
 			}
 		}
+		final View finalTarget1 = viewToScrollUp;
+		mScrollView.post(new Runnable() {
+			@Override
+			public void run() {
+				ObjectAnimator.ofInt(mScrollView, "scrollY", finalTarget1.getBottom()).setDuration(300).start();
+			}
+		});
 
-		getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.ACCOUNTS)
-				.setTarget(target)
-				.setTitle(R.string.walkthrough_account_title)
-				.setDescription(R.string.walkthrough_account_desc)
-				.setActionText(R.string.walkthrough_account_action)
-				.setImage(R.drawable.tips_tricks_ic_my_accounts)
-				//.setAction(this)
+		promptsActionListener = 1;
+		final View target = getTargetView(unavailableAccounts);
+		final String finalActionText = actionText;
+		final WMaterialShowcaseView.IWalkthroughActionListener listener = this;
+		new AsyncTask<Void, Void, Void>(){
+
+			@Override
+			protected Void doInBackground(Void... voids) {
+				target.invalidate();
+				return null;
+			}
+
+			@Override
+			protected void onPostExecute(Void aVoid) {
+				super.onPostExecute(aVoid);
+				getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.ACCOUNTS)
+						.setTarget(target)
+						.setTitle(R.string.walkthrough_account_title)
+						.setDescription(R.string.walkthrough_account_desc)
+						.setActionText(finalActionText)
+						.setImage(R.drawable.tips_tricks_ic_my_accounts)
+						.setAction(listener)
+						.setAsNewFeature()
+						.setArrowPosition(WMaterialShowcaseView.Arrow.TOP_LEFT)
+						.setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
+				getBottomNavigationActivity().walkThroughPromtView.show(getActivity());
+			}
+		}.execute();
+
+	}
+
+	private void showFeatureWalkthroughShoppingList() {
+		if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.shoppingList)
+			return;
+		promptsActionListener = 2;
+		mScrollView.post(new Runnable() {
+			@Override
+			public void run() {
+				ObjectAnimator.ofInt(mScrollView, "scrollY", relMyList.getBottom() * 4).setDuration(100).start();
+			}
+		});
+		getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.SHOPPING_LIST)
+				.setTarget(getViewDataBinding().myListIcon)
+				.setTitle(R.string.walkthrough_shopping_list_title)
+				.setDescription(R.string.walkthrough_shopping_list_desc)
+				.setActionText(R.string.walkthrough_shopping_list_action)
+				.setImage(R.drawable.tips_tricks_ic_shopping_list)
+				.setAction(this)
 				.setAsNewFeature()
+				.setShapePadding(48)
 				.setArrowPosition(WMaterialShowcaseView.Arrow.TOP_LEFT)
 				.setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
 		getBottomNavigationActivity().walkThroughPromtView.show(getActivity());
 
+	}
+
+	@Override
+	public void onWalkthroughActionButtonClick() {
+		switch (promptsActionListener) {
+			case 1:
+				if (unavailableAccounts.size() == 3) {
+					onClick(applyStoreCardView);
+				} else {
+					if (!unavailableAccounts.contains("SC")) {
+						onClick(linkedStoreCardView);
+					} else if (!unavailableAccounts.contains("CC")) {
+						onClick(linkedCreditCardView);
+					} else if (!unavailableAccounts.contains("PL")) {
+						onClick(linkedPersonalCardView);
+					}
+				}
+				break;
+			case 2:
+				onClick(relMyList);
+				break;
+		}
+	}
+
+	@Override
+	public void onPromptDismiss() {
+		if (promptsActionListener == 1)
+			showFeatureWalkthroughShoppingList();
+	}
+
+	public View getTargetView(List<String> unavailableAccounts) {
+
+		if (unavailableAccounts.size() == 3) {
+			return getViewDataBinding().applyNowLayout.imgStoreCardApply;
+		} else {
+			if (!unavailableAccounts.contains("SC")) {
+				return getViewDataBinding().linkedLayout.imgStoreCard;
+			} else if (!unavailableAccounts.contains("CC")) {
+				return getViewDataBinding().linkedLayout.imgCreditCardLayout;
+			} else if (!unavailableAccounts.contains("PL")) {
+				return getViewDataBinding().linkedLayout.imgPersonalLoan;
+			}
+		}
+		return getViewDataBinding().applyNowLayout.imgStoreCardApply;
 	}
 }
