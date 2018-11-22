@@ -956,11 +956,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 				ObjectAnimator.ofInt(mScrollView, "scrollY", relMyList.getBottom() * 4).setDuration(100).start();
 			}
 		});
-		try {
-			Thread.sleep(500);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 		getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.SHOPPING_LIST)
 				.setTarget(getViewDataBinding().myListIcon)
 				.setTitle(R.string.walkthrough_shopping_list_title)
