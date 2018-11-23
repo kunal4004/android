@@ -925,7 +925,12 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 
 			@Override
 			protected Void doInBackground(Void... voids) {
-				target.invalidate();
+				getActivity().runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						target.invalidate();
+					}
+				});
 				return null;
 			}
 
