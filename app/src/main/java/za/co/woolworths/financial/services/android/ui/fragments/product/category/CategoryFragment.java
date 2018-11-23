@@ -112,6 +112,8 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 			getViewDataBinding().imBurgerButtonPressed.setOnClickListener(this);
 			getViewDataBinding().textTBProductSearch.setOnClickListener(this);
 			getViewDataBinding().imTBBarcodeScanner.setOnClickListener(this);
+			if (!(!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.barcodeScan))
+				setProductSearchViewState(false);
 
 		}
 	}
@@ -394,12 +396,17 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 
 	@Override
 	public void onWalkthroughActionButtonClick() {
+		setProductSearchViewState(true);
 		checkLocationPermission(getBottomNavigator(), getBottomNavigator().getPermissionType(Manifest.permission.CAMERA), 2);
 	}
 
 	@Override
 	public void onPromptDismiss() {
+		setProductSearchViewState(true);
+	}
 
+	public void setProductSearchViewState(boolean viewState){
+		getViewDataBinding().textProductSearch.setEnabled(viewState);
 	}
 
 }

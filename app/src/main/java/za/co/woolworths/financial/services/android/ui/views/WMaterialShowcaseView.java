@@ -267,6 +267,9 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
     }
 
     private void notifyOnDismissed() {
+        if(actionListener!=null)
+            actionListener.onPromptDismiss();
+
         if (mListeners != null) {
             for (IShowcaseListener listener : mListeners) {
                 listener.onShowcaseDismissed(this);
@@ -308,6 +311,7 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
                 if (actionListener == null)
                     return;
                 hide();
+                actionListener.onPromptDismiss();
                 Utils.enableFeatureWalkThroughTutorials(false);
                 break;
             default:

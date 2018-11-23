@@ -947,6 +947,8 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	}
 
 	private void showFeatureWalkthroughShoppingList() {
+		if (!(getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment))
+			return;
 		if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.shoppingList)
 			return;
 		promptsActionListener = 2;
