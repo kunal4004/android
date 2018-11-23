@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.WindowManager;
 
 import com.awfs.coordination.R;
 
@@ -22,6 +23,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		Utils.updateStatusBarBackground(this);
 		setContentView(R.layout.product_details_activity);
 		Bundle bundle = getIntent().getExtras();
