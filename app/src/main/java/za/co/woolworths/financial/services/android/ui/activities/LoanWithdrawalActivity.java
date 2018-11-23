@@ -32,6 +32,7 @@ import com.awfs.coordination.R;
 
 import java.text.DecimalFormat;
 import java.text.ParseException;
+import java.util.StringTokenizer;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -154,7 +155,7 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 			}
 		});
 
-		mEditWithdrawalAmount.addTextChangedListener(new NumberTextWatcher
+		mEditWithdrawalAmount.addTextChangedListener(new NumberTextWatcherForThousand
 				(mEditWithdrawalAmount));
 
 		WLoanEditTextView.OnKeyPreImeListener onKeyPreImeListener =
@@ -448,100 +449,131 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 		}
 	}
 
-	private class NumberTextWatcher implements TextWatcher {
 
-		private DecimalFormat df;
-		private DecimalFormat dfnd;
+	public class NumberTextWatcherForThousand implements TextWatcher {
+		int previousLength;
+		boolean backSpace;
+		EditText edtLoanWiddrawal;
 
-		private EditText et;
-		private int mPreviousLength;
-
-		public NumberTextWatcher(EditText et) {
-			df = new DecimalFormat("##,###.##");
-			df.setDecimalSeparatorAlwaysShown(true);
-			dfnd = new DecimalFormat("#,###");
-			this.et = et;
+		private NumberTextWatcherForThousand(EditText edtLoanWiddrawal) {
+			this.edtLoanWiddrawal = edtLoanWiddrawal;
 		}
 
-		@SuppressWarnings("unused")
-		private static final String TAG = "NumberTextWatcher";
+		@Override
+		public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			previousLength = s.length();
+		}
 
+		@Override
+		public void onTextChanged(CharSequence s, int start, int before, int count) {
+			if (TextUtils.isEmpty(s)) {
+				menuItemVisible(mMenu, false);
+			} else {
+				menuItemVisible(mMenu, true);
+			}
+		}
+
+		@Override
 		public void afterTextChanged(Editable s) {
-			et.removeTextChangedListener(this);
-			mBackSpace = s.length() > mPreviousLength;
 			int inilen, endlen;
-			inilen = et.getText().length();
-			if (mBackSpace || TextUtils.isEmpty(et.getText().toString())) {
-				try {
-					String v = removeDecimal(s.toString()
-							.replace(String.valueOf(df.getDecimalFormatSymbols().getGroupingSeparator()), ""));
-					if (TextUtils.isEmpty(v)) {
+			inilen = edtLoanWiddrawal.getText().length();
+			backSpace = previousLength > s.length();
+			if (backSpace) {
+				edtLoanWiddrawal.removeTextChangedListener(this);
+				if (s.length() > 0) {
+					String loanAmount = s.toString()
+							.replace(".0", "")
+							.replace(" ", "");
+					loanAmount = loanAmount.substring(0, loanAmount.length() - 1);
+					if (TextUtils.isEmpty(loanAmount)) {
+						edtLoanWiddrawal.setText("");
+						backSpace = false;
 						menuItemVisible(mMenu, false);
-					} else {
-						menuItemVisible(mMenu, true);
+						edtLoanWiddrawal.addTextChangedListener(this);
+						return;
 					}
-
-					Number n = df.parse(v);
-					int cp = et.getSelectionStart();
-
-					et.setText(addDecimal(dfnd.format(n)));
-
-					endlen = et.getText().length();
+					int cp = edtLoanWiddrawal.getSelectionStart();
+					loanAmount = getDecimalFormat(trimCommaOfString(loanAmount)).concat(".00");
+					edtLoanWiddrawal.setText(loanAmount);
+					endlen = edtLoanWiddrawal.getText().length();
 					int sel = (cp + (endlen - inilen));
 					if (sel > 0) {
-						et.setSelection(endlen);
+						edtLoanWiddrawal.setSelection(endlen);
 					}
-				} catch (Exception ignored) {
 				}
-
+				edtLoanWiddrawal.addTextChangedListener(this);
 			} else {
-				String withdrawalAmount = mEditWithdrawalAmount.getText().toString();
-				String intWithdrawalAmount = withdrawalAmount
-						.replace(String.valueOf(df.getDecimalFormatSymbols()
-								.getGroupingSeparator()), "").replace(" .", ".")
-						.replace(" ", "")
-						.replace(".00", "").replace(".0", "");
-
 				try {
-					intWithdrawalAmount = intWithdrawalAmount.substring(0, intWithdrawalAmount.length() - 1);
-				} catch (Exception ex) {
-				}
+					edtLoanWiddrawal.removeTextChangedListener(this);
+					String value = edtLoanWiddrawal.getText().toString();
 
-				Number n = null;
-				if (TextUtils.isEmpty(intWithdrawalAmount)) {
-					et.setText("");
-					menuItemVisible(mMenu, false);
-				} else {
-					try {
-						n = df.parse(intWithdrawalAmount);
-					} catch (ParseException ignored) {
+					if (!value.equals("")) {
+
+						if (value.startsWith(".")) { //adds "0." when only "." is pressed on beginning of writing
+							edtLoanWiddrawal.setText("0.");
+						}
+						if (value.startsWith("0") && !value.startsWith("0.")) {
+							edtLoanWiddrawal.setText(""); //Prevents "0" while starting but not "0."
+						}
+
+						String str = edtLoanWiddrawal.getText().toString().replaceAll(" ", "");
+						if (!value.equals(""))
+							edtLoanWiddrawal.setText(getDecimalFormat(str).concat(".00"));
+						edtLoanWiddrawal.setSelection(edtLoanWiddrawal.getText().toString().length());
 					}
-					int cp = et.getSelectionStart();
-					String finalAmount = dfnd.format(n).replace(".", "").replace(",", " ") + ".00";
-					et.setText(finalAmount);
-					endlen = et.getText().length();
-					int sel = (cp + (endlen - inilen));
-					if (sel > 0 && sel <= et.getText().length()) {
-						et.setSelection(sel);
-					} else {
-						// place cursor at the end?
-						et.setSelection(et.getText().length());
-					}
-					menuItemVisible(mMenu, true);
+					edtLoanWiddrawal.addTextChangedListener(this);
+				} catch (Exception ex) {
+					edtLoanWiddrawal.addTextChangedListener(this);
 				}
 			}
-			et.addTextChangedListener(this);
 		}
 
-		public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-			mPreviousLength = s.length();
+
+		private String getDecimalFormat(String value) {
+			value = value.replace(".00", "");
+			StringTokenizer lst = new StringTokenizer(value, ".");
+			String str1 = value;
+			String str2 = "";
+			if (lst.countTokens() > 1) {
+				str1 = lst.nextToken();
+				str2 = lst.nextToken();
+			}
+			String str3 = "";
+			int i = 0;
+			int j = -1 + str1.length();
+			if (str1.charAt(-1 + str1.length()) == '.') {
+				j--;
+				str3 = ".";
+			}
+			for (int k = j; ; k--) {
+				if (k < 0) {
+					if (str2.length() > 0)
+						str3 = str3 + "." + str2;
+					return str3;
+				}
+				if (i == 3) {
+					str3 = " " + str3;
+					i = 0;
+				}
+				str3 = str1.charAt(k) + str3;
+				i++;
+			}
 
 		}
 
-		public void onTextChanged(CharSequence s, int start, int before, int count) {
-		}
 
+		//Trims all the comma of the string and returns
+		private String trimCommaOfString(String string) {
+//        String returnString;
+			if (string.contains(" ")) {
+				return string.replace(" ", "");
+			} else {
+				return string;
+			}
+
+		}
 	}
+
 
 
 	@Override
