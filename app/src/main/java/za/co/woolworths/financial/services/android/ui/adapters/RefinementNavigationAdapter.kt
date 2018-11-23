@@ -10,6 +10,7 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.refinements_on_promotion_layout.view.*
 import kotlinx.android.synthetic.main.refinements_options_layout.view.*
 import kotlinx.android.synthetic.main.refinements_section_header_layout.view.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.BreadCrumb
 import za.co.woolworths.financial.services.android.models.dto.RefinementHistory
 import za.co.woolworths.financial.services.android.models.dto.RefinementNavigation
@@ -18,6 +19,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.holder.Refinement
 import za.co.woolworths.financial.services.android.ui.fragments.product.refine.RefinementNavigationFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseFragmentListner
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.OnRefinementOptionSelected
+import za.co.woolworths.financial.services.android.util.Utils
 
 class RefinementNavigationAdapter(val context: Context, val listner: OnRefinementOptionSelected, var dataList: ArrayList<RefinementSelectableItem>, var history: RefinementHistory) : RecyclerView.Adapter<RefinementBaseViewHolder>() {
 
@@ -60,6 +62,7 @@ class RefinementNavigationAdapter(val context: Context, val listner: OnRefinemen
                 notifyDataSetChanged()
                 val navigationItem = refinementSelectableItem.item as RefinementNavigation
                 val navigationState = if (navigationItem.multiSelect) navigationItem.refinements[0].navigationState else navigationItem.refinementCrumbs[0].navigationState
+                Utils.triggerFireBaseEvents(if (navigationItem.multiSelect) FirebaseManagerAnalyticsProperties.REFINE_EVENT_PROMO_ON else FirebaseManagerAnalyticsProperties.REFINE_EVENT_PROMO_OFF)
                 listner.onBackPressedWithRefinement(navigationState)
             }
         }
