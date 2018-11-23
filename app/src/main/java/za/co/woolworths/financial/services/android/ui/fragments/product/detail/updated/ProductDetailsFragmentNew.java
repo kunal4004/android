@@ -1219,6 +1219,8 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	}
 
 	public void showFeatureWalkthrough(){
+		if (getActivity() == null)
+			return;
 		if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.findInStore)
 			return;
 		ProductDetailsActivity.walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.FIND_IN_STORE)
