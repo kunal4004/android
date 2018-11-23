@@ -151,11 +151,6 @@ public class WebViewActivity extends AppCompatActivity {
 		}
 	}
 
-	public void finishActivity() {
-		SessionUtilities.getInstance().setSTSParameters(null);
-		setResult(DEFAULT_KEYS_SEARCH_GLOBAL);
-		finish();
-		overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
-	}
+
 
 }

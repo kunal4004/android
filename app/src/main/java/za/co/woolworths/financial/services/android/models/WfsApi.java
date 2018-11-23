@@ -35,7 +35,6 @@ import za.co.woolworths.financial.services.android.models.dto.DeleteMessageRespo
 import za.co.woolworths.financial.services.android.models.dto.FAQ;
 import za.co.woolworths.financial.services.android.models.dto.IssueLoanRequest;
 import za.co.woolworths.financial.services.android.models.dto.IssueLoanResponse;
-import za.co.woolworths.financial.services.android.models.dto.LoadProduct;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.LoginRequest;
 import za.co.woolworths.financial.services.android.models.dto.LoginResponse;
@@ -44,6 +43,7 @@ import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
+import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
 import za.co.woolworths.financial.services.android.models.dto.PromotionsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProvincesResponse;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
@@ -83,7 +83,7 @@ public class WfsApi {
 		httpBuilder.connectTimeout(45, TimeUnit.SECONDS);
 		mApiInterface = new RestAdapter.Builder()
 				.setClient((new Ok3Client(httpBuilder.build())))
-				.setEndpoint(WoolworthsApplication.getBaseURL())
+				.setEndpoint(com.awfs.coordination.BuildConfig.HOST)
 				.setLogLevel(Util.isDebug(mContext) ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.NONE)
 				.build()
 				.create(ApiInterface.class);
@@ -214,45 +214,14 @@ public class WfsApi {
 		return mApiInterface.setDeliveryLocationSuburb(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), request);
 	}
 
-	public ProductView productViewRequest(LoadProduct lp) {
-		getMyLocation();
-		if (Utils.isLocationEnabled(mContext)) {
-			return mApiInterface.getProduct(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLatitude(), loc.getLongitude(), lp.getPageOffset(), lp.getPageSize(), lp.getProductId());
-		} else {
-			return mApiInterface.getProduct(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), lp.getPageOffset(), lp.getPageSize(), lp.getProductId());
-		}
-	}
-
-	public ProductView getProductSearchList(LoadProduct loadProduct) {
-		getMyLocation();
-		String search_item = "";
-		try {
-			search_item = URLEncoder.encode(loadProduct.getProductId(), "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-
-		if (Utils.isLocationEnabled(mContext)) {// should we implement location update here ?
-			return mApiInterface.getProductSearch(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLatitude(), loc.getLongitude(), loadProduct.isBarcode(), search_item, loadProduct.getPageOffset(), Utils.PAGE_SIZE);
-		} else {
-			return mApiInterface.getProductSearch(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loadProduct.isBarcode(), search_item, loadProduct.getPageOffset(), Utils.PAGE_SIZE);
-		}
-	}
-
-	public ProductView getProductSearchList(String search_item, boolean isBarcode, int pageSize, int pageNumber) {
-		getMyLocation();
-		try {
-			search_item = URLEncoder.encode(search_item, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-
-		if (Utils.isLocationEnabled(mContext)) {// should we implement location update here ?
-			return mApiInterface.getProductSearch(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLatitude(), loc.getLongitude(), isBarcode, search_item, pageSize, pageNumber);
-		} else {
-			return mApiInterface.getProductSearch(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), isBarcode, search_item, pageSize, pageNumber);
-		}
-	}
+    public ProductView getProducts(ProductsRequestParams requestParams) {
+        getMyLocation();
+        if (Utils.isLocationEnabled(mContext)) {
+            return mApiInterface.getProducts(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLatitude(), loc.getLongitude(), requestParams.getSearchTerm(), requestParams.getSearchType().getValue(), requestParams.getResponseType().getValue(), requestParams.getPageOffset(), Utils.PAGE_SIZE, requestParams.getSortOption(), requestParams.getRefinement());
+        } else {
+            return mApiInterface.getProductsWithoutLocation(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), requestParams.getSearchTerm(), requestParams.getSearchType().getValue(), requestParams.getResponseType().getValue(), requestParams.getPageOffset(), Utils.PAGE_SIZE, requestParams.getSortOption(), requestParams.getRefinement());
+        }
+    }
 
 	public FAQ getFAQ() {
 		return mApiInterface.getFAQ(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "");
@@ -362,17 +331,17 @@ public class WfsApi {
 	}
 
 	private String getSha1Password() {
-		return WoolworthsApplication.getSha1Password();
+		return com.awfs.coordination.BuildConfig.SHA1;
 	}
 
 	private String getApiId() {
-		return WoolworthsApplication.getApiKey();
+		return WoolworthsApplication.getApiId();
 	}
 
 	private String getSessionToken() {
 		String sessionToken = SessionUtilities.getInstance().getSessionToken();
 		if (sessionToken.isEmpty())
-			return "";
+			return ".";
 		else
 			return sessionToken;
 	}

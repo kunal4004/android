@@ -109,10 +109,12 @@
                         android:visibility="visible"/>
 
                     <include
+                        android:id="@+id/linkedLayout"
                         layout="@layout/account_linked_layout"
                         android:visibility="visible"/>
 
                     <include
+                        android:id="@+id/applyNowLayout"
                         layout="@layout/account_apply_layout"
                         android:visibility="visible"/>
 
@@ -133,7 +135,7 @@
 
                             <za.co.woolworths.financial.services.android.ui.views.WTextView
                                 style="@style/accountsItem"
-                                android:drawableLeft="@drawable/ic_call24"
+                                android:drawableLeft="@{@drawable/ic_link_account}"
                                 android:text="@string/link_your_woolies_card_today"/>
 
                             <ImageView
@@ -158,10 +160,20 @@
                                 style="@style/listStyle"
                                 android:background="@drawable/stores_details_background">
 
+                                <ImageView
+                                    android:id="@+id/myListIcon"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentLeft="true"
+                                    android:layout_centerVertical="true"
+                                    android:background="@{@drawable/shopping_list_icon}" />
+
                                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                                     style="@style/accountsItem"
-                                    android:drawableLeft="@drawable/shopping_list_icon"
-                                    android:text="@string/my_lists"/>
+                                    android:layout_toRightOf="@id/myListIcon"
+                                    android:drawablePadding="0dp"
+                                    android:paddingLeft="@dimen/sixteen_dp"
+                                    android:text="@string/my_lists" />
 
                                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                                     android:id="@+id/listsCounter"
@@ -256,7 +268,7 @@
 
                                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                                     style="@style/accountsItem"
-                                    android:drawableLeft="@drawable/ic_store_locator"
+                                    android:drawableLeft="@{@drawable/ic_store_locator}"
                                     android:text="@string/store_locator"/>
 
                                 <ImageView
@@ -268,14 +280,14 @@
                             </RelativeLayout>
 
                             <RelativeLayout
-                                android:id="@+id/relFAQ"
+                                android:id="@+id/helpSection"
                                 style="@style/listStyle"
                                 android:background="@drawable/stores_details_background">
 
                                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                                     style="@style/accountsItem"
-                                    android:drawableLeft="@drawable/signout_24_copy"
-                                    android:text="@string/drawer_faq"/>
+                                    android:drawableLeft="@{@drawable/ic_faq}"
+                                    android:text="@string/need_help" />
 
                                 <ImageView
                                     android:layout_width="wrap_content"
@@ -315,7 +327,7 @@
 
                         <za.co.woolworths.financial.services.android.ui.views.WTextView
                             style="@style/accountsItem"
-                            android:drawableLeft="@drawable/ic_my_details"
+                            android:drawableLeft="@{@drawable/ic_my_details}"
                             android:text="@string/acc_my_detail"/>
 
                         <ImageView
@@ -334,7 +346,7 @@
 
                         <za.co.woolworths.financial.services.android.ui.views.WTextView
                             style="@style/accountsItem"
-                            android:drawableLeft="@drawable/signout_24_copy_3"
+                            android:drawableLeft="@{@drawable/ic_my_preferences}"
                             android:text="@string/acc_my_preferences"/>
 
                         <ImageView
@@ -353,7 +365,7 @@
 
                         <za.co.woolworths.financial.services.android.ui.views.WTextView
                             style="@style/accountsItem"
-                            android:drawableLeft="@drawable/signout_25"
+                            android:drawableLeft="@{@drawable/ic_signout}"
                             android:text="@string/sign_out"/>
 
                         <ImageView

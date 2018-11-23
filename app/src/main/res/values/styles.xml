@@ -134,6 +134,14 @@
         <item name="android:windowActionBarOverlay">false</item>
     </style>
 
+    <style name="DebitOrder" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:homeAsUpIndicator">@drawable/close_24</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowActionBarOverlay">false</item>
+    </style>
+
     <style name="Animations_popup">
         <item name="android:windowEnterAnimation">@anim/popup_enter</item>
         <item name="android:windowExitAnimation">@anim/popup_exit</item>
@@ -474,8 +482,8 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:paddingBottom">26.2dp</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:paddingLeft">@dimen/default_margin</item>
-        <item name="android:paddingRight">@dimen/default_margin</item>
+        <item name="android:paddingLeft">24dp</item>
+        <item name="android:paddingRight">24dp</item>
         <item name="android:background">@drawable/bottom_light_divider_list</item>
     </style>
 
@@ -502,6 +510,59 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">60dp</item>
         <item name="android:paddingBottom">20dp</item>
+    </style>
+
+    <style name="style_account_status_label">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:lineSpacingExtra">0.1sp</item>
+        <item name="android:gravity">center|start</item>
+        <item name="WTextView_font">myriadpro_semibold</item>
+        <item name="android:letterSpacing">0.1</item>
+    </style>
+
+    <style name="style_debit_order_title">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:gravity">center|start</item>
+        <item name="WTextView_font">medium_bold</item>
+        <item name="android:lineSpacingExtra">0.1sp</item>
+        <item name="android:letterSpacing">0.1</item>
+    </style>
+
+    <style name="style_debit_order_description">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:alpha">0.5</item>
+        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:lineSpacingMultiplier">1.60</item>
+    </style>
+
+    <style name="style_debit_order_labels">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/account_label_color</item>
+        <item name="android:lineSpacingExtra">0.1sp</item>
+        <item name="android:gravity">center|start</item>
+        <item name="WTextView_font">myriadpro_regular</item>
+    </style>
+
+    <style name="style_how_to_pay_label">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">#222222</item>
+        <item name="android:lineSpacingExtra">0.1sp</item>
+        <item name="android:gravity">center|start</item>
+        <item name="WTextView_font">medium</item>
+        <item name="android:letterSpacing">0.1</item>
     </style>
 
     <style name="style_loan_label">
@@ -573,7 +634,7 @@
         <item name="android:textColor">@color/account_amount_color</item>
         <item name="android:lineSpacingExtra">0.1sp</item>
         <item name="android:gravity">center|end</item>
-        <item name="WTextView_font">myriadpro_semibold</item>
+        <item name="WTextView_font">myriadpro_regular</item>
     </style>
 
     <style name="style_loan_desc">
@@ -1187,4 +1248,173 @@
         <item name="android:windowIsFloating">false</item>
         <item name="android:windowCloseOnTouchOutside">true</item>
     </style>
+
+    <style name="black_circle_with_number">
+        <item name="android:layout_width">@dimen/twenty_four_dp</item>
+        <item name="android:layout_height">@dimen/twenty_four_dp</item>
+        <item name="android:background">@drawable/circle_black</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_marginRight">@dimen/sixteen_dp</item>
+        <item name="WTextView_font">medium_bold</item>
+    </style>
+
+    <style name="layout_with_top_border">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">@dimen/fifty_dp</item>
+        <item name="android:background">@drawable/top_border</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="refinements_textview_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:textColor">@color/offer_title</item>
+        <item name="android:textSize">17sp</item>
+        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:layout_alignParentLeft">true</item>
+    </style>
+
+    <style name="refinements_textview_style_with_margin_left" parent="@style/refinements_textview_style">
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:layout_alignParentLeft">false</item>
+    </style>
+
+    <style name="refinements_textview_style_breadcrumbs" parent="@style/refinements_textview_style_with_margin_left">
+        <item name="android:textSize">12sp</item>
+        <item name="WTextView_font">medium</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/offer_title_50</item>
+        <item name="android:letterSpacing">0.08</item>
+    </style>
+
+    <style name="toolbar_menu_text_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:letterSpacing">0.15</item>
+        <item name="WTextView_font">medium</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="sort_and_filter_selection_text_style" parent="@style/toolbar_menu_text_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:layout_alignParentLeft">true</item>
+        <item name="android:textColor">@color/black_50</item>
+    </style>
+
+    <style name="BalanceProtectionInsuranceStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowIsTranslucent">false</item>
+    </style>
+
+    <style name="styleBPIOverviewConstraint">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@color/white</item>
+    </style>
+
+    <style name="styleBPIBorderGuideLine">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="styleBPIOrangeBar">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:background">@color/bpi_orange</item>
+    </style>
+
+    <style name="styleBPIOverviewTitle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">@dimen/twenty_four_dp</item>
+        <item name="android:layout_marginTop">@dimen/twenty_two_dp</item>
+        <item name="android:lineSpacingMultiplier">1.20</item>
+        <item name="android:paddingBottom">@dimen/nineteen_dp</item>
+        <item name="android:text">@string/bpi_balance_protection_title</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="WTextView_font">myriadpro_semibold</item>
+        <item name="android:textSize">@dimen/fifteen_sp</item>
+    </style>
+
+    <style name="styleBPIOVerViewCoverText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">@dimen/twenty_four_dp</item>
+        <item name="android:layout_marginTop">@dimen/sixteen_dp</item>
+        <item name="android:layout_marginEnd">@dimen/twenty_three_dp</item>
+        <item name="android:letterSpacing">0.083</item>
+        <item name="android:text">@string/bpi_covered</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="WTextView_font">medium_bold</item>
+        <item name="android:textSize">@dimen/ten_sp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:background">@drawable/round_orange_bg</item>
+    </style>
+
+    <style name="styleBPICoverHorizontalDivider">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:layout_marginStart">@dimen/eight_dp</item>
+        <item name="android:background">@color/default_background</item>
+        <item name="android:paddingBottom">@dimen/seventeen_dp</item>
+    </style>
+
+    <style name="styleBPIDescText">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/eighteen_dp</item>
+        <item name="android:layout_marginStart">@dimen/twenty_four_dp</item>
+        <item name="android:paddingBottom">@dimen/seventeen_dp</item>
+        <item name="android:text">@string/bpi_balance_protection_desc</item>
+        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:alpha">0.7</item>
+        <item name="android:textColor">@color/black</item>
+
+    </style>
+
+    <style name="styleDescriptionGuideline">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="styleBPIDescImage">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/seventeen_dp</item>
+        <item name="android:layout_marginEnd">@dimen/seventeen_dp</item>
+        <item name="android:contentDescription">@string/bpi_toolbar_title</item>
+        <item name="android:paddingBottom">@dimen/eighteen_dp</item>
+    </style>
+
+    <style name="RefineActivityStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:selectableItemBackground">@android:color/transparent</item>
+        <item name="android:actionBarItemBackground">@null</item>
+        <item name="actionBarItemBackground">@null</item>
+    </style>
+
+    <style name="RuntimeExceptionActivityStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowIsTranslucent">false</item>
+    </style>
+
 </resources>

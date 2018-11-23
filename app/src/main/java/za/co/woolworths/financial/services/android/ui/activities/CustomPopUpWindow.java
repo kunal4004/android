@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -55,10 +56,10 @@ import za.co.woolworths.financial.services.android.ui.fragments.statement.Statem
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.dialog.AddToListFragment;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.StatementUtils;
@@ -102,6 +103,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 	MODAL_LAYOUT current_view;
 	private String description;
 	private String title;
+	private String buttonTitle;
 	private String userStatement = "";
 
 	@Override
@@ -119,6 +121,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 			current_view = (MODAL_LAYOUT) mBundle.getSerializable("key");
 			title = getText(mBundle.getString("title"));
 			description = getText(mBundle.getString("description"));
+			buttonTitle = getText(mBundle.getString("buttonTitle"));
 			mCloseView = mBundle.getBoolean("closeSlideUpPanel");
 			userStatement = mBundle.getString(StatementActivity.SEND_USER_STATEMENT);
 			displayView(current_view);
@@ -346,6 +349,9 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				mTextDesc = findViewById(R.id.textProofIncome);
 				mTextTitle.setText(title);
 				mTextDesc.setText(description);
+				if (buttonTitle != null && !buttonTitle.isEmpty()) {
+					mLowLoanAmount.setText(buttonTitle);
+				}
 				mLowLoanAmount.setOnClickListener(this);
 				mRelPopContainer.setOnClickListener(this);
 				break;
@@ -579,6 +585,10 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 	}
 
 	public void startExitAnimation() {
+		startExitAnimation(Activity.RESULT_OK);
+	}
+
+	public void startExitAnimation(final int result) {
 		if (!viewWasClicked) { // prevent more than one click
 			viewWasClicked = true;
 			TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
@@ -597,7 +607,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				@Override
 				public void onAnimationEnd(Animation animation) {
 					setResult(CART_DEFAULT_ERROR_TAPPED);
-					dismissLayout();
+					dismissLayout(result);
 				}
 			});
 			mRelRootContainer.startAnimation(animation);
@@ -622,7 +632,8 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 				@Override
 				public void onAnimationEnd(Animation animation) {
-					dismissLayout();
+					finish();
+					overridePendingTransition(0, 0);
 				}
 			});
 			mRelRootContainer.startAnimation(animation);
@@ -877,6 +888,12 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 	}
 
 	private void dismissLayout() {
+		dismissLayout(Activity.RESULT_OK);
+	}
+
+	private void dismissLayout(int result) {
+		Intent returnIntent = new Intent();
+		setResult(result, returnIntent);
 		finish();
 		overridePendingTransition(0, 0);
 	}
@@ -908,7 +925,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 			case R.id.btnOverlay:
 			case R.id.btnSignOutCancel:
 			case R.id.btnBarcodeOk:
-			case R.id.relPopContainer:
 			case R.id.btnUploadDocuments:
 			case R.id.btnShopOk:
 			case R.id.btnMandatoryOK:
@@ -921,6 +937,17 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 					}
 
 					startExitAnimation();
+				}
+				break;
+			case R.id.relPopContainer:
+				if (current_view == BIOMETRICS_SECURITY_INFO) {
+					exitSetupBiometricsAnimation();
+				} else {
+					if (v != mRelPopContainer) {
+						whiteEffectClick(mNegativeActionButton);
+					}
+
+					startExitAnimation(Activity.RESULT_CANCELED);
 				}
 				break;
 
@@ -1122,7 +1149,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				if (new ConnectionDetector().isOnline(CustomPopUpWindow.this)) {
+				if (NetworkManager.getInstance().isConnectedToNetwork(CustomPopUpWindow.this)) {
 					if (!loadState.onLoanCompleted()) {
 						sendStatement();
 					}

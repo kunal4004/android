@@ -178,5 +178,133 @@
         <item>@drawable/cli_walkthrough_creditbureau</item>
     </integer-array>
 
+    <string-array name="tips_tricks_descriptions">
+        <item>@string/tips_tricks_desc_navigation</item>
+        <item>@string/tips_tricks_desc_barcode</item>
+        <item>@string/tips_tricks_desc_refine</item>
+        <item>@string/tips_tricks_desc_stores</item>
+        <item>@string/tips_tricks_desc_delivery</item>
+        <item>@string/tips_tricks_desc_vouchers</item>
+        <item>@string/tips_tricks_desc_my_accounts</item>
+        <item>@string/tips_tricks_desc_statements</item>
+        <item>@string/tips_tricks_desc_shopping_list</item>
+    </string-array>
 
+    <string-array name="tips_tricks_titles">
+        <item>@string/tips_tricks_titles_navigation</item>
+        <item>@string/tips_tricks_titles_barcode</item>
+        <item>@string/tips_tricks_titles_refine</item>
+        <item>@string/tips_tricks_titles_stores</item>
+        <item>@string/tips_tricks_titles_delivery</item>
+        <item>@string/tips_tricks_titles_vouchers</item>
+        <item>@string/tips_tricks_titles_my_accounts</item>
+        <item>@string/tips_tricks_titles_statements</item>
+        <item>@string/tips_tricks_titles_shopping_list</item>
+    </string-array>
+
+    <string-array name="tips_tricks_buttons">
+        <item>@string/tips_tricks_button_navigation</item>
+        <item>@string/tips_tricks_button_barcode</item>
+        <item>@string/tips_tricks_button_refine</item>
+        <item>@string/tips_tricks_button_stores</item>
+        <item>@string/tips_tricks_button_delivery</item>
+        <item>@string/tips_tricks_titles_vouchers</item>
+        <item>@string/tips_tricks_titles_my_accounts</item>
+        <item>@string/tips_tricks_titles_statements</item>
+        <item>@string/tips_tricks_titles_shopping_list</item>
+    </string-array>
+
+    <integer-array name="tips_tricks_icons">
+        <item>@drawable/tips_tricks_ic_navigation</item>
+        <item>@drawable/tips_tricks_ic_scan</item>
+        <item>@drawable/tips_tricks_ic_refine</item>
+        <item>@drawable/tips_tricks_ic_stores</item>
+        <item>@drawable/tips_tricks_ic_delivery</item>
+        <item>@drawable/tips_tricks_ic_coupon</item>
+        <item>@drawable/tips_tricks_ic_my_accounts</item>
+        <item>@drawable/tips_tricks_ic_statements</item>
+        <item>@drawable/tips_tricks_ic_shopping_list</item>
+    </integer-array>
+
+    <string-array name="bpi_balance_protection_benefits">
+        <item>@string/bpi_balance_protection_benefit_1</item>
+        <item>@string/bpi_balance_protection_benefit_2</item>
+        <item>@string/bpi_balance_protection_benefit_3</item>
+    </string-array>
+
+    <string-array name="bpi_partner_cover_benefits">
+        <item>@string/bpi_partner_cover_benefit_1</item>
+        <item>@string/bpi_partner_cover_benefit_2</item>
+        <item>@string/bpi_partner_cover_benefit_3</item>
+    </string-array>
+
+    <string-array name="bpi_additional_death_cover">
+        <item>@string/bpi_additional_death_cover_1</item>
+        <item>@string/bpi_additional_death_cover_2</item>
+    </string-array>
+
+    <string-array name="bpi_additional_death_cover_for_partner">
+        <item>@string/bpi_additional_death_cover_for_partner_1</item>
+        <item>@string/bpi_additional_death_cover_for_partner_2</item>
+    </string-array>
+
+    <string-array name="bpi_card_balance_protection_benefits">
+        <item>@string/bpi_card_balance_protection_benefits_1</item>
+        <item>@string/bpi_card_balance_protection_benefits_2</item>
+        <item>@string/bpi_card_balance_protection_benefits_3</item>
+        <item>@string/bpi_card_balance_protection_benefits_4</item>
+    </string-array>
+
+    <string-array name="bpi_loan_balance_benefits">
+        <item>@string/bpi_loan_balance_protection_benefits_1</item>
+        <item>@string/bpi_loan_balance_protection_benefits_2</item>
+    </string-array>
+
+    <string-array name="bpi_companion_care_benefits">
+        <item>@string/bpi_companion_care_benefits_1</item>
+    </string-array>
+
+    <string-array name="bpi_balance_protection_above_65_benefits">
+        <item>@string/bpi_balance_protection_65_years_benefit_1</item>
+    </string-array>
+
+    <string-array name="bpi_partner_cover_above_65_benefits">
+        <item>@string/bpi_partner_cover_65_years_benefit_1</item>
+    </string-array>
+
+    <integer-array name="tips_tricks_images">
+        <item>@drawable/tips_tricks_navigation</item>
+        <item>@drawable/tips_tricks_barcode</item>
+        <item>@drawable/tips_tricks_refine</item>
+        <item>@drawable/tips_tricks_stores</item>
+        <item>@drawable/tips_tricks_delivery_location</item>
+        <item>@drawable/tips_tricks_vouchers</item>
+        <item>@drawable/tips_tricks_my_accounts</item>
+        <item>@drawable/tips_tricks_statements</item>
+        <item>@drawable/tips_tricks_shopping_list</item>
+    </integer-array>
+
+    <integer-array name="tips_tricks_list_item_icons">
+        <item>@drawable/ic_drw_tww</item>
+        <item>@drawable/barcode</item>
+        <item>@drawable/ic_search</item>
+        <item>@drawable/mapview</item>
+        <item>@drawable/ic_delivery_truck</item>
+        <item>@drawable/icon_wreward</item>
+        <item>@drawable/ic_profile</item>
+        <item>@drawable/ic_statements</item>
+        <item>@drawable/ic_lists</item>
+    </integer-array>
+
+    <string-array name="tips_tricks_item_names">
+        <item>@string/navigation</item>
+        <item>@string/tips_tricks_titles_barcode</item>
+        <item>@string/tips_tricks_titles_refine_search</item>
+        <item>@string/tips_tricks_titles_stores</item>
+        <item>@string/tips_tricks_titles_delivery</item>
+        <item>@string/tips_tricks_titles_vouchers</item>
+        <item>@string/my_accounts</item>
+        <item>@string/tips_tricks_titles_statements</item>
+        <item>@string/tips_tricks_titles_shopping_list</item>
+    </string-array>
 </resources>

@@ -37,7 +37,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CartItemGroup;
 import za.co.woolworths.financial.services.android.models.dto.CartResponse;
@@ -47,6 +49,7 @@ import za.co.woolworths.financial.services.android.models.dto.CommerceItemInfo;
 import za.co.woolworths.financial.services.android.models.dto.Data;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
+import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
@@ -55,6 +58,7 @@ import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForSt
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.rest.product.GetInventorySkusForStore;
 import za.co.woolworths.financial.services.android.models.rest.product.GetShoppingCart;
+import za.co.woolworths.financial.services.android.models.rest.shop.SetDeliveryLocationSuburb;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
@@ -65,12 +69,13 @@ import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocatio
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CartProductAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
+import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.MultiMap;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
@@ -88,7 +93,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.dashboar
 import static za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment.DIALOG_REQUEST_CODE;
 
 
-public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick, View.OnClickListener, NetworkChangeListener, ToastUtils.ToastInterface {
+public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick, View.OnClickListener, NetworkChangeListener, ToastUtils.ToastInterface, WMaterialShowcaseView.IWalkthroughActionListener {
 
 	private int mQuantity;
 	private String mSuburbName, mProvinceName;
@@ -132,6 +137,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	private boolean changeQuantityWasClicked = false;
 	private boolean errorMessageWasPopUp = false;
 	private boolean isAllInventoryAPICallSucceed;
+	private ImageView imgDeliveryLocation;
 
 	public CartFragment() {
 		// Required empty public constructor
@@ -170,6 +176,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		mErrorHandlerView.setMargin(rlNoConnectionLayout, 0, 0, 0, 0);
 		mConnectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
 		rlLocationSelectedLayout = view.findViewById(R.id.locationSelectedLayout);
+		imgDeliveryLocation = view.findViewById(R.id.truckIcon);
 		rlLocationSelectedLayout.setOnClickListener(this);
 		mBtnRetry.setOnClickListener(this);
 		btnCheckOut.setOnClickListener(this);
@@ -281,7 +288,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				}
 				break;
 			case R.id.btnRetry:
-				if (new ConnectionDetector().isOnline(getActivity())) {
+				if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
 					errorMessageWasPopUp = false;
 					rvCartList.setVisibility(View.VISIBLE);
 					loadShoppingCart(false).execute();
@@ -290,6 +297,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			case R.id.btnCheckOut:
 				Activity checkOutActivity = getActivity();
 				if ((checkOutActivity != null) && btnCheckOut.isEnabled()) {
+					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTCHECKOUT);
 					Intent openCheckOutActivity = new Intent(getContext(), CartCheckoutActivity.class);
 					startActivityForResult(openCheckOutActivity, CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY);
 					checkOutActivity.overridePendingTransition(0, 0);
@@ -405,12 +413,14 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				CartActivity cartActivity = (CartActivity) activity;
 				cartActivity.resetToolBarIcons();
 			}
+			showFeatureWalkthrough();
 		}
 	}
 
 	public void updateCart(CartResponse cartResponse, CommerceItem commerceItemToRemove) {
 		this.orderSummary = cartResponse.orderSummary;
 		if (cartResponse.cartItems.size() > 0 && cartProductAdapter != null && commerceItemToRemove != null) {
+			ArrayList<CartItemGroup> emptyCartItemGroups = new ArrayList<>();
 			for (CartItemGroup cartItemGroup : cartItems) {
 				for (CommerceItem commerceItem : cartItemGroup.commerceItems) {
 					if (commerceItem.commerceItemInfo.commerceId.equalsIgnoreCase(commerceItemToRemove.commerceItemInfo.commerceId)) {
@@ -422,9 +432,14 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				 * Remove header when commerceItems is empty
 				 */
 				if (cartItemGroup.commerceItems.size() == 0) {
-					cartItems.remove(cartItemGroup);
+					emptyCartItemGroups.add(cartItemGroup);// Gather all the empty groups after deleting item.
 				}
 			}
+			//remove all the empty groups
+			for (CartItemGroup cartItemGroup : emptyCartItemGroups) {
+				cartItems.remove(cartItemGroup);
+			}
+
 			cartProductAdapter.notifyAdapter(cartItems, orderSummary);
 		} else {
 
@@ -529,10 +544,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			CartActivity cartActivity = (CartActivity) activity;
 			cartActivity.hideEditCart();
 		}
-		return new GetShoppingCart(new OnEventListener() {
+
+		return new GetShoppingCart(new OnEventListener<ShoppingCartResponse>(){
 			@Override
-			public void onSuccess(Object object) {
-				ShoppingCartResponse shoppingCartResponse = (ShoppingCartResponse) object;
+			public void onSuccess(ShoppingCartResponse shoppingCartResponse) {
 				try {
 					pBar.setVisibility(View.GONE);
 					switch (shoppingCartResponse.httpCode) {
@@ -876,12 +891,55 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		}
 		if (requestCode == CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY || requestCode == SSOActivity.SSOActivityResult.LAUNCH.rawValue()) {
 			if (SessionUtilities.getInstance().isUserAuthenticated()) {
-				loadShoppingCart(false).execute();
-				ShoppingDeliveryLocation lastDeliveryLocation = Utils.getPreferredDeliveryLocation();
-				if (lastDeliveryLocation != null) {
-					mSuburbName = lastDeliveryLocation.suburb.name;
-					mProvinceName = lastDeliveryLocation.province.name;
-				}
+				if (resultCode == Activity.RESULT_OK) {
+					// Checkout completed successfully
+                    final ShoppingDeliveryLocation lastDeliveryLocation = Utils.getPreferredDeliveryLocation();
+                    if (lastDeliveryLocation != null) {
+                        SetDeliveryLocationSuburb setDeliveryLocationSuburb = new SetDeliveryLocationSuburb(lastDeliveryLocation.suburb.id, new OnEventListener() {
+                            @Override
+                            public void onSuccess(Object object) {
+                                SetDeliveryLocationSuburbResponse response = (SetDeliveryLocationSuburbResponse) object;
+                                if(response.httpCode == 200) {
+                                    Utils.savePreferredDeliveryLocation(lastDeliveryLocation);
+                                    Utils.sendBus(new CartState(lastDeliveryLocation.suburb.name + ", " + lastDeliveryLocation.province.name));
+                                }
+
+                                loadShoppingCartAndSetDeliveryLocation();
+                            }
+
+                            @Override
+                            public void onFailure(final String errorMessage) {
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        loadShoppingCartAndSetDeliveryLocation();
+                                    }
+                                });
+
+                            }
+                        });
+
+						// Show loading state
+						rlCheckOut.setVisibility(View.GONE);
+						pBar.setVisibility(View.VISIBLE);
+						if (cartProductAdapter != null) {
+							cartProductAdapter.clear();
+						}
+						Activity activity = getActivity();
+						if (activity != null) {
+							CartActivity cartActivity = (CartActivity) activity;
+							cartActivity.hideEditCart();
+						}
+
+                        setDeliveryLocationSuburb.execute();
+                    } else {
+                    	// Fallback if there is no cached location
+                        loadShoppingCartAndSetDeliveryLocation();
+                    }
+                } else {
+					// Checkout was cancelled
+                    loadShoppingCartAndSetDeliveryLocation();
+                }
 			} else {
 				getActivity().onBackPressed();
 			}
@@ -891,18 +949,22 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			switch (requestCode) {
 				case PDP_REQUEST_CODE:
 				case REQUEST_SUBURB_CHANGE:
-					loadShoppingCart(false).execute();
-					ShoppingDeliveryLocation lastDeliveryLocation = Utils.getPreferredDeliveryLocation();
-					if (lastDeliveryLocation != null) {
-						mSuburbName = lastDeliveryLocation.suburb.name;
-						mProvinceName = lastDeliveryLocation.province.name;
-					}
+                    loadShoppingCartAndSetDeliveryLocation();
 					break;
 				default:
 					break;
 			}
 		}
 	}
+
+	private void loadShoppingCartAndSetDeliveryLocation() {
+        loadShoppingCart(false).execute();
+        ShoppingDeliveryLocation lastDeliveryLocation = Utils.getPreferredDeliveryLocation();
+        if (lastDeliveryLocation != null) {
+            mSuburbName = lastDeliveryLocation.suburb.name;
+            mProvinceName = lastDeliveryLocation.province.name;
+        }
+    }
 
 	@Override
 	public void onConnectionChanged() {
@@ -1100,4 +1162,31 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		CartActivity cartActivity = (CartActivity) activity;
 		cartActivity.enableEditCart(enable);
 	}
+
+	public void showFeatureWalkthrough(){
+		if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.deliveryLocation)
+			return;
+		CartActivity.walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.DELIVERY_LOCATION)
+				.setTarget(imgDeliveryLocation)
+				.setTitle(R.string.tips_tricks_titles_delivery)
+				.setDescription(R.string.walkthrough_barcode_desc)
+				.setActionText(R.string.set_your_delivery_location)
+				.setImage(R.drawable.tips_tricks_ic_stores)
+				.setAction(this)
+				.setShapePadding(24)
+				.setArrowPosition(WMaterialShowcaseView.Arrow.TOP_LEFT)
+				.setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
+		CartActivity.walkThroughPromtView.show(getActivity());
+	}
+
+	@Override
+	public void onWalkthroughActionButtonClick() {
+		this.onClick(rlLocationSelectedLayout);
+	}
+
+	@Override
+	public void onPromptDismiss() {
+
+	}
+
 }

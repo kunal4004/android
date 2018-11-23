@@ -11,9 +11,11 @@ import android.widget.ProgressBar;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
+import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
@@ -29,6 +31,7 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
 	private ImageView btnCloseCart;
 	private CartFragment cartFragment;
 	private ProgressBar pbRemoveAllItem;
+	public static WMaterialShowcaseView walkThroughPromtView = null;
 
 	@Override
 	protected int getLayoutResourceId() {
@@ -77,6 +80,7 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
 				finishActivity();
 				break;
 			case R.id.btnClearCart:
+				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTREMOVEALL);
 				cartFragment.removeAllCartItem(null).execute();
 				break;
 		}
@@ -110,6 +114,7 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
 
 	public void finishActivity() {
 		setResult(DISMISS_POP_WINDOW_CLICKED);
+		Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTEXIT);
 		finish();
 		overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
 	}

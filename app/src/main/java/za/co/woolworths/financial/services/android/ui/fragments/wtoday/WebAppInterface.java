@@ -18,16 +18,18 @@ import java.util.Map;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
+import retrofit.client.Response;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator;
+import za.co.woolworths.financial.services.android.ui.activities.maintenance.MaintenanceMessageViewController;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
 import za.co.woolworths.financial.services.android.ui.views.ProductProgressDialogFrag;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.MyRunnable;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.PauseHandlerFragment;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -85,7 +87,7 @@ public class WebAppInterface {
 
 	@JavascriptInterface
 	public void showProduct(String productId, String skuId) {
-		if (new ConnectionDetector().isOnline(mContext))
+		if (NetworkManager.getInstance().isConnectedToNetwork(mContext))
 			onPauseHandler(productId, skuId);
 		else
 			mErrorHandlerView.showToast();
@@ -171,7 +173,7 @@ public class WebAppInterface {
 															Map<String, String> arguments = new HashMap<>();
 															arguments.put(skuId, "NO PRICE INFO");
 															arguments.put(skuId, "From WToday Promotions");
-															Utils.triggerFireBaseEvents(mContext, FirebaseAnalytics.Event.VIEW_ITEM, arguments);
+															Utils.triggerFireBaseEvents(FirebaseAnalytics.Event.VIEW_ITEM, arguments);
 															return;
 														}
 													}
@@ -196,6 +198,13 @@ public class WebAppInterface {
 
 					@Override
 					public void failure(RetrofitError error) {
+						//TODO:: replace getProductDetail asynchronous method with HttpAsyncTask
+						Response response = error.getResponse();
+						if (response.getStatus() == 404 || response.getStatus() == 503) {
+							MaintenanceMessageViewController maintenanceMessageViewController = new MaintenanceMessageViewController();
+							maintenanceMessageViewController.presentModal();
+							return;
+						}
 						dismissFragmentDialog();
 						if (error.toString().contains("Unable to resolve host"))
 							mErrorHandlerView.showToast();

@@ -24,6 +24,7 @@ import java.util.ArrayList;
 
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
+import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
@@ -251,10 +252,8 @@ public class BarcodeFragment extends BaseFragment<BarcodeMainLayoutBinding, Barc
 
 	private void executeBarcodeProduct(String barcodeId) {
 		if (TextUtils.isEmpty(barcodeId)) return;
-		getViewModel().setProductRequestBody(true, barcodeId);
-		Activity activity = getActivity();
-		if (activity == null) return;
-		getViewModel().executeGetBarcodeProduct(activity);
+		getViewModel().setProductRequestBody(ProductsRequestParams.SearchType.BARCODE, barcodeId);
+		getViewModel().executeGetBarcodeProduct(getActivity());
 	}
 
 	private void showLoadingProgressBar(boolean visible) {

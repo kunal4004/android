@@ -22,6 +22,7 @@ import com.google.gson.Gson;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.CardDetailsResponse;
 import za.co.woolworths.financial.services.android.models.dto.PromotionsResponse;
@@ -31,9 +32,9 @@ import za.co.woolworths.financial.services.android.ui.activities.WRewardsMembers
 import za.co.woolworths.financial.services.android.ui.adapters.FeaturedPromotionsAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.CardType;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
@@ -71,6 +72,7 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.wrewards_overview_fragment, container, false);
+		Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSOVERVIEW);
 		noTireHistory = (WTextView) view.findViewById(R.id.noTireHistory);
 		overviewLayout = (LinearLayout) view.findViewById(R.id.overviewLayout);
 		infoImage = (ImageView) view.findViewById(R.id.infoImage);
@@ -103,7 +105,7 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 		view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (new ConnectionDetector().isOnline(getActivity())) {
+				if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
 					loadPromotions();
 				}
 			}
@@ -220,6 +222,7 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 	}
 
 	public void flipCard() {
+		Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSFLIP);
 		if (!mIsBackVisible) {
 			mSetRightOut.setTarget(flipCardFrontLayout);
 			mSetLeftIn.setTarget(flipCardBackLayout);

@@ -2,6 +2,8 @@ package za.co.woolworths.financial.services.android.models;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.StrictMode;
 import android.support.multidex.MultiDex;
 import android.support.v7.app.AppCompatDelegate;
@@ -11,9 +13,9 @@ import com.crashlytics.android.Crashlytics;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
-import com.google.firebase.FirebaseApp;
 
 import io.fabric.sdk.android.Fabric;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
@@ -21,6 +23,7 @@ import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.service.RxBus;
+import za.co.woolworths.financial.services.android.util.FirebaseManager;
 
 
 public class WoolworthsApplication extends Application {
@@ -43,9 +46,6 @@ public class WoolworthsApplication extends Application {
 
 	private WGlobalState mWGlobalState;
 
-	private static String baseURL;
-	private static String apiKey;
-	private static String sha1Password;
 	private static String ssoRedirectURI;
 	private static String stsURI;
 	private static String ssoRedirectURILogout;
@@ -59,28 +59,34 @@ public class WoolworthsApplication extends Application {
 
 	private RxBus bus;
 
-	public static void setSha1Password(String sha1Password) {
-		WoolworthsApplication.sha1Password = sha1Password;
+	public static String getApiId() {
+		PackageInfo packageInfo = null;
+		try {
+
+			packageInfo = WoolworthsApplication.getInstance().getPackageManager().getPackageInfo(WoolworthsApplication.getInstance().getPackageName(), 0);
+		} catch (PackageManager.NameNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		String apiId = "ANDROID_V";
+		if (packageInfo.versionName.length() > 3) {
+			apiId += packageInfo.versionName.substring(0, 3);
+		} else {
+			apiId += packageInfo.versionName;
+		}
+		return apiId;
 	}
 
-	public static String getSha1Password() {
-		return sha1Password;
-	}
+	public static String getAppVersionName() {
+		PackageInfo packageInfo = null;
+		try {
 
-	public static void setApiKey(String apiKey) {
-		WoolworthsApplication.apiKey = apiKey;
-	}
+			packageInfo = WoolworthsApplication.getInstance().getPackageManager().getPackageInfo(WoolworthsApplication.getInstance().getPackageName(), 0);
+		} catch (PackageManager.NameNotFoundException e) {
+			e.printStackTrace();
+		}
 
-	public static void setBaseURL(String baseURL) {
-		WoolworthsApplication.baseURL = baseURL;
-	}
-
-	public static String getApiKey() {
-		return apiKey;
-	}
-
-	public static String getBaseURL() {
-		return baseURL;
+		return packageInfo.versionName;
 	}
 
 	public static String getRegistrationTCLink() {
@@ -187,17 +193,23 @@ public class WoolworthsApplication extends Application {
 	public void onCreate() {
 		super.onCreate();
 		mInstance = this;
+		WoolworthsApplication.context = this.getApplicationContext();
 		StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
 		StrictMode.setVmPolicy(builder.build());
 		Fabric.with(WoolworthsApplication.this, new Crashlytics());
-		Fresco.initialize(this);
 		AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
-		FirebaseApp.initializeApp(WoolworthsApplication.this);
+
+		ImagePipelineConfig config = ImagePipelineConfig.newBuilder(context)
+				.setDownsampleEnabled(true)
+				.build();
+		Fresco.initialize(this, config);
+		//wake up FirebaseManager that will instantiate
+		//FirebaseApp
+		FirebaseManager.Companion.getInstance();
 		FacebookSdk.sdkInitialize(WoolworthsApplication.this);
 		AppEventsLogger.activateApp(WoolworthsApplication.this);
 		mWGlobalState = new WGlobalState();
 		updateBankDetail = new UpdateBankDetail();
-		WoolworthsApplication.context = this.getApplicationContext();
 		// set app context
 		mContextApplication = getApplicationContext();
 		//Crittercism.initialize(getApplicationContext(), getResources().getString(R.string.crittercism_app_id));

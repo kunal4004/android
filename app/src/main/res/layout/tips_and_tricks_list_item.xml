@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/rewards"
+        style="@style/listStyle"
+        android:background="@drawable/stores_details_background">
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:id="@+id/listIcon"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            />
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/name"
+            style="@style/accountsItem"
+            android:layout_toRightOf="@+id/listIcon"
+            android:drawablePadding="0dp"
+            android:layout_marginLeft="16dp"
+            />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/ic_caret_black" />
+    </RelativeLayout>
+</LinearLayout>

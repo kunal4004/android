@@ -36,8 +36,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 
 public class CheckOutFragment extends Fragment {
@@ -168,17 +168,8 @@ public class CheckOutFragment extends Fragment {
 
 			public void onPageFinished(WebView view, String url) {
 				mProgressLayout.setVisibility(View.GONE);
-				Activity activity = getActivity();
-				if (activity != null) {
-					if (closeOnNextPage != null && !url.contains(closeOnNextPage.getValue())) {
-						Intent returnIntent = new Intent();
-						if (closeOnNextPage == QueryString.COMPLETE) {
-							activity.setResult(Activity.RESULT_OK, returnIntent);
-						} else if (closeOnNextPage == QueryString.ABANDON) {
-							activity.setResult(Activity.RESULT_CANCELED, returnIntent);
-						}
-						finishCartActivity();
-					}
+				if (closeOnNextPage != null && !url.contains(closeOnNextPage.getValue())) {
+					finishCartActivity();
 				}
 			}
 		});
@@ -187,6 +178,12 @@ public class CheckOutFragment extends Fragment {
 	private void finishCartActivity() {
 		Activity activity = getActivity();
 		if (activity != null) {
+			Intent returnIntent = new Intent();
+			if (closeOnNextPage == QueryString.COMPLETE) {
+				activity.setResult(Activity.RESULT_OK, returnIntent);
+			} else if (closeOnNextPage == QueryString.ABANDON) {
+				activity.setResult(Activity.RESULT_CANCELED, returnIntent);
+			}
 			activity.finish();
 			activity.overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
 		}
@@ -237,7 +234,7 @@ public class CheckOutFragment extends Fragment {
 		view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (new ConnectionDetector().isOnline(getActivity())) {
+				if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
 					mErrorHandlerView.hideErrorHandler();
 					mProgressLayout.setVisibility(View.VISIBLE);
 					mWebCheckOut.loadUrl(getUrl(), getExtraHeader());

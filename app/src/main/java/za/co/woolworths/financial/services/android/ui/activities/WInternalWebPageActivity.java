@@ -35,8 +35,8 @@ import android.widget.Toast;
 
 import com.awfs.coordination.R;
 
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class WInternalWebPageActivity extends AppCompatActivity implements View.OnClickListener {
@@ -160,7 +160,7 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 		findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (new ConnectionDetector().isOnline(WInternalWebPageActivity.this)) {
+				if (NetworkManager.getInstance().isConnectedToNetwork(WInternalWebPageActivity.this)) {
 					hideAppBar();
 					showProgressBar();
 					WebBackForwardList history = webInternalPage.copyBackForwardList();
@@ -215,7 +215,7 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 	}
 
 	public void goBackInWebView() {
-		if (new ConnectionDetector().isOnline(WInternalWebPageActivity.this)) {
+		if (NetworkManager.getInstance().isConnectedToNetwork(WInternalWebPageActivity.this)) {
 			WebBackForwardList history = webInternalPage.copyBackForwardList();
 			int index = -1;
 			String url = null;

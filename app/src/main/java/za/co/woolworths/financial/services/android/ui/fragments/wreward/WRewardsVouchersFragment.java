@@ -21,6 +21,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.ui.activities.WRewardsVoucherDetailsActivity;
@@ -52,6 +53,7 @@ public class WRewardsVouchersFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.wrewards_vouchers_fragment, container, false);
+		Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSVOUCHERS);
 		Bundle bundle = getArguments();
 		voucherResponse = new Gson().fromJson(bundle.getString("WREWARDS"), VoucherResponse.class);
 		recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);

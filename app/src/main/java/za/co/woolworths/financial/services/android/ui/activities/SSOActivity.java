@@ -31,7 +31,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,13 +38,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter;
 import za.co.woolworths.financial.services.android.util.SSORequiredParameter;
@@ -68,7 +68,7 @@ public class SSOActivity extends WebViewActivity {
 		CHANGE_PASSWORD(9);
 		private int result;
 
-		private SSOActivityResult(int i) {
+		SSOActivityResult(int i) {
 			this.result = i;
 		}
 
@@ -92,7 +92,7 @@ public class SSOActivity extends WebViewActivity {
 	public Path path;
 	private Map<String, String> extraQueryStringParams;
 
-	private final String state;
+	private String state;
 	private final String nonce;
 	private String stsParams;
 
@@ -125,11 +125,16 @@ public class SSOActivity extends WebViewActivity {
 			public void onReceivedTitle(WebView view, String title) {
 				super.onReceivedTitle(view, title);
 
-				ArrayList<String> invalidTitles = new ArrayList<String>(
+				// ensure variables are not null
+				title = TextUtils.isEmpty(title) ? "" : title;
+				redirectURIString = TextUtils.isEmpty(redirectURIString) ? "" : redirectURIString;
+				SSOActivity.this.state = TextUtils.isEmpty(SSOActivity.this.state) ? "" : SSOActivity.this.state;
+
+				ArrayList<String> invalidTitles = new ArrayList<>(
 						Arrays.asList("about:blank".toLowerCase(),
 								getString(R.string.sso_title_text_submit_this_form).toLowerCase(),
-								SSOActivity.this.redirectURIString.toLowerCase(),
-								SSOActivity.this.redirectURIString.concat("?state=").concat(SSOActivity.this.state).toLowerCase())
+								redirectURIString.toLowerCase(),
+								redirectURIString.concat("?state=").concat(SSOActivity.this.state).toLowerCase())
 				);
 
 				if (invalidTitles.contains(title.toLowerCase())) {
@@ -145,7 +150,7 @@ public class SSOActivity extends WebViewActivity {
 		findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (new ConnectionDetector().isOnline(SSOActivity.this)) {
+				if (NetworkManager.getInstance().isConnectedToNetwork(SSOActivity.this)) {
 					WebBackForwardList history = webView.copyBackForwardList();
 					int index = -1;
 					String url;
@@ -195,7 +200,7 @@ public class SSOActivity extends WebViewActivity {
 
 		private String protocol;
 
-		private Protocol(String protocol) {
+		Protocol(String protocol) {
 			this.protocol = protocol;
 		}
 
@@ -217,7 +222,7 @@ public class SSOActivity extends WebViewActivity {
 
 		private String host;
 
-		private Host(String protocol) {
+		Host(String protocol) {
 			this.host = protocol;
 		}
 
@@ -246,7 +251,7 @@ public class SSOActivity extends WebViewActivity {
 
 		private String path;
 
-		private Path(String protocol) {
+		Path(String protocol) {
 			this.path = protocol;
 		}
 
@@ -268,7 +273,7 @@ public class SSOActivity extends WebViewActivity {
 		switch (this.path) {
 
 			case SIGNIN:
-				this.redirectURIString = WoolworthsApplication.getSsoRedirectURI();
+				redirectURIString = WoolworthsApplication.getSsoRedirectURI();
 
                 /*
 				* // Check if sts params were supplied.
@@ -310,19 +315,19 @@ public class SSOActivity extends WebViewActivity {
                 * */
 				break;
 			case REGISTER:
-				this.redirectURIString = WoolworthsApplication.getSsoRedirectURI();
+				redirectURIString = WoolworthsApplication.getSsoRedirectURI();
 				break;
 
 
 			case UPDATE_PASSWORD:
-				this.redirectURIString = WoolworthsApplication.getSsoUpdateDetailsRedirectUri();
+				redirectURIString = WoolworthsApplication.getSsoUpdateDetailsRedirectUri();
 				break;
 			case UPDATE_PROFILE:
-				this.redirectURIString = WoolworthsApplication.getSsoUpdateDetailsRedirectUri();
+				redirectURIString = WoolworthsApplication.getSsoUpdateDetailsRedirectUri();
 				break;
 
 			case LOGOUT:
-				this.redirectURIString = WoolworthsApplication.getSsoRedirectURILogout();
+				redirectURIString = WoolworthsApplication.getSsoRedirectURILogout();
 				break;
 
 			default:
@@ -343,7 +348,7 @@ public class SSOActivity extends WebViewActivity {
 					.appendQueryParameter("client_id", "WWOneApp")
 					.appendQueryParameter("response_type", "id_token") // Identity token
 					.appendQueryParameter("response_mode", "form_post")
-					.appendQueryParameter("redirect_uri", this.redirectURIString)
+					.appendQueryParameter("redirect_uri", redirectURIString)
 					.appendQueryParameter("state", this.state)
 					.appendQueryParameter("nonce", this.nonce)
 					.appendQueryParameter("scope", scope);
@@ -403,8 +408,8 @@ public class SSOActivity extends WebViewActivity {
 							//Trigger Firebase Tag.
 							JWTDecodedModel jwtDecodedModel = SessionUtilities.getInstance().getJwt();
 							Map<String, String> arguments = new HashMap<>();
-							arguments.put("c2_id", (jwtDecodedModel.C2Id != null) ? jwtDecodedModel.C2Id : "");
-							Utils.triggerFireBaseEvents(getApplicationContext(), FirebaseAnalytics.Event.LOGIN, arguments);
+							arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, (jwtDecodedModel.C2Id != null) ? jwtDecodedModel.C2Id : "");
+							Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.LOGIN, arguments);
 
 							NotificationUtils.getInstance().sendRegistrationToServer();
 							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.ACTIVE);
@@ -471,9 +476,9 @@ public class SSOActivity extends WebViewActivity {
 
 		private boolean isNavigatingToRedirectURL(String url) {
 
-			String redirectUriWithState = SSOActivity.this.redirectURIString.concat("?state=").concat(SSOActivity.this.state);
+			String redirectUriWithState = redirectURIString.concat("?state=").concat(SSOActivity.this.state);
 
-			return url.equalsIgnoreCase(SSOActivity.this.redirectURIString) || url.equalsIgnoreCase(redirectUriWithState);
+			return url.equalsIgnoreCase(redirectURIString) || url.equalsIgnoreCase(redirectUriWithState);
 		}
 
 		@TargetApi(android.os.Build.VERSION_CODES.M)
@@ -515,9 +520,8 @@ public class SSOActivity extends WebViewActivity {
 	};
 
 
-
 	private void unknownNetworkFailure(WebView webView, String description) {
-		if (!new ConnectionDetector().isOnline(SSOActivity.this)) {
+		if (!NetworkManager.getInstance().isConnectedToNetwork(SSOActivity.this)) {
 			mErrorHandlerView.webViewBlankPage(webView);
 			mErrorHandlerView.networkFailureHandler(description);
 		}
@@ -587,7 +591,17 @@ public class SSOActivity extends WebViewActivity {
 	}
 
 	private void showFailureView(String s) {
-		if (!new ConnectionDetector().isOnline(SSOActivity.this))
+		if (!NetworkManager.getInstance().isConnectedToNetwork(SSOActivity.this))
 			mErrorHandlerView.networkFailureHandler(s);
+	}
+
+	public void finishActivity() {
+		SessionUtilities.getInstance().setSTSParameters(null);
+		setResult(DEFAULT_KEYS_SEARCH_GLOBAL);
+		finish();
+		if (this.path != null && (this.path == SSOActivity.Path.UPDATE_PASSWORD || this.path == SSOActivity.Path.UPDATE_PROFILE))
+			overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
+		else
+			overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
 	}
 }

@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.cli;
 
+import android.app.Activity;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -86,26 +87,27 @@ public class CLIAllStepsContainerFragment extends Fragment implements CLIStepInd
 
 	public void updateStepIndicator(int position) {
 		int stepNumber = position - 1;
-
+		Activity activity = getActivity();
+		if (activity == null) return;
 		for (int i = 0; i <= 3; i++) {
 			if (i < stepNumber) {
 				indicators[i].setBackgroundResource(R.drawable.cli_step_indicator_active);
 				indicatorNumbers[i].setVisibility(View.INVISIBLE);
 				stepNames[i].setTypeface(mStepFinished);
-				stepNames[i].setTextColor(ContextCompat.getColor(getActivity(), R.color.cli_step_indicator_done_text_color));
+				stepNames[i].setTextColor(ContextCompat.getColor(activity, R.color.cli_step_indicator_done_text_color));
 			} else if (i == stepNumber) {
 				indicators[i].setBackgroundResource(R.drawable.cli_step_indicator_background_current_screen);
 				indicatorNumbers[i].setVisibility(View.VISIBLE);
-				indicatorNumbers[i].setTextColor(ContextCompat.getColor(getActivity(), R.color.white));
+				indicatorNumbers[i].setTextColor(ContextCompat.getColor(activity, R.color.white));
 				stepNames[i].setTypeface(mStepCurrent);
-				stepNames[i].setTextColor(ContextCompat.getColor(getActivity(), R.color.black));
+				stepNames[i].setTextColor(ContextCompat.getColor(activity, R.color.black));
 
 			} else {
 				indicators[i].setBackgroundResource(R.drawable.cli_step_indicator_background_next_screen);
 				indicatorNumbers[i].setVisibility(View.VISIBLE);
-				indicatorNumbers[i].setTextColor(ContextCompat.getColor(getActivity(), R.color.mask_opacity));
+				indicatorNumbers[i].setTextColor(ContextCompat.getColor(activity, R.color.mask_opacity));
 				stepNames[i].setTypeface(mStepDefault);
-				stepNames[i].setTextColor(ContextCompat.getColor(getActivity(), R.color.mask_opacity));
+				stepNames[i].setTextColor(ContextCompat.getColor(activity, R.color.mask_opacity));
 			}
 		}
 	}
