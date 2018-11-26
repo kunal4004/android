@@ -42,6 +42,13 @@ class FirebaseManagerAnalyticsProperties {
         const val MYACCOUNTSPERSONALLOANBPI: String = "GA_Event_ONE_MYACCOUNTS_PL_BPI"
         const val ACCOUNTSEVENTSAPPEARED: String = "accounts_event_appeared"
         const val LOGIN: String = "login"
+        const val SORTBY_EVENT_APPEARED: String = "GA_Event_ONE_SORTSFILTERS_BUT"
+        const val SORTBY_EVENT_APPLIED: String = "GA_Event_ONE_SORTSFILTERS_OPTION"
+        const val REFINE_EVENT_APPEARED: String = "GA_Event_ONE_SORTSFILTERS_REFINE"
+        const val REFINE_EVENT_PROMO_ON: String = "GA_Event_ONE_SORTSFILTERS_PROMOON"
+        const val REFINE_EVENT_PROMO_OFF: String = "GA_Event_ONE_SORTSFILTERS_PROMOOFF"
+        const val REFINE_EVENT_SEE_RESULT: String = "GA_Event_ONE_SORTSFILTERS_SEERSB"
+        const val REFINE_EVENT_BACK_BUTTON: String = "GA_Event_ONE_SORTSFILTERS_SEERSBB"
     }
 
     class PropertyNames {
@@ -49,6 +56,7 @@ class FirebaseManagerAnalyticsProperties {
             const val SUBURBNAME: String = "SUBURBNAME"
             const val VOUCHERDESCRIPTION: String = "VOUCHERDESCRIPTION"
             const val C2ID: String = "c2_id"
+            const val SORT_OPTION_NAME : String = "SORTBY_OPTION_NAME"
         }
     }
 }
