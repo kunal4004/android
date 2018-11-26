@@ -117,7 +117,7 @@ class TipsAndTricksViewPagerActivity : AppCompatActivity(), View.OnClickListener
                     }
                 //STATEMENTS
                     7 -> {
-                        presentSttaments()
+                        presentAccountStatements()
                     }
                 //SHOPPING LIST
                     8 -> {
@@ -221,7 +221,7 @@ class TipsAndTricksViewPagerActivity : AppCompatActivity(), View.OnClickListener
         }
     }
 
-    private fun presentSttaments() {
+    private fun presentAccountStatements() {
         availableAccounts = getAvailableAccounts()
         if (availableAccounts.contains("SC"))
             redirectToMyAccountsCardsActivity(0)
