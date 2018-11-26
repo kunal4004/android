@@ -359,8 +359,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		allUserOptionsLayout.setVisibility(View.VISIBLE);
 		viewPager.setAdapter(adapter);
 		viewPager.setCurrentItem(0);
-		if (isActivityInForeground && SessionUtilities.getInstance().isUserAuthenticated() && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment)
-			showFeatureWalkthroughAccounts(unavailableAccounts);
+		showFeatureWalkthroughPrompts();
 	}
 
 	private void configureSignInNoC2ID() {
@@ -426,6 +425,8 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		showView(allUserOptionsLayout);
 		viewPager.setAdapter(adapter);
 		viewPager.setCurrentItem(0);
+		// prompts when user not linked
+        showFeatureWalkthroughPrompts();
 	}
 
 	private void configureAndLayoutTopLayerView() {
@@ -888,6 +889,11 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		ObjectAnimator anim = ObjectAnimator.ofInt(mScrollView, "scrollY", mScrollView.getScrollY(), 0);
 		anim.setDuration(500).start();
 	}
+
+    public void showFeatureWalkthroughPrompts() {
+        if (isActivityInForeground && SessionUtilities.getInstance().isUserAuthenticated() && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment)
+            showFeatureWalkthroughAccounts(unavailableAccounts);
+    }
 
 	@SuppressLint("StaticFieldLeak")
 	private void showFeatureWalkthroughAccounts(List<String> unavailableAccounts) {
