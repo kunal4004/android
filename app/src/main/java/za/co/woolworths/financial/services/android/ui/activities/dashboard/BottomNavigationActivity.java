@@ -46,6 +46,7 @@ import za.co.woolworths.financial.services.android.models.service.event.LoadStat
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
+import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment;
@@ -65,6 +66,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.wtoday.WTodayFra
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
+import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
@@ -110,6 +112,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	public static final int SLIDE_UP_COLLAPSE_REQUEST_CODE = 13;
 	public static final int SLIDE_UP_COLLAPSE_RESULT_CODE = 12345;
 	public static final int BOTTOM_FRAGMENT_REQUEST_CODE = 3401;
+	public static final int TIPS_AND_TRICKS_CTA_REQUEST_CODE = 3627;
 
 	public final String TAG = this.getClass().getSimpleName();
 	private PermissionUtils permissionUtils;
@@ -128,6 +131,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	private int mListItemCount = 0;
 	private QueryBadgeCounter mQueryBadgeCounter;
 	public static final int PDP_REQUEST_CODE = 18;
+	public WMaterialShowcaseView walkThroughPromtView = null;
 	private String mSessionExpiredAtTabSection;
 
 	@Override
@@ -549,6 +553,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		@Override
 		public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
+			// To avoid clicks while feature tutorial popup showing
+			if (!Utils.isFeatureTutorialsDismissed(walkThroughPromtView))
+				return false;
+
 			statusBarColor(R.color.white);
 			MultiClickPreventer.preventMultiClick(getViewDataBinding().wBottomNavigation);
 			switch (item.getItemId()) {
@@ -654,6 +662,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void onBackPressed() {
+
+		if (walkThroughPromtView != null && !walkThroughPromtView.isDismissed()) {
+			walkThroughPromtView.hide();
+			return;
+		}
+
 		/**
 		 *  Close slide up panel when expanded
 		 */
@@ -1022,6 +1036,20 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				if (getBottomFragmentById() instanceof ProductDetailFragment) {
 					getBottomFragmentById().onActivityResult(requestCode, resultCode, data);
 				}
+			}
+		}
+
+		if (requestCode == TIPS_AND_TRICKS_CTA_REQUEST_CODE) {
+			switch (resultCode) {
+				case TipsAndTricksViewPagerActivity.RESULT_OK_PRODUCTS:
+					getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
+					break;
+				case TipsAndTricksViewPagerActivity.RESULT_OK_ACCOUNTS:
+					getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
+					break;
+				case TipsAndTricksViewPagerActivity.RESULT_OK_REWARDS:
+					getBottomNavigationById().setCurrentItem(INDEX_REWARD);
+					break;
 			}
 		}
 

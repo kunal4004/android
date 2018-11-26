@@ -670,14 +670,17 @@
     <string name="tips_tricks_titles_vouchers">Vouchers</string>
     <string name="tips_tricks_titles_stores">Find a Product in-Store</string>
     <string name="tips_tricks_titles_barcode">Barcode Scanner</string>
+    <string name="tips_tricks_titles_refine">Filter Your Search</string>
     <string name="tips_tricks_titles_delivery">Delivery Location</string>
     <string name="tips_tricks_titles_navigation">My Cart</string>
     <string name="tips_tricks_titles_my_accounts">Accounts</string>
     <string name="tips_tricks_titles_statements">Statements</string>
     <string name="tips_tricks_titles_shopping_list">Shopping Lists</string>
+    <string name="tips_tricks_titles_refine_search">Refine Search</string>
     <string name="tips_tricks_desc_vouchers">View your latest vouchers and redeem them in-store. Make sure you use them before the expiry date.</string>
     <string name="tips_tricks_desc_stores">Want to know if a product is available in-store before you jump in your car to go shop?</string>
     <string name="tips_tricks_desc_barcode">Scan a product barcode to view the product information or seamlessly add it to your shopping list.</string>
+    <string name="tips_tricks_desc_refine">Find your item faster using filters e.g. Country Road, size 10, vegetarian, organic, Carb Clever.</string>
     <string name="tips_tricks_desc_delivery">The location at the top is your default delivery location. If you need products delivered elsewhere be sure to change this.</string>
     <string name="tips_tricks_desc_navigation">Simply click the cart icon in the navigation to view your basket.</string>
     <string name="tips_tricks_desc_my_accounts">See all your active financial products available balance, amount due and credit limit.</string>
@@ -686,12 +689,13 @@
     <string name="tips_tricks_button_vouchers">redeem a voucher today</string>
     <string name="tips_tricks_button_stores">check in-Store availability</string>
     <string name="tips_tricks_button_barcode">Scan a product</string>
+    <string name="tips_tricks_button_refine">Refine</string>
     <string name="tips_tricks_button_delivery">Set Your Delivery Location</string>
     <string name="tips_tricks_button_navigation">START SHOPPING</string>
     <string name="tips_tricks_button_my_accounts">check your account status</string>
     <string name="tips_tricks_button_statements">view your statements</string>
     <string name="tips_tricks_button_shopping_list">start creating shopping lists</string>
-    <string name="hide_feature_tutorials">hide feature tutorials</string>
+    <string name="Dont_show_these_tips">Don’t show these tips</string>
     <string name="new_feature_tutorials">New Feature Tutorials</string>
     <string name="scan_your_first_product">SCAN your first PRODUCT</string>
     <string name="check_in_store_availability">check in-store availability</string>
@@ -784,15 +788,23 @@
 
     <string name="bpi_loan_balance_protection_benefits_1">Pays the outstanding balance on your account (provided it is not in arrears) in the event of your death, permanent disability, or if you are diagnosed with a critical illness.</string>
     <string name="bpi_loan_balance_protection_benefits_2">Pays your instalments for up to 12 months from the date you are retrenched or temporarily disabled.</string>
-
-
     <string name="bpi_companion_care_benefits_1">Pays the outstanding balance on your account (provided it is not in arrears) in the event of your partner’s death.</string>
-
     <string name="bpi_partner_cover_65_years_benefit_1">Pays the outstanding balance on your account (provided it is not in arrears) if your partner passes away or if your partner is diagnosed with a critical illness.</string>
-
     <string name="bpi_balance_protection_65_years_benefit_1">Pays the outstanding balance on your account (provided it is not in arrears) in the event of your death, or if you are diagnosed with a critical illness.></string>
+    <string name="walkthrough_refine_title">NARROW LISTING RESULTS</string>
+    <string name="walkthrough_refine_desc">Want to get to products faster? You can now refine results by brands, size , colour and style to mention a few.</string>
+    <string name="walkthrough_refine_action">REFINE NOW</string>
+    <string name="walkthrough_account_title">account</string>
+    <string name="walkthrough_account_desc">See all your active financial products available balance, amount due and credit limit.</string>
+    <string name="walkthrough_account_action_no_products">apply for an account today</string>
+    <string name="walkthrough_account_action">check account status</string>
     <string name="app_maintenance_message">Oops… something went wrong.\nPlease try again later</string>
-
+    <string name="walkthrough_shopping_list_title">Shopping lists</string>
+    <string name="walkthrough_shopping_list_desc">Create and manage your shopping lists, and add a list to your cart.</string>
+    <string name="walkthrough_shopping_list_action">create a shopping list</string>
+    <string name="walkthrough_statement_title">Access Your Statements</string>
+    <string name="walkthrough_statement_desc">View and send your latest statements for your Woolworths accounts.</string>
+    <string name="walkthrough_statement_action">TAKE ME THERE</string>
 
 
 </resources>

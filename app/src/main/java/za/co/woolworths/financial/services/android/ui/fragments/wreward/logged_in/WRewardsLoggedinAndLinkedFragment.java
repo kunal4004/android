@@ -19,6 +19,7 @@ import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.WrewardsLoggedinAndLinkedFragmentBinding;
 
+import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dto.CardDetailsResponse;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.models.rest.reward.GetVoucher;
@@ -31,6 +32,8 @@ import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsOverviewFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsSavingsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.base.WRewardsFragment;
+import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
@@ -40,7 +43,7 @@ import za.co.woolworths.financial.services.android.util.Utils;
 /**
  * Created by W7099877 on 05/01/2017.
  */
-public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLoggedinAndLinkedFragmentBinding, WRewardLoggedInViewModel> {
+public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLoggedinAndLinkedFragmentBinding, WRewardLoggedInViewModel> implements WMaterialShowcaseView.IWalkthroughActionListener {
 
 	private TabLayout tabLayout;
 	private ViewPager viewPager;
@@ -144,6 +147,8 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 		if (pos == 1 && activeVoucherCount > 0) {
 			tv_count.setVisibility(View.VISIBLE);
 			tv_count.setText("" + activeVoucherCount);
+			if (getBottomNavigationActivity().getCurrentFragment() instanceof WRewardsFragment)
+				showFeatureWalkthrough(tv_count);
 		} else {
 			tv_count.setVisibility(View.GONE);
 		}
@@ -297,5 +302,41 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 					break;
 			}
 		}
+	}
+
+	public void showFeatureWalkthrough(View counterView){
+		if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.vouchers)
+			return;
+		getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.VOUCHERS)
+				.setTarget(counterView)
+				.setTitle(R.string.tips_tricks_titles_vouchers)
+				.setDescription(R.string.walkthrough_barcode_desc)
+				.setActionText(R.string.redeem_voucher_today)
+				.setImage(R.drawable.tips_tricks_ic_coupon)
+				.setAction(this)
+				.setShapePadding(24)
+				.setArrowPosition(WMaterialShowcaseView.Arrow.TOP_CENTER)
+				.setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
+		getBottomNavigationActivity().walkThroughPromtView.show(getActivity());
+	}
+
+	@Override
+	public void onWalkthroughActionButtonClick() {
+		getActivity().runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				viewPager.setCurrentItem(1);
+			}
+		});
+	}
+
+	@Override
+	public void onPromptDismiss() {
+
 	}
 }
