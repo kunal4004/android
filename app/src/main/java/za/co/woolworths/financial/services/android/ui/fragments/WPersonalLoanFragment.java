@@ -571,7 +571,12 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 
             @Override
             protected Void doInBackground(Void... voids) {
-                imViewStatementLogo.invalidate();
+				getActivity().runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						imViewStatementLogo.invalidate();
+					}
+				});
                 return null;
             }
 

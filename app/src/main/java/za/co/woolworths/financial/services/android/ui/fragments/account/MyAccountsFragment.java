@@ -125,6 +125,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	ImageView imgStoreCardApplyNow;
 	RelativeLayout relMyList;
 	int promptsActionListener;
+	boolean isActivityInForeground;
 
 	public MyAccountsFragment() {
 		// Required empty public constructor
@@ -269,6 +270,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	@Override
 	public void onResume() {
 		super.onResume();
+		isActivityInForeground = true;
 		if (!AppInstanceObject.biometricWalkthroughIsPresented(getActivity()))
 			messageCounterRequest();
 	}
@@ -357,7 +359,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		allUserOptionsLayout.setVisibility(View.VISIBLE);
 		viewPager.setAdapter(adapter);
 		viewPager.setCurrentItem(0);
-		if (SessionUtilities.getInstance().isUserAuthenticated() && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment)
+		if (isActivityInForeground && SessionUtilities.getInstance().isUserAuthenticated() && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment)
 			showFeatureWalkthroughAccounts(unavailableAccounts);
 	}
 
@@ -923,7 +925,12 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 
 			@Override
 			protected Void doInBackground(Void... voids) {
-				target.invalidate();
+				getActivity().runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						target.invalidate();
+					}
+				});
 				return null;
 			}
 
@@ -1015,5 +1022,11 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			}
 		}
 		return getViewDataBinding().applyNowLayout.imgStoreCardApply;
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		isActivityInForeground = false;
 	}
 }

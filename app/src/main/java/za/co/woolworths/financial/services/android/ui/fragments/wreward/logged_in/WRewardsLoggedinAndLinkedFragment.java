@@ -61,6 +61,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	private GetVoucher getVoucherAsync;
 	private AsyncTask<String, String, CardDetailsResponse> wRewardsCardDetails;
 	private String TAG = this.getClass().getSimpleName();
+	boolean isActivityInForeground;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -147,7 +148,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 		if (pos == 1 && activeVoucherCount > 0) {
 			tv_count.setVisibility(View.VISIBLE);
 			tv_count.setText("" + activeVoucherCount);
-			if (getBottomNavigationActivity().getCurrentFragment() instanceof WRewardsFragment)
+			if (isActivityInForeground && getBottomNavigationActivity().getCurrentFragment() instanceof WRewardsFragment)
 				showFeatureWalkthrough(tv_count);
 		} else {
 			tv_count.setVisibility(View.GONE);
@@ -338,5 +339,17 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	@Override
 	public void onPromptDismiss() {
 
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		isActivityInForeground = false;
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		isActivityInForeground = true;
 	}
 }
