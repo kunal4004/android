@@ -962,7 +962,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	private void showFeatureWalkthroughShoppingList() {
 		if (!(getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment))
 			return;
-		if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.shoppingList)
+		if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.shoppingList || shoppingListsResponse == null || shoppingListsResponse.lists.size() > 0)
 			return;
 		promptsActionListener = 2;
 		mScrollView.post(new Runnable() {
