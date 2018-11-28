@@ -910,7 +910,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			return;
 		}
 		View viewToScrollUp = null;
-		String actionText = getActivity().getResources().getString(R.string.walkthrough_account_action);
+		String actionText = getActivity().getResources().getString(R.string.tips_tricks_go_to_accounts);
 		if (unavailableAccounts.size() == 3) {
 			viewToScrollUp = imgStoreCardApplyNow;
 			actionText = getActivity().getResources().getString(R.string.walkthrough_account_action_no_products);
@@ -953,12 +953,11 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 				super.onPostExecute(aVoid);
 				getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.ACCOUNTS)
 						.setTarget(target)
-						.setTitle(R.string.walkthrough_account_title)
-						.setDescription(R.string.walkthrough_account_desc)
+						.setTitle(R.string.tips_tricks_view_your_accounts)
+						.setDescription(R.string.tips_tricks_desc_my_accounts)
 						.setActionText(finalActionText)
 						.setImage(R.drawable.tips_tricks_ic_my_accounts)
 						.setAction(listener)
-						.setAsNewFeature()
 						.setArrowPosition(WMaterialShowcaseView.Arrow.TOP_LEFT)
 						.setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
 				getBottomNavigationActivity().walkThroughPromtView.show(getActivity());

@@ -1168,9 +1168,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			return;
 		CartActivity.walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.DELIVERY_LOCATION)
 				.setTarget(imgDeliveryLocation)
-				.setTitle(R.string.tips_tricks_titles_delivery)
-				.setDescription(R.string.walkthrough_barcode_desc)
-				.setActionText(R.string.set_your_delivery_location)
+				.setTitle(R.string.your_delivery_location)
+				.setDescription(R.string.walkthrough_delivery_location_desc)
+				.setActionText(R.string.tips_edit_delivery_location)
 				.setImage(R.drawable.tips_tricks_ic_stores)
 				.setAction(this)
 				.setShapePadding(24)

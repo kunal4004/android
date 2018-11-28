@@ -310,9 +310,9 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 			return;
 		getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.VOUCHERS)
 				.setTarget(counterView)
-				.setTitle(R.string.tips_tricks_titles_vouchers)
-				.setDescription(R.string.walkthrough_barcode_desc)
-				.setActionText(R.string.redeem_voucher_today)
+				.setTitle(R.string.tips_tricks_your_vouchers)
+				.setDescription(R.string.walkthrough_vouchers_desc)
+				.setActionText(R.string.tips_tricks_view_these_now)
 				.setImage(R.drawable.tips_tricks_ic_coupon)
 				.setAction(this)
 				.setShapePadding(24)
