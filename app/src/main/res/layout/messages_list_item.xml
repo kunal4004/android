@@ -101,7 +101,7 @@
                                 android:layout_marginStart="17dp"
                                 android:layout_marginTop="8dp"
                                 android:layout_toEndOf="@+id/messagingwlogo"
-                                android:lineSpacingExtra="6dp"
+                                android:lineSpacingExtra="8dp"
                                 android:text="With Wrewards you can save up to 20% instantly on thousands of items through out the store, from food to clothing to homeware to beauty and more. "
                                 android:textColor="@color/in_app_msg_color_desc"
                                 android:textSize="15sp"
