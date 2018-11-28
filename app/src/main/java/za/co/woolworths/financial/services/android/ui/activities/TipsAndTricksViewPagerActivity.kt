@@ -145,6 +145,9 @@ class TipsAndTricksViewPagerActivity : AppCompatActivity(), View.OnClickListener
         counter.text = (position + 1).toString() + " OF " + titles?.size.toString()
         featureIcon.setBackgroundResource(icons.getResourceId(position, -1))
         when (position) {
+            0->{
+                featureActionButton.text = if (SessionUtilities.getInstance().isUserAuthenticated() && QueryBadgeCounter.getInstance().cartCount > 0) resources.getString(R.string.certified_id) else actionButtonTexts?.get(position)
+            }
             5 -> {
                 featureActionButton.visibility = if (SessionUtilities.getInstance().isUserAuthenticated() && QueryBadgeCounter.getInstance().voucherCount > 0) View.VISIBLE else View.INVISIBLE
             }
