@@ -121,8 +121,7 @@ class TipsAndTricksViewPagerActivity : AppCompatActivity(), View.OnClickListener
                     }
                 //SHOPPING LIST
                     8 -> {
-                        setResult(RESULT_OK_ACCOUNTS)
-                        onBackPressed()
+                        presentShoppingList()
                     }
                 }
             }
@@ -146,20 +145,25 @@ class TipsAndTricksViewPagerActivity : AppCompatActivity(), View.OnClickListener
         featureIcon.setBackgroundResource(icons.getResourceId(position, -1))
         when (position) {
             0->{
-                featureActionButton.text = if (SessionUtilities.getInstance().isUserAuthenticated() && QueryBadgeCounter.getInstance().cartCount > 0) resources.getString(R.string.certified_id) else actionButtonTexts?.get(position)
-            }
-            5 -> {
-                featureActionButton.visibility = if (SessionUtilities.getInstance().isUserAuthenticated() && QueryBadgeCounter.getInstance().voucherCount > 0) View.VISIBLE else View.INVISIBLE
-            }
-            6 -> {
-                featureActionButton.visibility = if (SessionUtilities.getInstance().isUserAuthenticated() && accountsResponse != null) View.VISIBLE else View.INVISIBLE
-            }
-            7 -> {
-                featureActionButton.visibility = if (SessionUtilities.getInstance().isUserAuthenticated() && accountsResponse != null && ((getAvailableAccounts().contains("SC")) || getAvailableAccounts().contains("PL"))) View.VISIBLE else View.INVISIBLE
+                featureTitle.text = if (SessionUtilities.getInstance().isUserAuthenticated()) resources.getString(R.string.tips_tricks_get_shopping) else titles?.get(position)
+                featureActionButton.text = if (SessionUtilities.getInstance().isUserAuthenticated() && QueryBadgeCounter.getInstance().cartCount > 0) resources.getString(R.string.tips_tricks_view_cart) else actionButtonTexts?.get(position)
             }
             2, 3 -> {
                 featureActionButton.visibility = View.INVISIBLE
             }
+            5 -> {
+                featureTitle.text = if (SessionUtilities.getInstance().isUserAuthenticated()) resources.getString(R.string.tips_tricks_your_vouchers) else titles?.get(position)
+                featureActionButton.visibility = if (SessionUtilities.getInstance().isUserAuthenticated() && QueryBadgeCounter.getInstance().voucherCount > 0) View.VISIBLE else View.INVISIBLE
+            }
+            6 -> {
+                featureTitle.text = if (SessionUtilities.getInstance().isUserAuthenticated()) resources.getString(R.string.tips_tricks_view_your_accounts) else titles?.get(position)
+                featureActionButton.visibility = if (SessionUtilities.getInstance().isUserAuthenticated() && accountsResponse != null) View.VISIBLE else View.INVISIBLE
+            }
+            7 -> {
+                featureTitle.text = if (SessionUtilities.getInstance().isUserAuthenticated()) resources.getString(R.string.tips_tricks_access_your_statements) else titles?.get(position)
+                featureActionButton.visibility = if (SessionUtilities.getInstance().isUserAuthenticated() && accountsResponse != null && ((getAvailableAccounts().contains("SC")) || getAvailableAccounts().contains("PL"))) View.VISIBLE else View.INVISIBLE
+            }
+
         }
     }
 

@@ -662,7 +662,7 @@
     <string name="text_new">NEW</string>
     <string name="walkthrough_biometrics_title">we’ve added \n biometrics authentication</string>
     <string name="walkthrough_biometrics_desc">You can now easily access secure features in the app by using the biometrics reader on your device.</string>
-    <string name="walkthrough_barcode_title">BARCODE SCANNER</string>
+    <string name="walkthrough_barcode_title">Barcode Scanning</string>
     <string name="walkthrough_barcode_desc">Scan a product barcode to view the product information or seamlessly add it to your shopping list.</string>
     <string name="previous">previous</string>
     <string name="need_help">Need Help</string>
@@ -697,7 +697,7 @@
     <string name="tips_tricks_button_shopping_list">start creating shopping lists</string>
     <string name="Dont_show_these_tips">Don’t show these tips</string>
     <string name="new_feature_tutorials">New Feature Tutorials</string>
-    <string name="scan_your_first_product">SCAN your first PRODUCT</string>
+    <string name="scan_your_first_product">SCAN a PRODUCT</string>
     <string name="check_in_store_availability">check in-store availability</string>
     <string name="redeem_voucher_today">REDEEM A VOUCHER TODAY</string>
     <string name="navigation">Navigation</string>
@@ -791,8 +791,8 @@
     <string name="bpi_companion_care_benefits_1">Pays the outstanding balance on your account (provided it is not in arrears) in the event of your partner’s death.</string>
     <string name="bpi_partner_cover_65_years_benefit_1">Pays the outstanding balance on your account (provided it is not in arrears) if your partner passes away or if your partner is diagnosed with a critical illness.</string>
     <string name="bpi_balance_protection_65_years_benefit_1">Pays the outstanding balance on your account (provided it is not in arrears) in the event of your death, or if you are diagnosed with a critical illness.></string>
-    <string name="walkthrough_refine_title">NARROW LISTING RESULTS</string>
-    <string name="walkthrough_refine_desc">Want to get to products faster? You can now refine results by brands, size , colour and style to mention a few.</string>
+    <string name="walkthrough_refine_title">Filter Your Search</string>
+    <string name="walkthrough_refine_desc">Find your item faster using filters e.g. Country Road, size 10, vegetarian, organic, Carb Clever.</string>
     <string name="walkthrough_refine_action">REFINE NOW</string>
     <string name="walkthrough_account_title">account</string>
     <string name="walkthrough_account_desc">See all your active financial products available balance, amount due and credit limit.</string>
@@ -810,6 +810,16 @@
     <string name="tips_create_shopping_list">create a shopping list</string>
     <string name="app_tips_tricks">App Tips &amp; Tricks</string>
     <string name="tips_tricks_view_cart">view cart</string>
-
+    <string name="tips_tricks_get_shopping">GET SHOPPING</string>
+    <string name="tips_tricks_your_vouchers">your vouchers</string>
+    <string name="tips_tricks_view_these_now">VIEW THESE NOW</string>
+    <string name="tips_tricks_go_to_accounts">GO TO YOUR ACCOUNTS</string>
+    <string name="tips_tricks_view_your_accounts">VIEW YOUR ACCOUNTS</string>
+    <string name="tips_tricks_take_me_there">TAKE ME THERE</string>
+    <string name="tips_tricks_access_your_statements">ACCESS YOUR STATEMENTS</string>
+    <string name="walkthrough_in_store_desc">Track down the product you’re looking for in the app – save yourself a drive to the wrong store!</string>
+    <string name="your_delivery_location">Your Delivery Location</string>
+    <string name="walkthrough_delivery_location_desc">Set your Delivery Location to see exact prices and the items available to you.</string>
+    <string name="walkthrough_vouchers_desc">View your latest vouchers and redeem them in-store before they expire.</string>
 
 </resources>

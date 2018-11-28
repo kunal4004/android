@@ -208,9 +208,9 @@
         <item>@string/tips_tricks_button_refine</item>
         <item>@string/tips_tricks_button_stores</item>
         <item>@string/tips_edit_delivery_location</item>
-        <item>@string/tips_tricks_titles_vouchers</item>
-        <item>@string/tips_tricks_titles_my_accounts</item>
-        <item>@string/tips_tricks_titles_statements</item>
+        <item>@string/tips_tricks_view_these_now</item>
+        <item>@string/tips_tricks_go_to_accounts</item>
+        <item>@string/tips_tricks_take_me_there</item>
         <item>@string/tips_create_shopping_list</item>
     </string-array>
 

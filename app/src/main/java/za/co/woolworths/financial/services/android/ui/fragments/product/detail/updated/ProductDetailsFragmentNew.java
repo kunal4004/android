@@ -1226,7 +1226,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		ProductDetailsActivity.walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.FIND_IN_STORE)
 				.setTarget(btnFindInStore)
 				.setTitle(R.string.tips_tricks_titles_stores)
-				.setDescription(R.string.walkthrough_barcode_desc)
+				.setDescription(R.string.walkthrough_in_store_desc)
 				.setActionText(R.string.check_in_store_availability)
 				.setImage(R.drawable.tips_tricks_ic_stores)
 				.setAction(this)
