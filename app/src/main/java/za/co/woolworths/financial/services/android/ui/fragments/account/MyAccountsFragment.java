@@ -126,6 +126,8 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	RelativeLayout relMyList;
 	int promptsActionListener;
 	boolean isActivityInForeground;
+	boolean isPromptsShown;
+	boolean isAccountsCallMade;
 
 	public MyAccountsFragment() {
 		// Required empty public constructor
@@ -271,6 +273,8 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	public void onResume() {
 		super.onResume();
 		isActivityInForeground = true;
+		if (!isPromptsShown && isAccountsCallMade)
+			showFeatureWalkthroughPrompts();
 		if (!AppInstanceObject.biometricWalkthroughIsPresented(getActivity()))
 			messageCounterRequest();
 	}
@@ -426,6 +430,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		viewPager.setAdapter(adapter);
 		viewPager.setCurrentItem(0);
 		// prompts when user not linked
+		isAccountsCallMade = true;
         showFeatureWalkthroughPrompts();
 	}
 
@@ -664,6 +669,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 									}
 								}
 							}
+							isAccountsCallMade = true;
 							configureView();
 							break;
 						case 440:
@@ -891,8 +897,10 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	}
 
     public void showFeatureWalkthroughPrompts() {
-        if (isActivityInForeground && SessionUtilities.getInstance().isUserAuthenticated() && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment)
-            showFeatureWalkthroughAccounts(unavailableAccounts);
+        if (isActivityInForeground && SessionUtilities.getInstance().isUserAuthenticated() && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment) {
+        	isPromptsShown = true;
+			showFeatureWalkthroughAccounts(unavailableAccounts);
+		}
     }
 
 	@SuppressLint("StaticFieldLeak")
