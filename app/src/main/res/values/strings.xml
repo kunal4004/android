@@ -805,5 +805,5 @@
     <string name="walkthrough_statement_title">Access Your Statements</string>
     <string name="walkthrough_statement_desc">View and send your latest statements for your Woolworths accounts.</string>
     <string name="walkthrough_statement_action">TAKE ME THERE</string>
-    <string name="account_statement_error">Oops, There seems to be a problem.  Please try again later. </string>
+    <string name="account_statement_error">Sorry, this document is unavailable</string>
 </resources>
