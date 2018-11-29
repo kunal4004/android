@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_marginTop="?attr/actionBarSize"
+    tools:context="za.co.woolworths.financial.services.android.ui.fragments.help.tipstricks.TipsAndTricksFragment">
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/default_background"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/newFeature"
+                style="@style/listStyle"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/stores_details_background">
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    style="@style/accountsItem"
+                    android:text="@string/new_feature_tutorials" />
+
+                <Switch
+                    android:id="@+id/featureSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:theme="@style/SwitchTheme" />
+            </RelativeLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/tipsAndTricksList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sixteen_dp"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+</layout>

@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -86,17 +87,20 @@ public class StoreFinderListFragment extends Fragment implements UpdateStoreFind
 
 	@Override
 	public void onFragmentUpdate() {
-		StoreFinderListFragment.this.getActivity().runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				if (!listReceiveUpdate) {
-					mStoreDetailList = wGlobalState.getStoreDetailsArrayList();
-					if (mStoreDetailList.size() > 0) {
-						getData(mStoreDetailList);
+		Activity activity = getActivity();
+		if (activity != null) {
+			activity.runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					if (!listReceiveUpdate) {
+						mStoreDetailList = wGlobalState.getStoreDetailsArrayList();
+						if (mStoreDetailList.size() > 0) {
+							getData(mStoreDetailList);
+						}
+						listReceiveUpdate = true;
 					}
-					listReceiveUpdate = true;
 				}
-			}
-		});
+			});
+		}
 	}
 }

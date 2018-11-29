@@ -64,9 +64,6 @@ public class WRewardsLoggedinAndNotLinkedFragment extends Fragment implements Vi
 		applyForWRewards.setOnClickListener(this);
 		wRewardsTagLine.setText(getResources().getText(R.string.wrewards_unlinked_tag_line));
 		wRewardsTagLine.setTextColor(getResources().getColor(R.color.black_50));
-		Typeface tf = Typeface.createFromAsset(getActivity().getAssets(), "fonts/MyriadPro-Regular.otf");
-		wRewardsTagLine.setTypeface(tf);
-		wRewardsTagLine.setTextSize(15);
 		return view;
 	}
 

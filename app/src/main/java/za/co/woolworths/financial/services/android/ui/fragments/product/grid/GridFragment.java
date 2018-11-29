@@ -31,9 +31,13 @@ import com.awfs.coordination.databinding.GridLayoutBinding;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.reactivex.functions.Consumer;
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
+import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
@@ -51,13 +55,14 @@ import za.co.woolworths.financial.services.android.ui.adapters.SortOptionsAdapte
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.ShoppingListFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsFragment;
+import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.OPEN_GET_LIST_SCREEN;
 
-public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel> implements GridNavigator, View.OnClickListener,SortOptionsAdapter.OnSortOptionSelected {
+public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel> implements GridNavigator, View.OnClickListener,SortOptionsAdapter.OnSortOptionSelected, WMaterialShowcaseView.IWalkthroughActionListener {
 
 	private GridViewModel mGridViewModel;
 	private ErrorHandlerView mErrorHandlerView;
@@ -213,8 +218,9 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 			hideFooterView();
 			if (!loadMoreData) {
                 getViewDataBinding().sortAndRefineLayout.parentLayout.setVisibility(View.VISIBLE);
-				getViewDataBinding().sortAndRefineLayout.refineProducts.setEnabled(getRefinementViewState(productView.navigation));
+				setRefinementViewState(getRefinementViewState(productView.navigation));
 				bindRecyclerViewWithUI(productLists);
+				showFeatureWalkthrough();
 			} else {
 				loadMoreData(productLists);
 			}
@@ -466,6 +472,7 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 				}
 				break;
 			case R.id.refineProducts:
+				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.REFINE_EVENT_APPEARED);
                 Intent intent = new Intent(getActivity(), ProductsRefineActivity.class);
                 intent.putExtra(REFINEMENT_DATA, Utils.toJson(productView));
                 intent.putExtra(PRODUCTS_REQUEST_PARAMS,Utils.toJson(getViewModel().getProductRequestBody()));
@@ -473,6 +480,7 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				break;
             case R.id.sortProducts:
+				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SORTBY_EVENT_APPEARED);
                 this.showShortOptions(productView.sortOptions);
                 break;
 		}
@@ -493,6 +501,9 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
     public void onSortOptionSelected(@NotNull SortOption sortOption) {
 		if(sortOptionDialog!=null && sortOptionDialog.isShowing()){
 			sortOptionDialog.dismiss();
+			Map<String, String> arguments = new HashMap<>();
+			arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.SORT_OPTION_NAME, sortOption.getLabel());
+			Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SORTBY_EVENT_APPLIED, arguments);
 			getViewModel().updateProductRequestBodyForSort(sortOption.getSortOption());
 			reloadProductsWithSortAndFilter();
 		}
@@ -537,6 +548,36 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 		startProductRequest();
 	}
 
+	private void showFeatureWalkthrough() {
+		if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.refineProducts)
+			return;
+
+		getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.REFINE)
+				.setTarget(getViewDataBinding().sortAndRefineLayout.refineDownArrow)
+				.setTitle(R.string.walkthrough_refine_title)
+				.setDescription(R.string.walkthrough_refine_desc)
+				.setActionText(R.string.walkthrough_refine_action)
+				.setImage(R.drawable.tips_tricks_ic_refine)
+				.setShapePadding(48)
+				.setAction(this)
+				.setAsNewFeature()
+				.setArrowPosition(WMaterialShowcaseView.Arrow.TOP_RIGHT)
+				.setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
+		getBottomNavigationActivity().walkThroughPromtView.show(getActivity());
+
+	}
+
+	@Override
+	public void onWalkthroughActionButtonClick() {
+		if (getViewDataBinding().sortAndRefineLayout.refineProducts.isClickable())
+			onClick(getViewDataBinding().sortAndRefineLayout.refineProducts);
+	}
+
+	@Override
+	public void onPromptDismiss() {
+
+	}
+
 	public boolean getRefinementViewState(ArrayList<RefinementNavigation> navigationList) {
 		if (navigationList.size() == 0)
 			return false;
@@ -548,5 +589,11 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 		}
 
 		return false;
+	}
+
+	private void setRefinementViewState(boolean refinementViewState) {
+		getViewDataBinding().sortAndRefineLayout.refineProducts.setEnabled(refinementViewState);
+		getViewDataBinding().sortAndRefineLayout.refineDownArrow.setEnabled(refinementViewState);
+		getViewDataBinding().sortAndRefineLayout.refinementText.setEnabled(refinementViewState);
 	}
 }

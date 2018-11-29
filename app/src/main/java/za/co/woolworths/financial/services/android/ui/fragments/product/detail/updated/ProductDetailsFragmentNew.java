@@ -29,20 +29,18 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ViewSwitcher;
-
 import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.ProductDetailsFragmentNewBinding;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import me.relex.circleindicator.CircleIndicator;
+import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
@@ -66,6 +64,7 @@ import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocatio
 import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity;
+import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.AvailableSizePickerAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductColorPickerAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductSizePickerAdapter;
@@ -73,6 +72,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerA
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ProductUtils;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
+import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
 import za.co.woolworths.financial.services.android.util.DrawImage;
@@ -90,7 +90,7 @@ import static android.app.Activity.RESULT_OK;
  * Created by W7099877 on 2018/07/14.
  */
 
-public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragmentNewBinding, ProductDetailsViewModelNew> implements ProductDetailNavigatorNew, ProductViewPagerAdapter.MultipleImageInterface, View.OnClickListener, ProductColorPickerAdapter.OnItemSelection, ProductSizePickerAdapter.OnSizeSelection, AvailableSizePickerAdapter.OnAvailableSizeSelection, PermissionResultCallback, ToastUtils.ToastInterface {
+public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragmentNewBinding, ProductDetailsViewModelNew> implements ProductDetailNavigatorNew, ProductViewPagerAdapter.MultipleImageInterface, View.OnClickListener, ProductColorPickerAdapter.OnItemSelection, ProductSizePickerAdapter.OnSizeSelection, AvailableSizePickerAdapter.OnAvailableSizeSelection, PermissionResultCallback, ToastUtils.ToastInterface, WMaterialShowcaseView.IWalkthroughActionListener {
 	public ProductDetailsViewModelNew productDetailsViewModelNew;
 	private String mSubCategoryTitle;
 	private boolean mFetchFromJson;
@@ -265,6 +265,11 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
 	@Override
 	public void onClick(View view) {
+
+		// To avoid clicks while feature tutorial popup showing
+		if (!Utils.isFeatureTutorialsDismissed(ProductDetailsActivity.walkThroughPromtView))
+			return;
+
 		switch (view.getId()) {
 			case R.id.imClose:
 				getActivity().onBackPressed();
@@ -443,6 +448,9 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		btnAddToCart.setAlpha(1f);
 		btnAddToCart.setEnabled(true);
 		this.configureMultiPickerDialog();
+		if (Boolean.valueOf(productDetails.isnAvailable)) {
+			showFeatureWalkthrough();
+		}
 	}
 
 	private void configureColorPicker() {
@@ -1208,6 +1216,34 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 			getViewDataBinding().linIngredient.setVisibility(View.VISIBLE);
 			getViewDataBinding().ingredientList.setText(this.productDetails.ingredients);
 		}
+	}
+
+	public void showFeatureWalkthrough(){
+		if (getActivity() == null)
+			return;
+		if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.findInStore)
+			return;
+		ProductDetailsActivity.walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.FIND_IN_STORE)
+				.setTarget(btnFindInStore)
+				.setTitle(R.string.tips_tricks_titles_stores)
+				.setDescription(R.string.walkthrough_in_store_desc)
+				.setActionText(R.string.check_in_store_availability)
+				.setImage(R.drawable.tips_tricks_ic_stores)
+				.setAction(this)
+				.withRectangleShape()
+				.setArrowPosition(WMaterialShowcaseView.Arrow.BOTTOM_LEFT)
+				.setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
+		ProductDetailsActivity.walkThroughPromtView.show(getActivity());
+	}
+
+	@Override
+	public void onWalkthroughActionButtonClick() {
+			this.onClick(btnFindInStore);
+	}
+
+	@Override
+	public void onPromptDismiss() {
+
 	}
 
 	public void setPromotionalText(ProductDetails productDetails) {

@@ -149,7 +149,10 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 
 			@Override
 			public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-				mBtnCancel.setText(etNewList.getText().toString().trim().length() > 0 ? getString(R.string.ok) : getString(R.string.cancel));
+				Activity activity = getActivity();
+				if (activity != null) {
+					mBtnCancel.setText(etNewList.getText().toString().trim().length() > 0 ? getString(R.string.ok) : getString(R.string.cancel));
+				}
 			}
 
 			@Override
@@ -305,7 +308,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 									&& addToListRequests.size() > 0
 									&& !getCurrentListId().equalsIgnoreCase("0")) {
 								mListRequests = mMapAddedToList.get(getCurrentListId());
-                                mMapAddedToList = groupListByListId();
+								mMapAddedToList = groupListByListId();
 								postAddToList(mListRequests, getCurrentListId());
 							} else {
 								if (woolworthsApplication != null) {
@@ -325,7 +328,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 
 						case 440:
 							((CustomPopUpWindow) activity).startExitAnimationForAddToListResult();
-							getActivity().setResult(RESULT_OK,new Intent().putExtra("sessionExpired", true));
+							getActivity().setResult(RESULT_OK, new Intent().putExtra("sessionExpired", true));
 						case 400:
 							//TODO:: HANDLE SESSION TIMEOUT
 							break;
