@@ -6,8 +6,8 @@ apply plugin: 'io.fabric'
 android {
 
     def major = "5"
-    def minor = "8"
-    def fix = "1"
+    def minor = "9"
+    def fix = "0"
 
     //placeholder will be temporarily updated by build server during a build.
     //check appcenter-pre-build.sh
@@ -59,7 +59,7 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         versionCode BUILD_NUMBER.toInteger()
         buildConfigField("String", "HOST", '"https://wfs-appserver.wigroup.co/wfs/app/v4"')
-        buildConfigField("String", "SHA1", '"9fc9aa4879781857f6c54f7b08e017ea3cef285c"')
+        buildConfigField("String", "SHA1", '"ee80b6f0590ae8408d11851b03e08e1336926b1a"')
     }
 
     compileSdkVersion 27
@@ -81,14 +81,14 @@ android {
             applicationId "com.awfs.coordination.dev"
             signingConfig signingConfigs.woneappDev
             buildConfigField("String", "HOST", '"http://wfs-appserver-dev.wigroup.co:8080/wfs/app/v4"')
-            buildConfigField("String", "SHA1", '"b178db51c10886eeeca7faebc5e03e5db3285f4b"')
+            buildConfigField("String", "SHA1", '"2f8f87cbf5933ea469c0e9c9d0793de4d8fe3744"')
         }
 
         qa {
             applicationId "com.awfs.coordination.qa"
             signingConfig signingConfigs.woneappQa
             buildConfigField("String", "HOST", '"http://wfs-appserver-qa.wigroup.co:8080/wfs/app/v4"')
-            buildConfigField("String", "SHA1", '"ac68acf5df23ac3bc418569bfc0984ad3f6006e0"')
+            buildConfigField("String", "SHA1", '"ec59f22c0c4774d392122c9b26b6ae48d19634b1"')
         }
 
         staging {
@@ -175,6 +175,7 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'me.relex:circleindicator:1.2.2@aar'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.4'
+    compile 'com.github.deano2390:MaterialShowcaseView:1.2.0'
     compile 'com.daasuu:BubbleLayout:1.2.0'
     implementation 'com.google.code.gson:gson:2.8.0'
 

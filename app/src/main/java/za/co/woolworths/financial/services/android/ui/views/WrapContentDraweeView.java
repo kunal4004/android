@@ -7,13 +7,17 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.backends.pipeline.PipelineDraweeControllerBuilder;
 import com.facebook.drawee.controller.BaseControllerListener;
 import com.facebook.drawee.controller.ControllerListener;
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.common.ResizeOptions;
 import com.facebook.imagepipeline.image.ImageInfo;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 
 public class WrapContentDraweeView extends SimpleDraweeView {
 
@@ -58,13 +62,19 @@ public class WrapContentDraweeView extends SimpleDraweeView {
 
 	@Override
 	public void setImageURI(Uri uri, Object callerContext) {
-		DraweeController controller = ((PipelineDraweeControllerBuilder) getControllerBuilder())
-				.setControllerListener(listener)
-				.setCallerContext(callerContext)
-				.setUri(uri)
-				.setOldController(getController())
+
+
+		ImageRequest request = ImageRequestBuilder.newBuilderWithSource(uri)
 				.build();
-		setController(controller);
+
+		setController(
+				Fresco.newDraweeControllerBuilder()
+						.setControllerListener(listener)
+						.setUri(uri)
+						.setCallerContext(callerContext)
+						.setOldController(getController())
+						.setImageRequest(request)
+						.build());
 	}
 
 	void updateViewSize(@Nullable ImageInfo imageInfo) {

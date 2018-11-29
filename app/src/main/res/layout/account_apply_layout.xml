@@ -1,19 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/applyNowLayout"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:focusable="false"
-    android:focusableInTouchMode="false"
-    android:orientation="vertical">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:clickable="true"
+    android:focusable="true"
+    tools:context="za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment">
+
+    <data>
+
+        <import type="android.view.View"/>
+
+        <variable
+            name="handlers"
+            type="za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment"/>
+
+        <variable
+            name="viewModel"
+            type="za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsViewModel"/>
+    </data>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/recent_search_bg"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
         android:orientation="vertical">
 
         <RelativeLayout
@@ -21,7 +30,7 @@
             style="@style/accountsCardStyle">
 
             <ImageView
-                android:id="@+id/imgStoreCard"
+                android:id="@+id/imgStoreCardApply"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
@@ -32,7 +41,7 @@
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 style="@style/sectionCardLight"
-                android:layout_toRightOf="@+id/imgStoreCard"
+                android:layout_toRightOf="@+id/imgStoreCardApply"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
                 android:text="@string/store_card"
@@ -61,7 +70,7 @@
             style="@style/accountsCardStyle">
 
             <ImageView
-                android:id="@+id/imgCreditCard"
+                android:id="@+id/imgCreditCardApply"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
@@ -72,7 +81,7 @@
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 style="@style/sectionCardLight"
-                android:layout_toRightOf="@+id/imgCreditCard"
+                android:layout_toRightOf="@+id/imgCreditCardApply"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
                 android:text="@string/credit_card"
@@ -100,7 +109,7 @@
             style="@style/accountsCardStyle">
 
             <ImageView
-                android:id="@+id/imgPersonalLoan"
+                android:id="@+id/imgPersonalLoanApply"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
@@ -112,7 +121,7 @@
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 style="@style/sectionCardLight"
                 android:layout_marginBottom="16dp"
-                android:layout_toRightOf="@+id/imgPersonalLoan"
+                android:layout_toRightOf="@+id/imgPersonalLoanApply"
                 android:layout_weight="6"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
@@ -145,4 +154,4 @@
             android:focusableInTouchMode="false" />
     </LinearLayout>
 
-</LinearLayout>
+</layout>

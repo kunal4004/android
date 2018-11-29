@@ -10,6 +10,7 @@ import android.view.View
 import android.view.WindowManager
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.activity_products_refine.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.extension.refineProducts
@@ -69,6 +70,7 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
     }
 
     override fun onBackPressed() {
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.REFINE_EVENT_BACK_BUTTON)
         var currentFragment: Fragment = supportFragmentManager.findFragmentById(R.id.refinement_fragment_container)!!
         if (currentFragment != null && currentFragment is BaseRefinementFragment)
             currentFragment.onBackPressed()
@@ -125,6 +127,7 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
         } else if (TextUtils.isEmpty(getBaseNavigationState()) && TextUtils.isEmpty(getRefinedNavigationState())) {
             setResultForProductListing(emptyNavigationState)
         }
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.REFINE_EVENT_SEE_RESULT)
         this.closeDownPage()
     }
 
