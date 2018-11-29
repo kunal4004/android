@@ -61,6 +61,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	private GetVoucher getVoucherAsync;
 	private AsyncTask<String, String, CardDetailsResponse> wRewardsCardDetails;
 	private String TAG = this.getClass().getSimpleName();
+	boolean isActivityInForeground;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -147,7 +148,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 		if (pos == 1 && activeVoucherCount > 0) {
 			tv_count.setVisibility(View.VISIBLE);
 			tv_count.setText("" + activeVoucherCount);
-			if (getBottomNavigationActivity().getCurrentFragment() instanceof WRewardsFragment)
+			if (isActivityInForeground && getBottomNavigationActivity().getCurrentFragment() instanceof WRewardsFragment)
 				showFeatureWalkthrough(tv_count);
 		} else {
 			tv_count.setVisibility(View.GONE);
@@ -309,9 +310,9 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 			return;
 		getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.VOUCHERS)
 				.setTarget(counterView)
-				.setTitle(R.string.tips_tricks_titles_vouchers)
-				.setDescription(R.string.walkthrough_barcode_desc)
-				.setActionText(R.string.redeem_voucher_today)
+				.setTitle(R.string.tips_tricks_your_vouchers)
+				.setDescription(R.string.walkthrough_vouchers_desc)
+				.setActionText(R.string.tips_tricks_view_these_now)
 				.setImage(R.drawable.tips_tricks_ic_coupon)
 				.setAction(this)
 				.setShapePadding(24)
@@ -338,5 +339,17 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	@Override
 	public void onPromptDismiss() {
 
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		isActivityInForeground = false;
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		isActivityInForeground = true;
 	}
 }

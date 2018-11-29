@@ -73,11 +73,9 @@ public class MesssagesListAdapter extends RecyclerSwipeAdapter<MesssagesListAdap
 		if (messageDetailsList.get(position).isRead) {
 			viewHolder.cardlayout.setBackground(ContextCompat.getDrawable(context, R.drawable.card_shadow));
 			viewHolder.cardlayout.setAlpha(0.5f);
-			viewHolder.txtBody.setTextColor(Color.GRAY);
 		} else {
 			viewHolder.cardlayout.setBackground(ContextCompat.getDrawable(context, R.drawable.card_shadow));
 			viewHolder.cardlayout.setAlpha(1f);
-			viewHolder.txtBody.setTextColor(Color.BLACK);
 		}
 		try {
 			viewHolder.txtDate.setText(WFormatter.formatMessagingDate(messageDetailsList.get(position).createDate));

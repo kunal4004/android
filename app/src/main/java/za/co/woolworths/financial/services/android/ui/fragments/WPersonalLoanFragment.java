@@ -571,7 +571,12 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 
             @Override
             protected Void doInBackground(Void... voids) {
-                imViewStatementLogo.invalidate();
+				getActivity().runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						imViewStatementLogo.invalidate();
+					}
+				});
                 return null;
             }
 
@@ -585,7 +590,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
                         .setActionText(R.string.walkthrough_statement_action)
                         .setImage(R.drawable.tips_tricks_statements)
                         .setAction(listener)
-                        .setAsNewFeature()
                         .setShapePadding(48)
                         .setArrowPosition(WMaterialShowcaseView.Arrow.BOTTOM_LEFT)
                         .setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();

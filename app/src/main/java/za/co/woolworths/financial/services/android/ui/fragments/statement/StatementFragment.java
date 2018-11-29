@@ -21,15 +21,11 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
-import com.google.gson.Gson;
 
 
 import java.io.File;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
@@ -77,7 +73,6 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
     private SlidingUpPanelLayout.PanelState panelIsCollapsed = SlidingUpPanelLayout.PanelState.COLLAPSED;
     private boolean viewWasCreated = false;
     private final String TAG = StatementFragment.this.getClass().getSimpleName();
-    private List<String> jsonMimeTypes = Arrays.asList("application/json", "application/json; charset=utf-8");
     View view;
     private GetPdfFile mGetPdfFile;
 
@@ -314,24 +309,12 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
                 hideViewProgress();
                 retrofit.client.Response response = (retrofit.client.Response) object;
                 switch (response.getStatus()) {
+
                     case 200:
                         try {
-
-                            if (jsonMimeTypes.contains(response.getBody().mimeType())) {
-                                try {
-                                    InputStreamReader is = new InputStreamReader(response.getBody().in());
-                                    Response resp = new Gson().fromJson(is, Response.class);
-                                    Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, resp.desc);
-                                } catch (IOException e) {
-                                    Log.d(TAG, e.getMessage());
-                                }
-                                return;
-                            }
-
                             StatementUtils statementUtils = new StatementUtils(activity);
                             statementUtils.savePDF(response.getBody().in());
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                // Call some material design APIs here
                                 PreviewStatement previewStatement = new PreviewStatement();
                                 FragmentUtils fragmentUtils = new FragmentUtils(activity);
                                 FragmentManager fragmentManager = activity.getSupportFragmentManager();

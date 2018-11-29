@@ -31,9 +31,12 @@ import com.awfs.coordination.databinding.GridLayoutBinding;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.reactivex.functions.Consumer;
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
@@ -469,6 +472,7 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 				}
 				break;
 			case R.id.refineProducts:
+				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.REFINE_EVENT_APPEARED);
                 Intent intent = new Intent(getActivity(), ProductsRefineActivity.class);
                 intent.putExtra(REFINEMENT_DATA, Utils.toJson(productView));
                 intent.putExtra(PRODUCTS_REQUEST_PARAMS,Utils.toJson(getViewModel().getProductRequestBody()));
@@ -476,6 +480,7 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				break;
             case R.id.sortProducts:
+				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SORTBY_EVENT_APPEARED);
                 this.showShortOptions(productView.sortOptions);
                 break;
 		}
@@ -496,6 +501,9 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
     public void onSortOptionSelected(@NotNull SortOption sortOption) {
 		if(sortOptionDialog!=null && sortOptionDialog.isShowing()){
 			sortOptionDialog.dismiss();
+			Map<String, String> arguments = new HashMap<>();
+			arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.SORT_OPTION_NAME, sortOption.getLabel());
+			Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SORTBY_EVENT_APPLIED, arguments);
 			getViewModel().updateProductRequestBodyForSort(sortOption.getSortOption());
 			reloadProductsWithSortAndFilter();
 		}

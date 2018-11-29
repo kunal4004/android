@@ -125,6 +125,9 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	ImageView imgStoreCardApplyNow;
 	RelativeLayout relMyList;
 	int promptsActionListener;
+	boolean isActivityInForeground;
+	boolean isPromptsShown;
+	boolean isAccountsCallMade;
 
 	public MyAccountsFragment() {
 		// Required empty public constructor
@@ -269,6 +272,9 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	@Override
 	public void onResume() {
 		super.onResume();
+		isActivityInForeground = true;
+		if (!isPromptsShown && isAccountsCallMade)
+			showFeatureWalkthroughPrompts();
 		if (!AppInstanceObject.biometricWalkthroughIsPresented(getActivity()))
 			messageCounterRequest();
 	}
@@ -357,8 +363,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		allUserOptionsLayout.setVisibility(View.VISIBLE);
 		viewPager.setAdapter(adapter);
 		viewPager.setCurrentItem(0);
-		if (SessionUtilities.getInstance().isUserAuthenticated() && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment)
-			showFeatureWalkthroughAccounts(unavailableAccounts);
+		showFeatureWalkthroughPrompts();
 	}
 
 	private void configureSignInNoC2ID() {
@@ -424,6 +429,9 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		showView(allUserOptionsLayout);
 		viewPager.setAdapter(adapter);
 		viewPager.setCurrentItem(0);
+		// prompts when user not linked
+		isAccountsCallMade = true;
+        showFeatureWalkthroughPrompts();
 	}
 
 	private void configureAndLayoutTopLayerView() {
@@ -661,6 +669,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 									}
 								}
 							}
+							isAccountsCallMade = true;
 							configureView();
 							break;
 						case 440:
@@ -887,6 +896,13 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		anim.setDuration(500).start();
 	}
 
+    public void showFeatureWalkthroughPrompts() {
+        if (isActivityInForeground && SessionUtilities.getInstance().isUserAuthenticated() && getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment) {
+        	isPromptsShown = true;
+			showFeatureWalkthroughAccounts(unavailableAccounts);
+		}
+    }
+
 	@SuppressLint("StaticFieldLeak")
 	private void showFeatureWalkthroughAccounts(List<String> unavailableAccounts) {
 		if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.account) {
@@ -894,7 +910,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			return;
 		}
 		View viewToScrollUp = null;
-		String actionText = getActivity().getResources().getString(R.string.walkthrough_account_action);
+		String actionText = getActivity().getResources().getString(R.string.tips_tricks_go_to_accounts);
 		if (unavailableAccounts.size() == 3) {
 			viewToScrollUp = imgStoreCardApplyNow;
 			actionText = getActivity().getResources().getString(R.string.walkthrough_account_action_no_products);
@@ -923,7 +939,12 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 
 			@Override
 			protected Void doInBackground(Void... voids) {
-				target.invalidate();
+				getActivity().runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						target.invalidate();
+					}
+				});
 				return null;
 			}
 
@@ -932,12 +953,11 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 				super.onPostExecute(aVoid);
 				getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.ACCOUNTS)
 						.setTarget(target)
-						.setTitle(R.string.walkthrough_account_title)
-						.setDescription(R.string.walkthrough_account_desc)
+						.setTitle(R.string.tips_tricks_view_your_accounts)
+						.setDescription(R.string.tips_tricks_desc_my_accounts)
 						.setActionText(finalActionText)
 						.setImage(R.drawable.tips_tricks_ic_my_accounts)
 						.setAction(listener)
-						.setAsNewFeature()
 						.setArrowPosition(WMaterialShowcaseView.Arrow.TOP_LEFT)
 						.setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
 				getBottomNavigationActivity().walkThroughPromtView.show(getActivity());
@@ -949,7 +969,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	private void showFeatureWalkthroughShoppingList() {
 		if (!(getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment))
 			return;
-		if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.shoppingList)
+		if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.shoppingList || shoppingListsResponse == null || shoppingListsResponse.lists == null || shoppingListsResponse.lists.size() > 0)
 			return;
 		promptsActionListener = 2;
 		mScrollView.post(new Runnable() {
@@ -1015,5 +1035,11 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			}
 		}
 		return getViewDataBinding().applyNowLayout.imgStoreCardApply;
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		isActivityInForeground = false;
 	}
 }

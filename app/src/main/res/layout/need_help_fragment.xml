@@ -18,7 +18,7 @@
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 style="@style/accountsItem"
-                android:text="@string/tips_tricks" />
+                android:text="@string/app_tips_tricks" />
 
             <ImageView
                 android:layout_width="wrap_content"
