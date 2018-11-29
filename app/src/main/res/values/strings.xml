@@ -821,5 +821,5 @@
     <string name="your_delivery_location">Your Delivery Location</string>
     <string name="walkthrough_delivery_location_desc">Set your Delivery Location to see exact prices and the items available to you.</string>
     <string name="walkthrough_vouchers_desc">View your latest vouchers and redeem them in-store before they expire.</string>
-
+    <string name="account_statement_error">Sorry, this document is unavailable</string>
 </resources>

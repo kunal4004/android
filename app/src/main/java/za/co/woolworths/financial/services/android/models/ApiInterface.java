@@ -51,6 +51,7 @@ import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.PromotionsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProvincesResponse;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
+import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.RootCategories;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbRequest;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
@@ -600,7 +601,7 @@ public interface ApiInterface {
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
 	@GET("/user/statements/{docId}")
 	@Streaming
-	void getStatement(
+    retrofit.client.Response getStatement(
 			@Header("apiId") String apiId,
 			@Header("sha1Password") String sha1Password,
 			@Header("deviceVersion") String deviceVersion,
@@ -613,8 +614,7 @@ public interface ApiInterface {
 			@Header("sessionToken") String sessionToken,
 			@Path("docId") String docId,
 			@Query("productOfferingId") String productOfferingId,
-			@Query("docDesc") String docDesc,
-			Callback<retrofit.client.Response> callback);
+			@Query("docDesc") String docDesc);
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
 	@POST("/user/statements")
