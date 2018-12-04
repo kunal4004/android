@@ -38,8 +38,8 @@ open class LoanBaseFragment : Fragment() {
         return (getPersonalLoanInfo()?.minDrawDownAmount ?: return 0)
     }
 
-    fun currencyFormatter(amount: Int, activity: Activity): String {
-        return Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(amount), 1, activity))
+    fun getProductOfferingId(): Int {
+        return (getPersonalLoanInfo()?.productOfferingId ?: return 0)
     }
 
     fun finishActivity(activity: Activity) {
@@ -47,5 +47,10 @@ open class LoanBaseFragment : Fragment() {
         activity.overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
     }
 
+    fun currencyFormatter(amount: Int, activity: Activity): String = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(amount), 1, activity))
+
     fun amountToInt(formattedAmount: String) = formattedAmount.substring(0, formattedAmount.indexOf(".")).replace("[\\D]".toRegex(), "")
+
+    fun repaymentPeriod(amount: Int): Int = if (amount < 1000000) 36 else 60
+
 }

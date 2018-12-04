@@ -5,14 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.loan_withdrawal_confirmation.*
+import za.co.woolworths.financial.services.android.ui.extension.withArgs
 
 class LoanWithdrawalDetailFragment : LoanBaseFragment() {
 
     companion object {
-        fun newInstance(accountInfo: String?) = LoanWithdrawalDetailFragment().apply {
-            arguments = Bundle(1).apply {
-                putString("accountInfo", accountInfo)
-            }
+        const val DRAWN_DOWN_AMOUNT = "DRAWN_DOWN_AMOUNT"
+        fun newInstance(accountInfo: String?) = LoanWithdrawalDetailFragment().withArgs {
+            putString(DRAWN_DOWN_AMOUNT, accountInfo)
         }
     }
 

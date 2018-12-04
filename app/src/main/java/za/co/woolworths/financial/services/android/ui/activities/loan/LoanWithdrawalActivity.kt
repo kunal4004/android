@@ -33,22 +33,22 @@ class LoanWithdrawalActivity : AppCompatActivity() {
 
     private fun setActionBar() {
         setSupportActionBar(toolbar)
-        val mActionBar = supportActionBar
-        if (mActionBar != null) {
-            mActionBar.setDisplayHomeAsUpEnabled(true)
-            mActionBar.setDisplayShowTitleEnabled(false)
-            mActionBar.setDisplayUseLogoEnabled(false)
-            mActionBar.setHomeAsUpIndicator(R.drawable.close_white)
+        supportActionBar?.let {
+            it.setDisplayHomeAsUpEnabled(true)
+            it.setDisplayShowTitleEnabled(false)
+            it.setDisplayUseLogoEnabled(false)
+            it.setHomeAsUpIndicator(R.drawable.close_white)
         }
     }
 
     fun finishActivity() {
-        if (supportFragmentManager == null) return
-        if (supportFragmentManager.backStackEntryCount > 1) {
-            supportFragmentManager.popBackStack()
-        } else {
-            finish()
-            overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+        supportFragmentManager?.let {
+            if (it.backStackEntryCount > 1) {
+                it.popBackStack()
+            } else {
+                finish()
+                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+            }
         }
     }
 
