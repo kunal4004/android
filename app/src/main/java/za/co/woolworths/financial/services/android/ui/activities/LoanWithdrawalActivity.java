@@ -30,8 +30,6 @@ import android.widget.TextView;
 
 import com.awfs.coordination.R;
 
-import java.text.DecimalFormat;
-import java.text.ParseException;
 import java.util.StringTokenizer;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
@@ -110,9 +108,9 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 	}
 
 	private void initViews() {
-		mTextAvailableFund = (WTextView) findViewById(R.id.textAvailableFunds);
-		mTextCreditLimit = (WTextView) findViewById(R.id.textCreditLimit);
-		mEditWithdrawalAmount = (WLoanEditTextView) findViewById(R.id.editWithdrawAmount);
+		mTextAvailableFund = (WTextView) findViewById(R.id.tvAvailableFunds);
+		mTextCreditLimit = (WTextView) findViewById(R.id.tvCreditLimit);
+		mEditWithdrawalAmount = (WLoanEditTextView) findViewById(R.id.edtWithdrawAmount);
 		llDrawndownAmount = (LinearLayout) findViewById(R.id.llDrawndownAmount);
 		mRelLoanWithdrawal = (RelativeLayout) findViewById(R.id.relLoanWithdrawal);
 		mLoanWithdrawalProgress = (ProgressBar) findViewById(R.id.mLoanWithdrawalProgress);

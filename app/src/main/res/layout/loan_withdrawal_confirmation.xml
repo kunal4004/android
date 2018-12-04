@@ -8,8 +8,7 @@
     android:background="@color/purple"
     android:fillViewport="true"
     android:orientation="vertical"
-    android:scrollbars="none"
-    android:visibility="gone">
+    android:scrollbars="none">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,8 +23,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_marginLeft="32dp"
-            android:layout_marginRight="32dp"
             android:layout_marginTop="24dp"
+            android:layout_marginRight="32dp"
             android:gravity="center"
             android:letterSpacing="0.09"
             android:lineSpacingExtra="1dp"
@@ -47,8 +46,8 @@
                 android:id="@+id/mCurrencyType"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
                 android:layout_centerVertical="true"
                 android:text="R 2.50"
@@ -140,11 +139,11 @@
                 android:id="@+id/linConfirm"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="48dp"
                 android:layout_marginTop="124dp"
                 android:background="@color/white"
-
                 android:gravity="center"
+
+                android:minHeight="48dp"
                 android:orientation="horizontal">
 
                 <ProgressBar
@@ -161,13 +160,13 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:letterSpacing="0.08"
-                    android:text="CONFIRM"
                     android:minHeight="48dp"
+                    android:text="CONFIRM"
                     android:textAllCaps="true"
-                    app:WTextView_font="medium"
                     android:textColor="@color/black"
                     android:textSize="12sp"
-                    android:visibility="visible" />
+                    android:visibility="visible"
+                    app:WTextView_font="medium" />
             </LinearLayout>
         </RelativeLayout>
     </LinearLayout>

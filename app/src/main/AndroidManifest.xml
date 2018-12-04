@@ -181,6 +181,13 @@
             android:screenOrientation="portrait"
             android:theme="@style/LoanWithdrawal"
             android:windowSoftInputMode="adjustResize|stateAlwaysVisible" />
+
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BalanceProtectionInsuranceStyle"
+            android:windowSoftInputMode="adjustResize|stateAlwaysVisible" />
+
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.LoanWithdrawalSuccessActivity"
             android:screenOrientation="portrait"
@@ -343,8 +350,7 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.DebitOrderActivity"
             android:screenOrientation="portrait"
             android:theme="@style/DebitOrder"></activity>
-        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.PortraitAppCompatActivity">
-        </activity>
+        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.PortraitAppCompatActivity"></activity>
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.product.refine.ProductsRefineActivity"
             android:screenOrientation="portrait"
@@ -356,9 +362,9 @@
 
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.maintenance.MaintenanceMessageActivity"
-            android:screenOrientation="portrait"
             android:launchMode="singleTask"
-            android:theme="@style/RuntimeExceptionActivityStyle"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/RuntimeExceptionActivityStyle" />
 
     </application>
 
