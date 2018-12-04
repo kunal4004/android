@@ -812,7 +812,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
 		for (String key : otherSKUsList.keySet()) {
 			for (OtherSkus otherSkusObj : otherSKUsList.get(key)) {
-				if (otherSkusObj.sku.equalsIgnoreCase(mDefaultProduct.sku)) {
+				if (otherSkusObj.sku.equalsIgnoreCase(this.productDetails.sku)) {
 					this.selectedGroupKey = key;
 					return otherSkusObj;
 				}
