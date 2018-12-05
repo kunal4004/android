@@ -13,6 +13,8 @@
     long consumerIndex;
 }
 
+-keep class com.shockwave.**
+
 -keep class retrofit.** {
     *;
 }

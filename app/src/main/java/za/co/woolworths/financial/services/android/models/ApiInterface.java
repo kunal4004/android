@@ -4,6 +4,7 @@ package za.co.woolworths.financial.services.android.models;
 import java.util.List;
 
 import retrofit.Callback;
+import retrofit.client.Response;
 import retrofit.http.Body;
 import retrofit.http.DELETE;
 import retrofit.http.GET;
@@ -600,7 +601,7 @@ public interface ApiInterface {
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
 	@GET("/user/statements/{docId}")
 	@Streaming
-	void getStatement(
+	Response getStatement(
 			@Header("apiId") String apiId,
 			@Header("sha1Password") String sha1Password,
 			@Header("deviceVersion") String deviceVersion,
@@ -613,8 +614,7 @@ public interface ApiInterface {
 			@Header("sessionToken") String sessionToken,
 			@Path("docId") String docId,
 			@Query("productOfferingId") String productOfferingId,
-			@Query("docDesc") String docDesc,
-			Callback<retrofit.client.Response> callback);
+			@Query("docDesc") String docDesc);
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
 	@POST("/user/statements")
