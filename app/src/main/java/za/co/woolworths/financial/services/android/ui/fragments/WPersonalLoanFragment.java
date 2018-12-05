@@ -245,6 +245,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 						llActiveAccount.setVisibility(View.VISIBLE);
 						llChargedOffAccount.setVisibility(View.GONE);
 					}
+					
 					tvBPIProtectInsurance.setText(p.insuranceCovered ? getString(R.string.bpi_covered) : getString(R.string.bpi_not_covered));
 					productOfferingGoodStanding = p.productOfferingGoodStanding;
 					productOfferingId = String.valueOf(p.productOfferingId);
