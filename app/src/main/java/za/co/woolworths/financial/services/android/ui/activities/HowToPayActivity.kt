@@ -32,7 +32,7 @@ class HowToPayActivity : AppCompatActivity(), View.OnClickListener {
         setHowToPayLogo()
         loadPaymentOptions()
         loadAccountDetails()
-        loadAbsaAccountIfNeeded();
+        loadAbsaCreditCardInfoIfNeeded();
     }
 
     override fun onClick(v: View?) {
@@ -95,7 +95,7 @@ class HowToPayActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun loadAbsaAccountIfNeeded() {
+    private fun loadAbsaCreditCardInfoIfNeeded() {
         when (accountDetails.productGroupCode) {
             "CC" -> {
                 llAbsaAccount.visibility = VISIBLE
