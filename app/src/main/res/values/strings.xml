@@ -734,6 +734,7 @@
     <string name="bpi_toolbar_title">Overview</string>
     <string name="bpi_claim_toolbar_title">Claim</string>
     <string name="bpi_covered">Covered</string>
+    <string name="bpi_not_covered">not covered</string>
     <string name="bpi_balance_protection_title">Balance Protection</string>
     <string name="bpi_balance_protection_desc">Cover in the event of your death, retrenchment, disability or a critical illness.</string>
     <string name="bpi_partner_cover_title">Partner Cover</string>

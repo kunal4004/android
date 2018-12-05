@@ -484,7 +484,7 @@
                 android:gravity="center|start"
                 android:lineSpacingExtra="0.1sp"
                 android:textColor="#343434"
-                android:textSize="13sp"
+                android:textSize="11sp"
                 android:textAllCaps="true"
                 android:letterSpacing="0.1"
                 app:WTextView_font="medium"
