@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -30,7 +32,7 @@ class HowToPayActivity : AppCompatActivity(), View.OnClickListener {
         setHowToPayLogo()
         loadPaymentOptions()
         loadAccountDetails()
-
+        loadAbsaAccountIfNeeded();
     }
 
     override fun onClick(v: View?) {
@@ -76,7 +78,7 @@ class HowToPayActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    fun setHowToPayLogo(){
+    fun setHowToPayLogo() {
         when (accountDetails.productGroupCode) {
             "SC" -> {
                 howToPayLogo.setBackgroundResource(R.drawable.how_to_pay_store_card)
@@ -89,6 +91,19 @@ class HowToPayActivity : AppCompatActivity(), View.OnClickListener {
             "PL" -> {
                 howToPayLogo.setBackgroundResource(R.drawable.how_to_pay_p_loan)
                 howToPayTitle.text = resources.getString(R.string.ways_to_pay_your_account_pl)
+            }
+        }
+    }
+
+    private fun loadAbsaAccountIfNeeded() {
+        when (accountDetails.productGroupCode) {
+            "CC" -> {
+                llAbsaAccount.visibility = VISIBLE
+                llCreditCardDetail.visibility = VISIBLE
+                tvHowToPayTitle.text = getString(R.string.how_to_pay_credit_card_title)
+            }
+            else -> {
+                llAbsaAccount.visibility = GONE
             }
         }
     }

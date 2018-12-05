@@ -1269,6 +1269,14 @@
         <item name="android:orientation">horizontal</item>
     </style>
 
+    <style name="layout_without_top_border">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">@dimen/fifty_dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+
     <style name="refinements_textview_style">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -1415,6 +1423,12 @@
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:windowIsTranslucent">false</item>
+    </style>
+
+    <style name="horizontal_divider_how_to_pay">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@color/recent_search_bg</item>
     </style>
 
 </resources>

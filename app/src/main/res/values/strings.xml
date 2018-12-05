@@ -707,6 +707,7 @@
     <string name="how_to_pay_2">By Electronic Funds Transfer (EFT)</string>
     <string name="how_to_pay_3">At any Woolworths store</string>
     <string name="how_to_pay_4">At any Absa Bank branch</string>
+
     <string name="how_to_pay_bank_details">BANKING DETAILS (EFT &amp; Direct Deposits)</string>
     <string name="title_how_to_pay">How To Pay</string>
     <string name="account_charged_of_title">YOUR ACCOUNT IS MORE THAN 6 MONTHS IN ARREARS.</string>
@@ -821,5 +822,10 @@
     <string name="your_delivery_location">Your Delivery Location</string>
     <string name="walkthrough_delivery_location_desc">Set your Delivery Location to see exact prices and the items available to you.</string>
     <string name="walkthrough_vouchers_desc">View your latest vouchers and redeem them in-store before they expire.</string>
+
+    <string name="how_to_pay_absa_payment_title">payments made from an absa account</string>
+    <string name="how_to_pay_absa_payment_desc">Electronic payments from another ABSA account can be made directly into your Woolworths Credit Card account. Use your 16-digit Woolworths Credit Card number as the bill account number. You can choose your preferred reference. </string>
+    <string name="how_to_pay_other_account_desc">Electronic payments from other bank account into your Woolworths credit card can be made into:</string>
+    <string name="how_to_pay_credit_card_title">payments made from other accounts</string>
 
 </resources>
