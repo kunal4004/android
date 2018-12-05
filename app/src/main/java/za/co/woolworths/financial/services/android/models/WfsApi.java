@@ -12,7 +12,9 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
+import retrofit.Callback;
 import retrofit.RestAdapter;
+import retrofit.client.Response;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
@@ -61,12 +63,15 @@ import za.co.woolworths.financial.services.android.models.dto.TransactionHistory
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
+import za.co.woolworths.financial.services.android.models.dto.statement.GetStatement;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementResponse;
 import za.co.woolworths.financial.services.android.models.dto.statement.StatementResponse;
 import za.co.woolworths.financial.services.android.models.dto.statement.UserStatement;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
+
+import static za.co.wigroup.androidutils.Util.getDeviceManufacturer;
 
 public class WfsApi {
 
@@ -302,6 +307,10 @@ public class WfsApi {
 	public SkusInventoryForStoreResponse getInventorySkuForStore(String store_id, String multipleSku) {
 		return mApiInterface.getInventorySKUForStore(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), store_id, multipleSku);
 
+	}
+
+	public Response getPDFResponse(GetStatement getStatement) {
+		return mApiInterface.getStatement(getApiId(), com.awfs.coordination.BuildConfig.SHA1, getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), getStatement.getDocId(), getStatement.getProductOfferingId(), getStatement.getDocDesc());
 	}
 
 	private String getOsVersion() {

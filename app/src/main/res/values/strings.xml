@@ -827,5 +827,5 @@
     <string name="how_to_pay_absa_payment_desc">Electronic payments from another ABSA account can be made directly into your Woolworths Credit Card account. Use your 16-digit Woolworths Credit Card number as the bill account number. You can choose your preferred reference. </string>
     <string name="how_to_pay_other_account_desc">Electronic payments from other bank account into your Woolworths credit card can be made into:</string>
     <string name="how_to_pay_credit_card_title">payments made from other accounts</string>
-
+    <string name="account_statement_error">Sorry, this document is unavailable</string>
 </resources>
