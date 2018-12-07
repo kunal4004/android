@@ -25,6 +25,7 @@ import android.support.annotation.Nullable;
 import android.support.design.internal.BottomNavigationItemView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -95,12 +96,14 @@ import za.co.woolworths.financial.services.android.models.dto.TransactionParentO
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
+import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.badgeview.Badge;
 import za.co.woolworths.financial.services.android.ui.views.badgeview.QBadgeView;
 import za.co.woolworths.financial.services.android.util.tooltip.TooltipHelper;
@@ -1373,4 +1376,12 @@ public class Utils {
 		return currentAmount;
 	}
 
+    public static void displayDialogActionSheet(Activity activity, int description, int buttonText) {
+        if (activity == null) return;
+        AppCompatActivity appCompatActivity = (AppCompatActivity) activity;
+        FragmentManager fm = appCompatActivity.getSupportFragmentManager();
+        SingleButtonDialogFragment singleButtonDialogFragment =
+                SingleButtonDialogFragment.newInstance(appCompatActivity.getString(description), appCompatActivity.getString(buttonText));
+        singleButtonDialogFragment.show(fm, SingleButtonDialogFragment.class.getSimpleName());
+    }
 }
