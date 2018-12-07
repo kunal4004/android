@@ -108,6 +108,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:gravity="center"
+            android:indeterminateTint="@color/white"
             android:visibility="gone" />
 
         <LinearLayout
@@ -139,6 +140,7 @@
                 android:gravity="left"
                 android:hint=" "
                 android:imeOptions="actionDone"
+                android:singleLine="true"
                 android:inputType="numberDecimal|numberSigned"
                 android:maxLength="13"
                 android:maxLines="1"

@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
@@ -17,7 +18,6 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 
 import com.awfs.coordination.R;
 
@@ -39,7 +39,7 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
 
 public class LoanWithdrawalConfirmActivity extends BaseActivity implements View.OnClickListener, NetworkChangeListener {
 
-	private ScrollView mScrollLoanWithdrawal;
+	private NestedScrollView mScrollLoanWithdrawal;
 	private SharePreferenceHelper mSharePreferenceHelper;
 	private WTextView mTextDrawnAmount;
 	private WTextView mTextMonths;
@@ -91,10 +91,10 @@ public class LoanWithdrawalConfirmActivity extends BaseActivity implements View.
 	}
 
 	private void initViews() {
-		mScrollLoanWithdrawal = (ScrollView) findViewById(R.id.scrollLoanWithdrawal);
-		mTextDrawnAmount = (WTextView) findViewById(R.id.mCurrencyType);
-		mTextMonths = (WTextView) findViewById(R.id.textMonths);
-		mTextAdditionalMonthAmount = (WTextView) findViewById(R.id.textAdditionalMonthAmount);
+		mScrollLoanWithdrawal =  findViewById(R.id.scrollLoanWithdrawal);
+		mTextDrawnAmount = (WTextView) findViewById(R.id.tvDrawnDownSelectedAmount);
+		mTextMonths = (WTextView) findViewById(R.id.tvRepaymentPeriod);
+		mTextAdditionalMonthAmount = (WTextView) findViewById(R.id.tvAdditionalMonthlyRepayment);
 		mBtnConfirm = (WTextView) findViewById(R.id.btnConfirm);
 		mConfirmProgressBar = (ProgressBar) findViewById(R.id.mConfirmProgressBar);
 	}

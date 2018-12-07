@@ -26,17 +26,18 @@ open class LoanBaseFragment : Fragment() {
         return getPersonalLoanInfo()?.availableFunds ?: return 0
     }
 
+    fun getAvailableFundWithoutCent(): Int {
+        return ((getPersonalLoanInfo()?.availableFunds) ?: return 0).div(100)
+    }
+
     fun getCreditLimit(): Int {
         return getPersonalLoanInfo()?.creditLimit ?: return 0
     }
 
     fun getMinDrawnAmountWithoutCent(): Int {
-        return (getPersonalLoanInfo()?.minDrawDownAmount ?: return 0) / 100
+        return ((getPersonalLoanInfo()?.minDrawDownAmount) ?: return 0).div(100)
     }
 
-    fun getMinDrawnAmountWithCent(): Int {
-        return (getPersonalLoanInfo()?.minDrawDownAmount ?: return 0)
-    }
 
     fun getProductOfferingId(): Int {
         return (getPersonalLoanInfo()?.productOfferingId ?: return 0)
@@ -52,5 +53,4 @@ open class LoanBaseFragment : Fragment() {
     fun amountToInt(formattedAmount: String) = formattedAmount.substring(0, formattedAmount.indexOf(".")).replace("[\\D]".toRegex(), "")
 
     fun repaymentPeriod(amount: Int): Int = if (amount < 1000000) 36 else 60
-
 }

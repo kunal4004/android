@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/purple"
+    android:fillViewport="true">
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/txtWithdrawAmount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="32dp"
+        android:gravity="center"
+        android:letterSpacing="0.09"
+        android:lineSpacingExtra="1dp"
+        android:minHeight="92dp"
+        android:text="@string/confirm_loan_withdrawal"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        app:WTextView_font="medium_bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/tvDrawnDownSelectedAmount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="32dp"
+        android:gravity="center"
+        android:text="R 2.50"
+        android:textColor="@color/white"
+        android:textSize="45sp"
+        app:WTextView_font="light"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/txtWithdrawAmount"
+        app:layout_constraintTop_toBottomOf="@+id/txtWithdrawAmount" />
+
+
+    <View
+        android:id="@+id/llRepaymentPeriod"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="78dp"
+        android:background="#1affffff"
+        app:layout_constraintTop_toBottomOf="@+id/tvDrawnDownSelectedAmount" />
+
+
+    <RelativeLayout
+        android:id="@+id/rlRepaymentPeriod"
+        android:layout_width="match_parent"
+        android:layout_height="47dp"
+        android:gravity="center_vertical"
+        android:minHeight="50dp"
+        android:padding="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/llRepaymentPeriod">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:text="Repayment Period"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            app:WTextView_font="myriadpro_regular" />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/tvRepaymentPeriod"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="36 Months"
+            android:textColor="#4dffffff"
+            android:textSize="15sp"
+            app:WTextView_font="myriadpro_regular" />
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/llAdditionalMonthlyRepayment"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:background="#1affffff"
+        app:layout_constraintTop_toBottomOf="@+id/rlRepaymentPeriod" />
+
+    <RelativeLayout
+        android:id="@+id/rlAdditionalMonthlyPayment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:minHeight="50dp"
+        android:padding="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/llAdditionalMonthlyRepayment">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:text="Additional Monthly Repayment"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            app:WTextView_font="myriadpro_regular" />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/tvAdditionalMonthlyRepayment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="R105.00"
+            android:textColor="#4dffffff"
+            android:textSize="15sp"
+            app:WTextView_font="myriadpro_regular" />
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/vAdditionalMonthlyPayment"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#1affffff"
+        app:layout_constraintTop_toBottomOf="@+id/rlAdditionalMonthlyPayment" />
+
+    <LinearLayout
+        android:id="@+id/linConfirm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@color/white"
+        android:gravity="center"
+        android:minHeight="48dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ProgressBar
+            android:id="@+id/mConfirmProgressBar"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:paddingTop="5dp"
+            android:visibility="gone" />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/btnConfirm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:letterSpacing="0.08"
+            android:minHeight="48dp"
+            android:text="CONFIRM"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            android:visibility="visible"
+            app:WTextView_font="medium" />
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

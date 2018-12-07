@@ -9,6 +9,7 @@ import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -34,6 +35,7 @@ import java.util.StringTokenizer;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
+import za.co.woolworths.financial.services.android.models.dto.IssueLoan;
 import za.co.woolworths.financial.services.android.models.dto.IssueLoanRequest;
 import za.co.woolworths.financial.services.android.models.dto.IssueLoanResponse;
 import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
@@ -114,7 +116,7 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 		llDrawndownAmount = (LinearLayout) findViewById(R.id.llDrawndownAmount);
 		mRelLoanWithdrawal = (RelativeLayout) findViewById(R.id.relLoanWithdrawal);
 		mLoanWithdrawalProgress = (ProgressBar) findViewById(R.id.mLoanWithdrawalProgress);
-		ScrollView mScrollLoanWithdrawal = (ScrollView) findViewById(R.id.scrollLoanWithdrawal);
+		NestedScrollView mScrollLoanWithdrawal =  findViewById(R.id.scrollLoanWithdrawal);
 		RelativeLayout linLoanWithdrawalSuccess = (RelativeLayout) findViewById(R.id.linLoanWithdrawalSuccess);
 		mScrollLoanWithdrawal.setVisibility(View.GONE);
 		linLoanWithdrawalSuccess.setVisibility(View.GONE);
@@ -288,7 +290,7 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 				String repaymentPeriod = String.valueOf(repaymentPeriod(drawnDownAmount));
 				mSharePreferenceHelper.save(repaymentPeriod, "lw_months");
 				mSharePreferenceHelper.save(String.valueOf(drawnDownAmountCent), "lw_amount_drawn_cent");
-				IssueLoanRequest issueLoanRequest = new IssueLoanRequest(productOfferingId,
+				IssueLoan issueLoanRequest = new IssueLoan(productOfferingId,
 						drawnDownAmountCent,
 						repaymentPeriod(creditLimit),
 						creditLimit);

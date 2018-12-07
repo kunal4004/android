@@ -13,7 +13,7 @@ class LoanWithdrawalActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Utils.updateStatusBarBackground(this@LoanWithdrawalActivity, R.color.purple)
-        setContentView(R.layout.loan_withdrawal_layout)
+        setContentView(R.layout.loan_withdrawal_container)
         setActionBar()
 
         val bundle = intent.extras
@@ -43,7 +43,7 @@ class LoanWithdrawalActivity : AppCompatActivity() {
 
     fun finishActivity() {
         supportFragmentManager?.let {
-            if (it.backStackEntryCount > 1) {
+            if (it.backStackEntryCount == 1) {
                 it.popBackStack()
             } else {
                 finish()

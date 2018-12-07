@@ -310,7 +310,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
                 startActivity(intBalanceProtection);
                 activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
                 break;
-
+//
 //            case R.id.relDrawnDownAmount:
 //                mSharePreferenceHelper.save("", "lw_amount_drawn_cent");
 //                mSharePreferenceHelper.save(String.valueOf(productOfferingId), "lw_product_offering_id");

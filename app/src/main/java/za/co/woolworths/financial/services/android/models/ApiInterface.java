@@ -38,6 +38,7 @@ import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice
 import za.co.woolworths.financial.services.android.models.dto.DeaBanks;
 import za.co.woolworths.financial.services.android.models.dto.DeleteMessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.FAQ;
+import za.co.woolworths.financial.services.android.models.dto.IssueLoan;
 import za.co.woolworths.financial.services.android.models.dto.IssueLoanRequest;
 import za.co.woolworths.financial.services.android.models.dto.IssueLoanResponse;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
@@ -145,6 +146,8 @@ public interface ApiInterface {
 			@Header("userAgentVersion") String userAgentVersion,
 			@Body LoginRequest loginRequest);
 
+
+	//TODO:: Delete this request method
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
 	@POST("/user/loan/request")
 	IssueLoanResponse issueLoan(
@@ -158,7 +161,8 @@ public interface ApiInterface {
 			@Header("userAgent") String userAgent,
 			@Header("userAgentVersion") String userAgentVersion,
 			@Header("sessionToken") String sessionToken,
-			@Body IssueLoanRequest issueLoanRequest);
+			@Body IssueLoan issueLoan);
+
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
 	@POST("/user/loan/authorise")
