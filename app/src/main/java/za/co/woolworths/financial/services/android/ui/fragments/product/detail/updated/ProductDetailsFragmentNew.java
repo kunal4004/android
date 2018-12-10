@@ -35,6 +35,9 @@ import com.awfs.coordination.databinding.ProductDetailsFragmentNewBinding;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -75,6 +78,7 @@ import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseVie
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
 import za.co.woolworths.financial.services.android.util.DrawImage;
+import za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton;
 import za.co.woolworths.financial.services.android.util.FusedLocationSingleton;
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
 import za.co.woolworths.financial.services.android.util.PermissionUtils;
@@ -140,6 +144,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	CircleIndicator circleindicator;
 	private final int ADD_TO_SHOPPING_LIST_REQUEST_CODE = 179;
 	private ToastUtils mToastUtils;
+    private FuseLocationAPISingleton mFuseLocationAPISingleton;
 
 	@Override
 	public ProductDetailsViewModelNew getViewModel() {
@@ -174,7 +179,8 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		initViews();
+        mFuseLocationAPISingleton = FuseLocationAPISingleton.INSTANCE;
+        initViews();
 	}
 
 	public void initViews() {
@@ -1080,46 +1086,39 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		Utils.displayDialog(activity, CustomPopUpWindow.MODAL_LAYOUT.SHOPPING_ADD_TO_LIST, "", ADD_TO_SHOPPING_LIST_REQUEST_CODE);
 	}
 
-	/*****************************
-	 * FIND IN STORE SECTION
-	 * ***************
-	 */
-
-	private BroadcastReceiver mLocationUpdated = new BroadcastReceiver() {
-		@RequiresApi(api = Build.VERSION_CODES.M)
-		@Override
-		public void onReceive(Context context, final Intent intent) {
-			try {
-				Location mLocation = intent.getParcelableExtra(FusedLocationSingleton.LBM_EVENT_LOCATION_UPDATE);
-				Utils.saveLastLocation(mLocation, getContext());
-				stopLocationUpdate();
-				executeLocationItemTask();
-			} catch (Exception e) {
-				Log.e(TAG, e.toString());
-			}
-		}
-	};
 
 	private void executeLocationItemTask() {
 		getViewModel().locationItemTask(getActivity(), this.otherSKUForFindInStore).execute();
 	}
 
-	@Override
-	public void startLocationUpdates() {
-		this.enableFindInStoreButton(true);
-		FusedLocationSingleton.getInstance().startLocationUpdates();
-		// register observer for location updates
-		LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mLocationUpdated,
-				new IntentFilter(FusedLocationSingleton.INTENT_FILTER_LOCATION_UPDATE));
-	}
+    @Override
+    public void startLocationUpdates() {
+        Activity activity = getActivity();
+        if ((activity == null) || (mFuseLocationAPISingleton == null)) return;
 
-	@Override
-	public void stopLocationUpdate() {
-		// stop location updates
-		FusedLocationSingleton.getInstance().stopLocationUpdates();
-		// unregister observer
-		LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mLocationUpdated);
-	}
+        if (mFuseLocationAPISingleton.getLocationMode(activity)) {
+            mFuseLocationAPISingleton.detectDeviceOnlyGPSLocation(activity);
+            return;
+        }
+
+        this.enableFindInStoreButton(true);
+        mFuseLocationAPISingleton.addOnLocationCompleteListener(new FuseLocationAPISingleton.OnLocationChangeCompleteListener() {
+            @Override
+            public void onLocationChanged(@NotNull Location location) {
+                Utils.saveLastLocation(location, getContext());
+                stopLocationUpdate();
+                executeLocationItemTask();
+            }
+        });
+        mFuseLocationAPISingleton.startLocationUpdate();
+    }
+
+    @Override
+    public void stopLocationUpdate() {
+        // stop location updates
+        if (mFuseLocationAPISingleton != null)
+            mFuseLocationAPISingleton.stopLocationUpdate();
+    }
 
 	@Override
 	public void PermissionGranted(int request_code) {
