@@ -177,6 +177,12 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		initViews();
 	}
 
+	@Override
+	public void onResume() {
+		super.onResume();
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_DETAIL);
+	}
+
 	public void initViews() {
 		txtFromPrice = getViewDataBinding().priceLayout.textPrice;
 		txtActualPrice = getViewDataBinding().priceLayout.textActualPrice;

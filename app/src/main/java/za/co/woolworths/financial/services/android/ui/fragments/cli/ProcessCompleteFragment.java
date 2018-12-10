@@ -9,10 +9,12 @@ import android.view.ViewGroup;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
+import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.controller.CLIFragment;
 
 public class ProcessCompleteFragment extends CLIFragment implements View.OnClickListener {
@@ -34,6 +36,12 @@ public class ProcessCompleteFragment extends CLIFragment implements View.OnClick
 		super.onViewCreated(view, savedInstanceState);
 		initUI(view);
 		mCliStepIndicatorListener.onStepSelected(5);
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.CLI_PROCESS_COMPLETE);
 	}
 
 	private void initUI(View view) {

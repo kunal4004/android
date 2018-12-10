@@ -866,6 +866,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	public void onResume() {
 		super.onResume();
 		Activity activity = getActivity();
+		Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.CART_LIST);
 		if (activity != null) {
 			activity.registerReceiver(mConnectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
 		}

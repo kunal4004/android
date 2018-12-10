@@ -10,6 +10,7 @@ import android.view.View
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_tips_and_trics_view_pager.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse
 import za.co.woolworths.financial.services.android.ui.adapters.TipsAndTricksViewPagerAdapter
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter
@@ -43,6 +44,11 @@ class TipsAndTricksViewPagerActivity : AppCompatActivity(), View.OnClickListener
         Utils.updateStatusBarBackground(this, R.color.unavailable_color);
         initViews()
         setActionBar()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.TIPS_AND_TRICKS_DETAILS)
     }
 
     private fun setActionBar() {

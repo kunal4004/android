@@ -34,6 +34,7 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.StringTokenizer;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.IssueLoanRequest;
@@ -585,6 +586,7 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 	@Override
 	protected void onResume() {
 		super.onResume();
+		Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.WITHDRAW_CASH);
 		showSoftKeyboard();
 		registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
 	}
