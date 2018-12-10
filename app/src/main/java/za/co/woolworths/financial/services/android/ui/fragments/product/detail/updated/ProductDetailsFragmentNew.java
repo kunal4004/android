@@ -1090,6 +1090,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
         Activity activity = getActivity();
         if ((activity == null) || (mFuseLocationAPISingleton == null)) return;
 
+        // Popup will appear when location method is on device mode only
         if (!mFuseLocationAPISingleton.getLocationMode(activity)) {
             mFuseLocationAPISingleton.detectDeviceOnlyGPSLocation(activity);
             return;
