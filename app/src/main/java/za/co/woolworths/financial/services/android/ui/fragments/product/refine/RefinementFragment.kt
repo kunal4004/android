@@ -116,13 +116,19 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
 
     private fun getNavigationState(): String {
         dataList.forEach {
-            if (it.type == RefinementSelectableItem.ViewType.SINGLE_SELECTOR || it.type == RefinementSelectableItem.ViewType.MULTI_SELECTOR) {
-                var item = it.item
+            var item = it.item
+            if (it.type == RefinementSelectableItem.ViewType.MULTI_SELECTOR) {
                 if (item is Refinement && it.isSelected) {
                     if (TextUtils.isEmpty(refinedNavigateState))
                         refinedNavigateState = refinedNavigateState.plus(item.navigationState)
                     else
                         refinedNavigateState = refinedNavigateState.plus("Z").plus(item.navigationState.substringAfterLast("Z"))
+                } else if (item is RefinementCrumb && !it.isSelected) {
+                    refinedNavigateState = refinedNavigateState.replace(getNavigationStateForRefinementCrumb(item.navigationState), "")
+                }
+            } else if (it.type == RefinementSelectableItem.ViewType.SINGLE_SELECTOR) {
+                if (item is Refinement && it.isSelected) {
+                    refinedNavigateState = item.navigationState
                 } else if (item is RefinementCrumb && !it.isSelected) {
                     refinedNavigateState = refinedNavigateState.replace(getNavigationStateForRefinementCrumb(item.navigationState), "")
                 }
