@@ -72,7 +72,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	public WTextView tvIncreaseLimit;
 	public WTextView tvIncreaseLimitDescription;
 
-	private ImageView iconAvailableFundsInfo;
+	private ImageView iconAvailableFundsInfo,infoCreditLimit,infoCurrentBalance,infoNextPaymentDue,infoTotalAmountDue,infoAmountOverdue,infoMinimumAmountDue;;
 
 	String productOfferingId;
 	WoolworthsApplication woolworthsApplication;
@@ -191,6 +191,19 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		relDebitOrders.setOnClickListener(this);
 
 		fakeView = view.findViewById(R.id.fakeView);
+		infoMinimumAmountDue = view.findViewById(R.id.infoMinimumAmountDue);
+		infoAmountOverdue = view.findViewById(R.id.infoAmountOverdue);
+		infoTotalAmountDue = view.findViewById(R.id.infoTotalAmountDue);
+		infoNextPaymentDue = view.findViewById(R.id.infoNextPaymentDue);
+		infoCurrentBalance = view.findViewById(R.id.infoCurrentBalance);
+		infoCreditLimit = view.findViewById(R.id.infoCreditLimit);
+
+		infoMinimumAmountDue.setOnClickListener(this);
+		infoAmountOverdue.setOnClickListener(this);
+		infoTotalAmountDue.setOnClickListener(this);
+		infoNextPaymentDue.setOnClickListener(this);
+		infoCurrentBalance.setOnClickListener(this);
+		infoCreditLimit.setOnClickListener(this);
 	}
 
 	private void addListener() {
@@ -235,7 +248,6 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 						dueDate.setText(p.paymentDueDate);
 						WiGroupLogger.e(getActivity(), "TAG", e.getMessage(), e);
 					}
-					iconAvailableFundsInfo.setVisibility(p.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
 					availableBalance.setTextColor(getResources().getColor(p.productOfferingGoodStanding ? R.color.black : R.color.bg_overlay));
 					accountInArrearsLayout.setVisibility(p.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
 					llIncreaseLimitContainer.setVisibility(p.productOfferingGoodStanding ? View.VISIBLE : View.GONE);
@@ -321,6 +333,15 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 					activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				break;
 			case R.id.iconAvailableFundsInfo:
+				if(this.account.productOfferingGoodStanding){
+					Utils.displayValidationMessageForResult(
+							this,
+							activity,
+							CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC,
+							activity.getResources().getString(R.string.info_available_funds_title),
+							getActivity().getResources().getString(R.string.info_available_funds_desc),
+							getActivity().getResources().getString(R.string.cli_got_it));
+				}else {
 				Utils.displayValidationMessageForResult(
 						this,
 						activity,
@@ -331,6 +352,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 								.replace("card_name", "Store Card"),
 						getActivity().getResources().getString(R.string.how_to_pay),
 						RESULT_CODE_FUNDS_INFO);
+				}
 				break;
 			case R.id.howToPayAccountStatus:
 			case R.id.howToPayArrears:
@@ -343,6 +365,53 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 					startActivity(debitOrderIntent);
 					activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
 				}
+				break;
+			case R.id.infoMinimumAmountDue:
+				Utils.displayValidationMessageForResult(
+						this,
+						activity,
+						CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC,
+						activity.getResources().getString(R.string.info_minimum_amount_due_title),
+						getActivity().getResources().getString(R.string.info_minimum_amount_due_desc),
+						getActivity().getResources().getString(R.string.cli_got_it));
+				break;
+			case R.id.infoAmountOverdue:
+				Utils.displayValidationMessageForResult(
+						this,
+						activity,
+						CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC,
+						activity.getResources().getString(R.string.info_amount_overdue_title),
+						getActivity().getResources().getString(R.string.info_amount_overdue_desc),
+						getActivity().getResources().getString(R.string.cli_got_it));
+				break;
+			case R.id.infoTotalAmountDue:
+				break;
+			case R.id.infoNextPaymentDue:
+				Utils.displayValidationMessageForResult(
+						this,
+						activity,
+						CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC,
+						activity.getResources().getString(R.string.info_next_payment_due_title),
+						getActivity().getResources().getString(R.string.info_next_payment_due_desc),
+						getActivity().getResources().getString(R.string.cli_got_it));
+				break;
+			case R.id.infoCurrentBalance:
+				Utils.displayValidationMessageForResult(
+						this,
+						activity,
+						CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC,
+						activity.getResources().getString(R.string.info_current_balance_title),
+						getActivity().getResources().getString(R.string.info_current_balance_desc),
+						getActivity().getResources().getString(R.string.cli_got_it));
+				break;
+			case R.id.infoCreditLimit:
+				Utils.displayValidationMessageForResult(
+						this,
+						activity,
+						CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC,
+						activity.getResources().getString(R.string.info_credit_limit_title),
+						getActivity().getResources().getString(R.string.info_credit_limit_desc),
+						getActivity().getResources().getString(R.string.cli_got_it));
 				break;
 			default:
 				break;

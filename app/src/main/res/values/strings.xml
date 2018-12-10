@@ -829,4 +829,16 @@
     <string name="how_to_pay_other_account_desc">Electronic payments from other bank account into your Woolworths credit card can be made into:</string>
     <string name="how_to_pay_credit_card_title">payments made from other accounts</string>
     <string name="account_statement_error">Sorry, this document is unavailable</string>
+    <string name="info_minimum_amount_due_title">Total Amount Due</string>
+    <string name="info_minimum_amount_due_desc">The total amount due is the total sum of the amount due and amount overdue.</string>
+    <string name="info_next_payment_due_title">Next Payment Due</string>
+    <string name="info_next_payment_due_desc">This is the date that the Total Amount Due is to be paid by.</string>
+    <string name="info_current_balance_title">Current Balance</string>
+    <string name="info_current_balance_desc">This is the total amount currently owed to Woolies.</string>
+    <string name="info_credit_limit_title">Credit Limit</string>
+    <string name="info_credit_limit_desc">This is the total amount of credit offered to you by Woolies</string>
+    <string name="info_amount_overdue_title">Amount Overdue</string>
+    <string name="info_amount_overdue_desc">This is the shortfall amount that was not paid by the specified payment due date.</string>
+    <string name="info_available_funds_title">Available Funds</string>
+    <string name="info_available_funds_desc">Your available funds to spend.</string>
 </resources>

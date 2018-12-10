@@ -627,7 +627,6 @@
     </style>
 
     <style name="style_loan_amount">
-        <item name="android:layout_alignParentEnd">true</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:textSize">15sp</item>
         <item name="android:layout_height">wrap_content</item>
@@ -635,6 +634,7 @@
         <item name="android:lineSpacingExtra">0.1sp</item>
         <item name="android:gravity">center|end</item>
         <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:layout_marginRight">@dimen/sixteen_dp</item>
     </style>
 
     <style name="style_loan_desc">
@@ -1429,6 +1429,14 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">1dp</item>
         <item name="android:background">@color/recent_search_bg</item>
+    </style>
+
+    <style name="style_info_cards">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:alpha">0.3</item>
     </style>
 
 </resources>
