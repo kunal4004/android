@@ -3,19 +3,14 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.detail.
 import android.Manifest;
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Point;
 import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomSheetDialog;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -79,7 +74,6 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
 import za.co.woolworths.financial.services.android.util.DrawImage;
 import za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton;
-import za.co.woolworths.financial.services.android.util.FusedLocationSingleton;
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
 import za.co.woolworths.financial.services.android.util.PermissionUtils;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
@@ -1096,7 +1090,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
         Activity activity = getActivity();
         if ((activity == null) || (mFuseLocationAPISingleton == null)) return;
 
-        if (mFuseLocationAPISingleton.getLocationMode(activity)) {
+        if (!mFuseLocationAPISingleton.getLocationMode(activity)) {
             mFuseLocationAPISingleton.detectDeviceOnlyGPSLocation(activity);
             return;
         }

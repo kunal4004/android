@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.store;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -146,7 +147,8 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 		super.onViewCreated(v, savedInstanceState);
 		mFragment = this;
 		mPopWindowValidationMessage = new PopWindowValidationMessage(getActivity());
-		pager = (WCustomViewPager) v.findViewById(R.id.cardPager);
+        mFuseLocationAPISingleton = FuseLocationAPISingleton.INSTANCE;
+        pager = (WCustomViewPager) v.findViewById(R.id.cardPager);
 		detailsLayout = (LinearLayout) v.findViewById(R.id.detailsView);
 		mLayout = (SlidingUpPanelLayout) v.findViewById(R.id.sliding_layout);
 		close = (ImageView) v.findViewById(R.id.close);
@@ -675,28 +677,32 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 			progressBar.setVisibility(View.GONE);
 	}
 
-	public void startLocationUpdates() {
-		if (checkLocationPermission()) {
-			if (ContextCompat.checkSelfPermission(getActivity(),
-					Manifest.permission.ACCESS_FINE_LOCATION)
-					== PackageManager.PERMISSION_GRANTED) {
-				onLocationLoadStart();
-                mFuseLocationAPISingleton = FuseLocationAPISingleton.INSTANCE;
-                mFuseLocationAPISingleton.addOnLocationCompleteListener(new FuseLocationAPISingleton.OnLocationChangeCompleteListener() {
-                    @Override
-                    public void onLocationChanged(@NotNull Location location) {
-                        locationAPIRequest(location);
-                        stopLocationUpdate();
-
-                    }
-                });
-                mFuseLocationAPISingleton.startLocationUpdate();
+    public void startLocationUpdates() {
+        Activity activity = getActivity();
+        if (activity == null) return;
+        //Present an error message if location method is set to device only
+        if (!mFuseLocationAPISingleton.getLocationMode(activity)) {
+            mFuseLocationAPISingleton.detectDeviceOnlyGPSLocation(activity);
+            return;
+        }
+        if (mFuseLocationAPISingleton.getLocationMode(activity))
+            if (checkLocationPermission()) {
+                if (ContextCompat.checkSelfPermission(getActivity(),
+                        Manifest.permission.ACCESS_FINE_LOCATION)
+                        == PackageManager.PERMISSION_GRANTED) {
+                    onLocationLoadStart();
+                    mFuseLocationAPISingleton.addOnLocationCompleteListener(new FuseLocationAPISingleton.OnLocationChangeCompleteListener() {
+                        @Override
+                        public void onLocationChanged(@NotNull Location location) {
+                            updateMap(location);
+                        }
+                    });
+                    mFuseLocationAPISingleton.startLocationUpdate();
+                }
+            } else {
+                checkLocationPermission();
             }
-		} else {
-			checkLocationPermission();
-		}
-	}
-
+    }
 	private void updateMap(Location location) {
 		if (location != null) {
 			Utils.saveLastLocation(location, getActivity());
