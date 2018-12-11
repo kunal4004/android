@@ -19,6 +19,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.RootCategory;
 import za.co.woolworths.financial.services.android.models.dto.SubCategory;
@@ -86,6 +87,12 @@ public class SubCategoryFragment extends BaseFragment<ExpandableSubCategoryFragm
 
 		onRetryConnectionClicked(mRootCategory.categoryId, false);
 		getViewDataBinding().btnRetry.setOnClickListener(this);
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.SHOP_SUB_CATEGORIES);
 	}
 
 	@Override

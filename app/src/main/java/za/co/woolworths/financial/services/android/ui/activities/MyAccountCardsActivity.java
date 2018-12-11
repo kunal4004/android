@@ -31,6 +31,7 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.util.FragmentLifecycle;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
@@ -179,6 +180,7 @@ public class MyAccountCardsActivity extends AppCompatActivity
 	@Override
 	protected void onResume() {
 		super.onResume();
+		Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.FINANCIAL_SERVICES);
 		fragmentInterfaceListener(currentPosition);
 	}
 

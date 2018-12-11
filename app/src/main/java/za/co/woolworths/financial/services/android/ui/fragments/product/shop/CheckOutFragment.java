@@ -35,10 +35,12 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
+import za.co.woolworths.financial.services.android.util.Utils;
 
 public class CheckOutFragment extends Fragment {
 
@@ -86,6 +88,12 @@ public class CheckOutFragment extends Fragment {
 			mWebCheckOut.loadUrl(getUrl(), getExtraHeader());
 			retryConnect(view);
 		}
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.CART_CHECKOUT);
 	}
 
 	@NonNull

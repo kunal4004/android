@@ -21,6 +21,7 @@ import android.widget.ScrollView;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AuthoriseLoanRequest;
@@ -288,6 +289,7 @@ public class LoanWithdrawalConfirmActivity extends BaseActivity implements View.
 	@Override
 	protected void onResume() {
 		super.onResume();
+		Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.WITHDRAW_CASH_CONFIRMATION);
 		registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
 	}
 

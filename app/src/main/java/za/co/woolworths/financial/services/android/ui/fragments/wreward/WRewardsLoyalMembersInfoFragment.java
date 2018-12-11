@@ -11,7 +11,9 @@ import android.view.ViewGroup;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.Utils;
 
 public class WRewardsLoyalMembersInfoFragment extends Fragment{
     public WTextView statustext6;
@@ -29,5 +31,11 @@ public class WRewardsLoyalMembersInfoFragment extends Fragment{
         infoHeaderText.setText(getActivity().getString(R.string.info_loyal_header));
         return view;
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.WREWARDS_TIER_INFO);
     }
 }

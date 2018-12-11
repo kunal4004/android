@@ -100,6 +100,12 @@ public class WRewardsVouchersFragment extends Fragment {
 		return view;
 	}
 
+	@Override
+	public void onResume() {
+		super.onResume();
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.WREWARDS_VOUCHERS);
+	}
+
 	public void displayNoVouchersView() {
 		mErrorHandlerView.showEmptyState(0);
 		mErrorHandlerView.hideIcon();

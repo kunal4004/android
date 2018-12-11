@@ -15,7 +15,9 @@ import com.github.barteksc.pdfviewer.listener.OnErrorListener;
 import java.io.File;
 
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.Utils;
 
 
 public class PreviewStatement extends Fragment {
@@ -34,6 +36,12 @@ public class PreviewStatement extends Fragment {
         initView(view);
 
         tvTitle = view.findViewById(R.id.tvTitle);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.STATEMENTS_DOCUMENT_PREVIEW);
     }
 
     private void initView(View view) {

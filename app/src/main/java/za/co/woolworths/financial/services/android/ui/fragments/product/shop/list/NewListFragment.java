@@ -24,6 +24,7 @@ import com.awfs.coordination.databinding.NewListFragmentBinding;
 
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.dto.CreateList;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
@@ -238,6 +239,7 @@ public class NewListFragment extends BaseFragment<NewListFragmentBinding, NewLis
 	@Override
 	public void onResume() {
 		super.onResume();
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.CREATE_SHOPPING_LIST);
 		showToolbar(R.string.new_list);
 	}
 

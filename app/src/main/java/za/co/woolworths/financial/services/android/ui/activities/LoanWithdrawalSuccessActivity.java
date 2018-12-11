@@ -11,6 +11,7 @@ import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.util.BaseActivity;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
@@ -43,6 +44,12 @@ public class LoanWithdrawalSuccessActivity extends BaseActivity {
                 canGoBack();
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.WITHDRAW_CASH_SUCCESSFUL);
     }
 
     @Override

@@ -11,9 +11,11 @@ import android.view.ViewGroup;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.StatementUtils;
+import za.co.woolworths.financial.services.android.util.Utils;
 
 public class EmailStatementFragment extends Fragment implements View.OnClickListener {
 
@@ -39,6 +41,12 @@ public class EmailStatementFragment extends Fragment implements View.OnClickList
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		initView(view);
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.STATEMENTS_EMAIL_CONFIRMED);
 	}
 
 	private void initView(View view) {

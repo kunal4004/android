@@ -378,6 +378,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 
 	@Override
 	public void onResumeFragment() {
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.FINANCIAL_SERVICES_CREDIT_CARD);
 		WCreditCardFragment.this.getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {

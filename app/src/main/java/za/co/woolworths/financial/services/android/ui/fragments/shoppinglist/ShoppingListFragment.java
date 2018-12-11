@@ -276,6 +276,7 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 	@Override
 	public void onResume() {
 		super.onResume();
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.SHOPPING_LISTS);
 		initGetShoppingList();
 		setDeliveryLocation();
 		KeyboardUtil.hideSoftKeyboard(getActivity());
