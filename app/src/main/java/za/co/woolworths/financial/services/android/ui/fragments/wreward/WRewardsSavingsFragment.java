@@ -110,6 +110,12 @@ public class WRewardsSavingsFragment extends Fragment implements View.OnClickLis
 
 	}
 
+	@Override
+	public void onResume() {
+		super.onResume();
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.WREWARDS_SAVINGS);
+	}
+
 	public void setUpYearToDateValue() {
 		savingSinceLayout.setVisibility(View.VISIBLE);
 		yearToDateSpendInfo.setVisibility(View.VISIBLE);

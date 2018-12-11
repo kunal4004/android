@@ -8,6 +8,7 @@ import android.view.View;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -36,6 +37,12 @@ public class WRewardsVoucherTermAndConditions extends AppCompatActivity {
 				Utils.openExternalLink(WRewardsVoucherTermAndConditions.this, WoolworthsApplication.getWrewardsTCLink());
 			}
 		});
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.WREWARDS_TERMS_CONDITIONS);
 	}
 
 	@Override

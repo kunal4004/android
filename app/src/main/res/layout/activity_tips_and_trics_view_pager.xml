@@ -41,7 +41,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:letterSpacing="0.2"
-                    android:text="@string/tips_tricks"
+                    android:text="@string/tips_tricks_page_tile"
                     android:textAllCaps="true"
                     android:textColor="@color/black"
                     android:textSize="12sp"

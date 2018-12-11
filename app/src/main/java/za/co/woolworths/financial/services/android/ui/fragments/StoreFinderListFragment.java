@@ -16,6 +16,7 @@ import com.google.gson.Gson;
 
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
@@ -23,6 +24,7 @@ import za.co.woolworths.financial.services.android.ui.activities.StoreDetailsAct
 import za.co.woolworths.financial.services.android.ui.adapters.StockFinderListAdapter;
 import za.co.woolworths.financial.services.android.util.RecycleViewClickListner;
 import za.co.woolworths.financial.services.android.util.UpdateStoreFinderFragment;
+import za.co.woolworths.financial.services.android.util.Utils;
 
 public class StoreFinderListFragment extends Fragment implements UpdateStoreFinderFragment {
 
@@ -43,6 +45,12 @@ public class StoreFinderListFragment extends Fragment implements UpdateStoreFind
 		init(view);
 		onItemSelected();
 		wGlobalState = ((WoolworthsApplication) getActivity().getApplication()).getWGlobalState();
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.STORES_SEARCH);
 	}
 
 	private void init(View view) {

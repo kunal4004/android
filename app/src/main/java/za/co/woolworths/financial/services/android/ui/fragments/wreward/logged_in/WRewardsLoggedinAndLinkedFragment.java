@@ -19,6 +19,7 @@ import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.WrewardsLoggedinAndLinkedFragmentBinding;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dto.CardDetailsResponse;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
@@ -350,6 +351,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	@Override
 	public void onResume() {
 		super.onResume();
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.WREWARDS_SIGNED_IN_LINKED);
 		isActivityInForeground = true;
 	}
 }

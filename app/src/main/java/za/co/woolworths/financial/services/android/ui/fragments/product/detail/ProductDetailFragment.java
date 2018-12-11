@@ -38,6 +38,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import io.reactivex.functions.Consumer;
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
@@ -1404,6 +1405,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	@Override
 	public void onResume() {
 		super.onResume();
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_DETAIL);
 		registerReceiver();
 	}
 

@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
@@ -223,6 +224,12 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 
 		initLocationCheck();
 		getActivity().registerReceiver(broadcastCall, new IntentFilter("broadcastCall"));
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.STORES_NEARBY);
 	}
 
 	public void initLocationCheck() {

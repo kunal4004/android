@@ -13,10 +13,12 @@ import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.NeedHelpFragmentBinding;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.faq.FAQFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.help.tipstricks.TipsAndTricksFragment;
+import za.co.woolworths.financial.services.android.util.Utils;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -43,6 +45,12 @@ public class HelpSectionFragment extends BaseFragment<NeedHelpFragmentBinding, N
         showToolbar();
         getViewDataBinding().relFAQ.setOnClickListener(this);
         getViewDataBinding().tipsAndTricks.setOnClickListener(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.HELP_SECTION);
     }
 
     @Override

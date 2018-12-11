@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.CustomTypefaceSpan;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -34,6 +35,12 @@ public class CLIProofOfIncomeDocumentFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.cli_proof_income_document_layout, container, false);
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.CLI_POI_DOCUMENTS);
 	}
 
 	@Override
