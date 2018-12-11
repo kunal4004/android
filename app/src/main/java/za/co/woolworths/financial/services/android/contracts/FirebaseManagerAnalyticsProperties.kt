@@ -62,6 +62,7 @@ class FirebaseManagerAnalyticsProperties {
 
     class ScreenNames {
         companion object {
+            const val STARTUP: String = "Startup"
             const val WTODAY: String = "WToday"
             const val SHOP_BARCODE: String = "Shop Barcode"
             const val SHOP_BARCODE_MANUAL: String = "Shop Barcode Manual"
