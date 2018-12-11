@@ -93,6 +93,7 @@ public class CLIEligibilityAndPermissionFragment extends Fragment implements Vie
 						ObjectAnimator.ofInt(scrollView, "scrollY", permissionView.getTop()).setDuration(SLIDE_UP_ANIM_DURATION).start();
 					}
 				});
+				Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.CLI_CONSENT);
 
 				break;
 			case R.id.permissionYes:

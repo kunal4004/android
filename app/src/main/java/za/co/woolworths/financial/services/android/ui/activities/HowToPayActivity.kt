@@ -10,6 +10,7 @@ import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.accounts_how_to_pay.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.PaymentMethod
 import za.co.woolworths.financial.services.android.util.Utils
@@ -24,6 +25,11 @@ class HowToPayActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(R.layout.accounts_how_to_pay)
         Utils.updateStatusBarBackground(this)
         initViews()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.HOW_TO_PAY)
     }
 
     private fun initViews() {

@@ -114,6 +114,12 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 		return view;
 	}
 
+	@Override
+	public void onResume() {
+		super.onResume();
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.WREWARDS_OVERVIEW);
+	}
+
 	public void loadPromotions() {
 		loadPromotionsAPI().execute();
 	}
