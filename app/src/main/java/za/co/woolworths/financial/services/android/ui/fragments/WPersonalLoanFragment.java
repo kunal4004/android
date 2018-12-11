@@ -97,8 +97,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	private LinearLayout accountInArrearsLayout;
 	private WTextView tvHowToPayAccountStatus;
 	private WTextView tvAmountOverdue;
-	private WTextView tvTotalAmountDue;
-	private ImageView iconAvailableFundsInfo,infoCreditLimit,infoCurrentBalance,infoNextPaymentDue,infoTotalAmountDue,infoAmountOverdue,infoMinimumAmountDue;
+	private ImageView iconAvailableFundsInfo,infoCreditLimit,infoCurrentBalance,infoNextPaymentDue,infoAmountOverdue,infoMinimumAmountDue;
 	public static int RESULT_CODE_FUNDS_INFO = 60;
 	private LinearLayout llActiveAccount;
 	private RelativeLayout llChargedOffAccount;
@@ -186,7 +185,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		accountInArrearsLayout = view.findViewById(R.id.llAccountInArrearsParentContainer);
 		tvHowToPayAccountStatus = view.findViewById(R.id.howToPayAccountStatus);
 		tvAmountOverdue = view.findViewById(R.id.amountOverdue);
-		tvTotalAmountDue = view.findViewById(R.id.totalAmountDue);
 		iconAvailableFundsInfo = view.findViewById(R.id.iconAvailableFundsInfo);
 		llActiveAccount = view.findViewById(R.id.llActiveAccount);
 		llChargedOffAccount = view.findViewById(R.id.llChargedOffAccount);
@@ -200,14 +198,12 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
         mScrollAccountCard = getActivity().findViewById(R.id.nest_scrollview);
 		infoMinimumAmountDue = view.findViewById(R.id.infoMinimumAmountDue);
 		infoAmountOverdue = view.findViewById(R.id.infoAmountOverdue);
-		infoTotalAmountDue = view.findViewById(R.id.infoTotalAmountDue);
 		infoNextPaymentDue = view.findViewById(R.id.infoNextPaymentDue);
 		infoCurrentBalance = view.findViewById(R.id.infoCurrentBalance);
 		infoCreditLimit = view.findViewById(R.id.infoCreditLimit);
 
 		infoMinimumAmountDue.setOnClickListener(this);
 		infoAmountOverdue.setOnClickListener(this);
-		infoTotalAmountDue.setOnClickListener(this);
 		infoNextPaymentDue.setOnClickListener(this);
 		infoCurrentBalance.setOnClickListener(this);
 		infoCreditLimit.setOnClickListener(this);
@@ -285,7 +281,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 					tvHowToPayAccountStatus.setVisibility(p.productOfferingGoodStanding ? View.VISIBLE : View.INVISIBLE);
 					if (!p.productOfferingGoodStanding) {
 						tvAmountOverdue.setText(WFormatter.newAmountFormat(p.amountOverdue));
-						tvTotalAmountDue.setText(WFormatter.newAmountFormat(p.totalAmountDue));
 					}
 
                     relDebitOrders.setVisibility(p.debitOrder.debitOrderActive ? View.VISIBLE : View.GONE);
@@ -388,8 +383,8 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 						this,
 						activity,
 						CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC,
-						activity.getResources().getString(R.string.info_minimum_amount_due_title),
-						getActivity().getResources().getString(R.string.info_minimum_amount_due_desc),
+						activity.getResources().getString(R.string.info_total_amount_due_title),
+						getActivity().getResources().getString(R.string.info_total_amount_due_desc),
 						getActivity().getResources().getString(R.string.cli_got_it));
 				break;
 			case R.id.infoAmountOverdue:
@@ -400,8 +395,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 						activity.getResources().getString(R.string.info_amount_overdue_title),
 						getActivity().getResources().getString(R.string.info_amount_overdue_desc),
 						getActivity().getResources().getString(R.string.cli_got_it));
-				break;
-			case R.id.infoTotalAmountDue:
 				break;
 			case R.id.infoNextPaymentDue:
 				Utils.displayValidationMessageForResult(

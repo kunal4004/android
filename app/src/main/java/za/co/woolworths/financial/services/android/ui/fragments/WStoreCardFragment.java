@@ -72,7 +72,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	public WTextView tvIncreaseLimit;
 	public WTextView tvIncreaseLimitDescription;
 
-	private ImageView iconAvailableFundsInfo,infoCreditLimit,infoCurrentBalance,infoNextPaymentDue,infoTotalAmountDue,infoAmountOverdue,infoMinimumAmountDue;;
+	private ImageView iconAvailableFundsInfo,infoCreditLimit,infoCurrentBalance,infoNextPaymentDue,infoAmountOverdue,infoMinimumAmountDue;;
 
 	String productOfferingId;
 	WoolworthsApplication woolworthsApplication;
@@ -100,7 +100,6 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	private LinearLayout accountInArrearsLayout;
 	private WTextView tvHowToPayAccountStatus;
 	private WTextView tvAmountOverdue;
-	private WTextView tvTotalAmountDue;
 	private LinearLayout llActiveAccount;
 	private RelativeLayout llChargedOffAccount;
 	private boolean productOfferingGoodStanding;
@@ -183,7 +182,6 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		tvHowToPayAccountStatus = view.findViewById(R.id.howToPayAccountStatus);
 		tvHowToPayArrears = view.findViewById(R.id.howToPayArrears);
 		tvAmountOverdue = view.findViewById(R.id.amountOverdue);
-		tvTotalAmountDue = view.findViewById(R.id.totalAmountDue);
 		llActiveAccount = view.findViewById(R.id.llActiveAccount);
 		llChargedOffAccount = view.findViewById(R.id.llChargedOffAccount);
 
@@ -193,14 +191,12 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		fakeView = view.findViewById(R.id.fakeView);
 		infoMinimumAmountDue = view.findViewById(R.id.infoMinimumAmountDue);
 		infoAmountOverdue = view.findViewById(R.id.infoAmountOverdue);
-		infoTotalAmountDue = view.findViewById(R.id.infoTotalAmountDue);
 		infoNextPaymentDue = view.findViewById(R.id.infoNextPaymentDue);
 		infoCurrentBalance = view.findViewById(R.id.infoCurrentBalance);
 		infoCreditLimit = view.findViewById(R.id.infoCreditLimit);
 
 		infoMinimumAmountDue.setOnClickListener(this);
 		infoAmountOverdue.setOnClickListener(this);
-		infoTotalAmountDue.setOnClickListener(this);
 		infoNextPaymentDue.setOnClickListener(this);
 		infoCurrentBalance.setOnClickListener(this);
 		infoCreditLimit.setOnClickListener(this);
@@ -254,7 +250,6 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 					tvHowToPayAccountStatus.setVisibility(p.productOfferingGoodStanding ? View.VISIBLE : View.INVISIBLE);
 					if(!p.productOfferingGoodStanding){
 						tvAmountOverdue.setText(WFormatter.newAmountFormat(p.amountOverdue));
-						tvTotalAmountDue.setText(WFormatter.newAmountFormat(p.totalAmountDue));
 					}
 
 					relDebitOrders.setVisibility(p.debitOrder.debitOrderActive ? View.VISIBLE : View.GONE);
@@ -371,8 +366,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 						this,
 						activity,
 						CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC,
-						activity.getResources().getString(R.string.info_minimum_amount_due_title),
-						getActivity().getResources().getString(R.string.info_minimum_amount_due_desc),
+						activity.getResources().getString(R.string.info_total_amount_due_title),
+						getActivity().getResources().getString(R.string.info_total_amount_due_desc),
 						getActivity().getResources().getString(R.string.cli_got_it));
 				break;
 			case R.id.infoAmountOverdue:
@@ -383,8 +378,6 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 						activity.getResources().getString(R.string.info_amount_overdue_title),
 						getActivity().getResources().getString(R.string.info_amount_overdue_desc),
 						getActivity().getResources().getString(R.string.cli_got_it));
-				break;
-			case R.id.infoTotalAmountDue:
 				break;
 			case R.id.infoNextPaymentDue:
 				Utils.displayValidationMessageForResult(
