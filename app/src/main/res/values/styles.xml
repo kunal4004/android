@@ -519,8 +519,8 @@
         <item name="android:textColor">@color/black</item>
         <item name="android:lineSpacingExtra">0.1sp</item>
         <item name="android:gravity">center|start</item>
-        <item name="WTextView_font">myriadpro_semibold</item>
-        <item name="android:letterSpacing">0.1</item>
+        <item name="WTextView_font">medium_bold</item>
+        <item name="android:letterSpacing">0.15</item>
     </style>
 
     <style name="style_debit_order_title">
@@ -1348,9 +1348,8 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginStart">@dimen/twenty_four_dp</item>
-        <item name="android:layout_marginTop">@dimen/twenty_two_dp</item>
         <item name="android:lineSpacingMultiplier">1.20</item>
-        <item name="android:paddingBottom">@dimen/nineteen_dp</item>
+        <item name="android:layout_centerVertical">true</item>
         <item name="android:text">@string/bpi_balance_protection_title</item>
         <item name="android:textColor">@color/black</item>
         <item name="WTextView_font">myriadpro_semibold</item>
@@ -1361,7 +1360,7 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginStart">@dimen/twenty_four_dp</item>
-        <item name="android:layout_marginTop">@dimen/sixteen_dp</item>
+        <item name="android:layout_centerVertical">true</item>
         <item name="android:layout_marginEnd">@dimen/twenty_three_dp</item>
         <item name="android:letterSpacing">0.083</item>
         <item name="android:text">@string/bpi_covered</item>

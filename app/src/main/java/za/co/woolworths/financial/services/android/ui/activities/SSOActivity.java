@@ -565,6 +565,22 @@ public class SSOActivity extends WebViewActivity {
 
 	}
 
+	@Override
+	protected void onResume() {
+		super.onResume();
+		if(path == Path.SIGNIN) {
+			Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.SSO_SIGN_IN);
+		} else if(path == Path.REGISTER) {
+			Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.SSO_REGISTER);
+		} else if(path == Path.LOGOUT) {
+			Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.SSO_LOGOUT);
+		} else if(path == Path.UPDATE_PASSWORD) {
+			Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.SSO_PASSWORD_CHANGE);
+		} else if(path == Path.UPDATE_PROFILE) {
+			Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.SSO_PROFILE_INFO);
+		}
+	}
+
 	public void closeActivity() {
 		finish();
 		overridePendingTransition(0, 0);

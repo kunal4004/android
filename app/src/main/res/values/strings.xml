@@ -540,7 +540,7 @@
 
     <!-- Cli carousel: Find Out More -->
     <string name="credit_bureau">Credit bureau</string>
-    <string name="credit_bureau_desc">We will try our best to ensure that you can afford the increased instalments of your new your credit limit. As such we obtain your credit information from various credit bureaus, who maintains the personal details related to your credit history (repayment behaviour, amount of credit you have available, outstanding debt collections and other).</string>
+    <string name="credit_bureau_desc">We will try our best to ensure that you can afford the increased instalments of your new credit limit. As such we obtain your credit information from various credit bureaus, who maintains the personal details related to your credit history (repayment behaviour, amount of credit you have available, outstanding debt collections and other).</string>
     <string name="txt_proof_of_income">Proof of income</string>
     <string name="txt_proof_of_income_desc">With credit applications, we may be required to verify your income. If so we may need 1 months payslip or bank statement.</string>
 
@@ -823,7 +823,6 @@
     <string name="your_delivery_location">Your Delivery Location</string>
     <string name="walkthrough_delivery_location_desc">Set your Delivery Location to see exact prices and the items available to you.</string>
     <string name="walkthrough_vouchers_desc">View your latest vouchers and redeem them in-store before they expire.</string>
-
     <string name="how_to_pay_absa_payment_title">payments made from an absa account</string>
     <string name="how_to_pay_absa_payment_desc">Electronic payments from another ABSA account can be made directly into your Woolworths Credit Card account. Use your 16-digit Woolworths Credit Card number as the bill account number. You can choose your preferred reference. </string>
     <string name="how_to_pay_other_account_desc">Electronic payments from other bank account into your Woolworths credit card can be made into:</string>
@@ -841,4 +840,6 @@
     <string name="info_amount_overdue_desc">This is the shortfall amount that was not paid by the specified payment due date.</string>
     <string name="info_available_funds_title">Available Funds</string>
     <string name="info_available_funds_desc">Your available funds to spend.</string>
+    <string name="tips_tricks_page_tile">Tips And Tricks</string>
+    <string name="tips_tricks_desc_navigation_sign_in">Tap the cart icon in the bottom menu to see the items you’ve added.</string>
 </resources>

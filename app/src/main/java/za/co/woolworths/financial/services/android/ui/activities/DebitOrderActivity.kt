@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.activity_debit_order.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.DebitOrder
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
@@ -38,6 +39,11 @@ class DebitOrderActivity : AppCompatActivity() {
         tvDebitOrderDescription.setText(description)
         tvDeductionDay.setText(debitOrder.debitOrderDeductionDay)
         tvAmountToBeDebited.setText(amountToBeDebited)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.DEBIT_ORDERS)
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {

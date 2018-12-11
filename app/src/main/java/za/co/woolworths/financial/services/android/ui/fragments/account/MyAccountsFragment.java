@@ -273,6 +273,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	@Override
 	public void onResume() {
 		super.onResume();
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.MY_ACCOUNTS);
 		isActivityInForeground = true;
 		if (!isPromptsShown && isAccountsCallMade)
 			showFeatureWalkthroughPrompts();

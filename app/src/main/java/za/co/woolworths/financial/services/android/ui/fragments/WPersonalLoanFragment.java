@@ -514,6 +514,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	@Override
 	public void onResume() {
 		super.onResume();
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.FINANCIAL_SERVICES_PERSONAL_LOAN);
 		try {
 			mSharePreferenceHelper.removeValue("lw_installment_amount");
 			mSharePreferenceHelper.removeValue("lwf_drawDownAmount");

@@ -20,6 +20,7 @@ import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.WtodayFragmentBinding;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -71,6 +72,12 @@ public class WTodayFragment extends BaseFragment<WtodayFragmentBinding, WTodayVi
 			initWebView(view);
 			retryConnect(view);
 		}
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.WTODAY);
 	}
 
 	@SuppressLint("SetJavaScriptEnabled")

@@ -496,6 +496,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 
 	@Override
 	public void onResumeFragment() {
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.FINANCIAL_SERVICES_STORE_CARD);
 		WStoreCardFragment.this.getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
