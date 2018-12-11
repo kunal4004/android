@@ -829,4 +829,6 @@
     <string name="how_to_pay_other_account_desc">Electronic payments from other bank account into your Woolworths credit card can be made into:</string>
     <string name="how_to_pay_credit_card_title">payments made from other accounts</string>
     <string name="account_statement_error">Sorry, this document is unavailable</string>
+    <string name="tips_tricks_page_tile">Tips And Tricks</string>
+    <string name="tips_tricks_desc_navigation_sign_in">Tap the cart icon in the bottom menu to see the items you’ve added.</string>
 </resources>
