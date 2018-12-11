@@ -10,7 +10,7 @@
     <string name="credit_limit">Credit Limit:</string>
     <string name="available_funds">Available Funds</string>
     <string name="next_payment_date">Next Payment Due:</string>
-    <string name="total_amount_due">Min Amount Due:</string>
+    <string name="total_amount_due">Total Amount Due</string>
     <string name="amount_overdue">Amount Overdue:</string>
     <string name="balance_at_statement_date">Balance At Statement Date:</string>
     <string name="deduction_day">Deduction Day:</string>
@@ -823,12 +823,23 @@
     <string name="your_delivery_location">Your Delivery Location</string>
     <string name="walkthrough_delivery_location_desc">Set your Delivery Location to see exact prices and the items available to you.</string>
     <string name="walkthrough_vouchers_desc">View your latest vouchers and redeem them in-store before they expire.</string>
-
     <string name="how_to_pay_absa_payment_title">payments made from an absa account</string>
     <string name="how_to_pay_absa_payment_desc">Electronic payments from another ABSA account can be made directly into your Woolworths Credit Card account. Use your 16-digit Woolworths Credit Card number as the bill account number. You can choose your preferred reference. </string>
     <string name="how_to_pay_other_account_desc">Electronic payments from other bank account into your Woolworths credit card can be made into:</string>
     <string name="how_to_pay_credit_card_title">payments made from other accounts</string>
     <string name="account_statement_error">Sorry, this document is unavailable</string>
+    <string name="info_total_amount_due_title">Total Amount Due</string>
+    <string name="info_total_amount_due_desc">This is the sum of your current instalment, including any overdue amount and interest.</string>
+    <string name="info_next_payment_due_title">Next Payment Due</string>
+    <string name="info_next_payment_due_desc">This is the date that the Total Amount Due is to be paid by.</string>
+    <string name="info_current_balance_title">Current Balance</string>
+    <string name="info_current_balance_desc">This is the total amount currently owed to Woolies.</string>
+    <string name="info_credit_limit_title">Credit Limit</string>
+    <string name="info_credit_limit_desc">This is the total amount of credit offered to you by Woolies</string>
+    <string name="info_amount_overdue_title">Amount Overdue</string>
+    <string name="info_amount_overdue_desc">This is the shortfall amount that was not paid by the specified payment due date.</string>
+    <string name="info_available_funds_title">Available Funds</string>
+    <string name="info_available_funds_desc">Your available funds to spend.</string>
     <string name="tips_tricks_page_tile">Tips And Tricks</string>
     <string name="tips_tricks_desc_navigation_sign_in">Tap the cart icon in the bottom menu to see the items you’ve added.</string>
 </resources>
