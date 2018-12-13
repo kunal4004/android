@@ -45,6 +45,7 @@ import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 
+import static za.co.woolworths.financial.services.android.ui.activities.CartActivity.CHECKOUT_SUCCESS;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.OPEN_CART_REQUEST;
 
@@ -331,7 +332,7 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 				initGetShoppingList();
 				break;
 			case OPEN_CART_REQUEST:
-				if (resultCode == DISMISS_POP_WINDOW_CLICKED) {
+				if (resultCode == DISMISS_POP_WINDOW_CLICKED || resultCode == CHECKOUT_SUCCESS ) {
 					showToolbar(R.string.title_my_list);
 				}
 				break;
