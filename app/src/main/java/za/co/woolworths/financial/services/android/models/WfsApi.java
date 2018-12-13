@@ -26,6 +26,7 @@ import za.co.woolworths.financial.services.android.models.dto.CLIOfferDecision;
 import za.co.woolworths.financial.services.android.models.dto.CardDetailsResponse;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.ChangeQuantity;
+import za.co.woolworths.financial.services.android.models.dto.CheckoutSuccess;
 import za.co.woolworths.financial.services.android.models.dto.CreateList;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferRequest;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice;
@@ -302,6 +303,10 @@ public class WfsApi {
 	public SkusInventoryForStoreResponse getInventorySkuForStore(String store_id, String multipleSku) {
 		return mApiInterface.getInventorySKUForStore(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), store_id, multipleSku);
 
+	}
+
+	public Void postCheckoutSuccess(CheckoutSuccess checkoutSuccess) {
+		return mApiInterface.postCheckoutSuccess(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), checkoutSuccess);
 	}
 
 	private String getOsVersion() {

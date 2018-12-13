@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.rest.shop.PostCheckoutSuccess;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
@@ -43,6 +44,7 @@ import za.co.woolworths.financial.services.android.util.SessionUtilities;
 public class CheckOutFragment extends Fragment {
 
 	public static int REQUEST_CART_REFRESH_ON_DESTROY = 9;
+	public static String ORDER_CONFIRMATION = "order-confirmation.jsp";
 
 	private enum QueryString {
 		COMPLETE("goto=complete"),
@@ -158,7 +160,9 @@ public class CheckOutFragment extends Fragment {
 				} else if (url.contains(QueryString.ABANDON.getValue())) {
 					closeOnNextPage = QueryString.ABANDON;
 				}
-
+				if(url.contains(ORDER_CONFIRMATION)){
+					initPostCheckout();
+				}
 				// close cart activity if current url equals next url
 				if (closeOnNextPage != null && !url.contains(closeOnNextPage.getValue())) {
 					mWebCheckOut.stopLoading();
@@ -178,11 +182,10 @@ public class CheckOutFragment extends Fragment {
 	private void finishCartActivity() {
 		Activity activity = getActivity();
 		if (activity != null) {
-			Intent returnIntent = new Intent();
 			if (closeOnNextPage == QueryString.COMPLETE) {
-				activity.setResult(Activity.RESULT_OK, returnIntent);
+				activity.setResult(Activity.RESULT_OK);
 			} else if (closeOnNextPage == QueryString.ABANDON) {
-				activity.setResult(Activity.RESULT_CANCELED, returnIntent);
+				activity.setResult(Activity.RESULT_CANCELED);
 			}
 			activity.finish();
 			activity.overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
@@ -250,5 +253,10 @@ public class CheckOutFragment extends Fragment {
 			extraHeaders.put("token", SessionUtilities.getInstance().getSessionToken());
 		}
 		return extraHeaders;
+	}
+
+	public void initPostCheckout()
+	{
+		new PostCheckoutSuccess().execute();
 	}
 }
