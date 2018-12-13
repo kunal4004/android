@@ -6,13 +6,12 @@ import android.text.TextUtils;
 
 import com.jakewharton.retrofit.Ok3Client;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
 import retrofit.RestAdapter;
+import retrofit.client.Response;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
@@ -62,6 +61,7 @@ import za.co.woolworths.financial.services.android.models.dto.TransactionHistory
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
+import za.co.woolworths.financial.services.android.models.dto.statement.GetStatement;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementResponse;
 import za.co.woolworths.financial.services.android.models.dto.statement.StatementResponse;
@@ -69,6 +69,7 @@ import za.co.woolworths.financial.services.android.models.dto.statement.UserStat
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 
+import static za.co.wigroup.androidutils.Util.getDeviceManufacturer;
 public class WfsApi {
 
 	private Context mContext;
@@ -305,6 +306,10 @@ public class WfsApi {
 
 	}
 
+	public Response getPDFResponse(GetStatement getStatement) {
+		return mApiInterface.getStatement(getApiId(), com.awfs.coordination.BuildConfig.SHA1, getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), getStatement.getDocId(), getStatement.getProductOfferingId(), getStatement.getDocDesc());
+	}
+	
 	public Void postCheckoutSuccess(CheckoutSuccess checkoutSuccess) {
 		return mApiInterface.postCheckoutSuccess(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), checkoutSuccess);
 	}
