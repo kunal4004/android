@@ -14,14 +14,17 @@ import com.awfs.coordination.R;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.QueryBadgeCounter;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED;
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL;
 
 public class CartActivity extends BottomActivity implements View.OnClickListener, CartFragment.ToggleRemoveItem, ToastUtils.ToastInterface {
@@ -32,6 +35,7 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
 	private CartFragment cartFragment;
 	private ProgressBar pbRemoveAllItem;
 	public static WMaterialShowcaseView walkThroughPromtView = null;
+	public static final int CHECKOUT_SUCCESS = 13134;
 
 	@Override
 	protected int getLayoutResourceId() {
@@ -160,7 +164,10 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-
+		if (requestCode == CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY && resultCode == RESULT_OK) {
+			finishActivityOnCheckoutSuccess();
+			return;
+		}
 		FragmentManager fm = getSupportFragmentManager();
 		Fragment fragment = fm.findFragmentById(R.id.content_frame);
 		Fragment bottomFragment = fm.findFragmentById(R.id.fragment_bottom_container);
@@ -207,5 +214,12 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
 	@Override
 	public void onToastButtonClicked(String currentState) {
 
+	}
+
+	public void finishActivityOnCheckoutSuccess(){
+		QueryBadgeCounter.getInstance().setCartCount(0, INDEX_CART);
+		setResult(CHECKOUT_SUCCESS);
+		finish();
+		overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
 	}
 }

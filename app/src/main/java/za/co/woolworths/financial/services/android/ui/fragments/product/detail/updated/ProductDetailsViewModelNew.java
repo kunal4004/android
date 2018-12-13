@@ -10,7 +10,9 @@ import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
+import za.co.woolworths.financial.services.android.models.dto.AddToCartDaTum;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
+import za.co.woolworths.financial.services.android.models.dto.FormException;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse;
@@ -175,7 +177,22 @@ public class ProductDetailsViewModelNew extends BaseViewModel<ProductDetailNavig
 					if (addItemToCartResponse != null) {
 						switch (addItemToCartResponse.httpCode) {
 							case 200:
-								getNavigator().addItemToCartResponse(addItemToCartResponse);
+								List<AddToCartDaTum> addToCartList = addItemToCartResponse.data;
+								if (addToCartList != null && addToCartList.size() > 0 && addToCartList.get(0).formexceptions != null) {
+									FormException formException = addToCartList.get(0).formexceptions.get(0);
+									if (formException != null) {
+										if (formException.message.toLowerCase().contains("some of the products chosen are out of stock")) {
+											addItemToCartResponse.response.desc = "Unfortunately this item is currently out of stock.";
+										} else {
+											addItemToCartResponse.response.desc = formException.message;
+										}
+										getNavigator().responseFailureHandler(addItemToCartResponse.response);
+										return;
+									}
+								}
+								if (addToCartList != null) {
+									getNavigator().addItemToCartResponse(addItemToCartResponse);
+								}
 								break;
 
 							case 440:
