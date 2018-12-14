@@ -43,7 +43,6 @@ import za.co.woolworths.financial.services.android.models.rest.cli.CLIGetOfferAc
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.DebitOrderActivity;
-import za.co.woolworths.financial.services.android.ui.activities.LoanWithdrawalActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
@@ -60,7 +59,6 @@ import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
-import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
@@ -74,7 +72,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
     private WoolworthsApplication woolworthsApplication;
     private ProgressBar mProgressCreditLimit;
     private WTextView tvApplyNowIncreaseLimit;
-    private SharePreferenceHelper mSharePreferenceHelper;
     private boolean personalWasAlreadyRunOnce = false;
 
     private ErrorHandlerView mErrorHandlerView;
@@ -159,7 +156,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 
     private void init(View view) {
         woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
-        mSharePreferenceHelper = SharePreferenceHelper.getInstance(getActivity());
         availableBalance = (WTextView) view.findViewById(R.id.available_funds);
         creditLimit = (WTextView) view.findViewById(R.id.creditLimit);
         rlViewStatement = (RelativeLayout) view.findViewById(R.id.rlViewStatement);
@@ -249,16 +245,12 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
                     productOfferingGoodStanding = p.productOfferingGoodStanding;
                     productOfferingId = String.valueOf(p.productOfferingId);
                     woolworthsApplication.setProductOfferingId(p.productOfferingId);
-                    mSharePreferenceHelper.save(String.valueOf(p.productOfferingId), "lw_product_offering_id");
                     minDrawnAmount = p.minDrawDownAmount;
                     if (TextUtils.isEmpty(String.valueOf(minDrawnAmount))) {
                         minDrawnAmount = 0;
                     }
                     availableBalance.setText(Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.availableFunds), 1, getActivity())));
-                    mSharePreferenceHelper.save(availableBalance.getText().toString(), "lw_available_fund");
                     creditLimit.setText(Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.creditLimit), 1, getActivity())));
-                    mSharePreferenceHelper.save(creditLimit.getText().toString(), "lw_credit_limit");
-
                     minAmountDue.setText(Utils.removeNegativeSymbol(WFormatter.newAmountFormat(p.minimumAmountDue)));
                     currentBalance.setText(Utils.removeNegativeSymbol(WFormatter.newAmountFormat(p.currentBalance)));
                     try {
@@ -310,20 +302,11 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
                 startActivity(intBalanceProtection);
                 activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
                 break;
-//
-//            case R.id.relDrawnDownAmount:
-//                mSharePreferenceHelper.save("", "lw_amount_drawn_cent");
-//                mSharePreferenceHelper.save(String.valueOf(productOfferingId), "lw_product_offering_id");
-//                Intent openWithdrawCashNow = new Intent(getActivity(), LoanWithdrawalActivity.class);
-//                openWithdrawCashNow.putExtra("minDrawnDownAmount", minDrawnAmount);
-//                startActivity(openWithdrawCashNow);
-//                getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
-//                break;
 
             case R.id.relDrawnDownAmount:
                 Intent intentWithdrawalActivity = new Intent(getActivity(), za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity.class);
                 intentWithdrawalActivity.putExtra("account_info", accountInfo);
-                startActivity(intentWithdrawalActivity);
+                startActivityForResult(intentWithdrawalActivity, 0);
                 activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
                 break;
 
@@ -453,19 +436,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
             }
             showFeatureWalkthroughStatements();
         } catch (IllegalStateException ignored) {
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        try {
-            mSharePreferenceHelper.removeValue("lw_installment_amount");
-            mSharePreferenceHelper.removeValue("lwf_drawDownAmount");
-            mSharePreferenceHelper.removeValue("lw_months");
-            mSharePreferenceHelper.removeValue("lw_product_offering_id");
-            mSharePreferenceHelper.removeValue("lw_amount_drawn_cent");
-        } catch (Exception ex) {
         }
     }
 

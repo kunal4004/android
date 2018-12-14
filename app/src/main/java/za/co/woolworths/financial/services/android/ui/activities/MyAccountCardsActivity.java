@@ -1,9 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -49,7 +46,6 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WViewPager;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.PersonalLoanAmount;
-import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class MyAccountCardsActivity extends AppCompatActivity
@@ -60,8 +56,6 @@ public class MyAccountCardsActivity extends AppCompatActivity
 	WCustomPager fragmentPager;
 	public WTextView toolbarTextView;
 	CardsFragmentPagerAdapter fragmentsAdapter;
-	private WoolworthsApplication mWoolworthsApplication;
-	private SharePreferenceHelper mSharePreferenceHelper;
 	ArrayList<Integer> cards;
 	private Toolbar mToolbar;
 	private Button mBtnApplyNow;
@@ -82,9 +76,7 @@ public class MyAccountCardsActivity extends AppCompatActivity
 		setContentView(R.layout.activity_my_accounts_offline_layout);
 		setActionBar();
 		init();
-		mWoolworthsApplication = (WoolworthsApplication) MyAccountCardsActivity.this.getApplication();
 		retryConnect();
-		mSharePreferenceHelper = SharePreferenceHelper.getInstance(MyAccountCardsActivity.this);
 		currentPosition = getIntent().getIntExtra("position", 0);
 		fragmentPager = (WCustomPager) findViewById(R.id.fragmentpager);
 		llRootLayout = (LinearLayout) findViewById(R.id.llRootLayout);
@@ -123,10 +115,6 @@ public class MyAccountCardsActivity extends AppCompatActivity
 			cards.add(R.drawable.w_personal_loan_card);
 			setUpAdapter(cards);
 		}
-
-
-		mSharePreferenceHelper.save("acc_card_activity", "acc_card_activity");
-		this.registerReceiver(this.finishAlert, new IntentFilter(mSharePreferenceHelper.getValue("acc_card_activity")));
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 			View decor = getWindow().getDecorView();
@@ -223,8 +211,6 @@ public class MyAccountCardsActivity extends AppCompatActivity
 	}
 
 	private void init() {
-		mWoolworthsApplication = (WoolworthsApplication) MyAccountCardsActivity
-				.this.getApplication();
 		toolbarTextView = (WTextView) findViewById(R.id.toolbarText);
 		pager = (WViewPager) findViewById(R.id.myAccountsCardPager);
 
@@ -233,15 +219,6 @@ public class MyAccountCardsActivity extends AppCompatActivity
 		mScrollAccountCard = (NestedScrollView) findViewById(R.id.nest_scrollview);
 		mBtnApplyNow.setOnClickListener(this);
 	}
-
-	BroadcastReceiver finishAlert = new BroadcastReceiver() {
-
-		@Override
-		public void onReceive(Context context, Intent intent) {
-
-			MyAccountCardsActivity.this.finish();
-		}
-	};
 
 	private void dynamicToolbarColor(int color) {
 		int mColor = ContextCompat.getColor(MyAccountCardsActivity.this, color);
@@ -271,8 +248,6 @@ public class MyAccountCardsActivity extends AppCompatActivity
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		mSharePreferenceHelper.removeValue("acc_card_activity");
-		this.unregisterReceiver(finishAlert);
 	}
 
 	@Override
@@ -418,12 +393,6 @@ public class MyAccountCardsActivity extends AppCompatActivity
 										WoolworthsApplication
 												.getApplyNowLink());
 
-							} else {
-								mSharePreferenceHelper.save("", "lw_amount_drawn_cent");
-								Intent openWithdrawCashNow = new Intent(MyAccountCardsActivity.this, LoanWithdrawalActivity.class);
-								openWithdrawCashNow.putExtra("minDrawnDownAmount", wMinDrawnDownAmount);
-								startActivity(openWithdrawCashNow);
-								overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 							}
 							break;
 					}
@@ -459,7 +428,7 @@ public class MyAccountCardsActivity extends AppCompatActivity
 		if (!cardsHasAccount) {
 			switch (position) {
 				case 0:
-					mBtnApplyNow.setBackgroundColor(ContextCompat.getColor(MyAccountCardsActivity.this, R.color.cli_store_card));
+			 		mBtnApplyNow.setBackgroundColor(ContextCompat.getColor(MyAccountCardsActivity.this, R.color.cli_store_card));
 					mBtnApplyNow.setVisibility(View.VISIBLE);
 					break;
 				case 1:
