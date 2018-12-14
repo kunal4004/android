@@ -73,7 +73,6 @@ class LoanWithdrawalDetailFragment : LoanBaseFragment() {
         btnConfirm.setOnClickListener { authoriseLoanRequest() }
     }
 
-
     private fun authoriseLoanRequest() {
         progressBarVisibility(true)
         mAuthoriseLoan = AuthoriseLoan(AuthoriseLoanRequest(mIssueLoan!!.productOfferingId,
