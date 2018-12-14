@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginTop="?attr/actionBarSize"
     android:background="@color/purple"
     android:fillViewport="true">
 
@@ -149,6 +150,7 @@
             style="?android:attr/progressBarStyleLarge"
             android:layout_width="35dp"
             android:layout_height="35dp"
+            android:indeterminateTint="@color/black"
             android:paddingTop="5dp"
             android:visibility="gone" />
 
