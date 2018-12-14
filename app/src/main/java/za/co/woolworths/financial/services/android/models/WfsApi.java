@@ -92,7 +92,7 @@ public class WfsApi {
 	}
 
 	public LoginResponse login(LoginRequest loginRequest) {
-		return mApiInterface.login(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", loginRequest);
+		return mApiInterface.login(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), loginRequest);
 	}
 
 	public AccountsResponse getAccounts() {
@@ -125,9 +125,9 @@ public class WfsApi {
 		getMyLocation();
 		if (startRadius != null && startRadius.equals("")) {
 			//This should never happen for now
-			return mApiInterface.getStoresLocationItem(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", String.valueOf(loc.getLatitude()), String.valueOf(loc.getLongitude()), sku, startRadius, endRadius, true);
+			return mApiInterface.getStoresLocationItem(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", String.valueOf(loc.getLatitude()), String.valueOf(loc.getLongitude()),getSessionToken(), sku, startRadius, endRadius, true);
 		} else {
-			return mApiInterface.getStoresLocationItem(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", String.valueOf(loc.getLatitude()), String.valueOf(loc.getLongitude()), sku, startRadius, endRadius, true);
+			return mApiInterface.getStoresLocationItem(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", String.valueOf(loc.getLatitude()), String.valueOf(loc.getLongitude()),getSessionToken(), sku, startRadius, endRadius, true);
 		}
 	}
 
@@ -188,15 +188,15 @@ public class WfsApi {
 	}
 
 	public PromotionsResponse getPromotions() {
-		return mApiInterface.getPromotions(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "");
+		return mApiInterface.getPromotions(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "",getSessionToken());
 	}
 
 	public RootCategories getRootCategory() {
-		return mApiInterface.getRootCategories(getOsVersion(), getApiId(), getOS(), getSha1Password(), getDeviceModel(), getNetworkCarrier(), getOsVersion(), "Android");
+		return mApiInterface.getRootCategories(getOsVersion(), getApiId(), getOS(), getSha1Password(), getDeviceModel(), getNetworkCarrier(), getOsVersion(), "Android",getSessionToken());
 	}
 
 	public SubCategories getSubCategory(String category_id) {
-		return mApiInterface.getSubCategory(getOsVersion(), getApiId(), getOS(), getSha1Password(), getDeviceModel(), getNetworkCarrier(), getOsVersion(), "Android", category_id);
+		return mApiInterface.getSubCategory(getOsVersion(), getApiId(), getOS(), getSha1Password(), getDeviceModel(), getNetworkCarrier(), getOsVersion(), "Android", getSessionToken(),category_id);
 	}
 
 	public ProvincesResponse getProvinces() {
@@ -219,14 +219,14 @@ public class WfsApi {
     public ProductView getProducts(ProductsRequestParams requestParams) {
         getMyLocation();
         if (Utils.isLocationEnabled(mContext)) {
-            return mApiInterface.getProducts(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLatitude(), loc.getLongitude(), requestParams.getSearchTerm(), requestParams.getSearchType().getValue(), requestParams.getResponseType().getValue(), requestParams.getPageOffset(), Utils.PAGE_SIZE, requestParams.getSortOption(), requestParams.getRefinement());
+            return mApiInterface.getProducts(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLatitude(), loc.getLongitude(),getSessionToken(), requestParams.getSearchTerm(), requestParams.getSearchType().getValue(), requestParams.getResponseType().getValue(), requestParams.getPageOffset(), Utils.PAGE_SIZE, requestParams.getSortOption(), requestParams.getRefinement());
         } else {
-            return mApiInterface.getProductsWithoutLocation(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), requestParams.getSearchTerm(), requestParams.getSearchType().getValue(), requestParams.getResponseType().getValue(), requestParams.getPageOffset(), Utils.PAGE_SIZE, requestParams.getSortOption(), requestParams.getRefinement());
+            return mApiInterface.getProductsWithoutLocation(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(),getSessionToken(), requestParams.getSearchTerm(), requestParams.getSearchType().getValue(), requestParams.getResponseType().getValue(), requestParams.getPageOffset(), Utils.PAGE_SIZE, requestParams.getSortOption(), requestParams.getRefinement());
         }
     }
 
 	public FAQ getFAQ() {
-		return mApiInterface.getFAQ(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "");
+		return mApiInterface.getFAQ(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken());
 	}
 
 	public CardDetailsResponse getCardDetails() {
@@ -268,11 +268,11 @@ public class WfsApi {
 		if (Utils.isLocationEnabled(mContext)) {
 			return mApiInterface.productDetail(getOsVersion(), getDeviceModel(), getOsVersion(),
 					getOS(), getNetworkCarrier(), getApiId(), "", "",
-					getSha1Password(), loc.getLongitude(), loc.getLatitude(), productId, skuId);
+					getSha1Password(), loc.getLongitude(), loc.getLatitude(),getSessionToken(), productId, skuId);
 		} else {
 			return mApiInterface.productDetail(getOsVersion(), getDeviceModel(), getOsVersion(),
 					getOS(), getNetworkCarrier(), getApiId(), "", "",
-					getSha1Password(), productId, skuId);
+					getSha1Password(),getSessionToken(), productId, skuId);
 		}
 	}
 

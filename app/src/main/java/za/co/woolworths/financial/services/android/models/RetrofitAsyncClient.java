@@ -84,11 +84,11 @@ public class RetrofitAsyncClient {
 		if (Utils.isLocationEnabled(mContext)) {
 			mApiInterface.getProductDetail(getOsVersion(), getDeviceModel(), getOsVersion(),
 					getOS(), getNetworkCarrier(), getApiId(), "", "",
-					com.awfs.coordination.BuildConfig.SHA1, loc.getLongitude(), loc.getLatitude(), productId, skuId, callback);
+					com.awfs.coordination.BuildConfig.SHA1, loc.getLongitude(), loc.getLatitude(),getSessionToken(), productId, skuId, callback);
 		} else {
 			mApiInterface.getProductDetail(getOsVersion(), getDeviceModel(), getOsVersion(),
 					getOS(), getNetworkCarrier(), getApiId(), "", "",
-					com.awfs.coordination.BuildConfig.SHA1, productId, skuId, callback);
+					com.awfs.coordination.BuildConfig.SHA1,getSessionToken(), productId, skuId, callback);
 		}
 	}
 
