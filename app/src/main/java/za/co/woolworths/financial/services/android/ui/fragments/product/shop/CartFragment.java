@@ -299,7 +299,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				if ((checkOutActivity != null) && btnCheckOut.isEnabled()) {
 					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTCHECKOUT);
 					Intent openCheckOutActivity = new Intent(getContext(), CartCheckoutActivity.class);
-					startActivityForResult(openCheckOutActivity, CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY);
+					getActivity().startActivityForResult(openCheckOutActivity, CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY);
 					checkOutActivity.overridePendingTransition(0, 0);
 				}
 				break;
@@ -866,6 +866,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	public void onResume() {
 		super.onResume();
 		Activity activity = getActivity();
+		Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.CART_LIST);
 		if (activity != null) {
 			activity.registerReceiver(mConnectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
 		}
@@ -889,7 +890,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			activity.overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
 			return;
 		}
-		if (requestCode == CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY || requestCode == SSOActivity.SSOActivityResult.LAUNCH.rawValue()) {
+		if (requestCode == SSOActivity.SSOActivityResult.LAUNCH.rawValue()) {
 			if (SessionUtilities.getInstance().isUserAuthenticated()) {
 				if (resultCode == Activity.RESULT_OK) {
 					// Checkout completed successfully

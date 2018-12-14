@@ -108,12 +108,5 @@ public class RetrofitAsyncClient {
 		}
 	}
 
-
-	public void getPDFResponse(GetStatement getStatement, Callback<Response> callback) {
-		mApiInterface.getStatement(getApiId(), com.awfs.coordination.BuildConfig.SHA1, getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), getStatement.getDocId(), getStatement.getProductOfferingId(), getStatement.getDocDesc(), callback);
-	}
-
-
-
 }
 

@@ -186,6 +186,12 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 		});
 	}
 
+	@Override
+	public void onResume() {
+		super.onResume();
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_SEARCH_RESULTS);
+	}
+
 	private void setTitle() {
 		if (isEmpty(mSearchProduct)) {
 			setTitle(mSubCategoryName);

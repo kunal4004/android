@@ -50,7 +50,6 @@ import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
-import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
@@ -95,7 +94,6 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	private String mSubCategoryTitle;
 	private boolean mFetchFromJson;
 	private String mDefaultProductResponse;
-	private ProductList mDefaultProduct;
 	private ProductViewPagerAdapter mProductViewPagerAdapter;
 	private List<String> mAuxiliaryImage = new ArrayList<>();
 	private ViewPager mImageViewPager;
@@ -165,7 +163,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		productDetailsViewModelNew.setNavigator(this);
 		final Bundle bundle = this.getArguments();
 		if (bundle != null) {
-			mDefaultProduct = (ProductList) Utils.jsonStringToObject(bundle.getString("strProductList"), ProductList.class);
+			productDetails = (ProductDetails) Utils.jsonStringToObject(bundle.getString("strProductList"), ProductDetails.class);
 			mSubCategoryTitle = bundle.getString("strProductCategory");
 			mDefaultProductResponse = bundle.getString("productResponse");
 			mFetchFromJson = bundle.getBoolean("fetchFromJson");
@@ -177,6 +175,12 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		initViews();
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_DETAIL);
 	}
 
 	public void initViews() {
@@ -206,35 +210,35 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
 	public void configureDefaultUI() {
 
-		getViewDataBinding().tvProductName.setText(mDefaultProduct.productName);
+		getViewDataBinding().tvProductName.setText(productDetails.productName);
 		getViewDataBinding().tvSubCategoryTitle.setText(mSubCategoryTitle);
 
-		if (!TextUtils.isEmpty(mDefaultProduct.saveText)) {
+		if (!TextUtils.isEmpty(productDetails.saveText)) {
 			txtSaveText.setVisibility(View.VISIBLE);
-			txtSaveText.setText(mDefaultProduct.saveText);
+			txtSaveText.setText(productDetails.saveText);
 		}
 
 		try {
 			// set price list
-			ProductUtils.displayPrice(txtFromPrice, txtActualPrice, String.valueOf(mDefaultProduct.fromPrice), getViewModel().maxWasPrice(mDefaultProduct.otherSkus));
+			ProductUtils.displayPrice(txtFromPrice, txtActualPrice, String.valueOf(productDetails.fromPrice), getViewModel().maxWasPrice(productDetails.otherSkus));
 		} catch (Exception ignored) {
 		}
 
-		this.mAuxiliaryImage.add(getImageByWidth(mDefaultProduct.externalImageRef, getActivity()));
+		this.mAuxiliaryImage.add(getImageByWidth(productDetails.externalImageRef, getActivity()));
 		this.mProductViewPagerAdapter = new ProductViewPagerAdapter(getActivity(), this.mAuxiliaryImage, this);
 		this.mImageViewPager.setAdapter(mProductViewPagerAdapter);
 		circleindicator.setViewPager(this.mImageViewPager);
 
 		//set promotional Images
-		if (mDefaultProduct.promotionImages != null)
-			loadPromotionalImages(mDefaultProduct.promotionImages);
+		if (productDetails.promotionImages != null)
+			loadPromotionalImages(productDetails.promotionImages);
 
 		if (mFetchFromJson) {
 			ProductDetails productDetails = Utils.stringToJson(getActivity(), mDefaultProductResponse).product;
 			this.onSuccessResponse(productDetails);
 		} else {
 			//loadProductDetails.
-			getViewModel().productDetail(new ProductRequest(mDefaultProduct.productId, mDefaultProduct.sku)).execute();
+			getViewModel().productDetail(new ProductRequest(productDetails.productId, productDetails.sku)).execute();
 		}
 	}
 
@@ -812,7 +816,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
 		for (String key : otherSKUsList.keySet()) {
 			for (OtherSkus otherSkusObj : otherSKUsList.get(key)) {
-				if (otherSkusObj.sku.equalsIgnoreCase(mDefaultProduct.sku)) {
+				if (otherSkusObj.sku.equalsIgnoreCase(this.productDetails.sku)) {
 					this.selectedGroupKey = key;
 					return otherSkusObj;
 				}

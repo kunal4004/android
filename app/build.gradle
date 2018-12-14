@@ -7,14 +7,14 @@ android {
 
     def major = "5"
     def minor = "9"
-    def fix = "0"
+    def fix = "1"
 
     //placeholder will be temporarily updated by build server during a build.
     //check appcenter-pre-build.sh
     def BUILD_NUMBER = "{BUILD_NUMBER}"
 
     if (!BUILD_NUMBER.isNumber()){
-        BUILD_NUMBER = "87"
+        BUILD_NUMBER = "89"
     }
 
     dataBinding {
@@ -168,7 +168,7 @@ dependencies {
     implementation 'uk.co.chrisjenx:calligraphy:2.2.0'
     implementation 'me.leolin:ShortcutBadger:1.1.13@aar'
     implementation 'com.daimajia.swipelayout:library:1.2.0'
-    implementation 'es.voghdev.pdfviewpager:library:1.0.3'
+    compile 'com.github.barteksc:android-pdf-viewer:2.8.2'
     api 'com.google.zxing:core:3.3.2'
     api 'com.google.zxing:android-core:3.3.0'
     annotationProcessor "android.arch.lifecycle:compiler:1.1.1"

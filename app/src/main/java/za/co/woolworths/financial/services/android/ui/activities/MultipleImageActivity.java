@@ -10,6 +10,8 @@ import android.widget.ImageView;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
+import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.photo.PhotoDraweeView;
 
 
@@ -28,6 +30,11 @@ public class MultipleImageActivity extends AppCompatActivity implements View.OnC
 		setImage();
 	}
 
+	@Override
+	protected void onResume() {
+		super.onResume();
+		Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_DETAIL_IMAGE_ZOOM);
+	}
 
 	private void getBundle() {
 		Bundle extras = getIntent().getExtras();

@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
@@ -43,6 +44,12 @@ public class CLIPOIProblemFragment extends Fragment implements View.OnClickListe
 		super.onViewCreated(view, savedInstanceState);
 		init(view);
 
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.CLI_POI_ERROR);
 	}
 
 	private void init(View view) {

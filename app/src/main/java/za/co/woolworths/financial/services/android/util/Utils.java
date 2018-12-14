@@ -80,6 +80,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -606,6 +607,11 @@ public class Utils {
 	public static void triggerFireBaseEvents(String eventName) {
 		FirebaseAnalytics mFirebaseAnalytics = FirebaseManager.Companion.getInstance().getAnalytics();
 		mFirebaseAnalytics.logEvent(eventName, null);
+	}
+
+	public static void setScreenName(Activity activity, String screenName) {
+		FirebaseAnalytics mFirebaseAnalytics = FirebaseManager.Companion.getInstance().getAnalytics();
+		mFirebaseAnalytics.setCurrentScreen(activity, screenName, null /* class override */);
 	}
 
 	public static void sendEmail(String emailId, String subject, Context mContext) {
@@ -1371,6 +1377,18 @@ public class Utils {
 			currentAmount = currentAmount.replace("R", "- R");
 		}
 		return currentAmount;
+	}
+
+	public static void displayValidationMessageForResult(Fragment fragment, Activity activity, CustomPopUpWindow.MODAL_LAYOUT key, String title, String description, String buttonTitle) {
+		Intent openMsg = new Intent(activity, CustomPopUpWindow.class);
+		Bundle args = new Bundle();
+		args.putSerializable("key", key);
+		args.putString("title", title);
+		args.putString("description", description);
+		args.putString("buttonTitle", buttonTitle);
+		openMsg.putExtras(args);
+		fragment.startActivity(openMsg);
+		((AppCompatActivity) activity).overridePendingTransition(0, 0);
 	}
 
 }

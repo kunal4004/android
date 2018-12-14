@@ -12,8 +12,10 @@ import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.FaqDetailBinding;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.faq.web.WebFragment;
+import za.co.woolworths.financial.services.android.util.Utils;
 
 public class FAQDetailFragment extends BaseFragment<FaqDetailBinding, FAQDetailViewModel> implements FAQDetailNavigator {
 
@@ -43,6 +45,12 @@ public class FAQDetailFragment extends BaseFragment<FaqDetailBinding, FAQDetailV
 		setTitle(getString(R.string.drawer_faq));
 		showToolbar();
 		populateTextView();
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.FAQ_DETAIL);
 	}
 
 	@Override

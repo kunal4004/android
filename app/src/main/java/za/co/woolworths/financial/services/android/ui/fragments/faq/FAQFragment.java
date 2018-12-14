@@ -14,6 +14,7 @@ import com.awfs.coordination.databinding.FaqFragmentBinding;
 
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.dto.FAQDetail;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.rest.faq.FAQRequest;
@@ -61,6 +62,12 @@ public class FAQFragment extends BaseFragment<FaqFragmentBinding, FAQViewModel> 
 			}
 
 		});
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.FAQ_LIST);
 	}
 
 	@Override
