@@ -90,21 +90,22 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
 
     private fun getRefinementSelectableItems(refinementNavigation: RefinementNavigation): ArrayList<RefinementSelectableItem> {
         var dataList = arrayListOf<RefinementSelectableItem>()
+        if (refinementNavigation.refinementCrumbs != null && refinementNavigation.refinementCrumbs.size > 0) {
+            refinementNavigation.refinementCrumbs.forEach {
+                var refinementSelectableItem = RefinementSelectableItem(it, if (it.multiSelect) RefinementSelectableItem.ViewType.MULTI_SELECTOR else RefinementSelectableItem.ViewType.SINGLE_SELECTOR)
+                refinementSelectableItem.isSelected = true
+                dataList.add(refinementSelectableItem)
+            }
+        }
+
         if (refinementNavigation.refinements != null && refinementNavigation.refinements.size > 0) {
             refinementNavigation.refinements.forEach {
-
                 if (it.subRefinements != null && it.subRefinements.size > 0) {
                     dataList.add(RefinementSelectableItem(it, RefinementSelectableItem.ViewType.OPTIONS))
                 } else {
                     dataList.add(RefinementSelectableItem(it, if (it.multiSelect) RefinementSelectableItem.ViewType.MULTI_SELECTOR else RefinementSelectableItem.ViewType.SINGLE_SELECTOR))
                 }
 
-            }
-        } else if (refinementNavigation.refinementCrumbs != null && refinementNavigation.refinementCrumbs.size > 0) {
-            refinementNavigation.refinementCrumbs.forEach {
-                var refinementSelectableItem = RefinementSelectableItem(it, if (it.multiSelect) RefinementSelectableItem.ViewType.MULTI_SELECTOR else RefinementSelectableItem.ViewType.SINGLE_SELECTOR)
-                refinementSelectableItem.isSelected = true
-                dataList.add(refinementSelectableItem)
             }
         }
         return dataList
@@ -120,23 +121,26 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     }
 
     private fun getNavigationState(): String {
-        var navigationState = ""
-        var isRefinementCrumb = false
         dataList.forEach {
-            if (it.type == RefinementSelectableItem.ViewType.SINGLE_SELECTOR || it.type == RefinementSelectableItem.ViewType.MULTI_SELECTOR) {
-                var item = it.item
+            var item = it.item
+            if (it.type == RefinementSelectableItem.ViewType.MULTI_SELECTOR) {
                 if (item is Refinement && it.isSelected) {
-                    if (TextUtils.isEmpty(navigationState))
-                        navigationState = navigationState.plus(item.navigationState)
+                    if (TextUtils.isEmpty(refinedNavigateState))
+                        refinedNavigateState = refinedNavigateState.plus(item.navigationState)
                     else
-                        navigationState = navigationState.plus("Z").plus(item.navigationState.substringAfterLast("Z"))
+                        refinedNavigateState = refinedNavigateState.plus("Z").plus(item.navigationState.substringAfterLast("Z"))
                 } else if (item is RefinementCrumb && !it.isSelected) {
-                    isRefinementCrumb = true
+                    refinedNavigateState = refinedNavigateState.replace(getNavigationStateForRefinementCrumb(item.navigationState), "")
+                }
+            } else if (it.type == RefinementSelectableItem.ViewType.SINGLE_SELECTOR) {
+                if (item is Refinement && it.isSelected) {
+                    refinedNavigateState = item.navigationState
+                } else if (item is RefinementCrumb && !it.isSelected) {
                     refinedNavigateState = refinedNavigateState.replace(getNavigationStateForRefinementCrumb(item.navigationState), "")
                 }
             }
         }
-        if (isRefinementCrumb) return refinedNavigateState else return navigationState
+        return refinedNavigateState
     }
 
     override fun onSelectionChanged() {
@@ -152,8 +156,8 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     }
 
     private fun getNavigationStateForRefinementCrumb(navigationState: String): String {
-        val list = navigationState.split("Z")
-        var navigation = refinedNavigateState
+        val list = navigationState.substringAfter("Z").split("Z")
+        var navigation = refinedNavigateState.substringAfter("Z")
         list.forEachIndexed { index, it ->
             if (index == 0) navigation = navigation.replace(it, "") else navigation = navigation.replace("Z".plus(it), "")
         }
