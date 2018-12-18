@@ -23,6 +23,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.grid.Gri
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ProductUtils;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
+import za.co.woolworths.financial.services.android.util.DrawImage;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class ProductViewListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -160,7 +161,8 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     private void setPromotionalImage(WrapContentDraweeView image, String url) {
         image.setVisibility(isEmpty(url) ? View.GONE : View.VISIBLE);
-        image.setImageURI((isEmpty(url) ? Utils.getExternalImageRef() : url));
+        DrawImage drawImage = new DrawImage(mContext);
+        drawImage.displayImage(image, isEmpty(url) ? Utils.getExternalImageRef() : url);
     }
 
     private boolean isEmpty(String text) {

@@ -7,14 +7,14 @@ android {
 
     def major = "5"
     def minor = "9"
-    def fix = "1"
+    def fix = "2"
 
     //placeholder will be temporarily updated by build server during a build.
     //check appcenter-pre-build.sh
     def BUILD_NUMBER = "{BUILD_NUMBER}"
 
     if (!BUILD_NUMBER.isNumber()){
-        BUILD_NUMBER = "89"
+        BUILD_NUMBER = "90"
     }
 
     dataBinding {

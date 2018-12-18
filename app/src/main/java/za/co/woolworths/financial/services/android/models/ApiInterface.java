@@ -16,7 +16,6 @@ import retrofit.http.Path;
 import retrofit.http.Query;
 import retrofit.http.Streaming;
 import retrofit.mime.MultipartTypedOutput;
-import za.co.woolworths.financial.services.android.models.dto.AccountResponse;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
@@ -77,21 +76,6 @@ public interface ApiInterface {
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:28800"})
 	@GET("/user/accounts")
-	AccountResponse getAccount(
-			@Header("apiId") String apiId,
-			@Header("sha1Password") String sha1Password,
-			@Header("deviceVersion") String deviceVersion,
-			@Header("deviceModel") String deviceModel,
-			@Header("network") String network,
-			@Header("os") String os,
-			@Header("osVersion") String osVersion,
-			@Header("userAgent") String userAgent,
-			@Header("userAgentVersion") String userAgentVersion,
-			@Header("sessionToken") String sessionToken,
-			@Query("productOfferingId") String productOfferingId);
-
-	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:28800"})
-	@GET("/user/accounts")
 	AccountsResponse getAccounts(
 			@Header("apiId") String apiId,
 			@Header("sha1Password") String sha1Password,
@@ -146,6 +130,7 @@ public interface ApiInterface {
 			@Header("osVersion") String osVersion,
 			@Header("userAgent") String userAgent,
 			@Header("userAgentVersion") String userAgentVersion,
+			@Header("sessionToken") String sessionToken,
 			@Body LoginRequest loginRequest);
 
 
@@ -180,19 +165,6 @@ public interface ApiInterface {
 			@Header("userAgentVersion") String userAgentVersion,
 			@Header("sessionToken") String sessionToken,
 			@Body AuthoriseLoanRequest authoriseLoanRequest);
-
-	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
-	@GET("/config/contactus")
-	ContactUsConfigResponse getContactUsConfig(
-			@Header("apiId") String apiId,
-			@Header("sha1Password") String sha1Password,
-			@Header("deviceVersion") String deviceVersion,
-			@Header("deviceModel") String deviceModel,
-			@Header("network") String network,
-			@Header("os") String os,
-			@Header("osVersion") String osVersion,
-			@Header("userAgent") String userAgent,
-			@Header("userAgentVersion") String userAgentVersion);
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600"})
 	@GET("/mobileconfigs")
@@ -259,6 +231,7 @@ public interface ApiInterface {
 			@Header("userAgentVersion") String userAgentVersion,
 			@Header("latitude") String latitude,
 			@Header("longitude") String longitude,
+			@Header("sessionToken") String sessionToken,
 			@Path(value = "sku", encode = false) String sku,
 			@Query("startRadius") String startRadius,
 			@Query("endRadius") String endRadius,
@@ -480,7 +453,8 @@ public interface ApiInterface {
 			@Header("os") String os,
 			@Header("osVersion") String osVersion,
 			@Header("userAgent") String userAgent,
-			@Header("userAgentVersion") String userAgentVersion);
+			@Header("userAgentVersion") String userAgentVersion,
+			@Header("sessionToken") String sessionToken);
 
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip"})
@@ -493,7 +467,8 @@ public interface ApiInterface {
 			@Header("deviceModel") String deviceModel,
 			@Header("network") String network,
 			@Header("deviceVersion") String deviceVersion,
-			@Header("apiKey") String userAgent);
+			@Header("apiKey") String userAgent,
+			@Header("sessionToken") String sessionToken);
 
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip"})
@@ -507,6 +482,7 @@ public interface ApiInterface {
 			@Header("network") String network,
 			@Header("deviceVersion") String deviceVersion,
 			@Header("apiKey") String apiKey,
+			@Header("sessionToken") String sessionToken,
 			@Path("cat") String category);
 
 
@@ -521,7 +497,8 @@ public interface ApiInterface {
 			@Header("os") String os,
 			@Header("osVersion") String osVersion,
 			@Header("userAgent") String userAgent,
-			@Header("userAgentVersion") String userAgentVersion);
+			@Header("userAgentVersion") String userAgentVersion,
+			@Header("sessionToken") String sessionToken);
 
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip"})
@@ -536,6 +513,7 @@ public interface ApiInterface {
 			@Header("userAgent") String userAgent,
 			@Header("userAgentVersion") String userAgentVersion,
 			@Header("sha1Password") String sha1Password,
+			@Header("sessionToken") String sessionToken,
 			@Path("productId") String productId,
 			@Query("sku") String sku);
 
@@ -551,6 +529,7 @@ public interface ApiInterface {
 			@Header("userAgent") String userAgent,
 			@Header("userAgentVersion") String userAgentVersion,
 			@Header("sha1Password") String sha1Password,
+			@Header("sessionToken") String sessionToken,
 			@Path("productId") String productId,
 			@Query("sku") String sku,
 			Callback<String> callback);
@@ -569,6 +548,7 @@ public interface ApiInterface {
 			@Header("sha1Password") String sha1Password,
 			@Header("longitude") double longitude,
 			@Header("latitude") double latitude,
+			@Header("sessionToken") String sessionToken,
 			@Path("productId") String productId,
 			@Query("sku") String sku,
 			Callback<String> callback);
@@ -734,8 +714,7 @@ public interface ApiInterface {
 			@Header("osVersion") String osVersion,
 			@Header("userAgent") String userAgent,
 			@Header("userAgentVersion") String userAgentVersion,
-			@Header("sessionToken") String sessionToken
-	);
+			@Header("sessionToken") String sessionToken);
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
 	@DELETE("/cart/item")
@@ -779,6 +758,7 @@ public interface ApiInterface {
 			@Header("userAgent") String userAgent,
 			@Header("userAgentVersion") String userAgentVersion,
 			@Header("sha1Password") String sha1Password,
+			@Header("sessionToken") String sessionToken,
 			@Path("productId") String productId,
 			@Query("sku") String sku);
 
@@ -797,6 +777,7 @@ public interface ApiInterface {
 			@Header("sha1Password") String sha1Password,
 			@Header("longitude") double longitude,
 			@Header("latitude") double latitude,
+			@Header("sessionToken") String sessionToken,
 			@Path("productId") String productId,
 			@Query("sku") String sku);
 
@@ -922,6 +903,7 @@ public interface ApiInterface {
 			@Header("sha1Password") String sha1Password,
 			@Header("longitude") double longitude,
 			@Header("latitude") double latitude,
+			@Header("sessionToken") String sessionToken,
 			@Query("searchTerm") String searchTerm,
 			@Query("searchType") String searchType,
 			@Query("responseType") String responseType,
@@ -942,6 +924,7 @@ public interface ApiInterface {
 			@Header("userAgent") String userAgent,
 			@Header("userAgentVersion") String userAgentVersion,
 			@Header("sha1Password") String sha1Password,
+			@Header("sessionToken") String sessionToken,
 			@Query("searchTerm") String searchTerm,
 			@Query("searchType") String searchType,
 			@Query("responseType") String responseType,

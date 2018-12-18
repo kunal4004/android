@@ -40,8 +40,11 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.rest.shop.PostCheckoutSuccess;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
+import za.co.woolworths.financial.services.android.util.QueryBadgeCounter;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
+
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART;
 
 public class CheckOutFragment extends Fragment {
 
@@ -167,8 +170,7 @@ public class CheckOutFragment extends Fragment {
 					closeOnNextPage = QueryString.COMPLETE;
 				} else if (url.contains(QueryString.ABANDON.getValue())) {
 					closeOnNextPage = QueryString.ABANDON;
-				}
-				if(url.contains(ORDER_CONFIRMATION)){
+				} else if (url.contains(ORDER_CONFIRMATION)) {
 					initPostCheckout();
 				}
 				// close cart activity if current url equals next url
@@ -265,6 +267,7 @@ public class CheckOutFragment extends Fragment {
 
 	public void initPostCheckout()
 	{
+		QueryBadgeCounter.getInstance().setCartCount(0, INDEX_CART);
 		new PostCheckoutSuccess().execute();
 	}
 }

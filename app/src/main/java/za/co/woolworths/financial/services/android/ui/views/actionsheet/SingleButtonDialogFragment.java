@@ -27,22 +27,39 @@ public class SingleButtonDialogFragment extends ActionSheetDialogFragment implem
         return singleButtonDialogFragment;
     }
 
+    public static SingleButtonDialogFragment newInstance(String responseDesc, String buttonText) {
+        SingleButtonDialogFragment singleButtonDialogFragment = new SingleButtonDialogFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("responseDesc", responseDesc);
+        bundle.putString("okButtonText", buttonText);
+        singleButtonDialogFragment.setArguments(bundle);
+        return singleButtonDialogFragment;
+    }
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        String mResponseDesc = getArguments().getString("responseDesc");
         addContentView(R.layout.single_button_dialog_fragment);
 
         Activity activity = getActivity();
         if (activity != null) {
             dialogListener = (DialogListener) activity;
         }
+
+        Bundle bundleArguments = getArguments();
+        String mResponseDesc = bundleArguments.getString("responseDesc");
+
         WTextView tvResponseDesc = view.findViewById(R.id.tvResponseDesc);
         if (!TextUtils.isEmpty(mResponseDesc))
             tvResponseDesc.setText(mResponseDesc);
 
         WButton btnCancel = view.findViewById(R.id.btnCancel);
         btnCancel.setOnClickListener(this);
+
+        // Update ok button text if okButton text is not empty
+        if (!TextUtils.isEmpty(bundleArguments.getString("okButtonText"))) {
+            btnCancel.setText(bundleArguments.getString("okButtonText"));
+        }
 
         mRootActionSheetConstraint.setOnClickListener(this);
     }
@@ -60,6 +77,5 @@ public class SingleButtonDialogFragment extends ActionSheetDialogFragment implem
             default:
                 break;
         }
-
     }
 }
