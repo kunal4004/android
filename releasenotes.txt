@@ -1,1 +1,1 @@
-https://wigroup2.atlassian.net/projects/WOP/versions/23041/tab/release-report-all-issues
+https://wigroup2.atlassian.net/projects/WOP/versions/23044/tab/release-report-all-issues
