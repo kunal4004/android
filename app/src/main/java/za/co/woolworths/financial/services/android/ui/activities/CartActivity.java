@@ -217,7 +217,6 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
 	}
 
 	public void finishActivityOnCheckoutSuccess(){
-		QueryBadgeCounter.getInstance().setCartCount(0, INDEX_CART);
 		setResult(CHECKOUT_SUCCESS);
 		finish();
 		overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
