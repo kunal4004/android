@@ -345,7 +345,7 @@
 
                         <za.co.woolworths.financial.services.android.ui.views.WTextView
                             style="@style/accountsItem"
-                            android:drawableLeft="@{@drawable/ic_my_details}"
+                            android:drawableStart="@drawable/account_update_password_icon"
                             android:text="@string/acc_update_password" />
 
                         <ImageView
