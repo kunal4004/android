@@ -150,8 +150,8 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     }
 
     private fun getNavigationStateForRefinementCrumb(navigationState: String): String {
-        val list = navigationState.split("Z")
-        var navigation = refinedNavigateState
+        val list = navigationState.substringAfter("Z").split("Z")
+        var navigation = refinedNavigateState.substringAfter("Z")
         list.forEachIndexed { index, it ->
             if (index == 0) navigation = navigation.replace(it, "") else navigation = navigation.replace("Z".plus(it), "")
         }
