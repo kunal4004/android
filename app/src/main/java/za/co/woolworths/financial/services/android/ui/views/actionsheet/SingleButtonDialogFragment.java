@@ -20,10 +20,20 @@ public class SingleButtonDialogFragment extends ActionSheetDialogFragment implem
 		return singleButtonDialogFragment;
 	}
 
+	public static SingleButtonDialogFragment newInstance(String responseDesc, String buttonText) {
+		SingleButtonDialogFragment singleButtonDialogFragment = new SingleButtonDialogFragment();
+		Bundle bundle = new Bundle();
+		bundle.putString("responseDesc", responseDesc);
+		bundle.putString("okButtonText",buttonText);
+		singleButtonDialogFragment.setArguments(bundle);
+		return singleButtonDialogFragment;
+	}
+
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		String mResponseDesc = getArguments().getString("responseDesc");
+        Bundle bundleArguments = getArguments();
+        String mResponseDesc = bundleArguments.getString("responseDesc");
 		addContentView(R.layout.single_button_dialog_fragment);
 
 		WTextView tvResponseDesc = view.findViewById(R.id.tvResponseDesc);
@@ -32,6 +42,11 @@ public class SingleButtonDialogFragment extends ActionSheetDialogFragment implem
 
 		WButton btnCancel = view.findViewById(R.id.btnCancel);
 		btnCancel.setOnClickListener(this);
+
+        // Update ok button text if okButton text is not empty
+        if (!TextUtils.isEmpty(bundleArguments.getString("okButtonText"))) {
+            btnCancel.setText(bundleArguments.getString("okButtonText"));
+        }
 
 		mRootActionSheetConstraint.setOnClickListener(this);
 	}

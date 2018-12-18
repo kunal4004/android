@@ -828,6 +828,7 @@
     <string name="how_to_pay_other_account_desc">Electronic payments from other bank account into your Woolworths credit card can be made into:</string>
     <string name="how_to_pay_credit_card_title">payments made from other accounts</string>
     <string name="account_statement_error">Sorry, this document is unavailable</string>
+    <string name="high_accuracy_location_err_desc"> This feature cannot be used without High Accuracy Location Services.</string>
     <string name="info_total_amount_due_title">Total Amount Due</string>
     <string name="info_total_amount_due_desc">This is the sum of your current instalment, including any overdue amount and interest.</string>
     <string name="info_next_payment_due_title">Next Payment Due</string>
