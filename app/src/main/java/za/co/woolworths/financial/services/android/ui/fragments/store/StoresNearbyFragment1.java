@@ -83,6 +83,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 	WCustomViewPager pager;
 	GoogleMap googleMap;
 	static int CAMERA_ANIMATION_SPEED = 350;
+    public static final int LAYOUT_ANCHORED_RESULT_CODE = 8001;
 	BitmapDescriptor unSelectedIcon;
 	BitmapDescriptor selectedIcon;
 	HashMap<String, Integer> mMarkers;
@@ -232,7 +233,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 								if (keyCode == KeyEvent.KEYCODE_BACK) {
 									mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
 									mLayout.setFocusable(false);
-									return true;
+									return false; // set to false to prevent user double tap hardware back button to navigate back
 								}
 								return true;
 							}
@@ -596,6 +597,12 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 			case REQUEST_CHECK_SETTINGS:
 				initLocationCheck();
 				break;
+
+            case LAYOUT_ANCHORED_RESULT_CODE:
+                if (mLayout == null) return;
+                mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+                mLayout.setFocusable(false);
+                break;
 		}
 	}
 
@@ -870,4 +877,9 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 		showProgressBar();
 		mErrorHandlerView.hideErrorHandlerLayout();
 	}
+
+    public boolean layoutIsAnchored() {
+        if (mLayout == null) return false;
+        return mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.ANCHORED;
+    }
 }

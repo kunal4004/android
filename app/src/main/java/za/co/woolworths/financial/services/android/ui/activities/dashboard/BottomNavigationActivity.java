@@ -673,6 +673,18 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		 *  Close slide up panel when expanded
 		 */
 		if (getSlidingLayout() != null) {
+		    // Send result to store locator fragment onActivityResult
+            // if current visible fragment points to store locator
+            // and store locator detail is anchored
+			if (mNavController.getCurrentFrag() instanceof StoresNearbyFragment1) {
+				Fragment currentFrag = mNavController.getCurrentFrag();
+				StoresNearbyFragment1 storesNearbyFragment = (StoresNearbyFragment1) currentFrag;
+				if (storesNearbyFragment.layoutIsAnchored()) {
+                    currentFrag.onActivityResult(StoresNearbyFragment1.LAYOUT_ANCHORED_RESULT_CODE,StoresNearbyFragment1.LAYOUT_ANCHORED_RESULT_CODE,null);
+				 return;
+				}
+			}
+
 			if (getSlidingLayout().getPanelState().equals(SlidingUpPanelLayout.PanelState.EXPANDED)) {
 				closeSlideUpPanel();
 				return;
