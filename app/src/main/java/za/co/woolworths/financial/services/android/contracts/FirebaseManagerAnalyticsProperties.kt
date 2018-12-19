@@ -49,6 +49,9 @@ class FirebaseManagerAnalyticsProperties {
         const val REFINE_EVENT_PROMO_OFF: String = "GA_Event_ONE_SORTSFILTERS_PROMOOFF"
         const val REFINE_EVENT_SEE_RESULT: String = "GA_Event_ONE_SORTSFILTERS_SEERSB"
         const val REFINE_EVENT_BACK_BUTTON: String = "GA_Event_ONE_SORTSFILTERS_SEERSBB"
+
+        const val CRASH_CAUTION: String = "GA_Event_ONE_CRASH_CAUTION"
+
     }
 
     class PropertyNames {
@@ -57,6 +60,7 @@ class FirebaseManagerAnalyticsProperties {
             const val VOUCHERDESCRIPTION: String = "VOUCHERDESCRIPTION"
             const val C2ID: String = "c2_id"
             const val SORT_OPTION_NAME : String = "SORTBY_OPTION_NAME"
+            const val DESCRIPTION : String = "DESCRIPTION"
         }
     }
 

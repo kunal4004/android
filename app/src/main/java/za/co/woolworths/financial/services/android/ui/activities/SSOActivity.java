@@ -26,7 +26,6 @@ import android.webkit.WebViewClient;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -369,6 +368,25 @@ public class SSOActivity extends WebViewActivity {
 		return constructedURL;
 	}
 
+	private boolean isNavigatingToRedirectURL(String url) {
+
+		//Fixes WOP-3286
+		if (redirectURIString == null || this.state == null){
+			//report this to analytics
+			Map<String, String> arguments = new HashMap<>();
+			arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.DESCRIPTION,
+					"redirectURIString isNull: " + (redirectURIString == null ? "true" : "false") + ";" +
+							"this.state isNull: " + (this.state == null ? "true" : "false"));
+
+			Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CRASH_CAUTION, arguments);
+			return false;
+		}
+
+		String redirectUriWithState = redirectURIString.concat("?state=").concat(this.state);
+
+		return url.equalsIgnoreCase(redirectURIString) || url.equalsIgnoreCase(redirectUriWithState);
+	}
+
 	private final WebViewClient webviewClient = new WebViewClient() {
 		@Override
 		public void onPageStarted(WebView view, String url, Bitmap favicon) {
@@ -472,13 +490,6 @@ public class SSOActivity extends WebViewActivity {
 				}
 			}
 			hideProgressBar();
-		}
-
-		private boolean isNavigatingToRedirectURL(String url) {
-
-			String redirectUriWithState = redirectURIString.concat("?state=").concat(SSOActivity.this.state);
-
-			return url.equalsIgnoreCase(redirectURIString) || url.equalsIgnoreCase(redirectUriWithState);
 		}
 
 		@TargetApi(android.os.Build.VERSION_CODES.M)
