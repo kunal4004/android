@@ -145,8 +145,12 @@ class LoanWithdrawalFragment : LoanBaseFragment() {
         @SuppressLint("SetTextI18n")
         override fun afterTextChanged(s: Editable) {
             val initLength: Int = edtLoanWithdrawal.text.length
+            val value = edtLoanWithdrawal.text.toString()
             val editLength: Int
             backSpace = previousLength > s.length
+            if (value.startsWith("0") && !value.startsWith("0.")) {
+                edtLoanWithdrawal.setText("") //Prevents "0" while starting but not "0."
+            }
             if (backSpace) {
                 edtLoanWithdrawal.removeTextChangedListener(this)
                 if (s.isNotEmpty()) {
