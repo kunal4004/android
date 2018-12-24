@@ -42,7 +42,7 @@ public class SingleButtonDialogFragment extends ActionSheetDialogFragment implem
         addContentView(R.layout.single_button_dialog_fragment);
 
         Activity activity = getActivity();
-        if (activity != null) {
+        if (activity instanceof DialogListener) {
             dialogListener = (DialogListener) activity;
         }
 
@@ -72,7 +72,9 @@ public class SingleButtonDialogFragment extends ActionSheetDialogFragment implem
             case R.id.rootActionSheetConstraint:
             case R.id.btnCancel:
                 onDialogBackPressed(false);
-                dialogListener.onDismissListener();
+
+                if (dialogListener != null)
+                    dialogListener.onDismissListener();
                 break;
             default:
                 break;
