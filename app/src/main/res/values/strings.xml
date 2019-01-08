@@ -840,7 +840,7 @@
     <string name="info_amount_overdue_title">Amount Overdue</string>
     <string name="info_amount_overdue_desc">This is the shortfall amount that was not paid by the specified payment due date.</string>
     <string name="info_available_funds_title">Available Funds</string>
-    <string name="info_available_funds_desc">Your available funds to spend.</string>
+    <string name="info_available_funds_desc">Funds available to be used</string>
     <string name="tips_tricks_page_tile">Tips And Tricks</string>
     <string name="tips_tricks_desc_navigation_sign_in">Tap the cart icon in the bottom menu to see the items you’ve added.</string>
 </resources>
