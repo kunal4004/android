@@ -128,15 +128,16 @@ public class SSOActivity extends WebViewActivity {
 				title = TextUtils.isEmpty(title) ? "" : title;
 				redirectURIString = TextUtils.isEmpty(redirectURIString) ? "" : redirectURIString;
 				SSOActivity.this.state = TextUtils.isEmpty(SSOActivity.this.state) ? "" : SSOActivity.this.state;
+				final String urlStateComponent = "?state=".concat(SSOActivity.this.state).toLowerCase();
 
 				ArrayList<String> invalidTitles = new ArrayList<>(
 						Arrays.asList("about:blank".toLowerCase(),
 								getString(R.string.sso_title_text_submit_this_form).toLowerCase(),
 								redirectURIString.toLowerCase(),
-								redirectURIString.concat("?state=").concat(SSOActivity.this.state).toLowerCase())
+								redirectURIString.concat(urlStateComponent))
 				);
 
-				if (invalidTitles.contains(title.toLowerCase())) {
+				if (invalidTitles.contains(title.toLowerCase()) || title.toLowerCase().endsWith(urlStateComponent)) {
 					toolbarTextView.setText("");
 				} else
 					toolbarTextView.setText(title);
