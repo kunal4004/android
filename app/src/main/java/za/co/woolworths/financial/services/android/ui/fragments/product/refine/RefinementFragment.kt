@@ -145,6 +145,7 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
 
     override fun onSelectionChanged() {
         clearRefinement?.isEnabled = isAnyRefinementSelected()
+        this.updateSeeResultButtonText()
     }
 
     private fun isAnyRefinementSelected(): Boolean {
@@ -164,5 +165,24 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
         return navigation
     }
 
+    private fun buildSeeResultButtonText(): String {
+        var selectedItems = arrayListOf<String>()
+        selectedItems.clear()
+        dataList.forEach {
+            var item = it.item
+            if (item is Refinement && it.isSelected) {
+                selectedItems.add(item.label)
+            } else if (item is RefinementCrumb && it.isSelected) {
+                selectedItems.add(item.label)
+            }
+
+        }
+
+        return getString(R.string.refinement_see_result_button_text) + if (selectedItems.size > 0) selectedItems.joinToString(",") else refinementNavigation?.displayName
+    }
+
+    private fun updateSeeResultButtonText() {
+        seeResultCount.text = buildSeeResultButtonText()
+    }
 
 }

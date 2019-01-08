@@ -843,4 +843,5 @@
     <string name="info_available_funds_desc">Your available funds to spend.</string>
     <string name="tips_tricks_page_tile">Tips And Tricks</string>
     <string name="tips_tricks_desc_navigation_sign_in">Tap the cart icon in the bottom menu to see the items you’ve added.</string>
+    <string name="refinement_see_result_button_text">All\u0020</string>
 </resources>
