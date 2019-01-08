@@ -215,7 +215,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					// product item successfully added to cart
 					cartSummaryAPI();
 					closeSlideUpPanel();
-					setToast();
+					setToast(getResources().getString(R.string.added_to), getResources().getString(R.string.cart));
 				} else if (object instanceof BadgeState) {
 					// call observer to update independent count
 					BadgeState badgeState = (BadgeState) object;
@@ -243,16 +243,16 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		mQueryBadgeCounter.addObserver(this);
 	}
 
-	private void setToast() {
+	private void setToast(String message, String cartText) {
 		mToastUtils = new ToastUtils(BottomNavigationActivity.this);
 		mToastUtils.setActivity(BottomNavigationActivity.this);
 		mToastUtils.setView(getBottomNavigationById());
 		mToastUtils.setGravity(Gravity.BOTTOM);
 		mToastUtils.setCurrentState(TAG);
-		mToastUtils.setCartText(R.string.cart);
+		mToastUtils.setCartText(cartText);
 		mToastUtils.setPixel(getBottomNavigationById().getHeight() + Utils.dp2px(BottomNavigationActivity.this, 45));
 		mToastUtils.setView(getBottomNavigationById());
-		mToastUtils.setMessage(R.string.added_to);
+		mToastUtils.setMessage(message);
 		mToastUtils.setViewState(true);
 		mToastUtils.build();
 	}
@@ -915,10 +915,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		}
 
 		if (requestCode == PDP_REQUEST_CODE && resultCode == RESULT_OK) {
-			boolean isItemAddToCart = data.getBooleanExtra("addedToCart", false);
+			String itemAddToCartMessage = data.getStringExtra("addedToCartMessage");
 			boolean isItemAddToShoppingList = data.getBooleanExtra("addedToShoppingList", false);
-			if (isItemAddToCart) {
-				setToast();
+			if (itemAddToCartMessage != null) {
+				setToast(itemAddToCartMessage, "");
 			} else if (isItemAddToShoppingList) {
 				// call back when Toast clicked after adding item to shopping list
 				List<ShoppingList> shoppingList = getGlobalState().getShoppingListRequest();
@@ -1044,7 +1044,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 		{
 			if (resultCode == ADD_TO_CART_SUCCESS_RESULT) {
-				setToast();
+				String itemAddToCartMessage = data.getStringExtra("addedToCartMessage");
+				if (itemAddToCartMessage != null) {
+					setToast(itemAddToCartMessage, "");
+				}
 			}
 		}
 
