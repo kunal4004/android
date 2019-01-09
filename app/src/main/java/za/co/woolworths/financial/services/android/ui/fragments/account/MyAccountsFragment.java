@@ -275,8 +275,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		super.onResume();
 		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.MY_ACCOUNTS);
 		isActivityInForeground = true;
-		if (!isPromptsShown && isAccountsCallMade)
-			showFeatureWalkthroughPrompts();
 		if (!AppInstanceObject.biometricWalkthroughIsPresented(getActivity()))
 			messageCounterRequest();
 	}
@@ -857,7 +855,12 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		//TODO: Comment what's actually happening here.
-		if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
+		if (requestCode == ScreenManager.BIOMETRICS_LAUNCH_VALUE) {
+			if (!isPromptsShown && isAccountsCallMade) {
+				isActivityInForeground = true;
+				showFeatureWalkthroughPrompts();
+			}
+		} else if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
 			shoppingListRequest();
 			initialize();
 			//One time biometricsWalkthrough
