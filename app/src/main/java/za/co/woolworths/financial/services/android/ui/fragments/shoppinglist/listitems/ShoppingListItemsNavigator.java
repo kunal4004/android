@@ -36,6 +36,8 @@ public interface ShoppingListItemsNavigator {
 
 	void onAddItemToCartFailure(String errorMessage);
 
+	void onAddItemToCartSuburbFailureHandler(Response response);
+
 	void onQuantityChangeClick(int position, ShoppingListItem shoppingListItem);
 
 	void onGetListFailure(String errorMessage);

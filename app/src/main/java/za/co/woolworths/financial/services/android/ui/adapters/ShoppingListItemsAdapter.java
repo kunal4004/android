@@ -367,4 +367,13 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 		if (shoppingDeliveryLocation == null) return true;
 		return shoppingDeliveryLocation.suburb == null;
 	}
+
+	public void resetSelection() {
+		for (ShoppingListItem shoppinglistItem : mShoppingListItem) {
+			shoppinglistItem.userQuantity = 0;
+			shoppinglistItem.isSelected = false;
+		}
+		notifyDataSetChanged();
+		navigator.onItemSelectionChange(mShoppingListItem);
+	}
 }

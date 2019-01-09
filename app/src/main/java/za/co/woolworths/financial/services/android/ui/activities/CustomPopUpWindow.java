@@ -203,6 +203,9 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
 				mRelPopContainer = findViewById(R.id.relPopContainer);
 				WButton mBtnOverlay = findViewById(R.id.btnOverlay);
+				if (buttonTitle != null && !buttonTitle.isEmpty()) {
+					mBtnOverlay.setText(buttonTitle);
+				}
 				WTextView mDescriptionOverlay = findViewById(R.id.overlayDescription);
 				if (description != null)
 					mDescriptionOverlay.setText(description);
