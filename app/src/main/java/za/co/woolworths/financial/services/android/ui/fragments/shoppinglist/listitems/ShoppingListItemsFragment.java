@@ -471,8 +471,13 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	public void onAddToCartSuccess(AddItemToCartResponse addItemToCartResponse) {
 		Activity activity = getActivity();
 		if (activity == null) return;
+		Intent resultIntent = new Intent();
+		if(addItemToCartResponse.data.size() > 0) {
+			String successMessage = addItemToCartResponse.data.get(0).message;
+			resultIntent.putExtra("addedToCartMessage", successMessage);
+		}
 		BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
-		bottomNavigationActivity.onActivityResult(ADD_TO_CART_SUCCESS_RESULT, ADD_TO_CART_SUCCESS_RESULT, null);
+		bottomNavigationActivity.onActivityResult(ADD_TO_CART_SUCCESS_RESULT, ADD_TO_CART_SUCCESS_RESULT, resultIntent);
 		popFragmentSlideDown();
 	}
 

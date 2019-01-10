@@ -693,7 +693,10 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	public void addItemToCartResponse(AddItemToCartResponse addItemToCartResponse) {
 		this.enableAddToCartButton(false);
 		Intent intent = new Intent();
-		intent.putExtra("addedToCart", true);
+		if(addItemToCartResponse.data.size() > 0) {
+			String successMessage = addItemToCartResponse.data.get(0).message;
+			intent.putExtra("addedToCartMessage", successMessage);
+		}
 		Activity activity = getActivity();
 		if (activity == null) return;
 		activity.setResult(RESULT_OK, intent);
