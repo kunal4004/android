@@ -28,6 +28,8 @@ public interface ProductDetailNavigatorNew {
 
 	void onFailureResponse(String s);
 
+	void requestDeliveryLocation(String requestMessage);
+
 	void responseFailureHandler(Response response);
 
 	void setProductCode(String productCode);
