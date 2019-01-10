@@ -185,7 +185,7 @@ public class WfsApi {
 	}
 
 	public ShoppingListItemsResponse addToList(List<AddToListRequest> addToListRequest, String listId) {
-		return mApiInterface.addToList(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), listId, addToListRequest);
+		return mApiInterface.addToList(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), listId, addToListRequest);
 	}
 
 	public PromotionsResponse getPromotions() {
@@ -193,11 +193,11 @@ public class WfsApi {
 	}
 
 	public RootCategories getRootCategory() {
-		return mApiInterface.getRootCategories(getOsVersion(), getApiId(), getOS(), getSha1Password(), getDeviceModel(), getNetworkCarrier(), getOsVersion(), "Android",getSessionToken());
+		return mApiInterface.getRootCategories(getOsVersion(), getApiId(), getOS(), getSha1Password(), getDeviceModel(), getNetworkCarrier(), getDeviceManufacturer(), "Android",getSessionToken());
 	}
 
 	public SubCategories getSubCategory(String category_id) {
-		return mApiInterface.getSubCategory(getOsVersion(), getApiId(), getOS(), getSha1Password(), getDeviceModel(), getNetworkCarrier(), getOsVersion(), "Android", getSessionToken(),category_id);
+		return mApiInterface.getSubCategory(getOsVersion(), getApiId(), getOS(), getSha1Password(), getDeviceModel(), getNetworkCarrier(), getDeviceManufacturer(), "Android", getSessionToken(),category_id);
 	}
 
 	public ProvincesResponse getProvinces() {
@@ -220,9 +220,9 @@ public class WfsApi {
     public ProductView getProducts(ProductsRequestParams requestParams) {
         getMyLocation();
         if (Utils.isLocationEnabled(mContext)) {
-            return mApiInterface.getProducts(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLatitude(), loc.getLongitude(),getSessionToken(), requestParams.getSearchTerm(), requestParams.getSearchType().getValue(), requestParams.getResponseType().getValue(), requestParams.getPageOffset(), Utils.PAGE_SIZE, requestParams.getSortOption(), requestParams.getRefinement());
+            return mApiInterface.getProducts(getOsVersion(), getDeviceModel(), getDeviceManufacturer(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLatitude(), loc.getLongitude(),getSessionToken(), requestParams.getSearchTerm(), requestParams.getSearchType().getValue(), requestParams.getResponseType().getValue(), requestParams.getPageOffset(), Utils.PAGE_SIZE, requestParams.getSortOption(), requestParams.getRefinement());
         } else {
-            return mApiInterface.getProductsWithoutLocation(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(),getSessionToken(), requestParams.getSearchTerm(), requestParams.getSearchType().getValue(), requestParams.getResponseType().getValue(), requestParams.getPageOffset(), Utils.PAGE_SIZE, requestParams.getSortOption(), requestParams.getRefinement());
+            return mApiInterface.getProductsWithoutLocation(getOsVersion(), getDeviceModel(), getDeviceManufacturer(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(),getSessionToken(), requestParams.getSearchTerm(), requestParams.getSearchType().getValue(), requestParams.getResponseType().getValue(), requestParams.getPageOffset(), Utils.PAGE_SIZE, requestParams.getSortOption(), requestParams.getRefinement());
         }
     }
 
@@ -247,7 +247,7 @@ public class WfsApi {
 	}
 
 	public ShoppingCartResponse getShoppingCart() {
-		return mApiInterface.getShoppingCart(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken());
+		return mApiInterface.getShoppingCart(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken());
 	}
 
 	public ShoppingCartResponse getChangeQuantity(ChangeQuantity changeQuantity) {
@@ -257,53 +257,53 @@ public class WfsApi {
 	}
 
 	public ShoppingCartResponse removeCartItem(String commerceId) {
-		return mApiInterface.removeItemFromCart(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), commerceId);
+		return mApiInterface.removeItemFromCart(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), commerceId);
 	}
 
 	public ShoppingCartResponse removeAllCartItems() {
-		return mApiInterface.removeAllCartItems(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken());
+		return mApiInterface.removeAllCartItems(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken());
 	}
 
 	public ProductDetailResponse productDetail(String productId, String skuId) {
 		getMyLocation();
 		if (Utils.isLocationEnabled(mContext)) {
-			return mApiInterface.productDetail(getOsVersion(), getDeviceModel(), getOsVersion(),
+			return mApiInterface.productDetail(getOsVersion(), getDeviceModel(), getDeviceManufacturer(),
 					getOS(), getNetworkCarrier(), getApiId(), "", "",
 					getSha1Password(), loc.getLongitude(), loc.getLatitude(),getSessionToken(), productId, skuId);
 		} else {
-			return mApiInterface.productDetail(getOsVersion(), getDeviceModel(), getOsVersion(),
+			return mApiInterface.productDetail(getOsVersion(), getDeviceModel(), getDeviceManufacturer(),
 					getOS(), getNetworkCarrier(), getApiId(), "", "",
 					getSha1Password(),getSessionToken(), productId, skuId);
 		}
 	}
 
 	public ShoppingListsResponse getShoppingLists() {
-		return mApiInterface.getShoppingLists(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken());
+		return mApiInterface.getShoppingLists(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken());
 	}
 
 	public ShoppingListsResponse createList(CreateList listName) {
-		return mApiInterface.createList(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), listName);
+		return mApiInterface.createList(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), listName);
 	}
 
 
 	public ShoppingListItemsResponse getShoppingListItems(String listId) {
-		return mApiInterface.getShoppingListItems(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), listId);
+		return mApiInterface.getShoppingListItems(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), listId);
 	}
 
 	public ShoppingListsResponse deleteShoppingList(String listId) {
-		return mApiInterface.deleteShoppingList(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), listId);
+		return mApiInterface.deleteShoppingList(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), listId);
 	}
 
 	public ShoppingListItemsResponse deleteShoppingListItem(String listId, String id, String productId, String catalogRefId) {
-		return mApiInterface.deleteShoppingListItem(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), listId, id, productId, catalogRefId);
+		return mApiInterface.deleteShoppingListItem(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), listId, id, productId, catalogRefId);
 	}
 
 	public SkuInventoryResponse getInventorySku(String multipleSku) {
-		return mApiInterface.getInventorySKU(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), multipleSku);
+		return mApiInterface.getInventorySKU(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), multipleSku);
 	}
 
 	public SkusInventoryForStoreResponse getInventorySkuForStore(String store_id, String multipleSku) {
-		return mApiInterface.getInventorySKUForStore(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), store_id, multipleSku);
+		return mApiInterface.getInventorySKUForStore(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), store_id, multipleSku);
 
 	}
 
