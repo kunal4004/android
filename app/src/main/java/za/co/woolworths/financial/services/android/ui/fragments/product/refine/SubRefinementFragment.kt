@@ -118,6 +118,24 @@ class SubRefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
 
     override fun onSelectionChanged() {
         clearRefinement?.isEnabled = !TextUtils.isEmpty(getNavigationState())
+        updateSeeResultButtonText()
+    }
+
+    private fun buildSeeResultButtonText(): String {
+        var selectedItems = arrayListOf<String>()
+        selectedItems.clear()
+        dataList.forEach {
+            if (it.isSelected) {
+                var item = it.item as SubRefinement
+                selectedItems.add(item.label)
+            }
+        }
+
+        return getString(R.string.refinement_see_result_button_text) + if (selectedItems.size > 0) selectedItems.joinToString(",") else refinement?.label
+    }
+
+    private fun updateSeeResultButtonText() {
+        seeResultCount.text = buildSeeResultButtonText()
     }
 
 }
