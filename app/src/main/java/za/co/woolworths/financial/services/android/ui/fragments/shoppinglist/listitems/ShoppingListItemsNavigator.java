@@ -36,7 +36,7 @@ public interface ShoppingListItemsNavigator {
 
 	void onAddItemToCartFailure(String errorMessage);
 
-	void onAddItemToCartSuburbFailureHandler(Response response);
+	void requestDeliveryLocation(String requestMessage);
 
 	void onQuantityChangeClick(int position, ShoppingListItem shoppingListItem);
 

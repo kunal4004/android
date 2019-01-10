@@ -478,7 +478,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	}
 
 	@Override
-	public void onAddItemToCartSuburbFailureHandler(Response response) {
+	public void requestDeliveryLocation(String requestMessage) {
 		if (isAdded()) {
 			getViewDataBinding().incConfirmButtonLayout.pbLoadingIndicator.setVisibility(View.GONE);
 			getViewDataBinding().incConfirmButtonLayout.btnCheckOut.setVisibility(View.VISIBLE);
@@ -486,7 +486,8 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 			Utils.displayValidationMessageForResult(this,
 					getActivity(),
 					CustomPopUpWindow.MODAL_LAYOUT.ERROR,
-					response.desc,
+					null,
+					requestMessage,
 					getResources().getString(R.string.set_delivery_location_button),
 					SET_DELIVERY_LOCATION_REQUEST_CODE);
 		}

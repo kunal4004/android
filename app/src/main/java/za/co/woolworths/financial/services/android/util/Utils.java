@@ -1227,17 +1227,6 @@ public class Utils {
 		((AppCompatActivity) context).overridePendingTransition(0, 0);
 	}
 
-	public static void displayValidationMessageForResult(Fragment fragment, Activity activity, CustomPopUpWindow.MODAL_LAYOUT key, String description, String buttonTitle, int requestCode) {
-		Intent openMsg = new Intent(activity, CustomPopUpWindow.class);
-		Bundle args = new Bundle();
-		args.putSerializable("key", key);
-		args.putString("description", description);
-		args.putString("buttonTitle", buttonTitle);
-		openMsg.putExtras(args);
-		fragment.startActivityForResult(openMsg, requestCode);
-		((AppCompatActivity) activity).overridePendingTransition(0, 0);
-	}
-
 	public static void displayValidationMessageForResult(Fragment fragment, Activity activity, CustomPopUpWindow.MODAL_LAYOUT key, String title, String description, String buttonTitle, int requestCode) {
 		Intent openMsg = new Intent(activity, CustomPopUpWindow.class);
 		Bundle args = new Bundle();

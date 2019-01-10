@@ -28,7 +28,7 @@ public interface ProductDetailNavigatorNew {
 
 	void onFailureResponse(String s);
 
-	void responseSuburbFailureHandler(Response response);
+	void requestDeliveryLocation(String requestMessage);
 
 	void responseFailureHandler(Response response);
 

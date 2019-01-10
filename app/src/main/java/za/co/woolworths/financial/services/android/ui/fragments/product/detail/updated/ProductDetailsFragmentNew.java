@@ -607,14 +607,15 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	}
 
 	@Override
-	public void responseSuburbFailureHandler(Response response) {
+	public void requestDeliveryLocation(String requestMessage) {
 		enableAddToCartButton(false);
 		enableFindInStoreButton(false);
 		if (isAdded())
 			Utils.displayValidationMessageForResult(this,
 					getActivity(),
 					CustomPopUpWindow.MODAL_LAYOUT.ERROR,
-					response.desc,
+					null,
+					requestMessage,
 					getResources().getString(R.string.set_delivery_location_button),
 					SET_DELIVERY_LOCATION_REQUEST_CODE);
 	}

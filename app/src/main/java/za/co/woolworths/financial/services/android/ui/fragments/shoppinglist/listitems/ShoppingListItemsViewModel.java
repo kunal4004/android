@@ -80,7 +80,7 @@ public class ShoppingListItemsViewModel extends BaseViewModel<ShoppingListItemsN
 								// Preferred Delivery Location has been reset on server
 								// As such, we give the user the ability to set their location again
 								if (addItemToCartResponse.response != null)
-									getNavigator().onAddItemToCartSuburbFailureHandler(addItemToCartResponse.response);
+									getNavigator().requestDeliveryLocation(addItemToCartResponse.response.desc);
 								break;
 
 							case 440:

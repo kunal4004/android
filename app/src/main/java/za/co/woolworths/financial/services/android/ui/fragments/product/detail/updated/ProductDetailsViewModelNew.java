@@ -199,7 +199,7 @@ public class ProductDetailsViewModelNew extends BaseViewModel<ProductDetailNavig
 								// Preferred Delivery Location has been reset on server
 								// As such, we give the user the ability to set their location again
 								if (addItemToCartResponse.response != null)
-									getNavigator().responseSuburbFailureHandler(addItemToCartResponse.response);
+									getNavigator().requestDeliveryLocation(addItemToCartResponse.response.desc);
 								break;
 
 							case 440:
