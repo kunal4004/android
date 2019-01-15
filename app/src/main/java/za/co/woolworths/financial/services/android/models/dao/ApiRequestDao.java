@@ -129,14 +129,6 @@ public class ApiRequestDao extends BaseDao {
             Log.e(TAG, e.getMessage());
         }
     }
-
-    public byte[] stringToBytesASCII(String str) {
-        byte[] b = new byte[str.length()];
-        for (int i = 0; i < b.length; i++) {
-            b[i] = (byte) str.charAt(i);
-        }
-        return b;
-    }
 }
 
 class CacheEmptyException extends Exception {
