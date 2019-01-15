@@ -69,14 +69,14 @@ public class ApiResponseDao extends BaseDao {
                 this.message = entry.getValue();
             } else if (entry.getKey().equals("body")) {
                 try {
-                    String bodyDecrypted = new String(SymmetricCipher.Aes256Decrypt(ApiRequestDao.SYMMETRIC_KEY, entry.getValue().getBytes("ISO-8859-1")), "ISO-8859-1");
+                    String bodyDecrypted = new String(SymmetricCipher.Aes256Decrypt(ApiRequestDao.SYMMETRIC_KEY, entry.getValue().getBytes(StandardCharsets.ISO_8859_1)), StandardCharsets.ISO_8859_1);
                     this.body = bodyDecrypted;
                 } catch (Exception e) {
                     Log.d(TAG, e.getMessage());
                 }
             } else if (entry.getKey().equals("headers")) {
                 try {
-                    String headersDecrypted = new String(SymmetricCipher.Aes256Decrypt(ApiRequestDao.SYMMETRIC_KEY, entry.getValue().getBytes("ISO-8859-1")), "ISO-8859-1");
+                    String headersDecrypted = new String(SymmetricCipher.Aes256Decrypt(ApiRequestDao.SYMMETRIC_KEY, entry.getValue().getBytes(StandardCharsets.ISO_8859_1)), StandardCharsets.ISO_8859_1);
                     this.headers = headersDecrypted;
                 } catch (Exception e) {
                     Log.d(TAG, e.getMessage());
