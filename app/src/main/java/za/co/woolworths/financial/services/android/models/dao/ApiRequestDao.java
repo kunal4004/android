@@ -5,10 +5,12 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
 import za.co.woolworths.financial.services.android.util.PersistenceLayer;
+import za.co.woolworths.financial.services.android.util.encryption.SymmetricCipher;
 
 /**
  * Created by eesajacobs on 2016/12/29.
@@ -16,6 +18,7 @@ import za.co.woolworths.financial.services.android.util.PersistenceLayer;
 
 public class ApiRequestDao extends BaseDao {
     public static final String TAG = "ApiRequestDao";
+    public static final byte[] SYMMETRIC_KEY = "K7MZpM6owN0VIjRbwfN3Xw==".getBytes();
 
     String requestType = "";
     String endpoint = "";
@@ -43,8 +46,11 @@ public class ApiRequestDao extends BaseDao {
         String query = "SELECT * FROM ApiRequest WHERE endpoint=? AND requestType=? AND headers=? AND parameters=? AND dateExpires > datetime() ORDER BY id ASC LIMIT 1;";
         Map<String, String> result = new HashMap<>();
         try {
+            String headersEncrypted = new String(SymmetricCipher.Aes256Encrypt(SYMMETRIC_KEY, _headers), StandardCharsets.ISO_8859_1);
+            String parametersEncrypted = new String(SymmetricCipher.Aes256Encrypt(SYMMETRIC_KEY, _parameters), StandardCharsets.ISO_8859_1);
+
             result = PersistenceLayer.getInstance().executeReturnableQuery(query, new String[]{
-                    _endpoint, ("" + _requestType), _headers, _parameters
+                    _endpoint, ("" + _requestType), headersEncrypted, parametersEncrypted
             });
 
             if (result.size() == 0)
@@ -70,9 +76,21 @@ public class ApiRequestDao extends BaseDao {
             } else if (entry.getKey().equals("endpoint")) {
                 this.endpoint = entry.getValue();
             } else if (entry.getKey().equals("headers")) {
-                this.headers = entry.getValue();
+                try {
+                    String headersDecrypted = new String(SymmetricCipher.Aes256Decrypt(SYMMETRIC_KEY, entry.getValue().getBytes("ISO-8859-1")), "ISO-8859-1");
+                    this.headers = headersDecrypted;
+                } catch (Exception e) {
+                    Log.d(TAG, e.getMessage());
+                    this.headers = _headers;
+                }
             } else if (entry.getKey().equals("parameters")) {
-                this.parameters = entry.getValue();
+                try {
+                    String parametersDecrypted = new String(SymmetricCipher.Aes256Decrypt(SYMMETRIC_KEY, entry.getValue().getBytes("ISO-8859-1")), "ISO-8859-1");
+                    this.parameters = parametersDecrypted;
+                } catch (Exception e) {
+                    Log.d(TAG, e.getMessage());
+                    this.parameters = _parameters;
+                }
             }
         }
         return this;
@@ -94,11 +112,14 @@ public class ApiRequestDao extends BaseDao {
 
             Log.d(TAG, dateExpires);
 
+            String headersEncrypted = new String(SymmetricCipher.Aes256Encrypt(SYMMETRIC_KEY, this.headers), StandardCharsets.ISO_8859_1);
+            String parametersEncrypted = new String(SymmetricCipher.Aes256Encrypt(SYMMETRIC_KEY, this.parameters), StandardCharsets.ISO_8859_1);
+
             Map<String, String> arguments = new HashMap<>();
             arguments.put("endpoint", this.endpoint);
             arguments.put("requestType", "" + this.requestType);
-            arguments.put("headers", this.headers);
-            arguments.put("parameters", this.parameters);
+            arguments.put("headers", headersEncrypted);
+            arguments.put("parameters", parametersEncrypted);
             arguments.put("dateExpires", this.dateExpires);
 
             long rowid = PersistenceLayer.getInstance().executeInsertQuery(getTableName(), arguments);
@@ -106,6 +127,14 @@ public class ApiRequestDao extends BaseDao {
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
+    }
+
+    public byte[] stringToBytesASCII(String str) {
+        byte[] b = new byte[str.length()];
+        for (int i = 0; i < b.length; i++) {
+            b[i] = (byte) str.charAt(i);
+        }
+        return b;
     }
 }
 
