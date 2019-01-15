@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.models.dao;
 
+import android.util.Base64;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -46,8 +47,8 @@ public class ApiRequestDao extends BaseDao {
         String query = "SELECT * FROM ApiRequest WHERE endpoint=? AND requestType=? AND headers=? AND parameters=? AND dateExpires > datetime() ORDER BY id ASC LIMIT 1;";
         Map<String, String> result = new HashMap<>();
         try {
-            String headersEncrypted = new String(SymmetricCipher.Aes256Encrypt(SYMMETRIC_KEY, _headers), StandardCharsets.ISO_8859_1);
-            String parametersEncrypted = new String(SymmetricCipher.Aes256Encrypt(SYMMETRIC_KEY, _parameters), StandardCharsets.ISO_8859_1);
+            String headersEncrypted = Base64.encodeToString(SymmetricCipher.Aes256Encrypt(SYMMETRIC_KEY, _headers), Base64.DEFAULT);
+            String parametersEncrypted = Base64.encodeToString(SymmetricCipher.Aes256Encrypt(SYMMETRIC_KEY, _parameters), Base64.DEFAULT);
 
             result = PersistenceLayer.getInstance().executeReturnableQuery(query, new String[]{
                     _endpoint, ("" + _requestType), headersEncrypted, parametersEncrypted
@@ -77,7 +78,7 @@ public class ApiRequestDao extends BaseDao {
                 this.endpoint = entry.getValue();
             } else if (entry.getKey().equals("headers")) {
                 try {
-                    String headersDecrypted = new String(SymmetricCipher.Aes256Decrypt(SYMMETRIC_KEY, entry.getValue().getBytes(StandardCharsets.ISO_8859_1)), StandardCharsets.ISO_8859_1);
+                    String headersDecrypted = new String(SymmetricCipher.Aes256Decrypt(SYMMETRIC_KEY, Base64.decode(entry.getValue(), Base64.DEFAULT)), StandardCharsets.UTF_8);
                     this.headers = headersDecrypted;
                 } catch (Exception e) {
                     Log.d(TAG, e.getMessage());
@@ -85,7 +86,7 @@ public class ApiRequestDao extends BaseDao {
                 }
             } else if (entry.getKey().equals("parameters")) {
                 try {
-                    String parametersDecrypted = new String(SymmetricCipher.Aes256Decrypt(SYMMETRIC_KEY, entry.getValue().getBytes(StandardCharsets.ISO_8859_1)), StandardCharsets.ISO_8859_1);
+                    String parametersDecrypted = new String(SymmetricCipher.Aes256Decrypt(SYMMETRIC_KEY, Base64.decode(entry.getValue(), Base64.DEFAULT)), StandardCharsets.UTF_8);
                     this.parameters = parametersDecrypted;
                 } catch (Exception e) {
                     Log.d(TAG, e.getMessage());
@@ -112,8 +113,8 @@ public class ApiRequestDao extends BaseDao {
 
             Log.d(TAG, dateExpires);
 
-            String headersEncrypted = new String(SymmetricCipher.Aes256Encrypt(SYMMETRIC_KEY, this.headers), StandardCharsets.ISO_8859_1);
-            String parametersEncrypted = new String(SymmetricCipher.Aes256Encrypt(SYMMETRIC_KEY, this.parameters), StandardCharsets.ISO_8859_1);
+            String headersEncrypted = Base64.encodeToString(SymmetricCipher.Aes256Encrypt(SYMMETRIC_KEY, this.headers), Base64.DEFAULT);
+            String parametersEncrypted = Base64.encodeToString(SymmetricCipher.Aes256Encrypt(SYMMETRIC_KEY, this.parameters), Base64.DEFAULT);
 
             Map<String, String> arguments = new HashMap<>();
             arguments.put("endpoint", this.endpoint);

@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.models.dao;
 
+import android.util.Base64;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -69,14 +70,14 @@ public class ApiResponseDao extends BaseDao {
                 this.message = entry.getValue();
             } else if (entry.getKey().equals("body")) {
                 try {
-                    String bodyDecrypted = new String(SymmetricCipher.Aes256Decrypt(ApiRequestDao.SYMMETRIC_KEY, entry.getValue().getBytes(StandardCharsets.ISO_8859_1)), StandardCharsets.ISO_8859_1);
+                    String bodyDecrypted = new String(SymmetricCipher.Aes256Decrypt(ApiRequestDao.SYMMETRIC_KEY, Base64.decode(entry.getValue(), Base64.DEFAULT)), StandardCharsets.UTF_8);
                     this.body = bodyDecrypted;
                 } catch (Exception e) {
                     Log.d(TAG, e.getMessage());
                 }
             } else if (entry.getKey().equals("headers")) {
                 try {
-                    String headersDecrypted = new String(SymmetricCipher.Aes256Decrypt(ApiRequestDao.SYMMETRIC_KEY, entry.getValue().getBytes(StandardCharsets.ISO_8859_1)), StandardCharsets.ISO_8859_1);
+                    String headersDecrypted = new String(SymmetricCipher.Aes256Decrypt(ApiRequestDao.SYMMETRIC_KEY, Base64.decode(entry.getValue(), Base64.DEFAULT)), StandardCharsets.UTF_8);
                     this.headers = headersDecrypted;
                 } catch (Exception e) {
                     Log.d(TAG, e.getMessage());
@@ -93,8 +94,8 @@ public class ApiResponseDao extends BaseDao {
         //ApiRequest will never be updated, only new records will be inserted.
         try {
 
-            String headersEncrypted = new String(SymmetricCipher.Aes256Encrypt(ApiRequestDao.SYMMETRIC_KEY, this.headers), StandardCharsets.ISO_8859_1);
-            String bodyEncrypted = new String(SymmetricCipher.Aes256Encrypt(ApiRequestDao.SYMMETRIC_KEY, this.body), StandardCharsets.ISO_8859_1);
+            String headersEncrypted = Base64.encodeToString(SymmetricCipher.Aes256Encrypt(ApiRequestDao.SYMMETRIC_KEY, this.headers), Base64.DEFAULT);
+            String bodyEncrypted = Base64.encodeToString(SymmetricCipher.Aes256Encrypt(ApiRequestDao.SYMMETRIC_KEY, this.body), Base64.DEFAULT);
 
             Map<String, String> arguments = new HashMap<>();
             arguments.put("apiRequestId", this.apiRequestId);
