@@ -32,6 +32,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.jetbrains.annotations.NotNull;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -391,7 +392,9 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		Point size = new Point();
 		deviceHeight.getSize(size);
 		int width = size.x;
-		imageUrl = (imageUrl.contains("jpg")) ? "https://images.woolworthsstatic.co.za/" + imageUrl : imageUrl;
+        if (TextUtils.isEmpty(imageUrl)) {
+            imageUrl = "https://images.woolworthsstatic.co.za/";
+        }
 		return imageUrl + "" + ((imageUrl.contains("jpg")) ? "" : "?w=" + width + "&q=" + 85);
 	}
 
@@ -837,6 +840,9 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	}
 
 	public List<String> getAuxiliaryImagesByGroupKey(String groupKey) {
+		if (TextUtils.isEmpty(groupKey)) {
+			return this.mAuxiliaryImage;
+		}
 		List<String> updatedAuxiliaryImages = new ArrayList<>();
 		ArrayList<OtherSkus> otherSkusArrayList = this.otherSKUsByGroupKey.get(groupKey);
 		if (otherSkusArrayList != null) {
