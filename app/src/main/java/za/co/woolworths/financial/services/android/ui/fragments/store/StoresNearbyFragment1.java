@@ -67,6 +67,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.MapWindowAdapter;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
@@ -75,6 +76,8 @@ import za.co.woolworths.financial.services.android.util.PopWindowValidationMessa
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WCustomViewPager;
 import za.co.woolworths.financial.services.android.util.WFormatter;
+
+import static android.app.Activity.RESULT_CANCELED;
 
 
 public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallback, ViewPager.OnPageChangeListener, GoogleMap.OnMarkerClickListener {
@@ -602,6 +605,10 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
                 if (mLayout == null) return;
                 mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
                 mLayout.setFocusable(false);
+                break;
+
+            case RESULT_CANCELED:
+                mBottomNavigator.popFragment();
                 break;
 		}
 	}
