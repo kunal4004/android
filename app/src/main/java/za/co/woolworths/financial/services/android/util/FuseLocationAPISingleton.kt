@@ -18,7 +18,7 @@ object FuseLocationAPISingleton {
     }
 
     @SuppressLint("StaticFieldLeak")
-    private lateinit var mGetFusedLocationProviderClient: FusedLocationProviderClient
+    private var mGetFusedLocationProviderClient: FusedLocationProviderClient? = null
     private lateinit var mOnLocationChangeCompletedListener: OnLocationChangeCompleteListener
     private lateinit var mLocationCallback: LocationCallback
 
@@ -66,18 +66,12 @@ object FuseLocationAPISingleton {
                 }
             }
         }
-
-        mGetFusedLocationProviderClient.lastLocation
-                .addOnSuccessListener { location : Location? ->
-                    // Got last known location. In some rare situations this can be null.
-                }
-
-        mGetFusedLocationProviderClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper())
+        mGetFusedLocationProviderClient?.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper())
     }
 
 
     fun stopLocationUpdate() {
-        mGetFusedLocationProviderClient.removeLocationUpdates(mLocationCallback)
+        mGetFusedLocationProviderClient?.removeLocationUpdates(mLocationCallback)
     }
 
     /**
