@@ -76,6 +76,8 @@ import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WCustomViewPager;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
+import static android.app.Activity.RESULT_CANCELED;
+
 
 public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallback, ViewPager.OnPageChangeListener, GoogleMap.OnMarkerClickListener {
 
@@ -603,6 +605,10 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
                 mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
                 mLayout.setFocusable(false);
                 break;
+
+			case RESULT_CANCELED:
+				mBottomNavigator.popFragment();
+				break;
 		}
 	}
 
