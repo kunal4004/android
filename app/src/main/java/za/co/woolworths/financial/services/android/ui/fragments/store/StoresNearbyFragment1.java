@@ -595,6 +595,18 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 		super.onActivityResult(requestCode, resultCode, data);
 		Log.d("RequestSETTINGRESULT", String.valueOf(requestCode));
 		switch (requestCode) {
+			case FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS:
+				switch (resultCode) {
+					case Activity.RESULT_OK:
+						initLocationCheck();
+						break;
+					default:
+						if (mBottomNavigator != null)
+							mBottomNavigator.popFragment();
+						break;
+				}
+				break;
+
 			// Check for the integer request code originally supplied to startResolutionForResult().
 			case REQUEST_CHECK_SETTINGS:
 				initLocationCheck();
@@ -605,10 +617,6 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
                 mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
                 mLayout.setFocusable(false);
                 break;
-
-			case RESULT_CANCELED:
-				mBottomNavigator.popFragment();
-				break;
 		}
 	}
 
@@ -694,24 +702,23 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
     public void startLocationUpdates() {
         Activity activity = getActivity();
         if (activity == null) return;
-        //Present an error message if location method is set to device only
-        if (!mFuseLocationAPISingleton.getLocationMode(activity)) {
-            mFuseLocationAPISingleton.detectDeviceOnlyGPSLocation(activity);
-            return;
-        }
-        if (mFuseLocationAPISingleton.getLocationMode(activity))
             if (checkLocationPermission()) {
                 if (ContextCompat.checkSelfPermission(getActivity(),
                         Manifest.permission.ACCESS_FINE_LOCATION)
                         == PackageManager.PERMISSION_GRANTED) {
                     onLocationLoadStart();
                     mFuseLocationAPISingleton.addOnLocationCompleteListener(new FuseLocationAPISingleton.OnLocationChangeCompleteListener() {
-                        @Override
+						@Override
                         public void onLocationChanged(@NotNull Location location) {
                             updateMap(location);
                         }
+
+						@Override
+						public void onLocationMethodPopUpDisplay() {
+							hideProgressBar();
+						}
                     });
-                    mFuseLocationAPISingleton.startLocationUpdate();
+                    mFuseLocationAPISingleton.startLocationUpdate(getActivity());
                 }
             } else {
                 checkLocationPermission();

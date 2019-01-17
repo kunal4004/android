@@ -70,6 +70,7 @@ import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationVie
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
+import za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton;
 import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
@@ -893,6 +894,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		//TODO: Explain where this is coming from.
+
+		// FuseLocationAPISingleton.kt : Change location method to High Accuracy confirmation dialog
+		if (requestCode== FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS){
+			getCurrentFragment().onActivityResult(requestCode,resultCode,data);
+			return;
+		}
 
 		/***
 		 * Navigate to list name view on view clicked from cart toast

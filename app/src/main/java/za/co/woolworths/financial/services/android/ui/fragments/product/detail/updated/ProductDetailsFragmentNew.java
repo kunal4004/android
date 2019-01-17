@@ -1010,6 +1010,19 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
+
+        // FuseLocationAPISingleton.kt : Change location method to High Accuracy confirmation dialog
+        if (requestCode == FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS) {
+            switch (resultCode) {
+                case Activity.RESULT_OK:
+                    findItemInStore();
+                    break;
+
+                default:
+                    dismissFindInStoreProgress();
+                    break;
+            }
+        }
 		if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
 			switch (requestCode) {
 				case SSO_REQUEST_ADD_TO_CART:
@@ -1099,22 +1112,22 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
         Activity activity = getActivity();
         if ((activity == null) || (mFuseLocationAPISingleton == null)) return;
 
-        // Popup will appear when location method is on device mode only
-        if (!mFuseLocationAPISingleton.getLocationMode(activity)) {
-            mFuseLocationAPISingleton.detectDeviceOnlyGPSLocation(activity);
-            return;
-        }
-
         this.enableFindInStoreButton(true);
         mFuseLocationAPISingleton.addOnLocationCompleteListener(new FuseLocationAPISingleton.OnLocationChangeCompleteListener() {
+
             @Override
             public void onLocationChanged(@NotNull Location location) {
                 Utils.saveLastLocation(location, getContext());
                 stopLocationUpdate();
                 executeLocationItemTask();
             }
+
+            @Override
+            public void onLocationMethodPopUpDisplay() {
+                dismissFindInStoreProgress();
+            }
         });
-        mFuseLocationAPISingleton.startLocationUpdate();
+        mFuseLocationAPISingleton.startLocationUpdate(getActivity());
     }
 
     @Override
