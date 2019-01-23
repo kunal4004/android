@@ -26,7 +26,6 @@ import android.webkit.WebViewClient;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -68,7 +67,7 @@ public class SSOActivity extends WebViewActivity {
 		CHANGE_PASSWORD(9);
 		private int result;
 
-		private SSOActivityResult(int i) {
+		SSOActivityResult(int i) {
 			this.result = i;
 		}
 
@@ -92,7 +91,7 @@ public class SSOActivity extends WebViewActivity {
 	public Path path;
 	private Map<String, String> extraQueryStringParams;
 
-	private final String state;
+	private String state;
 	private final String nonce;
 	private String stsParams;
 
@@ -125,14 +124,20 @@ public class SSOActivity extends WebViewActivity {
 			public void onReceivedTitle(WebView view, String title) {
 				super.onReceivedTitle(view, title);
 
-				ArrayList<String> invalidTitles = new ArrayList<String>(
+				// ensure variables are not null
+				title = TextUtils.isEmpty(title) ? "" : title;
+				redirectURIString = TextUtils.isEmpty(redirectURIString) ? "" : redirectURIString;
+				SSOActivity.this.state = TextUtils.isEmpty(SSOActivity.this.state) ? "" : SSOActivity.this.state;
+				final String urlStateComponent = "?state=".concat(SSOActivity.this.state).toLowerCase();
+
+				ArrayList<String> invalidTitles = new ArrayList<>(
 						Arrays.asList("about:blank".toLowerCase(),
 								getString(R.string.sso_title_text_submit_this_form).toLowerCase(),
-								SSOActivity.this.redirectURIString.toLowerCase(),
-								SSOActivity.this.redirectURIString.concat("?state=").concat(SSOActivity.this.state).toLowerCase())
+								redirectURIString.toLowerCase(),
+								redirectURIString.concat(urlStateComponent))
 				);
 
-				if (invalidTitles.contains(title.toLowerCase())) {
+				if (invalidTitles.contains(title.toLowerCase()) || title.toLowerCase().endsWith(urlStateComponent)) {
 					toolbarTextView.setText("");
 				} else
 					toolbarTextView.setText(title);
@@ -195,7 +200,7 @@ public class SSOActivity extends WebViewActivity {
 
 		private String protocol;
 
-		private Protocol(String protocol) {
+		Protocol(String protocol) {
 			this.protocol = protocol;
 		}
 
@@ -217,7 +222,7 @@ public class SSOActivity extends WebViewActivity {
 
 		private String host;
 
-		private Host(String protocol) {
+		Host(String protocol) {
 			this.host = protocol;
 		}
 
@@ -246,7 +251,7 @@ public class SSOActivity extends WebViewActivity {
 
 		private String path;
 
-		private Path(String protocol) {
+		Path(String protocol) {
 			this.path = protocol;
 		}
 
@@ -268,7 +273,7 @@ public class SSOActivity extends WebViewActivity {
 		switch (this.path) {
 
 			case SIGNIN:
-				this.redirectURIString = WoolworthsApplication.getSsoRedirectURI();
+				redirectURIString = WoolworthsApplication.getSsoRedirectURI();
 
                 /*
 				* // Check if sts params were supplied.
@@ -310,19 +315,19 @@ public class SSOActivity extends WebViewActivity {
                 * */
 				break;
 			case REGISTER:
-				this.redirectURIString = WoolworthsApplication.getSsoRedirectURI();
+				redirectURIString = WoolworthsApplication.getSsoRedirectURI();
 				break;
 
 
 			case UPDATE_PASSWORD:
-				this.redirectURIString = WoolworthsApplication.getSsoUpdateDetailsRedirectUri();
+				redirectURIString = WoolworthsApplication.getSsoUpdateDetailsRedirectUri();
 				break;
 			case UPDATE_PROFILE:
-				this.redirectURIString = WoolworthsApplication.getSsoUpdateDetailsRedirectUri();
+				redirectURIString = WoolworthsApplication.getSsoUpdateDetailsRedirectUri();
 				break;
 
 			case LOGOUT:
-				this.redirectURIString = WoolworthsApplication.getSsoRedirectURILogout();
+				redirectURIString = WoolworthsApplication.getSsoRedirectURILogout();
 				break;
 
 			default:
@@ -343,7 +348,7 @@ public class SSOActivity extends WebViewActivity {
 					.appendQueryParameter("client_id", "WWOneApp")
 					.appendQueryParameter("response_type", "id_token") // Identity token
 					.appendQueryParameter("response_mode", "form_post")
-					.appendQueryParameter("redirect_uri", this.redirectURIString)
+					.appendQueryParameter("redirect_uri", redirectURIString)
 					.appendQueryParameter("state", this.state)
 					.appendQueryParameter("nonce", this.nonce)
 					.appendQueryParameter("scope", scope);
@@ -362,6 +367,25 @@ public class SSOActivity extends WebViewActivity {
 			constructedURL = builder.build().toString();
 		}
 		return constructedURL;
+	}
+
+	private boolean isNavigatingToRedirectURL(String url) {
+
+		//Fixes WOP-3286
+		if (redirectURIString == null || this.state == null){
+			//report this to analytics
+			Map<String, String> arguments = new HashMap<>();
+			arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.DESCRIPTION,
+					"redirectURIString isNull: " + (redirectURIString == null ? "true" : "false") + ";" +
+							"this.state isNull: " + (this.state == null ? "true" : "false"));
+
+			Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CRASH_CAUTION, arguments);
+			return false;
+		}
+
+		String redirectUriWithState = redirectURIString.concat("?state=").concat(this.state);
+
+		return url.equalsIgnoreCase(redirectURIString) || url.equalsIgnoreCase(redirectUriWithState);
 	}
 
 	private final WebViewClient webviewClient = new WebViewClient() {
@@ -469,13 +493,6 @@ public class SSOActivity extends WebViewActivity {
 			hideProgressBar();
 		}
 
-		private boolean isNavigatingToRedirectURL(String url) {
-
-			String redirectUriWithState = SSOActivity.this.redirectURIString.concat("?state=").concat(SSOActivity.this.state);
-
-			return url.equalsIgnoreCase(SSOActivity.this.redirectURIString) || url.equalsIgnoreCase(redirectUriWithState);
-		}
-
 		@TargetApi(android.os.Build.VERSION_CODES.M)
 		@Override
 		public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
@@ -513,7 +530,6 @@ public class SSOActivity extends WebViewActivity {
 		}
 
 	};
-
 
 
 	private void unknownNetworkFailure(WebView webView, String description) {
@@ -559,6 +575,22 @@ public class SSOActivity extends WebViewActivity {
 		}
 		return true;
 
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		if(path == Path.SIGNIN) {
+			Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.SSO_SIGN_IN);
+		} else if(path == Path.REGISTER) {
+			Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.SSO_REGISTER);
+		} else if(path == Path.LOGOUT) {
+			Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.SSO_LOGOUT);
+		} else if(path == Path.UPDATE_PASSWORD) {
+			Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.SSO_PASSWORD_CHANGE);
+		} else if(path == Path.UPDATE_PROFILE) {
+			Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.SSO_PROFILE_INFO);
+		}
 	}
 
 	public void closeActivity() {

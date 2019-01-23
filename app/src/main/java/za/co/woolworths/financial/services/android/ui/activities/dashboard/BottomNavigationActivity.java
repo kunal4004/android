@@ -46,6 +46,7 @@ import za.co.woolworths.financial.services.android.models.service.event.LoadStat
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
+import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment;
@@ -56,6 +57,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.grid.Gri
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.ShoppingListFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsLoggedOutFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsLoggedinAndNotLinkedFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment;
@@ -65,6 +67,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.wtoday.WTodayFra
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
+import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
@@ -110,6 +113,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	public static final int SLIDE_UP_COLLAPSE_REQUEST_CODE = 13;
 	public static final int SLIDE_UP_COLLAPSE_RESULT_CODE = 12345;
 	public static final int BOTTOM_FRAGMENT_REQUEST_CODE = 3401;
+	public static final int TIPS_AND_TRICKS_CTA_REQUEST_CODE = 3627;
 
 	public final String TAG = this.getClass().getSimpleName();
 	private PermissionUtils permissionUtils;
@@ -128,6 +132,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	private int mListItemCount = 0;
 	private QueryBadgeCounter mQueryBadgeCounter;
 	public static final int PDP_REQUEST_CODE = 18;
+	public WMaterialShowcaseView walkThroughPromtView = null;
 	private String mSessionExpiredAtTabSection;
 
 	@Override
@@ -210,7 +215,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					// product item successfully added to cart
 					cartSummaryAPI();
 					closeSlideUpPanel();
-					setToast();
+					setToast(getResources().getString(R.string.added_to), getResources().getString(R.string.cart));
 				} else if (object instanceof BadgeState) {
 					// call observer to update independent count
 					BadgeState badgeState = (BadgeState) object;
@@ -238,16 +243,16 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		mQueryBadgeCounter.addObserver(this);
 	}
 
-	private void setToast() {
+	private void setToast(String message, String cartText) {
 		mToastUtils = new ToastUtils(BottomNavigationActivity.this);
 		mToastUtils.setActivity(BottomNavigationActivity.this);
 		mToastUtils.setView(getBottomNavigationById());
 		mToastUtils.setGravity(Gravity.BOTTOM);
 		mToastUtils.setCurrentState(TAG);
-		mToastUtils.setCartText(R.string.cart);
+		mToastUtils.setCartText(cartText);
 		mToastUtils.setPixel(getBottomNavigationById().getHeight() + Utils.dp2px(BottomNavigationActivity.this, 45));
 		mToastUtils.setView(getBottomNavigationById());
-		mToastUtils.setMessage(R.string.added_to);
+		mToastUtils.setMessage(message);
 		mToastUtils.setViewState(true);
 		mToastUtils.build();
 	}
@@ -549,6 +554,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		@Override
 		public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
+			// To avoid clicks while feature tutorial popup showing
+			if (!Utils.isFeatureTutorialsDismissed(walkThroughPromtView))
+				return false;
+
 			statusBarColor(R.color.white);
 			MultiClickPreventer.preventMultiClick(getViewDataBinding().wBottomNavigation);
 			switch (item.getItemId()) {
@@ -654,10 +663,28 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void onBackPressed() {
+
+		if (walkThroughPromtView != null && !walkThroughPromtView.isDismissed()) {
+			walkThroughPromtView.hide();
+			return;
+		}
+
 		/**
 		 *  Close slide up panel when expanded
 		 */
 		if (getSlidingLayout() != null) {
+		    // Send result to store locator fragment onActivityResult
+            // if current visible fragment points to store locator
+            // and store locator detail is anchored
+			if (mNavController.getCurrentFrag() instanceof StoresNearbyFragment1) {
+				Fragment currentFrag = mNavController.getCurrentFrag();
+				StoresNearbyFragment1 storesNearbyFragment = (StoresNearbyFragment1) currentFrag;
+				if (storesNearbyFragment.layoutIsAnchored()) {
+                    currentFrag.onActivityResult(StoresNearbyFragment1.LAYOUT_ANCHORED_RESULT_CODE,StoresNearbyFragment1.LAYOUT_ANCHORED_RESULT_CODE,null);
+				 return;
+				}
+			}
+
 			if (getSlidingLayout().getPanelState().equals(SlidingUpPanelLayout.PanelState.EXPANDED)) {
 				closeSlideUpPanel();
 				return;
@@ -850,6 +877,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+		Fragment fragment = getCurrentFragment();
+		if (fragment instanceof StoresNearbyFragment1){
+			fragment.onRequestPermissionsResult(requestCode,permissions,grantResults);
+		}
+
 		// redirects to utils
 		permissionUtils.onRequestPermissionsResult(requestCode, permissions, grantResults);
 	}
@@ -882,10 +915,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		}
 
 		if (requestCode == PDP_REQUEST_CODE && resultCode == RESULT_OK) {
-			boolean isItemAddToCart = data.getBooleanExtra("addedToCart", false);
+			String itemAddToCartMessage = data.getStringExtra("addedToCartMessage");
 			boolean isItemAddToShoppingList = data.getBooleanExtra("addedToShoppingList", false);
-			if (isItemAddToCart) {
-				setToast();
+			if (itemAddToCartMessage != null) {
+				setToast(itemAddToCartMessage, "");
 			} else if (isItemAddToShoppingList) {
 				// call back when Toast clicked after adding item to shopping list
 				List<ShoppingList> shoppingList = getGlobalState().getShoppingListRequest();
@@ -1011,7 +1044,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 		{
 			if (resultCode == ADD_TO_CART_SUCCESS_RESULT) {
-				setToast();
+				String itemAddToCartMessage = data.getStringExtra("addedToCartMessage");
+				if (itemAddToCartMessage != null) {
+					setToast(itemAddToCartMessage, "");
+				}
 			}
 		}
 
@@ -1022,6 +1058,20 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				if (getBottomFragmentById() instanceof ProductDetailFragment) {
 					getBottomFragmentById().onActivityResult(requestCode, resultCode, data);
 				}
+			}
+		}
+
+		if (requestCode == TIPS_AND_TRICKS_CTA_REQUEST_CODE) {
+			switch (resultCode) {
+				case TipsAndTricksViewPagerActivity.RESULT_OK_PRODUCTS:
+					getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
+					break;
+				case TipsAndTricksViewPagerActivity.RESULT_OK_ACCOUNTS:
+					getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
+					break;
+				case TipsAndTricksViewPagerActivity.RESULT_OK_REWARDS:
+					getBottomNavigationById().setCurrentItem(INDEX_REWARD);
+					break;
 			}
 		}
 

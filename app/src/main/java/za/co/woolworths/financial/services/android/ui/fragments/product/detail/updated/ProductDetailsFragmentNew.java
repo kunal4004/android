@@ -3,19 +3,14 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.detail.
 import android.Manifest;
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Point;
 import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomSheetDialog;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -29,7 +24,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ViewSwitcher;
-
 import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.ProductDetailsFragmentNewBinding;
@@ -37,12 +31,14 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import me.relex.circleindicator.CircleIndicator;
+import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
@@ -52,7 +48,6 @@ import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
-import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
@@ -66,6 +61,7 @@ import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocatio
 import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity;
+import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.AvailableSizePickerAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductColorPickerAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductSizePickerAdapter;
@@ -73,10 +69,11 @@ import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerA
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ProductUtils;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
+import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
 import za.co.woolworths.financial.services.android.util.DrawImage;
-import za.co.woolworths.financial.services.android.util.FusedLocationSingleton;
+import za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton;
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
 import za.co.woolworths.financial.services.android.util.PermissionUtils;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
@@ -90,12 +87,11 @@ import static android.app.Activity.RESULT_OK;
  * Created by W7099877 on 2018/07/14.
  */
 
-public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragmentNewBinding, ProductDetailsViewModelNew> implements ProductDetailNavigatorNew, ProductViewPagerAdapter.MultipleImageInterface, View.OnClickListener, ProductColorPickerAdapter.OnItemSelection, ProductSizePickerAdapter.OnSizeSelection, AvailableSizePickerAdapter.OnAvailableSizeSelection, PermissionResultCallback, ToastUtils.ToastInterface {
+public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragmentNewBinding, ProductDetailsViewModelNew> implements ProductDetailNavigatorNew, ProductViewPagerAdapter.MultipleImageInterface, View.OnClickListener, ProductColorPickerAdapter.OnItemSelection, ProductSizePickerAdapter.OnSizeSelection, AvailableSizePickerAdapter.OnAvailableSizeSelection, PermissionResultCallback, ToastUtils.ToastInterface, WMaterialShowcaseView.IWalkthroughActionListener {
 	public ProductDetailsViewModelNew productDetailsViewModelNew;
 	private String mSubCategoryTitle;
 	private boolean mFetchFromJson;
 	private String mDefaultProductResponse;
-	private ProductList mDefaultProduct;
 	private ProductViewPagerAdapter mProductViewPagerAdapter;
 	private List<String> mAuxiliaryImage = new ArrayList<>();
 	private ViewPager mImageViewPager;
@@ -141,7 +137,9 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	private OtherSkus otherSKUForFindInStore;
 	CircleIndicator circleindicator;
 	private final int ADD_TO_SHOPPING_LIST_REQUEST_CODE = 179;
+	private final int SET_DELIVERY_LOCATION_REQUEST_CODE = 180;
 	private ToastUtils mToastUtils;
+    private FuseLocationAPISingleton mFuseLocationAPISingleton;
 
 	@Override
 	public ProductDetailsViewModelNew getViewModel() {
@@ -165,7 +163,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		productDetailsViewModelNew.setNavigator(this);
 		final Bundle bundle = this.getArguments();
 		if (bundle != null) {
-			mDefaultProduct = (ProductList) Utils.jsonStringToObject(bundle.getString("strProductList"), ProductList.class);
+			productDetails = (ProductDetails) Utils.jsonStringToObject(bundle.getString("strProductList"), ProductDetails.class);
 			mSubCategoryTitle = bundle.getString("strProductCategory");
 			mDefaultProductResponse = bundle.getString("productResponse");
 			mFetchFromJson = bundle.getBoolean("fetchFromJson");
@@ -176,7 +174,14 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		initViews();
+        mFuseLocationAPISingleton = FuseLocationAPISingleton.INSTANCE;
+        initViews();
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_DETAIL);
 	}
 
 	public void initViews() {
@@ -206,35 +211,35 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
 	public void configureDefaultUI() {
 
-		getViewDataBinding().tvProductName.setText(mDefaultProduct.productName);
+		getViewDataBinding().tvProductName.setText(productDetails.productName);
 		getViewDataBinding().tvSubCategoryTitle.setText(mSubCategoryTitle);
 
-		if (!TextUtils.isEmpty(mDefaultProduct.saveText)) {
+		if (!TextUtils.isEmpty(productDetails.saveText)) {
 			txtSaveText.setVisibility(View.VISIBLE);
-			txtSaveText.setText(mDefaultProduct.saveText);
+			txtSaveText.setText(productDetails.saveText);
 		}
 
 		try {
 			// set price list
-			ProductUtils.displayPrice(txtFromPrice, txtActualPrice, String.valueOf(mDefaultProduct.fromPrice), getViewModel().maxWasPrice(mDefaultProduct.otherSkus));
+			ProductUtils.displayPrice(txtFromPrice, txtActualPrice, String.valueOf(productDetails.fromPrice), getViewModel().maxWasPrice(productDetails.otherSkus));
 		} catch (Exception ignored) {
 		}
 
-		this.mAuxiliaryImage.add(getImageByWidth(mDefaultProduct.externalImageRef, getActivity()));
+		this.mAuxiliaryImage.add(getImageByWidth(productDetails.externalImageRef, getActivity()));
 		this.mProductViewPagerAdapter = new ProductViewPagerAdapter(getActivity(), this.mAuxiliaryImage, this);
 		this.mImageViewPager.setAdapter(mProductViewPagerAdapter);
 		circleindicator.setViewPager(this.mImageViewPager);
 
 		//set promotional Images
-		if (mDefaultProduct.promotionImages != null)
-			loadPromotionalImages(mDefaultProduct.promotionImages);
+		if (productDetails.promotionImages != null)
+			loadPromotionalImages(productDetails.promotionImages);
 
 		if (mFetchFromJson) {
 			ProductDetails productDetails = Utils.stringToJson(getActivity(), mDefaultProductResponse).product;
 			this.onSuccessResponse(productDetails);
 		} else {
 			//loadProductDetails.
-			getViewModel().productDetail(new ProductRequest(mDefaultProduct.productId, mDefaultProduct.sku)).execute();
+			getViewModel().productDetail(new ProductRequest(productDetails.productId, productDetails.sku)).execute();
 		}
 	}
 
@@ -265,6 +270,11 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
 	@Override
 	public void onClick(View view) {
+
+		// To avoid clicks while feature tutorial popup showing
+		if (!Utils.isFeatureTutorialsDismissed(ProductDetailsActivity.walkThroughPromtView))
+			return;
+
 		switch (view.getId()) {
 			case R.id.imClose:
 				getActivity().onBackPressed();
@@ -443,6 +453,9 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		btnAddToCart.setAlpha(1f);
 		btnAddToCart.setEnabled(true);
 		this.configureMultiPickerDialog();
+		if (Boolean.valueOf(productDetails.isnAvailable)) {
+			showFeatureWalkthrough();
+		}
 	}
 
 	private void configureColorPicker() {
@@ -598,6 +611,20 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	}
 
 	@Override
+	public void requestDeliveryLocation(String requestMessage) {
+		enableAddToCartButton(false);
+		enableFindInStoreButton(false);
+		if (isAdded())
+			Utils.displayValidationMessageForResult(this,
+					getActivity(),
+					CustomPopUpWindow.MODAL_LAYOUT.ERROR,
+					null,
+					requestMessage,
+					getResources().getString(R.string.set_delivery_location_button),
+					SET_DELIVERY_LOCATION_REQUEST_CODE);
+	}
+
+	@Override
 	public void setProductCode(String productCode) {
 		try {
 			getViewDataBinding().productCode.setVisibility(View.VISIBLE);
@@ -660,7 +687,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 			if (cartSummaryList.get(0) != null) {
 				CartSummary cartSummary = cartSummaryList.get(0);
 				if (TextUtils.isEmpty(cartSummary.suburbId)) {
-					startActivityToSelectDeliveryLocation();
+					startActivityToSelectDeliveryLocation(true);
 				} else {
 					// show popup to confirm location
 					this.confirmDeliveryLocation();
@@ -669,10 +696,14 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		}
 	}
 
-	private void startActivityToSelectDeliveryLocation() {
+	private void startActivityToSelectDeliveryLocation(boolean addItemToCartOnFinished) {
 		if (getActivity() != null) {
 			Intent openDeliveryLocationSelectionActivity = new Intent(this.getContext(), DeliveryLocationSelectionActivity.class);
-			startActivityForResult(openDeliveryLocationSelectionActivity, REQUEST_SUBURB_CHANGE);
+			if(addItemToCartOnFinished) {
+				startActivityForResult(openDeliveryLocationSelectionActivity, REQUEST_SUBURB_CHANGE);
+			} else {
+				startActivity(openDeliveryLocationSelectionActivity);
+			}
 			getActivity().overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
 		}
 	}
@@ -681,7 +712,10 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	public void addItemToCartResponse(AddItemToCartResponse addItemToCartResponse) {
 		this.enableAddToCartButton(false);
 		Intent intent = new Intent();
-		intent.putExtra("addedToCart", true);
+		if(addItemToCartResponse.data.size() > 0) {
+			String successMessage = addItemToCartResponse.data.get(0).message;
+			intent.putExtra("addedToCartMessage", successMessage);
+		}
 		Activity activity = getActivity();
 		if (activity == null) return;
 		activity.setResult(RESULT_OK, intent);
@@ -804,7 +838,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
 		for (String key : otherSKUsList.keySet()) {
 			for (OtherSkus otherSkusObj : otherSKUsList.get(key)) {
-				if (otherSkusObj.sku.equalsIgnoreCase(mDefaultProduct.sku)) {
+				if (otherSkusObj.sku.equalsIgnoreCase(this.productDetails.sku)) {
 					this.selectedGroupKey = key;
 					return otherSkusObj;
 				}
@@ -1020,6 +1054,9 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 					}
 					showToastMessage(getActivity(), listSize);
 					break;
+				case SET_DELIVERY_LOCATION_REQUEST_CODE:
+					startActivityToSelectDeliveryLocation(false);
+					break;
 			}
 		}
 	}
@@ -1058,7 +1095,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 			@Override
 			public void onClick(View view) {
 				confirmDeliveryLocationDialog.dismiss();
-				startActivityToSelectDeliveryLocation();
+				startActivityToSelectDeliveryLocation(true);
 			}
 		});
 		confirmDeliveryLocationDialog.setCancelable(false);
@@ -1074,46 +1111,40 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		Utils.displayDialog(activity, CustomPopUpWindow.MODAL_LAYOUT.SHOPPING_ADD_TO_LIST, "", ADD_TO_SHOPPING_LIST_REQUEST_CODE);
 	}
 
-	/*****************************
-	 * FIND IN STORE SECTION
-	 * ***************
-	 */
-
-	private BroadcastReceiver mLocationUpdated = new BroadcastReceiver() {
-		@RequiresApi(api = Build.VERSION_CODES.M)
-		@Override
-		public void onReceive(Context context, final Intent intent) {
-			try {
-				Location mLocation = intent.getParcelableExtra(FusedLocationSingleton.LBM_EVENT_LOCATION_UPDATE);
-				Utils.saveLastLocation(mLocation, getContext());
-				stopLocationUpdate();
-				executeLocationItemTask();
-			} catch (Exception e) {
-				Log.e(TAG, e.toString());
-			}
-		}
-	};
 
 	private void executeLocationItemTask() {
 		getViewModel().locationItemTask(getActivity(), this.otherSKUForFindInStore).execute();
 	}
 
-	@Override
-	public void startLocationUpdates() {
-		this.enableFindInStoreButton(true);
-		FusedLocationSingleton.getInstance().startLocationUpdates();
-		// register observer for location updates
-		LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mLocationUpdated,
-				new IntentFilter(FusedLocationSingleton.INTENT_FILTER_LOCATION_UPDATE));
-	}
+    @Override
+    public void startLocationUpdates() {
+        Activity activity = getActivity();
+        if ((activity == null) || (mFuseLocationAPISingleton == null)) return;
 
-	@Override
-	public void stopLocationUpdate() {
-		// stop location updates
-		FusedLocationSingleton.getInstance().stopLocationUpdates();
-		// unregister observer
-		LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mLocationUpdated);
-	}
+        // Popup will appear when location method is on device mode only
+        if (!mFuseLocationAPISingleton.getLocationMode(activity)) {
+            mFuseLocationAPISingleton.detectDeviceOnlyGPSLocation(activity);
+            return;
+        }
+
+        this.enableFindInStoreButton(true);
+        mFuseLocationAPISingleton.addOnLocationCompleteListener(new FuseLocationAPISingleton.OnLocationChangeCompleteListener() {
+            @Override
+            public void onLocationChanged(@NotNull Location location) {
+                Utils.saveLastLocation(location, getContext());
+                stopLocationUpdate();
+                executeLocationItemTask();
+            }
+        });
+        mFuseLocationAPISingleton.startLocationUpdate();
+    }
+
+    @Override
+    public void stopLocationUpdate() {
+        // stop location updates
+        if (mFuseLocationAPISingleton != null)
+            mFuseLocationAPISingleton.stopLocationUpdate();
+    }
 
 	@Override
 	public void PermissionGranted(int request_code) {
@@ -1208,6 +1239,34 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 			getViewDataBinding().linIngredient.setVisibility(View.VISIBLE);
 			getViewDataBinding().ingredientList.setText(this.productDetails.ingredients);
 		}
+	}
+
+	public void showFeatureWalkthrough(){
+		if (getActivity() == null)
+			return;
+		if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.findInStore)
+			return;
+		ProductDetailsActivity.walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.FIND_IN_STORE)
+				.setTarget(btnFindInStore)
+				.setTitle(R.string.tips_tricks_titles_stores)
+				.setDescription(R.string.walkthrough_in_store_desc)
+				.setActionText(R.string.check_in_store_availability)
+				.setImage(R.drawable.tips_tricks_ic_stores)
+				.setAction(this)
+				.withRectangleShape()
+				.setArrowPosition(WMaterialShowcaseView.Arrow.BOTTOM_LEFT)
+				.setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
+		ProductDetailsActivity.walkThroughPromtView.show(getActivity());
+	}
+
+	@Override
+	public void onWalkthroughActionButtonClick() {
+			this.onClick(btnFindInStore);
+	}
+
+	@Override
+	public void onPromptDismiss() {
+
 	}
 
 	public void setPromotionalText(ProductDetails productDetails) {

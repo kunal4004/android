@@ -10,7 +10,7 @@
     <string name="credit_limit">Credit Limit:</string>
     <string name="available_funds">Available Funds</string>
     <string name="next_payment_date">Next Payment Due:</string>
-    <string name="total_amount_due">Min Amount Due:</string>
+    <string name="total_amount_due">Total Amount Due</string>
     <string name="amount_overdue">Amount Overdue:</string>
     <string name="balance_at_statement_date">Balance At Statement Date:</string>
     <string name="deduction_day">Deduction Day:</string>
@@ -55,6 +55,7 @@
     <string name="contact_us">Contact Us</string>
     <string name="cart">Cart</string>
     <string name="delivery_location">Delivery Location</string>
+    <string name="set_delivery_location_button">SET DELIVERY LOCATION</string>
     <string name="previously_selected_locations">Previously Selected Locations</string>
     <string name="select_your_province">Select your Province</string>
     <string name="select_your_suburb">Select your Suburb</string>
@@ -462,7 +463,7 @@
     <string name="confirm_color_desc">select your colour</string>
     <string name="confirm_size_desc">select your size</string>
     <string name="sf_instore_availability_title">In-Store Availability</string>
-    <string name="color">color</string>
+    <string name="color">colour</string>
     <string name="size">size</string>
     <string name="not_found">Unfortunately not found</string>
     <string name="stock_available_product">Stores in this area are out of your item (or have very little stock).</string>
@@ -540,9 +541,9 @@
 
     <!-- Cli carousel: Find Out More -->
     <string name="credit_bureau">Credit bureau</string>
-    <string name="credit_bureau_desc">We will try our best to ensure that you can afford the increased instalments of your new your credit limit. As such we obtain your credit information from various credit bureaus, who maintains the personal details related to your credit history (repayment behaviour, amount of credit you have available, outstanding debt collections and other).</string>
+    <string name="credit_bureau_desc">We will try our best to ensure that you can afford the increased instalments of your new credit limit. As such we obtain your credit information from various credit bureaus, who maintains the personal details related to your credit history (repayment behaviour, amount of credit you have available, outstanding debt collections and other).</string>
     <string name="txt_proof_of_income">Proof of income</string>
-    <string name="txt_proof_of_income_desc">With all credit applications, we are required to verify your income. To do so we need to obtain your latest payslip or bank statements reflecting your income.</string>
+    <string name="txt_proof_of_income_desc">With credit applications, we may be required to verify your income. If so we may need 1 months payslip or bank statement.</string>
 
     <!-- Cli carousel: Complete process title -->
     <string name="process_complete_title">Thanks for your application.</string>
@@ -662,38 +663,42 @@
     <string name="text_new">NEW</string>
     <string name="walkthrough_biometrics_title">we’ve added \n biometrics authentication</string>
     <string name="walkthrough_biometrics_desc">You can now easily access secure features in the app by using the biometrics reader on your device.</string>
-    <string name="walkthrough_barcode_title">BARCODE SCANNER</string>
+    <string name="walkthrough_barcode_title">Barcode Scanning</string>
     <string name="walkthrough_barcode_desc">Scan a product barcode to view the product information or seamlessly add it to your shopping list.</string>
     <string name="previous">previous</string>
     <string name="need_help">Need Help</string>
     <string name="tips_tricks">Tips &amp; Tricks</string>
     <string name="tips_tricks_titles_vouchers">Vouchers</string>
     <string name="tips_tricks_titles_stores">Find a Product in-Store</string>
-    <string name="tips_tricks_titles_barcode">Barcode Scanner</string>
+    <string name="tips_tricks_titles_barcode">Barcode Scanning</string>
+    <string name="tips_tricks_titles_refine">Filter Your Search</string>
     <string name="tips_tricks_titles_delivery">Delivery Location</string>
     <string name="tips_tricks_titles_navigation">My Cart</string>
     <string name="tips_tricks_titles_my_accounts">Accounts</string>
     <string name="tips_tricks_titles_statements">Statements</string>
     <string name="tips_tricks_titles_shopping_list">Shopping Lists</string>
-    <string name="tips_tricks_desc_vouchers">View your latest vouchers and redeem them in-store. Make sure you use them before the expiry date.</string>
-    <string name="tips_tricks_desc_stores">Want to know if a product is available in-store before you jump in your car to go shop?</string>
+    <string name="tips_tricks_titles_refine_search">Refine Search</string>
+    <string name="tips_tricks_desc_vouchers">View your latest vouchers and redeem them in-store before they expire.</string>
+    <string name="tips_tricks_desc_stores">Track down the product you’re looking for in the app – save yourself a drive to the wrong store!</string>
     <string name="tips_tricks_desc_barcode">Scan a product barcode to view the product information or seamlessly add it to your shopping list.</string>
-    <string name="tips_tricks_desc_delivery">The location at the top is your default delivery location. If you need products delivered elsewhere be sure to change this.</string>
-    <string name="tips_tricks_desc_navigation">Simply click the cart icon in the navigation to view your basket.</string>
-    <string name="tips_tricks_desc_my_accounts">See all your active financial products available balance, amount due and credit limit.</string>
-    <string name="tips_tricks_desc_statements">Select, send and view your latest statements.</string>
+    <string name="tips_tricks_desc_refine">Find your item faster using filters e.g. Country Road, size 10, vegetarian, organic, carb clever.</string>
+    <string name="tips_tricks_desc_delivery">Set your Delivery Location to see exact prices and the items available to you.</string>
+    <string name="tips_tricks_desc_navigation">Tap the cart icon in the bottom menu to see the items you’ve added to your cart.</string>
+    <string name="tips_tricks_desc_my_accounts">See all your active Woolworths accounts and check your available balance, amount due and credit limit.</string>
+    <string name="tips_tricks_desc_statements">View and send your latest statements for your Woolworths accounts.</string>
     <string name="tips_tricks_desc_shopping_list">Create and manage shopping lists and easily add a list to your cart.</string>
     <string name="tips_tricks_button_vouchers">redeem a voucher today</string>
     <string name="tips_tricks_button_stores">check in-Store availability</string>
     <string name="tips_tricks_button_barcode">Scan a product</string>
+    <string name="tips_tricks_button_refine">Refine</string>
     <string name="tips_tricks_button_delivery">Set Your Delivery Location</string>
-    <string name="tips_tricks_button_navigation">START SHOPPING</string>
+    <string name="tips_tricks_button_navigation">LET’S GO</string>
     <string name="tips_tricks_button_my_accounts">check your account status</string>
     <string name="tips_tricks_button_statements">view your statements</string>
     <string name="tips_tricks_button_shopping_list">start creating shopping lists</string>
-    <string name="hide_feature_tutorials">hide feature tutorials</string>
+    <string name="Dont_show_these_tips">Don’t show these tips</string>
     <string name="new_feature_tutorials">New Feature Tutorials</string>
-    <string name="scan_your_first_product">SCAN your first PRODUCT</string>
+    <string name="scan_your_first_product">SCAN a PRODUCT</string>
     <string name="check_in_store_availability">check in-store availability</string>
     <string name="redeem_voucher_today">REDEEM A VOUCHER TODAY</string>
     <string name="navigation">Navigation</string>
@@ -703,6 +708,7 @@
     <string name="how_to_pay_2">By Electronic Funds Transfer (EFT)</string>
     <string name="how_to_pay_3">At any Woolworths store</string>
     <string name="how_to_pay_4">At any Absa Bank branch</string>
+
     <string name="how_to_pay_bank_details">BANKING DETAILS (EFT &amp; Direct Deposits)</string>
     <string name="title_how_to_pay">How To Pay</string>
     <string name="account_charged_of_title">YOUR ACCOUNT IS MORE THAN 6 MONTHS IN ARREARS.</string>
@@ -729,6 +735,7 @@
     <string name="bpi_toolbar_title">Overview</string>
     <string name="bpi_claim_toolbar_title">Claim</string>
     <string name="bpi_covered">Covered</string>
+    <string name="bpi_not_covered">not covered</string>
     <string name="bpi_balance_protection_title">Balance Protection</string>
     <string name="bpi_balance_protection_desc">Cover in the event of your death, retrenchment, disability or a critical illness.</string>
     <string name="bpi_partner_cover_title">Partner Cover</string>
@@ -784,14 +791,58 @@
 
     <string name="bpi_loan_balance_protection_benefits_1">Pays the outstanding balance on your account (provided it is not in arrears) in the event of your death, permanent disability, or if you are diagnosed with a critical illness.</string>
     <string name="bpi_loan_balance_protection_benefits_2">Pays your instalments for up to 12 months from the date you are retrenched or temporarily disabled.</string>
-
-
     <string name="bpi_companion_care_benefits_1">Pays the outstanding balance on your account (provided it is not in arrears) in the event of your partner’s death.</string>
-
     <string name="bpi_partner_cover_65_years_benefit_1">Pays the outstanding balance on your account (provided it is not in arrears) if your partner passes away or if your partner is diagnosed with a critical illness.</string>
-
     <string name="bpi_balance_protection_65_years_benefit_1">Pays the outstanding balance on your account (provided it is not in arrears) in the event of your death, or if you are diagnosed with a critical illness.></string>
-    <string name="app_maintenance_message">Oops… something went wrong. Please try again later.</string>
-
-
+    <string name="walkthrough_refine_title">Filter Your Search</string>
+    <string name="walkthrough_refine_desc">Find your item faster using filters e.g. Country Road, size 10, vegetarian, organic, Carb Clever.</string>
+    <string name="walkthrough_refine_action">REFINE NOW</string>
+    <string name="walkthrough_account_title">account</string>
+    <string name="walkthrough_account_desc">See all your active financial products available balance, amount due and credit limit.</string>
+    <string name="walkthrough_account_action_no_products">apply for an account today</string>
+    <string name="walkthrough_account_action">check account status</string>
+    <string name="app_maintenance_message">Oops… something went wrong.\nPlease try again later</string>
+    <string name="walkthrough_shopping_list_title">Shopping lists</string>
+    <string name="walkthrough_shopping_list_desc">Create and manage your shopping lists, and add a list to your cart.</string>
+    <string name="walkthrough_shopping_list_action">create a shopping list</string>
+    <string name="walkthrough_statement_title">Access Your Statements</string>
+    <string name="walkthrough_statement_desc">View and send your latest statements for your Woolworths accounts.</string>
+    <string name="walkthrough_statement_action">TAKE ME THERE</string>
+    <string name="set_delivery_location">Your Delivery Location</string>
+    <string name="tips_edit_delivery_location">EDIT DELIVERY LOCATION</string>
+    <string name="tips_create_shopping_list">create a shopping list</string>
+    <string name="app_tips_tricks">App Tips &amp; Tricks</string>
+    <string name="tips_tricks_view_cart">view cart</string>
+    <string name="tips_tricks_get_shopping">GET SHOPPING</string>
+    <string name="tips_tricks_your_vouchers">your vouchers</string>
+    <string name="tips_tricks_view_these_now">VIEW THESE NOW</string>
+    <string name="tips_tricks_go_to_accounts">GO TO YOUR ACCOUNTS</string>
+    <string name="tips_tricks_view_your_accounts">VIEW YOUR ACCOUNTS</string>
+    <string name="tips_tricks_take_me_there">TAKE ME THERE</string>
+    <string name="tips_tricks_access_your_statements">ACCESS YOUR STATEMENTS</string>
+    <string name="walkthrough_in_store_desc">Track down the product you’re looking for in the app – save yourself a drive to the wrong store!</string>
+    <string name="your_delivery_location">Your Delivery Location</string>
+    <string name="walkthrough_delivery_location_desc">Set your Delivery Location to see exact prices and the items available to you.</string>
+    <string name="walkthrough_vouchers_desc">View your latest vouchers and redeem them in-store before they expire.</string>
+    <string name="how_to_pay_absa_payment_title">payments made from an absa account</string>
+    <string name="how_to_pay_absa_payment_desc">Electronic payments from another ABSA account can be made directly into your Woolworths Credit Card account. Use your 16-digit Woolworths Credit Card number as the bill account number. You can choose your preferred reference. </string>
+    <string name="how_to_pay_other_account_desc">Electronic payments from other bank account into your Woolworths credit card can be made into:</string>
+    <string name="how_to_pay_credit_card_title">payments made from other accounts</string>
+    <string name="account_statement_error">Sorry, this document is unavailable</string>
+    <string name="high_accuracy_location_err_desc"> This feature cannot be used without High Accuracy Location Services.</string>
+    <string name="info_total_amount_due_title">Total Amount Due</string>
+    <string name="info_total_amount_due_desc">This is the sum of your current instalment, including any overdue amount and interest.</string>
+    <string name="info_next_payment_due_title">Next Payment Due</string>
+    <string name="info_next_payment_due_desc">This is the date that the Total Amount Due is to be paid by.</string>
+    <string name="info_current_balance_title">Current Balance</string>
+    <string name="info_current_balance_desc">This is the total amount currently owed to Woolies.</string>
+    <string name="info_credit_limit_title">Credit Limit</string>
+    <string name="info_credit_limit_desc">This is the total amount of credit offered to you by Woolies</string>
+    <string name="info_amount_overdue_title">Amount Overdue</string>
+    <string name="info_amount_overdue_desc">This is the shortfall amount that was not paid by the specified payment due date.</string>
+    <string name="info_available_funds_title">Available Funds</string>
+    <string name="info_available_funds_desc">Funds available to be used</string>
+    <string name="tips_tricks_page_tile">Tips And Tricks</string>
+    <string name="tips_tricks_desc_navigation_sign_in">Tap the cart icon in the bottom menu to see the items you’ve added.</string>
+    <string name="refinement_see_result_button_text">All\u0020</string>
 </resources>

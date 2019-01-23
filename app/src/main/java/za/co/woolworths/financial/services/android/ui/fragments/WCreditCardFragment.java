@@ -81,8 +81,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	private LinearLayout accountInArrearsLayout;
 	private WTextView tvHowToPayAccountStatus;
     private WTextView tvAmountOverdue;
-    private WTextView tvTotalAmountDue;
-	private ImageView iconAvailableFundsInfo;
+	private ImageView iconAvailableFundsInfo,infoCreditLimit,infoCurrentBalance,infoNextPaymentDue,infoAmountOverdue,infoMinimumAmountDue;
 	public static int RESULT_CODE_FUNDS_INFO = 70;
     private LinearLayout llActiveAccount;
     private RelativeLayout llChargedOffAccount;
@@ -164,7 +163,6 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		accountInArrearsLayout = view.findViewById(R.id.llAccountInArrearsParentContainer);
 		tvHowToPayAccountStatus = view.findViewById(R.id.howToPayAccountStatus);
         tvAmountOverdue = view.findViewById(R.id.amountOverdue);
-        tvTotalAmountDue = view.findViewById(R.id.totalAmountDue);
 		iconAvailableFundsInfo = view.findViewById(R.id.iconAvailableFundsInfo);
         llActiveAccount = view.findViewById(R.id.llActiveAccount);
         llChargedOffAccount = view.findViewById(R.id.llChargedOffAccount);
@@ -192,6 +190,17 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		tvHowToPayAccountStatus.setOnClickListener(this);
 
 		fakeView = view.findViewById(R.id.fakeView);
+		infoMinimumAmountDue = view.findViewById(R.id.infoMinimumAmountDue);
+		infoAmountOverdue = view.findViewById(R.id.infoAmountOverdue);
+		infoNextPaymentDue = view.findViewById(R.id.infoNextPaymentDue);
+		infoCurrentBalance = view.findViewById(R.id.infoCurrentBalance);
+		infoCreditLimit = view.findViewById(R.id.infoCreditLimit);
+
+		infoMinimumAmountDue.setOnClickListener(this);
+		infoAmountOverdue.setOnClickListener(this);
+		infoNextPaymentDue.setOnClickListener(this);
+		infoCurrentBalance.setOnClickListener(this);
+		infoCreditLimit.setOnClickListener(this);
 	}
 
 	private void addListener() {
@@ -230,7 +239,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 					productOfferingGoodStanding = p.productOfferingGoodStanding;
 					productOfferingId = String.valueOf(p.productOfferingId);
 					woolworthsApplication.setProductOfferingId(p.productOfferingId);
-					tvBPIProtectInsurance.setVisibility(p.insuranceCovered ? View.VISIBLE : View.GONE);
+					tvBPIProtectInsurance.setText(p.insuranceCovered ? getString(R.string.bpi_covered) : getString(R.string.bpi_not_covered));
 					availableBalance.setText(Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.availableFunds), 1, getActivity())));
 					creditLimit.setText(Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.creditLimit), 1, getActivity())));
 					minAmountDue.setText(Utils.removeNegativeSymbol(WFormatter.newAmountFormat(p.minimumAmountDue)));
@@ -242,14 +251,12 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 						dueDate.setText(p.paymentDueDate);
 						WiGroupLogger.e(getActivity(), "TAG", e.getMessage(), e);
 					}
-					iconAvailableFundsInfo.setVisibility(p.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
                     availableBalance.setTextColor(getResources().getColor(p.productOfferingGoodStanding ? R.color.black : R.color.bg_overlay));
                     accountInArrearsLayout.setVisibility(p.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
 					llIncreaseLimitContainer.setVisibility(p.productOfferingGoodStanding ? View.VISIBLE : View.GONE);
 					tvHowToPayAccountStatus.setVisibility(p.productOfferingGoodStanding ? View.VISIBLE : View.INVISIBLE);
                     if(!p.productOfferingGoodStanding){
                         tvAmountOverdue.setText(WFormatter.newAmountFormat(p.amountOverdue));
-                        tvTotalAmountDue.setText(WFormatter.newAmountFormat(p.totalAmountDue));
                     }
 				}
 			}
@@ -290,16 +297,26 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 				}
 				break;
 			case R.id.iconAvailableFundsInfo:
-				Utils.displayValidationMessageForResult(
-						this,
-						activity,
-						CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC,
-						activity.getResources().getString(R.string.account_in_arrears_info_title),
-						getActivity().getResources().getString(R.string.account_in_arrears_info_description)
-								.replace("minimum_payment", Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account.totalAmountDue)))
-								.replace("card_name", "Credit Card"),
-						getActivity().getResources().getString(R.string.how_to_pay),
-						RESULT_CODE_FUNDS_INFO);
+				if(this.account.productOfferingGoodStanding){
+					Utils.displayValidationMessageForResult(
+							this,
+							activity,
+							CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC,
+							activity.getResources().getString(R.string.info_available_funds_title),
+							getActivity().getResources().getString(R.string.info_available_funds_desc),
+							getActivity().getResources().getString(R.string.cli_got_it));
+				}else {
+					Utils.displayValidationMessageForResult(
+							this,
+							activity,
+							CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC,
+							activity.getResources().getString(R.string.account_in_arrears_info_title),
+							getActivity().getResources().getString(R.string.account_in_arrears_info_description)
+									.replace("minimum_payment", Utils.removeNegativeSymbol(WFormatter.newAmountFormat(account.totalAmountDue)))
+									.replace("card_name", "Credit Card"),
+							getActivity().getResources().getString(R.string.how_to_pay),
+							RESULT_CODE_FUNDS_INFO);
+				}
 				break;
 			case R.id.howToPayAccountStatus:
 			case R.id.howToPayArrears:
@@ -308,6 +325,51 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 			case R.id.relFindOutMore:
 				if (controllerNotNull())
 					mIncreaseLimitController.intentFindOutMore(getActivity(), offerActive);
+				break;
+			case R.id.infoMinimumAmountDue:
+				Utils.displayValidationMessageForResult(
+						this,
+						activity,
+						CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC,
+						activity.getResources().getString(R.string.info_total_amount_due_title),
+						getActivity().getResources().getString(R.string.info_total_amount_due_desc),
+						getActivity().getResources().getString(R.string.cli_got_it));
+				break;
+			case R.id.infoAmountOverdue:
+				Utils.displayValidationMessageForResult(
+						this,
+						activity,
+						CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC,
+						activity.getResources().getString(R.string.info_amount_overdue_title),
+						getActivity().getResources().getString(R.string.info_amount_overdue_desc),
+						getActivity().getResources().getString(R.string.cli_got_it));
+				break;
+			case R.id.infoNextPaymentDue:
+				Utils.displayValidationMessageForResult(
+						this,
+						activity,
+						CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC,
+						activity.getResources().getString(R.string.info_next_payment_due_title),
+						getActivity().getResources().getString(R.string.info_next_payment_due_desc),
+						getActivity().getResources().getString(R.string.cli_got_it));
+				break;
+			case R.id.infoCurrentBalance:
+				Utils.displayValidationMessageForResult(
+						this,
+						activity,
+						CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC,
+						activity.getResources().getString(R.string.info_current_balance_title),
+						getActivity().getResources().getString(R.string.info_current_balance_desc),
+						getActivity().getResources().getString(R.string.cli_got_it));
+				break;
+			case R.id.infoCreditLimit:
+				Utils.displayValidationMessageForResult(
+						this,
+						activity,
+						CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC,
+						activity.getResources().getString(R.string.info_credit_limit_title),
+						getActivity().getResources().getString(R.string.info_credit_limit_desc),
+						getActivity().getResources().getString(R.string.cli_got_it));
 				break;
 		}
 	}
@@ -378,6 +440,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 
 	@Override
 	public void onResumeFragment() {
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.FINANCIAL_SERVICES_CREDIT_CARD);
 		WCreditCardFragment.this.getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {

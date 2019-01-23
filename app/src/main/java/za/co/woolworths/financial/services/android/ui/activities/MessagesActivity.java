@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -24,8 +25,10 @@ import com.daimajia.swipe.util.Attributes;
 import java.util.ArrayList;
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
+import za.co.woolworths.financial.services.android.models.dto.DeleteMessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageDetails;
 import za.co.woolworths.financial.services.android.models.dto.MessageRead;
 import za.co.woolworths.financial.services.android.models.dto.MessageReadRequest;
@@ -42,7 +45,7 @@ import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class MessagesActivity extends AppCompatActivity {
+public class MessagesActivity extends AppCompatActivity implements MesssagesListAdapter.MessageClickListener {
 	public RecyclerView messsageListview;
 	public MesssagesListAdapter adapter = null;
 	public LinearLayoutManager mLayoutManager;
@@ -60,6 +63,7 @@ public class MessagesActivity extends AppCompatActivity {
 	private ErrorHandlerView mErrorHandlerView;
 	private boolean paginationIsEnabled = false;
 	private int unreadMessageCount = 0;
+	private HttpAsyncTask<String, String, DeleteMessageResponse> mDeleteMessageRequest;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -238,7 +242,8 @@ public class MessagesActivity extends AppCompatActivity {
 						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, messageResponse.response.stsParams, MessagesActivity.this);
 						break;
 
-					default: if (messageResponse.response != null) {
+					default:
+						if (messageResponse.response != null) {
 							Utils.alertErrorMessage(MessagesActivity.this, messageResponse.response.desc);
 						}
 						break;
@@ -305,6 +310,7 @@ public class MessagesActivity extends AppCompatActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.MESSAGES);
 		// register new push message receiver
 		// by doing this, the activity will be notified each time a new message arrives
 		LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
@@ -364,11 +370,10 @@ public class MessagesActivity extends AppCompatActivity {
 						mCurrentPage = 1;
 						mIsLoading = false;
 					} else {
-						assert messageResponse.messagesList != null;
-						if (messageResponse.messagesList.size() == 0) {
-							messsageListview.setVisibility(View.GONE);
-							mErrorHandlerView.setEmptyState(5);
-							mErrorHandlerView.showErrorView();
+						if (messageResponse.messagesList != null) {
+							if (messageResponse.messagesList.size() == 0) {
+								emptyList();
+							}
 						}
 					}
 					break;
@@ -382,6 +387,12 @@ public class MessagesActivity extends AppCompatActivity {
 			}
 		} catch (Exception ignored) {
 		}
+	}
+
+	private void emptyList() {
+		messsageListview.setVisibility(View.GONE);
+		mErrorHandlerView.setEmptyState(5);
+		mErrorHandlerView.showErrorView();
 	}
 
 	public void networkFailureHandler(final String errorMessage, final int type) {
@@ -405,6 +416,54 @@ public class MessagesActivity extends AppCompatActivity {
 			loadMoreMessages();
 		} else {
 			loadMessages();
+		}
+	}
+
+	@Override
+	public void onDeleteItemClicked(String id) {
+		mDeleteMessageRequest = deleteMessage(id);
+		mDeleteMessageRequest.execute();
+	}
+
+	@Override
+	public void messageInboxIsEmpty(int sizeOfList) {
+		if (sizeOfList == 0) {
+			emptyList();
+		}
+	}
+
+	@SuppressLint("StaticFieldLeak")
+	public HttpAsyncTask<String, String, DeleteMessageResponse> deleteMessage(final String id) {
+		return new HttpAsyncTask<String, String, DeleteMessageResponse>() {
+			@Override
+			protected void onPreExecute() {
+				super.onPreExecute();
+			}
+
+			@Override
+			protected DeleteMessageResponse httpDoInBackground(String... params) {
+				return (WoolworthsApplication.getInstance()).getApi().getDeleteMessagesResponse(id);
+			}
+
+			@Override
+			protected Class<DeleteMessageResponse> httpDoInBackgroundReturnType() {
+				return DeleteMessageResponse.class;
+			}
+
+			@Override
+			protected DeleteMessageResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+				DeleteMessageResponse deleteMessageResponse = new DeleteMessageResponse();
+				deleteMessageResponse.response = new Response();
+				return deleteMessageResponse;
+			}
+		};
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		if (mDeleteMessageRequest != null && !mDeleteMessageRequest.isCancelled()) {
+			mDeleteMessageRequest.cancel(true);
 		}
 	}
 }

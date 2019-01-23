@@ -39,6 +39,7 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CartItemGroup;
 import za.co.woolworths.financial.services.android.models.dto.CartResponse;
@@ -68,6 +69,7 @@ import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocatio
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CartProductAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
+import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
@@ -91,7 +93,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.dashboar
 import static za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment.DIALOG_REQUEST_CODE;
 
 
-public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick, View.OnClickListener, NetworkChangeListener, ToastUtils.ToastInterface {
+public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick, View.OnClickListener, NetworkChangeListener, ToastUtils.ToastInterface, WMaterialShowcaseView.IWalkthroughActionListener {
 
 	private int mQuantity;
 	private String mSuburbName, mProvinceName;
@@ -135,6 +137,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	private boolean changeQuantityWasClicked = false;
 	private boolean errorMessageWasPopUp = false;
 	private boolean isAllInventoryAPICallSucceed;
+	private ImageView imgDeliveryLocation;
 
 	public CartFragment() {
 		// Required empty public constructor
@@ -173,6 +176,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		mErrorHandlerView.setMargin(rlNoConnectionLayout, 0, 0, 0, 0);
 		mConnectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
 		rlLocationSelectedLayout = view.findViewById(R.id.locationSelectedLayout);
+		imgDeliveryLocation = view.findViewById(R.id.truckIcon);
 		rlLocationSelectedLayout.setOnClickListener(this);
 		mBtnRetry.setOnClickListener(this);
 		btnCheckOut.setOnClickListener(this);
@@ -295,7 +299,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				if ((checkOutActivity != null) && btnCheckOut.isEnabled()) {
 					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTCHECKOUT);
 					Intent openCheckOutActivity = new Intent(getContext(), CartCheckoutActivity.class);
-					startActivityForResult(openCheckOutActivity, CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY);
+					getActivity().startActivityForResult(openCheckOutActivity, CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY);
 					checkOutActivity.overridePendingTransition(0, 0);
 				}
 				break;
@@ -409,6 +413,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				CartActivity cartActivity = (CartActivity) activity;
 				cartActivity.resetToolBarIcons();
 			}
+			showFeatureWalkthrough();
 		}
 	}
 
@@ -861,6 +866,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	public void onResume() {
 		super.onResume();
 		Activity activity = getActivity();
+		Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.CART_LIST);
 		if (activity != null) {
 			activity.registerReceiver(mConnectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
 		}
@@ -884,7 +890,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			activity.overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
 			return;
 		}
-		if (requestCode == CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY || requestCode == SSOActivity.SSOActivityResult.LAUNCH.rawValue()) {
+		if (requestCode == SSOActivity.SSOActivityResult.LAUNCH.rawValue()) {
 			if (SessionUtilities.getInstance().isUserAuthenticated()) {
 				if (resultCode == Activity.RESULT_OK) {
 					// Checkout completed successfully
@@ -1157,4 +1163,31 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		CartActivity cartActivity = (CartActivity) activity;
 		cartActivity.enableEditCart(enable);
 	}
+
+	public void showFeatureWalkthrough(){
+		if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.deliveryLocation)
+			return;
+		CartActivity.walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.DELIVERY_LOCATION)
+				.setTarget(imgDeliveryLocation)
+				.setTitle(R.string.your_delivery_location)
+				.setDescription(R.string.walkthrough_delivery_location_desc)
+				.setActionText(R.string.tips_edit_delivery_location)
+				.setImage(R.drawable.tips_tricks_ic_stores)
+				.setAction(this)
+				.setShapePadding(24)
+				.setArrowPosition(WMaterialShowcaseView.Arrow.TOP_LEFT)
+				.setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
+		CartActivity.walkThroughPromtView.show(getActivity());
+	}
+
+	@Override
+	public void onWalkthroughActionButtonClick() {
+		this.onClick(rlLocationSelectedLayout);
+	}
+
+	@Override
+	public void onPromptDismiss() {
+
+	}
+
 }

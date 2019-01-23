@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import io.reactivex.functions.Consumer;
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
@@ -69,6 +70,7 @@ import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 
+import static android.app.Activity.RESULT_OK;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SHOW_ADDED_TO_SHOPPING_LIST_TOAST;
 import static za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity.DELIVERY_LOCATION_CLOSE_CLICKED;
 
@@ -107,6 +109,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	private List<ShoppingListItem> shoppingListItems;
 	private boolean itemWasSelected;
 	public static final int ADD_TO_CART_SUCCESS_RESULT = 2000;
+	private final int SET_DELIVERY_LOCATION_REQUEST_CODE = 2011;
 
 	@Override
 	public ShoppingListItemsViewModel getViewModel() {
@@ -470,9 +473,30 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	public void onAddToCartSuccess(AddItemToCartResponse addItemToCartResponse) {
 		Activity activity = getActivity();
 		if (activity == null) return;
+		Intent resultIntent = new Intent();
+		if(addItemToCartResponse.data.size() > 0) {
+			String successMessage = addItemToCartResponse.data.get(0).message;
+			resultIntent.putExtra("addedToCartMessage", successMessage);
+		}
 		BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
-		bottomNavigationActivity.onActivityResult(ADD_TO_CART_SUCCESS_RESULT, ADD_TO_CART_SUCCESS_RESULT, null);
+		bottomNavigationActivity.onActivityResult(ADD_TO_CART_SUCCESS_RESULT, ADD_TO_CART_SUCCESS_RESULT, resultIntent);
 		popFragmentSlideDown();
+	}
+
+	@Override
+	public void requestDeliveryLocation(String requestMessage) {
+		if (isAdded()) {
+			getViewDataBinding().incConfirmButtonLayout.pbLoadingIndicator.setVisibility(View.GONE);
+			getViewDataBinding().incConfirmButtonLayout.btnCheckOut.setVisibility(View.VISIBLE);
+			shoppingListItemsAdapter.resetSelection();
+			Utils.displayValidationMessageForResult(this,
+					getActivity(),
+					CustomPopUpWindow.MODAL_LAYOUT.ERROR,
+					null,
+					requestMessage,
+					getResources().getString(R.string.set_delivery_location_button),
+					SET_DELIVERY_LOCATION_REQUEST_CODE);
+		}
 	}
 
 	@Override
@@ -482,7 +506,11 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 
 	@Override
 	public void otherHttpCode(Response response) {
-
+		if (isAdded()) {
+			getViewDataBinding().incConfirmButtonLayout.pbLoadingIndicator.setVisibility(View.GONE);
+			getViewDataBinding().incConfirmButtonLayout.btnCheckOut.setVisibility(View.VISIBLE);
+			Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
+		}
 	}
 
 	@Override
@@ -721,6 +749,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	@Override
 	public void onResume() {
 		super.onResume();
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.SHOPPING_LIST_ITEMS);
 		Activity activity = getActivity();
 		if (activity != null) {
 			activity.registerReceiver(mConnectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
@@ -921,6 +950,10 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				makeInventoryCall();
 			}
 		}
+
+		if (resultCode == RESULT_OK && requestCode == SET_DELIVERY_LOCATION_REQUEST_CODE) {
+			startActivityToSelectDeliveryLocation(false);
+		}
 	}
 
 	private void deliverySelectionIntent(int resultCode) {
@@ -930,6 +963,18 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		deliveryLocationSelectionActivity.putExtra(DeliveryLocationSelectionActivity.LOAD_PROVINCE, "LOAD_PROVINCE");
 		activity.startActivityForResult(deliveryLocationSelectionActivity, resultCode);
 		activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+	}
+
+	private void startActivityToSelectDeliveryLocation(boolean addItemToCartOnFinished) {
+		if (getActivity() != null) {
+			Intent openDeliveryLocationSelectionActivity = new Intent(this.getContext(), DeliveryLocationSelectionActivity.class);
+			if(addItemToCartOnFinished) {
+				startActivityForResult(openDeliveryLocationSelectionActivity, REQUEST_SUBURB_CHANGE);
+			} else {
+				startActivity(openDeliveryLocationSelectionActivity);
+			}
+			getActivity().overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
+		}
 	}
 
 	private String getLastValueInMap() {

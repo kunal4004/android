@@ -10,6 +10,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_refinement.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.Refinement
 import za.co.woolworths.financial.services.android.models.dto.RefinementCrumb
 import za.co.woolworths.financial.services.android.models.dto.RefinementNavigation
@@ -52,6 +53,11 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
         initViews()
     }
 
+    override fun onResume() {
+        super.onResume()
+        Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_SEARCH_REFINEMENT)
+    }
+
     private fun initViews() {
         backButton = activity.findViewById(R.id.btnClose)
         backButton?.setImageResource(R.drawable.back24)
@@ -84,21 +90,22 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
 
     private fun getRefinementSelectableItems(refinementNavigation: RefinementNavigation): ArrayList<RefinementSelectableItem> {
         var dataList = arrayListOf<RefinementSelectableItem>()
+        if (refinementNavigation.refinementCrumbs != null && refinementNavigation.refinementCrumbs.size > 0) {
+            refinementNavigation.refinementCrumbs.forEach {
+                var refinementSelectableItem = RefinementSelectableItem(it, if (it.multiSelect) RefinementSelectableItem.ViewType.MULTI_SELECTOR else RefinementSelectableItem.ViewType.SINGLE_SELECTOR)
+                refinementSelectableItem.isSelected = true
+                dataList.add(refinementSelectableItem)
+            }
+        }
+
         if (refinementNavigation.refinements != null && refinementNavigation.refinements.size > 0) {
             refinementNavigation.refinements.forEach {
-
                 if (it.subRefinements != null && it.subRefinements.size > 0) {
                     dataList.add(RefinementSelectableItem(it, RefinementSelectableItem.ViewType.OPTIONS))
                 } else {
                     dataList.add(RefinementSelectableItem(it, if (it.multiSelect) RefinementSelectableItem.ViewType.MULTI_SELECTOR else RefinementSelectableItem.ViewType.SINGLE_SELECTOR))
                 }
 
-            }
-        } else if (refinementNavigation.refinementCrumbs != null && refinementNavigation.refinementCrumbs.size > 0) {
-            refinementNavigation.refinementCrumbs.forEach {
-                var refinementSelectableItem = RefinementSelectableItem(it, if (it.multiSelect) RefinementSelectableItem.ViewType.MULTI_SELECTOR else RefinementSelectableItem.ViewType.SINGLE_SELECTOR)
-                refinementSelectableItem.isSelected = true
-                dataList.add(refinementSelectableItem)
             }
         }
         return dataList
@@ -114,27 +121,31 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     }
 
     private fun getNavigationState(): String {
-        var navigationState = ""
-        var isRefinementCrumb = false
         dataList.forEach {
-            if (it.type == RefinementSelectableItem.ViewType.SINGLE_SELECTOR || it.type == RefinementSelectableItem.ViewType.MULTI_SELECTOR) {
-                var item = it.item
+            var item = it.item
+            if (it.type == RefinementSelectableItem.ViewType.MULTI_SELECTOR) {
                 if (item is Refinement && it.isSelected) {
-                    if (TextUtils.isEmpty(navigationState))
-                        navigationState = navigationState.plus(item.navigationState)
+                    if (TextUtils.isEmpty(refinedNavigateState))
+                        refinedNavigateState = refinedNavigateState.plus(item.navigationState)
                     else
-                        navigationState = navigationState.plus("Z").plus(item.navigationState.substringAfterLast("Z"))
+                        refinedNavigateState = refinedNavigateState.plus("Z").plus(item.navigationState.substringAfterLast("Z"))
                 } else if (item is RefinementCrumb && !it.isSelected) {
-                    isRefinementCrumb = true
+                    refinedNavigateState = refinedNavigateState.replace(getNavigationStateForRefinementCrumb(item.navigationState), "")
+                }
+            } else if (it.type == RefinementSelectableItem.ViewType.SINGLE_SELECTOR) {
+                if (item is Refinement && it.isSelected) {
+                    refinedNavigateState = item.navigationState
+                } else if (item is RefinementCrumb && !it.isSelected) {
                     refinedNavigateState = refinedNavigateState.replace(getNavigationStateForRefinementCrumb(item.navigationState), "")
                 }
             }
         }
-        if (isRefinementCrumb) return refinedNavigateState else return navigationState
+        return refinedNavigateState
     }
 
     override fun onSelectionChanged() {
         clearRefinement?.isEnabled = isAnyRefinementSelected()
+        this.updateSeeResultButtonText()
     }
 
     private fun isAnyRefinementSelected(): Boolean {
@@ -146,13 +157,32 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     }
 
     private fun getNavigationStateForRefinementCrumb(navigationState: String): String {
-        val list = navigationState.split("Z")
-        var navigation = refinedNavigateState
+        val list = navigationState.substringAfter("Z").split("Z")
+        var navigation = refinedNavigateState.substringAfter("Z")
         list.forEachIndexed { index, it ->
             if (index == 0) navigation = navigation.replace(it, "") else navigation = navigation.replace("Z".plus(it), "")
         }
         return navigation
     }
 
+    private fun buildSeeResultButtonText(): String {
+        var selectedItems = arrayListOf<String>()
+        selectedItems.clear()
+        dataList.forEach {
+            var item = it.item
+            if (item is Refinement && it.isSelected) {
+                selectedItems.add(item.label)
+            } else if (item is RefinementCrumb && it.isSelected) {
+                selectedItems.add(item.label)
+            }
+
+        }
+
+        return getString(R.string.refinement_see_result_button_text) + if (selectedItems.size > 0) selectedItems.joinToString(",") else refinementNavigation?.displayName
+    }
+
+    private fun updateSeeResultButtonText() {
+        seeResultCount.text = buildSeeResultButtonText()
+    }
 
 }

@@ -98,12 +98,12 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/msgTitle"
-                                android:layout_marginLeft="17dp"
+                                android:layout_marginStart="17dp"
                                 android:layout_marginTop="8dp"
-                                android:lineSpacingExtra="4dp"
                                 android:layout_toEndOf="@+id/messagingwlogo"
+                                android:lineSpacingExtra="8dp"
                                 android:text="With Wrewards you can save up to 20% instantly on thousands of items through out the store, from food to clothing to homeware to beauty and more. "
-                                android:textColor="@color/black"
+                                android:textColor="@color/in_app_msg_color_desc"
                                 android:textSize="15sp"
                                 app:WTextView_font="myriadpro_regular" />
                         </RelativeLayout>

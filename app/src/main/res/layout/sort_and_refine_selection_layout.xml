@@ -9,18 +9,32 @@
     </data>
 
     <LinearLayout
+        android:id="@+id/parentLayout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/email_height_50"
-        android:id="@+id/parentLayout"
         android:background="@color/white"
-        android:visibility="gone"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:visibility="gone">
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
+        <RelativeLayout
             android:id="@+id/sortProducts"
-            style="@style/sort_and_filter_selection_text_style"
-            android:text="@string/sort_by" />
-        />
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:padding="@dimen/sixteen_dp">
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                style="@style/sort_and_filter_selection_text_style"
+                android:text="@string/sort_by" />
+            />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/path_3" />
+        </RelativeLayout>
 
         <View
             android:layout_width="1dp"
@@ -29,9 +43,25 @@
             android:layout_marginTop="8dp"
             android:background="#e4e4e4" />
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
+        <RelativeLayout
             android:id="@+id/refineProducts"
-            style="@style/sort_and_filter_selection_text_style"
-            android:text="@string/refine" />
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:padding="@dimen/sixteen_dp">
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/refinementText"
+                style="@style/sort_and_filter_selection_text_style"
+                android:text="@string/refine" />
+
+            <ImageView
+                android:id="@+id/refineDownArrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/refinement_down_arrow_selector" />
+        </RelativeLayout>
     </LinearLayout>
 </layout>

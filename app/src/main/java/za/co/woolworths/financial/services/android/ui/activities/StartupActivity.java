@@ -24,6 +24,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.OnResultListener;
 import za.co.woolworths.financial.services.android.contracts.RootActivityInterface;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
@@ -362,6 +363,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 
 	protected void onResume() {
 		super.onResume();
+		Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.STARTUP);
 		NotificationUtils.clearNotifications(StartupActivity.this);
 	}
 

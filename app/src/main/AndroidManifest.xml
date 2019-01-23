@@ -176,15 +176,13 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.SearchStoresActivity"
             android:screenOrientation="portrait"
             android:theme="@style/StoreSearch" />
+
         <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.LoanWithdrawalActivity"
+            android:name="za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/LoanWithdrawal"
+            android:theme="@style/BalanceProtectionInsuranceStyle"
             android:windowSoftInputMode="adjustResize|stateAlwaysVisible" />
-        <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.LoanWithdrawalSuccessActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/LoanWithdrawal" />
+
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.MessagesActivity"
             android:screenOrientation="portrait"
@@ -193,10 +191,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity" />
         </activity>
-        <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.LoanWithdrawalConfirmActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/OneAppBaseTheme" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity"
             android:screenOrientation="portrait"
@@ -231,10 +225,6 @@
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow"
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
-        <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.UserDetailActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/FaqStyle" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.OnBoardingActivity"
             android:screenOrientation="portrait"
@@ -332,6 +322,10 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.BiometricsWalkthrough"
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
         <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/FaqStyle" />
+        <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.HowToPayActivity"
             android:screenOrientation="portrait"
             android:theme="@style/FaqStyle" />
@@ -339,8 +333,7 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.DebitOrderActivity"
             android:screenOrientation="portrait"
             android:theme="@style/DebitOrder"></activity>
-        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.PortraitAppCompatActivity">
-        </activity>
+        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.PortraitAppCompatActivity"></activity>
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.product.refine.ProductsRefineActivity"
             android:screenOrientation="portrait"
@@ -351,10 +344,10 @@
             android:theme="@style/BalanceProtectionInsuranceStyle" />
 
         <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.maintenance.RuntimeExceptionActivity"
-            android:screenOrientation="portrait"
+            android:name="za.co.woolworths.financial.services.android.ui.activities.maintenance.MaintenanceMessageActivity"
             android:launchMode="singleTask"
-            android:theme="@style/RuntimeExceptionActivityStyle"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/RuntimeExceptionActivityStyle" />
 
     </application>
 

@@ -31,6 +31,7 @@ import com.google.gson.Gson;
 import java.util.List;
 import java.util.Random;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Bank;
 import za.co.woolworths.financial.services.android.models.dto.BankAccountType;
@@ -322,6 +323,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 		rclSelectYourBank.setLayoutManager(mLayoutManager);
 		rclSelectYourBank.setAdapter(documentAdapter);
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.CLI_POI_BANKS);
 	}
 
 	private void loadBankAccountTypesView(List<BankAccountType> accountTypes) {
@@ -330,7 +332,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 		rclAccountType.setLayoutManager(mLayoutManager);
 		rclAccountType.setAdapter(accountTypeAdapter);
-
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.CLI_POI_BANKS_ACCOUNT_TYPE);
 	}
 
 	private void loadPOIDocumentsSubmitTypeView() {
@@ -514,6 +516,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				ObjectAnimator.ofInt(nestedScrollView, "scrollY", bankTypeConfirmationLayout.getTop()).setDuration(ANIM_DURATION).start();
 			}
 		});
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.CLI_POI_BANKS_AUTHORIZATION);
 	}
 
 	public void scrollUpDocumentSubmitTypeLayout() {
@@ -546,6 +549,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			}
 		});
 		setButtonSubmit();
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.CLI_POI_BANK_ACC_NUMBER);
 	}
 
 	public void invalidateBankTypeSelection() {

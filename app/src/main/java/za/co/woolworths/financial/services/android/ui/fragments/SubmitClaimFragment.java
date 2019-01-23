@@ -13,9 +13,11 @@ import com.awfs.coordination.R;
 
 import java.util.ArrayList;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.dto.BalanceInsurance;
 import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.BalanceInsuranceAdapter;
+import za.co.woolworths.financial.services.android.util.Utils;
 
 public class SubmitClaimFragment extends Fragment implements BalanceInsuranceAdapter.OnItemClick {
 
@@ -104,6 +106,7 @@ public class SubmitClaimFragment extends Fragment implements BalanceInsuranceAda
 	@Override
 	public void onResume() {
 		super.onResume();
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.BPI_CLAIM_REASONS);
 		((BalanceProtectionActivity) getActivity()).setTitle(getActivity().getString(R.string.select_claim_reason));
 	}
 }

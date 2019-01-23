@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.ui.adapters.CLIIncreaseLimitInfoPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -55,6 +56,12 @@ public class FindOutMoreActivity extends AppCompatActivity implements SelectedIt
 		pager.addOnPageChangeListener(this);
 		btnIncreaseMyLimit.setOnClickListener(this);
 		setUiPageViewController();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.CLI_WALKTHROUGH);
 	}
 
 	private void setUiPageViewController() {

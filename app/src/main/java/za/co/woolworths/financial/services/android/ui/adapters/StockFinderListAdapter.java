@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.adapters;
 
 import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -52,8 +53,8 @@ public class StockFinderListAdapter extends RecyclerView.Adapter<StockFinderList
 	@Override
 	public void onBindViewHolder(SearchViewHolder holder, int position) {
 		StoreDetails storeDetails = storeDetailsList.get(position);
-		holder.storeName.setText(storeDetails.name);
-		holder.storeAddress.setText(storeDetails.address);
+		holder.storeName.setText(TextUtils.isEmpty(storeDetails.name) ? "" : storeDetails.name);
+		holder.storeAddress.setText(TextUtils.isEmpty(storeDetails.address) ? "" : storeDetails.address);
 		holder.storeDistance.setText(WFormatter.formatMeter(storeDetails.distance));
 
 		Utils.setRagRating(holder.storeDistance.getContext(), holder.offerings, storeDetails.status);

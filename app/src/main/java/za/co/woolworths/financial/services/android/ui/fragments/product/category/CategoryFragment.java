@@ -22,14 +22,12 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-
 import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.ProductSearchFragmentBinding;
 import com.squareup.picasso.Picasso;
-
 import java.util.List;
-
+import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.RootCategory;
@@ -37,6 +35,7 @@ import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWind
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.barcode.BarcodeFragment;
+import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
@@ -45,7 +44,7 @@ import za.co.woolworths.financial.services.android.util.ScrollState;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding, CategoryViewModel>
-		implements CategoryNavigator, ObservableScrollViewCallbacks, View.OnClickListener {
+		implements CategoryNavigator, ObservableScrollViewCallbacks, View.OnClickListener, WMaterialShowcaseView.IWalkthroughActionListener {
 
 	private static final float HIDE_ALPHA_VALUE = 0;
 	private static final float SHOW_ALPHA_VALUE = 1;
@@ -57,6 +56,7 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 	private List<RootCategory> mRootCategories;
 	private Toolbar mProductToolbar;
 	private CategoryViewModel mViewModel;
+	WMaterialShowcaseView wMaterialShowcaseView;
 
 	public CategoryFragment() {
 		setRetainInstance(true);
@@ -112,7 +112,16 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 			getViewDataBinding().imBurgerButtonPressed.setOnClickListener(this);
 			getViewDataBinding().textTBProductSearch.setOnClickListener(this);
 			getViewDataBinding().imTBBarcodeScanner.setOnClickListener(this);
+			if (!(!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.barcodeScan))
+				setProductSearchViewState(false);
+
 		}
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.SHOP_MAIN_CATEGORIES);
 	}
 
 	private void setUpConnectionError() {
@@ -329,6 +338,9 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 					fadeOutToolbar(R.color.recent_search_bg);
 					showBackNavigationIcon(false);
 					onRetryConnectionClicked();
+					if (getBottomNavigationActivity().getCurrentFragment() instanceof CategoryFragment) {
+						showFeatureWalkthrough();
+					}
 				}
 			}
 		}, 10);
@@ -370,4 +382,37 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 		ObjectAnimator anim = ObjectAnimator.ofInt(getViewDataBinding().mNestedScrollview, "scrollY", getViewDataBinding().mNestedScrollview.getScrollY(), 0);
 		anim.setDuration(500).start();
 	}
+
+	private void showFeatureWalkthrough() {
+		if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.barcodeScan)
+			return;
+
+		getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.BARCODE_SCAN)
+				.setTarget(getViewDataBinding().llBarcodeScanner)
+				.setTitle(R.string.walkthrough_barcode_title)
+				.setDescription(R.string.walkthrough_barcode_desc)
+				.setActionText(R.string.scan_your_first_product)
+				.setImage(R.drawable.tips_tricks_ic_scan)
+				.setAction(this)
+				.setArrowPosition(WMaterialShowcaseView.Arrow.TOP_RIGHT)
+				.setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
+		getBottomNavigationActivity().walkThroughPromtView.show(getActivity());
+
+	}
+
+	@Override
+	public void onWalkthroughActionButtonClick() {
+		setProductSearchViewState(true);
+		checkLocationPermission(getBottomNavigator(), getBottomNavigator().getPermissionType(Manifest.permission.CAMERA), 2);
+	}
+
+	@Override
+	public void onPromptDismiss() {
+		setProductSearchViewState(true);
+	}
+
+	public void setProductSearchViewState(boolean viewState){
+		getViewDataBinding().textProductSearch.setEnabled(viewState);
+	}
+
 }

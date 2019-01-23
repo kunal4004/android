@@ -18,11 +18,13 @@ import java.util.Map;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
+import retrofit.client.Response;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator;
+import za.co.woolworths.financial.services.android.ui.activities.maintenance.MaintenanceMessageViewController;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
 import za.co.woolworths.financial.services.android.ui.views.ProductProgressDialogFrag;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -196,6 +198,13 @@ public class WebAppInterface {
 
 					@Override
 					public void failure(RetrofitError error) {
+						//TODO:: replace getProductDetail asynchronous method with HttpAsyncTask
+						Response response = error.getResponse();
+						if (response.getStatus() == 404 || response.getStatus() == 503) {
+							MaintenanceMessageViewController maintenanceMessageViewController = new MaintenanceMessageViewController();
+							maintenanceMessageViewController.presentModal();
+							return;
+						}
 						dismissFragmentDialog();
 						if (error.toString().contains("Unable to resolve host"))
 							mErrorHandlerView.showToast();
