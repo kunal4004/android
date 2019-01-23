@@ -765,6 +765,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 							CartResponse cartResponse = convertResponseToCartResponseObject(shoppingCartResponse);
 							updateCart(cartResponse, commerceItem);
 							mToggleItemRemoved.onRemoveSuccess();
+							QueryBadgeCounter.getInstance().setCartCount(0, INDEX_CART);
 							break;
 						default:
 							mToggleItemRemoved.onRemoveItem(false);
