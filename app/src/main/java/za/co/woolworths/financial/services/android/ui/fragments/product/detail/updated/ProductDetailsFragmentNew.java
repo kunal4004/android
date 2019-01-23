@@ -137,6 +137,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	private OtherSkus otherSKUForFindInStore;
 	CircleIndicator circleindicator;
 	private final int ADD_TO_SHOPPING_LIST_REQUEST_CODE = 179;
+	private final int SET_DELIVERY_LOCATION_REQUEST_CODE = 180;
 	private ToastUtils mToastUtils;
     private FuseLocationAPISingleton mFuseLocationAPISingleton;
 
@@ -610,6 +611,20 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	}
 
 	@Override
+	public void requestDeliveryLocation(String requestMessage) {
+		enableAddToCartButton(false);
+		enableFindInStoreButton(false);
+		if (isAdded())
+			Utils.displayValidationMessageForResult(this,
+					getActivity(),
+					CustomPopUpWindow.MODAL_LAYOUT.ERROR,
+					null,
+					requestMessage,
+					getResources().getString(R.string.set_delivery_location_button),
+					SET_DELIVERY_LOCATION_REQUEST_CODE);
+	}
+
+	@Override
 	public void setProductCode(String productCode) {
 		try {
 			getViewDataBinding().productCode.setVisibility(View.VISIBLE);
@@ -672,7 +687,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 			if (cartSummaryList.get(0) != null) {
 				CartSummary cartSummary = cartSummaryList.get(0);
 				if (TextUtils.isEmpty(cartSummary.suburbId)) {
-					startActivityToSelectDeliveryLocation();
+					startActivityToSelectDeliveryLocation(true);
 				} else {
 					// show popup to confirm location
 					this.confirmDeliveryLocation();
@@ -681,10 +696,14 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		}
 	}
 
-	private void startActivityToSelectDeliveryLocation() {
+	private void startActivityToSelectDeliveryLocation(boolean addItemToCartOnFinished) {
 		if (getActivity() != null) {
 			Intent openDeliveryLocationSelectionActivity = new Intent(this.getContext(), DeliveryLocationSelectionActivity.class);
-			startActivityForResult(openDeliveryLocationSelectionActivity, REQUEST_SUBURB_CHANGE);
+			if(addItemToCartOnFinished) {
+				startActivityForResult(openDeliveryLocationSelectionActivity, REQUEST_SUBURB_CHANGE);
+			} else {
+				startActivity(openDeliveryLocationSelectionActivity);
+			}
 			getActivity().overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
 		}
 	}
@@ -1035,6 +1054,9 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 					}
 					showToastMessage(getActivity(), listSize);
 					break;
+				case SET_DELIVERY_LOCATION_REQUEST_CODE:
+					startActivityToSelectDeliveryLocation(false);
+					break;
 			}
 		}
 	}
@@ -1073,7 +1095,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 			@Override
 			public void onClick(View view) {
 				confirmDeliveryLocationDialog.dismiss();
-				startActivityToSelectDeliveryLocation();
+				startActivityToSelectDeliveryLocation(true);
 			}
 		});
 		confirmDeliveryLocationDialog.setCancelable(false);
