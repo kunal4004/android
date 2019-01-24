@@ -141,16 +141,14 @@ public class CheckOutFragment extends Fragment {
 			@Override
 			public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
 				super.onReceivedError(view, request, error);
-				mErrorHandlerView.webViewBlankPage(view);
-				mErrorHandlerView.networkFailureHandler(error.toString());
-			}
+                handleNetworConnectionError(view, error.getErrorCode(), error.toString());
+            }
 
 			@SuppressWarnings("deprecation")
 			@Override
 			public void onReceivedError(WebView webView, int errorCode, String description, String failingUrl) {
-				mErrorHandlerView.webViewBlankPage(webView);
-				mErrorHandlerView.networkFailureHandler(description);
-			}
+                handleNetworConnectionError(webView, errorCode, description);
+            }
 
 			@Override
 			public void onLoadResource(WebView view, String url) {
@@ -189,7 +187,19 @@ public class CheckOutFragment extends Fragment {
 		});
 	}
 
-	private void finishCartActivity() {
+    private void handleNetworConnectionError(WebView view, int errorCode, String s) {
+        switch (errorCode) {
+            case WebViewClient.ERROR_CONNECT:
+            case WebViewClient.ERROR_HOST_LOOKUP:
+                mErrorHandlerView.webViewBlankPage(view);
+                mErrorHandlerView.networkFailureHandler(s);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void finishCartActivity() {
 		Activity activity = getActivity();
 		if (activity != null) {
 			if (closeOnNextPage == QueryString.COMPLETE) {
