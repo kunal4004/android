@@ -110,7 +110,7 @@
                         <LinearLayout
                             android:id="@+id/llProductInfo"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:layout_marginLeft="26dp"
                             android:orientation="vertical">
 
@@ -129,7 +129,7 @@
                             <RelativeLayout
                                 android:id="@+id/llQuantityContainer"
                                 android:layout_width="match_parent"
-                                android:layout_height="match_parent">
+                                android:layout_height="wrap_content">
 
                                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                                     android:id="@+id/tvProductAvailability"
@@ -181,9 +181,9 @@
                                 <LinearLayout
                                     android:id="@+id/llPriceLayout"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_alignParentBottom="true"
+                                    android:layout_height="match_parent"
                                     android:layout_alignParentEnd="true"
+                                    android:gravity="bottom"
                                     android:orientation="vertical">
 
                                     <za.co.woolworths.financial.services.android.ui.views.WTextView
