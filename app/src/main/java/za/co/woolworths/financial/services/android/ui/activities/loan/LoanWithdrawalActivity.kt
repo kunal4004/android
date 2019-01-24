@@ -91,7 +91,7 @@ class LoanWithdrawalActivity : AppCompatActivity(), DialogListener, NetworkChang
         finishActivity()
     }
 
-    override fun onDismissListener() {
+    override fun cancel() {
         (findFragmentByTag(LoanWithdrawalFragment::class.java.simpleName) as LoanWithdrawalFragment?)?.onResume()
     }
 

@@ -16,7 +16,7 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 public class SingleButtonDialogFragment extends ActionSheetDialogFragment implements View.OnClickListener {
 
     public interface DialogListener {
-        void onDismissListener();
+        void cancel();
     }
 
     private DialogListener dialogListener;
@@ -71,17 +71,17 @@ public class SingleButtonDialogFragment extends ActionSheetDialogFragment implem
         switch (view.getId()) {
             case R.id.rootActionSheetConstraint:
             case R.id.btnCancel:
-                onCancelButtonClicked();
+                navigateBackToActivity();
                 break;
             default:
                 break;
         }
     }
 
-    private void onCancelButtonClicked() {
-        onDialogBackPressed(false);
+    private void navigateBackToActivity() {
+        shouldAnimateViewOnCancel(false);
         if (dialogListener != null)
-            dialogListener.onDismissListener();
+            dialogListener.cancel();
     }
 
 
@@ -93,7 +93,7 @@ public class SingleButtonDialogFragment extends ActionSheetDialogFragment implem
         return new Dialog(getActivity(), getTheme()) {
             @Override
             public void onBackPressed() {
-                onCancelButtonClicked();
+                navigateBackToActivity();
             }
         };
     }
