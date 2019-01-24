@@ -1113,17 +1113,17 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
         if ((activity == null) || (mFuseLocationAPISingleton == null)) return;
 
         this.enableFindInStoreButton(true);
-        mFuseLocationAPISingleton.addOnLocationCompleteListener(new FuseLocationAPISingleton.OnLocationChangeCompleteListener() {
+        mFuseLocationAPISingleton.addOnLocationCompleteListener(new FuseLocationAPISingleton.LocationChangeListener() {
 
             @Override
-            public void onLocationChanged(@NotNull Location location) {
+            public void updateUserLocation(@NotNull Location location) {
                 Utils.saveLastLocation(location, getContext());
                 stopLocationUpdate();
                 executeLocationItemTask();
             }
 
             @Override
-            public void onLocationMethodPopUpDisplay() {
+            public void locationMethodPopUpDialog() {
                 dismissFindInStoreProgress();
             }
         });

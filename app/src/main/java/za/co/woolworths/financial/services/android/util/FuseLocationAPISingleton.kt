@@ -7,7 +7,6 @@ import android.location.Location
 import android.os.Looper
 import android.util.Log
 import android.widget.Toast
-import com.google.android.gms.location.*
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.common.api.ApiException
@@ -15,9 +14,9 @@ import com.google.android.gms.common.api.ResolvableApiException
 
 object FuseLocationAPISingleton {
 
-    interface OnLocationChangeCompleteListener {
-        fun onLocationChanged(location: Location)
-        fun onLocationMethodPopUpDisplay()
+    interface LocationChangeListener {
+        fun updateUserLocation(location: Location)
+        fun locationMethodPopUpDialog()
     }
 
     /**
@@ -65,10 +64,10 @@ object FuseLocationAPISingleton {
      */
     private const val FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = UPDATE_INTERVAL_IN_MILLISECONDS / 2
 
-    private lateinit var mOnLocationChangeCompletedListener: OnLocationChangeCompleteListener
+    private lateinit var mLocationCompletedChangeListener: LocationChangeListener
 
-    fun addOnLocationCompleteListener(onLocationChangeCompleteListener: OnLocationChangeCompleteListener) {
-        this.mOnLocationChangeCompletedListener = onLocationChangeCompleteListener
+    fun addOnLocationCompleteListener(LocationChangeListener: LocationChangeListener) {
+        this.mLocationCompletedChangeListener = LocationChangeListener
         val mWoolworthInstance: WoolworthsApplication = WoolworthsApplication.getInstance()
                 ?: return
 
@@ -95,7 +94,7 @@ object FuseLocationAPISingleton {
                         LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> {
                             Log.i(TAG, "Location settings are not satisfied. Attempting to upgrade " + "location settings ")
                             try {
-                                mOnLocationChangeCompletedListener.onLocationMethodPopUpDisplay()
+                                mLocationCompletedChangeListener.locationMethodPopUpDialog()
                                 // Show the dialog by calling startResolutionForResult(), and check the
                                 // result in onActivityResult().
                                 val rae = e as ResolvableApiException
@@ -122,7 +121,7 @@ object FuseLocationAPISingleton {
         mLocationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult?) {
                 super.onLocationResult(locationResult)
-                mOnLocationChangeCompletedListener.onLocationChanged(locationResult!!.lastLocation)
+                mLocationCompletedChangeListener.updateUserLocation(locationResult!!.lastLocation)
             }
         }
     }

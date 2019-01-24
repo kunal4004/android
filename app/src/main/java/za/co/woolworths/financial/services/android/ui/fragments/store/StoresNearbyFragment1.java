@@ -76,8 +76,6 @@ import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WCustomViewPager;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
-import static android.app.Activity.RESULT_CANCELED;
-
 
 public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallback, ViewPager.OnPageChangeListener, GoogleMap.OnMarkerClickListener {
 
@@ -707,14 +705,14 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
                         Manifest.permission.ACCESS_FINE_LOCATION)
                         == PackageManager.PERMISSION_GRANTED) {
                     onLocationLoadStart();
-                    mFuseLocationAPISingleton.addOnLocationCompleteListener(new FuseLocationAPISingleton.OnLocationChangeCompleteListener() {
+                    mFuseLocationAPISingleton.addOnLocationCompleteListener(new FuseLocationAPISingleton.LocationChangeListener() {
 						@Override
-                        public void onLocationChanged(@NotNull Location location) {
+                        public void updateUserLocation(@NotNull Location location) {
                             updateMap(location);
                         }
 
 						@Override
-						public void onLocationMethodPopUpDisplay() {
+						public void locationMethodPopUpDialog() {
 							hideProgressBar();
 						}
                     });
