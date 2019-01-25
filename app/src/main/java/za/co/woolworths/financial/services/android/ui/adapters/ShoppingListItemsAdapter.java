@@ -156,12 +156,14 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 								holder.tvColorSize.setVisibility(View.GONE);
 								holder.tvProductAvailability.setVisibility(View.VISIBLE);
 								holder.price.setAlpha(0f);
-								Utils.setBackgroundColor(holder.tvProductAvailability, R.drawable.round_amber_corner, R.string.out_of_stock);
+                                holder.price.setVisibility(View.GONE);
+                                Utils.setBackgroundColor(holder.tvProductAvailability, R.drawable.round_amber_corner, R.string.out_of_stock);
 							} else {
 								holder.llQuantity.setVisibility((shoppingListItem.quantityInStock == 0) ? View.GONE : View.VISIBLE);
 								holder.tvProductAvailability.setVisibility((shoppingListItem.quantityInStock == 0) ? View.VISIBLE : View.GONE);
 								holder.select.setVisibility((shoppingListItem.quantityInStock == 0) ? View.GONE : View.VISIBLE);
-								holder.price.setAlpha(1f);
+                                holder.price.setVisibility((shoppingListItem.quantityInStock == 0) ? View.GONE : View.VISIBLE);
+                                holder.price.setAlpha(1f);
 								holder.tvColorSize.setVisibility(View.VISIBLE);
 								Utils.setBackgroundColor(holder.tvProductAvailability, R.drawable.round_amber_corner, R.string.out_of_stock);
 							}

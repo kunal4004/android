@@ -281,7 +281,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 
 			if (mOpenShoppingListItem.quantityInStock == 0) {
 				mToastUtils.setActivity(getActivity());
-				mToastUtils.setView(getBottomNavigator().getBottomNavigationById());
 				mToastUtils.setGravity(Gravity.BOTTOM);
 				mToastUtils.setCurrentState(TAG);
 				mToastUtils.setPixel(0);
