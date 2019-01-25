@@ -705,14 +705,14 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
                         Manifest.permission.ACCESS_FINE_LOCATION)
                         == PackageManager.PERMISSION_GRANTED) {
                     onLocationLoadStart();
-                    mFuseLocationAPISingleton.addOnLocationCompleteListener(new FuseLocationAPISingleton.LocationChangeListener() {
+                    mFuseLocationAPISingleton.addLocationChangeListener(new FuseLocationAPISingleton.ILocationProvider() {
 						@Override
-                        public void updateUserLocation(@NotNull Location location) {
+                        public void onLocationChange(@NotNull Location location) {
                             updateMap(location);
                         }
 
 						@Override
-						public void locationMethodPopUpDialog() {
+						public void onPopUpLocationDialogMethod() {
 							hideProgressBar();
 						}
                     });
