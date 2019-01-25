@@ -157,7 +157,8 @@ public class CheckOutFragment extends Fragment {
 
 			@Override
 			public boolean shouldOverrideUrlLoading(WebView view, String url) {
-				return super.shouldOverrideUrlLoading(view, url);
+				view.loadUrl(url);
+				return true;
 			}
 
 			@Override
