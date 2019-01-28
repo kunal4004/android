@@ -730,6 +730,9 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	@Override
 	public void onResume() {
 		super.onResume();
+		if (!TextUtils.isEmpty(listName)){
+			getBottomNavigator().setTitle(listName);
+		}
 		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.SHOPPING_LIST_ITEMS);
 		Activity activity = getActivity();
 		if (activity != null) {
