@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.util
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.IntentSender
-import android.location.Location
 import android.os.Looper
 import android.util.Log
 import android.widget.Toast
@@ -11,13 +10,9 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
+import za.co.woolworths.financial.services.android.contracts.ILocationProvider
 
 object FuseLocationAPISingleton {
-
-    interface ILocationProvider {
-        fun onLocationChange(location: Location)
-        fun onPopUpLocationDialogMethod()
-    }
 
     /**
      * Constant used in the location settings dialog.
@@ -64,10 +59,10 @@ object FuseLocationAPISingleton {
      */
     private const val FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = UPDATE_INTERVAL_IN_MILLISECONDS / 2
 
-    private lateinit var mILocationCompletedProvider: ILocationProvider
+    private lateinit var mLocationCompletedProvider: ILocationProvider
 
     fun addLocationChangeListener(ILocationProvider: ILocationProvider) {
-        this.mILocationCompletedProvider = ILocationProvider
+        this.mLocationCompletedProvider = ILocationProvider
         val mWoolworthInstance: WoolworthsApplication = WoolworthsApplication.getInstance()
                 ?: return
 
@@ -94,7 +89,7 @@ object FuseLocationAPISingleton {
                         LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> {
                             Log.i(TAG, "Location settings are not satisfied. Attempting to upgrade " + "location settings ")
                             try {
-                                mILocationCompletedProvider.onPopUpLocationDialogMethod()
+                                mLocationCompletedProvider.onPopUpLocationDialogMethod()
                                 // Show the dialog by calling startResolutionForResult(), and check the
                                 // result in onActivityResult().
                                 val rae = e as ResolvableApiException
@@ -121,7 +116,7 @@ object FuseLocationAPISingleton {
         mLocationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult?) {
                 super.onLocationResult(locationResult)
-                mILocationCompletedProvider.onLocationChange(locationResult!!.lastLocation)
+                mLocationCompletedProvider.onLocationChange(locationResult!!.lastLocation)
             }
         }
     }

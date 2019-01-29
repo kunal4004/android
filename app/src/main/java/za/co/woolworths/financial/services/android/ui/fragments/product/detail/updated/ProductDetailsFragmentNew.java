@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import me.relex.circleindicator.CircleIndicator;
+import za.co.woolworths.financial.services.android.contracts.ILocationProvider;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -1113,7 +1114,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
         if ((activity == null) || (mFuseLocationAPISingleton == null)) return;
 
         this.enableFindInStoreButton(true);
-        mFuseLocationAPISingleton.addLocationChangeListener(new FuseLocationAPISingleton.ILocationProvider() {
+        mFuseLocationAPISingleton.addLocationChangeListener(new ILocationProvider() {
 
             @Override
             public void onLocationChange(@NotNull Location location) {

@@ -56,6 +56,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
+import za.co.woolworths.financial.services.android.contracts.ILocationProvider;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
@@ -705,7 +706,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
                         Manifest.permission.ACCESS_FINE_LOCATION)
                         == PackageManager.PERMISSION_GRANTED) {
                     onLocationLoadStart();
-                    mFuseLocationAPISingleton.addLocationChangeListener(new FuseLocationAPISingleton.ILocationProvider() {
+                    mFuseLocationAPISingleton.addLocationChangeListener(new ILocationProvider() {
 						@Override
                         public void onLocationChange(@NotNull Location location) {
                             updateMap(location);
