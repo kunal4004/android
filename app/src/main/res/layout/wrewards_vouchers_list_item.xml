@@ -9,17 +9,17 @@
               android:paddingRight="10dp"
     >
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="130dp"
+        android:layout_height="match_parent"
         android:orientation="horizontal"
         android:background="@drawable/voucher_shadow"
         >
 
         <LinearLayout
+            android:id="@+id/leftpart"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:id="@+id/leftpart"
             android:orientation="vertical"
             android:padding="16dp"
             android:background="@drawable/voucherspart_left_part"
@@ -59,9 +59,8 @@
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/voucherMessage"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_above="@+id/expireDateLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
                 android:textColor="@color/black"
@@ -71,37 +70,44 @@
                 app:WTextView_font="medium_bold"
                 />
 
-            <LinearLayout
-                android:id="@+id/expireDateLayout"
+            <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/voucherMessage"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentLeft="true"
-                android:layout_marginTop="10dp"
-                android:orientation="horizontal"
-                >
+                android:layout_marginTop="10dp">
 
-                <ImageView
-                    android:layout_width="6dp"
-                    android:layout_height="6dp"
-                    android:layout_gravity="center_vertical"
-                    android:background="@drawable/vouchers_badge"
-                    />
-
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    android:id="@+id/voucherExpireDate"
+                <LinearLayout
+                    android:layout_alignParentBottom="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="5dp"
-                    android:textColor="#80000000"
-                    android:textSize="12sp"
-                    app:WTextView_font="myriadpro_regular"
+                    android:orientation="horizontal"
+                    >
 
-                    />
-            </LinearLayout>
+                    <ImageView
+                        android:layout_width="6dp"
+                        android:layout_height="6dp"
+                        android:layout_gravity="center_vertical"
+                        android:background="@drawable/vouchers_badge"
+                        />
+
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        android:id="@+id/voucherExpireDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="5dp"
+                        android:textColor="#80000000"
+                        android:textSize="12sp"
+                        app:WTextView_font="myriadpro_regular"
+
+                        />
+                </LinearLayout>
+
+            </RelativeLayout>
         </RelativeLayout>
 
-    </RelativeLayout>
+    </LinearLayout>
 
 </LinearLayout>
