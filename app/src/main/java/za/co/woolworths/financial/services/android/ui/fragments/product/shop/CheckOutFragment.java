@@ -141,13 +141,13 @@ public class CheckOutFragment extends Fragment {
 			@Override
 			public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
 				super.onReceivedError(view, request, error);
-                handleNetworConnectionError(view, error.getErrorCode(), error.toString());
+                handleNetworkConnectionError(view, error.getErrorCode(), error.toString());
             }
 
 			@SuppressWarnings("deprecation")
 			@Override
 			public void onReceivedError(WebView webView, int errorCode, String description, String failingUrl) {
-                handleNetworConnectionError(webView, errorCode, description);
+                handleNetworkConnectionError(webView, errorCode, description);
             }
 
 			@Override
@@ -188,7 +188,7 @@ public class CheckOutFragment extends Fragment {
 		});
 	}
 
-    private void handleNetworConnectionError(WebView view, int errorCode, String s) {
+    private void handleNetworkConnectionError(WebView view, int errorCode, String s) {
         switch (errorCode) {
             case WebViewClient.ERROR_CONNECT:
             case WebViewClient.ERROR_HOST_LOOKUP:
