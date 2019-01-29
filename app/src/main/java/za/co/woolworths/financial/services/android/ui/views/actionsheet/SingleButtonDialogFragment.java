@@ -19,7 +19,7 @@ public class SingleButtonDialogFragment extends ActionSheetDialogFragment implem
         void onDialogDismissed();
     }
 
-    private IDialogListener IDialogListener;
+    private IDialogListener iDialogListener;
 
     public static SingleButtonDialogFragment newInstance(String responseDesc) {
         SingleButtonDialogFragment singleButtonDialogFragment = new SingleButtonDialogFragment();
@@ -45,7 +45,7 @@ public class SingleButtonDialogFragment extends ActionSheetDialogFragment implem
 
         Activity activity = getActivity();
         if (activity instanceof IDialogListener) {
-            IDialogListener = (IDialogListener) activity;
+            iDialogListener = (IDialogListener) activity;
         }
 
         Bundle bundleArguments = getArguments();
@@ -80,8 +80,8 @@ public class SingleButtonDialogFragment extends ActionSheetDialogFragment implem
 
     private void navigateBackToActivity() {
         shouldAnimateViewOnCancel(false);
-        if (IDialogListener != null)
-            IDialogListener.onDialogDismissed();
+        if (iDialogListener != null)
+            iDialogListener.onDialogDismissed();
     }
 
 
