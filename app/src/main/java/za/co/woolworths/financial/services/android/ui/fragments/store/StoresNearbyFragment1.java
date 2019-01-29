@@ -78,7 +78,7 @@ import za.co.woolworths.financial.services.android.util.WCustomViewPager;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 
-public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallback, ViewPager.OnPageChangeListener, GoogleMap.OnMarkerClickListener {
+public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallback, ViewPager.OnPageChangeListener, GoogleMap.OnMarkerClickListener, ILocationProvider {
 
 	public static final int REQUEST_CALL = 1;
 	WCustomViewPager pager;
@@ -706,17 +706,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
                         Manifest.permission.ACCESS_FINE_LOCATION)
                         == PackageManager.PERMISSION_GRANTED) {
                     onLocationLoadStart();
-                    mFuseLocationAPISingleton.addLocationChangeListener(new ILocationProvider() {
-						@Override
-                        public void onLocationChange(@NotNull Location location) {
-                            updateMap(location);
-                        }
-
-						@Override
-						public void onPopUpLocationDialogMethod() {
-							hideProgressBar();
-						}
-                    });
+                    mFuseLocationAPISingleton.addLocationChangeListener(this);
                     mFuseLocationAPISingleton.startLocationUpdate(getActivity());
                 }
             } else {
@@ -894,4 +884,14 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         if (mLayout == null) return false;
         return mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.ANCHORED;
     }
+
+	@Override
+	public void onLocationChange(@NotNull Location location) {
+		updateMap(location);
+	}
+
+	@Override
+	public void onPopUpLocationDialogMethod() {
+		hideProgressBar();
+	}
 }

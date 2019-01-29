@@ -112,7 +112,7 @@ import static za.co.woolworths.financial.services.android.ui.fragments.product.s
 /**
  * TODO:: ProductDetailFragment class must be deleted. It is still being used in other section of the app.
  */
-public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding, ProductDetailViewModel> implements ProductDetailNavigator, ProductViewPagerAdapter.MultipleImageInterface, View.OnClickListener, NetworkChangeListener, ToastUtils.ToastInterface {
+public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding, ProductDetailViewModel> implements ProductDetailNavigator, ProductViewPagerAdapter.MultipleImageInterface, View.OnClickListener, NetworkChangeListener, ToastUtils.ToastInterface, ILocationProvider {
 
 	public static final int INDEX_STORE_FINDER = 1;
 	public static final int INDEX_ADD_TO_CART = 2;
@@ -962,19 +962,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
     @Override
     public void startLocationUpdates() {
         showFindInStoreProgress();
-        mFuseLocationAPISingleton.addLocationChangeListener(new ILocationProvider() {
-			@Override
-            public void onLocationChange(@NotNull Location location) {
-                stopLocationUpdate();
-                Utils.saveLastLocation(location, getContext());
-                executeLocationItemTask();
-            }
-			@Override
-			public void onPopUpLocationDialogMethod() {
-				dismissFindInStoreProgress();
-			}
-
-		});
+        mFuseLocationAPISingleton.addLocationChangeListener(this);
         mFuseLocationAPISingleton.startLocationUpdate(getActivity());
     }
 
@@ -1873,6 +1861,18 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 	public String getFulFillmentType() {
 		return TextUtils.isEmpty(getViewModel().getProduct().fulfillmentType) ? null : getViewModel().getProduct().fulfillmentType;
+	}
+
+	@Override
+	public void onLocationChange(@NotNull Location location) {
+		stopLocationUpdate();
+		Utils.saveLastLocation(location, getContext());
+		executeLocationItemTask();
+	}
+
+	@Override
+	public void onPopUpLocationDialogMethod() {
+		dismissFindInStoreProgress();
 	}
 }
 

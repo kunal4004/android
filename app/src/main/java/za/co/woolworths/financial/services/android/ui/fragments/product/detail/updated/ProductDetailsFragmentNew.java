@@ -88,7 +88,7 @@ import static android.app.Activity.RESULT_OK;
  * Created by W7099877 on 2018/07/14.
  */
 
-public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragmentNewBinding, ProductDetailsViewModelNew> implements ProductDetailNavigatorNew, ProductViewPagerAdapter.MultipleImageInterface, View.OnClickListener, ProductColorPickerAdapter.OnItemSelection, ProductSizePickerAdapter.OnSizeSelection, AvailableSizePickerAdapter.OnAvailableSizeSelection, PermissionResultCallback, ToastUtils.ToastInterface, WMaterialShowcaseView.IWalkthroughActionListener {
+public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragmentNewBinding, ProductDetailsViewModelNew> implements ProductDetailNavigatorNew, ProductViewPagerAdapter.MultipleImageInterface, View.OnClickListener, ProductColorPickerAdapter.OnItemSelection, ProductSizePickerAdapter.OnSizeSelection, AvailableSizePickerAdapter.OnAvailableSizeSelection, PermissionResultCallback, ToastUtils.ToastInterface, WMaterialShowcaseView.IWalkthroughActionListener, ILocationProvider {
 	public ProductDetailsViewModelNew productDetailsViewModelNew;
 	private String mSubCategoryTitle;
 	private boolean mFetchFromJson;
@@ -1114,20 +1114,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
         if ((activity == null) || (mFuseLocationAPISingleton == null)) return;
 
         this.enableFindInStoreButton(true);
-        mFuseLocationAPISingleton.addLocationChangeListener(new ILocationProvider() {
-
-            @Override
-            public void onLocationChange(@NotNull Location location) {
-                Utils.saveLastLocation(location, getContext());
-                stopLocationUpdate();
-                executeLocationItemTask();
-            }
-
-            @Override
-            public void onPopUpLocationDialogMethod() {
-                dismissFindInStoreProgress();
-            }
-        });
+        mFuseLocationAPISingleton.addLocationChangeListener(this);
         mFuseLocationAPISingleton.startLocationUpdate(getActivity());
     }
 
@@ -1266,5 +1253,17 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 			txtSaveText.setVisibility(View.VISIBLE);
 			txtSaveText.setText(productDetails.saveText);
 		}
+	}
+
+	@Override
+	public void onLocationChange(@NotNull Location location) {
+		Utils.saveLastLocation(location, getContext());
+		stopLocationUpdate();
+		executeLocationItemTask();
+	}
+
+	@Override
+	public void onPopUpLocationDialogMethod() {
+		dismissFindInStoreProgress();
 	}
 }
