@@ -95,6 +95,7 @@ public abstract class HttpAsyncTask<Params, Progress, Result> extends AsyncTask<
                 try {
                     //check if retrofitError is kind of error object.
                     //if error object, return error description instead of Result's json
+                    if (displayMaintenanceScreenIfNeeded(response)) return null;
                     InputStreamReader is = new InputStreamReader(retrofitError.getResponse().getBody().in());
                     result = new Gson().fromJson(is, this.httpDoInBackgroundReturnType());
                 } catch (IOException e) {
@@ -105,13 +106,19 @@ public abstract class HttpAsyncTask<Params, Progress, Result> extends AsyncTask<
                     }
                 }
             } else {
-                if (response.getStatus() == 404 || response.getStatus() == 503) {
-                    MaintenanceMessageViewController maintenanceMessageViewController = new MaintenanceMessageViewController();
-                    maintenanceMessageViewController.presentModal();
-                    return null;
-                }
+                if (displayMaintenanceScreenIfNeeded(response)) return null;
             }
         }
         return result;
+    }
+
+    private boolean displayMaintenanceScreenIfNeeded(Response response) {
+        if (response.getStatus() == 404 || response.getStatus() == 503) {
+            MaintenanceMessageViewController maintenanceMessageViewController
+                    = new MaintenanceMessageViewController(MaintenanceMessageViewController.class.getSimpleName());
+            maintenanceMessageViewController.openActivity();
+            return true;
+        }
+        return false;
     }
 }
