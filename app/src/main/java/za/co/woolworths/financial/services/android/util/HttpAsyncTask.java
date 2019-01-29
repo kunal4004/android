@@ -114,8 +114,9 @@ public abstract class HttpAsyncTask<Params, Progress, Result> extends AsyncTask<
 
     private boolean displayMaintenanceScreenIfNeeded(Response response) {
         if (response.getStatus() == 404 || response.getStatus() == 503) {
-            MaintenanceMessageViewController maintenanceMessageViewController = new MaintenanceMessageViewController();
-            maintenanceMessageViewController.presentModal();
+            MaintenanceMessageViewController maintenanceMessageViewController
+                    = new MaintenanceMessageViewController(MaintenanceMessageViewController.class.getSimpleName());
+            maintenanceMessageViewController.openActivity();
             return true;
         }
         return false;
