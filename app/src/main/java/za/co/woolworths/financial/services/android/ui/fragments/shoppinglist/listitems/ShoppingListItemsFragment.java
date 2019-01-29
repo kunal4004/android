@@ -283,7 +283,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 
 			if (mOpenShoppingListItem.quantityInStock == 0) {
 				mToastUtils.setActivity(getActivity());
-				mToastUtils.setView(getBottomNavigator().getBottomNavigationById());
 				mToastUtils.setGravity(Gravity.BOTTOM);
 				mToastUtils.setCurrentState(TAG);
 				mToastUtils.setPixel(0);
@@ -749,6 +748,9 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	@Override
 	public void onResume() {
 		super.onResume();
+		if (!TextUtils.isEmpty(listName)){
+			getBottomNavigator().setTitle(listName);
+		}
 		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.SHOPPING_LIST_ITEMS);
 		Activity activity = getActivity();
 		if (activity != null) {
