@@ -161,7 +161,7 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 		// R.id.navigate_to_wreward) prevent session dialog expired popup
 		// to appear when switching tab on an ongoing voucher call.
 		// R.id.navigate_to_cart enable expired popup display when CartActivity is finished.
-		Utils.setBadgeCounter(getActivity(), 0);
+		Utils.setBadgeCounter(0);
 		if (SessionUtilities.getInstance().isUserAuthenticated()
 				&& ((getBottomNavigationActivity().getCurrentSection() == R.id.navigate_to_wreward)
 				|| getBottomNavigationActivity().getCurrentSection() == R.id.navigate_to_cart)) {

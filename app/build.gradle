@@ -166,7 +166,7 @@ dependencies {
     implementation 'za.co.wigroup.android:Logger:1'
     implementation 'io.jsonwebtoken:jjwt:0.7.0'
     implementation 'uk.co.chrisjenx:calligraphy:2.2.0'
-    implementation 'me.leolin:ShortcutBadger:1.1.13@aar'
+    implementation 'me.leolin:ShortcutBadger:1.1.22@aar'
     implementation 'com.daimajia.swipelayout:library:1.2.0'
     implementation 'es.voghdev.pdfviewpager:library:1.0.3'
     api 'com.google.zxing:core:3.3.2'
