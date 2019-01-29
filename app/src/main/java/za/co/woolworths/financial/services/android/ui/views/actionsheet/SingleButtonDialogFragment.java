@@ -10,16 +10,13 @@ import android.view.View;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.contracts.IDialogListener;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
 public class SingleButtonDialogFragment extends ActionSheetDialogFragment implements View.OnClickListener {
 
-    public interface IDialogListener {
-        void onDialogDismissed();
-    }
-
-    private IDialogListener iDialogListener;
+    private IDialogListener mDialogListener;
 
     public static SingleButtonDialogFragment newInstance(String responseDesc) {
         SingleButtonDialogFragment singleButtonDialogFragment = new SingleButtonDialogFragment();
@@ -45,7 +42,7 @@ public class SingleButtonDialogFragment extends ActionSheetDialogFragment implem
 
         Activity activity = getActivity();
         if (activity instanceof IDialogListener) {
-            iDialogListener = (IDialogListener) activity;
+            mDialogListener = (IDialogListener) activity;
         }
 
         Bundle bundleArguments = getArguments();
@@ -80,8 +77,8 @@ public class SingleButtonDialogFragment extends ActionSheetDialogFragment implem
 
     private void navigateBackToActivity() {
         shouldAnimateViewOnCancel(false);
-        if (iDialogListener != null)
-            iDialogListener.onDialogDismissed();
+        if (mDialogListener != null)
+            mDialogListener.onDialogDismissed();
     }
 
 

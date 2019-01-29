@@ -6,11 +6,11 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.loan_withdrawal_layout.*
+import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.extension.findFragmentByTag
 import za.co.woolworths.financial.services.android.ui.fragments.loan.LoanWithdrawalDetailFragment
 import za.co.woolworths.financial.services.android.ui.fragments.loan.LoanWithdrawalFragment
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment.IDialogListener
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.Utils
