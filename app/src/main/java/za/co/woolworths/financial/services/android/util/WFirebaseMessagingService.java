@@ -39,7 +39,7 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
         Map<String, String> data = remoteMessage.getData();
         if (data.size() > 0 && NotificationUtils.isAppIsInBackground(getApplicationContext())) {// Check if message contains a data payload.
             notificationUtils=NotificationUtils.newInstance(this);
-            notificationUtils.sendBundledNotification(data.get("title"),data.get("body"));
+            notificationUtils.sendBundledNotification(data.get("title"),data.get("body"), Integer.parseInt(unreadCountValue));
         } else if (!NotificationUtils.isAppIsInBackground(getApplicationContext())) {
             Intent intent = new Intent("UpdateCounter");
             LocalBroadcastManager.
