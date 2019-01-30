@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.util;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -29,10 +28,10 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
 
             if (TextUtils.isEmpty(unreadCountValue) || unreadCountValue == null) {
                 Utils.sessionDaoSave(this, SessionDao.KEY.UNREAD_MESSAGE_COUNT, "0");
-                Utils.setBadgeCounter(this, 1);
+                Utils.setBadgeCounter(1);
             } else {
                 int unreadCount = Integer.valueOf(unreadCountValue) + 1;
-                Utils.setBadgeCounter(this, unreadCount);
+                Utils.setBadgeCounter(unreadCount);
             }
         } catch (NullPointerException ignored) {
         }

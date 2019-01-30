@@ -809,16 +809,15 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 
 	@Override
 	public void onMessageResponse(int unreadCount) {
-		Activity activity = getActivity();
-		if (activity == null) return;
-		Utils.setBadgeCounter(activity, unreadCount);
+		if (getActivity() == null) return;
+		Utils.setBadgeCounter(unreadCount);
 		addBadge(INDEX_ACCOUNT, unreadCount);
 		if (unreadCount > 0) {
 			hideView(getViewDataBinding().messagesRightArrow);
 			showView(messageCounter);
 			messageCounter.setText(String.valueOf(unreadCount));
 		} else {
-			Utils.removeBadgeCounter(getActivity());
+			Utils.removeBadgeCounter();
 			hideView(messageCounter);
 			showView(getViewDataBinding().messagesRightArrow);
 		}
@@ -881,7 +880,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	}
 
 	private void onSessionExpired(Activity activity) {
-		Utils.setBadgeCounter(getActivity(), 0);
+		Utils.setBadgeCounter(0);
 		removeAllBottomNavigationIconBadgeCount();
 		SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
 		SessionExpiredUtilities.getInstance().showSessionExpireDialog((AppCompatActivity) activity);
