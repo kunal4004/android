@@ -178,13 +178,17 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 	}
 
 	public void showView(View view) {
-		view.setVisibility(View.VISIBLE);
+		// This method may be called when not needed.
+		// Handle modifying UI only when needed.
+		if (view != null && view.getVisibility() != View.VISIBLE)
+			view.setVisibility(View.VISIBLE);
 	}
 
 	public void hideView(View view) {
-		if (view != null) {
+		// This method may be called when not needed.
+		// Handle modifying UI only when needed.
+		if (view != null && view.getVisibility() != View.GONE)
 			view.setVisibility(View.GONE);
-		}
 	}
 
 	public void slideBottomPanel() {

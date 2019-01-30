@@ -373,22 +373,31 @@ public class Utils {
 		return sessionDao.value;
 	}
 
-	public static void setBadgeCounter(Context context, int badgeCount) {
-		try {
-			if (badgeCount == 0) {
-				removeBadgeCounter(context);
-				return;
-			}
-			ShortcutBadger.applyCount(context, badgeCount);
-			sessionDaoSave(context, SessionDao.KEY.UNREAD_MESSAGE_COUNT, String.valueOf(badgeCount));
-		} catch (NullPointerException ex) {
+	public static void setBadgeCounter(int badgeCount) {
+
+		if (badgeCount == 0) {
+			removeBadgeCounter();
+			return;
 		}
+
+		Context context = WoolworthsApplication.getAppContext();
+		if (ShortcutBadger.isBadgeCounterSupported(context)){
+			ShortcutBadger.applyCount(context, badgeCount);
+		}else{
+			//fallback solution if ShortcutBadger is not supported
+			BadgeUtils.setBadge(context, badgeCount);
+		}
+
+		sessionDaoSave(context, SessionDao.KEY.UNREAD_MESSAGE_COUNT, String.valueOf(badgeCount));
 	}
 
-	public static void removeBadgeCounter(Context context) {
-		try {
-			ShortcutBadger.applyCount(context, 0);
-		} catch (NullPointerException ex) {
+	public static void removeBadgeCounter() {
+		Context context = WoolworthsApplication.getAppContext();
+		if (ShortcutBadger.isBadgeCounterSupported(context)){
+			ShortcutBadger.removeCount(context);
+		}else{
+			//fallback solution if ShortcutBadger is not supported
+			BadgeUtils.clearBadge(context);
 		}
 	}
 

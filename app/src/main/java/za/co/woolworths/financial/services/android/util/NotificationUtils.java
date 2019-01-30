@@ -19,6 +19,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.List;
 
+import me.leolin.shortcutbadger.ShortcutBadger;
 import za.co.woolworths.financial.services.android.models.WfsApi;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -77,9 +78,10 @@ public class NotificationUtils {
         this.contentIntent = contentIntent;
     }
 
-    public void sendBundledNotification(String title, String body) {
+    public void sendBundledNotification(String title, String body, int badgeCount) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             Notification notification = buildKitKatNotification(title, body);
+            ShortcutBadger.applyNotification(WoolworthsApplication.getAppContext(), notification, badgeCount);
             notificationManager.notify(getNotificationId(), notification);
         } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -89,8 +91,9 @@ public class NotificationUtils {
                         NotificationManager.IMPORTANCE_HIGH);
                 notificationManager.createNotificationChannel(channel);
             }
-            NotificationCompat.Builder notification = buildNotification(title, body, GROUP_KEY);
-            notificationManager.notify(getNotificationId(), notification.build());
+            Notification notification = buildNotification(title, body, GROUP_KEY).build();
+            ShortcutBadger.applyNotification(WoolworthsApplication.getAppContext(), notification, badgeCount);
+            notificationManager.notify(getNotificationId(), notification);
         }
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
