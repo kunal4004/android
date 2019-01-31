@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
@@ -157,6 +156,9 @@ public class CheckOutFragment extends Fragment {
 
 			@Override
 			public boolean shouldOverrideUrlLoading(WebView view, String url) {
+				if (url.contains(QueryString.ABANDON.getValue())) {
+					closeOnNextPage = QueryString.ABANDON;
+				}
 				view.loadUrl(url);
 				return true;
 			}
