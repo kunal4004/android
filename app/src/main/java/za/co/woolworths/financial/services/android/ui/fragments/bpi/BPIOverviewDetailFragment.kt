@@ -14,9 +14,11 @@ import com.google.gson.Gson
 import kotlinx.android.synthetic.main.bpi_detail_header.*
 import kotlinx.android.synthetic.main.bpi_overview_detail_content.*
 import kotlinx.android.synthetic.main.bpi_overview_detail_fragment.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.BPIOverview
 import za.co.woolworths.financial.services.android.models.dto.InsuranceType
 import za.co.woolworths.financial.services.android.ui.views.WTextView
+import za.co.woolworths.financial.services.android.util.Utils
 import java.text.ParseException
 import java.text.SimpleDateFormat
 
@@ -49,6 +51,11 @@ class BPIOverviewDetailFragment : BPIFragment(), View.OnClickListener {
 
         btnHowToClaim.setOnClickListener(this)
         imNavigateBack.setOnClickListener(this)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.BPI_DETAILS)
     }
 
     private fun setBenefitTitle(bpiOverview: BPIOverview) {

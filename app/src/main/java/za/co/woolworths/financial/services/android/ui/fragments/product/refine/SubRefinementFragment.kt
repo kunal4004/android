@@ -10,6 +10,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_refinement.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.Refinement
 import za.co.woolworths.financial.services.android.models.dto.RefinementSelectableItem
 import za.co.woolworths.financial.services.android.models.dto.SubRefinement
@@ -45,6 +46,11 @@ class SubRefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_SEARCH_REFINEMENT_CATEGORY)
     }
 
     private fun initViews() {
@@ -112,6 +118,24 @@ class SubRefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
 
     override fun onSelectionChanged() {
         clearRefinement?.isEnabled = !TextUtils.isEmpty(getNavigationState())
+        updateSeeResultButtonText()
+    }
+
+    private fun buildSeeResultButtonText(): String {
+        var selectedItems = arrayListOf<String>()
+        selectedItems.clear()
+        dataList.forEach {
+            if (it.isSelected) {
+                var item = it.item as SubRefinement
+                selectedItems.add(item.label)
+            }
+        }
+
+        return getString(R.string.refinement_see_result_button_text) + if (selectedItems.size > 0) selectedItems.joinToString(",") else refinement?.label
+    }
+
+    private fun updateSeeResultButtonText() {
+        seeResultCount.text = buildSeeResultButtonText()
     }
 
 }

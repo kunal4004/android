@@ -9,7 +9,9 @@ import android.view.ViewGroup;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.Utils;
 
 /**
  * Created by W7099877 on 05/01/2017.
@@ -28,5 +30,11 @@ public class WRewardsVipMembersInfoFragment extends Fragment {
         infoHeaderText.setText(getActivity().getString(R.string.info_vip_header));
         return view;
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.WREWARDS_TIER_INFO);
     }
 }

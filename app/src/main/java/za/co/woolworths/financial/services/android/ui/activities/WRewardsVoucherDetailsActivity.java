@@ -79,6 +79,12 @@ public class WRewardsVoucherDetailsActivity extends AppCompatActivity implements
 	}
 
 	@Override
+	public void onResume() {
+		super.onResume();
+		Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.WREWARDS_VOUCHERS_BARCODE);
+	}
+
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case android.R.id.home:

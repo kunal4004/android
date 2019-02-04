@@ -25,6 +25,7 @@ import com.daimajia.swipe.util.Attributes;
 import java.util.ArrayList;
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.DeleteMessageResponse;
@@ -309,6 +310,7 @@ public class MessagesActivity extends AppCompatActivity implements MesssagesList
 	@Override
 	protected void onResume() {
 		super.onResume();
+		Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.MESSAGES);
 		// register new push message receiver
 		// by doing this, the activity will be notified each time a new message arrives
 		LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,

@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import io.reactivex.functions.Consumer;
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
@@ -282,7 +283,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 
 			if (mOpenShoppingListItem.quantityInStock == 0) {
 				mToastUtils.setActivity(getActivity());
-				mToastUtils.setView(getBottomNavigator().getBottomNavigationById());
 				mToastUtils.setGravity(Gravity.BOTTOM);
 				mToastUtils.setCurrentState(TAG);
 				mToastUtils.setPixel(0);
@@ -472,8 +472,13 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	public void onAddToCartSuccess(AddItemToCartResponse addItemToCartResponse) {
 		Activity activity = getActivity();
 		if (activity == null) return;
+		Intent resultIntent = new Intent();
+		if(addItemToCartResponse.data.size() > 0) {
+			String successMessage = addItemToCartResponse.data.get(0).message;
+			resultIntent.putExtra("addedToCartMessage", successMessage);
+		}
 		BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
-		bottomNavigationActivity.onActivityResult(ADD_TO_CART_SUCCESS_RESULT, ADD_TO_CART_SUCCESS_RESULT, null);
+		bottomNavigationActivity.onActivityResult(ADD_TO_CART_SUCCESS_RESULT, ADD_TO_CART_SUCCESS_RESULT, resultIntent);
 		popFragmentSlideDown();
 	}
 
@@ -743,6 +748,10 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	@Override
 	public void onResume() {
 		super.onResume();
+		if (!TextUtils.isEmpty(listName)){
+			getBottomNavigator().setTitle(listName);
+		}
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.SHOPPING_LIST_ITEMS);
 		Activity activity = getActivity();
 		if (activity != null) {
 			activity.registerReceiver(mConnectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));

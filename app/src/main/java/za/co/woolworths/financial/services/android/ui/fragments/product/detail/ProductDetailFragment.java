@@ -10,12 +10,9 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -33,12 +30,15 @@ import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.ProductDetailViewBinding;
 import com.google.gson.Gson;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import io.reactivex.functions.Consumer;
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
@@ -80,7 +80,7 @@ import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeVie
 import za.co.woolworths.financial.services.android.util.CancelableCallback;
 import za.co.woolworths.financial.services.android.util.DrawImage;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
-import za.co.woolworths.financial.services.android.util.FusedLocationSingleton;
+import za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton;
 import za.co.woolworths.financial.services.android.util.LocationItemTask;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
@@ -148,6 +148,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	private OtherSkus selectedFindInStoreOtherSkus;
 	public static int DELIVERY_LOCATION_FROM_PDP_REQUEST = 2553;
 	private InventoryForStore mInventoryForStore;
+    private FuseLocationAPISingleton mFuseLocationAPISingleton;
 
 	@Override
 	public ProductDetailViewModel getViewModel() {
@@ -290,7 +291,8 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		getGlobalState().setColorWasPopup(false);
+        mFuseLocationAPISingleton = FuseLocationAPISingleton.INSTANCE;
+        getGlobalState().setColorWasPopup(false);
 		getGlobalState().setColorPickerSku(null);
 		getGlobalState().setSizeWasPopup(false);
 		getGlobalState().setSizePickerSku(null);
@@ -948,47 +950,36 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 			mInventoryForStore.cancelInventoryForStoreCall();
 	}
 
-	/*****************************
-	 * FIND IN STORE SECTION
-	 * ***************
-	 */
-
-	private BroadcastReceiver mLocationUpdated = new BroadcastReceiver() {
-		@RequiresApi(api = Build.VERSION_CODES.M)
-		@Override
-		public void onReceive(Context context, final Intent intent) {
-			try {
-				Location mLocation = intent.getParcelableExtra(FusedLocationSingleton.LBM_EVENT_LOCATION_UPDATE);
-				Utils.saveLastLocation(mLocation, getContext());
-				stopLocationUpdate();
-				executeLocationItemTask();
-			} catch (Exception e) {
-				Log.e(TAG, e.toString());
-			}
-		}
-	};
-
 	private void executeLocationItemTask() {
 		mLocationItemTask = getViewModel().locationItemTask(getActivity());
 		mLocationItemTask.execute();
 	}
 
-	@Override
-	public void startLocationUpdates() {
-		showFindInStoreProgress();
-		FusedLocationSingleton.getInstance().startLocationUpdates();
-		// register observer for location updates
-		LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mLocationUpdated,
-				new IntentFilter(FusedLocationSingleton.INTENT_FILTER_LOCATION_UPDATE));
-	}
+    @Override
+    public void startLocationUpdates() {
+        Activity activity = getActivity();
+        if ((activity == null) || (mFuseLocationAPISingleton == null)) return;
+        if (!mFuseLocationAPISingleton.getLocationMode(activity)) {
+            mFuseLocationAPISingleton.detectDeviceOnlyGPSLocation(activity);
+            return;
+        }
+        showFindInStoreProgress();
+        mFuseLocationAPISingleton.addOnLocationCompleteListener(new FuseLocationAPISingleton.OnLocationChangeCompleteListener() {
+            @Override
+            public void onLocationChanged(@NotNull Location location) {
+                stopLocationUpdate();
+                Utils.saveLastLocation(location, getContext());
+                executeLocationItemTask();
+            }
+        });
+        mFuseLocationAPISingleton.startLocationUpdate();
+    }
 
-	@Override
-	public void stopLocationUpdate() {
-		// stop location updates
-		FusedLocationSingleton.getInstance().stopLocationUpdates();
-		// unregister observer
-		LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mLocationUpdated);
-	}
+    @Override
+    public void stopLocationUpdate() {
+        if (mFuseLocationAPISingleton != null)
+            mFuseLocationAPISingleton.stopLocationUpdate();
+    }
 
 	@Override
 	public void showFindInStoreProgress() {
@@ -1414,6 +1405,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	@Override
 	public void onResume() {
 		super.onResume();
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_DETAIL);
 		registerReceiver();
 	}
 

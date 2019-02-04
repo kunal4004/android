@@ -26,7 +26,6 @@ import android.webkit.WebViewClient;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -129,15 +128,16 @@ public class SSOActivity extends WebViewActivity {
 				title = TextUtils.isEmpty(title) ? "" : title;
 				redirectURIString = TextUtils.isEmpty(redirectURIString) ? "" : redirectURIString;
 				SSOActivity.this.state = TextUtils.isEmpty(SSOActivity.this.state) ? "" : SSOActivity.this.state;
+				final String urlStateComponent = "?state=".concat(SSOActivity.this.state).toLowerCase();
 
 				ArrayList<String> invalidTitles = new ArrayList<>(
 						Arrays.asList("about:blank".toLowerCase(),
 								getString(R.string.sso_title_text_submit_this_form).toLowerCase(),
 								redirectURIString.toLowerCase(),
-								redirectURIString.concat("?state=").concat(SSOActivity.this.state).toLowerCase())
+								redirectURIString.concat(urlStateComponent))
 				);
 
-				if (invalidTitles.contains(title.toLowerCase())) {
+				if (invalidTitles.contains(title.toLowerCase()) || title.toLowerCase().endsWith(urlStateComponent)) {
 					toolbarTextView.setText("");
 				} else
 					toolbarTextView.setText(title);
@@ -369,6 +369,25 @@ public class SSOActivity extends WebViewActivity {
 		return constructedURL;
 	}
 
+	private boolean isNavigatingToRedirectURL(String url) {
+
+		//Fixes WOP-3286
+		if (redirectURIString == null || this.state == null){
+			//report this to analytics
+			Map<String, String> arguments = new HashMap<>();
+			arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.DESCRIPTION,
+					"redirectURIString isNull: " + (redirectURIString == null ? "true" : "false") + ";" +
+							"this.state isNull: " + (this.state == null ? "true" : "false"));
+
+			Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.CRASH_CAUTION, arguments);
+			return false;
+		}
+
+		String redirectUriWithState = redirectURIString.concat("?state=").concat(this.state);
+
+		return url.equalsIgnoreCase(redirectURIString) || url.equalsIgnoreCase(redirectUriWithState);
+	}
+
 	private final WebViewClient webviewClient = new WebViewClient() {
 		@Override
 		public void onPageStarted(WebView view, String url, Bitmap favicon) {
@@ -474,13 +493,6 @@ public class SSOActivity extends WebViewActivity {
 			hideProgressBar();
 		}
 
-		private boolean isNavigatingToRedirectURL(String url) {
-
-			String redirectUriWithState = redirectURIString.concat("?state=").concat(SSOActivity.this.state);
-
-			return url.equalsIgnoreCase(redirectURIString) || url.equalsIgnoreCase(redirectUriWithState);
-		}
-
 		@TargetApi(android.os.Build.VERSION_CODES.M)
 		@Override
 		public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
@@ -563,6 +575,22 @@ public class SSOActivity extends WebViewActivity {
 		}
 		return true;
 
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		if(path == Path.SIGNIN) {
+			Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.SSO_SIGN_IN);
+		} else if(path == Path.REGISTER) {
+			Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.SSO_REGISTER);
+		} else if(path == Path.LOGOUT) {
+			Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.SSO_LOGOUT);
+		} else if(path == Path.UPDATE_PASSWORD) {
+			Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.SSO_PASSWORD_CHANGE);
+		} else if(path == Path.UPDATE_PROFILE) {
+			Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.SSO_PROFILE_INFO);
+		}
 	}
 
 	public void closeActivity() {

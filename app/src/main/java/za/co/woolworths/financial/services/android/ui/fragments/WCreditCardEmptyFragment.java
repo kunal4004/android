@@ -9,8 +9,10 @@ import android.view.ViewGroup;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.util.FragmentLifecycle;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
+import za.co.woolworths.financial.services.android.util.Utils;
 
 
 /**
@@ -32,6 +34,6 @@ public class WCreditCardEmptyFragment extends Fragment implements FragmentLifecy
 
     @Override
     public void onResumeFragment() {
-
+        Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.FINANCIAL_SERVICES_CREDIT_CARD);
     }
 }

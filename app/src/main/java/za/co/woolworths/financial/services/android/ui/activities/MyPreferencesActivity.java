@@ -17,6 +17,7 @@ import android.widget.Switch;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -207,6 +208,7 @@ public class MyPreferencesActivity extends AppCompatActivity implements View.OnC
 	@Override
 	protected void onResume() {
 		super.onResume();
+		Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.PREFERENCES);
 		bindDataWithUI();
 	}
 
