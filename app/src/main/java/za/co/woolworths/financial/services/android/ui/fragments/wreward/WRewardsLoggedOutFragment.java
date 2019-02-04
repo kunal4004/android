@@ -70,6 +70,12 @@ public class WRewardsLoggedOutFragment extends Fragment implements View.OnClickL
 	}
 
 	@Override
+	public void onResume() {
+		super.onResume();
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.WREWARDS_SIGNED_OUT);
+	}
+
+	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
 			case R.id.wRewars_login:

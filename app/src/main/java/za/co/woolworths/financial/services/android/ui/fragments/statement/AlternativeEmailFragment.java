@@ -26,6 +26,7 @@ import com.google.gson.Gson;
 
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.statement.EmailStatementResponse;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
@@ -200,6 +201,7 @@ public class AlternativeEmailFragment extends Fragment implements View.OnClickLi
 	public void onResume() {
 		super.onResume();
 		Activity activity = getActivity();
+		Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.STATEMENTS_ALTERNATIVE_EMAIL);
 		if (activity instanceof StatementActivity) {
 			showKeyboard();
 			activity.registerReceiver(mConnectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));

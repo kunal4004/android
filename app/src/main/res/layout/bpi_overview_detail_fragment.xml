@@ -5,6 +5,7 @@
     android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/default_background"
     android:fitsSystemWindows="true">
 
     <android.support.constraint.ConstraintLayout
@@ -30,7 +31,9 @@
             android:paddingTop="@dimen/eight_dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginBottom="8dp"
+            >
 
             <za.co.woolworths.financial.services.android.ui.views.WButton
                 android:id="@+id/btnHowToClaim"
@@ -38,7 +41,6 @@
                 android:layout_height="@dimen/fifty_dp"
                 android:layout_marginStart="@dimen/eight_dp"
                 android:layout_marginEnd="@dimen/eight_dp"
-                android:layout_marginBottom="8dp"
                 android:background="@color/black"
                 android:letterSpacing="0.2"
                 android:text="@string/bpi_how_to_claim"

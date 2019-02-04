@@ -201,8 +201,8 @@ public class WebAppInterface {
 						//TODO:: replace getProductDetail asynchronous method with HttpAsyncTask
 						Response response = error.getResponse();
 						if (response.getStatus() == 404 || response.getStatus() == 503) {
-							MaintenanceMessageViewController maintenanceMessageViewController = new MaintenanceMessageViewController();
-							maintenanceMessageViewController.presentModal();
+							MaintenanceMessageViewController maintenanceMessageViewController = new MaintenanceMessageViewController(MaintenanceMessageViewController.class.getSimpleName());
+							maintenanceMessageViewController.openActivity();
 							return;
 						}
 						dismissFragmentDialog();

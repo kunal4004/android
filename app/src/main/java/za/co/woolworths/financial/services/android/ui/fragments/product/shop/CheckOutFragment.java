@@ -35,12 +35,14 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.rest.shop.PostCheckoutSuccess;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
+import za.co.woolworths.financial.services.android.util.Utils;
 
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART;
 
@@ -93,6 +95,12 @@ public class CheckOutFragment extends Fragment {
 		}
 	}
 
+	@Override
+	public void onResume() {
+		super.onResume();
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.CART_CHECKOUT);
+	}
+
 	@NonNull
 	private String getUrl() {
 		return WoolworthsApplication.getCartCheckoutLink();
@@ -133,16 +141,14 @@ public class CheckOutFragment extends Fragment {
 			@Override
 			public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
 				super.onReceivedError(view, request, error);
-				mErrorHandlerView.webViewBlankPage(view);
-				mErrorHandlerView.networkFailureHandler(error.toString());
-			}
+                handleNetworkConnectionError(view, error.getErrorCode(), error.toString());
+            }
 
 			@SuppressWarnings("deprecation")
 			@Override
 			public void onReceivedError(WebView webView, int errorCode, String description, String failingUrl) {
-				mErrorHandlerView.webViewBlankPage(webView);
-				mErrorHandlerView.networkFailureHandler(description);
-			}
+                handleNetworkConnectionError(webView, errorCode, description);
+            }
 
 			@Override
 			public void onLoadResource(WebView view, String url) {
@@ -151,7 +157,8 @@ public class CheckOutFragment extends Fragment {
 
 			@Override
 			public boolean shouldOverrideUrlLoading(WebView view, String url) {
-				return super.shouldOverrideUrlLoading(view, url);
+				view.loadUrl(url);
+				return true;
 			}
 
 			@Override
@@ -181,7 +188,19 @@ public class CheckOutFragment extends Fragment {
 		});
 	}
 
-	private void finishCartActivity() {
+    private void handleNetworkConnectionError(WebView view, int errorCode, String s) {
+        switch (errorCode) {
+            case WebViewClient.ERROR_CONNECT:
+            case WebViewClient.ERROR_HOST_LOOKUP:
+                mErrorHandlerView.webViewBlankPage(view);
+                mErrorHandlerView.networkFailureHandler(s);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void finishCartActivity() {
 		Activity activity = getActivity();
 		if (activity != null) {
 			if (closeOnNextPage == QueryString.COMPLETE) {

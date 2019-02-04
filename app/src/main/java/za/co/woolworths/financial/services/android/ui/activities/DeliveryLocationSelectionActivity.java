@@ -4,12 +4,10 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.View;
 
 import com.awfs.coordination.R;
 
-import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.DeliveryLocationSelectionFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.ProvinceSelectionFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -55,7 +53,7 @@ public class DeliveryLocationSelectionActivity extends AppCompatActivity impleme
 					.replace(R.id.content_frame, new ProvinceSelectionFragment()).commitAllowingStateLoss();
 		}
 
-		Utils.displayValidationMessage(DeliveryLocationSelectionActivity.this, CustomPopUpWindow.MODAL_LAYOUT.INFO,getResources().getString(R.string.delivering_location_popup_message));
+		Utils.displayDialogActionSheet(DeliveryLocationSelectionActivity.this, R.string.delivering_location_popup_message, R.string.cli_got_it);
 
 		//One time biometricsWalkthrough
 		ScreenManager.presentBiometricWalkthrough(DeliveryLocationSelectionActivity.this);

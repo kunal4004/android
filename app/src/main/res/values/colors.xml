@@ -68,7 +68,7 @@
     <color name="expandable_gradient_color">#09000000</color>
     <color name="dark_gray">#4A4A4A</color>
     <color name="violet">#7A4183</color>
-    <color name="alert_dialog_bg_color">#8c000000</color>
+    <color name="alert_dialog_bg_color">#0f000000</color>
     <color name="offer_title_50">#50222222</color>
     <color name="bpi_orange">#f3662d</color>
     <color name="bpi_background_divider">#BEBEB9</color>

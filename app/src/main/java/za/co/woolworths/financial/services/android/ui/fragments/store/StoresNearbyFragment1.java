@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.store;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -15,9 +16,9 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -48,10 +49,13 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
@@ -64,7 +68,7 @@ import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
-import za.co.woolworths.financial.services.android.util.FusedLocationSingleton;
+import za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
@@ -79,6 +83,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 	WCustomViewPager pager;
 	GoogleMap googleMap;
 	static int CAMERA_ANIMATION_SPEED = 350;
+    public static final int LAYOUT_ANCHORED_RESULT_CODE = 8001;
 	BitmapDescriptor unSelectedIcon;
 	BitmapDescriptor selectedIcon;
 	HashMap<String, Integer> mMarkers;
@@ -118,7 +123,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 	WButton btnOnLocationService;
 	protected static final int REQUEST_CHECK_SETTINGS = 99;
 	Marker myLocation;
-	public static final int PERMS_REQUEST_CODE = 123;
+    public static final int REQUEST_CODE_FINE_GPS = 5123;
 	private boolean navigateMenuState = false;
 
 	private PopWindowValidationMessage mPopWindowValidationMessage;
@@ -129,6 +134,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 	private boolean isSearchMenuEnabled = true;
 	public boolean isLocationServiceButtonClicked = false;
 	private BottomNavigator mBottomNavigator;
+	private FuseLocationAPISingleton mFuseLocationAPISingleton;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -143,7 +149,8 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 		super.onViewCreated(v, savedInstanceState);
 		mFragment = this;
 		mPopWindowValidationMessage = new PopWindowValidationMessage(getActivity());
-		pager = (WCustomViewPager) v.findViewById(R.id.cardPager);
+        mFuseLocationAPISingleton = FuseLocationAPISingleton.INSTANCE;
+        pager = (WCustomViewPager) v.findViewById(R.id.cardPager);
 		detailsLayout = (LinearLayout) v.findViewById(R.id.detailsView);
 		mLayout = (SlidingUpPanelLayout) v.findViewById(R.id.sliding_layout);
 		close = (ImageView) v.findViewById(R.id.close);
@@ -226,7 +233,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 								if (keyCode == KeyEvent.KEYCODE_BACK) {
 									mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
 									mLayout.setFocusable(false);
-									return true;
+									return false; // set to false to prevent user double tap hardware back button to navigate back
 								}
 								return true;
 							}
@@ -512,9 +519,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 			@Override
 			protected void onPreExecute() {
 				super.onPreExecute();
-				disableSearchMenu();
-				showProgressBar();
-				mErrorHandlerView.hideErrorHandlerLayout();
+				onLocationLoadStart();
 			}
 
 			@Override
@@ -592,6 +597,12 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 			case REQUEST_CHECK_SETTINGS:
 				initLocationCheck();
 				break;
+
+            case LAYOUT_ANCHORED_RESULT_CODE:
+                if (mLayout == null) return;
+                mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+                mLayout.setFocusable(false);
+                break;
 		}
 	}
 
@@ -674,47 +685,32 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 			progressBar.setVisibility(View.GONE);
 	}
 
-	public void startLocationUpdates() {
-		if (checkLocationPermission()) {
-			if (ContextCompat.checkSelfPermission(getActivity(),
-					Manifest.permission.ACCESS_FINE_LOCATION)
-					== PackageManager.PERMISSION_GRANTED) {
-				FusedLocationSingleton.getInstance().startLocationUpdates();
-				// register observer for location updates
-				LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mLocationUpdated,
-						new IntentFilter(FusedLocationSingleton.INTENT_FILTER_LOCATION_UPDATE));
-			}
-		} else {
-			checkLocationPermission();
-		}
-
-	}
-
-	public void stopLocationUpdate() {
-
-		// stop location updates
-		FusedLocationSingleton.getInstance().stopLocationUpdates();
-		// unregister observer
-		LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mLocationUpdated);
-	}
-
-	/**
-	 * handle new location
-	 */
-	private BroadcastReceiver mLocationUpdated = new BroadcastReceiver() {
-		@RequiresApi(api = Build.VERSION_CODES.M)
-		@Override
-		public void onReceive(Context context, final Intent intent) {
-			try {
-				Location location = intent.getParcelableExtra(FusedLocationSingleton.LBM_EVENT_LOCATION_UPDATE);
-				mLocation = location;
-				updateMap(location);
-			} catch (Exception e) {
-				Log.e(TAG, e.toString());
-			}
-		}
-	};
-
+    public void startLocationUpdates() {
+        Activity activity = getActivity();
+        if (activity == null) return;
+        //Present an error message if location method is set to device only
+        if (!mFuseLocationAPISingleton.getLocationMode(activity)) {
+            mFuseLocationAPISingleton.detectDeviceOnlyGPSLocation(activity);
+            return;
+        }
+        if (mFuseLocationAPISingleton.getLocationMode(activity))
+            if (checkLocationPermission()) {
+                if (ContextCompat.checkSelfPermission(getActivity(),
+                        Manifest.permission.ACCESS_FINE_LOCATION)
+                        == PackageManager.PERMISSION_GRANTED) {
+                    onLocationLoadStart();
+                    mFuseLocationAPISingleton.addOnLocationCompleteListener(new FuseLocationAPISingleton.OnLocationChangeCompleteListener() {
+                        @Override
+                        public void onLocationChanged(@NotNull Location location) {
+                            updateMap(location);
+                        }
+                    });
+                    mFuseLocationAPISingleton.startLocationUpdate();
+                }
+            } else {
+                checkLocationPermission();
+            }
+    }
 	private void updateMap(Location location) {
 		if (location != null) {
 			Utils.saveLastLocation(location, getActivity());
@@ -726,20 +722,22 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 		stopLocationUpdate();
 	}
 
+    public void stopLocationUpdate() {
+        if (mFuseLocationAPISingleton != null)
+            mFuseLocationAPISingleton.stopLocationUpdate();
+    }
+
 	public boolean checkLocationPermission() {
-		if (ContextCompat.checkSelfPermission(getActivity(),
+        String[] perms = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+        if (ContextCompat.checkSelfPermission(getActivity(),
 				Manifest.permission.ACCESS_FINE_LOCATION)
 				!= PackageManager.PERMISSION_GRANTED) {
 			if (shouldShowRequestPermissionRationale(
 					Manifest.permission.ACCESS_FINE_LOCATION)) {
-				requestPermissions(
-						new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-						PERMS_REQUEST_CODE);
-			} else {
+                ActivityCompat.requestPermissions(getActivity(), perms, REQUEST_CODE_FINE_GPS);
+            } else {
 				//we can request the permission.
-				requestPermissions(
-						new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-						PERMS_REQUEST_CODE);
+                ActivityCompat.requestPermissions(getActivity(), perms, REQUEST_CODE_FINE_GPS);
 			}
 			return false;
 		} else {
@@ -791,6 +789,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 	@Override
 	public void onResume() {
 		super.onResume();
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.STORES_NEARBY);
 		if (updateMap) {
 			checkLocationServiceAndSetLayout(true);
 			initLocationCheck();
@@ -802,7 +801,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 	public void onRequestPermissionsResult(int requestCode,
 										   String permissions[], int[] grantResults) {
 		switch (requestCode) {
-			case PERMS_REQUEST_CODE: {
+			case REQUEST_CODE_FINE_GPS: {
 				// If request is cancelled, the result arrays are empty.
 				if (grantResults.length > 0
 						&& grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -872,4 +871,15 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 			}
 		}
 	}
+
+	private void onLocationLoadStart() {
+		disableSearchMenu();
+		showProgressBar();
+		mErrorHandlerView.hideErrorHandlerLayout();
+	}
+
+    public boolean layoutIsAnchored() {
+        if (mLayout == null) return false;
+        return mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.ANCHORED;
+    }
 }

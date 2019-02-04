@@ -1,6 +1,3 @@
 package za.co.woolworths.financial.services.android.models.dto
 
-data class CheckoutSuccess(var suburbId: String) {
-    var orderId: String = ""
-    var basketTotal: Double = 0.0
-}
+data class CheckoutSuccess(var suburbId: String)

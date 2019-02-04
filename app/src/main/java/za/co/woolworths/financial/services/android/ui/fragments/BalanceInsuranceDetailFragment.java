@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.RequiredFormAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
@@ -56,6 +57,12 @@ public class BalanceInsuranceDetailFragment extends Fragment implements View.OnC
 		rlRequiredForm.setAdapter(requiredFormAdapter);
 		rlAdditionalSubmission.setAdapter(relAdditionalSubmission);
 
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.BPI_DOCUMENTS_PROCESSING);
 	}
 
 	@Override

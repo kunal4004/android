@@ -12,6 +12,7 @@ import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.TransactionHistoryResponse;
@@ -62,6 +63,12 @@ public class WTransactionsActivity extends AppCompatActivity {
 			}
 
 		});
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.TRANSACTIONS);
 	}
 
 	public void loadTransactionHistory(final String prOfferId) {

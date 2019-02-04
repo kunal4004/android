@@ -1,1 +1,1 @@
-* [Xiaomi Devices] Fixed app crashes when accessing Accounts
+We’ve listened to your suggestions and made several improvements to the shopping experience. Coming soon… your credit card statement in-app!
