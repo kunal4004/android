@@ -57,6 +57,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.grid.Gri
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.ShoppingListFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsLoggedOutFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsLoggedinAndNotLinkedFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment;
@@ -214,7 +215,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					// product item successfully added to cart
 					cartSummaryAPI();
 					closeSlideUpPanel();
-					setToast();
+					setToast(getResources().getString(R.string.added_to), getResources().getString(R.string.cart));
 				} else if (object instanceof BadgeState) {
 					// call observer to update independent count
 					BadgeState badgeState = (BadgeState) object;
@@ -242,16 +243,16 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		mQueryBadgeCounter.addObserver(this);
 	}
 
-	private void setToast() {
+	private void setToast(String message, String cartText) {
 		mToastUtils = new ToastUtils(BottomNavigationActivity.this);
 		mToastUtils.setActivity(BottomNavigationActivity.this);
 		mToastUtils.setView(getBottomNavigationById());
 		mToastUtils.setGravity(Gravity.BOTTOM);
 		mToastUtils.setCurrentState(TAG);
-		mToastUtils.setCartText(R.string.cart);
+		mToastUtils.setCartText(cartText);
 		mToastUtils.setPixel(getBottomNavigationById().getHeight() + Utils.dp2px(BottomNavigationActivity.this, 45));
 		mToastUtils.setView(getBottomNavigationById());
-		mToastUtils.setMessage(R.string.added_to);
+		mToastUtils.setMessage(message);
 		mToastUtils.setViewState(true);
 		mToastUtils.build();
 	}
@@ -672,6 +673,18 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		 *  Close slide up panel when expanded
 		 */
 		if (getSlidingLayout() != null) {
+		    // Send result to store locator fragment onActivityResult
+            // if current visible fragment points to store locator
+            // and store locator detail is anchored
+			if (mNavController.getCurrentFrag() instanceof StoresNearbyFragment1) {
+				Fragment currentFrag = mNavController.getCurrentFrag();
+				StoresNearbyFragment1 storesNearbyFragment = (StoresNearbyFragment1) currentFrag;
+				if (storesNearbyFragment.layoutIsAnchored()) {
+                    currentFrag.onActivityResult(StoresNearbyFragment1.LAYOUT_ANCHORED_RESULT_CODE,StoresNearbyFragment1.LAYOUT_ANCHORED_RESULT_CODE,null);
+				 return;
+				}
+			}
+
 			if (getSlidingLayout().getPanelState().equals(SlidingUpPanelLayout.PanelState.EXPANDED)) {
 				closeSlideUpPanel();
 				return;
@@ -864,6 +877,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+		Fragment fragment = getCurrentFragment();
+		if (fragment instanceof StoresNearbyFragment1){
+			fragment.onRequestPermissionsResult(requestCode,permissions,grantResults);
+		}
+
 		// redirects to utils
 		permissionUtils.onRequestPermissionsResult(requestCode, permissions, grantResults);
 	}
@@ -896,10 +915,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		}
 
 		if (requestCode == PDP_REQUEST_CODE && resultCode == RESULT_OK) {
-			boolean isItemAddToCart = data.getBooleanExtra("addedToCart", false);
+			String itemAddToCartMessage = data.getStringExtra("addedToCartMessage");
 			boolean isItemAddToShoppingList = data.getBooleanExtra("addedToShoppingList", false);
-			if (isItemAddToCart) {
-				setToast();
+			if (itemAddToCartMessage != null) {
+				setToast(itemAddToCartMessage, "");
 			} else if (isItemAddToShoppingList) {
 				// call back when Toast clicked after adding item to shopping list
 				List<ShoppingList> shoppingList = getGlobalState().getShoppingListRequest();
@@ -1025,7 +1044,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 		{
 			if (resultCode == ADD_TO_CART_SUCCESS_RESULT) {
-				setToast();
+				String itemAddToCartMessage = data.getStringExtra("addedToCartMessage");
+				if (itemAddToCartMessage != null) {
+					setToast(itemAddToCartMessage, "");
+				}
 			}
 		}
 

@@ -13,6 +13,7 @@ import android.widget.ScrollView;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.FragmentUtils;
@@ -59,6 +60,12 @@ public class CLIEligibilityAndPermissionFragment extends Fragment implements Vie
 	}
 
 	@Override
+	public void onResume() {
+		super.onResume();
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.CLI_INSOLVENCY_CHECK);
+	}
+
+	@Override
 	public void onClick(View view) {
 		switch (view.getId()) {
 			case R.id.eligibilityYes:
@@ -86,6 +93,7 @@ public class CLIEligibilityAndPermissionFragment extends Fragment implements Vie
 						ObjectAnimator.ofInt(scrollView, "scrollY", permissionView.getTop()).setDuration(SLIDE_UP_ANIM_DURATION).start();
 					}
 				});
+				Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.CLI_CONSENT);
 
 				break;
 			case R.id.permissionYes:

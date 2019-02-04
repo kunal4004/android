@@ -15,6 +15,7 @@ import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.TipsTricksFragmentBinding;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.TipsAndTricksListAdapter;
@@ -51,6 +52,12 @@ public class TipsAndTricksFragment extends BaseFragment<TipsTricksFragmentBindin
         rcvTipsAndTricks.setLayoutManager(mLayoutManager);
         rcvTipsAndTricks.setNestedScrollingEnabled(false);
         rcvTipsAndTricks.setAdapter(new TipsAndTricksListAdapter(getActivity(), this));
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.TIPS_AND_TRICKS_LIST);
     }
 
     @Override

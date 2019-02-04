@@ -25,6 +25,7 @@ import android.support.annotation.Nullable;
 import android.support.design.internal.BottomNavigationItemView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -80,6 +81,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -95,12 +97,14 @@ import za.co.woolworths.financial.services.android.models.dto.TransactionParentO
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
+import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.badgeview.Badge;
 import za.co.woolworths.financial.services.android.ui.views.badgeview.QBadgeView;
 import za.co.woolworths.financial.services.android.util.tooltip.TooltipHelper;
@@ -615,6 +619,11 @@ public class Utils {
 	public static void triggerFireBaseEvents(String eventName) {
 		FirebaseAnalytics mFirebaseAnalytics = FirebaseManager.Companion.getInstance().getAnalytics();
 		mFirebaseAnalytics.logEvent(eventName, null);
+	}
+
+	public static void setScreenName(Activity activity, String screenName) {
+		FirebaseAnalytics mFirebaseAnalytics = FirebaseManager.Companion.getInstance().getAnalytics();
+		mFirebaseAnalytics.setCurrentScreen(activity, screenName, null /* class override */);
 	}
 
 	public static void sendEmail(String emailId, String subject, Context mContext) {
@@ -1380,6 +1389,27 @@ public class Utils {
 			currentAmount = currentAmount.replace("R", "- R");
 		}
 		return currentAmount;
+	}
+
+    public static void displayDialogActionSheet(Activity activity, int description, int buttonText) {
+        if (activity == null) return;
+        AppCompatActivity appCompatActivity = (AppCompatActivity) activity;
+        FragmentManager fm = appCompatActivity.getSupportFragmentManager();
+        SingleButtonDialogFragment singleButtonDialogFragment =
+                SingleButtonDialogFragment.newInstance(appCompatActivity.getString(description), appCompatActivity.getString(buttonText));
+        singleButtonDialogFragment.show(fm, SingleButtonDialogFragment.class.getSimpleName());
+    }
+
+	public static void displayValidationMessageForResult(Fragment fragment, Activity activity, CustomPopUpWindow.MODAL_LAYOUT key, String title, String description, String buttonTitle) {
+		Intent openMsg = new Intent(activity, CustomPopUpWindow.class);
+		Bundle args = new Bundle();
+		args.putSerializable("key", key);
+		args.putString("title", title);
+		args.putString("description", description);
+		args.putString("buttonTitle", buttonTitle);
+		openMsg.putExtras(args);
+		fragment.startActivity(openMsg);
+		((AppCompatActivity) activity).overridePendingTransition(0, 0);
 	}
 
 }

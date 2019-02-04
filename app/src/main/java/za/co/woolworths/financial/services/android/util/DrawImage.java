@@ -34,6 +34,9 @@ public class DrawImage {
 		if (imgUrl != null) {
 			image.setLegacyVisibilityHandlingEnabled(true);
 			try {
+
+				imgUrl = android.net.Uri.encode(imgUrl, "@#&=*+-_.,:!?()/~'%");
+
 				ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(imgUrl))
 						.build();
 				DraweeController controller = Fresco.newDraweeControllerBuilder()
@@ -69,60 +72,6 @@ public class DrawImage {
 		}
 	}
 
-	public void widthDisplayImage(final SimpleDraweeView image, String imgUrl) {
-		if (imgUrl != null) {
-			try {
-				ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(imgUrl))
-						.build();
-				DraweeController controller = Fresco.newDraweeControllerBuilder()
-						.setOldController(image.getController())
-						.setImageRequest(request)
-						.build();
-
-				image.setController(controller);
-			} catch (IllegalArgumentException ignored) {
-			}
-		}
-	}
-
-
-	public void showCategoryImage(final SimpleDraweeView image, String imgUrl) {
-		if (imgUrl != null) {
-			try {
-				GenericDraweeHierarchyBuilder builder = new GenericDraweeHierarchyBuilder(mContext.getResources());
-				GenericDraweeHierarchy hierarchy = builder
-						.setActualImageScaleType(ScalingUtils.ScaleType.FIT_XY)
-						.setDesiredAspectRatio((float) 1.33)
-						.build();
-				ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(imgUrl))
-						.build();
-
-				ControllerListener<ImageInfo> controllerListener = new BaseControllerListener<ImageInfo>() {
-					public void onFinalImageSet(String id, ImageInfo imageinfo, Animatable animatable) {
-						if (imageinfo != null) {
-							updateViewSize(imageinfo, image);
-						}
-					}
-				};
-
-				PipelineDraweeController controller = (PipelineDraweeController)
-						Fresco.newDraweeControllerBuilder()
-								.setImageRequest(request)
-								.setOldController(image.getController())
-								.setControllerListener(controllerListener)
-								.build();
-
-				image.setHierarchy(hierarchy);
-				image.setController(controller);
-			} catch (IllegalArgumentException ignored) {
-			}
-		}
-	}
-
-	private void updateViewSize(ImageInfo imageinfo, SimpleDraweeView simpleDraweeView) {
-		simpleDraweeView.getLayoutParams().height = imageinfo.getHeight();
-		simpleDraweeView.requestLayout();
-	}
 
 	public void handleGIFImage(SimpleDraweeView simpleDraweeView) throws IOException {
 		ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithResourceId(R.raw.calc).build();

@@ -22,6 +22,7 @@ import com.google.zxing.Result;
 
 import java.util.ArrayList;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
@@ -117,6 +118,7 @@ public class BarcodeFragment extends BaseFragment<BarcodeMainLayoutBinding, Barc
 	@Override
 	public void onResume() {
 		super.onResume();
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.SHOP_BARCODE);
 		registerReceiver();
 		startPreview();
 	}

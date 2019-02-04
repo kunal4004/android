@@ -22,6 +22,7 @@ import com.awfs.coordination.R;
 
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
@@ -239,6 +240,7 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
 	@Override
 	public void onResume() {
 		super.onResume();
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.DELIVERY_LOCATION_HISTORY);
 		deliveryLocationSelectionFragmentChange.onFragmentChanged(getActivity().getResources().getString(R.string.delivery_location), false);
 	}
 }

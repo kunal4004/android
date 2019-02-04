@@ -118,6 +118,12 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 		}
 	}
 
+	@Override
+	public void onResume() {
+		super.onResume();
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.SHOP_MAIN_CATEGORIES);
+	}
+
 	private void setUpConnectionError() {
 		assert getViewDataBinding().incNoConnectionHandler != null;
 		mErrorHandlerView = new ErrorHandlerView(getActivity(), getViewDataBinding().incNoConnectionHandler.noConnectionLayout);

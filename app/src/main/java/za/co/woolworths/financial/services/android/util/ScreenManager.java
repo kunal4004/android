@@ -30,6 +30,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.dashboar
 public class ScreenManager {
 
 	public static final int CART_LAUNCH_VALUE = 1442;
+	public static final int BIOMETRICS_LAUNCH_VALUE = 1983;
 
 	public static void presentMain(Activity activity, String notificationUtils) {
 
@@ -148,7 +149,7 @@ public class ScreenManager {
 
 				if (!AppInstanceObject.get().isBiometricWalkthroughPresented() &&
 						AuthenticateUtils.getInstance(activity).isAppSupportsAuthentication() && !AuthenticateUtils.getInstance(activity).isAuthenticationEnabled()) {
-					activity.startActivity(new Intent(activity, BiometricsWalkthrough.class));
+					activity.startActivityForResult(new Intent(activity, BiometricsWalkthrough.class), BIOMETRICS_LAUNCH_VALUE);
 				}
 			}
 		}).start();

@@ -8,8 +8,7 @@
     android:background="@color/purple"
     android:orientation="vertical"
     android:paddingLeft="@dimen/bank_spacing_width"
-    android:paddingRight="@dimen/bank_spacing_width"
-    android:visibility="gone">
+    android:paddingRight="@dimen/bank_spacing_width">
 
     <za.co.woolworths.financial.services.android.ui.views.WButton
         android:id="@+id/btnOk"

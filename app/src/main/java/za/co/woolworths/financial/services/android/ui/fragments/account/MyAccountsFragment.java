@@ -7,7 +7,6 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -46,7 +45,6 @@ import za.co.woolworths.financial.services.android.ui.activities.MessagesActivit
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
-import za.co.woolworths.financial.services.android.ui.activities.UserDetailActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountOverViewPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
@@ -91,7 +89,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	LinearLayout loggedInHeaderLayout;
 	RelativeLayout unlinkedLayout;
 	RelativeLayout signOutBtn;
-	RelativeLayout myDetailBtn;
+	RelativeLayout mProfileBtn;
 	RelativeLayout myPreferences;
 	ViewPager viewPager;
 	MyAccountOverViewPagerAdapter adapter;
@@ -128,8 +126,9 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	boolean isActivityInForeground;
 	boolean isPromptsShown;
 	boolean isAccountsCallMade;
+    private RelativeLayout mUpdatePasswordBtn;
 
-	public MyAccountsFragment() {
+    public MyAccountsFragment() {
 		// Required empty public constructor
 		this.accounts = new HashMap<>();
 		this.unavailableAccounts = new ArrayList<>();
@@ -191,8 +190,9 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			unlinkedLayout = view.findViewById(R.id.llUnlinkedAccount);
 			relMyList = view.findViewById(R.id.myLists);
 			signOutBtn = view.findViewById(R.id.signOutBtn);
-			myDetailBtn = view.findViewById(R.id.rlMyDetails);
-			myPreferences = view.findViewById(R.id.rlMyPreferences);
+			mProfileBtn = view.findViewById(R.id.rlProfile);
+            mUpdatePasswordBtn = view.findViewById(R.id.rlUpdatePassword);
+            myPreferences = view.findViewById(R.id.rlMyPreferences);
 			viewPager = view.findViewById(R.id.pager);
 			pager_indicator = view.findViewById(R.id.viewPagerCountDots);
 			sc_available_funds = view.findViewById(R.id.sc_available_funds);
@@ -225,7 +225,8 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			linkedPersonalCardView.setOnClickListener(this);
 			openShoppingList.setOnClickListener(this);
 			signOutBtn.setOnClickListener(this);
-			myDetailBtn.setOnClickListener(this);
+			mProfileBtn.setOnClickListener(this);
+			mUpdatePasswordBtn.setOnClickListener(this);
 			helpSection.setOnClickListener(this);
 			storeLocator.setOnClickListener(this);
 			relMyList.setOnClickListener(this);
@@ -272,9 +273,8 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	@Override
 	public void onResume() {
 		super.onResume();
+		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.MY_ACCOUNTS);
 		isActivityInForeground = true;
-		if (!isPromptsShown && isAccountsCallMade)
-			showFeatureWalkthroughPrompts();
 		if (!AppInstanceObject.biometricWalkthroughIsPresented(getActivity()))
 			messageCounterRequest();
 	}
@@ -444,7 +444,8 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			userName.setText(name + " " + familyName);
 			//initials of the logged in user will be displayed on the page
 			showView(signOutBtn);
-			showView(myDetailBtn);
+			showView(mProfileBtn);
+            showView(mUpdatePasswordBtn);
 			showView(myPreferences);
 			showView(loginUserOptionsLayout);
 
@@ -467,7 +468,8 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		hideView(loggedInHeaderLayout);
 		hideView(loggedOutHeaderLayout);
 		hideView(signOutBtn);
-		hideView(myDetailBtn);
+		hideView(mProfileBtn);
+        hideView(mUpdatePasswordBtn);
 		hideView(linkedAccountsLayout);
 		hideView(applyNowAccountsLayout);
 		hideView(allUserOptionsLayout);
@@ -527,6 +529,8 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 
 	@Override
 	public void onClick(View v) {
+        Activity activity = getActivity();
+        if (activity == null) return;
 		switch (v.getId()) {
 			case R.id.openMessageActivity:
 				Intent openMessageActivity = new Intent(getActivity(), MessagesActivity.class);
@@ -570,15 +574,12 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			case R.id.signOutBtn:
 				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.SIGN_OUT, "");
 				break;
-
-			case R.id.rlMyDetails:
-				Activity activity = getActivity();
-				if (activity!=null) {
-					Intent openMyDetail = new Intent(getActivity(), UserDetailActivity.class);
-					startActivity(openMyDetail);
-					activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
-				}
-				break;
+            case R.id.rlProfile:
+                ScreenManager.presentSSOUpdateProfile(activity);
+                break;
+            case R.id.rlUpdatePassword:
+                ScreenManager.presentSSOUpdatePassword(activity);
+                break;
 			case R.id.storeLocator:
 				pushFragment(new StoresNearbyFragment1());
 				break;
@@ -853,7 +854,12 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		//TODO: Comment what's actually happening here.
-		if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
+		if (requestCode == ScreenManager.BIOMETRICS_LAUNCH_VALUE) {
+			if (!isPromptsShown && isAccountsCallMade) {
+				isActivityInForeground = true;
+				showFeatureWalkthroughPrompts();
+			}
+		} else if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
 			shoppingListRequest();
 			initialize();
 			//One time biometricsWalkthrough

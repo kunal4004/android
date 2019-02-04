@@ -4,10 +4,13 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.accounts_how_to_pay.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.PaymentMethod
 import za.co.woolworths.financial.services.android.util.Utils
@@ -24,13 +27,18 @@ class HowToPayActivity : AppCompatActivity(), View.OnClickListener {
         initViews()
     }
 
+    override fun onResume() {
+        super.onResume()
+        Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.HOW_TO_PAY)
+    }
+
     private fun initViews() {
         this.accountDetails = Gson().fromJson(intent.getStringExtra("account"), Account::class.java)
         btnClose.setOnClickListener(this)
         setHowToPayLogo()
         loadPaymentOptions()
         loadAccountDetails()
-
+        loadAbsaCreditCardInfoIfNeeded();
     }
 
     override fun onClick(v: View?) {
@@ -76,7 +84,7 @@ class HowToPayActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    fun setHowToPayLogo(){
+    fun setHowToPayLogo() {
         when (accountDetails.productGroupCode) {
             "SC" -> {
                 howToPayLogo.setBackgroundResource(R.drawable.how_to_pay_store_card)
@@ -89,6 +97,19 @@ class HowToPayActivity : AppCompatActivity(), View.OnClickListener {
             "PL" -> {
                 howToPayLogo.setBackgroundResource(R.drawable.how_to_pay_p_loan)
                 howToPayTitle.text = resources.getString(R.string.ways_to_pay_your_account_pl)
+            }
+        }
+    }
+
+    private fun loadAbsaCreditCardInfoIfNeeded() {
+        when (accountDetails.productGroupCode) {
+            "CC" -> {
+                llAbsaAccount.visibility = VISIBLE
+                llCreditCardDetail.visibility = VISIBLE
+                tvHowToPayTitle.text = getString(R.string.how_to_pay_credit_card_title)
+            }
+            else -> {
+                llAbsaAccount.visibility = GONE
             }
         }
     }
