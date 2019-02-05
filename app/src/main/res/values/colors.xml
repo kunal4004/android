@@ -76,4 +76,5 @@
     <color name="in_app_msg_color_desc">#7C7C7C</color>
 
     <color name="swatch_border_color">#E5E5E5</color>
+    <color name="black40">#40000000</color>
 </resources>
