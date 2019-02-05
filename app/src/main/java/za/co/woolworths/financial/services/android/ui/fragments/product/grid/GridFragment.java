@@ -299,20 +299,35 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 		}
 
 		mProductAdapter = new ProductViewListAdapter(getActivity(), mProductList, this);
+
 		mRecyclerViewLayoutManager = new GridLayoutManager(getActivity(), 2);
 		// Set up a GridLayoutManager to change the SpanSize of the header and footer
 		mRecyclerViewLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
 			@Override
 			public int getSpanSize(int position) {
+				if (position > mProductList.size() - 1){
+					//this is a failsafe to prevent ever getting
+					//the IndexOutOfBoundsException
+					return 1;
+				}
+
 				//header should have span size of 2, and regular item should have span size of 1
-				return (mProductList.get(position).viewTypeHeader || mProductList.get(position).viewTypeFooter) ? 2 : 1;
+				boolean isHeader = mProductList.get(position).viewTypeHeader;
+				boolean isFooter = mProductList.get(position).viewTypeFooter;
+
+				return (isHeader || isFooter) ? 2 : 1;
 			}
 		});
+
+
 		final RecyclerView rcvProductList = getViewDataBinding().productList;
 		if (rcvProductList.getVisibility() == View.INVISIBLE)
 			rcvProductList.setVisibility(View.VISIBLE);
+
 		rcvProductList.setLayoutManager(mRecyclerViewLayoutManager);
 		rcvProductList.setAdapter(mProductAdapter);
+
+		rcvProductList.clearOnScrollListeners();
 		rcvProductList.addOnScrollListener(new RecyclerView.OnScrollListener() {
 			@Override
 			public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -325,6 +340,13 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 					loadData();
 			}
 		});
+
+		//for some reason, when we change the visibility
+		//before setting the updated Adapter, the adapter still remembers
+		//the results from the previous listed data. This of course may be different in sizes
+		//and therefor we can most likely expect a IndexOutOfBoundsExeption
+		if (rcvProductList.getVisibility() == View.INVISIBLE)
+			rcvProductList.setVisibility(View.VISIBLE);
 	}
 
 	private void loadData() {
