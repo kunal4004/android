@@ -78,4 +78,5 @@
     <color name="swatch_border_color">#E5E5E5</color>
     <color name="black40">#40000000</color>
     <color name="orders_bg">#F0F0F0</color>
+    <color name="shop_search_color">#F6F6F6</color>
 </resources>

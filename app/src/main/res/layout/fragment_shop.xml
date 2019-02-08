@@ -1,53 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment">
+    android:layout_height="match_parent">
 
-    <RelativeLayout
-        android:id="@+id/searchLayout"
-        android:layout_width="match_parent"
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/tvSearchProduct"
+        android:layout_width="0dp"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/white"
-        android:paddingLeft="@dimen/sixteen_dp"
-        android:paddingTop="@dimen/five_dp"
-        android:paddingRight="@dimen/sixteen_dp"
-        android:paddingBottom="@dimen/five_dp">
+        android:layout_marginStart="@dimen/sixteen_dp"
+        android:layout_marginTop="@dimen/five_dp"
+        android:layout_marginEnd="@dimen/sixteen_dp"
+        android:layout_marginBottom="8dp"
+        android:layout_toStartOf="@+id/imBarcodeScanner"
+        android:background="@color/shop_search_color"
+        android:drawableStart="@drawable/ic_search"
+        android:drawablePadding="@dimen/sixteen_dp"
+        android:gravity="center_vertical"
+        android:hint="@string/product_search_hint"
+        android:paddingStart="@dimen/sixteen_dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/product_search_hint"
+        android:textSize="16sp"
+        app:WTextView_font="myriadpro_regular"
+        app:layout_constraintBottom_toTopOf="@+id/productSearchGuideline"
+        app:layout_constraintEnd_toStartOf="@+id/imBarcodeScanner"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="RtlSymmetry" />
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginRight="@dimen/sixteen_dp"
-            android:layout_toLeftOf="@+id/imBarcodeScanner"
-            android:background="#10000000"
-            android:drawableLeft="@drawable/ic_search"
-            android:drawablePadding="@dimen/sixteen_dp"
-            android:gravity="center_vertical"
-            android:hint="@string/product_search_hint"
-            android:paddingLeft="@dimen/sixteen_dp"
-            android:textColor="@color/black"
-            android:textColorHint="@color/product_search_hint"
-            android:textSize="16sp"
-            app:WTextView_font="myriadpro_regular" />
 
-        <ImageView
-            android:id="@+id/imBarcodeScanner"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:src="@drawable/barcode" />
-    </RelativeLayout>
+    <ImageView
+        android:id="@+id/imBarcodeScanner"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="@dimen/five_dp"
+        android:layout_marginEnd="@dimen/sixteen_dp"
+        android:layout_marginBottom="8dp"
+        android:contentDescription="@string/enter_barcode_desc"
+        android:src="@drawable/barcode"
+        app:layout_constraintBottom_toTopOf="@+id/productSearchGuideline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/tvSearchProduct"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
     <android.support.design.widget.TabLayout
         android:id="@+id/tabs_main"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
+        android:layout_marginTop="8dp"
         android:background="@drawable/appbar_background"
         android:elevation="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvSearchProduct"
         app:tabBackground="@color/white"
         app:tabGravity="fill"
         app:tabIndicatorColor="@color/black"
@@ -59,7 +73,17 @@
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager_main"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tabs_main" />
 
-</LinearLayout>
+    <android.support.constraint.Guideline
+        android:id="@+id/productSearchGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="?attr/actionBarSize" />
+</android.support.constraint.ConstraintLayout>
