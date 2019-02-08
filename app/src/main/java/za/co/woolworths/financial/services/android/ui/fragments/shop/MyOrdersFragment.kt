@@ -49,12 +49,12 @@ class MyOrdersFragment : Fragment(), OnOrdersResult {
 
     private fun buildDataToDisplayOrders(ordersResponse: OrdersResponse): ArrayList<OrderItem> {
         var dataList = arrayListOf<OrderItem>()
-        ordersResponse.upcomingOrders.forEach {
+        ordersResponse.upcomingOrders?.forEach {
             dataList.add(OrderItem(it, OrderItem.ViewType.UPCOMING_ORDER))
         }
-        if (ordersResponse.pastOrders.size > 0) {
+        if (ordersResponse.pastOrders?.size!! > 0) {
             dataList.add(OrderItem(null, OrderItem.ViewType.HEADER))
-            ordersResponse.pastOrders.forEach {
+            ordersResponse.pastOrders?.forEach {
                 dataList.add(OrderItem(it, OrderItem.ViewType.PAST_ORDER))
             }
         }
