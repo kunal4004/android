@@ -1,8 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop
 
-import android.os.Build
 import android.os.Bundle
-import android.support.annotation.RequiresApi
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
@@ -21,8 +19,8 @@ import android.support.v7.widget.DividerItemDecoration
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment
+import za.co.woolworths.financial.services.android.util.ConnectionBroadcastReceiver
 import za.co.woolworths.financial.services.android.util.Utils
-
 
 class DepartmentsFragment : Fragment() {
 
@@ -35,6 +33,19 @@ class DepartmentsFragment : Fragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         executeDepartmentRequest()
+        networkConnectivityStatus()
+    }
+
+    private fun networkConnectivityStatus() {
+        activity?.let {
+            ConnectionBroadcastReceiver.registerToFragmentAndAutoUnregister(it, this, object : ConnectionBroadcastReceiver() {
+                override fun onConnectionChanged(hasConnection: Boolean) {
+                    if (!hasConnection) {
+
+                    }
+                }
+            })
+        }
     }
 
     private fun executeDepartmentRequest() {
@@ -71,15 +82,12 @@ class DepartmentsFragment : Fragment() {
             dividerItemDecoration.setDrawable(ContextCompat.getDrawable(it, R.drawable.department_line_divider))
             rclDepartment.addItemDecoration(dividerItemDecoration)
             rclDepartment?.layoutManager = mLayoutManager
-            rclDepartment.itemAnimator.changeDuration = 0
             rclDepartment?.adapter = departmentAdapter
         }
     }
 
     private fun departmentItemClicked(rootCategory: RootCategory) {
-        if (activity is BottomNavigationActivity) {
-            (activity as BottomNavigationActivity).pushFragmentSlideUp(openNextFragment(rootCategory))
-        }
+        (activity as? BottomNavigationActivity)?.pushFragmentSlideUp(openNextFragment(rootCategory))
     }
 
     private fun openNextFragment(rootCategory: RootCategory): Fragment {
@@ -101,11 +109,5 @@ class DepartmentsFragment : Fragment() {
                 return gridFragment
             }
         }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    override fun onDetach() {
-        super.onDetach()
-        activity.window.exitTransition = null
     }
 }

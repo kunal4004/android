@@ -7,7 +7,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.Departments
 import za.co.woolworths.financial.services.android.ui.fragments.shop.MyListsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.MyOrdersFragment
 
-class ShopPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
+class ShopPagerAdapter(fm: FragmentManager, tabTitle: MutableList<String>?) : FragmentPagerAdapter(fm) {
+    private val mTabTitle = tabTitle
     override fun getItem(position: Int): Fragment {
         return when (position) {
             0 -> DepartmentsFragment()
@@ -19,15 +20,15 @@ class ShopPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
     }
 
     override fun getCount(): Int {
-        return 3
+        return mTabTitle!!.size
     }
 
     override fun getPageTitle(position: Int): CharSequence {
         return when (position) {
-            0 -> "DEPARTMENTS"
-            1 -> "MY LISTS"
+            0 -> mTabTitle!![0]
+            1 -> mTabTitle!![1]
             else -> {
-                return "MY ORDERS"
+                return mTabTitle!![2]
             }
         }
     }
