@@ -55,6 +55,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.category
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.ShoppingListFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
@@ -622,8 +623,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 				case R.id.navigate_to_shop:
 					clearStack();
-					CategoryFragment currentProductCategoryFragment = (CategoryFragment) mNavController.getCurrentFrag();
-					currentProductCategoryFragment.scrollToTop();
+					//TODO:: ORDER HISTORY HANDLE ON DOUBLE TAP SHOP ICON
+//					ShopFragment shopFragment = (ShopFragment) mNavController.getCurrentFrag();
+//					shopFragment.scrollToTop();
 					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMENU);
 					break;
 
@@ -750,9 +752,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			case INDEX_TODAY:
 				return new WTodayFragment();
 			case INDEX_PRODUCT:
-				return new CategoryFragment();
+				return new ShopFragment();
 			case INDEX_CART:
-				return new CategoryFragment();
+				return new ShopFragment();
 			case INDEX_REWARD:
 				wRewardsFragment = new WRewardsFragment();
 				return wRewardsFragment;
