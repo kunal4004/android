@@ -107,6 +107,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 
     private View fakeView;
     private NestedScrollView mScrollAccountCard;
+    private RelativeLayout rlABSALinkOnlineBankingToDevice;
 
     @Nullable
     @Override
@@ -177,6 +178,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
         relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
         tvBPIProtectInsurance = view.findViewById(R.id.tvBPIProtectInsurance);
 
+        rlABSALinkOnlineBankingToDevice = (RelativeLayout)view.findViewById(R.id.rlABSALinkOnlineBankingToDevice);
         relViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
         accountInArrearsLayout = view.findViewById(R.id.llAccountInArrearsParentContainer);
         tvHowToPayAccountStatus = view.findViewById(R.id.howToPayAccountStatus);
@@ -210,6 +212,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
         tvViewTransaction.setOnClickListener(this);
         relBalanceProtection.setOnClickListener(this);
         mRelDrawnDownAmount.setOnClickListener(this);
+        rlABSALinkOnlineBankingToDevice.setOnClickListener(this);
         relViewTransactions.setOnClickListener(this);
         mRelFindOutMore.setOnClickListener(this);
         mRelIncreaseMyLimit.setOnClickListener(this);
@@ -294,6 +297,8 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
             productOfferingId = Utils.getProductOfferingId(accountsResponse, "PL");
         }
         switch (v.getId()) {
+            case R.id.rlABSALinkOnlineBankingToDevice:
+                break;
             case R.id.rlViewTransactions:
             case R.id.tvViewTransaction:
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANTRANSACTIONS);

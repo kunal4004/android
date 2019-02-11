@@ -109,6 +109,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	private RelativeLayout relDebitOrders;
 
 	private View fakeView;
+	private RelativeLayout rlABSALinkOnlineBankingToDevice;
 
 	@Nullable
 	@Override
@@ -167,6 +168,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		tvIncreaseLimitDescription = (WTextView) view.findViewById(R.id.tvIncreaseLimitDescription);
 		relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
 		tvBPIProtectInsurance = view.findViewById(R.id.tvBPIProtectInsurance);
+		rlABSALinkOnlineBankingToDevice = (RelativeLayout)view.findViewById(R.id.rlABSALinkOnlineBankingToDevice);
 		rlViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
 
 		iconAvailableFundsInfo = view.findViewById(R.id.iconAvailableFundsInfo);
@@ -205,6 +207,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	private void addListener() {
 		relBalanceProtection.setOnClickListener(this);
 		tvViewTransaction.setOnClickListener(this);
+		rlABSALinkOnlineBankingToDevice.setOnClickListener(this);
 		rlViewTransactions.setOnClickListener(this);
 		llIncreaseLimitContainer.setOnClickListener(this);
 		mRelIncreaseMyLimit.setOnClickListener(this);
@@ -288,6 +291,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 			productOfferingId = Utils.getProductOfferingId(accountsResponse, "SC");
 		}
 		switch (v.getId()) {
+			case R.id.rlABSALinkOnlineBankingToDevice:
+				break;
 			case R.id.rlViewTransactions:
 			case R.id.tvViewTransaction:
 				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDTRANSACTIONS);

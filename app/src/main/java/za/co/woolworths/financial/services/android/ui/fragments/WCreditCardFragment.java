@@ -94,6 +94,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	private View fakeView;
 	private RelativeLayout relBalanceProtection;
 	private WTextView tvBPIProtectInsurance;
+	private RelativeLayout rlABSALinkOnlineBankingToDevice;
 
 	@Nullable
 	@Override
@@ -148,6 +149,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		creditLimit = (WTextView) view.findViewById(R.id.creditLimit);
 		dueDate = (WTextView) view.findViewById(R.id.dueDate);
 		minAmountDue = (WTextView) view.findViewById(R.id.minAmountDue);
+		rlABSALinkOnlineBankingToDevice = view.findViewById(R.id.rlABSALinkOnlineBankingToDevice);
 		currentBalance = (WTextView) view.findViewById(R.id.currentBalance);
 		tvViewTransaction = (WTextView) view.findViewById(R.id.tvViewTransaction);
 		tvIncreaseLimit = (WTextView) view.findViewById(R.id.tvIncreaseLimit);
@@ -181,6 +183,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		}
 
 		relBalanceProtection.setOnClickListener(this);
+		rlABSALinkOnlineBankingToDevice.setOnClickListener(this);
 		rlViewTransactions.setOnClickListener(this);
 		llIncreaseLimitContainer.setOnClickListener(this);
 		mRelIncreaseMyLimit.setOnClickListener(this);
@@ -272,6 +275,8 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 			productOfferingId = Utils.getProductOfferingId(accountsResponse, "CC");
 		}
 		switch (v.getId()) {
+			case R.id.rlABSALinkOnlineBankingToDevice:
+				break;
 			case R.id.rlViewTransactions:
 			case R.id.tvViewTransaction:
 				Intent intent = new Intent(getActivity(), WTransactionsActivity.class);
