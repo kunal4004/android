@@ -846,4 +846,7 @@
     <string name="tips_tricks_desc_navigation_sign_in">Tap the cart icon in the bottom menu to see the items you’ve added.</string>
     <string name="refinement_see_result_button_text">All\u0020</string>
     <string name="absa_link_banking_to_device_title">Link Online Banking to this Device</string>
+    <string name="absa_biometric_please_enter_your_pin">Please Enter Your ATM Pin.</string>
+    <string name="absa_biometric_please_card_number">Card number  **** **** **** 5491</string>
+    <string name="absa_biometric_forgot_atm_pin_code">Forgot ATM Pin Code</string>
 </resources>
