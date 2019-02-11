@@ -1466,15 +1466,4 @@
         <item name="android:textSize">14sp</item>
     </style>
 
-    <style name="OrderDetailsActivityStyle" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="android:windowIsTranslucent">false</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="android:selectableItemBackground">@android:color/transparent</item>
-        <item name="android:actionBarItemBackground">@null</item>
-        <item name="actionBarItemBackground">@null</item>
-    </style>
-
 </resources>

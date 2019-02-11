@@ -42,7 +42,6 @@ import za.co.woolworths.financial.services.android.models.dto.LoginResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageReadRequest;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
-import za.co.woolworths.financial.services.android.models.dto.OrderDetailsResponse;
 import za.co.woolworths.financial.services.android.models.dto.OrdersResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
@@ -319,10 +318,6 @@ public class WfsApi {
 
 	public OrdersResponse getOrders() {
 		return mApiInterface.getOrders(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken());
-	}
-
-	public OrderDetailsResponse getOrderDetails(String orderId) {
-		return mApiInterface.getOrderDetails(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), orderId);
 	}
 
 	private String getOsVersion() {

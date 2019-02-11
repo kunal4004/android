@@ -350,11 +350,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/RuntimeExceptionActivityStyle" />
 
-        <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/OrderDetailsActivityStyle" />
-
     </application>
 
 </manifest>
