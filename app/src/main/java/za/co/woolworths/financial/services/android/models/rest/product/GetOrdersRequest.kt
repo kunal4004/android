@@ -6,7 +6,6 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask
 import za.co.woolworths.financial.services.android.util.OnEventListener
-import java.lang.ref.WeakReference
 
 class GetOrdersRequest(val context: Context, var callback: OnEventListener<OrdersResponse>) : HttpAsyncTask<String, String, OrdersResponse>() {
 
