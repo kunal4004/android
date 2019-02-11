@@ -36,6 +36,7 @@ import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.rest.cli.CLIGetOfferActive;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
+import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingToDeviceActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.DebitOrderActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
@@ -292,6 +293,9 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		}
 		switch (v.getId()) {
 			case R.id.rlABSALinkOnlineBankingToDevice:
+				Intent openABSALinkOnlineBankingToDevice = new Intent(activity, ABSAOnlineBankingToDeviceActivity.class);
+				startActivity(openABSALinkOnlineBankingToDevice);
+				activity.overridePendingTransition(0, 0);
 				break;
 			case R.id.rlViewTransactions:
 			case R.id.tvViewTransaction:
