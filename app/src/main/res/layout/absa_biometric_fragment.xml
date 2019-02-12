@@ -74,8 +74,9 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="16dp"
-            android:theme="@style/SwitchTheme" />
+            android:theme="@style/SwitchTheme"
+            android:thumb="@drawable/customswitchselector"
+            android:track="@drawable/custom_track" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -109,11 +110,12 @@
 
     <ImageView
         android:id="@+id/imFootPrintLogo"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_above="@+id/tvBiometricTitle"
         android:layout_centerHorizontal="true"
+        android:alpha="0.5"
         android:gravity="center_horizontal"
-        app:srcCompat="@drawable/alerter_ic_notifications" />
+        app:srcCompat="@drawable/biometric_inactive" />
 
 </RelativeLayout>
