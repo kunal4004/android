@@ -848,5 +848,9 @@
     <string name="shop_department_title_department">departments</string>
     <string name="shop_department_title_list">my lists</string>
     <string name="shop_department_title_order">my orders</string>
+    <string name="total">Total:</string>
+    <string name="add_items_to_shopping_list">Add Items to Shopping List</string>
+    <string name="number_of_items">Number of items:</string>
+    <string name="purchase_date">Purchase Date:</string>
 
 </resources>

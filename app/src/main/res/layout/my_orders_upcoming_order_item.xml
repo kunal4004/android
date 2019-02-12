@@ -53,7 +53,7 @@
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     style="@style/my_orders_textview_style_2"
                     android:layout_alignParentLeft="true"
-                    android:text="Number of items:" />
+                    android:text="@string/number_of_items" />
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     style="@style/my_orders_textview_style_2"
@@ -72,7 +72,7 @@
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     style="@style/my_orders_textview_style_2"
                     android:layout_alignParentLeft="true"
-                    android:text="Purchase Date:" />
+                    android:text="@string/purchase_date" />
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     style="@style/my_orders_textview_style_2"
@@ -97,7 +97,7 @@
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     style="@style/my_orders_textview_style_2"
                     android:layout_alignParentLeft="true"
-                    android:text="Total:"
+                    android:text="@string/total"
                     android:textColor="@color/black"
                     android:textSize="15sp"
                     app:WTextView_font="myriadpro_semibold" />

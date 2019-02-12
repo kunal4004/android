@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/bg_light_overlay" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:paddingLeft="@dimen/twenty_four_dp"
+        android:paddingRight="@dimen/twenty_four_dp">
+
+        <ImageView
+            android:id="@+id/itemImage"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true" />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            style="@style/my_orders_textview_style_2"
+            android:layout_marginLeft="@dimen/sixteen_dp"
+            android:layout_toRightOf="@+id/itemImage"
+            android:text="3 x Koo Baked Beans"
+            android:textColor="@color/black" />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            style="@style/my_orders_textview_style_3"
+            android:drawableRight="null"
+            android:text="R4 100.50" />
+    </RelativeLayout>
+
+</LinearLayout>

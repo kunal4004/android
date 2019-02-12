@@ -6,23 +6,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
-import za.co.woolworths.financial.services.android.models.dto.OrderItem
+import za.co.woolworths.financial.services.android.models.dto.OrderDetailsItem
 import za.co.woolworths.financial.services.android.ui.adapters.holder.OrdersBaseViewHolder
 
-class OrderDetailsAdapter(val context: Context, var dataList: ArrayList<OrderItem>) : RecyclerView.Adapter<OrdersBaseViewHolder>() {
+class OrderDetailsAdapter(val context: Context, var dataList: ArrayList<OrderDetailsItem>) : RecyclerView.Adapter<OrdersBaseViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): OrdersBaseViewHolder? {
         when (viewType) {
-            OrderItem.ViewType.HEADER.value -> {
+            OrderDetailsItem.ViewType.HEADER.value -> {
                 return HeaderViewHolder(LayoutInflater.from(context).inflate(R.layout.my_orders_past_orders_header, parent, false))
             }
-            OrderItem.ViewType.UPCOMING_ORDER.value -> {
+            OrderDetailsItem.ViewType.ORDER_STATUS.value -> {
                 return OrderStatusViewHolder(LayoutInflater.from(context).inflate(R.layout.my_orders_upcoming_order_item, parent, false))
             }
-            OrderItem.ViewType.PAST_ORDER.value -> {
-                return OrderItemViewHolder(LayoutInflater.from(context).inflate(R.layout.my_orders_past_order_item, parent, false))
+            OrderDetailsItem.ViewType.ADD_TO_LIST_LAYOUT.value -> {
+                return OrderItemViewHolder(LayoutInflater.from(context).inflate(R.layout.add_item_to_shoppinglist_layout, parent, false))
             }
-            OrderItem.ViewType.PAST_ORDER.value -> {
-                return AddToListViewHolder(LayoutInflater.from(context).inflate(R.layout.my_orders_past_order_item, parent, false))
+            OrderDetailsItem.ViewType.COMMERCE_ITEM.value -> {
+                return AddToListViewHolder(LayoutInflater.from(context).inflate(R.layout.order_details_commerce_item, parent, false))
             }
         }
         return null
