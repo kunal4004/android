@@ -48,6 +48,7 @@ import za.co.woolworths.financial.services.android.models.dto.LoginResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageReadRequest;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
+import za.co.woolworths.financial.services.android.models.dto.OrderDetailsResponse;
 import za.co.woolworths.financial.services.android.models.dto.OrdersResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
@@ -958,4 +959,17 @@ public interface ApiInterface {
 			@Header("os") String os,
 			@Header("osVersion") String osVersion,
 			@Header("sessionToken") String sessionToken);
+
+	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+	@GET("/order/{id}")
+	OrderDetailsResponse getOrderDetails(
+			@Header("apiId") String apiId,
+			@Header("sha1Password") String sha1Password,
+			@Header("deviceVersion") String deviceVersion,
+			@Header("deviceModel") String deviceModel,
+			@Header("network") String network,
+			@Header("os") String os,
+			@Header("osVersion") String osVersion,
+			@Header("sessionToken") String sessionToken,
+			@Path("id") String id);
 }
