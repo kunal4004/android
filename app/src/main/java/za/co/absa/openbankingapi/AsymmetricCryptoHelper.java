@@ -32,7 +32,7 @@ import javax.crypto.NoSuchPaddingException;
 public class AsymmetricCryptoHelper {
     private static final String KEY_FACTORY_ALGORITHM = "RSA";
     private static final String CIPHER_ALGORITHM = "RSA/ECB/PKCS1Padding";
-    private static final String KEY_FILE = "mobileapp.pem.cer";
+    private static final String KEY_FILE = "Woolworths_MobileAppPubKey.pem";
 
     public final byte[] encryptSymmetricKey(Context context, byte[] symmetricKey) throws AsymmetricKeyGenerationFailureException, AsymmetricEncryptionFailureException {
         PublicKey publicKey = loadPublicKey(context);

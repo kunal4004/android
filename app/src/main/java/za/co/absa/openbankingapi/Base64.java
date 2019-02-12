@@ -12,6 +12,8 @@
  */
 package za.co.absa.openbankingapi;
 
+import com.awfs.coordination.BuildConfig;
+
 import java.io.IOException;
 import java.util.Locale;
 
