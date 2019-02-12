@@ -3,109 +3,101 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    android:fitsSystemWindows="true"
     android:paddingStart="@dimen/thirty_two_dp"
     android:paddingEnd="@dimen/thirty_two_dp">
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
-        android:id="@+id/tvEnterYourPin"
+        android:id="@+id/tvBiometricTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/thirty_two_dp"
-        android:layout_marginBottom="@dimen/eight_dp"
-        android:text="@string/absa_biometric_please_enter_your_pin"
+        android:layout_above="@+id/tvBiometricDesc"
+        android:layout_marginTop="84dp"
+        android:gravity="start|center"
+        android:letterSpacing="0.2"
+        android:lineSpacingMultiplier="1.29"
+        android:paddingTop="@dimen/thirty_five_dp"
+        android:paddingBottom="@dimen/eleven_dp"
+        android:text="@string/absa_biometric_title"
+        android:textAllCaps="true"
         android:textColor="@color/black"
-        android:textSize="@dimen/nineteen_sp"
-        app:WTextView_font="bold" />
-
+        android:textSize="@dimen/fourteen_sp"
+        app:WTextView_font="medium_bold" />
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
-        android:id="@+id/tvABSACardNumber"
+        android:id="@+id/tvBiometricDesc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tvEnterYourPin"
+        android:layout_above="@+id/vHorizontalDivider"
+        android:layout_marginTop="@dimen/eight_dp"
         android:alpha="0.5"
         android:lineSpacingExtra="0.14sp"
         android:lineSpacingMultiplier="1.40"
-        android:text="@string/absa_biometric_please_card_number"
+        android:text="@string/absa_biometric_desc"
         android:textColor="@color/offer_title"
         android:textSize="@dimen/fifteen_sp"
         app:WTextView_font="myriadpro_regular" />
 
 
-    <LinearLayout
-        android:id="@+id/llPinCodeContainer"
+    <View
+        android:id="@+id/vHorizontalDivider"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_gravity="center"
-        android:layout_marginTop="0dp"
-        android:background="@color/white"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:id="@+id/ivPin1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/fifteen_dp"
-            android:contentDescription="@string/app_label"
-            app:srcCompat="@drawable/pin_empty" />
-
-        <ImageView
-            android:id="@+id/ivPin2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/fifteen_dp"
-            android:contentDescription="@string/app_label"
-            app:srcCompat="@drawable/pin_empty" />
-
-        <ImageView
-            android:id="@+id/ivPin3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/fifteen_dp"
-            android:contentDescription="@string/app_label"
-            app:srcCompat="@drawable/pin_empty" />
-
-        <ImageView
-            android:id="@+id/ivPin4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/fifteen_dp"
-            android:contentDescription="@string/app_label"
-            app:srcCompat="@drawable/pin_empty" />
-
-        <ImageView
-            android:id="@+id/ivPin5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/app_label"
-            android:visibility="visible"
-            app:srcCompat="@drawable/pin_empty" />
-
-    </LinearLayout>
-
+        android:layout_height="1dp"
+        android:layout_above="@+id/rlToggleBiometric"
+        android:layout_marginTop="@dimen/thirty_one_dp"
+        android:background="@color/recent_search_bg" />
 
     <RelativeLayout
+        android:id="@+id/rlToggleBiometric"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_above="@+id/rlSkipBiometricLayout"
+        android:layout_marginTop="@dimen/twenty_seven_dp"
+        android:visibility="visible">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/tvEnableBiometric"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:drawableLeft="@drawable/ic_touch_id"
+            android:drawablePadding="16dp"
+            android:gravity="center_vertical"
+            android:lineSpacingExtra="0.4sp"
+            android:text="@string/absa_enable_biometric"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            app:WTextView_font="myriadpro_regular" />
+
+        <Switch
+            android:id="@+id/auSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="16dp"
+            android:theme="@style/SwitchTheme" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rlSkipBiometricLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:layout_marginTop="84dp"
         android:layout_marginBottom="@dimen/twenty_four_dp">
 
         <TextView
-            android:id="@+id/tvForgotPin"
+            android:id="@+id/tvSkipStep"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_centerInParent="true"
             android:gravity="start"
-            android:text="@string/absa_biometric_forgot_atm_pin_code"
+            android:text="@string/absa_biometric_skip_step"
             android:textColor="@color/black" />
 
         <FrameLayout
-            android:id="@+id/rlEnterFiveDigitCode"
+            android:id="@+id/flEnterFiveDigitCode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true">
@@ -128,14 +120,13 @@
 
     </RelativeLayout>
 
-    <EditText
-        android:id="@+id/edtEnterATMPin"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:inputType="number"
-        android:maxLength="4">
-
-        <requestFocus />
-    </EditText>
+    <ImageView
+        android:id="@+id/imFootPrintLogo"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/tvBiometricTitle"
+        android:gravity="center_horizontal"
+        app:srcCompat="@drawable/alerter_ic_notifications" />
 
 </RelativeLayout>
