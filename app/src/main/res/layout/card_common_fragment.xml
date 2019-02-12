@@ -27,8 +27,8 @@
                 android:layout_height="wrap_content"
                 android:background="@color/white"
                 android:orientation="horizontal"
-                android:paddingBottom="@dimen/twenty_nine_dp"
                 android:paddingTop="@dimen/fourty_dp"
+                android:paddingBottom="@dimen/twenty_nine_dp"
                 android:weightSum="1">
 
                 <LinearLayout
@@ -93,8 +93,8 @@
                         <za.co.woolworths.financial.services.android.ui.views.WTextView
                             android:id="@+id/minAmountDue"
                             style="@style/account_card_amount_style"
-                            android:layout_marginRight="0dp"
                             android:layout_width="wrap_content"
+                            android:layout_marginRight="0dp"
                             android:text="R100 000" />
 
                         <ImageView
@@ -134,8 +134,8 @@
                     android:text="@string/account_in_arrears" />
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    style="@style/style_how_to_pay_label"
                     android:id="@+id/howToPayArrears"
+                    style="@style/style_how_to_pay_label"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="24dp"
@@ -157,10 +157,11 @@
                     style="@style/style_loan_amount"
                     android:layout_toLeftOf="@+id/infoAmountOverdue"
                     android:text="1000" />
+
                 <ImageView
                     android:id="@+id/infoAmountOverdue"
-                    android:src="@drawable/icon_info"
-                    style="@style/style_info_cards" />
+                    style="@style/style_info_cards"
+                    android:src="@drawable/icon_info" />
             </RelativeLayout>
 
         </LinearLayout>
@@ -207,8 +208,8 @@
 
             <ImageView
                 android:id="@+id/infoNextPaymentDue"
-                android:src="@drawable/icon_info"
-                style="@style/style_info_cards" />
+                style="@style/style_info_cards"
+                android:src="@drawable/icon_info" />
         </RelativeLayout>
 
         <View style="@style/bottom_line" />
@@ -227,10 +228,11 @@
                 style="@style/style_loan_amount"
                 android:layout_toLeftOf="@+id/infoCurrentBalance"
                 android:text="1000" />
+
             <ImageView
                 android:id="@+id/infoCurrentBalance"
-                android:src="@drawable/icon_info"
-                style="@style/style_info_cards" />
+                style="@style/style_info_cards"
+                android:src="@drawable/icon_info" />
 
         </RelativeLayout>
 
@@ -239,8 +241,8 @@
         <RelativeLayout
             android:id="@+id/llCreditLimitContainer"
             style="@style/card_item_style"
-            android:paddingBottom="@dimen/twenty_seven_dp"
-            android:paddingTop="@dimen/twenty_eight_dp">
+            android:paddingTop="@dimen/twenty_eight_dp"
+            android:paddingBottom="@dimen/twenty_seven_dp">
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/tvCreditLimitLabel"
@@ -252,10 +254,11 @@
                 style="@style/style_loan_amount"
                 android:layout_toLeftOf="@+id/infoCreditLimit"
                 android:text="1000" />
+
             <ImageView
                 android:id="@+id/infoCreditLimit"
-                android:src="@drawable/icon_info"
-                style="@style/style_info_cards" />
+                style="@style/style_info_cards"
+                android:src="@drawable/icon_info" />
 
         </RelativeLayout>
 
@@ -274,9 +277,9 @@
             android:clickable="true"
             android:focusable="true"
             android:orientation="vertical"
-            android:paddingEnd="@dimen/ten_dp"
             android:paddingStart="@dimen/sixteen_dp"
-            android:paddingTop="@dimen/twenty_four_dp">
+            android:paddingTop="@dimen/twenty_four_dp"
+            android:paddingEnd="@dimen/ten_dp">
 
             <RelativeLayout
                 android:id="@+id/relApplyNow"
@@ -323,10 +326,10 @@
                         android:background="@drawable/cli_round_apply_now_tag"
                         android:gravity="center"
                         android:letterSpacing="0.12"
-                        android:paddingBottom="5dp"
                         android:paddingLeft="10dp"
-                        android:paddingRight="10dp"
                         android:paddingTop="5dp"
+                        android:paddingRight="10dp"
+                        android:paddingBottom="5dp"
                         android:src="@drawable/icon_info"
                         android:textAllCaps="true"
                         android:textColor="@color/white"
@@ -349,8 +352,8 @@
                 android:id="@+id/tvIncreaseLimitDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/twenty_four_dp"
                 android:layout_marginEnd="@dimen/thirty_one_dp"
+                android:layout_marginBottom="@dimen/twenty_four_dp"
                 android:text="@string/increase_limit_desc"
                 android:textColor="@color/offer_active_desc"
                 android:visibility="gone"
@@ -434,13 +437,13 @@
             <ImageView
                 android:id="@+id/logoABSALinkOnlineBanking"
                 style="@style/style_loan_logo_img"
-                android:src="@drawable/transactions" />
+                app:srcCompat="@drawable/globe_icon" />
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/tvABSALinkOnlineBanking"
                 style="@style/style_loan_title"
-                android:layout_alignBottom="@+id/logoABSALinkOnlineBanking"
                 android:layout_alignTop="@+id/logoABSALinkOnlineBanking"
+                android:layout_alignBottom="@+id/logoABSALinkOnlineBanking"
                 android:layout_toEndOf="@+id/logoABSALinkOnlineBanking"
                 android:text="@string/absa_link_banking_to_device_title" />
 
@@ -464,8 +467,8 @@
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/tvViewTransaction"
                 style="@style/style_loan_title"
-                android:layout_alignBottom="@+id/logoViewTransaction"
                 android:layout_alignTop="@+id/logoViewTransaction"
+                android:layout_alignBottom="@+id/logoViewTransaction"
                 android:layout_toEndOf="@+id/logoViewTransaction"
                 android:text="@string/view_transactions" />
 
@@ -488,8 +491,8 @@
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/tvViewStatement"
                 style="@style/style_loan_title"
-                android:layout_alignBottom="@+id/imViewStatementLogo"
                 android:layout_alignTop="@+id/imViewStatementLogo"
+                android:layout_alignBottom="@+id/imViewStatementLogo"
                 android:layout_toEndOf="@+id/imViewStatementLogo"
                 android:text="@string/view_statements" />
 
@@ -507,18 +510,17 @@
             <ImageView
                 android:id="@+id/logoProtectionInsurance"
                 style="@style/style_loan_logo_img"
-                android:src="@drawable/insurance"/>
+                android:src="@drawable/insurance" />
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/tvProtectionInsurance"
                 style="@style/style_loan_title"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/fourteen_dp"
                 android:layout_alignTop="@+id/logoProtectionInsurance"
-                android:layout_toEndOf="@+id/logoProtectionInsurance"
+                android:layout_marginEnd="@dimen/fourteen_dp"
                 android:layout_toStartOf="@+id/tvBPIProtectInsurance"
-                android:text="@string/balance_protection_insurance"/>
-
+                android:layout_toEndOf="@+id/logoProtectionInsurance"
+                android:text="@string/balance_protection_insurance" />
 
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -529,13 +531,13 @@
                 android:layout_marginRight="4dp"
                 android:layout_toLeftOf="@+id/iconBalanceInsurance"
                 android:gravity="center|start"
+                android:letterSpacing="0.1"
                 android:lineSpacingExtra="0.1sp"
+                android:text="@string/bpi_covered"
+                android:textAllCaps="true"
                 android:textColor="#343434"
                 android:textSize="11sp"
-                android:textAllCaps="true"
-                android:letterSpacing="0.1"
-                app:WTextView_font="medium"
-                android:text="@string/bpi_covered"/>
+                app:WTextView_font="medium" />
 
             <ImageView
                 android:id="@+id/iconBalanceInsurance"
@@ -592,12 +594,12 @@
                 android:layout_marginRight="4dp"
                 android:layout_toLeftOf="@+id/iconArrowDebitOrders"
                 android:gravity="center|start"
+                android:letterSpacing="0.1"
                 android:lineSpacingExtra="0.1sp"
+                android:text="@string/active"
                 android:textColor="#343434"
                 android:textSize="13sp"
-                android:letterSpacing="0.1"
-                app:WTextView_font="medium"
-                android:text="@string/active"/>
+                app:WTextView_font="medium" />
 
             <ImageView
                 android:id="@+id/iconArrowDebitOrders"
@@ -618,13 +620,12 @@
         android:background="@color/white"
         android:orientation="vertical"
         android:paddingLeft="@dimen/thirty_two_dp"
-        android:paddingRight="@dimen/thirty_two_dp"
-        >
+        android:paddingRight="@dimen/thirty_two_dp">
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/title"
             android:gravity="center"
             android:letterSpacing="0.04"
             android:lineSpacingMultiplier="1.13"
@@ -634,27 +635,27 @@
             app:WTextView_font="medium_bold" />
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/description"
             android:layout_below="@+id/title"
             android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
             android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
             android:gravity="center"
             android:lineSpacingMultiplier="1.33"
             android:text="@string/account_charged_of_description"
             android:textColor="@color/description_color"
             android:textSize="15sp"
             app:WTextView_font="myriadpro_regular" />
+
         <View
+            android:id="@+id/fakeView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:id="@+id/fakeView"
             android:layout_below="@+id/description"
-            android:background="@color/white"
             android:layout_alignParentBottom="true"
-            />
+            android:background="@color/white" />
     </RelativeLayout>
 
 </LinearLayout>

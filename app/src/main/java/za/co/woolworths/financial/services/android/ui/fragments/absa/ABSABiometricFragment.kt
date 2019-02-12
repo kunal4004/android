@@ -21,5 +21,4 @@ class ABSABiometricFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
     }
 
-
 }

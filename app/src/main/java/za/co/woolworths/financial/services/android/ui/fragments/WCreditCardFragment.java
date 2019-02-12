@@ -278,7 +278,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
             case R.id.rlABSALinkOnlineBankingToDevice:
                 Intent openABSALinkOnlineBankingToDevice = new Intent(activity, ABSAOnlineBankingToDeviceActivity.class);
                 startActivity(openABSALinkOnlineBankingToDevice);
-                activity.overridePendingTransition(0, 0);
+                activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
                 break;
             case R.id.rlViewTransactions:
             case R.id.tvViewTransaction:

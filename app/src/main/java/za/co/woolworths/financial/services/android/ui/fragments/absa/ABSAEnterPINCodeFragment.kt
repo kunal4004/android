@@ -41,7 +41,7 @@ class ABSAEnterPINCodeFragment : ABSAFragmentExtension(), View.OnClickListener, 
         ivPin5.visibility = View.GONE
         tvForgotPin.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         tvForgotPin.setOnClickListener(this)
-        flEnterFiveDigitCode.setOnClickListener(this)
+        ivEnterFiveDigitCode.setOnClickListener(this)
         edtEnterATMPin.setOnKeyPreImeListener { activity?.onBackPressed() }
         edtEnterATMPin.setOnEditorActionListener { _, actionId, _ ->
             var handled = false
@@ -90,18 +90,22 @@ class ABSAEnterPINCodeFragment : ABSAFragmentExtension(), View.OnClickListener, 
     }
 
     private fun updateEnteredPin(pinEnteredLength: Int, listOfPin: MutableList<ImageView>) {
-        listOfPin[pinEnteredLength].setImageResource(R.drawable.pin_fill)
-        if (pinEnteredLength == MAXIMUM_PIN_ALLOWED) {
-            ivEnterFiveDigitCode.setImageResource(R.drawable.next_button_circular_bg_active)
-            flEnterFiveDigitCode.isEnabled = true
+        if (pinEnteredLength > -1) {//Check to prevent mutableList[-1] when navigates back
+            listOfPin[pinEnteredLength].setImageResource(R.drawable.pin_fill)
+            if (pinEnteredLength == MAXIMUM_PIN_ALLOWED) {
+                ivEnterFiveDigitCode.alpha = 1.0f
+                ivEnterFiveDigitCode.isEnabled = true
+            }
         }
     }
 
     private fun deletePin(pinEnteredLength: Int, listOfPin: MutableList<ImageView>) {
-        listOfPin[pinEnteredLength].setImageResource(R.drawable.pin_empty)
-        if (pinEnteredLength <= MAXIMUM_PIN_ALLOWED) {
-            ivEnterFiveDigitCode.setImageResource(R.drawable.next_button_circular_bg_inactive)
-            flEnterFiveDigitCode.isEnabled = false
+        if (pinEnteredLength > -1) {
+            listOfPin[pinEnteredLength].setImageResource(R.drawable.pin_empty)
+            if (pinEnteredLength <= MAXIMUM_PIN_ALLOWED) {
+                ivEnterFiveDigitCode.alpha = 0.5f
+                ivEnterFiveDigitCode.isEnabled = false
+            }
         }
     }
 
@@ -125,7 +129,7 @@ class ABSAEnterPINCodeFragment : ABSAFragmentExtension(), View.OnClickListener, 
 
             }
 
-            R.id.flEnterFiveDigitCode -> {
+            R.id.ivEnterFiveDigitCode -> {
                 navigateToFiveDigitCodeFragment()
             }
         }
@@ -133,5 +137,14 @@ class ABSAEnterPINCodeFragment : ABSAFragmentExtension(), View.OnClickListener, 
 
     override fun onDialogDismissed() {
         showKeyboard(edtEnterATMPin)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        edtEnterATMPin?.apply {
+            clearPinImage(mPinImageViewList!!)
+            text.clear()
+            showKeyboard(this)
+        }
     }
 }

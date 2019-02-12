@@ -104,27 +104,15 @@
             android:text="@string/absa_biometric_forgot_atm_pin_code"
             android:textColor="@color/black" />
 
-        <FrameLayout
-            android:id="@+id/flEnterFiveDigitCode"
+
+        <ImageView
+            android:id="@+id/ivEnterFiveDigitCode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true">
-
-            <ImageView
-                android:id="@+id/ivEnterFiveDigitCode"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/app_label"
-                app:srcCompat="@drawable/next_button_circular_bg_inactive" />
-
-            <ImageView
-                android:id="@+id/ivNextIcon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:contentDescription="@string/app_label"
-                app:srcCompat="@drawable/back_white" />
-        </FrameLayout>
+            android:layout_alignParentEnd="true"
+            android:alpha="0.5"
+            android:contentDescription="@string/app_label"
+            app:srcCompat="@drawable/next_button_icon" />
 
     </RelativeLayout>
 

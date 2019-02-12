@@ -38,13 +38,26 @@ class ABSAOnlineBankingToDeviceActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                this.finish()
-                this.overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right)
+                navigateBack()
                 return true
             }
             else -> {
             }
         }
         return false
+    }
+
+    override fun onBackPressed() {
+        navigateBack()
+    }
+
+    private fun navigateBack() {
+        val fragmentManager = supportFragmentManager
+        if (fragmentManager.backStackEntryCount > 0) {
+            fragmentManager.popBackStack()
+        } else {
+            this.finish()
+            this.overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right)
+        }
     }
 }

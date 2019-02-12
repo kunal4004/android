@@ -45,7 +45,7 @@ class ABSAConfirmFiveDigitCodeFragment : ABSAFragmentExtension(), View.OnClickLi
         }
         tvEnterYourPin.setText(getString(R.string.absa_confirm_five_digit_code_title))
         mPinImageViewList = mutableListOf(ivPin1, ivPin2, ivPin3, ivPin4, ivPin5)
-        flEnterFiveDigitCode.setOnClickListener(this)
+        ivEnterFiveDigitCode.setOnClickListener(this)
         edtEnterATMPin.setOnKeyPreImeListener { activity?.onBackPressed() }
         edtEnterATMPin.setOnEditorActionListener { _, actionId, _ ->
             var handled = false
@@ -97,18 +97,22 @@ class ABSAConfirmFiveDigitCodeFragment : ABSAFragmentExtension(), View.OnClickLi
     }
 
     private fun updateEnteredPin(pinEnteredLength: Int, listOfPin: MutableList<ImageView>) {
-        listOfPin[pinEnteredLength].setImageResource(R.drawable.pin_fill)
-        if (pinEnteredLength == MAXIMUM_PIN_ALLOWED) {
-            ivEnterFiveDigitCode.setImageResource(R.drawable.next_button_circular_bg_active)
-            flEnterFiveDigitCode.isEnabled = true
+        if (pinEnteredLength > -1) {
+            listOfPin[pinEnteredLength].setImageResource(R.drawable.pin_fill)
+            if (pinEnteredLength == MAXIMUM_PIN_ALLOWED) {
+                ivEnterFiveDigitCode.alpha = 1.0f
+                ivEnterFiveDigitCode.isEnabled = true
+            }
         }
     }
 
     private fun deletePin(pinEnteredLength: Int, listOfPin: MutableList<ImageView>) {
-        listOfPin[pinEnteredLength].setImageResource(R.drawable.pin_empty)
-        if (pinEnteredLength <= MAXIMUM_PIN_ALLOWED) {
-            ivEnterFiveDigitCode.setImageResource(R.drawable.next_button_circular_bg_inactive)
-            flEnterFiveDigitCode.isEnabled = false
+        if (pinEnteredLength > -1) {
+            listOfPin[pinEnteredLength].setImageResource(R.drawable.pin_empty)
+            if (pinEnteredLength <= MAXIMUM_PIN_ALLOWED) {
+                ivEnterFiveDigitCode.alpha = 0.5f
+                ivEnterFiveDigitCode.isEnabled = false
+            }
         }
     }
 
@@ -120,9 +124,17 @@ class ABSAConfirmFiveDigitCodeFragment : ABSAFragmentExtension(), View.OnClickLi
 
     override fun onClick(view: View?) {
         when (view?.id) {
-            R.id.flEnterFiveDigitCode -> {
+            R.id.ivEnterFiveDigitCode -> {
                 navigateToConfirmFiveDigitCodeFragment()
             }
+        }
+    }
+    override fun onResume() {
+        super.onResume()
+        edtEnterATMPin?.apply {
+            clearPinImage(mPinImageViewList!!)
+            text.clear()
+            showKeyboard(this)
         }
     }
 }
