@@ -849,4 +849,13 @@
     <string name="absa_biometric_please_enter_your_pin">Please Enter Your ATM Pin.</string>
     <string name="absa_biometric_please_card_number">Card number  **** **** **** 5491</string>
     <string name="absa_biometric_forgot_atm_pin_code">Forgot ATM Pin Code</string>
+    <string name="absa_forgot_atm_pin_code_title">FORGOT ATM PIN CODE</string>
+    <string name="absa_forgot_atm_pin_code_desc">Please contact us on 0861 50 20 20 or email us at queries@wfs.co.za for assistance.</string>
+    <string name="absa_enter_five_digit_code_title">Please Enter a 5 Digit Code. </string>
+    <string name="absa_enter_five_digit_code_desc">This will be used for your online banking login credentials </string>
+    <string name="absa_confirm_five_digit_code_title">Confirm 5 Digit Code.</string>
+    <string name="absa_biometric_title">Would you like to enable Biometrics for Online banking.</string>
+    <string name="absa_biometric_desc">You can now easily access secure features in the app by using the biometrics reader on your device.</string>
+    <string name="absa_biometric_skip_step">Skip this Step</string>
+    <string name="absa_enable_biometric">Enable Biometrics</string>
 </resources>

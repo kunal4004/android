@@ -138,5 +138,6 @@
     <dimen name="ten_sp">10sp</dimen>
     <dimen name="forty_four_dp">44dp</dimen>
     <dimen name="nineteen_sp">19sp</dimen>
+    <dimen name="thirty_five_dp">35dp</dimen>
 </resources>
 
