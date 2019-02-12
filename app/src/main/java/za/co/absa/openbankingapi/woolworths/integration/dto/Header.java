@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class Header {
 
-	@SerializedName("statusode")
+	@SerializedName("statuscode")
 	private String statusCode;
 
 	@SerializedName("userAgent")
