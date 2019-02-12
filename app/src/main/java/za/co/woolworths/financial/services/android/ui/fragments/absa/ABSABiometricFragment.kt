@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_biometric_fragment.*
+import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 
 class ABSABiometricFragment : Fragment() {
 
@@ -44,6 +45,15 @@ class ABSABiometricFragment : Fragment() {
     }
 
     private fun navigateToCompleteFragment() {
-
+        replaceFragment(
+                fragment = ABSAPinCodeSuccessFragment.newInstance(),
+                tag = ABSAPinCodeSuccessFragment::class.java.simpleName,
+                containerViewId = R.id.flAbsaOnlineBankingToDevice,
+                allowStateLoss = true,
+                enterAnimation = R.anim.slide_in_from_right,
+                exitAnimation = R.anim.slide_to_left,
+                popEnterAnimation = R.anim.slide_from_left,
+                popExitAnimation = R.anim.slide_to_right
+        )
     }
 }

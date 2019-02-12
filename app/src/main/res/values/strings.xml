@@ -858,4 +858,6 @@
     <string name="absa_biometric_desc">You can now easily access secure features in the app by using the biometrics reader on your device.</string>
     <string name="absa_biometric_skip_step">Skip this Step</string>
     <string name="absa_enable_biometric">Enable Biometrics</string>
+    <string name="absa_success_title">Thanks, %1$s</string>
+    <string name="absa_success_desc">Your Online Banking has been successfully linked</string>
 </resources>
