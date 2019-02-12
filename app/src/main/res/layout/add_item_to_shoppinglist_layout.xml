@@ -2,14 +2,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/transparent">
+    android:background="@color/orders_bg"
+    android:paddingTop="@dimen/sixteen_dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/seventy_dp"
-        android:layout_marginTop="@dimen/sixteen_dp"
         android:paddingLeft="@dimen/twenty_four_dp"
-        android:paddingRight="@dimen/twenty_four_dp">
+        android:paddingRight="@dimen/twenty_four_dp"
+        android:background="@color/white"
+        >
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             style="@style/my_orders_textview_style_2"

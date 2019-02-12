@@ -852,5 +852,6 @@
     <string name="add_items_to_shopping_list">Add Items to Shopping List</string>
     <string name="number_of_items">Number of items:</string>
     <string name="purchase_date">Purchase Date:</string>
+    <string name="past_orders">PAST ORDERS</string>
 
 </resources>

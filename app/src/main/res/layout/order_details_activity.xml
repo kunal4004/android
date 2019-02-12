@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="za.co.woolworths.financial.services.android.ui.activities.product.refine.ProductsRefineActivity">
+    android:background="@color/default_background"
+    tools:context="za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/RefineActivityStyle"
+        android:theme="@style/OrderDetailsActivityStyle"
         app:elevation="0dp">
 
         <android.support.v7.widget.Toolbar
@@ -22,8 +23,8 @@
             android:gravity="center"
             android:minHeight="?attr/actionBarSize"
             app:layout_scrollFlags="scroll|enterAlways"
-            app:popupTheme="@style/RefineActivityStyle"
-            app:theme="@style/RefineActivityStyle">
+            app:popupTheme="@style/OrderDetailsActivityStyle"
+            app:theme="@style/OrderDetailsActivityStyle">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -59,8 +60,8 @@
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/myOrdersList"
+        android:id="@+id/orderDetails"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-</RelativeLayout>
+</LinearLayout>

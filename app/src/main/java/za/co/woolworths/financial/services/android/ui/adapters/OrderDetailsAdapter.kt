@@ -59,4 +59,8 @@ class OrderDetailsAdapter(val context: Context, var dataList: ArrayList<OrderDet
         }
 
     }
+
+    override fun getItemViewType(position: Int): Int {
+        return dataList[position].type.value
+    }
 }

@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:background="@color/orders_bg"
+    android:paddingTop="@dimen/sixteen_dp"
+    >
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         style="@style/my_orders_textview_style_1"
         android:layout_width="match_parent"
         android:layout_height="@dimen/fifty_dp"
+        android:background="@color/white"
         android:gravity="center_vertical"
         android:paddingLeft="@dimen/twenty_four_dp"
-        android:text="PAST ORDERS" />
+        android:text="@string/past_orders"
+        />
 </LinearLayout>
