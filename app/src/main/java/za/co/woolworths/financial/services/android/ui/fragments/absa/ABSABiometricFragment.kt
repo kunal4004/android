@@ -1,11 +1,13 @@
 package za.co.woolworths.financial.services.android.ui.fragments.absa
 
+import android.graphics.Paint
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.absa_biometric_fragment.*
 
 class ABSABiometricFragment : Fragment() {
 
@@ -19,6 +21,29 @@ class ABSABiometricFragment : Fragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setUpViewsAndEvents()
     }
 
+    private fun setUpViewsAndEvents() {
+        tvSkipStep.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+        swEnableBiometric.setOnCheckedChangeListener { _, isChecked
+            ->
+            if (isChecked) {
+                imFootPrintLogo.setImageResource(R.drawable.biometric_active)
+                ivNavigateToNextFragment.alpha = 1f
+                ivNavigateToNextFragment.isEnabled = true
+            } else {
+                imFootPrintLogo.setImageResource(R.drawable.biometric_inactive)
+                ivNavigateToNextFragment.alpha = 0.5f
+                ivNavigateToNextFragment.isEnabled = false
+            }
+        }
+
+        tvSkipStep.setOnClickListener { navigateToCompleteFragment() }
+        ivNavigateToNextFragment.setOnClickListener { navigateToCompleteFragment() }
+    }
+
+    private fun navigateToCompleteFragment() {
+
+    }
 }

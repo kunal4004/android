@@ -41,31 +41,31 @@ class ABSAEnterPINCodeFragment : ABSAFragmentExtension(), View.OnClickListener, 
         ivPin5.visibility = View.GONE
         tvForgotPin.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         tvForgotPin.setOnClickListener(this)
-        ivEnterFiveDigitCode.setOnClickListener(this)
+        ivNavigateToDigitFragment.setOnClickListener(this)
         edtEnterATMPin.setOnKeyPreImeListener { activity?.onBackPressed() }
         edtEnterATMPin.setOnEditorActionListener { _, actionId, _ ->
             var handled = false
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 handled = true
-                if ((edtEnterATMPin.length() - 1) == MAXIMUM_PIN_ALLOWED) {
-                    navigateToFiveDigitCodeFragment()
-                }
+                navigateToFiveDigitCodeFragment()
             }
             handled
         }
     }
 
     private fun navigateToFiveDigitCodeFragment() {
-        replaceFragment(
-                fragment = ABSAFiveDigitCodeFragment.newInstance(),
-                tag = ABSAFiveDigitCodeFragment::class.java.simpleName,
-                containerViewId = R.id.flAbsaOnlineBankingToDevice,
-                allowStateLoss = true,
-                enterAnimation = R.anim.slide_in_from_right,
-                exitAnimation = R.anim.slide_to_left,
-                popEnterAnimation = R.anim.slide_from_left,
-                popExitAnimation = R.anim.slide_to_right
-        )
+        if ((edtEnterATMPin.length() - 1) == ABSAEnterPINCodeFragment.MAXIMUM_PIN_ALLOWED) {
+            replaceFragment(
+                    fragment = ABSAFiveDigitCodeFragment.newInstance(),
+                    tag = ABSAFiveDigitCodeFragment::class.java.simpleName,
+                    containerViewId = R.id.flAbsaOnlineBankingToDevice,
+                    allowStateLoss = true,
+                    enterAnimation = R.anim.slide_in_from_right,
+                    exitAnimation = R.anim.slide_to_left,
+                    popEnterAnimation = R.anim.slide_from_left,
+                    popExitAnimation = R.anim.slide_to_right
+            )
+        }
     }
 
     private fun createTextListener(edtEnterATMPin: EditText?) {
@@ -93,8 +93,8 @@ class ABSAEnterPINCodeFragment : ABSAFragmentExtension(), View.OnClickListener, 
         if (pinEnteredLength > -1) {//Check to prevent mutableList[-1] when navigates back
             listOfPin[pinEnteredLength].setImageResource(R.drawable.pin_fill)
             if (pinEnteredLength == MAXIMUM_PIN_ALLOWED) {
-                ivEnterFiveDigitCode.alpha = 1.0f
-                ivEnterFiveDigitCode.isEnabled = true
+                ivNavigateToDigitFragment.alpha = 1.0f
+                ivNavigateToDigitFragment.isEnabled = true
             }
         }
     }
@@ -103,8 +103,8 @@ class ABSAEnterPINCodeFragment : ABSAFragmentExtension(), View.OnClickListener, 
         if (pinEnteredLength > -1) {
             listOfPin[pinEnteredLength].setImageResource(R.drawable.pin_empty)
             if (pinEnteredLength <= MAXIMUM_PIN_ALLOWED) {
-                ivEnterFiveDigitCode.alpha = 0.5f
-                ivEnterFiveDigitCode.isEnabled = false
+                ivNavigateToDigitFragment.alpha = 0.5f
+                ivNavigateToDigitFragment.isEnabled = false
             }
         }
     }
@@ -129,7 +129,7 @@ class ABSAEnterPINCodeFragment : ABSAFragmentExtension(), View.OnClickListener, 
 
             }
 
-            R.id.ivEnterFiveDigitCode -> {
+            R.id.ivNavigateToDigitFragment -> {
                 navigateToFiveDigitCodeFragment()
             }
         }
