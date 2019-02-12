@@ -353,6 +353,7 @@
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingToDeviceActivity"
             android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize|stateAlwaysVisible"
             android:screenOrientation="portrait"
             android:theme="@style/ABSAOnlineBankingToDeviceStyle" />
     </application>
