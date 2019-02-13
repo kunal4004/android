@@ -437,7 +437,8 @@
             <ImageView
                 android:id="@+id/logoABSALinkOnlineBanking"
                 style="@style/style_loan_logo_img"
-                app:srcCompat="@drawable/globe_icon" />
+                android:alpha="1"
+                android:src="@drawable/globe_icon" />
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/tvABSALinkOnlineBanking"
