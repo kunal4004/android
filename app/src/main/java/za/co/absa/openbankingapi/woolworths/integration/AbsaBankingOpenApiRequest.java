@@ -41,9 +41,8 @@ public class AbsaBankingOpenApiRequest<T> extends Request<T> {
 	@Override
 	public Map<String, String> getHeaders() throws AuthFailureError {
 
-		if (headers == null){
+		if (headers == null)
 			return super.getHeaders();
-		}
 
 		return headers;
 	}

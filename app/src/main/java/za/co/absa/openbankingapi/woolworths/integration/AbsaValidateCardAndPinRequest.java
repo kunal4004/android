@@ -1,7 +1,6 @@
 package za.co.absa.openbankingapi.woolworths.integration;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -18,6 +17,7 @@ import za.co.absa.openbankingapi.SessionKey;
 import za.co.absa.openbankingapi.SymmetricCipher;
 import za.co.absa.openbankingapi.woolworths.integration.dto.ValidateCardAndPinRequest;
 import za.co.absa.openbankingapi.woolworths.integration.dto.ValidateCardAndPinResponse;
+import za.co.absa.openbankingapi.woolworths.integration.service.IAbsaBankingOpenApiResponseListener;
 
 public class AbsaValidateCardAndPinRequest {
 
@@ -34,7 +34,7 @@ public class AbsaValidateCardAndPinRequest {
 		}
 	}
 
-	public void make(String cardToken, String cardPin){
+	public void make(String cardToken, String cardPin, final IAbsaBankingOpenApiResponseListener<ValidateCardAndPinResponse> responseListener){
 		Map<String, String> headers = new HashMap<>();
 		headers.put("Content-Type", "application/json");
 		headers.put("action", "validateCardAndPin");
@@ -50,23 +50,24 @@ public class AbsaValidateCardAndPinRequest {
 			throw new RuntimeException("This should never be null, check what issue occurred and resolve it. Also log this to Firebase.");
 
 		final String gatewaySymmetricKey = this.sessionKey.getEncryptedKeyBase64Encoded();
-
-		ValidateCardAndPinRequest validateCardAndPinRequest = new ValidateCardAndPinRequest(cardToken, encryptedPin, gatewaySymmetricKey);
-		final String body = validateCardAndPinRequest.getJson();
+		final String body = new ValidateCardAndPinRequest(cardToken, encryptedPin, gatewaySymmetricKey).getJson();
 
 		requestQueue.add(new AbsaBankingOpenApiRequest<>(ValidateCardAndPinResponse.class, headers, body, new Response.Listener<ValidateCardAndPinResponse>(){
 
 			@Override
 			public void onResponse(ValidateCardAndPinResponse response) {
+				//TODO: perform the appropriate checks
+				//to ensure this is in fact the success
+				if (true)
+					responseListener.onSuccess(response);
 
-				Log.d("", "");
-
+				else
+					responseListener.onFailure("Something clearly went wrong.");
 			}
 		}, new Response.ErrorListener() {
 			@Override
 			public void onErrorResponse(VolleyError error) {
-
-				Log.e("", "");
+				responseListener.onFailure(error.getMessage());
 			}
 		}));
 	}
