@@ -1,7 +1,6 @@
 package za.co.absa.openbankingapi.woolworths.integration;
 
 import za.co.absa.openbankingapi.SessionKey;
-import za.co.absa.openbankingapi.SymmetricKey;
 
 public class AbsaLoginRequest {
 
@@ -12,8 +11,6 @@ public class AbsaLoginRequest {
 	}
 
 	public void make(final String userPin, final String aliasId, final String deviceId, final String cookie){
-		final byte[] symmetricKey = sessionKey.getKey();
-		final SymmetricKey gatewaySymmetricKey = new SymmetricKey(sessionKey.getEncryptedKey());
 		/*let headers = ["Content-Type": "application/x-www-form-urlencoded"]
 
 		let encryptedUserPin = SymmetricCipher.aes256EncryptString(userPin, withKey: symmetricKey)!
