@@ -1,6 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.fragments.absa
 
+import android.content.Context
+import android.os.Build
 import android.os.Bundle
+import android.os.VibrationEffect
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -12,11 +15,18 @@ import android.widget.ImageView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_five_digit_code_fragment.*
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
+import android.os.Vibrator
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
+import za.co.woolworths.financial.services.android.contracts.IVibrateComplete
 
-class ABSAConfirmFiveDigitCodeFragment : ABSAFragmentExtension(), View.OnClickListener {
+
+class ABSAConfirmFiveDigitCodeFragment : ABSAFragmentExtension(), View.OnClickListener, IVibrateComplete {
 
     private var mPinImageViewList: MutableList<ImageView>? = null
     private var mFiveDigitCodePinCode: Int? = null
+    private var mShakeAnimation: Animation? = null
+    private var mVibrateComplete: IVibrateComplete? = null
 
     companion object {
         fun newInstance(fiveDigitCodePinCode: Int) = ABSAConfirmFiveDigitCodeFragment().apply {
@@ -26,6 +36,7 @@ class ABSAConfirmFiveDigitCodeFragment : ABSAFragmentExtension(), View.OnClickLi
         }
 
         const val MAXIMUM_PIN_ALLOWED: Int = 4
+        const val VIBRATE_DURATION: Long = 300
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -71,6 +82,8 @@ class ABSAConfirmFiveDigitCodeFragment : ABSAFragmentExtension(), View.OnClickLi
                         popEnterAnimation = R.anim.slide_from_left,
                         popExitAnimation = R.anim.slide_to_right
                 )
+            } else {
+                vibrate(this)
             }
         }
     }
@@ -129,12 +142,51 @@ class ABSAConfirmFiveDigitCodeFragment : ABSAFragmentExtension(), View.OnClickLi
             }
         }
     }
+
     override fun onResume() {
         super.onResume()
+        clearPin()
+    }
+
+    private fun clearPin() {
         edtEnterATMPin?.apply {
             clearPinImage(mPinImageViewList!!)
             text.clear()
             showKeyboard(this)
         }
+    }
+
+    private fun vibrate(onVibrateComplete: IVibrateComplete) {
+        this.mVibrateComplete = onVibrateComplete
+        activity?.apply {
+            mShakeAnimation = AnimationUtils.loadAnimation(this, R.anim.shake)
+            mShakeAnimation?.setAnimationListener(object : Animation.AnimationListener {
+                override fun onAnimationStart(animation: Animation) {
+
+                }
+
+                override fun onAnimationEnd(animation: Animation) {
+                    if (animation === mShakeAnimation) {
+                        mVibrateComplete?.onAnimationComplete()
+                    }
+                }
+
+                override fun onAnimationRepeat(animation: Animation) {
+
+                }
+            })
+
+            ivEnterFiveDigitCode?.startAnimation(mShakeAnimation)
+            val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                vibrator.vibrate(VibrationEffect.createOneShot(VIBRATE_DURATION, VibrationEffect.DEFAULT_AMPLITUDE))
+            } else {
+                vibrator.vibrate(VIBRATE_DURATION)
+            }
+        }
+    }
+
+    override fun onAnimationComplete() {
+        clearPin()
     }
 }
