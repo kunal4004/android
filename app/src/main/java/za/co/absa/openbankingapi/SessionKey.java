@@ -13,6 +13,7 @@
 package za.co.absa.openbankingapi;
 
 import android.content.Context;
+import android.util.Base64;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -39,6 +40,10 @@ public class SessionKey {
         return encryptedKey;
     }
 
+    public final String getEncryptedKeyBase64Encoded(){
+        return Base64.encodeToString(encryptedKey, Base64.NO_WRAP);
+    }
+
     public static SessionKey generate(Context context) throws KeyGenerationFailureException,
             AsymmetricCryptoHelper.AsymmetricEncryptionFailureException,
             AsymmetricCryptoHelper.AsymmetricKeyGenerationFailureException {
@@ -47,7 +52,7 @@ public class SessionKey {
         return new SessionKey(symmetricKey, encryptedSymmetricKeyBuffer);
     }
 
-    public static SecretKey generateKey() throws KeyGenerationFailureException {
+    private static SecretKey generateKey() throws KeyGenerationFailureException {
         try {
             KeyGenerator keyGenerator = KeyGenerator.getInstance(OUTPUT_KEY_DERIVATION_ALGORITHM);
             SecureRandom secureRandom = new SecureRandom();

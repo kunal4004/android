@@ -17,18 +17,24 @@ public class AbsaBankingOpenApiRequest<T> extends Request<T> {
 
 	private final Gson gson = new GsonBuilder().serializeNulls().create();
 	private final Class<T> clazz;
-	private Map<String, String> headers;
+	private final Map<String, String> headers;
+	private final String body;
 	private final Response.Listener<T> listener;
-	
-	private AbsaBankingOpenApiRequest(int method, String url, Class<T> clazz, Map<String, String> headers, Response.Listener<T> listener, Response.ErrorListener errorListener) {
+
+	private AbsaBankingOpenApiRequest(int method, String url, Class<T> clazz, Map<String, String> headers, String body, Response.Listener<T> listener, Response.ErrorListener errorListener) {
 		super(method, url, errorListener);
 		this.clazz = clazz;
 		this.headers = headers;
 		this.listener = listener;
+		this.body = body;
 	}
 
-	AbsaBankingOpenApiRequest(Class<T> clazz, Map<String, String> headers, Response.Listener<T> listener, Response.ErrorListener errorListener) {
-		this(Method.POST, "https://eu.absa.co.za/wcob/wfsMobileRegistration", clazz, headers, listener, errorListener);
+//	AbsaBankingOpenApiRequest(Class<T> clazz, Map<String, String> headers, Response.Listener<T> listener, Response.ErrorListener errorListener) {
+//		this(Method.POST, "https://eu.absa.co.za/wcob/wfsMobileRegistration", clazz, headers, null, listener, errorListener);
+//	}
+
+	AbsaBankingOpenApiRequest(Class<T> clazz, Map<String, String> headers, String body, Response.Listener<T> listener, Response.ErrorListener errorListener) {
+		this(Method.POST, "https://eu.absa.co.za/wcob/wfsMobileRegistration", clazz, headers, body, listener, errorListener);
 	}
 
 	@Override
@@ -38,7 +44,6 @@ public class AbsaBankingOpenApiRequest<T> extends Request<T> {
 			return super.getHeaders();
 		}
 
-		headers.put("Content-Type", "application/json");
 		return headers;
 	}
 

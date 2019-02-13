@@ -55,7 +55,7 @@ public class Header {
 	@SerializedName("brand")
 	private String brand;
 
-	@SerializedName("applicationID")
+	@SerializedName("applicationId")
 	private String applicationId;
 
 	@SerializedName("applicationKeyID")
@@ -174,5 +174,9 @@ public class Header {
 		public String getResponseMessage() {
 			return responseMessage;
 		}
+	}
+
+	public Header(){
+		applicationId = "WCOBMOBAPP";
 	}
 }
