@@ -20,7 +20,6 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import za.co.woolworths.financial.services.android.contracts.IVibrateComplete
 
-
 class ABSAConfirmFiveDigitCodeFragment : ABSAFragmentExtension(), View.OnClickListener, IVibrateComplete {
 
     private var mPinImageViewList: MutableList<ImageView>? = null
