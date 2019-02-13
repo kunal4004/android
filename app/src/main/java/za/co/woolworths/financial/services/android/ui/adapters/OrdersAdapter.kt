@@ -10,6 +10,10 @@ import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.dto.OrderItem
 import za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity
 import za.co.woolworths.financial.services.android.ui.adapters.holder.OrdersBaseViewHolder
+import kotlinx.android.synthetic.main.my_orders_upcoming_order_item.view.*
+import za.co.woolworths.financial.services.android.models.dto.Order
+import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.WFormatter
 
 class OrdersAdapter(val context: Context, var dataList: ArrayList<OrderItem>) : RecyclerView.Adapter<OrdersBaseViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): OrdersBaseViewHolder? {
@@ -37,8 +41,13 @@ class OrdersAdapter(val context: Context, var dataList: ArrayList<OrderItem>) : 
 
     inner class UpcomingOrderViewHolder(itemView: View) : OrdersBaseViewHolder(itemView) {
         override fun bind(position: Int) {
+            val item = dataList[position].item as Order
+            itemView.orderId.text = item.orderId
+            itemView.orderState.text = item.state
+            itemView.purchaseDate.text = item.submittedDate
+            itemView.total.text = WFormatter.formatAmount(item.total)
             itemView.setOnClickListener {
-                context.startActivity(Intent(context, OrderDetailsActivity::class.java))
+                presentOrderDetailsPage(item)
             }
         }
 
@@ -46,6 +55,13 @@ class OrdersAdapter(val context: Context, var dataList: ArrayList<OrderItem>) : 
 
     inner class PastOrderViewHolder(itemView: View) : OrdersBaseViewHolder(itemView) {
         override fun bind(position: Int) {
+            val item = dataList[position].item as Order
+            itemView.orderId.text = item.orderId
+            itemView.purchaseDate.text = item.submittedDate
+            itemView.total.text = WFormatter.formatAmount(item.total)
+            itemView.setOnClickListener {
+                presentOrderDetailsPage(item)
+            }
         }
 
     }
@@ -58,5 +74,11 @@ class OrdersAdapter(val context: Context, var dataList: ArrayList<OrderItem>) : 
 
     override fun getItemViewType(position: Int): Int {
         return dataList[position].type.value
+    }
+
+    private fun presentOrderDetailsPage(item: Order) {
+        val intent = Intent(context, OrderDetailsActivity::class.java)
+        intent.putExtra("order", item)
+        context.startActivity(intent)
     }
 }

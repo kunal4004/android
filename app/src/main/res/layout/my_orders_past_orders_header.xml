@@ -8,6 +8,7 @@
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         style="@style/my_orders_textview_style_1"
+        android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="@dimen/fifty_dp"
         android:background="@color/white"

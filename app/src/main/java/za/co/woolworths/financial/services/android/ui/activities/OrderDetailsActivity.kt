@@ -14,11 +14,13 @@ import za.co.woolworths.financial.services.android.models.rest.product.GetOrderD
 import za.co.woolworths.financial.services.android.util.OnEventListener
 import za.co.woolworths.financial.services.android.util.Utils
 import kotlinx.android.synthetic.main.order_details_activity.*
+import za.co.woolworths.financial.services.android.models.dto.Order
 import za.co.woolworths.financial.services.android.ui.adapters.OrderDetailsAdapter
 
 class OrderDetailsActivity : AppCompatActivity() {
 
     private var dataList = arrayListOf<OrderDetailsItem>()
+    private var order: Order? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,8 +30,9 @@ class OrderDetailsActivity : AppCompatActivity() {
     }
 
     private fun configureUI() {
+        order = intent.getSerializableExtra("order") as Order?
         orderDetails.layoutManager = LinearLayoutManager(this)
-        requestOrderDetails("o264740019").execute()
+        requestOrderDetails(order?.orderId!!).execute()
     }
 
     private fun requestOrderDetails(orderId: String): GetOrderDetailsRequest {
@@ -53,29 +56,30 @@ class OrderDetailsActivity : AppCompatActivity() {
 
     private fun buildDataForOrderDetailsView(ordersResponse: OrderDetailsResponse): ArrayList<OrderDetailsItem> {
         val dataList = arrayListOf<OrderDetailsItem>()
-        dataList.add(OrderDetailsItem(null, OrderDetailsItem.ViewType.ORDER_STATUS))
+        dataList.add(OrderDetailsItem(order, OrderDetailsItem.ViewType.ORDER_STATUS))
         dataList.add(OrderDetailsItem(null, OrderDetailsItem.ViewType.ADD_TO_LIST_LAYOUT))
         val itemsObject = JSONObject(Gson().toJson(ordersResponse.items))
         val keys = itemsObject.keys()
         while ((keys.hasNext())) {
             val key = keys.next()
             if (key.contains("default"))
-                dataList.add(OrderDetailsItem("GENERAL", OrderDetailsItem.ViewType.HEADER))
+                dataList.add(OrderDetailsItem("YOUR GENERAL ITEMS", OrderDetailsItem.ViewType.HEADER))
             else if (key.contains("homeCommerceItem"))
-                dataList.add(OrderDetailsItem("HOME", OrderDetailsItem.ViewType.HEADER))
+                dataList.add(OrderDetailsItem("YOUR HOME ITEMS", OrderDetailsItem.ViewType.HEADER))
             else if (key.contains("foodCommerceItem"))
-                dataList.add(OrderDetailsItem("FOOD", OrderDetailsItem.ViewType.HEADER))
+                dataList.add(OrderDetailsItem("YOUR FOOD ITEMS", OrderDetailsItem.ViewType.HEADER))
             else if (key.contains("clothingCommerceItem"))
-                dataList.add(OrderDetailsItem("CLOTHING", OrderDetailsItem.ViewType.HEADER))
+                dataList.add(OrderDetailsItem("YOUR CLOTHING ITEMS", OrderDetailsItem.ViewType.HEADER))
             else if (key.contains("premiumBrandCommerceItem"))
-                dataList.add(OrderDetailsItem("PREMIUM BRAND", OrderDetailsItem.ViewType.HEADER))
+                dataList.add(OrderDetailsItem("YOUR PREMIUM BRAND ITEMS", OrderDetailsItem.ViewType.HEADER))
             else
-                dataList.add(OrderDetailsItem("OTHER", OrderDetailsItem.ViewType.HEADER))
+                dataList.add(OrderDetailsItem("YOUR OTHER ITEMS", OrderDetailsItem.ViewType.HEADER))
 
             val productsArray = itemsObject.getJSONArray(key)
             if (productsArray.length() > 0) {
                 for (i in 0 until productsArray.length()) {
-                    val commerceItem = Gson().fromJson(productsArray.getJSONObject(i).toString(), CommerceItem::class.java)
+                    var commerceItem = CommerceItem()
+                    commerceItem = Gson().fromJson(productsArray.getJSONObject(i).toString(), CommerceItem::class.java)
                     val fulfillmentStoreId = Utils.retrieveStoreId(commerceItem.fulfillmentType)
                     commerceItem.fulfillmentStoreId = fulfillmentStoreId!!.replace("\"".toRegex(), "")
                     dataList.add(OrderDetailsItem(commerceItem, OrderDetailsItem.ViewType.COMMERCE_ITEM))

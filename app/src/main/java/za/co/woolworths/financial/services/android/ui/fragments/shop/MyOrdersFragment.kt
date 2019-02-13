@@ -48,7 +48,7 @@ class MyOrdersFragment : Fragment(), OnOrdersResult {
     }
 
     private fun buildDataToDisplayOrders(ordersResponse: OrdersResponse): ArrayList<OrderItem> {
-        var dataList = arrayListOf<OrderItem>()
+        val dataList = arrayListOf<OrderItem>()
         ordersResponse.upcomingOrders?.forEach {
             dataList.add(OrderItem(it, OrderItem.ViewType.UPCOMING_ORDER))
         }

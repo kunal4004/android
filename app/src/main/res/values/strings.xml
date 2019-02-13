@@ -853,5 +853,6 @@
     <string name="number_of_items">Number of items:</string>
     <string name="purchase_date">Purchase Date:</string>
     <string name="past_orders">PAST ORDERS</string>
+    <string name="order_items">order items</string>
 
 </resources>
