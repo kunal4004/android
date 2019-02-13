@@ -8,7 +8,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,11 +29,7 @@ public class AbsaValidateCardAndPinRequest {
 		try {
 			this.sessionKey = SessionKey.generate(context.getApplicationContext());
 			this.requestQueue = Volley.newRequestQueue(context.getApplicationContext());
-		} catch (KeyGenerationFailureException e) {
-			e.printStackTrace();
-		} catch (AsymmetricCryptoHelper.AsymmetricEncryptionFailureException e) {
-			e.printStackTrace();
-		} catch (AsymmetricCryptoHelper.AsymmetricKeyGenerationFailureException e) {
+		} catch (KeyGenerationFailureException | AsymmetricCryptoHelper.AsymmetricEncryptionFailureException | AsymmetricCryptoHelper.AsymmetricKeyGenerationFailureException e) {
 			e.printStackTrace();
 		}
 	}
@@ -47,7 +42,7 @@ public class AbsaValidateCardAndPinRequest {
 
 		try {
 			encryptedPin = SymmetricCipher.Aes256EncryptAndBase64Encode(cardPin, sessionKey.getKey());
-		} catch (DecryptionFailureException | UnsupportedEncodingException e) {
+		} catch (DecryptionFailureException e) {
 			e.printStackTrace();
 		}
 
@@ -58,7 +53,6 @@ public class AbsaValidateCardAndPinRequest {
 
 		ValidateCardAndPinRequest validateCardAndPinRequest = new ValidateCardAndPinRequest(cardToken, encryptedPin, gatewaySymmetricKey);
 		final String body = validateCardAndPinRequest.getJson();
-		Log.d("JSON", body);
 
 		requestQueue.add(new AbsaBankingOpenApiRequest<>(ValidateCardAndPinResponse.class, headers, body, new Response.Listener<ValidateCardAndPinResponse>(){
 

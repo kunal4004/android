@@ -11,6 +11,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 public class AbsaBankingOpenApiRequest<T> extends Request<T> {
@@ -45,6 +46,14 @@ public class AbsaBankingOpenApiRequest<T> extends Request<T> {
 		}
 
 		return headers;
+	}
+
+	@Override
+	public byte[] getBody() throws AuthFailureError {
+		if (this.body == null)
+			return super.getBody();
+
+		return this.body.getBytes(StandardCharsets.UTF_8);
 	}
 
 	@Override
