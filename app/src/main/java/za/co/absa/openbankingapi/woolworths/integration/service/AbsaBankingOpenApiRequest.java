@@ -12,6 +12,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
 import java.io.UnsupportedEncodingException;
+import java.net.HttpCookie;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,7 @@ public class AbsaBankingOpenApiRequest<T> extends Request<T> {
 	private final Map<String, String> headers;
 	private final String body;
 	private final AbsaBankingOpenApiResponse.Listener<T> listener;
-	private String mSetCookie;
+	private List<HttpCookie> mCookies;
 
 	private AbsaBankingOpenApiRequest(int method, String url, Class<T> clazz, Map<String, String> headers, String body, AbsaBankingOpenApiResponse.Listener<T> listener, Response.ErrorListener errorListener) {
 		super(method, url, errorListener);
@@ -74,14 +75,18 @@ public class AbsaBankingOpenApiRequest<T> extends Request<T> {
 
 	@Override
 	protected void deliverResponse(T response) {
-		listener.onResponse(response, this.mSetCookie);
+		listener.onResponse(response, mCookies);
 	}
 
 	@Override
 	protected Response<T> parseNetworkResponse(NetworkResponse response) {
 		try {
 			String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
-			this.mSetCookie = response.headers.get("Set-Cookie");
+
+			final String cookies = response.headers.get("Set-Cookie");
+			if (cookies != null && !cookies.isEmpty()){
+				mCookies = HttpCookie.parse(cookies);
+			}
 
 			return Response.success(gson.fromJson(json, clazz), HttpHeaderParser.parseCacheHeaders(response));
 		} catch (UnsupportedEncodingException e) {
