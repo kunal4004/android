@@ -10,25 +10,16 @@ import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.ImageView
 import com.awfs.coordination.R
-import com.google.gson.Gson
 import kotlinx.android.synthetic.main.absa_five_digit_code_fragment.*
-import za.co.absa.openbankingapi.woolworths.integration.dto.ValidateCardAndPinResponse
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 
-class AbsaFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener {
+class ABSAFiveDigitCodeFragment : ABSAFragmentExtension(), View.OnClickListener {
 
-    private var mPinImageViewList: MutableList<ImageView>? = null
-    private var mValidateCardAndPinResponse: ValidateCardAndPinResponse? = null
+    var mPinImageViewList: MutableList<ImageView>? = null
 
     companion object {
-        private const val VALIDATE_CARD_AND_PIN_RESPONSE = "validateCardAndPinResponse"
-        fun newInstance(validateCardAndPinResponse: ValidateCardAndPinResponse?) = AbsaFiveDigitCodeFragment().apply {
-            arguments = Bundle(1).apply {
-                putString(VALIDATE_CARD_AND_PIN_RESPONSE, Gson().toJson(validateCardAndPinResponse))
-            }
-        }
-
-        private const val MAXIMUM_PIN_ALLOWED: Int = 4
+        fun newInstance() = ABSAFiveDigitCodeFragment()
+        const val MAXIMUM_PIN_ALLOWED: Int = 4
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -37,18 +28,9 @@ class AbsaFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener 
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        getArgument()
         initViewsAndEvents()
         createTextListener(edtEnterATMPin)
         clearPinImage(mPinImageViewList!!)
-    }
-
-    private fun getArgument() {
-        arguments?.let {
-            it.getString(VALIDATE_CARD_AND_PIN_RESPONSE)?.let { response ->
-                mValidateCardAndPinResponse = Gson().fromJson(response, ValidateCardAndPinResponse::class.java)
-            }
-        }
     }
 
     private fun initViewsAndEvents() {
@@ -70,8 +52,8 @@ class AbsaFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener 
         if ((edtEnterATMPin.length() - 1) == MAXIMUM_PIN_ALLOWED) {
             val enteredPin = edtEnterATMPin.text.toString()
             replaceFragment(
-                    fragment = AbsaConfirmFiveDigitCodeFragment.newInstance(enteredPin.toInt()),
-                    tag = AbsaConfirmFiveDigitCodeFragment::class.java.simpleName,
+                    fragment = ABSAConfirmFiveDigitCodeFragment.newInstance(enteredPin.toInt()),
+                    tag = ABSAConfirmFiveDigitCodeFragment::class.java.simpleName,
                     containerViewId = R.id.flAbsaOnlineBankingToDevice,
                     allowStateLoss = true,
                     enterAnimation = R.anim.slide_in_from_right,

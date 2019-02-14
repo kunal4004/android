@@ -9,10 +9,10 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_biometric_fragment.*
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 
-class AbsaBiometricFragment : AbsaFragmentExtension() {
+class ABSABiometricFragment : ABSAFragmentExtension() {
 
     companion object {
-        fun newInstance() = AbsaBiometricFragment()
+        fun newInstance() = ABSABiometricFragment()
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -47,8 +47,8 @@ class AbsaBiometricFragment : AbsaFragmentExtension() {
 
     private fun navigateToCompleteFragment() {
         replaceFragment(
-                fragment = AbsaPinCodeSuccessFragment.newInstance(),
-                tag = AbsaPinCodeSuccessFragment::class.java.simpleName,
+                fragment = ABSAPinCodeSuccessFragment.newInstance(),
+                tag = ABSAPinCodeSuccessFragment::class.java.simpleName,
                 containerViewId = R.id.flAbsaOnlineBankingToDevice,
                 allowStateLoss = true,
                 enterAnimation = R.anim.slide_in_from_right,
