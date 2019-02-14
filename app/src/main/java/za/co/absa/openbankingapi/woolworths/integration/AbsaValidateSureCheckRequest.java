@@ -38,12 +38,7 @@ public class AbsaValidateSureCheckRequest {
 		final AbsaBankingOpenApiRequest request = new AbsaBankingOpenApiRequest<>(ValidateSureCheckResponse.class, headers, body, new AbsaBankingOpenApiResponse.Listener<ValidateSureCheckResponse>(){
 
 			@Override
-			public void onSetCookies(String cookies) {
-
-			}
-
-			@Override
-			public void onResponse(ValidateSureCheckResponse response) {
+			public void onResponse(ValidateSureCheckResponse response, String cookies) {
 				Header.ResultMessage[] resultMessages = response.getHeader().getResultMessages();
 				if (resultMessages == null || resultMessages.length == 0)
 					responseListener.onSuccess(response);
