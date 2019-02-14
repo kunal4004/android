@@ -2,8 +2,10 @@ package za.co.woolworths.financial.services.android.ui.fragments.absa
 
 import android.graphics.Paint
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,16 +14,18 @@ import android.widget.EditText
 import android.widget.ImageView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_pin_atm_fragment.*
+import za.co.absa.openbankingapi.woolworths.integration.dto.ValidateCardAndPinResponse
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
+import za.co.woolworths.financial.services.android.contracts.IValidatePinCodeDialogInterface
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GotITDialogFragment
 
-class ABSAEnterPINCodeFragment : ABSAFragmentExtension(), View.OnClickListener, IDialogListener {
+class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListener, IDialogListener, IValidatePinCodeDialogInterface {
 
     var mPinImageViewList: MutableList<ImageView>? = null
 
     companion object {
-        fun newInstance() = ABSAEnterPINCodeFragment()
+        fun newInstance() = AbsaEnterAtmPinCodeFragment()
         const val MAXIMUM_PIN_ALLOWED: Int = 3
     }
 
@@ -54,17 +58,14 @@ class ABSAEnterPINCodeFragment : ABSAFragmentExtension(), View.OnClickListener, 
     }
 
     private fun navigateToFiveDigitCodeFragment() {
-        if ((edtEnterATMPin.length() - 1) == ABSAEnterPINCodeFragment.MAXIMUM_PIN_ALLOWED) {
-            replaceFragment(
-                    fragment = ABSAFiveDigitCodeFragment.newInstance(),
-                    tag = ABSAFiveDigitCodeFragment::class.java.simpleName,
-                    containerViewId = R.id.flAbsaOnlineBankingToDevice,
-                    allowStateLoss = true,
-                    enterAnimation = R.anim.slide_in_from_right,
-                    exitAnimation = R.anim.slide_to_left,
-                    popEnterAnimation = R.anim.slide_from_left,
-                    popExitAnimation = R.anim.slide_to_right
-            )
+        if ((edtEnterATMPin.length() - 1) == AbsaEnterAtmPinCodeFragment.MAXIMUM_PIN_ALLOWED) {
+            activity?.let {
+                val fm = (it as? AppCompatActivity)?.supportFragmentManager
+                val absaValidateCardAndPinDialogFragment = AbsaValidateCardAndPinDialogFragment.newInstance("4103744472666291", "8667")
+                // Set the calling fragment for this dialog.
+                absaValidateCardAndPinDialogFragment.setTargetFragment(this, 0)
+                absaValidateCardAndPinDialogFragment.show(fm, AbsaValidateCardAndPinDialogFragment::class.java.simpleName)
+            }
         }
     }
 
@@ -139,12 +140,37 @@ class ABSAEnterPINCodeFragment : ABSAFragmentExtension(), View.OnClickListener, 
         showKeyboard(edtEnterATMPin)
     }
 
+    override fun onSuccessHandler(validateCardPin: ValidateCardAndPinResponse?) {
+        replaceFragment(
+                fragment = AbsaFiveDigitCodeFragment.newInstance(validateCardPin),
+                tag = AbsaFiveDigitCodeFragment::class.java.simpleName,
+                containerViewId = R.id.flAbsaOnlineBankingToDevice,
+                allowStateLoss = true,
+                enterAnimation = R.anim.slide_in_from_right,
+                exitAnimation = R.anim.slide_to_left,
+                popEnterAnimation = R.anim.slide_from_left,
+                popExitAnimation = R.anim.slide_to_right
+        )
+    }
+
+    override fun onFailureHandler(responseMessage: String) {
+        Log.e("onSuccessHandler", "onFailureHandler")
+        clearPin()
+        Log.e("clearPin", "onFailure")
+
+    }
+
     override fun onResume() {
         super.onResume()
+        clearPin()
+    }
+
+    private fun clearPin() {
         edtEnterATMPin?.apply {
             clearPinImage(mPinImageViewList!!)
             text.clear()
             showKeyboard(this)
         }
     }
+
 }

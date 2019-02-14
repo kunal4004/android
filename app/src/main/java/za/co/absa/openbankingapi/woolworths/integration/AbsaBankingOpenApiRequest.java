@@ -12,9 +12,10 @@ import com.google.gson.JsonSyntaxException;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Map;
 
-public class AbsaBankingOpenApiRequest<T> extends Request<T> {
+class AbsaBankingOpenApiRequest<T> extends Request<T> {
 
 	private final Gson gson = new GsonBuilder().serializeNulls().create();
 	private final Class<T> clazz;
@@ -45,6 +46,15 @@ public class AbsaBankingOpenApiRequest<T> extends Request<T> {
 			return super.getHeaders();
 
 		return headers;
+	}
+
+
+	public void setCookies(List<String> cookies) {
+		StringBuilder sb = new StringBuilder();
+		for (String cookie : cookies) {
+			sb.append(cookie).append("; ");
+		}
+		headers.put("Cookie", sb.toString());
 	}
 
 	@Override

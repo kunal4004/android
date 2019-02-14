@@ -2,7 +2,7 @@ package za.co.absa.openbankingapi.woolworths.integration.dto;
 
 import com.google.gson.annotations.SerializedName;
 
-public class ValidateCardAndPinResponse {
+public class ValidateSureCheckResponse {
 
 	@SerializedName("header")
 	private Header header;
@@ -25,8 +25,4 @@ public class ValidateCardAndPinResponse {
 	public Header getHeader() {
 		return header;
 	}
-
-    public String getResult() {
-        return result;
-    }
 }
