@@ -15,6 +15,7 @@ import za.co.absa.openbankingapi.DecryptionFailureException;
 import za.co.absa.openbankingapi.KeyGenerationFailureException;
 import za.co.absa.openbankingapi.SessionKey;
 import za.co.absa.openbankingapi.SymmetricCipher;
+import za.co.absa.openbankingapi.woolworths.integration.dto.Header;
 import za.co.absa.openbankingapi.woolworths.integration.dto.ValidateCardAndPinRequest;
 import za.co.absa.openbankingapi.woolworths.integration.dto.ValidateCardAndPinResponse;
 import za.co.absa.openbankingapi.woolworths.integration.service.IAbsaBankingOpenApiResponseListener;
@@ -56,9 +57,8 @@ public class AbsaValidateCardAndPinRequest {
 
 			@Override
 			public void onResponse(ValidateCardAndPinResponse response) {
-				//TODO: perform the appropriate checks
-				//to ensure this is in fact the success
-				if (true)
+				Header.ResultMessage[] resultMessages = response.getHeader().getResultMessages();
+				if (resultMessages == null || resultMessages.length == 0)
 					responseListener.onSuccess(response);
 
 				else
