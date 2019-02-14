@@ -25,4 +25,8 @@ public class ValidateCardAndPinResponse {
 	public Header getHeader() {
 		return header;
 	}
+
+    public String getResult() {
+        return result;
+    }
 }
