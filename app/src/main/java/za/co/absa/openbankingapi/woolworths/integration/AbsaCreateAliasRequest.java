@@ -52,12 +52,7 @@ public class AbsaCreateAliasRequest {
 		final AbsaBankingOpenApiRequest request = new AbsaBankingOpenApiRequest<>(CreateAliasResponse.class, headers, body, new AbsaBankingOpenApiResponse.Listener<CreateAliasResponse>(){
 
 			@Override
-			public void onSetCookies(String cookies) {
-
-			}
-
-			@Override
-			public void onResponse(CreateAliasResponse response) {
+			public void onResponse(CreateAliasResponse response, String cookies) {
 				Header.ResultMessage[] resultMessages = response.getHeader().getResultMessages();
 				if (resultMessages == null || resultMessages.length == 0){
 					final String encryptedAlias = Base64.encodeToString(response.getAliasId().getBytes(StandardCharsets.UTF_8), Base64.DEFAULT);

@@ -58,12 +58,7 @@ public class AbsaValidateCardAndPinRequest {
 		requestQueue.add(new AbsaBankingOpenApiRequest<>(ValidateCardAndPinResponse.class, headers, body, new AbsaBankingOpenApiResponse.Listener<ValidateCardAndPinResponse>(){
 
 			@Override
-			public void onSetCookies(String cookies) {
-
-			}
-
-			@Override
-			public void onResponse(ValidateCardAndPinResponse response) {
+			public void onResponse(ValidateCardAndPinResponse response, String cookies) {
 				Header.ResultMessage[] resultMessages = response.getHeader().getResultMessages();
 				if (resultMessages == null || resultMessages.length == 0)
 					responseListener.onSuccess(response);
