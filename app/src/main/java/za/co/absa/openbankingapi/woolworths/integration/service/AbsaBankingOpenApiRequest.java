@@ -1,6 +1,7 @@
-package za.co.absa.openbankingapi.woolworths.integration;
+package za.co.absa.openbankingapi.woolworths.integration.service;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
@@ -15,27 +16,32 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
-class AbsaBankingOpenApiRequest<T> extends Request<T> {
+public class AbsaBankingOpenApiRequest<T> extends Request<T> {
 
 	private final Gson gson = new GsonBuilder().serializeNulls().create();
 	private final Class<T> clazz;
 	private final Map<String, String> headers;
 	private final String body;
-	private final Response.Listener<T> listener;
+	private final AbsaBankingOpenApiResponse.Listener<T> listener;
 
-	private AbsaBankingOpenApiRequest(int method, String url, Class<T> clazz, Map<String, String> headers, String body, Response.Listener<T> listener, Response.ErrorListener errorListener) {
+	private AbsaBankingOpenApiRequest(int method, String url, Class<T> clazz, Map<String, String> headers, String body, AbsaBankingOpenApiResponse.Listener<T> listener, Response.ErrorListener errorListener) {
 		super(method, url, errorListener);
 		this.clazz = clazz;
 		this.headers = headers;
 		this.listener = listener;
 		this.body = body;
+
+		this.setRetryPolicy(new DefaultRetryPolicy(
+				9000,
+				5,
+				DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 	}
 
 //	AbsaBankingOpenApiRequest(Class<T> clazz, Map<String, String> headers, Response.Listener<T> listener, Response.ErrorListener errorListener) {
 //		this(Method.POST, "https://eu.absa.co.za/wcob/wfsMobileRegistration", clazz, headers, null, listener, errorListener);
 //	}
 
-	AbsaBankingOpenApiRequest(Class<T> clazz, Map<String, String> headers, String body, Response.Listener<T> listener, Response.ErrorListener errorListener) {
+	public AbsaBankingOpenApiRequest(Class<T> clazz, Map<String, String> headers, String body, AbsaBankingOpenApiResponse.Listener<T> listener, Response.ErrorListener errorListener) {
 		this(Method.POST, "https://eu.absa.co.za/wcob/wfsMobileRegistration", clazz, headers, body, listener, errorListener);
 	}
 
@@ -74,6 +80,11 @@ class AbsaBankingOpenApiRequest<T> extends Request<T> {
 	protected Response<T> parseNetworkResponse(NetworkResponse response) {
 		try {
 			String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+
+			final String setCookie = response.headers.get("Set-Cookie");
+			if(setCookie != null)
+				listener.onSetCookies(setCookie);
+
 			return Response.success(gson.fromJson(json, clazz), HttpHeaderParser.parseCacheHeaders(response));
 		} catch (UnsupportedEncodingException e) {
 			return Response.error(new ParseError(e));

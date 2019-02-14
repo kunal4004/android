@@ -15,6 +15,8 @@ import java.util.Map;
 import za.co.absa.openbankingapi.woolworths.integration.dto.Header;
 import za.co.absa.openbankingapi.woolworths.integration.dto.ValidateSureCheckRequest;
 import za.co.absa.openbankingapi.woolworths.integration.dto.ValidateSureCheckResponse;
+import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiRequest;
+import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse;
 import za.co.absa.openbankingapi.woolworths.integration.service.IAbsaBankingOpenApiResponseListener;
 
 public class AbsaValidateSureCheckRequest {
@@ -33,7 +35,12 @@ public class AbsaValidateSureCheckRequest {
 		headers.put("JSESSIONID", jSessionId);
 
 		final String body = new ValidateSureCheckRequest(jSessionId).getJson();
-		final AbsaBankingOpenApiRequest request = new AbsaBankingOpenApiRequest<>(ValidateSureCheckResponse.class, headers, body, new Response.Listener<ValidateSureCheckResponse>(){
+		final AbsaBankingOpenApiRequest request = new AbsaBankingOpenApiRequest<>(ValidateSureCheckResponse.class, headers, body, new AbsaBankingOpenApiResponse.Listener<ValidateSureCheckResponse>(){
+
+			@Override
+			public void onSetCookies(String cookies) {
+
+			}
 
 			@Override
 			public void onResponse(ValidateSureCheckResponse response) {

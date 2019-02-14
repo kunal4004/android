@@ -18,6 +18,8 @@ import za.co.absa.openbankingapi.SymmetricCipher;
 import za.co.absa.openbankingapi.woolworths.integration.dto.Header;
 import za.co.absa.openbankingapi.woolworths.integration.dto.ValidateCardAndPinRequest;
 import za.co.absa.openbankingapi.woolworths.integration.dto.ValidateCardAndPinResponse;
+import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiRequest;
+import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse;
 import za.co.absa.openbankingapi.woolworths.integration.service.IAbsaBankingOpenApiResponseListener;
 
 public class AbsaValidateCardAndPinRequest {
@@ -53,7 +55,12 @@ public class AbsaValidateCardAndPinRequest {
 		final String gatewaySymmetricKey = this.sessionKey.getEncryptedKeyBase64Encoded();
 		final String body = new ValidateCardAndPinRequest(cardToken, encryptedPin, gatewaySymmetricKey).getJson();
 
-		requestQueue.add(new AbsaBankingOpenApiRequest<>(ValidateCardAndPinResponse.class, headers, body, new Response.Listener<ValidateCardAndPinResponse>(){
+		requestQueue.add(new AbsaBankingOpenApiRequest<>(ValidateCardAndPinResponse.class, headers, body, new AbsaBankingOpenApiResponse.Listener<ValidateCardAndPinResponse>(){
+
+			@Override
+			public void onSetCookies(String cookies) {
+
+			}
 
 			@Override
 			public void onResponse(ValidateCardAndPinResponse response) {

@@ -1,6 +1,7 @@
 package za.co.absa.openbankingapi.woolworths.integration;
 
 import android.content.Context;
+import android.util.Base64;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -21,6 +22,8 @@ import za.co.absa.openbankingapi.SymmetricCipher;
 import za.co.absa.openbankingapi.woolworths.integration.dto.CreateAliasRequest;
 import za.co.absa.openbankingapi.woolworths.integration.dto.CreateAliasResponse;
 import za.co.absa.openbankingapi.woolworths.integration.dto.Header;
+import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiRequest;
+import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse;
 import za.co.absa.openbankingapi.woolworths.integration.service.IAbsaBankingOpenApiResponseListener;
 
 public class AbsaCreateAliasRequest {
@@ -41,17 +44,23 @@ public class AbsaCreateAliasRequest {
 	public void make(final String deviceId, final String jsessionId, final IAbsaBankingOpenApiResponseListener<CreateAliasResponse> responseListener){
 		Map<String, String> headers = new HashMap<>();
 		headers.put("Content-Type", "application/json");
+		headers.put("Accept", "application/json");
 		headers.put("action", "createAlias");
 		headers.put("JSESSIONID", jsessionId);
 
-		final String body = new CreateAliasRequest(jsessionId, sessionKey.getEncryptedKeyBase64Encoded()).getJson();
-		final AbsaBankingOpenApiRequest request = new AbsaBankingOpenApiRequest<>(CreateAliasResponse.class, headers, body, new Response.Listener<CreateAliasResponse>(){
+		final String body = new CreateAliasRequest(deviceId, sessionKey.getEncryptedKeyBase64Encoded()).getJson();
+		final AbsaBankingOpenApiRequest request = new AbsaBankingOpenApiRequest<>(CreateAliasResponse.class, headers, body, new AbsaBankingOpenApiResponse.Listener<CreateAliasResponse>(){
+
+			@Override
+			public void onSetCookies(String cookies) {
+
+			}
 
 			@Override
 			public void onResponse(CreateAliasResponse response) {
 				Header.ResultMessage[] resultMessages = response.getHeader().getResultMessages();
 				if (resultMessages == null || resultMessages.length == 0){
-					final String encryptedAlias = response.getAliasId();
+					final String encryptedAlias = Base64.encodeToString(response.getAliasId().getBytes(StandardCharsets.UTF_8), Base64.DEFAULT);
 					byte[] decryptedAlias;
 
 					try {
