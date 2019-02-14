@@ -11,11 +11,11 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_pin_code_complete_fragment.*
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 
-class ABSAPinCodeSuccessFragment : Fragment() {
+class AbsaPinCodeSuccessFragment : Fragment() {
 
     companion object {
         const val CLOSE_ACTIVITY_DELAY_MILIS = 2000
-        fun newInstance() = ABSAPinCodeSuccessFragment()
+        fun newInstance() = AbsaPinCodeSuccessFragment()
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {

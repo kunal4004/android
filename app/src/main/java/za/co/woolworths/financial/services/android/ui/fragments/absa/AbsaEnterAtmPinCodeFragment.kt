@@ -142,7 +142,7 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
 
     override fun onSuccessHandler(validateCardPin: ValidateCardAndPinResponse?) {
         replaceFragment(
-                fragment = AbsaFiveDigitCodeFragment.newInstance(validateCardPin),
+                fragment = AbsaFiveDigitCodeFragment.newInstance(),
                 tag = AbsaFiveDigitCodeFragment::class.java.simpleName,
                 containerViewId = R.id.flAbsaOnlineBankingToDevice,
                 allowStateLoss = true,

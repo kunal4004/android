@@ -13,12 +13,12 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_five_digit_code_fragment.*
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 
-class ABSAFiveDigitCodeFragment : ABSAFragmentExtension(), View.OnClickListener {
+class AbsaFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener {
 
     var mPinImageViewList: MutableList<ImageView>? = null
 
     companion object {
-        fun newInstance() = ABSAFiveDigitCodeFragment()
+        fun newInstance() = AbsaFiveDigitCodeFragment()
         const val MAXIMUM_PIN_ALLOWED: Int = 4
     }
 
@@ -52,8 +52,8 @@ class ABSAFiveDigitCodeFragment : ABSAFragmentExtension(), View.OnClickListener 
         if ((edtEnterATMPin.length() - 1) == MAXIMUM_PIN_ALLOWED) {
             val enteredPin = edtEnterATMPin.text.toString()
             replaceFragment(
-                    fragment = ABSAConfirmFiveDigitCodeFragment.newInstance(enteredPin.toInt()),
-                    tag = ABSAConfirmFiveDigitCodeFragment::class.java.simpleName,
+                    fragment = AbsaConfirmFiveDigitCodeFragment.newInstance(enteredPin.toInt()),
+                    tag = AbsaConfirmFiveDigitCodeFragment::class.java.simpleName,
                     containerViewId = R.id.flAbsaOnlineBankingToDevice,
                     allowStateLoss = true,
                     enterAnimation = R.anim.slide_in_from_right,

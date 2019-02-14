@@ -20,7 +20,7 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import za.co.woolworths.financial.services.android.contracts.IVibrateComplete
 
-class ABSAConfirmFiveDigitCodeFragment : ABSAFragmentExtension(), View.OnClickListener, IVibrateComplete {
+class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener, IVibrateComplete {
 
     private var mPinImageViewList: MutableList<ImageView>? = null
     private var mFiveDigitCodePinCode: Int? = null
@@ -28,7 +28,7 @@ class ABSAConfirmFiveDigitCodeFragment : ABSAFragmentExtension(), View.OnClickLi
     private var mVibrateComplete: IVibrateComplete? = null
 
     companion object {
-        fun newInstance(fiveDigitCodePinCode: Int) = ABSAConfirmFiveDigitCodeFragment().apply {
+        fun newInstance(fiveDigitCodePinCode: Int) = AbsaConfirmFiveDigitCodeFragment().apply {
             arguments = Bundle(1).apply {
                 putInt("fiveDigitCodePinCode", fiveDigitCodePinCode)
             }
@@ -72,8 +72,8 @@ class ABSAConfirmFiveDigitCodeFragment : ABSAFragmentExtension(), View.OnClickLi
             val enteredConfirmPin = edtEnterATMPin.text.toString()
             if (enteredConfirmPin.toInt() == mFiveDigitCodePinCode) {
                 replaceFragment(
-                        fragment = ABSABiometricFragment.newInstance(),
-                        tag = ABSABiometricFragment::class.java.simpleName,
+                        fragment = AbsaBiometricFragment.newInstance(),
+                        tag = AbsaBiometricFragment::class.java.simpleName,
                         containerViewId = R.id.flAbsaOnlineBankingToDevice,
                         allowStateLoss = true,
                         enterAnimation = R.anim.slide_in_from_right,

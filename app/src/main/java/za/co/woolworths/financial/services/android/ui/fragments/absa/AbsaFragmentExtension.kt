@@ -6,7 +6,7 @@ import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 
-open class ABSAFragmentExtension : Fragment() {
+open class AbsaFragmentExtension : Fragment() {
 
     fun showKeyboard(editText: EditText) {
         editText.requestFocus()
