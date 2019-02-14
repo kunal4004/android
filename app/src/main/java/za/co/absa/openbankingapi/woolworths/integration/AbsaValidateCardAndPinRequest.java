@@ -61,7 +61,7 @@ public class AbsaValidateCardAndPinRequest {
 			public void onResponse(ValidateCardAndPinResponse response, String cookies) {
 				Header.ResultMessage[] resultMessages = response.getHeader().getResultMessages();
 				if (resultMessages == null || resultMessages.length == 0)
-					responseListener.onSuccess(response);
+					responseListener.onSuccess(response, cookies);
 
 				else
 					responseListener.onFailure("Something clearly went wrong.");

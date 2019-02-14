@@ -41,7 +41,7 @@ public class AbsaValidateSureCheckRequest {
 			public void onResponse(ValidateSureCheckResponse response, String cookies) {
 				Header.ResultMessage[] resultMessages = response.getHeader().getResultMessages();
 				if (resultMessages == null || resultMessages.length == 0)
-					responseListener.onSuccess(response);
+					responseListener.onSuccess(response, cookies);
 
 				else
 					responseListener.onFailure(resultMessages[0].getResponseMessage());

@@ -66,7 +66,7 @@ public class AbsaCreateAliasRequest {
 
 
 
-					responseListener.onSuccess(response);
+					responseListener.onSuccess(response, cookies);
 				}
 
 				else
