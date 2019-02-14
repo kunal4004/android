@@ -116,7 +116,7 @@ class AbsaValidateCardAndPinDialogFragment : DialogFragment() {
     private fun successHandler(validateCardPin: ValidateCardAndPinResponse?) {
 //        iValidatePinCodeDialogInterface?.onSuccessHandler(validateCardPin)
 //        dismiss()
-        pollingAbsaValidateSureCheckRequest(validateCardPin)
+        pollingAbsaValidateSureCheckRequest(validateCardPin?.header?.jsessionId)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -131,15 +131,15 @@ class AbsaValidateCardAndPinDialogFragment : DialogFragment() {
         dismiss()
     }
 
-
-    private fun pollingAbsaValidateSureCheckRequest(validateCardPin: ValidateCardAndPinResponse?) {
+    private fun pollingAbsaValidateSureCheckRequest(jsessionId: String?) {
         val scheduler = Executors.newSingleThreadScheduledExecutor()
         activity?.apply {
-            mAbsaValidateSurSchedule = scheduler.scheduleAtFixedRate({
-                AbsaValidateSureCheckRequest(this).make(validateCardPin?.header?.jsessionId,
+            mAbsaValidateSurSchedule = scheduler.scheduleWithFixedDelay({
+                AbsaValidateSureCheckRequest(this).make(jsessionId,
                         object : IAbsaBankingOpenApiResponseListener<ValidateSureCheckResponse> {
                             override fun onSuccess(validateCardPin: ValidateSureCheckResponse) {
                                 Log.e("valideCardPin", "onSuccess")
+                                stopPolling()
                             }
 
                             override fun onFailure(errorMessage: String) {
@@ -148,5 +148,23 @@ class AbsaValidateCardAndPinDialogFragment : DialogFragment() {
                         })
             }, 0, 2, TimeUnit.SECONDS)
         }
+    }
+
+    private fun stopPolling() {
+        mAbsaValidateSurSchedule?.apply {
+            if (!isCancelled) {
+                cancel(true)
+            }
+        }
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        stopPolling()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        stopPolling()
     }
 }
