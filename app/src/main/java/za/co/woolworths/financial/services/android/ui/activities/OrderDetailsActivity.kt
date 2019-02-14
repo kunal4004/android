@@ -7,17 +7,15 @@ import android.support.v7.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import org.json.JSONObject
-import za.co.woolworths.financial.services.android.models.dto.CommerceItem
-import za.co.woolworths.financial.services.android.models.dto.OrderDetailsItem
-import za.co.woolworths.financial.services.android.models.dto.OrderDetailsResponse
 import za.co.woolworths.financial.services.android.models.rest.product.GetOrderDetailsRequest
 import za.co.woolworths.financial.services.android.util.OnEventListener
 import za.co.woolworths.financial.services.android.util.Utils
 import kotlinx.android.synthetic.main.order_details_activity.*
-import za.co.woolworths.financial.services.android.models.dto.Order
+import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.ui.adapters.OrderDetailsAdapter
+import za.co.woolworths.financial.services.android.util.ScreenManager
 
-class OrderDetailsActivity : AppCompatActivity() {
+class OrderDetailsActivity : AppCompatActivity(), OrderDetailsAdapter.OnItemClick {
 
     private var dataList = arrayListOf<OrderDetailsItem>()
     private var order: Order? = null
@@ -87,5 +85,25 @@ class OrderDetailsActivity : AppCompatActivity() {
             }
         }
         return dataList
+    }
+
+    override fun onAddToList() {
+        Utils.displayValidationMessage(this, CustomPopUpWindow.MODAL_LAYOUT.ORDER_ADD_TO_LIST, order?.orderId)
+    }
+
+    override fun onOpenProductDetail(commerceItem: CommerceItem) {
+        val productList = ProductDetails()
+        val commerceItemInfo = commerceItem.commerceItemInfo
+        productList.externalImageRef = commerceItemInfo.externalImageURL
+        productList.productName = commerceItemInfo.productDisplayName
+        productList.fromPrice = commerceItem.priceInfo.getAmount().toFloat()
+        productList.productId = commerceItemInfo.productId
+        productList.sku = commerceItemInfo.catalogRefId
+        val gson = Gson()
+        val strProductList = gson.toJson(productList)
+        val bundle = Bundle()
+        bundle.putString("strProductList", strProductList)
+        bundle.putString("strProductCategory", "")
+        ScreenManager.presentProductDetails(this, bundle)
     }
 }

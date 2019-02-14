@@ -37,12 +37,14 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem;
 import za.co.woolworths.financial.services.android.models.dto.CommerceItemInfo;
+import za.co.woolworths.financial.services.android.models.dto.OrderToShoppingListRequestBody;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.models.rest.product.OrderToShoppingListRequest;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.GetShoppingLists;
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostAddToList;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
@@ -78,6 +80,7 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 	private RelativeLayout rlNoConnectionLayout;
 	private List<AddToListRequest> addToLists;
 	private Map<String, List<AddToListRequest>> mMapAddedToList;
+	private String orderId;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -85,9 +88,12 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 		if (getArguments() != null) {
 			if (getArguments().containsKey("LIST_PAYLOAD")) {
 				mCommercialItemsList = getArguments().getString("LIST_PAYLOAD");
+				getItemsFromCart();
+			} else if (getArguments().containsKey("ORDER_ID")) {
+				orderId = getArguments().getString("ORDER_ID");
 			}
 		}
-		getItemsFromCart();
+
 	}
 
 	private List<CommerceItem> getItemsFromCart() {
@@ -245,6 +251,7 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 		Activity act = getActivity();
 		if (act != null) {
 			if (label.toLowerCase().equalsIgnoreCase("ok")) {
+				if(TextUtils.isEmpty(orderId)){
 				addToLists = getAddToListRequests();
 				addToLists = getAddToListRequests(addToLists);
 				WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
@@ -254,6 +261,9 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 						globalState.setShoppingListRequest(mShoppingListAdapter.getList());
 				}
 				postAddToList();
+				} else {
+					postAddOrderToList();
+				}
 				return;
 			}
 			((CustomPopUpWindow) act).startExitAnimation();
@@ -608,5 +618,34 @@ public class AddToListFragment extends Fragment implements View.OnClickListener,
 			return addToListRequests;
 		}
 		return addToListRequests;
+	}
+
+	private void postAddOrderToList() {
+		OrderToShoppingListRequestBody requestBody = buildOrderToLIstRequestBody();
+		new OrderToShoppingListRequest(getActivity(), orderId, requestBody, new OnEventListener() {
+
+			@Override
+			public void onSuccess(Object object) {
+                ((CustomPopUpWindow) getActivity()).startExitAnimationForAddToListResult();
+			}
+
+			@Override
+			public void onFailure(String e) {
+                ((CustomPopUpWindow) getActivity()).startExitAnimationForAddToListResult();
+			}
+		}).execute();
+	}
+
+	private OrderToShoppingListRequestBody buildOrderToLIstRequestBody() {
+		List<ShoppingList> shoppingLists = mShoppingListAdapter.getList();
+		OrderToShoppingListRequestBody requestBody = null;
+		if (shoppingLists != null || shoppingLists.size() != 0) {
+			for (ShoppingList spl : shoppingLists) {
+				if (spl.viewIsSelected) {
+					requestBody = new OrderToShoppingListRequestBody(spl.listId, spl.listName);
+				}
+			}
+		}
+		return requestBody;
 	}
 }
