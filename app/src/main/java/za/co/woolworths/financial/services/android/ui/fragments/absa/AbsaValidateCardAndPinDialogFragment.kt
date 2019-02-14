@@ -97,7 +97,7 @@ class AbsaValidateCardAndPinDialogFragment : DialogFragment() {
                                     }
                                 }
                                 // navigate to failure handler if result is null or not in acceptedResultMessages
-                                failureHandler(response?.header?.resultMessages?.first()?.responseMessage)
+                                failureHandler(header?.resultMessages?.first()?.responseMessage)
                             }
                         }
 
