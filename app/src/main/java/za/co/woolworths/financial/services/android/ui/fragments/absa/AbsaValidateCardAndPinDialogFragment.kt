@@ -6,15 +6,22 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.text.TextUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_validate_card_pin_dialog.*
 import za.co.absa.openbankingapi.woolworths.integration.AbsaValidateCardAndPinRequest
+import za.co.absa.openbankingapi.woolworths.integration.AbsaValidateSureCheckRequest
 import za.co.absa.openbankingapi.woolworths.integration.dto.ValidateCardAndPinResponse
+import za.co.absa.openbankingapi.woolworths.integration.dto.ValidateSureCheckResponse
 import za.co.absa.openbankingapi.woolworths.integration.service.IAbsaBankingOpenApiResponseListener
 import za.co.woolworths.financial.services.android.contracts.IValidatePinCodeDialogInterface
+import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledFuture
+import java.util.concurrent.TimeUnit
+
 
 class AbsaValidateCardAndPinDialogFragment : DialogFragment() {
 
@@ -23,6 +30,7 @@ class AbsaValidateCardAndPinDialogFragment : DialogFragment() {
     private var mCardPin: String? = null
     private var acceptedResultMessages = mutableListOf("success", "processing")
     private var iValidatePinCodeDialogInterface: IValidatePinCodeDialogInterface? = null
+    private var mAbsaValidateSurSchedule: ScheduledFuture<*>? = null
 
     companion object {
         private const val CARD_TOKEN = "cardToken"
@@ -83,13 +91,13 @@ class AbsaValidateCardAndPinDialogFragment : DialogFragment() {
                         override fun onSuccess(response: ValidateCardAndPinResponse?) {
                             response?.apply {
                                 result?.let {
-                                    if (it in acceptedResultMessages) { // in == contains
+                                    if (it.toLowerCase() in acceptedResultMessages) { // in == contains
                                         successHandler(response)
                                         return
                                     }
                                 }
                                 // navigate to failure handler if result is null or not in acceptedResultMessages
-                                failureHandler(null)
+                                failureHandler(response?.header?.resultMessages?.first()?.responseMessage)
                             }
                         }
 
@@ -106,8 +114,9 @@ class AbsaValidateCardAndPinDialogFragment : DialogFragment() {
     }
 
     private fun successHandler(validateCardPin: ValidateCardAndPinResponse?) {
-        iValidatePinCodeDialogInterface?.onSuccessHandler(validateCardPin)
-        dismiss()
+//        iValidatePinCodeDialogInterface?.onSuccessHandler(validateCardPin)
+//        dismiss()
+        pollingAbsaValidateSureCheckRequest(validateCardPin)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -120,5 +129,24 @@ class AbsaValidateCardAndPinDialogFragment : DialogFragment() {
 
     private fun cancelValidateCardAndPinRequest() {
         dismiss()
+    }
+
+
+    private fun pollingAbsaValidateSureCheckRequest(validateCardPin: ValidateCardAndPinResponse?) {
+        val scheduler = Executors.newSingleThreadScheduledExecutor()
+        activity?.apply {
+            mAbsaValidateSurSchedule = scheduler.scheduleAtFixedRate({
+                AbsaValidateSureCheckRequest(this).make(validateCardPin?.header?.jsessionId,
+                        object : IAbsaBankingOpenApiResponseListener<ValidateSureCheckResponse> {
+                            override fun onSuccess(validateCardPin: ValidateSureCheckResponse) {
+                                Log.e("valideCardPin", "onSuccess")
+                            }
+
+                            override fun onFailure(errorMessage: String) {
+                                Log.e("valideCardPin", "onFailure")
+                            }
+                        })
+            }, 0, 2, TimeUnit.SECONDS)
+        }
     }
 }
