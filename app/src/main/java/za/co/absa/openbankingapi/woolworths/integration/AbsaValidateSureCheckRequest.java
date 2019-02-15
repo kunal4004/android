@@ -19,7 +19,6 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.ValidateSureCheckReq
 import za.co.absa.openbankingapi.woolworths.integration.dto.ValidateSureCheckResponse;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiRequest;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse;
-import za.co.absa.openbankingapi.woolworths.integration.service.IAbsaBankingOpenApiResponseListener;
 
 public class AbsaValidateSureCheckRequest {
 
@@ -30,7 +29,7 @@ public class AbsaValidateSureCheckRequest {
 		this.requestQueue = Volley.newRequestQueue(context.getApplicationContext());
 	}
 
-	public void make(final JSession jSession, final IAbsaBankingOpenApiResponseListener<ValidateSureCheckResponse> responseListener){
+	public void make(final JSession jSession, final AbsaBankingOpenApiResponse.ResponseDelegate<ValidateSureCheckResponse> responseDelegate){
 		Map<String, String> headers = new HashMap<>();
 		headers.put("Content-Type", "application/json");
 		headers.put("action", "validateSurecheck");
@@ -43,15 +42,15 @@ public class AbsaValidateSureCheckRequest {
 			public void onResponse(ValidateSureCheckResponse response, List<HttpCookie> cookies) {
 				Header.ResultMessage[] resultMessages = response.getHeader().getResultMessages();
 				if (resultMessages == null || resultMessages.length == 0)
-					responseListener.onSuccess(response, cookies);
+					responseDelegate.onSuccess(response, cookies);
 
 				else
-					responseListener.onFailure(resultMessages[0].getResponseMessage());
+					responseDelegate.onFailure(resultMessages[0].getResponseMessage());
 			}
 		}, new Response.ErrorListener() {
 			@Override
 			public void onErrorResponse(VolleyError error) {
-				responseListener.onFailure(error.getMessage());
+				responseDelegate.onFailure(error.getMessage());
 			}
 		});
 
