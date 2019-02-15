@@ -7,7 +7,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 
+import java.net.HttpCookie;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import za.co.absa.openbankingapi.AsymmetricCryptoHelper;
@@ -58,10 +60,10 @@ public class AbsaValidateCardAndPinRequest {
 		requestQueue.add(new AbsaBankingOpenApiRequest<>(ValidateCardAndPinResponse.class, headers, body, new AbsaBankingOpenApiResponse.Listener<ValidateCardAndPinResponse>(){
 
 			@Override
-			public void onResponse(ValidateCardAndPinResponse response, String cookies) {
+			public void onResponse(ValidateCardAndPinResponse response, List<HttpCookie> cookies) {
 				Header.ResultMessage[] resultMessages = response.getHeader().getResultMessages();
 				if (resultMessages == null || resultMessages.length == 0)
-					responseListener.onSuccess(response);
+					responseListener.onSuccess(response, cookies);
 
 				else
 					responseListener.onFailure("Something clearly went wrong.");
