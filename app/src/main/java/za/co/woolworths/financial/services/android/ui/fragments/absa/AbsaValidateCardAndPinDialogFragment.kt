@@ -5,13 +5,13 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
-import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_validate_card_pin_dialog.*
+import za.co.absa.openbankingapi.SessionKey
 import za.co.absa.openbankingapi.woolworths.integration.AbsaCreateAliasRequest
 import za.co.absa.openbankingapi.woolworths.integration.AbsaValidateCardAndPinRequest
 import za.co.absa.openbankingapi.woolworths.integration.AbsaValidateSureCheckRequest
@@ -19,9 +19,11 @@ import za.co.absa.openbankingapi.woolworths.integration.dao.JSession
 import za.co.absa.openbankingapi.woolworths.integration.dto.CreateAliasResponse
 import za.co.absa.openbankingapi.woolworths.integration.dto.ValidateCardAndPinResponse
 import za.co.absa.openbankingapi.woolworths.integration.dto.ValidateSureCheckResponse
-import za.co.absa.openbankingapi.woolworths.integration.service.IAbsaBankingOpenApiResponseListener
+import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse
 import za.co.woolworths.financial.services.android.contracts.IValidatePinCodeDialogInterface
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import java.net.HttpCookie
+import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
@@ -91,7 +93,7 @@ class AbsaValidateCardAndPinDialogFragment : DialogFragment() {
     private fun absaValidateCardAndPinRequest(cardToken: String, cardPin: String) {
         activity?.apply {
             mAbsaValidateCardAndPinRequest = AbsaValidateCardAndPinRequest(this).make(cardToken, cardPin,
-                    object : IAbsaBankingOpenApiResponseListener<ValidateCardAndPinResponse> {
+                    object : AbsaBankingOpenApiResponse.ResponseDelegate<ValidateCardAndPinResponse> {
                         override fun onSuccess(response: ValidateCardAndPinResponse?, cookies: MutableList<HttpCookie>?) {
                             val jSession = JSession()
                             response?.apply {
@@ -149,7 +151,8 @@ class AbsaValidateCardAndPinDialogFragment : DialogFragment() {
         activity?.apply {
             mAbsaValidateSurSchedule = scheduler.scheduleWithFixedDelay({
                 AbsaValidateSureCheckRequest(this).make(jSession,
-                        object : IAbsaBankingOpenApiResponseListener<ValidateSureCheckResponse> {
+
+                        object : AbsaBankingOpenApiResponse.ResponseDelegate<ValidateSureCheckResponse> {
                             override fun onSuccess(validateCardAndPinResponse: ValidateSureCheckResponse?, cookies: MutableList<HttpCookie>?) {
 
                                 val resultMessage: String? = validateCardAndPinResponse?.result?.toLowerCase()
@@ -162,20 +165,21 @@ class AbsaValidateCardAndPinDialogFragment : DialogFragment() {
                                         when (resultMessage) {
                                             "rejected" -> {
                                                 //send sure check again
+                                                //TODO:: Handle rejected result message
                                             }
                                             "processed" -> {
-
+                                                createAlias(jSession)
                                             }
                                         }
 
                                         stopPolling()
                                     }
                                 }
-                                Log.e("valideCardPin", "onSuccess")
+                                Log.e("valideCardPin", "onSuccess - AbsaBankingOpenApiResponse")
                             }
 
                             override fun onFailure(errorMessage: String) {
-                                Log.e("valideCardPin", "onFailure")
+                                Log.e("valideCardPin", "onFailure - AbsaBankingOpenApiResponse")
                             }
                         })
             }, 0, 2, TimeUnit.SECONDS)
@@ -192,20 +196,30 @@ class AbsaValidateCardAndPinDialogFragment : DialogFragment() {
 
     fun createAlias(jSession: JSession) {
         activity?.apply {
-            AbsaCreateAliasRequest(this).make("", jSession, object : IAbsaBankingOpenApiResponseListener<CreateAliasResponse> {
+
+            //we'll need to keep reference to our symmKey
+            //as we'll need it to decrypt the response
+            val sessionKey = SessionKey.generate(WoolworthsApplication.getAppContext())
+
+            //create alias
+            val deviceId = UUID.randomUUID().toString().replace("-", "")
+            AbsaCreateAliasRequest(this).make(deviceId, jSession, object : AbsaBankingOpenApiResponse.ResponseDelegate<CreateAliasResponse> {
                 override fun onSuccess(validateSureCheckResponse: CreateAliasResponse?, cookies: MutableList<HttpCookie>?) {
                     //check if response indicates that the SureCheck has not been
                     //interacted with yet. If already interacted, continue with handlers
                     //otherwise attempt API again... perhaps after 5 seconds
 
+                    Log.e("valideCardPin", "onSuccess - AbsaCreateAliasRequest")
+
                 }
 
                 override fun onFailure(errorMessage: String) {
-                    Log.e("valideCardPin", "onFailure")
+                    Log.e("valideCardPin", "onFailure - AbsaCreateAliasRequest")
                 }
             })
         }
     }
+
 
     override fun onDetach() {
         super.onDetach()
