@@ -61,7 +61,7 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
         if ((edtEnterATMPin.length() - 1) == AbsaEnterAtmPinCodeFragment.MAXIMUM_PIN_ALLOWED) {
             activity?.let {
                 val fm = (it as? AppCompatActivity)?.supportFragmentManager
-                val absaValidateCardAndPinDialogFragment = AbsaValidateCardAndPinDialogFragment.newInstance("4103744472666291", "8667")
+                val absaValidateCardAndPinDialogFragment = AbsaValidateCardAndPinDialogFragment.newInstance("4103741655806361", "6666")
                 // Set the calling fragment for this dialog.
                 absaValidateCardAndPinDialogFragment.setTargetFragment(this, 0)
                 absaValidateCardAndPinDialogFragment.show(fm, AbsaValidateCardAndPinDialogFragment::class.java.simpleName)
