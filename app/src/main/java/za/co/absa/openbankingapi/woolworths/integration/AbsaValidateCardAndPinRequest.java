@@ -22,7 +22,6 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.ValidateCardAndPinRe
 import za.co.absa.openbankingapi.woolworths.integration.dto.ValidateCardAndPinResponse;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiRequest;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse;
-import za.co.absa.openbankingapi.woolworths.integration.service.IAbsaBankingOpenApiResponseListener;
 
 public class AbsaValidateCardAndPinRequest {
 
@@ -39,7 +38,7 @@ public class AbsaValidateCardAndPinRequest {
 		}
 	}
 
-	public void make(String cardToken, String cardPin, final IAbsaBankingOpenApiResponseListener<ValidateCardAndPinResponse> responseListener){
+	public void make(String cardToken, String cardPin, final AbsaBankingOpenApiResponse.ResponseDelegate<ValidateCardAndPinResponse> responseDelegate){
 		Map<String, String> headers = new HashMap<>();
 		headers.put("Content-Type", "application/json");
 		headers.put("action", "validateCardAndPin");
@@ -63,15 +62,15 @@ public class AbsaValidateCardAndPinRequest {
 			public void onResponse(ValidateCardAndPinResponse response, List<HttpCookie> cookies) {
 				Header.ResultMessage[] resultMessages = response.getHeader().getResultMessages();
 				if (resultMessages == null || resultMessages.length == 0)
-					responseListener.onSuccess(response, cookies);
+					responseDelegate.onSuccess(response, cookies);
 
 				else
-					responseListener.onFailure("Something clearly went wrong.");
+					responseDelegate.onFailure("Something clearly went wrong.");
 			}
 		}, new Response.ErrorListener() {
 			@Override
 			public void onErrorResponse(VolleyError error) {
-				responseListener.onFailure(error.getMessage());
+				responseDelegate.onFailure(error.getMessage());
 			}
 		}));
 	}

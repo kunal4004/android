@@ -26,7 +26,6 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.CreateAliasResponse;
 import za.co.absa.openbankingapi.woolworths.integration.dto.Header;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiRequest;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse;
-import za.co.absa.openbankingapi.woolworths.integration.service.IAbsaBankingOpenApiResponseListener;
 
 public class AbsaCreateAliasRequest {
 
@@ -43,7 +42,7 @@ public class AbsaCreateAliasRequest {
 		}
 	}
 
-	public void make(final String deviceId, final JSession jSession, final IAbsaBankingOpenApiResponseListener<CreateAliasResponse> responseListener){
+	public void make(final String deviceId, final JSession jSession, final AbsaBankingOpenApiResponse.ResponseDelegate<CreateAliasResponse> responseDelegate){
 		Map<String, String> headers = new HashMap<>();
 		headers.put("Content-Type", "application/json");
 		headers.put("Accept", "application/json");
@@ -71,16 +70,16 @@ public class AbsaCreateAliasRequest {
 						throw new RuntimeException(e);
 					}
 
-					responseListener.onSuccess(response, cookies);
+					responseDelegate.onSuccess(response, cookies);
 				}
 
 				else
-					responseListener.onFailure(resultMessages[0].getResponseMessage());
+					responseDelegate.onFailure(resultMessages[0].getResponseMessage());
 			}
 		}, new Response.ErrorListener() {
 			@Override
 			public void onErrorResponse(VolleyError error) {
-				responseListener.onFailure(error.getMessage());
+				responseDelegate.onFailure(error.getMessage());
 			}
 		});
 
