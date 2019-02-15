@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +13,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_pin_atm_fragment.*
-import za.co.absa.openbankingapi.woolworths.integration.dto.ValidateCardAndPinResponse
+import za.co.absa.openbankingapi.woolworths.integration.dao.JSession
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.contracts.IValidatePinCodeDialogInterface
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
@@ -140,9 +139,9 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
         showKeyboard(edtEnterATMPin)
     }
 
-    override fun onSuccessHandler(validateCardPin: ValidateCardAndPinResponse?) {
+    override fun onSuccessHandler(jSession: JSession) {
         replaceFragment(
-                fragment = AbsaFiveDigitCodeFragment.newInstance(),
+                fragment = AbsaFiveDigitCodeFragment.newInstance(jSession),
                 tag = AbsaFiveDigitCodeFragment::class.java.simpleName,
                 containerViewId = R.id.flAbsaOnlineBankingToDevice,
                 allowStateLoss = true,
@@ -154,10 +153,7 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
     }
 
     override fun onFailureHandler(responseMessage: String) {
-        Log.e("onSuccessHandler", "onFailureHandler")
         clearPin()
-        Log.e("clearPin", "onFailure")
-
     }
 
     override fun onResume() {

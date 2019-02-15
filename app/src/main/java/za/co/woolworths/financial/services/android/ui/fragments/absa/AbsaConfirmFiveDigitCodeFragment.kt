@@ -18,6 +18,8 @@ import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import android.os.Vibrator
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import com.google.gson.Gson
+import za.co.absa.openbankingapi.woolworths.integration.dao.JSession
 import za.co.woolworths.financial.services.android.contracts.IVibrateComplete
 
 class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener, IVibrateComplete {
@@ -26,16 +28,19 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
     private var mFiveDigitCodePinCode: Int? = null
     private var mShakeAnimation: Animation? = null
     private var mVibrateComplete: IVibrateComplete? = null
+    private var mJSession: JSession? = null
 
     companion object {
-        fun newInstance(fiveDigitCodePinCode: Int) = AbsaConfirmFiveDigitCodeFragment().apply {
-            arguments = Bundle(1).apply {
-                putInt("fiveDigitCodePinCode", fiveDigitCodePinCode)
+        private const val MAXIMUM_PIN_ALLOWED: Int = 4
+        private const val VIBRATE_DURATION: Long = 300
+        private const val FIVE_DIGIT_PIN_CODE = "FIVE_DIGIT_PIN_CODE"
+        private const val JSESSION = "JSESSION"
+        fun newInstance(fiveDigitCodePinCode: Int, jSession: String?) = AbsaConfirmFiveDigitCodeFragment().apply {
+            arguments = Bundle(2).apply {
+                putInt(FIVE_DIGIT_PIN_CODE, fiveDigitCodePinCode)
+                putString(JSESSION, jSession)
             }
         }
-
-        const val MAXIMUM_PIN_ALLOWED: Int = 4
-        const val VIBRATE_DURATION: Long = 300
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -50,9 +55,7 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
     }
 
     private fun initViewsAndEvents() {
-        if (arguments.containsKey("fiveDigitCodePinCode")) {
-            mFiveDigitCodePinCode = arguments.getInt("fiveDigitCodePinCode")
-        }
+        setArguments()
         tvEnterYourPin.setText(getString(R.string.absa_confirm_five_digit_code_title))
         mPinImageViewList = mutableListOf(ivPin1, ivPin2, ivPin3, ivPin4, ivPin5)
         ivEnterFiveDigitCode.setOnClickListener(this)
@@ -64,6 +67,14 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
                 navigateToConfirmFiveDigitCodeFragment()
             }
             handled
+        }
+    }
+
+    private fun setArguments() {
+        arguments?.apply {
+            mFiveDigitCodePinCode = getInt(FIVE_DIGIT_PIN_CODE)
+            getString(JSESSION)?.apply { mJSession = Gson().fromJson(this, JSession::class.java) }
+
         }
     }
 

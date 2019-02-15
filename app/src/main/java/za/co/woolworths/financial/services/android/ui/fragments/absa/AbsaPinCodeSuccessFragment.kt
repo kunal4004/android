@@ -14,7 +14,7 @@ import za.co.woolworths.financial.services.android.util.SessionUtilities
 class AbsaPinCodeSuccessFragment : Fragment() {
 
     companion object {
-        const val CLOSE_ACTIVITY_DELAY_MILIS = 2000
+        const val DELAY_CLOSING_ACTIVITY = 2000
         fun newInstance() = AbsaPinCodeSuccessFragment()
     }
 
@@ -40,7 +40,7 @@ class AbsaPinCodeSuccessFragment : Fragment() {
                 finish()
                 overridePendingTransition(R.anim.stay, android.R.anim.fade_out)
             }
-        }, CLOSE_ACTIVITY_DELAY_MILIS.toLong())
+        }, DELAY_CLOSING_ACTIVITY.toLong())
     }
 
     private fun initView() {
