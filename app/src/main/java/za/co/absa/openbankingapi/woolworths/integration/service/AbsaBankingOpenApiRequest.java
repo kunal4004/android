@@ -39,12 +39,12 @@ public class AbsaBankingOpenApiRequest<T> extends Request<T> {
 				DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 	}
 
-//	AbsaBankingOpenApiRequest(Class<T> clazz, Map<String, String> headers, Response.Listener<T> listener, Response.ErrorListener errorListener) {
-//		this(Method.POST, "https://eu.absa.co.za/wcob/wfsMobileRegistration", clazz, headers, null, listener, errorListener);
-//	}
-
 	public AbsaBankingOpenApiRequest(Class<T> clazz, Map<String, String> headers, String body, AbsaBankingOpenApiResponse.Listener<T> listener, Response.ErrorListener errorListener) {
 		this(Method.POST, "https://eu.absa.co.za/wcob/wfsMobileRegistration", clazz, headers, body, listener, errorListener);
+	}
+
+	public AbsaBankingOpenApiRequest(String url, Class<T> clazz, Map<String, String> headers, String body, AbsaBankingOpenApiResponse.Listener<T> listener, Response.ErrorListener errorListener) {
+		this(Method.POST, url, clazz, headers, body, listener, errorListener);
 	}
 
 	@Override
@@ -76,6 +76,15 @@ public class AbsaBankingOpenApiRequest<T> extends Request<T> {
 	@Override
 	protected void deliverResponse(T response) {
 		listener.onResponse(response, mCookies);
+	}
+
+	@Override
+	public String getBodyContentType() {
+		if (this.headers.containsKey("Content-Type")){
+			return this.headers.get("Content-Type");
+		}
+
+		return "application/json";
 	}
 
 	@Override

@@ -21,8 +21,6 @@ public class CreateAliasRequest {
 		this.symmetricKey = symmetricKey;
 	}
 
-
-
 	public final String getJson(){
 		Gson gson = new GsonBuilder().disableHtmlEscaping().create();
 		return gson.toJson(this);

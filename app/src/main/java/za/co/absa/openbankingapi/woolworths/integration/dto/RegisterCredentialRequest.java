@@ -20,7 +20,6 @@ public class RegisterCredentialRequest {
 	@SerializedName("symmetricKey")
 	private String symmetricKey;
 
-
 	public static class CredentialVO {
 		@SerializedName("aliasId")
 		private String aliasId;

@@ -31,7 +31,7 @@ public class AbsaValidateSureCheckRequest {
 
 	public void make(final JSession jSession, final AbsaBankingOpenApiResponse.ResponseDelegate<ValidateSureCheckResponse> responseDelegate){
 		Map<String, String> headers = new HashMap<>();
-		headers.put("Content-Type", "application/json");
+		headers.put("Accept", "application/json");
 		headers.put("action", "validateSurecheck");
 		headers.put("JSESSIONID", jSession.getId());
 

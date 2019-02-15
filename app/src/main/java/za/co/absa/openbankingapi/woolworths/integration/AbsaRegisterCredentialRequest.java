@@ -1,7 +1,6 @@
 package za.co.absa.openbankingapi.woolworths.integration;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -43,7 +42,6 @@ public class AbsaRegisterCredentialRequest {
 
 	public void make(final String aliasId, final String deviceId, final String credential, final JSession jSession, final AbsaBankingOpenApiResponse.ResponseDelegate<RegisterCredentialResponse> responseDelegate){
 		Map<String, String> headers = new HashMap<>();
-		headers.put("Content-Type", "application/json");
 		headers.put("Accept", "application/json");
 		headers.put("action", "registerCredential");
 		headers.put("JSESSIONID", jSession.getId());

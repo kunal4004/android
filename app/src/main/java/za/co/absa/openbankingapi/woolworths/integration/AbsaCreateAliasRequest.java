@@ -44,7 +44,6 @@ public class AbsaCreateAliasRequest {
 
 	public void make(final String deviceId, final JSession jSession, final AbsaBankingOpenApiResponse.ResponseDelegate<CreateAliasResponse> responseDelegate){
 		Map<String, String> headers = new HashMap<>();
-		headers.put("Content-Type", "application/json");
 		headers.put("Accept", "application/json");
 		headers.put("action", "createAlias");
 		headers.put("JSESSIONID", jSession.getId());
