@@ -6,8 +6,8 @@ apply plugin: 'io.fabric'
 android {
 
     def major = "5"
-    def minor = "9"
-    def fix = "4"
+    def minor = "10"
+    def fix = "0"
 
     //placeholder will be temporarily updated by build server during a build.
     //check appcenter-pre-build.sh
