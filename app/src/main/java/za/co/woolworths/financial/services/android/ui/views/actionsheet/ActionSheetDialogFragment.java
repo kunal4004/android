@@ -39,6 +39,7 @@ public class ActionSheetDialogFragment extends DialogFragment implements Animate
 		if (window == null) return;
 		window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 		window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+		window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
 	}
 
 	@Override
@@ -59,7 +60,7 @@ public class ActionSheetDialogFragment extends DialogFragment implements Animate
 		return new Dialog(getActivity(), getTheme()) {
 			@Override
 			public void onBackPressed() {
-				onDialogBackPressed(false);
+				shouldAnimateViewOnCancel(false);
 			}
 		};
 	}
@@ -87,7 +88,7 @@ public class ActionSheetDialogFragment extends DialogFragment implements Animate
 		mAnimationUtils.setAnimation(mFrameAlertContainer, this);
 	}
 
-	public void onDialogBackPressed(boolean positiveResultSelected) {
+	public void shouldAnimateViewOnCancel(boolean positiveResultSelected) {
 		mAnimationUtils.animateDismissView(mFrameAlertContainer, positiveResultSelected);
 	}
 

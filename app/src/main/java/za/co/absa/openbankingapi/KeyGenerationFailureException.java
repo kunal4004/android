@@ -10,10 +10,10 @@
  *  Limited
  *
  */
-package za.co.woolworths.financial.services.android.util.encryption;
+package za.co.absa.openbankingapi;
 
-public class PasscodeCredential extends BaseCredential {
-    public PasscodeCredential(byte[] encryptedPasscode, byte[] encryptedAliasId, SessionKey sessionKey) {
-        super(encryptedPasscode, encryptedAliasId, sessionKey);
+public final class KeyGenerationFailureException extends Exception {
+    KeyGenerationFailureException(Throwable e) {
+        super(e);
     }
 }

@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import me.relex.circleindicator.CircleIndicator;
+import za.co.woolworths.financial.services.android.contracts.ILocationProvider;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -87,7 +88,7 @@ import static android.app.Activity.RESULT_OK;
  * Created by W7099877 on 2018/07/14.
  */
 
-public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragmentNewBinding, ProductDetailsViewModelNew> implements ProductDetailNavigatorNew, ProductViewPagerAdapter.MultipleImageInterface, View.OnClickListener, ProductColorPickerAdapter.OnItemSelection, ProductSizePickerAdapter.OnSizeSelection, AvailableSizePickerAdapter.OnAvailableSizeSelection, PermissionResultCallback, ToastUtils.ToastInterface, WMaterialShowcaseView.IWalkthroughActionListener {
+public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragmentNewBinding, ProductDetailsViewModelNew> implements ProductDetailNavigatorNew, ProductViewPagerAdapter.MultipleImageInterface, View.OnClickListener, ProductColorPickerAdapter.OnItemSelection, ProductSizePickerAdapter.OnSizeSelection, AvailableSizePickerAdapter.OnAvailableSizeSelection, PermissionResultCallback, ToastUtils.ToastInterface, WMaterialShowcaseView.IWalkthroughActionListener, ILocationProvider {
 	public ProductDetailsViewModelNew productDetailsViewModelNew;
 	private String mSubCategoryTitle;
 	private boolean mFetchFromJson;
@@ -137,6 +138,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	private OtherSkus otherSKUForFindInStore;
 	CircleIndicator circleindicator;
 	private final int ADD_TO_SHOPPING_LIST_REQUEST_CODE = 179;
+	private final int SET_DELIVERY_LOCATION_REQUEST_CODE = 180;
 	private ToastUtils mToastUtils;
     private FuseLocationAPISingleton mFuseLocationAPISingleton;
 
@@ -391,7 +393,9 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		Point size = new Point();
 		deviceHeight.getSize(size);
 		int width = size.x;
-		imageUrl = (imageUrl.contains("jpg")) ? "https://images.woolworthsstatic.co.za/" + imageUrl : imageUrl;
+        if (TextUtils.isEmpty(imageUrl)) {
+            imageUrl = "https://images.woolworthsstatic.co.za/";
+        }
 		return imageUrl + "" + ((imageUrl.contains("jpg")) ? "" : "?w=" + width + "&q=" + 85);
 	}
 
@@ -610,6 +614,20 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	}
 
 	@Override
+	public void requestDeliveryLocation(String requestMessage) {
+		enableAddToCartButton(false);
+		enableFindInStoreButton(false);
+		if (isAdded())
+			Utils.displayValidationMessageForResult(this,
+					getActivity(),
+					CustomPopUpWindow.MODAL_LAYOUT.ERROR,
+					null,
+					requestMessage,
+					getResources().getString(R.string.set_delivery_location_button),
+					SET_DELIVERY_LOCATION_REQUEST_CODE);
+	}
+
+	@Override
 	public void setProductCode(String productCode) {
 		try {
 			getViewDataBinding().productCode.setVisibility(View.VISIBLE);
@@ -672,7 +690,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 			if (cartSummaryList.get(0) != null) {
 				CartSummary cartSummary = cartSummaryList.get(0);
 				if (TextUtils.isEmpty(cartSummary.suburbId)) {
-					startActivityToSelectDeliveryLocation();
+					startActivityToSelectDeliveryLocation(true);
 				} else {
 					// show popup to confirm location
 					this.confirmDeliveryLocation();
@@ -681,10 +699,14 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 		}
 	}
 
-	private void startActivityToSelectDeliveryLocation() {
+	private void startActivityToSelectDeliveryLocation(boolean addItemToCartOnFinished) {
 		if (getActivity() != null) {
 			Intent openDeliveryLocationSelectionActivity = new Intent(this.getContext(), DeliveryLocationSelectionActivity.class);
-			startActivityForResult(openDeliveryLocationSelectionActivity, REQUEST_SUBURB_CHANGE);
+			if(addItemToCartOnFinished) {
+				startActivityForResult(openDeliveryLocationSelectionActivity, REQUEST_SUBURB_CHANGE);
+			} else {
+				startActivity(openDeliveryLocationSelectionActivity);
+			}
 			getActivity().overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
 		}
 	}
@@ -840,6 +862,9 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	}
 
 	public List<String> getAuxiliaryImagesByGroupKey(String groupKey) {
+		if (TextUtils.isEmpty(groupKey)) {
+			return this.mAuxiliaryImage;
+		}
 		List<String> updatedAuxiliaryImages = new ArrayList<>();
 		ArrayList<OtherSkus> otherSkusArrayList = this.otherSKUsByGroupKey.get(groupKey);
 		if (otherSkusArrayList != null) {
@@ -1010,6 +1035,19 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
+
+        // FuseLocationAPISingleton.kt : Change location method to High Accuracy confirmation dialog
+        if (requestCode == FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS) {
+            switch (resultCode) {
+                case Activity.RESULT_OK:
+                    findItemInStore();
+                    break;
+
+                default:
+                    dismissFindInStoreProgress();
+                    break;
+            }
+        }
 		if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
 			switch (requestCode) {
 				case SSO_REQUEST_ADD_TO_CART:
@@ -1034,6 +1072,9 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 						return;
 					}
 					showToastMessage(getActivity(), listSize);
+					break;
+				case SET_DELIVERY_LOCATION_REQUEST_CODE:
+					startActivityToSelectDeliveryLocation(false);
 					break;
 			}
 		}
@@ -1073,7 +1114,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 			@Override
 			public void onClick(View view) {
 				confirmDeliveryLocationDialog.dismiss();
-				startActivityToSelectDeliveryLocation();
+				startActivityToSelectDeliveryLocation(true);
 			}
 		});
 		confirmDeliveryLocationDialog.setCancelable(false);
@@ -1099,22 +1140,9 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
         Activity activity = getActivity();
         if ((activity == null) || (mFuseLocationAPISingleton == null)) return;
 
-        // Popup will appear when location method is on device mode only
-        if (!mFuseLocationAPISingleton.getLocationMode(activity)) {
-            mFuseLocationAPISingleton.detectDeviceOnlyGPSLocation(activity);
-            return;
-        }
-
         this.enableFindInStoreButton(true);
-        mFuseLocationAPISingleton.addOnLocationCompleteListener(new FuseLocationAPISingleton.OnLocationChangeCompleteListener() {
-            @Override
-            public void onLocationChanged(@NotNull Location location) {
-                Utils.saveLastLocation(location, getContext());
-                stopLocationUpdate();
-                executeLocationItemTask();
-            }
-        });
-        mFuseLocationAPISingleton.startLocationUpdate();
+        mFuseLocationAPISingleton.addLocationChangeListener(this);
+        mFuseLocationAPISingleton.startLocationUpdate(getActivity());
     }
 
     @Override
@@ -1252,5 +1280,17 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 			txtSaveText.setVisibility(View.VISIBLE);
 			txtSaveText.setText(productDetails.saveText);
 		}
+	}
+
+	@Override
+	public void onLocationChange(@NotNull Location location) {
+		Utils.saveLastLocation(location, getContext());
+		stopLocationUpdate();
+		executeLocationItemTask();
+	}
+
+	@Override
+	public void onPopUpLocationDialogMethod() {
+		dismissFindInStoreProgress();
 	}
 }

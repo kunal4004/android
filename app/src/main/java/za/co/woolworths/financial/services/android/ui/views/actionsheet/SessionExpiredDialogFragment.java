@@ -46,11 +46,11 @@ public class SessionExpiredDialogFragment extends ActionSheetDialogFragment impl
 		switch (view.getId()) {
 			case R.id.btnSECancel:
 				changeTappedButtonColor(btnSECancel);
-				onDialogBackPressed(false);
+				shouldAnimateViewOnCancel(false);
 				break;
 			case R.id.btnSESignIn:
 				changeTappedButtonColor(btnSESignIn);
-				onDialogBackPressed(true);
+				shouldAnimateViewOnCancel(true);
 				break;
 			default:
 				break;

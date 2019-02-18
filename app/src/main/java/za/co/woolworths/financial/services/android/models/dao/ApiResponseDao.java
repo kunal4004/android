@@ -10,8 +10,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
+import za.co.absa.openbankingapi.SymmetricCipher;
 import za.co.woolworths.financial.services.android.util.PersistenceLayer;
-import za.co.woolworths.financial.services.android.util.encryption.SymmetricCipher;
 
 /**
  * Created by eesajacobs on 2016/12/29.

@@ -10,10 +10,11 @@
  *  Limited
  *
  */
-package za.co.woolworths.financial.services.android.util.encryption;
+package za.co.absa.openbankingapi;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.util.Base64;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,7 +33,7 @@ import javax.crypto.NoSuchPaddingException;
 public class AsymmetricCryptoHelper {
     private static final String KEY_FACTORY_ALGORITHM = "RSA";
     private static final String CIPHER_ALGORITHM = "RSA/ECB/PKCS1Padding";
-    private static final String KEY_FILE = "mobileapp.pem.cer";
+    private static final String KEY_FILE = "Woolworths_MobileAppPubKey.pem";
 
     public final byte[] encryptSymmetricKey(Context context, byte[] symmetricKey) throws AsymmetricKeyGenerationFailureException, AsymmetricEncryptionFailureException {
         PublicKey publicKey = loadPublicKey(context);
@@ -50,7 +51,7 @@ public class AsymmetricCryptoHelper {
             String pubKey = new String(keyBytes, "UTF-8");
             pubKey = pubKey.replaceAll("(-+BEGIN PUBLIC KEY-+\\r?\\n|-+END PUBLIC KEY-+\\r?\\n?)", "");
 
-            keyBytes = Base64.decode(pubKey);
+            keyBytes = Base64.decode(pubKey, Base64.DEFAULT);
 
             X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
             KeyFactory keyFactory = KeyFactory.getInstance(KEY_FACTORY_ALGORITHM);

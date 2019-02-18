@@ -10,17 +10,21 @@
  *  Limited
  *
  */
-package za.co.woolworths.financial.services.android.util.encryption;
+package za.co.absa.openbankingapi;
 
-public class SymmetricKey {
-    private String safeUrlEncodedEncryptedSymmetricKey;
+import android.util.Log;
 
-    public SymmetricKey(byte[] encryptedSymmetricKey) {
-        safeUrlEncodedEncryptedSymmetricKey = Base64.encodeBytes(encryptedSymmetricKey);
+final class Logger {
+
+    static boolean isDebug = true;
+
+    static void setIsDebug(boolean value) {
+        isDebug = value;
     }
 
-    public String getSafeUrlEncodedEncryptedSymmetricKey() {
-        return safeUrlEncodedEncryptedSymmetricKey;
+    static void Error(String tag, String value) {
+        if (isDebug && value != null) {
+            Log.e(tag, value);
+        }
     }
 }
-

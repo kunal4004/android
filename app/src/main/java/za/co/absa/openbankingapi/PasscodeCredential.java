@@ -10,21 +10,10 @@
  *  Limited
  *
  */
-package za.co.woolworths.financial.services.android.util.encryption;
+package za.co.absa.openbankingapi;
 
-import android.util.Log;
-
-final class Logger {
-
-    static boolean isDebug = true;
-
-    static void setIsDebug(boolean value) {
-        isDebug = value;
-    }
-
-    static void Error(String tag, String value) {
-        if (isDebug && value != null) {
-            Log.e(tag, value);
-        }
+public class PasscodeCredential extends BaseCredential {
+    public PasscodeCredential(byte[] encryptedPasscode, byte[] encryptedAliasId, SessionKey sessionKey) {
+        super(encryptedPasscode, encryptedAliasId, sessionKey);
     }
 }

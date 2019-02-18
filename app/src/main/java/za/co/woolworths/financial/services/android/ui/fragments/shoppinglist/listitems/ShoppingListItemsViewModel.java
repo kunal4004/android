@@ -76,6 +76,13 @@ public class ShoppingListItemsViewModel extends BaseViewModel<ShoppingListItemsN
 								getNavigator().onAddToCartSuccess(addItemToCartResponse);
 								break;
 
+							case 417:
+								// Preferred Delivery Location has been reset on server
+								// As such, we give the user the ability to set their location again
+								if (addItemToCartResponse.response != null)
+									getNavigator().requestDeliveryLocation(addItemToCartResponse.response.desc);
+								break;
+
 							case 440:
 								if (addItemToCartResponse.response != null)
 									getNavigator().onSessionTokenExpired(addItemToCartResponse.response);

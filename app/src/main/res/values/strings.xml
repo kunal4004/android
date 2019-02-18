@@ -55,6 +55,7 @@
     <string name="contact_us">Contact Us</string>
     <string name="cart">Cart</string>
     <string name="delivery_location">Delivery Location</string>
+    <string name="set_delivery_location_button">SET DELIVERY LOCATION</string>
     <string name="previously_selected_locations">Previously Selected Locations</string>
     <string name="select_your_province">Select your Province</string>
     <string name="select_your_suburb">Select your Suburb</string>
@@ -581,7 +582,7 @@
     <string name="statement_sent_to_title">Statement will be sent to:</string>
     <string name="confirm_email">confirm email</string>
     <string name="or_send_to_different_email">or send to different email</string>
-    <string name="follow_instruction">Please follow the instructions we\'ve sent to your email.  If you didn\'t receive the email, please check your spam folder or click "send to a new email address" below.</string>
+    <string name="follow_instruction">Please follow the instructions we\'ve sent to your email.  If you didn\'t receive the email, please check your spam folder.</string>
     <string name="alternative_email_adress">alternative email address:</string>
     <string name="no_statements">No Statements</string>
     <string name="no_statements_desc">We have no data for the current period.</string>
@@ -828,7 +829,6 @@
     <string name="how_to_pay_other_account_desc">Electronic payments from other bank account into your Woolworths credit card can be made into:</string>
     <string name="how_to_pay_credit_card_title">payments made from other accounts</string>
     <string name="account_statement_error">Sorry, this document is unavailable</string>
-    <string name="high_accuracy_location_err_desc"> This feature cannot be used without High Accuracy Location Services.</string>
     <string name="info_total_amount_due_title">Total Amount Due</string>
     <string name="info_total_amount_due_desc">This is the sum of your current instalment, including any overdue amount and interest.</string>
     <string name="info_next_payment_due_title">Next Payment Due</string>

@@ -10,9 +10,11 @@
  *  Limited
  *
  */
-package za.co.woolworths.financial.services.android.util.encryption;
+package za.co.absa.openbankingapi;
 
-import java.io.UnsupportedEncodingException;
+import android.util.Base64;
+
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -29,8 +31,13 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class SymmetricCipher {
 
-    public static final byte[] Aes256Encrypt(byte[] keyBytes, String data) throws DecryptionFailureException, UnsupportedEncodingException {
-        return Aes256Encrypt(keyBytes, data.getBytes("UTF-8"));
+    public static final byte[] Aes256Encrypt(byte[] keyBytes, String data) throws DecryptionFailureException {
+        return Aes256Encrypt(keyBytes, data.getBytes(StandardCharsets.UTF_8));
+    }
+
+    public static final String Aes256EncryptAndBase64Encode(String string, byte[] keyBytes) throws DecryptionFailureException {
+        byte[] encryptedData = Aes256Encrypt(keyBytes, string.getBytes(StandardCharsets.UTF_8));
+        return Base64.encodeToString(encryptedData, Base64.NO_WRAP);
     }
 
     public static final byte[] Aes256Encrypt(byte[] keyBytes, byte[] data) throws DecryptionFailureException {

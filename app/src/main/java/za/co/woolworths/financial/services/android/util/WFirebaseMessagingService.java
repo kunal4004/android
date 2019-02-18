@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.util;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -24,23 +23,20 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
         if (remoteMessage == null)
             return;
 
-        try {
-            String unreadCountValue = Utils.getSessionDaoValue(this, SessionDao.KEY.UNREAD_MESSAGE_COUNT);
+        String unreadCountValue = Utils.getSessionDaoValue(this, SessionDao.KEY.UNREAD_MESSAGE_COUNT);
 
-            if (TextUtils.isEmpty(unreadCountValue) || unreadCountValue == null) {
-                Utils.sessionDaoSave(this, SessionDao.KEY.UNREAD_MESSAGE_COUNT, "0");
-                Utils.setBadgeCounter(this, 1);
-            } else {
-                int unreadCount = Integer.valueOf(unreadCountValue) + 1;
-                Utils.setBadgeCounter(this, unreadCount);
-            }
-        } catch (NullPointerException ignored) {
+        if (TextUtils.isEmpty(unreadCountValue) || unreadCountValue == null) {
+            Utils.sessionDaoSave(this, SessionDao.KEY.UNREAD_MESSAGE_COUNT, "0");
+            Utils.setBadgeCounter(1);
+        } else {
+            int unreadCount = Integer.valueOf(unreadCountValue) + 1;
+            Utils.setBadgeCounter(unreadCount);
         }
 
         Map<String, String> data = remoteMessage.getData();
         if (data.size() > 0 && NotificationUtils.isAppIsInBackground(getApplicationContext())) {// Check if message contains a data payload.
             notificationUtils=NotificationUtils.newInstance(this);
-            notificationUtils.sendBundledNotification(data.get("title"),data.get("body"));
+            notificationUtils.sendBundledNotification(data.get("title"),data.get("body"), Integer.parseInt(unreadCountValue));
         } else if (!NotificationUtils.isAppIsInBackground(getApplicationContext())) {
             Intent intent = new Intent("UpdateCounter");
             LocalBroadcastManager.

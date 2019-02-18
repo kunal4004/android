@@ -10,7 +10,7 @@
  *  Limited
  *
  */
-package za.co.woolworths.financial.services.android.util.encryption;
+package za.co.absa.openbankingapi;
 
 public final class DecryptionFailureException extends Exception {
     DecryptionFailureException(Throwable e) {
