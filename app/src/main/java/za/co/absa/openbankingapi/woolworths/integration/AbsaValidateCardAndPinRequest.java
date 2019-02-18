@@ -40,7 +40,7 @@ public class AbsaValidateCardAndPinRequest {
 
 	public void make(String cardToken, String cardPin, final AbsaBankingOpenApiResponse.ResponseDelegate<ValidateCardAndPinResponse> responseDelegate){
 		Map<String, String> headers = new HashMap<>();
-		headers.put("Content-Type", "application/json");
+		headers.put("Accept", "application/json");
 		headers.put("action", "validateCardAndPin");
 		String encryptedPin = null;
 

@@ -1,7 +1,6 @@
 package za.co.absa.openbankingapi.woolworths.integration;
 
 import android.content.Context;
-import android.util.Base64;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -9,7 +8,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 
 import java.net.HttpCookie;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,18 +19,18 @@ import za.co.absa.openbankingapi.KeyGenerationFailureException;
 import za.co.absa.openbankingapi.SessionKey;
 import za.co.absa.openbankingapi.SymmetricCipher;
 import za.co.absa.openbankingapi.woolworths.integration.dao.JSession;
-import za.co.absa.openbankingapi.woolworths.integration.dto.CreateAliasRequest;
-import za.co.absa.openbankingapi.woolworths.integration.dto.CreateAliasResponse;
 import za.co.absa.openbankingapi.woolworths.integration.dto.Header;
+import za.co.absa.openbankingapi.woolworths.integration.dto.RegisterCredentialRequest;
+import za.co.absa.openbankingapi.woolworths.integration.dto.RegisterCredentialResponse;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiRequest;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse;
 
-public class AbsaCreateAliasRequest {
+public class AbsaRegisterCredentialRequest {
 
 	private SessionKey sessionKey;
 	private RequestQueue requestQueue;
 
-	public AbsaCreateAliasRequest(final Context context){
+	public AbsaRegisterCredentialRequest(final Context context){
 
 		try {
 			this.sessionKey = SessionKey.generate(context.getApplicationContext());
@@ -42,33 +40,36 @@ public class AbsaCreateAliasRequest {
 		}
 	}
 
-	public void make(final String deviceId, final JSession jSession, final AbsaBankingOpenApiResponse.ResponseDelegate<CreateAliasResponse> responseDelegate){
+	public void make(final String aliasId, final String deviceId, final String credential, final JSession jSession, final AbsaBankingOpenApiResponse.ResponseDelegate<RegisterCredentialResponse> responseDelegate){
 		Map<String, String> headers = new HashMap<>();
 		headers.put("Accept", "application/json");
-		headers.put("action", "createAlias");
+		headers.put("action", "registerCredential");
 		headers.put("JSESSIONID", jSession.getId());
 
-		final String body = new CreateAliasRequest(deviceId, sessionKey.getEncryptedKeyBase64Encoded()).getJson();
-		final AbsaBankingOpenApiRequest request = new AbsaBankingOpenApiRequest<>(CreateAliasResponse.class, headers, body, new AbsaBankingOpenApiResponse.Listener<CreateAliasResponse>(){
+
+		final byte[] symmetricKey = sessionKey.getKey();
+		final String gatewaySymmetricKey = this.sessionKey.getEncryptedKeyBase64Encoded();
+		String encryptedAlias = null;
+		String encryptedCredential = null;
+		RegisterCredentialRequest.CredentialVO[] credentialVOs = new RegisterCredentialRequest.CredentialVO[1];
+
+		try{
+			encryptedAlias = SymmetricCipher.Aes256EncryptAndBase64Encode(aliasId, symmetricKey);
+			encryptedCredential = SymmetricCipher.Aes256EncryptAndBase64Encode(credential, symmetricKey);
+			credentialVOs[0] = new RegisterCredentialRequest.CredentialVO(encryptedAlias, "MOBILEAPP_5DIGIT_PIN", encryptedCredential);
+		} catch (DecryptionFailureException e) {
+			throw new RuntimeException(e);
+		}
+
+
+		final String body = new RegisterCredentialRequest(encryptedAlias, deviceId, credentialVOs, gatewaySymmetricKey).getJson();
+
+		final AbsaBankingOpenApiRequest request = new AbsaBankingOpenApiRequest<>(RegisterCredentialResponse.class, headers, body, new AbsaBankingOpenApiResponse.Listener<RegisterCredentialResponse>(){
 
 			@Override
-			public void onResponse(CreateAliasResponse response, List<HttpCookie> cookies) {
+			public void onResponse(RegisterCredentialResponse response, List<HttpCookie> cookies) {
 				Header.ResultMessage[] resultMessages = response.getHeader().getResultMessages();
 				if (resultMessages == null || resultMessages.length == 0){
-					try{
-						byte[] encryptedAliasBytes = response.getAliasId().getBytes(StandardCharsets.UTF_8);
-						byte[] encryptedAliasBase64DecodedBytes = Base64.decode(encryptedAliasBytes, Base64.NO_WRAP);
-
-						byte[] aliasBytes = SymmetricCipher.Aes256Decrypt(sessionKey.getKey(), encryptedAliasBase64DecodedBytes);
-						byte[] aliasBase64DecodedBytes = Base64.decode(Base64.encodeToString(aliasBytes, Base64.NO_WRAP), Base64.DEFAULT);
-						String decryptedAlias = new String(aliasBase64DecodedBytes, StandardCharsets.UTF_8);
-
-						response.setAliasId(decryptedAlias);
-					}catch (DecryptionFailureException e){
-						//TODO: Handle decryption issue
-						throw new RuntimeException(e);
-					}
-
 					responseDelegate.onSuccess(response, cookies);
 				}
 
@@ -78,7 +79,7 @@ public class AbsaCreateAliasRequest {
 		}, new Response.ErrorListener() {
 			@Override
 			public void onErrorResponse(VolleyError error) {
-				responseDelegate.onFailure(error.getMessage());
+
 			}
 		});
 
