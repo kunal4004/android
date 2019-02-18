@@ -68,7 +68,9 @@ import za.co.woolworths.financial.services.android.ui.views.NestedScrollableView
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
+import za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton;
 import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
@@ -87,6 +89,7 @@ import za.co.woolworths.financial.services.android.util.nav.tabhistory.FragNavTa
 
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT;
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT_TEMP;
+import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_DIALOG_TAPPED;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SHOW_ADDED_TO_SHOPPING_LIST_TOAST;
 import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.RESULT_TAP_FIND_INSTORE_BTN;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
@@ -891,6 +894,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		//TODO: Explain where this is coming from.
+
+		// FuseLocationAPISingleton.kt : Change location method to High Accuracy confirmation dialog
+		if (requestCode== FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS){
+			getCurrentFragment().onActivityResult(requestCode,resultCode,data);
+			return;
+		}
 
 		/***
 		 * Navigate to list name view on view clicked from cart toast
