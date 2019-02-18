@@ -1,8 +1,9 @@
 package za.co.woolworths.financial.services.android.models.dto
 
 import com.google.gson.JsonElement
+import java.io.Serializable
 
-class OrderDetailsResponse {
+class OrderDetailsResponse : Serializable {
     private val basketId: String? = null
 
     private val productLeadTimeExceeded: String? = null

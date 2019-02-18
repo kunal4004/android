@@ -15,7 +15,7 @@ import za.co.woolworths.financial.services.android.models.dto.CommerceItem
 import za.co.woolworths.financial.services.android.models.dto.Order
 import za.co.woolworths.financial.services.android.util.WFormatter
 
-class OrderDetailsAdapter(val context: Context, var dataList: ArrayList<OrderDetailsItem>) : RecyclerView.Adapter<OrdersBaseViewHolder>() {
+class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var dataList: ArrayList<OrderDetailsItem>) : RecyclerView.Adapter<OrdersBaseViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): OrdersBaseViewHolder? {
         when (viewType) {
             OrderDetailsItem.ViewType.HEADER.value -> {
@@ -59,7 +59,7 @@ class OrderDetailsAdapter(val context: Context, var dataList: ArrayList<OrderDet
             itemView.itemName.text = item.commerceItemInfo.productDisplayName
             itemView.price.text = WFormatter.formatAmount(item.priceInfo.amount)
 
-            itemView.setOnClickListener { (context as OnItemClick).onOpenProductDetail(item) }
+            itemView.setOnClickListener { listner.onOpenProductDetail(item) }
         }
 
     }
