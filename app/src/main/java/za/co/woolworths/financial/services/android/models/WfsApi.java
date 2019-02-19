@@ -6,6 +6,7 @@ import android.text.TextUtils;
 
 import com.jakewharton.retrofit.Ok3Client;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 

@@ -90,7 +90,6 @@ public class MyAccountCardsActivity extends AppCompatActivity
 		changeButtonColor(currentPosition);
 		getScreenResolution();
 
-
 		cardsHasAccount = getIntent().hasExtra("accounts");
 		if (cardsHasAccount) {
 			accountsResponse = new Gson().fromJson(getIntent().getExtras().getString("accounts"), AccountsResponse.class);

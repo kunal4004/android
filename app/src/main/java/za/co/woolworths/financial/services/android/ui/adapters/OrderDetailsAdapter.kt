@@ -11,6 +11,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.holder.OrdersBase
 import kotlinx.android.synthetic.main.my_orders_past_orders_header.view.*
 import kotlinx.android.synthetic.main.my_orders_upcoming_order_item.view.*
 import kotlinx.android.synthetic.main.order_details_commerce_item.view.*
+import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem
 import za.co.woolworths.financial.services.android.models.dto.Order
 import za.co.woolworths.financial.services.android.util.WFormatter
@@ -74,7 +75,10 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
 
     inner class AddToListViewHolder(itemView: View) : OrdersBaseViewHolder(itemView) {
         override fun bind(position: Int) {
-            itemView.setOnClickListener { (context as OnItemClick).onAddToList() }
+
+            itemView.setOnClickListener {
+                (context as OnItemClick).onAddToList(getCommerceItemList())
+            }
         }
 
     }
@@ -86,8 +90,26 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
 
     interface OnItemClick {
 
-        fun onAddToList()
+        fun onAddToList(commerceItemList: MutableList<AddToListRequest>)
 
         fun onOpenProductDetail(commerceItem: CommerceItem)
+    }
+
+    fun getCommerceItemList(): MutableList<AddToListRequest> {
+        val addToListRequest = mutableListOf<AddToListRequest>()
+        dataList.forEach {
+            if (it.type.name.equals(OrderDetailsItem.ViewType.COMMERCE_ITEM.name)) {
+                val commerceItem = it.item as? CommerceItem
+                commerceItem?.commerceItemInfo?.apply {
+                    val listItem = AddToListRequest()
+                    listItem.catalogRefId = catalogRefId
+                    listItem.skuID = catalogRefId
+                    listItem.giftListId = catalogRefId
+                    listItem.quantity = getQuantity().toString()
+                    addToListRequest.add(listItem)
+                }
+            }
+        }
+        return addToListRequest
     }
 }

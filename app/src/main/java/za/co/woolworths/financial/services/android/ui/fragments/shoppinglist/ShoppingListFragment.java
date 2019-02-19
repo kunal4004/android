@@ -64,7 +64,6 @@ public class ShoppingListFragment extends BaseFragment<ShoppinglistFragmentBindi
 	private WTextView tvDeliveringToText;
 	private final int SSO_FOR_SHOPPING_LIST = 2020;
 
-
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

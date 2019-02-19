@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.activities
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
+
 import android.support.v7.app.AppCompatActivity
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.dto.Order
@@ -11,6 +12,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.AddOrderToC
 import za.co.woolworths.financial.services.android.ui.fragments.shop.OrderDetailsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnOrderItemsClicked
 import za.co.woolworths.financial.services.android.util.Utils
+
 
 class OrderDetailsActivity : AppCompatActivity(), OnOrderItemsClicked {
 
@@ -45,7 +47,6 @@ class OrderDetailsActivity : AppCompatActivity(), OnOrderItemsClicked {
     fun pushFragment(fragment: Fragment, tag: String) {
         replaceFragmentSafely(fragment, tag, false, true, R.id.fragmentContainer, R.anim.slide_in_from_right, R.anim.slide_out_to_left, R.anim.slide_in_from_left, R.anim.slide_out_to_right)
     }
-
     override fun onBackPressed() {
         if (supportFragmentManager.backStackEntryCount > 0) {
             supportFragmentManager.popBackStack()

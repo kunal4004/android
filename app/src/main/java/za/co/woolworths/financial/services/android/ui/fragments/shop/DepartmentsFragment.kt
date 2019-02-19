@@ -76,13 +76,15 @@ class DepartmentsFragment : Fragment() {
         val categories: MutableList<RootCategory>? = rootCategories.rootCategories
         val departmentAdapter = DepartmentAdapter(categories) { rootCategory: RootCategory -> departmentItemClicked(rootCategory) }
         activity?.let {
-            val mLayoutManager = LinearLayoutManager(it, LinearLayout.VERTICAL, false)
-            //setting top and bottom space between item row
-            val dividerItemDecoration = DividerItemDecoration(it, mLayoutManager.orientation)
-            dividerItemDecoration.setDrawable(ContextCompat.getDrawable(it, R.drawable.department_line_divider))
-            rclDepartment.addItemDecoration(dividerItemDecoration)
-            rclDepartment?.layoutManager = mLayoutManager
-            rclDepartment?.adapter = departmentAdapter
+            rclDepartment?.apply {
+                val mLayoutManager = LinearLayoutManager(it, LinearLayout.VERTICAL, false)
+                //setting top and bottom space between item row
+                val dividerItemDecoration = DividerItemDecoration(it, mLayoutManager.orientation)
+                dividerItemDecoration.setDrawable(ContextCompat.getDrawable(it, R.drawable.department_line_divider))
+                addItemDecoration(dividerItemDecoration)
+                layoutManager = mLayoutManager
+                adapter = departmentAdapter
+            }
         }
     }
 

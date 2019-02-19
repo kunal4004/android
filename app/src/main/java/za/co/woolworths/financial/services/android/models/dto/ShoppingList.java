@@ -11,5 +11,5 @@ public class ShoppingList {
 	@SerializedName("itemCount")
 	public int listCount;
 
-	public boolean viewIsSelected;
+	public boolean shoppingListRowWasSelected;
 }

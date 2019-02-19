@@ -390,7 +390,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 							List<ShoppingList> shoppingList = getGlobalState().getShoppingListRequest();
 							if (shoppingList != null) {
 								for (ShoppingList shopList : shoppingList) {
-									if (shopList.viewIsSelected) {
+									if (shopList.shoppingListRowWasSelected) {
 										newList.add(shopList);
 									}
 								}

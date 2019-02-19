@@ -27,7 +27,7 @@ public class BottomNavigationViewModel extends BaseViewModel<BottomNavigator> {
 		List<ShoppingList> newList = new ArrayList<>();
 		if (shoppingList != null) {
 			for (ShoppingList shopList : shoppingList) {
-				if (shopList.viewIsSelected) {
+				if (shopList.shoppingListRowWasSelected) {
 					newList.add(shopList);
 				}
 			}

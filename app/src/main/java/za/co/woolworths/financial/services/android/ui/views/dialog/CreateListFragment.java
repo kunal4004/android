@@ -314,7 +314,7 @@ public class CreateListFragment extends Fragment implements View.OnClickListener
 								if (woolworthsApplication != null) {
 									if (wGlobalState != null) {
 										List<ShoppingList> shoppingLists = createListResponse.lists;
-										shoppingLists.get(0).viewIsSelected = true;
+										shoppingLists.get(0).shoppingListRowWasSelected = true;
 										wGlobalState.setShoppingListRequest(shoppingLists);
 									}
 								}
