@@ -1,7 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.adapters
 
 import android.content.Context
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +16,8 @@ import kotlinx.android.synthetic.main.order_details_commerce_item.view.*
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem
 import za.co.woolworths.financial.services.android.models.dto.Order
+import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
 
 class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var dataList: ArrayList<OrderDetailsItem>) : RecyclerView.Adapter<OrdersBaseViewHolder>() {
@@ -47,8 +51,10 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
         override fun bind(position: Int) {
             val item = dataList[position].item as Order
             itemView.orderId.text = item.orderId
+            itemView.orderState.setBackgroundResource(0)
+            itemView.orderState.setTextColor(ContextCompat.getColor(context, R.color.black))
             itemView.orderState.text = item.state
-            itemView.purchaseDate.text = item.submittedDate
+            itemView.purchaseDate.text = WFormatter.formatOrdersDate(item.submittedDate)
             itemView.total.text = WFormatter.formatAmount(item.total)
         }
 
@@ -57,8 +63,10 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
     inner class OrderItemViewHolder(itemView: View) : OrdersBaseViewHolder(itemView) {
         override fun bind(position: Int) {
             val item = dataList[position].item as CommerceItem
+            setProductImage(itemView.productImage, item.commerceItemInfo.externalImageURL)
             itemView.itemName.text = item.commerceItemInfo.productDisplayName
             itemView.price.text = WFormatter.formatAmount(item.priceInfo.amount)
+            itemView.price.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
 
             itemView.setOnClickListener { listner.onOpenProductDetail(item) }
         }
@@ -77,7 +85,7 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
         override fun bind(position: Int) {
 
             itemView.setOnClickListener {
-                (context as OnItemClick).onAddToList(getCommerceItemList())
+                listner.onAddToList(getCommerceItemList())
             }
         }
 
@@ -111,5 +119,12 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
             }
         }
         return addToListRequest
+    }
+
+    private fun setProductImage(image: WrapContentDraweeView, imgUrl: String) {
+        if (!TextUtils.isEmpty(imgUrl)) {
+            image.setResizeImage(true)
+            image.setImageURI(Utils.getExternalImageRef() + imgUrl + if (imgUrl.indexOf("?") > 0) "w=" + 48 + "&q=" + 48 else "?w=" + 48 + "&q=" + 48)
+        }
     }
 }

@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.adapters
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.support.v7.widget.RecyclerView
@@ -44,7 +45,7 @@ class OrdersAdapter(val context: Context, var dataList: ArrayList<OrderItem>) : 
             val item = dataList[position].item as Order
             itemView.orderId.text = item.orderId
             itemView.orderState.text = item.state
-            itemView.purchaseDate.text = item.submittedDate
+            itemView.purchaseDate.text = WFormatter.formatOrdersDate(item.submittedDate)
             itemView.total.text = WFormatter.formatAmount(item.total)
             itemView.setOnClickListener {
                 presentOrderDetailsPage(item)
@@ -57,7 +58,7 @@ class OrdersAdapter(val context: Context, var dataList: ArrayList<OrderItem>) : 
         override fun bind(position: Int) {
             val item = dataList[position].item as Order
             itemView.orderId.text = item.orderId
-            itemView.purchaseDate.text = item.submittedDate
+            itemView.purchaseDate.text = WFormatter.formatOrdersDate(item.submittedDate)
             itemView.total.text = WFormatter.formatAmount(item.total)
             itemView.setOnClickListener {
                 presentOrderDetailsPage(item)
@@ -80,5 +81,6 @@ class OrdersAdapter(val context: Context, var dataList: ArrayList<OrderItem>) : 
         val intent = Intent(context, OrderDetailsActivity::class.java)
         intent.putExtra("order", item)
         context.startActivity(intent)
+        (context as Activity).overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
     }
 }

@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.adapters
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
+import android.text.TextUtils.isEmpty
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +13,7 @@ import kotlinx.android.synthetic.main.orders_to_cart_commerce_item.view.*
 import za.co.woolworths.financial.services.android.models.dto.OrderDetailsItem
 import za.co.woolworths.financial.services.android.models.dto.OrderHistoryCommerceItem
 import za.co.woolworths.financial.services.android.ui.adapters.holder.OrdersBaseViewHolder
+import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
 
@@ -43,7 +45,7 @@ class AddOrderToCartAdapter(val context: Context, val listner: OnItemClick, var 
     inner class OrderItemViewHolder(itemView: View) : OrdersBaseViewHolder(itemView) {
         override fun bind(position: Int) {
             val item = dataList[position].item as OrderHistoryCommerceItem
-            itemView.cartProductImage.setImageURI(Utils.getExternalImageRef() + item.commerceItemInfo.externalImageURL + "?w=" + 85 + "&q=" + 85)
+            setProductImage(itemView.cartProductImage, item.commerceItemInfo.externalImageURL)
             itemView.tvTitle.text = item.commerceItemInfo.productDisplayName
             itemView.tvQuantity.text = item.userQuantity.toString()
             itemView.tvPrice.text = WFormatter.formatAmount(item.priceInfo.amount)
@@ -145,7 +147,7 @@ class AddOrderToCartAdapter(val context: Context, val listner: OnItemClick, var 
 
                 if (item.quantityInStock == 0) return@OnClickListener
 
-                listner.onQuantityUpdate(position)
+                listner.onQuantityUpdate(position, item)
             })
         }
 
@@ -181,7 +183,7 @@ class AddOrderToCartAdapter(val context: Context, val listner: OnItemClick, var 
 
     interface OnItemClick {
         fun onItemSelectionChanged(dataList: ArrayList<OrderDetailsItem>)
-        fun onQuantityUpdate(position: Int)
+        fun onQuantityUpdate(position: Int, quantityInStock: OrderHistoryCommerceItem)
     }
 
     fun getListItems(): ArrayList<OrderDetailsItem> {
@@ -220,6 +222,13 @@ class AddOrderToCartAdapter(val context: Context, val listner: OnItemClick, var 
             Log.e("updateList", ex.toString())
         }
 
+    }
+
+    private fun setProductImage(image: WrapContentDraweeView, imgUrl: String) {
+        if (!isEmpty(imgUrl)) {
+            image.setResizeImage(true)
+            image.setImageURI(Utils.getExternalImageRef() + imgUrl + if (imgUrl.indexOf("?") > 0) "w=" + 85 + "&q=" + 85 else "?w=" + 85 + "&q=" + 85)
+        }
     }
 
 }

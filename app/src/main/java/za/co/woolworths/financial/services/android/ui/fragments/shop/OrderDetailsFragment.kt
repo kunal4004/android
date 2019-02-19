@@ -9,12 +9,12 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import org.json.JSONObject
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.rest.product.GetOrderDetailsRequest
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.adapters.OrderDetailsAdapter
 import za.co.woolworths.financial.services.android.util.OnEventListener
 import za.co.woolworths.financial.services.android.util.ScreenManager
@@ -22,14 +22,15 @@ import za.co.woolworths.financial.services.android.util.Utils
 import kotlinx.android.synthetic.main.order_details_fragment.*
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnOrderItemsClicked
+import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.FragmentsEventsListner
 
 class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick {
 
     private var dataList = arrayListOf<OrderDetailsItem>()
     private var order: Order? = null
     private var orderDetailsResponse: OrderDetailsResponse? = null
-    private lateinit var listener: OnOrderItemsClicked
+    private lateinit var listener: FragmentsEventsListner
+    private var tvSelectAll: TextView? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -57,6 +58,8 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick {
     }
 
     private fun initViews() {
+        tvSelectAll = activity.findViewById(R.id.tvSelectAll)
+        tvSelectAll?.visibility = View.GONE
         orderDetails.layoutManager = LinearLayoutManager(activity) as RecyclerView.LayoutManager?
         orderItemsBtn.setOnClickListener {
             listener.onOrderItemsClicked(orderDetailsResponse!!)
@@ -67,6 +70,8 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick {
     private fun requestOrderDetails(orderId: String): GetOrderDetailsRequest {
         return GetOrderDetailsRequest(activity, orderId, object : OnEventListener<OrderDetailsResponse> {
             override fun onSuccess(ordersResponse: OrderDetailsResponse) {
+                mainLayout.visibility = View.VISIBLE
+                loadingBar.visibility = View.GONE
                 orderDetailsResponse = ordersResponse
                 bindData(orderDetailsResponse!!)
             }
@@ -147,10 +152,10 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick {
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        if (context is OnOrderItemsClicked) {
+        if (context is FragmentsEventsListner) {
             listener = context
         } else {
-            throw ClassCastException(context.toString() + " must implement OnOrderItemsClicked.")
+            throw ClassCastException(context.toString() + " must implement FragmentsEventsListner.")
         }
     }
 }

@@ -32,7 +32,7 @@
                 android:paddingRight="@dimen/sixteen_dp">
 
                 <ImageView
-                    android:id="@+id/btnClose"
+                    android:id="@+id/btnBack"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
@@ -47,7 +47,6 @@
                     android:ellipsize="end"
                     android:letterSpacing="0.2"
                     android:singleLine="true"
-                    android:text="Order: 123344"
                     android:textAllCaps="true"
                     android:textColor="@color/black"
                     android:textSize="12sp"
@@ -58,7 +57,8 @@
                     style="@style/toolbar_menu_text_style"
                     android:layout_alignParentRight="true"
                     android:text="@string/select_all"
-                    android:textColor="@drawable/refine_toolbar_menu_text_color" />
+                    android:textColor="@drawable/refine_toolbar_menu_text_color"
+                    android:visibility="gone" />
 
             </RelativeLayout>
 

@@ -19,6 +19,11 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.2dp"
+                android:background="@color/outside_border" />
+
             <LinearLayout
                 android:id="@+id/llItemContainer"
                 android:layout_width="match_parent"
@@ -66,7 +71,7 @@
                     <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
                         android:id="@+id/cartProductImage"
                         android:layout_width="84dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="84dp"
                         android:layout_gravity="center"
                         android:contentDescription="@string/app_name"
                         android:minHeight="84dp"
@@ -175,10 +180,7 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.2dp"
-                android:background="@color/outside_border" />
+
         </LinearLayout>
 
     </LinearLayout>
