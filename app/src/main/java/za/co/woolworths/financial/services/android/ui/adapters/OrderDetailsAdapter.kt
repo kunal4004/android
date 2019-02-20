@@ -77,7 +77,7 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
         override fun bind(position: Int) {
 
             itemView.setOnClickListener {
-                (context as OnItemClick).onAddToList(getCommerceItemList())
+                listner.onAddToList(getCommerceItemList())
             }
         }
 
@@ -98,7 +98,7 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
     fun getCommerceItemList(): MutableList<AddToListRequest> {
         val addToListRequest = mutableListOf<AddToListRequest>()
         dataList.forEach {
-            if (it.type.name.equals(OrderDetailsItem.ViewType.COMMERCE_ITEM.name)) {
+            if (it.type.name == OrderDetailsItem.ViewType.COMMERCE_ITEM.name) {
                 val commerceItem = it.item as? CommerceItem
                 commerceItem?.commerceItemInfo?.apply {
                     val listItem = AddToListRequest()

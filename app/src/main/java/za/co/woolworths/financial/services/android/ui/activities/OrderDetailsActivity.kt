@@ -28,7 +28,6 @@ class OrderDetailsActivity : AppCompatActivity(), OnOrderItemsClicked {
     companion object {
         const val TAG_ORDER_DETAILS_FRAGMENT: String = "OrderDetailsFragment"
         const val TAG_ORDER_TO_CART_FRAGMENT: String = "OrderToCartFragment"
-
     }
 
     private fun configureUI() {
@@ -47,6 +46,7 @@ class OrderDetailsActivity : AppCompatActivity(), OnOrderItemsClicked {
     fun pushFragment(fragment: Fragment, tag: String) {
         replaceFragmentSafely(fragment, tag, false, true, R.id.fragmentContainer, R.anim.slide_in_from_right, R.anim.slide_out_to_left, R.anim.slide_in_from_left, R.anim.slide_out_to_right)
     }
+
     override fun onBackPressed() {
         if (supportFragmentManager.backStackEntryCount > 0) {
             supportFragmentManager.popBackStack()

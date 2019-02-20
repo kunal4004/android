@@ -12,7 +12,9 @@ import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
 import za.co.woolworths.financial.services.android.ui.extension.requestOrders
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnOrdersResult
 import kotlinx.android.synthetic.main.fragment_shop_my_orders.*
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.ui.adapters.OrdersAdapter
+import za.co.woolworths.financial.services.android.util.SessionUtilities
 
 class MyOrdersFragment : Fragment(), OnOrdersResult {
 
@@ -49,16 +51,24 @@ class MyOrdersFragment : Fragment(), OnOrdersResult {
 
     private fun buildDataToDisplayOrders(ordersResponse: OrdersResponse): ArrayList<OrderItem> {
         val dataList = arrayListOf<OrderItem>()
-        ordersResponse.upcomingOrders?.forEach {
-            dataList.add(OrderItem(it, OrderItem.ViewType.UPCOMING_ORDER))
-        }
-        if (ordersResponse.pastOrders?.size!! > 0) {
-            dataList.add(OrderItem(null, OrderItem.ViewType.HEADER))
-            ordersResponse.pastOrders?.forEach {
-                dataList.add(OrderItem(it, OrderItem.ViewType.PAST_ORDER))
+        ordersResponse.apply {
+            when (httpCode) {
+                440 -> {
+                    SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
+                }
+                else -> {
+                    upcomingOrders?.forEach {
+                        dataList.add(OrderItem(it, OrderItem.ViewType.UPCOMING_ORDER))
+                    }
+                    if (pastOrders?.size!! > 0) {
+                        dataList.add(OrderItem(null, OrderItem.ViewType.HEADER))
+                        pastOrders?.forEach {
+                            dataList.add(OrderItem(it, OrderItem.ViewType.PAST_ORDER))
+                        }
+                    }
+                }
             }
         }
-
         return dataList
     }
 }
