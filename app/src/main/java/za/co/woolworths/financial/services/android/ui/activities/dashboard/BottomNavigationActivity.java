@@ -572,6 +572,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				case R.id.navigate_to_shop:
 					setCurrentSection(R.id.navigate_to_shop);
 					switchTab(INDEX_PRODUCT);
+					hideToolbar();
 					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMENU);
 					return true;
 
@@ -881,6 +882,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 		Fragment fragment = getCurrentFragment();
 		if (fragment instanceof StoresNearbyFragment1){
+			fragment.onRequestPermissionsResult(requestCode,permissions,grantResults);
+		}else if (fragment instanceof ShopFragment){
 			fragment.onRequestPermissionsResult(requestCode,permissions,grantResults);
 		}
 

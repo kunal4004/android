@@ -1,20 +1,21 @@
 package za.co.woolworths.financial.services.android.ui.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
-
 import android.support.v7.app.AppCompatActivity
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.order_details_activity.*
 import za.co.woolworths.financial.services.android.models.dto.Order
 import za.co.woolworths.financial.services.android.models.dto.OrderDetailsResponse
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragmentSafely
 import za.co.woolworths.financial.services.android.ui.fragments.shop.AddOrderToCartFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.OrderDetailsFragment
-import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnOrderItemsClicked
+import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.FragmentsEventsListner
 import za.co.woolworths.financial.services.android.util.Utils
 
 
-class OrderDetailsActivity : AppCompatActivity(), OnOrderItemsClicked {
+class OrderDetailsActivity : AppCompatActivity(), FragmentsEventsListner {
 
     private var order: Order? = null
 
@@ -32,6 +33,8 @@ class OrderDetailsActivity : AppCompatActivity(), OnOrderItemsClicked {
 
     private fun configureUI() {
         order = intent.getSerializableExtra("order") as Order?
+        toolbarText.text = getString(R.string.order_page_title_prefix) + order?.orderId
+        btnBack.setOnClickListener { onBackPressed() }
         replaceOrderDetailsFragment(order!!)
     }
 
@@ -53,6 +56,18 @@ class OrderDetailsActivity : AppCompatActivity(), OnOrderItemsClicked {
         } else {
             super.onBackPressed()
             overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        val fragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
+        fragment.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun onItemsAddedToCart() {
+        if (supportFragmentManager.backStackEntryCount > 0) {
+            supportFragmentManager.popBackStack()
         }
     }
 }
