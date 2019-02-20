@@ -74,6 +74,8 @@ class AddToShoppingListFragment : ShoppingListExtensionFragment(), View.OnClickL
         recyclerViewMaximumHeight(rclAddToList.layoutParams)
         relProgressBar.visibility = if (state) VISIBLE else GONE
         isRetrievingShoppingItem = state
+        imCreateList.alpha = if (state) 0.5f else 1.0f
+        imCreateList.isEnabled = !state
     }
 
     private fun noNetworkConnection(state: Boolean) {
@@ -94,7 +96,8 @@ class AddToShoppingListFragment : ShoppingListExtensionFragment(), View.OnClickL
                                 bindShoppingListToUI(lists)
                             }
                             else -> {
-                                showErrorDialog(this.response?.desc!!)
+                                loadShoppingList(false)
+                                // showErrorDialog(this.response?.desc!!)
                             }
                         }
                         loadShoppingList(false)
@@ -263,10 +266,12 @@ class AddToShoppingListFragment : ShoppingListExtensionFragment(), View.OnClickL
     }
 
     private fun showShoppingListSuccessToast() {
-        Toast.makeText(activity, "TODO(not implement Toast)", Toast.LENGTH_SHORT).show()
+        Toast.makeText(activity, "TODO(implement smooth dismiss animation + toast)", Toast.LENGTH_SHORT).show()
+        activity?.finish()
+        activity?.overridePendingTransition(0, 0)
     }
 
-    fun navigateToCreateShoppingListFragment() {
+    private fun navigateToCreateShoppingListFragment() {
         replaceFragment(
                 fragment = CreateShoppingListFragment.newInstance(mShoppingListGroup, mAddToListArgs),
                 tag = CreateShoppingListFragment::class.java.simpleName,

@@ -9,8 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/fifty_dp"
         android:background="@drawable/white_bg_pressed"
-        android:paddingLeft="@dimen/sixteen_dp"
-        android:paddingRight="@dimen/nineteen_dp">
+        android:paddingStart="@dimen/sixteen_dp"
+        android:paddingEnd="@dimen/nineteen_dp">
 
         <ImageView
             android:id="@+id/truckIcon"

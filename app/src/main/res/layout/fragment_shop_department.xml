@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/orders_bg">
+    android:background="@color/onboarding_desc_text">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rclDepartment"
@@ -15,6 +15,7 @@
         android:fastScrollEnabled="true"
         android:overScrollMode="never"
         android:paddingTop="@dimen/sixteen_dp"
+        android:paddingBottom="@dimen/sixteen_dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
