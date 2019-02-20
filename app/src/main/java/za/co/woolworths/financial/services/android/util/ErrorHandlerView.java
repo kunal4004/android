@@ -33,6 +33,9 @@ public class ErrorHandlerView {
 	private ImageView mImgEmptyStateIcon;
 	private RelativeLayout mRlRootNoConnectionLayout;
 	private Context mContext;
+	private WButton actionButton;
+	private ACTION_TYPE actionType;
+	public enum ACTION_TYPE {SIGN_IN, RETRY, REDIRECT}
 
 	public ErrorHandlerView(Context context) {
 		this.mContext = context;
@@ -64,6 +67,17 @@ public class ErrorHandlerView {
 		this.mTxtEmptyStateTitle = textTitle;
 		this.mTxtEmptyStateDesc = textDesc;
 		this.mRelErrorLayout = relative;
+	}
+
+	public ErrorHandlerView(Context context,
+							RelativeLayout relativeLayout, ImageView imageIcon, WTextView
+									textTitle, WTextView textDesc,WButton actionButton) {
+		this.mRlRootNoConnectionLayout = relativeLayout;
+		this.mContext = context;
+		this.mImgEmptyStateIcon = imageIcon;
+		this.mTxtEmptyStateTitle = textTitle;
+		this.mTxtEmptyStateDesc = textDesc;
+		this.actionButton = actionButton;
 	}
 
 	public ErrorHandlerView(Context context, RelativeLayout relConnectionLayout, OfferCalculationFragment fragment) {
@@ -102,6 +116,20 @@ public class ErrorHandlerView {
 		mImgEmptyStateIcon.setImageResource(emptyStateIcon.getResourceId(position, -1));
 		mTxtEmptyStateTitle.setText(emptyStateTitle[position]);
 		mTxtEmptyStateDesc.setText(emptyStateDesc[position]);
+	}
+
+	public void setEmptyStateWithAction(int position, int actionText, ACTION_TYPE type) {
+		Resources resources = mContext.getResources();
+		TypedArray emptyStateIcon = resources.obtainTypedArray(R.array.empty_state_icon);
+		String[] emptyStateTitle = resources.getStringArray(R.array.empty_state_title);
+		String[] emptyStateDesc = resources.getStringArray(R.array.empty_state_desc);
+		mImgEmptyStateIcon.setImageResource(emptyStateIcon.getResourceId(position, -1));
+		mTxtEmptyStateTitle.setText(emptyStateTitle[position]);
+		mTxtEmptyStateDesc.setText(emptyStateDesc[position]);
+		actionButton.setVisibility(View.VISIBLE);
+		actionButton.setText(getString(actionText));
+		setActionType(type);
+		mRlRootNoConnectionLayout.setVisibility(View.VISIBLE);
 	}
 
 	public void showErrorHandler() {
@@ -215,5 +243,13 @@ public class ErrorHandlerView {
 
 	public void showErrorView(){
 		mRlRootNoConnectionLayout.setVisibility(View.VISIBLE);
+	}
+
+	private void setActionType(ACTION_TYPE actionType) {
+		this.actionType = actionType;
+	}
+
+	public ACTION_TYPE getActionType() {
+		return actionType;
 	}
 }
