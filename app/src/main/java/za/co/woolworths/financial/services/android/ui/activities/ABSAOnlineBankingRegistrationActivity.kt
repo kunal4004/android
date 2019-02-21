@@ -26,21 +26,17 @@ class ABSAOnlineBankingRegistrationActivity : AppCompatActivity() {
         Utils.updateStatusBarBackground(this)
         actionBar()
         if (savedInstanceState == null) {
-
             getBundleArgument()
-
             if (mShouldDisplayABSALogin!!) {
                 addFragment(
                         fragment = AbsaLoginFragment.newInstance(),
                         tag = AbsaLoginFragment::class.java.simpleName,
-                        containerViewId = R.id.flAbsaOnlineBankingToDevice
-                )
+                        containerViewId = R.id.flAbsaOnlineBankingToDevice)
             } else {
                 addFragment(
                         fragment = AbsaEnterAtmPinCodeFragment.newInstance(),
                         tag = AbsaEnterAtmPinCodeFragment::class.java.simpleName,
-                        containerViewId = R.id.flAbsaOnlineBankingToDevice
-                )
+                        containerViewId = R.id.flAbsaOnlineBankingToDevice)
             }
         }
     }

@@ -24,7 +24,7 @@ class AbsaLoginFragment : AbsaFragmentExtension() {
 
     companion object {
         private const val MAXIMUM_PIN_ALLOWED: Int = 4
-        fun newInstance() = AbsaConfirmFiveDigitCodeFragment()
+        fun newInstance() = AbsaLoginFragment()
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
