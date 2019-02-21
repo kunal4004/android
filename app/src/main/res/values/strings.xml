@@ -862,5 +862,7 @@
     <string name="sign_out_order_view_desc">Sign in to track your current orders, and view all your previous orders.</string>
 
     <string name="shop_create_a_list">Create A New List</string>
+    <string name="shop_sign_out_order_title">sign in to view and create lists</string>
+    <string name="shop_sign_out_order_desc">Search for products to start adding items to this list.</string>
 
 </resources>

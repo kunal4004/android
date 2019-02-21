@@ -128,6 +128,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick {
         activity?.apply {
             val intentAddToList = Intent(this, AddToShoppingListActivity::class.java)
             intentAddToList.putExtra("addToListRequest", Gson().toJson(commerceItemList))
+            intentAddToList.putExtra("shouldDisplayCreateList", false)
             startActivity(intentAddToList)
             overridePendingTransition(0, 0)
         }

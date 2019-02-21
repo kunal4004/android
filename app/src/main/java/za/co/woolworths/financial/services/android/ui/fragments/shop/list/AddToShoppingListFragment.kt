@@ -1,6 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop.list
 
+import android.content.Intent
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.DisplayMetrics
@@ -14,6 +16,7 @@ import android.widget.Toast
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.add_to_list_content.*
 import za.co.woolworths.financial.services.android.contracts.AsyncAPIResponse
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.GetShoppingList
@@ -22,9 +25,9 @@ import za.co.woolworths.financial.services.android.ui.adapters.AddToShoppingList
 import java.util.*
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostAddToShoppingList
+import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
-import za.co.woolworths.financial.services.android.util.ConnectionBroadcastReceiver
-import za.co.woolworths.financial.services.android.util.NetworkManager
+import za.co.woolworths.financial.services.android.util.*
 
 class AddToShoppingListFragment : ShoppingListExtensionFragment(), View.OnClickListener {
 
@@ -95,9 +98,14 @@ class AddToShoppingListFragment : ShoppingListExtensionFragment(), View.OnClickL
                             200 -> {
                                 bindShoppingListToUI(lists)
                             }
+                            440 -> {
+                                loadShoppingList(false)
+                                SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
+                                ScreenManager.presentSSOSignin(it)
+                            }
                             else -> {
                                 loadShoppingList(false)
-                                // showErrorDialog(this.response?.desc!!)
+                                showErrorDialog(this.response?.message!!)
                             }
                         }
                         loadShoppingList(false)
@@ -120,7 +128,7 @@ class AddToShoppingListFragment : ShoppingListExtensionFragment(), View.OnClickL
                 when {
                     size == 0 -> {
                         // pop up create list fragment
-                        navigateToCreateShoppingListFragment()
+                        navigateToCreateShoppingListFragment(false)
                     }
                     size < 4 -> {
                         viewGroupParams.height = RecyclerView.LayoutParams.WRAP_CONTENT
@@ -186,7 +194,7 @@ class AddToShoppingListFragment : ShoppingListExtensionFragment(), View.OnClickL
 
             R.id.imCreateList -> {
                 mShoppingListGroup = shoppingListSelectedItemGroup()
-                navigateToCreateShoppingListFragment()
+                navigateToCreateShoppingListFragment(false)
             }
         }
     }
@@ -245,12 +253,13 @@ class AddToShoppingListFragment : ShoppingListExtensionFragment(), View.OnClickL
                             }
                         }
                         440 -> {
+                            SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
+                            SessionExpiredUtilities.getInstance().showSessionExpireDialog(activity as? AppCompatActivity)
                             shoppingListPostProgress(false)
-
                         }
                         else -> {
-                            // TODO :: display dialog error message
                             shoppingListPostProgress(false)
+                            showErrorDialog(this.response?.desc!!)
                         }
                     }
                     isPostingShoppingItem = false
@@ -271,9 +280,9 @@ class AddToShoppingListFragment : ShoppingListExtensionFragment(), View.OnClickL
         activity?.overridePendingTransition(0, 0)
     }
 
-    private fun navigateToCreateShoppingListFragment() {
+    private fun navigateToCreateShoppingListFragment(state: Boolean) {
         replaceFragment(
-                fragment = CreateShoppingListFragment.newInstance(mShoppingListGroup, mAddToListArgs),
+                fragment = CreateShoppingListFragment.newInstance(mShoppingListGroup, mAddToListArgs, state),
                 tag = CreateShoppingListFragment::class.java.simpleName,
                 containerViewId = R.id.flShoppingListContainer,
                 allowStateLoss = true,
@@ -284,8 +293,30 @@ class AddToShoppingListFragment : ShoppingListExtensionFragment(), View.OnClickL
         )
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (resultCode) {
+            SSOActivity.SSOActivityResult.SUCCESS.rawValue() -> {
+                getShoppingList()
+            }
+            SSOActivity.SSOActivityResult.STATE_MISMATCH.rawValue() -> {
+                //TODO:: Work on the animation
+                activity?.finish()
+                activity?.overridePendingTransition(0, 0)
+            }
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         hideKeyboard()
+    }
+
+    fun closeFragment() {
+        //TODO:: slide down and dismiss animation
+        activity?.let {
+            it.finish()
+            it.overridePendingTransition(0, 0)
+        }
     }
 }

@@ -51,4 +51,5 @@ open class ShoppingListExtensionFragment : Fragment() {
             }
         }
     }
+
 }

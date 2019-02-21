@@ -8,9 +8,10 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.Toast
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.create_new_list_layout.*
+import kotlinx.android.synthetic.main.create_new_list.*
 import za.co.woolworths.financial.services.android.contracts.AsyncAPIResponse
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.models.dto.CreateList
@@ -20,6 +21,7 @@ import za.co.woolworths.financial.services.android.models.rest.shoppinglist.Crea
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostAddToShoppingList
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask
+import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.ToastUtils
 import java.util.HashMap
 
@@ -28,22 +30,33 @@ class CreateShoppingListFragment : ShoppingListExtensionFragment(), View.OnClick
     private var mShoppingListGroup: HashMap<String, Boolean>? = null
     private var mAddToListRequest: MutableList<AddToListRequest>? = null
     private var isPostingShoppingItem: Boolean? = null
-    private lateinit var mPostShoppingList: HttpAsyncTask<String, String, ShoppingListItemsResponse>
-    private lateinit var mCreateShoppingList: HttpAsyncTask<String, String, ShoppingListsResponse>
+    private var mPostShoppingList: HttpAsyncTask<String, String, ShoppingListItemsResponse>? = null
+    private var mCreateShoppingList: HttpAsyncTask<String, String, ShoppingListsResponse>? = null
+    private var mShouldDisplayCreateListOnly: Boolean = false
 
     companion object {
         private const val SHOPPING_LIST_SELECTED_LIST_ID = "SHOPPING_LIST_SELECTED_LIST_ID"
         private const val SHOPPING_LIST_SELECTED_GROUP = "SHOPPING_LIST_SELECTED_GROUP"
+        private const val DISPLAY_CREATE_LIST_ONLY = "DISPLAY_CREATE_LIST_ONLY"
+
         fun newInstance(listOfIds: HashMap<String, Boolean>?, selectedListGroup: String?) = CreateShoppingListFragment().apply {
             arguments = Bundle(2).apply {
                 putSerializable(SHOPPING_LIST_SELECTED_LIST_ID, listOfIds)
                 putString(SHOPPING_LIST_SELECTED_GROUP, selectedListGroup)
             }
         }
+
+        fun newInstance(listOfIds: HashMap<String, Boolean>?, selectedListGroup: String?, shouldDisplayCreateList: Boolean) = CreateShoppingListFragment().apply {
+            arguments = Bundle(3).apply {
+                putSerializable(SHOPPING_LIST_SELECTED_LIST_ID, listOfIds)
+                putString(SHOPPING_LIST_SELECTED_GROUP, selectedListGroup)
+                putBoolean(DISPLAY_CREATE_LIST_ONLY, shouldDisplayCreateList)
+            }
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.create_new_list_layout, container, false)
+        return inflater!!.inflate(R.layout.create_new_list, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
@@ -65,6 +78,9 @@ class CreateShoppingListFragment : ShoppingListExtensionFragment(), View.OnClick
                 mAddToListRequest = convertStringToObject(this.getString(SHOPPING_LIST_SELECTED_GROUP))
             }
 
+            if (this.containsKey(DISPLAY_CREATE_LIST_ONLY))
+                mShouldDisplayCreateListOnly = this.getBoolean(DISPLAY_CREATE_LIST_ONLY, false)
+
         }
     }
 
@@ -79,7 +95,8 @@ class CreateShoppingListFragment : ShoppingListExtensionFragment(), View.OnClick
             override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
 
             override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
-                btnCancel.text = if (etNewList.text.toString().trim { it <= ' ' }.isNotEmpty()) getString(R.string.ok) else getString(R.string.cancel)
+                if (!mShouldDisplayCreateListOnly)
+                    btnCancel.text = if (etNewList.text.toString().trim { it <= ' ' }.isNotEmpty()) getString(R.string.ok) else getString(R.string.cancel)
             }
 
             override fun afterTextChanged(editable: Editable) {
@@ -104,6 +121,9 @@ class CreateShoppingListFragment : ShoppingListExtensionFragment(), View.OnClick
         val entryCount: Int? = getFragmentBackStackEntryCount()
         imBack.visibility = if (entryCount == 0) GONE else VISIBLE
         imCloseIcon.visibility = if (entryCount == 0) VISIBLE else GONE
+        imBack.visibility = if (mShouldDisplayCreateListOnly) GONE else VISIBLE
+        imCloseIcon.visibility = if (mShouldDisplayCreateListOnly) GONE else VISIBLE
+        changeLayoutHeightToMatchParent()
     }
 
     private fun getFragmentBackStackEntryCount() = activity?.supportFragmentManager?.backStackEntryCount
@@ -123,7 +143,12 @@ class CreateShoppingListFragment : ShoppingListExtensionFragment(), View.OnClick
                 R.id.btnCancel -> {
                     val listName = etNewList.text.toString()
                     if (listName.isNotEmpty()) {
-                        createShoppingListRequest()
+                        showKeyboard(etNewList)
+                        if (NetworkManager.getInstance().isConnectedToNetwork(this)) {
+                            createShoppingListRequest()
+                        } else {
+                            ErrorHandlerView(this).showToast()
+                        }
                     } else {
                         onBackPressed()
                     }
@@ -232,5 +257,13 @@ class CreateShoppingListFragment : ShoppingListExtensionFragment(), View.OnClick
 
     override fun onToastButtonClicked(state: String?) {
         Toast.makeText(activity, "TODO(not implement Toast)", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun changeLayoutHeightToMatchParent() {
+//        val params = clCreateNewList.layoutParams
+//        params.height = if (mShouldDisplayCreateListOnly) MATCH_PARENT else resources.getDimension(R.dimen.hundred_and_fifty_dp).toInt()
+//        params.width = MATCH_PARENT
+//        clCreateNewList.layoutParams = params
+//        clCreateNewList.requestLayout()//It is necesary to refresh the screen
     }
 }

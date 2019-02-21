@@ -9,7 +9,8 @@
     <LinearLayout
         android:id="@+id/llCreateNewList"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="150dp"
+        android:layout_above="@+id/vCancelDivider"
         android:layout_alignParentBottom="true"
         android:background="@color/white"
         android:orientation="vertical">
@@ -66,14 +67,14 @@
         <RelativeLayout
             android:id="@+id/rlWriteToListContainer"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:layout_above="@+id/flCancelBtn"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/vCancelDivider"
             android:gravity="center">
 
             <za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView
                 android:id="@+id/etNewList"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_alignParentStart="true"
                 android:background="@android:color/transparent"
                 android:ems="10"
@@ -105,38 +106,40 @@
                 android:visibility="gone" />
         </RelativeLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.8dp"
-            android:layout_marginStart="@dimen/twenty_four_dp"
-            android:layout_marginEnd="@dimen/twenty_four_dp"
-            android:background="@color/recent_search_bg" />
+    </LinearLayout>
 
-        <FrameLayout
-            android:id="@+id/flCancelBtn"
+    <View
+        android:id="@+id/vCancelDivider"
+        android:layout_width="match_parent"
+        android:layout_height="0.8dp"
+        android:layout_above="@+id/flCancelBtn"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
+        android:background="@color/recent_search_bg" />
+
+    <FrameLayout
+        android:id="@+id/flCancelBtn"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/seventy_five_dp"
+        android:layout_alignParentBottom="true">
+
+        <za.co.woolworths.financial.services.android.ui.views.WButton
+            android:id="@+id/btnCancel"
             android:layout_width="match_parent"
             android:layout_height="@dimen/seventy_five_dp"
-            android:layout_alignParentBottom="true">
+            android:background="@color/white"
+            android:letterSpacing="0.1"
+            android:lineSpacingMultiplier="1.67"
+            android:text="@string/cancel"
+            app:WButton_font="myriadpro_regular" />
 
-            <za.co.woolworths.financial.services.android.ui.views.WButton
-                android:id="@+id/btnCancel"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/seventy_five_dp"
-                android:background="@color/white"
-                android:letterSpacing="0.1"
-                android:lineSpacingMultiplier="1.67"
-                android:text="@string/cancel"
-                app:WButton_font="myriadpro_regular" />
-
-            <ProgressBar
-                android:id="@+id/pbCreateList"
-                android:layout_width="@dimen/twenty_four_dp"
-                android:layout_height="@dimen/twenty_four_dp"
-                android:layout_gravity="center"
-                android:indeterminateTint="@color/black"
-                android:visibility="gone" />
-        </FrameLayout>
-
-    </LinearLayout>
+        <ProgressBar
+            android:id="@+id/pbCreateList"
+            android:layout_width="@dimen/twenty_four_dp"
+            android:layout_height="@dimen/twenty_four_dp"
+            android:layout_gravity="center"
+            android:indeterminateTint="@color/black"
+            android:visibility="gone" />
+    </FrameLayout>
 
 </RelativeLayout>
