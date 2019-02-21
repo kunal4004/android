@@ -566,16 +566,9 @@ public class MyAccountCardsActivity extends AppCompatActivity
                 || (fragment instanceof WPersonalLoanFragment)
                 || (fragment instanceof WCreditCardFragment)) {
             switch (position) {
-                case 0:
-                    ((WStoreCardFragment) fragment).updateABSATitle();
-                    break;
 
                 case 1:
                     ((WCreditCardFragment) fragment).updateABSATitle();
-                    break;
-
-                case 2:
-                    ((WPersonalLoanFragment) fragment).updateABSATitle();
                     break;
 
                 default:
