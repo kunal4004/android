@@ -45,7 +45,6 @@ class GotITDialogFragment : ActionSheetDialogFragment(), View.OnClickListener {
     override fun onClick(view: View) {
         when (view.id) {
             R.id.btnGotIt, R.id.rootActionSheetConstraint -> {
-                onDialogBackPressed(false)
                 mOnDialogDismiss?.onDialogDismissed()
             }
         }

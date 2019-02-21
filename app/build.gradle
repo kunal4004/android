@@ -6,15 +6,15 @@ apply plugin: 'io.fabric'
 android {
 
     def major = "5"
-    def minor = "9"
-    def fix = "3"
+    def minor = "10"
+    def fix = "0"
 
     //placeholder will be temporarily updated by build server during a build.
     //check appcenter-pre-build.sh
     def BUILD_NUMBER = "{BUILD_NUMBER}"
 
     if (!BUILD_NUMBER.isNumber()){
-        BUILD_NUMBER = "93"
+        BUILD_NUMBER = "96"
     }
 
     dataBinding {
@@ -88,7 +88,7 @@ android {
             applicationId "com.awfs.coordination.qa"
             signingConfig signingConfigs.woneappQa
             buildConfigField("String", "HOST", '"http://wfs-appserver-qa.wigroup.co:8080/wfs/app/v4"')
-            buildConfigField("String", "SHA1", '"ec59f22c0c4774d392122c9b26b6ae48d19634b1"')
+            buildConfigField("String", "SHA1", '"68826b286ece905ed633d1367a0d0a9cbbe74be0"')
         }
 
         staging {

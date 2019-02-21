@@ -1,7 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.views.actionsheet;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
@@ -14,7 +16,7 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
 public class SingleButtonDialogFragment extends ActionSheetDialogFragment implements View.OnClickListener {
 
-    private IDialogListener dialogListener;
+    private IDialogListener mDialogListener;
 
     public static SingleButtonDialogFragment newInstance(String responseDesc) {
         SingleButtonDialogFragment singleButtonDialogFragment = new SingleButtonDialogFragment();
@@ -40,7 +42,7 @@ public class SingleButtonDialogFragment extends ActionSheetDialogFragment implem
 
         Activity activity = getActivity();
         if (activity instanceof IDialogListener) {
-            dialogListener = (IDialogListener) activity;
+            mDialogListener = (IDialogListener) activity;
         }
 
         Bundle bundleArguments = getArguments();
@@ -63,18 +65,33 @@ public class SingleButtonDialogFragment extends ActionSheetDialogFragment implem
 
     @Override
     public void onClick(View view) {
-        Activity activity = getActivity();
-        if (activity == null) return;
         switch (view.getId()) {
             case R.id.rootActionSheetConstraint:
             case R.id.btnCancel:
-                onDialogBackPressed(false);
-
-                if (dialogListener != null)
-                    dialogListener.onDialogDismissed();
+                navigateBackToActivity();
                 break;
             default:
                 break;
         }
+    }
+
+    private void navigateBackToActivity() {
+        shouldAnimateViewOnCancel(false);
+        if (mDialogListener != null)
+            mDialogListener.onDialogDismissed();
+    }
+
+
+    //Override hardware back button from popup Dialog
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+        return new Dialog(getActivity(), getTheme()) {
+            @Override
+            public void onBackPressed() {
+                navigateBackToActivity();
+            }
+        };
     }
 }
