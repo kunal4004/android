@@ -63,7 +63,7 @@ class MyOrdersFragment : Fragment() {
         configureUI()
     }
 
-    private fun configureUI() {
+    fun configureUI() {
 
         if (SessionUtilities.getInstance().isUserAuthenticated()) {
             executeOrdersRequest()
@@ -132,13 +132,6 @@ class MyOrdersFragment : Fragment() {
             }
         }
         return dataList
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == ORDERS_LOGIN_REQUEST && resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
-            configureUI()
-        }
     }
 
     private fun requestOrders(): GetOrdersRequest {
