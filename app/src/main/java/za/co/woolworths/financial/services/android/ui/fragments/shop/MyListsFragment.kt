@@ -234,9 +234,9 @@ class MyListsFragment : ShoppingListExtensionFragment(), View.OnClickListener, I
             override fun onSuccess(response: ShoppingListsResponse) {
                 when (response.httpCode) {
                     200 -> {
-                        mAddToShoppingListAdapter?.getShoppingList()
-                                .takeIf { it?.size == 0 }
-                                .apply { showEmptyShoppingListView() }
+
+                        if (mAddToShoppingListAdapter?.getShoppingList()?.size == 0)
+                            showEmptyShoppingListView()
                     }
                 }
             }
@@ -254,6 +254,7 @@ class MyListsFragment : ShoppingListExtensionFragment(), View.OnClickListener, I
                 it?.remove(shoppingList)
                 mAddToShoppingListAdapter?.notifyItemRemoved(position)
                 mAddToShoppingListAdapter?.notifyItemRangeChanged(0, it!!.size)
+                deleteShoppingListItem(shoppingList)
             }
         }
     }

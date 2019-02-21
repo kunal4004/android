@@ -47,7 +47,6 @@ class ShopFragment : Fragment(), PermissionResultCallback {
         mTabTitle = mutableListOf(resources.getString(R.string.shop_department_title_department),
                 resources.getString(R.string.shop_department_title_list),
                 resources.getString(R.string.shop_department_title_order))
-        viewpager_main.setSwipeable(false)
         viewpager_main.adapter = ShopPagerAdapter(fragmentManager, mTabTitle)
         tabs_main.setupWithViewPager(viewpager_main)
         setupTabIcons(0)

@@ -30,7 +30,7 @@ class ViewShoppingListAdapter(private val shopMutableList: MutableList<ShoppingL
                 // or the original string, if it's empty or already starts with an upper case letter.
                 itemView.tvListName.text = listName?.capitalize() ?: ""
                 itemView.tvListCount.text = ("$listCount  item").plus(if (listCount == 1) "" else "s")
-                itemView.setOnClickListener { onClickListener.onShoppingListItemSelected(this) }
+                itemView.listItem.setOnClickListener { onClickListener.onShoppingListItemSelected(this) }
                 itemView.tvDelete.setOnClickListener { onClickListener.onShoppingListItemDeleted(this, adapterPosition) }
 
             }
