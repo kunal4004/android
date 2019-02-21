@@ -49,6 +49,9 @@
         <item>@drawable/emptytransactions</item>
         <item>@drawable/shoppinglistemptyimg</item>
         <item>@drawable/emptyinbox</item>
+        <item>@drawable/emptyinbox</item>
+        <item>@drawable/emptyinbox</item>
+        <item>@drawable/emptyinbox</item>
     </integer-array>
 
     <string-array name="on_boarding_walkthrough_descriptions">

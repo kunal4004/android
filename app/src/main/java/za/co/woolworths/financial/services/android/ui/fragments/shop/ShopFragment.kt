@@ -15,6 +15,7 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ShopPagerAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.barcode.BarcodeFragment
+import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback
 import za.co.woolworths.financial.services.android.util.PermissionUtils
 import java.util.*
@@ -24,7 +25,7 @@ import java.util.*
  * A simple [Fragment] subclass.
  *
  */
-class ShopFragment : Fragment(), PermissionResultCallback {
+class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents {
 
     private var mTabTitle: MutableList<String>? = null
     private var permissionUtils: PermissionUtils? = null
@@ -47,7 +48,7 @@ class ShopFragment : Fragment(), PermissionResultCallback {
         mTabTitle = mutableListOf(resources.getString(R.string.shop_department_title_department),
                 resources.getString(R.string.shop_department_title_list),
                 resources.getString(R.string.shop_department_title_order))
-        viewpager_main.adapter = ShopPagerAdapter(fragmentManager, mTabTitle)
+        viewpager_main.adapter = ShopPagerAdapter(fragmentManager, mTabTitle, this)
         tabs_main.setupWithViewPager(viewpager_main)
         setupTabIcons(0)
     }
@@ -134,8 +135,8 @@ class ShopFragment : Fragment(), PermissionResultCallback {
             }
         }
     }
-}
 
-private fun Any?.authenticateUser() {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun onStartShopping() {
+        viewpager_main.setCurrentItem(0, true)
+    }
 }

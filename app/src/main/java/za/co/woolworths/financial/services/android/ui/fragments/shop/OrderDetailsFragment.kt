@@ -92,6 +92,8 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick {
     private fun buildDataForOrderDetailsView(ordersResponse: OrderDetailsResponse): ArrayList<OrderDetailsItem> {
         val dataList = arrayListOf<OrderDetailsItem>()
         dataList.add(OrderDetailsItem(order, OrderDetailsItem.ViewType.ORDER_STATUS))
+        if (order?.taxNoteNumbers != null && order?.taxNoteNumbers!!.size > 0)
+            dataList.add(OrderDetailsItem(null, OrderDetailsItem.ViewType.VIEW_TAX_INVOICE))
         dataList.add(OrderDetailsItem(null, OrderDetailsItem.ViewType.ADD_TO_LIST_LAYOUT))
         val itemsObject = JSONObject(Gson().toJson(ordersResponse.items))
         val keys = itemsObject.keys()
@@ -158,5 +160,9 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick {
         } else {
             throw ClassCastException(context.toString() + " must implement FragmentsEventsListner.")
         }
+    }
+
+    override fun onViewTaxInvoice() {
+        listener.openTaxInvoices()
     }
 }

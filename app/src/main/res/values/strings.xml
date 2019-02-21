@@ -368,6 +368,9 @@
         <item>no transactions</item>
         <item>shopping list is empty</item>
         <item>inbox is empty</item>
+        <item>@string/empty_order_view_title</item>
+        <item>@string/sign_out_order_view_title</item>
+        <item>@string/no_internet_title</item>
     </string-array>
 
     <string-array name="empty_state_desc">
@@ -377,6 +380,9 @@
         <item>We have no transaction data to show.</item>
         <item>You have no items in your  shopping list yet.</item>
         <item>When you receive messages you will\n see them here.</item>
+        <item>@string/empty_order_view_desc</item>
+        <item>@string/sign_out_order_view_desc</item>
+        <item>@string/no_connection_desc_1</item>
     </string-array>
 
     <string name="on_boarding_title_1">WELCOME</string>
@@ -860,6 +866,9 @@
     <string name="sign_in">sign in</string>
     <string name="sign_out_order_view_title">Sign in to view your orders</string>
     <string name="sign_out_order_view_desc">Sign in to track your current orders, and view all your previous orders.</string>
+    <string name="view_tax_invoice">View Tax Invoice</string>
+    <string name="invoice_number">invoice number</string>
+    <string name="tax_invoices">TAX INVOICES</string>
 
     <string name="shop_create_a_list">Create A New List</string>
     <string name="shop_sign_out_order_title">sign in to view and create lists</string>
