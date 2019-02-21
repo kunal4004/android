@@ -53,20 +53,20 @@ class AbsaLoginFragment : AbsaFragmentExtension() {
 
     private fun requestToLogin() {
         if ((edtEnterATMPin.length() - 1) == MAXIMUM_PIN_ALLOWED) {
-            val fiveDigitPin = edtEnterATMPin.text.toString()
-            val aliasId = SessionDao.getByKey(SessionDao.KEY.ABSA_ALIASID).value
-            val deviceId = SessionDao.getByKey(SessionDao.KEY.ABSA_DEVICEID).value
-            absaLoginRequest(aliasId, deviceId, fiveDigitPin)
+            val userPin = edtEnterATMPin.text.toString()
+            val aliasId = SessionDao.getByKey(SessionDao.KEY.ABSA_ALIASID)?.value ?: ""
+            val deviceId = SessionDao.getByKey(SessionDao.KEY.ABSA_DEVICEID)?.value ?: ""
+            absaLoginRequest(aliasId, deviceId, userPin)
         } else {
             clearPin()
         }
     }
 
-    private fun absaLoginRequest(aliasId: String?, deviceId: String?, pin: String) {
+    private fun absaLoginRequest(aliasId: String?, deviceId: String?, userPin: String) {
         activity?.let {
             displayLoginProgress(true)
 
-            AbsaLoginRequest(it).make(aliasId, deviceId, pin,
+            AbsaLoginRequest(it).make(userPin,aliasId, deviceId,
                     object : AbsaBankingOpenApiResponse.ResponseDelegate<LoginResponse> {
                         override fun onSuccess(response: LoginResponse?, cookies: MutableList<HttpCookie>?) {
                             response?.apply {

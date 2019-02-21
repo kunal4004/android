@@ -91,9 +91,6 @@ public class MyAccountCardsActivity extends AppCompatActivity
         changeButtonColor(currentPosition);
         getScreenResolution();
 
-        Intent intent = new Intent(this, ABSAOnlineBankingRegistrationActivity.class);
-        intent.putExtra(ABSAOnlineBankingRegistrationActivity.SHOULD_DISPLAY_LOGIN_SCREEN, true);
-        startActivity(intent);
 
         cardsHasAccount = getIntent().hasExtra("accounts");
         if (cardsHasAccount) {
