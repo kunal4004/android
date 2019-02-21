@@ -159,6 +159,6 @@
         layout="@layout/empty_state_template"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="@dimen/twenty_four_dp"
-        android:layout_marginEnd="@dimen/twenty_four_dp" />
+        android:paddingStart="@dimen/twenty_four_dp"
+        android:paddingEnd="@dimen/twenty_four_dp" />
 </FrameLayout>
