@@ -108,6 +108,7 @@ class MyOrdersFragment : Fragment() {
         if (dataList.size > 0) {
             mErrorHandlerView?.hideEmpyState()
             myOrdersList.adapter = OrdersAdapter(activity, dataList)
+            myOrdersList.visibility = View.VISIBLE
         } else
             showEmptyOrdersView()
     }
@@ -115,7 +116,7 @@ class MyOrdersFragment : Fragment() {
 
     private fun executeOrdersRequest() {
         mErrorHandlerView?.hideEmpyState()
-        loadingBar.visibility = View.VISIBLE
+        showLoading()
         requestOrders().execute()
     }
 
@@ -161,5 +162,10 @@ class MyOrdersFragment : Fragment() {
 
         })
 
+    }
+
+    private fun showLoading() {
+        loadingBar.visibility = View.VISIBLE
+        myOrdersList.visibility = View.GONE
     }
 }
