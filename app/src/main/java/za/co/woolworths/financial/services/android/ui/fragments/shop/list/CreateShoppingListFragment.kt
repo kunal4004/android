@@ -8,7 +8,6 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.Toast
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.create_new_list.*
@@ -95,8 +94,8 @@ class CreateShoppingListFragment : ShoppingListExtensionFragment(), View.OnClick
             override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
 
             override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
-                if (!mShouldDisplayCreateListOnly)
-                    btnCancel.text = if (etNewList.text.toString().trim { it <= ' ' }.isNotEmpty()) getString(R.string.ok) else getString(R.string.cancel)
+                // if (!mShouldDisplayCreateListOnly)
+                btnCancel.text = if (etNewList.text.toString().trim { it <= ' ' }.isNotEmpty()) getString(R.string.ok) else getString(R.string.cancel)
             }
 
             override fun afterTextChanged(editable: Editable) {
@@ -121,8 +120,8 @@ class CreateShoppingListFragment : ShoppingListExtensionFragment(), View.OnClick
         val entryCount: Int? = getFragmentBackStackEntryCount()
         imBack.visibility = if (entryCount == 0) GONE else VISIBLE
         imCloseIcon.visibility = if (entryCount == 0) VISIBLE else GONE
-        imBack.visibility = if (mShouldDisplayCreateListOnly) GONE else VISIBLE
-        imCloseIcon.visibility = if (mShouldDisplayCreateListOnly) GONE else VISIBLE
+//        imBack.visibility = if (mShouldDisplayCreateListOnly) GONE else VISIBLE
+//        imCloseIcon.visibility = if (mShouldDisplayCreateListOnly) GONE else VISIBLE
         changeLayoutHeightToMatchParent()
     }
 
