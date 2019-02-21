@@ -36,7 +36,7 @@ import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.rest.cli.CLIGetOfferActive;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
-import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingToDeviceActivity;
+import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
@@ -96,6 +96,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
     private RelativeLayout relBalanceProtection;
     private WTextView tvBPIProtectInsurance;
     private RelativeLayout rlABSALinkOnlineBankingToDevice;
+    private WTextView tvABSALinkOnlineBanking;
 
     @Nullable
     @Override
@@ -170,6 +171,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         llActiveAccount = view.findViewById(R.id.llActiveAccount);
         llChargedOffAccount = view.findViewById(R.id.llChargedOffAccount);
         tvHowToPayArrears = view.findViewById(R.id.howToPayArrears);
+        tvABSALinkOnlineBanking = (WTextView)view.findViewById(R.id.tvABSALinkOnlineBanking);
 
         relDebitOrders = view.findViewById(R.id.relDebitOrders);
         relDebitOrders.setVisibility(View.GONE);
@@ -276,8 +278,8 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         }
         switch (v.getId()) {
             case R.id.rlABSALinkOnlineBankingToDevice:
-                Intent openABSALinkOnlineBankingToDevice = new Intent(activity, ABSAOnlineBankingToDeviceActivity.class);
-                startActivity(openABSALinkOnlineBankingToDevice);
+                Intent openABSALinkOnlineBankingToDevice = new Intent(activity, ABSAOnlineBankingRegistrationActivity.class);
+                startActivityForResult(openABSALinkOnlineBankingToDevice, MyAccountCardsActivity.ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE);
                 activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
                 break;
             case R.id.rlViewTransactions:
@@ -557,4 +559,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         mIncreaseLimitController.cliDefaultView(llCommonLayer, tvIncreaseLimitDescription);
     }
 
+    public void updateABSATitle() {
+        tvABSALinkOnlineBanking.setText(getString(R.string.online_banking));
+    }
 }

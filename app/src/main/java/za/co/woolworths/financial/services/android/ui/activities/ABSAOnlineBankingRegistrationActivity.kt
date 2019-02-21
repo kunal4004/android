@@ -11,7 +11,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.absa.AbsaEnterAt
 import za.co.woolworths.financial.services.android.ui.fragments.absa.AbsaPinCodeSuccessFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
-class ABSAOnlineBankingToDeviceActivity : AppCompatActivity() {
+class ABSAOnlineBankingRegistrationActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

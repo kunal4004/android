@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.absa
 
+import android.app.Activity.RESULT_OK
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.app.Fragment
@@ -37,6 +38,7 @@ class AbsaPinCodeSuccessFragment : Fragment() {
         val handler: Handler? = Handler()
         handler?.postDelayed({
             activity?.apply {
+                setResult(RESULT_OK)
                 finish()
                 overridePendingTransition(R.anim.stay, android.R.anim.fade_out)
             }

@@ -59,11 +59,12 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
     private fun navigateToFiveDigitCodeFragment() {
         if ((edtEnterATMPin.length() - 1) == AbsaEnterAtmPinCodeFragment.MAXIMUM_PIN_ALLOWED) {
             activity?.let {
+                val pinCode = edtEnterATMPin.text.toString()
                 val fm = (it as? AppCompatActivity)?.supportFragmentManager
-                val absaValidateCardAndPinDialogFragment = AbsaValidateCardAndPinDialogFragment.newInstance("4103741655806361", "6666")
+                val validateCardAndPinDialogFragment = AbsaValidateCardAndPinDialogFragment.newInstance("4103744472666291", "8667")
                 // Set the calling fragment for this dialog.
-                absaValidateCardAndPinDialogFragment.setTargetFragment(this, 0)
-                absaValidateCardAndPinDialogFragment.show(fm, AbsaValidateCardAndPinDialogFragment::class.java.simpleName)
+                validateCardAndPinDialogFragment.setTargetFragment(this, 0)
+                validateCardAndPinDialogFragment.show(fm, AbsaValidateCardAndPinDialogFragment::class.java.simpleName)
             }
         }
     }

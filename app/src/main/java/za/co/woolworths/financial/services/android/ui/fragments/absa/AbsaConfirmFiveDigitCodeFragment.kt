@@ -14,23 +14,25 @@ import android.widget.EditText
 import android.widget.ImageView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_five_digit_code_fragment.*
-import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import android.os.Vibrator
+import android.util.Log
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import com.google.gson.Gson
+import za.co.absa.openbankingapi.woolworths.integration.AbsaRegisterCredentialRequest
 import za.co.absa.openbankingapi.woolworths.integration.dao.JSession
+import za.co.absa.openbankingapi.woolworths.integration.dto.RegisterCredentialResponse
 import za.co.woolworths.financial.services.android.contracts.IVibrateComplete
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse
-import za.co.woolworths.financial.services.android.ui.activities.StartupActivity
+import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import java.net.HttpCookie
 
 
 class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener, IVibrateComplete {
 
     private var mPinImageViewList: MutableList<ImageView>? = null
-    private var mFiveDigitCodePinCode: Int? = null
+    private var mBundleFiveDigitCodePinCode: Int? = null
     private var mShakeAnimation: Animation? = null
     private var mVibrateComplete: IVibrateComplete? = null
     private var mJSession: JSession? = null
@@ -77,7 +79,7 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
 
     private fun setArguments() {
         arguments?.apply {
-            mFiveDigitCodePinCode = getInt(FIVE_DIGIT_PIN_CODE)
+            mBundleFiveDigitCodePinCode = getInt(FIVE_DIGIT_PIN_CODE)
             getString(JSESSION)?.apply { mJSession = Gson().fromJson(this, JSession::class.java) }
 
         }
@@ -85,28 +87,60 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
 
     private fun navigateToAbsaBiometricScreen() {
         if ((edtEnterATMPin.length() - 1) == MAXIMUM_PIN_ALLOWED) {
-            val enteredConfirmPin = edtEnterATMPin.text.toString()
-            if (enteredConfirmPin.toInt() == mFiveDigitCodePinCode) {
-                val aliasId = SessionDao.getByKey(SessionDao.KEY.ABSA_ALIASID)
-                val deviceId = SessionDao.getByKey(SessionDao.KEY.ABSA_DEVICEID)
-                registerCredentials(aliasId, deviceId, enteredConfirmPin, mJSession)
+            val fiveDigitPin = edtEnterATMPin.text.toString()
+            if (fiveDigitPin.toInt() == mBundleFiveDigitCodePinCode) {
+                val aliasId = SessionDao.getByKey(SessionDao.KEY.ABSA_ALIASID).value
+                val deviceId = SessionDao.getByKey(SessionDao.KEY.ABSA_DEVICEID).value
+                registerCredentials(aliasId, deviceId, fiveDigitPin, mJSession)
             } else {
                 vibrate(this)
             }
         }
     }
 
-    private fun registerCredentials(aliasId: SessionDao?, deviceId: SessionDao?, fiveDigitPin: String, jSession: JSession?) {
-//        AbsaRegisterCredentialRequest(this).make(aliasId, deviceId, fiveDigitPin, jSession, object : AbsaBankingOpenApiResponse.ResponseDelegate<RegisterCredentialResponse> {
-//            fun onSuccess(response: RegisterCredentialResponse, cookies: List<HttpCookie>) {
-//                Log.d("", "")
-//
-//            }
-//
-//            override fun onFailure(errorMessage: String) {
-//                Log.d("", "")
-//            }
-//        })
+    private fun registerCredentials(aliasId: String?, deviceId: String?, fiveDigitPin: String, jSession: JSession?) {
+        activity?.let {
+            displayRegisterCredentialProgress(true)
+            AbsaRegisterCredentialRequest(it).make(aliasId, deviceId, fiveDigitPin, jSession,
+                    object : AbsaBankingOpenApiResponse.ResponseDelegate<RegisterCredentialResponse> {
+                        override fun onSuccess(response: RegisterCredentialResponse, cookies: List<HttpCookie>) {
+                            Log.d("onSuccess", "onSuccess")
+                            response.apply {
+                                if (header?.resultMessages?.size == 0 || aliasId != null) {
+                                    successHandler(response)
+                                } else {
+                                    failureHandler(header?.resultMessages?.first()?.responseMessage)
+                                }
+                            }
+
+                            displayRegisterCredentialProgress(false)
+
+                        }
+
+                        override fun onFailure(errorMessage: String) {
+                            Log.d("onSuccess", "onFailure")
+                            displayRegisterCredentialProgress(false)
+                        }
+                    })
+        }
+    }
+
+    private fun successHandler(response: RegisterCredentialResponse) {
+        replaceFragment(
+                fragment = AbsaBiometricFragment.newInstance(),
+                tag = AbsaBiometricFragment::class.java.simpleName,
+                containerViewId = R.id.flAbsaOnlineBankingToDevice,
+                allowStateLoss = true,
+                enterAnimation = R.anim.slide_in_from_right,
+                exitAnimation = R.anim.slide_to_left,
+                popEnterAnimation = R.anim.slide_from_left,
+                popExitAnimation = R.anim.slide_to_right
+        )
+    }
+
+    private fun failureHandler(message: String?) {
+        //TODO: implement failureHandler(response.header!.resultMessages.first?.responseMessage ??
+        // "Technical error occured.")
     }
 
     private fun createTextListener(edtEnterATMPin: EditText?) {
@@ -210,4 +244,9 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
     override fun onAnimationComplete() {
         clearPin()
     }
+
+    fun displayRegisterCredentialProgress(state: Boolean) {
+        pbRegisterCredential.visibility = if (state) View.VISIBLE else View.GONE
+    }
+
 }

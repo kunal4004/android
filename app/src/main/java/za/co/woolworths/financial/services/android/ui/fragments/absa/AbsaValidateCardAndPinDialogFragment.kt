@@ -11,7 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_validate_card_pin_dialog.*
-import za.co.absa.openbankingapi.SessionKey
 import za.co.absa.openbankingapi.woolworths.integration.AbsaCreateAliasRequest
 import za.co.absa.openbankingapi.woolworths.integration.AbsaValidateCardAndPinRequest
 import za.co.absa.openbankingapi.woolworths.integration.AbsaValidateSureCheckRequest
@@ -21,7 +20,6 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.ValidateCardAndPinRe
 import za.co.absa.openbankingapi.woolworths.integration.dto.ValidateSureCheckResponse
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse
 import za.co.woolworths.financial.services.android.contracts.IValidatePinCodeDialogInterface
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import java.net.HttpCookie
 import java.util.*
@@ -81,13 +79,10 @@ class AbsaValidateCardAndPinDialogFragment : DialogFragment() {
         btnCancelRequest.setOnClickListener { cancelValidateCardAndPinRequest() }
     }
 
-    private fun initListener() {
-        try {
-            mValidatePinCodeDialogLinterface = targetFragment?.let { it as? IValidatePinCodeDialogInterface }
-        } catch (e: ClassCastException) {
-            throw ClassCastException(
-                    "The calling Fragment must implement MyDialogFragment.onChangeListener")
-        }
+    private fun initListener() = try {
+        mValidatePinCodeDialogLinterface = targetFragment?.let { it as? IValidatePinCodeDialogInterface }
+    } catch (e: ClassCastException) {
+        throw ClassCastException("The calling Fragment must implement MyDialogFragment.onChangeListener")
     }
 
     private fun validateCardAndPin(cardToken: String, pin: String) {
@@ -144,6 +139,7 @@ class AbsaValidateCardAndPinDialogFragment : DialogFragment() {
 
     private fun cancelValidateCardAndPinRequest() {
         dismiss()
+        mValidatePinCodeDialogLinterface?.onFailureHandler("onCreateDialog")
     }
 
     private fun validateSureCheck(jSession: JSession) {
@@ -151,12 +147,9 @@ class AbsaValidateCardAndPinDialogFragment : DialogFragment() {
         activity?.apply {
             mAbsaValidateSurSchedule = scheduler.scheduleWithFixedDelay({
                 AbsaValidateSureCheckRequest(this).make(jSession,
-
                         object : AbsaBankingOpenApiResponse.ResponseDelegate<ValidateSureCheckResponse> {
                             override fun onSuccess(validateCardAndPinResponse: ValidateSureCheckResponse?, cookies: MutableList<HttpCookie>?) {
-
-                                val resultMessage: String? = validateCardAndPinResponse?.result?.toLowerCase()
-                                        ?: ""
+                                 val resultMessage: String? = validateCardAndPinResponse?.result?.toLowerCase() ?: ""
                                 when (resultMessage) {
                                     "processing" -> {
 
@@ -175,11 +168,12 @@ class AbsaValidateCardAndPinDialogFragment : DialogFragment() {
                                         stopPolling()
                                     }
                                 }
-                                Log.e("valideCardPin", "onSuccess - AbsaBankingOpenApiResponse")
+                                Log.e("valideCardPin", "onSuccess - AbsaBankingOpenApiResponse $resultMessage")
                             }
 
                             override fun onFailure(errorMessage: String) {
                                 Log.e("valideCardPin", "onFailure - AbsaBankingOpenApiResponse")
+
                             }
                         })
             }, 0, 2, TimeUnit.SECONDS)
@@ -196,26 +190,29 @@ class AbsaValidateCardAndPinDialogFragment : DialogFragment() {
 
     fun createAlias(jSession: JSession) {
         activity?.apply {
-            //we'll need to keep reference to our symmKey
-            //as we'll need it to decrypt the response
-            val sessionKey = SessionKey.generate(WoolworthsApplication.getAppContext())
-            //create alias
             val deviceId = UUID.randomUUID().toString().replace("-", "")
             AbsaCreateAliasRequest(this).make(deviceId, jSession, object : AbsaBankingOpenApiResponse.ResponseDelegate<CreateAliasResponse> {
-                override fun onSuccess(createAliasResponse: CreateAliasResponse?, cookies: MutableList<HttpCookie>?) {
-                    var sessionDao: SessionDao? = SessionDao.getByKey(SessionDao.KEY.ABSA_DEVICEID)
-                    sessionDao?.value = deviceId
-                    sessionDao?.save()
+                override fun onSuccess(response: CreateAliasResponse?, cookies: MutableList<HttpCookie>?) {
+                    Log.e("validCardPin", "onSuccess - AbsaCreateAliasRequest")
+                    response?.apply {
+                        if (header?.resultMessages?.size == 0 || aliasId != null) {
+                            var sessionDao: SessionDao? = SessionDao.getByKey(SessionDao.KEY.ABSA_DEVICEID)
+                            sessionDao?.value = deviceId
+                            sessionDao?.save()
 
-                    sessionDao = SessionDao.getByKey(SessionDao.KEY.ABSA_ALIASID)
-                    sessionDao?.value = createAliasResponse?.aliasId
-                    sessionDao?.save()
+                            sessionDao = SessionDao.getByKey(SessionDao.KEY.ABSA_ALIASID)
+                            sessionDao?.value = aliasId
+                            sessionDao?.save()
 
-                    navigateToRegisterCredential(jSession)
+                            navigateToRegisterCredential(jSession)
+                        } else {
+                            //TODO: implement failureHandler("An error occured while attempting to decode the server response.")
+                        }
+                    }
                 }
 
                 override fun onFailure(errorMessage: String) {
-                    Log.e("valideCardPin", "onFailure - AbsaCreateAliasRequest")
+                    Log.e("validCardPin", "onFailure - AbsaCreateAliasRequest")
                 }
             })
         }
