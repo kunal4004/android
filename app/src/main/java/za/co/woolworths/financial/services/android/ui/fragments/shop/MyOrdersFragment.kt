@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -10,20 +11,43 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.empty_state_template.*
 import za.co.woolworths.financial.services.android.models.dto.OrderItem
 import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
-import za.co.woolworths.financial.services.android.ui.extension.requestOrders
-import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnOrdersResult
 import kotlinx.android.synthetic.main.fragment_shop_my_orders.*
+import za.co.woolworths.financial.services.android.models.rest.product.GetOrdersRequest
+import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.adapters.OrdersAdapter
+import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView
+import za.co.woolworths.financial.services.android.util.OnEventListener
+import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 
-class MyOrdersFragment : Fragment(), OnOrdersResult {
+class MyOrdersFragment : Fragment() {
 
     private var dataList = arrayListOf<OrderItem>()
+    private var mErrorHandlerView: ErrorHandlerView? = null
+    private var listner: OnChildFragmentEvents? = null
+
+    companion object {
+        const val ORDERS_LOGIN_REQUEST = 2025
+        private val ARG_PARAM = "listner"
+
+        fun getInstance(listner: OnChildFragmentEvents) = MyOrdersFragment().withArgs {
+            putSerializable(ARG_PARAM, listner)
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_shop_my_orders, container, false)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (arguments != null) {
+            listner = arguments.getSerializable(ARG_PARAM) as OnChildFragmentEvents
+        }
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
@@ -32,7 +56,9 @@ class MyOrdersFragment : Fragment(), OnOrdersResult {
     }
 
     fun initViews() {
+        mErrorHandlerView = ErrorHandlerView(activity, relEmptyStateHandler, imgEmpyStateIcon, txtEmptyStateTitle, txtEmptyStateDesc, btnGoToProduct)
         myOrdersList.layoutManager = LinearLayoutManager(activity)
+        btnGoToProduct.setOnClickListener { onActionClick() }
         configureUI()
     }
 
@@ -42,28 +68,44 @@ class MyOrdersFragment : Fragment(), OnOrdersResult {
             executeOrdersRequest()
         } else {
             showSignOutView()
+
+        }
+    }
+
+    private fun onActionClick() {
+        when (mErrorHandlerView?.actionType) {
+            ErrorHandlerView.ACTION_TYPE.SIGN_IN -> {
+                ScreenManager.presentSSOSignin(activity, ORDERS_LOGIN_REQUEST)
+            }
+            ErrorHandlerView.ACTION_TYPE.REDIRECT -> {
+                listner?.onStartShopping()
+            }
+            ErrorHandlerView.ACTION_TYPE.RETRY -> {
+                executeOrdersRequest()
+            }
         }
     }
 
     private fun showEmptyOrdersView() {
-        relEmptyStateHandler.visibility = View.VISIBLE
-        imgEmpyStateIcon.setImageResource(R.drawable.emptyinbox)
-        txtEmptyStateTitle.text = getString(R.string.empty_order_view_title)
-        txtEmptyStateDesc.text = getString(R.string.empty_order_view_desc)
-        btnGoToProduct.text = getString(R.string.go_to_products)
+
+        mErrorHandlerView?.setEmptyStateWithAction(6, R.string.start_shopping, ErrorHandlerView.ACTION_TYPE.REDIRECT)
     }
 
     private fun showSignOutView() {
-        relEmptyStateHandler.visibility = View.VISIBLE
-        imgEmpyStateIcon.setImageResource(R.drawable.emptyinbox)
-        txtEmptyStateTitle.text = getString(R.string.sign_out_order_view_title)
-        txtEmptyStateDesc.text = getString(R.string.sign_out_order_view_desc)
-        btnGoToProduct.text = getString(R.string.sign_in)
+
+        mErrorHandlerView?.setEmptyStateWithAction(7, R.string.sign_in, ErrorHandlerView.ACTION_TYPE.SIGN_IN)
+
     }
 
-    private fun showSignInView(dataList: ArrayList<OrderItem>) {
+    private fun showErrorView() {
+        mErrorHandlerView?.setEmptyStateWithAction(8, R.string.retry, ErrorHandlerView.ACTION_TYPE.RETRY)
+
+    }
+
+    private fun showSignInView(ordersResponse: OrdersResponse) {
+        dataList = buildDataToDisplayOrders(ordersResponse)
         if (dataList.size > 0) {
-            relEmptyStateHandler.visibility = View.GONE
+            mErrorHandlerView?.hideEmpyState()
             myOrdersList.adapter = OrdersAdapter(activity, dataList)
         } else
             showEmptyOrdersView()
@@ -71,26 +113,18 @@ class MyOrdersFragment : Fragment(), OnOrdersResult {
 
 
     private fun executeOrdersRequest() {
+        mErrorHandlerView?.hideEmpyState()
         loadingBar.visibility = View.VISIBLE
-        requestOrders(this, activity).execute()
+        requestOrders().execute()
     }
 
-    override fun onOrdersRequestSuccess(ordersResponse: OrdersResponse) {
-        loadingBar.visibility = View.GONE
-        dataList = buildDataToDisplayOrders(ordersResponse)
-        showSignInView(dataList)
-    }
-
-    override fun onOrdersRequestFailure(message: String) {
-        loadingBar.visibility = View.GONE
-    }
 
     private fun buildDataToDisplayOrders(ordersResponse: OrdersResponse): ArrayList<OrderItem> {
         val dataList = arrayListOf<OrderItem>()
         ordersResponse.upcomingOrders?.forEach {
             dataList.add(OrderItem(it, OrderItem.ViewType.UPCOMING_ORDER))
         }
-        if (ordersResponse.pastOrders?.size!! > 0) {
+        if (ordersResponse.pastOrders != null && ordersResponse.pastOrders?.size!! > 0) {
             dataList.add(OrderItem(null, OrderItem.ViewType.HEADER))
             ordersResponse.pastOrders?.forEach {
                 dataList.add(OrderItem(it, OrderItem.ViewType.PAST_ORDER))
@@ -98,5 +132,41 @@ class MyOrdersFragment : Fragment(), OnOrdersResult {
         }
 
         return dataList
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == ORDERS_LOGIN_REQUEST && resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
+            configureUI()
+        }
+    }
+
+    private fun requestOrders(): GetOrdersRequest {
+        return GetOrdersRequest(context, object : OnEventListener<OrdersResponse> {
+            override fun onSuccess(ordersResponse: OrdersResponse) {
+                loadingBar.visibility = View.GONE
+                when (ordersResponse.httpCode) {
+                    0 -> {
+                        showSignInView(ordersResponse)
+                    }
+                    440 -> {
+                        showSignOutView()
+                    }
+                    else -> {
+                        showErrorView()
+                    }
+                }
+
+            }
+
+            override fun onFailure(e: String?) {
+                activity.runOnUiThread(java.lang.Runnable {
+                    loadingBar.visibility = View.GONE
+                    showErrorView()
+                })
+            }
+
+        })
+
     }
 }

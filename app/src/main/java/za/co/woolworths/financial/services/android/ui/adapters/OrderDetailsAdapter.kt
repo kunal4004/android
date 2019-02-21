@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.add_item_to_shoppinglist_layout.view.*
 import za.co.woolworths.financial.services.android.models.dto.OrderDetailsItem
 import za.co.woolworths.financial.services.android.ui.adapters.holder.OrdersBaseViewHolder
 import kotlinx.android.synthetic.main.my_orders_past_orders_header.view.*
@@ -21,6 +22,9 @@ import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
 
 class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var dataList: ArrayList<OrderDetailsItem>) : RecyclerView.Adapter<OrdersBaseViewHolder>() {
+
+    var isTaxInvoiceViewExist: Boolean = false
+
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): OrdersBaseViewHolder? {
         when (viewType) {
             OrderDetailsItem.ViewType.HEADER.value -> {
@@ -34,6 +38,10 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
             }
             OrderDetailsItem.ViewType.COMMERCE_ITEM.value -> {
                 return OrderItemViewHolder(LayoutInflater.from(context).inflate(R.layout.order_details_commerce_item, parent, false))
+            }
+            OrderDetailsItem.ViewType.VIEW_TAX_INVOICE.value -> {
+                isTaxInvoiceViewExist = true
+                return ViewTaxInvoiceViewHolder(LayoutInflater.from(context).inflate(R.layout.order_details_view_tax_invoice_layout, parent, false))
             }
         }
         return null
@@ -56,6 +64,7 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
             itemView.orderState.text = item.state
             itemView.purchaseDate.text = WFormatter.formatOrdersDate(item.submittedDate)
             itemView.total.text = WFormatter.formatAmount(item.total)
+            itemView.total.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
         }
 
     }
@@ -67,7 +76,6 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
             itemView.itemName.text = item.commerceItemInfo.productDisplayName
             itemView.price.text = WFormatter.formatAmount(item.priceInfo.amount)
             itemView.price.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
-
             itemView.setOnClickListener { listner.onOpenProductDetail(item) }
         }
 
@@ -83,9 +91,19 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
 
     inner class AddToListViewHolder(itemView: View) : OrdersBaseViewHolder(itemView) {
         override fun bind(position: Int) {
-
+            itemView.fakeDivider.visibility = if (isTaxInvoiceViewExist) View.GONE else View.VISIBLE
             itemView.setOnClickListener {
                 listner.onAddToList(getCommerceItemList())
+            }
+        }
+
+    }
+
+    inner class ViewTaxInvoiceViewHolder(itemView: View) : OrdersBaseViewHolder(itemView) {
+        override fun bind(position: Int) {
+
+            itemView.setOnClickListener {
+                listner.onViewTaxInvoice()
             }
         }
 
@@ -101,6 +119,8 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
         fun onAddToList(commerceItemList: MutableList<AddToListRequest>)
 
         fun onOpenProductDetail(commerceItem: CommerceItem)
+
+        fun onViewTaxInvoice()
     }
 
     fun getCommerceItemList(): MutableList<AddToListRequest> {

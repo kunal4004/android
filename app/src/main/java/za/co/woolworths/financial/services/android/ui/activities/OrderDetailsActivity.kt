@@ -11,6 +11,7 @@ import za.co.woolworths.financial.services.android.models.dto.OrderDetailsRespon
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragmentSafely
 import za.co.woolworths.financial.services.android.ui.fragments.shop.AddOrderToCartFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.OrderDetailsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.shop.TaxInvoiceLIstFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.FragmentsEventsListner
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -29,6 +30,7 @@ class OrderDetailsActivity : AppCompatActivity(), FragmentsEventsListner {
     companion object {
         const val TAG_ORDER_DETAILS_FRAGMENT: String = "OrderDetailsFragment"
         const val TAG_ORDER_TO_CART_FRAGMENT: String = "OrderToCartFragment"
+        const val TAG_TAX_INVOICE_FRAGMENT: String = "TaxInvoiceFragment"
 
     }
 
@@ -70,5 +72,9 @@ class OrderDetailsActivity : AppCompatActivity(), FragmentsEventsListner {
         if (supportFragmentManager.backStackEntryCount > 0) {
             supportFragmentManager.popBackStack()
         }
+    }
+
+    override fun openTaxInvoices() {
+        pushFragment(TaxInvoiceLIstFragment.getInstance(order?.taxNoteNumbers!!), TAG_TAX_INVOICE_FRAGMENT)
     }
 }

@@ -8,7 +8,7 @@
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/tvSearchProduct"
         android:layout_width="0dp"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="44dp"
         android:layout_marginStart="@dimen/sixteen_dp"
         android:layout_marginTop="@dimen/twenty_one_dp"
         android:layout_marginEnd="@dimen/sixteen_dp"

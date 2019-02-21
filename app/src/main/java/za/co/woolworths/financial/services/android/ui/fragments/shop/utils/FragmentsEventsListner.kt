@@ -5,4 +5,5 @@ import za.co.woolworths.financial.services.android.models.dto.OrderDetailsRespon
 interface FragmentsEventsListner {
     fun onOrderItemsClicked(orderDetailsResponse: OrderDetailsResponse)
     fun onItemsAddedToCart()
+    fun openTaxInvoices()
 }
