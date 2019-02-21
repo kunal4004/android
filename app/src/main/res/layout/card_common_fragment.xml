@@ -432,6 +432,7 @@
 
         <RelativeLayout
             android:id="@+id/rlABSALinkOnlineBankingToDevice"
+            android:visibility="gone"
             style="@style/card_item_click_style">
 
             <ImageView

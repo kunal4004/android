@@ -41,7 +41,6 @@ import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.rest.cli.CLIGetOfferActive;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
-import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.DebitOrderActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
@@ -108,8 +107,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 
     private View fakeView;
     private NestedScrollView mScrollAccountCard;
-    private RelativeLayout rlABSALinkOnlineBankingToDevice;
-    private WTextView tvABSALinkOnlineBanking;
 
     @Nullable
     @Override
@@ -176,11 +173,9 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
         llCommonLayer = (LinearLayout) view.findViewById(R.id.llCommonLayer);
         logoIncreaseLimit = (ImageView) view.findViewById(R.id.logoIncreaseLimit);
         llIncreaseLimitContainer = (LinearLayout) view.findViewById(R.id.llIncreaseLimitContainer);
-        tvABSALinkOnlineBanking = (WTextView)view.findViewById(R.id.tvABSALinkOnlineBanking);
         relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
         tvBPIProtectInsurance = view.findViewById(R.id.tvBPIProtectInsurance);
 
-        rlABSALinkOnlineBankingToDevice = (RelativeLayout)view.findViewById(R.id.rlABSALinkOnlineBankingToDevice);
         relViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
         accountInArrearsLayout = view.findViewById(R.id.llAccountInArrearsParentContainer);
         tvHowToPayAccountStatus = view.findViewById(R.id.howToPayAccountStatus);
@@ -214,7 +209,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
         tvViewTransaction.setOnClickListener(this);
         relBalanceProtection.setOnClickListener(this);
         mRelDrawnDownAmount.setOnClickListener(this);
-        rlABSALinkOnlineBankingToDevice.setOnClickListener(this);
         relViewTransactions.setOnClickListener(this);
         mRelFindOutMore.setOnClickListener(this);
         mRelIncreaseMyLimit.setOnClickListener(this);
@@ -299,11 +293,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
             productOfferingId = Utils.getProductOfferingId(accountsResponse, "PL");
         }
         switch (v.getId()) {
-            case R.id.rlABSALinkOnlineBankingToDevice:
-                Intent openABSALinkOnlineBankingToDevice = new Intent(activity, ABSAOnlineBankingRegistrationActivity.class);
-                startActivityForResult(openABSALinkOnlineBankingToDevice, MyAccountCardsActivity.ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE);
-                activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
-                break;
             case R.id.rlViewTransactions:
             case R.id.tvViewTransaction:
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANTRANSACTIONS);
@@ -663,10 +652,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
     @Override
     public void onPromptDismiss() {
 
-    }
-
-    public void updateABSATitle() {
-        tvABSALinkOnlineBanking.setText(getString(R.string.online_banking));
     }
 }
 
