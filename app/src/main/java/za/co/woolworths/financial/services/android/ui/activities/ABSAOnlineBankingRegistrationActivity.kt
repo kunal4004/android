@@ -8,7 +8,7 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_online_banking_to_device_activity.*
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.absa.AbsaEnterAtmPinCodeFragment
-import za.co.woolworths.financial.services.android.ui.fragments.absa.ABSAPinCodeSuccessFragment
+import za.co.woolworths.financial.services.android.ui.fragments.absa.AbsaPinCodeSuccessFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
 class ABSAOnlineBankingRegistrationActivity : AppCompatActivity() {
@@ -54,8 +54,8 @@ class ABSAOnlineBankingRegistrationActivity : AppCompatActivity() {
     }
 
     private fun navigateBack() {
-        // Refrain from navigate to previous fragment when landing fragment is ABSAPinCodeSuccessFragment
-        if (getCurrentFragment() is ABSAPinCodeSuccessFragment) {
+        // Refrain from navigate to previous fragment when landing fragment is AbsaPinCodeSuccessFragment
+        if (getCurrentFragment() is AbsaPinCodeSuccessFragment) {
             finishActivity()
             return
         }

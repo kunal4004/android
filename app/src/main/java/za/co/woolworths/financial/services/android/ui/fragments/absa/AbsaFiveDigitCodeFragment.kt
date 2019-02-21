@@ -15,7 +15,7 @@ import kotlinx.android.synthetic.main.absa_five_digit_code_fragment.*
 import za.co.absa.openbankingapi.woolworths.integration.dao.JSession
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 
-class ABSAFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener {
+class AbsaFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener {
 
     private var mPinImageViewList: MutableList<ImageView>? = null
     private var jSession: String? = null
@@ -23,7 +23,7 @@ class ABSAFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener 
     companion object {
         private const val MAXIMUM_PIN_ALLOWED: Int = 4
         private const val JSESSION = "JSESSION"
-        fun newInstance(jSession: JSession) = ABSAFiveDigitCodeFragment().apply {
+        fun newInstance(jSession: JSession) = AbsaFiveDigitCodeFragment().apply {
             arguments?.apply {
                 Bundle(1).apply {
                     putString(JSESSION, Gson().toJson(jSession))
@@ -69,8 +69,8 @@ class ABSAFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener 
         if ((edtEnterATMPin.length() - 1) == MAXIMUM_PIN_ALLOWED) {
             val enteredPin = edtEnterATMPin.text.toString()
             replaceFragment(
-                    fragment = ABSAConfirmFiveDigitCodeFragment.newInstance(enteredPin.toInt(), jSession),
-                    tag = ABSAConfirmFiveDigitCodeFragment::class.java.simpleName,
+                    fragment = AbsaConfirmFiveDigitCodeFragment.newInstance(enteredPin.toInt(), jSession),
+                    tag = AbsaConfirmFiveDigitCodeFragment::class.java.simpleName,
                     containerViewId = R.id.flAbsaOnlineBankingToDevice,
                     allowStateLoss = true,
                     enterAnimation = R.anim.slide_in_from_right,

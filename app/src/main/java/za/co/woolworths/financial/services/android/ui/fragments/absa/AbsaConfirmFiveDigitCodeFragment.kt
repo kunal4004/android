@@ -29,7 +29,7 @@ import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import java.net.HttpCookie
 
 
-class ABSAConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener, IVibrateComplete {
+class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener, IVibrateComplete {
 
     private var mPinImageViewList: MutableList<ImageView>? = null
     private var mBundleFiveDigitCodePinCode: Int? = null
@@ -42,7 +42,7 @@ class ABSAConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
         private const val VIBRATE_DURATION: Long = 300
         private const val FIVE_DIGIT_PIN_CODE = "FIVE_DIGIT_PIN_CODE"
         private const val JSESSION = "JSESSION"
-        fun newInstance(fiveDigitCodePinCode: Int, jSession: String?) = ABSAConfirmFiveDigitCodeFragment().apply {
+        fun newInstance(fiveDigitCodePinCode: Int, jSession: String?) = AbsaConfirmFiveDigitCodeFragment().apply {
             arguments = Bundle(2).apply {
                 putInt(FIVE_DIGIT_PIN_CODE, fiveDigitCodePinCode)
                 putString(JSESSION, jSession)
@@ -127,8 +127,8 @@ class ABSAConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
 
     private fun successHandler(response: RegisterCredentialResponse) {
         replaceFragment(
-                fragment = ABSABiometricFragment.newInstance(),
-                tag = ABSABiometricFragment::class.java.simpleName,
+                fragment = AbsaBiometricFragment.newInstance(),
+                tag = AbsaBiometricFragment::class.java.simpleName,
                 containerViewId = R.id.flAbsaOnlineBankingToDevice,
                 allowStateLoss = true,
                 enterAnimation = R.anim.slide_in_from_right,
