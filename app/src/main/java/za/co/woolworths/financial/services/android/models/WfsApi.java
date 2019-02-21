@@ -44,6 +44,7 @@ import za.co.woolworths.financial.services.android.models.dto.MessageReadRequest
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.dto.OrderDetailsResponse;
+import za.co.woolworths.financial.services.android.models.dto.OrderTaxInvoiceResponse;
 import za.co.woolworths.financial.services.android.models.dto.OrderToListReponse;
 import za.co.woolworths.financial.services.android.models.dto.OrderToShoppingListRequestBody;
 import za.co.woolworths.financial.services.android.models.dto.OrdersResponse;
@@ -331,6 +332,10 @@ public class WfsApi {
 
 	public OrderToListReponse addOrderToList(String orderId, OrderToShoppingListRequestBody orderToShoppingListRequestBody) {
 		return mApiInterface.addOrderToList(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), orderId, orderToShoppingListRequestBody);
+	}
+
+	public OrderTaxInvoiceResponse getOrderTaxInvoice(String taxNoteNumber) {
+		return mApiInterface.getTaxInvoice(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), taxNoteNumber);
 	}
 
 	private String getOsVersion() {

@@ -67,6 +67,12 @@ class OrderDetailsActivity : AppCompatActivity(), FragmentsEventsListner {
         fragment.onActivityResult(requestCode, resultCode, data)
     }
 
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        val fragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
+        fragment.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
     override fun onItemsAddedToCart() {
         if (supportFragmentManager.backStackEntryCount > 0) {
             supportFragmentManager.popBackStack()
@@ -74,6 +80,6 @@ class OrderDetailsActivity : AppCompatActivity(), FragmentsEventsListner {
     }
 
     override fun openTaxInvoices() {
-        pushFragment(TaxInvoiceLIstFragment.getInstance(order?.taxNoteNumbers!!), TAG_TAX_INVOICE_FRAGMENT)
+        pushFragment(TaxInvoiceLIstFragment.getInstance(order?.orderId!!, order?.taxNoteNumbers!!), TAG_TAX_INVOICE_FRAGMENT)
     }
 }
