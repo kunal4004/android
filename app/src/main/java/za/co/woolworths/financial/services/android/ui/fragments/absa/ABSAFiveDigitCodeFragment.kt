@@ -10,16 +10,26 @@ import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.ImageView
 import com.awfs.coordination.R
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.absa_five_digit_code_fragment.*
+import za.co.absa.openbankingapi.woolworths.integration.dao.JSession
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 
-class ABSAFiveDigitCodeFragment : ABSAFragmentExtension(), View.OnClickListener {
+class ABSAFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener {
 
-    var mPinImageViewList: MutableList<ImageView>? = null
+    private var mPinImageViewList: MutableList<ImageView>? = null
+    private var jSession: String? = null
 
     companion object {
-        fun newInstance() = ABSAFiveDigitCodeFragment()
-        const val MAXIMUM_PIN_ALLOWED: Int = 4
+        private const val MAXIMUM_PIN_ALLOWED: Int = 4
+        private const val JSESSION = "JSESSION"
+        fun newInstance(jSession: JSession) = ABSAFiveDigitCodeFragment().apply {
+            arguments?.apply {
+                Bundle(1).apply {
+                    putString(JSESSION, Gson().toJson(jSession))
+                }
+            }
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -28,9 +38,16 @@ class ABSAFiveDigitCodeFragment : ABSAFragmentExtension(), View.OnClickListener 
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        getBundleArgument()
         initViewsAndEvents()
         createTextListener(edtEnterATMPin)
         clearPinImage(mPinImageViewList!!)
+    }
+
+    private fun getBundleArgument() {
+        arguments?.let {
+            it.getString(JSESSION)?.apply { jSession = this }
+        }
     }
 
     private fun initViewsAndEvents() {
@@ -52,7 +69,7 @@ class ABSAFiveDigitCodeFragment : ABSAFragmentExtension(), View.OnClickListener 
         if ((edtEnterATMPin.length() - 1) == MAXIMUM_PIN_ALLOWED) {
             val enteredPin = edtEnterATMPin.text.toString()
             replaceFragment(
-                    fragment = ABSAConfirmFiveDigitCodeFragment.newInstance(enteredPin.toInt()),
+                    fragment = ABSAConfirmFiveDigitCodeFragment.newInstance(enteredPin.toInt(), jSession),
                     tag = ABSAConfirmFiveDigitCodeFragment::class.java.simpleName,
                     containerViewId = R.id.flAbsaOnlineBankingToDevice,
                     allowStateLoss = true,

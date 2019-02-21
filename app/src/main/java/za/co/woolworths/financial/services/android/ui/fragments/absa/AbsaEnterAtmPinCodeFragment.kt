@@ -142,8 +142,8 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
 
     override fun onSuccessHandler(jSession: JSession) {
         replaceFragment(
-                fragment = AbsaFiveDigitCodeFragment.newInstance(jSession),
-                tag = AbsaFiveDigitCodeFragment::class.java.simpleName,
+                fragment = ABSAFiveDigitCodeFragment.newInstance(jSession),
+                tag = ABSAFiveDigitCodeFragment::class.java.simpleName,
                 containerViewId = R.id.flAbsaOnlineBankingToDevice,
                 allowStateLoss = true,
                 enterAnimation = R.anim.slide_in_from_right,

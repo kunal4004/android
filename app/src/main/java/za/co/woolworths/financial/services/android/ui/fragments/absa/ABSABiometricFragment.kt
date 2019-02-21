@@ -9,7 +9,7 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_biometric_fragment.*
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 
-class ABSABiometricFragment : ABSAFragmentExtension() {
+class ABSABiometricFragment : AbsaFragmentExtension() {
 
     companion object {
         fun newInstance() = ABSABiometricFragment()
