@@ -8,10 +8,17 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_online_banking_to_device_activity.*
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.absa.AbsaEnterAtmPinCodeFragment
+import za.co.woolworths.financial.services.android.ui.fragments.absa.AbsaLoginFragment
 import za.co.woolworths.financial.services.android.ui.fragments.absa.AbsaPinCodeSuccessFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
 class ABSAOnlineBankingRegistrationActivity : AppCompatActivity() {
+
+    private var mShouldDisplayABSALogin: Boolean? = false
+
+    companion object {
+        const val SHOULD_DISPLAY_LOGIN_SCREEN = "SHOULD_DISPLAY_LOGIN_SCREEN"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,12 +26,28 @@ class ABSAOnlineBankingRegistrationActivity : AppCompatActivity() {
         Utils.updateStatusBarBackground(this)
         actionBar()
         if (savedInstanceState == null) {
-            addFragment(
-                    fragment = AbsaEnterAtmPinCodeFragment.newInstance(),
-                    tag = AbsaEnterAtmPinCodeFragment::class.java.simpleName,
-                    containerViewId = R.id.flAbsaOnlineBankingToDevice
-            )
+
+            getBundleArgument()
+
+            if (mShouldDisplayABSALogin!!) {
+                addFragment(
+                        fragment = AbsaLoginFragment.newInstance(),
+                        tag = AbsaLoginFragment::class.java.simpleName,
+                        containerViewId = R.id.flAbsaOnlineBankingToDevice
+                )
+            } else {
+                addFragment(
+                        fragment = AbsaEnterAtmPinCodeFragment.newInstance(),
+                        tag = AbsaEnterAtmPinCodeFragment::class.java.simpleName,
+                        containerViewId = R.id.flAbsaOnlineBankingToDevice
+                )
+            }
         }
+    }
+
+    private fun getBundleArgument() {
+        val bundle: Bundle? = intent?.extras!!
+        mShouldDisplayABSALogin = bundle!!.getBoolean(SHOULD_DISPLAY_LOGIN_SCREEN, false)
     }
 
     private fun actionBar() {
