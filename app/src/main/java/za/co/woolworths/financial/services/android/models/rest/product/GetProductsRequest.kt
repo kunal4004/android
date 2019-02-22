@@ -35,5 +35,4 @@ class GetProductsRequest(val context: Context, var requestParams: ProductsReques
         }
     }
 
-
 }

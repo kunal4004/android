@@ -28,12 +28,8 @@ allprojects {
     repositories {
         mavenLocal()
         google()
-        maven {
-            credentials {
-                username "deployment"
-                password "l1k3n00th3r"
-            }
-            url "http://nexus.wigroup.co:8081/nexus/content/groups/public"
+        flatDir {
+            dirs 'libs'
         }
         maven { url "https://mint.splunk.com/gradle/" }
         maven { url "https://jitpack.io" }

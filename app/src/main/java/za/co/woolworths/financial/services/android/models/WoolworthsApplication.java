@@ -68,13 +68,9 @@ public class WoolworthsApplication extends Application {
 			e.printStackTrace();
 		}
 
-		String apiId = "ANDROID_V";
-		if (packageInfo.versionName.length() > 3) {
-			apiId += packageInfo.versionName.substring(0, 3);
-		} else {
-			apiId += packageInfo.versionName;
-		}
-		return apiId;
+		String prefix = "ANDROID_V";
+		String majorMinorVersion = packageInfo.versionName.substring(0, packageInfo.versionName.lastIndexOf('.'));
+		return prefix.concat(majorMinorVersion);
 	}
 
 	public static String getAppVersionName() {
