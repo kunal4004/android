@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/clCreateNewList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/imBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="24dp"
+            android:contentDescription="@string/shop_create_a_list"
+            app:layout_constraintBottom_toTopOf="@+id/toolbarGuideLine"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/back24" />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/tvToolbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
+            android:layout_toEndOf="@+id/imBack"
+            android:gravity="center"
+            android:letterSpacing="0.2"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:text="@string/new_list"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            app:WTextView_font="medium_bold"
+            app:layout_constraintBottom_toTopOf="@+id/toolbarGuideLine"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/imCloseIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:contentDescription="@string/shop_create_a_list"
+            app:layout_constraintBottom_toTopOf="@+id/toolbarGuideLine"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/close_24" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/toolbarGuideLine"
+            android:layout_width="wrap_content"
+            android:layout_height="?attr/actionBarSize"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="?attr/actionBarSize" />
+
+        <View
+            android:id="@+id/vCancelDivider"
+            android:layout_width="match_parent"
+            android:layout_height="0.8dp"
+            android:background="@color/recent_search_bg"
+            app:layout_constraintTop_toTopOf="@+id/toolbarGuideLine" />
+
+
+        <za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView
+            android:id="@+id/etNewList"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@android:color/transparent"
+            android:ems="10"
+            android:gravity="center"
+            android:hint="List Name"
+            android:imeOptions="actionDone"
+            android:inputType="text|textNoSuggestions"
+            android:maxLength="50"
+            android:minHeight="@dimen/hundred_and_fifty_dp"
+            android:singleLine="true"
+            android:textColor="@color/black"
+            android:textColorHint="@color/recent_search_bg"
+            android:textCursorDrawable="@drawable/colorcursor"
+            android:textSize="@dimen/eighteen_sp"
+            app:WEditTextView_font="myriadpro_regular"
+            app:layout_constraintBottom_toTopOf="@+id/tvOnErrorLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/vCancelDivider">
+
+            <requestFocus />
+        </za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView>
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/tvOnErrorLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingStart="@dimen/sixteen_dp"
+            android:paddingTop="@dimen/sixteen_dp"
+            android:paddingEnd="@dimen/sixteen_dp"
+            android:paddingBottom="@dimen/sixteen_dp"
+            android:text="@string/barcode_error_desc"
+            android:textColor="@color/red"
+            android:textSize="@dimen/twelve_sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/vBtnCancelDivider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <View
+            android:id="@+id/vBtnCancelDivider"
+            android:layout_width="match_parent"
+            android:layout_height="0.8dp"
+            android:background="@color/recent_search_bg"
+            app:layout_constraintBottom_toTopOf="@+id/clBottomView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/clBottomView"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_style_height"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="@dimen/eight_dp"
+            android:layout_marginEnd="@dimen/eight_dp"
+            android:layout_marginBottom="@dimen/eight_dp"
+            android:background="@drawable/black_button_drawable_state"
+            android:enabled="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+
+            <za.co.woolworths.financial.services.android.ui.views.WButton
+                android:id="@+id/btnCancel"
+                style="@style/transparentButtonStyle"
+                android:letterSpacing="0.1"
+                android:text="@string/create_list"
+                android:visibility="visible"
+                app:WButton_font="myriadpro_regular"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent" />
+
+
+            <ProgressBar
+                android:id="@+id/pbCreateList"
+                android:layout_width="@dimen/twenty_four_dp"
+                android:layout_height="@dimen/twenty_four_dp"
+                android:layout_marginBottom="8dp"
+                android:indeterminateTint="@color/white"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/btnCancel"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+        </android.support.constraint.ConstraintLayout>
+    </android.support.constraint.ConstraintLayout>
+</RelativeLayout>

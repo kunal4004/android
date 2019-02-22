@@ -1,1 +1,2 @@
 https://wigroup2.atlassian.net/projects/WOP/versions/23069/tab/release-report-all-issues
+* [Xiaomi Devices] Fixed app crashes when accessing Accounts

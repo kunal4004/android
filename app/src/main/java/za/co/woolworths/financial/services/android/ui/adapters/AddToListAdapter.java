@@ -35,18 +35,18 @@ public class AddToListAdapter extends RecyclerView.Adapter<AddToListAdapter.View
 	public void onBindViewHolder(final ViewHolder holder, final int position) {
 		ShoppingList shoppingList = lists.get(position);
 		holder.tvName.setText(TextUtils.isEmpty(shoppingList.listName) ? "" : shoppingList.listName);
-		holder.chxAddToList.setChecked(shoppingList.viewIsSelected ? true : false);
+		holder.chxAddToList.setChecked(shoppingList.shoppingListRowWasSelected ? true : false);
 		holder.itemView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
 				int position = holder.getAdapterPosition();
-				boolean viewIsSelected = lists.get(position).viewIsSelected;
-				lists.get(position).viewIsSelected = !viewIsSelected;
+				boolean viewIsSelected = lists.get(position).shoppingListRowWasSelected;
+				lists.get(position).shoppingListRowWasSelected = !viewIsSelected;
 				ShoppingList shoppingList = lists.get(position);
 				notifyItemChanged(position);
 				boolean active = false;
 				for (ShoppingList list : lists) {
-					if (list.viewIsSelected) {
+					if (list.shoppingListRowWasSelected) {
 						active = true;
 						break;
 					}

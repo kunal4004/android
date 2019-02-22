@@ -66,6 +66,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:letterSpacing="0.15"
+            android:paddingStart="@dimen/twenty_four_dp"
             android:text="@string/view"
             android:textAllCaps="true"
             android:textColor="@color/white_color_selector"

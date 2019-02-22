@@ -28,6 +28,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.StockFinderFragme
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ColorFragmentList;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.EditQuantityFragmentList;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.SizeFragmentList;
+import za.co.woolworths.financial.services.android.ui.fragments.shop.AddOrderToCartFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ColorInterface;
 import za.co.woolworths.financial.services.android.util.NonSwipeableViewPager;
@@ -41,6 +42,7 @@ import static za.co.woolworths.financial.services.android.ui.fragments.product.d
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_ADD_TO_SHOPPING_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_SEARCH_FROM_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_STORE_FINDER;
+import static za.co.woolworths.financial.services.android.ui.fragments.shop.AddOrderToCartFragment.QUANTITY_CHANGED;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsFragment.QUANTITY_CHANGED_FROM_LIST;
 
 public class ConfirmColorSizeActivity extends AppCompatActivity implements View.OnClickListener, WStockFinderActivity.RecyclerItemSelected {
@@ -83,6 +85,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 	private String mQuantityInStock;
 	private int mCartQuantityInStock;
 	private boolean shouldMakeInventoryCall;
+	private int mOrderQuantityInStock;
 
 
 	@Override
@@ -108,6 +111,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 			mQuantityInStock = mBundle.getString("QUANTITY_IN_STOCK");
 			mCartQuantityInStock = mBundle.getInt("CART_QUANTITY_In_STOCK");
 			shouldMakeInventoryCall = mBundle.getBoolean("MAKE_INVENTORY_CALL");
+			mOrderQuantityInStock = mBundle.getInt("ORDER_QUANTITY_IN_STOCK");
 		}
 
 		init();
@@ -279,6 +283,10 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 							case QUANTITY_CHANGED_FROM_LIST:
 								intent.putExtra("QUANTITY_CHANGED_FROM_LIST", quantity);
 								setResult(QUANTITY_CHANGED_FROM_LIST, intent);
+								break;
+							case QUANTITY_CHANGED:
+								intent.putExtra("QUANTITY_CHANGED", quantity);
+								setResult(QUANTITY_CHANGED, intent);
 								break;
 							default:
 								if (getGlobalState().getSaveButtonClick() == INDEX_SEARCH_FROM_LIST) {
@@ -574,6 +582,13 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 			if (mCartQuantityInStock != 0) {
 				list.clear();
 				for (int number = 0; number < mCartQuantityInStock; number++) {
+					list.add(number + 1);
+				}
+			}
+
+			if (mOrderQuantityInStock != 0) {
+				list.clear();
+				for (int number = 0; number < mOrderQuantityInStock; number++) {
 					list.add(number + 1);
 				}
 			}

@@ -1,0 +1,105 @@
+package za.co.woolworths.financial.services.android.ui.activities
+
+import android.app.Activity
+import android.content.Intent
+import android.os.Bundle
+import android.support.v4.app.Fragment
+import android.support.v7.app.AppCompatActivity
+import com.awfs.coordination.R
+import com.google.gson.JsonElement
+import com.google.gson.JsonObject
+import kotlinx.android.synthetic.main.order_details_activity.*
+import za.co.woolworths.financial.services.android.contracts.IToastInterface
+import za.co.woolworths.financial.services.android.models.dto.Order
+import za.co.woolworths.financial.services.android.models.dto.OrderDetailsResponse
+import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
+import za.co.woolworths.financial.services.android.ui.extension.replaceFragmentSafely
+import za.co.woolworths.financial.services.android.ui.fragments.shop.AddOrderToCartFragment
+import za.co.woolworths.financial.services.android.ui.fragments.shop.OrderDetailsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.shop.TaxInvoiceLIstFragment
+import za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment
+import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.FragmentsEventsListner
+import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.ShoppingListToastNavigation
+import za.co.woolworths.financial.services.android.ui.views.ToastFactory
+import za.co.woolworths.financial.services.android.util.Utils
+
+
+class OrderDetailsActivity : AppCompatActivity(), FragmentsEventsListner, IToastInterface {
+
+    private var order: Order? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.order_details_activity)
+        Utils.updateStatusBarBackground(this)
+        configureUI()
+    }
+
+    companion object {
+        const val TAG_ORDER_DETAILS_FRAGMENT: String = "OrderDetailsFragment"
+        const val TAG_ORDER_TO_CART_FRAGMENT: String = "OrderToCartFragment"
+        const val TAG_TAX_INVOICE_FRAGMENT: String = "TaxInvoiceFragment"
+    }
+
+    private fun configureUI() {
+        order = intent.getSerializableExtra("order") as Order?
+        toolbarText.text = getString(R.string.order_page_title_prefix) + order?.orderId
+        btnBack.setOnClickListener { onBackPressed() }
+        replaceOrderDetailsFragment(order!!)
+    }
+
+    private fun replaceOrderDetailsFragment(order: Order) {
+        replaceFragmentSafely(OrderDetailsFragment.getInstance(order), TAG_ORDER_DETAILS_FRAGMENT, false, false, R.id.fragmentContainer)
+    }
+
+    override fun onOrderItemsClicked(orderDetailsResponse: OrderDetailsResponse) {
+        pushFragment(AddOrderToCartFragment.getInstance(orderDetailsResponse), TAG_ORDER_TO_CART_FRAGMENT)
+    }
+
+    fun pushFragment(fragment: Fragment, tag: String) {
+        replaceFragmentSafely(fragment, tag, false, true, R.id.fragmentContainer, R.anim.slide_in_from_right, R.anim.slide_out_to_left, R.anim.slide_in_from_left, R.anim.slide_out_to_right)
+    }
+
+    override fun onBackPressed() {
+        if (supportFragmentManager.backStackEntryCount > 0) {
+            supportFragmentManager.popBackStack()
+        } else {
+            super.onBackPressed()
+            overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == ADD_TO_SHOPPING_LIST_REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                ToastFactory.buildShoppingListToast(fragmentContainer, true, data, this)
+                return
+            }
+        }
+
+        val fragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
+        fragment.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun onItemsAddedToCart() {
+        if (supportFragmentManager.backStackEntryCount > 0) {
+            supportFragmentManager.popBackStack()
+        }
+    }
+
+    override fun openTaxInvoices() {
+        pushFragment(TaxInvoiceLIstFragment.getInstance(order?.taxNoteNumbers!!), TAG_TAX_INVOICE_FRAGMENT)
+    }
+
+    override fun onToastButtonClicked(element: JsonElement?) {
+        element?.let { item ->
+            if (item is JsonObject)
+                toastClick(element as? JsonObject)
+        }
+    }
+
+    private fun toastClick(obj: JsonObject?) {
+        ShoppingListToastNavigation.requestToastOnNavigateBack(this, AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST, obj)
+    }
+}

@@ -350,6 +350,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/RuntimeExceptionActivityStyle" />
 
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize|stateAlwaysVisible"
+            android:screenOrientation="portrait"
+            android:theme="@style/ABSAOnlineBankingToDeviceStyle" />
     </application>
 
 </manifest>

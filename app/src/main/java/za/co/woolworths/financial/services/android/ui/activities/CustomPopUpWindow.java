@@ -97,7 +97,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 		HIGH_LOAN_AMOUNT, LOW_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION, SIGN_OUT, BARCODE_ERROR,
 		SHOPPING_LIST_INFO, INSTORE_AVAILABILITY, NO_STOCK, LOCATION_OFF, SUPPLY_DETAIL_INFO,
 		CLI_DANGER_ACTION_MESSAGE_VALIDATION, AMOUNT_STOCK, UPLOAD_DOCUMENT_MODAL, PROOF_OF_INCOME,
-		STATEMENT_SENT_TO, CLI_DECLINE, CLI_ERROR, DETERMINE_LOCATION_POPUP, STATEMENT_ERROR, SHOPPING_ADD_TO_LIST, ERROR_TITLE_DESC, SET_UP_BIOMETRICS_ON_DEVICE, BIOMETRICS_SECURITY_INFO
+		STATEMENT_SENT_TO, CLI_DECLINE, CLI_ERROR, DETERMINE_LOCATION_POPUP, STATEMENT_ERROR, SHOPPING_ADD_TO_LIST, ERROR_TITLE_DESC, SET_UP_BIOMETRICS_ON_DEVICE, BIOMETRICS_SECURITY_INFO, ORDER_ADD_TO_LIST
 	}
 
 	MODAL_LAYOUT current_view;
@@ -570,6 +570,22 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				mNegativeActionButton.setOnClickListener(this);
 				mPositiveActionButton.setOnClickListener(this);
 				mRelPopContainer.setOnClickListener(this);
+				break;
+			case ORDER_ADD_TO_LIST:
+				setContentView(R.layout.shopping_add_list_layout);
+				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = findViewById(R.id.relPopContainer);
+				mRelPopContainer.setOnClickListener(this);
+				FragmentManager fmOrder = getSupportFragmentManager();
+				Bundle bundleOrder = new Bundle();
+				bundleOrder.putString("ORDER_ID", description);
+				AddToListFragment addToListFragmentOrder = new AddToListFragment();
+				addToListFragmentOrder.setArguments(bundleOrder);
+				fmOrder.beginTransaction()
+						.add(R.id.flShoppingListContainer, addToListFragmentOrder)
+						.commitAllowingStateLoss();
+
+
 				break;
 			default:
 				break;

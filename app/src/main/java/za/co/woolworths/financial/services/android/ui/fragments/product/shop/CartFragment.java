@@ -1140,7 +1140,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			List<ShoppingList> shoppingListRequest = globalState.getShoppingListRequest();
 			if (shoppingListRequest != null) {
 				for (ShoppingList shoppingList : shoppingListRequest) {
-					if (shoppingList.viewIsSelected) {
+					if (shoppingList.shoppingListRowWasSelected) {
 						intent.putExtra("listId", shoppingList.listId);
 						intent.putExtra("listName", shoppingList.listName);
 					}

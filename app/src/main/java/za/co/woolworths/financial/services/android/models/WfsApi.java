@@ -6,6 +6,7 @@ import android.text.TextUtils;
 
 import com.jakewharton.retrofit.Ok3Client;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -42,6 +43,10 @@ import za.co.woolworths.financial.services.android.models.dto.LoginResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageReadRequest;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
+import za.co.woolworths.financial.services.android.models.dto.OrderDetailsResponse;
+import za.co.woolworths.financial.services.android.models.dto.OrderToListReponse;
+import za.co.woolworths.financial.services.android.models.dto.OrderToShoppingListRequestBody;
+import za.co.woolworths.financial.services.android.models.dto.OrdersResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
@@ -67,6 +72,7 @@ import za.co.woolworths.financial.services.android.models.dto.statement.SendUser
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementResponse;
 import za.co.woolworths.financial.services.android.models.dto.statement.StatementResponse;
 import za.co.woolworths.financial.services.android.models.dto.statement.UserStatement;
+import za.co.woolworths.financial.services.android.models.rest.product.OrderToShoppingListRequest;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -313,6 +319,18 @@ public class WfsApi {
 	
 	public Void postCheckoutSuccess(CheckoutSuccess checkoutSuccess) {
 		return mApiInterface.postCheckoutSuccess(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), checkoutSuccess);
+	}
+
+	public OrdersResponse getOrders() {
+		return mApiInterface.getOrders(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken());
+	}
+
+	public OrderDetailsResponse getOrderDetails(String orderId) {
+		return mApiInterface.getOrderDetails(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), orderId);
+	}
+
+	public OrderToListReponse addOrderToList(String orderId, OrderToShoppingListRequestBody orderToShoppingListRequestBody) {
+		return mApiInterface.addOrderToList(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), orderId, orderToShoppingListRequestBody);
 	}
 
 	private String getOsVersion() {

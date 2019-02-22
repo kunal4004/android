@@ -152,7 +152,7 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 							List<ShoppingList> shoppingList = getGlobalState().getShoppingListRequest();
 							if (shoppingList != null) {
 								for (ShoppingList shopList : shoppingList) {
-									if (shopList.viewIsSelected) {
+									if (shopList.shoppingListRowWasSelected) {
 										newList.add(shopList);
 									}
 								}
