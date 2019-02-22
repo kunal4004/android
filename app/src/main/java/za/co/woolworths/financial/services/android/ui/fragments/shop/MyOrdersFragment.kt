@@ -63,7 +63,7 @@ class MyOrdersFragment : Fragment() {
         configureUI()
     }
 
-    private fun configureUI() {
+    fun configureUI() {
 
         if (SessionUtilities.getInstance().isUserAuthenticated()) {
             executeOrdersRequest()
@@ -108,6 +108,7 @@ class MyOrdersFragment : Fragment() {
         if (dataList.size > 0) {
             mErrorHandlerView?.hideEmpyState()
             myOrdersList.adapter = OrdersAdapter(activity, dataList)
+            myOrdersList.visibility = View.VISIBLE
         } else
             showEmptyOrdersView()
     }
@@ -115,7 +116,7 @@ class MyOrdersFragment : Fragment() {
 
     private fun executeOrdersRequest() {
         mErrorHandlerView?.hideEmpyState()
-        loadingBar.visibility = View.VISIBLE
+        showLoading()
         requestOrders().execute()
     }
 
@@ -132,13 +133,6 @@ class MyOrdersFragment : Fragment() {
             }
         }
         return dataList
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == ORDERS_LOGIN_REQUEST && resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
-            configureUI()
-        }
     }
 
     private fun requestOrders(): GetOrdersRequest {
@@ -168,5 +162,10 @@ class MyOrdersFragment : Fragment() {
 
         })
 
+    }
+
+    private fun showLoading() {
+        loadingBar.visibility = View.VISIBLE
+        myOrdersList.visibility = View.GONE
     }
 }

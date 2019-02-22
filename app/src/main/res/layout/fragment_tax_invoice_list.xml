@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,17 +8,32 @@
     android:paddingRight="@dimen/thirty_two_dp"
     tools:context="za.co.woolworths.financial.services.android.ui.fragments.shop.TaxInvoiceLIstFragment">
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
-        style="@style/my_orders_textview_style_1"
-        android:layout_marginTop="34dp"
-        android:letterSpacing="0.1"
-        android:text="@string/tax_invoices" />
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/taxInvoiceList"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/thirteen_dp"
-        android:clipToPadding="false" />
+        android:orientation="vertical">
 
-</LinearLayout>
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            style="@style/my_orders_textview_style_1"
+            android:layout_marginTop="34dp"
+            android:letterSpacing="0.1"
+            android:text="@string/tax_invoices" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/taxInvoiceList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/thirteen_dp"
+            android:clipToPadding="false" />
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/loadingBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_centerInParent="true"
+        android:indeterminateTint="@color/black"
+        android:visibility="invisible" />
+
+</RelativeLayout>

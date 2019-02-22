@@ -126,6 +126,7 @@ class AddOrderToCartAdapter(val context: Context, val listner: OnItemClick, var 
                 if (!item.isSelected) {
                     if (userShouldSetSuburb()) {
                         item.isSelected = false
+                        listner.openSetSuburbProcess()
                         return@OnClickListener
                     }
                 }
@@ -144,6 +145,11 @@ class AddOrderToCartAdapter(val context: Context, val listner: OnItemClick, var 
             itemView.llQuantity.setOnClickListener(View.OnClickListener {
                 if (enableClickEvent(item)) return@OnClickListener
                 if (!mAdapterIsClickable) return@OnClickListener
+                if (userShouldSetSuburb()) {
+                    listner.openSetSuburbProcess()
+                    return@OnClickListener
+                }
+                if (item.quantityInStock == 0) return@OnClickListener
 
                 if (item.quantityInStock == 0) return@OnClickListener
 
@@ -184,6 +190,7 @@ class AddOrderToCartAdapter(val context: Context, val listner: OnItemClick, var 
     interface OnItemClick {
         fun onItemSelectionChanged(dataList: ArrayList<OrderDetailsItem>)
         fun onQuantityUpdate(position: Int, quantityInStock: OrderHistoryCommerceItem)
+        fun openSetSuburbProcess()
     }
 
     fun getListItems(): ArrayList<OrderDetailsItem> {

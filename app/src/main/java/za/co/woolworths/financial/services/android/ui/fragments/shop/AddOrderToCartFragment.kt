@@ -22,11 +22,13 @@ import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.rest.product.GetInventorySkusForStore
 import za.co.woolworths.financial.services.android.models.rest.product.PostAddItemToCart
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity
+import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity
 import za.co.woolworths.financial.services.android.ui.adapters.AddOrderToCartAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.FragmentsEventsListner
 import za.co.woolworths.financial.services.android.util.MultiMap
 import za.co.woolworths.financial.services.android.util.OnEventListener
+import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
 
 
@@ -54,7 +56,7 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
     companion object {
         private val ARG_PARAM = "orderDetailsResponse"
         const val QUANTITY_CHANGED = 2019
-
+        const val REQUEST_SUBURB_CHANGE = 1550
         fun getInstance(orderDetailsResponse: OrderDetailsResponse) = AddOrderToCartFragment().withArgs {
             putString(ARG_PARAM, Utils.objectToJson(orderDetailsResponse))
         }
@@ -77,6 +79,7 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
     private fun initViews() {
         tvSelectAll = activity.findViewById(R.id.tvSelectAll)
         rvItemsToCart.layoutManager = LinearLayoutManager(activity) as RecyclerView.LayoutManager?
+        addToCartButton.isEnabled = isAnyItemSelected
         tvSelectAll?.setOnClickListener { onSelectAll() }
         addToCartButton.setOnClickListener { addItemsToCart() }
         setSelectAllTextVisibility(isSelectAllReadyToShow)
@@ -88,6 +91,15 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
         dataList = buildDataForOrderDetailsView(orderDetailsResponse!!)
         addOrderToCartAdapter = AddOrderToCartAdapter(activity, this, dataList)
         rvItemsToCart.adapter = addOrderToCartAdapter
+        makeInventoryCall()
+    }
+
+    fun makeInventoryCall() {
+        val shoppingDeliveryLocation = Utils.getPreferredDeliveryLocation()
+        if (shoppingDeliveryLocation == null) {
+            addOrderToCartAdapter?.adapterClickable(true)
+            return
+        }
         shoppingListInventory()
     }
 
@@ -167,10 +179,13 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
 
                 }
             }
+        } else if (requestCode == REQUEST_SUBURB_CHANGE && resultCode == RESULT_OK) {
+            makeInventoryCall()
         }
     }
 
     private fun shoppingListInventory(): Boolean {
+
 
         val multiListItem: MultiMap<String, OrderHistoryCommerceItem> = MultiMap.create()
         for (listItem in dataList) {
@@ -408,6 +423,12 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
         } else {
             throw ClassCastException(context.toString() + " must implement FragmentsEventsListner.")
         }
+    }
+
+    override fun openSetSuburbProcess() {
+        val openDeliveryLocationSelectionActivity = Intent(activity, DeliveryLocationSelectionActivity::class.java)
+        startActivityForResult(openDeliveryLocationSelectionActivity, REQUEST_SUBURB_CHANGE)
+        activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay)
     }
 
 }
