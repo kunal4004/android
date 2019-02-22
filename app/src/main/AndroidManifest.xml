@@ -364,8 +364,10 @@
 
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity"
-            android:windowSoftInputMode="adjustResize"
-            android:theme="@style/ABSAOnlineBankingToDeviceStyle" />
+            android:theme="@style/ABSAOnlineBankingToDeviceStyle"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize|stateAlwaysVisible"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>
