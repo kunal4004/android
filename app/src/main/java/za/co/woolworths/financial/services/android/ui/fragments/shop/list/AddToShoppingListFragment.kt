@@ -14,7 +14,6 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.add_to_list_content.*
-import kotlinx.android.synthetic.main.create_new_list.*
 import za.co.woolworths.financial.services.android.contracts.AsyncAPIResponse
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
@@ -38,7 +37,7 @@ class AddToShoppingListFragment : ShoppingListExtensionFragment(), View.OnClickL
     private var mShoppingListGroup: HashMap<String, ShoppingList>? = null
 
     private lateinit var mPostItemList: MutableList<String>
-    private lateinit var mAddToShoppingListAdapter: AddToShoppingListAdapter
+    private var mAddToShoppingListAdapter: AddToShoppingListAdapter? = null
 
     companion object {
         public const val POST_ADD_TO_SHOPPING_LIST = "POST_ADD_TO_SHOPPING_LIST"
@@ -158,14 +157,14 @@ class AddToShoppingListFragment : ShoppingListExtensionFragment(), View.OnClickL
     }
 
     private fun shoppingListItemClicked() {
-        mAddToShoppingListAdapter.notifyDataSetChanged()
+        mAddToShoppingListAdapter?.notifyDataSetChanged()
         btnPostShoppingList.text = if (shoppingListItemWasSelected()) getString(R.string.ok) else getString(R.string.cancel)
     }
 
     private fun shoppingListSelectedItemGroup(): HashMap<String, ShoppingList>? {
         val hmSelectedShoppingList = HashMap<String, ShoppingList>()
-        mAddToShoppingListAdapter.getShoppingList().apply {
-            forEach {
+        mAddToShoppingListAdapter?.getShoppingList().apply {
+            this?.forEach {
                 if (it.shoppingListRowWasSelected) {
                     hmSelectedShoppingList[it.listId] = it
                 }
@@ -272,8 +271,7 @@ class AddToShoppingListFragment : ShoppingListExtensionFragment(), View.OnClickL
                         }
                         else -> {
                             shoppingListPostProgress(false)
-                            tvOnErrorLabel.text = response.response?.desc ?: ""
-                            tvOnErrorLabel.visibility = VISIBLE
+                            showErrorDialog(response.response?.desc ?: "")
                         }
                     }
                     isPostingShoppingItem = false
