@@ -169,10 +169,10 @@ public class LocationTracker extends Service implements LocationListener{
             }
         });
 
-        // on pressing cancel button
+        // on pressing onDialogDismissed button
         alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
+                dialog.onDialogDismissed();
             }
         });
 

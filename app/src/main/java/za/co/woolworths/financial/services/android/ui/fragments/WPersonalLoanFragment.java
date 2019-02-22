@@ -173,7 +173,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
         llCommonLayer = (LinearLayout) view.findViewById(R.id.llCommonLayer);
         logoIncreaseLimit = (ImageView) view.findViewById(R.id.logoIncreaseLimit);
         llIncreaseLimitContainer = (LinearLayout) view.findViewById(R.id.llIncreaseLimitContainer);
-
         relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
         tvBPIProtectInsurance = view.findViewById(R.id.tvBPIProtectInsurance);
 

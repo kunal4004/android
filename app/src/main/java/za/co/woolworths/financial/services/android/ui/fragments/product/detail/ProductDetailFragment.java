@@ -39,6 +39,7 @@ import java.util.List;
 
 import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
+import za.co.woolworths.financial.services.android.contracts.ILocationProvider;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
@@ -108,7 +109,10 @@ import static za.co.woolworths.financial.services.android.ui.fragments.product.d
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.SuburbSelectionFragment.SUBURB_SET_RESULT;
 
 
-public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding, ProductDetailViewModel> implements ProductDetailNavigator, ProductViewPagerAdapter.MultipleImageInterface, View.OnClickListener, NetworkChangeListener, ToastUtils.ToastInterface {
+/**
+ * TODO:: ProductDetailFragment class must be deleted. It is still being used in other section of the app.
+ */
+public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding, ProductDetailViewModel> implements ProductDetailNavigator, ProductViewPagerAdapter.MultipleImageInterface, View.OnClickListener, NetworkChangeListener, ToastUtils.ToastInterface, ILocationProvider {
 
 	public static final int INDEX_STORE_FINDER = 1;
 	public static final int INDEX_ADD_TO_CART = 2;
@@ -957,22 +961,9 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
     @Override
     public void startLocationUpdates() {
-        Activity activity = getActivity();
-        if ((activity == null) || (mFuseLocationAPISingleton == null)) return;
-        if (!mFuseLocationAPISingleton.getLocationMode(activity)) {
-            mFuseLocationAPISingleton.detectDeviceOnlyGPSLocation(activity);
-            return;
-        }
         showFindInStoreProgress();
-        mFuseLocationAPISingleton.addOnLocationCompleteListener(new FuseLocationAPISingleton.OnLocationChangeCompleteListener() {
-            @Override
-            public void onLocationChanged(@NotNull Location location) {
-                stopLocationUpdate();
-                Utils.saveLastLocation(location, getContext());
-                executeLocationItemTask();
-            }
-        });
-        mFuseLocationAPISingleton.startLocationUpdate();
+        mFuseLocationAPISingleton.addLocationChangeListener(this);
+        mFuseLocationAPISingleton.startLocationUpdate(getActivity());
     }
 
     @Override
@@ -1752,6 +1743,18 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
+		// FuseLocationAPISingleton.kt : Change location method to High Accuracy confirmation dialog
+		if (requestCode == FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS) {
+			switch (resultCode) {
+				case Activity.RESULT_OK:
+					llStoreFinder.performClick();
+					break;
+
+				default:
+					dismissFindInStoreProgress();
+					break;
+			}
+		}
 
 		if (requestCode == SSOActivity.SSOActivityResult.LAUNCH.rawValue()) {
 			if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
@@ -1858,6 +1861,18 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
 	public String getFulFillmentType() {
 		return TextUtils.isEmpty(getViewModel().getProduct().fulfillmentType) ? null : getViewModel().getProduct().fulfillmentType;
+	}
+
+	@Override
+	public void onLocationChange(@NotNull Location location) {
+		stopLocationUpdate();
+		Utils.saveLastLocation(location, getContext());
+		executeLocationItemTask();
+	}
+
+	@Override
+	public void onPopUpLocationDialogMethod() {
+		dismissFindInStoreProgress();
 	}
 }
 

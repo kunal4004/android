@@ -350,6 +350,8 @@
             android:theme="@style/RuntimeExceptionActivityStyle" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize|stateAlwaysVisible"
             android:screenOrientation="portrait"
             android:theme="@style/OrderDetailsActivityStyle" />
         <activity
@@ -359,6 +361,11 @@
         <activity android:name="za.co.woolworths.financial.services.android.ui.activities.OrdersTaxInvoiceActivity"
             android:screenOrientation="portrait"
             android:theme="@style/TaxInvoiceActivityStyle"/>
+
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/ABSAOnlineBankingToDeviceStyle" />
     </application>
 
 </manifest>
