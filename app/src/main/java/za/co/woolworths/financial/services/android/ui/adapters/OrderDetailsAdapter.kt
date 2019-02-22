@@ -131,7 +131,7 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
                 commerceItem?.commerceItemInfo?.apply {
                     val listItem = AddToListRequest()
                     listItem.catalogRefId = catalogRefId
-                    listItem.skuID = catalogRefId
+                    listItem.skuID = productId
                     listItem.giftListId = catalogRefId
                     listItem.quantity = getQuantity().toString()
                     addToListRequest.add(listItem)
