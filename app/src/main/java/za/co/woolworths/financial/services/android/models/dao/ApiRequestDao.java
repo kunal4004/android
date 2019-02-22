@@ -1,13 +1,16 @@
 package za.co.woolworths.financial.services.android.models.dao;
 
+import android.util.Base64;
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
+import za.co.absa.openbankingapi.SymmetricCipher;
 import za.co.woolworths.financial.services.android.util.PersistenceLayer;
 
 /**
@@ -16,6 +19,7 @@ import za.co.woolworths.financial.services.android.util.PersistenceLayer;
 
 public class ApiRequestDao extends BaseDao {
     public static final String TAG = "ApiRequestDao";
+    public static final byte[] SYMMETRIC_KEY = "K7MZpM6owN0VIjRbwfN3Xw==".getBytes();
 
     String requestType = "";
     String endpoint = "";
@@ -43,8 +47,11 @@ public class ApiRequestDao extends BaseDao {
         String query = "SELECT * FROM ApiRequest WHERE endpoint=? AND requestType=? AND headers=? AND parameters=? AND dateExpires > datetime() ORDER BY id ASC LIMIT 1;";
         Map<String, String> result = new HashMap<>();
         try {
+            String headersEncrypted = Base64.encodeToString(SymmetricCipher.Aes256Encrypt(SYMMETRIC_KEY, _headers), Base64.DEFAULT);
+            String parametersEncrypted = Base64.encodeToString(SymmetricCipher.Aes256Encrypt(SYMMETRIC_KEY, _parameters), Base64.DEFAULT);
+
             result = PersistenceLayer.getInstance().executeReturnableQuery(query, new String[]{
-                    _endpoint, ("" + _requestType), _headers, _parameters
+                    _endpoint, ("" + _requestType), headersEncrypted, parametersEncrypted
             });
 
             if (result.size() == 0)
@@ -70,9 +77,21 @@ public class ApiRequestDao extends BaseDao {
             } else if (entry.getKey().equals("endpoint")) {
                 this.endpoint = entry.getValue();
             } else if (entry.getKey().equals("headers")) {
-                this.headers = entry.getValue();
+                try {
+                    String headersDecrypted = new String(SymmetricCipher.Aes256Decrypt(SYMMETRIC_KEY, Base64.decode(entry.getValue(), Base64.DEFAULT)), StandardCharsets.UTF_8);
+                    this.headers = headersDecrypted;
+                } catch (Exception e) {
+                    Log.d(TAG, e.getMessage());
+                    this.headers = _headers;
+                }
             } else if (entry.getKey().equals("parameters")) {
-                this.parameters = entry.getValue();
+                try {
+                    String parametersDecrypted = new String(SymmetricCipher.Aes256Decrypt(SYMMETRIC_KEY, Base64.decode(entry.getValue(), Base64.DEFAULT)), StandardCharsets.UTF_8);
+                    this.parameters = parametersDecrypted;
+                } catch (Exception e) {
+                    Log.d(TAG, e.getMessage());
+                    this.parameters = _parameters;
+                }
             }
         }
         return this;
@@ -94,11 +113,14 @@ public class ApiRequestDao extends BaseDao {
 
             Log.d(TAG, dateExpires);
 
+            String headersEncrypted = Base64.encodeToString(SymmetricCipher.Aes256Encrypt(SYMMETRIC_KEY, this.headers), Base64.DEFAULT);
+            String parametersEncrypted = Base64.encodeToString(SymmetricCipher.Aes256Encrypt(SYMMETRIC_KEY, this.parameters), Base64.DEFAULT);
+
             Map<String, String> arguments = new HashMap<>();
             arguments.put("endpoint", this.endpoint);
             arguments.put("requestType", "" + this.requestType);
-            arguments.put("headers", this.headers);
-            arguments.put("parameters", this.parameters);
+            arguments.put("headers", headersEncrypted);
+            arguments.put("parameters", parametersEncrypted);
             arguments.put("dateExpires", this.dateExpires);
 
             long rowid = PersistenceLayer.getInstance().executeInsertQuery(getTableName(), arguments);

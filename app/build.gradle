@@ -6,15 +6,15 @@ apply plugin: 'io.fabric'
 android {
 
     def major = "5"
-    def minor = "9"
-    def fix = "3"
+    def minor = "10"
+    def fix = "0"
 
     //placeholder will be temporarily updated by build server during a build.
     //check appcenter-pre-build.sh
     def BUILD_NUMBER = "{BUILD_NUMBER}"
 
     if (!BUILD_NUMBER.isNumber()){
-        BUILD_NUMBER = "92"
+        BUILD_NUMBER = "96"
     }
 
     dataBinding {
@@ -88,7 +88,7 @@ android {
             applicationId "com.awfs.coordination.qa"
             signingConfig signingConfigs.woneappQa
             buildConfigField("String", "HOST", '"http://wfs-appserver-qa.wigroup.co:8080/wfs/app/v4"')
-            buildConfigField("String", "SHA1", '"ec59f22c0c4774d392122c9b26b6ae48d19634b1"')
+            buildConfigField("String", "SHA1", '"68826b286ece905ed633d1367a0d0a9cbbe74be0"')
         }
 
         staging {
@@ -162,8 +162,10 @@ dependencies {
     implementation 'com.squareup.retrofit:retrofit:1.9.0'
     implementation 'com.squareup.okhttp3:okhttp:3.9.1'
     implementation 'com.jakewharton.retrofit:retrofit1-okhttp3-client:1.1.0'
-    implementation 'za.co.wigroup.android:utils:1.1.8'
-    implementation 'za.co.wigroup.android:Logger:1'
+
+    implementation(name:'utils-1.1.8', ext:'aar')
+    implementation(name:'Logger-1', ext:'aar')
+
     implementation 'io.jsonwebtoken:jjwt:0.7.0'
     implementation 'uk.co.chrisjenx:calligraphy:2.2.0'
     implementation 'me.leolin:ShortcutBadger:1.1.22@aar'
@@ -178,6 +180,8 @@ dependencies {
     compile 'com.github.deano2390:MaterialShowcaseView:1.2.0'
     compile 'com.daasuu:BubbleLayout:1.2.0'
     implementation 'com.google.code.gson:gson:2.8.0'
+
+    compile 'com.android.volley:volley:1.1.1'
 
     //
     testImplementation 'junit:junit:4.12'
