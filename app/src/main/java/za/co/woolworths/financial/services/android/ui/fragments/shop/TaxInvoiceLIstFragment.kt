@@ -116,9 +116,13 @@ class TaxInvoiceLIstFragment : Fragment(), TaxInvoiceAdapter.OnItemClick, Permis
     }
 
     fun buildTaxInvoicePDF(data: String) {
-        var getFilePathAndStatus: GetFilePathAndStatus = getFileFromBase64AndSaveInSDCard(data, selectedInvoiceNumber!!, "pdf")
+        var filePathAndStatus: GetFilePathAndStatus = getFileFromBase64AndSaveInSDCard(data, orderId + "_" + selectedInvoiceNumber!!, "pdf")
+        if (filePathAndStatus.filStatus && File(filePathAndStatus.filePath).exists()) showTAxInvoice(filePathAndStatus.filePath!!) else return
+    }
+
+    private fun showTAxInvoice(filePath: String) {
         var intent: Intent = Intent(activity, OrdersTaxInvoiceActivity::class.java)
-        intent.putExtra("filePath", getFilePathAndStatus.filePath)
+        intent.putExtra("filePath", filePath)
         intent.putExtra("orderId", orderId)
         activity.startActivity(intent)
     }
@@ -145,7 +149,7 @@ class TaxInvoiceLIstFragment : Fragment(), TaxInvoiceAdapter.OnItemClick, Permis
     }
 
     fun getReportPath(filename: String, extension: String): String {
-        val file = File(Environment.getExternalStorageDirectory().getPath(), "ParentFolder/Report")
+        val file = File(Environment.getExternalStorageDirectory().getPath(), "Woolworths/TaxInvoice")
         if (!file.exists()) {
             file.mkdirs()
         }
