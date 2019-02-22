@@ -860,4 +860,5 @@
     <string name="absa_success_title">Thanks, %1$s</string>
     <string name="absa_success_desc">Your Online Banking has been successfully linked</string>
     <string name="online_banking">Online Banking</string>
+    <string name="absa_passcode">Enter Passcode</string>
 </resources>
