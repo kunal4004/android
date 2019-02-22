@@ -241,7 +241,7 @@
         android:layout_height="@dimen/seventy_five_dp">
 
         <za.co.woolworths.financial.services.android.ui.views.WButton
-            android:id="@+id/btnCancel"
+            android:id="@+id/btnPostShoppingList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/custom_bg"

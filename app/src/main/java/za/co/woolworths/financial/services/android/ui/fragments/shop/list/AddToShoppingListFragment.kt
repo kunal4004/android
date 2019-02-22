@@ -12,9 +12,9 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.Toast
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.add_to_list_content.*
+import kotlinx.android.synthetic.main.create_new_list.*
 import za.co.woolworths.financial.services.android.contracts.AsyncAPIResponse
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
@@ -27,6 +27,7 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsR
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostAddToShoppingList
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
+import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.ShoppingListToastNavigation
 import za.co.woolworths.financial.services.android.util.*
 
 class AddToShoppingListFragment : ShoppingListExtensionFragment(), View.OnClickListener {
@@ -34,13 +35,13 @@ class AddToShoppingListFragment : ShoppingListExtensionFragment(), View.OnClickL
     private var mAddToListArgs: String? = null
     private var isRetrievingShoppingItem = false
     private var isPostingShoppingItem = false
-    private var mShoppingListGroup: HashMap<String, Boolean>? = null
+    private var mShoppingListGroup: HashMap<String, ShoppingList>? = null
 
     private lateinit var mPostItemList: MutableList<String>
     private lateinit var mAddToShoppingListAdapter: AddToShoppingListAdapter
 
     companion object {
-        private const val POST_ADD_TO_SHOPPING_LIST = "POST_ADD_TO_SHOPPING_LIST"
+        public const val POST_ADD_TO_SHOPPING_LIST = "POST_ADD_TO_SHOPPING_LIST"
         fun newInstance(postListRequest: String?) = AddToShoppingListFragment().apply {
             arguments = Bundle(1).apply {
                 putString(POST_ADD_TO_SHOPPING_LIST, postListRequest)
@@ -68,7 +69,7 @@ class AddToShoppingListFragment : ShoppingListExtensionFragment(), View.OnClickL
     }
 
     private fun setListener() {
-        btnCancel.setOnClickListener(this)
+        btnPostShoppingList.setOnClickListener(this)
         btnRetry.setOnClickListener(this)
         imCreateList.setOnClickListener(this)
     }
@@ -114,8 +115,11 @@ class AddToShoppingListFragment : ShoppingListExtensionFragment(), View.OnClickL
             }
 
             override fun onFailure(errorMessage: String) {
-                loadShoppingList(false)
-
+                activity?.let {
+                    it.runOnUiThread {
+                        loadShoppingList(false)
+                    }
+                }
             }
         }).execute()
     }
@@ -155,15 +159,15 @@ class AddToShoppingListFragment : ShoppingListExtensionFragment(), View.OnClickL
 
     private fun shoppingListItemClicked() {
         mAddToShoppingListAdapter.notifyDataSetChanged()
-        btnCancel.text = if (shoppingListItemWasSelected()) getString(R.string.ok) else getString(R.string.cancel)
+        btnPostShoppingList.text = if (shoppingListItemWasSelected()) getString(R.string.ok) else getString(R.string.cancel)
     }
 
-    private fun shoppingListSelectedItemGroup(): HashMap<String, Boolean>? {
-        val hmSelectedShoppingList = HashMap<String, Boolean>()
+    private fun shoppingListSelectedItemGroup(): HashMap<String, ShoppingList>? {
+        val hmSelectedShoppingList = HashMap<String, ShoppingList>()
         mAddToShoppingListAdapter.getShoppingList().apply {
             forEach {
                 if (it.shoppingListRowWasSelected) {
-                    hmSelectedShoppingList[it.listId] = false
+                    hmSelectedShoppingList[it.listId] = it
                 }
             }
         }
@@ -174,7 +178,7 @@ class AddToShoppingListFragment : ShoppingListExtensionFragment(), View.OnClickL
 
     override fun onClick(view: View?) {
         when (view?.id) {
-            R.id.btnCancel -> {
+            R.id.btnPostShoppingList -> {
                 if (shoppingListItemWasSelected()) {
                     // contain selected item
                     buildShoppingListRequest()
@@ -205,7 +209,7 @@ class AddToShoppingListFragment : ShoppingListExtensionFragment(), View.OnClickL
         val constructAddToListRequest = convertStringToObject(mAddToListArgs)
         mShoppingListGroup?.forEach { (key, valueWasPosted) ->
             constructAddToListRequest.forEach { it.listId = key }
-            if (!valueWasPosted)
+            if (!valueWasPosted.wasSentToServer)
                 postToShoppingList(constructAddToListRequest, key)
         }
     }
@@ -243,10 +247,19 @@ class AddToShoppingListFragment : ShoppingListExtensionFragment(), View.OnClickL
                         200 -> {
                             mShoppingListGroup?.apply {
                                 // Will replace the value of an existing key and will create it if doesn't exist
-                                listId?.let { put(it, true) }
+                                val shopList = get(listId)
+                                shopList!!.wasSentToServer = true
+                                listId?.let { put(it, shopList) }
 
                                 //Check all values are true, implying that all request was sent
-                                if (false !in values) {
+                                var allRequestPostToServer = true
+                                values.forEach {
+                                    if (!it.wasSentToServer) {
+                                        allRequestPostToServer = false
+                                    }
+                                }
+
+                                if (allRequestPostToServer) {
                                     shoppingListPostProgress(false)
                                     showShoppingListSuccessToast()
                                 }
@@ -259,7 +272,8 @@ class AddToShoppingListFragment : ShoppingListExtensionFragment(), View.OnClickL
                         }
                         else -> {
                             shoppingListPostProgress(false)
-                            showErrorDialog(this.response?.desc!!)
+                            tvOnErrorLabel.text = response.response?.desc ?: ""
+                            tvOnErrorLabel.visibility = VISIBLE
                         }
                     }
                     isPostingShoppingItem = false
@@ -275,9 +289,7 @@ class AddToShoppingListFragment : ShoppingListExtensionFragment(), View.OnClickL
     }
 
     private fun showShoppingListSuccessToast() {
-        Toast.makeText(activity, "TODO(implement smooth dismiss animation + toast)", Toast.LENGTH_SHORT).show()
-        activity?.finish()
-        activity?.overridePendingTransition(0, 0)
+        ShoppingListToastNavigation.requestToastOnNavigateBack(activity, POST_ADD_TO_SHOPPING_LIST, mShoppingListGroup)
     }
 
     private fun navigateToCreateShoppingListFragment(state: Boolean) {

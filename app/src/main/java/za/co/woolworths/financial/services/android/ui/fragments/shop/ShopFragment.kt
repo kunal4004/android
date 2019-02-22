@@ -139,4 +139,8 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
     override fun onStartShopping() {
         viewpager_main.setCurrentItem(0, true)
     }
+
+    fun navigateToMyListFragment() {
+        viewpager_main.setCurrentItem(1, true)
+    }
 }

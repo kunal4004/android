@@ -27,7 +27,6 @@ import za.co.woolworths.financial.services.android.models.rest.shoppinglist.Post
 import za.co.woolworths.financial.services.android.util.ConnectionBroadcastReceiver
 import za.co.woolworths.financial.services.android.util.NetworkManager
 
-
 class AddToListFragment : Fragment(), View.OnClickListener {
 
     private var mAddToListArgs: String? = null
@@ -64,7 +63,7 @@ class AddToListFragment : Fragment(), View.OnClickListener {
     }
 
     private fun setListener() {
-        btnCancel.setOnClickListener(this)
+        btnPostShoppingList.setOnClickListener(this)
         btnRetry.setOnClickListener(this)
         imCreateList.setOnClickListener(this)
     }
@@ -140,7 +139,7 @@ class AddToListFragment : Fragment(), View.OnClickListener {
 
     private fun shoppingListItemClicked() {
         mAddToShoppingListAdapter.notifyDataSetChanged()
-        btnCancel.text = if (shoppingListItemWasSelected()) getString(R.string.ok) else getString(R.string.cancel)
+        btnPostShoppingList.text = if (shoppingListItemWasSelected()) getString(R.string.ok) else getString(R.string.cancel)
     }
 
     private fun shoppingListSelectedItemGroup(): HashMap<String, Boolean>? {
@@ -203,7 +202,7 @@ class AddToListFragment : Fragment(), View.OnClickListener {
     }
 
     private fun shoppingListPostProgress(state: Boolean) {
-        btnCancel.isEnabled = !state
+        btnPostShoppingList.isEnabled = !state
         rclAddToList.isEnabled = !state
         pbAddToList.visibility = if (state) VISIBLE else GONE
     }

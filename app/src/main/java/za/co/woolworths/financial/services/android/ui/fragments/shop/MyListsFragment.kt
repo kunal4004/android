@@ -27,6 +27,7 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.DeleteShoppingLists
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
+import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.ShoppingListExtensionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsFragment
@@ -172,7 +173,7 @@ class MyListsFragment : ShoppingListExtensionFragment(), View.OnClickListener, I
             val intentAddToList = Intent(this, AddToShoppingListActivity::class.java)
             intentAddToList.putExtra("addToListRequest", Gson().toJson(commerceItemList))
             intentAddToList.putExtra("shouldDisplayCreateList", true)
-            startActivity(intentAddToList)
+            startActivityForResult(intentAddToList, ADD_TO_SHOPPING_LIST_REQUEST_CODE)
             overridePendingTransition(0, 0)
         }
     }

@@ -26,6 +26,13 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.Fragm
 
 class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick {
 
+    companion object {
+        private val ARG_PARAM = "order"
+        fun getInstance(order: Order) = OrderDetailsFragment().withArgs {
+            putSerializable(ARG_PARAM, order)
+        }
+    }
+
     private var dataList = arrayListOf<OrderDetailsItem>()
     private var order: Order? = null
     private var orderDetailsResponse: OrderDetailsResponse? = null
@@ -35,14 +42,6 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.order_details_fragment, container, false)
-    }
-
-    companion object {
-        private val ARG_PARAM = "order"
-
-        fun getInstance(order: Order) = OrderDetailsFragment().withArgs {
-            putSerializable(ARG_PARAM, order)
-        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -131,7 +130,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick {
             val intentAddToList = Intent(this, AddToShoppingListActivity::class.java)
             intentAddToList.putExtra("addToListRequest", Gson().toJson(commerceItemList))
             intentAddToList.putExtra("shouldDisplayCreateList", false)
-            startActivity(intentAddToList)
+            startActivityForResult(intentAddToList, AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_REQUEST_CODE)
             overridePendingTransition(0, 0)
         }
     }

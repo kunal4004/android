@@ -12,6 +12,9 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class AddToShoppingListActivity : AppCompatActivity(), SingleButtonDialogFragment.DialogListener {
 
+    companion object {
+        const val ADD_TO_SHOPPING_LIST_REQUEST_CODE = 1209
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.add_to_shopping_list_activity)
@@ -45,9 +48,8 @@ class AddToShoppingListActivity : AppCompatActivity(), SingleButtonDialogFragmen
     override fun onDismissListener() {
         var fm = supportFragmentManager?.findFragmentById(R.id.flShoppingListContainer)
         when (fm) {
-            is AddToShoppingListFragment -> {
-                (fm as? AddToShoppingListFragment)?.closeFragment()
-            }
+            is AddToShoppingListFragment -> (fm as? AddToShoppingListFragment)?.closeFragment()
+
             is CreateShoppingListFragment -> {
 
             }
