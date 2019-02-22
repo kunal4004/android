@@ -1,13 +1,17 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop.list
 
 import android.os.Bundle
+import android.support.v4.app.FragmentActivity
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.widget.TextView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.create_new_list.*
 import za.co.woolworths.financial.services.android.contracts.AsyncAPIResponse
@@ -88,6 +92,16 @@ class CreateShoppingListFragment : ShoppingListExtensionFragment(), View.OnClick
         imBack.setOnClickListener(this)
         imCloseIcon.setOnClickListener(this)
         btnCancel.setOnClickListener(this)
+        etNewList.setOnEditorActionListener(object : TextView.OnEditorActionListener {
+            override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
+                if ((actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_DONE || event?.action == KeyEvent.ACTION_DOWN && event.keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    activity?.beginCreateListExecution()
+                } else {
+
+                }
+                return true
+            }
+        })
     }
 
     private fun textChangeListener() {
@@ -146,19 +160,23 @@ class CreateShoppingListFragment : ShoppingListExtensionFragment(), View.OnClick
                 }
 
                 R.id.btnCancel -> {
-                    val listName = etNewList.text.toString()
-                    if (listName.isNotEmpty()) {
-                        showKeyboard(etNewList)
-                        if (NetworkManager.getInstance().isConnectedToNetwork(this)) {
-                            createShoppingListRequest()
-                        } else {
-                            ErrorHandlerView(this).showToast()
-                        }
-                    } else {
-                        onBackPressed()
-                    }
+                    activity?.beginCreateListExecution()
                 }
             }
+        }
+    }
+
+    private fun FragmentActivity.beginCreateListExecution() {
+        val listName = etNewList.text.toString()
+        if (listName.isNotEmpty()) {
+            showKeyboard(etNewList)
+            if (NetworkManager.getInstance().isConnectedToNetwork(this)) {
+                createShoppingListRequest()
+            } else {
+                ErrorHandlerView(this).showToast()
+            }
+        } else {
+            onBackPressed()
         }
     }
 
@@ -283,6 +301,5 @@ class CreateShoppingListFragment : ShoppingListExtensionFragment(), View.OnClick
             ShoppingListToastNavigation.requestToastOnNavigateBack(activity, AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST, mShoppingListGroup)
         else
             ShoppingListToastNavigation.displayBottomNavigationToast(activity, AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST, mShoppingListGroup)
-
     }
 }
