@@ -68,7 +68,6 @@ import za.co.woolworths.financial.services.android.ui.views.NestedScrollableView
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton;
 import za.co.woolworths.financial.services.android.util.KeyboardUtil;
@@ -89,7 +88,6 @@ import za.co.woolworths.financial.services.android.util.nav.tabhistory.FragNavTa
 
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT;
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT_TEMP;
-import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_DIALOG_TAPPED;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SHOW_ADDED_TO_SHOPPING_LIST_TOAST;
 import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.RESULT_TAP_FIND_INSTORE_BTN;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
@@ -391,13 +389,13 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 							}
 							List<ShoppingList> newList = new ArrayList<>();
 							List<ShoppingList> shoppingList = getGlobalState().getShoppingListRequest();
-							if (shoppingList != null) {
+							/*if (shoppingList != null) {
 								for (ShoppingList shopList : shoppingList) {
 									if (shopList.viewIsSelected) {
 										newList.add(shopList);
 									}
 								}
-							}
+							}*/
 							int shoppingListSize = newList.size();
 							if (shoppingListSize == 1) {
 								hideBottomNavigationMenu();
