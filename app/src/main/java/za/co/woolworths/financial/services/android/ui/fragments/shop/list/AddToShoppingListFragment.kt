@@ -232,7 +232,7 @@ class AddToShoppingListFragment : ShoppingListExtensionFragment(), View.OnClickL
     }
 
     private fun shoppingListPostProgress(state: Boolean) {
-        btnCancel.isEnabled = !state
+        btnPostShoppingList.isEnabled = !state
         rclAddToList.isEnabled = !state
         pbAddToList.visibility = if (state) VISIBLE else GONE
     }
