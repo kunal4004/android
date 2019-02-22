@@ -4,6 +4,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.shop
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.view.ViewPager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,6 +32,7 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
     private var permissionUtils: PermissionUtils? = null
     var permissions: ArrayList<String> = arrayListOf()
     var bottomNavigationActivity: BottomNavigationActivity? = null
+    var shopPagerAdapter: ShopPagerAdapter? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -48,7 +50,22 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
         mTabTitle = mutableListOf(resources.getString(R.string.shop_department_title_department),
                 resources.getString(R.string.shop_department_title_list),
                 resources.getString(R.string.shop_department_title_order))
-        viewpager_main.adapter = ShopPagerAdapter(fragmentManager, mTabTitle, this)
+        shopPagerAdapter = ShopPagerAdapter(fragmentManager, mTabTitle, this)
+        viewpager_main.adapter = shopPagerAdapter
+        viewpager_main.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+
+            override fun onPageScrollStateChanged(state: Int) {
+            }
+
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+
+            }
+
+            override fun onPageSelected(position: Int) {
+                shopPagerAdapter?.notifyDataSetChanged()
+            }
+
+        })
         tabs_main.setupWithViewPager(viewpager_main)
         setupTabIcons(0)
     }
@@ -129,9 +146,8 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
                 myListsFragment?.authenticateUser()
             }
             2 -> {
-                // TODO:: Refresh my order sign in
-                //                        val myListsFragment = viewpager_main.adapter?.instantiateItem(viewpager_main, viewpager_main.currentItem) as? MyOrdersFragment
-                //                        myListsFragment?.authenticateUser()
+                val myOrdersFragment = viewpager_main.adapter?.instantiateItem(viewpager_main, viewpager_main.currentItem) as? MyOrdersFragment
+                myOrdersFragment?.configureUI()
             }
         }
     }

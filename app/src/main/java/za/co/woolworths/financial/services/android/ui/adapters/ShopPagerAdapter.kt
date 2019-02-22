@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.adapters
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
+import android.support.v4.view.PagerAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.shop.DepartmentsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.MyListsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.MyOrdersFragment
@@ -32,5 +33,9 @@ class ShopPagerAdapter(fm: FragmentManager, tabTitle: MutableList<String>?, var 
                 return mTabTitle!![2]
             }
         }
+    }
+
+    override fun getItemPosition(`object`: Any?): Int {
+        return PagerAdapter.POSITION_NONE
     }
 }

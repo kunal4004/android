@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.tax_invoice_list_item.view.*
 
-class TaxInvoiceAdapter(var taxNoteNumbers: ArrayList<String>?) : RecyclerView.Adapter<TaxInvoiceAdapter.ViewHolder>() {
+class TaxInvoiceAdapter(var taxNoteNumbers: ArrayList<String>?, val listner: OnItemClick) : RecyclerView.Adapter<TaxInvoiceAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaxInvoiceAdapter.ViewHolder {
         val v: View = LayoutInflater.from(parent.context).inflate(R.layout.tax_invoice_list_item, parent, false)
@@ -16,7 +16,7 @@ class TaxInvoiceAdapter(var taxNoteNumbers: ArrayList<String>?) : RecyclerView.A
 
     override fun onBindViewHolder(holder: TaxInvoiceAdapter.ViewHolder, position: Int) {
         val taxNumber = taxNoteNumbers?.get(position)
-        holder.bindText(taxNumber!!)
+        holder.bindText(taxNumber!!, listner)
     }
 
     override fun getItemCount(): Int {
@@ -24,11 +24,15 @@ class TaxInvoiceAdapter(var taxNoteNumbers: ArrayList<String>?) : RecyclerView.A
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bindText(taxNumber: String) {
+        fun bindText(taxNumber: String, listner: OnItemClick) {
             itemView.taxNumber.text = taxNumber
-            itemView.setOnClickListener { }
+            itemView.setOnClickListener { listner.onItemSelection(taxNumber) }
         }
 
+    }
+
+    interface OnItemClick {
+        fun onItemSelection(taxNumber: String)
     }
 
 }
