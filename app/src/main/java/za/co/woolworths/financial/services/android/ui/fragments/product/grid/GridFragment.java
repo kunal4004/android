@@ -35,7 +35,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
@@ -43,24 +42,17 @@ import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
 import za.co.woolworths.financial.services.android.models.dto.RefinementNavigation;
 import za.co.woolworths.financial.services.android.models.dto.Response;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.dto.SortOption;
-import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.refine.ProductsRefineActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewListAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.SortOptionsAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.ShoppingListFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsFragment;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.Utils;
-
-import static za.co.woolworths.financial.services.android.models.service.event.ProductState.OPEN_GET_LIST_SCREEN;
 
 public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel> implements GridNavigator, View.OnClickListener,SortOptionsAdapter.OnSortOptionSelected, WMaterialShowcaseView.IWalkthroughActionListener {
 
@@ -140,50 +132,6 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 		getViewDataBinding().incNoConnectionHandler.btnRetry.setOnClickListener(this);
 		getViewDataBinding().sortAndRefineLayout.refineProducts.setOnClickListener(this);
         getViewDataBinding().sortAndRefineLayout.sortProducts.setOnClickListener(this);
-
-		observableOn(new Consumer() {
-			@Override
-			public void accept(Object object) throws Exception {
-				if (object instanceof ProductState) {
-					ProductState productState = (ProductState) object;
-					switch (productState.getState()) {
-						case OPEN_GET_LIST_SCREEN:
-							List<ShoppingList> newList = new ArrayList<>();
-							List<ShoppingList> shoppingList = getGlobalState().getShoppingListRequest();
-							if (shoppingList != null) {
-								for (ShoppingList shopList : shoppingList) {
-									if (shopList.shoppingListRowWasSelected) {
-										newList.add(shopList);
-									}
-								}
-							}
-							int shoppingListSize = newList.size();
-							if (shoppingListSize == 1) {
-								getBottomNavigator().hideBottomNavigationMenu();
-								ShoppingList shop = newList.get(0);
-								Bundle bundle = new Bundle();
-								bundle.putString("listId", shop.listId);
-								bundle.putString("listName", shop.listName);
-								ShoppingListItemsFragment shoppingListItemsFragment = new ShoppingListItemsFragment();
-								shoppingListItemsFragment.setArguments(bundle);
-								pushFragmentSlideUp(shoppingListItemsFragment);
-							} else if (shoppingListSize > 1) {
-								Bundle bundle = new Bundle();
-								ShoppingListsResponse shoppingListsResponse = new ShoppingListsResponse();
-								bundle.putString("ShoppingList", Utils.objectToJson(shoppingListsResponse));
-								ShoppingListFragment shoppingListFragment = new ShoppingListFragment();
-								shoppingListFragment.setArguments(bundle);
-								pushFragmentSlideUp(shoppingListFragment);
-							}
-
-							break;
-
-						default:
-							break;
-					}
-				}
-			}
-		});
 	}
 
 	@Override
