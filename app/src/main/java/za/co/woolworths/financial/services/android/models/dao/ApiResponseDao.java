@@ -1,13 +1,16 @@
 package za.co.woolworths.financial.services.android.models.dao;
 
+import android.util.Base64;
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
+import za.co.absa.openbankingapi.SymmetricCipher;
 import za.co.woolworths.financial.services.android.util.PersistenceLayer;
 
 /**
@@ -66,9 +69,19 @@ public class ApiResponseDao extends BaseDao {
             } else if (entry.getKey().equals("message")) {
                 this.message = entry.getValue();
             } else if (entry.getKey().equals("body")) {
-                this.body = entry.getValue();
+                try {
+                    String bodyDecrypted = new String(SymmetricCipher.Aes256Decrypt(ApiRequestDao.SYMMETRIC_KEY, Base64.decode(entry.getValue(), Base64.DEFAULT)), StandardCharsets.UTF_8);
+                    this.body = bodyDecrypted;
+                } catch (Exception e) {
+                    Log.d(TAG, e.getMessage());
+                }
             } else if (entry.getKey().equals("headers")) {
-                this.headers = entry.getValue();
+                try {
+                    String headersDecrypted = new String(SymmetricCipher.Aes256Decrypt(ApiRequestDao.SYMMETRIC_KEY, Base64.decode(entry.getValue(), Base64.DEFAULT)), StandardCharsets.UTF_8);
+                    this.headers = headersDecrypted;
+                } catch (Exception e) {
+                    Log.d(TAG, e.getMessage());
+                }
             } else if (entry.getKey().equals("contentType")) {
                 this.contentType = entry.getValue();
             }
@@ -81,14 +94,17 @@ public class ApiResponseDao extends BaseDao {
         //ApiRequest will never be updated, only new records will be inserted.
         try {
 
+            String headersEncrypted = Base64.encodeToString(SymmetricCipher.Aes256Encrypt(ApiRequestDao.SYMMETRIC_KEY, this.headers), Base64.DEFAULT);
+            String bodyEncrypted = Base64.encodeToString(SymmetricCipher.Aes256Encrypt(ApiRequestDao.SYMMETRIC_KEY, this.body), Base64.DEFAULT);
+
             Map<String, String> arguments = new HashMap<>();
             arguments.put("apiRequestId", this.apiRequestId);
             arguments.put("responseHandler", "-1");
             arguments.put("code", "" + this.code);
             arguments.put("message", this.message);
             arguments.put("contentType", this.contentType);
-            arguments.put("headers", this.headers);
-            arguments.put("body", this.body);
+            arguments.put("headers", headersEncrypted);
+            arguments.put("body", bodyEncrypted);
             long rowid = PersistenceLayer.getInstance().executeInsertQuery(getTableName(), arguments);
             this.id = "" + rowid;
         } catch (Exception e) {

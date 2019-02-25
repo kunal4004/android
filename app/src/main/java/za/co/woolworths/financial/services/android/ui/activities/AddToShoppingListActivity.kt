@@ -10,13 +10,13 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.add_to_shopping_list_activity.*
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.ANIM_DOWN_DURATION
 import za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity.Companion.ORDER_ID
+import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.CreateShoppingListFragment
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
-class AddToShoppingListActivity : AppCompatActivity(), SingleButtonDialogFragment.DialogListener {
+class AddToShoppingListActivity : AppCompatActivity(), IDialogListener {
 
     private var mPopEnterAnimation: Animation? = null
     private var exitAnimationHasStarted: Boolean = false
@@ -58,7 +58,7 @@ class AddToShoppingListActivity : AppCompatActivity(), SingleButtonDialogFragmen
 
     }
 
-    override fun onDismissListener() {
+    override fun onDialogDismissed() {
         var fm = supportFragmentManager?.findFragmentById(R.id.flShoppingListContainer)
         when (fm) {
             is AddToShoppingListFragment -> (fm as? AddToShoppingListFragment)?.closeFragment()

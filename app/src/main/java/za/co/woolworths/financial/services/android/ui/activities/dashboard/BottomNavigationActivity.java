@@ -77,6 +77,7 @@ import za.co.woolworths.financial.services.android.ui.views.ToastFactory;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
+import za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton;
 import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
@@ -893,8 +894,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         Fragment fragment = getCurrentFragment();
         if (fragment instanceof StoresNearbyFragment1) {
             fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        } else if (fragment instanceof ShopFragment) {
-            fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
 
         // redirects to utils
@@ -921,9 +920,15 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             return;
         }
 
-/***
- * Navigate to list name view on view clicked from cart toast
- */
+        // FuseLocationAPISingleton.kt : Change location method to High Accuracy confirmation dialog
+        if (requestCode == FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS) {
+            getCurrentFragment().onActivityResult(requestCode, resultCode, data);
+            return;
+        }
+
+        /***
+         * Navigate to list name view on view clicked from cart toast
+         */
         if (resultCode == MOVE_TO_LIST_ON_TOAST_VIEW_CLICKED) {
             if (data != null) {
                 Bundle bundle = data.getExtras();
@@ -1302,14 +1307,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mQueryBadgeCounter == null) return;
-        mQueryBadgeCounter.deleteObserver(this);
-        mQueryBadgeCounter.cancelCounterRequest();
-    }
-
-    @Override
     public void onToastButtonClicked(@Nullable JsonElement jsonElement) {
         switchToShoppingListTab(jsonElement);
     }
@@ -1339,5 +1336,13 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 }
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mQueryBadgeCounter == null) return;
+        mQueryBadgeCounter.deleteObserver(this);
+        mQueryBadgeCounter.cancelCounterRequest();
     }
 }

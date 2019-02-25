@@ -1242,11 +1242,12 @@
     <!-- Define your custom dialog theme here extending from base -->
 
     <style name="AppDialogTheme" parent="Theme.AppCompat.Light.Dialog">
-        <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowNoTitle">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
         <item name="android:windowFullscreen">false</item>
         <item name="android:windowIsFloating">false</item>
         <item name="android:windowCloseOnTouchOutside">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
     </style>
 
     <style name="black_circle_with_number">
