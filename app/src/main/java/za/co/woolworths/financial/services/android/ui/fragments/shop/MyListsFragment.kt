@@ -269,4 +269,9 @@ class MyListsFragment : ShoppingListExtensionFragment(), View.OnClickListener, I
         (activity as? BottomNavigationActivity)?.pushFragment(shoppingListItemsFragment)
     }
 
+    fun scrollToTop() {
+        if (nested_scrollview != null)
+            nested_scrollview.scrollTo(0, 0)
+    }
+
 }

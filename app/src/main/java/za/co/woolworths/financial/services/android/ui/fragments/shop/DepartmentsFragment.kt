@@ -112,4 +112,9 @@ class DepartmentsFragment : Fragment() {
             }
         }
     }
+
+    fun scrollToTop() {
+        if (rclDepartment != null)
+            rclDepartment.scrollToPosition(0)
+    }
 }
