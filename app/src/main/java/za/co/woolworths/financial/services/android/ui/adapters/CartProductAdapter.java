@@ -377,7 +377,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                         addToListRequests.add(listItem);
                     }
                     NavigateToShoppingList navigateToShoppingList = new NavigateToShoppingList();
-                    navigateToShoppingList.openShoppingList(mContext, addToListRequests, "", false);
+                    navigateToShoppingList.openShoppingList(mContext,addToListRequests,"",false);
                 }
             });
         }
