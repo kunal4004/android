@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.shop.list
 
 import android.os.Bundle
 import android.support.v4.app.FragmentActivity
+import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.KeyEvent
@@ -15,23 +16,28 @@ import android.widget.TextView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.create_new_list.*
 import za.co.woolworths.financial.services.android.contracts.AsyncAPIResponse
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.CreateShoppingList
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostAddToShoppingList
-import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.ShoppingListToastNavigation
-import za.co.woolworths.financial.services.android.util.ErrorHandlerView
-import za.co.woolworths.financial.services.android.util.HttpAsyncTask
-import za.co.woolworths.financial.services.android.util.NetworkManager
+import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostOrderToShoppingList
+import za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity
+import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
+import za.co.woolworths.financial.services.android.util.*
 import java.util.HashMap
 
 class CreateShoppingListFragment : ShoppingListExtensionFragment(), View.OnClickListener {
 
     private var mShoppingListGroup: HashMap<String, ShoppingList>? = null
     private var mAddToListRequest: MutableList<AddToListRequest>? = null
-    private var isPostingShoppingItem: Boolean? = null
+    private var isPostingShoppingItem: Boolean? = false
     private var mPostShoppingList: HttpAsyncTask<String, String, ShoppingListItemsResponse>? = null
+    private var isPostingToOrderShoppingList: Boolean = false
     private var mCreateShoppingList: HttpAsyncTask<String, String, ShoppingListsResponse>? = null
     private var mShouldDisplayCreateListOnly: Boolean = false
+    private var mOrderId: String? = null
+    private var isOrderIdNullOrEmpty: Boolean = false
+    private var mDialogErrorMessageDidAppear = false
 
     companion object {
         private const val SHOPPING_LIST_SELECTED_LIST_ID = "SHOPPING_LIST_SELECTED_LIST_ID"
@@ -45,11 +51,12 @@ class CreateShoppingListFragment : ShoppingListExtensionFragment(), View.OnClick
             }
         }
 
-        fun newInstance(listOfIds: HashMap<String, ShoppingList>?, selectedListGroup: String?, shouldDisplayCreateList: Boolean) = CreateShoppingListFragment().apply {
-            arguments = Bundle(3).apply {
+        fun newInstance(listOfIds: HashMap<String, ShoppingList>?, selectedListGroup: String?, shouldDisplayCreateList: Boolean, orderId: String?) = CreateShoppingListFragment().apply {
+            arguments = Bundle(4).apply {
                 putSerializable(SHOPPING_LIST_SELECTED_LIST_ID, listOfIds)
                 putString(SHOPPING_LIST_SELECTED_GROUP, selectedListGroup)
                 putBoolean(DISPLAY_CREATE_LIST_ONLY, shouldDisplayCreateList)
+                putString(OrderDetailsActivity.ORDER_ID, orderId)
             }
         }
     }
@@ -74,6 +81,7 @@ class CreateShoppingListFragment : ShoppingListExtensionFragment(), View.OnClick
     private fun getBundleArguments() {
         mAddToListRequest = mutableListOf()
         arguments.apply {
+
             if (this.containsKey(SHOPPING_LIST_SELECTED_LIST_ID)) {
                 mShoppingListGroup = this.getSerializable(SHOPPING_LIST_SELECTED_LIST_ID) as HashMap<String, ShoppingList>?
             }
@@ -84,6 +92,9 @@ class CreateShoppingListFragment : ShoppingListExtensionFragment(), View.OnClick
 
             if (this.containsKey(DISPLAY_CREATE_LIST_ONLY))
                 mShouldDisplayCreateListOnly = this.getBoolean(DISPLAY_CREATE_LIST_ONLY, false)
+
+            if (this.containsKey(OrderDetailsActivity.ORDER_ID))
+                mOrderId = this.getString(OrderDetailsActivity.ORDER_ID)
 
         }
     }
@@ -111,10 +122,12 @@ class CreateShoppingListFragment : ShoppingListExtensionFragment(), View.OnClick
             override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
                 val isEditTextNotEmpty = etNewList.text.toString().trim { it <= ' ' }.isNotEmpty()
                 if (!mShouldDisplayCreateListOnly) {
+                    btnCancel.isEnabled = isEditTextNotEmpty
                     btnCancel.text = if (isEditTextNotEmpty) getString(R.string.ok) else getString(R.string.cancel)
                 } else {
                     enableCancelButton(isEditTextNotEmpty)
                 }
+                tvOnErrorLabel.visibility = GONE
             }
 
             override fun afterTextChanged(editable: Editable) {
@@ -160,6 +173,8 @@ class CreateShoppingListFragment : ShoppingListExtensionFragment(), View.OnClick
                 }
 
                 R.id.btnCancel -> {
+                    isOrderIdNullOrEmpty = mOrderId.isNullOrEmpty()
+                    shoppingListPostProgress(true)
                     activity?.beginCreateListExecution()
                 }
             }
@@ -183,8 +198,6 @@ class CreateShoppingListFragment : ShoppingListExtensionFragment(), View.OnClick
     private fun createShoppingListRequest() {
         val listName = etNewList?.text?.toString()
         val createListRequest = buildFirstRequest(listName)
-        shoppingListPostProgress(true)
-
         mCreateShoppingList = CreateShoppingList(createListRequest, object : AsyncAPIResponse.ResponseDelegate<ShoppingListsResponse> {
             override fun onSuccess(response: ShoppingListsResponse) {
                 response.apply {
@@ -192,19 +205,21 @@ class CreateShoppingListFragment : ShoppingListExtensionFragment(), View.OnClick
                         200 -> {
                             //add new list to shopping list group
                             val createdList = lists[0]
-                            createdList.wasSentToServer = true
+                            createdList.wasSentToServer = !isOrderIdNullOrEmpty
                             mShoppingListGroup?.put(createdList.listId, createdList)
 
-                            if (mShoppingListGroup?.size!! > 0) {
+                            if (mShoppingListGroup?.size!! > 0 && !mShouldDisplayCreateListOnly) {
                                 mShoppingListGroup?.forEach {
                                     val listId = it.key
                                     val shopList = it.value
                                     // Post item not sent to server only, false mean item not send yet
-                                    if (!shopList.wasSentToServer) {
+                                    if (!shopList.wasSentToServer && isOrderIdNullOrEmpty) {
                                         // Update listId value from dto AddToListRequest
                                         mAddToListRequest?.forEach { item -> item.listId = listId }
+                                        postToShoppingList(mAddToListRequest, it.key)
+                                    } else {
+                                        addOrderToShoppingList(mOrderId, shopList)
                                     }
-                                    postToShoppingList(mAddToListRequest, it.key)
                                 }
                             } else {
                                 shoppingListPostProgress(false)
@@ -213,6 +228,8 @@ class CreateShoppingListFragment : ShoppingListExtensionFragment(), View.OnClick
                         }
                         440 -> {
                             shoppingListPostProgress(false)
+                            SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
+                            ScreenManager.presentSSOSignin(activity)
                         }
                         else -> {
                             shoppingListPostProgress(false)
@@ -283,7 +300,7 @@ class CreateShoppingListFragment : ShoppingListExtensionFragment(), View.OnClick
     }
 
     private fun shoppingListPostProgress(state: Boolean) {
-        enableCancelButton(state)
+        enableCancelButton(!state)
         pbCreateList.visibility = if (state) VISIBLE else GONE
     }
 
@@ -298,8 +315,76 @@ class CreateShoppingListFragment : ShoppingListExtensionFragment(), View.OnClick
 
     private fun showShoppingListSuccessToast() {
         if (!mShouldDisplayCreateListOnly)
-            ShoppingListToastNavigation.requestToastOnNavigateBack(activity, AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST, mShoppingListGroup)
+            NavigateToShoppingList.requestToastOnNavigateBack(activity, AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST, mShoppingListGroup)
         else
-            ShoppingListToastNavigation.displayBottomNavigationToast(activity, AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST, mShoppingListGroup)
+            NavigateToShoppingList.displayBottomNavigationToast(activity, AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST, mShoppingListGroup)
     }
+
+    private fun addOrderToShoppingList(orderId: String?, shoppingList: ShoppingList) {
+        isPostingToOrderShoppingList = true
+        shoppingListPostProgress(true)
+        val orderRequestList = OrderToShoppingListRequestBody(shoppingList.listId, shoppingList.listName)
+        PostOrderToShoppingList(orderId, orderRequestList, object : AsyncAPIResponse.ResponseDelegate<OrderToListReponse> {
+            override fun onSuccess(ordersResponse: OrderToListReponse) {
+                ordersResponse.apply {
+                    addOrderResponseHandler(orderRequestList.shoppingListId, ordersResponse)
+                    isPostingToOrderShoppingList = false
+                }
+            }
+
+            override fun onFailure(errorMessage: String) {
+                activity?.let {
+                    it.runOnUiThread {
+                        shoppingListPostProgress(false)
+                        ErrorHandlerView(it).showToast()
+                    }
+                }
+
+            }
+        }).execute()
+    }
+
+    private fun addOrderResponseHandler(listId: String, ordersResponse: OrderToListReponse) {
+        ordersResponse.apply {
+            when (httpCode) {
+                0 -> {
+                    mShoppingListGroup?.apply {
+                        // Will replace the value of an existing key and will create it if doesn't exist
+                        val shopList = get(listId)
+                        shopList!!.wasSentToServer = true
+                        put(listId, shopList)
+                        //Check all values are true, implying that all request was sent
+                        var allShoppingListPostExecuteCompleted = true
+                        values.forEach {
+                            if (!it.wasSentToServer) {
+                                allShoppingListPostExecuteCompleted = false
+                            }
+                        }
+
+                        if (allShoppingListPostExecuteCompleted) {
+                            shoppingListPostProgress(false)
+                            showShoppingListSuccessToast()
+                        }
+                    }
+                }
+                440 -> {
+                    SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
+                    SessionExpiredUtilities.getInstance().showSessionExpireDialog(activity as? AppCompatActivity)
+                    shoppingListPostProgress(false)
+                }
+                else -> {
+                    errorDialogDisplay(response)
+                }
+            }
+        }
+    }
+
+    private fun errorDialogDisplay(response: Response?) {
+        if (!mDialogErrorMessageDidAppear) {
+            mDialogErrorMessageDidAppear = true
+            shoppingListPostProgress(false)
+            showErrorDialog(response?.desc ?: "")
+        }
+    }
+
 }

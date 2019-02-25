@@ -8,7 +8,7 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.add_to_list_row.view.*
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 
-class AddToShoppingListAdapter(private val shopMutableList: MutableList<ShoppingList>, private val clickListener: (ShoppingList) -> Unit) : RecyclerView.Adapter<AddToShoppingListAdapter.ViewHolder>() {
+class AddToShoppingListAdapter(private var shopMutableList: MutableList<ShoppingList>, private val clickListener: (ShoppingList) -> Unit) : RecyclerView.Adapter<AddToShoppingListAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.add_to_list_row, parent, false)
         return ViewHolder(v, clickListener)
@@ -38,4 +38,7 @@ class AddToShoppingListAdapter(private val shopMutableList: MutableList<Shopping
 
     fun getShoppingList(): MutableList<ShoppingList> = shopMutableList
 
+    fun setShoppingList(mutableList: MutableList<ShoppingList>) {
+        shopMutableList = mutableList
+    }
 }

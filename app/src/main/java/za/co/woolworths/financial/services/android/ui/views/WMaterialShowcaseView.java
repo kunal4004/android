@@ -980,7 +980,6 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
     }
 
     public void animateOut() {
-
         mAnimationFactory.animateOutView(this, mTarget.getPoint(), mFadeDurationInMillis, new IAnimationFactory.AnimationEndListener() {
             @Override
             public void onAnimationEnd() {

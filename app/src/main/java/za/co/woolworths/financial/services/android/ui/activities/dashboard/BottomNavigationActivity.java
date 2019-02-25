@@ -25,16 +25,22 @@ import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.ActivityBottomNavigationBinding;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Set;
 
 import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
+import za.co.woolworths.financial.services.android.contracts.IToastInterface;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
@@ -55,6 +61,8 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.detail.P
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList;
+
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.ShoppingListFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
@@ -66,6 +74,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.wreward.logged_i
 import za.co.woolworths.financial.services.android.ui.fragments.wtoday.WTodayFragment;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
+import za.co.woolworths.financial.services.android.ui.views.ToastFactory;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
@@ -89,6 +98,7 @@ import za.co.woolworths.financial.services.android.util.nav.tabhistory.FragNavTa
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT;
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT_TEMP;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SHOW_ADDED_TO_SHOPPING_LIST_TOAST;
+import static za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.RESULT_TAP_FIND_INSTORE_BTN;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED;
@@ -97,11 +107,12 @@ import static za.co.woolworths.financial.services.android.ui.fragments.product.d
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_ADD_TO_CART;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment.MOVE_TO_LIST_ON_TOAST_VIEW_CLICKED;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.SuburbSelectionFragment.SUBURB_SET_RESULT;
+import static za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsFragment.ADD_TO_CART_SUCCESS_RESULT;
 import static za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment.LOCK_REQUEST_CODE_WREWARDS;
 import static za.co.woolworths.financial.services.android.util.ScreenManager.CART_LAUNCH_VALUE;
 
-public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigationBinding, BottomNavigationViewModel> implements BottomNavigator, FragNavController.TransactionListener, FragNavController.RootFragmentListener, PermissionResultCallback, ToastUtils.ToastInterface, Observer {
+public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigationBinding, BottomNavigationViewModel> implements BottomNavigator, FragNavController.TransactionListener, FragNavController.RootFragmentListener, PermissionResultCallback, ToastUtils.ToastInterface, IToastInterface, Observer {
 
 	public static final int INDEX_TODAY = FragNavController.TAB1;
 	public static final int INDEX_PRODUCT = FragNavController.TAB2;
@@ -677,6 +688,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		    // Send result to store locator fragment onActivityResult
             // if current visible fragment points to store locator
             // and store locator detail is anchored
+
 			if (mNavController.getCurrentFrag() instanceof StoresNearbyFragment1) {
 				Fragment currentFrag = mNavController.getCurrentFrag();
 				StoresNearbyFragment1 storesNearbyFragment = (StoresNearbyFragment1) currentFrag;
@@ -888,14 +900,30 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		permissionUtils.onRequestPermissionsResult(requestCode, permissions, grantResults);
 	}
 
+
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		//TODO: Explain where this is coming from.
 
+		if (requestCode == ADD_TO_SHOPPING_LIST_REQUEST_CODE) {
+			if (resultCode == RESULT_OK) {
+				String obj = data.getStringExtra(POST_ADD_TO_SHOPPING_LIST);
+				JsonElement element = new JsonParser().parse(obj);
+				switchToShoppingListTab(element);
+			} else if (resultCode == NavigateToShoppingList.DISPLAY_TOAST_RESULT_CODE) {
+				ToastFactory toastFactory = new ToastFactory();
+				toastFactory.Companion.buildShoppingListToast(getBottomNavigationById(), true, data, this);
+				Fragment fragmentById = getCurrentFragment();
+				if (fragmentById != null)
+					fragmentById.onActivityResult(requestCode, resultCode, null);
+			}
+			return;
+		}
+
 		// FuseLocationAPISingleton.kt : Change location method to High Accuracy confirmation dialog
-		if (requestCode== FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS){
-			getCurrentFragment().onActivityResult(requestCode,resultCode,data);
+		if (requestCode == FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS) {
+			getCurrentFragment().onActivityResult(requestCode, resultCode, data);
 			return;
 		}
 
@@ -991,9 +1019,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		}
 
 		Fragment fragment = mNavController.getCurrentFrag();
-		if (fragment != null)
-
-		{
+		if (fragment != null) {
 			fragment.onActivityResult(requestCode, resultCode, data);
 		}
 
@@ -1005,9 +1031,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 		}
 		// Biometric Authentication check
-		if (resultCode == RESULT_OK)
-
-		{
+		if (resultCode == RESULT_OK) {
 			switch (requestCode) {
 				case LOCK_REQUEST_CODE_ACCOUNTS:
 					AuthenticateUtils.getInstance(BottomNavigationActivity.this).enableBiometricForCurrentSession(false);
@@ -1021,9 +1045,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			}
 		}
 
-		if (requestCode == DELIVERY_LOCATION_FROM_PDP_REQUEST)
-
-		{
+		if (requestCode == DELIVERY_LOCATION_FROM_PDP_REQUEST) {
 			/***
 			 * Activated when set delivery location process is successfully set
 			 */
@@ -1047,9 +1069,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			}
 		}
 
-		if (requestCode == ADD_TO_CART_SUCCESS_RESULT)
-
-		{
+		if (requestCode == ADD_TO_CART_SUCCESS_RESULT) {
 			if (resultCode == ADD_TO_CART_SUCCESS_RESULT) {
 				String itemAddToCartMessage = data.getStringExtra("addedToCartMessage");
 				if (itemAddToCartMessage != null) {
@@ -1058,9 +1078,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			}
 		}
 
-		if (requestCode == BOTTOM_FRAGMENT_REQUEST_CODE)
-
-		{
+		if (requestCode == BOTTOM_FRAGMENT_REQUEST_CODE) {
 			if (resultCode == RESULT_OK) {
 				if (getBottomFragmentById() instanceof ProductDetailFragment) {
 					getBottomFragmentById().onActivityResult(requestCode, resultCode, data);
@@ -1185,6 +1203,11 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		}
 	}
 
+	@Override
+	public void onToastButtonClicked(@Nullable JsonElement jsonElement) {
+		switchToShoppingListTab(jsonElement);
+	}
+
 	// show toast after slideUpPanel closed
 	public void setCloseFromListEnabled(boolean closeFromListEnabled) {
 		this.closeFromListEnabled = closeFromListEnabled;
@@ -1285,6 +1308,35 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				default:
 					badgeCount();
 					break;
+			}
+		}
+	}
+
+
+
+	private void switchToShoppingListTab(JsonElement element) {
+		if (element instanceof JsonObject) {
+			JsonObject list = (JsonObject) element;
+			if (list.size() == 1) {
+				Set<Map.Entry<String, JsonElement>> entries = list.entrySet();//will return members of your object
+				String listId = null;
+				JsonElement shoppingList = null;
+				for (Map.Entry<String, JsonElement> entry : entries) {
+					listId = entry.getKey();
+					shoppingList = entry.getValue();
+				}
+				Bundle bundle = new Bundle();
+				bundle.putString("listName", shoppingList.getAsJsonObject().get("name").getAsString());
+				bundle.putString("listId", listId);
+				ShoppingListItemsFragment shoppingListItemsFragment = new ShoppingListItemsFragment();
+				shoppingListItemsFragment.setArguments(bundle);
+				pushFragment(shoppingListItemsFragment);
+			} else {
+				getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
+				if (mNavController.getCurrentFrag() instanceof ShopFragment) {
+					ShopFragment shopFragment = (ShopFragment) mNavController.getCurrentFrag();
+					shopFragment.navigateToMyListFragment();
+				}
 			}
 		}
 	}
