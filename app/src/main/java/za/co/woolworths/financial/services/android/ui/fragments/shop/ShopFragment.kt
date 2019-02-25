@@ -159,4 +159,8 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
     fun navigateToMyListFragment() {
         viewpager_main.setCurrentItem(1, true)
     }
+
+    fun scrollToTop() {
+
+    }
 }
