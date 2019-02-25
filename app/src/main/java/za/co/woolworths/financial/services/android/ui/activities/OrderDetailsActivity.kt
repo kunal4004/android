@@ -39,6 +39,7 @@ class OrderDetailsActivity : AppCompatActivity(), FragmentsEventsListner, IToast
         const val TAG_ORDER_DETAILS_FRAGMENT: String = "OrderDetailsFragment"
         const val TAG_ORDER_TO_CART_FRAGMENT: String = "OrderToCartFragment"
         const val TAG_TAX_INVOICE_FRAGMENT: String = "TaxInvoiceFragment"
+        const val ORDER_ID: String = "ORDER_ID"
     }
 
     private fun configureUI() {

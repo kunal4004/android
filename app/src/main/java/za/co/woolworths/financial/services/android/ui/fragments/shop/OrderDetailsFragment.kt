@@ -21,6 +21,7 @@ import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
 import kotlinx.android.synthetic.main.order_details_fragment.*
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
+import za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity.Companion.ORDER_ID
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.FragmentsEventsListner
 
@@ -130,6 +131,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick {
             val intentAddToList = Intent(this, AddToShoppingListActivity::class.java)
             intentAddToList.putExtra("addToListRequest", Gson().toJson(commerceItemList))
             intentAddToList.putExtra("shouldDisplayCreateList", false)
+            intentAddToList.putExtra(ORDER_ID, order?.orderId)
             startActivityForResult(intentAddToList, AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_REQUEST_CODE)
             overridePendingTransition(0, 0)
         }

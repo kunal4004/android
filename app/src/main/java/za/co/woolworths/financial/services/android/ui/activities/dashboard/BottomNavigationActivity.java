@@ -28,12 +28,10 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.reflect.TypeToken;
 
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
@@ -913,9 +911,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 String obj = data.getStringExtra(POST_ADD_TO_SHOPPING_LIST);
                 JsonElement element = new JsonParser().parse(obj);
                 switchToShoppingListTab(element);
-            }else if (resultCode == ShoppingListToastNavigation.DISPLAY_TOAST_RESULT_CODE) {
+            } else if (resultCode == ShoppingListToastNavigation.DISPLAY_TOAST_RESULT_CODE) {
                 ToastFactory toastFactory = new ToastFactory();
                 toastFactory.Companion.buildShoppingListToast(getBottomNavigationById(), true, data, this);
+                Fragment fragmentById = getCurrentFragment();
+                if (fragmentById != null)
+                    fragmentById.onActivityResult(requestCode, resultCode, null);
             }
             return;
         }

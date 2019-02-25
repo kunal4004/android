@@ -33,8 +33,8 @@ import com.daasuu.bl.BubbleLayout;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.co.deanwild.materialshowcaseview.CircularRevealAnimationFactory;
-import uk.co.deanwild.materialshowcaseview.FadeAnimationFactory;
+//import uk.co.deanwild.materialshowcaseview.CircularRevealAnimationFactory;
+//import uk.co.deanwild.materialshowcaseview.FadeAnimationFactory;
 import uk.co.deanwild.materialshowcaseview.IAnimationFactory;
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
 import uk.co.deanwild.materialshowcaseview.PrefsManager;
@@ -582,12 +582,12 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
         setFadeDuration(config.getFadeDuration());
         setContentTextColor(config.getContentTextColor());
         setDismissTextColor(config.getDismissTextColor());
-        setDismissStyle(config.getDismissTextStyle());
+        //setDismissStyle(config.getDismissTextStyle());
 
         setMaskColour(config.getMaskColor());
         setShape(config.getShape());
         setShapePadding(config.getShapePadding());
-        setRenderOverNavigationBar(config.getRenderOverNavigationBar());
+        //setRenderOverNavigationBar(config.getRenderOverNavigationBar());
     }
 
     private void updateDismissButton() {
@@ -856,9 +856,9 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
             if (showcaseView.mAnimationFactory == null) {
                 // create our animation factory
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && !showcaseView.mUseFadeAnimation) {
-                    showcaseView.setAnimationFactory(new CircularRevealAnimationFactory());
+                    //showcaseView.setAnimationFactory(new CircularRevealAnimationFactory());
                 } else {
-                    showcaseView.setAnimationFactory(new FadeAnimationFactory());
+                   // showcaseView.setAnimationFactory(new FadeAnimationFactory());
                 }
             }
 
@@ -968,26 +968,26 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
     public void animateIn() {
         setVisibility(INVISIBLE);
 
-        mAnimationFactory.animateInView(this, mTarget.getPoint(), mFadeDurationInMillis,
-                new IAnimationFactory.AnimationStartListener() {
-                    @Override
-                    public void onAnimationStart() {
-                        setVisibility(View.VISIBLE);
-                        notifyOnDisplayed();
-                    }
-                }
-        );
+//        mAnimationFactory.animateInView(this, mTarget.getPoint(), mFadeDurationInMillis,
+//                new IAnimationFactory.AnimationStartListener() {
+//                    @Override
+//                    public void onAnimationStart() {
+//                        setVisibility(View.VISIBLE);
+//                        notifyOnDisplayed();
+//                    }
+//                }
+//        );
     }
 
     public void animateOut() {
 
-        mAnimationFactory.animateOutView(this, mTarget.getPoint(), mFadeDurationInMillis, new IAnimationFactory.AnimationEndListener() {
-            @Override
-            public void onAnimationEnd() {
-                setVisibility(INVISIBLE);
-                removeFromWindow();
-            }
-        });
+//        mAnimationFactory.animateOutView(this, mTarget.getPoint(), mFadeDurationInMillis, new IAnimationFactory.AnimationEndListener() {
+//            @Override
+//            public void onAnimationEnd() {
+//                setVisibility(INVISIBLE);
+//                removeFromWindow();
+//            }
+//        });
     }
 
     public void resetSingleUse() {

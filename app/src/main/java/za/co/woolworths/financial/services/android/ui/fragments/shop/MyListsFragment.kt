@@ -83,8 +83,7 @@ class MyListsFragment : ShoppingListExtensionFragment(), View.OnClickListener, I
                             440 -> {
                                 SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
                                 showSignOutView()
-                                if (isMyListsFragmentVisible)
-                                    SessionExpiredUtilities.getInstance().showSessionExpireDialog(activity as? AppCompatActivity)
+                                QueryBadgeCounter.getInstance().clearBadge()
                             }
                             else -> {
                                 loadShoppingList(false)
