@@ -69,6 +69,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick {
     private fun requestOrderDetails(orderId: String): GetOrderDetailsRequest {
         return GetOrderDetailsRequest(activity, orderId, object : OnEventListener<OrderDetailsResponse> {
             override fun onSuccess(ordersResponse: OrderDetailsResponse) {
+                if (!isAdded) return
                 mainLayout.visibility = View.VISIBLE
                 loadingBar.visibility = View.GONE
                 orderDetailsResponse = ordersResponse
