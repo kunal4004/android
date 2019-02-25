@@ -1857,10 +1857,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
             if (state.equalsIgnoreCase(currentState)) {
                 Activity activity = getActivity();
                 if (activity != null) {
-                    if (activity instanceof BottomNavigationActivity) {
-                        BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) activity;
-                        bottomNavigationActivity.navigateToList(mNumberOfListSelected);
-                    }
                     if (activity instanceof CartActivity) {
                         CartActivity cartActivity = (CartActivity) activity;
                         cartActivity.navigateToList(mNumberOfListSelected);

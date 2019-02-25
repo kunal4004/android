@@ -32,7 +32,6 @@ import com.google.gson.JsonParser;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -44,12 +43,9 @@ import za.co.woolworths.financial.services.android.contracts.IToastInterface;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
 import za.co.woolworths.financial.services.android.models.service.event.AuthenticationState;
 import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
-import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity;
@@ -62,8 +58,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.grid.Gri
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList;
-
-import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.ShoppingListFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsLoggedOutFragment;
@@ -97,7 +91,6 @@ import za.co.woolworths.financial.services.android.util.nav.tabhistory.FragNavTa
 
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT;
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT_TEMP;
-import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SHOW_ADDED_TO_SHOPPING_LIST_TOAST;
 import static za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity.RESULT_TAP_FIND_INSTORE_BTN;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
@@ -105,7 +98,6 @@ import static za.co.woolworths.financial.services.android.ui.activities.CustomPo
 import static za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity.DELIVERY_LOCATION_CLOSE_CLICKED;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.DELIVERY_LOCATION_FROM_PDP_REQUEST;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_ADD_TO_CART;
-import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment.MOVE_TO_LIST_ON_TOAST_VIEW_CLICKED;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.SuburbSelectionFragment.SUBURB_SET_RESULT;
 import static za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsFragment.ADD_TO_CART_SUCCESS_RESULT;
@@ -132,20 +124,13 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	private ArrayList<String> permissions;
 	private BottomNavigationViewModel bottomNavigationViewModel;
 	private FragNavController mNavController;
-	private WRewardsFragment wRewardsFragment;
-	private MyAccountsFragment myAccountsFragment;
 	private Bundle mBundle;
 	private int currentSection;
 	private ToastUtils mToastUtils;
-	private boolean closeFromListEnabled;
-	private int shoppingListItemCount;
-	private boolean singleOrMultipleItemSelector;
 	public static final int LOCK_REQUEST_CODE_ACCOUNTS = 444;
-	private int mListItemCount = 0;
 	private QueryBadgeCounter mQueryBadgeCounter;
 	public static final int PDP_REQUEST_CODE = 18;
 	public WMaterialShowcaseView walkThroughPromtView = null;
-	private String mSessionExpiredAtTabSection;
 
 	@Override
 	public int getLayoutId() {
@@ -277,7 +262,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
 			}
 
-			mSessionExpiredAtTabSection = mBundle.getString("sessionExpiredAtTabSection");
+			String mSessionExpiredAtTabSection = mBundle.getString("sessionExpiredAtTabSection");
 			if (!TextUtils.isEmpty(mSessionExpiredAtTabSection)) {
 				getBottomNavigationById().setCurrentItem(Integer.valueOf(mSessionExpiredAtTabSection));
 				SessionExpiredUtilities.getInstance().showSessionExpireDialog(BottomNavigationActivity.this);
@@ -379,54 +364,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				switch (newState) {
 					case COLLAPSED:
 						showStatusBar();
-
-						// show toast on search result fragment after add to list
-						// activates when user access pdp page from list section
-						if (closeFromListEnabled()) {
-							Utils.sendBus(new ProductState(getShoppingListItemCount(), SHOW_ADDED_TO_SHOPPING_LIST_TOAST));
-							setCloseFromListEnabled(false);
-						}
-
-						// open single list or multiple list view on collapsed
-						if (singleOrMultipleItemSelector()) {
-							if (mListItemCount > 1) {
-								Bundle bundle = new Bundle();
-								ShoppingListsResponse shoppingListsResponse = new ShoppingListsResponse();
-								bundle.putString("ShoppingList", Utils.objectToJson(shoppingListsResponse));
-								ShoppingListFragment shoppingListFragment = new ShoppingListFragment();
-								shoppingListFragment.setArguments(bundle);
-								pushFragmentSlideUp(shoppingListFragment);
-								return;
-							}
-							List<ShoppingList> newList = new ArrayList<>();
-							List<ShoppingList> shoppingList = getGlobalState().getShoppingListRequest();
-							/*if (shoppingList != null) {
-								for (ShoppingList shopList : shoppingList) {
-									if (shopList.viewIsSelected) {
-										newList.add(shopList);
-									}
-								}
-							}*/
-							int shoppingListSize = newList.size();
-							if (shoppingListSize == 1) {
-								hideBottomNavigationMenu();
-								ShoppingList shop = newList.get(0);
-								Bundle bundle = new Bundle();
-								bundle.putString("listId", shop.listId);
-								bundle.putString("listName", shop.listName);
-								ShoppingListItemsFragment shoppingListItemsFragment = new ShoppingListItemsFragment();
-								shoppingListItemsFragment.setArguments(bundle);
-								pushFragmentSlideUp(shoppingListItemsFragment);
-							} else if (shoppingListSize > 1) {
-								Bundle bundle = new Bundle();
-								ShoppingListsResponse shoppingListsResponse = new ShoppingListsResponse();
-								bundle.putString("ShoppingList", Utils.objectToJson(shoppingListsResponse));
-								ShoppingListFragment shoppingListFragment = new ShoppingListFragment();
-								shoppingListFragment.setArguments(bundle);
-								pushFragmentSlideUp(shoppingListFragment);
-							}
-							setSingleOrMultipleItemSelector(false);
-						}
 						onActivityResult(SLIDE_UP_COLLAPSE_REQUEST_CODE, SLIDE_UP_COLLAPSE_RESULT_CODE, null);
 						try {
 							//detach detail fragment
@@ -439,7 +376,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 						break;
 
 					case EXPANDED:
-						setCloseFromListEnabled(false);
 						hideStatusBar();
 						break;
 					default:
@@ -767,10 +703,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			case INDEX_CART:
 				return new ShopFragment();
 			case INDEX_REWARD:
-				wRewardsFragment = new WRewardsFragment();
+				WRewardsFragment wRewardsFragment = new WRewardsFragment();
 				return wRewardsFragment;
 			case INDEX_ACCOUNT:
-				myAccountsFragment = new MyAccountsFragment();
+				MyAccountsFragment myAccountsFragment = new MyAccountsFragment();
 				return myAccountsFragment;
 		}
 		throw new IllegalStateException("Need to send an index that we know");
@@ -905,7 +841,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		//TODO: Explain where this is coming from.
-
+		// call back when Toast clicked after adding item to shopping list
 		if (requestCode == ADD_TO_SHOPPING_LIST_REQUEST_CODE) {
 			if (resultCode == RESULT_OK) {
 				String obj = data.getStringExtra(POST_ADD_TO_SHOPPING_LIST);
@@ -927,37 +863,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			return;
 		}
 
-		/***
-		 * Navigate to list name view on view clicked from cart toast
-		 */
-		if (resultCode == MOVE_TO_LIST_ON_TOAST_VIEW_CLICKED) {
-			if (data != null) {
-				Bundle bundle = data.getExtras();
-				if (bundle != null) {
-					int countShopItem = bundle.getInt("count");
-					if (countShopItem > 1) {
-						pushFragment(new ShoppingListFragment());
-					} else {
-						bundle.putString("listName", bundle.getString("listName"));
-						bundle.putString("listId", bundle.getString("listId"));
-						ShoppingListItemsFragment shoppingListItemsFragment = new ShoppingListItemsFragment();
-						shoppingListItemsFragment.setArguments(bundle);
-						pushFragment(shoppingListItemsFragment);
-					}
-					return;
-				}
-			}
-		}
-
 		if (requestCode == PDP_REQUEST_CODE && resultCode == RESULT_OK) {
 			String itemAddToCartMessage = data.getStringExtra("addedToCartMessage");
-			boolean isItemAddToShoppingList = data.getBooleanExtra("addedToShoppingList", false);
 			if (itemAddToCartMessage != null) {
 				setToast(itemAddToCartMessage, "");
-			} else if (isItemAddToShoppingList) {
-				// call back when Toast clicked after adding item to shopping list
-				List<ShoppingList> shoppingList = getGlobalState().getShoppingListRequest();
-				getViewModel().openShoppingListOnToastClick(shoppingList, this);
 			}
 			return;
 		}
@@ -1014,8 +923,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 						fragmentById.onActivityResult(requestCode, resultCode, data);
 					break;
 			}
-
-
 		}
 
 		Fragment fragment = mNavController.getCurrentFrag();
@@ -1176,8 +1083,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void closeSlideUpPanelFromList(int count) {
-		setCloseFromListEnabled(true);
-		setShoppingListItemCount(count);
 		closeSlideUpPanel();
 	}
 
@@ -1206,37 +1111,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	@Override
 	public void onToastButtonClicked(@Nullable JsonElement jsonElement) {
 		switchToShoppingListTab(jsonElement);
-	}
-
-	// show toast after slideUpPanel closed
-	public void setCloseFromListEnabled(boolean closeFromListEnabled) {
-		this.closeFromListEnabled = closeFromListEnabled;
-	}
-
-	public boolean closeFromListEnabled() {
-		return closeFromListEnabled;
-	}
-
-	public void navigateToList(int listItemCount) {
-		this.mListItemCount = listItemCount;
-		setSingleOrMultipleItemSelector(true);
-		closeSlideUpPanel();
-	}
-
-	public void setShoppingListItemCount(int shoppingListItemCount) {
-		this.shoppingListItemCount = shoppingListItemCount;
-	}
-
-	public int getShoppingListItemCount() {
-		return shoppingListItemCount;
-	}
-
-	public void setSingleOrMultipleItemSelector(boolean singleOrMultipleItemSelector) {
-		this.singleOrMultipleItemSelector = singleOrMultipleItemSelector;
-	}
-
-	public boolean singleOrMultipleItemSelector() {
-		return singleOrMultipleItemSelector;
 	}
 
 	public Fragment getCurrentFragment() {
