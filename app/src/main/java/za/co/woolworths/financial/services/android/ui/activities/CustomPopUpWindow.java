@@ -97,7 +97,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 		HIGH_LOAN_AMOUNT, LOW_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION, SIGN_OUT, BARCODE_ERROR,
 		SHOPPING_LIST_INFO, INSTORE_AVAILABILITY, NO_STOCK, LOCATION_OFF, SUPPLY_DETAIL_INFO,
 		CLI_DANGER_ACTION_MESSAGE_VALIDATION, AMOUNT_STOCK, UPLOAD_DOCUMENT_MODAL, PROOF_OF_INCOME,
-		STATEMENT_SENT_TO, CLI_DECLINE, CLI_ERROR, DETERMINE_LOCATION_POPUP, STATEMENT_ERROR, SHOPPING_ADD_TO_LIST, ERROR_TITLE_DESC, SET_UP_BIOMETRICS_ON_DEVICE, BIOMETRICS_SECURITY_INFO, ORDER_ADD_TO_LIST
+		STATEMENT_SENT_TO, CLI_DECLINE, CLI_ERROR, DETERMINE_LOCATION_POPUP, STATEMENT_ERROR, ERROR_TITLE_DESC, SET_UP_BIOMETRICS_ON_DEVICE, BIOMETRICS_SECURITY_INFO, ORDER_ADD_TO_LIST
 	}
 
 	MODAL_LAYOUT current_view;
@@ -539,22 +539,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 					}
 				}
 				break;
-			case SHOPPING_ADD_TO_LIST:
-				setContentView(R.layout.shopping_add_list_layout);
-				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
-				mRelPopContainer = findViewById(R.id.relPopContainer);
-				mRelPopContainer.setOnClickListener(this);
-				FragmentManager fm = getSupportFragmentManager();
-				Bundle bundle = new Bundle();
-				bundle.putString("LIST_PAYLOAD", description);
-				AddToListFragment addToListFragment = new AddToListFragment();
-				addToListFragment.setArguments(bundle);
-				fm.beginTransaction()
-						.add(R.id.flShoppingListContainer, addToListFragment)
-						.commitAllowingStateLoss();
 
-
-				break;
 			case SET_UP_BIOMETRICS_ON_DEVICE:
 				setContentView(R.layout.sign_out);
 				mRelRootContainer = findViewById(R.id.relContainerRootMessage);

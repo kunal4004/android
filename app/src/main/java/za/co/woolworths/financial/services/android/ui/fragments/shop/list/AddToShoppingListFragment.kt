@@ -38,7 +38,7 @@ class AddToShoppingListFragment : ShoppingListExtensionFragment(), View.OnClickL
     private var isPostingToOrderShoppingList: Boolean? = null
     private lateinit var mPostItemList: MutableList<String>
     private var mAddToShoppingListAdapter: AddToShoppingListAdapter? = null
-    var _rootView: View? = null
+    private var mErrorDialogDidAppear: Boolean = false
 
     companion object {
         const val POST_ADD_TO_SHOPPING_LIST = "POST_ADD_TO_SHOPPING_LIST"
@@ -118,7 +118,10 @@ class AddToShoppingListFragment : ShoppingListExtensionFragment(), View.OnClickL
                             }
                             else -> {
                                 loadShoppingList(false)
-                                showErrorDialog(this.response?.message!!)
+                                if (mErrorDialogDidAppear) {
+                                    mErrorDialogDidAppear = true
+                                    showErrorDialog(this.response?.message!!)
+                                }
                             }
                         }
                         loadShoppingList(false)
@@ -335,7 +338,10 @@ class AddToShoppingListFragment : ShoppingListExtensionFragment(), View.OnClickL
                 }
                 else -> {
                     shoppingListPostProgress(false)
-                    showErrorDialog(response?.desc ?: "")
+                    if (mErrorDialogDidAppear) {
+                        mErrorDialogDidAppear = true
+                        showErrorDialog(this.response?.message!!)
+                    }
                 }
             }
         }
@@ -372,7 +378,10 @@ class AddToShoppingListFragment : ShoppingListExtensionFragment(), View.OnClickL
                 }
                 else -> {
                     shoppingListPostProgress(false)
-                    showErrorDialog(response?.desc ?: "")
+                    if (mErrorDialogDidAppear) {
+                        mErrorDialogDidAppear = true
+                        showErrorDialog(this.response?.message!!)
+                    }
                 }
             }
         }
