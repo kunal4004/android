@@ -61,7 +61,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.detail.P
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.ShoppingListToastNavigation;
+import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.ShoppingListFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
@@ -910,7 +910,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 String obj = data.getStringExtra(POST_ADD_TO_SHOPPING_LIST);
                 JsonElement element = new JsonParser().parse(obj);
                 switchToShoppingListTab(element);
-            } else if (resultCode == ShoppingListToastNavigation.DISPLAY_TOAST_RESULT_CODE) {
+            } else if (resultCode == NavigateToShoppingList.DISPLAY_TOAST_RESULT_CODE) {
                 ToastFactory toastFactory = new ToastFactory();
                 toastFactory.Companion.buildShoppingListToast(getBottomNavigationById(), true, data, this);
                 Fragment fragmentById = getCurrentFragment();

@@ -24,6 +24,7 @@ import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingLi
 import za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity.Companion.ORDER_ID
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.FragmentsEventsListner
+import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 
 class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick {
 
@@ -127,14 +128,8 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick {
     }
 
     override fun onAddToList(commerceItemList: MutableList<AddToListRequest>) {
-        activity?.apply {
-            val intentAddToList = Intent(this, AddToShoppingListActivity::class.java)
-            intentAddToList.putExtra("addToListRequest", Gson().toJson(commerceItemList))
-            intentAddToList.putExtra("shouldDisplayCreateList", false)
-            intentAddToList.putExtra(ORDER_ID, order?.orderId)
-            startActivityForResult(intentAddToList, AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_REQUEST_CODE)
-            overridePendingTransition(0, 0)
-        }
+        val navigateTo = NavigateToShoppingList()
+        navigateTo.openShoppingList(activity,commerceItemList,order?.orderId,false)
     }
 
     override fun onOpenProductDetail(commerceItem: CommerceItem) {

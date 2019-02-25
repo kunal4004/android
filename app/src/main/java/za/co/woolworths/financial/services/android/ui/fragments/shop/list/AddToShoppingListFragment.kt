@@ -25,7 +25,7 @@ import za.co.woolworths.financial.services.android.models.rest.shoppinglist.Post
 import za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity.Companion.ORDER_ID
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
-import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.ShoppingListToastNavigation
+import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.util.*
 
 class AddToShoppingListFragment : ShoppingListExtensionFragment(), View.OnClickListener {
@@ -379,7 +379,7 @@ class AddToShoppingListFragment : ShoppingListExtensionFragment(), View.OnClickL
     }
 
     private fun showShoppingListSuccessToast() {
-        ShoppingListToastNavigation.requestToastOnNavigateBack(activity, POST_ADD_TO_SHOPPING_LIST, mShoppingListGroup)
+        NavigateToShoppingList.requestToastOnNavigateBack(activity, POST_ADD_TO_SHOPPING_LIST, mShoppingListGroup)
     }
 
     private fun navigateToCreateShoppingListFragment(state: Boolean) {

@@ -22,7 +22,7 @@ import za.co.woolworths.financial.services.android.models.rest.shoppinglist.Crea
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostAddToShoppingList
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostOrderToShoppingList
 import za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity
-import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.ShoppingListToastNavigation
+import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.util.*
 import java.util.HashMap
 
@@ -174,6 +174,7 @@ class CreateShoppingListFragment : ShoppingListExtensionFragment(), View.OnClick
 
                 R.id.btnCancel -> {
                     isOrderIdNullOrEmpty = mOrderId.isNullOrEmpty()
+                    shoppingListPostProgress(true)
                     activity?.beginCreateListExecution()
                 }
             }
@@ -197,7 +198,6 @@ class CreateShoppingListFragment : ShoppingListExtensionFragment(), View.OnClick
     private fun createShoppingListRequest() {
         val listName = etNewList?.text?.toString()
         val createListRequest = buildFirstRequest(listName)
-        shoppingListPostProgress(true)
         mCreateShoppingList = CreateShoppingList(createListRequest, object : AsyncAPIResponse.ResponseDelegate<ShoppingListsResponse> {
             override fun onSuccess(response: ShoppingListsResponse) {
                 response.apply {
@@ -300,7 +300,7 @@ class CreateShoppingListFragment : ShoppingListExtensionFragment(), View.OnClick
     }
 
     private fun shoppingListPostProgress(state: Boolean) {
-        enableCancelButton(state)
+        enableCancelButton(!state)
         pbCreateList.visibility = if (state) VISIBLE else GONE
     }
 
@@ -315,9 +315,9 @@ class CreateShoppingListFragment : ShoppingListExtensionFragment(), View.OnClick
 
     private fun showShoppingListSuccessToast() {
         if (!mShouldDisplayCreateListOnly)
-            ShoppingListToastNavigation.requestToastOnNavigateBack(activity, AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST, mShoppingListGroup)
+            NavigateToShoppingList.requestToastOnNavigateBack(activity, AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST, mShoppingListGroup)
         else
-            ShoppingListToastNavigation.displayBottomNavigationToast(activity, AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST, mShoppingListGroup)
+            NavigateToShoppingList.displayBottomNavigationToast(activity, AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST, mShoppingListGroup)
     }
 
     private fun addOrderToShoppingList(orderId: String?, shoppingList: ShoppingList) {
