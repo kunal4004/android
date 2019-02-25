@@ -57,6 +57,7 @@
                     android:id="@+id/done"
                     style="@style/toolbar_menu_text_style"
                     android:layout_alignParentLeft="true"
+                    android:padding="@dimen/five_dp"
                     android:text="@string/done"
                     android:textColor="@color/white" />
 
