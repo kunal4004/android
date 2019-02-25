@@ -1326,6 +1326,14 @@
         <item name="android:windowIsTranslucent">false</item>
     </style>
 
+    <style name="ABSAOnlineBankingToDeviceStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:homeAsUpIndicator">@drawable/close_24</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowActionBarOverlay">false</item>
+    </style>
+
     <style name="styleBPIOverviewConstraint">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>

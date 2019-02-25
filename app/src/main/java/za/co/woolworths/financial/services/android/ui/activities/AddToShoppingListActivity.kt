@@ -53,13 +53,13 @@ class AddToShoppingListActivity : AppCompatActivity(), IDialogListener {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        var fm = supportFragmentManager?.findFragmentById(R.id.flShoppingListContainer)
+        val fm = supportFragmentManager?.findFragmentById(R.id.flShoppingListContainer)
         fm?.onActivityResult(requestCode, resultCode, data)
 
     }
 
     override fun onDialogDismissed() {
-        var fm = supportFragmentManager?.findFragmentById(R.id.flShoppingListContainer)
+        val fm = supportFragmentManager?.findFragmentById(R.id.flShoppingListContainer)
         when (fm) {
             is AddToShoppingListFragment -> (fm as? AddToShoppingListFragment)?.closeFragment()
         }

@@ -110,5 +110,4 @@ public class ActionSheetDialogFragment extends DialogFragment implements Animate
 		if (dialog != null)
 			dialog.dismiss();
 	}
-
 }
