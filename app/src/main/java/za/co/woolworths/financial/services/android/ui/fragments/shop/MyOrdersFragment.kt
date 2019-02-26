@@ -149,10 +149,12 @@ class MyOrdersFragment : Fragment() {
             }
 
             override fun onFailure(e: String?) {
-                activity.runOnUiThread(java.lang.Runnable {
-                    loadingBar.visibility = View.GONE
-                    showErrorView()
-                })
+                activity?.let {
+                    it.runOnUiThread(java.lang.Runnable {
+                        loadingBar.visibility = View.GONE
+                        showErrorView()
+                    })
+                }
             }
 
         })
@@ -192,7 +194,9 @@ class MyOrdersFragment : Fragment() {
     }
 
     fun cancelRequest() {
-        if (!requestOrders?.isCancelled!!)
-            requestOrders?.cancel(true)
+        requestOrders.let {
+            if (!requestOrders?.isCancelled!!)
+                requestOrders?.cancel(true)
+        }
     }
 }

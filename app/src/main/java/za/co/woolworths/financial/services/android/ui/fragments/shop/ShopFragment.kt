@@ -178,7 +178,7 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
     fun scrollToTop() {
         when (viewpager_main.currentItem) {
             0 -> {
-                val detailsFragment = viewpager_main.adapter?.instantiateItem(viewpager_main, viewpager_main.currentItem) as? DepartmentsFragment
+                val detailsFragment = viewpager_main.adapter?.instantiateItem(viewpager_main, viewpager_main.currentItem) as? CategoryFragment
                 detailsFragment?.scrollToTop()
             }
             1 -> {

@@ -39,7 +39,6 @@ class CategoryFragment : DepartmentExtensionFragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpRecyclerView(mutableListOf())
-        executeDepartmentRequest()
         setListener()
         if (isFragmentVisible) {
             executeDepartmentRequest()
@@ -139,16 +138,17 @@ class CategoryFragment : DepartmentExtensionFragment() {
     override fun onDestroy() {
         super.onDestroy()
         cancelRequest(mProductDepartmentRequest)
-        fun scrollToTop() {
-            if (rclDepartment != null)
-                rclDepartment.scrollToPosition(0)
-        }
+
     }
 
-        override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
             super.setUserVisibleHint(isVisibleToUser)
             isFragmentVisible = isVisibleToUser
-        }
+    }
 
+    fun scrollToTop() {
+        if (rclDepartment != null)
+            rclDepartment.scrollToPosition(0)
+    }
 
 }
