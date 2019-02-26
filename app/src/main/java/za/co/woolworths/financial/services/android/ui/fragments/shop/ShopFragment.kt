@@ -167,6 +167,11 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        refreshViewPagerFragment()
+    }
+
     override fun onStartShopping() {
         viewpager_main.setCurrentItem(0, true)
     }

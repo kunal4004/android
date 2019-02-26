@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.support.v4.app.FragmentActivity
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
@@ -38,9 +37,9 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
     private lateinit var mPostItemList: MutableList<String>
     private var mAddToShoppingListAdapter: AddToShoppingListAdapter? = null
     private var mErrorDialogDidAppear: Boolean = false
-    private var mReConnect: ReConnect? = null
+    private var mAutoConnect: AutoConnect? = null
 
-    enum class ReConnect {
+    enum class AutoConnect {
         ADD_ORDER_TO_LIST,
         ADD_PRODUCT_TO_LIST;
     }
@@ -113,16 +112,12 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
                 activity?.let {
                     response.apply {
                         when (httpCode) {
-                            200 -> {
-                                bindShoppingListToUI(lists)
-                            }
+                            200 -> bindShoppingListToUI(lists)
                             440 -> {
-                                loadShoppingList(false)
                                 SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
                                 ScreenManager.presentSSOSignin(it)
                             }
                             else -> {
-                                loadShoppingList(false)
                                 if (!mErrorDialogDidAppear) {
                                     mErrorDialogDidAppear = true
                                     response.response?.desc?.let { showErrorDialog(it) }
@@ -147,9 +142,6 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
         }).execute()
     }
 
-    private fun networkConnectionAvailable(it: FragmentActivity) = NetworkManager.getInstance().isConnectedToNetwork(it)
-
-
     private fun bindShoppingListToUI(shoppingList: MutableList<ShoppingList>) {
         activity?.apply {
             // dynamic RecyclerView height
@@ -162,18 +154,9 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
 
     private fun setRecyclerViewHeight(shoppingList: MutableList<ShoppingList>, viewGroupParams: ViewGroup.LayoutParams) {
         shoppingList.apply {
-            when {
-                size == 0 -> {
-                    // pop up create list fragment
-                    navigateToCreateShoppingListFragment(false)
-                }
-                size < 4 -> {
-                    viewGroupParams.height = RecyclerView.LayoutParams.WRAP_CONTENT
-                    rclAddToList.layoutParams = viewGroupParams
-                }
-                else -> {
-                    recyclerViewMaximumHeight(viewGroupParams)
-                }
+            when (size) {
+                0 -> navigateToCreateShoppingListFragment(false)   // pop up create list fragment
+                else -> recyclerViewMaximumHeight(viewGroupParams)
             }
         }
     }
@@ -256,19 +239,19 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
             ConnectionBroadcastReceiver.registerToFragmentAndAutoUnregister(it, this, object : ConnectionBroadcastReceiver() {
                 override fun onConnectionChanged(hasConnection: Boolean) {
                     if (hasConnection) {
-                        mReConnect?.let { connect ->
+                        mAutoConnect?.let { connect ->
                             when (connect) {
-                                ReConnect.ADD_PRODUCT_TO_LIST -> {
+                                AutoConnect.ADD_PRODUCT_TO_LIST -> {
                                     disableCreateListButton(false)
                                     btnPostShoppingList.performClick()
                                 }
 
-                                ReConnect.ADD_ORDER_TO_LIST -> {
+                                AutoConnect.ADD_ORDER_TO_LIST -> {
                                     disableCreateListButton(false)
                                     btnPostShoppingList.performClick()
                                 }
                             }
-                            mReConnect = null
+                            mAutoConnect = null
                         }
                     }
                 }
@@ -296,7 +279,7 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
             override fun onFailure(errorMessage: String) {
                 activity?.let {
                     it.runOnUiThread {
-                        mReConnect = ReConnect.ADD_PRODUCT_TO_LIST
+                        mAutoConnect = AutoConnect.ADD_PRODUCT_TO_LIST
                         disableCreateListButton(true)
                         shoppingListPostProgress(false)
                         ErrorHandlerView(it).showToast()
@@ -320,7 +303,7 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
             override fun onFailure(errorMessage: String) {
                 activity?.let {
                     it.runOnUiThread {
-                        mReConnect = ReConnect.ADD_ORDER_TO_LIST
+                        mAutoConnect = AutoConnect.ADD_ORDER_TO_LIST
                         disableCreateListButton(true)
                         shoppingListPostProgress(false)
                         ErrorHandlerView(it).showToast()
@@ -442,7 +425,12 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
             if (networkConnectionAvailable(activity)) retrieveShoppingList() else noNetworkConnection(true)
         } else {
             val cachedShoppingList = getLatestShoppingList()
-            btnPostShoppingList.text = cachedShoppingList?.let { if (it.size > 0) getString(R.string.ok) else getString(R.string.cancel) }
+            var atLeastOneShoppingListItemSelected = false
+            cachedShoppingList?.forEach {
+                if (it.shoppingListRowWasSelected)
+                    atLeastOneShoppingListItemSelected = true
+            }
+            btnPostShoppingList.text = cachedShoppingList?.let { if (atLeastOneShoppingListItemSelected) getString(R.string.ok) else getString(R.string.cancel) }
             cachedShoppingList?.let { setRecyclerViewHeight(it, rclAddToList.layoutParams) }
             cachedShoppingList?.let { mAddToShoppingListAdapter?.setShoppingList(it) }
             mAddToShoppingListAdapter?.notifyDataSetChanged()

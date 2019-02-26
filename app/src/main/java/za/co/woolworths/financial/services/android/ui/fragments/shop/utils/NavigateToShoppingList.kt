@@ -12,8 +12,10 @@ class NavigateToShoppingList {
         const val DISPLAY_TOAST_RESULT_CODE = 120
         fun requestToastOnNavigateBack(activity: Activity?, key: String, value: Any?) {
             activity?.apply {
+                val sizeOfList = value as? Map<*, *>
                 val output = Intent()
                 output.putExtra(key, Gson().toJson(value))
+                output.putExtra("sizeOfList", sizeOfList?.size)
                 setResult(ADD_TO_SHOPPING_LIST_RESULT_CODE, output)
                 finish()
                 overridePendingTransition(0, 0)

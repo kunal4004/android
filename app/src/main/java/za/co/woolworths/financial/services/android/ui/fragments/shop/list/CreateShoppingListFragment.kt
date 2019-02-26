@@ -31,14 +31,19 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
 
     private var mShoppingListGroup: HashMap<String, ShoppingList>? = null
     private var mAddToListRequest: MutableList<AddToListRequest>? = null
-    private var isPostingShoppingItem: Boolean? = false
     private var mPostShoppingList: HttpAsyncTask<String, String, ShoppingListItemsResponse>? = null
-    private var isPostingToOrderShoppingList: Boolean = false
     private var mCreateShoppingList: HttpAsyncTask<String, String, ShoppingListsResponse>? = null
     private var mShouldDisplayCreateListOnly: Boolean = false
     private var mOrderId: String? = null
     private var isOrderIdNullOrEmpty: Boolean = false
     private var mDialogErrorMessageDidAppear = false
+    private var mAutoConnect: AutoConnect? = null
+
+    enum class AutoConnect {
+        CREATE_LIST,
+        ADD_ORDER_TO_LIST,
+        ADD_PRODUCT_TO_LIST;
+    }
 
     companion object {
         private const val HIDE_KEYBOARD_DELAY_MILIS: Long = 400
@@ -46,6 +51,7 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
         private const val SHOPPING_LIST_SELECTED_LIST_ID = "SHOPPING_LIST_SELECTED_LIST_ID"
         private const val SHOPPING_LIST_SELECTED_GROUP = "SHOPPING_LIST_SELECTED_GROUP"
         private const val DISPLAY_CREATE_LIST_ONLY = "DISPLAY_CREATE_LIST_ONLY"
+
 
         fun newInstance(listOfIds: HashMap<String, ShoppingList>?, selectedListGroup: String?) = CreateShoppingListFragment().apply {
             arguments = Bundle(2).apply {
@@ -79,6 +85,36 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
         clickListener()
         textChangeListener()
         enableCancelButton(false)
+        networkConnectivityStatus()
+    }
+
+    private fun networkConnectivityStatus() {
+        activity?.let {
+            ConnectionBroadcastReceiver.registerToFragmentAndAutoUnregister(it, this, object : ConnectionBroadcastReceiver() {
+                override fun onConnectionChanged(hasConnection: Boolean) {
+                    if (hasConnection) {
+                        mAutoConnect?.let { connect ->
+                            when (connect) {
+                                AutoConnect.CREATE_LIST -> {
+                                    btnCancel.isEnabled = true
+                                    btnCancel.performClick()
+                                }
+                                AutoConnect.ADD_PRODUCT_TO_LIST -> {
+                                    btnCancel.isEnabled = true
+                                    btnCancel.performClick()
+                                }
+
+                                AutoConnect.ADD_ORDER_TO_LIST -> {
+                                    btnCancel.isEnabled = true
+                                    btnCancel.performClick()
+                                }
+                            }
+                            mAutoConnect = null
+                        }
+                    }
+                }
+            })
+        }
     }
 
     private fun getBundleArguments() {
@@ -93,12 +129,13 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
                 mAddToListRequest = convertStringToObject(this.getString(SHOPPING_LIST_SELECTED_GROUP))
             }
 
-            if (this.containsKey(DISPLAY_CREATE_LIST_ONLY))
+            if (this.containsKey(DISPLAY_CREATE_LIST_ONLY)) {
                 mShouldDisplayCreateListOnly = this.getBoolean(DISPLAY_CREATE_LIST_ONLY, false)
+            }
 
-            if (this.containsKey(OrderDetailsActivity.ORDER_ID))
+            if (this.containsKey(OrderDetailsActivity.ORDER_ID)) {
                 mOrderId = this.getString(OrderDetailsActivity.ORDER_ID)
-
+            }
         }
     }
 
@@ -147,7 +184,6 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
         cancelRequest(mPostShoppingList)
         cancelRequest(mCreateShoppingList)
         hideKeyboard()
-
     }
 
     private fun toolbarIconVisibility() {
@@ -192,10 +228,10 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
         val listName = etNewList.text.toString()
         if (listName.isNotEmpty()) {
             showKeyboard(etNewList)
-            if (NetworkManager.getInstance().isConnectedToNetwork(this)) {
+            if (networkConnectionAvailable(activity)) {
                 createShoppingListRequest()
             } else {
-                ErrorHandlerView(this).showToast()
+                ErrorHandlerView(activity).showToast()
             }
         } else {
             onBackPressed()
@@ -213,7 +249,7 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
                             if (mShoppingListGroup?.size!! > 0 && !mShouldDisplayCreateListOnly) {
                                 //add new list to shopping list group
                                 val createdList = lists[0]
-                                createdList.wasSentToServer = !isOrderIdNullOrEmpty
+                                createdList.wasSentToServer = isOrderIdNullOrEmpty
                                 mShoppingListGroup?.put(createdList.listId, createdList)
 
                                 mShoppingListGroup?.forEach {
@@ -223,14 +259,14 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
                                     if (!shopList.wasSentToServer && isOrderIdNullOrEmpty) {
                                         // Update listId value from dto AddToListRequest
                                         mAddToListRequest?.forEach { item -> item.listId = listId }
-                                        postToShoppingList(mAddToListRequest, it.key)
+                                        addProductToShoppingList(mAddToListRequest, it.key)
                                     } else {
                                         addOrderToShoppingList(mOrderId, shopList)
                                     }
                                 }
                             } else {
                                 val createdList = lists[0]
-                                createdList.wasSentToServer = !isOrderIdNullOrEmpty
+                                createdList.wasSentToServer = isOrderIdNullOrEmpty
                                 mShoppingListGroup?.put(createdList.listId, createdList)
 
                                 // post order to list
@@ -253,7 +289,7 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
                         440 -> {
                             shoppingListPostProgress(false)
                             SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
-                            ScreenManager.presentSSOSignin(activity)
+                            activity?.let { ScreenManager.presentSSOSignin(it) }
                         }
                         else -> {
                             shoppingListPostProgress(false)
@@ -265,15 +301,20 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
             }
 
             override fun onFailure(errorMessage: String) {
-                shoppingListPostProgress(false)
-                displayNoConnectionToast()
+                activity?.let {
+                    it.runOnUiThread {
+                        if (!networkConnectionAvailable(it)) {
+                            mAutoConnect = AutoConnect.CREATE_LIST
+                            displayNoConnectionToast()
+                        }
+                        shoppingListPostProgress(false)
+                    }
+                }
             }
         }).execute() as HttpAsyncTask<String, String, ShoppingListsResponse>
     }
 
-
-    private fun postToShoppingList(addToListRequest: MutableList<AddToListRequest>?, listId: String?) {
-        isPostingShoppingItem = true
+    private fun addProductToShoppingList(addToListRequest: MutableList<AddToListRequest>?, listId: String?) {
         mPostShoppingList = PostAddToShoppingList(listId, addToListRequest, object : AsyncAPIResponse.ResponseDelegate<ShoppingListItemsResponse> {
             override fun onSuccess(response: ShoppingListItemsResponse) {
                 response.apply {
@@ -308,12 +349,16 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
                         }
                     }
                 }
-                isPostingShoppingItem = false
             }
 
             override fun onFailure(errorMessage: String) {
-                shoppingListPostProgress(false)
-                displayNoConnectionToast()
+                activity?.let {
+                    it.runOnUiThread {
+                        mAutoConnect = AutoConnect.ADD_PRODUCT_TO_LIST
+                        shoppingListPostProgress(false)
+                        displayNoConnectionToast()
+                    }
+                }
             }
 
         }).execute() as HttpAsyncTask<String, String, ShoppingListItemsResponse>
@@ -334,33 +379,39 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
     }
 
     private fun buildFirstRequest(listName: String?): CreateList {
-        return CreateList(listName, mAddToListRequest)
+        // create list and post order to the new list
+        return if (mOrderId.isNullOrEmpty()) CreateList(listName, mAddToListRequest) else CreateList(listName, mutableListOf())
     }
 
     private fun showShoppingListSuccessToast() {
-        if (!mShouldDisplayCreateListOnly)
-            NavigateToShoppingList.requestToastOnNavigateBack(activity, AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST, mShoppingListGroup)
-        else
-            NavigateToShoppingList.displayBottomNavigationToast(activity, AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST, mShoppingListGroup)
+        if (mShoppingListGroup?.size == 1) {
+            activity?.let { NavigateToShoppingList.requestToastOnNavigateBack(it, AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST, mShoppingListGroup) }
+        } else {
+            if (!mShouldDisplayCreateListOnly)
+                activity?.let { NavigateToShoppingList.requestToastOnNavigateBack(it, AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST, mShoppingListGroup) }
+            else
+                activity?.let { NavigateToShoppingList.displayBottomNavigationToast(it, AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST, mShoppingListGroup) }
+        }
     }
 
     private fun addOrderToShoppingList(orderId: String?, shoppingList: ShoppingList) {
-        isPostingToOrderShoppingList = true
         shoppingListPostProgress(true)
         val orderRequestList = OrderToShoppingListRequestBody(shoppingList.listId, shoppingList.listName)
         PostOrderToShoppingList(orderId, orderRequestList, object : AsyncAPIResponse.ResponseDelegate<OrderToListReponse> {
-            override fun onSuccess(ordersResponse: OrderToListReponse) {
-                ordersResponse.apply {
-                    addOrderResponseHandler(orderRequestList.shoppingListId, ordersResponse)
-                    isPostingToOrderShoppingList = false
+            override fun onSuccess(response: OrderToListReponse) {
+                response.apply {
+                    addOrderResponseHandler(orderRequestList.shoppingListId, response)
                 }
             }
 
             override fun onFailure(errorMessage: String) {
                 activity?.let {
                     it.runOnUiThread {
-                        shoppingListPostProgress(false)
-                        ErrorHandlerView(it).showToast()
+                        if (!networkConnectionAvailable(it)) {
+                            mAutoConnect = AutoConnect.ADD_ORDER_TO_LIST
+                            shoppingListPostProgress(false)
+                            ErrorHandlerView(it).showToast()
+                        }
                     }
                 }
             }
@@ -392,12 +443,10 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
                 }
                 440 -> {
                     SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
-                    SessionExpiredUtilities.getInstance().showSessionExpireDialog(activity as? AppCompatActivity)
+                    activity?.let { SessionExpiredUtilities.getInstance().showSessionExpireDialog(it as? AppCompatActivity) }
                     shoppingListPostProgress(false)
                 }
-                else -> {
-                    errorDialogDisplay(response)
-                }
+                else -> errorDialogDisplay(response)
             }
         }
     }
@@ -406,7 +455,7 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
         if (!mDialogErrorMessageDidAppear) {
             mDialogErrorMessageDidAppear = true
             shoppingListPostProgress(false)
-            showErrorDialog(response?.desc ?: "")
+            response?.desc?.let { showErrorDialog(it) }
         }
     }
 }

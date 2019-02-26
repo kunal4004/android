@@ -83,7 +83,7 @@
             android:gravity="center"
             android:hint="List Name"
             android:imeOptions="actionDone"
-            android:inputType="text|textNoSuggestions"
+            android:inputType="textCapWords"
             android:maxLength="50"
             android:minHeight="@dimen/hundred_and_fifty_dp"
             android:singleLine="true"

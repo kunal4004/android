@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.activities
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -8,6 +7,7 @@ import android.support.v7.app.AppCompatActivity
 import com.awfs.coordination.R
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
+import com.google.gson.JsonParser
 import kotlinx.android.synthetic.main.order_details_activity.*
 import za.co.woolworths.financial.services.android.contracts.IToastInterface
 import za.co.woolworths.financial.services.android.models.dto.Order
@@ -19,6 +19,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.AddOrderToC
 import za.co.woolworths.financial.services.android.ui.fragments.shop.OrderDetailsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.TaxInvoiceLIstFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment
+import za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment.Companion.POST_ADD_TO_SHOPPING_LIST
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.FragmentsEventsListner
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory
@@ -75,7 +76,14 @@ class OrderDetailsActivity : AppCompatActivity(), FragmentsEventsListner, IToast
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == ADD_TO_SHOPPING_LIST_REQUEST_CODE) {
             if (resultCode == ADD_TO_SHOPPING_LIST_RESULT_CODE) {
-                ToastFactory.buildShoppingListToast(fragmentContainer, true, data, this)
+                data?.getIntExtra("sizeOfList", 0)?.let {
+                    if (it == 1) {
+                        onToastButtonClicked(JsonParser().parse(data.getStringExtra(POST_ADD_TO_SHOPPING_LIST)))
+                    } else {
+                        ToastFactory.buildShoppingListToast(fragmentContainer, true, data, this)
+                    }
+                }
+
                 return
             }
         }
@@ -100,10 +108,10 @@ class OrderDetailsActivity : AppCompatActivity(), FragmentsEventsListner, IToast
         pushFragment(TaxInvoiceLIstFragment.getInstance(order?.orderId!!, order?.taxNoteNumbers!!), TAG_TAX_INVOICE_FRAGMENT)
     }
 
-    override fun onToastButtonClicked(element: JsonElement?) {
-        element?.let { item ->
+    override fun onToastButtonClicked(jsonElement: JsonElement?) {
+        jsonElement?.let { item ->
             if (item is JsonObject)
-                toastClick(element as? JsonObject)
+                toastClick(jsonElement as? JsonObject)
         }
     }
 
