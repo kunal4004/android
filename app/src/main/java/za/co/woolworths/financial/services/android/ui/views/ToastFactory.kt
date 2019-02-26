@@ -54,7 +54,7 @@ class ToastFactory {
 
             tvButtonClick?.visibility = if (buttonIsVisible) View.VISIBLE else View.GONE
             tvBoldTitle?.visibility = View.VISIBLE
-            tvAddedTo?.setAllCaps(false)
+            tvAddedTo?.setAllCaps(true)
 
             shoppingListArray?.let { tvBoldTitle?.setText(context.getString(R.string.shopping_list).plus(if (it.size() > 1) "s" else "")) }
             shoppingListObject?.let { tvBoldTitle?.setText(context.getString(R.string.shopping_list).plus(if (it.size() > 1) "s" else "")) }
