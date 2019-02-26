@@ -168,4 +168,9 @@ class MyOrdersFragment : Fragment() {
         loadingBar.visibility = View.VISIBLE
         myOrdersList.visibility = View.GONE
     }
+
+    fun scrollToTop() {
+        if (myOrdersList != null)
+            myOrdersList.scrollToPosition(0)
+    }
 }

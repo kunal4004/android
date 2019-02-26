@@ -19,7 +19,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.OrderDetail
 import za.co.woolworths.financial.services.android.ui.fragments.shop.TaxInvoiceLIstFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.FragmentsEventsListner
-import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.ShoppingListToastNavigation
+import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -39,6 +39,7 @@ class OrderDetailsActivity : AppCompatActivity(), FragmentsEventsListner, IToast
         const val TAG_ORDER_DETAILS_FRAGMENT: String = "OrderDetailsFragment"
         const val TAG_ORDER_TO_CART_FRAGMENT: String = "OrderToCartFragment"
         const val TAG_TAX_INVOICE_FRAGMENT: String = "TaxInvoiceFragment"
+        const val ORDER_ID: String = "ORDER_ID"
     }
 
     private fun configureUI() {
@@ -106,6 +107,6 @@ class OrderDetailsActivity : AppCompatActivity(), FragmentsEventsListner, IToast
     }
 
     private fun toastClick(obj: JsonObject?) {
-        ShoppingListToastNavigation.requestToastOnNavigateBack(this, AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST, obj)
+        NavigateToShoppingList.requestToastOnNavigateBack(this, AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST, obj)
     }
 }

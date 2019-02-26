@@ -11,12 +11,14 @@ import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_shop.*
 import kotlinx.android.synthetic.main.shop_custom_tab.view.*
+import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ShopPagerAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.barcode.BarcodeFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
+import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList.Companion.DISPLAY_TOAST_RESULT_CODE
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback
 import za.co.woolworths.financial.services.android.util.PermissionUtils
 import java.util.*
@@ -132,6 +134,13 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            ADD_TO_SHOPPING_LIST_REQUEST_CODE -> {
+                if (resultCode == DISPLAY_TOAST_RESULT_CODE) {
+                    refreshViewPagerFragment()
+                }
+            }
+        }
         when (resultCode) {
             SSOActivity.SSOActivityResult.SUCCESS.rawValue() -> {
                 refreshViewPagerFragment()
@@ -161,6 +170,19 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
     }
 
     fun scrollToTop() {
-
+        when (viewpager_main.currentItem) {
+            0 -> {
+                val detailsFragment = viewpager_main.adapter?.instantiateItem(viewpager_main, viewpager_main.currentItem) as? DepartmentsFragment
+                detailsFragment?.scrollToTop()
+            }
+            1 -> {
+                val myListsFragment = viewpager_main.adapter?.instantiateItem(viewpager_main, viewpager_main.currentItem) as? MyListsFragment
+                myListsFragment?.scrollToTop()
+            }
+            2 -> {
+                val myOrdersFragment = viewpager_main.adapter?.instantiateItem(viewpager_main, viewpager_main.currentItem) as? MyOrdersFragment
+                myOrdersFragment?.scrollToTop()
+            }
+        }
     }
 }
