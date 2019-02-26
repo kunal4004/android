@@ -37,7 +37,9 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:src="@drawable/cli_step_indicator_active" />
+                    android:src="@drawable/ic_share"
+                    android:padding="@dimen/five_dp"
+                    />
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     android:id="@+id/toolbarText"
@@ -47,7 +49,6 @@
                     android:ellipsize="end"
                     android:letterSpacing="0.2"
                     android:singleLine="true"
-                    android:text="123456"
                     android:textAllCaps="true"
                     android:textColor="@color/white"
                     android:textSize="12sp"

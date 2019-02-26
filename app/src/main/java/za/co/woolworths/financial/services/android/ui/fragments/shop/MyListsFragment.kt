@@ -266,6 +266,13 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
         isFragmentVisible = isVisibleToUser
+        if (!isVisibleToUser && mGetShoppingListRequest != null)
+            cancelRequest(mGetShoppingListRequest)
+    }
+
+    fun scrollToTop() {
+        if (nested_scrollview != null)
+            nested_scrollview.scrollTo(0, 0)
     }
 
 }

@@ -181,6 +181,19 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
     }
 
     fun scrollToTop() {
-
+        when (viewpager_main.currentItem) {
+            0 -> {
+                val detailsFragment = viewpager_main.adapter?.instantiateItem(viewpager_main, viewpager_main.currentItem) as? CategoryFragment
+                detailsFragment?.scrollToTop()
+            }
+            1 -> {
+                val myListsFragment = viewpager_main.adapter?.instantiateItem(viewpager_main, viewpager_main.currentItem) as? MyListsFragment
+                myListsFragment?.scrollToTop()
+            }
+            2 -> {
+                val myOrdersFragment = viewpager_main.adapter?.instantiateItem(viewpager_main, viewpager_main.currentItem) as? MyOrdersFragment
+                myOrdersFragment?.scrollToTop()
+            }
+        }
     }
 }

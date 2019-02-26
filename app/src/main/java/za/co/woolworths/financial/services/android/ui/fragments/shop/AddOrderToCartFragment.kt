@@ -405,14 +405,7 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
     }
 
     fun onAddToCartSuccess(addItemToCartResponse: AddItemToCartResponse) {
-        /* val intent = Intent()
-         if (addItemToCartResponse.data.size > 0) {
-             val successMessage = addItemToCartResponse.data[0].message
-             intent.putExtra("addedToCartMessage", successMessage)
-         }
-         val activity = activity ?: return
-         activity.setResult(RESULT_OK, intent)*/
-        listener.onItemsAddedToCart()
+        listener.onItemsAddedToCart(addItemToCartResponse)
     }
 
     override fun onAttach(context: Context?) {
