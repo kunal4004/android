@@ -17,7 +17,6 @@ import android.util.DisplayMetrics
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 
-
 class ToastFactory {
 
     companion object {

@@ -39,6 +39,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
     private var mSuburbName: String? = null
     private var mProvinceName: String? = null
     private var isMyListsFragmentVisible: Boolean = false
+    private var isFragmentVisible: Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -47,9 +48,11 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initUI()
-        authenticateUser()
-        setListener()
+        if (isFragmentVisible) {
+            initUI()
+            authenticateUser()
+            setListener()
+        }
     }
 
     private fun initUI() {
@@ -258,6 +261,11 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
         val shoppingListItemsFragment = ShoppingListItemsFragment()
         shoppingListItemsFragment.arguments = bundle
         (activity as? BottomNavigationActivity)?.pushFragment(shoppingListItemsFragment)
+    }
+
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+        isFragmentVisible = isVisibleToUser
     }
 
 }

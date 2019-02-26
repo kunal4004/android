@@ -13,6 +13,7 @@ import za.co.woolworths.financial.services.android.contracts.IToastInterface
 import za.co.woolworths.financial.services.android.models.dto.Order
 import za.co.woolworths.financial.services.android.models.dto.OrderDetailsResponse
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
+import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragmentSafely
 import za.co.woolworths.financial.services.android.ui.fragments.shop.AddOrderToCartFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.OrderDetailsFragment
@@ -73,7 +74,7 @@ class OrderDetailsActivity : AppCompatActivity(), FragmentsEventsListner, IToast
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == ADD_TO_SHOPPING_LIST_REQUEST_CODE) {
-            if (resultCode == Activity.RESULT_OK) {
+            if (resultCode == ADD_TO_SHOPPING_LIST_RESULT_CODE) {
                 ToastFactory.buildShoppingListToast(fragmentContainer, true, data, this)
                 return
             }

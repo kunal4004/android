@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
+import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity
 
 class NavigateToShoppingList {
@@ -13,7 +14,7 @@ class NavigateToShoppingList {
             activity?.apply {
                 val output = Intent()
                 output.putExtra(key, Gson().toJson(value))
-                setResult(Activity.RESULT_OK, output)
+                setResult(ADD_TO_SHOPPING_LIST_RESULT_CODE, output)
                 finish()
                 overridePendingTransition(0, 0)
             }

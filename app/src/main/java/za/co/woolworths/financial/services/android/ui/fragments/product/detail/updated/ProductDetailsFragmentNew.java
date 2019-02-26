@@ -87,6 +87,7 @@ import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 import static android.app.Activity.RESULT_OK;
+import static za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_REQUEST_CODE;
 
 /**
  * Created by W7099877 on 2018/07/14.
@@ -141,7 +142,6 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
     PermissionUtils permissionUtils;
     private OtherSkus otherSKUForFindInStore;
     CircleIndicator circleindicator;
-    private final int ADD_TO_SHOPPING_LIST_REQUEST_CODE = 179;
     private final int SET_DELIVERY_LOCATION_REQUEST_CODE = 180;
     private ToastUtils mToastUtils;
     private FuseLocationAPISingleton mFuseLocationAPISingleton;
