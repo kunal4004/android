@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.activities
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.view.animation.TranslateAnimation
@@ -13,7 +14,7 @@ import za.co.woolworths.financial.services.android.ui.activities.OrderDetailsAct
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToDepartmentFragment
-import za.co.woolworths.financial.services.android.ui.fragments.shop.list.CreateDepartmentFragment
+import za.co.woolworths.financial.services.android.ui.fragments.shop.list.CreateShoppingListFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
 class AddToShoppingListActivity : AppCompatActivity(), IDialogListener {
@@ -36,7 +37,7 @@ class AddToShoppingListActivity : AppCompatActivity(), IDialogListener {
 
             if (shouldDisplayCreateList!!) {
                 addFragment(
-                        fragment = CreateDepartmentFragment.newInstance(HashMap(), addToListRequestBundle, shouldDisplayCreateList, orderId),
+                        fragment = CreateShoppingListFragment.newInstance(HashMap(), addToListRequestBundle, shouldDisplayCreateList, orderId),
                         tag = AddToDepartmentFragment::class.java.simpleName,
                         containerViewId = R.id.flShoppingListContainer)
             } else {

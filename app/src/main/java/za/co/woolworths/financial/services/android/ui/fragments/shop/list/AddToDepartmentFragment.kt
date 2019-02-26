@@ -393,8 +393,8 @@ class AddToDepartmentFragment : DepartmentExtensionFragment(), View.OnClickListe
 
     private fun navigateToCreateShoppingListFragment(state: Boolean) {
         replaceFragment(
-                fragment = CreateDepartmentFragment.newInstance(mShoppingListGroup, mAddToListArgs, state, mOrderId),
-                tag = CreateDepartmentFragment::class.java.simpleName,
+                fragment = CreateShoppingListFragment.newInstance(mShoppingListGroup, mAddToListArgs, state, mOrderId),
+                tag = CreateShoppingListFragment::class.java.simpleName,
                 containerViewId = R.id.flShoppingListContainer,
                 allowStateLoss = false,
                 enterAnimation = R.anim.stay,

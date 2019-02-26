@@ -82,7 +82,7 @@ class CategoryFragment : DepartmentExtensionFragment() {
 
     private fun bindDepartment(rootCategories: RootCategories) {
         mDepartmentAdapter?.setRootCategories(rootCategories.rootCategories)
-        rootCategories.rootCategories?.size?.let { mDepartmentAdapter?.notifyItemRangeInserted(0, it) }
+        mDepartmentAdapter?.notifyDataSetChanged()
     }
 
     private fun setUpRecyclerView(categories: MutableList<RootCategory>?) {

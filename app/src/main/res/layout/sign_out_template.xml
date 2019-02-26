@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/orders_bg"
-    android:paddingStart="@dimen/sixty_dp"
-    android:paddingEnd="@dimen/sixty_dp">
+    android:paddingStart="@dimen/fifty_dp"
+    android:paddingEnd="@dimen/fifty_dp">
 
     <ImageView
         android:id="@+id/imEmptyIcon"
@@ -45,7 +45,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/txtEmptyStateTitle"
-        android:layout_marginStart="1dp"
         android:layout_marginBottom="8dp"
         android:gravity="center"
         android:text="@string/shop_sign_out_order_desc"
@@ -57,7 +56,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
     <za.co.woolworths.financial.services.android.ui.views.WButton
         android:id="@+id/btnGoToProduct"
         style="@style/whiteButtonStyle"
@@ -65,10 +63,10 @@
         android:layout_height="50dp"
         android:layout_below="@+id/txtEmptyStateDesc"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/twenty_four_dp"
-        android:letterSpacing="0.15"
         android:layout_marginStart="@dimen/twenty_two_dp"
+        android:layout_marginTop="@dimen/twenty_four_dp"
         android:layout_marginEnd="@dimen/twenty_two_dp"
+        android:letterSpacing="0.15"
         android:text="@string/go_to_products"
         android:textColor="@color/black"
         android:textSize="12sp"

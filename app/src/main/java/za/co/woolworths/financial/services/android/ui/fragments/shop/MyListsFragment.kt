@@ -17,6 +17,7 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingListsRespo
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.GetShoppingList
 import za.co.woolworths.financial.services.android.ui.adapters.ViewShoppingListAdapter
 import android.support.v7.widget.DividerItemDecoration
+import kotlinx.android.synthetic.main.no_connection_handler.*
 import kotlinx.android.synthetic.main.sign_out_template.*
 import kotlinx.android.synthetic.main.shopping_list_fragment.*
 import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity
@@ -66,6 +67,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
         locationSelectedLayout.setOnClickListener(this)
         btnGoToProduct.setOnClickListener(this)
         rlCreateAList.setOnClickListener(this)
+        btnRetry.setOnClickListener(this)
     }
 
     private fun getShoppingList() {
