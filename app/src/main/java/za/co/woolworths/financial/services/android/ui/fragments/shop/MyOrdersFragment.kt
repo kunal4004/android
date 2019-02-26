@@ -188,6 +188,11 @@ class MyOrdersFragment : Fragment() {
         super.setUserVisibleHint(isVisibleToUser)
         isFragmentVisible = isVisibleToUser
         if (!isVisibleToUser && requestOrders != null)
+            cancelRequest()
+    }
+
+    fun cancelRequest() {
+        if (!requestOrders?.isCancelled!!)
             requestOrders?.cancel(true)
     }
 }
