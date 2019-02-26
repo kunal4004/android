@@ -12,7 +12,7 @@ import com.awfs.coordination.R
 import com.google.gson.JsonParser
 import za.co.woolworths.financial.services.android.contracts.IToastInterface
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment
+import za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToDepartmentFragment
 import android.util.DisplayMetrics
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
@@ -26,7 +26,7 @@ class ToastFactory {
         fun buildShoppingListToast(viewLocation: View, buttonIsVisible: Boolean, data: Intent?, toastInterface: IToastInterface): PopupWindow? {
             val context = WoolworthsApplication.getAppContext()
 
-            val shoppingList = data?.getStringExtra(AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST)
+            val shoppingList = data?.getStringExtra(AddToDepartmentFragment.POST_ADD_TO_SHOPPING_LIST)
             var shoppingListObject: JsonObject? = null
             var shoppingListArray: JsonArray? = null
 

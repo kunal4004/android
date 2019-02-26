@@ -25,13 +25,13 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.DeleteShoppingLists
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
-import za.co.woolworths.financial.services.android.ui.fragments.shop.list.ShoppingListExtensionFragment
+import za.co.woolworths.financial.services.android.ui.fragments.shop.list.DepartmentExtensionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsFragment
 import za.co.woolworths.financial.services.android.util.*
 
 
-class MyListsFragment : ShoppingListExtensionFragment(), View.OnClickListener, IShoppingList {
+class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, IShoppingList {
 
     private var mAddToShoppingListAdapter: ViewShoppingListAdapter? = null
     private var mGetShoppingListRequest: HttpAsyncTask<String, String, ShoppingListsResponse>? = null

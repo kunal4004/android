@@ -26,7 +26,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.Navig
 import za.co.woolworths.financial.services.android.util.*
 import java.util.HashMap
 
-class CreateShoppingListFragment : ShoppingListExtensionFragment(), View.OnClickListener {
+class CreateDepartmentFragment : DepartmentExtensionFragment(), View.OnClickListener {
 
     private var mShoppingListGroup: HashMap<String, ShoppingList>? = null
     private var mAddToListRequest: MutableList<AddToListRequest>? = null
@@ -44,14 +44,14 @@ class CreateShoppingListFragment : ShoppingListExtensionFragment(), View.OnClick
         private const val SHOPPING_LIST_SELECTED_GROUP = "SHOPPING_LIST_SELECTED_GROUP"
         private const val DISPLAY_CREATE_LIST_ONLY = "DISPLAY_CREATE_LIST_ONLY"
 
-        fun newInstance(listOfIds: HashMap<String, ShoppingList>?, selectedListGroup: String?) = CreateShoppingListFragment().apply {
+        fun newInstance(listOfIds: HashMap<String, ShoppingList>?, selectedListGroup: String?) = CreateDepartmentFragment().apply {
             arguments = Bundle(2).apply {
                 putSerializable(SHOPPING_LIST_SELECTED_LIST_ID, listOfIds)
                 putString(SHOPPING_LIST_SELECTED_GROUP, selectedListGroup)
             }
         }
 
-        fun newInstance(listOfIds: HashMap<String, ShoppingList>?, selectedListGroup: String?, shouldDisplayCreateList: Boolean, orderId: String?) = CreateShoppingListFragment().apply {
+        fun newInstance(listOfIds: HashMap<String, ShoppingList>?, selectedListGroup: String?, shouldDisplayCreateList: Boolean, orderId: String?) = CreateDepartmentFragment().apply {
             arguments = Bundle(4).apply {
                 putSerializable(SHOPPING_LIST_SELECTED_LIST_ID, listOfIds)
                 putString(SHOPPING_LIST_SELECTED_GROUP, selectedListGroup)
@@ -315,9 +315,9 @@ class CreateShoppingListFragment : ShoppingListExtensionFragment(), View.OnClick
 
     private fun showShoppingListSuccessToast() {
         if (!mShouldDisplayCreateListOnly)
-            NavigateToShoppingList.requestToastOnNavigateBack(activity, AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST, mShoppingListGroup)
+            NavigateToShoppingList.requestToastOnNavigateBack(activity, AddToDepartmentFragment.POST_ADD_TO_SHOPPING_LIST, mShoppingListGroup)
         else
-            NavigateToShoppingList.displayBottomNavigationToast(activity, AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST, mShoppingListGroup)
+            NavigateToShoppingList.displayBottomNavigationToast(activity, AddToDepartmentFragment.POST_ADD_TO_SHOPPING_LIST, mShoppingListGroup)
     }
 
     private fun addOrderToShoppingList(orderId: String?, shoppingList: ShoppingList) {

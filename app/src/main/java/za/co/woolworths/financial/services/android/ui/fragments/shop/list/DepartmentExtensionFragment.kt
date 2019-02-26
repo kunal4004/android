@@ -10,7 +10,7 @@ import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask
 
-open class ShoppingListExtensionFragment : Fragment() {
+open class DepartmentExtensionFragment : Fragment() {
 
     fun showKeyboard(editText: EditText) {
         editText.requestFocus()

@@ -28,7 +28,7 @@ import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.util.*
 
-class AddToShoppingListFragment : ShoppingListExtensionFragment(), View.OnClickListener {
+class AddToDepartmentFragment : DepartmentExtensionFragment(), View.OnClickListener {
 
     private var mAddToListArgs: String? = null
     private var isRetrievingShoppingItem = false
@@ -42,7 +42,7 @@ class AddToShoppingListFragment : ShoppingListExtensionFragment(), View.OnClickL
 
     companion object {
         const val POST_ADD_TO_SHOPPING_LIST = "POST_ADD_TO_SHOPPING_LIST"
-        fun newInstance(postListRequest: String?, order_id: String?) = AddToShoppingListFragment().apply {
+        fun newInstance(postListRequest: String?, order_id: String?) = AddToDepartmentFragment().apply {
             arguments = Bundle(2).apply {
                 putString(POST_ADD_TO_SHOPPING_LIST, postListRequest)
                 putString(ORDER_ID, order_id)
@@ -393,8 +393,8 @@ class AddToShoppingListFragment : ShoppingListExtensionFragment(), View.OnClickL
 
     private fun navigateToCreateShoppingListFragment(state: Boolean) {
         replaceFragment(
-                fragment = CreateShoppingListFragment.newInstance(mShoppingListGroup, mAddToListArgs, state, mOrderId),
-                tag = CreateShoppingListFragment::class.java.simpleName,
+                fragment = CreateDepartmentFragment.newInstance(mShoppingListGroup, mAddToListArgs, state, mOrderId),
+                tag = CreateDepartmentFragment::class.java.simpleName,
                 containerViewId = R.id.flShoppingListContainer,
                 allowStateLoss = false,
                 enterAnimation = R.anim.stay,

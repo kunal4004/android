@@ -22,10 +22,11 @@ import kotlinx.android.synthetic.main.no_connection_layout.*
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment
+import za.co.woolworths.financial.services.android.ui.fragments.shop.list.DepartmentExtensionFragment
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.Utils
 
-class CategoryFragment : Fragment() {
+class CategoryFragment : DepartmentExtensionFragment() {
 
     private var mProductDepartmentRequest: ProductCategoryRequest? = null
     private var mDepartmentAdapter: DepartmentAdapter? = null
@@ -64,7 +65,7 @@ class CategoryFragment : Fragment() {
             override fun onSuccess(rootCategories: RootCategories) {
                 when (rootCategories.httpCode) {
                     200 -> bindDepartment(rootCategories)
-                    else -> errorMessage(rootCategories.response?.desc)
+                    else -> rootCategories.response?.desc?.let { showErrorDialog(it) }
                 }
             }
 
@@ -77,10 +78,6 @@ class CategoryFragment : Fragment() {
                 }
             }
         })
-    }
-
-    private fun errorMessage(desc: String?) {
-
     }
 
     private fun bindDepartment(rootCategories: RootCategories) {
@@ -137,10 +134,6 @@ class CategoryFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        mProductDepartmentRequest?.let {
-            if (!it.isCancelled) {
-                it.cancel(true)
-            }
-        }
+        cancelRequest(mProductDepartmentRequest)
     }
 }

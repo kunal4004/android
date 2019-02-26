@@ -12,8 +12,8 @@ import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWind
 import za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity.Companion.ORDER_ID
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
-import za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment
-import za.co.woolworths.financial.services.android.ui.fragments.shop.list.CreateShoppingListFragment
+import za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToDepartmentFragment
+import za.co.woolworths.financial.services.android.ui.fragments.shop.list.CreateDepartmentFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
 class AddToShoppingListActivity : AppCompatActivity(), IDialogListener {
@@ -36,13 +36,13 @@ class AddToShoppingListActivity : AppCompatActivity(), IDialogListener {
 
             if (shouldDisplayCreateList!!) {
                 addFragment(
-                        fragment = CreateShoppingListFragment.newInstance(HashMap(), addToListRequestBundle, shouldDisplayCreateList, orderId),
-                        tag = AddToShoppingListFragment::class.java.simpleName,
+                        fragment = CreateDepartmentFragment.newInstance(HashMap(), addToListRequestBundle, shouldDisplayCreateList, orderId),
+                        tag = AddToDepartmentFragment::class.java.simpleName,
                         containerViewId = R.id.flShoppingListContainer)
             } else {
                 addFragment(
-                        fragment = AddToShoppingListFragment.newInstance(addToListRequestBundle, orderId),
-                        tag = AddToShoppingListFragment::class.java.simpleName,
+                        fragment = AddToDepartmentFragment.newInstance(addToListRequestBundle, orderId),
+                        tag = AddToDepartmentFragment::class.java.simpleName,
                         containerViewId = R.id.flShoppingListContainer
                 )
             }
@@ -61,7 +61,7 @@ class AddToShoppingListActivity : AppCompatActivity(), IDialogListener {
     override fun onDialogDismissed() {
         val fm = supportFragmentManager?.findFragmentById(R.id.flShoppingListContainer)
         when (fm) {
-            is AddToShoppingListFragment -> (fm as? AddToShoppingListFragment)?.closeFragment()
+            is AddToDepartmentFragment -> (fm as? AddToDepartmentFragment)?.closeFragment()
         }
     }
 
