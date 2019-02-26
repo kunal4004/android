@@ -139,19 +139,8 @@ class MyOrdersFragment : Fragment() {
     private fun requestOrders(): GetOrdersRequest {
         return GetOrdersRequest(context, object : OnEventListener<OrdersResponse> {
             override fun onSuccess(ordersResponse: OrdersResponse) {
-                loadingBar.visibility = View.GONE
-                when (ordersResponse.httpCode) {
-                    0 -> {
-                        showSignInView(ordersResponse)
-                    }
-                    440 -> {
-                        showSignOutView()
-                    }
-                    else -> {
-                        showErrorView()
-                    }
-                }
-
+                if (isAdded)
+                    updateUI(ordersResponse)
             }
 
             override fun onFailure(e: String?) {
@@ -163,6 +152,21 @@ class MyOrdersFragment : Fragment() {
 
         })
 
+    }
+
+    fun updateUI(ordersResponse: OrdersResponse) {
+        loadingBar.visibility = View.GONE
+        when (ordersResponse.httpCode) {
+            0 -> {
+                showSignInView(ordersResponse)
+            }
+            440 -> {
+                showSignOutView()
+            }
+            else -> {
+                showErrorView()
+            }
+        }
     }
 
     private fun showLoading() {
