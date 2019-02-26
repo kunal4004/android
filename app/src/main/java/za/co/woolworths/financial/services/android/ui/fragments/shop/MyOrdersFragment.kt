@@ -28,6 +28,8 @@ class MyOrdersFragment : Fragment() {
     private var dataList = arrayListOf<OrderItem>()
     private var mErrorHandlerView: ErrorHandlerView? = null
     private var listner: OnChildFragmentEvents? = null
+    private var isFragmentVisible: Boolean = false
+    private var requestOrders: GetOrdersRequest? = null
 
     companion object {
         const val ORDERS_LOGIN_REQUEST = 2025
@@ -53,7 +55,8 @@ class MyOrdersFragment : Fragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initViews()
+        if (isFragmentVisible)
+            initViews()
     }
 
     fun initViews() {
@@ -118,7 +121,9 @@ class MyOrdersFragment : Fragment() {
     private fun executeOrdersRequest() {
         mErrorHandlerView?.hideEmpyState()
         showLoading()
-        requestOrders().execute()
+        requestOrders = requestOrders()
+        requestOrders?.execute()
+
     }
 
 
@@ -177,5 +182,12 @@ class MyOrdersFragment : Fragment() {
     fun scrollToTop() {
         if (myOrdersList != null)
             myOrdersList.scrollToPosition(0)
+    }
+
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+        isFragmentVisible = isVisibleToUser
+        if (!isVisibleToUser && requestOrders != null)
+            requestOrders?.cancel(true)
     }
 }

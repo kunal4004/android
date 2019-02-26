@@ -25,6 +25,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 class DepartmentsFragment : Fragment() {
 
     private var mProductDepartmentRequest: ProductCategoryRequest? = null
+    private var isFragmentVisible: Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_shop_department, container, false)
@@ -32,8 +33,10 @@ class DepartmentsFragment : Fragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        executeDepartmentRequest()
-        networkConnectivityStatus()
+        if (isFragmentVisible) {
+            executeDepartmentRequest()
+            networkConnectivityStatus()
+        }
     }
 
     private fun networkConnectivityStatus() {
@@ -116,5 +119,10 @@ class DepartmentsFragment : Fragment() {
     fun scrollToTop() {
         if (rclDepartment != null)
             rclDepartment.scrollToPosition(0)
+    }
+
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+        isFragmentVisible = isVisibleToUser
     }
 }
