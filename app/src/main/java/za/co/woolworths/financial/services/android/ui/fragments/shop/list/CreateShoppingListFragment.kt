@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop.list
 
+import android.graphics.Color
 import android.os.Bundle
 import android.support.v4.app.FragmentActivity
 import android.support.v7.app.AppCompatActivity
@@ -122,6 +123,7 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
                 if (!mShouldDisplayCreateListOnly) {
                     btnCancel.isEnabled = isEditTextNotEmpty
                     btnCancel.text = if (isEditTextNotEmpty) getString(R.string.ok) else getString(R.string.cancel)
+                    btnCancel.setTextColor(Color.BLACK)
                 } else {
                     enableCancelButton(isEditTextNotEmpty)
                 }
@@ -314,9 +316,9 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
 
     private fun showShoppingListSuccessToast() {
         if (!mShouldDisplayCreateListOnly)
-            NavigateToShoppingList.requestToastOnNavigateBack(activity, AddToDepartmentFragment.POST_ADD_TO_SHOPPING_LIST, mShoppingListGroup)
+            NavigateToShoppingList.requestToastOnNavigateBack(activity, AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST, mShoppingListGroup)
         else
-            NavigateToShoppingList.displayBottomNavigationToast(activity, AddToDepartmentFragment.POST_ADD_TO_SHOPPING_LIST, mShoppingListGroup)
+            NavigateToShoppingList.displayBottomNavigationToast(activity, AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST, mShoppingListGroup)
     }
 
     private fun addOrderToShoppingList(orderId: String?, shoppingList: ShoppingList) {

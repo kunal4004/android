@@ -28,7 +28,7 @@ import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.util.*
 
-class AddToDepartmentFragment : DepartmentExtensionFragment(), View.OnClickListener {
+class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickListener {
 
     private var mAddToListArgs: String? = null
     private var isRetrievingShoppingItem = false
@@ -42,7 +42,7 @@ class AddToDepartmentFragment : DepartmentExtensionFragment(), View.OnClickListe
 
     companion object {
         const val POST_ADD_TO_SHOPPING_LIST = "POST_ADD_TO_SHOPPING_LIST"
-        fun newInstance(postListRequest: String?, order_id: String?) = AddToDepartmentFragment().apply {
+        fun newInstance(postListRequest: String?, order_id: String?) = AddToShoppingListFragment().apply {
             arguments = Bundle(2).apply {
                 putString(POST_ADD_TO_SHOPPING_LIST, postListRequest)
                 putString(ORDER_ID, order_id)
@@ -202,9 +202,7 @@ class AddToDepartmentFragment : DepartmentExtensionFragment(), View.OnClickListe
                         createProductShoppingList()
                     }
                 } else {
-                    //TODO:: Implement elegant transition animation
-                    activity?.finish()
-                    activity?.overridePendingTransition(0, 0)
+                    activity?.onBackPressed()
                 }
             }
             R.id.btnRetry -> {

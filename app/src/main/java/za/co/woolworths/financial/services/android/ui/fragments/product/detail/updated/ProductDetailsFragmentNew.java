@@ -1134,8 +1134,8 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
         OtherSkus selectedSKU = getGlobalState().getSelectedSKUId();
         AddToListRequest item = new AddToListRequest();
         item.setQuantity("1");
-        item.setGiftListId(selectedSKU.sku);
         item.setSkuID(selectedSKU.sku);
+        item.setGiftListId(selectedSKU.sku);
         item.setCatalogRefId(selectedSKU.sku);
         ArrayList<AddToListRequest> addToListRequests = new ArrayList<>();
         addToListRequests.add(item);

@@ -371,13 +371,13 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                         AddToListRequest listItem = new AddToListRequest();
                         CommerceItemInfo commerceItemInfo = commerceItem.commerceItemInfo;
                         listItem.setCatalogRefId(commerceItemInfo.catalogRefId);
-                        listItem.setSkuID(commerceItemInfo.productId);
-                        listItem.setGiftListId(commerceItemInfo.catalogRefId);
+                        listItem.setSkuID(commerceItemInfo.catalogRefId);
+                        listItem.setGiftListId(commerceItemInfo.productId);
                         listItem.setQuantity("1");
                         addToListRequests.add(listItem);
                     }
                     NavigateToShoppingList navigateToShoppingList = new NavigateToShoppingList();
-                    navigateToShoppingList.openShoppingList(mContext,addToListRequests,"",false);
+                    navigateToShoppingList.openShoppingList(mContext, addToListRequests, "", false);
                 }
             });
         }

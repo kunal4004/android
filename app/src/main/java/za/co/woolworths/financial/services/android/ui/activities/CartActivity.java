@@ -34,7 +34,7 @@ import za.co.woolworths.financial.services.android.util.Utils;
 import static za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL;
-import static za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToDepartmentFragment.POST_ADD_TO_SHOPPING_LIST;
+import static za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST;
 
 public class CartActivity extends BottomActivity implements View.OnClickListener, CartFragment.ToggleRemoveItem, ToastUtils.ToastInterface, IToastInterface {
 
@@ -46,6 +46,7 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
     public static WMaterialShowcaseView walkThroughPromtView = null;
     public static final int CHECKOUT_SUCCESS = 13134;
     private FrameLayout flContentFrame;
+    private boolean toastButtonWasCliked = false;
 
     @Override
     protected int getLayoutResourceId() {
@@ -129,7 +130,9 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
     }
 
     public void finishActivity() {
-        setResult(DISMISS_POP_WINDOW_CLICKED);
+        // Check to prevent DISMISS_POP_WINDOW_CLICKED override setResult for toast clicked event
+        if (!toastButtonWasCliked)
+            setResult(DISMISS_POP_WINDOW_CLICKED);
         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTEXIT);
         finish();
         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
@@ -243,6 +246,7 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
 
     @Override
     public void onToastButtonClicked(@Nullable JsonElement jsonElement) {
+        toastButtonWasCliked = true;
         NavigateToShoppingList.Companion navigateTo = NavigateToShoppingList.Companion;
         if (jsonElement instanceof JsonObject) {
             navigateTo.requestToastOnNavigateBack(this, POST_ADD_TO_SHOPPING_LIST, jsonElement.getAsJsonObject());

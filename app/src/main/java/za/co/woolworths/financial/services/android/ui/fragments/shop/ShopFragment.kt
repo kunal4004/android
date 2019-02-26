@@ -148,7 +148,7 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
         }
     }
 
-    private fun refreshViewPagerFragment() {
+    fun refreshViewPagerFragment() {
         when (viewpager_main.currentItem) {
             1 -> {
                 val myListsFragment = viewpager_main.adapter?.instantiateItem(viewpager_main, viewpager_main.currentItem) as? MyListsFragment

@@ -397,10 +397,9 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
                 for (ProductList list : mProductAdapter.getProductList()) {
                     if (list.itemWasChecked) {
                         AddToListRequest addToList = new AddToListRequest();
-                        addToList.setSkuID(list.sku);
                         addToList.setCatalogRefId(list.sku);
                         addToList.setQuantity("1");
-                        addToList.setGiftListId(list.productId);
+                        addToList.setSkuID(list.productId);
                         addToListRequests.add(addToList);
                     }
                 }
