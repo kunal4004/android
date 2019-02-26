@@ -10,6 +10,8 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.order_details_activity.*
 import za.co.woolworths.financial.services.android.contracts.IToastInterface
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse
 import za.co.woolworths.financial.services.android.models.dto.Order
 import za.co.woolworths.financial.services.android.models.dto.OrderDetailsResponse
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
@@ -22,6 +24,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToS
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.FragmentsEventsListner
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory
+import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 
 
@@ -90,9 +93,19 @@ class OrderDetailsActivity : AppCompatActivity(), FragmentsEventsListner, IToast
         fragment.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
-    override fun onItemsAddedToCart() {
-        if (supportFragmentManager.backStackEntryCount > 0) {
-            supportFragmentManager.popBackStack()
+    override fun onItemsAddedToCart(addItemToCartResponse: AddItemToCartResponse) {
+        when (addItemToCartResponse.httpCode) {
+            200 -> {
+                if (supportFragmentManager.backStackEntryCount > 0) {
+                    supportFragmentManager.popBackStack()
+                }
+                ToastFactory.buildAddToCartSuccessToast(fragmentContainer, true, this)
+            }
+            440 -> {
+                SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, addItemToCartResponse.response.stsParams, this)
+                finish()
+            }
+
         }
     }
 

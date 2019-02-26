@@ -268,4 +268,9 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
         isFragmentVisible = isVisibleToUser
     }
 
+    fun scrollToTop() {
+        if (nested_scrollview != null)
+            nested_scrollview.scrollTo(0, 0)
+    }
+
 }

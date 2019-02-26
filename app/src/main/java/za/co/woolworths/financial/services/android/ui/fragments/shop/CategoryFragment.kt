@@ -30,6 +30,7 @@ class CategoryFragment : DepartmentExtensionFragment() {
 
     private var mProductDepartmentRequest: ProductCategoryRequest? = null
     private var mDepartmentAdapter: DepartmentAdapter? = null
+    private var isFragmentVisible: Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_shop_department, container, false)
@@ -40,6 +41,10 @@ class CategoryFragment : DepartmentExtensionFragment() {
         setUpRecyclerView(mutableListOf())
         executeDepartmentRequest()
         setListener()
+        if (isFragmentVisible) {
+            executeDepartmentRequest()
+            networkConnectionStatus()
+        }
     }
 
     private fun setListener() {
@@ -129,11 +134,21 @@ class CategoryFragment : DepartmentExtensionFragment() {
         incConnectionLayout.visibility = if (isVisible) VISIBLE else GONE
     }
 
-    fun networkConnectionStatus(): Boolean = activity?.let { NetworkManager.getInstance().isConnectedToNetwork(it) }
-            ?: false
+    fun networkConnectionStatus(): Boolean = activity?.let { NetworkManager.getInstance().isConnectedToNetwork(it) } ?: false
 
     override fun onDestroy() {
         super.onDestroy()
         cancelRequest(mProductDepartmentRequest)
+        fun scrollToTop() {
+            if (rclDepartment != null)
+                rclDepartment.scrollToPosition(0)
+        }
     }
+
+        override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+            super.setUserVisibleHint(isVisibleToUser)
+            isFragmentVisible = isVisibleToUser
+        }
+
+
 }
