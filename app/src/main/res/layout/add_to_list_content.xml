@@ -70,7 +70,7 @@
         <RelativeLayout
             android:id="@+id/no_connection_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="400dp"
             android:background="@color/recent_search_bg"
             android:gravity="center"
             android:visibility="gone">

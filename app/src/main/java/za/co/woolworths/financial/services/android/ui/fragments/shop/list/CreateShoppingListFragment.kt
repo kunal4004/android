@@ -41,6 +41,8 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
     private var mDialogErrorMessageDidAppear = false
 
     companion object {
+        private const val HIDE_KEYBOARD_DELAY_MILIS: Long = 400
+        private const val SHOW_KEYBOARD_DELAY_MILIS: Long = 290
         private const val SHOPPING_LIST_SELECTED_LIST_ID = "SHOPPING_LIST_SELECTED_LIST_ID"
         private const val SHOPPING_LIST_SELECTED_GROUP = "SHOPPING_LIST_SELECTED_GROUP"
         private const val DISPLAY_CREATE_LIST_ONLY = "DISPLAY_CREATE_LIST_ONLY"
@@ -137,7 +139,7 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
 
     override fun onResume() {
         super.onResume()
-        showKeyboard(etNewList)
+        view?.postDelayed({ showKeyboard(etNewList) }, SHOW_KEYBOARD_DELAY_MILIS)
     }
 
     override fun onDestroy() {
@@ -165,11 +167,11 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
             when (view?.id) {
                 R.id.imBack -> {
                     hideKeyboard()
-                    onBackPressed()
+                    closeFragment(view)
                 }
 
                 R.id.imCloseIcon -> {
-                    onBackPressed()
+                    closeFragment(view)
                 }
 
                 R.id.btnCancel -> {
@@ -179,6 +181,10 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
                 }
             }
         }
+    }
+
+    private fun FragmentActivity.closeFragment(view: View) {
+        view.postDelayed({ onBackPressed() }, HIDE_KEYBOARD_DELAY_MILIS)
     }
 
     private fun FragmentActivity.beginCreateListExecution() {
@@ -204,12 +210,12 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
                 response.apply {
                     when (httpCode) {
                         200 -> {
-                            //add new list to shopping list group
-                            val createdList = lists[0]
-                            createdList.wasSentToServer = !isOrderIdNullOrEmpty
-                            mShoppingListGroup?.put(createdList.listId, createdList)
-
                             if (mShoppingListGroup?.size!! > 0 && !mShouldDisplayCreateListOnly) {
+                                //add new list to shopping list group
+                                val createdList = lists[0]
+                                createdList.wasSentToServer = !isOrderIdNullOrEmpty
+                                mShoppingListGroup?.put(createdList.listId, createdList)
+
                                 mShoppingListGroup?.forEach {
                                     val listId = it.key
                                     val shopList = it.value
@@ -223,6 +229,23 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
                                     }
                                 }
                             } else {
+                                val createdList = lists[0]
+                                createdList.wasSentToServer = !isOrderIdNullOrEmpty
+                                mShoppingListGroup?.put(createdList.listId, createdList)
+
+                                // post order to list
+                                if (!isOrderIdNullOrEmpty) {
+                                    mShoppingListGroup?.forEach {
+                                        val shopList = it.value
+                                        // Post item not sent to server only, false mean item not send yet
+                                        if (!shopList.wasSentToServer) {
+                                            // Update listId value from dto AddToListRequest
+                                            addOrderToShoppingList(mOrderId, shopList)
+                                        }
+                                    }
+                                    return
+                                }
+
                                 shoppingListPostProgress(false)
                                 showShoppingListSuccessToast()
                             }
@@ -340,7 +363,6 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
                         ErrorHandlerView(it).showToast()
                     }
                 }
-
             }
         }).execute()
     }

@@ -844,18 +844,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         //TODO: Explain where this is coming from.
         // call back when Toast clicked after adding item to shopping list
         if (requestCode == ADD_TO_SHOPPING_LIST_REQUEST_CODE) {
-            clearStack();
-            if (resultCode == ADD_TO_SHOPPING_LIST_RESULT_CODE) {
-                String obj = data.getStringExtra(POST_ADD_TO_SHOPPING_LIST);
-                JsonElement element = new JsonParser().parse(obj);
-                switchToShoppingListTab(element);
-            } else if (resultCode == NavigateToShoppingList.DISPLAY_TOAST_RESULT_CODE) {
-                ToastFactory toastFactory = new ToastFactory();
-                toastFactory.Companion.buildShoppingListToast(getBottomNavigationById(), true, data, this);
-                Fragment fragmentById = getCurrentFragment();
-                if (fragmentById != null)
-                    fragmentById.onActivityResult(requestCode, resultCode, null);
-            }
+            navigateToMyList(requestCode, resultCode, data);
             return;
         }
 
@@ -866,12 +855,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         }
 
         if (requestCode == PDP_REQUEST_CODE) {
-            if (resultCode == ADD_TO_SHOPPING_LIST_RESULT_CODE) {
-                clearStack();
-                Fragment fragmentById = getCurrentFragment();
-                if (fragmentById != null)
-                    fragmentById.onActivityResult(requestCode, resultCode, null);
-            }
+            navigateToMyList(requestCode, resultCode, data);
             if (resultCode == RESULT_OK) {
                 String itemAddToCartMessage = data.getStringExtra("addedToCartMessage");
                 if (itemAddToCartMessage != null) {
@@ -883,7 +867,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
         // navigate to product section
         if (requestCode == OPEN_CART_REQUEST) {
-            //Handling error 500 from cart
+            navigateToMyList(requestCode, resultCode, data);
+        //Handling error 500 from cart
             if (resultCode == CART_DEFAULT_ERROR_TAPPED) {
                 Fragment fragmentById = getCurrentFragment();
                 if (fragmentById != null)
@@ -1017,6 +1002,21 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             }
         }
 
+    }
+
+    private void navigateToMyList(int requestCode, int resultCode, Intent data) {
+        clearStack();
+        if (resultCode == ADD_TO_SHOPPING_LIST_RESULT_CODE) {
+            String obj = data.getStringExtra(POST_ADD_TO_SHOPPING_LIST);
+            JsonElement element = new JsonParser().parse(obj);
+            switchToShoppingListTab(element);
+        } else if (resultCode == NavigateToShoppingList.DISPLAY_TOAST_RESULT_CODE) {
+            ToastFactory toastFactory = new ToastFactory();
+            toastFactory.Companion.buildShoppingListToast(getBottomNavigationById(), true, data, this);
+            Fragment fragmentById = getCurrentFragment();
+            if (fragmentById != null)
+                fragmentById.onActivityResult(requestCode, resultCode, null);
+        }
     }
 
     private Fragment getBottomFragmentById() {

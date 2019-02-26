@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import android.support.v7.app.AppCompatActivity
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -11,6 +12,7 @@ import kotlinx.android.synthetic.main.add_to_shopping_list_activity.*
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.ANIM_DOWN_DURATION
 import za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity.Companion.ORDER_ID
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
+import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.CreateShoppingListFragment
@@ -20,6 +22,7 @@ class AddToShoppingListActivity : AppCompatActivity(), IDialogListener {
 
     private var mPopEnterAnimation: Animation? = null
     private var exitAnimationHasStarted: Boolean = false
+    private var mShoppingList: MutableList<ShoppingList>? = null
 
     companion object {
         const val ADD_TO_SHOPPING_LIST_REQUEST_CODE = 1209
@@ -39,11 +42,14 @@ class AddToShoppingListActivity : AppCompatActivity(), IDialogListener {
                 addFragment(
                         fragment = CreateShoppingListFragment.newInstance(HashMap(), addToListRequestBundle, shouldDisplayCreateList, orderId),
                         tag = AddToShoppingListFragment::class.java.simpleName,
+                        allowStateLoss = false,
                         containerViewId = R.id.flShoppingListContainer)
+
             } else {
                 addFragment(
                         fragment = AddToShoppingListFragment.newInstance(addToListRequestBundle, orderId),
                         tag = AddToShoppingListFragment::class.java.simpleName,
+                        allowStateLoss = false,
                         containerViewId = R.id.flShoppingListContainer
                 )
             }
@@ -69,7 +75,7 @@ class AddToShoppingListActivity : AppCompatActivity(), IDialogListener {
     override fun onBackPressed() {
         val fm = supportFragmentManager
         if (fm.backStackEntryCount > 0) {
-            fm.popBackStack()
+            fm.popBackStack(null, POP_BACK_STACK_INCLUSIVE)
         } else {
             exitActivityAnimation()
         }
@@ -101,4 +107,12 @@ class AddToShoppingListActivity : AppCompatActivity(), IDialogListener {
             flShoppingListContainer.startAnimation(animation)
         }
     }
+
+    fun setLatestShoppingList(shoppingList: MutableList<ShoppingList>) {
+        mShoppingList = shoppingList
+    }
+
+    fun getLatestShoppingList() = mShoppingList
+
+
 }

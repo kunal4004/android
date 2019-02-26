@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.shop.list
 
 import android.content.Intent
 import android.os.Bundle
+import android.support.v4.app.FragmentActivity
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -22,6 +23,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.AddToShoppingList
 import java.util.*
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostAddToShoppingList
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostOrderToShoppingList
+import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
 import za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity.Companion.ORDER_ID
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
@@ -31,14 +33,17 @@ import za.co.woolworths.financial.services.android.util.*
 class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickListener {
 
     private var mAddToListArgs: String? = null
-    private var isRetrievingShoppingItem = false
-    private var isPostingShoppingItem = false
     private var mShoppingListGroup: HashMap<String, ShoppingList>? = null
     private var mOrderId: String? = null
-    private var isPostingToOrderShoppingList: Boolean? = null
     private lateinit var mPostItemList: MutableList<String>
     private var mAddToShoppingListAdapter: AddToShoppingListAdapter? = null
     private var mErrorDialogDidAppear: Boolean = false
+    private var mReConnect: ReConnect? = null
+
+    enum class ReConnect {
+        ADD_ORDER_TO_LIST,
+        ADD_PRODUCT_TO_LIST;
+    }
 
     companion object {
         const val POST_ADD_TO_SHOPPING_LIST = "POST_ADD_TO_SHOPPING_LIST"
@@ -56,13 +61,11 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (savedInstanceState == null) {
-            getBundleArguments()
-            initAndConfigureUI()
-            setListener()
-            getShoppingList()
-            networkConnectivityStatus()
-        }
+        getBundleArguments()
+        initAndConfigureUI()
+        setListener()
+        displayListItem()
+        networkConnectivityStatus()
     }
 
     private fun initAndConfigureUI() {
@@ -89,19 +92,21 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
     private fun loadShoppingList(state: Boolean) {
         recyclerViewMaximumHeight(rclAddToList.layoutParams)
         relProgressBar.visibility = if (state) VISIBLE else GONE
-        isRetrievingShoppingItem = state
+        disableCreateListButton(state)
+    }
+
+    private fun noNetworkConnection(state: Boolean) {
+        no_connection_layout.visibility = if (state) VISIBLE else GONE
+        flCancelButton.visibility = if (state) GONE else VISIBLE
+        disableCreateListButton(state)
+    }
+
+    private fun disableCreateListButton(state: Boolean) {
         imCreateList.alpha = if (state) 0.5f else 1.0f
         imCreateList.isEnabled = !state
     }
 
-    private fun noNetworkConnection(state: Boolean) {
-        if (isRetrievingShoppingItem) {
-            no_connection_layout.visibility = if (state) GONE else VISIBLE
-            flCancelButton.visibility = if (state) VISIBLE else GONE
-        }
-    }
-
-    private fun getShoppingList() {
+    private fun retrieveShoppingList() {
         loadShoppingList(true)
         GetShoppingList(object : AsyncAPIResponse.ResponseDelegate<ShoppingListsResponse> {
             override fun onSuccess(response: ShoppingListsResponse) {
@@ -118,9 +123,9 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
                             }
                             else -> {
                                 loadShoppingList(false)
-                                if (mErrorDialogDidAppear) {
+                                if (!mErrorDialogDidAppear) {
                                     mErrorDialogDidAppear = true
-                                    showErrorDialog(this.response?.message!!)
+                                    response.response?.desc?.let { showErrorDialog(it) }
                                 }
                             }
                         }
@@ -133,35 +138,43 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
                 activity?.let {
                     it.runOnUiThread {
                         loadShoppingList(false)
+                        if (!networkConnectionAvailable(it)) {
+                            noNetworkConnection(true)
+                        }
                     }
                 }
             }
         }).execute()
     }
 
+    private fun networkConnectionAvailable(it: FragmentActivity) = NetworkManager.getInstance().isConnectedToNetwork(it)
+
 
     private fun bindShoppingListToUI(shoppingList: MutableList<ShoppingList>) {
         activity?.apply {
             // dynamic RecyclerView height
-            val viewGroupParams = rclAddToList.layoutParams
-            shoppingList.apply {
-                when {
-                    size == 0 -> {
-                        // pop up create list fragment
-                        navigateToCreateShoppingListFragment(false)
-                    }
-                    size < 4 -> {
-                        viewGroupParams.height = RecyclerView.LayoutParams.WRAP_CONTENT
-                        rclAddToList.layoutParams = viewGroupParams
-
-                    }
-                    else -> {
-                        recyclerViewMaximumHeight(viewGroupParams)
-                    }
-                }
-            }
+            setRecyclerViewHeight(shoppingList, rclAddToList.layoutParams)
+            saveShoppingListInstance(shoppingList)
             mAddToShoppingListAdapter?.setShoppingList(shoppingList)
             mAddToShoppingListAdapter?.notifyDataSetChanged()
+        }
+    }
+
+    private fun setRecyclerViewHeight(shoppingList: MutableList<ShoppingList>, viewGroupParams: ViewGroup.LayoutParams) {
+        shoppingList.apply {
+            when {
+                size == 0 -> {
+                    // pop up create list fragment
+                    navigateToCreateShoppingListFragment(false)
+                }
+                size < 4 -> {
+                    viewGroupParams.height = RecyclerView.LayoutParams.WRAP_CONTENT
+                    rclAddToList.layoutParams = viewGroupParams
+                }
+                else -> {
+                    recyclerViewMaximumHeight(viewGroupParams)
+                }
+            }
         }
     }
 
@@ -189,11 +202,10 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
         return hmSelectedShoppingList
     }
 
-    private fun shoppingListItemWasSelected(): Boolean = shoppingListSelectedItemGroup()?.size!! > 0
-
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.btnPostShoppingList -> {
+                mAddToShoppingListAdapter?.getShoppingList()?.let { saveShoppingListInstance(it) }
                 if (shoppingListItemWasSelected()) {
                     // contain selected item
                     if (!mOrderId.isNullOrEmpty()) {
@@ -207,13 +219,13 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
             }
             R.id.btnRetry -> {
                 if (NetworkManager.getInstance().isConnectedToNetwork(activity)) {
-                    no_connection_layout.visibility = GONE
-                    flCancelButton.visibility = VISIBLE
-                    getShoppingList()
+                    noNetworkConnection(false)
+                    displayListItem()
                 }
             }
 
             R.id.imCreateList -> {
+                mAddToShoppingListAdapter?.getShoppingList()?.let { saveShoppingListInstance(it) }
                 mShoppingListGroup = shoppingListSelectedItemGroup()
                 navigateToCreateShoppingListFragment(false)
             }
@@ -222,7 +234,7 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
 
     private fun createOrderShoppingListRequest() {
         mShoppingListGroup = shoppingListSelectedItemGroup()
-        mShoppingListGroup?.forEach { (key, shoppingList) ->
+        mShoppingListGroup?.forEach { (_, shoppingList) ->
             if (!shoppingList.wasSentToServer)
                 addOrderToShoppingList(mOrderId, shoppingList)
         }
@@ -243,16 +255,24 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
         activity?.let {
             ConnectionBroadcastReceiver.registerToFragmentAndAutoUnregister(it, this, object : ConnectionBroadcastReceiver() {
                 override fun onConnectionChanged(hasConnection: Boolean) {
-                    noNetworkConnection(hasConnection)
-                    retryPostAddToShoppingList()
+                    if (hasConnection) {
+                        mReConnect?.let { connect ->
+                            when (connect) {
+                                ReConnect.ADD_PRODUCT_TO_LIST -> {
+                                    disableCreateListButton(false)
+                                    btnPostShoppingList.performClick()
+                                }
+
+                                ReConnect.ADD_ORDER_TO_LIST -> {
+                                    disableCreateListButton(false)
+                                    btnPostShoppingList.performClick()
+                                }
+                            }
+                            mReConnect = null
+                        }
+                    }
                 }
             })
-        }
-    }
-
-    private fun retryPostAddToShoppingList() {
-        if (isPostingShoppingItem) {
-            createProductShoppingList()
         }
     }
 
@@ -266,40 +286,44 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
 
     private fun addProductToShoppingList(addToListRequest: MutableList<AddToListRequest>?, listId: String?) {
         shoppingListPostProgress(true)
-        isPostingShoppingItem = true
         PostAddToShoppingList(listId, addToListRequest, object : AsyncAPIResponse.ResponseDelegate<ShoppingListItemsResponse> {
             override fun onSuccess(response: ShoppingListItemsResponse) {
                 response.apply {
                     addProductResponseHandler(listId, response)
-                    isPostingShoppingItem = false
                 }
             }
 
             override fun onFailure(errorMessage: String) {
-                shoppingListPostProgress(false)
-                noNetworkConnection(false)
+                activity?.let {
+                    it.runOnUiThread {
+                        mReConnect = ReConnect.ADD_PRODUCT_TO_LIST
+                        disableCreateListButton(true)
+                        shoppingListPostProgress(false)
+                        ErrorHandlerView(it).showToast()
+                    }
+                }
             }
 
         }).execute()
     }
 
     private fun addOrderToShoppingList(orderId: String?, shoppingList: ShoppingList) {
-        isPostingToOrderShoppingList = true
         shoppingListPostProgress(true)
         val orderRequestList = OrderToShoppingListRequestBody(shoppingList.listId, shoppingList.listName)
         PostOrderToShoppingList(orderId, orderRequestList, object : AsyncAPIResponse.ResponseDelegate<OrderToListReponse> {
-            override fun onSuccess(ordersResponse: OrderToListReponse) {
-                ordersResponse.apply {
-                    addOrderResponseHandler(orderRequestList.shoppingListId, ordersResponse)
-                    isPostingToOrderShoppingList = false
+            override fun onSuccess(response: OrderToListReponse) {
+                response.apply {
+                    addOrderResponseHandler(orderRequestList.shoppingListId, response)
                 }
             }
 
             override fun onFailure(errorMessage: String) {
-                activity?.apply {
-                    runOnUiThread {
+                activity?.let {
+                    it.runOnUiThread {
+                        mReConnect = ReConnect.ADD_ORDER_TO_LIST
+                        disableCreateListButton(true)
                         shoppingListPostProgress(false)
-                        noNetworkConnection(false)
+                        ErrorHandlerView(it).showToast()
                     }
                 }
             }
@@ -395,24 +419,45 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
                 tag = CreateShoppingListFragment::class.java.simpleName,
                 containerViewId = R.id.flShoppingListContainer,
                 allowStateLoss = false,
-                enterAnimation = R.anim.stay,
-                exitAnimation = R.anim.slide_down_anim,
-                popEnterAnimation = R.anim.fade_in,
-                popExitAnimation = R.anim.stay
-        )
+                enterAnimation = R.anim.enter_from_right,
+                exitAnimation = R.anim.exit_to_left,
+                popEnterAnimation = R.anim.enter_from_left,
+                popExitAnimation = R.anim.exit_to_right)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (resultCode) {
             SSOActivity.SSOActivityResult.SUCCESS.rawValue() -> {
-                getShoppingList()
+                displayListItem()
             }
             SSOActivity.SSOActivityResult.STATE_MISMATCH.rawValue() -> {
                 activity?.onBackPressed()
             }
         }
     }
+
+    private fun displayListItem() {
+        if (getLatestShoppingList() == null) {
+            if (networkConnectionAvailable(activity)) retrieveShoppingList() else noNetworkConnection(true)
+        } else {
+            val cachedShoppingList = getLatestShoppingList()
+            btnPostShoppingList.text = cachedShoppingList?.let { if (it.size > 0) getString(R.string.ok) else getString(R.string.cancel) }
+            cachedShoppingList?.let { setRecyclerViewHeight(it, rclAddToList.layoutParams) }
+            cachedShoppingList?.let { mAddToShoppingListAdapter?.setShoppingList(it) }
+            mAddToShoppingListAdapter?.notifyDataSetChanged()
+        }
+    }
+
+    //Recreate list with selected option on fragment back navigation
+    private fun saveShoppingListInstance(shoppingList: MutableList<ShoppingList>) {
+        if (activity is AddToShoppingListActivity)
+            (activity as? AddToShoppingListActivity)?.setLatestShoppingList(shoppingList)
+    }
+
+    private fun getLatestShoppingList(): MutableList<ShoppingList>? = (activity as? AddToShoppingListActivity)?.getLatestShoppingList()
+
+    private fun shoppingListItemWasSelected(): Boolean = shoppingListSelectedItemGroup()?.size!! > 0
 
     override fun onResume() {
         super.onResume()

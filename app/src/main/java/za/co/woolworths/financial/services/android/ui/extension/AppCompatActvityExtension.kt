@@ -60,6 +60,27 @@ fun AppCompatActivity.replaceFragmentSafely(fragment: Fragment,
     }
 }
 
+fun AppCompatActivity.addFragment(fragment: Fragment,
+                                            tag: String,
+                                            allowStateLoss: Boolean = false,
+                                            allowBackStack: Boolean,
+                                            @IdRes containerViewId: Int,
+                                            @AnimRes enterAnimation: Int = 0,
+                                            @AnimRes exitAnimation: Int = 0,
+                                            @AnimRes popEnterAnimation: Int = 0,
+                                            @AnimRes popExitAnimation: Int = 0) {
+    val ft = supportFragmentManager
+            .beginTransaction()
+            .setCustomAnimations(enterAnimation, exitAnimation, popEnterAnimation, popExitAnimation)
+            .add(containerViewId, fragment, tag)
+    if (allowBackStack)
+        ft.addToBackStack(null)
+    if (!supportFragmentManager.isStateSaved) {
+        ft.commit()
+    } else if (allowStateLoss) {
+        ft.commitAllowingStateLoss()
+    }
+}
 /**
  * Method to check if fragment exists. The operation is performed by the supportFragmentManager.
  */
