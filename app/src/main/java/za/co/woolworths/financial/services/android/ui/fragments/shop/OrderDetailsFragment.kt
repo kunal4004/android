@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -20,8 +19,6 @@ import za.co.woolworths.financial.services.android.util.OnEventListener
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
 import kotlinx.android.synthetic.main.order_details_fragment.*
-import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
-import za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity.Companion.ORDER_ID
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.FragmentsEventsListner
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
@@ -93,7 +90,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick {
 
     private fun buildDataForOrderDetailsView(ordersResponse: OrderDetailsResponse): ArrayList<OrderDetailsItem> {
         val dataList = arrayListOf<OrderDetailsItem>()
-        dataList.add(OrderDetailsItem(order, OrderDetailsItem.ViewType.ORDER_STATUS))
+        dataList.add(OrderDetailsItem(ordersResponse, OrderDetailsItem.ViewType.ORDER_STATUS))
         if (order?.taxNoteNumbers != null && order?.taxNoteNumbers!!.size > 0)
             dataList.add(OrderDetailsItem(null, OrderDetailsItem.ViewType.VIEW_TAX_INVOICE))
         dataList.add(OrderDetailsItem(null, OrderDetailsItem.ViewType.ADD_TO_LIST_LAYOUT))

@@ -88,17 +88,18 @@ class MyOrdersFragment : Fragment() {
     }
 
     private fun showEmptyOrdersView() {
-
+        myOrdersList.visibility = View.GONE
         mErrorHandlerView?.setEmptyStateWithAction(6, R.string.start_shopping, ErrorHandlerView.ACTION_TYPE.REDIRECT)
     }
 
     private fun showSignOutView() {
-
+        myOrdersList.visibility = View.GONE
         mErrorHandlerView?.setEmptyStateWithAction(7, R.string.sign_in, ErrorHandlerView.ACTION_TYPE.SIGN_IN)
 
     }
 
     private fun showErrorView() {
+        myOrdersList.visibility = View.GONE
         mErrorHandlerView?.setEmptyStateWithAction(8, R.string.retry, ErrorHandlerView.ACTION_TYPE.RETRY)
 
     }

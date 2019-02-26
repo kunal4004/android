@@ -21,7 +21,7 @@ class OrderDetailsResponse {
 
     private val vouchers: String? = null
 
-    private val orderSummary: OrderSummary? = null
+    val orderSummary: OrderSummary? = null
 
     var items: JsonElement? = null
 }
