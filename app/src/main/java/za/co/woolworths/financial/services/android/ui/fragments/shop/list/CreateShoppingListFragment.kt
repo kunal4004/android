@@ -22,6 +22,7 @@ import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.CreateShoppingList
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostAddToShoppingList
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostOrderToShoppingList
+import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
 import za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.util.*
@@ -38,6 +39,7 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
     private var isOrderIdNullOrEmpty: Boolean = false
     private var mDialogErrorMessageDidAppear = false
     private var mAutoConnect: AutoConnect? = null
+    private var mDisplayCloseIcon: Boolean = false
 
     enum class AutoConnect {
         CREATE_LIST,
@@ -51,12 +53,15 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
         private const val SHOPPING_LIST_SELECTED_LIST_ID = "SHOPPING_LIST_SELECTED_LIST_ID"
         private const val SHOPPING_LIST_SELECTED_GROUP = "SHOPPING_LIST_SELECTED_GROUP"
         private const val DISPLAY_CREATE_LIST_ONLY = "DISPLAY_CREATE_LIST_ONLY"
+        private const val DISPLAY_CLOSE_ICON = "DISPLAY_CLOSE_ICON"
 
-
-        fun newInstance(listOfIds: HashMap<String, ShoppingList>?, selectedListGroup: String?) = CreateShoppingListFragment().apply {
-            arguments = Bundle(2).apply {
+        fun newInstance(listOfIds: HashMap<String, ShoppingList>?, selectedListGroup: String?, shouldDisplayCreateList: Boolean, orderId: String?, closeIconVisibility: Boolean) = CreateShoppingListFragment().apply {
+            arguments = Bundle(5).apply {
                 putSerializable(SHOPPING_LIST_SELECTED_LIST_ID, listOfIds)
                 putString(SHOPPING_LIST_SELECTED_GROUP, selectedListGroup)
+                putBoolean(DISPLAY_CREATE_LIST_ONLY, shouldDisplayCreateList)
+                putBoolean(DISPLAY_CLOSE_ICON, closeIconVisibility)
+                putString(OrderDetailsActivity.ORDER_ID, orderId)
             }
         }
 
@@ -123,6 +128,7 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
 
             if (this.containsKey(SHOPPING_LIST_SELECTED_LIST_ID)) {
                 mShoppingListGroup = this.getSerializable(SHOPPING_LIST_SELECTED_LIST_ID) as HashMap<String, ShoppingList>?
+                        ?: hashMapOf()
             }
 
             if (this.containsKey(SHOPPING_LIST_SELECTED_GROUP)) {
@@ -133,6 +139,9 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
                 mShouldDisplayCreateListOnly = this.getBoolean(DISPLAY_CREATE_LIST_ONLY, false)
             }
 
+            if (this.containsKey(DISPLAY_CLOSE_ICON)) {
+                mDisplayCloseIcon = this.getBoolean(DISPLAY_CLOSE_ICON, false)
+            }
             if (this.containsKey(OrderDetailsActivity.ORDER_ID)) {
                 mOrderId = this.getString(OrderDetailsActivity.ORDER_ID)
             }
@@ -187,12 +196,19 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
     }
 
     private fun toolbarIconVisibility() {
+
         val entryCount: Int? = getFragmentBackStackEntryCount()
         imBack.visibility = if (entryCount == 0) GONE else VISIBLE
         imCloseIcon.visibility = if (entryCount == 0) VISIBLE else GONE
+
         if (mShouldDisplayCreateListOnly) {
             imBack.visibility = VISIBLE
             imCloseIcon.visibility = GONE
+        }
+        //triggered when add to list is empty
+        if (mDisplayCloseIcon) {
+            imBack.visibility = GONE
+            imCloseIcon.visibility = VISIBLE
         }
     }
 
@@ -207,7 +223,8 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
                 }
 
                 R.id.imCloseIcon -> {
-                    closeFragment(view)
+                    hideKeyboard()
+                    view.postDelayed({ (activity as? AddToShoppingListActivity)?.exitActivityAnimation() }, HIDE_KEYBOARD_DELAY_MILIS)
                 }
 
                 R.id.btnCancel -> {

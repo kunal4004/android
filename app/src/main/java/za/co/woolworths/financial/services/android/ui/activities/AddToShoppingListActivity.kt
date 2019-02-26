@@ -86,7 +86,7 @@ class AddToShoppingListActivity : AppCompatActivity(), IDialogListener {
         flShoppingListContainer.startAnimation(mPopEnterAnimation)
     }
 
-    private fun exitActivityAnimation() {
+    fun exitActivityAnimation() {
         if (!exitAnimationHasStarted) {
             exitAnimationHasStarted = true
             val animation = TranslateAnimation(0f, 0f, 0f, flShoppingListContainer.height.toFloat())

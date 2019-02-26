@@ -112,6 +112,7 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
                 activity?.let {
                     response.apply {
                         when (httpCode) {
+
                             200 -> bindShoppingListToUI(lists)
                             440 -> {
                                 SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
@@ -399,6 +400,18 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
     private fun navigateToCreateShoppingListFragment(state: Boolean) {
         replaceFragment(
                 fragment = CreateShoppingListFragment.newInstance(mShoppingListGroup, mAddToListArgs, state, mOrderId),
+                tag = CreateShoppingListFragment::class.java.simpleName,
+                containerViewId = R.id.flShoppingListContainer,
+                allowStateLoss = false,
+                enterAnimation = R.anim.enter_from_right,
+                exitAnimation = R.anim.exit_to_left,
+                popEnterAnimation = R.anim.enter_from_left,
+                popExitAnimation = R.anim.exit_to_right)
+    }
+
+    private fun navigateToCreateShoppingListFragment(displayCloseIcon: Boolean, displayCreateList: Boolean) {
+        replaceFragment(
+                fragment = CreateShoppingListFragment.newInstance(mShoppingListGroup, mAddToListArgs, displayCreateList, mOrderId, displayCloseIcon),
                 tag = CreateShoppingListFragment::class.java.simpleName,
                 containerViewId = R.id.flShoppingListContainer,
                 allowStateLoss = false,
