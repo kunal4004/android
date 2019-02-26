@@ -156,9 +156,7 @@
         android:layout_height="match_parent" />
 
     <include
-        layout="@layout/empty_state_template"
+        layout="@layout/sign_out_template"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingStart="@dimen/twenty_four_dp"
-        android:paddingEnd="@dimen/twenty_four_dp" />
+        android:layout_height="match_parent" />
 </FrameLayout>

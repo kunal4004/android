@@ -10,7 +10,7 @@ import kotlinx.android.synthetic.main.item_shopping_list.view.*
 import za.co.woolworths.financial.services.android.contracts.IShoppingList
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 
-class ViewShoppingListAdapter(private val shopMutableList: MutableList<ShoppingList>, shoppingList: IShoppingList) : RecyclerSwipeAdapter<ViewShoppingListAdapter.ViewHolder>() {
+class ViewShoppingListAdapter(private var shopMutableList: MutableList<ShoppingList>, shoppingList: IShoppingList) : RecyclerSwipeAdapter<ViewShoppingListAdapter.ViewHolder>() {
     var onClickListener = shoppingList
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.item_shopping_list, parent, false)
@@ -42,4 +42,6 @@ class ViewShoppingListAdapter(private val shopMutableList: MutableList<ShoppingL
     override fun getSwipeLayoutResourceId(position: Int) = R.id.swipe
 
     fun getShoppingList(): MutableList<ShoppingList> = shopMutableList
+
+    fun setShoppingList(shoppingList: MutableList<ShoppingList>) { shopMutableList = shoppingList }
 }

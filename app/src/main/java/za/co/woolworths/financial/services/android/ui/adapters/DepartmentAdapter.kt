@@ -9,7 +9,8 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.department_row.view.*
 import za.co.woolworths.financial.services.android.models.dto.RootCategory
 
-internal class DepartmentAdapter(private val mlRootCategories: MutableList<RootCategory>?, private val clickListener: (RootCategory) -> Unit)
+
+internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootCategory>?, private val clickListener: (RootCategory) -> Unit)
     : RecyclerView.Adapter<DepartmentAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DepartmentAdapter.ViewHolder {
@@ -38,4 +39,7 @@ internal class DepartmentAdapter(private val mlRootCategories: MutableList<RootC
         }
     }
 
+    fun setRootCategories(rootCategories: MutableList<RootCategory>?) {
+        mlRootCategories = rootCategories
+    }
 }

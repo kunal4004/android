@@ -16,15 +16,19 @@ import za.co.woolworths.financial.services.android.ui.adapters.DepartmentAdapter
 import za.co.woolworths.financial.services.android.util.OnEventListener
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.DividerItemDecoration
+import android.view.View.GONE
+import android.view.View.VISIBLE
+import kotlinx.android.synthetic.main.no_connection_layout.*
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment
-import za.co.woolworths.financial.services.android.util.ConnectionBroadcastReceiver
+import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.Utils
 
-class DepartmentsFragment : Fragment() {
+class CategoryFragment : Fragment() {
 
     private var mProductDepartmentRequest: ProductCategoryRequest? = null
+    private var mDepartmentAdapter: DepartmentAdapter? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_shop_department, container, false)
@@ -32,49 +36,60 @@ class DepartmentsFragment : Fragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setUpRecyclerView(mutableListOf())
         executeDepartmentRequest()
-        networkConnectivityStatus()
+        setListener()
     }
 
-    private fun networkConnectivityStatus() {
-        activity?.let {
-            ConnectionBroadcastReceiver.registerToFragmentAndAutoUnregister(it, this, object : ConnectionBroadcastReceiver() {
-                override fun onConnectionChanged(hasConnection: Boolean) {
-                    if (!hasConnection) {
-
-                    }
-                }
-            })
+    private fun setListener() {
+        btnRetryConnect.setOnClickListener {
+            if (networkConnectionStatus()) {
+                executeDepartmentRequest()
+            }
         }
     }
 
     private fun executeDepartmentRequest() {
-        mProductDepartmentRequest = requestDepartment()
-        mProductDepartmentRequest!!.execute()
+        if (networkConnectionStatus()) {
+            noConnectionLayout(false)
+            mProductDepartmentRequest = requestDepartment()
+            mProductDepartmentRequest?.execute()
+        } else {
+            noConnectionLayout(true)
+        }
     }
 
     private fun requestDepartment(): ProductCategoryRequest {
         return ProductCategoryRequest(object : OnEventListener<RootCategories> {
             override fun onSuccess(rootCategories: RootCategories) {
                 when (rootCategories.httpCode) {
-                    200 -> {
-                        bindDepartment(rootCategories)
-                    }
-                    else -> {
-
-                    }
+                    200 -> bindDepartment(rootCategories)
+                    else -> errorMessage(rootCategories.response?.desc)
                 }
             }
 
             override fun onFailure(e: String?) {
+                activity?.apply {
+                    runOnUiThread {
+                        if (networkConnectionStatus())
+                            noConnectionLayout(true)
+                    }
+                }
             }
-
         })
     }
 
+    private fun errorMessage(desc: String?) {
+
+    }
+
     private fun bindDepartment(rootCategories: RootCategories) {
-        val categories: MutableList<RootCategory>? = rootCategories.rootCategories
-        val departmentAdapter = DepartmentAdapter(categories) { rootCategory: RootCategory -> departmentItemClicked(rootCategory) }
+        mDepartmentAdapter?.setRootCategories(rootCategories.rootCategories)
+        rootCategories.rootCategories?.size?.let { mDepartmentAdapter?.notifyItemRangeInserted(0, it) }
+    }
+
+    private fun setUpRecyclerView(categories: MutableList<RootCategory>?) {
+        mDepartmentAdapter = DepartmentAdapter(categories) { rootCategory: RootCategory -> departmentItemClicked(rootCategory) }
         activity?.let {
             rclDepartment?.apply {
                 val mLayoutManager = LinearLayoutManager(it, LinearLayout.VERTICAL, false)
@@ -83,7 +98,7 @@ class DepartmentsFragment : Fragment() {
                 dividerItemDecoration.setDrawable(ContextCompat.getDrawable(it, R.drawable.department_line_divider))
                 addItemDecoration(dividerItemDecoration)
                 layoutManager = mLayoutManager
-                adapter = departmentAdapter
+                adapter = mDepartmentAdapter
             }
         }
     }
@@ -109,6 +124,22 @@ class DepartmentsFragment : Fragment() {
                 bundle.putString("sub_category_name", rootCategory.categoryName)
                 gridFragment.arguments = bundle
                 return gridFragment
+            }
+        }
+    }
+
+    fun noConnectionLayout(isVisible: Boolean) {
+        incConnectionLayout.visibility = if (isVisible) VISIBLE else GONE
+    }
+
+    fun networkConnectionStatus(): Boolean = activity?.let { NetworkManager.getInstance().isConnectedToNetwork(it) }
+            ?: false
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mProductDepartmentRequest?.let {
+            if (!it.isCancelled) {
+                it.cancel(true)
             }
         }
     }

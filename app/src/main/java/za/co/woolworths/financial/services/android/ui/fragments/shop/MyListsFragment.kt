@@ -17,9 +17,9 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingListsRespo
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.GetShoppingList
 import za.co.woolworths.financial.services.android.ui.adapters.ViewShoppingListAdapter
 import android.support.v7.widget.DividerItemDecoration
+import kotlinx.android.synthetic.main.sign_out_template.*
 import kotlinx.android.synthetic.main.shopping_list_fragment.*
 import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity
-import kotlinx.android.synthetic.main.empty_state_template.*
 import za.co.woolworths.financial.services.android.contracts.IShoppingList
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
@@ -57,6 +57,8 @@ class MyListsFragment : ShoppingListExtensionFragment(), View.OnClickListener, I
             itemDecorator.setDrawable(ContextCompat.getDrawable(it, R.drawable.divider))
             rcvShoppingLists.addItemDecoration(itemDecorator)
             rcvShoppingLists.layoutManager = LinearLayoutManager(it, LinearLayout.VERTICAL, false)
+            mAddToShoppingListAdapter = ViewShoppingListAdapter(mutableListOf(), this)
+            rcvShoppingLists.adapter = mAddToShoppingListAdapter
         }
     }
 
@@ -104,17 +106,13 @@ class MyListsFragment : ShoppingListExtensionFragment(), View.OnClickListener, I
     }
 
     private fun bindShoppingListToUI(shoppingList: MutableList<ShoppingList>) {
-        activity?.let {
-            shoppingList.let {
-                when (it.size) {
-                    0 -> {
-                        //no list found
-                        showEmptyShoppingListView()
-                    }
-                    else -> {
-                        mAddToShoppingListAdapter = ViewShoppingListAdapter(shoppingList, this)
-                        rcvShoppingLists.adapter = mAddToShoppingListAdapter
-                    }
+        shoppingList.let {
+            when (it.size) {
+                0 -> showEmptyShoppingListView() //no list found
+
+                else -> {
+                    mAddToShoppingListAdapter?.setShoppingList(shoppingList)
+                    mAddToShoppingListAdapter?.notifyDataSetChanged()
                 }
             }
         }
@@ -178,20 +176,20 @@ class MyListsFragment : ShoppingListExtensionFragment(), View.OnClickListener, I
     }
 
     private fun showEmptyShoppingListView() {
-        relEmptyStateHandler.visibility = VISIBLE
-        imgEmpyStateIcon.setImageResource(R.drawable.emptylists)
+        clSignOutTemplate.visibility = VISIBLE
+        imEmptyIcon.setImageResource(R.drawable.emptylists)
         txtEmptyStateTitle.text = getString(R.string.title_no_shopping_lists)
         txtEmptyStateDesc.text = getString(R.string.description_no_shopping_lists)
         btnGoToProduct.visibility = GONE
     }
 
     private fun hideEmptyOverlay() {
-        relEmptyStateHandler.visibility = GONE
+        clSignOutTemplate.visibility = GONE
     }
 
     private fun showSignOutView() {
-        relEmptyStateHandler.visibility = VISIBLE
-        imgEmpyStateIcon.setImageResource(R.drawable.emptylists)
+        clSignOutTemplate.visibility = VISIBLE
+        imEmptyIcon.setImageResource(R.drawable.emptylists)
         txtEmptyStateTitle.text = getString(R.string.shop_sign_out_order_title)
         txtEmptyStateDesc.text = getString(R.string.shop_sign_out_order_desc)
         btnGoToProduct.visibility = VISIBLE
@@ -251,10 +249,10 @@ class MyListsFragment : ShoppingListExtensionFragment(), View.OnClickListener, I
         }
     }
 
-    override fun onShoppingListItemSelected(item: ShoppingList) {
+    override fun onShoppingListItemSelected(shoppingList: ShoppingList) {
         val bundle = Bundle()
-        bundle.putString("listName", item.listName)
-        bundle.putString("listId", item.listId)
+        bundle.putString("listName", shoppingList.listName)
+        bundle.putString("listId", shoppingList.listId)
         val shoppingListItemsFragment = ShoppingListItemsFragment()
         shoppingListItemsFragment.arguments = bundle
         (activity as? BottomNavigationActivity)?.pushFragment(shoppingListItemsFragment)

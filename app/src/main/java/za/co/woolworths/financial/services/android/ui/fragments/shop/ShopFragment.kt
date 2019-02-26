@@ -49,7 +49,7 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
         bottomNavigationActivity = activity as BottomNavigationActivity
         tvSearchProduct.setOnClickListener { navigateToProductSearch() }
         imBarcodeScanner.setOnClickListener { checkCameraPermission() }
-        mTabTitle = mutableListOf(resources.getString(R.string.shop_department_title_department),
+        mTabTitle = mutableListOf(resources.getString(R.string.shop_department_title_category),
                 resources.getString(R.string.shop_department_title_list),
                 resources.getString(R.string.shop_department_title_order))
         shopPagerAdapter = ShopPagerAdapter(fragmentManager, mTabTitle, this)
