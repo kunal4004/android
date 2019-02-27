@@ -4,27 +4,23 @@
     android:width="24dp"
     android:height="24dp">
     <group
-        android:translateX="-168"
-        android:translateY="-312">
+        android:translateX="-316"
+        android:translateY="-267">
         <group
-            android:translateX="168"
-            android:translateY="312">
+            android:translateX="316"
+            android:translateY="267">
             <path
-                android:pathData="M0 0H24V24H0V0Z"
+                android:pathData="M24 12A12 12 0 0 1 0 12A12 12 0 0 1 24 12Z"
                 android:fillColor="#000000" />
             <group
-                android:translateX="5.16"
-                android:translateY="5.228571">
+                android:translateX="3.5"
+                android:translateY="3">
                 <path
-                    android:pathData="M7.83999993 5.77142857L12.8399999 5.77142857L12.8399999 7.77142857L7.83999993 7.77142857L7.83999993 12.7714286L5.83999993 12.7714286L5.83999993 7.77142857L0.839999935 7.77142857L0.839999935 5.77142857L5.83999993 5.77142857L5.83999993 0.771428571L7.83999993 0.771428571L7.83999993 5.77142857Z"
-                    android:fillColor="#D8D8D8" />
-                <group
-                    android:translateX="-5"
-                    android:translateY="-5">
-                    <path
-                        android:pathData="M0 0H24V24H0V0Z"
-                        android:fillColor="#FFFFFF" />
-                </group>
+                    android:pathData="M9.53480475 8.06791171L13.9354839 8.06791171L13.9354839 9.53480475L9.53480475 9.53480475L9.53480475 13.9354839L8.06791171 13.9354839L8.06791171 9.53480475L3.6672326 9.53480475L3.6672326 8.06791171L8.06791171 8.06791171L8.06791171 3.6672326L9.53480475 3.6672326L9.53480475 8.06791171Z"
+                    android:fillColor="#000000" />
+                <path
+                    android:pathData="M0 0H17.60272V17.60272H0V0Z"
+                    android:fillColor="#FFFFFF" />
             </group>
         </group>
     </group>

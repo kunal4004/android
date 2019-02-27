@@ -28,12 +28,23 @@ class ViewShoppingListAdapter(private var shopMutableList: MutableList<ShoppingL
             item?.apply {
                 // Returns a copy of this string having its first letter uppercased,
                 // or the original string, if it's empty or already starts with an upper case letter.
-                itemView.tvListName.text = listName?.capitalize() ?: ""
+                itemView.tvListName.text = toTitleCase(listName ?: "")
                 itemView.tvListCount.text = ("$listCount  item").plus(if (listCount == 1) "" else "s")
                 itemView.listItem.setOnClickListener { onClickListener.onShoppingListItemSelected(this) }
                 itemView.tvDelete.setOnClickListener { onClickListener.onShoppingListItemDeleted(this, adapterPosition) }
 
             }
+        }
+
+        private fun toTitleCase(givenString: String): String {
+            val arr = givenString.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+            val sb = StringBuffer()
+
+            for (i in arr.indices) {
+                sb.append(Character.toUpperCase(arr[i][0]))
+                        .append(arr[i].substring(1)).append(" ")
+            }
+            return sb.toString().trim { it <= ' ' }
         }
     }
 
@@ -43,5 +54,7 @@ class ViewShoppingListAdapter(private var shopMutableList: MutableList<ShoppingL
 
     fun getShoppingList(): MutableList<ShoppingList> = shopMutableList
 
-    fun setShoppingList(shoppingList: MutableList<ShoppingList>) { shopMutableList = shoppingList }
+    fun setShoppingList(shoppingList: MutableList<ShoppingList>) {
+        shopMutableList = shoppingList
+    }
 }

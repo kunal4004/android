@@ -109,7 +109,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_marginEnd="@dimen/twenty_four_dp"
-                    app:srcCompat="@drawable/ic_delivery_truck" />
+                    app:srcCompat="@drawable/ic_add_circle" />
 
             </RelativeLayout>
 

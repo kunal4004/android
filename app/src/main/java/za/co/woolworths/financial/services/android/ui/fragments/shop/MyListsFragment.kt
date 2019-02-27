@@ -182,19 +182,19 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
 
     private fun showEmptyShoppingListView() {
         clSignOutTemplate.visibility = VISIBLE
-        imEmptyIcon.setImageResource(R.drawable.emptylists)
+        imEmptyIcon.setImageResource(R.drawable.ic_shopping_list_sign_out)
         txtEmptyStateTitle.text = getString(R.string.title_no_shopping_lists)
         txtEmptyStateDesc.text = getString(R.string.description_no_shopping_lists)
         btnGoToProduct.visibility = GONE
     }
 
     private fun hideEmptyOverlay() {
-        clSignOutTemplate.visibility = GONE
+        clSignOutTemplate?.visibility = GONE
     }
 
     private fun showSignOutView() {
         clSignOutTemplate.visibility = VISIBLE
-        imEmptyIcon.setImageResource(R.drawable.emptylists)
+        imEmptyIcon.setImageResource(R.drawable.ic_shopping_list_sign_out)
         txtEmptyStateTitle.text = getString(R.string.shop_sign_out_order_title)
         txtEmptyStateDesc.text = getString(R.string.shop_sign_out_order_desc)
         btnGoToProduct.visibility = VISIBLE

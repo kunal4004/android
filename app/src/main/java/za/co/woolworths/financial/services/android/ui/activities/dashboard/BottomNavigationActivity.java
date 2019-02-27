@@ -97,6 +97,8 @@ import static za.co.woolworths.financial.services.android.ui.activities.ConfirmC
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.CART_DEFAULT_ERROR_TAPPED;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED;
 import static za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity.DELIVERY_LOCATION_CLOSE_CLICKED;
+import static za.co.woolworths.financial.services.android.ui.activities.MyPreferencesActivity.SECURITY_SETTING_REQUEST_DIALOG;
+import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.RESULT_OK_ACCOUNTS;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.DELIVERY_LOCATION_FROM_PDP_REQUEST;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_ADD_TO_CART;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.SuburbSelectionFragment.SUBURB_SET_RESULT;
@@ -124,7 +126,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     private PermissionUtils permissionUtils;
     private ArrayList<String> permissions;
     private BottomNavigationViewModel bottomNavigationViewModel;
-    private FragNavController mNavController;
+    public FragNavController mNavController;
     private Bundle mBundle;
     private int currentSection;
     private ToastUtils mToastUtils;
@@ -842,7 +844,22 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         //TODO: Explain where this is coming from.
-        // call back when Toast clicked after adding item to shopping list
+
+        //Open shopping from Tips and trick activity request code
+        if (requestCode == TIPS_AND_TRICKS_CTA_REQUEST_CODE) {
+            if (resultCode == RESULT_OK_ACCOUNTS) {
+                clearStack();
+                setCurrentSection(R.id.navigate_to_shop);
+                switchTab(INDEX_PRODUCT);
+                Fragment fragment = mNavController.getCurrentFrag();
+                ShopFragment shopFragment = (ShopFragment) fragment;
+                shopFragment.navigateToMyListFragment();
+                shopFragment.refreshViewPagerFragment();
+            }
+            return;
+        }
+
+        // Call back when Toast clicked after adding item to shopping list
         if (requestCode == ADD_TO_SHOPPING_LIST_REQUEST_CODE) {
             navigateToMyList(requestCode, resultCode, data);
             return;
@@ -868,7 +885,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         // navigate to product section
         if (requestCode == OPEN_CART_REQUEST) {
             navigateToMyList(requestCode, resultCode, data);
-        //Handling error 500 from cart
+            //Handling error 500 from cart
             if (resultCode == CART_DEFAULT_ERROR_TAPPED) {
                 Fragment fragmentById = getCurrentFragment();
                 if (fragmentById != null)
@@ -993,7 +1010,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 case TipsAndTricksViewPagerActivity.RESULT_OK_PRODUCTS:
                     getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
                     break;
-                case TipsAndTricksViewPagerActivity.RESULT_OK_ACCOUNTS:
+                case RESULT_OK_ACCOUNTS:
                     getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
                     break;
                 case TipsAndTricksViewPagerActivity.RESULT_OK_REWARDS:

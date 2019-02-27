@@ -204,7 +204,10 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
         if (mShouldDisplayCreateListOnly) {
             imBack.visibility = VISIBLE
             imCloseIcon.visibility = GONE
+        } else {
+            btnCancel.setTextColor(Color.BLACK)
         }
+
         //triggered when add to list is empty
         if (mDisplayCloseIcon) {
             imBack.visibility = GONE
