@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.shop
 
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -52,7 +53,11 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initViews()
+        Handler().postDelayed(Runnable {
+            activity.runOnUiThread(Runnable {
+                initViews()
+            })
+        }, 100)
     }
 
     private fun initViews() {
@@ -127,7 +132,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick {
 
     override fun onAddToList(commerceItemList: MutableList<AddToListRequest>) {
         val navigateTo = NavigateToShoppingList()
-        navigateTo.openShoppingList(activity,commerceItemList,order?.orderId,false)
+        navigateTo.openShoppingList(activity, commerceItemList, order?.orderId, false)
     }
 
     override fun onOpenProductDetail(commerceItem: CommerceItem) {
