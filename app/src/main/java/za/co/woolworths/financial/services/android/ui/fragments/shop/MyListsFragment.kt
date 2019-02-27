@@ -129,7 +129,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
     }
 
     private fun loadShoppingList(state: Boolean) {
-        loadingBar.visibility = if (state) VISIBLE else GONE
+        loadingBar?.visibility = if (state) VISIBLE else GONE
     }
 
     private fun setYourDeliveryLocation() {

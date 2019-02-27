@@ -598,9 +598,11 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
                 case R.id.navigate_to_account:
                     clearStack();
-                    MyAccountsFragment currentAccountFragment = (MyAccountsFragment) mNavController.getCurrentFrag();
-                    currentAccountFragment.scrollToTop();
-                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSMENU);
+                    if (mNavController.getCurrentFrag() instanceof MyAccountsFragment) {
+                        MyAccountsFragment currentAccountFragment = (MyAccountsFragment) mNavController.getCurrentFrag();
+                        currentAccountFragment.scrollToTop();
+                        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSMENU);
+                    }
                     break;
             }
         }
@@ -848,13 +850,14 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         //Open shopping from Tips and trick activity request code
         if (requestCode == TIPS_AND_TRICKS_CTA_REQUEST_CODE) {
             if (resultCode == RESULT_OK_ACCOUNTS) {
+                getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
                 clearStack();
-                setCurrentSection(R.id.navigate_to_shop);
-                switchTab(INDEX_PRODUCT);
                 Fragment fragment = mNavController.getCurrentFrag();
-                ShopFragment shopFragment = (ShopFragment) fragment;
-                shopFragment.navigateToMyListFragment();
-                shopFragment.refreshViewPagerFragment();
+                if (fragment instanceof ShopFragment) {
+                    ShopFragment shopFragment = (ShopFragment) fragment;
+                    shopFragment.navigateToMyListFragment();
+                    shopFragment.refreshViewPagerFragment();
+                }
             }
             return;
         }
