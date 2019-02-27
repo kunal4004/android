@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.shop
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
@@ -30,7 +31,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.list.Depart
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsFragment
 import za.co.woolworths.financial.services.android.util.*
-
 
 class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, IShoppingList {
 
@@ -71,6 +71,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
         btnGoToProduct.setOnClickListener(this)
         rlCreateAList.setOnClickListener(this)
         btnRetry.setOnClickListener(this)
+        rlDeliveryLocationLayout.setOnClickListener(this)
     }
 
     private fun getShoppingList() {
@@ -88,6 +89,8 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
                                 SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
                                 showSignOutView()
                                 QueryBadgeCounter.getInstance().clearBadge()
+                                if (isFragmentVisible)
+                                    activity?.let { SessionExpiredUtilities.getInstance().showSessionExpireDialog(it as? AppCompatActivity?) }
                             }
                             else -> {
                                 loadShoppingList(false)
@@ -142,17 +145,24 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
 
     private fun manageDeliveryLocationUI(deliveryLocation: String) {
         tvDeliveringTo.text = getString(R.string.delivering_to)
-        tvDeliveryLocation.visibility = View.VISIBLE
+        tvDeliveringEmptyTo.text = getString(R.string.delivering_to)
+        tvDeliveryLocation.visibility = VISIBLE
+        tvDeliveryEmptyLocation.visibility = VISIBLE
         tvDeliveryLocation.text = deliveryLocation
+        tvDeliveryEmptyLocation.text = deliveryLocation
     }
 
     override fun onClick(view: View?) {
         when (view?.id) {
-            R.id.locationSelectedLayout -> {
+
+            R.id.locationSelectedLayout,R.id.rlDeliveryLocationLayout -> {
                 locationSelectionClicked()
             }
             R.id.btnGoToProduct -> {
-                ScreenManager.presentSSOSignin(activity)
+                when (btnGoToProduct.tag) {
+                    0 -> activity?.let { ScreenManager.presentSSOSignin(it) }
+                    1 -> navigateToCreateListFragment(mutableListOf())
+                }
             }
 
             R.id.btnRetry -> {
@@ -182,10 +192,14 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
 
     private fun showEmptyShoppingListView() {
         clSignOutTemplate.visibility = VISIBLE
-        imEmptyIcon.setImageResource(R.drawable.ic_shopping_list_sign_out)
+        imEmptyIcon.setImageResource(R.drawable.emptylists)
+        imEmptyIcon.alpha = 1.0f
         txtEmptyStateTitle.text = getString(R.string.title_no_shopping_lists)
         txtEmptyStateDesc.text = getString(R.string.description_no_shopping_lists)
-        btnGoToProduct.visibility = GONE
+        btnGoToProduct.text = getString(R.string.button_no_shopping_lists)
+        btnGoToProduct.tag = 1
+        btnGoToProduct.visibility = VISIBLE
+        rlDeliveryLocationLayout.visibility = VISIBLE
     }
 
     private fun hideEmptyOverlay() {
@@ -198,7 +212,9 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
         txtEmptyStateTitle.text = getString(R.string.shop_sign_out_order_title)
         txtEmptyStateDesc.text = getString(R.string.shop_sign_out_order_desc)
         btnGoToProduct.visibility = VISIBLE
+        btnGoToProduct.tag = 0
         btnGoToProduct.text = getString(R.string.sign_in)
+        rlDeliveryLocationLayout.visibility = GONE
     }
 
     fun authenticateUser() {
