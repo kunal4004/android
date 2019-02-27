@@ -961,7 +961,7 @@ public interface ApiInterface {
 			@Header("osVersion") String osVersion,
 			@Header("sessionToken") String sessionToken);
 
-	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:120"})
 	@GET("/order/{id}")
 	OrderDetailsResponse getOrderDetails(
 			@Header("apiId") String apiId,

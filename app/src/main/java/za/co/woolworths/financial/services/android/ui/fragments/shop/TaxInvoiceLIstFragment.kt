@@ -14,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import com.awfs.coordination.R
+import com.facebook.FacebookSdk.getApplicationContext
 import kotlinx.android.synthetic.main.activity_products_refine.*
 import kotlinx.android.synthetic.main.fragment_tax_invoice_list.*
 import za.co.woolworths.financial.services.android.contracts.AsyncAPIResponse
@@ -101,18 +102,24 @@ class TaxInvoiceLIstFragment : Fragment(), TaxInvoiceAdapter.OnItemClick, Permis
 
     private fun loadTaxInvoice() {
         showProgressBar()
-        GetOrderInvoiceRequest(selectedInvoiceNumber!!, object : AsyncAPIResponse.ResponseDelegate<OrderTaxInvoiceResponse> {
-            override fun onSuccess(response: OrderTaxInvoiceResponse) {
-                hideProgressBar()
-                buildTaxInvoicePDF(response.data!!)
+        var file = File(Environment.getExternalStorageDirectory().getPath(), "Woolworths/TaxInvoice/" + orderId + "_" + selectedInvoiceNumber!! + ".pdf")
+        if (file.exists()) {
+            hideProgressBar()
+            showTAxInvoice(file.path)
+        } else {
+            GetOrderInvoiceRequest(selectedInvoiceNumber!!, object : AsyncAPIResponse.ResponseDelegate<OrderTaxInvoiceResponse> {
+                override fun onSuccess(response: OrderTaxInvoiceResponse) {
+                    hideProgressBar()
+                    buildTaxInvoicePDF(response.data!!)
 
-            }
+                }
 
-            override fun onFailure(errorMessage: String) {
-                hideProgressBar()
-            }
+                override fun onFailure(errorMessage: String) {
+                    hideProgressBar()
+                }
 
-        }).execute()
+            }).execute()
+        }
     }
 
     fun buildTaxInvoicePDF(data: String) {

@@ -103,11 +103,10 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
     }
 
     override fun onItemSelectionChanged(dataList: ArrayList<OrderDetailsItem>) {
-        isAnyItemSelected = getButtonStatus(dataList)
-        val activity = activity ?: return
-        addToCartButton.isEnabled = isAnyItemSelected
 
         if (isAdded) {
+            isAnyItemSelected = getButtonStatus(dataList)
+            addToCartButton.isEnabled = isAnyItemSelected
             if (dataList.size > 0)
                 tvSelectAll?.setText(getString(if (getSelectAllMenuVisibility(dataList)) R.string.deselect_all else R.string.select_all))
             else
