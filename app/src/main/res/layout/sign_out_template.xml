@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/sixteen_dp"
         android:background="@color/white"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -87,6 +87,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="24dp"
         android:alpha="0.4"
@@ -96,6 +97,7 @@
         app:layout_constraintBottom_toTopOf="@+id/txtEmptyStateTitle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rlDeliveryLocationLayout"
         app:srcCompat="@drawable/emptylists" />
 
 
@@ -126,9 +128,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/txtEmptyStateTitle"
-        android:layout_marginStart="@dimen/fifty_dp"
+        android:layout_marginStart="32dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="@dimen/fifty_dp"
+        android:layout_marginEnd="32dp"
         android:layout_marginBottom="8dp"
         android:gravity="center"
         android:text="@string/shop_sign_out_order_desc"
@@ -138,7 +140,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/rlDeliveryLocationLayout" />
 
     <za.co.woolworths.financial.services.android.ui.views.WButton
         android:id="@+id/btnGoToProduct"
