@@ -28,7 +28,6 @@ import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.FragmentsEventsListner
 import za.co.woolworths.financial.services.android.util.MultiMap
 import za.co.woolworths.financial.services.android.util.OnEventListener
-import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
 
 
@@ -406,14 +405,7 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
     }
 
     fun onAddToCartSuccess(addItemToCartResponse: AddItemToCartResponse) {
-        /* val intent = Intent()
-         if (addItemToCartResponse.data.size > 0) {
-             val successMessage = addItemToCartResponse.data[0].message
-             intent.putExtra("addedToCartMessage", successMessage)
-         }
-         val activity = activity ?: return
-         activity.setResult(RESULT_OK, intent)*/
-        listener.onItemsAddedToCart()
+        listener.onItemsAddedToCart(addItemToCartResponse)
     }
 
     override fun onAttach(context: Context?) {

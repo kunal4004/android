@@ -109,7 +109,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_marginEnd="@dimen/twenty_four_dp"
-                    app:srcCompat="@drawable/ic_delivery_truck" />
+                    app:srcCompat="@drawable/ic_add_circle" />
 
             </RelativeLayout>
 
@@ -157,9 +157,7 @@
         android:layout_height="match_parent" />
 
     <include
-        layout="@layout/empty_state_template"
+        layout="@layout/sign_out_template"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingStart="@dimen/twenty_four_dp"
-        android:paddingEnd="@dimen/twenty_four_dp" />
+        android:layout_height="match_parent" />
 </FrameLayout>

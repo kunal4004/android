@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.activities.product;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
@@ -12,6 +11,7 @@ import android.widget.FrameLayout;
 import com.awfs.coordination.R;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -23,6 +23,7 @@ import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseVie
 import za.co.woolworths.financial.services.android.util.Utils;
 
 import static za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_REQUEST_CODE;
+import static za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_RESULT_CODE;
 import static za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST;
 
 public class ProductDetailsActivity extends AppCompatActivity implements IToastInterface {
@@ -50,9 +51,17 @@ public class ProductDetailsActivity extends AppCompatActivity implements IToastI
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ADD_TO_SHOPPING_LIST_REQUEST_CODE) {
-            if (resultCode == Activity.RESULT_OK) {
-                FragmentManager fm = getSupportFragmentManager();
-                ToastFactory.Companion.buildShoppingListToast(flContentFrame, true, data, this);
+            if (resultCode == ADD_TO_SHOPPING_LIST_RESULT_CODE) {
+                int sizeOfList = 0;
+                if (data != null) {
+                    sizeOfList = data.getIntExtra("sizeOfList", 0);
+                }
+                // open list directly if map contain 1 element
+                if (sizeOfList == 1) {
+                    onToastButtonClicked(new JsonParser().parse(data.getStringExtra(POST_ADD_TO_SHOPPING_LIST)));
+                } else {
+                    ToastFactory.Companion.buildShoppingListToast(flContentFrame, true, data, this);
+                }
                 return;
             }
         }

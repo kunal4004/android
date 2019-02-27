@@ -14,6 +14,8 @@ public class OrderSummary {
 	public double savedAmount;
 	public double totalStaffDiscount;
 	public Suburb suburb;
+	public String state;
+	public String submittedDate;
 
 	public int getTotalItemsCount() {
 		return totalItemsCount;

@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.shop.list
 
 import android.content.Context
 import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentActivity
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import com.google.gson.Gson
@@ -9,8 +10,9 @@ import com.google.gson.reflect.TypeToken
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask
+import za.co.woolworths.financial.services.android.util.NetworkManager
 
-open class ShoppingListExtensionFragment : Fragment() {
+open class DepartmentExtensionFragment : Fragment() {
 
     fun showKeyboard(editText: EditText) {
         editText.requestFocus()
@@ -52,4 +54,5 @@ open class ShoppingListExtensionFragment : Fragment() {
         }
     }
 
+    fun networkConnectionAvailable(it: FragmentActivity) = NetworkManager.getInstance().isConnectedToNetwork(it)
 }

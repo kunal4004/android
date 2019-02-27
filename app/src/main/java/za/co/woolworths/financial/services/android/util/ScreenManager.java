@@ -14,6 +14,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.ui.activities.BiometricsWalkthrough;
+import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.HowToPayActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.OnBoardingActivity;
@@ -21,6 +22,7 @@ import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity;
 
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.OPEN_CART_REQUEST;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
 
 /**
@@ -177,6 +179,12 @@ public class ScreenManager {
 		Intent howToPayIntent = new Intent(activity, HowToPayActivity.class);
 		howToPayIntent.putExtra("account",Utils.objectToJson(account));
 		activity.startActivity(howToPayIntent);
+		activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+	}
+
+	public static void presentShoppingCart(Activity activity){
+		Intent openCartActivity = new Intent(activity, CartActivity.class);
+		activity.startActivityForResult(openCartActivity, OPEN_CART_REQUEST);
 		activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 	}
 }

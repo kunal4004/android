@@ -643,7 +643,7 @@
     <string name="description_empty_shopping_list">Search for products to start adding \n items to this list.</string>
     <string name="button_empty_shopping_list">Search Products</string>
     <string name="title_no_shopping_lists">You have no lists</string>
-    <string name="description_no_shopping_lists">Shopping lists makes it easier and faster to get \n your favourite Woolworths products.</string>
+    <string name="description_no_shopping_lists">Shopping lists makes it easier and faster to get your favourite Woolworths products.</string>
     <string name="button_no_shopping_lists">create a list</string>
     <string name="single_item_text">item</string>
     <string name="multiple_item_text">items</string>
@@ -867,7 +867,7 @@
     <string name="absa_success_desc">Your Online Banking has been successfully linked</string>
     <string name="online_banking">Online Banking</string>
     <string name="absa_passcode">Enter Passcode</string>
-    <string name="shop_department_title_department">departments</string>
+    <string name="shop_department_title_category">categories</string>
     <string name="shop_department_title_list">my lists</string>
     <string name="shop_department_title_order">my orders</string>
     <string name="total">Total:</string>
@@ -887,8 +887,13 @@
     <string name="tax_invoices">TAX INVOICES</string>
 
     <string name="shop_create_a_list">Create A New List</string>
-    <string name="shop_sign_out_order_title">sign in to view and create lists</string>
+    <string name="shop_sign_out_order_title">sign in to view\nand create lists</string>
     <string name="shop_sign_out_order_desc">Search for products to start adding items to this list.</string>
     <string name="order_invoice_title_prefix">PDF:\u0020</string>
+    <string name="delivery_suburb">Delivery Suburb:</string>
+    <string name="order_status">Order Status:</string>
+    <string name="no_of_items">\u0020Items</string>
+    <string name="no_of_item">\u0020Item</string>
+    <string name="toast_added_to_cart">ADDED TO CART</string>
 
 </resources>

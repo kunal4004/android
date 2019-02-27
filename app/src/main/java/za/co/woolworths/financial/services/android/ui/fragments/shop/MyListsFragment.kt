@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.shop
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
@@ -17,27 +18,28 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingListsRespo
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.GetShoppingList
 import za.co.woolworths.financial.services.android.ui.adapters.ViewShoppingListAdapter
 import android.support.v7.widget.DividerItemDecoration
+import kotlinx.android.synthetic.main.no_connection_handler.*
+import kotlinx.android.synthetic.main.sign_out_template.*
 import kotlinx.android.synthetic.main.shopping_list_fragment.*
 import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity
-import kotlinx.android.synthetic.main.empty_state_template.*
 import za.co.woolworths.financial.services.android.contracts.IShoppingList
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.DeleteShoppingLists
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
-import za.co.woolworths.financial.services.android.ui.fragments.shop.list.ShoppingListExtensionFragment
+import za.co.woolworths.financial.services.android.ui.fragments.shop.list.DepartmentExtensionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsFragment
 import za.co.woolworths.financial.services.android.util.*
 
-
-class MyListsFragment : ShoppingListExtensionFragment(), View.OnClickListener, IShoppingList {
+class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, IShoppingList {
 
     private var mAddToShoppingListAdapter: ViewShoppingListAdapter? = null
     private var mGetShoppingListRequest: HttpAsyncTask<String, String, ShoppingListsResponse>? = null
     private var mSuburbName: String? = null
     private var mProvinceName: String? = null
     private var isMyListsFragmentVisible: Boolean = false
+    private var isFragmentVisible: Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -46,9 +48,11 @@ class MyListsFragment : ShoppingListExtensionFragment(), View.OnClickListener, I
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initUI()
-        authenticateUser()
-        setListener()
+        if (isFragmentVisible) {
+            initUI()
+            authenticateUser()
+            setListener()
+        }
     }
 
     private fun initUI() {
@@ -57,6 +61,8 @@ class MyListsFragment : ShoppingListExtensionFragment(), View.OnClickListener, I
             itemDecorator.setDrawable(ContextCompat.getDrawable(it, R.drawable.divider))
             rcvShoppingLists.addItemDecoration(itemDecorator)
             rcvShoppingLists.layoutManager = LinearLayoutManager(it, LinearLayout.VERTICAL, false)
+            mAddToShoppingListAdapter = ViewShoppingListAdapter(mutableListOf(), this)
+            rcvShoppingLists.adapter = mAddToShoppingListAdapter
         }
     }
 
@@ -64,6 +70,8 @@ class MyListsFragment : ShoppingListExtensionFragment(), View.OnClickListener, I
         locationSelectedLayout.setOnClickListener(this)
         btnGoToProduct.setOnClickListener(this)
         rlCreateAList.setOnClickListener(this)
+        btnRetry.setOnClickListener(this)
+        rlDeliveryLocationLayout.setOnClickListener(this)
     }
 
     private fun getShoppingList() {
@@ -81,6 +89,8 @@ class MyListsFragment : ShoppingListExtensionFragment(), View.OnClickListener, I
                                 SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
                                 showSignOutView()
                                 QueryBadgeCounter.getInstance().clearBadge()
+                                if (isFragmentVisible)
+                                    activity?.let { SessionExpiredUtilities.getInstance().showSessionExpireDialog(it as? AppCompatActivity?) }
                             }
                             else -> {
                                 loadShoppingList(false)
@@ -104,17 +114,13 @@ class MyListsFragment : ShoppingListExtensionFragment(), View.OnClickListener, I
     }
 
     private fun bindShoppingListToUI(shoppingList: MutableList<ShoppingList>) {
-        activity?.let {
-            shoppingList.let {
-                when (it.size) {
-                    0 -> {
-                        //no list found
-                        showEmptyShoppingListView()
-                    }
-                    else -> {
-                        mAddToShoppingListAdapter = ViewShoppingListAdapter(shoppingList, this)
-                        rcvShoppingLists.adapter = mAddToShoppingListAdapter
-                    }
+        shoppingList.let {
+            when (it.size) {
+                0 -> showEmptyShoppingListView() //no list found
+
+                else -> {
+                    mAddToShoppingListAdapter?.setShoppingList(shoppingList)
+                    mAddToShoppingListAdapter?.notifyDataSetChanged()
                 }
             }
         }
@@ -126,7 +132,7 @@ class MyListsFragment : ShoppingListExtensionFragment(), View.OnClickListener, I
     }
 
     private fun loadShoppingList(state: Boolean) {
-        loadingBar.visibility = if (state) VISIBLE else GONE
+        loadingBar?.visibility = if (state) VISIBLE else GONE
     }
 
     private fun setYourDeliveryLocation() {
@@ -139,17 +145,24 @@ class MyListsFragment : ShoppingListExtensionFragment(), View.OnClickListener, I
 
     private fun manageDeliveryLocationUI(deliveryLocation: String) {
         tvDeliveringTo.text = getString(R.string.delivering_to)
-        tvDeliveryLocation.visibility = View.VISIBLE
+        tvDeliveringEmptyTo.text = getString(R.string.delivering_to)
+        tvDeliveryLocation.visibility = VISIBLE
+        tvDeliveryEmptyLocation.visibility = VISIBLE
         tvDeliveryLocation.text = deliveryLocation
+        tvDeliveryEmptyLocation.text = deliveryLocation
     }
 
     override fun onClick(view: View?) {
         when (view?.id) {
-            R.id.locationSelectedLayout -> {
+
+            R.id.locationSelectedLayout,R.id.rlDeliveryLocationLayout -> {
                 locationSelectionClicked()
             }
             R.id.btnGoToProduct -> {
-                ScreenManager.presentSSOSignin(activity)
+                when (btnGoToProduct.tag) {
+                    0 -> activity?.let { ScreenManager.presentSSOSignin(it) }
+                    1 -> navigateToCreateListFragment(mutableListOf())
+                }
             }
 
             R.id.btnRetry -> {
@@ -178,24 +191,30 @@ class MyListsFragment : ShoppingListExtensionFragment(), View.OnClickListener, I
     }
 
     private fun showEmptyShoppingListView() {
-        relEmptyStateHandler.visibility = VISIBLE
-        imgEmpyStateIcon.setImageResource(R.drawable.emptylists)
+        clSignOutTemplate.visibility = VISIBLE
+        imEmptyIcon.setImageResource(R.drawable.emptylists)
+        imEmptyIcon.alpha = 1.0f
         txtEmptyStateTitle.text = getString(R.string.title_no_shopping_lists)
         txtEmptyStateDesc.text = getString(R.string.description_no_shopping_lists)
-        btnGoToProduct.visibility = GONE
+        btnGoToProduct.text = getString(R.string.button_no_shopping_lists)
+        btnGoToProduct.tag = 1
+        btnGoToProduct.visibility = VISIBLE
+        rlDeliveryLocationLayout.visibility = VISIBLE
     }
 
     private fun hideEmptyOverlay() {
-        relEmptyStateHandler.visibility = GONE
+        clSignOutTemplate?.visibility = GONE
     }
 
     private fun showSignOutView() {
-        relEmptyStateHandler.visibility = VISIBLE
-        imgEmpyStateIcon.setImageResource(R.drawable.emptylists)
+        clSignOutTemplate.visibility = VISIBLE
+        imEmptyIcon.setImageResource(R.drawable.ic_shopping_list_sign_out)
         txtEmptyStateTitle.text = getString(R.string.shop_sign_out_order_title)
         txtEmptyStateDesc.text = getString(R.string.shop_sign_out_order_desc)
         btnGoToProduct.visibility = VISIBLE
+        btnGoToProduct.tag = 0
         btnGoToProduct.text = getString(R.string.sign_in)
+        rlDeliveryLocationLayout.visibility = GONE
     }
 
     fun authenticateUser() {
@@ -251,13 +270,20 @@ class MyListsFragment : ShoppingListExtensionFragment(), View.OnClickListener, I
         }
     }
 
-    override fun onShoppingListItemSelected(item: ShoppingList) {
+    override fun onShoppingListItemSelected(shoppingList: ShoppingList) {
         val bundle = Bundle()
-        bundle.putString("listName", item.listName)
-        bundle.putString("listId", item.listId)
+        bundle.putString("listName", shoppingList.listName)
+        bundle.putString("listId", shoppingList.listId)
         val shoppingListItemsFragment = ShoppingListItemsFragment()
         shoppingListItemsFragment.arguments = bundle
         (activity as? BottomNavigationActivity)?.pushFragment(shoppingListItemsFragment)
+    }
+
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+        isFragmentVisible = isVisibleToUser
+        if (!isVisibleToUser && mGetShoppingListRequest != null)
+            cancelRequest(mGetShoppingListRequest)
     }
 
     fun scrollToTop() {

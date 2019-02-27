@@ -10,7 +10,7 @@ import kotlinx.android.synthetic.main.item_shopping_list.view.*
 import za.co.woolworths.financial.services.android.contracts.IShoppingList
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 
-class ViewShoppingListAdapter(private val shopMutableList: MutableList<ShoppingList>, shoppingList: IShoppingList) : RecyclerSwipeAdapter<ViewShoppingListAdapter.ViewHolder>() {
+class ViewShoppingListAdapter(private var shopMutableList: MutableList<ShoppingList>, shoppingList: IShoppingList) : RecyclerSwipeAdapter<ViewShoppingListAdapter.ViewHolder>() {
     var onClickListener = shoppingList
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.item_shopping_list, parent, false)
@@ -28,12 +28,23 @@ class ViewShoppingListAdapter(private val shopMutableList: MutableList<ShoppingL
             item?.apply {
                 // Returns a copy of this string having its first letter uppercased,
                 // or the original string, if it's empty or already starts with an upper case letter.
-                itemView.tvListName.text = listName?.capitalize() ?: ""
+                itemView.tvListName.text = toTitleCase(listName ?: "")
                 itemView.tvListCount.text = ("$listCount  item").plus(if (listCount == 1) "" else "s")
                 itemView.listItem.setOnClickListener { onClickListener.onShoppingListItemSelected(this) }
                 itemView.tvDelete.setOnClickListener { onClickListener.onShoppingListItemDeleted(this, adapterPosition) }
 
             }
+        }
+
+        private fun toTitleCase(givenString: String): String {
+            val arr = givenString.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+            val sb = StringBuffer()
+
+            for (i in arr.indices) {
+                sb.append(Character.toUpperCase(arr[i][0]))
+                        .append(arr[i].substring(1)).append(" ")
+            }
+            return sb.toString().trim { it <= ' ' }
         }
     }
 
@@ -42,4 +53,8 @@ class ViewShoppingListAdapter(private val shopMutableList: MutableList<ShoppingL
     override fun getSwipeLayoutResourceId(position: Int) = R.id.swipe
 
     fun getShoppingList(): MutableList<ShoppingList> = shopMutableList
+
+    fun setShoppingList(shoppingList: MutableList<ShoppingList>) {
+        shopMutableList = shoppingList
+    }
 }

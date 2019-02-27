@@ -49,25 +49,6 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone">
-
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    style="@style/my_orders_textview_style_2"
-                    android:layout_alignParentLeft="true"
-                    android:text="@string/number_of_items" />
-
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    style="@style/my_orders_textview_style_2"
-                    android:layout_alignParentRight="true"
-                    android:text="7 Items"
-                    android:textColor="@color/black"
-                    android:textSize="15sp"
-                    app:WTextView_font="myriadpro_semibold" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView

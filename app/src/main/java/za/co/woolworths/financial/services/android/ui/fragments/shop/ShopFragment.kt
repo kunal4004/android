@@ -12,8 +12,10 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_shop.*
 import kotlinx.android.synthetic.main.shop_custom_tab.view.*
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
+import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ShopPagerAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.barcode.BarcodeFragment
@@ -49,7 +51,7 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
         bottomNavigationActivity = activity as BottomNavigationActivity
         tvSearchProduct.setOnClickListener { navigateToProductSearch() }
         imBarcodeScanner.setOnClickListener { checkCameraPermission() }
-        mTabTitle = mutableListOf(resources.getString(R.string.shop_department_title_department),
+        mTabTitle = mutableListOf(resources.getString(R.string.shop_department_title_category),
                 resources.getString(R.string.shop_department_title_list),
                 resources.getString(R.string.shop_department_title_order))
         shopPagerAdapter = ShopPagerAdapter(fragmentManager, mTabTitle, this)
@@ -134,21 +136,25 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            ADD_TO_SHOPPING_LIST_REQUEST_CODE -> {
-                if (resultCode == DISPLAY_TOAST_RESULT_CODE) {
-                    refreshViewPagerFragment()
-                }
+        if (requestCode == ADD_TO_SHOPPING_LIST_REQUEST_CODE) {
+            if (resultCode == DISPLAY_TOAST_RESULT_CODE) {
+                navigateToMyListFragment()
+                refreshViewPagerFragment()
             }
         }
-        when (resultCode) {
-            SSOActivity.SSOActivityResult.SUCCESS.rawValue() -> {
+        if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
+            refreshViewPagerFragment()
+        }
+
+        if (requestCode == PDP_REQUEST_CODE) {
+            if (resultCode == ADD_TO_SHOPPING_LIST_RESULT_CODE) {
+                navigateToMyListFragment()
                 refreshViewPagerFragment()
             }
         }
     }
 
-    private fun refreshViewPagerFragment() {
+    fun refreshViewPagerFragment() {
         when (viewpager_main.currentItem) {
             1 -> {
                 val myListsFragment = viewpager_main.adapter?.instantiateItem(viewpager_main, viewpager_main.currentItem) as? MyListsFragment
@@ -159,6 +165,11 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
                 myOrdersFragment?.configureUI()
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        refreshViewPagerFragment()
     }
 
     override fun onStartShopping() {
@@ -172,7 +183,7 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
     fun scrollToTop() {
         when (viewpager_main.currentItem) {
             0 -> {
-                val detailsFragment = viewpager_main.adapter?.instantiateItem(viewpager_main, viewpager_main.currentItem) as? DepartmentsFragment
+                val detailsFragment = viewpager_main.adapter?.instantiateItem(viewpager_main, viewpager_main.currentItem) as? CategoryFragment
                 detailsFragment?.scrollToTop()
             }
             1 -> {

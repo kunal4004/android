@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -14,6 +13,7 @@ import android.widget.ProgressBar;
 import com.awfs.coordination.R;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -32,6 +32,7 @@ import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 import static za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_REQUEST_CODE;
+import static za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_RESULT_CODE;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL;
 import static za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST;
@@ -46,6 +47,7 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
     public static WMaterialShowcaseView walkThroughPromtView = null;
     public static final int CHECKOUT_SUCCESS = 13134;
     private FrameLayout flContentFrame;
+    private boolean toastButtonWasClicked = false;
 
     @Override
     protected int getLayoutResourceId() {
@@ -129,7 +131,9 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
     }
 
     public void finishActivity() {
-        setResult(DISMISS_POP_WINDOW_CLICKED);
+        // Check to prevent DISMISS_POP_WINDOW_CLICKED override setResult for toast clicked event
+        if (!toastButtonWasClicked)
+            setResult(DISMISS_POP_WINDOW_CLICKED);
         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTEXIT);
         finish();
         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
@@ -177,9 +181,17 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ADD_TO_SHOPPING_LIST_REQUEST_CODE) {
-            if (resultCode == Activity.RESULT_OK) {
-                FragmentManager fm = getSupportFragmentManager();
-                ToastFactory.Companion.buildShoppingListToast(flContentFrame, true, data, this);
+            if (resultCode == ADD_TO_SHOPPING_LIST_RESULT_CODE) {
+                int sizeOfList = 0;
+                if (data != null) {
+                    sizeOfList = data.getIntExtra("sizeOfList", 0);
+                }
+                // open list directly if map contain 1 element
+                if (sizeOfList == 1) {
+                    onToastButtonClicked(new JsonParser().parse(data.getStringExtra(POST_ADD_TO_SHOPPING_LIST)));
+                } else {
+                    ToastFactory.Companion.buildShoppingListToast(flContentFrame, true, data, this);
+                }
                 return;
             }
         }
@@ -243,6 +255,7 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
 
     @Override
     public void onToastButtonClicked(@Nullable JsonElement jsonElement) {
+        toastButtonWasClicked = true;
         NavigateToShoppingList.Companion navigateTo = NavigateToShoppingList.Companion;
         if (jsonElement instanceof JsonObject) {
             navigateTo.requestToastOnNavigateBack(this, POST_ADD_TO_SHOPPING_LIST, jsonElement.getAsJsonObject());

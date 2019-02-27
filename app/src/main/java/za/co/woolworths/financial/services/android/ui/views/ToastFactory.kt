@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.views
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Handler
@@ -16,7 +17,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToS
 import android.util.DisplayMetrics
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
-
+import za.co.woolworths.financial.services.android.util.ScreenManager
 
 class ToastFactory {
 
@@ -54,7 +55,7 @@ class ToastFactory {
 
             tvButtonClick?.visibility = if (buttonIsVisible) View.VISIBLE else View.GONE
             tvBoldTitle?.visibility = View.VISIBLE
-            tvAddedTo?.setAllCaps(false)
+            tvAddedTo?.setAllCaps(true)
 
             shoppingListArray?.let { tvBoldTitle?.setText(context.getString(R.string.shopping_list).plus(if (it.size() > 1) "s" else "")) }
             shoppingListObject?.let { tvBoldTitle?.setText(context.getString(R.string.shopping_list).plus(if (it.size() > 1) "s" else "")) }
@@ -74,6 +75,38 @@ class ToastFactory {
 
         private fun convertDpToPixel(dp: Float, context: Context): Int {
             return (dp * (context.resources?.displayMetrics?.densityDpi?.toFloat()?.div(DisplayMetrics.DENSITY_DEFAULT)!!)).toInt()
+        }
+
+        fun buildAddToCartSuccessToast(viewLocation: View, buttonIsVisible: Boolean, activity: Activity): PopupWindow? {
+            val context = WoolworthsApplication.getAppContext()
+            // inflate your xml layout
+            val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as? LayoutInflater
+            val layout = inflater?.inflate(R.layout.add_to_cart_success, null)
+            // set the custom display
+            val tvButtonClick = layout?.findViewById<WTextView>(R.id.tvView)
+            val tvBoldTitle = layout?.findViewById<WTextView>(R.id.tvCart)
+            val tvAddedTo = layout?.findViewById<WTextView>(R.id.tvAddToCart)
+            // initialize your popupWindow and use your custom layout as the view
+            val popupWindow = PopupWindow(layout,
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT, true)
+
+            tvButtonClick?.visibility = if (buttonIsVisible) View.VISIBLE else View.GONE
+            tvBoldTitle?.visibility = View.GONE
+            tvAddedTo?.text = context.getString(R.string.toast_added_to_cart)
+            tvAddedTo?.setAllCaps(true)
+
+            // handle popupWindow click event
+            tvButtonClick?.setOnClickListener {
+                ScreenManager.presentShoppingCart(activity)
+                popupWindow.dismiss() // dismiss the window
+            }
+
+            // dismiss the popup window after 3sec
+            Handler().postDelayed({ popupWindow.dismiss() }, POPUP_DELAY_MILLIS.toLong())
+            popupWindow.showAtLocation(viewLocation, Gravity.BOTTOM, 0, convertDpToPixel(60f, context))
+            popupWindow.isOutsideTouchable = true
+            return popupWindow
         }
     }
 }
