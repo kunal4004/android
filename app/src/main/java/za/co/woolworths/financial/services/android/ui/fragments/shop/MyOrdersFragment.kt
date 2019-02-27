@@ -18,10 +18,7 @@ import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.adapters.OrdersAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
-import za.co.woolworths.financial.services.android.util.ErrorHandlerView
-import za.co.woolworths.financial.services.android.util.OnEventListener
-import za.co.woolworths.financial.services.android.util.ScreenManager
-import za.co.woolworths.financial.services.android.util.SessionUtilities
+import za.co.woolworths.financial.services.android.util.*
 
 class MyOrdersFragment : Fragment() {
 
@@ -168,7 +165,9 @@ class MyOrdersFragment : Fragment() {
                 showSignInView(ordersResponse)
             }
             440 -> {
+                SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
                 showSignOutView()
+                QueryBadgeCounter.getInstance().clearBadge()
             }
             else -> {
                 showErrorView()

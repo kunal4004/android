@@ -881,6 +881,8 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 
 	@SuppressLint("StaticFieldLeak")
 	private void showFeatureWalkthroughAccounts(List<String> unavailableAccounts) {
+		if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.account)
+			return;
 		View viewToScrollUp = null;
 		String actionText = getActivity().getResources().getString(R.string.tips_tricks_go_to_accounts);
 		if (unavailableAccounts.size() == 3) {
