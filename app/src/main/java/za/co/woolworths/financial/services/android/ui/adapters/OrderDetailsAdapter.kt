@@ -68,7 +68,7 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
         override fun bind(position: Int) {
             val item = dataList[position].item as CommerceItem
             setProductImage(itemView.productImage, item.commerceItemInfo.externalImageURL)
-            itemView.itemName.text = item.commerceItemInfo.productDisplayName
+            itemView.itemName.text = item.commerceItemInfo.quantity.toString()+" x "+item.commerceItemInfo.productDisplayName
             itemView.price.text = WFormatter.formatAmount(item.priceInfo.amount)
             itemView.price.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
 
