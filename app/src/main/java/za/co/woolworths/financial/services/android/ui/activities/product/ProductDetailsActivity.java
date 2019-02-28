@@ -52,7 +52,6 @@ public class ProductDetailsActivity extends AppCompatActivity implements IToastI
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ADD_TO_SHOPPING_LIST_REQUEST_CODE) {
             if (resultCode == ADD_TO_SHOPPING_LIST_RESULT_CODE) {
-                // open list directly if map contain 1 element
                 ToastFactory.Companion.buildShoppingListToast(flContentFrame, true, data, this);
                 return;
             }
