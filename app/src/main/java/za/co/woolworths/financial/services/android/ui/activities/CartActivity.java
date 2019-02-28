@@ -13,7 +13,6 @@ import android.widget.ProgressBar;
 import com.awfs.coordination.R;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -182,16 +181,7 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ADD_TO_SHOPPING_LIST_REQUEST_CODE) {
             if (resultCode == ADD_TO_SHOPPING_LIST_RESULT_CODE) {
-                int sizeOfList = 0;
-                if (data != null) {
-                    sizeOfList = data.getIntExtra("sizeOfList", 0);
-                }
-                // open list directly if map contain 1 element
-                if (sizeOfList == 1) {
-                    onToastButtonClicked(new JsonParser().parse(data.getStringExtra(POST_ADD_TO_SHOPPING_LIST)));
-                } else {
                     ToastFactory.Companion.buildShoppingListToast(flContentFrame, true, data, this);
-                }
                 return;
             }
         }

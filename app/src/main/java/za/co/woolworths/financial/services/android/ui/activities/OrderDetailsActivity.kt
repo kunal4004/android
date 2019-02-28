@@ -79,18 +79,10 @@ class OrderDetailsActivity : AppCompatActivity(), FragmentsEventsListner, IToast
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == ADD_TO_SHOPPING_LIST_REQUEST_CODE) {
             if (resultCode == ADD_TO_SHOPPING_LIST_RESULT_CODE) {
-                data?.getIntExtra("sizeOfList", 0)?.let {
-                    if (it == 1) {
-                        onToastButtonClicked(JsonParser().parse(data.getStringExtra(POST_ADD_TO_SHOPPING_LIST)))
-                    } else {
-                        ToastFactory.buildShoppingListToast(fragmentContainer, true, data, this)
-                    }
-                }
-
+                ToastFactory.buildShoppingListToast(fragmentContainer, true, data, this)
                 return
             }
         }
-
         val fragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
         fragment.onActivityResult(requestCode, resultCode, data)
     }

@@ -16,6 +16,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment
 import android.util.DisplayMetrics
 import com.google.gson.JsonArray
+import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import za.co.woolworths.financial.services.android.util.ScreenManager
 
@@ -57,8 +58,16 @@ class ToastFactory {
             tvBoldTitle?.visibility = View.VISIBLE
             tvAddedTo?.setAllCaps(true)
 
-            shoppingListArray?.let { tvBoldTitle?.setText(context.getString(R.string.shopping_list).plus(if (it.size() > 1) "s" else "")) }
-            shoppingListObject?.let { tvBoldTitle?.setText(context.getString(R.string.shopping_list).plus(if (it.size() > 1) "s" else "")) }
+            shoppingListObject?.let {
+                when (it.size()) {
+                    1 -> {
+                        var shoppingList: JsonElement? = null
+                        it.entrySet()?.forEach { item -> shoppingList = item.value }
+                        tvBoldTitle?.setText(shoppingList?.asJsonObject?.get("name")?.asString)
+                    }
+                    else -> tvBoldTitle?.setText(context.getString(R.string.shopping_list).plus("s"))
+                }
+            }
 
             // handle popupWindow click event
             tvButtonClick?.setOnClickListener {
