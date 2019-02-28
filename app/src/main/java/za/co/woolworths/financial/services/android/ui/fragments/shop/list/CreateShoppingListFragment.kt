@@ -89,7 +89,8 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
         toolbarIconVisibility()
         clickListener()
         textChangeListener()
-        enableCancelButton(false)
+        // Disable create list button when tap from create a list row
+        if (!mShouldDisplayCreateListOnly) enableCancelButton(true) else enableCancelButton(false)
         networkConnectivityStatus()
     }
 
