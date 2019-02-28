@@ -69,23 +69,23 @@ class AddOrderToCartAdapter(val context: Context, val listner: OnItemClick, var 
 
             if (userShouldSetSuburb()) {
                 itemView.tvProductAvailability.setVisibility(View.GONE)
-                itemView.tvQuantity.setVisibility(View.VISIBLE)
-                itemView.tvQuantity.setAlpha(1.0f)
+                itemView.llQuantity.setVisibility(View.VISIBLE)
+                itemView.llQuantity.setAlpha(1.0f)
                 itemView.selector.setEnabled(true)
                 adapterClickable(true)
                 itemView.selector.setAlpha(1.0f)
-                itemView.tvQuantity.setEnabled(true)
+                itemView.llQuantity.setEnabled(true)
             } else {
                 if (item != null) {
                     val productInStock = item.quantityInStock != 0
-                    itemView.tvQuantity.setAlpha(if (productInStock) 1.0f else 0.5f)
+                    itemView.llQuantity.setAlpha(if (productInStock) 1.0f else 0.5f)
                     itemView.tvQuantity.setAlpha(if (productInStock) 1.0f else 0.5f)
                     itemView.selector.setEnabled(productInStock)
                     itemView.imPrice.setAlpha(if (productInStock) 1.0f else 0.5f)
                     if (item.inventoryCallCompleted) {
                         val inventoryQueryStatus = item.quantityInStock
                         if (inventoryQueryStatus == -1) {
-                            itemView.tvQuantity.setVisibility(View.GONE)
+                            itemView.llQuantity.setVisibility(View.GONE)
                             itemView.selector.setVisibility(View.GONE)
                             itemView.imPrice.setAlpha(0.5f)
                             itemView.tvColorSize.setVisibility(View.GONE)
@@ -94,7 +94,7 @@ class AddOrderToCartAdapter(val context: Context, val listner: OnItemClick, var 
                             itemView.tvPrice.setVisibility(View.GONE)
                             Utils.setBackgroundColor(itemView.tvProductAvailability, R.drawable.round_amber_corner, R.string.out_of_stock)
                         } else {
-                            itemView.tvQuantity.setVisibility(if (item.quantityInStock == 0) View.GONE else View.VISIBLE)
+                            itemView.llQuantity.setVisibility(if (item.quantityInStock == 0) View.GONE else View.VISIBLE)
                             itemView.tvProductAvailability.setVisibility(if (item.quantityInStock == 0) View.VISIBLE else View.GONE)
                             itemView.selector.setVisibility(if (item.quantityInStock == 0) View.GONE else View.VISIBLE)
                             itemView.tvPrice.setVisibility(if (item.quantityInStock == 0) View.GONE else View.VISIBLE)
@@ -103,7 +103,7 @@ class AddOrderToCartAdapter(val context: Context, val listner: OnItemClick, var 
                             Utils.setBackgroundColor(itemView.tvProductAvailability, R.drawable.round_amber_corner, R.string.out_of_stock)
                         }
                     } else {
-                        itemView.tvQuantity.setVisibility(View.VISIBLE)
+                        itemView.llQuantity.setVisibility(View.VISIBLE)
                         itemView.tvProductAvailability.setVisibility(View.GONE)
                     }
                 }
