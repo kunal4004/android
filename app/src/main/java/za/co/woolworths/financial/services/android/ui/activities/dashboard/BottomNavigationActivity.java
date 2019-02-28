@@ -1025,12 +1025,13 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     }
 
     private void navigateToMyList(int requestCode, int resultCode, Intent data) {
-        clearStack();
         if (resultCode == ADD_TO_SHOPPING_LIST_RESULT_CODE) {
+            clearStack();
             String obj = data.getStringExtra(POST_ADD_TO_SHOPPING_LIST);
             JsonElement element = new JsonParser().parse(obj);
             switchToShoppingListTab(element);
         } else if (resultCode == NavigateToShoppingList.DISPLAY_TOAST_RESULT_CODE) {
+            clearStack();
             ToastFactory toastFactory = new ToastFactory();
             toastFactory.Companion.buildShoppingListToast(getBottomNavigationById(), true, data, this);
             Fragment fragmentById = getCurrentFragment();
