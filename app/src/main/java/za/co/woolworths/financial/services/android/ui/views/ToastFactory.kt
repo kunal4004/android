@@ -76,8 +76,7 @@ class ToastFactory {
             }
 
             // dismiss the popup window after 3sec
-            Handler().postDelayed(
-                    { popupWindow.dismiss() }, POPUP_DELAY_MILLIS.toLong())
+            Handler().postDelayed({ popupWindow.dismiss() }, POPUP_DELAY_MILLIS.toLong())
             popupWindow.showAtLocation(viewLocation, Gravity.BOTTOM, 0, convertDpToPixel(60f, context))
             popupWindow.isOutsideTouchable = true
             return popupWindow
