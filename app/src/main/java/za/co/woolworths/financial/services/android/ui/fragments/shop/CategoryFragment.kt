@@ -31,19 +31,26 @@ class CategoryFragment : DepartmentExtensionFragment() {
     private var mProductDepartmentRequest: ProductCategoryRequest? = null
     private var mDepartmentAdapter: DepartmentAdapter? = null
     private var isFragmentVisible: Boolean = false
+    private var catchedView: View? = null
+    public var apiDataReceived = false
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_shop_department, container, false)
+        if (catchedView == null)
+            catchedView = inflater.inflate(R.layout.fragment_shop_department, container, false)
+        return catchedView
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setUpRecyclerView(mutableListOf())
-        setListener()
-        if (isFragmentVisible) {
-            executeDepartmentRequest()
-            networkConnectionStatus()
+        if ((savedInstanceState == null) and !apiDataReceived) {
+            setUpRecyclerView(mutableListOf())
+            setListener()
         }
+
+        if (isFragmentVisible)
+            executeDepartmentRequest()
+
     }
 
     private fun setListener() {
@@ -87,18 +94,14 @@ class CategoryFragment : DepartmentExtensionFragment() {
     private fun bindDepartment(rootCategories: RootCategories) {
         mDepartmentAdapter?.setRootCategories(rootCategories.rootCategories)
         mDepartmentAdapter?.notifyDataSetChanged()
+        apiDataReceived = true
     }
 
     private fun setUpRecyclerView(categories: MutableList<RootCategory>?) {
         mDepartmentAdapter = DepartmentAdapter(categories) { rootCategory: RootCategory -> departmentItemClicked(rootCategory) }
         activity?.let {
             rclDepartment?.apply {
-                val mLayoutManager = LinearLayoutManager(it, LinearLayout.VERTICAL, false)
-                //setting top and bottom space between item row
-                val dividerItemDecoration = DividerItemDecoration(it, mLayoutManager.orientation)
-                dividerItemDecoration.setDrawable(ContextCompat.getDrawable(it, R.drawable.department_line_divider))
-                addItemDecoration(dividerItemDecoration)
-                layoutManager = mLayoutManager
+                layoutManager = LinearLayoutManager(it, LinearLayout.VERTICAL, false)
                 adapter = mDepartmentAdapter
             }
         }
@@ -133,7 +136,8 @@ class CategoryFragment : DepartmentExtensionFragment() {
         incConnectionLayout.visibility = if (isVisible) VISIBLE else GONE
     }
 
-    fun networkConnectionStatus(): Boolean = activity?.let { NetworkManager.getInstance().isConnectedToNetwork(it) } ?: false
+    fun networkConnectionStatus(): Boolean = activity?.let { NetworkManager.getInstance().isConnectedToNetwork(it) }
+            ?: false
 
     override fun onDestroy() {
         super.onDestroy()
@@ -142,8 +146,8 @@ class CategoryFragment : DepartmentExtensionFragment() {
     }
 
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
-            super.setUserVisibleHint(isVisibleToUser)
-            isFragmentVisible = isVisibleToUser
+        super.setUserVisibleHint(isVisibleToUser)
+        isFragmentVisible = isVisibleToUser
     }
 
     fun scrollToTop() {
