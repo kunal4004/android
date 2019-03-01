@@ -704,12 +704,14 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 
 	}
 
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		hideProgressBar();
-		cancelRequest(mGetShoppingLists);
-	}
+    @Override
+    public void onDestroy() {
+        if (getActivity() != null && getViewDataBinding().pbAccount != null) {
+            hideProgressBar();
+            cancelRequest(mGetShoppingLists);
+        }
+        super.onDestroy();
+    }
 
 //	public int getAvailableFundsPercentage(int availableFund, int creditLimit) {
 //		// Progressbar MAX value is 10000 to manage float values
