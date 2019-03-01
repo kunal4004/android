@@ -835,6 +835,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         Fragment fragment = getCurrentFragment();
         if (fragment instanceof StoresNearbyFragment1) {
             fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }else if(fragment instanceof ShopFragment){
+            fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
 
         // redirects to utils
