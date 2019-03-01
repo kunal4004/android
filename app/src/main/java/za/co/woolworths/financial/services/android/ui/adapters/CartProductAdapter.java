@@ -372,6 +372,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                         CommerceItemInfo commerceItemInfo = commerceItem.commerceItemInfo;
                         listItem.setCatalogRefId(commerceItemInfo.catalogRefId);
                         listItem.setSkuID(commerceItemInfo.catalogRefId);
+                        listItem.setGiftListId(commerceItemInfo.catalogRefId);
                         listItem.setQuantity("1");
                         addToListRequests.add(listItem);
                     }
