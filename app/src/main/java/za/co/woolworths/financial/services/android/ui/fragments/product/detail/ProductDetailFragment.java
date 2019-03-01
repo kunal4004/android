@@ -295,7 +295,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
         AddToListRequest item = new AddToListRequest();
         item.setCatalogRefId(selectedSku.sku);
         item.setSkuID(selectedSku.sku);
-        item.setGiftListId(selectedSku.sku);
         item.setQuantity("1");
         ArrayList<AddToListRequest> addToListRequests = new ArrayList<>();
         addToListRequests.add(item);
