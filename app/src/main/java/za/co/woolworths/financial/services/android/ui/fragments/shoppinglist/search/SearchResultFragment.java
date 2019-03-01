@@ -399,7 +399,8 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
                         AddToListRequest addToList = new AddToListRequest();
                         addToList.setCatalogRefId(list.sku);
                         addToList.setQuantity("1");
-                        addToList.setSkuID(list.productId);
+                        addToList.setGiftListId(list.sku);
+                        addToList.setSkuID(list.sku);
                         addToListRequests.add(addToList);
                     }
                 }
@@ -608,6 +609,7 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
         AddToListRequest item = new AddToListRequest();
         item.setCatalogRefId(selectedSku.sku);
         item.setSkuID(selectedSku.sku);
+        item.setGiftListId(selectedSku.sku);
         item.setQuantity("1");
         ArrayList<AddToListRequest> addToListRequests = new ArrayList<>();
         addToListRequests.add(item);
