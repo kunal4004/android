@@ -108,7 +108,7 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
             isAnyItemSelected = getButtonStatus(dataList)
             addToCartButton.isEnabled = isAnyItemSelected
             if (dataList.size > 0)
-                tvSelectAll?.setText(getString(if (getSelectAllMenuVisibility(dataList)) R.string.deselect_all else R.string.select_all))
+                tvSelectAll?.setText(getString(if (getSelectAllMenuVisibility(dataList)) R.string.deselect else R.string.select_all))
             else
                 tvSelectAll?.visibility = View.GONE
         }
@@ -362,7 +362,7 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
     private fun onSelectAll() {
         if (tvSelectAll?.getText().toString().equals("SELECT ALL", ignoreCase = true)) {
             selectAllItems(true)
-            tvSelectAll?.setText(getString(R.string.deselect_all))
+            tvSelectAll?.setText(getString(R.string.deselect))
         } else {
             selectAllItems(false)
             tvSelectAll?.setText(getString(R.string.select_all))
