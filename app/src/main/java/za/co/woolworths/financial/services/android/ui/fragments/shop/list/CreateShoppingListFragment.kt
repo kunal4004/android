@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.ui.fragments.shop.list
 import android.graphics.Color
 import android.os.Bundle
 import android.support.v4.app.FragmentActivity
-import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.KeyEvent
@@ -267,44 +266,31 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
                 response.apply {
                     when (httpCode) {
                         200 -> {
-                            if (mShoppingListGroup?.size!! > 0 && !mShouldDisplayCreateListOnly) {
-                                //add new list to shopping list group
-                                val createdList = lists[0]
-                                createdList.wasSentToServer = isOrderIdNullOrEmpty
-                                mShoppingListGroup?.put(createdList.listId, createdList)
-
-                                mShoppingListGroup?.forEach {
-                                    val listId = it.key
-                                    val shopList = it.value
-                                    // Post item not sent to server only, false mean item not send yet
-                                    if (!shopList.wasSentToServer && isOrderIdNullOrEmpty) {
-                                        // Update listId value from dto AddToListRequest
-                                        mAddToListRequest?.forEach { item -> item.listId = listId }
-                                        addProductToShoppingList(mAddToListRequest, it.key)
-                                    } else {
-                                        addOrderToShoppingList(mOrderId, shopList)
-                                    }
+                            // Add to List from MyListFragment
+                            if (mShouldDisplayCreateListOnly) {
+                                response.lists[0]?.apply {
+                                    mShoppingListGroup?.put(listId, this)
+                                    shoppingListPostProgress(false)
+                                    showShoppingListSuccessToast()
                                 }
-                            } else {
-                                val createdList = lists[0]
-                                createdList.wasSentToServer = isOrderIdNullOrEmpty
-                                mShoppingListGroup?.put(createdList.listId, createdList)
+                                return
+                            }
 
-                                // post order to list
-                                if (!isOrderIdNullOrEmpty) {
-                                    mShoppingListGroup?.forEach {
-                                        val shopList = it.value
-                                        // Post item not sent to server only, false mean item not send yet
-                                        if (!shopList.wasSentToServer) {
-                                            // Update listId value from dto AddToListRequest
-                                            addOrderToShoppingList(mOrderId, shopList)
-                                        }
-                                    }
-                                    return
+                            // Add to list from other sections
+                            val createdList = lists[0]
+                            createdList.wasSentToServer = false
+                            mShoppingListGroup?.put(createdList.listId, createdList)
+                            //add new list to shopping list group
+                            mShoppingListGroup?.forEach {
+                                // Post product/commerceItem item to server, wasSentToServer -> false mean product item not send
+                                val listId = it.key
+                                val value = it.value
+                                if (isOrderIdNullOrEmpty) {
+                                    if (!value.wasSentToServer)
+                                        addProductToShoppingList(listId)
+                                } else {
+                                    addOrderToShoppingList(mOrderId, value)
                                 }
-
-                                shoppingListPostProgress(false)
-                                showShoppingListSuccessToast()
                             }
                         }
                         440 -> {
@@ -335,39 +321,19 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
         }).execute() as HttpAsyncTask<String, String, ShoppingListsResponse>
     }
 
-    private fun addProductToShoppingList(addToListRequest: MutableList<AddToListRequest>?, listId: String?) {
-        mPostShoppingList = PostAddToShoppingList(listId, addToListRequest, object : AsyncAPIResponse.ResponseDelegate<ShoppingListItemsResponse> {
+    private fun addProductToShoppingList(listId: String?) {
+        // Update listId value from dto AddToListRequest
+        mAddToListRequest?.forEach { item ->
+            item.giftListId = listId
+            item.listId = null // remove list id from request body
+        }
+        mPostShoppingList = PostAddToShoppingList(listId, mAddToListRequest, object : AsyncAPIResponse.ResponseDelegate<ShoppingListItemsResponse> {
             override fun onSuccess(response: ShoppingListItemsResponse) {
                 response.apply {
                     when (httpCode) {
-                        200 -> {
-                            mShoppingListGroup?.apply {
-                                // Will replace the value of an existing key and will create it if doesn't exist
-                                val shopList = get(listId)
-                                shopList!!.wasSentToServer = true
-                                listId?.let { put(it, shopList) }
-
-                                //Check all values are true, implying that all request was sent
-                                var allRequestPostToServer = true
-                                values.forEach {
-                                    if (!it.wasSentToServer) {
-                                        allRequestPostToServer = false
-                                    }
-                                }
-
-                                if (allRequestPostToServer) {
-                                    shoppingListPostProgress(false)
-                                    showShoppingListSuccessToast()
-                                }
-                            }
-                        }
-                        440 -> {
-                            shoppingListPostProgress(false)
-
-                        }
-                        else -> {
-                            shoppingListPostProgress(false)
-                        }
+                        200 -> addToListWasSendSuccessfully(listId)
+                        440 -> sessionExpiredHandler()
+                        else -> response.response?.let { otherHttpCodeHandler(it) }
                     }
                 }
             }
@@ -383,6 +349,28 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
             }
 
         }).execute() as HttpAsyncTask<String, String, ShoppingListItemsResponse>
+    }
+
+    private fun addToListWasSendSuccessfully(listId: String?) {
+        mShoppingListGroup?.apply {
+            // Will replace the value of an existing key and will create it if doesn't exist
+            val shopList = get(listId)
+            shopList!!.wasSentToServer = true
+            listId?.let { put(it, shopList) }
+
+            //Check all values are true, implying that all request was sent
+            var allRequestPostToServer = true
+            values.forEach {
+                if (!it.wasSentToServer) {
+                    allRequestPostToServer = false
+                }
+            }
+
+            if (allRequestPostToServer) {
+                shoppingListPostProgress(false)
+                showShoppingListSuccessToast()
+            }
+        }
     }
 
     private fun displayNoConnectionToast() {
@@ -421,7 +409,13 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
         PostOrderToShoppingList(orderId, orderRequestList, object : AsyncAPIResponse.ResponseDelegate<OrderToListReponse> {
             override fun onSuccess(response: OrderToListReponse) {
                 response.apply {
-                    addOrderResponseHandler(orderRequestList.shoppingListId, response)
+                    response.apply {
+                        when (httpCode) {
+                            0 -> addToListWasSendSuccessfully(orderRequestList.shoppingListId)
+                            440 -> sessionExpiredHandler()
+                            else -> response.response?.let { otherHttpCodeHandler(it) }
+                        }
+                    }
                 }
             }
 
@@ -439,44 +433,18 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
         }).execute()
     }
 
-    private fun addOrderResponseHandler(listId: String, ordersResponse: OrderToListReponse) {
-        ordersResponse.apply {
-            when (httpCode) {
-                0 -> {
-                    mShoppingListGroup?.apply {
-                        // Will replace the value of an existing key and will create it if doesn't exist
-                        val shopList = get(listId)
-                        shopList!!.wasSentToServer = true
-                        put(listId, shopList)
-                        //Check all values are true, implying that all request was sent
-                        var allShoppingListPostExecuteCompleted = true
-                        values.forEach {
-                            if (!it.wasSentToServer) {
-                                allShoppingListPostExecuteCompleted = false
-                            }
-                        }
-
-                        if (allShoppingListPostExecuteCompleted) {
-                            shoppingListPostProgress(false)
-                            showShoppingListSuccessToast()
-                        }
-                    }
-                }
-                440 -> {
-                    SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
-                    activity?.let { SessionExpiredUtilities.getInstance().showSessionExpireDialog(it as? AppCompatActivity) }
-                    shoppingListPostProgress(false)
-                }
-                else -> errorDialogDisplay(response)
-            }
-        }
-    }
-
-    private fun errorDialogDisplay(response: Response?) {
+    private fun otherHttpCodeHandler(response: Response) {
+        shoppingListPostProgress(false)
         if (!mDialogErrorMessageDidAppear) {
             mDialogErrorMessageDidAppear = true
             shoppingListPostProgress(false)
-            response?.desc?.let { showErrorDialog(it) }
+            response.desc?.let { desc -> showErrorDialog(desc) }
         }
+    }
+
+    private fun sessionExpiredHandler() {
+        SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
+        activity?.let { ScreenManager.presentSSOSignin(it) }
+        shoppingListPostProgress(false)
     }
 }

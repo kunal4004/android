@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.fragments.shop.list
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.FragmentActivity
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.util.DisplayMetrics
@@ -228,10 +227,14 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
         mPostItemList = mutableListOf()
         mShoppingListGroup = shoppingListSelectedItemGroup()
         val constructAddToListRequest = convertStringToObject(mAddToListArgs)
-        mShoppingListGroup?.forEach { (key, valueWasPosted) ->
-            constructAddToListRequest.forEach { it.listId = key }
-            if (!valueWasPosted.wasSentToServer)
-                addProductToShoppingList(constructAddToListRequest, key)
+        mShoppingListGroup?.forEach { (listId, valueWasPosted) ->
+            constructAddToListRequest.forEach {
+                it.giftListId = listId
+                it.listId = null // remove list id from request body
+            }
+            if (!valueWasPosted.wasSentToServer) {
+                addProductToShoppingList(constructAddToListRequest, listId)
+            }
         }
     }
 
@@ -400,18 +403,6 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
     private fun navigateToCreateShoppingListFragment(state: Boolean) {
         replaceFragment(
                 fragment = CreateShoppingListFragment.newInstance(mShoppingListGroup, mAddToListArgs, state, mOrderId),
-                tag = CreateShoppingListFragment::class.java.simpleName,
-                containerViewId = R.id.flShoppingListContainer,
-                allowStateLoss = false,
-                enterAnimation = R.anim.enter_from_right,
-                exitAnimation = R.anim.exit_to_left,
-                popEnterAnimation = R.anim.enter_from_left,
-                popExitAnimation = R.anim.exit_to_right)
-    }
-
-    private fun navigateToCreateShoppingListFragment(displayCloseIcon: Boolean, displayCreateList: Boolean) {
-        replaceFragment(
-                fragment = CreateShoppingListFragment.newInstance(mShoppingListGroup, mAddToListArgs, displayCreateList, mOrderId, displayCloseIcon),
                 tag = CreateShoppingListFragment::class.java.simpleName,
                 containerViewId = R.id.flShoppingListContainer,
                 allowStateLoss = false,
