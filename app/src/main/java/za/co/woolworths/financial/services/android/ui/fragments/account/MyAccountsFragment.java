@@ -834,23 +834,26 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		hideView(getViewDataBinding().pbAccount);
 	}
 
-	@Override
-	public void onHiddenChanged(boolean hidden) {
-		super.onHiddenChanged(hidden);
-		if (!hidden) {
-			//do when hidden
-			//hide all views, load accounts may occur
-			this.initialize();
-			hideToolbar();
-			setToolbarBackgroundColor(R.color.white);
-			shoppingListRequest();
-			messageCounterRequest();
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
 
-			//Fixes WOP-3407
-			BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) getActivity();
-			bottomNavigationActivity.showBottomNavigationMenu();
-		}
-	}
+            //Check if view hierarchy was created
+            if (getViewDataBinding() !=null){
+            //hide all views, load accounts may occur
+            MyAccountsFragment.this.initialize();
+            hideToolbar();
+            setToolbarBackgroundColor(R.color.white);
+            shoppingListRequest();
+            messageCounterRequest();
+
+            //Fixes WOP-3407
+            BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) getActivity();
+            bottomNavigationActivity.showBottomNavigationMenu();
+            }
+        }
+    }
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
