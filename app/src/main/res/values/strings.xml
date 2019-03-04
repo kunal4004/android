@@ -895,5 +895,6 @@
     <string name="no_of_items">\u0020Items</string>
     <string name="no_of_item">\u0020Item</string>
     <string name="toast_added_to_cart">ADDED TO CART</string>
+    <string name="deselect">DESELECT</string>
 
 </resources>
