@@ -399,7 +399,8 @@ public class SearchResultFragment extends BaseFragment<GridLayoutBinding, Search
                         AddToListRequest addToList = new AddToListRequest();
                         addToList.setCatalogRefId(list.sku);
                         addToList.setQuantity("1");
-                        addToList.setSkuID(list.productId);
+                        addToList.setGiftListId(list.sku);
+                        addToList.setSkuID(list.sku);
                         addToListRequests.add(addToList);
                     }
                 }
