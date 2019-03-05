@@ -105,7 +105,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	private String mFulFillmentStoreId;
 	private int DELIVERY_LOCATION_REQUEST_CODE_FROM_SELECT_ALL = 1222;
 	private Integer mDeliveryResultCode;
-	private List<ShoppingListItem> shoppingListItems;
 	private boolean itemWasSelected;
 	public static final int ADD_TO_CART_SUCCESS_RESULT = 2000;
 	private final int SET_DELIVERY_LOCATION_REQUEST_CODE = 2011;
@@ -431,16 +430,18 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	@Override
 	public void onItemSelectionChange(List<ShoppingListItem> items) {
 		itemWasSelected = getButtonStatus(items);
-		Activity activity = getActivity();
-		if (activity == null) return;
 		getViewDataBinding().incConfirmButtonLayout.rlCheckOut.setVisibility(itemWasSelected ? View.VISIBLE : View.GONE);
-		Utils.setRecyclerViewMargin(getViewDataBinding().rcvShoppingListItems, itemWasSelected ? Utils.dp2px(activity, 60) : 0);
+		Utils.setRecyclerViewMargin(getViewDataBinding().rcvShoppingListItems, itemWasSelected ? Utils.dp2px(getActivity(), 60) : 0);
 		if (isAdded()) {
-			if (items.size() > 0)
-				tvMenuSelectAll.setText(getString(getSelectAllMenuVisibility(items) ? R.string.deselect_all : R.string.select_all));
-			else
-				mMenuActionSelectAll.setVisible(false);
+			if (items.size() > 0) setSelectAllButtonText(items);
+			else mMenuActionSelectAll.setVisible(false);
+		} else {
+			setSelectAllButtonText(items);
 		}
+	}
+
+	public void setSelectAllButtonText(List<ShoppingListItem> items) {
+		tvMenuSelectAll.setText(getString(getSelectAllMenuVisibility(items) ? R.string.deselect_all : R.string.select_all));
 	}
 
 	@Override
@@ -600,7 +601,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 
 	public boolean getSelectAllMenuVisibility(List<ShoppingListItem> items) {
 		for (ShoppingListItem shoppingListItem : items) {
-			if (!shoppingListItem.isSelected)
+			if (!shoppingListItem.isSelected && shoppingListItem.quantityInStock>0)
 				return false;
 		}
 		return true;
