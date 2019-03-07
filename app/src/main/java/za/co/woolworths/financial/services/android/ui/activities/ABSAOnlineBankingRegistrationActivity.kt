@@ -15,6 +15,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 class ABSAOnlineBankingRegistrationActivity : AppCompatActivity() {
 
     private var mShouldDisplayABSALogin: Boolean? = false
+    private var mCreditAccountInfo: String? = ""
 
     companion object {
         const val SHOULD_DISPLAY_LOGIN_SCREEN = "SHOULD_DISPLAY_LOGIN_SCREEN"
@@ -34,7 +35,7 @@ class ABSAOnlineBankingRegistrationActivity : AppCompatActivity() {
                         containerViewId = R.id.flAbsaOnlineBankingToDevice)
             } else {
                 addFragment(
-                        fragment = AbsaEnterAtmPinCodeFragment.newInstance(),
+                        fragment = AbsaEnterAtmPinCodeFragment.newInstance(mCreditAccountInfo),
                         tag = AbsaEnterAtmPinCodeFragment::class.java.simpleName,
                         containerViewId = R.id.flAbsaOnlineBankingToDevice)
             }
@@ -42,8 +43,10 @@ class ABSAOnlineBankingRegistrationActivity : AppCompatActivity() {
     }
 
     private fun getBundleArgument() {
-        val bundle: Bundle? = intent?.extras!!
-        mShouldDisplayABSALogin = bundle!!.getBoolean(SHOULD_DISPLAY_LOGIN_SCREEN, false)
+        intent?.extras?.apply {
+            mShouldDisplayABSALogin = getBoolean(SHOULD_DISPLAY_LOGIN_SCREEN, false)
+            mCreditAccountInfo = getString("accountNumber")
+        }
     }
 
     private fun actionBar() {
@@ -61,8 +64,6 @@ class ABSAOnlineBankingRegistrationActivity : AppCompatActivity() {
             android.R.id.home -> {
                 navigateBack()
                 return true
-            }
-            else -> {
             }
         }
         return false

@@ -22,9 +22,15 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.GotITDia
 class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListener, IDialogListener, IValidatePinCodeDialogInterface {
 
     var mPinImageViewList: MutableList<ImageView>? = null
+    private var mCreditAccountInfo: String? = ""
 
     companion object {
-        fun newInstance() = AbsaEnterAtmPinCodeFragment()
+        fun newInstance(creditAccountInfo: String?) = AbsaEnterAtmPinCodeFragment().apply {
+            arguments = Bundle(1).apply {
+                putString("accountNumber", creditAccountInfo)
+            }
+        }
+
         const val MAXIMUM_PIN_ALLOWED: Int = 3
     }
 
@@ -34,9 +40,21 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        getBundleArguments()
         initViewsAndEvents()
+        maskPinNumber()
         createTextListener(edtEnterATMPin)
         clearPinImage(mPinImageViewList!!)
+    }
+
+    private fun getBundleArguments() {
+        val bundle: Bundle? = arguments
+
+        mCreditAccountInfo = arguments?.getString("accountNumber") ?: ""
+    }
+
+    private fun maskPinNumber() {
+        tvABSACardNumber?.setText(getString(R.string.absa_biometric_please_card_number, maskedCardNumberWithSpaces(mCreditAccountInfo)))
     }
 
     private fun initViewsAndEvents() {

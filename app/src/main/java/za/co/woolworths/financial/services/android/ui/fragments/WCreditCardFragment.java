@@ -57,6 +57,7 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
 
 import static android.app.Activity.RESULT_OK;
+import static za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity.SHOULD_DISPLAY_LOGIN_SCREEN;
 
 public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle, NetworkChangeListener {
 
@@ -277,10 +278,16 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         if (accountsResponse != null) {
             productOfferingId = Utils.getProductOfferingId(accountsResponse, "CC");
         }
+        MyAccountHelper myAccountHelper = new MyAccountHelper();
+        String accountInfo = myAccountHelper.getAccountInfo(accountsResponse, "CC");
+        Account creditCardInfo = myAccountHelper.getAccount(accountsResponse, "CC");
+
         switch (v.getId()) {
             case R.id.rlABSALinkOnlineBankingToDevice:
-                Intent openABSALinkOnlineBankingToDevice = new Intent(activity, ABSAOnlineBankingRegistrationActivity.class);
-                startActivityForResult(openABSALinkOnlineBankingToDevice, MyAccountCardsActivity.ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE);
+                Intent openABSAOnlineBanking = new Intent(activity, ABSAOnlineBankingRegistrationActivity.class);
+                openABSAOnlineBanking.putExtra(SHOULD_DISPLAY_LOGIN_SCREEN, false);
+                openABSAOnlineBanking.putExtra("accountNumber", creditCardInfo.bankingDetails.getAsJsonObject().get("accountNumber").getAsString());
+                startActivityForResult(openABSAOnlineBanking, MyAccountCardsActivity.ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE);
                 activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
                 break;
             case R.id.rlViewTransactions:
@@ -293,8 +300,6 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 
             case R.id.relBalanceProtection:
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSCREDITCARDBPI);
-                MyAccountHelper myAccountHelper = new MyAccountHelper();
-                String accountInfo = myAccountHelper.getAccountInfo(accountsResponse, "CC");
                 Intent intBalanceProtection = new Intent(getActivity(), BPIBalanceProtectionActivity.class);
                 intBalanceProtection.putExtra("account_info", accountInfo);
                 startActivity(intBalanceProtection);
