@@ -205,7 +205,7 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 						shoppingListItem.userQuantity = shoppingListItem.isSelected ? 0 : 1;
 						shoppingListItem.isSelected = !shoppingListItem.isSelected;
 						notifyDataSetChanged();
-						navigator.onItemSelectionChange(mShoppingListItem);
+						navigator.onItemSelectionChange(getShoppingListItems());
 					}
 				});
 
