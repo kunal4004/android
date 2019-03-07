@@ -27,7 +27,7 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
     companion object {
         fun newInstance(creditAccountInfo: String?) = AbsaEnterAtmPinCodeFragment().apply {
             arguments = Bundle(1).apply {
-                putString("account_info", creditAccountInfo)
+                putString("accountNumber", creditAccountInfo)
             }
         }
 
@@ -48,7 +48,9 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
     }
 
     private fun getBundleArguments() {
-        mCreditAccountInfo = arguments?.getString("account_info") ?: ""
+        val bundle: Bundle? = arguments
+
+        mCreditAccountInfo = arguments?.getString("accountNumber") ?: ""
     }
 
     private fun maskPinNumber() {

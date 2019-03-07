@@ -43,9 +43,10 @@ class ABSAOnlineBankingRegistrationActivity : AppCompatActivity() {
     }
 
     private fun getBundleArgument() {
-        val bundle: Bundle? = intent?.extras
-        mShouldDisplayABSALogin = bundle?.getBoolean(SHOULD_DISPLAY_LOGIN_SCREEN, false)
-        var creditAccountInfo = bundle?.getString("account_info")
+        intent?.extras?.apply {
+            mShouldDisplayABSALogin = getBoolean(SHOULD_DISPLAY_LOGIN_SCREEN, false)
+            mCreditAccountInfo = getString("accountNumber")
+        }
     }
 
     private fun actionBar() {
