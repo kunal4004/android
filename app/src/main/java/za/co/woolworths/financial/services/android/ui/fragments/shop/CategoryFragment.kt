@@ -29,25 +29,20 @@ class CategoryFragment : DepartmentExtensionFragment() {
     private var mProductDepartmentRequest: ProductCategoryRequest? = null
     private var mDepartmentAdapter: DepartmentAdapter? = null
     private var isFragmentVisible: Boolean = false
-    private var catchedView: View? = null
-    private var apiDataReceived = false
+    private var parentFragment: ShopFragment? = null
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        if (catchedView == null)
-            catchedView = inflater.inflate(R.layout.fragment_shop_department, container, false)
-        return catchedView
+        return inflater.inflate(R.layout.fragment_shop_department, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if ((savedInstanceState == null) and !apiDataReceived) {
-            setUpRecyclerView(mutableListOf())
-            setListener()
-        }
-
+        parentFragment = (activity as BottomNavigationActivity).currentFragment as ShopFragment
+        setUpRecyclerView(mutableListOf())
+        setListener()
         if (isFragmentVisible)
-            executeDepartmentRequest()
+            if (parentFragment?.getCategoryResponseData() != null) bindDepartment() else executeDepartmentRequest()
 
     }
 
@@ -73,7 +68,10 @@ class CategoryFragment : DepartmentExtensionFragment() {
         return ProductCategoryRequest(object : OnEventListener<RootCategories> {
             override fun onSuccess(rootCategories: RootCategories) {
                 when (rootCategories.httpCode) {
-                    200 -> bindDepartment(rootCategories)
+                    200 -> {
+                        parentFragment?.setCategoryResponseData(rootCategories)
+                        bindDepartment()
+                    }
                     else -> rootCategories.response?.desc?.let { showErrorDialog(it) }
                 }
             }
@@ -89,10 +87,9 @@ class CategoryFragment : DepartmentExtensionFragment() {
         })
     }
 
-    private fun bindDepartment(rootCategories: RootCategories) {
-        mDepartmentAdapter?.setRootCategories(rootCategories.rootCategories)
+    private fun bindDepartment() {
+        mDepartmentAdapter?.setRootCategories(parentFragment?.getCategoryResponseData()!!.rootCategories)
         mDepartmentAdapter?.notifyDataSetChanged()
-        apiDataReceived = true
     }
 
     private fun setUpRecyclerView(categories: MutableList<RootCategory>?) {

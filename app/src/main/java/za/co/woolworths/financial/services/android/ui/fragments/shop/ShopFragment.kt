@@ -145,6 +145,9 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
         if (requestCode == ADD_TO_SHOPPING_LIST_REQUEST_CODE) {
             if (resultCode == DISPLAY_TOAST_RESULT_CODE) {
                 navigateToMyListFragment()
+                refreshViewPagerFragment()
+            } else if (resultCode == ADD_TO_SHOPPING_LIST_RESULT_CODE) {
+                refreshViewPagerFragment()
             }
         }
         if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
@@ -163,7 +166,7 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
         when (viewpager_main.currentItem) {
             1 -> {
                 val myListsFragment = viewpager_main.adapter?.instantiateItem(viewpager_main, viewpager_main.currentItem) as? MyListsFragment
-                myListsFragment?.authenticateUser()
+                myListsFragment?.authenticateUser(true)
             }
             2 -> {
                 val myOrdersFragment = viewpager_main.adapter?.instantiateItem(viewpager_main, viewpager_main.currentItem) as? MyOrdersFragment
