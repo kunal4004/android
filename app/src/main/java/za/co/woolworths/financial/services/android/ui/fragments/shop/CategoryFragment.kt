@@ -77,11 +77,11 @@ class CategoryFragment : DepartmentExtensionFragment() {
             }
 
             override fun onFailure(e: String?) {
-                activity?.apply {
-                    runOnUiThread {
-                        if (networkConnectionStatus())
-                            noConnectionLayout(true)
-                    }
+                if(isAdded){
+                   activity.runOnUiThread {
+                       if (networkConnectionStatus())
+                           noConnectionLayout(true)
+                   }
                 }
             }
         })
