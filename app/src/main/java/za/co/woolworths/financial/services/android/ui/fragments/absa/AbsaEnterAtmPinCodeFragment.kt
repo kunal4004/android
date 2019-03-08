@@ -2,11 +2,12 @@ package za.co.woolworths.financial.services.android.ui.fragments.absa
 
 import android.graphics.Paint
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
@@ -48,8 +49,6 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
     }
 
     private fun getBundleArguments() {
-        val bundle: Bundle? = arguments
-
         mCreditAccountInfo = arguments?.getString("accountNumber") ?: ""
     }
 
@@ -76,15 +75,17 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
 
     private fun navigateToFiveDigitCodeFragment() {
         if ((edtEnterATMPin.length() - 1) == AbsaEnterAtmPinCodeFragment.MAXIMUM_PIN_ALLOWED) {
+
             activity?.let {
                 val pinCode = edtEnterATMPin.text.toString()
-                val fm = (it as? AppCompatActivity)?.supportFragmentManager
-                val validateCardAndPinDialogFragment = AbsaValidateCardAndPinDialogFragment.newInstance("4103744472666291", "8667")
-                // Set the calling fragment for this dialog.
-                validateCardAndPinDialogFragment.setTargetFragment(this, 0)
-                validateCardAndPinDialogFragment.show(fm, AbsaValidateCardAndPinDialogFragment::class.java.simpleName)
+                progressIndicator(VISIBLE)
+                ValidateATMPinCode("4103741655806361", "6666", this).make()
             }
         }
+    }
+
+    private fun progressIndicator(state: Int) {
+        pbEnterAtmPin.visibility = state
     }
 
     private fun createTextListener(edtEnterATMPin: EditText?) {
@@ -171,8 +172,16 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
         )
     }
 
-    override fun onFailureHandler(responseMessage: String) {
+    override fun onFailureHandler(responseMessage: String, dismissActivity: Boolean) {
+        // Navigate back to credit card screen when resultMessage is failed or rejected.
+        if (dismissActivity) {
+
+            return
+        }
+        //  Display error message and dismiss dialog on ok button clicked
+        progressIndicator(GONE)
         clearPin()
+        view?.postDelayed({ showErrorMessage(responseMessage) }, 200)
     }
 
     override fun onResume() {

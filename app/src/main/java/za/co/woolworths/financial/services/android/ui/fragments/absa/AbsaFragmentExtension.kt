@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment
 
 open class AbsaFragmentExtension : Fragment() {
 
@@ -34,6 +35,15 @@ open class AbsaFragmentExtension : Fragment() {
     }
 
     fun maskedCardNumberWithSpaces(cardNumber: String?): String {
-        return " **** **** **** ".plus(cardNumber?.let { it.substring(it.length-4, it.length) } ?: "")
+        return " **** **** **** ".plus(cardNumber?.let { it.substring(it.length - 4, it.length) }
+                ?: "")
+    }
+
+    fun showErrorMessage(message: String) {
+        activity?.let {
+            val fm = it.supportFragmentManager
+            val singleButtonDialogFragment = SingleButtonDialogFragment.newInstance(message)
+            singleButtonDialogFragment.show(fm, SingleButtonDialogFragment::class.java.simpleName)
+        }
     }
 }

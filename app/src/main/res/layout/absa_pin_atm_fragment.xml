@@ -105,14 +105,27 @@
             android:textColor="@color/black" />
 
 
-        <ImageView
-            android:id="@+id/ivNavigateToDigitFragment"
+        <FrameLayout
+            android:id="@+id/flNextContainer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:alpha="0.5"
-            android:contentDescription="@string/app_label"
-            app:srcCompat="@drawable/next_button_icon" />
+            android:layout_alignParentEnd="true">
+
+            <ImageView
+                android:id="@+id/ivNavigateToDigitFragment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:alpha="0.5"
+                android:contentDescription="@string/app_label"
+                app:srcCompat="@drawable/next_button_icon" />
+
+            <ProgressBar
+                android:id="@+id/pbEnterAtmPin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminateTint="@color/white"
+                android:visibility="gone" />
+        </FrameLayout>
 
     </RelativeLayout>
 
