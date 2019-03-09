@@ -7,7 +7,7 @@ android {
 
     def major = "5"
     def minor = "9"
-    def fix = "4"
+    def fix = "5"
 
     //placeholder will be temporarily updated by build server during a build.
     //check appcenter-pre-build.sh
