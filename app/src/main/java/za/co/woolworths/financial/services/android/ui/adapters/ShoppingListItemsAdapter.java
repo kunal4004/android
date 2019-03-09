@@ -186,12 +186,12 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 					@Override
 					public void onClick(View view) {
 						ShoppingListItem shoppingListItem = getItem(position);
+						int currentPosition = position - 1;
 						if (enableClickEvent(shoppingListItem)) return;
 						if (!mAdapterIsClickable) return;
 						if (!shoppingListItem.isSelected) {
 							if (userShouldSetSuburb()) {
 								shoppingListItem.isSelected = false;
-								int currentPosition = position - 1;
 								notifyItemRangeChanged(currentPosition, mShoppingListItem.size());
 								navigator.openSetSuburbProcess(shoppingListItem);
 								return;
@@ -204,8 +204,9 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 						 */
 						shoppingListItem.userQuantity = shoppingListItem.isSelected ? 0 : 1;
 						shoppingListItem.isSelected = !shoppingListItem.isSelected;
+						mShoppingListItem.set(currentPosition,shoppingListItem);
+						navigator.onItemSelectionChange(mShoppingListItem);
 						notifyDataSetChanged();
-						navigator.onItemSelectionChange(getShoppingListItems());
 					}
 				});
 
