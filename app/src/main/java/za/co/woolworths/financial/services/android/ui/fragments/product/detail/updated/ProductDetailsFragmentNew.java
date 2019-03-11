@@ -329,25 +329,23 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
     }
 
     public void addItemToShoppingList() {
-
         if (!SessionUtilities.getInstance().isUserAuthenticated()) {
             ScreenManager.presentSSOSignin(getActivity(), SSO_REQUEST_ADD_TO_SHOPPING_LIST);
-            return;
-        }
-
-        if (this.otherSKUForList != null) {
-            getGlobalState().setSelectedSKUId(this.otherSKUForList);
-            openAddToListFragment(getActivity());
-
-        } else if (this.selectedOtherSku != null) {
-            this.otherSKUForList = this.selectedOtherSku;
-            this.addItemToShoppingList();
-            return;
-        } else {
+        } else if (selectedOtherSku == null && otherSKUForList == null) { // Size picker was not selected, open size selector first
             openSizePicker(this.selectedGroupKey, true, false);
-            return;
+        } else {
+            OtherSkus otherSkus = (otherSKUForList == null) ? selectedOtherSku : otherSKUForList;
+            AddToListRequest item = new AddToListRequest();
+            item.setQuantity("1");
+            item.setSkuID(otherSkus.sku);
+            item.setCatalogRefId(otherSkus.sku);
+            item.setGiftListId(otherSkus.sku);
+            ArrayList<AddToListRequest> addToListRequests = new ArrayList<>();
+            addToListRequests.add(item);
+            NavigateToShoppingList navigateToShoppingList = new NavigateToShoppingList();
+            navigateToShoppingList.openShoppingList(getActivity(), addToListRequests, "", false);
+            otherSKUForList = null; // remove otherSKUForList value to enable openSizePicker when user re-tap add to list button
         }
-
     }
 
     public void addItemToCart() {
@@ -981,6 +979,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
     public void onSizeSelected(OtherSkus selectedSizeSku) {
         this.selectedOtherSku = selectedSizeSku;
         this.tvSelectedSize.setText(this.selectedOtherSku.size);
+        getGlobalState().setSelectedSKUId(selectedSizeSku);
         this.configureUIForOtherSKU(selectedOtherSku);
         sizePickerDialog.dismiss();
     }
@@ -1128,19 +1127,6 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
         //One time biometricsWalkthrough
         ScreenManager.presentBiometricWalkthrough(getActivity());
-    }
-
-    private void openAddToListFragment(Activity activity) {
-        OtherSkus selectedSKU = getGlobalState().getSelectedSKUId();
-        AddToListRequest item = new AddToListRequest();
-        item.setQuantity("1");
-        item.setSkuID(selectedSKU.sku);
-        item.setCatalogRefId(selectedSKU.sku);
-        item.setGiftListId(selectedSKU.sku);
-        ArrayList<AddToListRequest> addToListRequests = new ArrayList<>();
-        addToListRequests.add(item);
-        NavigateToShoppingList navigateToShoppingList = new NavigateToShoppingList();
-        navigateToShoppingList.openShoppingList(activity, addToListRequests, "", false);
     }
 
     private void executeLocationItemTask() {

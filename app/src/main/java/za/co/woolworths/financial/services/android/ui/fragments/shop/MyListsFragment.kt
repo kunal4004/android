@@ -227,7 +227,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
     }
 
     private fun noNetworkConnectionLayout(state: Boolean) {
-        incConnectionLayout.visibility = if (state) VISIBLE else GONE
+        incConnectionLayout?.visibility = if (state) VISIBLE else GONE
     }
 
     override fun onDestroy() {
