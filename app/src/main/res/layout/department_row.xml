@@ -1,32 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/product_category_image_height"
-    android:clickable="true"
-    android:background="?attr/selectableItemBackground">
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/orders_bg"
+    android:clickable="true">
 
-    <ImageView
-        android:id="@+id/imProductCategory"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clickable="false" />
+        android:layout_height="@dimen/product_category_image_height"
+        android:background="?attr/selectableItemBackground"
+        android:layout_marginBottom="@dimen/sixteen_dp"
+        >
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
-        android:id="@+id/tvDepartmentTitle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|start"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="16dp"
-        android:text="@string/app_name"
-        android:textAllCaps="true"
-        android:textColor="@color/black"
-        android:textSize="20sp"
-        app:WTextView_font="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        <ImageView
+            android:id="@+id/imProductCategory"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="false" />
 
-</android.support.constraint.ConstraintLayout>
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/tvDepartmentTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|start"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="16dp"
+            android:text="@string/app_name"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:WTextView_font="bold" />
+    </FrameLayout>
+
+</LinearLayout>

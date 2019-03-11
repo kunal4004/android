@@ -1,8 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop
 
-import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +14,7 @@ import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
 import kotlinx.android.synthetic.main.fragment_shop_my_orders.*
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.rest.product.GetOrdersRequest
-import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.OrdersAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
@@ -27,6 +27,7 @@ class MyOrdersFragment : Fragment() {
     private var listner: OnChildFragmentEvents? = null
     private var isFragmentVisible: Boolean = false
     private var requestOrders: GetOrdersRequest? = null
+    private var parentFragment: ShopFragment? = null
 
     companion object {
         const val ORDERS_LOGIN_REQUEST = 2025
@@ -57,19 +58,26 @@ class MyOrdersFragment : Fragment() {
     }
 
     fun initViews() {
+        parentFragment = (activity as BottomNavigationActivity).currentFragment as ShopFragment
         mErrorHandlerView = ErrorHandlerView(activity, relEmptyStateHandler, imgEmpyStateIcon, txtEmptyStateTitle, txtEmptyStateDesc, btnGoToProduct)
         myOrdersList.layoutManager = LinearLayoutManager(activity)
         btnGoToProduct.setOnClickListener { onActionClick() }
-        configureUI()
+        swipeToRefresh.setOnRefreshListener(object : SwipeRefreshLayout.OnRefreshListener {
+            override fun onRefresh() {
+                swipeToRefresh.isRefreshing = true
+                executeOrdersRequest(true)
+            }
+        })
+        configureUI(false)
     }
 
-    fun configureUI() {
+    fun configureUI(isNewSession: Boolean) {
 
         if (SessionUtilities.getInstance().isUserAuthenticated()) {
-            executeOrdersRequest()
+            val orderResponse = parentFragment?.getOrdersResponseData()
+            if (orderResponse != null && !isNewSession) showSignInView(orderResponse) else executeOrdersRequest(false)
         } else {
             showSignOutView()
-
         }
     }
 
@@ -82,24 +90,24 @@ class MyOrdersFragment : Fragment() {
                 listner?.onStartShopping()
             }
             ErrorHandlerView.ACTION_TYPE.RETRY -> {
-                executeOrdersRequest()
+                executeOrdersRequest(false)
             }
         }
     }
 
     private fun showEmptyOrdersView() {
-        myOrdersList.visibility = View.GONE
+        swipeToRefresh.visibility = View.GONE
         mErrorHandlerView?.setEmptyStateWithAction(6, R.string.start_shopping, ErrorHandlerView.ACTION_TYPE.REDIRECT)
     }
 
     private fun showSignOutView() {
-        myOrdersList.visibility = View.GONE
+        swipeToRefresh.visibility = View.GONE
         mErrorHandlerView?.setEmptyStateWithAction(7, R.string.sign_in, ErrorHandlerView.ACTION_TYPE.SIGN_IN)
 
     }
 
     private fun showErrorView() {
-        myOrdersList.visibility = View.GONE
+        swipeToRefresh.visibility = View.GONE
         mErrorHandlerView?.setEmptyStateWithAction(8, R.string.retry, ErrorHandlerView.ACTION_TYPE.RETRY)
 
     }
@@ -109,16 +117,16 @@ class MyOrdersFragment : Fragment() {
         if (dataList.size > 0) {
             mErrorHandlerView?.hideEmpyState()
             myOrdersList.adapter = OrdersAdapter(activity, dataList)
-            myOrdersList.visibility = View.VISIBLE
+            swipeToRefresh.visibility = View.VISIBLE
         } else
             showEmptyOrdersView()
     }
 
 
-    private fun executeOrdersRequest() {
+    private fun executeOrdersRequest(isPullToRefresh: Boolean) {
         mErrorHandlerView?.hideEmpyState()
-        showLoading()
-        requestOrders = requestOrders()
+        if (!isPullToRefresh) showLoading()
+        requestOrders = requestOrders(isPullToRefresh)
         requestOrders?.execute()
 
     }
@@ -138,16 +146,19 @@ class MyOrdersFragment : Fragment() {
         return dataList
     }
 
-    private fun requestOrders(): GetOrdersRequest {
+    private fun requestOrders(isPullToRefresh: Boolean): GetOrdersRequest {
         return GetOrdersRequest(context, object : OnEventListener<OrdersResponse> {
             override fun onSuccess(ordersResponse: OrdersResponse) {
-                if (isAdded)
-                    updateUI(ordersResponse)
+                if (isAdded) {
+                    if (isPullToRefresh) swipeToRefresh.isRefreshing = false
+                    parentFragment?.setOrdersResponseData(ordersResponse)
+                    updateUI()
+                }
             }
 
             override fun onFailure(e: String?) {
-                activity?.let {
-                    it.runOnUiThread(java.lang.Runnable {
+                if (isAdded) {
+                    activity.runOnUiThread(java.lang.Runnable {
                         loadingBar.visibility = View.GONE
                         showErrorView()
                     })
@@ -158,11 +169,12 @@ class MyOrdersFragment : Fragment() {
 
     }
 
-    fun updateUI(ordersResponse: OrdersResponse) {
+    fun updateUI() {
+        var ordersResponse = parentFragment?.getOrdersResponseData()
         loadingBar.visibility = View.GONE
-        when (ordersResponse.httpCode) {
+        when (ordersResponse?.httpCode) {
             0 -> {
-                showSignInView(ordersResponse)
+                showSignInView(ordersResponse!!)
             }
             440 -> {
                 SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
@@ -177,7 +189,7 @@ class MyOrdersFragment : Fragment() {
 
     private fun showLoading() {
         loadingBar.visibility = View.VISIBLE
-        myOrdersList.visibility = View.GONE
+        swipeToRefresh.visibility = View.GONE
     }
 
     fun scrollToTop() {
