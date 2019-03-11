@@ -181,21 +181,18 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == PDP_REQUEST_CODE) {
-            if (resultCode == ADD_TO_SHOPPING_LIST_RESULT_CODE) {
-                setResult(ADD_TO_SHOPPING_LIST_RESULT_CODE, data);
-                finish();
-                overridePendingTransition(0,0);
-                return;
-            }
+        if (requestCode == PDP_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_RESULT_CODE) {
+            setResult(ADD_TO_SHOPPING_LIST_RESULT_CODE, data);
+            finish();
+            overridePendingTransition(0, 0);
+            return;
         }
 
-        if (requestCode == ADD_TO_SHOPPING_LIST_REQUEST_CODE) {
-            if (resultCode == ADD_TO_SHOPPING_LIST_RESULT_CODE) {
-                    ToastFactory.Companion.buildShoppingListToast(flContentFrame, true, data, this);
-                return;
-            }
+        if (requestCode == ADD_TO_SHOPPING_LIST_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_RESULT_CODE) {
+            ToastFactory.Companion.buildShoppingListToast(flContentFrame, true, data, this);
+            return;
         }
+
         if (requestCode == CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY && resultCode == RESULT_OK) {
             finishActivityOnCheckoutSuccess();
             return;
