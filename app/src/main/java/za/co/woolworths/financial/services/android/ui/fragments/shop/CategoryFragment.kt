@@ -38,7 +38,7 @@ class CategoryFragment : DepartmentExtensionFragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        parentFragment = (activity as BottomNavigationActivity).currentFragment as ShopFragment
+        parentFragment = (activity as BottomNavigationActivity).currentFragment as? ShopFragment
         setUpRecyclerView(mutableListOf())
         setListener()
         if (isFragmentVisible)

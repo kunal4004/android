@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -71,6 +72,8 @@ import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 import static android.app.Activity.RESULT_OK;
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SHOW_ADDED_TO_SHOPPING_LIST_TOAST;
 import static za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity.DELIVERY_LOCATION_CLOSE_CLICKED;
 
@@ -242,7 +245,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	}
 
 	public void loadShoppingListItems(ShoppingListItemsResponse shoppingListItemsResponse) {
-		getViewDataBinding().loadingBar.setVisibility(View.GONE);
+		getViewDataBinding().loadingBar.setVisibility(GONE);
 		mShoppingListItems = shoppingListItemsResponse.listItems;
 		makeInventoryCall();
 	}
@@ -344,9 +347,9 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	private void setUpView() {
 		RecyclerView rcvShoppingListItems = getViewDataBinding().rcvShoppingListItems;
 		LinearLayout rlEmptyView = getViewDataBinding().rlEmptyListView;
-		rlEmptyView.setVisibility(mShoppingListItems == null || mShoppingListItems.size() == 0 ? View.VISIBLE : View.GONE);
+		rlEmptyView.setVisibility(mShoppingListItems == null || mShoppingListItems.size() == 0 ? VISIBLE : GONE);
 		// 1 to exclude header
-		rcvShoppingListItems.setVisibility(mShoppingListItems == null || mShoppingListItems.size() == 0 ? View.GONE : View.VISIBLE);
+		rcvShoppingListItems.setVisibility(mShoppingListItems == null || mShoppingListItems.size() == 0 ? GONE : VISIBLE);
 		manageSelectAllMenuVisibility(mShoppingListItems.size());
 	}
 
@@ -411,7 +414,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 				break;
 			default:
 				enableAdapterClickEvent(true);
-				getViewDataBinding().loadingBar.setVisibility(View.GONE);
+				getViewDataBinding().loadingBar.setVisibility(GONE);
 				Activity activity = getActivity();
 				if (activity == null) return;
 				if (shoppingListItemsResponse.response == null) return;
@@ -430,11 +433,13 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	@Override
 	public void onItemSelectionChange(List<ShoppingListItem> items) {
 		itemWasSelected = getButtonStatus(items);
-		getViewDataBinding().incConfirmButtonLayout.rlCheckOut.setVisibility(itemWasSelected ? View.VISIBLE : View.GONE);
+		getViewDataBinding().incConfirmButtonLayout.rlCheckOut.setVisibility(itemWasSelected ? VISIBLE : GONE);
 		Utils.setRecyclerViewMargin(getViewDataBinding().rcvShoppingListItems, itemWasSelected ? Utils.dp2px(getActivity(), 60) : 0);
 		if (isAdded()) {
-			if (items.size() > 0) setSelectAllButtonText(items);
-			else mMenuActionSelectAll.setVisible(false);
+			if (items.size() > 0)
+				setSelectAllButtonText(items);
+			else
+				mMenuActionSelectAll.setVisible(false);
 		} else {
 			setSelectAllButtonText(items);
 		}
@@ -464,8 +469,8 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 
 	@Override
 	public void onAddToCartPreExecute() {
-		getViewDataBinding().incConfirmButtonLayout.pbLoadingIndicator.setVisibility(View.VISIBLE);
-		getViewDataBinding().incConfirmButtonLayout.btnCheckOut.setVisibility(View.GONE);
+		getViewDataBinding().incConfirmButtonLayout.pbLoadingIndicator.setVisibility(VISIBLE);
+		enableAddToCartButton(GONE);
 	}
 
 	@Override
@@ -485,8 +490,8 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	@Override
 	public void requestDeliveryLocation(String requestMessage) {
 		if (isAdded()) {
-			getViewDataBinding().incConfirmButtonLayout.pbLoadingIndicator.setVisibility(View.GONE);
-			getViewDataBinding().incConfirmButtonLayout.btnCheckOut.setVisibility(View.VISIBLE);
+			getViewDataBinding().incConfirmButtonLayout.pbLoadingIndicator.setVisibility(GONE);
+			enableAddToCartButton(VISIBLE);
 			shoppingListItemsAdapter.resetSelection();
 			Utils.displayValidationMessageForResult(this,
 					getActivity(),
@@ -498,6 +503,10 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		}
 	}
 
+	private void enableAddToCartButton(int visible) {
+		getViewDataBinding().incConfirmButtonLayout.btnCheckOut.setVisibility(visible);
+	}
+
 	@Override
 	public void onSessionTokenExpired(final Response response) {
 		SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.stsParams, getActivity());
@@ -506,8 +515,8 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	@Override
 	public void otherHttpCode(Response response) {
 		if (isAdded()) {
-			getViewDataBinding().incConfirmButtonLayout.pbLoadingIndicator.setVisibility(View.GONE);
-			getViewDataBinding().incConfirmButtonLayout.btnCheckOut.setVisibility(View.VISIBLE);
+			getViewDataBinding().incConfirmButtonLayout.pbLoadingIndicator.setVisibility(GONE);
+			enableAddToCartButton(VISIBLE);
 			Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
 		}
 	}
@@ -539,7 +548,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 			activity.runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					getViewDataBinding().loadingBar.setVisibility(View.GONE);
+					getViewDataBinding().loadingBar.setVisibility(GONE);
 					mErrorHandlerView.showErrorHandler();
 					mErrorHandlerView.networkFailureHandler(errorMessage);
 				}
@@ -576,9 +585,9 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 		mShoppingListItems = new ArrayList<>();
 		RecyclerView rcvShoppingListItems = getViewDataBinding().rcvShoppingListItems;
 		LinearLayout rlEmptyView = getViewDataBinding().rlEmptyListView;
-		rlEmptyView.setVisibility(View.GONE);
-		rcvShoppingListItems.setVisibility(View.GONE);
-		getViewDataBinding().loadingBar.setVisibility(View.VISIBLE);
+		rlEmptyView.setVisibility(GONE);
+		rcvShoppingListItems.setVisibility(GONE);
+		getViewDataBinding().loadingBar.setVisibility(VISIBLE);
 		getShoppingListItems = getViewModel().getShoppingListItems(listId);
 		getShoppingListItems.execute();
 	}
@@ -686,8 +695,8 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	}
 
 	private void resetAddToCartButton() {
-		getViewDataBinding().incConfirmButtonLayout.pbLoadingIndicator.setVisibility(View.GONE);
-		getViewDataBinding().incConfirmButtonLayout.btnCheckOut.setVisibility(View.VISIBLE);
+		getViewDataBinding().incConfirmButtonLayout.pbLoadingIndicator.setVisibility(GONE);
+		enableAddToCartButton(VISIBLE);
 	}
 
 	public void manageSelectAllMenuVisibility(int listSize) {
@@ -706,7 +715,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 	public void selectAllListItems(boolean setSelection) {
 		if (shoppingListItemsAdapter != null && mShoppingListItems != null && mShoppingListItems.size() > 0) {
 			for (ShoppingListItem item : mShoppingListItems) {
-				if (item.quantityInStock != 0) {
+				if (item.quantityInStock > 0) {
 					item.isSelected = setSelection;
 					int quantity = item.userQuantity > 1 ? item.userQuantity : 1; // Click -> Select all - when one item quantity is > 1
 					item.userQuantity = setSelection ? quantity : 0;
@@ -714,7 +723,6 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 			}
 			shoppingListItemsAdapter.updateList(mShoppingListItems);
 		}
-
 	}
 
 	@Override
@@ -785,7 +793,7 @@ public class ShoppingListItemsFragment extends BaseFragment<ShoppingListItemsFra
 
 	private void selectAllTextVisibility(boolean visible) {
 		if (tvMenuSelectAll != null)
-			tvMenuSelectAll.setVisibility(visible ? View.VISIBLE : View.GONE);
+			tvMenuSelectAll.setVisibility(visible ? VISIBLE : GONE);
 	}
 
 	@Override
