@@ -24,7 +24,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.list.Depart
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.Utils
 
-class CategoryFragment : DepartmentExtensionFragment() {
+class DepartmentsFragment : DepartmentExtensionFragment() {
 
     private var mProductDepartmentRequest: ProductCategoryRequest? = null
     private var mDepartmentAdapter: DepartmentAdapter? = null
