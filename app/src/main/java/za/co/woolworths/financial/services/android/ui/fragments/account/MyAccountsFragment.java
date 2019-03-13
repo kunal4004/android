@@ -702,12 +702,14 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 
 	}
 
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		hideProgressBar();
-		cancelRequest(mGetShoppingLists);
-	}
+    @Override
+    public void onDestroy() {
+        if (getActivity() != null && getViewDataBinding().pbAccount != null) {
+            hideProgressBar();
+            cancelRequest(mGetShoppingLists);
+        }
+        super.onDestroy();
+    }
 
 //	public int getAvailableFundsPercentage(int availableFund, int creditLimit) {
 //		// Progressbar MAX value is 10000 to manage float values
@@ -814,13 +816,13 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		hideView(getViewDataBinding().pbAccount);
 	}
 
-	@Override
-	public void onHiddenChanged(boolean hidden) {
-		super.onHiddenChanged(hidden);
-		if (!hidden) {
-			//do when hidden
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+		//Check if view hierarchy was created
+		if (!hidden && getViewDataBinding() != null) {
 			//hide all views, load accounts may occur
-			this.initialize();
+			MyAccountsFragment.this.initialize();
 			hideToolbar();
 			setToolbarBackgroundColor(R.color.white);
 			messageCounterRequest();

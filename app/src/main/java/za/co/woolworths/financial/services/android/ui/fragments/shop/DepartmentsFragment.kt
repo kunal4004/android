@@ -14,8 +14,6 @@ import za.co.woolworths.financial.services.android.models.dto.RootCategory
 import za.co.woolworths.financial.services.android.models.rest.product.ProductCategoryRequest
 import za.co.woolworths.financial.services.android.ui.adapters.DepartmentAdapter
 import za.co.woolworths.financial.services.android.util.OnEventListener
-import android.support.v4.content.ContextCompat
-import android.support.v7.widget.DividerItemDecoration
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import kotlinx.android.synthetic.main.no_connection_layout.*
@@ -26,11 +24,13 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.list.Depart
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.Utils
 
-class CategoryFragment : DepartmentExtensionFragment() {
+class DepartmentsFragment : DepartmentExtensionFragment() {
 
     private var mProductDepartmentRequest: ProductCategoryRequest? = null
     private var mDepartmentAdapter: DepartmentAdapter? = null
     private var isFragmentVisible: Boolean = false
+    private var parentFragment: ShopFragment? = null
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_shop_department, container, false)
@@ -38,12 +38,12 @@ class CategoryFragment : DepartmentExtensionFragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        parentFragment = (activity as BottomNavigationActivity).currentFragment as? ShopFragment
         setUpRecyclerView(mutableListOf())
         setListener()
-        if (isFragmentVisible) {
-            executeDepartmentRequest()
-            networkConnectionStatus()
-        }
+        if (isFragmentVisible)
+            if (parentFragment?.getCategoryResponseData() != null) bindDepartment() else executeDepartmentRequest()
+
     }
 
     private fun setListener() {
@@ -68,24 +68,27 @@ class CategoryFragment : DepartmentExtensionFragment() {
         return ProductCategoryRequest(object : OnEventListener<RootCategories> {
             override fun onSuccess(rootCategories: RootCategories) {
                 when (rootCategories.httpCode) {
-                    200 -> bindDepartment(rootCategories)
+                    200 -> {
+                        parentFragment?.setCategoryResponseData(rootCategories)
+                        bindDepartment()
+                    }
                     else -> rootCategories.response?.desc?.let { showErrorDialog(it) }
                 }
             }
 
             override fun onFailure(e: String?) {
-                activity?.apply {
-                    runOnUiThread {
-                        if (networkConnectionStatus())
-                            noConnectionLayout(true)
-                    }
+                if(isAdded){
+                   activity.runOnUiThread {
+                       if (networkConnectionStatus())
+                           noConnectionLayout(true)
+                   }
                 }
             }
         })
     }
 
-    private fun bindDepartment(rootCategories: RootCategories) {
-        mDepartmentAdapter?.setRootCategories(rootCategories.rootCategories)
+    private fun bindDepartment() {
+        mDepartmentAdapter?.setRootCategories(parentFragment?.getCategoryResponseData()!!.rootCategories)
         mDepartmentAdapter?.notifyDataSetChanged()
     }
 
@@ -93,12 +96,7 @@ class CategoryFragment : DepartmentExtensionFragment() {
         mDepartmentAdapter = DepartmentAdapter(categories) { rootCategory: RootCategory -> departmentItemClicked(rootCategory) }
         activity?.let {
             rclDepartment?.apply {
-                val mLayoutManager = LinearLayoutManager(it, LinearLayout.VERTICAL, false)
-                //setting top and bottom space between item row
-                val dividerItemDecoration = DividerItemDecoration(it, mLayoutManager.orientation)
-                dividerItemDecoration.setDrawable(ContextCompat.getDrawable(it, R.drawable.department_line_divider))
-                addItemDecoration(dividerItemDecoration)
-                layoutManager = mLayoutManager
+                layoutManager = LinearLayoutManager(it, LinearLayout.VERTICAL, false)
                 adapter = mDepartmentAdapter
             }
         }
@@ -133,7 +131,8 @@ class CategoryFragment : DepartmentExtensionFragment() {
         incConnectionLayout.visibility = if (isVisible) VISIBLE else GONE
     }
 
-    fun networkConnectionStatus(): Boolean = activity?.let { NetworkManager.getInstance().isConnectedToNetwork(it) } ?: false
+    fun networkConnectionStatus(): Boolean = activity?.let { NetworkManager.getInstance().isConnectedToNetwork(it) }
+            ?: false
 
     override fun onDestroy() {
         super.onDestroy()
@@ -142,8 +141,8 @@ class CategoryFragment : DepartmentExtensionFragment() {
     }
 
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
-            super.setUserVisibleHint(isVisibleToUser)
-            isFragmentVisible = isVisibleToUser
+        super.setUserVisibleHint(isVisibleToUser)
+        isFragmentVisible = isVisibleToUser
     }
 
     fun scrollToTop() {

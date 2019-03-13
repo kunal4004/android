@@ -1031,6 +1031,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             clearStack();
             String obj = data.getStringExtra(POST_ADD_TO_SHOPPING_LIST);
             JsonElement element = new JsonParser().parse(obj);
+            Fragment fragmentById = getCurrentFragment();
+            if (fragmentById != null && fragmentById instanceof ShopFragment)
+                fragmentById.onActivityResult(requestCode, resultCode, null);
             switchToShoppingListTab(element);
         } else if (resultCode == NavigateToShoppingList.DISPLAY_TOAST_RESULT_CODE) {
             clearStack();

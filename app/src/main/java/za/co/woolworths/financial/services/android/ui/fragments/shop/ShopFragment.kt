@@ -11,6 +11,9 @@ import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_shop.*
 import kotlinx.android.synthetic.main.shop_custom_tab.view.*
+import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
+import za.co.woolworths.financial.services.android.models.dto.RootCategories
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
@@ -37,6 +40,10 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
     var permissions: ArrayList<String> = arrayListOf()
     var bottomNavigationActivity: BottomNavigationActivity? = null
     var shopPagerAdapter: ShopPagerAdapter? = null
+    private var rootCategories: RootCategories? = null
+    private var ordersResponse: OrdersResponse? = null
+    private var shoppingListsResponse: ShoppingListsResponse? = null
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -103,7 +110,6 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
             //do when hidden
             (activity as BottomNavigationActivity).fadeOutToolbar(R.color.recent_search_bg)
             (activity as BottomNavigationActivity).showBackNavigationIcon(false)
-            refreshViewPagerFragment()
         }
     }
 
@@ -140,6 +146,8 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
             if (resultCode == DISPLAY_TOAST_RESULT_CODE) {
                 navigateToMyListFragment()
                 refreshViewPagerFragment()
+            } else if (resultCode == ADD_TO_SHOPPING_LIST_RESULT_CODE) {
+                refreshViewPagerFragment()
             }
         }
         if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
@@ -158,19 +166,15 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
         when (viewpager_main.currentItem) {
             1 -> {
                 val myListsFragment = viewpager_main.adapter?.instantiateItem(viewpager_main, viewpager_main.currentItem) as? MyListsFragment
-                myListsFragment?.authenticateUser()
+                myListsFragment?.authenticateUser(true)
             }
             2 -> {
                 val myOrdersFragment = viewpager_main.adapter?.instantiateItem(viewpager_main, viewpager_main.currentItem) as? MyOrdersFragment
-                myOrdersFragment?.configureUI()
+                myOrdersFragment?.configureUI(true)
             }
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        refreshViewPagerFragment()
-    }
 
     override fun onStartShopping() {
         viewpager_main.setCurrentItem(0, true)
@@ -183,7 +187,7 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
     fun scrollToTop() {
         when (viewpager_main.currentItem) {
             0 -> {
-                val detailsFragment = viewpager_main.adapter?.instantiateItem(viewpager_main, viewpager_main.currentItem) as? CategoryFragment
+                val detailsFragment = viewpager_main.adapter?.instantiateItem(viewpager_main, viewpager_main.currentItem) as? DepartmentsFragment
                 detailsFragment?.scrollToTop()
             }
             1 -> {
@@ -195,5 +199,29 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
                 myOrdersFragment?.scrollToTop()
             }
         }
+    }
+
+    fun setCategoryResponseData(rootCategories: RootCategories) {
+        this.rootCategories = rootCategories
+    }
+
+    fun setShoppingListResponseData(shoppingListsResponse: ShoppingListsResponse) {
+        this.shoppingListsResponse = shoppingListsResponse
+    }
+
+    fun setOrdersResponseData(ordersResponse: OrdersResponse) {
+        this.ordersResponse = ordersResponse
+    }
+
+    fun getCategoryResponseData(): RootCategories? {
+        return rootCategories
+    }
+
+    fun getShoppingListResponseData(): ShoppingListsResponse? {
+        return shoppingListsResponse
+    }
+
+    fun getOrdersResponseData(): OrdersResponse? {
+        return ordersResponse
     }
 }

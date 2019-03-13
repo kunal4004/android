@@ -76,19 +76,15 @@ class OrderDetailsActivity : AppCompatActivity(), FragmentsEventsListner, IToast
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == ADD_TO_SHOPPING_LIST_REQUEST_CODE) {
-            if (resultCode == ADD_TO_SHOPPING_LIST_RESULT_CODE) {
-                ToastFactory.buildShoppingListToast(fragmentContainer, true, data, this)
-                return
-            }
+        if (requestCode == ADD_TO_SHOPPING_LIST_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_RESULT_CODE) {
+            ToastFactory.buildShoppingListToast(fragmentContainer, true, data, this)
+            return
         }
-        if (requestCode == PDP_REQUEST_CODE) {
-            if (resultCode == ADD_TO_SHOPPING_LIST_RESULT_CODE) {
-                setResult(ADD_TO_SHOPPING_LIST_RESULT_CODE, data)
-                finish()
-                overridePendingTransition(0, 0)
-                return
-            }
+        if (requestCode == PDP_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_RESULT_CODE) {
+            setResult(ADD_TO_SHOPPING_LIST_RESULT_CODE, data)
+            finish()
+            overridePendingTransition(0, 0)
+            return
         }
         val fragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
         fragment.onActivityResult(requestCode, resultCode, data)
