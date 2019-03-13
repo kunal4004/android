@@ -29,6 +29,7 @@ class ValidateATMPinCode(cardToken: String, pinCode: String, validatePinCodeDial
     private var mScheduleValidateSureCheck: ScheduledFuture<*>? = null
     private var mCardToken = cardToken
     private var mPinCode = pinCode
+    private var mPollingCount: Int = 0
 
     fun make() {
         validateCardAndPin(mCardToken, mPinCode)
@@ -82,6 +83,13 @@ class ValidateATMPinCode(cardToken: String, pinCode: String, validatePinCodeDial
                         override fun onSuccess(validateCardAndPinResponse: ValidateSureCheckResponse?, cookies: MutableList<HttpCookie>?) {
                             val resultMessage: String? = validateCardAndPinResponse?.result?.toLowerCase()
                                     ?: ""
+                            mPollingCount.apply {
+                                this + 1
+                                if (this > 5) {
+                                    stopPolling()
+                                    failureHandler("Maximum polling rate reached", true)
+                                }
+                            }
                             when (resultMessage) {
                                 "processing" -> {
                                     // SureCheck was sent, no client response yet. If > 60 seconds,
@@ -100,7 +108,6 @@ class ValidateATMPinCode(cardToken: String, pinCode: String, validatePinCodeDial
                                     // Unable to send surecheck (USSD).
                                     // Present an input screen for the OTP,
                                     // as well as a different request payload.
-                                    // I will forward payload details to you.
                                 }
                                 else -> {
                                     when (resultMessage) {

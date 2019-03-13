@@ -20,7 +20,7 @@ import za.co.woolworths.financial.services.android.contracts.IValidatePinCodeDia
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GotITDialogFragment
 
-class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListener, IDialogListener, IValidatePinCodeDialogInterface {
+class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListener, IValidatePinCodeDialogInterface, IDialogListener {
 
     var mPinImageViewList: MutableList<ImageView>? = null
     private var mCreditAccountInfo: String? = ""
@@ -45,7 +45,7 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
         initViewsAndEvents()
         maskPinNumber()
         createTextListener(edtEnterATMPin)
-        clearPinImage(mPinImageViewList!!)
+        clearPinImage(mPinImageViewList)
     }
 
     private fun getBundleArguments() {
@@ -77,9 +77,9 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
         if ((edtEnterATMPin.length() - 1) == AbsaEnterAtmPinCodeFragment.MAXIMUM_PIN_ALLOWED) {
 
             activity?.let {
-                val pinCode = edtEnterATMPin.text.toString()
                 progressIndicator(VISIBLE)
-                ValidateATMPinCode("4103741655806361", "6666", this).make()
+                val pinCode = edtEnterATMPin.text.toString()
+                ValidateATMPinCode("4103749837793791", pinCode, this).make()
             }
         }
     }
@@ -129,8 +129,8 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
         }
     }
 
-    private fun clearPinImage(listOfPin: MutableList<ImageView>) {
-        listOfPin.forEach {
+    private fun clearPinImage(listOfPin: MutableList<ImageView>?) {
+        listOfPin?.forEach {
             it.setImageResource(R.drawable.pin_empty)
         }
     }
@@ -174,14 +174,14 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
 
     override fun onFailureHandler(responseMessage: String, dismissActivity: Boolean) {
         // Navigate back to credit card screen when resultMessage is failed or rejected.
-        if (dismissActivity) {
-
-            return
-        }
-        //  Display error message and dismiss dialog on ok button clicked
         progressIndicator(GONE)
         clearPin()
-        view?.postDelayed({ showErrorMessage(responseMessage) }, 200)
+        if (dismissActivity) {
+            //  Display error message and dismiss dialog on ok button clicked
+            tapAndNavigateBackErrorDialog(responseMessage)
+            return
+        }
+        view?.postDelayed({ tapAndDismissErrorDialog(responseMessage) }, 200)
     }
 
     override fun onResume() {

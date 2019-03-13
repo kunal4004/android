@@ -1,18 +1,22 @@
 package za.co.woolworths.financial.services.android.ui.activities
 
+import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.MenuItem
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_online_banking_to_device_activity.*
+import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.absa.AbsaEnterAtmPinCodeFragment
 import za.co.woolworths.financial.services.android.ui.fragments.absa.AbsaLoginFragment
 import za.co.woolworths.financial.services.android.ui.fragments.absa.AbsaPinCodeSuccessFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
-class ABSAOnlineBankingRegistrationActivity : AppCompatActivity() {
+class ABSAOnlineBankingRegistrationActivity : AppCompatActivity(), IDialogListener {
 
     private var mShouldDisplayABSALogin: Boolean? = false
     private var mCreditAccountInfo: String? = ""
@@ -95,5 +99,9 @@ class ABSAOnlineBankingRegistrationActivity : AppCompatActivity() {
 
     private fun getCurrentFragment(): Fragment? {
         return supportFragmentManager?.findFragmentById(R.id.flAbsaOnlineBankingToDevice)
+    }
+
+    override fun onDialogDismissed() {
+        Handler().postDelayed({ finishActivity() }, 200)
     }
 }
