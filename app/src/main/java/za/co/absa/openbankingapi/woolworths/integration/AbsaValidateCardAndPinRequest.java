@@ -61,7 +61,7 @@ public class AbsaValidateCardAndPinRequest {
 			@Override
 			public void onResponse(ValidateCardAndPinResponse response, List<HttpCookie> cookies) {
 				Header.ResultMessage[] resultMessages = response.getHeader().getResultMessages();
-				if (resultMessages == null || resultMessages.length == 0)
+				if (resultMessages != null || resultMessages.length != 0)
 					responseDelegate.onSuccess(response, cookies);
 
 				else
