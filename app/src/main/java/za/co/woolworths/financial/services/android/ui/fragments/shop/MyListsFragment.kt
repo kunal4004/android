@@ -143,6 +143,8 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
 
     private fun loadShoppingList(state: Boolean) {
         loadingBar?.visibility = if (state) VISIBLE else GONE
+        rcvShoppingLists?.visibility = if (state) GONE else VISIBLE
+        if (state) mAddToShoppingListAdapter?.clear()
     }
 
     private fun setYourDeliveryLocation() {

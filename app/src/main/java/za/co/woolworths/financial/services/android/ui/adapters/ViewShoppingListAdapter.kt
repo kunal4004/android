@@ -57,4 +57,8 @@ class ViewShoppingListAdapter(private var shopMutableList: MutableList<ShoppingL
     fun setShoppingList(shoppingList: MutableList<ShoppingList>) {
         shopMutableList = shoppingList
     }
+    fun clear(){
+        shopMutableList.clear()
+        notifyDataSetChanged()
+    }
 }
