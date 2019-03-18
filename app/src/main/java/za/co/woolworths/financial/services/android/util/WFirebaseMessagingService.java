@@ -24,14 +24,14 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
 
         if (remoteMessage == null)
             return;
-        
+
         Map<String,String> data = remoteMessage.getData();
         if(data.containsKey("type")){
-            String type = data.get("type").toString();
+            String type = data.get("type");
             switch (type){
                 case FCMMessageType
                         .mcConfigClear:{
-                    mcConfigClear(data);
+                    mcConfigClear();
                 }
             }
             return;
@@ -49,7 +49,7 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     //#region FCM Methods
-    private void mcConfigClear(Map<String,String> data){
+    private void mcConfigClear(){
 
         String unreadCountValue = Utils.getSessionDaoValue(this, SessionDao.KEY.UNREAD_MESSAGE_COUNT);
         if (!TextUtils.isEmpty(unreadCountValue) && TextUtils.isDigitsOnly(unreadCountValue)) {
