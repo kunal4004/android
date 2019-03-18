@@ -30,7 +30,6 @@ import za.co.woolworths.financial.services.android.models.rest.shoppinglist.Dele
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.DepartmentExtensionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
-import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsFragment
 import za.co.woolworths.financial.services.android.util.*
 
 class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, IShoppingList {
