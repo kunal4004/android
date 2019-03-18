@@ -858,7 +858,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 if (fragment instanceof ShopFragment) {
                     ShopFragment shopFragment = (ShopFragment) fragment;
                     shopFragment.navigateToMyListFragment();
-                    shopFragment.refreshViewPagerFragment();
+                    shopFragment.refreshViewPagerFragment(true);
                 }
             }
             return;
@@ -1245,7 +1245,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 if (mNavController.getCurrentFrag() instanceof ShopFragment) {
                     ShopFragment shopFragment = (ShopFragment) mNavController.getCurrentFrag();
                     shopFragment.navigateToMyListFragment();
-                    shopFragment.refreshViewPagerFragment();
+                    shopFragment.refreshViewPagerFragment(true);
                 }
             }
         }
