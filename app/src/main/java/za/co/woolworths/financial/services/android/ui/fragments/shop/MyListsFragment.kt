@@ -143,6 +143,8 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
 
     private fun loadShoppingList(state: Boolean) {
         loadingBar?.visibility = if (state) VISIBLE else GONE
+        rcvShoppingLists?.visibility = if (state) GONE else VISIBLE
+        if (state) mAddToShoppingListAdapter?.clear()
     }
 
     private fun setYourDeliveryLocation() {
@@ -231,7 +233,10 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
         parentFragment = (activity as BottomNavigationActivity).currentFragment as ShopFragment
         hideEmptyOverlay()
         if (SessionUtilities.getInstance().isUserAuthenticated) {
-            if (parentFragment?.getShoppingListResponseData() != null && !isNewSession) bindShoppingListToUI() else getShoppingList(false)
+            if (parentFragment?.getShoppingListResponseData() != null && !isNewSession && !parentFragment?.isDifferentUser()!!) bindShoppingListToUI() else {
+                parentFragment?.clearCachedData()
+                getShoppingList(false)
+            }
         } else {
             showSignOutView()
         }

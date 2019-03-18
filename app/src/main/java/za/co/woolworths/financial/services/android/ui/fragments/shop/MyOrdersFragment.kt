@@ -75,7 +75,10 @@ class MyOrdersFragment : Fragment() {
 
         if (SessionUtilities.getInstance().isUserAuthenticated()) {
             val orderResponse = parentFragment?.getOrdersResponseData()
-            if (orderResponse != null && !isNewSession) showSignInView(orderResponse) else executeOrdersRequest(false)
+            if (orderResponse != null && !isNewSession && !parentFragment?.isDifferentUser()!!) showSignInView(orderResponse) else {
+                parentFragment?.clearCachedData()
+                executeOrdersRequest(false)
+            }
         } else {
             showSignOutView()
         }
