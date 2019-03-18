@@ -101,9 +101,11 @@ import static za.co.woolworths.financial.services.android.ui.fragments.product.d
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_ADD_TO_CART;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.SuburbSelectionFragment.SUBURB_SET_RESULT;
 import static za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST;
-import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsFragment.ADD_TO_CART_SUCCESS_RESULT;
+import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.ADD_TO_CART_SUCCESS_RESULT;
 import static za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment.LOCK_REQUEST_CODE_WREWARDS;
+import static za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS;
 import static za.co.woolworths.financial.services.android.util.ScreenManager.CART_LAUNCH_VALUE;
+import static za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE;
 
 public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigationBinding, BottomNavigationViewModel> implements BottomNavigator, FragNavController.TransactionListener, FragNavController.RootFragmentListener, PermissionResultCallback, ToastUtils.ToastInterface, IToastInterface, Observer {
 
@@ -847,30 +849,42 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         super.onActivityResult(requestCode, resultCode, data);
         //TODO: Explain where this is coming from.
 
-        //Open shopping from Tips and trick activity request code
-        if (requestCode == TIPS_AND_TRICKS_CTA_REQUEST_CODE) {
-            if (resultCode == RESULT_OK_ACCOUNTS) {
-                getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
-                clearStack();
-                Fragment fragment = mNavController.getCurrentFrag();
-                if (fragment instanceof ShopFragment) {
-                    ShopFragment shopFragment = (ShopFragment) fragment;
-                    shopFragment.navigateToMyListFragment();
-                    shopFragment.refreshViewPagerFragment(true);
+        // Navigate from shopping list detail activity
+        switch (requestCode) {
+            case ADD_TO_SHOPPING_LIST_REQUEST_CODE:  // Call back when Toast clicked after adding item to shopping list
+            case SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE:
+                navigateToMyList(requestCode, resultCode, data);
+
+                // refresh my list view
+                if (resultCode == ADD_TO_SHOPPING_LIST_REQUEST_CODE) {
+                    getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
+                    clearStack();
+                    Fragment fragment = mNavController.getCurrentFrag();
+                    if (fragment instanceof ShopFragment) {
+                        ShopFragment shopFragment = (ShopFragment) fragment;
+                        shopFragment.navigateToMyListFragment();
+                        shopFragment.refreshViewPagerFragment(true);
+                    }
                 }
+                break;
+
+            case REQUEST_CHECK_SETTINGS:
+                getCurrentFragment().onActivityResult(requestCode, resultCode, data);
+                break;
+            default:
+                break;
+        }
+
+        //Open shopping from Tips and trick activity requestcode
+        if ((requestCode == TIPS_AND_TRICKS_CTA_REQUEST_CODE) && (resultCode == RESULT_OK_ACCOUNTS)) {
+            getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
+            clearStack();
+            Fragment fragment = mNavController.getCurrentFrag();
+            if (fragment instanceof ShopFragment) {
+                ShopFragment shopFragment = (ShopFragment) fragment;
+                shopFragment.navigateToMyListFragment();
+                shopFragment.refreshViewPagerFragment(true);
             }
-            return;
-        }
-
-        // Call back when Toast clicked after adding item to shopping list
-        if (requestCode == ADD_TO_SHOPPING_LIST_REQUEST_CODE) {
-            navigateToMyList(requestCode, resultCode, data);
-            return;
-        }
-
-        // FuseLocationAPISingleton.kt : Change location method to High Accuracy confirmation dialog
-        if (requestCode == FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS) {
-            getCurrentFragment().onActivityResult(requestCode, resultCode, data);
             return;
         }
 
@@ -1030,13 +1044,13 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             String obj = data.getStringExtra(POST_ADD_TO_SHOPPING_LIST);
             JsonElement element = new JsonParser().parse(obj);
             Fragment fragmentById = getCurrentFragment();
-            if (fragmentById != null && fragmentById instanceof ShopFragment)
+            if (fragmentById instanceof ShopFragment)
                 fragmentById.onActivityResult(requestCode, resultCode, null);
             switchToShoppingListTab(element);
         } else if (resultCode == NavigateToShoppingList.DISPLAY_TOAST_RESULT_CODE) {
             clearStack();
             ToastFactory toastFactory = new ToastFactory();
-            toastFactory.Companion.buildShoppingListToast(getBottomNavigationById(), true, data, this);
+            toastFactory.Companion.buildShoppingListToast(this, getBottomNavigationById(), true, data, this);
             Fragment fragmentById = getCurrentFragment();
             if (fragmentById != null)
                 fragmentById.onActivityResult(requestCode, resultCode, null);
@@ -1232,12 +1246,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     listId = entry.getKey();
                     shoppingList = entry.getValue();
                 }
-                Bundle bundle = new Bundle();
-                bundle.putString("listName", shoppingList.getAsJsonObject().get("name").getAsString());
-                bundle.putString("listId", listId);
-                ShoppingListItemsFragment shoppingListItemsFragment = new ShoppingListItemsFragment();
-                shoppingListItemsFragment.setArguments(bundle);
-                pushFragment(shoppingListItemsFragment);
+                if (shoppingList != null)
+                    ScreenManager.presentShoppingListDetailActivity(this, listId, shoppingList.getAsJsonObject().get("name").getAsString());
             } else {
                 getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
                 if (mNavController.getCurrentFrag() instanceof ShopFragment) {
