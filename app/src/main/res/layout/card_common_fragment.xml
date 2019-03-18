@@ -450,9 +450,26 @@
                 android:text="@string/absa_link_banking_to_device_title" />
 
 
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerInParent="true"
+                android:gravity="center|end"
+                android:orientation="horizontal">
             <ImageView
                 android:id="@+id/imABSAViewOnlineBanking"
                 style="@style/style_loan_img" />
+
+                <ProgressBar
+                    style="?android:attr/progressBarStyleLarge"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:visibility="gone"
+                    android:layout_marginStart="@dimen/bank_spacing_width"
+                    android:indeterminateTint="@color/black"
+                    android:id="@+id/pbGetCreditCardToken"/>
+            </LinearLayout>
 
         </RelativeLayout>
 

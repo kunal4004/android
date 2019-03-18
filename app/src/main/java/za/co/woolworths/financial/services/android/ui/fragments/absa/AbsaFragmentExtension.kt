@@ -32,4 +32,8 @@ open class AbsaFragmentExtension : Fragment() {
             window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
         }
     }
+
+    fun maskedCardNumberWithSpaces(cardNumber: String?): String {
+        return " **** **** **** ".plus(cardNumber?.let { it.substring(it.length-4, it.length) } ?: "")
+    }
 }
