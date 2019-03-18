@@ -2,25 +2,27 @@ package za.co.woolworths.financial.services.android.util;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
 import com.awfs.coordination.R;
+import com.google.gson.Gson;
 
 import java.util.HashMap;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dto.Account;
+import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.ui.activities.BiometricsWalkthrough;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.HowToPayActivity;
-import za.co.woolworths.financial.services.android.ui.activities.MyPreferencesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity;
+import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListDetailActivity;
+import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListSearchResultActivity;
 
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.OPEN_CART_REQUEST;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
@@ -33,6 +35,7 @@ public class ScreenManager {
 
 	public static final int CART_LAUNCH_VALUE = 1442;
 	public static final int BIOMETRICS_LAUNCH_VALUE = 1983;
+	public static final int SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE = 2330;
 
 	public static void presentMain(Activity activity, String notificationUtils) {
 
@@ -186,5 +189,32 @@ public class ScreenManager {
 		Intent openCartActivity = new Intent(activity, CartActivity.class);
 		activity.startActivityForResult(openCartActivity, OPEN_CART_REQUEST);
 		activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+	}
+
+	public static void presentShoppingListDetailActivity(Activity activity, String listId, String listName) {
+		Intent openShoppingListDetailActivity = new Intent(activity, ShoppingListDetailActivity.class);
+		openShoppingListDetailActivity.putExtra("listId", listId);
+		openShoppingListDetailActivity.putExtra("listName", listName);
+		activity.startActivityForResult(openShoppingListDetailActivity, SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE);
+		activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+
+	}
+
+	public static void presentShoppingListSearchResult(Activity activity, String searchTerm, String listId) {
+		Intent openShoppingListSearchResultActivity = new Intent(activity, ShoppingListSearchResultActivity.class);
+		openShoppingListSearchResultActivity.putExtra("searchTerm", searchTerm);
+		openShoppingListSearchResultActivity.putExtra("listID", listId);
+		activity.startActivityForResult(openShoppingListSearchResultActivity, ShoppingListSearchResultActivity.SHOPPING_LIST_SEARCH_RESULT_REQUEST_CODE);
+		activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+
+	}
+
+	public static void presentProductDetails(Activity activity,String productName, ProductList productList ){
+		Gson gson = new Gson();
+		String strProductList = gson.toJson(productList);
+		Bundle bundle = new Bundle();
+		bundle.putString("strProductList", strProductList);
+		bundle.putString("strProductCategory", productName);
+		presentProductDetails(activity, bundle);
 	}
 }
