@@ -8,57 +8,6 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:26127746311:android:3dd958f34241af01",
-        "android_client_info": {
-          "package_name": "com.awfs.coordination.qa"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "26127746311-mj3jjtegol6l3drpuhf84ugk0lup9vmd.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.awfs.coordination.qa",
-            "certificate_hash": "3302c160772d64984b36e56bf4fc07c77c5bee1c"
-          }
-        },
-        {
-          "client_id": "26127746311-d28icif4e2p4j1ragui2kt32idvft30a.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyC7zspB_GMuPeNkDMfvcHJxCUUQy27gF-g"
-        }
-      ],
-      "services": {
-        "analytics_service": {
-          "status": 1
-        },
-        "appinvite_service": {
-          "status": 2,
-          "other_platform_oauth_client": [
-            {
-              "client_id": "26127746311-aha84q54jq3rpc9vcb6mgcsj9s8utokl.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.virtualmobiletech.wfsdev"
-              }
-            },
-            {
-              "client_id": "26127746311-d28icif4e2p4j1ragui2kt32idvft30a.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        },
-        "ads_service": {
-          "status": 2
-        }
-      }
-    },
-    {
-      "client_info": {
         "mobilesdk_app_id": "1:26127746311:android:23b8ba4c075decfa",
         "android_client_info": {
           "package_name": "com.awfs.coordination"
@@ -99,15 +48,15 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
+              "client_id": "26127746311-d28icif4e2p4j1ragui2kt32idvft30a.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
               "client_id": "26127746311-aha84q54jq3rpc9vcb6mgcsj9s8utokl.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
                 "bundle_id": "com.virtualmobiletech.wfsdev"
               }
-            },
-            {
-              "client_id": "26127746311-d28icif4e2p4j1ragui2kt32idvft30a.apps.googleusercontent.com",
-              "client_type": 3
             }
           ]
         },
@@ -150,15 +99,15 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
+              "client_id": "26127746311-d28icif4e2p4j1ragui2kt32idvft30a.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
               "client_id": "26127746311-aha84q54jq3rpc9vcb6mgcsj9s8utokl.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
                 "bundle_id": "com.virtualmobiletech.wfsdev"
               }
-            },
-            {
-              "client_id": "26127746311-d28icif4e2p4j1ragui2kt32idvft30a.apps.googleusercontent.com",
-              "client_type": 3
             }
           ]
         },
@@ -169,26 +118,18 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:26127746311:android:b4daa4d7a782eca4",
+        "mobilesdk_app_id": "1:26127746311:android:3dd958f34241af01",
         "android_client_info": {
-          "package_name": "com.awfs.coordination.staging"
+          "package_name": "com.awfs.coordination.qa"
         }
       },
       "oauth_client": [
         {
-          "client_id": "26127746311-lo6hbh0o49ev5tcp9kqkfnk8c3eps10m.apps.googleusercontent.com",
+          "client_id": "26127746311-mj3jjtegol6l3drpuhf84ugk0lup9vmd.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.awfs.coordination.staging",
-            "certificate_hash": "4f4dac05423a9eaca436948a50596c573c1ab70a"
-          }
-        },
-        {
-          "client_id": "26127746311-orasve6oq5ueavv7icu8lcln98r0nn7r.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.awfs.coordination.staging",
-            "certificate_hash": "4fef70e6eb2bd859b72f534e492e2cb32043a80f"
+            "package_name": "com.awfs.coordination.qa",
+            "certificate_hash": "3302c160772d64984b36e56bf4fc07c77c5bee1c"
           }
         },
         {
@@ -209,15 +150,15 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
+              "client_id": "26127746311-d28icif4e2p4j1ragui2kt32idvft30a.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
               "client_id": "26127746311-aha84q54jq3rpc9vcb6mgcsj9s8utokl.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
                 "bundle_id": "com.virtualmobiletech.wfsdev"
               }
-            },
-            {
-              "client_id": "26127746311-d28icif4e2p4j1ragui2kt32idvft30a.apps.googleusercontent.com",
-              "client_type": 3
             }
           ]
         },

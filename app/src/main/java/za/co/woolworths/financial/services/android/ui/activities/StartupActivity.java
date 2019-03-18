@@ -7,6 +7,7 @@ import android.graphics.PorterDuff;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -20,7 +21,11 @@ import android.widget.RelativeLayout;
 
 import com.awfs.coordination.BuildConfig;
 import com.awfs.coordination.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
@@ -153,10 +158,20 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 
 	//#region FirebaseMessaging
 	private void setupFirebaseMessaging(){
-		//get env variable
-		String topic = "all_"+BuildConfig.ENV.toLowerCase();
-		FirebaseMessaging.getInstance().subscribeToTopic(topic);
-		Log.d(TAG, "setupFirebaseMessaging: "+topic);
+		FirebaseInstanceId.getInstance().getInstanceId()
+				.addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+					@Override
+					public void onComplete(@NonNull Task<InstanceIdResult> task) {
+						if (!task.isSuccessful()) {
+							//nothing much can be done here
+							return;
+						}
+
+						// Get new Instance ID token
+						String topic = "all_"+BuildConfig.ENV.toLowerCase();
+						FirebaseMessaging.getInstance().subscribeToTopic(topic);
+					}
+				});
 	}
 	//#endregion
 
