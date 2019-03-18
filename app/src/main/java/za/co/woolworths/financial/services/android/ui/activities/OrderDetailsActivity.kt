@@ -77,7 +77,7 @@ class OrderDetailsActivity : AppCompatActivity(), FragmentsEventsListner, IToast
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == ADD_TO_SHOPPING_LIST_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_RESULT_CODE) {
-            ToastFactory.buildShoppingListToast(fragmentContainer, true, data, this)
+            ToastFactory.buildShoppingListToast(this,fragmentContainer, true, data, this)
             return
         }
         if (requestCode == PDP_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_RESULT_CODE) {
@@ -117,13 +117,6 @@ class OrderDetailsActivity : AppCompatActivity(), FragmentsEventsListner, IToast
     }
 
     override fun onToastButtonClicked(jsonElement: JsonElement?) {
-        jsonElement?.let { item ->
-            if (item is JsonObject)
-                toastClick(jsonElement as? JsonObject)
-        }
-    }
-
-    private fun toastClick(obj: JsonObject?) {
-        NavigateToShoppingList.requestToastOnNavigateBack(this, AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST, obj)
+        jsonElement?.let { NavigateToShoppingList.navigateToShoppingListOnToastClicked(this, it) }
     }
 }
