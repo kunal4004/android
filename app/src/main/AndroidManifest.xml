@@ -367,6 +367,18 @@
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustResize|stateAlwaysVisible"
             android:screenOrientation="portrait"/>
+
+        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListDetailActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ShoppingListDetailActivityStyle"
+
+            />
+
+        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListSearchResultActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ShoppingListDetailActivityStyle"
+            />
+
     </application>
 
 </manifest>
