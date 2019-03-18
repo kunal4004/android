@@ -82,6 +82,7 @@ android {
             signingConfig signingConfigs.woneappDev
             buildConfigField("String", "HOST", '"http://wfs-appserver-dev.wigroup.co:8080/wfs/app/v4"')
             buildConfigField("String", "SHA1", '"2f8f87cbf5933ea469c0e9c9d0793de4d8fe3744"')
+            buildConfigField("String", "env", '"DEV"')
         }
 
         qa {
@@ -89,16 +90,19 @@ android {
             signingConfig signingConfigs.woneappQa
             buildConfigField("String", "HOST", '"http://wfs-appserver-qa.wigroup.co:8080/wfs/app/v4"')
             buildConfigField("String", "SHA1", '"68826b286ece905ed633d1367a0d0a9cbbe74be0"')
+            buildConfigField("String", "env", '"QA"')
         }
 
         staging {
             applicationId "com.awfs.coordination.staging"
             signingConfig signingConfigs.woneappStaging
+            buildConfigField("String", "env", '"STAGING"')
         }
 
         production {
             applicationId "com.awfs.coordination"
             signingConfig signingConfigs.woolworths
+            buildConfigField("String", "env", '""')
         }
         dexOptions {
             javaMaxHeapSize "2560M"

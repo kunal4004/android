@@ -146,6 +146,16 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 		AuthenticateUtils.getInstance(StartupActivity.this).enableBiometricForCurrentSession(true);
 	}
 
+
+	//#region FirebaseMessaging
+	private void setupFirebaseMessaging(){
+		//get env variable
+
+	}
+	//#endregion
+
+
+
 	private void executeConfigServer() {
 		//if app is expired, don't execute MCS.
 
