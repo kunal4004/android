@@ -104,6 +104,8 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 			mPushNotificationUpdate = bundle.getString(NotificationUtils.PUSH_NOTIFICATION_INTENT);
 		}
 
+		setupFirebaseMessaging();
+
 		WoolworthsApplication woolworthsApplication = (WoolworthsApplication) StartupActivity.this.getApplication();
 		mWGlobalState = woolworthsApplication.getWGlobalState();
 
@@ -152,8 +154,9 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 	//#region FirebaseMessaging
 	private void setupFirebaseMessaging(){
 		//get env variable
-		String topic = "all_"+BuildConfig.ENV;
+		String topic = "all_"+BuildConfig.ENV.toLowerCase();
 		FirebaseMessaging.getInstance().subscribeToTopic(topic);
+		Log.d(TAG, "setupFirebaseMessaging: "+topic);
 	}
 	//#endregion
 
