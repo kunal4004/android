@@ -24,8 +24,7 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
 
         if (remoteMessage == null)
             return;
-
-        Log.d(TAG, "onMessageReceived: "+remoteMessage);
+        
         Map<String,String> data = remoteMessage.getData();
         if(data.containsKey("type")){
             String type = data.get("type").toString();
