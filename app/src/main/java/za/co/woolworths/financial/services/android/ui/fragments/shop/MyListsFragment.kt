@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.shop
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
@@ -40,6 +41,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
     private var mProvinceName: String? = null
     private var isMyListsFragmentVisible: Boolean = false
     private var isFragmentVisible: Boolean = false
+    private var parentFragment: ShopFragment? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -50,7 +52,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
         super.onViewCreated(view, savedInstanceState)
         if (isFragmentVisible) {
             initUI()
-            authenticateUser()
+            authenticateUser(false)
             setListener()
         }
     }
@@ -72,10 +74,15 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
         rlCreateAList.setOnClickListener(this)
         btnRetry.setOnClickListener(this)
         rlDeliveryLocationLayout.setOnClickListener(this)
+        swipeToRefresh.setOnRefreshListener(object : SwipeRefreshLayout.OnRefreshListener {
+            override fun onRefresh() {
+                getShoppingList(true)
+            }
+        })
     }
 
-    private fun getShoppingList() {
-        loadShoppingList(true)
+    private fun getShoppingList(isPullToRefresh: Boolean) {
+        if (isPullToRefresh) swipeToRefresh.isRefreshing = true else loadShoppingList(true)
         noNetworkConnectionLayout(false)
         mGetShoppingListRequest = GetShoppingList(object : AsyncAPIResponse.ResponseDelegate<ShoppingListsResponse> {
             override fun onSuccess(response: ShoppingListsResponse) {
@@ -83,7 +90,8 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
                     response.apply {
                         when (httpCode) {
                             200 -> {
-                                bindShoppingListToUI(lists)
+                                parentFragment?.setShoppingListResponseData(response)
+                                bindShoppingListToUI()
                             }
                             440 -> {
                                 SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
@@ -97,7 +105,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
                                 showErrorDialog(this.response?.desc!!)
                             }
                         }
-                        loadShoppingList(false)
+                        if (isPullToRefresh) swipeToRefresh.isRefreshing = false else loadShoppingList(false)
                     }
                 }
             }
@@ -105,6 +113,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
             override fun onFailure(errorMessage: String) {
                 activity?.let {
                     it.runOnUiThread {
+                        if (isPullToRefresh) swipeToRefresh.isRefreshing = false else loadShoppingList(false)
                         loadShoppingList(false)
                         noNetworkConnectionLayout(true)
                     }
@@ -113,7 +122,8 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
         }).execute() as HttpAsyncTask<String, String, ShoppingListsResponse>
     }
 
-    private fun bindShoppingListToUI(shoppingList: MutableList<ShoppingList>) {
+    private fun bindShoppingListToUI() {
+        var shoppingList: MutableList<ShoppingList> = parentFragment?.getShoppingListResponseData()!!.lists
         shoppingList.let {
             when (it.size) {
                 0 -> showEmptyShoppingListView() //no list found
@@ -155,7 +165,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
     override fun onClick(view: View?) {
         when (view?.id) {
 
-            R.id.locationSelectedLayout,R.id.rlDeliveryLocationLayout -> {
+            R.id.locationSelectedLayout, R.id.rlDeliveryLocationLayout -> {
                 locationSelectionClicked()
             }
             R.id.btnGoToProduct -> {
@@ -167,7 +177,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
 
             R.id.btnRetry -> {
                 if (NetworkManager.getInstance().isConnectedToNetwork(activity)) {
-                    getShoppingList()
+                    getShoppingList(false)
                 }
             }
 
@@ -217,17 +227,18 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
         rlDeliveryLocationLayout.visibility = GONE
     }
 
-    fun authenticateUser() {
+    fun authenticateUser(isNewSession: Boolean) {
+        parentFragment = (activity as BottomNavigationActivity).currentFragment as ShopFragment
         hideEmptyOverlay()
         if (SessionUtilities.getInstance().isUserAuthenticated) {
-            getShoppingList()
+            if (parentFragment?.getShoppingListResponseData() != null && !isNewSession) bindShoppingListToUI() else getShoppingList(false)
         } else {
             showSignOutView()
         }
     }
 
     private fun noNetworkConnectionLayout(state: Boolean) {
-        incConnectionLayout.visibility = if (state) VISIBLE else GONE
+        incConnectionLayout?.visibility = if (state) VISIBLE else GONE
     }
 
     override fun onDestroy() {
@@ -245,7 +256,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
             override fun onSuccess(response: ShoppingListsResponse) {
                 when (response.httpCode) {
                     200 -> {
-
+                        parentFragment?.setShoppingListResponseData(response)
                         if (mAddToShoppingListAdapter?.getShoppingList()?.size == 0)
                             showEmptyShoppingListView()
                     }

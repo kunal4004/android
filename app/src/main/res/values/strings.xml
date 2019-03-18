@@ -867,7 +867,7 @@
     <string name="absa_success_desc">Your Online Banking has been successfully linked</string>
     <string name="online_banking">Online Banking</string>
     <string name="absa_passcode">Enter Passcode</string>
-    <string name="shop_department_title_category">categories</string>
+    <string name="shop_department_title_category">DEPARTMENTS</string>
     <string name="shop_department_title_list">my lists</string>
     <string name="shop_department_title_order">my orders</string>
     <string name="total">Total:</string>

@@ -359,11 +359,11 @@ public class MessagesActivity extends AppCompatActivity implements MesssagesList
 						bindDataWithUI(messageList);
 						String unreadCountValue = Utils.getSessionDaoValue(MessagesActivity.this,
 								SessionDao.KEY.UNREAD_MESSAGE_COUNT);
-						if (TextUtils.isEmpty(unreadCountValue)) {
-							Utils.setBadgeCounter(0);
-						} else {
+						if (!TextUtils.isEmpty(unreadCountValue) && TextUtils.isDigitsOnly(unreadCountValue)) {
 							int unreadCount = Integer.valueOf(unreadCountValue) - messageList.size();
 							Utils.setBadgeCounter(unreadCount);
+						} else {
+							Utils.setBadgeCounter(0);
 						}
 						setMeassagesAsRead(messageList);
 						mIsLastPage = false;
