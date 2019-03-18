@@ -18,8 +18,10 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
+import com.awfs.coordination.BuildConfig;
 import com.awfs.coordination.R;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -150,7 +152,8 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 	//#region FirebaseMessaging
 	private void setupFirebaseMessaging(){
 		//get env variable
-
+		String topic = "all_"+BuildConfig.ENV;
+		FirebaseMessaging.getInstance().subscribeToTopic(topic);
 	}
 	//#endregion
 
