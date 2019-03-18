@@ -45,7 +45,7 @@ class ABSAOnlineBankingRegistrationActivity : AppCompatActivity() {
     private fun getBundleArgument() {
         intent?.extras?.apply {
             mShouldDisplayABSALogin = getBoolean(SHOULD_DISPLAY_LOGIN_SCREEN, false)
-            mCreditAccountInfo = getString("accountNumber")
+            mCreditAccountInfo = getString("creditCardToken")
         }
     }
 
