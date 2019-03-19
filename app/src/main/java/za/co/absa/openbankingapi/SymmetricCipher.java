@@ -35,8 +35,8 @@ public class SymmetricCipher {
         return Aes256Encrypt(keyBytes, data.getBytes(StandardCharsets.UTF_8));
     }
 
-    public static final String Aes256EncryptAndBase64Encode(String string, byte[] keyBytes) throws DecryptionFailureException {
-        byte[] encryptedData = Aes256Encrypt(keyBytes, string.getBytes(StandardCharsets.UTF_8));
+    public static final String Aes256EncryptAndBase64Encode(String string, byte[] keyBytes, byte[] iv) throws DecryptionFailureException {
+        byte[] encryptedData = Aes256Encrypt(keyBytes, string.getBytes(StandardCharsets.UTF_8), iv);
         return Base64.encodeToString(encryptedData, Base64.NO_WRAP);
     }
 
@@ -52,11 +52,35 @@ public class SymmetricCipher {
         }
     }
 
+    public static final byte[] Aes256Encrypt(byte[] keyBytes, byte[] data, byte[] iv) throws DecryptionFailureException {
+        try {
+            SecretKey secretKey = new SecretKeySpec(keyBytes, "AES");
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey, new IvParameterSpec(iv));
+            return cipher.doFinal(data);
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalArgumentException
+                | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
+            throw new DecryptionFailureException(e);
+        }
+    }
+
     public static final byte[] Aes256Decrypt(byte[] keyBytes, byte[] data) throws DecryptionFailureException {
         try {
             SecretKey secretKey = new SecretKeySpec(keyBytes, "AES");
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
             cipher.init(Cipher.DECRYPT_MODE, secretKey, generateIV());
+            return cipher.doFinal(data);
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalArgumentException
+                | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
+            throw new DecryptionFailureException(e);
+        }
+    }
+
+    public static final byte[] Aes256Decrypt(byte[] keyBytes, byte[] data, byte[] iv) throws DecryptionFailureException {
+        try {
+            SecretKey secretKey = new SecretKeySpec(keyBytes, "AES");
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            cipher.init(Cipher.DECRYPT_MODE, secretKey, new IvParameterSpec(iv));
             return cipher.doFinal(data);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalArgumentException
                 | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {

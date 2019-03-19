@@ -48,8 +48,8 @@ public class AbsaLoginRequest {
 		String encryptedAlias = null;
 
 		try{
-			encryptedUserPin = SymmetricCipher.Aes256EncryptAndBase64Encode(userPin, sessionKey.getKey());
-			encryptedAlias = SymmetricCipher.Aes256EncryptAndBase64Encode(aliasId, sessionKey.getKey());
+			encryptedUserPin = SymmetricCipher.Aes256EncryptAndBase64Encode(userPin, sessionKey.getKey(), sessionKey.getIV());
+			encryptedAlias = SymmetricCipher.Aes256EncryptAndBase64Encode(aliasId, sessionKey.getKey(), sessionKey.getIV());
 		} catch (DecryptionFailureException e) {
 			throw new RuntimeException(e);
 		}

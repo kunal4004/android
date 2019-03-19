@@ -54,8 +54,8 @@ public class AbsaRegisterCredentialRequest {
 		RegisterCredentialRequest.CredentialVO[] credentialVOs = new RegisterCredentialRequest.CredentialVO[1];
 
 		try{
-			encryptedAlias = SymmetricCipher.Aes256EncryptAndBase64Encode(aliasId, symmetricKey);
-			encryptedCredential = SymmetricCipher.Aes256EncryptAndBase64Encode(credential, symmetricKey);
+			encryptedAlias = SymmetricCipher.Aes256EncryptAndBase64Encode(aliasId, symmetricKey, sessionKey.getIV());
+			encryptedCredential = SymmetricCipher.Aes256EncryptAndBase64Encode(credential, symmetricKey, sessionKey.getIV());
 			credentialVOs[0] = new RegisterCredentialRequest.CredentialVO(encryptedAlias, "MOBILEAPP_5DIGIT_PIN", encryptedCredential);
 		} catch (DecryptionFailureException e) {
 			throw new RuntimeException(e);

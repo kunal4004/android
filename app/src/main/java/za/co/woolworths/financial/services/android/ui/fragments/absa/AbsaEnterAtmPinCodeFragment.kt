@@ -79,7 +79,7 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
             activity?.let {
                 val pinCode = edtEnterATMPin.text.toString()
                 val fm = (it as? AppCompatActivity)?.supportFragmentManager
-                val validateCardAndPinDialogFragment = AbsaValidateCardAndPinDialogFragment.newInstance("4103744472666291", "8667")
+                val validateCardAndPinDialogFragment = AbsaValidateCardAndPinDialogFragment.newInstance("4103759011454901", "1011")
                 // Set the calling fragment for this dialog.
                 validateCardAndPinDialogFragment.setTargetFragment(this, 0)
                 validateCardAndPinDialogFragment.show(fm, AbsaValidateCardAndPinDialogFragment::class.java.simpleName)

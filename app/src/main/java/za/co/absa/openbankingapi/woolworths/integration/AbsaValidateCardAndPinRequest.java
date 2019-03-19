@@ -45,7 +45,7 @@ public class AbsaValidateCardAndPinRequest {
 		String encryptedPin = null;
 
 		try {
-			encryptedPin = SymmetricCipher.Aes256EncryptAndBase64Encode(cardPin, sessionKey.getKey());
+			encryptedPin = SymmetricCipher.Aes256EncryptAndBase64Encode(cardPin, sessionKey.getKey(), sessionKey.getIV());
 		} catch (DecryptionFailureException e) {
 			e.printStackTrace();
 		}
