@@ -52,7 +52,7 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
 
                             result?.let {
                                 if (it.toLowerCase() in acceptedResultMessages) { // in == contains
-                                    successHandler(jSession)
+                                    validateSureCheck(jSession)
                                     return
                                 }
                             }
@@ -72,10 +72,6 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
                 ?: "Technical error occured", shouldDismissActivity)
     }
 
-    private fun successHandler(jSession: JSession) {
-        validateSureCheck(jSession)
-    }
-
     private fun validateSureCheck(jSession: JSession) {
         mScheduleValidateSureCheck = Executors.newSingleThreadScheduledExecutor().scheduleWithFixedDelay({
             AbsaValidateSureCheckRequest(WoolworthsApplication.getAppContext()).make(jSession,
@@ -83,12 +79,10 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
                         override fun onSuccess(validateCardAndPinResponse: ValidateSureCheckResponse?, cookies: MutableList<HttpCookie>?) {
                             val resultMessage: String? = validateCardAndPinResponse?.result?.toLowerCase()
                                     ?: ""
-                            mPollingCount.apply {
-                                this + 1
-                                if (this > 5) {
-                                    stopPolling()
-                                    failureHandler("Maximum polling rate reached", true)
-                                }
+                            mPollingCount += 1
+                            if (mPollingCount > 5) {
+                                stopPolling()
+                                failureHandler("Maximum polling rate reached", true)
                             }
                             when (resultMessage) {
                                 "processing" -> {
@@ -108,12 +102,13 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
                                     // Unable to send surecheck (USSD).
                                     // Present an input screen for the OTP,
                                     // as well as a different request payload.
+                                    // #note: consider as rejected for now
+                                    failureHandler("An error has occured. Please try again later.", true)
                                 }
                                 else -> {
                                     when (resultMessage) {
                                         "rejected" -> {
                                             //send sure check again
-                                            //TODO:: Handle rejected result message
                                             // SureCheck was rejected/declined, Stop registration process
                                             failureHandler("An error has occured. Please try again later.", true)
                                         }

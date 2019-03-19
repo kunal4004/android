@@ -16,6 +16,8 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_five_digit_code_fragment.*
 import android.os.Vibrator
 import android.util.Log
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import com.google.gson.Gson
@@ -78,10 +80,12 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
     }
 
     private fun setArguments() {
-        arguments?.apply {
-            mBundleFiveDigitCodePinCode = getInt(FIVE_DIGIT_PIN_CODE)
-            getString(JSESSION)?.apply { mJSession = Gson().fromJson(this, JSession::class.java) }
-
+        arguments?.let {
+            mBundleFiveDigitCodePinCode = it.getInt(FIVE_DIGIT_PIN_CODE,0)
+            if (it.containsKey(JSESSION)){
+                val jSession = it.getString(JSESSION)
+                mJSession = Gson().fromJson(jSession, JSession::class.java)
+            }
         }
     }
 
@@ -246,7 +250,7 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
     }
 
     fun displayRegisterCredentialProgress(state: Boolean) {
-        pbRegisterCredential.visibility = if (state) View.VISIBLE else View.GONE
+        pbRegisterCredential.visibility = if (state) VISIBLE else INVISIBLE
     }
 
 }

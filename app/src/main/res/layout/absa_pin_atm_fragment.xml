@@ -34,7 +34,6 @@
         android:textSize="@dimen/fifteen_sp"
         app:WTextView_font="myriadpro_regular" />
 
-
     <LinearLayout
         android:id="@+id/llPinCodeContainer"
         android:layout_width="match_parent"
@@ -88,6 +87,16 @@
 
     </LinearLayout>
 
+    <ProgressBar
+        android:id="@+id/pbEnterAtmPin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/llPinCodeContainer"
+        android:layout_gravity="center"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/sixteen_dp"
+        android:indeterminateTint="@color/black"
+        android:visibility="invisible" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -105,28 +114,14 @@
             android:text="@string/absa_biometric_forgot_atm_pin_code"
             android:textColor="@color/black" />
 
-
-        <FrameLayout
-            android:id="@+id/flNextContainer"
+        <ImageView
+            android:id="@+id/ivNavigateToDigitFragment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true">
-
-            <ImageView
-                android:id="@+id/ivNavigateToDigitFragment"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:alpha="0.5"
-                android:contentDescription="@string/app_label"
-                app:srcCompat="@drawable/next_button_icon" />
-
-            <ProgressBar
-                android:id="@+id/pbEnterAtmPin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:indeterminateTint="@color/white"
-                android:visibility="gone" />
-        </FrameLayout>
+            android:layout_alignParentEnd="true"
+            android:alpha="0.5"
+            android:contentDescription="@string/app_label"
+            app:srcCompat="@drawable/next_button_icon" />
 
     </RelativeLayout>
 

@@ -6,8 +6,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
@@ -78,14 +77,16 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
 
             activity?.let {
                 progressIndicator(VISIBLE)
-                val pinCode = edtEnterATMPin.text.toString()
+                var pinCode = edtEnterATMPin.text.toString()
+                mCreditAccountInfo = "4103748566552471"
+                pinCode = "5053"
                 ValidateATMPinCode(mCreditAccountInfo, pinCode, this).make()
             }
         }
     }
 
     private fun progressIndicator(state: Int) {
-        pbEnterAtmPin.visibility = state
+        pbEnterAtmPin?.visibility = state
     }
 
     private fun createTextListener(edtEnterATMPin: EditText?) {
@@ -174,7 +175,7 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
 
     override fun onFailureHandler(responseMessage: String, dismissActivity: Boolean) {
         // Navigate back to credit card screen when resultMessage is failed or rejected.
-        progressIndicator(GONE)
+        progressIndicator(View.INVISIBLE)
         clearPin()
         if (dismissActivity) {
             //  Display error message and dismiss dialog on ok button clicked
