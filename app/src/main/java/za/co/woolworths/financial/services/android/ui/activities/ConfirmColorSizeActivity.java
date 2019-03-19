@@ -28,7 +28,6 @@ import za.co.woolworths.financial.services.android.ui.adapters.StockFinderFragme
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ColorFragmentList;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.EditQuantityFragmentList;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.SizeFragmentList;
-import za.co.woolworths.financial.services.android.ui.fragments.shop.AddOrderToCartFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ColorInterface;
 import za.co.woolworths.financial.services.android.util.NonSwipeableViewPager;
@@ -43,7 +42,7 @@ import static za.co.woolworths.financial.services.android.ui.fragments.product.d
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_SEARCH_FROM_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_STORE_FINDER;
 import static za.co.woolworths.financial.services.android.ui.fragments.shop.AddOrderToCartFragment.QUANTITY_CHANGED;
-import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsFragment.QUANTITY_CHANGED_FROM_LIST;
+import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.QUANTITY_CHANGED_FROM_LIST;
 
 public class ConfirmColorSizeActivity extends AppCompatActivity implements View.OnClickListener, WStockFinderActivity.RecyclerItemSelected {
 
@@ -86,6 +85,10 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 	private int mCartQuantityInStock;
 	private boolean shouldMakeInventoryCall;
 	private int mOrderQuantityInStock;
+
+	private Intent selectedItemIntent;
+	public static final int SELECTED_SHOPPING_LIST_ITEM_RESULT_CODE = 3015;
+	public static final int CLOSE_ICON_TAPPED_RESULT_CODE = 3013;
 
 
 	@Override
@@ -198,6 +201,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 		switch (v.getId()) {
 			case R.id.relPopContainer:
 			case R.id.imCloseIcon:
+				setResult(CLOSE_ICON_TAPPED_RESULT_CODE, selectedItemIntent);
 				closeViewAnimation(CLOSE);
 				break;
 
@@ -218,7 +222,6 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 			animation.setFillAfter(true);
 			animation.setDuration(ANIM_DOWN_DURATION);
 			animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
-
 				@Override
 				public void onAnimationStart(Animation animation) {
 				}
@@ -229,6 +232,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 
 				@Override
 				public void onAnimationEnd(Animation animation) {
+
 					/**
 					 * Close animation on Picker selection
 					 */
@@ -240,11 +244,9 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 						case CLOSE:
 							Utils.sendBus(new ProductState(CANCEL_DIALOG_TAPPED));
 							break;
-
 						case SHOP_LIST:
 							Utils.sendBus(new ProductState(OPEN_ADD_TO_SHOPPING_LIST_VIEW));
 							break;
-
 						default:
 							break;
 					}
@@ -420,15 +422,15 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 
 	@Override
 	public void onRecyclerItemClick(View v, int position, String filterType) {
-		Intent intent = new Intent();
+		selectedItemIntent = new Intent();
 		if (shouldDisplayColorSizePicker()) {
 			if (colorPickerWasEnabled()) {
-				selectedPickerOtherSku(position, intent, getOtherSKUList(mColorList), "color");
+				selectedPickerOtherSku(position, selectedItemIntent, getOtherSKUList(mColorList), "color");
 			}
 			if (sizePickerWasEnabled()) {
-				selectedPickerOtherSku(position, intent, getOtherSKUList(mColorList), "size");
+				selectedPickerOtherSku(position, selectedItemIntent, getOtherSKUList(mColorList), "size");
 			}
-			setResult(RESULT_OK, intent);
+			setResult(RESULT_OK, selectedItemIntent);
 			closeViewAnimation(CLOSE);
 			return;
 		}
@@ -494,6 +496,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 			switch (mGlobalState.getSaveButtonClick()) {
 				case INDEX_SEARCH_FROM_LIST:
 					Utils.sendBus(new ProductState(ProductState.INDEX_SEARCH_FROM_LIST));
+					setResult(SELECTED_SHOPPING_LIST_ITEM_RESULT_CODE, selectedItemIntent);
 					closeViewAnimation(DISABLE_STATE_RESET);
 					break;
 				case INDEX_STORE_FINDER:

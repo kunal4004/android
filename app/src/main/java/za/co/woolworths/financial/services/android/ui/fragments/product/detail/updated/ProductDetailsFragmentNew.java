@@ -342,8 +342,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
             item.setGiftListId(otherSkus.sku);
             ArrayList<AddToListRequest> addToListRequests = new ArrayList<>();
             addToListRequests.add(item);
-            NavigateToShoppingList navigateToShoppingList = new NavigateToShoppingList();
-            navigateToShoppingList.openShoppingList(getActivity(), addToListRequests, "", false);
+            NavigateToShoppingList.Companion.openShoppingList(getActivity(), addToListRequests, "", false);
             otherSKUForList = null; // remove otherSKUForList value to enable openSizePicker when user re-tap add to list button
         }
     }

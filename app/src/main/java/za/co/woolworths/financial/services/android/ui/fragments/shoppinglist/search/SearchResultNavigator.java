@@ -4,7 +4,6 @@ import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.Response;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 
@@ -18,8 +17,6 @@ public interface SearchResultNavigator {
 	void cancelAPIRequest();
 
 	void bindRecyclerViewWithUI(List<ProductList> productList);
-
-	void onBottomReached();
 
 	void startProductRequest();
 
@@ -41,19 +38,13 @@ public interface SearchResultNavigator {
 
 	void onAddToListLoad(boolean isLoading);
 
-	void onAddToListLoadComplete(List<ShoppingListItem> shoppingLists);
-
 	void onCheckedItem(List<ProductList> mProductList, ProductList selectedProduct, boolean viewIsLoading);
 
 	void toggleAddToListBtn(boolean enable);
 
-	void onLoadStart();
-
 	void responseFailureHandler(Response response);
 
 	void onSuccessResponse(WProduct product);
-
-	void onLoadComplete();
 
 	void onLoadDetailFailure(String e);
 

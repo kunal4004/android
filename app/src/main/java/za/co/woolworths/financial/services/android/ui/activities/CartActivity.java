@@ -12,7 +12,6 @@ import android.widget.ProgressBar;
 
 import com.awfs.coordination.R;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -35,7 +34,6 @@ import static za.co.woolworths.financial.services.android.ui.activities.AddToSho
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL;
-import static za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST;
 
 public class CartActivity extends BottomActivity implements View.OnClickListener, CartFragment.ToggleRemoveItem, ToastUtils.ToastInterface, IToastInterface {
 
@@ -189,7 +187,7 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
         }
 
         if (requestCode == ADD_TO_SHOPPING_LIST_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_RESULT_CODE) {
-            ToastFactory.Companion.buildShoppingListToast(flContentFrame, true, data, this);
+            ToastFactory.Companion.buildShoppingListToast(this,flContentFrame, true, data, this);
             return;
         }
 
@@ -255,12 +253,7 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
     public void onToastButtonClicked(@Nullable JsonElement jsonElement) {
         toastButtonWasClicked = true;
         NavigateToShoppingList.Companion navigateTo = NavigateToShoppingList.Companion;
-        if (jsonElement instanceof JsonObject) {
-            navigateTo.requestToastOnNavigateBack(this, POST_ADD_TO_SHOPPING_LIST, jsonElement.getAsJsonObject());
-        } else {
-            if (jsonElement != null) {
-                navigateTo.requestToastOnNavigateBack(this, POST_ADD_TO_SHOPPING_LIST, jsonElement.getAsJsonArray());
-            }
-        }
+        if (jsonElement != null)
+            navigateTo.navigateToShoppingListOnToastClicked(this, jsonElement);
     }
 }
