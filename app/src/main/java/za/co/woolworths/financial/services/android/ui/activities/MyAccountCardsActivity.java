@@ -551,12 +551,12 @@ public class MyAccountCardsActivity extends AppCompatActivity
         //Absa registration activity request and result code
         if (requestCode == ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE
                 && resultCode == ABSA_REGISTRATION_COMPLETE_RESULT_CODE) {
-            if (pager != null) getCurrentFragmentFromViewpager(pager.getCurrentItem());
+            if (fragmentPager != null) getCurrentFragmentFromViewpager(pager.getCurrentItem());
         }
     }
 
     private void getCurrentFragmentFromViewpager(int position) {
-        Fragment fragment = (Fragment) pager.getAdapter().instantiateItem(pager, position);
+        Fragment fragment = (Fragment) fragmentPager.getAdapter().instantiateItem(fragmentPager, position);
         if ((fragment instanceof WStoreCardFragment)
                 || (fragment instanceof WPersonalLoanFragment)
                 || (fragment instanceof WCreditCardFragment)) {

@@ -224,6 +224,8 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         infoNextPaymentDue.setOnClickListener(this);
         infoCurrentBalance.setOnClickListener(this);
         infoCreditLimit.setOnClickListener(this);
+
+        updateABSATitle();
     }
 
     private void addListener() {
@@ -588,8 +590,8 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
     }
 
     public void updateABSATitle() {
-        if (tvABSALinkOnlineBanking != null)
-        tvABSALinkOnlineBanking.setText(getString(R.string.online_banking));
+        if (tvABSALinkOnlineBanking != null && !TextUtils.isEmpty(SessionDao.getByKey(SessionDao.KEY.ABSA_ALIASID).value))
+            tvABSALinkOnlineBanking.setText(getString(R.string.online_banking));
     }
 
     public AsyncTask<String, String, CreditCardTokenResponse> getCreditCardToken(final Activity activity) {
