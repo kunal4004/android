@@ -18,7 +18,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 
-class ValidateATMPinCode(cardToken: String, pinCode: String, validatePinCodeDialogInterface: IValidatePinCodeDialogInterface) {
+class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDialogInterface: IValidatePinCodeDialogInterface) {
 
     companion object {
         private const val POLLING_INTERVAL: Long = 10
@@ -27,12 +27,12 @@ class ValidateATMPinCode(cardToken: String, pinCode: String, validatePinCodeDial
     private var acceptedResultMessages = mutableListOf("success", "processing")
     private var mValidatePinCodeDialogInterface: IValidatePinCodeDialogInterface? = validatePinCodeDialogInterface
     private var mScheduleValidateSureCheck: ScheduledFuture<*>? = null
-    private var mCardToken = cardToken
+    private var mCardToken: String? = cardToken
     private var mPinCode = pinCode
     private var mPollingCount: Int = 0
 
     fun make() {
-        validateCardAndPin(mCardToken, mPinCode)
+        mCardToken?.let { validateCardAndPin(it, mPinCode) }
     }
 
     private fun validateCardAndPin(cardToken: String, pin: String) {

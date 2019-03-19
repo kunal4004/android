@@ -49,13 +49,7 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
     }
 
     private fun getBundleArguments() {
-<<<<<<< HEAD
-        mCreditAccountInfo = arguments?.getString("accountNumber") ?: ""
-=======
-        val bundle: Bundle? = arguments
-
         mCreditAccountInfo = arguments?.getString("creditCardToken") ?: ""
->>>>>>> 669f160bae43f78521b34f113fb139daec5a874e
     }
 
     private fun maskPinNumber() {
@@ -85,7 +79,7 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
             activity?.let {
                 progressIndicator(VISIBLE)
                 val pinCode = edtEnterATMPin.text.toString()
-                ValidateATMPinCode("4103749837793791", pinCode, this).make()
+                ValidateATMPinCode(mCreditAccountInfo, pinCode, this).make()
             }
         }
     }
