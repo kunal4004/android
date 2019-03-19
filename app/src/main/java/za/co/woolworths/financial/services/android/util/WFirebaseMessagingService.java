@@ -37,10 +37,18 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
             return;
         }
 
-        String unreadCountValue = Utils.getSessionDaoValue(this, SessionDao.KEY.UNREAD_MESSAGE_COUNT);
+        //Push Notification Message Handler down onward i.e no data message
+        String unreadCountString = Utils.getSessionDaoValue(this, SessionDao.KEY.UNREAD_MESSAGE_COUNT);
+        int unreadCountValue = 0;
+        try{
+            unreadCountValue = Integer.parseInt(unreadCountString);
+        }catch (Exception e){
+            //unreadCountValue will remain 0
+        }
+
         if (data.size() > 0 && NotificationUtils.isAppIsInBackground(getApplicationContext())) {// Check if message contains a data payload.
             notificationUtils=NotificationUtils.newInstance(this);
-            notificationUtils.sendBundledNotification(data.get("title"),data.get("body"), Integer.parseInt(unreadCountValue));
+            notificationUtils.sendBundledNotification(data.get("title"),data.get("body"), unreadCountValue);
         } else if (!NotificationUtils.isAppIsInBackground(getApplicationContext())) {
             Intent intent = new Intent("UpdateCounter");
             LocalBroadcastManager.
@@ -50,16 +58,6 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
 
     //#region FCM Methods
     private void mcConfigClear(){
-
-        String unreadCountValue = Utils.getSessionDaoValue(this, SessionDao.KEY.UNREAD_MESSAGE_COUNT);
-        if (!TextUtils.isEmpty(unreadCountValue) && TextUtils.isDigitsOnly(unreadCountValue)) {
-            int unreadCount = Integer.valueOf(unreadCountValue) + 1;
-            Utils.setBadgeCounter(unreadCount);
-        } else {
-            Utils.sessionDaoSave(this, SessionDao.KEY.UNREAD_MESSAGE_COUNT, "0");
-            Utils.setBadgeCounter(1);
-        }
-
         try {
             PersistenceLayer.getInstance().executeDeleteQuery("DELETE FROM ApiResponse WHERE ApiRequestId IN (SELECT id FROM ApiRequest WHERE endpoint = '/mobileconfigs');");
             PersistenceLayer.getInstance().executeDeleteQuery("DELETE FROM ApiRequest WHERE endpoint = '/mobileconfigs';");
