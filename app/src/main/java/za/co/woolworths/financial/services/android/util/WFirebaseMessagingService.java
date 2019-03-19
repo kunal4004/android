@@ -39,11 +39,11 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
 
         //Push Notification Message Handler down onward i.e no data message
         String unreadCountString = Utils.getSessionDaoValue(this, SessionDao.KEY.UNREAD_MESSAGE_COUNT);
-        int unreadCountValue = 0;
+        int unreadCountValue;
         try{
             unreadCountValue = Integer.parseInt(unreadCountString);
         }catch (Exception e){
-            //unreadCountValue will remain 0
+            unreadCountValue = 0;
         }
 
         if (data.size() > 0 && NotificationUtils.isAppIsInBackground(getApplicationContext())) {// Check if message contains a data payload.
