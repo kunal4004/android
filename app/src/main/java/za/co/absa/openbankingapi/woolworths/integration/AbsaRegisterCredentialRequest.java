@@ -62,7 +62,7 @@ public class AbsaRegisterCredentialRequest {
 		}
 
 
-		final String body = new RegisterCredentialRequest(encryptedAlias, deviceId, credentialVOs, gatewaySymmetricKey).getJson();
+		final String body = new RegisterCredentialRequest(encryptedAlias, deviceId, credentialVOs, gatewaySymmetricKey, sessionKey.getEncryptedIVBase64Encoded()).getJson();
 
 		final AbsaBankingOpenApiRequest request = new AbsaBankingOpenApiRequest<>(RegisterCredentialResponse.class, headers, body, new AbsaBankingOpenApiResponse.Listener<RegisterCredentialResponse>(){
 

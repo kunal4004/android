@@ -48,7 +48,7 @@ public class AbsaCreateAliasRequest {
 		headers.put("action", "createAlias");
 		headers.put("JSESSIONID", jSession.getId());
 
-		final String body = new CreateAliasRequest(deviceId, sessionKey.getEncryptedKeyBase64Encoded()).getJson();
+		final String body = new CreateAliasRequest(deviceId, sessionKey.getEncryptedKeyBase64Encoded(), sessionKey.getEncryptedIVBase64Encoded()).getJson();
 		final AbsaBankingOpenApiRequest request = new AbsaBankingOpenApiRequest<>(CreateAliasResponse.class, headers, body, new AbsaBankingOpenApiResponse.Listener<CreateAliasResponse>(){
 
 			@Override

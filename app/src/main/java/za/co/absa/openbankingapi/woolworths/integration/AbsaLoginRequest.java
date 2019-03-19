@@ -56,7 +56,7 @@ public class AbsaLoginRequest {
 
 		String body = null;
 		try{
-			body = new LoginRequest(encryptedAlias, deviceId, encryptedUserPin, gatewaySymmetricKey).getUrlEncodedFormData();
+			body = new LoginRequest(encryptedAlias, deviceId, encryptedUserPin, gatewaySymmetricKey, sessionKey.getEncryptedIVBase64Encoded()).getUrlEncodedFormData();
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}

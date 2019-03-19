@@ -54,7 +54,7 @@ public class AbsaValidateCardAndPinRequest {
 			throw new RuntimeException("This should never be null, check what issue occurred and resolve it. Also log this to Firebase.");
 
 		final String gatewaySymmetricKey = this.sessionKey.getEncryptedKeyBase64Encoded();
-		final String body = new ValidateCardAndPinRequest(cardToken, encryptedPin, gatewaySymmetricKey).getJson();
+		final String body = new ValidateCardAndPinRequest(cardToken, encryptedPin, gatewaySymmetricKey, sessionKey.getEncryptedIVBase64Encoded()).getJson();
 
 		requestQueue.add(new AbsaBankingOpenApiRequest<>(ValidateCardAndPinResponse.class, headers, body, new AbsaBankingOpenApiResponse.Listener<ValidateCardAndPinResponse>(){
 
