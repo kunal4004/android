@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/fragment_mainLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/default_background">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/default_background"
+        android:orientation="vertical">
+
+        <include
+            android:id="@+id/sortAndRefineLayout"
+            layout="@layout/sort_and_refine_selection_layout" />
+
+
+        <ProgressBar
+            android:id="@+id/pbLoadProduct"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:indeterminateTint="@color/black"
+            android:visibility="gone" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/productList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/rlCheckOut"
+            android:layout_below="@+id/sortAndRefineLayout"
+            android:layout_alignParentStart="true"
+            android:animateLayoutChanges="false"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:scrollbars="vertical"
+            android:smoothScrollbar="true" />
+
+        <RelativeLayout
+            android:id="@+id/rlCheckOut"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="@color/recent_search_bg"
+            android:gravity="center"
+            android:visibility="gone">
+
+            <RelativeLayout
+                android:id="@+id/rlCheckOutContainer"
+                style="@style/blackButtonStyle"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginBottom="8dp">
+
+                <ProgressBar
+                    android:id="@+id/pbLoadingIndicator"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:indeterminateTint="@color/white"
+                    android:visibility="gone" />
+
+                <za.co.woolworths.financial.services.android.ui.views.WButton
+                    android:id="@+id/btnCheckOut"
+                    style="@style/blackButtonStyle"
+                    android:background="@color/black"
+                    android:text="@string/checkout"
+                    app:WButton_font="medium_bold" />
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+    <include
+        android:id="@+id/incNoConnectionHandler"
+        layout="@layout/no_connection" />
+
+</RelativeLayout>

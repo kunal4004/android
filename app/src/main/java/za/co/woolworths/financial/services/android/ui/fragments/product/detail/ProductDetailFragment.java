@@ -299,8 +299,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
         item.setQuantity("1");
         ArrayList<AddToListRequest> addToListRequests = new ArrayList<>();
         addToListRequests.add(item);
-        NavigateToShoppingList navigateToShoppingList = new NavigateToShoppingList();
-        navigateToShoppingList.openShoppingList(activity, addToListRequests, "", false);
+        NavigateToShoppingList.Companion.openShoppingList(activity, addToListRequests, "", false);
     }
 
     @Override

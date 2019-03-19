@@ -1,0 +1,103 @@
+package za.co.woolworths.financial.services.android.ui.activities.product.shop;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.ImageView;
+
+import com.awfs.coordination.R;
+
+import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment;
+import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.Utils;
+
+import static za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_RESULT_CODE;
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
+import static za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity.PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE;
+import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.ADDED_TO_SHOPPING_LIST_RESULT_CODE;
+
+public class ShoppingListDetailActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Utils.updateStatusBarBackground(this);
+        setContentView(R.layout.shopping_list_detail_activity);
+        Bundle bundle = getIntent().getExtras();
+        String listId = "", listName = "";
+        if (bundle != null) {
+            listId = bundle.getString("listId");
+            listName = bundle.getString("listName");
+        }
+        retrieveBundle();
+        setUpToolbar(listName);
+        initFragment(listId, listName);
+    }
+
+    private void retrieveBundle() {
+        ImageView btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
+    }
+
+    private void setUpToolbar(String listName) {
+        Toolbar shoppingToolbar = findViewById(R.id.mToolbar);
+        WTextView tvToolbar = findViewById(R.id.tvToolbar);
+        tvToolbar.setText(listName);
+        setSupportActionBar(shoppingToolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayShowTitleEnabled(false);
+            actionBar.setDisplayUseLogoEnabled(false);
+            actionBar.setHomeAsUpIndicator(R.drawable.back24);
+        }
+    }
+
+    private void initFragment(String listId, String listName) {
+        ShoppingListDetailFragment shoppingListDetailFragment = new ShoppingListDetailFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("listId", listId);
+        bundle.putString("listName", listName);
+        shoppingListDetailFragment.setArguments(bundle);
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.flShoppingListDetailFragment, shoppingListDetailFragment,
+                        ShoppingListDetailFragment.class.getSimpleName())
+                .disallowAddToBackStack()
+                .commit();
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+        overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // response from product detail page
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.flShoppingListDetailFragment);
+        if ((requestCode == PDP_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_RESULT_CODE)
+                || (requestCode == PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_RESULT_CODE)) {
+            setResult(ADD_TO_SHOPPING_LIST_RESULT_CODE, data);
+            finish();
+            overridePendingTransition(0, 0);
+            return;
+            // response from search product from shopping list
+        } else if (requestCode == PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE && resultCode == ADDED_TO_SHOPPING_LIST_RESULT_CODE) {
+            fragment.onActivityResult(requestCode, resultCode, data);
+            return;
+        }
+
+        fragment.onActivityResult(requestCode, resultCode, data);
+    }
+}

@@ -52,7 +52,7 @@ public class ProductDetailsActivity extends AppCompatActivity implements IToastI
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ADD_TO_SHOPPING_LIST_REQUEST_CODE) {
             if (resultCode == ADD_TO_SHOPPING_LIST_RESULT_CODE) {
-                ToastFactory.Companion.buildShoppingListToast(flContentFrame, true, data, this);
+                ToastFactory.Companion.buildShoppingListToast(this,flContentFrame, true, data, this);
                 return;
             }
         }
@@ -81,13 +81,7 @@ public class ProductDetailsActivity extends AppCompatActivity implements IToastI
     @Override
     public void onToastButtonClicked(@Nullable JsonElement jsonElement) {
         NavigateToShoppingList.Companion navigateTo = NavigateToShoppingList.Companion;
-        if (jsonElement instanceof JsonObject) {
-            navigateTo.requestToastOnNavigateBack(this, POST_ADD_TO_SHOPPING_LIST, jsonElement.getAsJsonObject());
-        } else {
-            if (jsonElement != null) {
-                navigateTo.requestToastOnNavigateBack(this, POST_ADD_TO_SHOPPING_LIST, jsonElement.getAsJsonArray());
-            }
-        }
+        if (jsonElement != null)
+            navigateTo.navigateToShoppingListOnToastClicked(this, jsonElement);
     }
-
 }

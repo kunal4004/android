@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.util
 
 import com.google.gson.Gson
+import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse
 
 class MyAccountHelper {
@@ -16,4 +17,16 @@ class MyAccountHelper {
         }
         return ""
     }
+
+    fun getAccount(accountsResponse: AccountsResponse, desiredSection: String): Account {
+        val accountList = accountsResponse.accountList
+        if (accountList != null) {
+            for (account in accountList) {
+                if (desiredSection == account.productGroupCode)
+                    return account
+            }
+        }
+        return Account()
+    }
+
 }

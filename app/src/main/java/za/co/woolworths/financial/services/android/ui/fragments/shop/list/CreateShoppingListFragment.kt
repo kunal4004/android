@@ -22,6 +22,7 @@ import za.co.woolworths.financial.services.android.models.rest.shoppinglist.Crea
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostAddToShoppingList
 import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostOrderToShoppingList
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
+import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.util.*
@@ -269,9 +270,13 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
                             // Add to List from MyListFragment
                             if (mShouldDisplayCreateListOnly) {
                                 response.lists[0]?.apply {
-                                    mShoppingListGroup?.put(listId, this)
                                     shoppingListPostProgress(false)
-                                    showShoppingListSuccessToast()
+                                    ScreenManager.presentShoppingListDetailActivity(activity, listId, listName)
+                                    activity?.apply {
+                                        setResult(ADD_TO_SHOPPING_LIST_REQUEST_CODE)
+                                        finish()
+                                        overridePendingTransition(0, 0)
+                                    }
                                 }
                                 return
                             }

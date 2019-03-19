@@ -131,8 +131,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick {
     }
 
     override fun onAddToList(commerceItemList: MutableList<AddToListRequest>) {
-        val navigateTo = NavigateToShoppingList()
-        navigateTo.openShoppingList(activity, commerceItemList, order?.orderId, false)
+        NavigateToShoppingList.openShoppingList(activity, commerceItemList, order?.orderId, false)
     }
 
     override fun onOpenProductDetail(commerceItem: CommerceItem) {
