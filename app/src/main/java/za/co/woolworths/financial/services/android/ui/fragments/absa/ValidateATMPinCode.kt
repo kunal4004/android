@@ -42,15 +42,14 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
                         response?.apply {
                             jSession.id = header?.jsessionId
 
-                            for (cookie in cookies!!) {
+                            cookies?.forEach { cookie ->
                                 if (cookie.name.equals("jsessionid", ignoreCase = true)) {
                                     jSession.cookie = cookie
-                                    break
                                 }
                             }
 
-                            result?.let {
-                                if (it.toLowerCase() in acceptedResultMessages) { // in == contains
+                            result?.toLowerCase().apply {
+                                if (this in acceptedResultMessages) { // in == contains
                                     validateSureCheck(jSession)
                                     return
                                 }
@@ -66,58 +65,50 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
                 })
     }
 
-    private fun failureHandler(responseMessage: String?, shouldDismissActivity: Boolean) {
-        mValidatePinCodeDialogInterface?.onFailureHandler(responseMessage
-                ?: "Technical error occured", shouldDismissActivity)
-    }
-
     private fun validateSureCheck(jSession: JSession) {
         mScheduleValidateSureCheck = Executors.newSingleThreadScheduledExecutor().scheduleWithFixedDelay({
             AbsaValidateSureCheckRequest(WoolworthsApplication.getAppContext()).make(jSession,
                     object : AbsaBankingOpenApiResponse.ResponseDelegate<ValidateSureCheckResponse> {
-                        override fun onSuccess(validateCardAndPinResponse: ValidateSureCheckResponse?, cookies: MutableList<HttpCookie>?) {
-                            val resultMessage: String? = validateCardAndPinResponse?.result?.toLowerCase()
-                                    ?: ""
-                            mPollingCount += 1
-                            if (mPollingCount > 5) {
-                                stopPolling()
-                                failureHandler("Maximum polling rate reached", true)
-                            }
-                            when (resultMessage) {
-                                "processing" -> {
-                                    // SureCheck was sent, no client response yet. If > 60 seconds,
-                                    // prompt to resend. If resend, same polling as above.
-                                    // (5 resends allowed)
-                                }
+                        override fun onSuccess(response: ValidateSureCheckResponse?, cookies: MutableList<HttpCookie>?) {
 
-                                "failed" -> {
-                                    // Sending of the SureCheck failed for some reason. Stop registration details.
-                                    // Display an error message and advise to try again later
-                                    failureHandler("An error has occured. Please try again later.", true)
+                            val acceptedResultMessages = mutableListOf("success", "processed")
+                            val failedResultMessages = mutableListOf("failed", "rejected")
+                            val continuePollingProcessResultMessage = mutableListOf("processing")
+                            val presentOTPScreenResultMessage = mutableListOf("processing")
 
-                                }
+                            response?.result?.toLowerCase().apply {
+                                when (this) {
+                                    in acceptedResultMessages -> {
+                                        //SureCheck was accepted, continue with registration process
+                                        createAlias(jSession)
+                                        stopPolling()
+                                    }
+                                    in failedResultMessages -> {
+                                        // Sending of the SureCheck failed for some reason. Stop registration details.
+                                        // Display an error message and advise to try again later
+                                        failureHandler(response)
+                                        stopPolling()
+                                    }
 
-                                "revertback" -> {
-                                    // Unable to send surecheck (USSD).
-                                    // Present an input screen for the OTP,
-                                    // as well as a different request payload.
-                                    // #note: consider as rejected for now
-                                    failureHandler("An error has occured. Please try again later.", true)
-                                }
-                                else -> {
-                                    when (resultMessage) {
-                                        "rejected" -> {
-                                            //send sure check again
-                                            // SureCheck was rejected/declined, Stop registration process
-                                            failureHandler("An error has occured. Please try again later.", true)
-                                        }
-                                        "processed" -> {
-                                            //SureCheck was accepted, continue with registration process
-                                            createAlias(jSession)
+                                    in continuePollingProcessResultMessage -> {
+                                        // SureCheck was sent, no client response yet. If > 60 seconds,
+                                        // prompt to resend. If resend, same polling as above.
+                                        // (5 resends allowed)
+                                        mPollingCount += 1
+                                        if (mPollingCount > 5) {
+                                            failureHandler("Maximum polling rate reached", true)
+                                            stopPolling()
                                         }
                                     }
 
-                                    stopPolling()
+                                    in presentOTPScreenResultMessage -> {
+                                        // TODO:: Unable to send surecheck (USSD).
+                                        // Present an input screen for the OTP,
+                                        // as well as a different request payload.
+                                        // #note: consider as rejected for now
+                                        failureHandler(response)
+                                        stopPolling()
+                                    }
                                 }
                             }
                         }
@@ -128,6 +119,16 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
                         }
                     })
         }, 0, POLLING_INTERVAL, TimeUnit.SECONDS)
+    }
+
+    private fun failureHandler(response: ValidateSureCheckResponse?) {
+        failureHandler(response?.header?.resultMessages?.first()?.responseMessage
+                ?: "Technical error occured.", true)
+    }
+
+    private fun failureHandler(response: String?, shouldDismissActivity: Boolean) {
+        mValidatePinCodeDialogInterface?.onFailureHandler(response
+                ?: "Technical error occured", shouldDismissActivity)
     }
 
     fun createAlias(jSession: JSession) {
@@ -146,7 +147,8 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
 
                         navigateToRegisterCredential(jSession)
                     } else {
-                        failureHandler("An error occured while attempting to decode the server response.", true)
+                        failureHandler(header?.resultMessages?.first()?.responseMessage
+                                ?: "Technical error occured.", true)
                     }
                 }
             }
