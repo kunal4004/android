@@ -59,7 +59,7 @@ public class AbsaCreateAliasRequest {
 						byte[] encryptedAliasBytes = response.getAliasId().getBytes(StandardCharsets.UTF_8);
 						byte[] encryptedAliasBase64DecodedBytes = Base64.decode(encryptedAliasBytes, Base64.NO_WRAP);
 
-						byte[] aliasBytes = SymmetricCipher.Aes256Decrypt(sessionKey.getKey(), encryptedAliasBase64DecodedBytes);
+						byte[] aliasBytes = SymmetricCipher.Aes256Decrypt(sessionKey.getKey(), encryptedAliasBase64DecodedBytes, sessionKey.getIV());
 						byte[] aliasBase64DecodedBytes = Base64.decode(Base64.encodeToString(aliasBytes, Base64.NO_WRAP), Base64.DEFAULT);
 						String decryptedAlias = new String(aliasBase64DecodedBytes, StandardCharsets.UTF_8);
 

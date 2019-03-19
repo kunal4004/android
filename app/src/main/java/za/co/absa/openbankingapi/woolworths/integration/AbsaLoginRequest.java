@@ -1,6 +1,7 @@
 package za.co.absa.openbankingapi.woolworths.integration;
 
 import android.content.Context;
+import android.util.Base64;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import za.co.absa.openbankingapi.AsymmetricCryptoHelper;
+import za.co.absa.openbankingapi.Cryptography;
 import za.co.absa.openbankingapi.DecryptionFailureException;
 import za.co.absa.openbankingapi.KeyGenerationFailureException;
 import za.co.absa.openbankingapi.SessionKey;
@@ -38,25 +40,29 @@ public class AbsaLoginRequest {
 		}
 	}
 
-	public void make(final String userPin, final String aliasId, final String deviceId, final AbsaBankingOpenApiResponse.ResponseDelegate<LoginResponse> responseDelegate){
+	public void make(final String passcode, final String aliasId, final String deviceId, final AbsaBankingOpenApiResponse.ResponseDelegate<LoginResponse> responseDelegate){
 		Map<String, String> headers = new HashMap<>();
 		headers.put("Content-Type", "application/x-www-form-urlencoded");
 		headers.put("Accept", "application/json");
 
 		final String gatewaySymmetricKey = this.sessionKey.getEncryptedKeyBase64Encoded();
-		String encryptedUserPin = null;
+		String base64EncodedEncryptedDerivedKey = null;
 		String encryptedAlias = null;
 
 		try{
-			encryptedUserPin = SymmetricCipher.Aes256EncryptAndBase64Encode(userPin, sessionKey.getKey(), sessionKey.getIV());
-			encryptedAlias = SymmetricCipher.Aes256EncryptAndBase64Encode(aliasId, sessionKey.getKey(), sessionKey.getIV());
-		} catch (DecryptionFailureException e) {
+			encryptedAlias = Base64.encodeToString(SymmetricCipher.Aes256Encrypt(sessionKey.getKey(),aliasId),Base64.NO_WRAP);
+
+			byte[] derivedKey = Cryptography.PasswordBasedKeyDerivationFunction2(aliasId.concat(passcode), deviceId, 1000, 256);
+			byte[] encryptedDerivedKey = SymmetricCipher.Aes256Encrypt(sessionKey.getKey(), derivedKey);
+			base64EncodedEncryptedDerivedKey = Base64.encodeToString(encryptedDerivedKey, Base64.NO_WRAP);
+
+		} catch (DecryptionFailureException | UnsupportedEncodingException | KeyGenerationFailureException e) {
 			throw new RuntimeException(e);
 		}
 
 		String body = null;
 		try{
-			body = new LoginRequest(encryptedAlias, deviceId, encryptedUserPin, gatewaySymmetricKey, sessionKey.getEncryptedIVBase64Encoded()).getUrlEncodedFormData();
+			body = new LoginRequest(encryptedAlias, deviceId, base64EncodedEncryptedDerivedKey, gatewaySymmetricKey, sessionKey.getEncryptedIVBase64Encoded()).getUrlEncodedFormData();
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}

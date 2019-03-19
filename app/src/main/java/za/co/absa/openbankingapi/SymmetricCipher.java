@@ -40,23 +40,45 @@ public class SymmetricCipher {
         return Base64.encodeToString(encryptedData, Base64.NO_WRAP);
     }
 
+    /**
+     *
+     * @param {byte[]} keyBytes
+     * @param {byte[]} data
+     *
+     * This method is responsible for executing
+     * Aes256Encrypt with a default zero based IV.
+     */
     public static final byte[] Aes256Encrypt(byte[] keyBytes, byte[] data) throws DecryptionFailureException {
-        try {
-            SecretKey secretKey = new SecretKeySpec(keyBytes, "AES");
-            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-            cipher.init(Cipher.ENCRYPT_MODE, secretKey, generateIV());
-            return cipher.doFinal(data);
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalArgumentException
-                | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
-            throw new DecryptionFailureException(e);
-        }
+        return Aes256Encrypt(keyBytes, data, generateIV());
     }
 
+    /**
+     *
+     * @param {byte[]} keyBytes
+     * @param {byte[]} data
+     * @param {byte[]} iv
+     *
+     * This method is responsible for executing
+     * Aes256Encrypt casting the IV bytes into IvParameterSpec.
+     */
     public static final byte[] Aes256Encrypt(byte[] keyBytes, byte[] data, byte[] iv) throws DecryptionFailureException {
+        AlgorithmParameterSpec algorithmParameterSpec = new IvParameterSpec(iv);
+        return Aes256Encrypt(keyBytes, data, algorithmParameterSpec);
+    }
+
+    /**
+     *
+     * @param {byte[]} keyBytes
+     * @param {byte[]} data
+     * @param {AlgorithmParameterSpec} algorithmParameterSpec
+     *
+     * This is the main method used for AES Encryption.
+     */
+    public static final byte[] Aes256Encrypt(byte[] keyBytes, byte[] data, AlgorithmParameterSpec algorithmParameterSpec) throws DecryptionFailureException {
         try {
             SecretKey secretKey = new SecretKeySpec(keyBytes, "AES");
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-            cipher.init(Cipher.ENCRYPT_MODE, secretKey, new IvParameterSpec(iv));
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey, algorithmParameterSpec);
             return cipher.doFinal(data);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalArgumentException
                 | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
@@ -64,23 +86,49 @@ public class SymmetricCipher {
         }
     }
 
+
+
+
+
+    /**
+     *
+     * @param {byte[]} keyBytes
+     * @param {byte[]} data
+     *
+     * This method is responsible for executing
+     * Aes256Decrypt with a default zero based IV.
+     */
     public static final byte[] Aes256Decrypt(byte[] keyBytes, byte[] data) throws DecryptionFailureException {
-        try {
-            SecretKey secretKey = new SecretKeySpec(keyBytes, "AES");
-            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-            cipher.init(Cipher.DECRYPT_MODE, secretKey, generateIV());
-            return cipher.doFinal(data);
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalArgumentException
-                | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
-            throw new DecryptionFailureException(e);
-        }
+        return Aes256Decrypt(keyBytes, data, generateIV());
     }
 
+    /**
+     *
+     * @param {byte[]} keyBytes
+     * @param {byte[]} data
+     * @param {byte[]} iv
+     *
+     * This method is responsible for executing
+     * Aes256Encrypt casting the IV bytes into IvParameterSpec.
+     */
     public static final byte[] Aes256Decrypt(byte[] keyBytes, byte[] data, byte[] iv) throws DecryptionFailureException {
+        AlgorithmParameterSpec algorithmParameterSpec = new IvParameterSpec(iv);
+        return Aes256Decrypt(keyBytes, data, algorithmParameterSpec);
+    }
+
+    /**
+     *
+     * @param {byte[]} keyBytes
+     * @param {byte[]} data
+     * @param {AlgorithmParameterSpec} algorithmParameterSpec
+     *
+     * This is the main method used for AES decryption.
+     */
+    public static final byte[] Aes256Decrypt(byte[] keyBytes, byte[] data, AlgorithmParameterSpec algorithmParameterSpec) throws DecryptionFailureException {
         try {
             SecretKey secretKey = new SecretKeySpec(keyBytes, "AES");
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-            cipher.init(Cipher.DECRYPT_MODE, secretKey, new IvParameterSpec(iv));
+            cipher.init(Cipher.DECRYPT_MODE, secretKey, algorithmParameterSpec);
             return cipher.doFinal(data);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalArgumentException
                 | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {

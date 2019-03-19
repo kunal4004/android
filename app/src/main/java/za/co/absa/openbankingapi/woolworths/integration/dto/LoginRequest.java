@@ -40,7 +40,8 @@ public class LoginRequest {
 				.append("&credential=").append(URLEncoder.encode(this.credential, utfEncodingType))
 				.append("&aliasType=").append(this.aliasType)
 				.append("&type=").append(this.type)
-                .append("&symmetricKeyIV=").append(this.symmetricKeyIV)
+				//TODO
+                //.append("&symmetricKeyIV=").append(this.symmetricKeyIV)
 				.append("&symmetrickey=").append(URLEncoder.encode(this.symmetricKey, utfEncodingType));
 
 		return sb.toString();
