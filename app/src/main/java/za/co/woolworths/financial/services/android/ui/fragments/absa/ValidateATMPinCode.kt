@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.absa
 
-import android.util.Log
 import za.co.absa.openbankingapi.woolworths.integration.AbsaCreateAliasRequest
 import za.co.absa.openbankingapi.woolworths.integration.AbsaValidateCardAndPinRequest
 import za.co.absa.openbankingapi.woolworths.integration.AbsaValidateSureCheckRequest
@@ -121,11 +120,9 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
                                     stopPolling()
                                 }
                             }
-                            Log.e("valideCardPin", "onSuccess - AbsaBankingOpenApiResponse $resultMessage")
                         }
 
                         override fun onFailure(errorMessage: String) {
-                            Log.e("valideCardPin", "onFailure - AbsaBankingOpenApiResponse")
                             failureHandler(errorMessage, false)
 
                         }
@@ -137,7 +134,6 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
         val deviceId = UUID.randomUUID().toString().replace("-", "")
         AbsaCreateAliasRequest(WoolworthsApplication.getAppContext()).make(deviceId, jSession, object : AbsaBankingOpenApiResponse.ResponseDelegate<CreateAliasResponse> {
             override fun onSuccess(response: CreateAliasResponse?, cookies: MutableList<HttpCookie>?) {
-                Log.e("validCardPin", "onSuccess - AbsaCreateAliasRequest")
                 response?.apply {
                     if (header?.resultMessages?.size == 0 || aliasId != null) {
                         var sessionDao: SessionDao? = SessionDao.getByKey(SessionDao.KEY.ABSA_DEVICEID)
@@ -150,13 +146,12 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
 
                         navigateToRegisterCredential(jSession)
                     } else {
-                        //TODO: implement failureHandler("An error occured while attempting to decode the server response.")
+                        failureHandler("An error occured while attempting to decode the server response.", true)
                     }
                 }
             }
 
             override fun onFailure(errorMessage: String) {
-                Log.e("validCardPin", "onFailure - AbsaCreateAliasRequest")
                 failureHandler(errorMessage, false)
             }
         })

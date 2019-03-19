@@ -73,7 +73,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
     public WTextView tvIncreaseLimitDescription;
 
     private ImageView iconAvailableFundsInfo, infoCreditLimit, infoCurrentBalance, infoNextPaymentDue, infoAmountOverdue, infoMinimumAmountDue;
-    ;
+
 
     String productOfferingId;
     WoolworthsApplication woolworthsApplication;

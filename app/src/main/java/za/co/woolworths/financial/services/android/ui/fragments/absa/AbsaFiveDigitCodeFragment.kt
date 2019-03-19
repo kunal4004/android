@@ -25,8 +25,16 @@ class AbsaFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener 
         private const val JSESSION = "JSESSION"
         fun newInstance(jSession: JSession) = AbsaFiveDigitCodeFragment().apply {
             arguments = Bundle(1).apply {
-                    putString(JSESSION, Gson().toJson(jSession))
-                }
+                putString(JSESSION, Gson().toJson(jSession))
+            }
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.apply {
+            if (containsKey(JSESSION))
+                jSession = getString(JSESSION)
         }
     }
 
@@ -36,17 +44,9 @@ class AbsaFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener 
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        getBundleArgument()
         initViewsAndEvents()
         createTextListener(edtEnterATMPin)
         clearPinImage(mPinImageViewList!!)
-    }
-
-    private fun getBundleArgument() {
-        arguments?.let {
-            if (it.containsKey(JSESSION))
-                jSession = it.getString(JSESSION)
-        }
     }
 
     private fun initViewsAndEvents() {

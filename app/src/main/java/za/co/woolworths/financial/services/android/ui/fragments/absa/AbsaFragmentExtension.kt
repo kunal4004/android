@@ -30,9 +30,7 @@ open class AbsaFragmentExtension : Fragment() {
     }
 
     fun alwaysHideWindowSoftInputMode() {
-        activity?.apply {
-            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
-        }
+        activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
     }
 
     fun maskedCardNumberWithSpaces(cardNumber: String?): String {

@@ -25,13 +25,21 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
     private var mCreditAccountInfo: String? = ""
 
     companion object {
+        const val MAXIMUM_PIN_ALLOWED: Int = 3
         fun newInstance(creditAccountInfo: String?) = AbsaEnterAtmPinCodeFragment().apply {
             arguments = Bundle(1).apply {
                 putString("creditCardToken", creditAccountInfo)
             }
         }
+    }
 
-        const val MAXIMUM_PIN_ALLOWED: Int = 3
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.apply {
+            if (containsKey("creditCardToken")) {
+                mCreditAccountInfo = arguments?.getString("creditCardToken") ?: ""
+            }
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -40,15 +48,10 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        getBundleArguments()
         initViewsAndEvents()
         maskPinNumber()
         createTextListener(edtEnterATMPin)
         clearPinImage(mPinImageViewList)
-    }
-
-    private fun getBundleArguments() {
-        mCreditAccountInfo = arguments?.getString("creditCardToken") ?: ""
     }
 
     private fun maskPinNumber() {

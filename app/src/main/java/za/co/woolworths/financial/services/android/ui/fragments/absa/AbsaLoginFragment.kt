@@ -28,7 +28,7 @@ class AbsaLoginFragment : AbsaFragmentExtension() {
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.absa_login_fragment, container, false)
+        return inflater?.inflate(R.layout.absa_login_fragment, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
@@ -157,5 +157,4 @@ class AbsaLoginFragment : AbsaFragmentExtension() {
     fun displayLoginProgress(state: Boolean) {
         pbLoginProgress.visibility = if (state) View.VISIBLE else View.GONE
     }
-
 }
