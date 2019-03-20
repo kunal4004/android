@@ -5,6 +5,8 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
@@ -65,7 +67,6 @@ class AbsaLoginFragment : AbsaFragmentExtension() {
     private fun absaLoginRequest(aliasId: String?, deviceId: String?, userPin: String) {
         activity?.let {
             displayLoginProgress(true)
-
             AbsaLoginRequest(it).make(userPin, aliasId, deviceId,
                     object : AbsaBankingOpenApiResponse.ResponseDelegate<LoginResponse> {
                         override fun onSuccess(response: LoginResponse?, cookies: MutableList<HttpCookie>?) {
@@ -92,6 +93,7 @@ class AbsaLoginFragment : AbsaFragmentExtension() {
                         }
 
                         override fun onFailure(errorMessage: String) {
+                            failureHandler(errorMessage)
                             displayLoginProgress(false)
                         }
                     })
@@ -164,6 +166,6 @@ class AbsaLoginFragment : AbsaFragmentExtension() {
     }
 
     fun displayLoginProgress(state: Boolean) {
-        pbLoginProgress.visibility = if (state) View.VISIBLE else View.GONE
+        pbLoginProgress.visibility = if (state) VISIBLE else INVISIBLE
     }
 }
