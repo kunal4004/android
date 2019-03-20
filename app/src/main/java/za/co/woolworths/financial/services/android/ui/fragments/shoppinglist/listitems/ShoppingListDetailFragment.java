@@ -247,8 +247,11 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
                 mMapStoreFulFillmentKeyValue.put(fulFillmentTypeIdCollection, mFulFillmentStoreId);
                 executeGetInventoryForStore(mFulFillmentStoreId, multiSKUS);
             } else {
-                for (ShoppingListItem inventoryItems : mShoppingListItems) {
-                    inventoryItems.inventoryCallCompleted = true;
+                for (String sku : skuIds) {
+                    for (ShoppingListItem inventoryItems : mShoppingListItems) {
+                        if (inventoryItems.catalogRefId.equalsIgnoreCase(sku))
+                            inventoryItems.inventoryCallCompleted = true;
+                    }
                 }
                 enableAdapterClickEvent(true);
             }
