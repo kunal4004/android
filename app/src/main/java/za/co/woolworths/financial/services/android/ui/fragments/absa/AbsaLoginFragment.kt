@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.ui.fragments.absa
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,6 +23,7 @@ class AbsaLoginFragment : AbsaFragmentExtension() {
 
     companion object {
         private const val MAXIMUM_PIN_ALLOWED: Int = 4
+        private const val technical_error_occurred = "Technical error occurred."
         fun newInstance() = AbsaLoginFragment()
     }
 
@@ -70,26 +70,36 @@ class AbsaLoginFragment : AbsaFragmentExtension() {
                     object : AbsaBankingOpenApiResponse.ResponseDelegate<LoginResponse> {
                         override fun onSuccess(response: LoginResponse?, cookies: MutableList<HttpCookie>?) {
                             response?.apply {
-                                if (!(resultMessage?.length != 0 && aliasId == null)) {
-                                    successHandler(this)
+                                if (result?.toLowerCase() == "success") {
+                                    successHandler()
                                 } else {
-                                    failureHandler(resultMessage ?: "")
+                                    failureHandler(resultMessage ?: technical_error_occurred)
                                 }
+                            /* Work for WOP-3881
+                               Commented because header returning nil
+                                header?.apply {
+                                    if (statusCode == "0" || resultMessages.isEmpty()) {
+                                        successHandler(response)
+                                    } else {
+                                        if (statusCode == "1") {
+                                            failureHandler(header.resultMessages.first()?.responseMessage
+                                                    ?: technical_error_occurred)
+                                        }
+                                    }
+                                }*/
                             }
-
                             displayLoginProgress(false)
                         }
 
                         override fun onFailure(errorMessage: String) {
-                            Log.d("onSuccess", "onFailure")
                             displayLoginProgress(false)
                         }
                     })
         }
     }
 
-    private fun successHandler(response: LoginResponse) {
-        //TODO:: handle Success
+    private fun successHandler() {
+
     }
 
     private fun failureHandler(message: String?) {
