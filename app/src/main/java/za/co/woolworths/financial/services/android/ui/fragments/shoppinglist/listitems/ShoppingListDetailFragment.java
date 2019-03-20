@@ -102,7 +102,6 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     private Map<String, String> mMapStoreFulFillmentKeyValue;
     private boolean errorMessageWasPopUp;
     private ShoppingListItem mOpenShoppingListItem;
-    private String mFulFillmentStoreId;
     private Integer mDeliveryResultCode;
     private boolean addedToCart;
     private boolean internetConnectionWasLost = false;
@@ -241,11 +240,11 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             }
             String multiSKUS = TextUtils.join("-", skuIds);
             collectOtherSkuId.put(fulFillmentTypeIdCollection, multiSKUS);
-            mFulFillmentStoreId = Utils.retrieveStoreId(fulFillmentTypeIdCollection);
-            if (!TextUtils.isEmpty(mFulFillmentStoreId)) {
-                mFulFillmentStoreId = mFulFillmentStoreId.replaceAll("\"", "");
-                mMapStoreFulFillmentKeyValue.put(fulFillmentTypeIdCollection, mFulFillmentStoreId);
-                executeGetInventoryForStore(mFulFillmentStoreId, multiSKUS);
+            String fulFillmentStoreId = Utils.retrieveStoreId(fulFillmentTypeIdCollection);
+            if (!TextUtils.isEmpty(fulFillmentStoreId)) {
+                fulFillmentStoreId = fulFillmentStoreId.replaceAll("\"", "");
+                mMapStoreFulFillmentKeyValue.put(fulFillmentTypeIdCollection, fulFillmentStoreId);
+                executeGetInventoryForStore(fulFillmentStoreId, multiSKUS);
             } else {
                 for (ShoppingListItem inventoryItems : mShoppingListItems) {
                     inventoryItems.inventoryCallCompleted = true;
@@ -533,10 +532,6 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.selectAll:
-                if (shouldUserSetSuburb()) {
-                    deliverySelectionIntent(DELIVERY_LOCATION_REQUEST_CODE_FROM_SELECT_ALL);
-                    return super.onOptionsItemSelected(item);
-                }
                 if (tvMenuSelectAll.getText().toString().equalsIgnoreCase("SELECT ALL")) {
                     selectAllListItems(true);
                     tvMenuSelectAll.setText(getString(R.string.deselect_all));
@@ -882,10 +877,6 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         if (mMapStoreFulFillmentKeyValue == null) return null;
         List<String> listOfFulfillmentValue = Collections.list(Collections.enumeration(mMapStoreFulFillmentKeyValue.values()));
         return listOfFulfillmentValue.get(listOfFulfillmentValue.size() - 1);
-    }
-
-    private boolean shouldUserSetSuburb() {
-        return TextUtils.isEmpty(mFulFillmentStoreId);
     }
 
     private void setResultCode(Integer resultCode) {
