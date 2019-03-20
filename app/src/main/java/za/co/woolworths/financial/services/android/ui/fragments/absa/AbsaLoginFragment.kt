@@ -66,7 +66,7 @@ class AbsaLoginFragment : AbsaFragmentExtension() {
         activity?.let {
             displayLoginProgress(true)
 
-            AbsaLoginRequest(it).make(userPin,aliasId, deviceId,
+            AbsaLoginRequest(it).make(userPin, aliasId, deviceId,
                     object : AbsaBankingOpenApiResponse.ResponseDelegate<LoginResponse> {
                         override fun onSuccess(response: LoginResponse?, cookies: MutableList<HttpCookie>?) {
                             response?.apply {
@@ -75,18 +75,18 @@ class AbsaLoginFragment : AbsaFragmentExtension() {
                                 } else {
                                     failureHandler(resultMessage ?: technical_error_occurred)
                                 }
-                            /* Work for WOP-3881
-                               Commented because header returning nil
-                                header?.apply {
-                                    if (statusCode == "0" || resultMessages.isEmpty()) {
-                                        successHandler(response)
-                                    } else {
-                                        if (statusCode == "1") {
-                                            failureHandler(header.resultMessages.first()?.responseMessage
-                                                    ?: technical_error_occurred)
+                                /* Work for WOP-3881
+                                   Commented because header returning nil
+                                    header?.apply {
+                                        if (statusCode == "0" || resultMessages.isEmpty()) {
+                                            successHandler(response)
+                                        } else {
+                                            if (statusCode == "1") {
+                                                failureHandler(header.resultMessages.first()?.responseMessage
+                                                        ?: technical_error_occurred)
+                                            }
                                         }
-                                    }
-                                }*/
+                                    }*/
                             }
                             displayLoginProgress(false)
                         }
@@ -99,12 +99,11 @@ class AbsaLoginFragment : AbsaFragmentExtension() {
     }
 
     private fun successHandler() {
-
+        tapAndDismissErrorDialog("Login Successful")
     }
 
     private fun failureHandler(message: String?) {
-        //TODO: implement failureHandler(response.header!.resultMessages.first?.responseMessage ??
-        // "Technical error occured.")
+        message?.let { tapAndNavigateBackErrorDialog(it) }
     }
 
     private fun createTextListener(edtEnterATMPin: EditText?) {
