@@ -157,11 +157,9 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
             refreshViewPagerFragment(true)
         }
 
-        if (requestCode == PDP_REQUEST_CODE) {
-            if (resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE) {
+        if (requestCode == PDP_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE) {
                 navigateToMyListFragment()
                 refreshViewPagerFragment(true)
-            }
         }
     }
 

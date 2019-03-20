@@ -47,12 +47,12 @@ public class ProductDetailsActivity extends AppCompatActivity implements IToastI
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == ADD_TO_SHOPPING_LIST_REQUEST_CODE) {
-            if (resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE) {
+        if (requestCode == ADD_TO_SHOPPING_LIST_REQUEST_CODE
+                && resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE) {
                 ToastFactory.Companion.buildShoppingListToast(this,flContentFrame, true, data, this);
                 return;
             }
-        }
+
         if (productDetailsFragmentNew != null)
             productDetailsFragmentNew.onActivityResult(requestCode, resultCode, data);
     }
