@@ -260,7 +260,9 @@ public class ProductSearchActivity extends AppCompatActivity
         if ((requestCode == PDP_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE)
                 || (requestCode == SHOPPING_LIST_SEARCH_RESULT_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE)) {
             setActivityResult(data, ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE);
-        } else if (requestCode == SHOPPING_LIST_SEARCH_RESULT_REQUEST_CODE && resultCode == ADDED_TO_SHOPPING_LIST_RESULT_CODE) {
+        } 
+
+        if (requestCode == SHOPPING_LIST_SEARCH_RESULT_REQUEST_CODE && resultCode == ADDED_TO_SHOPPING_LIST_RESULT_CODE) {
             setActivityResult(data, ADDED_TO_SHOPPING_LIST_RESULT_CODE);
         }
     }
