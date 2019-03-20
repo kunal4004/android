@@ -36,9 +36,10 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-import static za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_RESULT_CODE;
+import static za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListSearchResultActivity.SHOPPING_LIST_SEARCH_RESULT_REQUEST_CODE;
+import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.ADDED_TO_SHOPPING_LIST_RESULT_CODE;
 
 public class ProductSearchActivity extends AppCompatActivity
 		implements View.OnClickListener {
@@ -253,17 +254,24 @@ public class ProductSearchActivity extends AppCompatActivity
 
 	}
 
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		if ((requestCode == PDP_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_RESULT_CODE)
-				|| (requestCode == SHOPPING_LIST_SEARCH_RESULT_REQUEST_CODE
-				&& resultCode == ADD_TO_SHOPPING_LIST_RESULT_CODE)) {
-			setResult(ADD_TO_SHOPPING_LIST_RESULT_CODE, data);
-			finish();
-			overridePendingTransition(0, 0);
-		}
-	}
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if ((requestCode == PDP_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE)
+                || (requestCode == SHOPPING_LIST_SEARCH_RESULT_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE)) {
+            setActivityResult(data, ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE);
+        } 
+
+        if (requestCode == SHOPPING_LIST_SEARCH_RESULT_REQUEST_CODE && resultCode == ADDED_TO_SHOPPING_LIST_RESULT_CODE) {
+            setActivityResult(data, ADDED_TO_SHOPPING_LIST_RESULT_CODE);
+        }
+    }
+
+    private void setActivityResult(Intent data, int addToShoppingListResultCode) {
+        setResult(addToShoppingListResultCode, data);
+        finish();
+        overridePendingTransition(0, 0);
+    }
 
 	@Override
 	protected void onDestroy() {

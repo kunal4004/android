@@ -16,7 +16,7 @@ import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
 import za.co.woolworths.financial.services.android.models.dto.RootCategories
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
-import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_RESULT_CODE
+import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE
@@ -149,7 +149,7 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
             if (resultCode == DISPLAY_TOAST_RESULT_CODE) {
                 navigateToMyListFragment()
                 refreshViewPagerFragment(true)
-            } else if (resultCode == ADD_TO_SHOPPING_LIST_RESULT_CODE) {
+            } else if (resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE) {
                 refreshViewPagerFragment(true)
             }
         }
@@ -157,11 +157,9 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
             refreshViewPagerFragment(true)
         }
 
-        if (requestCode == PDP_REQUEST_CODE) {
-            if (resultCode == ADD_TO_SHOPPING_LIST_RESULT_CODE) {
+        if (requestCode == PDP_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE) {
                 navigateToMyListFragment()
                 refreshViewPagerFragment(true)
-            }
         }
     }
 

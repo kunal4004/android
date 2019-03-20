@@ -10,8 +10,6 @@ import android.widget.FrameLayout;
 
 import com.awfs.coordination.R;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -23,8 +21,7 @@ import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseVie
 import za.co.woolworths.financial.services.android.util.Utils;
 
 import static za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_REQUEST_CODE;
-import static za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_RESULT_CODE;
-import static za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST;
+import static za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE;
 
 public class ProductDetailsActivity extends AppCompatActivity implements IToastInterface {
 
@@ -50,12 +47,12 @@ public class ProductDetailsActivity extends AppCompatActivity implements IToastI
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == ADD_TO_SHOPPING_LIST_REQUEST_CODE) {
-            if (resultCode == ADD_TO_SHOPPING_LIST_RESULT_CODE) {
+        if (requestCode == ADD_TO_SHOPPING_LIST_REQUEST_CODE
+                && resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE) {
                 ToastFactory.Companion.buildShoppingListToast(this,flContentFrame, true, data, this);
                 return;
             }
-        }
+
         if (productDetailsFragmentNew != null)
             productDetailsFragmentNew.onActivityResult(requestCode, resultCode, data);
     }
