@@ -21,6 +21,7 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
 
     companion object {
         private const val POLLING_INTERVAL: Long = 10
+        private const val technical_error_occurred = "Technical error occurred."
     }
 
     private var acceptedResultMessages = mutableListOf("success", "processing")
@@ -74,7 +75,7 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
                             val acceptedResultMessages = mutableListOf("success", "processed")
                             val failedResultMessages = mutableListOf("failed", "rejected")
                             val continuePollingProcessResultMessage = mutableListOf("processing")
-                            val presentOTPScreenResultMessage = mutableListOf("processing")
+                            val presentOTPScreenResultMessage = mutableListOf("revertback")
 
                             response?.result?.toLowerCase().apply {
                                 when (this) {
@@ -123,12 +124,12 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
 
     private fun failureHandler(response: ValidateSureCheckResponse?) {
         failureHandler(response?.header?.resultMessages?.first()?.responseMessage
-                ?: "Technical error occured.", true)
+                ?: technical_error_occurred, true)
     }
 
     private fun failureHandler(response: String?, shouldDismissActivity: Boolean) {
         mValidatePinCodeDialogInterface?.onFailureHandler(response
-                ?: "Technical error occured", shouldDismissActivity)
+                ?: technical_error_occurred, shouldDismissActivity)
     }
 
     fun createAlias(jSession: JSession) {
@@ -148,7 +149,7 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
                         navigateToRegisterCredential(jSession)
                     } else {
                         failureHandler(header?.resultMessages?.first()?.responseMessage
-                                ?: "Technical error occured.", true)
+                                ?: technical_error_occurred, true)
                     }
                 }
             }
