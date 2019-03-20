@@ -26,7 +26,7 @@ class AddToShoppingListActivity : AppCompatActivity(), IDialogListener {
 
     companion object {
         const val ADD_TO_SHOPPING_LIST_REQUEST_CODE = 1209
-        const val ADD_TO_SHOPPING_LIST_RESULT_CODE = 1210
+        const val ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE = 1210
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -15,7 +15,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.lis
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-import static za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_RESULT_CODE;
+import static za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity.PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.ADDED_TO_SHOPPING_LIST_RESULT_CODE;
@@ -86,9 +86,9 @@ public class ShoppingListDetailActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         // response from product detail page
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.flShoppingListDetailFragment);
-        if ((requestCode == PDP_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_RESULT_CODE)
-                || (requestCode == PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_RESULT_CODE)) {
-            setResult(ADD_TO_SHOPPING_LIST_RESULT_CODE, data);
+        if ((requestCode == PDP_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE)
+                || (requestCode == PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE)) {
+            setResult(ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE, data);
             finish();
             overridePendingTransition(0, 0);
             return;
