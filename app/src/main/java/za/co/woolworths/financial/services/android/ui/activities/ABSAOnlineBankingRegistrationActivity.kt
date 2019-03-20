@@ -1,11 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.activities
 
-import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.MenuItem
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_online_banking_to_device_activity.*
