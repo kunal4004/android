@@ -48,7 +48,7 @@ public class AbsaCreateAliasRequest {
 		headers.put("action", "createAlias");
 		headers.put("JSESSIONID", jSession.getId());
 
-		final String body = new CreateAliasRequest(deviceId, sessionKey.getEncryptedKeyBase64Encoded()).getJson();
+		final String body = new CreateAliasRequest(deviceId, sessionKey.getEncryptedKeyBase64Encoded(), sessionKey.getEncryptedIVBase64Encoded()).getJson();
 		final AbsaBankingOpenApiRequest request = new AbsaBankingOpenApiRequest<>(CreateAliasResponse.class, headers, body, new AbsaBankingOpenApiResponse.Listener<CreateAliasResponse>(){
 
 			@Override
@@ -59,7 +59,7 @@ public class AbsaCreateAliasRequest {
 						byte[] encryptedAliasBytes = response.getAliasId().getBytes(StandardCharsets.UTF_8);
 						byte[] encryptedAliasBase64DecodedBytes = Base64.decode(encryptedAliasBytes, Base64.NO_WRAP);
 
-						byte[] aliasBytes = SymmetricCipher.Aes256Decrypt(sessionKey.getKey(), encryptedAliasBase64DecodedBytes);
+						byte[] aliasBytes = SymmetricCipher.Aes256Decrypt(sessionKey.getKey(), encryptedAliasBase64DecodedBytes, sessionKey.getIV());
 						byte[] aliasBase64DecodedBytes = Base64.decode(Base64.encodeToString(aliasBytes, Base64.NO_WRAP), Base64.DEFAULT);
 						String decryptedAlias = new String(aliasBase64DecodedBytes, StandardCharsets.UTF_8);
 

@@ -77,12 +77,9 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
 
     private fun navigateToFiveDigitCodeFragment() {
         if ((edtEnterATMPin.length() - 1) == AbsaEnterAtmPinCodeFragment.MAXIMUM_PIN_ALLOWED) {
-
             activity?.let {
                 progressIndicator(VISIBLE)
-                var pinCode = edtEnterATMPin.text.toString()
-                mCreditAccountInfo = "4103748566552471"
-                pinCode = "5053"
+                val pinCode = edtEnterATMPin.text.toString()
                 ValidateATMPinCode(mCreditAccountInfo, pinCode, this).make()
             }
         }
