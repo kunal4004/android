@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rlAbsaAtmFragmentContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
@@ -33,7 +34,6 @@
         android:textSize="@dimen/fifteen_sp"
         app:WTextView_font="myriadpro_regular" />
 
-
     <LinearLayout
         android:id="@+id/llPinCodeContainer"
         android:layout_width="match_parent"
@@ -42,7 +42,7 @@
         android:layout_gravity="center"
         android:layout_marginTop="0dp"
         android:background="@color/white"
-        android:gravity="center"
+        android:gravity="center|center_vertical"
         android:orientation="horizontal">
 
         <ImageView
@@ -87,6 +87,16 @@
 
     </LinearLayout>
 
+    <ProgressBar
+        android:id="@+id/pbEnterAtmPin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/llPinCodeContainer"
+        android:layout_gravity="center"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/sixteen_dp"
+        android:indeterminateTint="@color/black"
+        android:visibility="invisible" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -103,7 +113,6 @@
             android:gravity="start"
             android:text="@string/absa_biometric_forgot_atm_pin_code"
             android:textColor="@color/black" />
-
 
         <ImageView
             android:id="@+id/ivNavigateToDigitFragment"

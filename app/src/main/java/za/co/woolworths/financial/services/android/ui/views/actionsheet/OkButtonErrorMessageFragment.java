@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.views.actionsheet;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,24 +9,21 @@ import android.view.View;
 
 import com.awfs.coordination.R;
 
-import za.co.woolworths.financial.services.android.contracts.IDialogListener;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
-public class SingleButtonDialogFragment extends ActionSheetDialogFragment implements View.OnClickListener {
+public class OkButtonErrorMessageFragment extends ActionSheetDialogFragment implements View.OnClickListener {
 
-    private IDialogListener mDialogListener;
-
-    public static SingleButtonDialogFragment newInstance(String responseDesc) {
-        SingleButtonDialogFragment singleButtonDialogFragment = new SingleButtonDialogFragment();
+    public static OkButtonErrorMessageFragment newInstance(String responseDesc) {
+        OkButtonErrorMessageFragment singleButtonDialogFragment = new OkButtonErrorMessageFragment();
         Bundle bundle = new Bundle();
         bundle.putString("responseDesc", responseDesc);
         singleButtonDialogFragment.setArguments(bundle);
         return singleButtonDialogFragment;
     }
 
-    public static SingleButtonDialogFragment newInstance(String responseDesc, String buttonText) {
-        SingleButtonDialogFragment singleButtonDialogFragment = new SingleButtonDialogFragment();
+    public static OkButtonErrorMessageFragment newInstance(String responseDesc, String buttonText) {
+        OkButtonErrorMessageFragment singleButtonDialogFragment = new OkButtonErrorMessageFragment();
         Bundle bundle = new Bundle();
         bundle.putString("responseDesc", responseDesc);
         bundle.putString("okButtonText", buttonText);
@@ -39,11 +35,6 @@ public class SingleButtonDialogFragment extends ActionSheetDialogFragment implem
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         addContentView(R.layout.single_button_dialog_fragment);
-
-        Activity activity = getActivity();
-        if (activity instanceof IDialogListener) {
-            mDialogListener = (IDialogListener) activity;
-        }
 
         Bundle bundleArguments = getArguments();
         String mResponseDesc = bundleArguments.getString("responseDesc");
@@ -77,8 +68,6 @@ public class SingleButtonDialogFragment extends ActionSheetDialogFragment implem
 
     private void navigateBackToActivity() {
         shouldAnimateViewOnCancel(true);
-        if (mDialogListener != null)
-            mDialogListener.onDialogDismissed();
     }
 
 

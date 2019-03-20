@@ -49,6 +49,8 @@ import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.PersonalLoanAmount;
 import za.co.woolworths.financial.services.android.util.Utils;
 
+import static za.co.woolworths.financial.services.android.ui.fragments.absa.AbsaPinCodeSuccessFragment.ABSA_REGISTRATION_COMPLETE_RESULT_CODE;
+
 public class MyAccountCardsActivity extends AppCompatActivity
         implements View.OnClickListener,
         PersonalLoanAmount {
@@ -69,7 +71,7 @@ public class MyAccountCardsActivity extends AppCompatActivity
     private NestedScrollView mScrollAccountCard;
     int currentPosition = 0;
     public static WMaterialShowcaseView walkThroughPromtView = null;
-    public static int ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE = 2111;
+    public static final int ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE = 2111;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -415,7 +417,6 @@ public class MyAccountCardsActivity extends AppCompatActivity
         @Override
         public void onActivityResult(int requestCode, int resultCode, Intent data) {
             super.onActivityResult(requestCode, resultCode, data);
-
             getActivity().setResult(resultCode);
         }
     }
@@ -547,28 +548,22 @@ public class MyAccountCardsActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         //Absa registration activity request and result code
-        if (requestCode == ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                if (pager != null) {
-                    getCurrentFragmentFromViewpager(pager.getCurrentItem());
-                }
-
-                return;
-            }
+        if (requestCode == ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE
+                && resultCode == ABSA_REGISTRATION_COMPLETE_RESULT_CODE) {
+            if (fragmentPager != null) getCurrentFragmentFromViewpager(pager.getCurrentItem());
         }
     }
 
     private void getCurrentFragmentFromViewpager(int position) {
-        Fragment fragment = (Fragment) pager.getAdapter().instantiateItem(pager, position);
+        Fragment fragment = (Fragment) fragmentPager.getAdapter().instantiateItem(fragmentPager, position);
         if ((fragment instanceof WStoreCardFragment)
                 || (fragment instanceof WPersonalLoanFragment)
                 || (fragment instanceof WCreditCardFragment)) {
             switch (position) {
-
                 case 1:
-                    ((WCreditCardFragment) fragment).updateABSATitle();
+                    if (fragment instanceof WCreditCardFragment)
+                        ((WCreditCardFragment) fragment).updateABSATitle();
                     break;
 
                 default:

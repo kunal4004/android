@@ -16,6 +16,8 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_five_digit_code_fragment.*
 import android.os.Vibrator
 import android.util.Log
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import com.google.gson.Gson
@@ -27,7 +29,6 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import java.net.HttpCookie
-
 
 class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener, IVibrateComplete {
 
@@ -50,6 +51,17 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.apply {
+            mBundleFiveDigitCodePinCode = getInt(FIVE_DIGIT_PIN_CODE, 0)
+            if (containsKey(JSESSION)) {
+                val jSession = getString(JSESSION)
+                mJSession = Gson().fromJson(jSession, JSession::class.java)
+            }
+        }
+    }
+
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater!!.inflate(R.layout.absa_five_digit_code_fragment, container, false)
     }
@@ -62,7 +74,6 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
     }
 
     private fun initViewsAndEvents() {
-        setArguments()
         tvEnterYourPin.setText(getString(R.string.absa_confirm_five_digit_code_title))
         mPinImageViewList = mutableListOf(ivPin1, ivPin2, ivPin3, ivPin4, ivPin5)
         ivEnterFiveDigitCode.setOnClickListener(this)
@@ -74,14 +85,6 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
                 navigateToAbsaBiometricScreen()
             }
             handled
-        }
-    }
-
-    private fun setArguments() {
-        arguments?.apply {
-            mBundleFiveDigitCodePinCode = getInt(FIVE_DIGIT_PIN_CODE)
-            getString(JSESSION)?.apply { mJSession = Gson().fromJson(this, JSession::class.java) }
-
         }
     }
 
@@ -107,7 +110,7 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
                             Log.d("onSuccess", "onSuccess")
                             response.apply {
                                 if (header?.resultMessages?.size == 0 || aliasId != null) {
-                                    successHandler(response)
+                                    successHandler()
                                 } else {
                                     failureHandler(header?.resultMessages?.first()?.responseMessage)
                                 }
@@ -125,7 +128,7 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
         }
     }
 
-    private fun successHandler(response: RegisterCredentialResponse) {
+    private fun successHandler() {
         replaceFragment(
                 fragment = AbsaBiometricFragment.newInstance(),
                 tag = AbsaBiometricFragment::class.java.simpleName,
@@ -139,8 +142,7 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
     }
 
     private fun failureHandler(message: String?) {
-        //TODO: implement failureHandler(response.header!.resultMessages.first?.responseMessage ??
-        // "Technical error occured.")
+        view?.postDelayed({ message?.let { tapAndDismissErrorDialog(it) } }, 200)
     }
 
     private fun createTextListener(edtEnterATMPin: EditText?) {
@@ -246,7 +248,7 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
     }
 
     fun displayRegisterCredentialProgress(state: Boolean) {
-        pbRegisterCredential.visibility = if (state) View.VISIBLE else View.GONE
+        pbRegisterCredential.visibility = if (state) VISIBLE else INVISIBLE
     }
 
 }

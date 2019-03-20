@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.absa
 
-import android.app.Activity.RESULT_OK
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.app.Fragment
@@ -15,12 +14,13 @@ import za.co.woolworths.financial.services.android.util.SessionUtilities
 class AbsaPinCodeSuccessFragment : Fragment() {
 
     companion object {
-        const val DELAY_CLOSING_ACTIVITY = 2000
+        const val DELAY_CLOSING_ACTIVITY: Long = 2 * 1000
+        const val ABSA_REGISTRATION_COMPLETE_RESULT_CODE = 2112
         fun newInstance() = AbsaPinCodeSuccessFragment()
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.absa_pin_code_complete_fragment, container, false)
+        return inflater?.inflate(R.layout.absa_pin_code_complete_fragment, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
@@ -38,16 +38,15 @@ class AbsaPinCodeSuccessFragment : Fragment() {
         val handler: Handler? = Handler()
         handler?.postDelayed({
             activity?.apply {
-                setResult(RESULT_OK)
+                setResult(ABSA_REGISTRATION_COMPLETE_RESULT_CODE)
                 finish()
                 overridePendingTransition(R.anim.stay, android.R.anim.fade_out)
             }
-        }, DELAY_CLOSING_ACTIVITY.toLong())
+        }, DELAY_CLOSING_ACTIVITY)
     }
 
     private fun initView() {
-        val jwtDecoded = SessionUtilities.getInstance().jwt
-        val name = jwtDecoded?.name?.get(0)
+        val name = SessionUtilities.getInstance().jwt?.name?.get(0)
         tvTitle.text = getString(R.string.absa_success_title, name)
     }
 }
