@@ -49,8 +49,6 @@ import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.PersonalLoanAmount;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-import static za.co.woolworths.financial.services.android.ui.fragments.absa.AbsaPinCodeSuccessFragment.ABSA_REGISTRATION_COMPLETE_RESULT_CODE;
-
 public class MyAccountCardsActivity extends AppCompatActivity
         implements View.OnClickListener,
         PersonalLoanAmount {
@@ -550,7 +548,7 @@ public class MyAccountCardsActivity extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
         //Absa registration activity request and result code
         if (requestCode == ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE
-                && resultCode == ABSA_REGISTRATION_COMPLETE_RESULT_CODE) {
+                && resultCode == RESULT_OK) {
             if (fragmentPager != null) getCurrentFragmentFromViewpager(pager.getCurrentItem());
         }
     }
