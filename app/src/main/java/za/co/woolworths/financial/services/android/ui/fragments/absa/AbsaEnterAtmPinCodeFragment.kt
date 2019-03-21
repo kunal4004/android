@@ -49,13 +49,7 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
     }
 
     private fun getBundleArguments() {
-<<<<<<< HEAD
-        mCreditAccountInfo = arguments?.getString("accountNumber") ?: ""
-=======
-        val bundle: Bundle? = arguments
-
         mCreditAccountInfo = arguments?.getString("creditCardToken") ?: ""
->>>>>>> d2f85d8d9a820d6dcfc9f33641df40097f9bfc11
     }
 
     private fun maskPinNumber() {
@@ -84,16 +78,8 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
 
             activity?.let {
                 val pinCode = edtEnterATMPin.text.toString()
-<<<<<<< HEAD
                 progressIndicator(VISIBLE)
                 ValidateATMPinCode("4103741655806361", "6666", this).make()
-=======
-                val fm = (it as? AppCompatActivity)?.supportFragmentManager
-                val validateCardAndPinDialogFragment = AbsaValidateCardAndPinDialogFragment.newInstance("4103759011454901", "1011")
-                // Set the calling fragment for this dialog.
-                validateCardAndPinDialogFragment.setTargetFragment(this, 0)
-                validateCardAndPinDialogFragment.show(fm, AbsaValidateCardAndPinDialogFragment::class.java.simpleName)
->>>>>>> d2f85d8d9a820d6dcfc9f33641df40097f9bfc11
             }
         }
     }
