@@ -27,6 +27,7 @@ import android.widget.RelativeLayout;
 import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.GridLayoutBinding;
+import com.crashlytics.android.Crashlytics;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -527,7 +528,7 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 	private void showFeatureWalkthrough() {
 		if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.refineProducts)
 			return;
-
+		Crashlytics.setString(getString(R.string.crashlytics_materialshowcase_key),this.getClass().getCanonicalName());
 		getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.REFINE)
 				.setTarget(getViewDataBinding().sortAndRefineLayout.refineDownArrow)
 				.setTitle(R.string.walkthrough_refine_title)

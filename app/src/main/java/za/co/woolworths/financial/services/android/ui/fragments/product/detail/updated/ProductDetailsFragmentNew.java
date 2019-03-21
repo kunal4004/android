@@ -28,6 +28,7 @@ import android.widget.ViewSwitcher;
 import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.ProductDetailsFragmentNewBinding;
+import com.crashlytics.android.Crashlytics;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -1249,6 +1250,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
             return;
         if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.findInStore)
             return;
+        Crashlytics.setString(getString(R.string.crashlytics_materialshowcase_key),this.getClass().getCanonicalName());
         ProductDetailsActivity.walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.FIND_IN_STORE)
                 .setTarget(btnFindInStore)
                 .setTitle(R.string.tips_tricks_titles_stores)

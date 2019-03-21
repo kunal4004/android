@@ -898,4 +898,6 @@
     <string name="deselect">DESELECT</string>
     <string name="card_number_not_found">Card number not found</string>
     <string name="check_connection_status">Check your connection and try again.</string>
+
+    <string name="crashlytics_materialshowcase_key">materialshowcase_parent</string>
 </resources>

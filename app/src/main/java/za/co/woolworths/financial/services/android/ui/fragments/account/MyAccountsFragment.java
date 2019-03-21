@@ -24,6 +24,7 @@ import android.widget.RelativeLayout;
 import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.MyAccountsFragmentBinding;
+import com.crashlytics.android.Crashlytics;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -927,6 +928,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			@Override
 			protected void onPostExecute(Void aVoid) {
 				super.onPostExecute(aVoid);
+				Crashlytics.setString(getString(R.string.crashlytics_materialshowcase_key),this.getClass().getCanonicalName());
 				getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.ACCOUNTS)
 						.setTarget(target)
 						.setTitle(R.string.tips_tricks_view_your_accounts)
