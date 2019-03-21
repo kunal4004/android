@@ -24,10 +24,9 @@ class AbsaFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener 
         private const val MAXIMUM_PIN_ALLOWED: Int = 4
         private const val JSESSION = "JSESSION"
         fun newInstance(jSession: JSession) = AbsaFiveDigitCodeFragment().apply {
-            arguments?.apply {
-                Bundle(1).apply {
+            arguments = Bundle(1).apply {
                     putString(JSESSION, Gson().toJson(jSession))
-                }
+
             }
         }
     }

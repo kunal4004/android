@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.views
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Point
 import android.os.Handler
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -15,17 +16,20 @@ import za.co.woolworths.financial.services.android.contracts.IToastInterface
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment
 import android.util.DisplayMetrics
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import za.co.woolworths.financial.services.android.util.ScreenManager
+
 
 class ToastFactory {
 
     companion object {
         private const val POPUP_DELAY_MILLIS = 3000
 
-        fun buildShoppingListToast(viewLocation: View, buttonIsVisible: Boolean, data: Intent?, toastInterface: IToastInterface): PopupWindow? {
+        fun buildShoppingListToast(activity: Activity,viewLocation: View, buttonIsVisible: Boolean, data: Intent?, toastInterface: IToastInterface): PopupWindow? {
             val context = WoolworthsApplication.getAppContext()
 
             val shoppingList = data?.getStringExtra(AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST)
@@ -54,8 +58,8 @@ class ToastFactory {
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT, true)
 
-            tvButtonClick?.visibility = if (buttonIsVisible) View.VISIBLE else View.GONE
-            tvBoldTitle?.visibility = View.VISIBLE
+            tvButtonClick?.visibility = if (buttonIsVisible) VISIBLE else GONE
+            tvBoldTitle?.visibility = VISIBLE
             tvAddedTo?.setAllCaps(true)
 
             shoppingListObject?.let {
@@ -77,7 +81,7 @@ class ToastFactory {
 
             // dismiss the popup window after 3sec
             Handler().postDelayed({ popupWindow.dismiss() }, POPUP_DELAY_MILLIS.toLong())
-            popupWindow.showAtLocation(viewLocation, Gravity.BOTTOM, 0, convertDpToPixel(60f, context))
+            popupWindow.showAtLocation(viewLocation, Gravity.BOTTOM, 0, convertDpToPixel(getDeviceHeight(activity), context))
             popupWindow.isOutsideTouchable = true
             return popupWindow
         }
@@ -100,8 +104,8 @@ class ToastFactory {
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT, true)
 
-            tvButtonClick?.visibility = if (buttonIsVisible) View.VISIBLE else View.GONE
-            tvBoldTitle?.visibility = View.GONE
+            tvButtonClick?.visibility = if (buttonIsVisible) VISIBLE else GONE
+            tvBoldTitle?.visibility = GONE
             tvAddedTo?.text = context.getString(R.string.toast_added_to_cart)
             tvAddedTo?.setAllCaps(true)
 
@@ -113,9 +117,103 @@ class ToastFactory {
 
             // dismiss the popup window after 3sec
             Handler().postDelayed({ popupWindow.dismiss() }, POPUP_DELAY_MILLIS.toLong())
-            popupWindow.showAtLocation(viewLocation, Gravity.BOTTOM, 0, convertDpToPixel(60f, context))
+            popupWindow.showAtLocation(viewLocation, Gravity.BOTTOM, 0, convertDpToPixel(getDeviceHeight(activity), context))
+            popupWindow.isOutsideTouchable = true
+            return popupWindow
+        }
+
+        fun showToast(activity: Activity,viewLocation: View, message: String): PopupWindow? {
+            val context = WoolworthsApplication.getAppContext()
+            // inflate your xml layout
+            val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as? LayoutInflater
+            val layout = inflater?.inflate(R.layout.add_to_cart_success, null)
+            // set the custom display
+            val tvButtonClick = layout?.findViewById<WTextView>(R.id.tvView)
+            val tvBoldTitle = layout?.findViewById<WTextView>(R.id.tvCart)
+            val tvAddedTo = layout?.findViewById<WTextView>(R.id.tvAddToCart)
+            // initialize your popupWindow and use your custom layout as the view
+            val popupWindow = PopupWindow(layout,
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT, true)
+
+            tvButtonClick?.visibility = GONE
+            tvBoldTitle?.visibility = VISIBLE
+            tvAddedTo?.visibility = GONE
+            tvAddedTo?.setAllCaps(true)
+
+            // dismiss the popup window after 3sec
+            Handler().postDelayed({ popupWindow.dismiss() }, POPUP_DELAY_MILLIS.toLong())
+            popupWindow.showAtLocation(viewLocation, Gravity.BOTTOM, 0, convertDpToPixel(getDeviceHeight(activity), context))
+            popupWindow.isOutsideTouchable = true
+            return popupWindow
+        }
+
+        fun buildShoppingListFromSearchResultToast(activity: Activity, viewLocation: View, listName: String, count: Int): PopupWindow? {
+            val context = WoolworthsApplication.getAppContext()
+
+            // inflate your xml layout
+            val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as? LayoutInflater
+            val layout = inflater?.inflate(R.layout.add_to_cart_success, null)
+            // set the custom display
+            val tvButtonClick = layout?.findViewById<WTextView>(R.id.tvView)
+            val tvBoldTitle = layout?.findViewById<WTextView>(R.id.tvCart)
+            val tvAddedTo = layout?.findViewById<WTextView>(R.id.tvAddToCart)
+            // initialize your popupWindow and use your custom layout as the view
+            val popupWindow = PopupWindow(layout,
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT, true)
+
+            tvButtonClick?.visibility = GONE
+            tvBoldTitle?.visibility = VISIBLE
+            tvAddedTo?.setAllCaps(true)
+            tvAddedTo?.setText("$count ITEM".plus(if (count > 1) "S" else "").plus(" ADDED TO"))
+            tvBoldTitle?.setText(listName)
+
+
+            // dismiss the popup window after 3sec
+            Handler().postDelayed({ popupWindow.dismiss() }, POPUP_DELAY_MILLIS.toLong())
+            popupWindow.showAtLocation(viewLocation, Gravity.BOTTOM, 0, convertDpToPixel(getDeviceHeight(activity), context))
+            popupWindow.isOutsideTouchable = true
+            return popupWindow
+        }
+
+        private fun getDeviceHeight(activity: Activity): Float {
+            val display = activity.windowManager?.defaultDisplay
+            val size = Point()
+            display?.getSize(size)
+            return (size.y * (3/4)).toFloat() + 100f
+        }
+
+        fun buildAddToCartSuccessToast(viewLocation: View, buttonIsVisible: Boolean, activity: Activity, toastInterface: IToastInterface): PopupWindow? {
+            val context = WoolworthsApplication.getAppContext()
+            // inflate your xml layout
+            val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as? LayoutInflater
+            val layout = inflater?.inflate(R.layout.add_to_cart_success, null)
+            // set the custom display
+            val tvButtonClick = layout?.findViewById<WTextView>(R.id.tvView)
+            val tvBoldTitle = layout?.findViewById<WTextView>(R.id.tvCart)
+            val tvAddedTo = layout?.findViewById<WTextView>(R.id.tvAddToCart)
+            // initialize your popupWindow and use your custom layout as the view
+            val popupWindow = PopupWindow(layout,
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT, true)
+
+            tvButtonClick?.visibility = if (buttonIsVisible) VISIBLE else GONE
+            tvBoldTitle?.visibility = GONE
+            tvAddedTo?.text = context.getString(R.string.toast_added_to_cart)
+            tvAddedTo?.setAllCaps(true)
+
+            tvButtonClick?.setOnClickListener {
+                toastInterface.onToastButtonClicked(JsonObject())
+                popupWindow.dismiss() // dismiss the window
+            }
+
+            // dismiss the popup window after 3sec
+            Handler().postDelayed({ popupWindow.dismiss() }, POPUP_DELAY_MILLIS.toLong())
+            popupWindow.showAtLocation(viewLocation, Gravity.BOTTOM, 0, convertDpToPixel(getDeviceHeight(activity), context))
             popupWindow.isOutsideTouchable = true
             return popupWindow
         }
     }
+
 }

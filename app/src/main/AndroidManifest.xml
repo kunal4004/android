@@ -108,6 +108,9 @@
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_notification" />
         <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="wfs_channel_id"/>
+        <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
         <meta-data
@@ -367,6 +370,18 @@
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustResize|stateAlwaysVisible"
             android:screenOrientation="portrait"/>
+
+        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListDetailActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ShoppingListDetailActivityStyle"
+
+            />
+
+        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListSearchResultActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ShoppingListDetailActivityStyle"
+            />
+
     </application>
 
 </manifest>

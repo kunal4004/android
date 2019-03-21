@@ -18,11 +18,15 @@ public class ValidateCardAndPinRequest {
 	@SerializedName("symmetricKey")
 	private String symmetricKey;
 
-	public ValidateCardAndPinRequest(final String cardToken, final String cardPin, final String symmetricKey){
+	@SerializedName("symmetricKeyIV")
+	private String symmetricKeyIV;
+
+	public ValidateCardAndPinRequest(final String cardToken, final String cardPin, final String symmetricKey, final String symmetricKeyIV){
 		this.header = new Header();
 		this.cardToken = cardToken;
 		this.cardPin = cardPin;
 		this.symmetricKey = symmetricKey;
+		this.symmetricKeyIV = symmetricKeyIV;
 	}
 
 	public final String getJson(){

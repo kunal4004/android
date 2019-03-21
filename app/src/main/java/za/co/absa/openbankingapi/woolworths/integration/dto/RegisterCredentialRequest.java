@@ -20,6 +20,9 @@ public class RegisterCredentialRequest {
 	@SerializedName("symmetricKey")
 	private String symmetricKey;
 
+    @SerializedName("symmetricKeyIV")
+    private String symmetricKeyIV;
+
 	public static class CredentialVO {
 		@SerializedName("aliasId")
 		private String aliasId;
@@ -37,12 +40,13 @@ public class RegisterCredentialRequest {
 		}
 	}
 
-	public RegisterCredentialRequest(String aliasId, String deviceId, CredentialVO[] credentialVOs, String symmetricKey){
+	public RegisterCredentialRequest(String aliasId, String deviceId, CredentialVO[] credentialVOs, String symmetricKey, String symmetricKeyIV){
 		this.header = new Header();
 		this.aliasId = aliasId;
 		this.deviceId = deviceId;
 		this.credentialVOs = credentialVOs;
 		this.symmetricKey = symmetricKey;
+		this.symmetricKeyIV = symmetricKeyIV;
 	}
 
 	public final String getJson(){

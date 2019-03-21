@@ -11,11 +11,12 @@ import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_shop.*
 import kotlinx.android.synthetic.main.shop_custom_tab.view.*
+import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
 import za.co.woolworths.financial.services.android.models.dto.RootCategories
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
-import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_RESULT_CODE
+import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE
@@ -43,6 +44,7 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
     private var rootCategories: RootCategories? = null
     private var ordersResponse: OrdersResponse? = null
     private var shoppingListsResponse: ShoppingListsResponse? = null
+    public var user: String = ""
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -110,6 +112,7 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
             //do when hidden
             (activity as BottomNavigationActivity).fadeOutToolbar(R.color.recent_search_bg)
             (activity as BottomNavigationActivity).showBackNavigationIcon(false)
+            refreshViewPagerFragment(false)
         }
     }
 
@@ -145,32 +148,30 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
         if (requestCode == ADD_TO_SHOPPING_LIST_REQUEST_CODE) {
             if (resultCode == DISPLAY_TOAST_RESULT_CODE) {
                 navigateToMyListFragment()
-                refreshViewPagerFragment()
-            } else if (resultCode == ADD_TO_SHOPPING_LIST_RESULT_CODE) {
-                refreshViewPagerFragment()
+                refreshViewPagerFragment(true)
+            } else if (resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE) {
+                refreshViewPagerFragment(true)
             }
         }
         if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
-            refreshViewPagerFragment()
+            refreshViewPagerFragment(true)
         }
 
-        if (requestCode == PDP_REQUEST_CODE) {
-            if (resultCode == ADD_TO_SHOPPING_LIST_RESULT_CODE) {
+        if (requestCode == PDP_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE) {
                 navigateToMyListFragment()
-                refreshViewPagerFragment()
-            }
+                refreshViewPagerFragment(true)
         }
     }
 
-    fun refreshViewPagerFragment() {
+    fun refreshViewPagerFragment(isNewSession: Boolean) {
         when (viewpager_main.currentItem) {
             1 -> {
                 val myListsFragment = viewpager_main.adapter?.instantiateItem(viewpager_main, viewpager_main.currentItem) as? MyListsFragment
-                myListsFragment?.authenticateUser(true)
+                myListsFragment?.authenticateUser(isNewSession)
             }
             2 -> {
                 val myOrdersFragment = viewpager_main.adapter?.instantiateItem(viewpager_main, viewpager_main.currentItem) as? MyOrdersFragment
-                myOrdersFragment?.configureUI(true)
+                myOrdersFragment?.configureUI(isNewSession)
             }
         }
     }
@@ -205,11 +206,11 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
         this.rootCategories = rootCategories
     }
 
-    fun setShoppingListResponseData(shoppingListsResponse: ShoppingListsResponse) {
+    fun setShoppingListResponseData(shoppingListsResponse: ShoppingListsResponse?) {
         this.shoppingListsResponse = shoppingListsResponse
     }
 
-    fun setOrdersResponseData(ordersResponse: OrdersResponse) {
+    fun setOrdersResponseData(ordersResponse: OrdersResponse?) {
         this.ordersResponse = ordersResponse
     }
 
@@ -223,5 +224,17 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
 
     fun getOrdersResponseData(): OrdersResponse? {
         return ordersResponse
+    }
+
+    fun isDifferentUser(): Boolean {
+        return !user.equals(AppInstanceObject.get().getCurrentUserObject().id)
+    }
+
+    fun clearCachedData() {
+        if (isDifferentUser()) {
+            setOrdersResponseData(null)
+            setShoppingListResponseData(null)
+        }
+        user = AppInstanceObject.get().getCurrentUserObject().id
     }
 }
