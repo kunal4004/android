@@ -301,14 +301,12 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         switch (v.getId()) {
             case R.id.rlABSALinkOnlineBankingToDevice:
                 SessionDao aliasID = SessionDao.getByKey(SessionDao.KEY.ABSA_ALIASID);
-                if (TextUtils.isEmpty(aliasID.value)) {
+                SessionDao deviceID = SessionDao.getByKey(SessionDao.KEY.ABSA_DEVICEID);
+                if ((TextUtils.isEmpty(aliasID.value) && TextUtils.isEmpty(deviceID.value))) {
                     mGetCreditCardToken = getCreditCardToken(activity);
-                }
-                 else {
+                } else {
                     openAbsaOnLineBankingActivity(activity);
                 }
-
-
                 break;
             case R.id.rlViewTransactions:
             case R.id.tvViewTransaction:
@@ -590,7 +588,9 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
     }
 
     public void updateABSATitle() {
-        if (tvABSALinkOnlineBanking != null && !TextUtils.isEmpty(SessionDao.getByKey(SessionDao.KEY.ABSA_ALIASID).value))
+        if (tvABSALinkOnlineBanking != null
+                && !TextUtils.isEmpty(SessionDao.getByKey(SessionDao.KEY.ABSA_ALIASID).value)
+                && !TextUtils.isEmpty(SessionDao.getByKey(SessionDao.KEY.ABSA_DEVICEID).value))
             tvABSALinkOnlineBanking.setText(getString(R.string.online_banking));
     }
 
