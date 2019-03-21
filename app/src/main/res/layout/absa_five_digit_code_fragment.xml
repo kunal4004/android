@@ -94,7 +94,6 @@
         android:layout_gravity="center"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/sixteen_dp"
-        android:indeterminateTint="@color/black"
         android:visibility="invisible" />
 
     <ImageView

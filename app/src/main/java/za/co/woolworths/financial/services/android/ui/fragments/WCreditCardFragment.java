@@ -9,6 +9,7 @@ import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -654,7 +655,11 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
     }
 
     public void showGetCreditCardTokenProgressBar(int state) {
-        mPbGetCreditCardToken.setVisibility(state);
-        mImABSAViewOnlineBanking.setVisibility((state == VISIBLE) ? GONE : VISIBLE);
+        Activity activity = getActivity();
+        if (activity != null) {
+            mPbGetCreditCardToken.getIndeterminateDrawable().setColorFilter(ContextCompat.getColor(activity, R.color.black), android.graphics.PorterDuff.Mode.SRC_IN);
+            mPbGetCreditCardToken.setVisibility(state);
+            mImABSAViewOnlineBanking.setVisibility((state == VISIBLE) ? GONE : VISIBLE);
+        }
     }
 }

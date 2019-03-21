@@ -15,6 +15,7 @@ import android.widget.ImageView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_five_digit_code_fragment.*
 import android.os.Vibrator
+import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
@@ -249,6 +250,7 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
 
     fun displayRegisterCredentialProgress(state: Boolean) {
         pbRegisterCredential.visibility = if (state) VISIBLE else INVISIBLE
+        activity?.let { pbRegisterCredential?.indeterminateDrawable?.setColorFilter(ContextCompat.getColor(it, R.color.black), android.graphics.PorterDuff.Mode.SRC_IN) }
     }
 
 }
