@@ -33,10 +33,10 @@ public class AbsaBankingOpenApiRequest<T> extends Request<T> {
 		this.listener = listener;
 		this.body = body;
 
-		this.setRetryPolicy(new DefaultRetryPolicy(
-				9000,
-				5,
-				DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        this.setRetryPolicy(new DefaultRetryPolicy(
+                18 * 1000,
+                1,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 	}
 
 	public AbsaBankingOpenApiRequest(Class<T> clazz, Map<String, String> headers, String body, AbsaBankingOpenApiResponse.Listener<T> listener, Response.ErrorListener errorListener) {

@@ -15,9 +15,11 @@ import android.widget.ImageView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_five_digit_code_fragment.*
 import android.os.Vibrator
+import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import com.android.volley.VolleyError
 import com.google.gson.Gson
 import za.co.absa.openbankingapi.woolworths.integration.AbsaRegisterCredentialRequest
 import za.co.absa.openbankingapi.woolworths.integration.dao.JSession
@@ -25,6 +27,7 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.RegisterCredentialRe
 import za.co.woolworths.financial.services.android.contracts.IVibrateComplete
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse
+import za.co.absa.openbankingapi.woolworths.integration.service.VolleyErrorHandler
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import java.net.HttpCookie
 
@@ -103,6 +106,7 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
             displayRegisterCredentialProgress(true)
             AbsaRegisterCredentialRequest(it).make(aliasId, deviceId, fiveDigitPin, jSession,
                     object : AbsaBankingOpenApiResponse.ResponseDelegate<RegisterCredentialResponse> {
+
                         override fun onSuccess(response: RegisterCredentialResponse, cookies: List<HttpCookie>) {
                             Log.d("onSuccess", "onSuccess")
                             response.apply {
@@ -120,6 +124,10 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
                         override fun onFailure(errorMessage: String) {
                             Log.d("onSuccess", "onFailure")
                             displayRegisterCredentialProgress(false)
+                        }
+
+                        override fun onFatalError(error: VolleyError?) {
+                            (activity as? AppCompatActivity)?.apply { error?.let { error -> VolleyErrorHandler(this, error).show() } }
                         }
                     })
         }

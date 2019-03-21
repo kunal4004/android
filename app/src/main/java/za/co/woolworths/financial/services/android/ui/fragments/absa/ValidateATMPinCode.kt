@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.absa
 
 import android.util.Log
+import com.android.volley.VolleyError
 import za.co.absa.openbankingapi.woolworths.integration.AbsaCreateAliasRequest
 import za.co.absa.openbankingapi.woolworths.integration.AbsaValidateCardAndPinRequest
 import za.co.absa.openbankingapi.woolworths.integration.AbsaValidateSureCheckRequest
@@ -63,7 +64,15 @@ class ValidateATMPinCode(cardToken: String, pinCode: String, validatePinCodeDial
                     override fun onFailure(errorMessage: String?) {
                         failureHandler(errorMessage, false)
                     }
+
+                    override fun onFatalError(error: VolleyError?) {
+                        fatalErrorHandler(error)
+                    }
                 })
+    }
+
+    private fun fatalErrorHandler(error: VolleyError?) {
+        mValidatePinCodeDialogInterface?.onFatalError(error)
     }
 
     private fun failureHandler(responseMessage: String?, shouldDismissActivity: Boolean) {
@@ -79,6 +88,7 @@ class ValidateATMPinCode(cardToken: String, pinCode: String, validatePinCodeDial
         mScheduleValidateSureCheck = Executors.newSingleThreadScheduledExecutor().scheduleWithFixedDelay({
             AbsaValidateSureCheckRequest(WoolworthsApplication.getAppContext()).make(jSession,
                     object : AbsaBankingOpenApiResponse.ResponseDelegate<ValidateSureCheckResponse> {
+
                         override fun onSuccess(validateCardAndPinResponse: ValidateSureCheckResponse?, cookies: MutableList<HttpCookie>?) {
                             val resultMessage: String? = validateCardAndPinResponse?.result?.toLowerCase()
                                     ?: ""
@@ -125,7 +135,10 @@ class ValidateATMPinCode(cardToken: String, pinCode: String, validatePinCodeDial
                         override fun onFailure(errorMessage: String) {
                             Log.e("valideCardPin", "onFailure - AbsaBankingOpenApiResponse")
                             failureHandler(errorMessage, false)
+                        }
 
+                        override fun onFatalError(error: VolleyError?) {
+                            fatalErrorHandler(error)
                         }
                     })
         }, 0, POLLING_INTERVAL, TimeUnit.SECONDS)
@@ -134,6 +147,7 @@ class ValidateATMPinCode(cardToken: String, pinCode: String, validatePinCodeDial
     fun createAlias(jSession: JSession) {
         val deviceId = UUID.randomUUID().toString().replace("-", "")
         AbsaCreateAliasRequest(WoolworthsApplication.getAppContext()).make(deviceId, jSession, object : AbsaBankingOpenApiResponse.ResponseDelegate<CreateAliasResponse> {
+
             override fun onSuccess(response: CreateAliasResponse?, cookies: MutableList<HttpCookie>?) {
                 Log.e("validCardPin", "onSuccess - AbsaCreateAliasRequest")
                 response?.apply {
@@ -156,6 +170,10 @@ class ValidateATMPinCode(cardToken: String, pinCode: String, validatePinCodeDial
             override fun onFailure(errorMessage: String) {
                 Log.e("validCardPin", "onFailure - AbsaCreateAliasRequest")
                 failureHandler(errorMessage, false)
+            }
+
+            override fun onFatalError(error: VolleyError?) {
+                fatalErrorHandler(error)
             }
         })
     }

@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.absa
 
 import android.graphics.Paint
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -12,9 +13,11 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.ImageView
+import com.android.volley.VolleyError
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_pin_atm_fragment.*
 import za.co.absa.openbankingapi.woolworths.integration.dao.JSession
+import za.co.absa.openbankingapi.woolworths.integration.service.VolleyErrorHandler
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.contracts.IValidatePinCodeDialogInterface
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
@@ -182,6 +185,12 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
         progressIndicator(GONE)
         clearPin()
         view?.postDelayed({ showErrorMessage(responseMessage) }, 200)
+    }
+
+    override fun onFatalError(error: VolleyError?) {
+        progressIndicator(GONE)
+        clearPin()
+        (activity as? AppCompatActivity)?.apply { error?.let { VolleyErrorHandler(this, it).show() } }
     }
 
     override fun onResume() {
