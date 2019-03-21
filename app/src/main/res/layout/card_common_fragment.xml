@@ -467,7 +467,6 @@
                     android:layout_height="24dp"
                     android:visibility="gone"
                     android:layout_marginStart="@dimen/bank_spacing_width"
-                    android:indeterminateTint="@color/black"
                     android:id="@+id/pbGetCreditCardToken"/>
             </LinearLayout>
 
