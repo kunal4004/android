@@ -4,5 +4,5 @@ import za.co.absa.openbankingapi.woolworths.integration.dao.JSession
 
 interface IValidatePinCodeDialogInterface {
     fun onSuccessHandler(jSession: JSession)
-    fun onFailureHandler(responseMessage: String)
+    fun onFailureHandler(responseMessage: String, dismissActivity: Boolean)
 }
