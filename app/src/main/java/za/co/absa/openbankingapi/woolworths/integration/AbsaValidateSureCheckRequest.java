@@ -1,6 +1,5 @@
 package za.co.absa.openbankingapi.woolworths.integration;
 
-import android.content.Context;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -23,8 +22,8 @@ public class AbsaValidateSureCheckRequest {
 
 	private VolleySingleton requestQueue;
 
-	public AbsaValidateSureCheckRequest(final Context context){
-		this.requestQueue = VolleySingleton.getInstance(context.getApplicationContext());
+	public AbsaValidateSureCheckRequest(){
+		this.requestQueue = VolleySingleton.getInstance();
 	}
 
 	public void make(final JSession jSession, final AbsaBankingOpenApiResponse.ResponseDelegate<ValidateSureCheckResponse> responseDelegate){

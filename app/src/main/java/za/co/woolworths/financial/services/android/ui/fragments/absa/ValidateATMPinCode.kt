@@ -68,7 +68,7 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
 
     private fun validateSureCheck(jSession: JSession) {
         mScheduleValidateSureCheck = Executors.newSingleThreadScheduledExecutor().scheduleWithFixedDelay({
-            AbsaValidateSureCheckRequest(WoolworthsApplication.getAppContext()).make(jSession,
+            AbsaValidateSureCheckRequest().make(jSession,
                     object : AbsaBankingOpenApiResponse.ResponseDelegate<ValidateSureCheckResponse> {
                         override fun onSuccess(response: ValidateSureCheckResponse?, cookies: MutableList<HttpCookie>?) {
 

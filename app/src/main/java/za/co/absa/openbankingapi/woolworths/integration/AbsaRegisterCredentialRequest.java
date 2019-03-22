@@ -36,7 +36,7 @@ public class AbsaRegisterCredentialRequest {
 
 		try {
 			this.sessionKey = SessionKey.generate(context.getApplicationContext());
-			this.requestQueue = VolleySingleton.getInstance(context.getApplicationContext());
+			this.requestQueue = VolleySingleton.getInstance();
 		} catch (KeyGenerationFailureException | AsymmetricCryptoHelper.AsymmetricEncryptionFailureException | AsymmetricCryptoHelper.AsymmetricKeyGenerationFailureException e) {
 			e.printStackTrace();
 		}

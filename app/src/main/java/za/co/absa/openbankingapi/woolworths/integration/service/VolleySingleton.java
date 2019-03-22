@@ -1,31 +1,29 @@
 package za.co.absa.openbankingapi.woolworths.integration.service;
 
-import android.content.Context;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+
 public class VolleySingleton {
     private static VolleySingleton mInstance;
     private RequestQueue mRequestQueue;
-    private static Context mCtx;
 
-    private VolleySingleton(Context context) {
-        mCtx = context;
+    private VolleySingleton() {
         mRequestQueue = getRequestQueue();
     }
 
-    public static synchronized VolleySingleton getInstance(Context context) {
+    public static synchronized VolleySingleton getInstance() {
         if (mInstance == null) {
-            mInstance = new VolleySingleton(context);
+            mInstance = new VolleySingleton();
         }
         return mInstance;
     }
 
     public RequestQueue getRequestQueue() {
         if (mRequestQueue == null) {
-            mRequestQueue = Volley.newRequestQueue(mCtx.getApplicationContext());
+            mRequestQueue = Volley.newRequestQueue(WoolworthsApplication.getAppContext());
         }
         return mRequestQueue;
     }

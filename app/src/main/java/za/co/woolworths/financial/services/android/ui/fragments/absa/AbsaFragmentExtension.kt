@@ -56,10 +56,8 @@ open class AbsaFragmentExtension : Fragment() {
     }
 
     fun cancelVolleyRequest(name: String?) {
-        activity?.let {
-            VolleySingleton.getInstance(it)?.apply {
-                cancelRequest(name)
-            }
+        VolleySingleton.getInstance()?.apply {
+            cancelRequest(name)
         }
     }
 }
