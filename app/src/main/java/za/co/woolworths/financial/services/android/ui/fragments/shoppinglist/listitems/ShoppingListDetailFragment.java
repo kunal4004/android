@@ -80,7 +80,6 @@ import static za.co.woolworths.financial.services.android.ui.fragments.shoppingl
 
 public class ShoppingListDetailFragment extends Fragment implements View.OnClickListener, EmptyCartView.EmptyCartInterface, NetworkChangeListener, ToastUtils.ToastInterface, ShoppingListItemsNavigator, IToastInterface {
 
-    public static final int SUBURB_SET_RESULT = 123401;
     private final int DELIVERY_LOCATION_REQUEST = 2;
     public static final int ADD_TO_CART_SUCCESS_RESULT = 2000;
     private final int SET_DELIVERY_LOCATION_REQUEST_CODE = 2011;
@@ -848,7 +847,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         }
 
         if (requestCode == DELIVERY_LOCATION_REQUEST_CODE_FROM_SELECT_ALL) {
-            if (resultCode == SUBURB_SET_RESULT) { // on suburb selection successful
+            if (resultCode == RESULT_OK) { // on suburb selection successful
                 setResultCode(DELIVERY_LOCATION_REQUEST_CODE_FROM_SELECT_ALL);
                 makeInventoryCall();
             }
