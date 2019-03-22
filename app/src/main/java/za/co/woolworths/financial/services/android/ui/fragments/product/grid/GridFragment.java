@@ -362,6 +362,14 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 	}
 
 	@Override
+	public void onDetach() {
+		super.onDetach();
+		if(getBottomNavigationActivity() != null && getBottomNavigationActivity().walkThroughPromtView != null){
+			getBottomNavigationActivity().walkThroughPromtView.removeFromWindow();
+		}
+	}
+
+	@Override
 	public void onGridItemSelected(final ProductList productList) {
 		if (!isEmpty(mSearchProduct)) {
 			mSubCategoryName = mSearchProduct;

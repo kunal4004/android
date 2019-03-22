@@ -265,6 +265,9 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	@Override
 	public void onDetach() {
 		super.onDetach();
+		if(getBottomNavigationActivity() != null && getBottomNavigationActivity().walkThroughPromtView != null){
+			getBottomNavigationActivity().walkThroughPromtView.removeFromWindow();
+		}
 	}
 
 	@Override

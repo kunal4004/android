@@ -712,7 +712,16 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
         super.onDestroy();
     }
 
-//	public int getAvailableFundsPercentage(int availableFund, int creditLimit) {
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		if(getBottomNavigationActivity() != null & getBottomNavigationActivity().walkThroughPromtView != null){
+			getBottomNavigationActivity().walkThroughPromtView.removeFromWindow();
+		}
+
+	}
+
+	//	public int getAvailableFundsPercentage(int availableFund, int creditLimit) {
 //		// Progressbar MAX value is 10000 to manage float values
 //		int percentage = Math.round((100 * ((float) availableFund / (float) creditLimit)) * 100);
 //		if (percentage < 0 || percentage > Utils.ACCOUNTS_PROGRESS_BAR_MAX_VALUE)

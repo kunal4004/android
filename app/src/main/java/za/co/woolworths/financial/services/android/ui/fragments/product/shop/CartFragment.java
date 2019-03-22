@@ -464,8 +464,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				&& !mDisposables.isDisposed()) {
 			mDisposables.dispose();
 		}
-		MaterialShowcaseView.resetAll(getContext());
-		CartActivity.walkThroughPromtView.clearAnimation();
+		if(CartActivity.walkThroughPromtView != null){
+			CartActivity.walkThroughPromtView.removeFromWindow();
+		}
 	}
 
 	public void changeQuantity(CartResponse cartResponse, ChangeQuantity changeQuantity) {
@@ -1171,7 +1172,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	public void showFeatureWalkthrough(){
 		if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.deliveryLocation)
 			return;
-		Crashlytics.setString(getString(R.string.crashlytics_materialshowcase_key),this.getClass().getCanonicalName());
+		Crashlytics.setString(getString(R.string.crashlytics_materialshowcase_key),this.getClass().getSimpleName());
 		CartActivity.walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.DELIVERY_LOCATION)
 				.setTarget(imgDeliveryLocation)
 				.setTitle(R.string.your_delivery_location)

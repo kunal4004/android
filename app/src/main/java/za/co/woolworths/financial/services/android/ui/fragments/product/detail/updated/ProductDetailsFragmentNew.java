@@ -190,6 +190,14 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
         Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_DETAIL);
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        if(ProductDetailsActivity.walkThroughPromtView != null){
+            ProductDetailsActivity.walkThroughPromtView.removeFromWindow();
+        }
+    }
+
     public void initViews() {
         txtFromPrice = getViewDataBinding().priceLayout.textPrice;
         txtActualPrice = getViewDataBinding().priceLayout.textActualPrice;

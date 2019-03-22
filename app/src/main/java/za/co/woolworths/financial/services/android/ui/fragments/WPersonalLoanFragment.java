@@ -154,6 +154,14 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        if(MyAccountCardsActivity.walkThroughPromtView != null){
+            MyAccountCardsActivity.walkThroughPromtView.removeFromWindow();
+        }
+    }
+
     private void init(View view) {
         woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
         availableBalance = (WTextView) view.findViewById(R.id.available_funds);
