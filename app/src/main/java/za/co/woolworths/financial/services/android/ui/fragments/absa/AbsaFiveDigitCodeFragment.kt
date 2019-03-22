@@ -37,24 +37,24 @@ class AbsaFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener 
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.apply {
+            getString(JSESSION)?.apply { jSession = this }
+            getString(ALIAS_ID)?.apply { mAliasId = this }
+            getString(DEVICE_ID)?.apply { mDeviceId = this }
+        }
+    }
+
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater!!.inflate(R.layout.absa_five_digit_code_fragment, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        getBundleArgument()
         initViewsAndEvents()
         createTextListener(edtEnterATMPin)
         clearPinImage(mPinImageViewList!!)
-    }
-
-    private fun getBundleArgument() {
-        arguments?.apply {
-            getString(JSESSION)?.apply { jSession = this }
-            getString(ALIAS_ID)?.apply { mAliasId = this }
-            getString(DEVICE_ID)?.apply { mDeviceId = this }
-        }
     }
 
     private fun initViewsAndEvents() {

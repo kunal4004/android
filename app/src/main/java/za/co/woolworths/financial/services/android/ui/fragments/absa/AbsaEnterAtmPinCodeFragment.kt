@@ -3,12 +3,12 @@ package za.co.woolworths.financial.services.android.ui.fragments.absa
 import android.graphics.Paint
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v4.content.ContextCompat
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
@@ -23,19 +23,27 @@ import za.co.woolworths.financial.services.android.contracts.IValidatePinCodeDia
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GotITDialogFragment
 
-class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListener, IDialogListener, IValidatePinCodeDialogInterface {
+class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListener, IValidatePinCodeDialogInterface, IDialogListener {
 
     var mPinImageViewList: MutableList<ImageView>? = null
     private var mCreditCardNumber: String? = ""
 
     companion object {
+        const val MAXIMUM_PIN_ALLOWED: Int = 3
         fun newInstance(creditAccountInfo: String?) = AbsaEnterAtmPinCodeFragment().apply {
             arguments = Bundle(1).apply {
                 putString("creditCardToken", creditAccountInfo)
             }
         }
+    }
 
-        const val MAXIMUM_PIN_ALLOWED: Int = 3
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.apply {
+            if (containsKey("creditCardToken")) {
+                mCreditCardNumber = arguments?.getString("creditCardToken") ?: ""
+            }
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -44,15 +52,10 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        getBundleArguments()
         initViewsAndEvents()
         maskPinNumber()
         createTextListener(edtEnterATMPin)
-        clearPinImage(mPinImageViewList!!)
-    }
-
-    private fun getBundleArguments() {
-        mCreditCardNumber = arguments?.getString("creditCardToken") ?: ""
+        clearPinImage(mPinImageViewList)
     }
 
     private fun maskPinNumber() {
@@ -87,7 +90,8 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
     }
 
     private fun progressIndicator(state: Int) {
-        pbEnterAtmPin.visibility = state
+        pbEnterAtmPin?.visibility = state
+        activity?.let { pbEnterAtmPin?.indeterminateDrawable?.setColorFilter(ContextCompat.getColor(it, R.color.black), android.graphics.PorterDuff.Mode.SRC_IN) }
     }
 
     private fun createTextListener(edtEnterATMPin: EditText?) {
@@ -131,8 +135,8 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
         }
     }
 
-    private fun clearPinImage(listOfPin: MutableList<ImageView>) {
-        listOfPin.forEach {
+    private fun clearPinImage(listOfPin: MutableList<ImageView>?) {
+        listOfPin?.forEach {
             it.setImageResource(R.drawable.pin_empty)
         }
     }
@@ -176,14 +180,14 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
 
     override fun onFailureHandler(responseMessage: String, dismissActivity: Boolean) {
         // Navigate back to credit card screen when resultMessage is failed or rejected.
+        progressIndicator(View.INVISIBLE)
+        clearPin()
         if (dismissActivity) {
-
+            //  Display error message and dismiss dialog on ok button clicked
+            tapAndNavigateBackErrorDialog(responseMessage)
             return
         }
-        //  Display error message and dismiss dialog on ok button clicked
-        progressIndicator(GONE)
-        clearPin()
-        view?.postDelayed({ showErrorMessage(responseMessage) }, 200)
+        view?.postDelayed({ tapAndDismissErrorDialog(responseMessage) }, 200)
     }
 
     override fun onFatalError(error: VolleyError?) {
