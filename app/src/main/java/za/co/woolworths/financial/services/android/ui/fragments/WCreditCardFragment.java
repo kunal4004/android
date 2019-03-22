@@ -6,10 +6,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,7 +24,6 @@ import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.net.ConnectException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -226,6 +225,8 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         infoNextPaymentDue.setOnClickListener(this);
         infoCurrentBalance.setOnClickListener(this);
         infoCreditLimit.setOnClickListener(this);
+
+        updateABSATitle();
     }
 
     private void addListener() {
@@ -297,11 +298,16 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         }
         MyAccountHelper myAccountHelper = new MyAccountHelper();
         String accountInfo = myAccountHelper.getAccountInfo(accountsResponse, "CC");
-        Account creditCardInfo = myAccountHelper.getAccount(accountsResponse, "CC");
 
         switch (v.getId()) {
             case R.id.rlABSALinkOnlineBankingToDevice:
-               mGetCreditCardToken =  getCreditCardToken(activity);
+                SessionDao aliasID = SessionDao.getByKey(SessionDao.KEY.ABSA_ALIASID);
+                SessionDao deviceID = SessionDao.getByKey(SessionDao.KEY.ABSA_DEVICEID);
+                if ((TextUtils.isEmpty(aliasID.value) && TextUtils.isEmpty(deviceID.value))) {
+                    mGetCreditCardToken = getCreditCardToken(activity);
+                } else {
+                    openAbsaOnLineBankingActivity(activity);
+                }
                 break;
             case R.id.rlViewTransactions:
             case R.id.tvViewTransaction:
@@ -583,7 +589,10 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
     }
 
     public void updateABSATitle() {
-        tvABSALinkOnlineBanking.setText(getString(R.string.online_banking));
+        if (tvABSALinkOnlineBanking != null
+                && !TextUtils.isEmpty(SessionDao.getByKey(SessionDao.KEY.ABSA_ALIASID).value)
+                && !TextUtils.isEmpty(SessionDao.getByKey(SessionDao.KEY.ABSA_DEVICEID).value))
+            tvABSALinkOnlineBanking.setText(getString(R.string.online_banking));
     }
 
     public AsyncTask<String, String, CreditCardTokenResponse> getCreditCardToken(final Activity activity) {
@@ -600,11 +609,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
                                 Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, getString(R.string.card_number_not_found));
                                 break;
                             default:
-                                Intent openABSAOnlineBanking = new Intent(getActivity(), ABSAOnlineBankingRegistrationActivity.class);
-                                openABSAOnlineBanking.putExtra(SHOULD_DISPLAY_LOGIN_SCREEN, false);
-                                openABSAOnlineBanking.putExtra("creditCardToken", response.cards.get(0).absaCardToken);
-                                activity.startActivityForResult(openABSAOnlineBanking, MyAccountCardsActivity.ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE);
-                                activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+                                openAbsaOnLineBankingActivity(response, activity);
                                 break;
                         }
                         break;
@@ -634,8 +639,27 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         }).execute();
     }
 
+    private void openAbsaOnLineBankingActivity(CreditCardTokenResponse response, Activity activity) {
+        Intent openABSAOnlineBanking = new Intent(getActivity(), ABSAOnlineBankingRegistrationActivity.class);
+        openABSAOnlineBanking.putExtra(SHOULD_DISPLAY_LOGIN_SCREEN, false);
+        openABSAOnlineBanking.putExtra("creditCardToken", response.cards.get(0).absaCardToken);
+        activity.startActivityForResult(openABSAOnlineBanking, MyAccountCardsActivity.ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE);
+        activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+    }
+
+    private void openAbsaOnLineBankingActivity(Activity activity) {
+        Intent openABSAOnlineBanking = new Intent(getActivity(), ABSAOnlineBankingRegistrationActivity.class);
+        openABSAOnlineBanking.putExtra(SHOULD_DISPLAY_LOGIN_SCREEN, true);
+        activity.startActivityForResult(openABSAOnlineBanking, MyAccountCardsActivity.ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE);
+        activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+    }
+
     public void showGetCreditCardTokenProgressBar(int state) {
-        mPbGetCreditCardToken.setVisibility(state);
-        mImABSAViewOnlineBanking.setVisibility((state == VISIBLE) ? GONE : VISIBLE);
+        Activity activity = getActivity();
+        if (activity != null) {
+            mPbGetCreditCardToken.getIndeterminateDrawable().setColorFilter(ContextCompat.getColor(activity, R.color.black), android.graphics.PorterDuff.Mode.SRC_IN);
+            mPbGetCreditCardToken.setVisibility(state);
+            mImABSAViewOnlineBanking.setVisibility((state == VISIBLE) ? GONE : VISIBLE);
+        }
     }
 }

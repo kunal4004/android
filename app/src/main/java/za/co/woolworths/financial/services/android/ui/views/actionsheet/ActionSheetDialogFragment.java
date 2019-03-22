@@ -88,8 +88,8 @@ public class ActionSheetDialogFragment extends DialogFragment implements Animate
 		mAnimationUtils.setAnimation(mFrameAlertContainer, this);
 	}
 
-	public void shouldAnimateViewOnCancel(boolean positiveResultSelected) {
-		mAnimationUtils.animateDismissView(mFrameAlertContainer, positiveResultSelected);
+	public void shouldAnimateViewOnCancel(boolean animateAndDismiss) {
+		mAnimationUtils.animateDismissView(mFrameAlertContainer, animateAndDismiss);
 	}
 
 	public void changeTappedButtonColor(WButton button) {
