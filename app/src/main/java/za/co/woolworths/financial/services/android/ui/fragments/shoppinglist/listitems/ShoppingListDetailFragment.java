@@ -814,10 +814,8 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             return;
         }
 
-        if (requestCode == DELIVERY_LOCATION_REQUEST) {
-            if (resultCode == SUBURB_SET_RESULT) { // on suburb selection successful
+        if (requestCode == DELIVERY_LOCATION_REQUEST  && resultCode == RESULT_OK) { // on suburb selection successful
                 makeInventoryCall();
-            }
         }
 
         if (requestCode == REQUEST_SUBURB_CHANGE) {
