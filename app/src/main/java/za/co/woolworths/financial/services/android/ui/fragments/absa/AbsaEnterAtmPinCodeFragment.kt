@@ -26,7 +26,7 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.GotITDia
 class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListener, IDialogListener, IValidatePinCodeDialogInterface {
 
     var mPinImageViewList: MutableList<ImageView>? = null
-    private var mCreditAccountInfo: String? = ""
+    private var mCreditCardNumber: String? = ""
 
     companion object {
         fun newInstance(creditAccountInfo: String?) = AbsaEnterAtmPinCodeFragment().apply {
@@ -52,11 +52,11 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
     }
 
     private fun getBundleArguments() {
-        mCreditAccountInfo = arguments?.getString("creditCardToken") ?: ""
+        mCreditCardNumber = arguments?.getString("creditCardToken") ?: ""
     }
 
     private fun maskPinNumber() {
-        tvABSACardNumber?.setText(getString(R.string.absa_biometric_please_card_number, maskedCardNumberWithSpaces(mCreditAccountInfo)))
+        tvABSACardNumber?.setText(getString(R.string.absa_biometric_please_card_number, maskedCardNumberWithSpaces(mCreditCardNumber)))
     }
 
     private fun initViewsAndEvents() {
@@ -78,11 +78,10 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
 
     private fun navigateToFiveDigitCodeFragment() {
         if ((edtEnterATMPin.length() - 1) == AbsaEnterAtmPinCodeFragment.MAXIMUM_PIN_ALLOWED) {
-
             activity?.let {
                 val pinCode = edtEnterATMPin.text.toString()
                 progressIndicator(VISIBLE)
-                ValidateATMPinCode("4103741655806361", "6666", this).make()
+                mCreditCardNumber?.let { creditCardNumber -> ValidateATMPinCode(creditCardNumber, pinCode, this).make() }
             }
         }
     }
@@ -162,9 +161,9 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
         showKeyboard(edtEnterATMPin)
     }
 
-    override fun onSuccessHandler(jSession: JSession) {
+    override fun onSuccessHandler(jSession: JSession, aliasId: String, deviceId: String) {
         replaceFragment(
-                fragment = AbsaFiveDigitCodeFragment.newInstance(jSession),
+                fragment = AbsaFiveDigitCodeFragment.newInstance(jSession, aliasId, deviceId),
                 tag = AbsaFiveDigitCodeFragment::class.java.simpleName,
                 containerViewId = R.id.flAbsaOnlineBankingToDevice,
                 allowStateLoss = true,

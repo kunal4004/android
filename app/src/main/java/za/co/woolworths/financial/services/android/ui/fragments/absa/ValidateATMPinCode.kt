@@ -12,7 +12,6 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.ValidateSureCheckRes
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse
 import za.co.woolworths.financial.services.android.contracts.IValidatePinCodeDialogInterface
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import java.net.HttpCookie
 import java.util.*
 import java.util.concurrent.Executors
@@ -152,15 +151,7 @@ class ValidateATMPinCode(cardToken: String, pinCode: String, validatePinCodeDial
                 Log.e("validCardPin", "onSuccess - AbsaCreateAliasRequest")
                 response?.apply {
                     if (header?.resultMessages?.size == 0 || aliasId != null) {
-                        var sessionDao: SessionDao? = SessionDao.getByKey(SessionDao.KEY.ABSA_DEVICEID)
-                        sessionDao?.value = deviceId
-                        sessionDao?.save()
-
-                        sessionDao = SessionDao.getByKey(SessionDao.KEY.ABSA_ALIASID)
-                        sessionDao?.value = aliasId
-                        sessionDao?.save()
-
-                        navigateToRegisterCredential(jSession)
+                        navigateToRegisterCredential(jSession, aliasId, deviceId)
                     } else {
                         //TODO: implement failureHandler("An error occured while attempting to decode the server response.")
                     }
@@ -186,7 +177,7 @@ class ValidateATMPinCode(cardToken: String, pinCode: String, validatePinCodeDial
         }
     }
 
-    private fun navigateToRegisterCredential(jSession: JSession) {
-        mValidatePinCodeDialogInterface?.onSuccessHandler(jSession)
+    private fun navigateToRegisterCredential(jSession: JSession, aliasId: String?, deviceId: String?) {
+        mValidatePinCodeDialogInterface?.onSuccessHandler(jSession, aliasId!!, deviceId!!)
     }
 }
