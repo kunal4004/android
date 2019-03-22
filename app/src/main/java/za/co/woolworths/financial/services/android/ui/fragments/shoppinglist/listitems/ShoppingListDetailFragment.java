@@ -538,6 +538,11 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (shouldUserSetSuburb()) {
+            deliverySelectionIntent(DELIVERY_LOCATION_REQUEST_CODE_FROM_SELECT_ALL);
+            return super.onOptionsItemSelected(item);
+        }
+
         switch (item.getItemId()) {
             case R.id.selectAll:
                 if (tvMenuSelectAll.getText().toString().equalsIgnoreCase("SELECT ALL")) {
@@ -1008,5 +1013,10 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             activity.finish();
             activity.overridePendingTransition(0, 0);
         }
+    }
+
+    public boolean shouldUserSetSuburb() {
+        ShoppingDeliveryLocation shoppingDeliveryLocation = Utils.getPreferredDeliveryLocation();
+        return shoppingDeliveryLocation.suburb == null;
     }
 }
