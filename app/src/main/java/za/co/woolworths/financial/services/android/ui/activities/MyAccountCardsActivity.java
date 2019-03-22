@@ -531,16 +531,12 @@ public class MyAccountCardsActivity extends AppCompatActivity
     }
 
     private void fragmentInterfaceListener(int position) {
-        try {
+
             FragmentLifecycle fragmentToShow = (FragmentLifecycle) fragmentsAdapter.getItem(position);
             fragmentToShow.onResumeFragment();
 
             FragmentLifecycle fragmentToHide = (FragmentLifecycle) fragmentsAdapter.getItem(position);
             fragmentToHide.onPauseFragment();
-        } catch (Exception ignore) {
-
-        }
-
     }
 
     @Override

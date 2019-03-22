@@ -143,6 +143,7 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
     }
 
     private fun failureHandler(message: String?) {
+        cancelRequest()
         view?.postDelayed({ message?.let { tapAndDismissErrorDialog(it) } }, 200)
     }
 
@@ -253,4 +254,12 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
         activity?.let { pbRegisterCredential?.indeterminateDrawable?.setColorFilter(ContextCompat.getColor(it, R.color.black), android.graphics.PorterDuff.Mode.SRC_IN) }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        cancelRequest()
+    }
+
+    private fun cancelRequest() {
+        cancelVolleyRequest(AbsaRegisterCredentialRequest::class.java.simpleName)
+    }
 }

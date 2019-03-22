@@ -2,10 +2,8 @@ package za.co.absa.openbankingapi.woolworths.integration;
 
 import android.content.Context;
 
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
 
 import java.net.HttpCookie;
 import java.util.HashMap;
@@ -22,17 +20,18 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.ValidateCardAndPinRe
 import za.co.absa.openbankingapi.woolworths.integration.dto.ValidateCardAndPinResponse;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiRequest;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse;
+import za.co.absa.openbankingapi.woolworths.integration.service.VolleySingleton;
 
 public class AbsaValidateCardAndPinRequest {
 
 	private SessionKey sessionKey;
-	private RequestQueue requestQueue;
+	private VolleySingleton requestQueue;
 
 	public AbsaValidateCardAndPinRequest(final Context context){
 
 		try {
 			this.sessionKey = SessionKey.generate(context.getApplicationContext());
-			this.requestQueue = Volley.newRequestQueue(context.getApplicationContext());
+			this.requestQueue = VolleySingleton.getInstance();
 		} catch (KeyGenerationFailureException | AsymmetricCryptoHelper.AsymmetricEncryptionFailureException | AsymmetricCryptoHelper.AsymmetricKeyGenerationFailureException e) {
 			e.printStackTrace();
 		}
@@ -56,24 +55,27 @@ public class AbsaValidateCardAndPinRequest {
 		final String gatewaySymmetricKey = this.sessionKey.getEncryptedKeyBase64Encoded();
 		final String body = new ValidateCardAndPinRequest(cardToken, encryptedPin, gatewaySymmetricKey, sessionKey.getEncryptedIVBase64Encoded()).getJson();
 
-		requestQueue.add(new AbsaBankingOpenApiRequest<>(ValidateCardAndPinResponse.class, headers, body, new AbsaBankingOpenApiResponse.Listener<ValidateCardAndPinResponse>(){
+		AbsaBankingOpenApiRequest request = new AbsaBankingOpenApiRequest<>(ValidateCardAndPinResponse.class, headers, body, new AbsaBankingOpenApiResponse.Listener<ValidateCardAndPinResponse>(){
 
 			@Override
 			public void onResponse(ValidateCardAndPinResponse response, List<HttpCookie> cookies) {
 				Header.ResultMessage[] resultMessages = response.getHeader().getResultMessages();
-				if (resultMessages == null || resultMessages.length == 0)
+				if (resultMessages == null || resultMessages.length == 0) {
 					responseDelegate.onSuccess(response, cookies);
-
-				else
-					responseDelegate.onFailure("Something clearly went wrong.");
+				}else {
+					responseDelegate.onFailure(resultMessages[0].getResponseMessage());
+				}
 			}
 		}, new Response.ErrorListener() {
 			@Override
 			public void onErrorResponse(VolleyError error) {
 				responseDelegate.onFailure(error.getMessage());
 			}
-		}));
+		});
+
+		request.setTag(AbsaRegisterCredentialRequest.class.getSimpleName());
+
+		requestQueue.addToRequestQueue(request,AbsaValidateCardAndPinRequest.class);
+
 	}
-
-
 }

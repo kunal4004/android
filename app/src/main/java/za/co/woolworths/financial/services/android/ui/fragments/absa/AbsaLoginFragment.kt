@@ -105,6 +105,7 @@ class AbsaLoginFragment : AbsaFragmentExtension() {
     }
 
     private fun failureHandler(message: String?) {
+        cancelRequest()
         message?.let { tapAndNavigateBackErrorDialog(it) }
     }
 
@@ -163,6 +164,15 @@ class AbsaLoginFragment : AbsaFragmentExtension() {
             text.clear()
             showKeyboard(this)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        cancelRequest()
+    }
+
+    private fun cancelRequest() {
+        cancelVolleyRequest(AbsaLoginRequest::class.java.simpleName)
     }
 
     fun displayLoginProgress(state: Boolean) {

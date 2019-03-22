@@ -37,7 +37,7 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
     }
 
     private fun validateCardAndPin(cardToken: String, pin: String) {
-        AbsaValidateCardAndPinRequest(WoolworthsApplication.getAppContext()).make(cardToken, pin,
+      AbsaValidateCardAndPinRequest(WoolworthsApplication.getAppContext()).make(cardToken, pin,
                 object : AbsaBankingOpenApiResponse.ResponseDelegate<ValidateCardAndPinResponse> {
                     override fun onSuccess(response: ValidateCardAndPinResponse?, cookies: MutableList<HttpCookie>?) {
                         val jSession = JSession()
@@ -69,7 +69,7 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
 
     private fun validateSureCheck(jSession: JSession) {
         mScheduleValidateSureCheck = Executors.newSingleThreadScheduledExecutor().scheduleWithFixedDelay({
-            AbsaValidateSureCheckRequest(WoolworthsApplication.getAppContext()).make(jSession,
+            AbsaValidateSureCheckRequest().make(jSession,
                     object : AbsaBankingOpenApiResponse.ResponseDelegate<ValidateSureCheckResponse> {
                         override fun onSuccess(response: ValidateSureCheckResponse?, cookies: MutableList<HttpCookie>?) {
                             Log.e("resultState",response?.result.plus(" $mPollingCount"))
@@ -172,4 +172,5 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
     private fun navigateToRegisterCredential(jSession: JSession) {
         mValidatePinCodeDialogInterface?.onSuccessHandler(jSession)
     }
+
 }
