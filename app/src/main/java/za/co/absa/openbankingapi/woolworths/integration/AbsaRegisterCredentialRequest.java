@@ -3,10 +3,8 @@ package za.co.absa.openbankingapi.woolworths.integration;
 import android.content.Context;
 import android.util.Base64;
 
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
 
 import java.io.UnsupportedEncodingException;
 import java.net.HttpCookie;
@@ -27,17 +25,18 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.RegisterCredentialRe
 import za.co.absa.openbankingapi.woolworths.integration.dto.RegisterCredentialResponse;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiRequest;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse;
+import za.co.absa.openbankingapi.woolworths.integration.service.VolleySingleton;
 
 public class AbsaRegisterCredentialRequest {
 
 	private SessionKey sessionKey;
-	private RequestQueue requestQueue;
+	private VolleySingleton requestQueue;
 
 	public AbsaRegisterCredentialRequest(final Context context){
 
 		try {
 			this.sessionKey = SessionKey.generate(context.getApplicationContext());
-			this.requestQueue = Volley.newRequestQueue(context.getApplicationContext());
+			this.requestQueue = VolleySingleton.getInstance(context.getApplicationContext());
 		} catch (KeyGenerationFailureException | AsymmetricCryptoHelper.AsymmetricEncryptionFailureException | AsymmetricCryptoHelper.AsymmetricKeyGenerationFailureException e) {
 			e.printStackTrace();
 		}
@@ -93,6 +92,6 @@ public class AbsaRegisterCredentialRequest {
 		cookies.add(jSession.getCookie().toString());
 		request.setCookies(cookies);
 
-		requestQueue.add(request);
+		requestQueue.addToRequestQueue(request, AbsaRegisterCredentialRequest.class);
 	}
 }

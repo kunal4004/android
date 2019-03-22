@@ -36,7 +36,7 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
     }
 
     private fun validateCardAndPin(cardToken: String, pin: String) {
-        AbsaValidateCardAndPinRequest(WoolworthsApplication.getAppContext()).make(cardToken, pin,
+      AbsaValidateCardAndPinRequest(WoolworthsApplication.getAppContext()).make(cardToken, pin,
                 object : AbsaBankingOpenApiResponse.ResponseDelegate<ValidateCardAndPinResponse> {
                     override fun onSuccess(response: ValidateCardAndPinResponse?, cookies: MutableList<HttpCookie>?) {
                         val jSession = JSession()
@@ -171,4 +171,5 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
     private fun navigateToRegisterCredential(jSession: JSession) {
         mValidatePinCodeDialogInterface?.onSuccessHandler(jSession)
     }
+
 }
