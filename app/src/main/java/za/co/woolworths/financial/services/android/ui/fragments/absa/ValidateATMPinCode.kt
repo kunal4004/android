@@ -88,7 +88,7 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
                                     in failedResultMessages -> {
                                         // Sending of the SureCheck failed for some reason. Stop registration details.
                                         // Display an error message and advise to try again later
-                                        failureHandler("An error has occured. Please try again later.", true)
+                                        failureHandler("An error has occurred. Please try again later.", true)
                                         stopPolling()
                                     }
 
@@ -108,7 +108,7 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
                                         // Present an input screen for the OTP,
                                         // as well as a different request payload.
                                         // #note: consider as rejected for now
-                                        failureHandler("An error has occured. Please try again later.",true)
+                                        failureHandler("An error has occurred. Please try again later.",true)
                                         stopPolling()
                                     }
                                 }
