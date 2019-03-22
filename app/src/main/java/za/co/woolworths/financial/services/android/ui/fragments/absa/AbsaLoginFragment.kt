@@ -3,9 +3,10 @@ package za.co.woolworths.financial.services.android.ui.fragments.absa
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
@@ -24,6 +25,7 @@ class AbsaLoginFragment : AbsaFragmentExtension() {
 
     companion object {
         private const val MAXIMUM_PIN_ALLOWED: Int = 4
+        private const val technical_error_occurred = "Technical error occurred."
         fun newInstance() = AbsaLoginFragment()
     }
 
@@ -65,37 +67,46 @@ class AbsaLoginFragment : AbsaFragmentExtension() {
     private fun absaLoginRequest(aliasId: String?, deviceId: String?, userPin: String) {
         activity?.let {
             displayLoginProgress(true)
-
-            AbsaLoginRequest(it).make(userPin,aliasId, deviceId,
+            AbsaLoginRequest(it).make(userPin, aliasId, deviceId,
                     object : AbsaBankingOpenApiResponse.ResponseDelegate<LoginResponse> {
                         override fun onSuccess(response: LoginResponse?, cookies: MutableList<HttpCookie>?) {
                             response?.apply {
-                                if (!(resultMessage?.length != 0 && aliasId == null)) {
-                                    successHandler(this)
+                                if (result?.toLowerCase() == "success") {
+                                    successHandler()
                                 } else {
-                                    failureHandler(resultMessage ?: "")
+                                    failureHandler(resultMessage ?: technical_error_occurred)
                                 }
+                                /* Work for WOP-3881
+                                   Commented because header returning nil
+                                    header?.apply {
+                                        if (statusCode == "0" || resultMessages.isEmpty()) {
+                                            successHandler(response)
+                                        } else {
+                                            if (statusCode == "1") {
+                                                failureHandler(header.resultMessages.first()?.responseMessage
+                                                        ?: technical_error_occurred)
+                                            }
+                                        }
+                                    }*/
                             }
-
                             displayLoginProgress(false)
                         }
 
                         override fun onFailure(errorMessage: String) {
-                            Log.d("onSuccess", "onFailure")
+                            failureHandler(errorMessage)
                             displayLoginProgress(false)
                         }
                     })
         }
     }
 
-    private fun successHandler(response: LoginResponse) {
-        //TODO:: handle Success
+    private fun successHandler() {
+        tapAndDismissErrorDialog("Login Successful")
     }
 
     private fun failureHandler(message: String?) {
         cancelRequest()
-        //TODO: implement failureHandler(response.header!.resultMessages.first?.responseMessage ??
-        // "Technical error occured.")
+        message?.let { tapAndNavigateBackErrorDialog(it) }
     }
 
     private fun createTextListener(edtEnterATMPin: EditText?) {
@@ -165,6 +176,6 @@ class AbsaLoginFragment : AbsaFragmentExtension() {
     }
 
     fun displayLoginProgress(state: Boolean) {
-        pbLoginProgress.visibility = if (state) View.VISIBLE else View.GONE
+        pbLoginProgress.visibility = if (state) VISIBLE else INVISIBLE
     }
 }
