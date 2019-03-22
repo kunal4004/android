@@ -513,7 +513,9 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 
     @Override
     public void onResumeFragment() {
-        WPersonalLoanFragment.this.getActivity().runOnUiThread(new Runnable() {
+        Activity activity = getActivity();
+        if (activity == null) return;
+       activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (!personalWasAlreadyRunOnce) {
