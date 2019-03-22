@@ -24,6 +24,7 @@ import android.widget.RelativeLayout;
 import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.MyAccountsFragmentBinding;
+import com.crashlytics.android.Crashlytics;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -711,7 +712,16 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
         super.onDestroy();
     }
 
-//	public int getAvailableFundsPercentage(int availableFund, int creditLimit) {
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		if(getBottomNavigationActivity() != null & getBottomNavigationActivity().walkThroughPromtView != null){
+			getBottomNavigationActivity().walkThroughPromtView.removeFromWindow();
+		}
+
+	}
+
+	//	public int getAvailableFundsPercentage(int availableFund, int creditLimit) {
 //		// Progressbar MAX value is 10000 to manage float values
 //		int percentage = Math.round((100 * ((float) availableFund / (float) creditLimit)) * 100);
 //		if (percentage < 0 || percentage > Utils.ACCOUNTS_PROGRESS_BAR_MAX_VALUE)
@@ -927,6 +937,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			@Override
 			protected void onPostExecute(Void aVoid) {
 				super.onPostExecute(aVoid);
+				Crashlytics.setString(getString(R.string.crashlytics_materialshowcase_key),this.getClass().getCanonicalName());
 				getBottomNavigationActivity().walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.ACCOUNTS)
 						.setTarget(target)
 						.setTitle(R.string.tips_tricks_view_your_accounts)

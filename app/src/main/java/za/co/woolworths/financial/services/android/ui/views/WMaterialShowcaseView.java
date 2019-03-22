@@ -37,7 +37,6 @@ import uk.co.deanwild.materialshowcaseview.CircularRevealAnimationFactory;
 import uk.co.deanwild.materialshowcaseview.FadeAnimationFactory;
 import uk.co.deanwild.materialshowcaseview.IAnimationFactory;
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
-import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
 import uk.co.deanwild.materialshowcaseview.PrefsManager;
 import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
 import uk.co.deanwild.materialshowcaseview.shape.CircleShape;
