@@ -9,6 +9,7 @@ import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -301,14 +302,12 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         switch (v.getId()) {
             case R.id.rlABSALinkOnlineBankingToDevice:
                 SessionDao aliasID = SessionDao.getByKey(SessionDao.KEY.ABSA_ALIASID);
-                if (TextUtils.isEmpty(aliasID.value)) {
+                SessionDao deviceID = SessionDao.getByKey(SessionDao.KEY.ABSA_DEVICEID);
+                if ((TextUtils.isEmpty(aliasID.value) && TextUtils.isEmpty(deviceID.value))) {
                     mGetCreditCardToken = getCreditCardToken(activity);
-                }
-                 else {
+                } else {
                     openAbsaOnLineBankingActivity(activity);
                 }
-
-
                 break;
             case R.id.rlViewTransactions:
             case R.id.tvViewTransaction:
@@ -590,7 +589,9 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
     }
 
     public void updateABSATitle() {
-        if (tvABSALinkOnlineBanking != null && !TextUtils.isEmpty(SessionDao.getByKey(SessionDao.KEY.ABSA_ALIASID).value))
+        if (tvABSALinkOnlineBanking != null
+                && !TextUtils.isEmpty(SessionDao.getByKey(SessionDao.KEY.ABSA_ALIASID).value)
+                && !TextUtils.isEmpty(SessionDao.getByKey(SessionDao.KEY.ABSA_DEVICEID).value))
             tvABSALinkOnlineBanking.setText(getString(R.string.online_banking));
     }
 
@@ -654,7 +655,11 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
     }
 
     public void showGetCreditCardTokenProgressBar(int state) {
-        mPbGetCreditCardToken.setVisibility(state);
-        mImABSAViewOnlineBanking.setVisibility((state == VISIBLE) ? GONE : VISIBLE);
+        Activity activity = getActivity();
+        if (activity != null) {
+            mPbGetCreditCardToken.getIndeterminateDrawable().setColorFilter(ContextCompat.getColor(activity, R.color.black), android.graphics.PorterDuff.Mode.SRC_IN);
+            mPbGetCreditCardToken.setVisibility(state);
+            mImABSAViewOnlineBanking.setVisibility((state == VISIBLE) ? GONE : VISIBLE);
+        }
     }
 }

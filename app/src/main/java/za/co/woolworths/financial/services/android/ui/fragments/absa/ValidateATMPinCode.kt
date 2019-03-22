@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.absa
 
+import android.util.Log
 import za.co.absa.openbankingapi.woolworths.integration.AbsaCreateAliasRequest
 import za.co.absa.openbankingapi.woolworths.integration.AbsaValidateCardAndPinRequest
 import za.co.absa.openbankingapi.woolworths.integration.AbsaValidateSureCheckRequest
@@ -71,7 +72,7 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
             AbsaValidateSureCheckRequest(WoolworthsApplication.getAppContext()).make(jSession,
                     object : AbsaBankingOpenApiResponse.ResponseDelegate<ValidateSureCheckResponse> {
                         override fun onSuccess(response: ValidateSureCheckResponse?, cookies: MutableList<HttpCookie>?) {
-
+                            Log.e("resultState",response?.result.plus(" $mPollingCount"))
                             val acceptedResultMessages = mutableListOf("success", "processed")
                             val failedResultMessages = mutableListOf("failed", "rejected")
                             val continuePollingProcessResultMessage = mutableListOf("processing")
@@ -87,7 +88,7 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
                                     in failedResultMessages -> {
                                         // Sending of the SureCheck failed for some reason. Stop registration details.
                                         // Display an error message and advise to try again later
-                                        failureHandler(response)
+                                        failureHandler("An error has occurred. Please try again later.", true)
                                         stopPolling()
                                     }
 
@@ -107,7 +108,7 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
                                         // Present an input screen for the OTP,
                                         // as well as a different request payload.
                                         // #note: consider as rejected for now
-                                        failureHandler(response)
+                                        failureHandler("An error has occurred. Please try again later.",true)
                                         stopPolling()
                                     }
                                 }
@@ -116,7 +117,7 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
 
                         override fun onFailure(errorMessage: String) {
                             failureHandler(errorMessage, false)
-
+                            stopPolling()
                         }
                     })
         }, 0, POLLING_INTERVAL, TimeUnit.SECONDS)

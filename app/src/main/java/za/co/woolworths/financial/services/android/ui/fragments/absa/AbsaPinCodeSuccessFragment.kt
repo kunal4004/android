@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.absa
 
+import android.app.Activity.RESULT_OK
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.app.Fragment
@@ -15,7 +16,6 @@ class AbsaPinCodeSuccessFragment : Fragment() {
 
     companion object {
         const val DELAY_CLOSING_ACTIVITY: Long = 2 * 1000
-        const val ABSA_REGISTRATION_COMPLETE_RESULT_CODE = 2112
         fun newInstance() = AbsaPinCodeSuccessFragment()
     }
 
@@ -38,7 +38,7 @@ class AbsaPinCodeSuccessFragment : Fragment() {
         val handler: Handler? = Handler()
         handler?.postDelayed({
             activity?.apply {
-                setResult(ABSA_REGISTRATION_COMPLETE_RESULT_CODE)
+                setResult(RESULT_OK)
                 finish()
                 overridePendingTransition(R.anim.stay, android.R.anim.fade_out)
             }
