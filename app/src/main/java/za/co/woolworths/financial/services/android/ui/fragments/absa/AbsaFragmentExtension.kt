@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import za.co.absa.openbankingapi.woolworths.integration.service.VolleySingleton
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.OkButtonErrorMessageFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment
 
@@ -51,6 +52,12 @@ open class AbsaFragmentExtension : Fragment() {
             val fm = it.supportFragmentManager
             val okButtonErrorMessageFragment = OkButtonErrorMessageFragment.newInstance(text)
             okButtonErrorMessageFragment.show(fm, OkButtonErrorMessageFragment::class.java.simpleName)
+        }
+    }
+
+    fun cancelVolleyRequest(name: String?) {
+        VolleySingleton.getInstance()?.apply {
+            cancelRequest(name)
         }
     }
 }
