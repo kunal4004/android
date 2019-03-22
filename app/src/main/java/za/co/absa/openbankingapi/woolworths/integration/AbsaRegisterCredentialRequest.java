@@ -61,7 +61,7 @@ public class AbsaRegisterCredentialRequest {
 			byte[] encryptedDerivedKey = SymmetricCipher.Aes256Encrypt(sessionKey.getKey(), derivedKey, sessionKey.getIV());
 			String base64EncodedEncryptedDerivedKey = Base64.encodeToString(encryptedDerivedKey, Base64.NO_WRAP);
 
-			credentialVOs[0] = new RegisterCredentialRequest.CredentialVO(encryptedAlias, "MOBILEAPP_5DIGIT_PIN", base64EncodedEncryptedDerivedKey);
+			 credentialVOs[0] = new RegisterCredentialRequest.CredentialVO(encryptedAlias, "MOBILEAPP_5DIGIT_PIN", base64EncodedEncryptedDerivedKey);
 		} catch (DecryptionFailureException | UnsupportedEncodingException | KeyGenerationFailureException e) {
 			throw new RuntimeException(e);
 		}
@@ -84,7 +84,7 @@ public class AbsaRegisterCredentialRequest {
 		}, new Response.ErrorListener() {
 			@Override
 			public void onErrorResponse(VolleyError error) {
-
+				responseDelegate.onFatalError(error);
 			}
 		});
 

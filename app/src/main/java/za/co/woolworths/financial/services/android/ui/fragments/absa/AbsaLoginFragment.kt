@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.absa
 
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -11,11 +12,13 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.ImageView
+import com.android.volley.VolleyError
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_login_fragment.*
 import za.co.absa.openbankingapi.woolworths.integration.AbsaLoginRequest
 import za.co.absa.openbankingapi.woolworths.integration.dto.LoginResponse
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse
+import za.co.absa.openbankingapi.woolworths.integration.service.VolleyErrorHandler
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import java.net.HttpCookie
 
@@ -69,6 +72,7 @@ class AbsaLoginFragment : AbsaFragmentExtension() {
             displayLoginProgress(true)
             AbsaLoginRequest(it).make(userPin, aliasId, deviceId,
                     object : AbsaBankingOpenApiResponse.ResponseDelegate<LoginResponse> {
+
                         override fun onSuccess(response: LoginResponse?, cookies: MutableList<HttpCookie>?) {
                             response?.apply {
                                 if (result?.toLowerCase() == "success") {
@@ -95,6 +99,10 @@ class AbsaLoginFragment : AbsaFragmentExtension() {
                         override fun onFailure(errorMessage: String) {
                             failureHandler(errorMessage)
                             displayLoginProgress(false)
+                        }
+
+                        override fun onFatalError(error: VolleyError?) {
+                            (activity as? AppCompatActivity)?.apply { error?.let { error -> VolleyErrorHandler(this, error).show() } }
                         }
                     })
         }

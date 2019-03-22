@@ -1,6 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.absa
 
-import android.util.Log
+import com.android.volley.VolleyError
 import za.co.absa.openbankingapi.woolworths.integration.AbsaCreateAliasRequest
 import za.co.absa.openbankingapi.woolworths.integration.AbsaValidateCardAndPinRequest
 import za.co.absa.openbankingapi.woolworths.integration.AbsaValidateSureCheckRequest
@@ -11,7 +11,6 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.ValidateSureCheckRes
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse
 import za.co.woolworths.financial.services.android.contracts.IValidatePinCodeDialogInterface
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import java.net.HttpCookie
 import java.util.*
 import java.util.concurrent.Executors
@@ -64,7 +63,20 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
                     override fun onFailure(errorMessage: String?) {
                         failureHandler(errorMessage, false)
                     }
+
+                    override fun onFatalError(error: VolleyError?) {
+                        fatalErrorHandler(error)
+                    }
                 })
+    }
+
+    private fun fatalErrorHandler(error: VolleyError?) {
+        mValidatePinCodeDialogInterface?.onFatalError(error)
+    }
+
+    private fun failureHandler(responseMessage: String?, shouldDismissActivity: Boolean) {
+        mValidatePinCodeDialogInterface?.onFailureHandler(responseMessage
+                ?: "Technical error occured", shouldDismissActivity)
     }
 
     private fun validateSureCheck(jSession: JSession) {
@@ -72,7 +84,7 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
             AbsaValidateSureCheckRequest().make(jSession,
                     object : AbsaBankingOpenApiResponse.ResponseDelegate<ValidateSureCheckResponse> {
                         override fun onSuccess(response: ValidateSureCheckResponse?, cookies: MutableList<HttpCookie>?) {
-                            Log.e("resultState",response?.result.plus(" $mPollingCount"))
+
                             val acceptedResultMessages = mutableListOf("success", "processed")
                             val failedResultMessages = mutableListOf("failed", "rejected")
                             val continuePollingProcessResultMessage = mutableListOf("processing")
@@ -108,7 +120,7 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
                                         // Present an input screen for the OTP,
                                         // as well as a different request payload.
                                         // #note: consider as rejected for now
-                                        failureHandler("An error has occurred. Please try again later.",true)
+                                        failureHandler("An error has occurred. Please try again later.", true)
                                         stopPolling()
                                     }
                                 }
@@ -119,35 +131,23 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
                             failureHandler(errorMessage, false)
                             stopPolling()
                         }
+
+                        override fun onFatalError(error: VolleyError?) {
+                            fatalErrorHandler(error)
+                            stopPolling()
+                        }
                     })
         }, 0, POLLING_INTERVAL, TimeUnit.SECONDS)
-    }
-
-    private fun failureHandler(response: ValidateSureCheckResponse?) {
-        failureHandler(response?.header?.resultMessages?.first()?.responseMessage
-                ?: technical_error_occurred, true)
-    }
-
-    private fun failureHandler(response: String?, shouldDismissActivity: Boolean) {
-        mValidatePinCodeDialogInterface?.onFailureHandler(response
-                ?: technical_error_occurred, shouldDismissActivity)
     }
 
     fun createAlias(jSession: JSession) {
         val deviceId = UUID.randomUUID().toString().replace("-", "")
         AbsaCreateAliasRequest(WoolworthsApplication.getAppContext()).make(deviceId, jSession, object : AbsaBankingOpenApiResponse.ResponseDelegate<CreateAliasResponse> {
+
             override fun onSuccess(response: CreateAliasResponse?, cookies: MutableList<HttpCookie>?) {
                 response?.apply {
                     if (header?.resultMessages?.size == 0 || aliasId != null) {
-                        var sessionDao: SessionDao? = SessionDao.getByKey(SessionDao.KEY.ABSA_DEVICEID)
-                        sessionDao?.value = deviceId
-                        sessionDao?.save()
-
-                        sessionDao = SessionDao.getByKey(SessionDao.KEY.ABSA_ALIASID)
-                        sessionDao?.value = aliasId
-                        sessionDao?.save()
-
-                        navigateToRegisterCredential(jSession)
+                        navigateToRegisterCredential(jSession, aliasId, deviceId)
                     } else {
                         failureHandler(header?.resultMessages?.first()?.responseMessage
                                 ?: technical_error_occurred, true)
@@ -157,6 +157,10 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
 
             override fun onFailure(errorMessage: String) {
                 failureHandler(errorMessage, false)
+            }
+
+            override fun onFatalError(error: VolleyError?) {
+                fatalErrorHandler(error)
             }
         })
     }
@@ -169,8 +173,8 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
         }
     }
 
-    private fun navigateToRegisterCredential(jSession: JSession) {
-        mValidatePinCodeDialogInterface?.onSuccessHandler(jSession)
+    private fun navigateToRegisterCredential(jSession: JSession, aliasId: String?, deviceId: String?) {
+        mValidatePinCodeDialogInterface?.onSuccessHandler(jSession, aliasId!!, deviceId!!)
     }
 
 }

@@ -77,7 +77,7 @@ public class AbsaCreateAliasRequest {
 		}, new Response.ErrorListener() {
 			@Override
 			public void onErrorResponse(VolleyError error) {
-				responseDelegate.onFailure(error.getMessage());
+				responseDelegate.onFatalError(error);
 			}
 		});
 

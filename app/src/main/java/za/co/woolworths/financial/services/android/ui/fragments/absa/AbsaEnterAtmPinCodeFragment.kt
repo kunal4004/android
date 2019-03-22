@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.absa
 
 import android.graphics.Paint
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.support.v4.content.ContextCompat
 import android.text.Editable
 import android.text.TextWatcher
@@ -12,12 +13,14 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.ImageView
+import com.android.volley.VolleyError
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_pin_atm_fragment.*
 import za.co.absa.openbankingapi.woolworths.integration.AbsaCreateAliasRequest
 import za.co.absa.openbankingapi.woolworths.integration.AbsaValidateCardAndPinRequest
 import za.co.absa.openbankingapi.woolworths.integration.AbsaValidateSureCheckRequest
 import za.co.absa.openbankingapi.woolworths.integration.dao.JSession
+import za.co.absa.openbankingapi.woolworths.integration.service.VolleyErrorHandler
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.contracts.IValidatePinCodeDialogInterface
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
@@ -26,7 +29,7 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.GotITDia
 class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListener, IValidatePinCodeDialogInterface, IDialogListener {
 
     var mPinImageViewList: MutableList<ImageView>? = null
-    private var mCreditAccountInfo: String? = ""
+    private var mCreditCardNumber: String? = ""
 
     companion object {
         const val MAXIMUM_PIN_ALLOWED: Int = 3
@@ -41,7 +44,7 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
         super.onCreate(savedInstanceState)
         arguments?.apply {
             if (containsKey("creditCardToken")) {
-                mCreditAccountInfo = arguments?.getString("creditCardToken") ?: ""
+                mCreditCardNumber = arguments?.getString("creditCardToken") ?: ""
             }
         }
     }
@@ -59,7 +62,7 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
     }
 
     private fun maskPinNumber() {
-        tvABSACardNumber?.setText(getString(R.string.absa_biometric_please_card_number, maskedCardNumberWithSpaces(mCreditAccountInfo)))
+        tvABSACardNumber?.setText(getString(R.string.absa_biometric_please_card_number, maskedCardNumberWithSpaces(mCreditCardNumber)))
     }
 
     private fun initViewsAndEvents() {
@@ -82,9 +85,9 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
     private fun navigateToFiveDigitCodeFragment() {
         if ((edtEnterATMPin.length() - 1) == AbsaEnterAtmPinCodeFragment.MAXIMUM_PIN_ALLOWED) {
             activity?.let {
-                progressIndicator(VISIBLE)
                 val pinCode = edtEnterATMPin.text.toString()
-                ValidateATMPinCode(mCreditAccountInfo, pinCode, this).make()
+                progressIndicator(VISIBLE)
+                mCreditCardNumber?.let { creditCardNumber -> ValidateATMPinCode(creditCardNumber, pinCode, this).make() }
             }
         }
     }
@@ -165,9 +168,9 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
         showKeyboard(edtEnterATMPin)
     }
 
-    override fun onSuccessHandler(jSession: JSession) {
+    override fun onSuccessHandler(jSession: JSession, aliasId: String, deviceId: String) {
         replaceFragment(
-                fragment = AbsaFiveDigitCodeFragment.newInstance(jSession),
+                fragment = AbsaFiveDigitCodeFragment.newInstance(jSession, aliasId, deviceId),
                 tag = AbsaFiveDigitCodeFragment::class.java.simpleName,
                 containerViewId = R.id.flAbsaOnlineBankingToDevice,
                 allowStateLoss = true,
@@ -189,6 +192,12 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
             return
         }
         view?.postDelayed({ tapAndDismissErrorDialog(responseMessage) }, 200)
+    }
+
+    override fun onFatalError(error: VolleyError?) {
+        progressIndicator(GONE)
+        clearPin()
+        (activity as? AppCompatActivity)?.apply { error?.let { VolleyErrorHandler(this, it).show() } }
     }
 
     override fun onResume() {
