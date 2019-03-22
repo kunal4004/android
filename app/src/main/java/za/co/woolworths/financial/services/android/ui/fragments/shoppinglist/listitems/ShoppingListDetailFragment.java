@@ -383,6 +383,12 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             String successMessage = addItemToCartResponse.data.get(0).message;
             resultIntent.putExtra("addedToCartMessage", successMessage);
         }
+
+        // reset selection after items added to cart
+        if (shoppingListItemsAdapter != null) {
+            shoppingListItemsAdapter.resetSelection();
+        }
+        
         pbLoadingIndicator.setVisibility(GONE);
         btnCheckOut.setVisibility(VISIBLE);
         ToastFactory.Companion.buildAddToCartSuccessToast(rlCheckOut, true, activity, this);
