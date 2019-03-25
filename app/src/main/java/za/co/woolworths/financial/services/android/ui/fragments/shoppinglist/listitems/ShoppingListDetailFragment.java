@@ -110,6 +110,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     private ProgressBar pbLoadingIndicator;
     private WButton btnCheckOut;
     private LinearLayout rlEmptyView;
+    private boolean openFromMyList;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -119,6 +120,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         if (argument != null) {
             listId = argument.getString("listId");
             listName = argument.getString("listName");
+            openFromMyList = argument.getBoolean("openFromMyList", false);
         }
     }
 
@@ -390,7 +392,16 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         
         pbLoadingIndicator.setVisibility(GONE);
         btnCheckOut.setVisibility(VISIBLE);
-        ToastFactory.Companion.buildAddToCartSuccessToast(rlCheckOut, true, activity, this);
+
+        // Present toast on BottomNavigationMenu if shopping list detail was opened from my list
+        if (openFromMyList) {
+            activity.setResult(RESULT_OK,resultIntent);
+            activity.finish();
+            activity.overridePendingTransition(0, 0);
+        } else {
+            // else display shopping list toast
+            ToastFactory.Companion.buildAddToCartSuccessToast(rlCheckOut, true, activity, this);
+        }
     }
 
     @Override
