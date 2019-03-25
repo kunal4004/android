@@ -62,6 +62,7 @@
             android:layout_alignBottom="@+id/tvAddToCart"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="@dimen/sixteen_dp"
+            android:textAllCaps="true"
             android:layout_weight="1"
             android:gravity="center"
             android:letterSpacing="0.15"
