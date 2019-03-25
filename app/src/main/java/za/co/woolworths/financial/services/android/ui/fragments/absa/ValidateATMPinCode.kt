@@ -30,16 +30,16 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
     private var mCardToken: String? = cardToken
     private var mPinCode = pinCode
     private var mPollingCount: Int = 0
+    private var jSession = JSession()
 
     fun make() {
         mCardToken?.let { validateCardAndPin(it, mPinCode) }
     }
 
     private fun validateCardAndPin(cardToken: String, pin: String) {
-      AbsaValidateCardAndPinRequest(WoolworthsApplication.getAppContext()).make(cardToken, pin,
+        AbsaValidateCardAndPinRequest(WoolworthsApplication.getAppContext()).make(cardToken, pin,
                 object : AbsaBankingOpenApiResponse.ResponseDelegate<ValidateCardAndPinResponse> {
                     override fun onSuccess(response: ValidateCardAndPinResponse?, cookies: MutableList<HttpCookie>?) {
-                        val jSession = JSession()
                         response?.apply {
                             jSession.id = header?.jsessionId
 
@@ -84,6 +84,8 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
             AbsaValidateSureCheckRequest().make(jSession,
                     object : AbsaBankingOpenApiResponse.ResponseDelegate<ValidateSureCheckResponse> {
                         override fun onSuccess(response: ValidateSureCheckResponse?, cookies: MutableList<HttpCookie>?) {
+
+                            jSession.id = response?.header?.jsessionId
 
                             val acceptedResultMessages = mutableListOf("success", "processed")
                             val failedResultMessages = mutableListOf("failed", "rejected")
@@ -146,6 +148,9 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
 
             override fun onSuccess(response: CreateAliasResponse?, cookies: MutableList<HttpCookie>?) {
                 response?.apply {
+
+                    jSession.id = header?.jsessionId
+
                     if (header?.resultMessages?.size == 0 || aliasId != null) {
                         navigateToRegisterCredential(jSession, aliasId, deviceId)
                     } else {
