@@ -80,7 +80,6 @@ import static za.co.woolworths.financial.services.android.ui.fragments.shoppingl
 
 public class ShoppingListDetailFragment extends Fragment implements View.OnClickListener, EmptyCartView.EmptyCartInterface, NetworkChangeListener, ToastUtils.ToastInterface, ShoppingListItemsNavigator, IToastInterface {
 
-    public static final int SUBURB_SET_RESULT = 123401;
     private final int DELIVERY_LOCATION_REQUEST = 2;
     public static final int ADD_TO_CART_SUCCESS_RESULT = 2000;
     private final int SET_DELIVERY_LOCATION_REQUEST_CODE = 2011;
@@ -383,6 +382,12 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             String successMessage = addItemToCartResponse.data.get(0).message;
             resultIntent.putExtra("addedToCartMessage", successMessage);
         }
+
+        // reset selection after items added to cart
+        if (shoppingListItemsAdapter != null) {
+            shoppingListItemsAdapter.resetSelection();
+        }
+        
         pbLoadingIndicator.setVisibility(GONE);
         btnCheckOut.setVisibility(VISIBLE);
         ToastFactory.Companion.buildAddToCartSuccessToast(rlCheckOut, true, activity, this);
@@ -533,6 +538,11 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (shouldUserSetSuburb()) {
+            deliverySelectionIntent(DELIVERY_LOCATION_REQUEST_CODE_FROM_SELECT_ALL);
+            return super.onOptionsItemSelected(item);
+        }
+
         switch (item.getItemId()) {
             case R.id.selectAll:
                 if (tvMenuSelectAll.getText().toString().equalsIgnoreCase("SELECT ALL")) {
@@ -808,10 +818,8 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             return;
         }
 
-        if (requestCode == DELIVERY_LOCATION_REQUEST) {
-            if (resultCode == SUBURB_SET_RESULT) { // on suburb selection successful
+        if (requestCode == DELIVERY_LOCATION_REQUEST  && resultCode == RESULT_OK) { // on suburb selection successful
                 makeInventoryCall();
-            }
         }
 
         if (requestCode == REQUEST_SUBURB_CHANGE) {
@@ -844,7 +852,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         }
 
         if (requestCode == DELIVERY_LOCATION_REQUEST_CODE_FROM_SELECT_ALL) {
-            if (resultCode == SUBURB_SET_RESULT) { // on suburb selection successful
+            if (resultCode == RESULT_OK) { // on suburb selection successful
                 setResultCode(DELIVERY_LOCATION_REQUEST_CODE_FROM_SELECT_ALL);
                 makeInventoryCall();
             }
@@ -1005,5 +1013,10 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             activity.finish();
             activity.overridePendingTransition(0, 0);
         }
+    }
+
+    public boolean shouldUserSetSuburb() {
+        ShoppingDeliveryLocation shoppingDeliveryLocation = Utils.getPreferredDeliveryLocation();
+        return shoppingDeliveryLocation.suburb == null;
     }
 }

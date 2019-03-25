@@ -98,7 +98,6 @@ import static za.co.woolworths.financial.services.android.ui.activities.Delivery
 import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.RESULT_OK_ACCOUNTS;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.DELIVERY_LOCATION_FROM_PDP_REQUEST;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_ADD_TO_CART;
-import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.SuburbSelectionFragment.SUBURB_SET_RESULT;
 import static za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.ADD_TO_CART_SUCCESS_RESULT;
 import static za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment.LOCK_REQUEST_CODE_WREWARDS;
@@ -985,7 +984,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
              * Activated when set delivery location process is successfully set
              */
 
-            if (resultCode == SUBURB_SET_RESULT) {
+            if (resultCode == RESULT_OK) {
                 if (getGlobalState().getSaveButtonClick() == INDEX_ADD_TO_CART) {
                     Fragment fragmentById = getBottomFragmentById();
                     fragmentById.onActivityResult(requestCode, resultCode, null);

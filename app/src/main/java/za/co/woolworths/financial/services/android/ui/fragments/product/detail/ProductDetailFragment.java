@@ -108,7 +108,6 @@ import static za.co.woolworths.financial.services.android.ui.activities.Delivery
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.BOTTOM_FRAGMENT_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailViewModel.CLOTHING_PRODUCT;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailViewModel.FOOD_PRODUCT;
-import static za.co.woolworths.financial.services.android.ui.fragments.product.shop.SuburbSelectionFragment.SUBURB_SET_RESULT;
 
 
 /**
@@ -1789,7 +1788,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
          * perform add to cart call for first time user
          */
         if (requestCode == DELIVERY_LOCATION_FROM_PDP_REQUEST) {
-            if (resultCode == SUBURB_SET_RESULT) {
+            if (resultCode == RESULT_OK) {
                 if (getGlobalState().getSaveButtonClick() == INDEX_ADD_TO_CART) {
                     getViewDataBinding().llAddToCart.performClick();
                     return;
