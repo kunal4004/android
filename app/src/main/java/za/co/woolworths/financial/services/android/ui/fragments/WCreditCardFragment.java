@@ -612,7 +612,18 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
                                 Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, getString(R.string.card_number_not_found));
                                 break;
                             default:
-                                openAbsaOnLineBankingActivity(response, activity);
+                                String creditCardNumber = "";
+                                for (Card card : cards) {
+                                    if (card.cardStatus.equalsIgnoreCase("AAA")) {
+                                        creditCardNumber = card.absaCardToken;
+                                    }
+                                }
+
+                                if (TextUtils.isEmpty(creditCardNumber)) {
+                                    Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, getString(R.string.card_number_not_found));
+                                    return;
+                                }
+                                openAbsaOnLineBankingActivity(creditCardNumber, activity);
                                 break;
                         }
                         break;
@@ -642,10 +653,10 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         }).execute();
     }
 
-    private void openAbsaOnLineBankingActivity(CreditCardTokenResponse response, Activity activity) {
+    private void openAbsaOnLineBankingActivity(String creditCardNumber, Activity activity) {
         Intent openABSAOnlineBanking = new Intent(getActivity(), ABSAOnlineBankingRegistrationActivity.class);
         openABSAOnlineBanking.putExtra(SHOULD_DISPLAY_LOGIN_SCREEN, false);
-        openABSAOnlineBanking.putExtra("creditCardToken", response.cards.get(0).absaCardToken);
+        openABSAOnlineBanking.putExtra("creditCardToken", creditCardNumber);
         activity.startActivityForResult(openABSAOnlineBanking, MyAccountCardsActivity.ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE);
         activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
     }
