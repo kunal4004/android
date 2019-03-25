@@ -287,7 +287,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
     }
 
     override fun onShoppingListItemSelected(shoppingList: ShoppingList) {
-        activity?.let { ScreenManager.presentShoppingListDetailActivity(it, shoppingList.listId, shoppingList.listName) }
+        activity?.let { ScreenManager.presentShoppingListDetailActivity(it, shoppingList.listId, shoppingList.listName,true) }
     }
 
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {

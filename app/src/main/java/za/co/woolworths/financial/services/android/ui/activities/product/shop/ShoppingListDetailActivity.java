@@ -29,13 +29,15 @@ public class ShoppingListDetailActivity extends AppCompatActivity {
         setContentView(R.layout.shopping_list_detail_activity);
         Bundle bundle = getIntent().getExtras();
         String listId = "", listName = "";
+        boolean openFromMyList = false;
         if (bundle != null) {
+            openFromMyList = bundle.getBoolean("openFromMyList", false);
             listId = bundle.getString("listId");
             listName = bundle.getString("listName");
         }
         retrieveBundle();
         setUpToolbar(listName);
-        initFragment(listId, listName);
+        initFragment(listId, listName, openFromMyList);
     }
 
     private void retrieveBundle() {
@@ -61,11 +63,12 @@ public class ShoppingListDetailActivity extends AppCompatActivity {
         }
     }
 
-    private void initFragment(String listId, String listName) {
+    private void initFragment(String listId, String listName, boolean openFromMyList) {
         ShoppingListDetailFragment shoppingListDetailFragment = new ShoppingListDetailFragment();
         Bundle bundle = new Bundle();
         bundle.putString("listId", listId);
         bundle.putString("listName", listName);
+        bundle.putBoolean("openFromMyList",openFromMyList);
         shoppingListDetailFragment.setArguments(bundle);
         getSupportFragmentManager()
                 .beginTransaction()

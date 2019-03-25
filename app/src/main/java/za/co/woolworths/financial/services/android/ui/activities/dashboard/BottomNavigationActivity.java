@@ -248,7 +248,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         mToastUtils.setGravity(Gravity.BOTTOM);
         mToastUtils.setCurrentState(TAG);
         mToastUtils.setCartText(cartText);
-        mToastUtils.setPixel(getBottomNavigationById().getHeight() + Utils.dp2px(BottomNavigationActivity.this, 45));
+        mToastUtils.setAllCapsUpperCase(false);
+        mToastUtils.setPixel(getBottomNavigationById().getHeight() + Utils.dp2px(BottomNavigationActivity.this, 10));
         mToastUtils.setView(getBottomNavigationById());
         mToastUtils.setMessage(message);
         mToastUtils.setViewState(true);
@@ -853,22 +854,33 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             case SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE:
                 navigateToMyList(requestCode, resultCode, data);
 
-                // refresh my list view
-                if (resultCode == ADD_TO_SHOPPING_LIST_REQUEST_CODE) {
-                    getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
-                    clearStack();
-                    Fragment fragment = mNavController.getCurrentFrag();
-                    if (fragment instanceof ShopFragment) {
-                        ShopFragment shopFragment = (ShopFragment) fragment;
-                        shopFragment.navigateToMyListFragment();
-                        shopFragment.refreshViewPagerFragment(true);
-                    }
+                switch (resultCode){
+                    case ADD_TO_SHOPPING_LIST_REQUEST_CODE:
+                        // refresh my list view
+                        getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
+                        clearStack();
+                        Fragment fragment = mNavController.getCurrentFrag();
+                        if (fragment instanceof ShopFragment) {
+                            ShopFragment shopFragment = (ShopFragment) fragment;
+                            shopFragment.navigateToMyListFragment();
+                            shopFragment.refreshViewPagerFragment(true);
+                        }
+                        break;
+
+                    case RESULT_OK:
+                        // Open Shopping List Detail Fragment From MyList and Add item to cart
+                        String itemAddToCartMessage = data.getStringExtra("addedToCartMessage");
+                        if (itemAddToCartMessage != null) {
+                            setToast(itemAddToCartMessage, "");
+                        }
+                        break;
                 }
                 break;
 
             case REQUEST_CHECK_SETTINGS:
                 getCurrentFragment().onActivityResult(requestCode, resultCode, data);
                 break;
+
             default:
                 break;
         }
