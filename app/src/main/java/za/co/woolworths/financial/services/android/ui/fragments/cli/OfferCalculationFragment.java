@@ -357,7 +357,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		tvAdditionalCreditLimitAmount = (WTextView) view.findViewById(R.id.tvAdditionalCreditLimitAmount);
 		tvNewCreditLimitAmount = (WTextView) view.findViewById(R.id.tvNewCreditLimitAmount);
 		tvSlideToEditAmount = (WTextView) view.findViewById(R.id.tvSlideToEditAmount);
-		WButton btnRetry = (WButton) view.findViewById(R.id.btnRetry);
+		WButton btnRetry = (WButton) view.findViewById(R.id.btnRetryConnect);
 
 		sbSlideAmount = (SeekBar) view.findViewById(R.id.sbSlideAmount);
 		flCircularProgressSpinner = (FrameLayout) view.findViewById(R.id.flCircularProgressSpinner);

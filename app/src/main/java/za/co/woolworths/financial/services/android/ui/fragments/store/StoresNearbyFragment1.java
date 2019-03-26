@@ -307,7 +307,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 	}
 
 	public void initMap() {
-		if (googleMap == null) {
+		if (googleMap == null & isAdded()) {
 			mapFragment = (SupportMapFragment) this.getChildFragmentManager().findFragmentById(R.id.map);
 			mapFragment.getMapAsync(this);
 			mMarkers = new HashMap<>();
@@ -583,7 +583,8 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 			layoutLocationServiceOff.setVisibility(View.GONE);
 			layoutLocationServiceOn.setVisibility(View.VISIBLE);
 			navigateMenuState = true;
-			getActivity().invalidateOptionsMenu();
+			if (isAdded())
+				getActivity().invalidateOptionsMenu();
 
 		}
 	}
