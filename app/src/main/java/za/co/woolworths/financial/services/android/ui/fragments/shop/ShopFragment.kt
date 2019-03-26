@@ -237,4 +237,11 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
         }
         user = AppInstanceObject.get().getCurrentUserObject().id
     }
+
+    /***
+     * TODO:: Add barcode scanner in an Activity
+     */
+    fun openBarcodeScanner() {
+        imBarcodeScanner?.performClick()
+    }
 }
