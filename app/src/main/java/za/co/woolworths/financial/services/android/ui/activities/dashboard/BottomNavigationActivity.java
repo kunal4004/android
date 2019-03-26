@@ -96,6 +96,7 @@ import static za.co.woolworths.financial.services.android.ui.activities.CustomPo
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED;
 import static za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity.DELIVERY_LOCATION_CLOSE_CLICKED;
 import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.RESULT_OK_ACCOUNTS;
+import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.RESULT_OK_BARCODE_SCAN;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.DELIVERY_LOCATION_FROM_PDP_REQUEST;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_ADD_TO_CART;
 import static za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST;
@@ -886,16 +887,30 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         }
 
         //Open shopping from Tips and trick activity requestcode
-        if ((requestCode == TIPS_AND_TRICKS_CTA_REQUEST_CODE) && (resultCode == RESULT_OK_ACCOUNTS)) {
+        if (requestCode == TIPS_AND_TRICKS_CTA_REQUEST_CODE) {
             getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
             clearStack();
             Fragment fragment = mNavController.getCurrentFrag();
-            if (fragment instanceof ShopFragment) {
-                ShopFragment shopFragment = (ShopFragment) fragment;
-                shopFragment.navigateToMyListFragment();
-                shopFragment.refreshViewPagerFragment(false);
+            switch (resultCode) {
+                case RESULT_OK_ACCOUNTS:
+                    if (fragment instanceof ShopFragment) {
+                        ShopFragment shopFragment = (ShopFragment) fragment;
+                        shopFragment.navigateToMyListFragment();
+                        shopFragment.refreshViewPagerFragment(true);
+                        return;
+                    }
+                    break;
+
+                case RESULT_OK_BARCODE_SCAN:
+                    if (fragment instanceof ShopFragment) {
+                        ShopFragment shopFragment = (ShopFragment) fragment;
+                        shopFragment.openBarcodeScanner();
+                        return;
+                    }
+                    break;
+                default:
+                    break;
             }
-            return;
         }
 
         if (requestCode == PDP_REQUEST_CODE) {
