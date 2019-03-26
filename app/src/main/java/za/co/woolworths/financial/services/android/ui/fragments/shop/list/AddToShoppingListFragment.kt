@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.shop.list
 
 import android.content.Intent
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.util.DisplayMetrics
@@ -24,6 +25,7 @@ import za.co.woolworths.financial.services.android.models.rest.shoppinglist.Post
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
 import za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity.Companion.ORDER_ID
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
+import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
 import za.co.woolworths.financial.services.android.util.*
@@ -153,9 +155,9 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
     }
 
     private fun setRecyclerViewHeight(shoppingList: MutableList<ShoppingList>, viewGroupParams: ViewGroup.LayoutParams) {
-        shoppingList.apply {
-            when (size) {
-                0 -> navigateToCreateShoppingListFragment(false)   // pop up create list fragment
+        shoppingList.let {
+            when (it.size) {
+                0 -> navigateToCreateShoppingListFragment(false, this)   // pop up create list fragment
                 else -> recyclerViewMaximumHeight(viewGroupParams)
             }
         }
@@ -410,6 +412,28 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
                 exitAnimation = R.anim.exit_to_left,
                 popEnterAnimation = R.anim.enter_from_left,
                 popExitAnimation = R.anim.exit_to_right)
+    }
+
+    private fun navigateToCreateShoppingListFragment(state: Boolean, removeFragment: Fragment) {
+        // remove current fragment from fragment stack before popping next up
+        activity?.let {
+            it.supportFragmentManager?.apply {
+                beginTransaction()
+                        ?.remove(removeFragment)
+                        ?.commitAllowingStateLoss()
+                popBackStack()
+            }
+
+            (it as? AppCompatActivity)?.addFragment(
+                    fragment = CreateShoppingListFragment.newInstance(mShoppingListGroup, mAddToListArgs, state, mOrderId),
+                    tag = CreateShoppingListFragment::class.java.simpleName,
+                    containerViewId = R.id.flShoppingListContainer,
+                    allowStateLoss = false,
+                    enterAnimation = R.anim.enter_from_right,
+                    exitAnimation = R.anim.exit_to_left,
+                    popEnterAnimation = R.anim.enter_from_left,
+                    popExitAnimation = R.anim.exit_to_right)
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
