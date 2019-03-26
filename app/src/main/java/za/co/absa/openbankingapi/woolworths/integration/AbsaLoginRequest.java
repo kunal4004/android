@@ -1,11 +1,10 @@
 package za.co.absa.openbankingapi.woolworths.integration;
 
 import android.content.Context;
+import android.util.Base64;
 
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
 
 import java.io.UnsupportedEncodingException;
 import java.net.HttpCookie;
@@ -14,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import za.co.absa.openbankingapi.AsymmetricCryptoHelper;
+import za.co.absa.openbankingapi.Cryptography;
 import za.co.absa.openbankingapi.DecryptionFailureException;
 import za.co.absa.openbankingapi.KeyGenerationFailureException;
 import za.co.absa.openbankingapi.SessionKey;
@@ -22,41 +22,46 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.LoginRequest;
 import za.co.absa.openbankingapi.woolworths.integration.dto.LoginResponse;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiRequest;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse;
+import za.co.absa.openbankingapi.woolworths.integration.service.VolleySingleton;
 
 public class AbsaLoginRequest {
 
 	private SessionKey sessionKey;
-	private RequestQueue requestQueue;
+	private VolleySingleton requestQueue;
 
 	public AbsaLoginRequest(final Context context){
 
 		try {
 			this.sessionKey = SessionKey.generate(context.getApplicationContext());
-			this.requestQueue = Volley.newRequestQueue(context.getApplicationContext());
+			this.requestQueue = VolleySingleton.getInstance();
 		} catch (KeyGenerationFailureException | AsymmetricCryptoHelper.AsymmetricEncryptionFailureException | AsymmetricCryptoHelper.AsymmetricKeyGenerationFailureException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void make(final String userPin, final String aliasId, final String deviceId, final AbsaBankingOpenApiResponse.ResponseDelegate<LoginResponse> responseDelegate){
+	public void make(final String passcode, final String aliasId, final String deviceId, final AbsaBankingOpenApiResponse.ResponseDelegate<LoginResponse> responseDelegate){
 		Map<String, String> headers = new HashMap<>();
 		headers.put("Content-Type", "application/x-www-form-urlencoded");
 		headers.put("Accept", "application/json");
 
 		final String gatewaySymmetricKey = this.sessionKey.getEncryptedKeyBase64Encoded();
-		String encryptedUserPin = null;
+		String base64EncodedEncryptedDerivedKey = null;
 		String encryptedAlias = null;
 
 		try{
-			encryptedUserPin = SymmetricCipher.Aes256EncryptAndBase64Encode(userPin, sessionKey.getKey());
-			encryptedAlias = SymmetricCipher.Aes256EncryptAndBase64Encode(aliasId, sessionKey.getKey());
-		} catch (DecryptionFailureException e) {
+			encryptedAlias = Base64.encodeToString(SymmetricCipher.Aes256Encrypt(sessionKey.getKey(),aliasId),Base64.NO_WRAP);
+
+			byte[] derivedKey = Cryptography.PasswordBasedKeyDerivationFunction2(aliasId.concat(passcode), deviceId, 1000, 256);
+			byte[] encryptedDerivedKey = SymmetricCipher.Aes256Encrypt(sessionKey.getKey(), derivedKey);
+			base64EncodedEncryptedDerivedKey = Base64.encodeToString(encryptedDerivedKey, Base64.NO_WRAP);
+
+		} catch (DecryptionFailureException | UnsupportedEncodingException | KeyGenerationFailureException e) {
 			throw new RuntimeException(e);
 		}
 
 		String body = null;
 		try{
-			body = new LoginRequest(encryptedAlias, deviceId, encryptedUserPin, gatewaySymmetricKey).getUrlEncodedFormData();
+			body = new LoginRequest(encryptedAlias, deviceId, base64EncodedEncryptedDerivedKey, gatewaySymmetricKey, sessionKey.getEncryptedIVBase64Encoded()).getUrlEncodedFormData();
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
@@ -77,10 +82,10 @@ public class AbsaLoginRequest {
 		}, new Response.ErrorListener() {
 			@Override
 			public void onErrorResponse(VolleyError error) {
-				responseDelegate.onFailure(error.getMessage());
+				responseDelegate.onFatalError(error);
 			}
 		});
 
-		requestQueue.add(request);
+		requestQueue.addToRequestQueue(request,AbsaLoginRequest.class);
 	}
 }

@@ -73,7 +73,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
     public WTextView tvIncreaseLimitDescription;
 
     private ImageView iconAvailableFundsInfo, infoCreditLimit, infoCurrentBalance, infoNextPaymentDue, infoAmountOverdue, infoMinimumAmountDue;
-    ;
+
 
     String productOfferingId;
     WoolworthsApplication woolworthsApplication;
@@ -496,8 +496,11 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 
     @Override
     public void onResumeFragment() {
-        Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.FINANCIAL_SERVICES_STORE_CARD);
-        WStoreCardFragment.this.getActivity().runOnUiThread(new Runnable() {
+        Activity activity  = getActivity();
+        if (activity == null) return;
+
+        Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.FINANCIAL_SERVICES_STORE_CARD);
+        activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (!storeWasAlreadyRunOnce) {

@@ -23,6 +23,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
+import com.crashlytics.android.Crashlytics;
 import com.google.gson.Gson;
 
 import java.text.ParseException;
@@ -151,6 +152,14 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
                     }));
         }
 
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        if(MyAccountCardsActivity.walkThroughPromtView != null){
+            MyAccountCardsActivity.walkThroughPromtView.removeFromWindow();
+        }
     }
 
     private void init(View view) {
@@ -513,7 +522,9 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 
     @Override
     public void onResumeFragment() {
-        WPersonalLoanFragment.this.getActivity().runOnUiThread(new Runnable() {
+        Activity activity = getActivity();
+        if (activity == null) return;
+       activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (!personalWasAlreadyRunOnce) {
@@ -628,6 +639,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
+                Crashlytics.setString(getString(R.string.crashlytics_materialshowcase_key),this.getClass().getCanonicalName());
                 MyAccountCardsActivity.walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.STATEMENTS)
                         .setTarget(getActivity().getWindow().getDecorView().findViewById(R.id.imViewStatementLogo))
                         .setTitle(R.string.walkthrough_statement_title)

@@ -3,10 +3,8 @@ package za.co.absa.openbankingapi.woolworths.integration;
 import android.content.Context;
 import android.util.Base64;
 
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
 
 import java.net.HttpCookie;
 import java.nio.charset.StandardCharsets;
@@ -26,17 +24,18 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.CreateAliasResponse;
 import za.co.absa.openbankingapi.woolworths.integration.dto.Header;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiRequest;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse;
+import za.co.absa.openbankingapi.woolworths.integration.service.VolleySingleton;
 
 public class AbsaCreateAliasRequest {
 
+	private VolleySingleton requestQueue;
 	private SessionKey sessionKey;
-	private RequestQueue requestQueue;
 
 	public AbsaCreateAliasRequest(final Context context){
 
 		try {
 			this.sessionKey = SessionKey.generate(context.getApplicationContext());
-			this.requestQueue = Volley.newRequestQueue(context.getApplicationContext());
+			this.requestQueue = VolleySingleton.getInstance();
 		} catch (KeyGenerationFailureException | AsymmetricCryptoHelper.AsymmetricEncryptionFailureException | AsymmetricCryptoHelper.AsymmetricKeyGenerationFailureException e) {
 			e.printStackTrace();
 		}
@@ -48,7 +47,7 @@ public class AbsaCreateAliasRequest {
 		headers.put("action", "createAlias");
 		headers.put("JSESSIONID", jSession.getId());
 
-		final String body = new CreateAliasRequest(deviceId, sessionKey.getEncryptedKeyBase64Encoded()).getJson();
+		final String body = new CreateAliasRequest(deviceId, sessionKey.getEncryptedKeyBase64Encoded(), sessionKey.getEncryptedIVBase64Encoded()).getJson();
 		final AbsaBankingOpenApiRequest request = new AbsaBankingOpenApiRequest<>(CreateAliasResponse.class, headers, body, new AbsaBankingOpenApiResponse.Listener<CreateAliasResponse>(){
 
 			@Override
@@ -59,7 +58,7 @@ public class AbsaCreateAliasRequest {
 						byte[] encryptedAliasBytes = response.getAliasId().getBytes(StandardCharsets.UTF_8);
 						byte[] encryptedAliasBase64DecodedBytes = Base64.decode(encryptedAliasBytes, Base64.NO_WRAP);
 
-						byte[] aliasBytes = SymmetricCipher.Aes256Decrypt(sessionKey.getKey(), encryptedAliasBase64DecodedBytes);
+						byte[] aliasBytes = SymmetricCipher.Aes256Decrypt(sessionKey.getKey(), encryptedAliasBase64DecodedBytes, sessionKey.getIV());
 						byte[] aliasBase64DecodedBytes = Base64.decode(Base64.encodeToString(aliasBytes, Base64.NO_WRAP), Base64.DEFAULT);
 						String decryptedAlias = new String(aliasBase64DecodedBytes, StandardCharsets.UTF_8);
 
@@ -78,7 +77,7 @@ public class AbsaCreateAliasRequest {
 		}, new Response.ErrorListener() {
 			@Override
 			public void onErrorResponse(VolleyError error) {
-				responseDelegate.onFailure(error.getMessage());
+				responseDelegate.onFatalError(error);
 			}
 		});
 
@@ -86,6 +85,6 @@ public class AbsaCreateAliasRequest {
 		cookies.add(jSession.getCookie().toString());
 		request.setCookies(cookies);
 
-		requestQueue.add(request);
+        requestQueue.addToRequestQueue(request, AbsaCreateAliasRequest.class);
 	}
 }

@@ -30,7 +30,6 @@ import za.co.woolworths.financial.services.android.models.rest.shoppinglist.Dele
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.DepartmentExtensionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
-import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListItemsFragment
 import za.co.woolworths.financial.services.android.util.*
 
 class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, IShoppingList {
@@ -190,16 +189,17 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
     }
 
     private fun navigateToCreateListFragment(commerceItemList: MutableList<AddToListRequest>) {
-        val navigate = NavigateToShoppingList()
-        navigate.openShoppingList(activity, commerceItemList, "", true)
+        NavigateToShoppingList.openShoppingList(activity, commerceItemList, "", true)
     }
 
     private fun locationSelectionClicked() {
-        val openDeliveryLocationSelectionActivity = Intent(activity, DeliveryLocationSelectionActivity::class.java)
-        openDeliveryLocationSelectionActivity.putExtra("suburbName", mSuburbName)
-        openDeliveryLocationSelectionActivity.putExtra("provinceName", mProvinceName)
-        startActivity(openDeliveryLocationSelectionActivity)
-        activity?.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay)
+        activity?.apply {
+            val openDeliveryLocationSelectionActivity = Intent(this, DeliveryLocationSelectionActivity::class.java)
+            openDeliveryLocationSelectionActivity.putExtra("suburbName", mSuburbName)
+            openDeliveryLocationSelectionActivity.putExtra("provinceName", mProvinceName)
+            startActivity(openDeliveryLocationSelectionActivity)
+            overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay)
+        }
     }
 
     private fun showEmptyShoppingListView() {
@@ -287,12 +287,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
     }
 
     override fun onShoppingListItemSelected(shoppingList: ShoppingList) {
-        val bundle = Bundle()
-        bundle.putString("listName", shoppingList.listName)
-        bundle.putString("listId", shoppingList.listId)
-        val shoppingListItemsFragment = ShoppingListItemsFragment()
-        shoppingListItemsFragment.arguments = bundle
-        (activity as? BottomNavigationActivity)?.pushFragment(shoppingListItemsFragment)
+        activity?.let { ScreenManager.presentShoppingListDetailActivity(it, shoppingList.listId, shoppingList.listName,true) }
     }
 
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {

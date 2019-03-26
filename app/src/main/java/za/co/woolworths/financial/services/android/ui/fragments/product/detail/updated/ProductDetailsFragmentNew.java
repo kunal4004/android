@@ -28,6 +28,7 @@ import android.widget.ViewSwitcher;
 import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.ProductDetailsFragmentNewBinding;
+import com.crashlytics.android.Crashlytics;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -189,6 +190,14 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
         Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_DETAIL);
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        if(ProductDetailsActivity.walkThroughPromtView != null){
+            ProductDetailsActivity.walkThroughPromtView.removeFromWindow();
+        }
+    }
+
     public void initViews() {
         txtFromPrice = getViewDataBinding().priceLayout.textPrice;
         txtActualPrice = getViewDataBinding().priceLayout.textActualPrice;
@@ -342,8 +351,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
             item.setGiftListId(otherSkus.sku);
             ArrayList<AddToListRequest> addToListRequests = new ArrayList<>();
             addToListRequests.add(item);
-            NavigateToShoppingList navigateToShoppingList = new NavigateToShoppingList();
-            navigateToShoppingList.openShoppingList(getActivity(), addToListRequests, "", false);
+            NavigateToShoppingList.Companion.openShoppingList(getActivity(), addToListRequests, "", false);
             otherSKUForList = null; // remove otherSKUForList value to enable openSizePicker when user re-tap add to list button
         }
     }
@@ -1250,6 +1258,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
             return;
         if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.findInStore)
             return;
+        Crashlytics.setString(getString(R.string.crashlytics_materialshowcase_key),this.getClass().getCanonicalName());
         ProductDetailsActivity.walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.FIND_IN_STORE)
                 .setTarget(btnFindInStore)
                 .setTitle(R.string.tips_tricks_titles_stores)

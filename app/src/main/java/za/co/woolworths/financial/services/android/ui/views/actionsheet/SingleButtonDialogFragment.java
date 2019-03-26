@@ -76,7 +76,7 @@ public class SingleButtonDialogFragment extends ActionSheetDialogFragment implem
     }
 
     private void navigateBackToActivity() {
-        shouldAnimateViewOnCancel(false);
+        shouldAnimateViewOnCancel(true);
         if (mDialogListener != null)
             mDialogListener.onDialogDismissed();
     }

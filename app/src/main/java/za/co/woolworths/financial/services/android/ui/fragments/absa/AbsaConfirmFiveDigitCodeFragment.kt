@@ -15,9 +15,14 @@ import android.widget.ImageView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_five_digit_code_fragment.*
 import android.os.Vibrator
+import android.support.v7.app.AppCompatActivity
+import android.support.v4.content.ContextCompat
 import android.util.Log
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import com.android.volley.VolleyError
 import com.google.gson.Gson
 import za.co.absa.openbankingapi.woolworths.integration.AbsaRegisterCredentialRequest
 import za.co.absa.openbankingapi.woolworths.integration.dao.JSession
@@ -25,9 +30,9 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.RegisterCredentialRe
 import za.co.woolworths.financial.services.android.contracts.IVibrateComplete
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse
+import za.co.absa.openbankingapi.woolworths.integration.service.VolleyErrorHandler
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import java.net.HttpCookie
-
 
 class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener, IVibrateComplete {
 
@@ -36,17 +41,34 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
     private var mShakeAnimation: Animation? = null
     private var mVibrateComplete: IVibrateComplete? = null
     private var mJSession: JSession? = null
+    private var mAliasId: String? = null
+    private var mDeviceId: String? = null
 
     companion object {
         private const val MAXIMUM_PIN_ALLOWED: Int = 4
         private const val VIBRATE_DURATION: Long = 300
         private const val FIVE_DIGIT_PIN_CODE = "FIVE_DIGIT_PIN_CODE"
         private const val JSESSION = "JSESSION"
-        fun newInstance(fiveDigitCodePinCode: Int, jSession: String?) = AbsaConfirmFiveDigitCodeFragment().apply {
-            arguments = Bundle(2).apply {
+        private const val ALIAS_ID = "ALIAS_ID"
+        private const val DEVICE_ID = "DEVICE_ID"
+
+        fun newInstance(fiveDigitCodePinCode: Int, jSession: String?, aliasId: String?, deviceId: String?) = AbsaConfirmFiveDigitCodeFragment().apply {
+            arguments = Bundle(4).apply {
                 putInt(FIVE_DIGIT_PIN_CODE, fiveDigitCodePinCode)
                 putString(JSESSION, jSession)
+                putString(ALIAS_ID, aliasId)
+                putString(DEVICE_ID, deviceId)
             }
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.apply {
+            mBundleFiveDigitCodePinCode = getInt(FIVE_DIGIT_PIN_CODE, 0)
+            getString(JSESSION)?.apply { mJSession = Gson().fromJson(this, JSession::class.java) }
+            getString(ALIAS_ID)?.apply { mAliasId = this }
+            getString(DEVICE_ID)?.apply { mDeviceId = this }
         }
     }
 
@@ -62,7 +84,6 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
     }
 
     private fun initViewsAndEvents() {
-        setArguments()
         tvEnterYourPin.setText(getString(R.string.absa_confirm_five_digit_code_title))
         mPinImageViewList = mutableListOf(ivPin1, ivPin2, ivPin3, ivPin4, ivPin5)
         ivEnterFiveDigitCode.setOnClickListener(this)
@@ -77,21 +98,11 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
         }
     }
 
-    private fun setArguments() {
-        arguments?.apply {
-            mBundleFiveDigitCodePinCode = getInt(FIVE_DIGIT_PIN_CODE)
-            getString(JSESSION)?.apply { mJSession = Gson().fromJson(this, JSession::class.java) }
-
-        }
-    }
-
     private fun navigateToAbsaBiometricScreen() {
         if ((edtEnterATMPin.length() - 1) == MAXIMUM_PIN_ALLOWED) {
             val fiveDigitPin = edtEnterATMPin.text.toString()
             if (fiveDigitPin.toInt() == mBundleFiveDigitCodePinCode) {
-                val aliasId = SessionDao.getByKey(SessionDao.KEY.ABSA_ALIASID).value
-                val deviceId = SessionDao.getByKey(SessionDao.KEY.ABSA_DEVICEID).value
-                registerCredentials(aliasId, deviceId, fiveDigitPin, mJSession)
+                registerCredentials(mAliasId, mDeviceId, fiveDigitPin, mJSession)
             } else {
                 vibrate(this)
             }
@@ -103,11 +114,20 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
             displayRegisterCredentialProgress(true)
             AbsaRegisterCredentialRequest(it).make(aliasId, deviceId, fiveDigitPin, jSession,
                     object : AbsaBankingOpenApiResponse.ResponseDelegate<RegisterCredentialResponse> {
+
                         override fun onSuccess(response: RegisterCredentialResponse, cookies: List<HttpCookie>) {
                             Log.d("onSuccess", "onSuccess")
                             response.apply {
                                 if (header?.resultMessages?.size == 0 || aliasId != null) {
-                                    successHandler(response)
+                                    var sessionDao: SessionDao? = SessionDao.getByKey(SessionDao.KEY.ABSA_DEVICEID)
+                                    sessionDao?.value = deviceId
+                                    sessionDao?.save()
+
+                                    sessionDao = SessionDao.getByKey(SessionDao.KEY.ABSA_ALIASID)
+                                    sessionDao?.value = aliasId
+                                    sessionDao?.save()
+
+                                    successHandler()
                                 } else {
                                     failureHandler(header?.resultMessages?.first()?.responseMessage)
                                 }
@@ -121,11 +141,15 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
                             Log.d("onSuccess", "onFailure")
                             displayRegisterCredentialProgress(false)
                         }
+
+                        override fun onFatalError(error: VolleyError?) {
+                            (activity as? AppCompatActivity)?.apply { error?.let { error -> VolleyErrorHandler(this, error).show() } }
+                        }
                     })
         }
     }
 
-    private fun successHandler(response: RegisterCredentialResponse) {
+    private fun successHandler() {
         replaceFragment(
                 fragment = AbsaBiometricFragment.newInstance(),
                 tag = AbsaBiometricFragment::class.java.simpleName,
@@ -139,8 +163,8 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
     }
 
     private fun failureHandler(message: String?) {
-        //TODO: implement failureHandler(response.header!.resultMessages.first?.responseMessage ??
-        // "Technical error occured.")
+        cancelRequest()
+        view?.postDelayed({ message?.let { tapAndDismissErrorDialog(it) } }, 200)
     }
 
     private fun createTextListener(edtEnterATMPin: EditText?) {
@@ -246,7 +270,16 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
     }
 
     fun displayRegisterCredentialProgress(state: Boolean) {
-        pbRegisterCredential.visibility = if (state) View.VISIBLE else View.GONE
+        pbRegisterCredential.visibility = if (state) VISIBLE else INVISIBLE
+        activity?.let { pbRegisterCredential?.indeterminateDrawable?.setColorFilter(ContextCompat.getColor(it, R.color.black), android.graphics.PorterDuff.Mode.SRC_IN) }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        cancelRequest()
+    }
+
+    private fun cancelRequest() {
+        cancelVolleyRequest(AbsaRegisterCredentialRequest::class.java.simpleName)
+    }
 }

@@ -15,10 +15,14 @@ public class CreateAliasRequest {
 	@SerializedName("symmetricKey")
 	private String symmetricKey;
 
-	public CreateAliasRequest(String deviceId, String symmetricKey){
+    @SerializedName("symmetricKeyIV")
+    private String symmetricKeyIV;
+
+	public CreateAliasRequest(String deviceId, String symmetricKey, String symmetricKeyIV){
 		this.header = new Header();
 		this.deviceId = deviceId;
 		this.symmetricKey = symmetricKey;
+		this.symmetricKeyIV = symmetricKeyIV;
 	}
 
 	public final String getJson(){

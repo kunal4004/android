@@ -99,18 +99,21 @@ class MyOrdersFragment : Fragment() {
     }
 
     private fun showEmptyOrdersView() {
-        swipeToRefresh.visibility = View.GONE
+        myOrdersList.visibility = View.GONE
+        swipeToRefresh.isEnabled = true
         mErrorHandlerView?.setEmptyStateWithAction(6, R.string.start_shopping, ErrorHandlerView.ACTION_TYPE.REDIRECT)
     }
 
     private fun showSignOutView() {
-        swipeToRefresh.visibility = View.GONE
+        myOrdersList.visibility = View.GONE
+        swipeToRefresh.isEnabled = false
         mErrorHandlerView?.setEmptyStateWithAction(7, R.string.sign_in, ErrorHandlerView.ACTION_TYPE.SIGN_IN)
 
     }
 
     private fun showErrorView() {
-        swipeToRefresh.visibility = View.GONE
+        myOrdersList.visibility = View.GONE
+        swipeToRefresh.isEnabled = false
         mErrorHandlerView?.setEmptyStateWithAction(8, R.string.retry, ErrorHandlerView.ACTION_TYPE.RETRY)
 
     }
@@ -120,7 +123,8 @@ class MyOrdersFragment : Fragment() {
         if (dataList.size > 0) {
             mErrorHandlerView?.hideEmpyState()
             myOrdersList.adapter = OrdersAdapter(activity, dataList)
-            swipeToRefresh.visibility = View.VISIBLE
+            myOrdersList.visibility = View.VISIBLE
+            swipeToRefresh.isEnabled = true
         } else
             showEmptyOrdersView()
     }
@@ -192,7 +196,7 @@ class MyOrdersFragment : Fragment() {
 
     private fun showLoading() {
         loadingBar.visibility = View.VISIBLE
-        swipeToRefresh.visibility = View.GONE
+        myOrdersList.visibility = View.GONE
     }
 
     fun scrollToTop() {

@@ -126,6 +126,7 @@ class AddOrderToCartAdapter(val context: Context, val listner: OnItemClick, var 
                 if (!item.isSelected) {
                     if (userShouldSetSuburb()) {
                         item.isSelected = false
+                        notifyDataSetChanged()
                         listner.openSetSuburbProcess()
                         return@OnClickListener
                     }

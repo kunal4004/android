@@ -19,16 +19,30 @@ class AbsaFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener 
 
     private var mPinImageViewList: MutableList<ImageView>? = null
     private var jSession: String? = null
+    private var mAliasId: String? = null
+    private var mDeviceId: String? = null
 
     companion object {
         private const val MAXIMUM_PIN_ALLOWED: Int = 4
         private const val JSESSION = "JSESSION"
-        fun newInstance(jSession: JSession) = AbsaFiveDigitCodeFragment().apply {
-            arguments?.apply {
-                Bundle(1).apply {
-                    putString(JSESSION, Gson().toJson(jSession))
-                }
+        private const val ALIAS_ID = "ALIAS_ID"
+        private const val DEVICE_ID = "DEVICE_ID"
+
+        fun newInstance(jSession: JSession, aliasId: String?, deviceId: String?) = AbsaFiveDigitCodeFragment().apply {
+            arguments = Bundle(3).apply {
+                putString(JSESSION, Gson().toJson(jSession))
+                putString(ALIAS_ID, aliasId)
+                putString(DEVICE_ID, deviceId)
             }
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.apply {
+            getString(JSESSION)?.apply { jSession = this }
+            getString(ALIAS_ID)?.apply { mAliasId = this }
+            getString(DEVICE_ID)?.apply { mDeviceId = this }
         }
     }
 
@@ -38,16 +52,9 @@ class AbsaFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener 
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        getBundleArgument()
         initViewsAndEvents()
         createTextListener(edtEnterATMPin)
         clearPinImage(mPinImageViewList!!)
-    }
-
-    private fun getBundleArgument() {
-        arguments?.let {
-            it.getString(JSESSION)?.apply { jSession = this }
-        }
     }
 
     private fun initViewsAndEvents() {
@@ -69,7 +76,7 @@ class AbsaFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener 
         if ((edtEnterATMPin.length() - 1) == MAXIMUM_PIN_ALLOWED) {
             val enteredPin = edtEnterATMPin.text.toString()
             replaceFragment(
-                    fragment = AbsaConfirmFiveDigitCodeFragment.newInstance(enteredPin.toInt(), jSession),
+                    fragment = AbsaConfirmFiveDigitCodeFragment.newInstance(enteredPin.toInt(), jSession, mAliasId, mDeviceId),
                     tag = AbsaConfirmFiveDigitCodeFragment::class.java.simpleName,
                     containerViewId = R.id.flAbsaOnlineBankingToDevice,
                     allowStateLoss = true,

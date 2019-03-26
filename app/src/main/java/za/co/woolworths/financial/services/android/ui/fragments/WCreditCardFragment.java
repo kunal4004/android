@@ -6,8 +6,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +22,10 @@ import android.widget.RelativeLayout;
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -28,13 +33,17 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import za.co.wigroup.logger.lib.WiGroupLogger;
+import za.co.woolworths.financial.services.android.contracts.AsyncAPIResponse;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
+import za.co.woolworths.financial.services.android.models.dto.Card;
+import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.rest.cli.CLIGetOfferActive;
+import za.co.woolworths.financial.services.android.models.rest.shoppinglist.GetCreditCardToken;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
@@ -57,6 +66,8 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
 
 import static android.app.Activity.RESULT_OK;
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity.SHOULD_DISPLAY_LOGIN_SCREEN;
 
 public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle, NetworkChangeListener {
@@ -98,6 +109,9 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
     private WTextView tvBPIProtectInsurance;
     private RelativeLayout rlABSALinkOnlineBankingToDevice;
     private WTextView tvABSALinkOnlineBanking;
+    private AsyncTask<String, String, CreditCardTokenResponse> mGetCreditCardToken;
+    private ProgressBar mPbGetCreditCardToken;
+    private ImageView mImABSAViewOnlineBanking;
 
     @Nullable
     @Override
@@ -148,10 +162,12 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
     private void init(View view) {
         availableBalance = (WTextView) view.findViewById(R.id.available_funds);
         RelativeLayout rlViewStatement = (RelativeLayout) view.findViewById(R.id.rlViewStatement);
-        rlViewStatement.setVisibility(View.GONE);
+        rlViewStatement.setVisibility(GONE);
         creditLimit = (WTextView) view.findViewById(R.id.creditLimit);
         dueDate = (WTextView) view.findViewById(R.id.dueDate);
         minAmountDue = (WTextView) view.findViewById(R.id.minAmountDue);
+        mPbGetCreditCardToken = (ProgressBar)view.findViewById(R.id.pbGetCreditCardToken);
+        mImABSAViewOnlineBanking = (ImageView)view.findViewById(R.id.imABSAViewOnlineBanking);
         rlABSALinkOnlineBankingToDevice = view.findViewById(R.id.rlABSALinkOnlineBankingToDevice);
         currentBalance = (WTextView) view.findViewById(R.id.currentBalance);
         tvViewTransaction = (WTextView) view.findViewById(R.id.tvViewTransaction);
@@ -172,11 +188,10 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         llActiveAccount = view.findViewById(R.id.llActiveAccount);
         llChargedOffAccount = view.findViewById(R.id.llChargedOffAccount);
         tvHowToPayArrears = view.findViewById(R.id.howToPayArrears);
-        tvABSALinkOnlineBanking = (WTextView)view.findViewById(R.id.tvABSALinkOnlineBanking);
+        tvABSALinkOnlineBanking = (WTextView) view.findViewById(R.id.tvABSALinkOnlineBanking);
 
         relDebitOrders = view.findViewById(R.id.relDebitOrders);
-        relDebitOrders.setVisibility(View.GONE);
-        rlABSALinkOnlineBankingToDevice.setVisibility(View.VISIBLE);
+        relDebitOrders.setVisibility(GONE);
 
         relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
         tvBPIProtectInsurance = view.findViewById(R.id.tvBPIProtectInsurance);
@@ -209,6 +224,8 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         infoNextPaymentDue.setOnClickListener(this);
         infoCurrentBalance.setOnClickListener(this);
         infoCreditLimit.setOnClickListener(this);
+
+        updateABSATitle();
     }
 
     private void addListener() {
@@ -234,13 +251,13 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
                 if ("CC".equals(p.productGroupCode)) {
                     this.account = p;
                     if (!p.productOfferingGoodStanding && p.productOfferingStatus.equalsIgnoreCase(Utils.ACCOUNT_CHARGED_OFF)) {
-                        llActiveAccount.setVisibility(View.GONE);
-                        llChargedOffAccount.setVisibility(View.VISIBLE);
+                        llActiveAccount.setVisibility(GONE);
+                        llChargedOffAccount.setVisibility(VISIBLE);
                         Utils.setViewHeightToRemainingBottomSpace(getActivity(), fakeView);
                         return;
                     } else {
-                        llActiveAccount.setVisibility(View.VISIBLE);
-                        llChargedOffAccount.setVisibility(View.GONE);
+                        llActiveAccount.setVisibility(VISIBLE);
+                        llChargedOffAccount.setVisibility(GONE);
                     }
 
                     productOfferingGoodStanding = p.productOfferingGoodStanding;
@@ -259,9 +276,9 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
                         WiGroupLogger.e(getActivity(), "TAG", e.getMessage(), e);
                     }
                     availableBalance.setTextColor(getResources().getColor(p.productOfferingGoodStanding ? R.color.black : R.color.bg_overlay));
-                    accountInArrearsLayout.setVisibility(p.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
-                    llIncreaseLimitContainer.setVisibility(p.productOfferingGoodStanding ? View.VISIBLE : View.GONE);
-                    tvHowToPayAccountStatus.setVisibility(p.productOfferingGoodStanding ? View.VISIBLE : View.INVISIBLE);
+                    accountInArrearsLayout.setVisibility(p.productOfferingGoodStanding ? GONE : VISIBLE);
+                    llIncreaseLimitContainer.setVisibility(p.productOfferingGoodStanding ? VISIBLE : GONE);
+                    tvHowToPayAccountStatus.setVisibility(p.productOfferingGoodStanding ? VISIBLE : View.INVISIBLE);
                     if (!p.productOfferingGoodStanding) {
                         tvAmountOverdue.setText(WFormatter.newAmountFormat(p.amountOverdue));
                     }
@@ -280,15 +297,16 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         }
         MyAccountHelper myAccountHelper = new MyAccountHelper();
         String accountInfo = myAccountHelper.getAccountInfo(accountsResponse, "CC");
-        Account creditCardInfo = myAccountHelper.getAccount(accountsResponse, "CC");
 
         switch (v.getId()) {
             case R.id.rlABSALinkOnlineBankingToDevice:
-                Intent openABSAOnlineBanking = new Intent(activity, ABSAOnlineBankingRegistrationActivity.class);
-                openABSAOnlineBanking.putExtra(SHOULD_DISPLAY_LOGIN_SCREEN, false);
-                openABSAOnlineBanking.putExtra("accountNumber", creditCardInfo.bankingDetails.getAsJsonObject().get("accountNumber").getAsString());
-                startActivityForResult(openABSAOnlineBanking, MyAccountCardsActivity.ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE);
-                activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+                SessionDao aliasID = SessionDao.getByKey(SessionDao.KEY.ABSA_ALIASID);
+                SessionDao deviceID = SessionDao.getByKey(SessionDao.KEY.ABSA_DEVICEID);
+                if ((TextUtils.isEmpty(aliasID.value) && TextUtils.isEmpty(deviceID.value))) {
+                    mGetCreditCardToken = getCreditCardToken(activity);
+                } else {
+                    openAbsaOnLineBankingActivity(activity);
+                }
                 break;
             case R.id.rlViewTransactions:
             case R.id.tvViewTransaction:
@@ -421,9 +439,9 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
     private void onLoad() {
         llIncreaseLimitContainer.setEnabled(false);
         mRelIncreaseMyLimit.setEnabled(false);
-        mProgressCreditLimit.setVisibility(View.VISIBLE);
-        tvApplyNowIncreaseLimit.setVisibility(View.GONE);
-        tvIncreaseLimit.setVisibility(View.VISIBLE);
+        mProgressCreditLimit.setVisibility(VISIBLE);
+        tvApplyNowIncreaseLimit.setVisibility(GONE);
+        tvIncreaseLimit.setVisibility(VISIBLE);
     }
 
     private void bindUI(OfferActive offerActive) {
@@ -446,8 +464,8 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
     public void onLoadComplete() {
         llIncreaseLimitContainer.setEnabled(true);
         mRelIncreaseMyLimit.setEnabled(true);
-        mProgressCreditLimit.setVisibility(View.GONE);
-        tvIncreaseLimit.setVisibility(View.VISIBLE);
+        mProgressCreditLimit.setVisibility(GONE);
+        tvIncreaseLimit.setVisibility(VISIBLE);
     }
 
     @Override
@@ -456,8 +474,11 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 
     @Override
     public void onResumeFragment() {
-        Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.FINANCIAL_SERVICES_CREDIT_CARD);
-        WCreditCardFragment.this.getActivity().runOnUiThread(new Runnable() {
+        Activity activity = getActivity();
+        if (activity==null) return;
+
+        Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.FINANCIAL_SERVICES_CREDIT_CARD);
+        activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (!creditWasAlreadyRunOnce) {
@@ -555,6 +576,10 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
                 cliGetOfferActive.cancel(true);
             }
         }
+        //  Cancel creditCardToken api if running
+        if (mGetCreditCardToken != null && !mGetCreditCardToken.isCancelled()) {
+            mGetCreditCardToken.cancel(true);
+        }
     }
 
     private void cliOfferStatus(OfferActive offerActive) {
@@ -566,6 +591,88 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
     }
 
     public void updateABSATitle() {
-        tvABSALinkOnlineBanking.setText(getString(R.string.online_banking));
+        if (tvABSALinkOnlineBanking != null
+                && !TextUtils.isEmpty(SessionDao.getByKey(SessionDao.KEY.ABSA_ALIASID).value)
+                && !TextUtils.isEmpty(SessionDao.getByKey(SessionDao.KEY.ABSA_DEVICEID).value))
+            tvABSALinkOnlineBanking.setText(getString(R.string.online_banking));
+    }
+
+    public AsyncTask<String, String, CreditCardTokenResponse> getCreditCardToken(final Activity activity) {
+        showGetCreditCardTokenProgressBar(VISIBLE);
+        return new GetCreditCardToken(new AsyncAPIResponse.ResponseDelegate<CreditCardTokenResponse>() {
+            @Override
+            public void onSuccess(CreditCardTokenResponse response) {
+                showGetCreditCardTokenProgressBar(GONE);
+                switch (response.httpCode) {
+                    case 200:
+                        ArrayList<Card> cards = response.cards;
+                        switch (cards.size()) {
+                            case 0:
+                                Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, getString(R.string.card_number_not_found));
+                                break;
+                            default:
+                                String creditCardNumber = "";
+                                for (Card card : cards) {
+                                    if (card.cardStatus.equalsIgnoreCase("AAA")) {
+                                        creditCardNumber = card.absaCardToken;
+                                    }
+                                }
+
+                                if (TextUtils.isEmpty(creditCardNumber)) {
+                                    Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, getString(R.string.card_number_not_found));
+                                    return;
+                                }
+                                openAbsaOnLineBankingActivity(creditCardNumber, activity);
+                                break;
+                        }
+                        break;
+
+                    case 440:
+                        SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, offerActive.response.stsParams, getActivity());
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull final String errorMessage) {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        showGetCreditCardTokenProgressBar(GONE);
+                        if (errorMessage.contains("ConnectException")
+                                || errorMessage.contains("SocketTimeoutException")) {
+                            Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, getString(R.string.check_connection_status));
+                        }
+                    }
+                });
+            }
+        }).execute();
+    }
+
+    private void openAbsaOnLineBankingActivity(String creditCardNumber, Activity activity) {
+        Intent openABSAOnlineBanking = new Intent(getActivity(), ABSAOnlineBankingRegistrationActivity.class);
+        openABSAOnlineBanking.putExtra(SHOULD_DISPLAY_LOGIN_SCREEN, false);
+        openABSAOnlineBanking.putExtra("creditCardToken", creditCardNumber);
+        activity.startActivityForResult(openABSAOnlineBanking, MyAccountCardsActivity.ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE);
+        activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+    }
+
+    private void openAbsaOnLineBankingActivity(Activity activity) {
+        Intent openABSAOnlineBanking = new Intent(getActivity(), ABSAOnlineBankingRegistrationActivity.class);
+        openABSAOnlineBanking.putExtra(SHOULD_DISPLAY_LOGIN_SCREEN, true);
+        activity.startActivityForResult(openABSAOnlineBanking, MyAccountCardsActivity.ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE);
+        activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+    }
+
+    public void showGetCreditCardTokenProgressBar(int state) {
+        Activity activity = getActivity();
+        if (activity != null) {
+            mPbGetCreditCardToken.getIndeterminateDrawable().setColorFilter(ContextCompat.getColor(activity, R.color.black), android.graphics.PorterDuff.Mode.SRC_IN);
+            mPbGetCreditCardToken.setVisibility(state);
+            mImABSAViewOnlineBanking.setVisibility((state == VISIBLE) ? GONE : VISIBLE);
+        }
     }
 }

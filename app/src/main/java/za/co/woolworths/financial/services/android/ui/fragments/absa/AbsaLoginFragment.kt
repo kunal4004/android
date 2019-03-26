@@ -1,20 +1,24 @@
 package za.co.woolworths.financial.services.android.ui.fragments.absa
 
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.ImageView
+import com.android.volley.VolleyError
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_login_fragment.*
 import za.co.absa.openbankingapi.woolworths.integration.AbsaLoginRequest
 import za.co.absa.openbankingapi.woolworths.integration.dto.LoginResponse
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse
+import za.co.absa.openbankingapi.woolworths.integration.service.VolleyErrorHandler
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import java.net.HttpCookie
 
@@ -24,11 +28,12 @@ class AbsaLoginFragment : AbsaFragmentExtension() {
 
     companion object {
         private const val MAXIMUM_PIN_ALLOWED: Int = 4
+        private const val technical_error_occurred = "Technical error occurred."
         fun newInstance() = AbsaLoginFragment()
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.absa_login_fragment, container, false)
+        return inflater?.inflate(R.layout.absa_login_fragment, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
@@ -65,36 +70,51 @@ class AbsaLoginFragment : AbsaFragmentExtension() {
     private fun absaLoginRequest(aliasId: String?, deviceId: String?, userPin: String) {
         activity?.let {
             displayLoginProgress(true)
-
-            AbsaLoginRequest(it).make(userPin,aliasId, deviceId,
+            AbsaLoginRequest(it).make(userPin, aliasId, deviceId,
                     object : AbsaBankingOpenApiResponse.ResponseDelegate<LoginResponse> {
+
                         override fun onSuccess(response: LoginResponse?, cookies: MutableList<HttpCookie>?) {
                             response?.apply {
-                                if (!(resultMessage?.length != 0 && aliasId == null)) {
-                                    successHandler(this)
+                                if (result?.toLowerCase() == "success") {
+                                    successHandler()
                                 } else {
-                                    failureHandler(resultMessage ?: "")
+                                    failureHandler(resultMessage ?: technical_error_occurred)
                                 }
+                                /* Work for WOP-3881
+                                   Commented because header returning nil
+                                    header?.apply {
+                                        if (statusCode == "0" || resultMessages.isEmpty()) {
+                                            successHandler(response)
+                                        } else {
+                                            if (statusCode == "1") {
+                                                failureHandler(header.resultMessages.first()?.responseMessage
+                                                        ?: technical_error_occurred)
+                                            }
+                                        }
+                                    }*/
                             }
-
                             displayLoginProgress(false)
                         }
 
                         override fun onFailure(errorMessage: String) {
-                            Log.d("onSuccess", "onFailure")
+                            failureHandler(errorMessage)
                             displayLoginProgress(false)
+                        }
+
+                        override fun onFatalError(error: VolleyError?) {
+                            (activity as? AppCompatActivity)?.apply { error?.let { error -> VolleyErrorHandler(this, error).show() } }
                         }
                     })
         }
     }
 
-    private fun successHandler(response: LoginResponse) {
-        //TODO:: handle Success
+    private fun successHandler() {
+        tapAndDismissErrorDialog("Login Successful")
     }
 
     private fun failureHandler(message: String?) {
-        //TODO: implement failureHandler(response.header!.resultMessages.first?.responseMessage ??
-        // "Technical error occured.")
+        cancelRequest()
+        message?.let { tapAndNavigateBackErrorDialog(it) }
     }
 
     private fun createTextListener(edtEnterATMPin: EditText?) {
@@ -154,8 +174,16 @@ class AbsaLoginFragment : AbsaFragmentExtension() {
         }
     }
 
-    fun displayLoginProgress(state: Boolean) {
-        pbLoginProgress.visibility = if (state) View.VISIBLE else View.GONE
+    override fun onDestroy() {
+        super.onDestroy()
+        cancelRequest()
     }
 
+    private fun cancelRequest() {
+        cancelVolleyRequest(AbsaLoginRequest::class.java.simpleName)
+    }
+
+    fun displayLoginProgress(state: Boolean) {
+        pbLoginProgress.visibility = if (state) VISIBLE else INVISIBLE
+    }
 }

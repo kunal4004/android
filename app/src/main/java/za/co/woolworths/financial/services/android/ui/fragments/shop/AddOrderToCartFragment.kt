@@ -211,9 +211,12 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
                 mMapStoreFulFillmentKeyValue?.put(fulFillmentTypeIdCollection, mFulFillmentStoreId!!)
                 executeGetInventoryForStore(mFulFillmentStoreId!!, multiSKUS)
             } else {
-                for (inventoryItems in dataList) {
-                    if (inventoryItems.type == OrderDetailsItem.ViewType.COMMERCE_ITEM) {
-                        (inventoryItems.item as OrderHistoryCommerceItem).inventoryCallCompleted = true
+                for (sku in skuIds) {
+                    for (orderDetailsItem in dataList) {
+                        if (orderDetailsItem.type == OrderDetailsItem.ViewType.COMMERCE_ITEM) {
+                            if ((orderDetailsItem.item as OrderHistoryCommerceItem).commerceItemInfo.catalogRefId.equals(sku))
+                                orderDetailsItem.item.inventoryCallCompleted = true
+                        }
                     }
                 }
                 addOrderToCartAdapter?.adapterClickable(true)

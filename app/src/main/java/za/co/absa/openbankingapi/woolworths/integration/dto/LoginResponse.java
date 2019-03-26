@@ -4,6 +4,9 @@ import com.google.gson.annotations.SerializedName;
 
 public class LoginResponse {
 
+	@SerializedName("header")
+	private Header header;
+
 	@SerializedName("result")
 	private String result;
 
@@ -52,5 +55,13 @@ public class LoginResponse {
 
 	public String getResultMessage() {
 		return resultMessage;
+	}
+
+	public Header getHeader() {
+		return header;
+	}
+
+	public String getResult() {
+		return result;
 	}
 }
