@@ -166,11 +166,11 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
     fun refreshViewPagerFragment(isNewSession: Boolean) {
         when (viewpager_main.currentItem) {
             1 -> {
-                val myListsFragment = viewpager_main.adapter?.instantiateItem(viewpager_main, viewpager_main.currentItem) as? MyListsFragment
+                val myListsFragment = viewpager_main?.adapter?.instantiateItem(viewpager_main, viewpager_main.currentItem) as? MyListsFragment
                 myListsFragment?.authenticateUser(isNewSession)
             }
             2 -> {
-                val myOrdersFragment = viewpager_main.adapter?.instantiateItem(viewpager_main, viewpager_main.currentItem) as? MyOrdersFragment
+                val myOrdersFragment = viewpager_main?.adapter?.instantiateItem(viewpager_main, viewpager_main.currentItem) as? MyOrdersFragment
                 myOrdersFragment?.configureUI(isNewSession)
             }
         }
@@ -178,25 +178,25 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
 
 
     override fun onStartShopping() {
-        viewpager_main.setCurrentItem(0, true)
+        viewpager_main?.setCurrentItem(0, true)
     }
 
     fun navigateToMyListFragment() {
-        viewpager_main.setCurrentItem(1, true)
+        viewpager_main?.setCurrentItem(1, true)
     }
 
     fun scrollToTop() {
         when (viewpager_main.currentItem) {
             0 -> {
-                val detailsFragment = viewpager_main.adapter?.instantiateItem(viewpager_main, viewpager_main.currentItem) as? DepartmentsFragment
+                val detailsFragment = viewpager_main?.adapter?.instantiateItem(viewpager_main, viewpager_main.currentItem) as? DepartmentsFragment
                 detailsFragment?.scrollToTop()
             }
             1 -> {
-                val myListsFragment = viewpager_main.adapter?.instantiateItem(viewpager_main, viewpager_main.currentItem) as? MyListsFragment
+                val myListsFragment = viewpager_main?.adapter?.instantiateItem(viewpager_main, viewpager_main.currentItem) as? MyListsFragment
                 myListsFragment?.scrollToTop()
             }
             2 -> {
-                val myOrdersFragment = viewpager_main.adapter?.instantiateItem(viewpager_main, viewpager_main.currentItem) as? MyOrdersFragment
+                val myOrdersFragment = viewpager_main?.adapter?.instantiateItem(viewpager_main, viewpager_main.currentItem) as? MyOrdersFragment
                 myOrdersFragment?.scrollToTop()
             }
         }
