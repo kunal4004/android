@@ -44,7 +44,7 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
     private var rootCategories: RootCategories? = null
     private var ordersResponse: OrdersResponse? = null
     private var shoppingListsResponse: ShoppingListsResponse? = null
-    var user: String = ""
+    public var user: String = ""
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -110,8 +110,8 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
         super.onHiddenChanged(hidden)
         if (!hidden) {
             //do when hidden
-            (activity as? BottomNavigationActivity)?.fadeOutToolbar(R.color.recent_search_bg)
-            (activity as? BottomNavigationActivity)?.showBackNavigationIcon(false)
+            (activity as BottomNavigationActivity).fadeOutToolbar(R.color.recent_search_bg)
+            (activity as BottomNavigationActivity).showBackNavigationIcon(false)
             refreshViewPagerFragment(false)
         }
     }
@@ -226,15 +226,15 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
         return ordersResponse
     }
 
-    fun isDifferentUser(): Boolean? {
-        return user != AppInstanceObject.get()?.currentUserObject?.id ?: false
+    fun isDifferentUser(): Boolean {
+        return !user.equals(AppInstanceObject.get().getCurrentUserObject().id)
     }
 
     fun clearCachedData() {
-        if (isDifferentUser()!!) {
+        if (isDifferentUser()) {
             setOrdersResponseData(null)
             setShoppingListResponseData(null)
         }
-        user = AppInstanceObject.get()?.currentUserObject?.id ?: ""
+        user = AppInstanceObject.get().getCurrentUserObject().id
     }
 }

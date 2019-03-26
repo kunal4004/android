@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.shop
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
@@ -72,7 +73,11 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
         rlCreateAList.setOnClickListener(this)
         btnRetry.setOnClickListener(this)
         rlDeliveryLocationLayout.setOnClickListener(this)
-        swipeToRefresh.setOnRefreshListener { getShoppingList(true) }
+        swipeToRefresh.setOnRefreshListener(object : SwipeRefreshLayout.OnRefreshListener {
+            override fun onRefresh() {
+                getShoppingList(true)
+            }
+        })
     }
 
     private fun getShoppingList(isPullToRefresh: Boolean) {
@@ -225,12 +230,12 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
     }
 
     fun authenticateUser(isNewSession: Boolean) {
-        parentFragment = (activity as? BottomNavigationActivity)?.currentFragment as? ShopFragment
+        parentFragment = (activity as BottomNavigationActivity).currentFragment as ShopFragment
         hideEmptyOverlay()
         if (SessionUtilities.getInstance().isUserAuthenticated) {
             if (parentFragment?.getShoppingListResponseData() != null && !isNewSession && !parentFragment?.isDifferentUser()!!) bindShoppingListToUI() else {
                 parentFragment?.clearCachedData()
-                getShoppingList(true)
+                getShoppingList(false)
             }
         } else {
             showSignOutView()
