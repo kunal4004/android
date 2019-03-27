@@ -226,16 +226,16 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
         return ordersResponse
     }
 
-    fun isDifferentUser(): Boolean {
-        return !user.equals(AppInstanceObject.get().getCurrentUserObject().id)
+    fun isDifferentUser(): Boolean? {
+        return user != AppInstanceObject.get()?.currentUserObject?.id ?: false
     }
 
     fun clearCachedData() {
-        if (isDifferentUser()) {
+        if (isDifferentUser()!!) {
             setOrdersResponseData(null)
             setShoppingListResponseData(null)
         }
-        user = AppInstanceObject.get().getCurrentUserObject().id
+        user = AppInstanceObject.get()?.currentUserObject?.id ?: ""
     }
 
     /***
