@@ -47,7 +47,7 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
     }
 
     private fun setListener() {
-        btnRetryConnect.setOnClickListener {
+        btnRetry.setOnClickListener {
             if (networkConnectionStatus()) {
                 executeDepartmentRequest()
             }

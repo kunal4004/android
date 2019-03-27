@@ -138,7 +138,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         relNextButton = view.findViewById(R.id.relNextButton);
         mBtnEmailStatement = view.findViewById(R.id.btnEmailStatement);
         RelativeLayout relativeLayout = view.findViewById(R.id.no_connection_layout);
-        mBtnRetry = view.findViewById(R.id.btnRetryConnect);
+        mBtnRetry = view.findViewById(R.id.btnRetry);
 
         mErrorHandlerView = new ErrorHandlerView(getActivity()
                 , relativeLayout);
