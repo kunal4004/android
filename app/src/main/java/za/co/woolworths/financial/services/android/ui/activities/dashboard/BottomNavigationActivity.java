@@ -896,7 +896,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     if (fragment instanceof ShopFragment) {
                         ShopFragment shopFragment = (ShopFragment) fragment;
                         shopFragment.navigateToMyListFragment();
-                        shopFragment.refreshViewPagerFragment(true);
+                        shopFragment.refreshViewPagerFragment(false);
                         return;
                     }
                     break;
