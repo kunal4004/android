@@ -122,13 +122,13 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
     }
 
     private fun bindShoppingListToUI() {
-        var shoppingList: MutableList<ShoppingList> = parentFragment?.getShoppingListResponseData()!!.lists
+        var shoppingList: MutableList<ShoppingList>? = parentFragment?.getShoppingListResponseData()?.lists ?: mutableListOf()
         shoppingList.let {
-            when (it.size) {
+            when (it?.size) {
                 0 -> showEmptyShoppingListView() //no list found
 
                 else -> {
-                    mAddToShoppingListAdapter?.setShoppingList(shoppingList)
+                    mAddToShoppingListAdapter?.setShoppingList(shoppingList!!)
                     mAddToShoppingListAdapter?.notifyDataSetChanged()
                 }
             }
@@ -230,7 +230,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
     }
 
     fun authenticateUser(isNewSession: Boolean) {
-        parentFragment = (activity as BottomNavigationActivity).currentFragment as ShopFragment
+        parentFragment = (activity as? BottomNavigationActivity)?.currentFragment as? ShopFragment
         hideEmptyOverlay()
         if (SessionUtilities.getInstance().isUserAuthenticated) {
             if (parentFragment?.getShoppingListResponseData() != null && !isNewSession && !parentFragment?.isDifferentUser()!!) bindShoppingListToUI() else {
