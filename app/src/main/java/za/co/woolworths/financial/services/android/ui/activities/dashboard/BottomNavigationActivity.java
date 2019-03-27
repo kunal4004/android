@@ -887,7 +887,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         }
 
         //Open shopping from Tips and trick activity requestcode
-        if (requestCode == TIPS_AND_TRICKS_CTA_REQUEST_CODE) {
+        if (requestCode == TIPS_AND_TRICKS_CTA_REQUEST_CODE && (resultCode == RESULT_OK_ACCOUNTS || resultCode == RESULT_OK_BARCODE_SCAN)) {
             getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
             clearStack();
             Fragment fragment = mNavController.getCurrentFrag();
