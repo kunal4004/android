@@ -13,10 +13,11 @@ import java.util.*
 open class BPIFragment : Fragment() {
 
     fun navigateToBalanceProtectionActivity() {
-        if (activity == null) return
-        val deathCoverIntent = Intent(activity, BalanceProtectionActivity::class.java)
-        startActivity(deathCoverIntent)
-        activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
+        activity?.apply {
+            val deathCoverIntent = Intent(this, BalanceProtectionActivity::class.java)
+            startActivity(deathCoverIntent)
+            overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
+        }
     }
 
 
@@ -35,12 +36,12 @@ open class BPIFragment : Fragment() {
     }
 
     fun updateBPIList(): MutableList<BPIOverview>? {
-        val bpiList = createBPIList()
+        val bpiList = createBPIList() ?: mutableListOf()
         val coveredList: MutableList<BPIOverview> = mutableListOf()
         val uncoveredList: MutableList<BPIOverview> = mutableListOf()
-        val insuranceListType = getInsuranceType()!!
-        for (insuranceType in insuranceListType) {
-            for (bpi in bpiList!!) {
+        val insuranceListType: MutableList<InsuranceType>?  = getInsuranceType()
+        for (insuranceType in insuranceListType!!) {
+            for (bpi in bpiList) {
                 if (bpi.overviewTitle == insuranceType.description) {
                     val type: InsuranceType = bpi.insuranceType!!
                     type.covered = insuranceType.covered
@@ -62,9 +63,9 @@ open class BPIFragment : Fragment() {
         if (arguments != null) {
             if (arguments.containsKey("accountInfo")) {
                 val account: Account? = Gson().fromJson(arguments.get("accountInfo") as String, Account::class.java)
-                return account!!.insuranceTypes
+                return account?.insuranceTypes ?: mutableListOf()
             }
         }
-        return null
+        return mutableListOf()
     }
 }
