@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -146,6 +147,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
     private final int SET_DELIVERY_LOCATION_REQUEST_CODE = 180;
     private ToastUtils mToastUtils;
     private FuseLocationAPISingleton mFuseLocationAPISingleton;
+    private AsyncTask<String, String, SkusInventoryForStoreResponse> mExecuteInventoryForSku;
 
     @Override
     public ProductDetailsViewModelNew getViewModel() {
@@ -385,10 +387,10 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
             }
 
             if (this.otherSKUForCart != null)
-                getViewModel().queryInventoryForSKUs(storeId, this.otherSKUForCart.sku, false).execute();
+              mExecuteInventoryForSku =  getViewModel().queryInventoryForSKUs(storeId, this.otherSKUForCart.sku, false).execute();
             else {
                 String multiSKUs = getViewModel().getMultiSKUsStringForInventory(this.otherSKUsByGroupKey.get(this.selectedGroupKey));
-                getViewModel().queryInventoryForSKUs(storeId, multiSKUs, true).execute();
+                mExecuteInventoryForSku = getViewModel().queryInventoryForSKUs(storeId, multiSKUs, true).execute();
             }
 
         }
@@ -789,6 +791,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
     @Override
     public void onInventoryResponseForAllSKUs(SkusInventoryForStoreResponse inventoryResponse) {
+        if (getActivity() == null || rcvSizePickerForInventory== null) return;
         ArrayList<OtherSkus> stockRequestedSkus = this.otherSKUsByGroupKey.get(this.selectedGroupKey);
 
         for (OtherSkus otherSkus : stockRequestedSkus) {
@@ -799,7 +802,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
                 }
             }
         }
-        this.openSizePickerWithAvailableQuantity(stockRequestedSkus);
+        openSizePickerWithAvailableQuantity(stockRequestedSkus);
 
     }
 
@@ -1299,5 +1302,13 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
     @Override
     public void onPopUpLocationDialogMethod() {
         dismissFindInStoreProgress();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mExecuteInventoryForSku!=null &&  !mExecuteInventoryForSku.isCancelled()){
+            mExecuteInventoryForSku.cancel(true);
+        }
     }
 }
