@@ -35,7 +35,7 @@ class BPIOverviewFragment : BPIFragment(), BPIOverviewAdapter.OnBPIAdapterClickL
     private var mLayoutManager: RecyclerView.LayoutManager? = null
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.bpi_overview_fragment, container, false)
+        return inflater?.inflate(R.layout.bpi_overview_fragment, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
@@ -48,11 +48,11 @@ class BPIOverviewFragment : BPIFragment(), BPIOverviewAdapter.OnBPIAdapterClickL
 
     override fun onResume() {
         super.onResume()
-        Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.BPI_OVERVIEW)
+        activity?.let { Utils.setScreenName(it, FirebaseManagerAnalyticsProperties.ScreenNames.BPI_OVERVIEW) }
     }
 
     private fun initialize() {
-        mLayoutManager = LinearLayoutManager(this.activity!!, LinearLayout.VERTICAL, false)
+        activity?.let { mLayoutManager = LinearLayoutManager(it, LinearLayout.VERTICAL, false) }
         mBPIOverviewAdapter = BPIOverviewAdapter(updateBPIList(), this)
     }
 
@@ -62,19 +62,18 @@ class BPIOverviewFragment : BPIFragment(), BPIOverviewAdapter.OnBPIAdapterClickL
     }
 
     private fun setupList() {
-        rvBPIOverview!!.layoutManager = mLayoutManager
-        rvBPIOverview!!.adapter = mBPIOverviewAdapter
+        rvBPIOverview?.apply {
+            layoutManager = mLayoutManager
+            adapter = mBPIOverviewAdapter
+        }
     }
 
     private fun setClaimButtonVisibility(bpiOverviewList: MutableList<BPIOverview>?) {
-        val insuranceCoveredList = arrayListOf<Boolean>()
-        if (bpiOverviewList != null) {
-            for (overview in bpiOverviewList) {
-                insuranceCoveredList.add(overview.insuranceType!!.covered)
-            }
+        val insuranceCoveredList: MutableList<Boolean> = mutableListOf()
+        bpiOverviewList?.forEach {
+            it.insuranceType?.covered?.let { covered -> insuranceCoveredList.add(covered) }
         }
-
-        tvBPIOverviewClaim.visibility = if (insuranceCoveredList.contains(true)) View.VISIBLE else View.GONE
+        tvBPIOverviewClaim?.visibility = if (insuranceCoveredList.contains(true)) View.VISIBLE else View.GONE
     }
 
     override fun onItemViewClicked(bpiOverview: BPIOverview) {
@@ -97,9 +96,10 @@ class BPIOverviewFragment : BPIFragment(), BPIOverviewAdapter.OnBPIAdapterClickL
             }
 
             R.id.imGoBack -> {
-                if (activity is BPIBalanceProtectionActivity) {
-                    val bpiBalanceProtectionActivity = activity as BPIBalanceProtectionActivity
-                    bpiBalanceProtectionActivity.finishActivity()
+                activity?.apply {
+                    if (this is BPIBalanceProtectionActivity) {
+                        (this as? BPIBalanceProtectionActivity)?.finishActivity()
+                    }
                 }
             }
         }
