@@ -887,7 +887,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         }
 
         //Open shopping from Tips and trick activity requestcode
-        if (requestCode == TIPS_AND_TRICKS_CTA_REQUEST_CODE) {
+        if (requestCode == TIPS_AND_TRICKS_CTA_REQUEST_CODE && (resultCode == RESULT_OK_ACCOUNTS || resultCode == RESULT_OK_BARCODE_SCAN)) {
             getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
             clearStack();
             Fragment fragment = mNavController.getCurrentFrag();
@@ -936,7 +936,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             }
             switch (resultCode) {
                 case RESULT_OK:
-                    getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
+                    navigateToDepartmentFragment();
                     break;
                 case DISMISS_POP_WINDOW_CLICKED:
                     //ensure counter is refresh when user cart activity is closed
@@ -1050,7 +1050,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         if (requestCode == TIPS_AND_TRICKS_CTA_REQUEST_CODE) {
             switch (resultCode) {
                 case TipsAndTricksViewPagerActivity.RESULT_OK_PRODUCTS:
-                    getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
+                    navigateToDepartmentFragment();
                     break;
                 case RESULT_OK_ACCOUNTS:
                     getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
@@ -1290,5 +1290,16 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         if (mQueryBadgeCounter == null) return;
         mQueryBadgeCounter.deleteObserver(this);
         mQueryBadgeCounter.cancelCounterRequest();
+    }
+
+    private void navigateToDepartmentFragment(){
+        getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
+        clearStack();
+        Fragment currentFragment = mNavController.getCurrentFrag();
+        if (currentFragment instanceof ShopFragment) {
+            ShopFragment shopFragment = (ShopFragment) currentFragment;
+            shopFragment.onStartShopping();
+            return;
+        }
     }
 }
