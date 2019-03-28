@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.activities.product;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -30,10 +31,15 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.SearchHistory;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
-import za.co.woolworths.financial.services.android.models.service.event.ShopState;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
+
+import static za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE;
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
+import static za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListSearchResultActivity.SHOPPING_LIST_SEARCH_RESULT_REQUEST_CODE;
+import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.ADDED_TO_SHOPPING_LIST_RESULT_CODE;
 
 public class ProductSearchActivity extends AppCompatActivity
 		implements View.OnClickListener {
@@ -44,6 +50,7 @@ public class ProductSearchActivity extends AppCompatActivity
 	private LinearLayout recentSearchList;
 	private String mSearchTextHint = "";
 	private String mListID;
+	public static int PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE = 1244;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -127,12 +134,12 @@ public class ProductSearchActivity extends AppCompatActivity
 				LoadState loadState = new LoadState();
 				loadState.setSearchProduct(searchProductBrand);
 				Utils.sendBus(loadState);
+				mEditSearchProduct.setText("");
+				finish();
+				overridePendingTransition(0, 0);
 			} else {
-				Utils.sendBus(new ShopState(search.searchedValue, mListID));
+				ScreenManager.presentShoppingListSearchResult(this, search.searchedValue, mListID);
 			}
-			mEditSearchProduct.setText("");
-			finish();
-			overridePendingTransition(0, 0);
 		}
 	}
 
@@ -246,6 +253,25 @@ public class ProductSearchActivity extends AppCompatActivity
 		showRecentSearchHistoryView(true);
 
 	}
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if ((requestCode == PDP_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE)
+                || (requestCode == SHOPPING_LIST_SEARCH_RESULT_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE)) {
+            setActivityResult(data, ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE);
+        } 
+
+        if (requestCode == SHOPPING_LIST_SEARCH_RESULT_REQUEST_CODE && resultCode == ADDED_TO_SHOPPING_LIST_RESULT_CODE) {
+            setActivityResult(data, ADDED_TO_SHOPPING_LIST_RESULT_CODE);
+        }
+    }
+
+    private void setActivityResult(Intent data, int addToShoppingListResultCode) {
+        setResult(addToShoppingListResultCode, data);
+        finish();
+        overridePendingTransition(0, 0);
+    }
 
 	@Override
 	protected void onDestroy() {

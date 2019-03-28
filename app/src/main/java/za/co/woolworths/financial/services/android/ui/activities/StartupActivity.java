@@ -7,6 +7,7 @@ import android.graphics.PorterDuff;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -18,7 +19,10 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
+import com.awfs.coordination.BuildConfig;
 import com.awfs.coordination.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.ArrayList;
@@ -102,6 +106,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 			mPushNotificationUpdate = bundle.getString(NotificationUtils.PUSH_NOTIFICATION_INTENT);
 		}
 
+
 		WoolworthsApplication woolworthsApplication = (WoolworthsApplication) StartupActivity.this.getApplication();
 		mWGlobalState = woolworthsApplication.getWGlobalState();
 
@@ -145,6 +150,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 		Utils.clearSharedPreferences(StartupActivity.this);
 		AuthenticateUtils.getInstance(StartupActivity.this).enableBiometricForCurrentSession(true);
 	}
+
 
 	private void executeConfigServer() {
 		//if app is expired, don't execute MCS.

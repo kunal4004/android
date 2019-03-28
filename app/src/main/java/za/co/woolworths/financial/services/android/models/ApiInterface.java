@@ -31,16 +31,15 @@ import za.co.woolworths.financial.services.android.models.dto.CartSummaryRespons
 import za.co.woolworths.financial.services.android.models.dto.ChangeQuantity;
 import za.co.woolworths.financial.services.android.models.dto.CheckoutSuccess;
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
-import za.co.woolworths.financial.services.android.models.dto.ContactUsConfigResponse;
 import za.co.woolworths.financial.services.android.models.dto.CreateList;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferRequest;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDeviceResponse;
+import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse;
 import za.co.woolworths.financial.services.android.models.dto.DeaBanks;
 import za.co.woolworths.financial.services.android.models.dto.DeleteMessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.FAQ;
 import za.co.woolworths.financial.services.android.models.dto.IssueLoan;
-import za.co.woolworths.financial.services.android.models.dto.IssueLoanRequest;
 import za.co.woolworths.financial.services.android.models.dto.IssueLoanResponse;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.LoginRequest;
@@ -48,6 +47,10 @@ import za.co.woolworths.financial.services.android.models.dto.LoginResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageReadRequest;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
+import za.co.woolworths.financial.services.android.models.dto.OrderDetailsResponse;
+import za.co.woolworths.financial.services.android.models.dto.OrderToListReponse;
+import za.co.woolworths.financial.services.android.models.dto.OrderToShoppingListRequestBody;
+import za.co.woolworths.financial.services.android.models.dto.OrdersResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.PromotionsResponse;
@@ -63,6 +66,7 @@ import za.co.woolworths.financial.services.android.models.dto.SkuInventoryRespon
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
 import za.co.woolworths.financial.services.android.models.dto.SubCategories;
 import za.co.woolworths.financial.services.android.models.dto.SuburbsResponse;
+import za.co.woolworths.financial.services.android.models.dto.OrderTaxInvoiceResponse;
 import za.co.woolworths.financial.services.android.models.dto.TransactionHistoryResponse;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetailResponse;
@@ -945,4 +949,70 @@ public interface ApiInterface {
 			@Header("osVersion") String osVersion,
 			@Header("sessionToken") String sessionToken,
 			@Body CheckoutSuccess checkoutSuccess);
+
+	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+	@GET("/order")
+	OrdersResponse getOrders(
+			@Header("apiId") String apiId,
+			@Header("sha1Password") String sha1Password,
+			@Header("deviceVersion") String deviceVersion,
+			@Header("deviceModel") String deviceModel,
+			@Header("network") String network,
+			@Header("os") String os,
+			@Header("osVersion") String osVersion,
+			@Header("sessionToken") String sessionToken);
+
+	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:120"})
+	@GET("/order/{id}")
+	OrderDetailsResponse getOrderDetails(
+			@Header("apiId") String apiId,
+			@Header("sha1Password") String sha1Password,
+			@Header("deviceVersion") String deviceVersion,
+			@Header("deviceModel") String deviceModel,
+			@Header("network") String network,
+			@Header("os") String os,
+			@Header("osVersion") String osVersion,
+			@Header("sessionToken") String sessionToken,
+			@Path("id") String id);
+
+	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+	@POST("/order/{id}")
+	OrderToListReponse addOrderToList(
+			@Header("apiId") String apiId,
+			@Header("sha1Password") String sha1Password,
+			@Header("deviceVersion") String deviceVersion,
+			@Header("deviceModel") String deviceModel,
+			@Header("network") String network,
+			@Header("os") String os,
+			@Header("osVersion") String osVersion,
+			@Header("sessionToken") String sessionToken,
+			@Path("id") String id,
+			@Body OrderToShoppingListRequestBody requestBody);
+
+	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+	@GET("/order/taxInvoice/{taxNoteNumber}")
+	OrderTaxInvoiceResponse getTaxInvoice(
+			@Header("apiId") String apiId,
+			@Header("sha1Password") String sha1Password,
+			@Header("deviceVersion") String deviceVersion,
+			@Header("deviceModel") String deviceModel,
+			@Header("network") String network,
+			@Header("os") String os,
+			@Header("osVersion") String osVersion,
+			@Header("sessionToken") String sessionToken,
+			@Path("taxNoteNumber") String taxNoteNumber);
+
+	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+	@GET("/user/creditCardToken")
+	CreditCardTokenResponse getCreditCardToken(
+			@Header("apiId") String apiId,
+			@Header("sha1Password") String sha1Password,
+			@Header("deviceVersion") String deviceVersion,
+			@Header("deviceModel") String deviceModel,
+			@Header("network") String network,
+			@Header("os") String os,
+			@Header("osVersion") String osVersion,
+			@Header("userAgent") String userAgent,
+			@Header("userAgentVersion") String userAgentVersion,
+			@Header("sessionToken") String sessionToken);
 }

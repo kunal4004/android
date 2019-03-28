@@ -1,1 +1,1 @@
-Your concerns are important to us. We've addressed the issue where the app crashes in Accounts for some low-end Android devices. While we were at it, we tossed in some new content!
+https://wigroup2.atlassian.net/projects/WOP/versions/23117/tab/release-report-all-issues

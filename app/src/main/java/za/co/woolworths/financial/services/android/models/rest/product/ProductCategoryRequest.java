@@ -10,7 +10,6 @@ import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 
 public class ProductCategoryRequest extends HttpAsyncTask<String, String, RootCategories> {
-	private WoolworthsApplication mWoolworthsApp;
 	private OnEventListener<RootCategories> mCallBack;
 	public String mException;
 

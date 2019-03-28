@@ -6,219 +6,254 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.awfs.coordination.R;
+import com.google.gson.JsonElement;
+
+import org.jetbrains.annotations.Nullable;
 
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
+import za.co.woolworths.financial.services.android.contracts.IToastInterface;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
+import za.co.woolworths.financial.services.android.ui.views.ToastFactory;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.QueryBadgeCounter;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 
+import static za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_REQUEST_CODE;
+import static za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED;
-import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART;
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL;
 
-public class CartActivity extends BottomActivity implements View.OnClickListener, CartFragment.ToggleRemoveItem, ToastUtils.ToastInterface {
+public class CartActivity extends BottomActivity implements View.OnClickListener, CartFragment.ToggleRemoveItem, ToastUtils.ToastInterface, IToastInterface {
 
-	private WTextView btnEditCart;
-	private WTextView btnClearCart;
-	private ImageView btnCloseCart;
-	private CartFragment cartFragment;
-	private ProgressBar pbRemoveAllItem;
-	public static WMaterialShowcaseView walkThroughPromtView = null;
-	public static final int CHECKOUT_SUCCESS = 13134;
+    private WTextView btnEditCart;
+    private WTextView btnClearCart;
+    private ImageView btnCloseCart;
+    private CartFragment cartFragment;
+    private ProgressBar pbRemoveAllItem;
+    public static WMaterialShowcaseView walkThroughPromtView = null;
+    public static final int CHECKOUT_SUCCESS = 13134;
+    private FrameLayout flContentFrame;
+    private boolean toastButtonWasClicked = false;
 
-	@Override
-	protected int getLayoutResourceId() {
-		return R.layout.activity_cart;
-	}
+    @Override
+    protected int getLayoutResourceId() {
+        return R.layout.activity_cart;
+    }
 
-	@Override
-	protected void initUI() {
-		Utils.updateStatusBarBackground(this);
+    @Override
+    protected void initUI() {
+        Utils.updateStatusBarBackground(this);
 
-		Toolbar toolbar = findViewById(R.id.toolbar);
-		btnCloseCart = findViewById(R.id.btnCloseCart);
-		btnCloseCart.setOnClickListener(this);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        btnCloseCart = findViewById(R.id.btnCloseCart);
+        btnCloseCart.setOnClickListener(this);
 
-		btnEditCart = findViewById(R.id.btnEditCart);
-		btnEditCart.setOnClickListener(this);
+        flContentFrame = findViewById(R.id.content_frame);
 
-		btnClearCart = findViewById(R.id.btnClearCart);
-		btnClearCart.setOnClickListener(this);
+        btnEditCart = findViewById(R.id.btnEditCart);
+        btnEditCart.setOnClickListener(this);
 
-		btnEditCart = findViewById(R.id.btnEditCart);
+        btnClearCart = findViewById(R.id.btnClearCart);
+        btnClearCart.setOnClickListener(this);
 
-		pbRemoveAllItem = findViewById(R.id.pbRemoveAllItem);
+        btnEditCart = findViewById(R.id.btnEditCart);
 
-		setSupportActionBar(toolbar);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-		getSupportActionBar().setTitle(null);
-		cartFragment = new CartFragment();
-		FragmentManager fragmentManager = getSupportFragmentManager();
-		fragmentManager.beginTransaction()
-				.replace(R.id.content_frame, cartFragment).commit();
+        pbRemoveAllItem = findViewById(R.id.pbRemoveAllItem);
 
-		//One time biometricsWalkthrough
-		ScreenManager.presentBiometricWalkthrough(CartActivity.this);
-	}
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        getSupportActionBar().setTitle(null);
+        cartFragment = new CartFragment();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.content_frame, cartFragment).commit();
 
-	@Override
-	public void onClick(View v) {
-		switch (v.getId()) {
-			case R.id.btnEditCart:
-				toggleCartMode();
-				// prevent remove all item progressbar visible
-				dismissProgress();
-				break;
-			case R.id.btnCloseCart:
-				finishActivity();
-				break;
-			case R.id.btnClearCart:
-				Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTREMOVEALL);
-				cartFragment.removeAllCartItem(null).execute();
-				break;
-		}
-	}
+        //One time biometricsWalkthrough
+        ScreenManager.presentBiometricWalkthrough(CartActivity.this);
+    }
 
-	private void dismissProgress() {
-		pbRemoveAllItem.setVisibility(View.GONE);
-	}
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btnEditCart:
+                toggleCartMode();
+                // prevent remove all item progressbar visible
+                dismissProgress();
+                break;
+            case R.id.btnCloseCart:
+                finishActivity();
+                break;
+            case R.id.btnClearCart:
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTREMOVEALL);
+                cartFragment.removeAllCartItem(null).execute();
+                break;
+        }
+    }
 
-	public void toggleCartMode() {
-		boolean isEditMode = cartFragment.toggleEditMode();
-		btnEditCart.setText(isEditMode ? R.string.done : R.string.edit);
-		btnCloseCart.setVisibility(isEditMode ? View.GONE : View.VISIBLE);
-		btnClearCart.setVisibility(isEditMode ? View.VISIBLE : View.GONE);
-		cartFragment.deliveryLocationEnabled(!isEditMode);
-	}
+    private void dismissProgress() {
+        pbRemoveAllItem.setVisibility(View.GONE);
+    }
 
-	@Override
-	public void onBackPressed() {
-		// close expanded ProductDetails detail page
-		if (getSlidingLayout().getPanelState().equals(SlidingUpPanelLayout.PanelState.EXPANDED)) {
-			closeSlideUpPanel();
-			return;
-		}
-		if (getFragmentManager().getBackStackEntryCount() > 0) {
-			getFragmentManager().popBackStack();
-		} else {
-			finishActivity();
-		}
-	}
+    public void toggleCartMode() {
+        boolean isEditMode = cartFragment.toggleEditMode();
+        btnEditCart.setText(isEditMode ? R.string.done : R.string.edit);
+        btnCloseCart.setVisibility(isEditMode ? View.GONE : View.VISIBLE);
+        btnClearCart.setVisibility(isEditMode ? View.VISIBLE : View.GONE);
+        cartFragment.deliveryLocationEnabled(!isEditMode);
+    }
 
-	public void finishActivity() {
-		setResult(DISMISS_POP_WINDOW_CLICKED);
-		Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTEXIT);
-		finish();
-		overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
-	}
+    @Override
+    public void onBackPressed() {
+        // close expanded ProductDetails detail page
+        if (getSlidingLayout().getPanelState().equals(SlidingUpPanelLayout.PanelState.EXPANDED)) {
+            closeSlideUpPanel();
+            return;
+        }
+        if (getFragmentManager().getBackStackEntryCount() > 0) {
+            getFragmentManager().popBackStack();
+        } else {
+            finishActivity();
+        }
+    }
 
-	public void showEditCart() {
-		btnEditCart.setAlpha(1.0f);
-		btnEditCart.setVisibility(View.VISIBLE);
-		btnEditCart.setEnabled(true);
-	}
+    public void finishActivity() {
+        // Check to prevent DISMISS_POP_WINDOW_CLICKED override setResult for toast clicked event
+        if (!toastButtonWasClicked)
+            setResult(DISMISS_POP_WINDOW_CLICKED);
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTEXIT);
+        finish();
+        overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
+    }
 
-	public void hideEditCart() {
-		btnEditCart.setAlpha(0.0f);
-		btnEditCart.setVisibility(View.GONE);
-		btnEditCart.setEnabled(false);
-	}
+    public void showEditCart() {
+        btnEditCart.setAlpha(1.0f);
+        btnEditCart.setVisibility(View.VISIBLE);
+        btnEditCart.setEnabled(true);
+    }
 
-	public void resetToolBarIcons() {
-		hideEditCart();
-		btnCloseCart.setVisibility(View.VISIBLE);
-		btnClearCart.setVisibility(View.GONE);
-	}
+    public void hideEditCart() {
+        btnEditCart.setAlpha(0.0f);
+        btnEditCart.setVisibility(View.GONE);
+        btnEditCart.setEnabled(false);
+    }
 
-	@Override
-	public void onRemoveItem(boolean visibility) {
-		pbRemoveAllItem.setVisibility(visibility ? View.VISIBLE : View.GONE);
-		btnClearCart.setVisibility(visibility ? View.GONE : View.VISIBLE);
-		btnCloseCart.setVisibility(visibility ? View.GONE : View.GONE);
-		btnEditCart.setEnabled(visibility ? false : true);
-	}
+    public void resetToolBarIcons() {
+        hideEditCart();
+        btnCloseCart.setVisibility(View.VISIBLE);
+        btnClearCart.setVisibility(View.GONE);
+    }
 
-	public void enableEditCart(boolean enable) {
-		Utils.fadeInFadeOutAnimation(btnEditCart, enable);
-		btnEditCart.setEnabled(enable ? false : true);
-	}
+    @Override
+    public void onRemoveItem(boolean visibility) {
+        pbRemoveAllItem.setVisibility(visibility ? View.VISIBLE : View.GONE);
+        btnClearCart.setVisibility(visibility ? View.GONE : View.VISIBLE);
+        btnCloseCart.setVisibility(visibility ? View.GONE : View.GONE);
+        btnEditCart.setEnabled(visibility ? false : true);
+    }
 
-	@Override
-	public void onRemoveSuccess() {
-		pbRemoveAllItem.setVisibility(View.GONE);
-		btnCloseCart.setVisibility(View.VISIBLE);
-		btnClearCart.setVisibility(View.GONE);
-	}
+    public void enableEditCart(boolean enable) {
+        Utils.fadeInFadeOutAnimation(btnEditCart, enable);
+        btnEditCart.setEnabled(enable ? false : true);
+    }
 
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		if (requestCode == CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY && resultCode == RESULT_OK) {
-			finishActivityOnCheckoutSuccess();
-			return;
-		}
-		FragmentManager fm = getSupportFragmentManager();
-		Fragment fragment = fm.findFragmentById(R.id.content_frame);
-		Fragment bottomFragment = fm.findFragmentById(R.id.fragment_bottom_container);
-		if (bottomFragment != null) {
-			if (bottomFragment != null && bottomFragment instanceof ProductDetailFragment) {
-				bottomFragment.onActivityResult(requestCode, resultCode, data);
-			}
-		}
-		/***
-		 * Result from success add to cart
-		 */
+    @Override
+    public void onRemoveSuccess() {
+        pbRemoveAllItem.setVisibility(View.GONE);
+        btnCloseCart.setVisibility(View.VISIBLE);
+        btnClearCart.setVisibility(View.GONE);
+    }
 
-		if (requestCode == RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL) {
-			if (resultCode == RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL) {
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-				if (fragment instanceof CartFragment) {
-					fragment.onActivityResult(requestCode, resultCode, null);
-				}
+        if (requestCode == PDP_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE) {
+            setResult(ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE, data);
+            finish();
+            overridePendingTransition(0, 0);
+            return;
+        }
 
-				ToastUtils mToastUtils = new ToastUtils(this);
-				mToastUtils.setActivity(this);
-				mToastUtils.setGravity(Gravity.BOTTOM);
-				mToastUtils.setCartText(R.string.cart);
-				mToastUtils.setView((SlidingUpPanelLayout) findViewById(R.id.slideUpPanel));
-				mToastUtils.setPixel(Utils.dp2px(this, 105));
-				mToastUtils.setMessage(R.string.added_to);
-				mToastUtils.setViewState(false);
-				mToastUtils.build();
-			}
-		}
+        if (requestCode == ADD_TO_SHOPPING_LIST_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE) {
+            ToastFactory.Companion.buildShoppingListToast(this,flContentFrame, true, data, this);
+            return;
+        }
 
-		//DISMISS_POP_WINDOW_CLICKED
-		//Cancel button click from session expired pop-up dialog
-		//will close CartActivity
-		if (fragment instanceof CartFragment) {
-			if (resultCode == DISMISS_POP_WINDOW_CLICKED) {
-				finishActivity();
-				return;
-			}
-			fragment.onActivityResult(requestCode, resultCode, data);
-		}
-	}
+        if (requestCode == CheckOutFragment.REQUEST_CART_REFRESH_ON_DESTROY && resultCode == RESULT_OK) {
+            finishActivityOnCheckoutSuccess();
+            return;
+        }
+        FragmentManager fm = getSupportFragmentManager();
+        Fragment fragment = fm.findFragmentById(R.id.content_frame);
+        Fragment bottomFragment = fm.findFragmentById(R.id.fragment_bottom_container);
+        if (bottomFragment != null) {
+            if (bottomFragment != null && bottomFragment instanceof ProductDetailFragment) {
+                bottomFragment.onActivityResult(requestCode, resultCode, data);
+            }
+        }
+        /***
+         * Result from success add to cart
+         */
 
-	@Override
-	public void onToastButtonClicked(String currentState) {
+        if (requestCode == RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL) {
+            if (resultCode == RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL) {
 
-	}
+                if (fragment instanceof CartFragment) {
+                    fragment.onActivityResult(requestCode, resultCode, null);
+                }
 
-	public void finishActivityOnCheckoutSuccess(){
-		setResult(CHECKOUT_SUCCESS);
-		finish();
-		overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
-	}
+                ToastUtils mToastUtils = new ToastUtils(this);
+                mToastUtils.setActivity(this);
+                mToastUtils.setGravity(Gravity.BOTTOM);
+                mToastUtils.setCartText(R.string.cart);
+                mToastUtils.setView((SlidingUpPanelLayout) findViewById(R.id.slideUpPanel));
+                mToastUtils.setPixel(Utils.dp2px(this, 105));
+                mToastUtils.setMessage(R.string.added_to);
+                mToastUtils.setViewState(false);
+                mToastUtils.build();
+            }
+        }
+
+        //DISMISS_POP_WINDOW_CLICKED
+        //Cancel button click from session expired pop-up dialog
+        //will close CartActivity
+        if (fragment instanceof CartFragment) {
+            if (resultCode == DISMISS_POP_WINDOW_CLICKED) {
+                finishActivity();
+                return;
+            }
+            fragment.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    @Override
+    public void onToastButtonClicked(String currentState) {
+
+    }
+
+    public void finishActivityOnCheckoutSuccess() {
+        setResult(CHECKOUT_SUCCESS);
+        finish();
+        overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
+    }
+
+    @Override
+    public void onToastButtonClicked(@Nullable JsonElement jsonElement) {
+        toastButtonWasClicked = true;
+        NavigateToShoppingList.Companion navigateTo = NavigateToShoppingList.Companion;
+        if (jsonElement != null)
+            navigateTo.navigateToShoppingListOnToastClicked(this, jsonElement);
+    }
 }

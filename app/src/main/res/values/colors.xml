@@ -76,4 +76,8 @@
     <color name="in_app_msg_color_desc">#7C7C7C</color>
 
     <color name="swatch_border_color">#E5E5E5</color>
+    <color name="black40">#40000000</color>
+    <color name="orders_bg">#F0F0F0</color>
+    <color name="shop_search_color">#F6F6F6</color>
+    <color name="button_disable">#C1C1C1</color>
 </resources>

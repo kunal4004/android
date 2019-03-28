@@ -37,14 +37,12 @@ import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.binder.DeliveryLocationSelectionFragmentChange;
 
-
 public class DeliveryLocationSelectionFragment extends Fragment implements DeliveryLocationAdapter.OnItemClick, View.OnClickListener {
 
 	public DeliveryLocationSelectionFragmentChange deliveryLocationSelectionFragmentChange;
 
 	private ErrorHandlerView mErrorHandlerView;
 	private View btnRetry;
-	private final int SUBURB_SET_RESULT = 123401;
 
 	private View selectionContentLayout, layoutPreviousSelectedLocations;
 	private ProgressBar loadingProgressBar;
@@ -157,7 +155,6 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
 					Activity activity = getActivity();
 					if (activity != null) {
 						Utils.savePreferredDeliveryLocation(location);
-						activity.setResult(SUBURB_SET_RESULT);
 						activity.setResult(Activity.RESULT_OK);
 						Utils.sendBus(new CartState(location.suburb.name + ", " + location.province.name));
 						activity.finish();
