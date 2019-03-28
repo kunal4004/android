@@ -308,8 +308,8 @@ class LoanWithdrawalFragment : LoanBaseFragment() {
     }
 
     private fun showProgressDialog(isVisible: Boolean) {
-        mLoanWithdrawalProgress.visibility = if (isVisible) VISIBLE else GONE
-        llDrawndownAmount.visibility = if (isVisible) GONE else VISIBLE
+        mLoanWithdrawalProgress?.visibility = if (isVisible) VISIBLE else GONE
+        llDrawndownAmount?.visibility = if (isVisible) GONE else VISIBLE
     }
 
     override fun onDestroy() {
@@ -328,33 +328,29 @@ class LoanWithdrawalFragment : LoanBaseFragment() {
     override fun onResume() {
         super.onResume()
         // retrieve drawnDown amount
-        val drawnDownAmount: String = edtWithdrawAmount.text.toString()
+        val drawnDownAmount: String = edtWithdrawAmount?.text.toString()
         // check if drawnDownAmount is empty
         val drawnDownAmountIsEmpty = TextUtils.isEmpty(drawnDownAmount)
         // Change icon to close icon
-        activity?.let { (it as LoanWithdrawalActivity).setHomeIndicatorIcon(R.drawable.close_white) }
+        activity?.let { (it as? LoanWithdrawalActivity)?.setHomeIndicatorIcon(R.drawable.close_white) }
         if (!drawnDownAmountIsEmpty)
-            edtWithdrawAmount.setText(drawnDownAmount)
+            edtWithdrawAmount?.setText(drawnDownAmount)
         Handler().postDelayed({ mMenu?.let { menuItemVisible(it, !drawnDownAmountIsEmpty) } }, MILIS)
         showKeyboard()
     }
 
     private fun hideKeyboard() {
         activity?.let {
-            if (it.currentFocus != null && it.currentFocus.windowToken != null) {
-                (it.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
-                        .hideSoftInputFromWindow(it.currentFocus.windowToken, 0)
-            }
+                (it.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)?.hideSoftInputFromWindow(it.currentFocus?.windowToken, 0)
         }
     }
 
     private fun showKeyboard() {
-        edtWithdrawAmount.requestFocus()
-        activity?.let {
-            edtWithdrawAmount.requestFocus()
-            edtWithdrawAmount.isFocusableInTouchMode = true
-            val imm = it.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.showSoftInput(edtWithdrawAmount, InputMethodManager.SHOW_IMPLICIT)
+        edtWithdrawAmount?.apply {
+            requestFocus()
+            isFocusableInTouchMode = true
+            val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+            imm?.showSoftInput(edtWithdrawAmount, InputMethodManager.SHOW_IMPLICIT)
         }
     }
 

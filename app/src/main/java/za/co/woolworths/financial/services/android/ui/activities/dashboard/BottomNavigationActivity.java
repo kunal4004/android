@@ -64,7 +64,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewards
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.base.WRewardsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.logged_in.WRewardsLoggedinAndLinkedFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.wtoday.WTodayFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.wtoday.WToday;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory;
@@ -566,7 +566,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             switch (item.getItemId()) {
                 case R.id.navigation_today:
                     clearStack();
-                    WTodayFragment currentWTodayFragment = (WTodayFragment) mNavController.getCurrentFrag();
+                    WToday currentWTodayFragment = (WToday) mNavController.getCurrentFrag();
                     currentWTodayFragment.scrollToTop();
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WTODAYMENU);
                     break;
@@ -702,7 +702,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     public Fragment getRootFragment(int index) {
         switch (index) {
             case INDEX_TODAY:
-                return new WTodayFragment();
+                return new WToday();
             case INDEX_PRODUCT:
                 return new ShopFragment();
             case INDEX_CART:
