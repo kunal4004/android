@@ -14,7 +14,7 @@ android {
     def BUILD_NUMBER = "{BUILD_NUMBER}"
 
     if (!BUILD_NUMBER.isNumber()){
-        BUILD_NUMBER = "97"
+        BUILD_NUMBER = "98"
     }
 
     dataBinding {
@@ -59,7 +59,7 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         versionCode BUILD_NUMBER.toInteger()
         buildConfigField("String", "HOST", '"https://wfs-appserver.wigroup.co/wfs/app/v4"')
-        buildConfigField("String", "SHA1", '"ee80b6f0590ae8408d11851b03e08e1336926b1a"')
+        buildConfigField("String", "SHA1", '"431bba408383af191dd6e28edfde6ff7facb37cb"')
     }
 
     compileSdkVersion 27
