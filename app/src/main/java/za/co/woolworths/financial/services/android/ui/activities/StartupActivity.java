@@ -256,7 +256,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 
 		if (!StartupActivity.this.mVideoPlayerShouldPlay) {
 
-			presentNextScreenOrServerMessage();
+			showServerMessageOrProceed();
 			mp.stop();
 
 		} else {
