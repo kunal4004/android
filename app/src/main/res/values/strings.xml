@@ -368,6 +368,9 @@
         <item>no transactions</item>
         <item>shopping list is empty</item>
         <item>inbox is empty</item>
+        <item>@string/empty_order_view_title</item>
+        <item>@string/sign_out_order_view_title</item>
+        <item>@string/no_internet_title</item>
     </string-array>
 
     <string-array name="empty_state_desc">
@@ -377,6 +380,9 @@
         <item>We have no transaction data to show.</item>
         <item>You have no items in your  shopping list yet.</item>
         <item>When you receive messages you will\n see them here.</item>
+        <item>@string/empty_order_view_desc</item>
+        <item>@string/sign_out_order_view_desc</item>
+        <item>@string/no_connection_desc_1</item>
     </string-array>
 
     <string name="on_boarding_title_1">WELCOME</string>
@@ -637,7 +643,7 @@
     <string name="description_empty_shopping_list">Search for products to start adding \n items to this list.</string>
     <string name="button_empty_shopping_list">Search Products</string>
     <string name="title_no_shopping_lists">You have no lists</string>
-    <string name="description_no_shopping_lists">Shopping lists makes it easier and faster to get \n your favourite Woolworths products.</string>
+    <string name="description_no_shopping_lists">Shopping lists makes it easier and faster to get your favourite Woolworths products.</string>
     <string name="button_no_shopping_lists">create a list</string>
     <string name="single_item_text">item</string>
     <string name="multiple_item_text">items</string>
@@ -829,7 +835,6 @@
     <string name="how_to_pay_other_account_desc">Electronic payments from other bank account into your Woolworths credit card can be made into:</string>
     <string name="how_to_pay_credit_card_title">payments made from other accounts</string>
     <string name="account_statement_error">Sorry, this document is unavailable</string>
-    <string name="high_accuracy_location_err_desc"> This feature cannot be used without High Accuracy Location Services.</string>
     <string name="info_total_amount_due_title">Total Amount Due</string>
     <string name="info_total_amount_due_desc">This is the sum of your current instalment, including any overdue amount and interest.</string>
     <string name="info_next_payment_due_title">Next Payment Due</string>
@@ -845,4 +850,54 @@
     <string name="tips_tricks_page_tile">Tips And Tricks</string>
     <string name="tips_tricks_desc_navigation_sign_in">Tap the cart icon in the bottom menu to see the items you’ve added.</string>
     <string name="refinement_see_result_button_text">All\u0020</string>
+    <string name="absa_link_banking_to_device_title">Link Online Banking to this Device</string>
+    <string name="absa_biometric_please_enter_your_pin">Please Enter Your ATM Pin.</string>
+    <string name="absa_biometric_please_card_number">Card number %1$s</string>
+    <string name="absa_biometric_forgot_atm_pin_code">Forgot ATM Pin Code</string>
+    <string name="absa_forgot_atm_pin_code_title">FORGOT ATM PIN CODE</string>
+    <string name="absa_forgot_atm_pin_code_desc">Please contact us on 0861 50 20 20 or email us at queries@wfs.co.za for assistance.</string>
+    <string name="absa_enter_five_digit_code_title">Please Enter a 5 Digit Code. </string>
+    <string name="absa_enter_five_digit_code_desc">This will be used for your online banking login credentials </string>
+    <string name="absa_confirm_five_digit_code_title">Confirm 5 Digit Code.</string>
+    <string name="absa_biometric_title">Would you like to enable Biometrics for Online banking.</string>
+    <string name="absa_biometric_desc">You can now easily access secure features in the app by using the biometrics reader on your device.</string>
+    <string name="absa_biometric_skip_step">Skip this Step</string>
+    <string name="absa_enable_biometric">Enable Biometrics</string>
+    <string name="absa_success_title">Thanks, %1$s</string>
+    <string name="absa_success_desc">Your Online Banking has been successfully linked</string>
+    <string name="online_banking">Online Banking</string>
+    <string name="absa_passcode">Enter Passcode</string>
+    <string name="shop_department_title_category">DEPARTMENTS</string>
+    <string name="shop_department_title_list">my lists</string>
+    <string name="shop_department_title_order">my orders</string>
+    <string name="total">Total:</string>
+    <string name="add_items_to_shopping_list">Add Items to Shopping List</string>
+    <string name="number_of_items">Number of items:</string>
+    <string name="purchase_date">Purchase Date:</string>
+    <string name="past_orders">PAST ORDERS</string>
+    <string name="order_items">order items</string>
+    <string name="order_page_title_prefix">ORDER:\u0020</string>
+    <string name="empty_order_view_title">No order history</string>
+    <string name="empty_order_view_desc">We see that you have no order history. Would you like to start shopping?</string>
+    <string name="sign_in">sign in</string>
+    <string name="sign_out_order_view_title">Sign in to view your orders</string>
+    <string name="sign_out_order_view_desc">Sign in to track your current orders, and view all your previous orders.</string>
+    <string name="view_tax_invoice">View Tax Invoice</string>
+    <string name="invoice_number">invoice number</string>
+    <string name="tax_invoices">TAX INVOICES</string>
+
+    <string name="shop_create_a_list">Create A New List</string>
+    <string name="shop_sign_out_order_title">sign in to view\nand create lists</string>
+    <string name="shop_sign_out_order_desc">Search for products to start adding items to this list.</string>
+    <string name="order_invoice_title_prefix">PDF:\u0020</string>
+    <string name="delivery_suburb">Delivery Suburb:</string>
+    <string name="order_status">Order Status:</string>
+    <string name="no_of_items">\u0020Items</string>
+    <string name="no_of_item">\u0020Item</string>
+    <string name="toast_added_to_cart">ADDED TO CART</string>
+    <string name="deselect">DESELECT</string>
+    <string name="card_number_not_found">Card number not found</string>
+    <string name="check_connection_status">Check your connection and try again.</string>
+    <string name="general_error_desc">Oops, There seems to be a problem. Please try again later.</string>
+    <string name="crashlytics_materialshowcase_key">materialshowcase_parent</string>
 </resources>

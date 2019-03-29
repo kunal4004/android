@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/orders_bg"
+    android:orientation="vertical">
+
+    <View
+        android:id="@+id/fakeDivider"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sixteen_dp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/seventy_dp"
+        android:background="@color/white"
+        android:paddingLeft="@dimen/twenty_four_dp"
+        android:paddingRight="@dimen/twenty_four_dp">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            style="@style/my_orders_textview_style_2"
+            android:drawableLeft="@drawable/shopping_list_icon_black"
+            android:drawablePadding="@dimen/sixteen_dp"
+            android:gravity="center_vertical"
+            android:text="@string/add_items_to_shopping_list"
+            android:textColor="@color/black"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/ic_caret_black" />
+    </RelativeLayout>
+
+</LinearLayout>

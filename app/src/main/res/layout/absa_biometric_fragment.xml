@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingStart="@dimen/thirty_two_dp"
+    android:paddingEnd="@dimen/thirty_two_dp">
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/tvBiometricTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/tvBiometricDesc"
+        android:layout_marginTop="@dimen/thirty_two_dp"
+        android:gravity="start|center"
+        android:letterSpacing="0.2"
+        android:lineSpacingExtra="1.2dp"
+        android:paddingBottom="@dimen/eleven_dp"
+        android:text="@string/absa_biometric_title"
+        android:textAllCaps="true"
+        android:textColor="@color/black"
+        android:textSize="@dimen/fourteen_sp"
+        app:WTextView_font="medium_bold" />
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/tvBiometricDesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/vHorizontalDivider"
+        android:layout_marginTop="@dimen/eight_dp"
+        android:alpha="0.5"
+        android:lineSpacingExtra="0.14sp"
+        android:lineSpacingMultiplier="1.40"
+        android:text="@string/absa_biometric_desc"
+        android:textColor="@color/offer_title"
+        android:textSize="@dimen/fifteen_sp"
+        app:WTextView_font="myriadpro_regular" />
+
+
+    <View
+        android:id="@+id/vHorizontalDivider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_above="@+id/rlToggleBiometric"
+        android:layout_marginTop="@dimen/thirty_one_dp"
+        android:background="@color/recent_search_bg" />
+
+    <RelativeLayout
+        android:id="@+id/rlToggleBiometric"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_above="@+id/rlSkipBiometricLayout"
+        android:layout_marginTop="@dimen/twenty_seven_dp"
+        android:visibility="visible">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/tvEnableBiometric"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:drawableLeft="@drawable/ic_touch_id"
+            android:drawablePadding="16dp"
+            android:gravity="center_vertical"
+            android:lineSpacingExtra="0.4sp"
+            android:text="@string/absa_enable_biometric"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            app:WTextView_font="myriadpro_regular" />
+
+        <Switch
+            android:id="@+id/swEnableBiometric"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:theme="@style/SwitchTheme"
+            android:thumb="@drawable/customswitchselector"
+            android:track="@drawable/custom_track" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rlSkipBiometricLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="84dp"
+        android:layout_marginBottom="@dimen/twenty_four_dp">
+
+        <TextView
+            android:id="@+id/tvSkipStep"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerInParent="true"
+            android:gravity="start"
+            android:text="@string/absa_biometric_skip_step"
+            android:textColor="@color/black" />
+
+        <ImageView
+            android:id="@+id/ivNavigateToNextFragment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:alpha="0.5"
+            android:contentDescription="@string/app_label"
+            app:srcCompat="@drawable/next_button_icon" />
+
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/imFootPrintLogo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/tvBiometricTitle"
+        android:layout_centerHorizontal="true"
+        android:alpha="0.5"
+        android:gravity="center_horizontal"
+        app:srcCompat="@drawable/biometric_inactive" />
+
+</RelativeLayout>

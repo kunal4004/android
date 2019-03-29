@@ -1242,11 +1242,12 @@
     <!-- Define your custom dialog theme here extending from base -->
 
     <style name="AppDialogTheme" parent="Theme.AppCompat.Light.Dialog">
-        <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowNoTitle">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
         <item name="android:windowFullscreen">false</item>
         <item name="android:windowIsFloating">false</item>
         <item name="android:windowCloseOnTouchOutside">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
     </style>
 
     <style name="black_circle_with_number">
@@ -1323,6 +1324,14 @@
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:windowIsTranslucent">false</item>
+    </style>
+
+    <style name="ABSAOnlineBankingToDeviceStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:homeAsUpIndicator">@drawable/close_24</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowActionBarOverlay">false</item>
     </style>
 
     <style name="styleBPIOverviewConstraint">
@@ -1437,5 +1446,67 @@
         <item name="android:layout_alignParentRight">true</item>
         <item name="android:alpha">0.3</item>
     </style>
+
+    <style name="my_orders_textview_style_1">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:textSize">12sp</item>
+        <item name="WTextView_font">medium_bold</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:letterSpacing">0.15</item>
+    </style>
+
+    <style name="my_orders_textview_style_2">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:textSize">14sp</item>
+        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:textColor">@color/black40</item>
+    </style>
+
+    <style name="my_orders_textview_style_3" parent="my_orders_textview_style_1">
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:drawableRight">@drawable/ic_caret_black</item>
+        <item name="android:drawablePadding">@dimen/sixteen_dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="OrderDetailsActivityStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:selectableItemBackground">@android:color/transparent</item>
+        <item name="android:actionBarItemBackground">@null</item>
+        <item name="actionBarItemBackground">@null</item>
+    </style>
+
+    <style name="TaxInvoiceActivityStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:selectableItemBackground">@android:color/transparent</item>
+        <item name="android:actionBarItemBackground">@null</item>
+        <item name="actionBarItemBackground">@null</item>
+    </style>
+
+    <style name="ShoppingListDetailActivityStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:selectableItemBackground">@android:color/transparent</item>
+        <item name="android:actionBarItemBackground">@null</item>
+        <item name="actionBarItemBackground">@null</item>
+    </style>
+
 
 </resources>

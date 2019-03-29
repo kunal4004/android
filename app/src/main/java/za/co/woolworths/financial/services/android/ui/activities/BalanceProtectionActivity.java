@@ -12,9 +12,7 @@ import android.view.MenuItem;
 
 import com.awfs.coordination.R;
 
-import za.co.woolworths.financial.services.android.ui.fragments.BalanceInsuranceFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.SubmitClaimFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.product.shop.list.NewListFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.Utils;
 

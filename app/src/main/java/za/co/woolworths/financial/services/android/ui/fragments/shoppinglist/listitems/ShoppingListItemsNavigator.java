@@ -2,13 +2,9 @@ package za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.li
 
 import java.util.List;
 
-import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
-import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
-import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
-import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
 
 /**
  * Created by W7099877 on 2018/03/08.
@@ -16,41 +12,21 @@ import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForSt
 
 public interface ShoppingListItemsNavigator {
 
-	void onShoppingListItemsResponse(ShoppingListItemsResponse shoppingListItemsResponse);
+    void onItemSelectionChange(List<ShoppingListItem> items);
 
-	void onItemSelectionChange(List<ShoppingListItem> items);
+    void onShoppingListItemDelete(ShoppingListItemsResponse shoppingListItemsResponse);
 
-	void onShoppingListItemDelete(ShoppingListItemsResponse shoppingListItemsResponse);
+    void onItemDeleteClick(String id, String productId, String catalogRefId);
 
-	void onItemDeleteClick(String id, String productId, String catalogRefId);
+    void onShoppingSearchClick();
 
-	void onShoppingSearchClick();
+    void openProductDetailFragment(String productName, ProductList productList);
 
-	void onAddToCartPreExecute();
+    void requestDeliveryLocation(String requestMessage);
 
-	void onAddToCartSuccess(AddItemToCartResponse addItemToCartResponse);
+    void onQuantityChangeClick(int position, ShoppingListItem shoppingListItem);
 
-	void onSessionTokenExpired(Response response);
+    void onDeleteItemFailed();
 
-	void otherHttpCode(Response response);
-
-	void onAddItemToCartFailure(String errorMessage);
-
-	void requestDeliveryLocation(String requestMessage);
-
-	void onQuantityChangeClick(int position, ShoppingListItem shoppingListItem);
-
-	void onGetListFailure(String errorMessage);
-
-	void onDeleteItemFailed();
-
-	void openProductDetailFragment(String productName, ProductList productList);
-
-	void onAddToCartLoad();
-
-	void getInventoryForStoreSuccess(SkusInventoryForStoreResponse skusInventoryForStoreResponse);
-
-	void geInventoryForStoreFailure(String e);
-
-	void openSetSuburbProcess(ShoppingListItem shoppingListItem);
+    void openSetSuburbProcess(ShoppingListItem shoppingListItem);
 }

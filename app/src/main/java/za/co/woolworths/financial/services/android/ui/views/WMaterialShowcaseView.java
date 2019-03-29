@@ -112,6 +112,7 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
     private WTextView mHideTutorialAction;
     public Feature feature;
     private WTextView mNewFeature;
+    private View mContentView;
 
     public WMaterialShowcaseView(Context context, Feature feature) {
         super(context);
@@ -152,16 +153,16 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
         setVisibility(INVISIBLE);
 
 
-        View contentView = LayoutInflater.from(getContext()).inflate(R.layout.feature_walkthrough_popup, this, true);
-        mContentBox = contentView.findViewById(R.id.content_box);
-        mDismissButton = contentView.findViewById(R.id.close);
-        mWalkThroughIcon = contentView.findViewById(R.id.icon);
-        mWalkThroughTitle = contentView.findViewById(R.id.title);
-        mWalkThroughDesc = contentView.findViewById(R.id.description);
-        mWalkThroughAction = contentView.findViewById(R.id.actionButton);
-        windowContainer = contentView.findViewById(R.id.windowContainer);
-        mHideTutorialAction = contentView.findViewById(R.id.hideFeatureTutorials);
-        mNewFeature = contentView.findViewById(R.id.newFeature);
+        mContentView = LayoutInflater.from(getContext()).inflate(R.layout.feature_walkthrough_popup, this, true);
+        mContentBox = mContentView.findViewById(R.id.content_box);
+        mDismissButton = mContentView.findViewById(R.id.close);
+        mWalkThroughIcon = mContentView.findViewById(R.id.icon);
+        mWalkThroughTitle = mContentView.findViewById(R.id.title);
+        mWalkThroughDesc = mContentView.findViewById(R.id.description);
+        mWalkThroughAction = mContentView.findViewById(R.id.actionButton);
+        windowContainer = mContentView.findViewById(R.id.windowContainer);
+        mHideTutorialAction = mContentView.findViewById(R.id.hideFeatureTutorials);
+        mNewFeature = mContentView.findViewById(R.id.newFeature);
         mDismissButton.setOnClickListener(this);
         mWalkThroughAction.setOnClickListener(this);
         mHideTutorialAction.setOnClickListener(this);
@@ -967,25 +968,38 @@ public class WMaterialShowcaseView extends FrameLayout implements View.OnTouchLi
 
     public void animateIn() {
         setVisibility(INVISIBLE);
-
-        mAnimationFactory.animateInView(this, mTarget.getPoint(), mFadeDurationInMillis,
-                new IAnimationFactory.AnimationStartListener() {
-                    @Override
-                    public void onAnimationStart() {
-                        setVisibility(View.VISIBLE);
-                        notifyOnDisplayed();
-                    }
+        //The runnable will run after the view's creation.
+        mContentView.post(new Runnable() {
+            @Override
+            public void run() {
+                if (mAnimationFactory != null) {
+                    mAnimationFactory.animateInView(WMaterialShowcaseView.this, mTarget.getPoint(), mFadeDurationInMillis,
+                            new IAnimationFactory.AnimationStartListener() {
+                                @Override
+                                public void onAnimationStart() {
+                                    setVisibility(View.VISIBLE);
+                                    notifyOnDisplayed();
+                                }
+                            }
+                    );
                 }
-        );
+            }
+        });
     }
 
     public void animateOut() {
-
-        mAnimationFactory.animateOutView(this, mTarget.getPoint(), mFadeDurationInMillis, new IAnimationFactory.AnimationEndListener() {
+        mContentView.post(new Runnable() {
             @Override
-            public void onAnimationEnd() {
-                setVisibility(INVISIBLE);
-                removeFromWindow();
+            public void run() {
+                if (mAnimationFactory != null) {
+                    mAnimationFactory.animateOutView(WMaterialShowcaseView.this, mTarget.getPoint(), mFadeDurationInMillis, new IAnimationFactory.AnimationEndListener() {
+                        @Override
+                        public void onAnimationEnd() {
+                            setVisibility(INVISIBLE);
+                            removeFromWindow();
+                        }
+                    });
+                }
             }
         });
     }

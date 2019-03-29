@@ -7,8 +7,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -35,15 +33,11 @@ import za.co.woolworths.financial.services.android.models.dto.ProductDetailRespo
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
 import za.co.woolworths.financial.services.android.models.dto.Response;
-import za.co.woolworths.financial.services.android.models.dto.WProduct;
-import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
-import za.co.woolworths.financial.services.android.ui.activities.product.ProductDetailsActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.barcode.BarcodeNavigator;
 import za.co.woolworths.financial.services.android.ui.fragments.barcode.BarcodeViewModel;
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
@@ -52,8 +46,6 @@ import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
-
-import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
 
 public class ManualBarcodeFragment extends BaseFragment<ManualBarcodeLayoutBinding, BarcodeViewModel> implements BarcodeNavigator, View.OnClickListener, NetworkChangeListener {
 
@@ -246,7 +238,7 @@ public class ManualBarcodeFragment extends BaseFragment<ManualBarcodeLayoutBindi
 					|| actionId == EditorInfo.IME_ACTION_DONE
 					|| event.getAction() == KeyEvent.ACTION_DOWN
 					&& event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-				onBackPressed();
+			    callManualBarcodeAPI();
 				return true;
 			}
 			// Return true if you have consumed the action, else false.
@@ -258,15 +250,19 @@ public class ManualBarcodeFragment extends BaseFragment<ManualBarcodeLayoutBindi
 	public void onClick(View view) {
 		switch (view.getId()) {
 			case R.id.btnBarcodeConfirm:
-				mEditBarcodeIdText = mEditBarcodeNumber.getText().toString();
-				executeBarcodeProduct(mEditBarcodeIdText);
-				break;
+                callManualBarcodeAPI();
+                break;
 			default:
 				break;
 		}
 	}
 
-	@Override
+    private void callManualBarcodeAPI() {
+        mEditBarcodeIdText = mEditBarcodeNumber.getText().toString();
+        executeBarcodeProduct(mEditBarcodeIdText);
+    }
+
+    @Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		showLoadingProgressBar(false);

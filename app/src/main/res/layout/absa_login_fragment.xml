@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/tvPasscodeTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fourty_dp"
+        android:gravity="center"
+        android:text="@string/absa_passcode"
+        android:textColor="@color/black"
+        android:textSize="@dimen/twenty_sp"
+        app:WTextView_font="medium_bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <LinearLayout
+        android:id="@+id/llPinCodeContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/twenty_three_dp"
+        android:background="@color/white"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvPasscodeTitle">
+
+        <ImageView
+            android:id="@+id/ivPin1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/fifteen_dp"
+            android:contentDescription="@string/app_label"
+            app:srcCompat="@drawable/pin_empty" />
+
+        <ImageView
+            android:id="@+id/ivPin2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/fifteen_dp"
+            android:contentDescription="@string/app_label"
+            app:srcCompat="@drawable/pin_empty" />
+
+        <ImageView
+            android:id="@+id/ivPin3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/fifteen_dp"
+            android:contentDescription="@string/app_label"
+            app:srcCompat="@drawable/pin_empty" />
+
+        <ImageView
+            android:id="@+id/ivPin4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/fifteen_dp"
+            android:contentDescription="@string/app_label"
+            app:srcCompat="@drawable/pin_empty" />
+
+        <ImageView
+            android:id="@+id/ivPin5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/app_label"
+            android:visibility="visible"
+            app:srcCompat="@drawable/pin_empty" />
+
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/pbLoginProgress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/llPinCodeContainer"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp"
+        android:indeterminateTint="@color/black"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/llPinCodeContainer" />
+
+
+    <za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView
+        android:id="@+id/edtEnterATMPin"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:inputType="number"
+        android:maxLength="5"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <requestFocus />
+    </za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView>
+</android.support.constraint.ConstraintLayout>

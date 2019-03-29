@@ -55,7 +55,6 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 
 	private ErrorHandlerView mErrorHandlerView;
 	private View btnRetry;
-	public static final int SUBURB_SET_RESULT = 123401;
 
 	private RelativeLayout suburbContentLayout;
 	private ProgressBar loadingProgressBar;
@@ -298,11 +297,7 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 					Map<String, String> arguments = new HashMap<>();
 					arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.SUBURBNAME, suburb.name);
 					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTDELIVERY, arguments);
-					// TODO: go back to cart if no items removed from cart, else go to list of removed items
-					if (activity != null) {
-						activity.setResult(SUBURB_SET_RESULT);
-						activity.setResult(Activity.RESULT_OK);
-					}
+					activity.setResult(Activity.RESULT_OK);
 					closeActivity();
 					break;
 				case 440:

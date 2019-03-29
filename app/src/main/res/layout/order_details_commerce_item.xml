@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/bg_light_overlay" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:paddingLeft="@dimen/twenty_four_dp"
+        android:paddingRight="@dimen/twenty_four_dp">
+
+        <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
+            android:id="@+id/productImage"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="@string/app_name"
+            fresco:fadeDuration="10"
+            fresco:failureImage="@drawable/woolworth_logo_icon" />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/itemName"
+            style="@style/my_orders_textview_style_2"
+            android:layout_marginLeft="@dimen/sixteen_dp"
+            android:layout_marginRight="@dimen/eight_dp"
+            android:layout_toLeftOf="@+id/price"
+            android:layout_toRightOf="@+id/productImage"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textColor="@color/black" />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/price"
+            style="@style/my_orders_textview_style_3" />
+    </RelativeLayout>
+
+</LinearLayout>

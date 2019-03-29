@@ -20,6 +20,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
+import com.crashlytics.android.Crashlytics;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
@@ -462,6 +463,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		if (mDisposables != null
 				&& !mDisposables.isDisposed()) {
 			mDisposables.dispose();
+		}
+		if(CartActivity.walkThroughPromtView != null){
+			CartActivity.walkThroughPromtView.removeFromWindow();
 		}
 	}
 
@@ -1140,7 +1144,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			List<ShoppingList> shoppingListRequest = globalState.getShoppingListRequest();
 			if (shoppingListRequest != null) {
 				for (ShoppingList shoppingList : shoppingListRequest) {
-					if (shoppingList.viewIsSelected) {
+					if (shoppingList.shoppingListRowWasSelected) {
 						intent.putExtra("listId", shoppingList.listId);
 						intent.putExtra("listName", shoppingList.listName);
 					}
@@ -1168,6 +1172,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	public void showFeatureWalkthrough(){
 		if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.deliveryLocation)
 			return;
+		Crashlytics.setString(getString(R.string.crashlytics_materialshowcase_key),this.getClass().getSimpleName());
 		CartActivity.walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.DELIVERY_LOCATION)
 				.setTarget(imgDeliveryLocation)
 				.setTitle(R.string.your_delivery_location)

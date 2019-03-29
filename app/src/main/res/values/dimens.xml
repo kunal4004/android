@@ -117,6 +117,7 @@
     <dimen name="email_height_50">50dp</dimen>
     <dimen name="email_text_size_15sp">15sp</dimen>
     <dimen name="hundred_dp">100dp</dimen>
+    <dimen name="hundred_and_fifty_dp">150dp</dimen>
     <dimen name="statusbar_view_height">0dp</dimen>
     <dimen name="five_dp">5dp</dimen>
     <dimen name="six_dp">6dp</dimen>
@@ -137,5 +138,8 @@
     <dimen name="fourteen_sp">14sp</dimen>
     <dimen name="ten_sp">10sp</dimen>
     <dimen name="forty_four_dp">44dp</dimen>
+    <dimen name="nineteen_sp">19sp</dimen>
+    <dimen name="thirty_five_dp">35dp</dimen>
+    <dimen name="sixty_three_dp">63dp</dimen>
 </resources>
 
