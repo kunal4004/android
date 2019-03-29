@@ -68,6 +68,7 @@ class WToday : Fragment(), IWTodayInterface {
                 javaScriptEnabled = true
                 mediaPlaybackRequiresUserGesture = true
                 domStorageEnabled = true
+                cacheMode = WebSettings.LOAD_CACHE_ELSE_NETWORK
                 addJavascriptInterface(WebViewJavascriptInterface(this@WToday), "Android")
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
