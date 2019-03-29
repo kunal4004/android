@@ -54,6 +54,7 @@ public class WoolworthsApplication extends Application {
 	private static String creditCardType;
 	private boolean isOther = false;
 	private static int productOfferingId;
+	private static String authenticVersionStamp = "";
 
 	public UpdateBankDetail updateBankDetail;
 
@@ -317,5 +318,12 @@ public class WoolworthsApplication extends Application {
 
 	public static String getCartCheckoutLink() {
 		return cartCheckoutLink;
+	}
+	public static String getAuthenticVersionStamp() {
+		return authenticVersionStamp;
+	}
+
+	public static void setAuthenticVersionStamp(String authenticVersionStamp) {
+		WoolworthsApplication.authenticVersionStamp = authenticVersionStamp;
 	}
 }
