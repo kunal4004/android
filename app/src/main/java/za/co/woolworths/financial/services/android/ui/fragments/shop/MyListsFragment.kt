@@ -235,7 +235,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
         if (SessionUtilities.getInstance().isUserAuthenticated) {
             if (parentFragment?.getShoppingListResponseData() != null && !isNewSession && !parentFragment?.isDifferentUser()!!) bindShoppingListToUI() else {
                 parentFragment?.clearCachedData()
-                getShoppingList(false)
+                getShoppingList(isNewSession)
             }
         } else {
             showSignOutView()
