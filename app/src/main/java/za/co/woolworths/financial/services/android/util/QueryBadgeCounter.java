@@ -183,6 +183,12 @@ public class QueryBadgeCounter extends Observable {
 		});
 	}
 
+	public void clearBadge(){
+		setCartCount(0,INDEX_CART);
+		setMessageCount(0,INDEX_ACCOUNT);
+		setVoucherCount(0,INDEX_REWARD);
+	}
+
 	public void cancelCounterRequest() {
 		cancelRequest(mGetMessage);
 		cancelRequest(mGetVoucher);

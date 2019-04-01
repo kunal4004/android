@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/tvSearchProduct"
+        android:layout_width="0dp"
+        android:layout_height="44dp"
+        android:layout_marginStart="@dimen/sixteen_dp"
+        android:layout_marginTop="@dimen/twenty_one_dp"
+        android:layout_marginEnd="@dimen/sixteen_dp"
+        android:layout_marginBottom="8dp"
+        android:layout_toStartOf="@+id/imBarcodeScanner"
+        android:background="@color/shop_search_color"
+        android:drawableStart="@drawable/ic_search"
+        android:drawablePadding="@dimen/sixteen_dp"
+        android:gravity="center_vertical"
+        android:hint="@string/product_search_hint"
+        android:paddingStart="@dimen/sixteen_dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/product_search_hint"
+        android:textSize="16sp"
+        app:WTextView_font="myriadpro_regular"
+        app:layout_constraintBottom_toTopOf="@+id/productSearchGuideline"
+        app:layout_constraintEnd_toStartOf="@+id/imBarcodeScanner"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="RtlSymmetry" />
+
+
+    <ImageView
+        android:id="@+id/imBarcodeScanner"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="@dimen/twenty_one_dp"
+        android:layout_marginEnd="@dimen/sixteen_dp"
+        android:layout_marginBottom="8dp"
+        android:contentDescription="@string/enter_barcode_desc"
+        android:src="@drawable/barcode"
+        app:layout_constraintBottom_toTopOf="@+id/productSearchGuideline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/tvSearchProduct"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tabs_main"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_marginTop="@dimen/eight_dp"
+        android:background="@drawable/appbar_background"
+        android:elevation="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvSearchProduct"
+        app:tabBackground="@color/white"
+        app:tabGravity="fill"
+        app:tabIndicatorColor="@color/black"
+        app:tabMode="fixed"
+        app:tabPaddingEnd="2dp"
+        app:tabPaddingStart="2dp"
+        app:tabSelectedTextColor="@color/black"
+        app:tabTextColor="#40000000" />
+
+    <za.co.woolworths.financial.services.android.ui.views.ShopViewPager
+        android:id="@+id/viewpager_main"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tabs_main" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/productSearchGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="?attr/actionBarSize" />
+</android.support.constraint.ConstraintLayout>

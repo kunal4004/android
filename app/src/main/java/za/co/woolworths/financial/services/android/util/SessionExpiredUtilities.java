@@ -26,7 +26,7 @@ public class SessionExpiredUtilities {
 			FragmentManager fm = activity.getSupportFragmentManager();
 			SessionExpiredDialogFragment sessionExpiredDialogFragment = SessionExpiredDialogFragment.newInstance(SessionUtilities.getInstance().getSTSParameters());
 			sessionExpiredDialogFragment.show(fm, SessionExpiredDialogFragment.class.getSimpleName());
-		} catch (NullPointerException ex) {
+		} catch (Exception ex) {
 			Log.d(TAG, ex.getMessage());
 		}
 	}

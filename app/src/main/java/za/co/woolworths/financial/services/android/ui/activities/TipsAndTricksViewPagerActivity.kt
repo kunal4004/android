@@ -32,6 +32,7 @@ class TipsAndTricksViewPagerActivity : AppCompatActivity(), View.OnClickListener
 
     companion object {
         const val RESULT_OK_PRODUCTS = 123
+        const val RESULT_OK_BARCODE_SCAN = 203
         const val RESULT_OK_ACCOUNTS = 234
         const val RESULT_OK_REWARDS = 345
         const val REQUEST_CODE_DELIVERY_LOCATION = 456
@@ -41,7 +42,7 @@ class TipsAndTricksViewPagerActivity : AppCompatActivity(), View.OnClickListener
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tips_and_trics_view_pager)
-        Utils.updateStatusBarBackground(this, R.color.unavailable_color);
+        Utils.updateStatusBarBackground(this, R.color.unavailable_color)
         initViews()
         setActionBar()
     }
@@ -52,12 +53,13 @@ class TipsAndTricksViewPagerActivity : AppCompatActivity(), View.OnClickListener
     }
 
     private fun setActionBar() {
-        setSupportActionBar(mToolbar);
-        supportActionBar?.setDisplayHomeAsUpEnabled(true);
-        supportActionBar?.setDisplayShowTitleEnabled(false);
-        supportActionBar?.setDisplayUseLogoEnabled(false);
-        supportActionBar?.setHomeAsUpIndicator(R.drawable.back24);
-
+        setSupportActionBar(mToolbar)
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            setDisplayShowTitleEnabled(false)
+            setDisplayUseLogoEnabled(false)
+            setHomeAsUpIndicator(R.drawable.back24)
+        }
     }
 
     private fun initViews() {
@@ -105,7 +107,7 @@ class TipsAndTricksViewPagerActivity : AppCompatActivity(), View.OnClickListener
                     }
                 //BARCODE SCAN
                     1 -> {
-                        setResult(RESULT_OK_PRODUCTS)
+                        setResult(RESULT_OK_BARCODE_SCAN)
                         onBackPressed()
                     }
                 //DELIVERY LOCATION

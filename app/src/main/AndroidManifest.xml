@@ -108,6 +108,9 @@
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_notification" />
         <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="wfs_channel_id"/>
+        <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
         <meta-data
@@ -333,8 +336,8 @@
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.DebitOrderActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/DebitOrder"></activity>
-        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.PortraitAppCompatActivity"></activity>
+            android:theme="@style/DebitOrder" />
+        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.PortraitAppCompatActivity" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.product.refine.ProductsRefineActivity"
             android:screenOrientation="portrait"
@@ -343,12 +346,41 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.bpi.BPIBalanceProtectionActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BalanceProtectionInsuranceStyle" />
-
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.maintenance.MaintenanceMessageActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/RuntimeExceptionActivityStyle" />
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/OrderDetailsActivityStyle" />
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity"
+            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar"
+            android:windowSoftInputMode="adjustResize" />
+        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.OrdersTaxInvoiceActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/TaxInvoiceActivityStyle"/>
+
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity"
+            android:theme="@style/ABSAOnlineBankingToDeviceStyle"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize|stateAlwaysVisible"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListDetailActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ShoppingListDetailActivityStyle"
+
+            />
+
+        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListSearchResultActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ShoppingListDetailActivityStyle"
+            />
 
     </application>
 

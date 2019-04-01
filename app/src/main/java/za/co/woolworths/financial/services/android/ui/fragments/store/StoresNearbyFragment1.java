@@ -56,6 +56,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
+import za.co.woolworths.financial.services.android.contracts.ILocationProvider;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
@@ -77,7 +78,7 @@ import za.co.woolworths.financial.services.android.util.WCustomViewPager;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 
-public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallback, ViewPager.OnPageChangeListener, GoogleMap.OnMarkerClickListener {
+public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallback, ViewPager.OnPageChangeListener, GoogleMap.OnMarkerClickListener, ILocationProvider {
 
 	public static final int REQUEST_CALL = 1;
 	WCustomViewPager pager;
@@ -306,7 +307,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 	}
 
 	public void initMap() {
-		if (googleMap == null) {
+		if (googleMap == null & isAdded()) {
 			mapFragment = (SupportMapFragment) this.getChildFragmentManager().findFragmentById(R.id.map);
 			mapFragment.getMapAsync(this);
 			mMarkers = new HashMap<>();
@@ -582,7 +583,8 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 			layoutLocationServiceOff.setVisibility(View.GONE);
 			layoutLocationServiceOn.setVisibility(View.VISIBLE);
 			navigateMenuState = true;
-			getActivity().invalidateOptionsMenu();
+			if (isAdded())
+				getActivity().invalidateOptionsMenu();
 
 		}
 	}
@@ -593,6 +595,18 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 		super.onActivityResult(requestCode, resultCode, data);
 		Log.d("RequestSETTINGRESULT", String.valueOf(requestCode));
 		switch (requestCode) {
+			case FuseLocationAPISingleton.REQUEST_CHECK_SETTINGS:
+				switch (resultCode) {
+					case Activity.RESULT_OK:
+						initLocationCheck();
+						break;
+					default:
+						if (mBottomNavigator != null)
+							mBottomNavigator.popFragment();
+						break;
+				}
+				break;
+
 			// Check for the integer request code originally supplied to startResolutionForResult().
 			case REQUEST_CHECK_SETTINGS:
 				initLocationCheck();
@@ -688,24 +702,13 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
     public void startLocationUpdates() {
         Activity activity = getActivity();
         if (activity == null) return;
-        //Present an error message if location method is set to device only
-        if (!mFuseLocationAPISingleton.getLocationMode(activity)) {
-            mFuseLocationAPISingleton.detectDeviceOnlyGPSLocation(activity);
-            return;
-        }
-        if (mFuseLocationAPISingleton.getLocationMode(activity))
             if (checkLocationPermission()) {
                 if (ContextCompat.checkSelfPermission(getActivity(),
                         Manifest.permission.ACCESS_FINE_LOCATION)
                         == PackageManager.PERMISSION_GRANTED) {
                     onLocationLoadStart();
-                    mFuseLocationAPISingleton.addOnLocationCompleteListener(new FuseLocationAPISingleton.OnLocationChangeCompleteListener() {
-                        @Override
-                        public void onLocationChanged(@NotNull Location location) {
-                            updateMap(location);
-                        }
-                    });
-                    mFuseLocationAPISingleton.startLocationUpdate();
+                    mFuseLocationAPISingleton.addLocationChangeListener(this);
+                    mFuseLocationAPISingleton.startLocationUpdate(getActivity());
                 }
             } else {
                 checkLocationPermission();
@@ -882,4 +885,14 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         if (mLayout == null) return false;
         return mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.ANCHORED;
     }
+
+	@Override
+	public void onLocationChange(@NotNull Location location) {
+		updateMap(location);
+	}
+
+	@Override
+	public void onPopUpLocationDialogMethod() {
+		hideProgressBar();
+	}
 }
