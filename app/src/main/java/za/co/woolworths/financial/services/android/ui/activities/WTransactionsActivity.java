@@ -115,10 +115,7 @@ public class WTransactionsActivity extends AppCompatActivity {
 				super.onPostExecute(transactionHistoryResponse);
 				if (WTransactionsActivity.this != null && getSupportFragmentManager() != null) {
 					dismissProgress();
-					int httpCode = transactionHistoryResponse.httpCode;
-					httpCode = 200;
-					transactionHistoryResponse.transactions = new ArrayList<>();
-					switch (httpCode) {
+					switch (transactionHistoryResponse.httpCode) {
 						case 200:
 							if (transactionHistoryResponse.transactions.size() > 0) {
 								transactionListview.setVisibility(View.VISIBLE);
