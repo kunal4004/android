@@ -7,6 +7,8 @@
 
     <LinearLayout
         xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/ssoLayout"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -69,6 +71,12 @@
                 android:visibility="gone"/>
         </RelativeLayout>
     </LinearLayout>
-
+    <ProgressBar
+        android:id="@+id/kmsiProgressBar"
+        android:layout_width="@dimen/twenty_four_dp"
+        android:layout_height="@dimen/twenty_four_dp"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center_horizontal|center_vertical"
+        android:visibility="visible"/>
     <include layout="@layout/no_connection_handler"/>
 </FrameLayout>

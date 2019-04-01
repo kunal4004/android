@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.JavascriptInterface;
 import android.webkit.SslErrorHandler;
 import android.webkit.ValueCallback;
 import android.webkit.WebBackForwardList;
@@ -40,6 +41,7 @@ import java.util.UUID;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
@@ -108,6 +110,7 @@ public class SSOActivity extends WebViewActivity {
 		mGlobalState = ((WoolworthsApplication) getApplication()).getWGlobalState();
 		mErrorHandlerView = new ErrorHandlerView(SSOActivity.this, (RelativeLayout) findViewById
 				(R.id.no_connection_layout));
+		handleUIForKMSIEntry();
 	}
 
 	private void instantiateWebView() {
@@ -115,6 +118,7 @@ public class SSOActivity extends WebViewActivity {
 		this.webView.getSettings().setUseWideViewPort(true);
 		this.webView.getSettings().setLoadWithOverviewMode(true);
 		this.webView.getSettings().setDomStorageEnabled(true);
+		this.webView.addJavascriptInterface(new KMSIState(),"injection");
 		if (Build.VERSION.SDK_INT >= 21) {
 			this.webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
 		}
@@ -351,7 +355,8 @@ public class SSOActivity extends WebViewActivity {
 					.appendQueryParameter("redirect_uri", redirectURIString)
 					.appendQueryParameter("state", this.state)
 					.appendQueryParameter("nonce", this.nonce)
-					.appendQueryParameter("scope", scope);
+					.appendQueryParameter("scope", scope)
+					.appendQueryParameter("appVersion","5.10.0");
 		}
 
 		if (this.extraQueryStringParams != null) {
@@ -478,6 +483,12 @@ public class SSOActivity extends WebViewActivity {
 		@Override
 		public void onPageFinished(WebView view, String url) {
 			super.onPageFinished(view, url);
+
+			if (SSOActivity.this.path == Path.SIGNIN) {
+				view.evaluateJavascript("jquery:$('#rememberMe').on('change', function() {injection.reportCheckboxStateChange($(this).is(':checked'))})", null);
+				view.evaluateJavascript("jquery:injection.reportCheckboxState($('#rememberMe').is(':checked'))", null);
+			}
+
 			if (isNavigatingToRedirectURL(url)) {
 				//get state and scope from webview posted form
 				if (SSOActivity.this.path.rawValue().equals(Path.LOGOUT.rawValue())) {
@@ -631,5 +642,27 @@ public class SSOActivity extends WebViewActivity {
 			overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
 		else
 			overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
+	}
+
+	class KMSIState extends Object{
+		@JavascriptInterface
+		public void reportCheckboxState(boolean isChecked) {
+
+		}
+
+		@JavascriptInterface
+		public void reportCheckboxStateChange(boolean isChecked) {
+			Utils.setUserKMSIState(isChecked);
+		}
+	}
+
+	public void handleUIForKMSIEntry() {
+		if (Utils.getUserKMSIState() && SSOActivity.this.path == Path.SIGNIN) {
+			ssoLayout.setVisibility(View.GONE);
+			loadingProgressBarKMSI.setVisibility(View.VISIBLE);
+		} else {
+			ssoLayout.setVisibility(View.VISIBLE);
+			loadingProgressBarKMSI.setVisibility(View.GONE);
+		}
 	}
 }

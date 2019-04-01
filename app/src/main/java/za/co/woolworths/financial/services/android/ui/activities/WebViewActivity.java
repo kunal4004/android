@@ -19,6 +19,7 @@ import android.webkit.SslErrorHandler;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
@@ -37,6 +38,8 @@ public class WebViewActivity extends AppCompatActivity {
 	public WTextView toolbarTextView;
 	private ProgressBar loadingProgressBar;
 	private ErrorHandlerView mErrorView;
+	public ProgressBar loadingProgressBarKMSI;
+	public LinearLayout ssoLayout;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -50,12 +53,15 @@ public class WebViewActivity extends AppCompatActivity {
 		loadingProgressBar = findViewById(R.id.loadingProgressBar);
 		mErrorView = new ErrorHandlerView(WebViewActivity.this, (RelativeLayout) findViewById
 				(R.id.no_connection_layout));
+		loadingProgressBarKMSI = findViewById(R.id.kmsiProgressBar);
+		ssoLayout = findViewById(R.id.ssoLayout);
 		setSupportActionBar(toolbar);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setTitle(null);
 
 		String url = b.getString("link");
 		webView.getSettings().setJavaScriptEnabled(true);
+		webView.getSettings().setUserAgentString("iphone");
 		webView.getSettings().setDomStorageEnabled(true);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
 			webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
@@ -71,12 +77,12 @@ public class WebViewActivity extends AppCompatActivity {
 		} catch (Exception ex) {
 			Log.e("WebSettings", "Error calling setMixedContentMode: " + ex.getMessage(), ex);
 		}
-		webView.clearCache(true);
+		//webView.clearCache(true);
 		webView.clearHistory();
 		if (Build.VERSION.SDK_INT >= 21) {
 			webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
 		}
-		clearCookies(this);
+		//clearCookies(this);
 		if (TextUtils.isEmpty(url)) mErrorView.networkFailureHandler("");
 		webView.loadUrl(url);
 	}
