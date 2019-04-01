@@ -83,7 +83,7 @@ public class WTodayFragment extends BaseFragment<WtodayFragmentBinding, WTodayVi
 	@SuppressLint("SetJavaScriptEnabled")
 	private void initWebView(View view) {
 		webView = view.findViewById(R.id.wtoday_fragment_webview);
-		webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+		webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
 		webView.getSettings().setJavaScriptEnabled(true);
 		webView.getSettings().setMediaPlaybackRequiresUserGesture(false);
 		webView.getSettings().setDomStorageEnabled(true);
