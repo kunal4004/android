@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -10,8 +11,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -25,9 +28,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import za.co.absa.openbankingapi.Cryptography;
+import za.co.absa.openbankingapi.KeyGenerationFailureException;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.OnResultListener;
 import za.co.woolworths.financial.services.android.contracts.RootActivityInterface;
@@ -35,6 +41,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.MobileConfigServerDao;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
+import za.co.woolworths.financial.services.android.models.dto.Configs;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -171,6 +178,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 					WoolworthsApplication.setSsoRedirectURILogout(configResponse.configs.enviroment.getSsoRedirectURILogout());
 					WoolworthsApplication.setSsoUpdateDetailsRedirectUri(configResponse.configs.enviroment.getSsoUpdateDetailsRedirectUri());
 					WoolworthsApplication.setWwTodayURI(configResponse.configs.enviroment.getWwTodayURI());
+					WoolworthsApplication.setAuthenticVersionStamp(configResponse.configs.enviroment.getAuthenticVersionStamp());
 					WoolworthsApplication.setApplyNowLink(configResponse.configs.defaults.getApplyNowLink());
 					WoolworthsApplication.setRegistrationTCLink(configResponse.configs.defaults.getRegisterTCLink());
 					WoolworthsApplication.setFaqLink(configResponse.configs.defaults.getFaqLink());
@@ -179,15 +187,17 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 					WoolworthsApplication.setHowToSaveLink(configResponse.configs.defaults.getHowtosaveLink());
 					WoolworthsApplication.setWrewardsTCLink(configResponse.configs.defaults.getWrewardsTCLink());
 					WoolworthsApplication.setCartCheckoutLink(configResponse.configs.defaults.getCartCheckoutLink());
+
 					mWGlobalState.setStartRadius(configResponse.configs.enviroment.getStoreStockLocatorConfigStartRadius());
 					mWGlobalState.setEndRadius(configResponse.configs.enviroment.getStoreStockLocatorConfigEndRadius());
+
 
 					splashScreenText = configResponse.configs.enviroment.splashScreenText;
 					splashScreenDisplay = configResponse.configs.enviroment.splashScreenDisplay;
 					splashScreenPersist = configResponse.configs.enviroment.splashScreenPersist;
 
 					if (!isVideoPlaying) {
-						presentNextScreenOrServerMessage();
+						showServerMessageOrProceed();
 					}
 
 				} catch (NullPointerException ignored) {
@@ -206,6 +216,38 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 		});
 	}
 
+
+	//#region ShowServerMessage
+	public void showServerMessageOrProceed(){
+		String passphrase = BuildConfig.VERSION_NAME+", "+BuildConfig.SHA1;
+		byte[] hash = null;
+		try {
+			hash = Cryptography.PasswordBasedKeyDerivationFunction2(passphrase,Integer.toString(BuildConfig.VERSION_CODE),1007,256);
+		} catch (KeyGenerationFailureException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		String hashB64 = Base64.encodeToString(hash,Base64.NO_WRAP);
+
+		String authenticVersionStamp = WoolworthsApplication.getAuthenticVersionStamp();
+		if(!authenticVersionStamp.isEmpty() && hashB64.equals(authenticVersionStamp)){
+			final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle(getString(R.string.update_title));
+			builder.setMessage(getString(R.string.update_desc));
+			builder.setCancelable(false);
+			builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+				}
+			});
+			AlertDialog dialog = builder.create();
+			dialog.show();
+		}
+		presentNextScreenOrServerMessage();
+	}
+	//#endregion
 	//video player on completion
 	@Override
 	public void onCompletion(MediaPlayer mp) {
@@ -214,7 +256,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 
 		if (!StartupActivity.this.mVideoPlayerShouldPlay) {
 
-			presentNextScreenOrServerMessage();
+			showServerMessageOrProceed();
 			mp.stop();
 
 		} else {
