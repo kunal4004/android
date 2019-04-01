@@ -219,10 +219,10 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 
 	//#region ShowServerMessage
 	public void showServerMessageOrProceed(){
-		String passphrase = "5.10.0, 4732308ab73a002c4914dfa9568d724145f53a5e";//BuildConfig.VERSION_NAME+", "+BuildConfig.SHA1;
+		String passphrase = BuildConfig.VERSION_NAME+", "+BuildConfig.SHA1;
 		byte[] hash = null;
 		try {
-			hash = Cryptography.PasswordBasedKeyDerivationFunction2(passphrase,"234",1007,256);
+			hash = Cryptography.PasswordBasedKeyDerivationFunction2(passphrase,Integer.toString(BuildConfig.VERSION_CODE),1007,256);
 		} catch (KeyGenerationFailureException e) {
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {
