@@ -108,6 +108,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 
     private View fakeView;
     private NestedScrollView mScrollAccountCard;
+    private boolean mIsVisibleToUser = false;
 
     @Nullable
     @Override
@@ -230,17 +231,17 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
     }
 
     private void setAccountDetails() {
-        boolBroadcastRegistered = true;
-        getActivity().registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
-        accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
-        onLoadComplete();
-        mErrorHandlerView = new ErrorHandlerView(getActivity());
-        if (!NetworkManager.getInstance().isConnectedToNetwork(getActivity()))
-            mErrorHandlerView.showToast();
-        if (accountsResponse != null)
-            bindData(accountsResponse);
+            boolBroadcastRegistered = true;
+            getActivity().registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+            accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
+            onLoadComplete();
+            mErrorHandlerView = new ErrorHandlerView(getActivity());
+            if (!NetworkManager.getInstance().isConnectedToNetwork(getActivity()))
+                mErrorHandlerView.showToast();
+            if (accountsResponse != null)
+                bindData(accountsResponse);
 
-        mIncreaseLimitController.defaultIncreaseLimitView(logoIncreaseLimit, llCommonLayer, tvIncreaseLimit);
+            mIncreaseLimitController.defaultIncreaseLimitView(logoIncreaseLimit, llCommonLayer, tvIncreaseLimit);
     }
 
     public void bindData(AccountsResponse response) {
@@ -436,20 +437,25 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
         cliGetOfferActive = new CLIGetOfferActive(getActivity(), productOfferingId, new OnEventListener() {
             @Override
             public void onSuccess(Object object) {
-                offerActive = ((OfferActive) object);
-                bindUI(offerActive);
-                personalWasAlreadyRunOnce = true;
-                onLoadComplete();
+                if (getActivity()==null && !mIsVisibleToUser) return;
+                    offerActive = ((OfferActive) object);
+                    bindUI(offerActive);
+                    personalWasAlreadyRunOnce = true;
+                    onLoadComplete();
+
             }
 
             @Override
             public void onFailure(String e) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        networkFailureHandler();
-                    }
-                });
+                Activity activity = getActivity();
+                if (activity!=null && mIsVisibleToUser) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            networkFailureHandler();
+                        }
+                    });
+                }
             }
         });
         cliGetOfferActive.execute();
@@ -664,6 +670,12 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
     @Override
     public void onPromptDismiss() {
 
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        mIsVisibleToUser = isVisibleToUser;
     }
 }
 
