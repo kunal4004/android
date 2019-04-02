@@ -231,7 +231,8 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 		String hashB64 = Base64.encodeToString(hash,Base64.NO_WRAP);
 
 		String authenticVersionStamp = WoolworthsApplication.getAuthenticVersionStamp();
-		if(!authenticVersionStamp.isEmpty() && hashB64.equals(authenticVersionStamp)){
+		Boolean isDialogShown = false;
+		if(!authenticVersionStamp.isEmpty() && !hashB64.equals(authenticVersionStamp)){
 			final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setTitle(getString(R.string.update_title));
 			builder.setMessage(getString(R.string.update_desc));
@@ -240,12 +241,16 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					dialog.dismiss();
+					presentNextScreenOrServerMessage();
 				}
 			});
 			AlertDialog dialog = builder.create();
 			dialog.show();
+			isDialogShown = true;
 		}
-		presentNextScreenOrServerMessage();
+		if(!isDialogShown){
+			presentNextScreenOrServerMessage();
+		}
 	}
 	//#endregion
 	//video player on completion
