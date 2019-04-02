@@ -900,4 +900,6 @@
     <string name="check_connection_status">Check your connection and try again.</string>
     <string name="general_error_desc">Oops, There seems to be a problem. Please try again later.</string>
     <string name="crashlytics_materialshowcase_key">materialshowcase_parent</string>
+    <string name="update_title">Update Available</string>
+    <string name="update_desc">Please update to the latest version of the App.</string>
 </resources>

@@ -12,6 +12,7 @@ public class Environment {
 	public String ssoRedirectURILogout;
 	public String ssoUpdateDetailsRedirectUri;
 	public String wwTodayURI;
+	public String authenticVersionStamp = "";
 	public int storeStockLocatorConfigStartRadius;
 	public int storeStockLocatorConfigEndRadius;
 	public boolean storeStockLocatorConfigFoodProducts;
@@ -119,5 +120,13 @@ public class Environment {
 
 	public String getSplashScreenText() {
 		return splashScreenText;
+	}
+
+	public String getAuthenticVersionStamp() {
+		return authenticVersionStamp;
+	}
+
+	public void setAuthenticVersionStamp(String authenticVersionStamp) {
+		this.authenticVersionStamp = authenticVersionStamp;
 	}
 }
