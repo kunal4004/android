@@ -24,8 +24,6 @@ class LoanWithdrawalDetailFragment : LoanBaseFragment() {
 
     private var mIssueLoan: IssueLoan? = null
     private var mInstallmentAmount = 0
-    private var mRepaymentPeriod: Int? = 0
-    private var mDrawnDownAmount: Int? = 0
     private var mAuthoriseLoan: AuthoriseLoan? = null
     private var autoIssueLoanConnectIsActivated: Boolean = false
     private var mErrorHandlerView: ErrorHandlerView? = null
@@ -42,79 +40,83 @@ class LoanWithdrawalDetailFragment : LoanBaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+        arguments?.apply {
+            mIssueLoan = getString(ISSUE_LOAN)?.let { Gson().fromJson(it, IssueLoan::class.java) }
+            mInstallmentAmount = getInt(INSTALLMENT_AMOUNT)
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.loan_confirmation_layout, container, false)
+        return inflater?.inflate(R.layout.loan_confirmation_layout, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         activity?.let {
             mErrorHandlerView = ErrorHandlerView(it)
-            (it as LoanWithdrawalActivity).setHomeIndicatorIcon(R.drawable.back_white)
+            (it as? LoanWithdrawalActivity)?.setHomeIndicatorIcon(R.drawable.back_white)
+            mIssueLoan?.apply {
+                tvDrawnDownSelectedAmount?.text = currencyFormatter(drawDownAmount, it)
+                val repaymentPeriod = "$repaymentPeriod month".plus(if (repaymentPeriod == 1) "" else "s")
+                tvRepaymentPeriod?.text = repaymentPeriod
+                tvAdditionalMonthlyRepayment?.text = currencyFormatter((mInstallmentAmount), it)
+            }
         }
 
-        arguments?.let { bundle ->
-            mIssueLoan = bundle.getString(ISSUE_LOAN)?.let { Gson().fromJson(it, IssueLoan::class.java) }!!
-            mInstallmentAmount = bundle.getInt(INSTALLMENT_AMOUNT)
-        }
-
-        mRepaymentPeriod = mIssueLoan?.repaymentPeriod
-        mDrawnDownAmount = mIssueLoan?.drawDownAmount!!
-
-        activity?.let {
-            tvDrawnDownSelectedAmount.text = currencyFormatter(mDrawnDownAmount!!, it)
-            tvRepaymentPeriod.text = mRepaymentPeriod?.toString()?.plus(" month".plus(if (mRepaymentPeriod == 1) "" else "s"))
-            tvAdditionalMonthlyRepayment.text = currencyFormatter((mInstallmentAmount), it)
-        }
-
-        btnConfirm.setOnClickListener { authoriseLoanRequest() }
+        btnConfirm?.setOnClickListener { authoriseLoanRequest() }
     }
 
     private fun authoriseLoanRequest() {
         progressBarVisibility(true)
+
         mAuthoriseLoan = AuthoriseLoan(AuthoriseLoanRequest(mIssueLoan!!.productOfferingId,
                 mIssueLoan!!.drawDownAmount, mIssueLoan!!.repaymentPeriod, mInstallmentAmount,
                 mIssueLoan!!.creditLimit), object : OnEventListener<AuthoriseLoanResponse> {
 
-            override fun onSuccess(`object`: AuthoriseLoanResponse?) {
-                progressBarVisibility(false)
-                val authoriseLoanResponse: AuthoriseLoanResponse = `object` as AuthoriseLoanResponse
-                autoIssueLoanConnectIsActivated = false
-                when (authoriseLoanResponse.httpCode) {
-                    200 -> {
-                        replaceFragment(
-                                fragment = LoanWithdrawalSuccessFragment.newInstance(),
-                                tag = LoanWithdrawalSuccessFragment::class.java.simpleName,
-                                containerViewId = R.id.flLoanContent,
-                                allowStateLoss = true,
-                                enterAnimation = R.anim.slide_in_from_right,
-                                exitAnimation = R.anim.slide_to_left,
-                                popEnterAnimation = R.anim.slide_from_left,
-                                popExitAnimation = R.anim.slide_to_right)
+            override fun onSuccess(authoriseLoanResponse: AuthoriseLoanResponse?) {
+                activity?.let { fragmentActivity ->
+                    progressBarVisibility(false)
+                    autoIssueLoanConnectIsActivated = false
+                    authoriseLoanResponse?.apply {
+                        when (httpCode) {
+                            200 -> {
+                                replaceFragment(
+                                        fragment = LoanWithdrawalSuccessFragment.newInstance(),
+                                        tag = LoanWithdrawalSuccessFragment::class.java.simpleName,
+                                        containerViewId = R.id.flLoanContent,
+                                        allowStateLoss = true,
+                                        enterAnimation = R.anim.slide_in_from_right,
+                                        exitAnimation = R.anim.slide_to_left,
+                                        popEnterAnimation = R.anim.slide_from_left,
+                                        popExitAnimation = R.anim.slide_to_right)
+                            }
+                            440 -> {
+                                response.stsParams.let { stsParams ->
+                                    SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE,
+                                            stsParams, fragmentActivity)
+                                }
+                            }
+                            else ->
+                                authoriseLoanResponse.response?.desc?.let { desc -> DialogManager(fragmentActivity).showBasicDialog(desc) }
+                        }
                     }
-                    440 -> {
-                        SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE,
-                                authoriseLoanResponse.response.stsParams, activity)
-                    }
-                    else ->
-                        authoriseLoanResponse.response?.let { result -> DialogManager(activity).showBasicDialog(result.desc) }
                 }
             }
+
             override fun onFailure(e: String?) {
-                progressBarVisibility(false)
-                autoIssueLoanConnectIsActivated = true
+                activity?.apply {
+                    progressBarVisibility(false)
+                    autoIssueLoanConnectIsActivated = true
+                }
             }
         })
 
-        mAuthoriseLoan!!.execute()
+        mAuthoriseLoan?.execute()
     }
 
     private fun progressBarVisibility(visible: Boolean) {
-        mConfirmProgressBar.visibility = if (visible) VISIBLE else GONE
-        btnConfirm.visibility = if (visible) GONE else VISIBLE
+        mConfirmProgressBar?.visibility = if (visible) VISIBLE else GONE
+        btnConfirm?.visibility = if (visible) GONE else VISIBLE
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
