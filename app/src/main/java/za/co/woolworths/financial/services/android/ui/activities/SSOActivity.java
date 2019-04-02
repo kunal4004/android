@@ -57,6 +57,7 @@ public class SSOActivity extends WebViewActivity {
 
 	public ErrorHandlerView mErrorHandlerView;
 	private WGlobalState mGlobalState;
+	private boolean isKMSIChecked;
 
 	public enum SSOActivityResult {
 		LAUNCH(1),
@@ -110,7 +111,7 @@ public class SSOActivity extends WebViewActivity {
 		mGlobalState = ((WoolworthsApplication) getApplication()).getWGlobalState();
 		mErrorHandlerView = new ErrorHandlerView(SSOActivity.this, (RelativeLayout) findViewById
 				(R.id.no_connection_layout));
-		handleUIForKMSIEntry();
+		handleUIForKMSIEntry((Utils.getUserKMSIState() && SSOActivity.this.path == Path.SIGNIN));
 	}
 
 	private void instantiateWebView() {
@@ -439,6 +440,7 @@ public class SSOActivity extends WebViewActivity {
 							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.ACTIVE);
 							QueryBadgeCounter.getInstance().queryBadgeCount();
 							setResult(SSOActivityResult.SUCCESS.rawValue(), intent);
+							Utils.setUserKMSIState(isKMSIChecked);
 						} else {
 							setResult(SSOActivityResult.STATE_MISMATCH.rawValue(), intent);
 						}
@@ -463,6 +465,7 @@ public class SSOActivity extends WebViewActivity {
 						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
 						Intent intent = new Intent();
 						setResult(SSOActivityResult.SIGNED_OUT.rawValue(), intent);
+						Utils.setUserKMSIState(false);
 						closeActivity();
 					} else {
 					}
@@ -483,6 +486,10 @@ public class SSOActivity extends WebViewActivity {
 		@Override
 		public void onPageFinished(WebView view, String url) {
 			super.onPageFinished(view, url);
+
+			if(url.contains("/customerid/login") || url.contains("/customerid/userdetails") || url.contains("/customerid/userdetails/password")){
+				handleUIForKMSIEntry(false);
+			}
 
 			if (SSOActivity.this.path == Path.SIGNIN) {
 				view.evaluateJavascript("jquery:$('#rememberMe').on('change', function() {injection.reportCheckboxStateChange($(this).is(':checked'))})", null);
@@ -647,22 +654,17 @@ public class SSOActivity extends WebViewActivity {
 	class KMSIState extends Object{
 		@JavascriptInterface
 		public void reportCheckboxState(boolean isChecked) {
-
+			isKMSIChecked = isChecked;
 		}
 
 		@JavascriptInterface
 		public void reportCheckboxStateChange(boolean isChecked) {
-			Utils.setUserKMSIState(isChecked);
+			isKMSIChecked = isChecked;
 		}
 	}
 
-	public void handleUIForKMSIEntry() {
-		if (Utils.getUserKMSIState() && SSOActivity.this.path == Path.SIGNIN) {
-			ssoLayout.setVisibility(View.GONE);
-			loadingProgressBarKMSI.setVisibility(View.VISIBLE);
-		} else {
-			ssoLayout.setVisibility(View.VISIBLE);
-			loadingProgressBarKMSI.setVisibility(View.GONE);
-		}
+	public void handleUIForKMSIEntry(boolean showKMSIView) {
+		ssoLayout.setVisibility(showKMSIView ? View.GONE : View.VISIBLE);
+		loadingProgressBarKMSI.setVisibility(showKMSIView ? View.VISIBLE : View.GONE);
 	}
 }
