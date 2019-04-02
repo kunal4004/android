@@ -193,6 +193,8 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         relDebitOrders = view.findViewById(R.id.relDebitOrders);
         relDebitOrders.setVisibility(GONE);
 
+        // show absa cell
+        rlABSALinkOnlineBankingToDevice.setVisibility(VISIBLE);
         relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
         tvBPIProtectInsurance = view.findViewById(R.id.tvBPIProtectInsurance);
 
