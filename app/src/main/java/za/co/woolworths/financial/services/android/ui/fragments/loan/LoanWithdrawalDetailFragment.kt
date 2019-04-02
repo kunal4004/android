@@ -70,7 +70,7 @@ class LoanWithdrawalDetailFragment : LoanBaseFragment() {
         progressBarVisibility(true)
 
         mAuthoriseLoan = AuthoriseLoan(AuthoriseLoanRequest(mIssueLoan!!.productOfferingId,
-                mIssueLoan!!.drawDownAmount, mIssueLoan!!.repaymentPeriod, mInstallmentAmount,
+                mIssueLoan!!.drawDownAmount,mIssueLoan!!.repaymentPeriod, mInstallmentAmount,
                 mIssueLoan!!.creditLimit), object : OnEventListener<AuthoriseLoanResponse> {
 
             override fun onSuccess(authoriseLoanResponse: AuthoriseLoanResponse?) {

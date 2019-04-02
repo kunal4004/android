@@ -52,7 +52,7 @@ class LoanWithdrawalFragment : LoanBaseFragment() {
 
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.loan_withdrawal, container, false)
+        return inflater?.inflate(R.layout.loan_withdrawal, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
