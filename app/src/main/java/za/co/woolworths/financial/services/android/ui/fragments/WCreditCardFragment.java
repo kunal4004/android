@@ -112,7 +112,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
     private AsyncTask<String, String, CreditCardTokenResponse> mGetCreditCardToken;
     private ProgressBar mPbGetCreditCardToken;
     private ImageView mImABSAViewOnlineBanking;
-    private boolean mIsVisibleToUser= false;
+    private boolean mCreditCardFragmentIsVisible = false;
 
     @Nullable
     @Override
@@ -603,7 +603,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         return new GetCreditCardToken(new AsyncAPIResponse.ResponseDelegate<CreditCardTokenResponse>() {
             @Override
             public void onSuccess(CreditCardTokenResponse response) {
-                if (getActivity() ==null && !mIsVisibleToUser) return;
+                if (getActivity() ==null && !mCreditCardFragmentIsVisible) return;
                 showGetCreditCardTokenProgressBar(GONE);
                 switch (response.httpCode) {
                     case 200:
@@ -641,7 +641,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
             @Override
             public void onFailure(@NotNull final String errorMessage) {
                 final Activity activity = getActivity();
-                if (activity!=null && mIsVisibleToUser) {
+                if (activity!=null && mCreditCardFragmentIsVisible) {
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -684,6 +684,6 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        mIsVisibleToUser = isVisibleToUser;
+        mCreditCardFragmentIsVisible = isVisibleToUser;
     }
 }

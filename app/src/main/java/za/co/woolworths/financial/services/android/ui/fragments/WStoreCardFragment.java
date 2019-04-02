@@ -110,7 +110,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
     private RelativeLayout relDebitOrders;
 
     private View fakeView;
-    private boolean mIsVisibleToUser = false;
+    private boolean mStoreCardFragmentIsVisible = false;
 
     @Nullable
     @Override
@@ -421,7 +421,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
         cliGetOfferActive = new CLIGetOfferActive(getActivity(), productOfferingId, new OnEventListener() {
             @Override
             public void onSuccess(Object object) {
-                    if (getActivity() != null && mIsVisibleToUser) {
+                    if (getActivity() != null && mStoreCardFragmentIsVisible) {
                         offerActive = ((OfferActive) object);
                         bindUI(offerActive);
                     }
@@ -430,7 +430,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
             @Override
             public void onFailure(String e) {
                     Activity activity = getActivity();
-                    if (activity!=null && mIsVisibleToUser) {
+                    if (activity!=null && mStoreCardFragmentIsVisible) {
                         activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -598,6 +598,6 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        mIsVisibleToUser = isVisibleToUser;
+        mStoreCardFragmentIsVisible = isVisibleToUser;
     }
 }
