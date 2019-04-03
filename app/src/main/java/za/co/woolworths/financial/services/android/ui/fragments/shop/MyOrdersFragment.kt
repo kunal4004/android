@@ -117,7 +117,7 @@ class MyOrdersFragment : Fragment() {
 
     private fun showSignInView(ordersResponse: OrdersResponse) {
         dataList = buildDataToDisplayOrders(ordersResponse)
-        if (dataList.size > 0) {
+            if (dataList.size > 0) {
             mErrorHandlerView?.hideEmpyState()
             myOrdersList.adapter = OrdersAdapter(activity, dataList)
             myOrdersList.visibility = View.VISIBLE
@@ -176,6 +176,8 @@ class MyOrdersFragment : Fragment() {
     }
 
     fun updateUI() {
+        // Proceed with onPostExecute block code if UI exist
+        if (myOrdersList == null) return
         val ordersResponse = parentFragment?.getOrdersResponseData()
         loadingBar?.visibility = View.GONE
         when (ordersResponse?.httpCode) {
