@@ -112,6 +112,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
     private AsyncTask<String, String, CreditCardTokenResponse> mGetCreditCardToken;
     private ProgressBar mPbGetCreditCardToken;
     private ImageView mImABSAViewOnlineBanking;
+    private boolean mCreditCardFragmentIsVisible = false;
 
     @Nullable
     @Override
@@ -235,13 +236,13 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
     }
 
     private void setAccountDetail() {
-        bolBroacastRegistred = true;
-        accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
-        bindData(accountsResponse);
-        onLoadComplete();
-        mErrorHandlerView = new ErrorHandlerView(getActivity());
-        if (!NetworkManager.getInstance().isConnectedToNetwork(getActivity()))
-            mErrorHandlerView.showToast();
+            bolBroacastRegistred = true;
+            accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
+            bindData(accountsResponse);
+            onLoadComplete();
+            mErrorHandlerView = new ErrorHandlerView(getActivity());
+            if (!NetworkManager.getInstance().isConnectedToNetwork(getActivity()))
+                mErrorHandlerView.showToast();
     }
 
     public void bindData(AccountsResponse response) {
@@ -602,6 +603,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         return new GetCreditCardToken(new AsyncAPIResponse.ResponseDelegate<CreditCardTokenResponse>() {
             @Override
             public void onSuccess(CreditCardTokenResponse response) {
+                if (getActivity() ==null && !mCreditCardFragmentIsVisible) return;
                 showGetCreditCardTokenProgressBar(GONE);
                 switch (response.httpCode) {
                     case 200:
@@ -638,16 +640,19 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 
             @Override
             public void onFailure(@NotNull final String errorMessage) {
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        showGetCreditCardTokenProgressBar(GONE);
-                        if (errorMessage.contains("ConnectException")
-                                || errorMessage.contains("SocketTimeoutException")) {
-                            Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, getString(R.string.check_connection_status));
+                final Activity activity = getActivity();
+                if (activity!=null && mCreditCardFragmentIsVisible) {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            showGetCreditCardTokenProgressBar(GONE);
+                            if (errorMessage.contains("ConnectException")
+                                    || errorMessage.contains("SocketTimeoutException")) {
+                                Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, getString(R.string.check_connection_status));
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
         }).execute();
     }
@@ -674,5 +679,11 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
             mPbGetCreditCardToken.setVisibility(state);
             mImABSAViewOnlineBanking.setVisibility((state == VISIBLE) ? GONE : VISIBLE);
         }
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        mCreditCardFragmentIsVisible = isVisibleToUser;
     }
 }
