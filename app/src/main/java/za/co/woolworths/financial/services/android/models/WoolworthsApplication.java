@@ -12,6 +12,7 @@ import android.support.multidex.MultiDex;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatDelegate;
 import android.util.Base64;
+import android.util.Log;
 
 import com.awfs.coordination.BuildConfig;
 import com.awfs.coordination.R;
@@ -241,9 +242,9 @@ public class WoolworthsApplication extends Application implements Application.Ac
 		try {
 			hash = Cryptography.PasswordBasedKeyDerivationFunction2(passphrase,Integer.toString(BuildConfig.VERSION_CODE),1007,256);
 		} catch (KeyGenerationFailureException e) {
-			e.printStackTrace();
+			Log.e(TAG,e.getMessage());
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			Log.e(TAG,e.getMessage());
 		}
 		String hashB64 = Base64.encodeToString(hash,Base64.NO_WRAP);
 		if(!authenticVersionStamp.isEmpty() && !hashB64.equals(authenticVersionStamp)){
