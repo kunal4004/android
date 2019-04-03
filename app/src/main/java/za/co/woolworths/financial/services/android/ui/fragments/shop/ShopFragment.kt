@@ -39,7 +39,6 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
     private var mTabTitle: MutableList<String>? = null
     private var permissionUtils: PermissionUtils? = null
     var permissions: ArrayList<String> = arrayListOf()
-    var bottomNavigationActivity: BottomNavigationActivity? = null
     var shopPagerAdapter: ShopPagerAdapter? = null
     private var rootCategories: RootCategories? = null
     private var ordersResponse: OrdersResponse? = null
@@ -67,7 +66,6 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
         activity?.apply {
             permissionUtils = PermissionUtils(this, this@ShopFragment)
             permissions.add(android.Manifest.permission.CAMERA)
-            bottomNavigationActivity = this as? BottomNavigationActivity
         }
         tvSearchProduct.setOnClickListener { navigateToProductSearch() }
         imBarcodeScanner.setOnClickListener { checkCameraPermission() }
@@ -84,22 +82,24 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
 
             override fun onPageSelected(position: Int) {
                 shopPagerAdapter?.notifyDataSetChanged()
+                updateTabIconUI(position)
             }
-
         })
-        tabs_main.setupWithViewPager(viewpager_main)
-        setupTabIcons(0)
+        tabs_main?.setupWithViewPager(viewpager_main)
+        updateTabIconUI(0)
     }
 
     private fun checkCameraPermission() {
         permissionUtils?.check_permission(permissions, "Explain here why the app needs permissions", 1)
     }
 
-    private fun setupTabIcons(selectedTab: Int) {
-        for (i in mTabTitle?.indices!!) {
-            tabs_main.getTabAt(i)?.customView = prepareTabView(i, mTabTitle)
+    private fun updateTabIconUI(selectedTab: Int) {
+        tabs_main?.let { tab ->
+            for (i in mTabTitle?.indices!!) {
+                tab.getTabAt(i)?.customView = prepareTabView(i, mTabTitle)
+            }
+            tab.getTabAt(selectedTab)?.customView?.isSelected = true
         }
-        tabs_main.getTabAt(selectedTab)?.customView?.isSelected = true
     }
 
     private fun prepareTabView(pos: Int, tabTitle: MutableList<String>?): View {
@@ -151,7 +151,7 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
         val bundle = Bundle()
         bundle.putString("SCAN_MODE", "ONE_D_MODE")
         barcodeFragment.arguments = bundle
-        bottomNavigationActivity?.apply {
+        (activity as? BottomNavigationActivity)?.apply {
             hideBottomNavigationMenu()
             pushFragmentSlideUp(barcodeFragment)
         }
