@@ -78,7 +78,7 @@ public class WebViewActivity extends AppCompatActivity {
 			Log.e("WebSettings", "Error calling setMixedContentMode: " + ex.getMessage(), ex);
 		}
 		//webView.clearCache(true);
-		webView.clearHistory();
+		//webView.clearHistory();
 		if (Build.VERSION.SDK_INT >= 21) {
 			webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
 		}
