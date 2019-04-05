@@ -9,7 +9,9 @@ import android.view.View;
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.ui.views.WButton;
+import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
+import za.co.woolworths.financial.services.android.util.Utils;
 
 public class SessionExpiredDialogFragment extends ActionSheetDialogFragment implements View.OnClickListener {
 
@@ -24,6 +26,8 @@ public class SessionExpiredDialogFragment extends ActionSheetDialogFragment impl
 	private String mStsParams;
 	private WButton btnSECancel;
 	private WButton btnSESignIn;
+	private WTextView tvSessionExpiredTitle;
+	private WTextView tvSessionExpiredDesc;
 
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -35,6 +39,11 @@ public class SessionExpiredDialogFragment extends ActionSheetDialogFragment impl
 
 		btnSECancel = view.findViewById(R.id.btnSECancel);
 		btnSESignIn = view.findViewById(R.id.btnSESignIn);
+		tvSessionExpiredTitle = view.findViewById(R.id.tvSessionExpiredTitle);
+		tvSessionExpiredDesc = view.findViewById(R.id.tvSessionExpiredDesc);
+
+		tvSessionExpiredTitle.setText(Utils.getUserKMSIState() ? getString(R.string.kmsi_session_expired_title) : getString(R.string.session_expired_title));
+		tvSessionExpiredDesc.setText(Utils.getUserKMSIState() ? getString(R.string.kmsi_session_expired_desc) : getString(R.string.session_expired_desc));
 
 		btnSECancel.setOnClickListener(this);
 		btnSESignIn.setOnClickListener(this);

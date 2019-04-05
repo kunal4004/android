@@ -900,4 +900,6 @@
     <string name="check_connection_status">Check your connection and try again.</string>
     <string name="general_error_desc">Oops, There seems to be a problem. Please try again later.</string>
     <string name="crashlytics_materialshowcase_key">materialshowcase_parent</string>
+    <string name="kmsi_session_expired_desc">Would you like to stay signed in?</string>
+    <string name="kmsi_session_expired_title">keep me signed in</string>
 </resources>
