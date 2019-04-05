@@ -82,10 +82,10 @@ class BPIOverviewFragment : BPIFragment(), BPIOverviewAdapter.OnBPIAdapterClickL
                 tag = BPIOverviewDetailFragment::class.java.simpleName,
                 containerViewId = R.id.flBPIContainer,
                 allowStateLoss = true,
-                enterAnimation = R.anim.slide_in_from_right,
-                exitAnimation = R.anim.slide_to_left,
-                popEnterAnimation = R.anim.slide_from_left,
-                popExitAnimation = R.anim.slide_to_right
+                enterAnimation = R.anim.stay,
+                exitAnimation = R.anim.fade_out,
+                popEnterAnimation = R.anim.stay,
+                popExitAnimation = R.anim.fade_out
         )
     }
 
@@ -116,12 +116,12 @@ class BPIOverviewFragment : BPIFragment(), BPIOverviewAdapter.OnBPIAdapterClickL
     }
 
     @VisibleForTesting
-    public fun testGetInsuranceType():  MutableList<InsuranceType>? {
+    public fun testGetInsuranceType(): MutableList<InsuranceType>? {
         return getInsuranceType()
     }
 
     @VisibleForTesting
-    public fun testClaimButtonVisibility(){
+    public fun testClaimButtonVisibility() {
         setClaimButtonVisibility(updateBPIList())
     }
 }

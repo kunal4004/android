@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <TextView
+        android:id="@+id/tvBlockCardTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="32dp"
+        android:background="@color/white"
+        android:fontFamily="@font/myriad_pro_semi_bold"
+        android:letterSpacing="0.1"
+        android:text="@string/block_card_title"
+        android:textAllCaps="true"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:targetApi="lollipop" />
+
+    <TextView
+        android:id="@+id/tvBlockCardDescription"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="32dp"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:text="@string/block_card_desc"
+        android:textColor="@color/unavailable"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvBlockCardTitle" />
+
+
+    <RadioGroup
+        android:id="@+id/blockCardRadioGroup"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="@dimen/fifty_dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="32dp"
+        android:divider="?android:attr/dividerHorizontal"
+        android:showDividers="middle"
+        app:layout_constraintBottom_toTopOf="@+id/btnBlockCard"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvBlockCardDescription">
+
+        <RadioButton
+            android:id="@+id/radDamaged"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:button="@drawable/radio_button_tick_drawable"
+            android:paddingStart="@dimen/twenty_four_dp"
+            android:paddingTop="26dp"
+            android:paddingEnd="0dp"
+            android:paddingBottom="26dp"
+            android:text="@string/Damaged" />
+
+        <RadioButton
+            android:id="@+id/radLost"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:button="@drawable/radio_button_tick_drawable"
+            android:paddingStart="@dimen/twenty_four_dp"
+            android:paddingTop="26dp"
+            android:paddingEnd="0dp"
+            android:paddingBottom="26dp"
+            android:text="@string/rad_lost" />
+
+        <RadioButton
+            android:id="@+id/radStolen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:button="@drawable/radio_button_tick_drawable"
+            android:paddingStart="@dimen/twenty_four_dp"
+            android:paddingTop="26dp"
+            android:paddingEnd="0dp"
+            android:paddingBottom="26dp"
+            android:text="@string/radStolen" />
+
+        <RadioButton
+            android:id="@+id/radNotReceived"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:button="@drawable/radio_button_tick_drawable"
+            android:paddingStart="@dimen/twenty_four_dp"
+            android:paddingTop="26dp"
+            android:paddingEnd="0dp"
+            android:paddingBottom="26dp"
+            android:text="@string/rad_not_received" />
+    </RadioGroup>
+
+
+    <View
+        android:id="@+id/blockCardRadDivider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="@dimen/thirty_two_dp"
+        android:layout_marginEnd="@dimen/thirty_two_dp"
+        android:background="@color/grey_bg"
+        app:layout_constraintBottom_toBottomOf="@+id/blockCardRadioGroup"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btnBlockCard"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="32dp"
+        android:background="@drawable/black_button_drawable_state"
+        android:enabled="false"
+        android:fontFamily="@font/myriad_pro_regular_otf"
+        android:letterSpacing="0.15"
+        android:text="@string/block_card_title"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:targetApi="lollipop" />
+
+</android.support.constraint.ConstraintLayout>

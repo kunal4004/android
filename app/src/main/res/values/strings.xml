@@ -902,4 +902,28 @@
     <string name="crashlytics_materialshowcase_key">materialshowcase_parent</string>
     <string name="update_title">Update Available</string>
     <string name="update_desc">Please update to the latest version of the App.</string>
+
+    <string name="my_card_title">My Card</string>
+    <string name="card_detail_title">Card Details</string>
+    <string name="card_number_title">Card Number:</string>
+    <string name="card_holder_title">Card Holder:</string>
+    <string name="manage">Manage</string>
+    <string name="block_card_title">Block Card</string>
+    <string name="block_card_desc">Please select the reason for blocking your card.</string>
+    <string name="Damaged">Damaged</string>
+    <string name="rad_lost">Lost</string>
+    <string name="radStolen">Stolen</string>
+    <string name="rad_not_received">Not Received</string>
+    <string name="permanent_card_block_title">Permanent Card Block</string>
+    <string name="permanent_card_block_desc">Are you sure you want to permanently block this card? You will need to collect a replacement card at a participating Woolworths store; or call us.</string>
+    <string name="yes_block_it">yes, block it</string>
+    <string name="processing_your_request">Processing Your Request</string>
+    <string name="processing_your_request_desc">This may take a few seconds</string>
+    <string name="card_block_success">Your card has been successfully blocked.</string>
+    <string name="blocked">BLOCKED</string>
+    <string name="no_active_card">No Active Card</string>
+    <string name="card_block_desc">Your card has been blocked and can no longer be used.</string>
+    <string name="link_a_card">link a card</string>
+    <string name="get_replacement_card">get replacement card</string>
+
 </resources>

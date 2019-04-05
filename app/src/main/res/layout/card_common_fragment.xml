@@ -431,9 +431,39 @@
         <View style="@style/horizontal_divider_bold_style" />
 
         <RelativeLayout
+            android:id="@+id/rlMyStoreCard"
+            style="@style/card_item_click_style"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/imMyCardLogo"
+                android:layout_marginStart="0dp"
+                style="@style/style_account_logo_img"
+                app:srcCompat="@drawable/icon_card" />
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/tvMyCardText"
+                style="@style/style_loan_title"
+                android:layout_alignTop="@+id/imMyCardLogo"
+                android:layout_alignBottom="@+id/imMyCardLogo"
+                android:layout_toEndOf="@+id/imMyCardLogo"
+                android:text="@string/my_card_title" />
+
+
+            <ImageView
+                android:id="@+id/imMyCardNextArrow"
+                style="@style/style_loan_img"
+                android:layout_alignParentEnd="true"
+                android:gravity="center|end" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
             android:id="@+id/rlABSALinkOnlineBankingToDevice"
-            android:visibility="gone"
-            style="@style/card_item_click_style">
+            style="@style/card_item_click_style"
+            android:visibility="gone">
 
             <ImageView
                 android:id="@+id/logoABSALinkOnlineBanking"
@@ -457,17 +487,18 @@
                 android:layout_centerInParent="true"
                 android:gravity="center|end"
                 android:orientation="horizontal">
-            <ImageView
-                android:id="@+id/imABSAViewOnlineBanking"
-                style="@style/style_loan_img" />
+
+                <ImageView
+                    android:id="@+id/imABSAViewOnlineBanking"
+                    style="@style/style_loan_img" />
 
                 <ProgressBar
+                    android:id="@+id/pbGetCreditCardToken"
                     style="?android:attr/progressBarStyleLarge"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:visibility="gone"
                     android:layout_marginStart="@dimen/bank_spacing_width"
-                    android:id="@+id/pbGetCreditCardToken"/>
+                    android:visibility="gone" />
             </LinearLayout>
 
         </RelativeLayout>

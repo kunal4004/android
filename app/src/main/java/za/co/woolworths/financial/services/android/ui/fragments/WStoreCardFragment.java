@@ -39,6 +39,7 @@ import za.co.woolworths.financial.services.android.models.service.event.BusStati
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.DebitOrderActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
+import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.bpi.BPIBalanceProtectionActivity;
@@ -111,6 +112,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 
     private View fakeView;
     private boolean mStoreCardFragmentIsVisible = false;
+    private RelativeLayout rlMyStoreCard;
 
     @Nullable
     @Override
@@ -170,6 +172,9 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
         relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
         tvBPIProtectInsurance = view.findViewById(R.id.tvBPIProtectInsurance);
         rlViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
+        rlMyStoreCard = (RelativeLayout) view.findViewById(R.id.rlMyStoreCard);
+        rlMyStoreCard.setVisibility(View.VISIBLE);
+        rlMyStoreCard.setOnClickListener(this);
 
         iconAvailableFundsInfo = view.findViewById(R.id.iconAvailableFundsInfo);
         iconAvailableFundsInfo.setOnClickListener(this);
@@ -295,7 +300,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
                 Intent intent = new Intent(getActivity(), WTransactionsActivity.class);
                 intent.putExtra("productOfferingId", productOfferingId);
                 startActivityForResult(intent, 0);
-                getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim
+                activity.overridePendingTransition(R.anim.slide_up_anim, R.anim
                         .stay);
                 break;
             case R.id.relBalanceProtection:
@@ -406,6 +411,11 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
                         activity.getResources().getString(R.string.info_credit_limit_title),
                         getActivity().getResources().getString(R.string.info_credit_limit_desc),
                         getActivity().getResources().getString(R.string.cli_got_it));
+                break;
+            case R.id.rlMyStoreCard:
+                Intent openMyCard = new Intent(activity, MyCardDetailActivity.class);
+                activity.startActivity(openMyCard);
+                activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
                 break;
             default:
                 break;
