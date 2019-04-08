@@ -81,4 +81,5 @@
     <color name="shop_search_color">#F6F6F6</color>
     <color name="button_disable">#C1C1C1</color>
     <color name="active_card_color">#424244</color>
+    <color name="npc_description">#909090</color>
 </resources>

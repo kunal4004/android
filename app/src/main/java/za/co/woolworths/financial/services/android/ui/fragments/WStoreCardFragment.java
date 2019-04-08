@@ -64,6 +64,7 @@ import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
+import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
@@ -666,7 +667,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
                         break;
 
                     case 440:
-                        SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, offerActive.response.stsParams, getActivity());
+                        SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE,"",activity);
                         break;
 
                     default:
