@@ -5,15 +5,30 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.my_card_fragment.*
+import za.co.woolworths.financial.services.android.models.dto.Card
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 
 class MyCardDetailFragment : MyCardExtension() {
 
-    companion object {
-        fun newInstance() = MyCardDetailFragment().withArgs {
+    private var mCardDetail: Card? = null
 
+    companion object {
+        const val CARD = "CARD"
+        fun newInstance(card: String) = MyCardDetailFragment().withArgs {
+            putString(CARD, card)
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.apply {
+            getString(CARD)?.apply {
+                mCardDetail = Gson().fromJson(this, Card::class.java)
+            }
         }
     }
 
@@ -29,11 +44,23 @@ class MyCardDetailFragment : MyCardExtension() {
     }
 
     private fun populateView() {
-        tvCardNumberValue?.text = maskedCardNumberWithSpaces("30394938244039012")
-        tvCardHolderValue?.text = "Thuli Sandile"
+        mCardDetail?.apply {
+            tvCardNumberValue?.text = maskedCardNumberWithSpaces(absaCardToken)
+            tvCardNumberHeader?.text = maskedCardNumberWithSpaces(absaCardToken)
+
+            tvCardHolderValue?.text = toTitleCase(cardName())
+            tvCardHolderHeader?.text = toTitleCase(cardName())
+        }
+    }
+
+    private fun cardName(): String {
+        val jwtDecoded = SessionUtilities.getInstance().jwt
+        val name = jwtDecoded.name[0]
+        val familyName = jwtDecoded.family_name[0]
+        return "$familyName $name"
     }
 
     private fun onClick() {
-        blockCardView.setOnClickListener { navigateToBlockMyCardActivity(activity) }
+        blockCardView.setOnClickListener { activity?.let { navigateToBlockMyCardActivity(it) } }
     }
 }

@@ -30,4 +30,13 @@ open class MyCardExtension : Fragment() {
             )
         }
     }
+
+    fun toTitleCase(name: String?): String {
+        val words = name?.toLowerCase()?.trim()?.split(" ")?.toMutableList() ?: mutableListOf()
+        var output = ""
+        for (word in words) {
+            output += word.capitalize() + " "
+        }
+        return output.trim()
+    }
 }

@@ -439,8 +439,10 @@
 
             <ImageView
                 android:id="@+id/imMyCardLogo"
-                android:layout_marginStart="0dp"
                 style="@style/style_account_logo_img"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="0dp"
                 app:srcCompat="@drawable/icon_card" />
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -452,11 +454,26 @@
                 android:text="@string/my_card_title" />
 
 
-            <ImageView
-                android:id="@+id/imMyCardNextArrow"
-                style="@style/style_loan_img"
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:gravity="center|end" />
+                android:layout_centerInParent="true"
+                android:gravity="center|end"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/imMyCardNextArrow"
+                    style="@style/style_loan_img" />
+
+                <ProgressBar
+                    android:id="@+id/pbGetCardToken"
+                    style="?android:attr/progressBarStyleLarge"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="@dimen/bank_spacing_width"
+                    android:visibility="gone" />
+            </LinearLayout>
 
         </RelativeLayout>
 

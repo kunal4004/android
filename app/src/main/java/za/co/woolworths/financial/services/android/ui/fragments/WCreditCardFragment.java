@@ -114,7 +114,6 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
     private ProgressBar mPbGetCreditCardToken;
     private ImageView mImABSAViewOnlineBanking;
     private boolean mCreditCardFragmentIsVisible = false;
-    private RelativeLayout rlMyStoreCard;
 
     @Nullable
     @Override
@@ -192,13 +191,10 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         llChargedOffAccount = view.findViewById(R.id.llChargedOffAccount);
         tvHowToPayArrears = view.findViewById(R.id.howToPayArrears);
         tvABSALinkOnlineBanking = (WTextView) view.findViewById(R.id.tvABSALinkOnlineBanking);
-        rlMyStoreCard = (RelativeLayout)view.findViewById(R.id.rlMyStoreCard);
 
         relDebitOrders = view.findViewById(R.id.relDebitOrders);
         relDebitOrders.setVisibility(GONE);
 
-        rlMyStoreCard.setVisibility(View.VISIBLE);
-        rlMyStoreCard.setOnClickListener(this);
         // show absa cell
         rlABSALinkOnlineBankingToDevice.setVisibility(VISIBLE);
         relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
@@ -412,12 +408,6 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
                         activity.getResources().getString(R.string.info_credit_limit_title),
                         getActivity().getResources().getString(R.string.info_credit_limit_desc),
                         getActivity().getResources().getString(R.string.cli_got_it));
-                break;
-
-            case R.id.rlMyStoreCard:
-                Intent openMyCard = new Intent(activity, MyCardDetailActivity.class);
-                activity.startActivity(openMyCard);
-                activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
                 break;
         }
     }

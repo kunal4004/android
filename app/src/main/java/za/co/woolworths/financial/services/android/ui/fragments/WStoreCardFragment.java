@@ -6,8 +6,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.media.Image;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +23,11 @@ import android.widget.RelativeLayout;
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
 
+
+import org.jetbrains.annotations.NotNull;
+
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -28,13 +35,17 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import za.co.wigroup.logger.lib.WiGroupLogger;
+import za.co.woolworths.financial.services.android.contracts.AsyncAPIResponse;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
+import za.co.woolworths.financial.services.android.models.dto.Card;
+import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.rest.cli.CLIGetOfferActive;
+import za.co.woolworths.financial.services.android.models.rest.shoppinglist.GetCreditCardToken;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.DebitOrderActivity;
@@ -59,6 +70,9 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
 
 import static android.app.Activity.RESULT_OK;
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+import static za.co.woolworths.financial.services.android.ui.fragments.card.MyCardDetailFragment.CARD;
 
 public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle, NetworkChangeListener {
 
@@ -113,6 +127,9 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
     private View fakeView;
     private boolean mStoreCardFragmentIsVisible = false;
     private RelativeLayout rlMyStoreCard;
+    private AsyncTask<String, String, CreditCardTokenResponse> mExecuteCardToken;
+    private ImageView imMyCardNextArrow;
+    private ProgressBar mPbGetCardToken;
 
     @Nullable
     @Override
@@ -192,6 +209,9 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
         llActiveAccount = view.findViewById(R.id.llActiveAccount);
         llChargedOffAccount = view.findViewById(R.id.llChargedOffAccount);
 
+        imMyCardNextArrow = view.findViewById(R.id.imMyCardNextArrow);
+        mPbGetCardToken = view.findViewById(R.id.pbGetCardToken);
+
         relDebitOrders = view.findViewById(R.id.relDebitOrders);
         relDebitOrders.setOnClickListener(this);
 
@@ -222,44 +242,44 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
     }
 
     public void bindData(AccountsResponse response) {
-            List<Account> accountList = response.accountList;
-            if (accountList != null) {
-                for (Account p : accountList) {
-                    if ("SC".equals(p.productGroupCode)) {
-                        this.account = p;
-                        if (!p.productOfferingGoodStanding && p.productOfferingStatus.equalsIgnoreCase(Utils.ACCOUNT_CHARGED_OFF)) {
-                            llActiveAccount.setVisibility(View.GONE);
-                            llChargedOffAccount.setVisibility(View.VISIBLE);
-                            Utils.setViewHeightToRemainingBottomSpace(getActivity(), fakeView);
-                            return;
-                        } else {
-                            llActiveAccount.setVisibility(View.VISIBLE);
-                            llChargedOffAccount.setVisibility(View.GONE);
-                        }
-                        tvBPIProtectInsurance.setText(p.insuranceCovered ? getString(R.string.bpi_covered) : getString(R.string.bpi_not_covered));
-                        productOfferingGoodStanding = p.productOfferingGoodStanding;
-                        productOfferingId = String.valueOf(p.productOfferingId);
-                        woolworthsApplication.setProductOfferingId(p.productOfferingId);
-                        availableBalance.setText(Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.availableFunds), 1, getActivity())));
-                        creditLimit.setText(Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.creditLimit), 1, getActivity())));
-                        minAmountDue.setText(Utils.removeNegativeSymbol(WFormatter.newAmountFormat(p.minimumAmountDue)));
-                        currentBalance.setText(Utils.removeNegativeSymbol(WFormatter.newAmountFormat(p.currentBalance)));
-                        try {
-                            dueDate.setText(WFormatter.addSpaceToDate(WFormatter.newDateFormat(p.paymentDueDate)));
-                        } catch (ParseException e) {
-                            dueDate.setText(p.paymentDueDate);
-                            WiGroupLogger.e(getActivity(), "TAG", e.getMessage(), e);
-                        }
-                        availableBalance.setTextColor(getResources().getColor(p.productOfferingGoodStanding ? R.color.black : R.color.bg_overlay));
-                        accountInArrearsLayout.setVisibility(p.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
-                        llIncreaseLimitContainer.setVisibility(p.productOfferingGoodStanding ? View.VISIBLE : View.GONE);
-                        tvHowToPayAccountStatus.setVisibility(p.productOfferingGoodStanding ? View.VISIBLE : View.INVISIBLE);
-                        if (!p.productOfferingGoodStanding) {
-                            tvAmountOverdue.setText(WFormatter.newAmountFormat(p.amountOverdue));
-                        }
-
-                        relDebitOrders.setVisibility(p.debitOrder.debitOrderActive ? View.VISIBLE : View.GONE);
+        List<Account> accountList = response.accountList;
+        if (accountList != null) {
+            for (Account p : accountList) {
+                if ("SC".equals(p.productGroupCode)) {
+                    this.account = p;
+                    if (!p.productOfferingGoodStanding && p.productOfferingStatus.equalsIgnoreCase(Utils.ACCOUNT_CHARGED_OFF)) {
+                        llActiveAccount.setVisibility(View.GONE);
+                        llChargedOffAccount.setVisibility(View.VISIBLE);
+                        Utils.setViewHeightToRemainingBottomSpace(getActivity(), fakeView);
+                        return;
+                    } else {
+                        llActiveAccount.setVisibility(View.VISIBLE);
+                        llChargedOffAccount.setVisibility(View.GONE);
                     }
+                    tvBPIProtectInsurance.setText(p.insuranceCovered ? getString(R.string.bpi_covered) : getString(R.string.bpi_not_covered));
+                    productOfferingGoodStanding = p.productOfferingGoodStanding;
+                    productOfferingId = String.valueOf(p.productOfferingId);
+                    woolworthsApplication.setProductOfferingId(p.productOfferingId);
+                    availableBalance.setText(Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.availableFunds), 1, getActivity())));
+                    creditLimit.setText(Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.creditLimit), 1, getActivity())));
+                    minAmountDue.setText(Utils.removeNegativeSymbol(WFormatter.newAmountFormat(p.minimumAmountDue)));
+                    currentBalance.setText(Utils.removeNegativeSymbol(WFormatter.newAmountFormat(p.currentBalance)));
+                    try {
+                        dueDate.setText(WFormatter.addSpaceToDate(WFormatter.newDateFormat(p.paymentDueDate)));
+                    } catch (ParseException e) {
+                        dueDate.setText(p.paymentDueDate);
+                        WiGroupLogger.e(getActivity(), "TAG", e.getMessage(), e);
+                    }
+                    availableBalance.setTextColor(getResources().getColor(p.productOfferingGoodStanding ? R.color.black : R.color.bg_overlay));
+                    accountInArrearsLayout.setVisibility(p.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
+                    llIncreaseLimitContainer.setVisibility(p.productOfferingGoodStanding ? View.VISIBLE : View.GONE);
+                    tvHowToPayAccountStatus.setVisibility(p.productOfferingGoodStanding ? View.VISIBLE : View.INVISIBLE);
+                    if (!p.productOfferingGoodStanding) {
+                        tvAmountOverdue.setText(WFormatter.newAmountFormat(p.amountOverdue));
+                    }
+
+                    relDebitOrders.setVisibility(p.debitOrder.debitOrderActive ? View.VISIBLE : View.GONE);
+                }
             }
         }
     }
@@ -413,9 +433,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
                         getActivity().getResources().getString(R.string.cli_got_it));
                 break;
             case R.id.rlMyStoreCard:
-                Intent openMyCard = new Intent(activity, MyCardDetailActivity.class);
-                activity.startActivity(openMyCard);
-                activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+                getCreditCardToken(activity);
                 break;
             default:
                 break;
@@ -431,23 +449,23 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
         cliGetOfferActive = new CLIGetOfferActive(getActivity(), productOfferingId, new OnEventListener() {
             @Override
             public void onSuccess(Object object) {
-                    if (getActivity() != null && mStoreCardFragmentIsVisible) {
-                        offerActive = ((OfferActive) object);
-                        bindUI(offerActive);
-                    }
+                if (getActivity() != null && mStoreCardFragmentIsVisible) {
+                    offerActive = ((OfferActive) object);
+                    bindUI(offerActive);
+                }
             }
 
             @Override
             public void onFailure(String e) {
-                    Activity activity = getActivity();
-                    if (activity!=null && mStoreCardFragmentIsVisible) {
-                        activity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                networkFailureHandler();
-                            }
-                        });
-                    }
+                Activity activity = getActivity();
+                if (activity != null && mStoreCardFragmentIsVisible) {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            networkFailureHandler();
+                        }
+                    });
+                }
             }
         });
         cliGetOfferActive.execute();
@@ -512,7 +530,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 
     @Override
     public void onResumeFragment() {
-        Activity activity  = getActivity();
+        Activity activity = getActivity();
         if (activity == null) return;
 
         Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.FINANCIAL_SERVICES_STORE_CARD);
@@ -589,10 +607,11 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
         if (!disposables.isDisposed()) {
             disposables.clear();
         }
-        if (cliGetOfferActive != null) {
-            if (!cliGetOfferActive.isCancelled()) {
-                cliGetOfferActive.cancel(true);
-            }
+        if (cliGetOfferActive != null && !cliGetOfferActive.isCancelled()) {
+            cliGetOfferActive.cancel(true);
+        }
+        if (mExecuteCardToken != null && !mExecuteCardToken.isCancelled()) {
+            mExecuteCardToken.cancel(true);
         }
     }
 
@@ -610,4 +629,82 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
         super.setUserVisibleHint(isVisibleToUser);
         mStoreCardFragmentIsVisible = isVisibleToUser;
     }
+
+    public void getCreditCardToken(final Activity activity) {
+        cardTokenProgressBarVisibility(VISIBLE);
+        GetCreditCardToken getCreditCardToken = new GetCreditCardToken(new AsyncAPIResponse.ResponseDelegate<CreditCardTokenResponse>() {
+            @Override
+            public void onSuccess(CreditCardTokenResponse response) {
+                if (getActivity() == null && !mStoreCardFragmentIsVisible) return;
+                cardTokenProgressBarVisibility(GONE);
+                switch (response.httpCode) {
+                    case 200:
+                        ArrayList<Card> cards = response.cards;
+                        switch (cards.size()) {
+                            case 0:
+                                Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, getString(R.string.card_number_not_found));
+                                break;
+                            default:
+                                Card selectedCard = null;
+                                for (Card card : cards) {
+                                    if (card.cardStatus.trim().equalsIgnoreCase("AAA")) {
+                                        selectedCard = card;
+                                    }
+                                }
+
+                                if (selectedCard == null) {
+                                    Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, getString(R.string.card_number_not_found));
+                                    return;
+                                }
+
+                                Intent openMyCard = new Intent(activity, MyCardDetailActivity.class);
+                                openMyCard.putExtra(CARD, new Gson().toJson(selectedCard));
+                                activity.startActivity(openMyCard);
+                                activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+                                break;
+                        }
+                        break;
+
+                    case 440:
+                        SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, offerActive.response.stsParams, getActivity());
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull final String errorMessage) {
+                final Activity activity = getActivity();
+                if (activity != null && mStoreCardFragmentIsVisible) {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            cardTokenProgressBarVisibility(GONE);
+                            if (errorMessage.contains("ConnectException")
+                                    || errorMessage.contains("SocketTimeoutException")) {
+                                Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, getString(R.string.check_connection_status));
+                            }
+                        }
+                    });
+
+                }
+            }
+        });
+
+        mExecuteCardToken =  getCreditCardToken.execute();
+
+    }
+
+    private void cardTokenProgressBarVisibility(int state) {
+        Activity activity = getActivity();
+        if (activity != null) {
+            mPbGetCardToken.getIndeterminateDrawable().setColorFilter(ContextCompat.getColor(activity, R.color.black), android.graphics.PorterDuff.Mode.SRC_IN);
+            mPbGetCardToken.setVisibility(state);
+            imMyCardNextArrow.setVisibility((state == VISIBLE) ? GONE : VISIBLE);
+
+        }
+    }
+
 }
