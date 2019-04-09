@@ -66,11 +66,15 @@
             android:layout_height="wrap_content"
             android:background="@null"
             android:button="@drawable/radio_button_tick_drawable"
+            android:fontFamily="@font/myriad_pro_regular_otf"
+            android:lineSpacingExtra="1.18sp"
             android:paddingStart="@dimen/twenty_four_dp"
             android:paddingTop="26dp"
             android:paddingEnd="0dp"
             android:paddingBottom="26dp"
-            android:text="@string/Damaged" />
+            android:text="@string/Damaged"
+            android:textColor="@color/offer_title"
+            android:textSize="17sp" />
 
         <RadioButton
             android:id="@+id/radLost"
@@ -78,11 +82,15 @@
             android:layout_height="wrap_content"
             android:background="@null"
             android:button="@drawable/radio_button_tick_drawable"
+            android:fontFamily="@font/myriad_pro_regular_otf"
+            android:lineSpacingExtra="1.18sp"
             android:paddingStart="@dimen/twenty_four_dp"
             android:paddingTop="26dp"
             android:paddingEnd="0dp"
             android:paddingBottom="26dp"
-            android:text="@string/rad_lost" />
+            android:text="@string/rad_lost"
+            android:textColor="@color/offer_title"
+            android:textSize="17sp" />
 
         <RadioButton
             android:id="@+id/radStolen"
@@ -90,11 +98,15 @@
             android:layout_height="wrap_content"
             android:background="@null"
             android:button="@drawable/radio_button_tick_drawable"
+            android:fontFamily="@font/myriad_pro_regular_otf"
+            android:lineSpacingExtra="1.18sp"
             android:paddingStart="@dimen/twenty_four_dp"
             android:paddingTop="26dp"
             android:paddingEnd="0dp"
             android:paddingBottom="26dp"
-            android:text="@string/radStolen" />
+            android:text="@string/radStolen"
+            android:textColor="@color/offer_title"
+            android:textSize="17sp" />
 
         <RadioButton
             android:id="@+id/radNotReceived"
@@ -102,11 +114,15 @@
             android:layout_height="wrap_content"
             android:background="@null"
             android:button="@drawable/radio_button_tick_drawable"
+            android:fontFamily="@font/myriad_pro_regular_otf"
+            android:lineSpacingExtra="1.18sp"
             android:paddingStart="@dimen/twenty_four_dp"
             android:paddingTop="26dp"
             android:paddingEnd="0dp"
             android:paddingBottom="26dp"
-            android:text="@string/rad_not_received" />
+            android:text="@string/rad_not_received"
+            android:textColor="@color/offer_title"
+            android:textSize="17sp" />
     </RadioGroup>
 
 
@@ -131,15 +147,28 @@
         android:layout_marginBottom="32dp"
         android:background="@drawable/black_button_drawable_state"
         android:enabled="false"
-        android:fontFamily="@font/myriad_pro_regular_otf"
+        android:fontFamily="@font/futura_semi_bold_ttf"
         android:letterSpacing="0.15"
+        android:lineSpacingMultiplier="1.08"
         android:text="@string/block_card_title"
         android:textAllCaps="true"
         android:textColor="@color/white"
+        android:textSize="12sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:targetApi="lollipop" />
+
+    <ProgressBar
+        android:id="@+id/pbBlockUI"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/btnBlockCard"
+        app:layout_constraintEnd_toEndOf="@+id/btnBlockCard"
+        app:layout_constraintStart_toStartOf="@+id/btnBlockCard"
+        app:layout_constraintTop_toTopOf="@+id/btnBlockCard" />
 
 </android.support.constraint.ConstraintLayout>

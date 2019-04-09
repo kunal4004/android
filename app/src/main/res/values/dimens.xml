@@ -141,5 +141,6 @@
     <dimen name="nineteen_sp">19sp</dimen>
     <dimen name="thirty_five_dp">35dp</dimen>
     <dimen name="sixty_three_dp">63dp</dimen>
+    <dimen name="sixty_six_dp">66dp</dimen>
 </resources>
 

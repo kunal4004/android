@@ -11,7 +11,7 @@ import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import android.app.Activity
 import android.graphics.Paint
-import android.graphics.Paint.UNDERLINE_TEXT_FLAG
+
 
 
 class PermanentCardBlockDialogFragment : WBottomSheetDialogFragment() {
