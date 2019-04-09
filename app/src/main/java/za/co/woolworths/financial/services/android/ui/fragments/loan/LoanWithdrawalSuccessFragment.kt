@@ -19,21 +19,17 @@ class LoanWithdrawalSuccessFragment : LoanBaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.loan_withdrawal_success, container, false)
+        return inflater?.inflate(R.layout.loan_withdrawal_success, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        activity?.let { (it as LoanWithdrawalActivity).setHomeIndicatorIcon(R.drawable.close_white) }
+        activity?.let { (it as? LoanWithdrawalActivity)?.setHomeIndicatorIcon(R.drawable.close_white) }
 
-        btnOk.setOnClickListener {
+        btnOk?.setOnClickListener {
             onBackPressed()
         }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -45,10 +41,5 @@ class LoanWithdrawalSuccessFragment : LoanBaseFragment() {
 
     private fun onBackPressed() {
         finishActivity(activity)
-    }
-
-    fun onConnectionChanged(hasInternet: Boolean) {
-        Log.e("hasInternrt:", "hasInternet $hasInternet")
-
     }
 }
