@@ -41,7 +41,7 @@ class PermanentCardBlockDialogFragment : WBottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        tvCancel?.paintFlags = Paint.UNDERLINE_TEXT_FLAG;
+        tvCancel?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         tvCancel?.setOnClickListener { dismiss() }
         btnBlockPermanentCard?.setOnClickListener {
             mPermanentCardBlockCallback?.onBlockPermanentCardPermissionGranted()

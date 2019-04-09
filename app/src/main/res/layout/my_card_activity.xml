@@ -16,7 +16,7 @@
             android:id="@+id/tbMyCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/grey_bg"
+            android:background="@drawable/toolbar_transition_drawable"
             app:layout_scrollFlags="snap">
 
             <TextView

@@ -925,5 +925,10 @@
     <string name="card_block_desc">Your card has been blocked and can no longer be used.</string>
     <string name="link_a_card">link a card</string>
     <string name="get_replacement_card">get replacement card</string>
+    <string name="get_a_replacement_card">Get A Replacement Card</string>
+    <string name="already_have_a_card_title">ALREADY HAVE CARD? LINK IT NOW</string>
+    <string name="participating_stores">participating stores</string>
+    <string name="replacement_desc_part_one">Collect your free replacement card at the Financial Services counter at any of the participating Woolworths stores nationwide.</string>
+    <string name="replacement_desc_part_two">  Once you have your replacement card, you can link it in a few easy steps.</string>
 
 </resources>
