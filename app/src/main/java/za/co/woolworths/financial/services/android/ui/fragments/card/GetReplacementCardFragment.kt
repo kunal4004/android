@@ -14,7 +14,6 @@ import kotlinx.android.synthetic.main.replace_card_fragment.*
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity
-import za.co.woolworths.financial.services.android.ui.activities.card.LinkNewCardActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.util.Utils
 
