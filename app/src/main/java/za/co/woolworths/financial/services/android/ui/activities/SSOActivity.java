@@ -110,6 +110,7 @@ public class SSOActivity extends WebViewActivity {
 		mGlobalState = ((WoolworthsApplication) getApplication()).getWGlobalState();
 		mErrorHandlerView = new ErrorHandlerView(SSOActivity.this, (RelativeLayout) findViewById
 				(R.id.no_connection_layout));
+		isKMSIChecked = Utils.getUserKMSIState();
 		handleUIForKMSIEntry((Utils.getUserKMSIState() && SSOActivity.this.path == Path.SIGNIN));
 	}
 
@@ -407,7 +408,33 @@ public class SSOActivity extends WebViewActivity {
 				showProgressBar();
 			stsParams = SessionUtilities.getInstance().getSTSParameters();
 
-			if ((SSOActivity.this.path == Path.SIGNIN || SSOActivity.this.path == Path.REGISTER) && isNavigatingToRedirectURL(url)) {
+			if (extraQueryStringParams != null) {
+				int indexOfQuestionMark = url.indexOf("?");
+				if (indexOfQuestionMark > -1) {
+					String urlWithoutQueryString = url.substring(0, indexOfQuestionMark);
+
+					if (urlWithoutQueryString.equals(extraQueryStringParams.get("post_logout_redirect_uri"))) {
+						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
+						Intent intent = new Intent();
+						setResult(SSOActivityResult.SIGNED_OUT.rawValue(), intent);
+						Utils.setUserKMSIState(false);
+						closeActivity();
+					} else {
+					}
+				}
+
+			} else if (url.equalsIgnoreCase(WoolworthsApplication.getSsoUpdateDetailsRedirectUri())) {
+				setResult(SSOActivityResult.CHANGE_PASSWORD.rawValue());
+				closeActivity();
+			}
+		}
+
+
+		@Override
+		public void onPageFinished(WebView view, String url) {
+			super.onPageFinished(view, url);
+
+			if (SSOActivity.this.path == Path.SIGNIN || SSOActivity.this.path == Path.REGISTER) {
 				view.evaluateJavascript("(function(){return {'content': [document.forms[0].state.value.toString(), document.forms[0].id_token.value.toString()]}})();", new ValueCallback<String>() {
 					@Override
 					public void onReceiveValue(String value) {
@@ -461,36 +488,7 @@ public class SSOActivity extends WebViewActivity {
 						}
 					}
 				});
-			} else if (extraQueryStringParams != null) {
-				int indexOfQuestionMark = url.indexOf("?");
-				if (indexOfQuestionMark > -1) {
-					String urlWithoutQueryString = url.substring(0, indexOfQuestionMark);
-
-					if (urlWithoutQueryString.equals(extraQueryStringParams.get("post_logout_redirect_uri"))) {
-						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
-						Intent intent = new Intent();
-						setResult(SSOActivityResult.SIGNED_OUT.rawValue(), intent);
-						Utils.setUserKMSIState(false);
-						closeActivity();
-					} else {
-					}
-				}
-
-			} else if (url.equalsIgnoreCase(WoolworthsApplication.getSsoUpdateDetailsRedirectUri())) {
-				setResult(SSOActivityResult.CHANGE_PASSWORD.rawValue());
-				closeActivity();
-			} else {
 			}
-		}
-
-		@Override
-		public boolean shouldOverrideUrlLoading(WebView view, String url) {
-			return super.shouldOverrideUrlLoading(view, url);
-		}
-
-		@Override
-		public void onPageFinished(WebView view, String url) {
-			super.onPageFinished(view, url);
 
 			if(url.contains("/customerid/login") || url.contains("/customerid/userdetails") || url.contains("/customerid/userdetails/password")){
 				handleUIForKMSIEntry(false);

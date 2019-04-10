@@ -63,6 +63,7 @@ public class WebViewActivity extends AppCompatActivity {
 		webView.getSettings().setJavaScriptEnabled(true);
 		webView.getSettings().setUserAgentString("iphone");
 		webView.getSettings().setDomStorageEnabled(true);
+		webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
 			webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
 		webView.setWebViewClient(new WebViewController());
