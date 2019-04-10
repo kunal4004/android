@@ -41,7 +41,6 @@ import java.util.UUID;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
@@ -375,8 +374,14 @@ public class SSOActivity extends WebViewActivity {
 		return constructedURL;
 	}
 
+	/* Check whether the URL that we pass in
+	 * is one of the URLs that we're listing for.
+	 * The URL parameter may contain url-encoded characters.
+	 *
+	 * When this method is called with a null state
+	 * the local redirectURL is null, do nothing and log to firebase.
+	 * */
 	private boolean isNavigatingToRedirectURL(String url) {
-
 		//Fixes WOP-3286
 		if (redirectURIString == null || this.state == null){
 			//report this to analytics
@@ -402,7 +407,7 @@ public class SSOActivity extends WebViewActivity {
 				showProgressBar();
 			stsParams = SessionUtilities.getInstance().getSTSParameters();
 
-			if (SSOActivity.this.path == Path.SIGNIN || SSOActivity.this.path == Path.REGISTER) {
+			if ((SSOActivity.this.path == Path.SIGNIN || SSOActivity.this.path == Path.REGISTER) && isNavigatingToRedirectURL(url)) {
 				view.evaluateJavascript("(function(){return {'content': [document.forms[0].state.value.toString(), document.forms[0].id_token.value.toString()]}})();", new ValueCallback<String>() {
 					@Override
 					public void onReceiveValue(String value) {
