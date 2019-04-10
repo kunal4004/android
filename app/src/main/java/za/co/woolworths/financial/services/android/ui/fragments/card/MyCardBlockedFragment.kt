@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.card
 
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,7 +25,7 @@ class MyCardBlockedFragment : MyCardExtension() {
         super.onViewCreated(view, savedInstanceState)
 
         btnGetReplacementCard?.setOnClickListener { navigateToReplacementCard() }
-        btnLinkACard?.setOnClickListener { navigateToLinkACard() }
+        btnLinkACard?.setOnClickListener { (activity as? AppCompatActivity)?.apply { navigateToLinkNewCardActivity(this) } }
 
     }
 
@@ -38,20 +39,6 @@ class MyCardBlockedFragment : MyCardExtension() {
                 exitAnimation = R.anim.slide_to_left,
                 popEnterAnimation = R.anim.slide_from_left,
                 popExitAnimation = R.anim.slide_to_right
-        )
-    }
-
-    private fun navigateToLinkACard() {
-        replaceFragment(
-                fragment = LinkCardFragment.newInstance(),
-                tag = LinkCardFragment::class.java.simpleName,
-                containerViewId = R.id.flMyCard,
-                allowStateLoss = true,
-                enterAnimation = R.anim.slide_in_from_right,
-                exitAnimation = R.anim.slide_to_left,
-                popEnterAnimation = R.anim.slide_from_left,
-                popExitAnimation = R.anim.slide_to_right
-
         )
     }
 }

@@ -103,6 +103,7 @@
         android:id="@+id/imReplacementCard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:contentDescription="@string/app_name"
         app:layout_constraintBottom_toTopOf="@+id/tvReplacementCardTitle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

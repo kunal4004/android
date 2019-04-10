@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity.Companion.BLOCK_MY_CARD_REQUEST_CODE
+import za.co.woolworths.financial.services.android.ui.activities.card.LinkNewCardActivity
 
 open class MyCardExtension : Fragment() {
 
@@ -31,6 +32,15 @@ open class MyCardExtension : Fragment() {
         }
     }
 
+    internal fun navigateToLinkNewCardActivity(activity: AppCompatActivity?) {
+        activity?.apply {
+            val linkNewCardIntent = Intent(this, LinkNewCardActivity::class.java)
+            startActivity(linkNewCardIntent)
+            overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+        }
+
+    }
+
     fun toTitleCase(name: String?): String {
         val words = name?.toLowerCase()?.trim()?.split(" ")?.toMutableList() ?: mutableListOf()
         var output = ""
@@ -39,4 +49,5 @@ open class MyCardExtension : Fragment() {
         }
         return output.trim()
     }
+
 }
