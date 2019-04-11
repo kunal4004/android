@@ -11,7 +11,8 @@ fun showSoftKeyboard(activity: Activity, editTextView: WLoanEditTextView) {
     activity.apply {
         window?.setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
-        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.showSoftInput(editTextView, InputMethodManager.SHOW_IMPLICIT)
+        (getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)?.apply {
+            showSoftInput(editTextView, InputMethodManager.SHOW_IMPLICIT)
+        }
     }
 }

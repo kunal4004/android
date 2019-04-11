@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.barcode
 
+import android.content.Context
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
@@ -12,8 +13,17 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.scan_barcode_fragment.*
+import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse
+import za.co.woolworths.financial.services.android.models.dto.ProductView
+import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
+import za.co.woolworths.financial.services.android.models.rest.product.GetProductDetail
+import za.co.woolworths.financial.services.android.models.rest.product.GetProductsRequest
+import za.co.woolworths.financial.services.android.models.rest.product.ProductRequest
 import za.co.woolworths.financial.services.android.ui.activities.card.BarcodeScannerActivity
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
+import za.co.woolworths.financial.services.android.util.OnEventListener
+import za.co.woolworths.financial.services.android.util.ScreenManager
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.barcode.*
 
 class ScanBarcodeFragment : Fragment() {
@@ -67,9 +77,9 @@ class ScanBarcodeFragment : Fragment() {
                 .autoFocusMode(AutoFocusMode.SAFE)
                 .autoFocusInterval(2000L)
                 .flash(false)
-                .onDecoded {
+                .onDecoded { searchTerm ->
                     runOnUiThread {
-
+                        searchTerm.text?.apply { getBarcodeProduct(activity, ProductsRequestParams(this, ProductsRequestParams.SearchType.BARCODE, ProductsRequestParams.ResponseType.DETAIL, 0)) }
                     }
                 }
                 .onError {
@@ -86,5 +96,53 @@ class ScanBarcodeFragment : Fragment() {
             indeterminateDrawable?.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN)
             visibility = if (visible) VISIBLE else GONE
         }
+    }
+
+    fun getBarcodeProduct(context: Context?, requestParams: ProductsRequestParams): GetProductsRequest {
+        return GetProductsRequest(context!!, requestParams, object : OnEventListener<ProductView> {
+            override fun onSuccess(product: ProductView?) {
+                product?.products?.get(0)?.let { ProductRequest(it.productId, it.sku) }?.also { getProductDetail(it) }
+            }
+
+            override fun onFailure(e: String?) {
+            }
+
+
+        })
+    }
+
+    fun getProductDetail(productRequest: ProductRequest): GetProductDetail {
+        return GetProductDetail(productRequest, object : OnEventListener<ProductDetailResponse> {
+            override fun onSuccess(response: ProductDetailResponse?) {
+                response?.apply {
+                    when (httpCode) {
+                        200 -> {
+                            product?.apply {
+                                if (productId != null) {
+                                    val bundle = Bundle().apply {
+                                        putString("strProductList", Utils.objectToJson(this))
+                                        putString("strProductCategory", productName)
+                                        putString("productResponse", Utils.objectToJson(this))
+                                        putBoolean("fetchFromJson", true)
+                                    }
+                                    activity?.let { ScreenManager.presentProductDetails(it, bundle) }
+                                }
+                            }
+                        }
+                        else -> {
+                        }
+                    }
+                }
+            }
+
+            override fun onFailure(e: String?) {
+                activity?.let {
+                    it.runOnUiThread {
+
+
+                    }
+                }
+            }
+        })
     }
 }
