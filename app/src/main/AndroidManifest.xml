@@ -398,6 +398,11 @@
             android:windowSoftInputMode="adjustResize|stateAlwaysVisible"
             />
 
+        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.card.BarcodeScannerActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BarcodeScannerActivityStyle"
+            />
+
     </application>
 
 </manifest>

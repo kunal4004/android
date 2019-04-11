@@ -78,7 +78,7 @@
         app:layout_constraintTop_toBottomOf="@+id/tvLinkNewCardDesc" />
 
     <View
-        android:id="@+id/vCameraTappedArea"
+        android:id="@+id/vCameraBgTapped"
         android:layout_width="62dp"
         android:layout_height="62dp"
         app:layout_constraintEnd_toEndOf="@+id/vInputCardNumberBackground"
@@ -89,10 +89,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/app_label"
-        app:layout_constraintBottom_toBottomOf="@+id/vCameraTappedArea"
-        app:layout_constraintEnd_toEndOf="@+id/vCameraTappedArea"
-        app:layout_constraintStart_toStartOf="@+id/vCameraTappedArea"
-        app:layout_constraintTop_toTopOf="@+id/vCameraTappedArea"
+        app:layout_constraintBottom_toBottomOf="@+id/vCameraBgTapped"
+        app:layout_constraintEnd_toEndOf="@+id/vCameraBgTapped"
+        app:layout_constraintStart_toStartOf="@+id/vCameraBgTapped"
+        app:layout_constraintTop_toTopOf="@+id/vCameraBgTapped"
         app:srcCompat="@drawable/icon_camera" />
 
     <EditText
@@ -110,7 +110,7 @@
         android:textColorHint="@color/unavailable"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="@+id/vInputCardNumberBackground"
-        app:layout_constraintEnd_toStartOf="@+id/vCameraTappedArea"
+        app:layout_constraintEnd_toStartOf="@+id/vCameraBgTapped"
         app:layout_constraintStart_toStartOf="@+id/vInputCardNumberBackground"
         app:layout_constraintTop_toTopOf="@+id/vInputCardNumberBackground" />
 

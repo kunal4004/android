@@ -5,6 +5,7 @@ import android.content.Intent
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import com.awfs.coordination.R
+import za.co.woolworths.financial.services.android.ui.activities.card.BarcodeScannerActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity.Companion.BLOCK_MY_CARD_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.card.LinkNewCardActivity
@@ -39,6 +40,14 @@ open class MyCardExtension : Fragment() {
             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
         }
 
+    }
+
+    internal fun navigateToBarCodeScannerActivity(activity: AppCompatActivity?) {
+        activity?.apply {
+            val barcodeScannerIntent = Intent(this, BarcodeScannerActivity::class.java)
+            startActivity(barcodeScannerIntent)
+            overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+        }
     }
 
     fun toTitleCase(name: String?): String {
