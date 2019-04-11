@@ -904,4 +904,6 @@
     <string name="kmsi_session_expired_title">keep me signed in</string>
     <string name="cancel_no_thanks">NO THANKS</string>
     <string name="please_wait">Please wait...</string>
+    <string name="update_title">Update Available</string>
+    <string name="update_desc">Please update to the latest version of the App.</string>
 </resources>

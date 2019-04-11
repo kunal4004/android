@@ -1,13 +1,20 @@
 package za.co.woolworths.financial.services.android.models;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.multidex.MultiDex;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatDelegate;
+import android.util.Base64;
+import android.util.Log;
 
+import com.awfs.coordination.BuildConfig;
 import com.awfs.coordination.R;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.FacebookSdk;
@@ -17,16 +24,22 @@ import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 
+import java.io.UnsupportedEncodingException;
+
 import io.fabric.sdk.android.Fabric;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
+import za.co.absa.openbankingapi.Cryptography;
+import za.co.absa.openbankingapi.KeyGenerationFailureException;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.service.RxBus;
+import za.co.woolworths.financial.services.android.ui.activities.OnBoardingActivity;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
 
 
-public class WoolworthsApplication extends Application {
+public class WoolworthsApplication extends Application implements Application.ActivityLifecycleCallbacks {
 
 	private static Context context;
 	private static Context mContextApplication;
@@ -54,7 +67,9 @@ public class WoolworthsApplication extends Application {
 	private static String creditCardType;
 	private boolean isOther = false;
 	private static int productOfferingId;
+	private static String authenticVersionStamp = "";
 
+	private boolean shouldDisplayServerMessage = true;
 	public UpdateBankDetail updateBankDetail;
 
 	private RxBus bus;
@@ -190,6 +205,7 @@ public class WoolworthsApplication extends Application {
 		super.onCreate();
 		mInstance = this;
 		WoolworthsApplication.context = this.getApplicationContext();
+		this.registerActivityLifecycleCallbacks(this);
 		StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
 		StrictMode.setVmPolicy(builder.build());
 		Fabric.with(WoolworthsApplication.this, new Crashlytics());
@@ -217,6 +233,76 @@ public class WoolworthsApplication extends Application {
 		getTracker();
 		bus = new RxBus();
 	}
+
+
+	//#region ShowServerMessage
+	public void showServerMessageOrProceed(Activity activity){
+		String passphrase = BuildConfig.VERSION_NAME+", "+BuildConfig.SHA1;
+		byte[] hash = null;
+		try {
+			hash = Cryptography.PasswordBasedKeyDerivationFunction2(passphrase,Integer.toString(BuildConfig.VERSION_CODE),1007,256);
+		} catch (KeyGenerationFailureException e) {
+			Log.e(TAG,e.getMessage());
+		} catch (UnsupportedEncodingException e) {
+			Log.e(TAG,e.getMessage());
+		}
+		String hashB64 = Base64.encodeToString(hash,Base64.NO_WRAP);
+		if(!authenticVersionStamp.isEmpty() && !hashB64.equals(authenticVersionStamp)){
+			final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+			builder.setTitle(getString(R.string.update_title));
+			builder.setMessage(getString(R.string.update_desc));
+			builder.setCancelable(false);
+			builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+				}
+			});
+			AlertDialog dialog = builder.create();
+			dialog.show();
+		}
+	}
+	//#endregion
+
+	//#region ActivityLifeCycleCallBack
+	@Override
+	public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+		if(activity.getClass().equals(OnBoardingActivity.class) || activity.getClass().equals(BottomNavigationActivity.class) && shouldDisplayServerMessage){
+			showServerMessageOrProceed(activity);
+			shouldDisplayServerMessage = false;
+		}
+	}
+
+	@Override
+	public void onActivityStarted(Activity activity) {
+
+	}
+
+	@Override
+	public void onActivityResumed(Activity activity) {
+
+	}
+
+	@Override
+	public void onActivityPaused(Activity activity) {
+
+	}
+
+	@Override
+	public void onActivityStopped(Activity activity) {
+
+	}
+
+	@Override
+	public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+
+	}
+
+	@Override
+	public void onActivityDestroyed(Activity activity) {
+
+	}
+	//#endregion
 
 	public UserManager getUserManager() {
 		if (mUserManager == null) {
@@ -318,4 +404,12 @@ public class WoolworthsApplication extends Application {
 	public static String getCartCheckoutLink() {
 		return cartCheckoutLink;
 	}
+	public static String getAuthenticVersionStamp() {
+		return authenticVersionStamp;
+	}
+
+	public static void setAuthenticVersionStamp(String authenticVersionStamp) {
+		WoolworthsApplication.authenticVersionStamp = authenticVersionStamp;
+	}
+
 }

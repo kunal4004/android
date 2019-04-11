@@ -26,9 +26,8 @@ class LoanWithdrawalActivity : AppCompatActivity(), IDialogListener, NetworkChan
         setContentView(R.layout.loan_withdrawal_container)
         setActionBar()
 
-        val bundle = intent.extras
-        if (bundle != null) {
-            accountInfo = bundle.getString("account_info")
+        intent?.extras?.apply {
+            accountInfo = getString("account_info")
         }
 
         if (savedInstanceState == null) {
@@ -62,11 +61,9 @@ class LoanWithdrawalActivity : AppCompatActivity(), IDialogListener, NetworkChan
 
     fun finishActivity() {
         supportFragmentManager?.let {
-            (it.backStackEntryCount).let { num ->
-                when (num) {
-                    1 -> {
-                        it.popBackStack()
-                    }
+            it.backStackEntryCount.let { count ->
+                when (count) {
+                    1 -> it.popBackStack()
                     else -> {
                         finish()
                         overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
@@ -92,15 +89,16 @@ class LoanWithdrawalActivity : AppCompatActivity(), IDialogListener, NetworkChan
     }
 
     override fun onDialogDismissed() {
-        (findFragmentByTag(LoanWithdrawalFragment::class.java.simpleName) as LoanWithdrawalFragment?)?.onResume()
+        (findFragmentByTag(LoanWithdrawalFragment::class.java.simpleName) as? LoanWithdrawalFragment)?.onResume()
     }
 
     override fun onConnectionChanged() {
-        val fragment = supportFragmentManager?.findFragmentById(R.id.flLoanContent)
         val isConnected = NetworkManager.getInstance().isConnectedToNetwork(this@LoanWithdrawalActivity)
-        when (fragment) {
-            is LoanWithdrawalFragment -> fragment.onConnectionChanged(isConnected)
-            is LoanWithdrawalDetailFragment -> fragment.onConnectionChanged(isConnected)
-        }
+       supportFragmentManager?.findFragmentById(R.id.flLoanContent)?.apply {
+           when (this) {
+               is LoanWithdrawalFragment -> onConnectionChanged(isConnected)
+               is LoanWithdrawalDetailFragment -> onConnectionChanged(isConnected)
+           }
+       }
     }
 }

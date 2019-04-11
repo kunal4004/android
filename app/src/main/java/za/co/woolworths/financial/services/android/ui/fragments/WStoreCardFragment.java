@@ -110,6 +110,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
     private RelativeLayout relDebitOrders;
 
     private View fakeView;
+    private boolean mStoreCardFragmentIsVisible = false;
 
     @Nullable
     @Override
@@ -216,44 +217,44 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
     }
 
     public void bindData(AccountsResponse response) {
-        List<Account> accountList = response.accountList;
-        if (accountList != null) {
-            for (Account p : accountList) {
-                if ("SC".equals(p.productGroupCode)) {
-                    this.account = p;
-                    if (!p.productOfferingGoodStanding && p.productOfferingStatus.equalsIgnoreCase(Utils.ACCOUNT_CHARGED_OFF)) {
-                        llActiveAccount.setVisibility(View.GONE);
-                        llChargedOffAccount.setVisibility(View.VISIBLE);
-                        Utils.setViewHeightToRemainingBottomSpace(getActivity(), fakeView);
-                        return;
-                    } else {
-                        llActiveAccount.setVisibility(View.VISIBLE);
-                        llChargedOffAccount.setVisibility(View.GONE);
-                    }
-                    tvBPIProtectInsurance.setText(p.insuranceCovered ? getString(R.string.bpi_covered) : getString(R.string.bpi_not_covered));
-                    productOfferingGoodStanding = p.productOfferingGoodStanding;
-                    productOfferingId = String.valueOf(p.productOfferingId);
-                    woolworthsApplication.setProductOfferingId(p.productOfferingId);
-                    availableBalance.setText(Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.availableFunds), 1, getActivity())));
-                    creditLimit.setText(Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.creditLimit), 1, getActivity())));
-                    minAmountDue.setText(Utils.removeNegativeSymbol(WFormatter.newAmountFormat(p.minimumAmountDue)));
-                    currentBalance.setText(Utils.removeNegativeSymbol(WFormatter.newAmountFormat(p.currentBalance)));
-                    try {
-                        dueDate.setText(WFormatter.addSpaceToDate(WFormatter.newDateFormat(p.paymentDueDate)));
-                    } catch (ParseException e) {
-                        dueDate.setText(p.paymentDueDate);
-                        WiGroupLogger.e(getActivity(), "TAG", e.getMessage(), e);
-                    }
-                    availableBalance.setTextColor(getResources().getColor(p.productOfferingGoodStanding ? R.color.black : R.color.bg_overlay));
-                    accountInArrearsLayout.setVisibility(p.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
-                    llIncreaseLimitContainer.setVisibility(p.productOfferingGoodStanding ? View.VISIBLE : View.GONE);
-                    tvHowToPayAccountStatus.setVisibility(p.productOfferingGoodStanding ? View.VISIBLE : View.INVISIBLE);
-                    if (!p.productOfferingGoodStanding) {
-                        tvAmountOverdue.setText(WFormatter.newAmountFormat(p.amountOverdue));
-                    }
+            List<Account> accountList = response.accountList;
+            if (accountList != null) {
+                for (Account p : accountList) {
+                    if ("SC".equals(p.productGroupCode)) {
+                        this.account = p;
+                        if (!p.productOfferingGoodStanding && p.productOfferingStatus.equalsIgnoreCase(Utils.ACCOUNT_CHARGED_OFF)) {
+                            llActiveAccount.setVisibility(View.GONE);
+                            llChargedOffAccount.setVisibility(View.VISIBLE);
+                            Utils.setViewHeightToRemainingBottomSpace(getActivity(), fakeView);
+                            return;
+                        } else {
+                            llActiveAccount.setVisibility(View.VISIBLE);
+                            llChargedOffAccount.setVisibility(View.GONE);
+                        }
+                        tvBPIProtectInsurance.setText(p.insuranceCovered ? getString(R.string.bpi_covered) : getString(R.string.bpi_not_covered));
+                        productOfferingGoodStanding = p.productOfferingGoodStanding;
+                        productOfferingId = String.valueOf(p.productOfferingId);
+                        woolworthsApplication.setProductOfferingId(p.productOfferingId);
+                        availableBalance.setText(Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.availableFunds), 1, getActivity())));
+                        creditLimit.setText(Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.creditLimit), 1, getActivity())));
+                        minAmountDue.setText(Utils.removeNegativeSymbol(WFormatter.newAmountFormat(p.minimumAmountDue)));
+                        currentBalance.setText(Utils.removeNegativeSymbol(WFormatter.newAmountFormat(p.currentBalance)));
+                        try {
+                            dueDate.setText(WFormatter.addSpaceToDate(WFormatter.newDateFormat(p.paymentDueDate)));
+                        } catch (ParseException e) {
+                            dueDate.setText(p.paymentDueDate);
+                            WiGroupLogger.e(getActivity(), "TAG", e.getMessage(), e);
+                        }
+                        availableBalance.setTextColor(getResources().getColor(p.productOfferingGoodStanding ? R.color.black : R.color.bg_overlay));
+                        accountInArrearsLayout.setVisibility(p.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
+                        llIncreaseLimitContainer.setVisibility(p.productOfferingGoodStanding ? View.VISIBLE : View.GONE);
+                        tvHowToPayAccountStatus.setVisibility(p.productOfferingGoodStanding ? View.VISIBLE : View.INVISIBLE);
+                        if (!p.productOfferingGoodStanding) {
+                            tvAmountOverdue.setText(WFormatter.newAmountFormat(p.amountOverdue));
+                        }
 
-                    relDebitOrders.setVisibility(p.debitOrder.debitOrderActive ? View.VISIBLE : View.GONE);
-                }
+                        relDebitOrders.setVisibility(p.debitOrder.debitOrderActive ? View.VISIBLE : View.GONE);
+                    }
             }
         }
     }
@@ -420,18 +421,23 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
         cliGetOfferActive = new CLIGetOfferActive(getActivity(), productOfferingId, new OnEventListener() {
             @Override
             public void onSuccess(Object object) {
-                offerActive = ((OfferActive) object);
-                bindUI(offerActive);
+                    if (getActivity() != null && mStoreCardFragmentIsVisible) {
+                        offerActive = ((OfferActive) object);
+                        bindUI(offerActive);
+                    }
             }
 
             @Override
             public void onFailure(String e) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        networkFailureHandler();
+                    Activity activity = getActivity();
+                    if (activity!=null && mStoreCardFragmentIsVisible) {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                networkFailureHandler();
+                            }
+                        });
                     }
-                });
             }
         });
         cliGetOfferActive.execute();
@@ -586,5 +592,12 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 
     private void hideCLIView() {
         mIncreaseLimitController.cliDefaultView(llCommonLayer, tvIncreaseLimitDescription);
+    }
+
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        mStoreCardFragmentIsVisible = isVisibleToUser;
     }
 }
