@@ -38,7 +38,7 @@ public class WebViewActivity extends AppCompatActivity {
 	public WTextView toolbarTextView;
 	private ProgressBar loadingProgressBar;
 	private ErrorHandlerView mErrorView;
-	public ProgressBar loadingProgressBarKMSI;
+	public LinearLayout loadingProgressBarKMSI;
 	public LinearLayout ssoLayout;
 
 	@Override
@@ -53,7 +53,7 @@ public class WebViewActivity extends AppCompatActivity {
 		loadingProgressBar = findViewById(R.id.loadingProgressBar);
 		mErrorView = new ErrorHandlerView(WebViewActivity.this, (RelativeLayout) findViewById
 				(R.id.no_connection_layout));
-		loadingProgressBarKMSI = findViewById(R.id.kmsiProgressBar);
+		loadingProgressBarKMSI = findViewById(R.id.kmsiProgressLayout);
 		ssoLayout = findViewById(R.id.ssoLayout);
 		setSupportActionBar(toolbar);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);

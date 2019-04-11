@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:app="http://schemas.android.com/apk/res-auto"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-    >
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <LinearLayout
-        xmlns:tools="http://schemas.android.com/tools"
+    <LinearLayout xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/ssoLayout"
-        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:visibility="gone"
         tools:context="za.co.woolworths.financial.services.android.ui.activities.WebViewActivity">
 
         <android.support.design.widget.AppBarLayout
@@ -31,29 +29,27 @@
                 app:popupTheme="@style/SSOActivity"
                 app:theme="@style/SSOActivity"
                 app:title=" "
-                app:titleTextColor="@color/black"
-                >
+                app:titleTextColor="@color/black">
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     android:id="@+id/toolbar_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="left"
+                    android:background="@color/white"
                     android:letterSpacing="0.2"
                     android:text=""
                     android:textAllCaps="true"
                     android:textColor="@color/black"
                     android:textSize="12sp"
-                    app:WTextView_font="medium_bold"
-                    android:background="@color/white"
-                    />
+                    app:WTextView_font="medium_bold" />
             </android.support.v7.widget.Toolbar>
 
             <View
                 android:id="@+id/view_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:color="#D3D3D3"/>
+                android:color="#D3D3D3" />
         </android.support.design.widget.AppBarLayout>
 
         <RelativeLayout
@@ -71,17 +67,38 @@
                 android:layout_height="@dimen/twenty_four_dp"
                 android:layout_centerInParent="true"
                 android:background="@color/white"
-                android:visibility="gone"/>
+                android:visibility="gone" />
         </RelativeLayout>
     </LinearLayout>
-    <ProgressBar
-        android:id="@+id/kmsiProgressBar"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_centerInParent="true"
-        android:indeterminateTint="@color/white"
+
+    <LinearLayout
+        android:id="@+id/kmsiProgressLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|center_vertical"
         android:background="@color/transparent"
-        android:visibility="visible"/>
-    <include layout="@layout/no_connection_handler"/>
+        android:orientation="vertical">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="@color/transparent"
+            android:text="@string/please_wait"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            app:WTextView_font="myriadpro_regular" />
+
+        <ProgressBar
+            android:id="@+id/kmsiProgressBar"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@color/transparent"
+            android:indeterminateTint="@color/white"
+            android:visibility="visible" />
+    </LinearLayout>
+
+
+    <include layout="@layout/no_connection_handler" />
 </FrameLayout>

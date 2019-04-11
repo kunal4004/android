@@ -44,6 +44,7 @@ public class SessionExpiredDialogFragment extends ActionSheetDialogFragment impl
 
 		tvSessionExpiredTitle.setText(Utils.getUserKMSIState() ? getString(R.string.kmsi_session_expired_title) : getString(R.string.session_expired_title));
 		tvSessionExpiredDesc.setText(Utils.getUserKMSIState() ? getString(R.string.kmsi_session_expired_desc) : getString(R.string.session_expired_desc));
+		btnSECancel.setText(Utils.getUserKMSIState() ? getString(R.string.cancel_no_thanks) : getString(R.string.cancel));
 
 		btnSECancel.setOnClickListener(this);
 		btnSESignIn.setOnClickListener(this);

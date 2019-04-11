@@ -169,6 +169,7 @@ public class SSOActivity extends WebViewActivity {
 						index--;
 					}
 					mErrorHandlerView.hideErrorHandlerLayout();
+					handleUIForKMSIEntry(Utils.getUserKMSIState());
 				}
 			}
 		});
@@ -640,8 +641,11 @@ public class SSOActivity extends WebViewActivity {
 	}
 
 	private void showFailureView(String s) {
-		if (!NetworkManager.getInstance().isConnectedToNetwork(SSOActivity.this))
+		if (!NetworkManager.getInstance().isConnectedToNetwork(SSOActivity.this)) {
+			//This handle UI to show the Action bar when UI is transparent
+			handleUIForKMSIEntry(false);
 			mErrorHandlerView.networkFailureHandler(s);
+		}
 	}
 
 	public void finishActivity() {

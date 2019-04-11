@@ -902,4 +902,6 @@
     <string name="crashlytics_materialshowcase_key">materialshowcase_parent</string>
     <string name="kmsi_session_expired_desc">Would you like to stay signed in?</string>
     <string name="kmsi_session_expired_title">keep me signed in</string>
+    <string name="cancel_no_thanks">NO THANKS</string>
+    <string name="please_wait">Please wait...</string>
 </resources>
