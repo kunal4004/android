@@ -5,13 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.permanent_card_block_dialog_fragment.*
+import kotlinx.android.synthetic.main.npc_permanent_card_block_layout.*
 import za.co.woolworths.financial.services.android.contracts.IPermanentCardBlock
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
-import android.app.Activity
+import android.content.Context
 import android.graphics.Paint
-
 
 
 class PermanentCardBlockDialogFragment : WBottomSheetDialogFragment() {
@@ -24,8 +23,8 @@ class PermanentCardBlockDialogFragment : WBottomSheetDialogFragment() {
         }
     }
 
-    override fun onAttach(activity: Activity?) {
-        super.onAttach(activity)
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
         activity?.apply {
             try {
                 mPermanentCardBlockCallback = this as? IPermanentCardBlock
@@ -36,7 +35,7 @@ class PermanentCardBlockDialogFragment : WBottomSheetDialogFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.permanent_card_block_dialog_fragment, container, false)
+        return inflater.inflate(R.layout.npc_permanent_card_block_layout, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {

@@ -32,7 +32,7 @@ class GetReplacementCardFragment : MyCardExtension() {
         activity?.let { Utils.updateStatusBarBackground(it) }
         updateToolbarBg()
         tvAlreadyHaveCard?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
-        tvAlreadyHaveCard?.setOnClickListener {(activity as? AppCompatActivity)?.apply { navigateToLinkNewCardActivity(this) } }
+        tvAlreadyHaveCard?.setOnClickListener { (activity as? AppCompatActivity)?.apply { navigateToLinkNewCardActivity(this) } }
         btnParticipatingStores?.setOnClickListener { navigateToParticipatingStores() }
     }
 
@@ -182,10 +182,12 @@ class GetReplacementCardFragment : MyCardExtension() {
 
             val listType = object : TypeToken<List<StoreDetails>>() {}.type
             WoolworthsApplication.getInstance().wGlobalState.storeDetailsArrayList = Gson().fromJson(location, listType)
-            val intentInStoreFinder = Intent(activity, WStockFinderActivity::class.java)
-            intentInStoreFinder.putExtra("PRODUCT_NAME", getString(R.string.nearest_store))
+            val intentInStoreFinder = Intent(this, WStockFinderActivity::class.java)
+            intentInStoreFinder.putExtra("PRODUCT_NAME", getString(R.string.participating_stores))
+            intentInStoreFinder.putExtra("CONTACT_INFO", getString(R.string.participating_store_desc))
+
             startActivity(intentInStoreFinder)
-            overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+            overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
         }
     }
 }

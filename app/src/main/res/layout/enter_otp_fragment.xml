@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/tvEnterOtpTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="32dp"
+        android:fontFamily="@font/futura_semi_bold_ttf"
+        android:gravity="center|start"
+        android:lineSpacingMultiplier="1.40"
+        android:text="@string/enter_otp_title"
+        android:textColor="@color/black"
+        android:textSize="@dimen/twenty_sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@string/enter_otp_title" />
+
+    <TextView
+        android:id="@+id/tvEnterOtpDesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="32dp"
+        android:fontFamily="@font/myriad_pro_regular_otf"
+        android:gravity="center|start"
+        android:lineSpacingExtra="1.dp"
+        android:lineSpacingMultiplier="1.40"
+        android:text="@string/enter_otp_desc"
+        android:textColor="@color/permanent_card_block_desc_color"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.6"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvEnterOtpTitle"
+        tools:text="@string/enter_otp_desc" />
+
+    <View
+        android:id="@+id/viewOTPBackground"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="32dp"
+        android:background="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvEnterOtpDesc" />
+
+    <EditText
+        android:id="@+id/edtVerificationCode2"
+        android:layout_width="47dp"
+        android:layout_height="50dp"
+        android:background="@drawable/edit_text_bg_selector_bg"
+        android:ems="10"
+        android:fontFamily="@font/futura_semi_bold_ttf"
+        android:gravity="center"
+        android:imeOptions="actionNext"
+        android:inputType="textPersonName"
+        android:maxLength="1"
+        android:nextFocusForward="@+id/edtVerificationCode3"
+        android:singleLine="true"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/viewOTPBackground"
+        app:layout_constraintEnd_toStartOf="@+id/edtVerificationCode3"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/edtVericationCode1"
+        app:layout_constraintTop_toTopOf="@+id/viewOTPBackground" />
+
+    <EditText
+        android:id="@+id/edtVerificationCode3"
+        android:layout_width="47dp"
+        android:layout_height="50dp"
+        android:background="@drawable/edit_text_bg_selector_bg"
+        android:ems="10"
+        android:fontFamily="@font/myriad_pro_semi_bold_otf"
+        android:gravity="center"
+        android:imeOptions="actionNext"
+        android:inputType="textPersonName"
+        android:maxLength="1"
+        android:nextFocusForward="@+id/edtVerificationCode4"
+        android:singleLine="true"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/edtVerificationCode2"
+        app:layout_constraintEnd_toStartOf="@+id/edtVerificationCode4"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/edtVerificationCode2"
+        app:layout_constraintTop_toTopOf="@+id/edtVerificationCode2" />
+
+    <EditText
+        android:id="@+id/edtVerificationCode4"
+        android:layout_width="47dp"
+        android:layout_height="50dp"
+        android:background="@drawable/edit_text_bg_selector_bg"
+        android:ems="10"
+        android:fontFamily="@font/futura_semi_bold_ttf"
+        android:gravity="center"
+        android:imeOptions="actionNext"
+        android:inputType="textPersonName"
+        android:maxLength="1"
+        android:nextFocusForward="@+id/edtVerificationCode5"
+        android:singleLine="true"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/viewOTPBackground"
+        app:layout_constraintEnd_toStartOf="@+id/edtVerificationCode5"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/edtVerificationCode3"
+        app:layout_constraintTop_toTopOf="@+id/viewOTPBackground" />
+
+    <EditText
+        android:id="@+id/edtVerificationCode5"
+        android:layout_width="47dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/edit_text_bg_selector_bg"
+        android:ems="10"
+        android:fontFamily="@font/futura_semi_bold_ttf"
+        android:gravity="center"
+        android:imeOptions="actionDone"
+        android:inputType="textPersonName"
+        android:maxLength="1"
+        android:singleLine="true"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/viewOTPBackground"
+        app:layout_constraintEnd_toEndOf="@+id/viewOTPBackground"
+        app:layout_constraintStart_toEndOf="@+id/edtVerificationCode4"
+        app:layout_constraintTop_toTopOf="@+id/viewOTPBackground" />
+
+    <EditText
+        android:id="@+id/edtVericationCode1"
+        android:layout_width="46dp"
+        android:layout_height="50dp"
+        android:background="@drawable/edit_text_bg_selector_bg"
+        android:ems="10"
+        android:fontFamily="@font/futura_semi_bold_ttf"
+        android:gravity="center"
+        android:imeOptions="actionNext"
+        android:inputType="textPersonName"
+        android:maxLength="1"
+        android:nextFocusForward="@+id/edtVerificationCode2"
+        android:singleLine="true"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/viewOTPBackground"
+        app:layout_constraintEnd_toStartOf="@+id/edtVerificationCode2"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/viewOTPBackground"
+        app:layout_constraintTop_toTopOf="@+id/viewOTPBackground" />
+
+
+    <ImageView
+        android:id="@+id/imNextProcessLinkCard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:alpha="0.5"
+        android:contentDescription="@string/app_label"
+        app:layout_constraintBottom_toBottomOf="@+id/vLinkBottomNavigation"
+        app:layout_constraintEnd_toEndOf="@+id/vLinkBottomNavigation"
+        app:layout_constraintTop_toTopOf="@+id/vLinkBottomNavigation"
+        app:srcCompat="@drawable/next_button_icon" />
+
+    <TextView
+        android:id="@+id/tvDidNotReceivedOTP"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_alignParentStart="true"
+        android:layout_centerInParent="true"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:fontFamily="@font/myriad_pro_regular_otf"
+        android:gravity="start|center"
+        android:text="@string/did_not_receive_title"
+        android:textAllCaps="true"
+        android:textColor="@color/black"
+        android:textSize="@dimen/cli_twelve_sp"
+        app:layout_constraintBottom_toBottomOf="@+id/vLinkBottomNavigation"
+        app:layout_constraintEnd_toStartOf="@+id/imNextProcessLinkCard"
+        app:layout_constraintStart_toStartOf="@+id/vLinkBottomNavigation"
+        app:layout_constraintTop_toTopOf="@+id/vLinkBottomNavigation"
+        tools:text="@string/did_not_receive_title" />
+
+
+    <View
+        android:id="@+id/vLinkBottomNavigation"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</android.support.constraint.ConstraintLayout>

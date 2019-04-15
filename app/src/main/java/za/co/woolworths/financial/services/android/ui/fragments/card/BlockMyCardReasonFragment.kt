@@ -36,7 +36,8 @@ class BlockMyCardReasonFragment : MyCardExtension() {
                 blockUIProgressState(VISIBLE)
                 Handler().postDelayed({
                     blockUIProgressState(GONE)
-                    btnBlockCard?.text = activity?.resources?.getString(R.string.block_card_title) ?: ""
+                    btnBlockCard?.text = activity?.resources?.getString(R.string.block_card_title)
+                            ?: ""
                     navigateToPermanentCardBlockFragment(it)
                 }, 2000)
 
@@ -51,7 +52,7 @@ class BlockMyCardReasonFragment : MyCardExtension() {
 
     fun processBlockCardRequest() {
         replaceFragment(
-                fragment = ProcessBlockCardFragment.newInstance(),
+                fragment = ProcessBlockCardFragment.newInstance(false),
                 tag = ProcessBlockCardFragment::class.java.simpleName,
                 containerViewId = R.id.flMyCard,
                 allowStateLoss = true,

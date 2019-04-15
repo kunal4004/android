@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <View
+        android:id="@+id/emailHorizontalView"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:background="@color/grey_bg"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sendOTPByEmailView" />
+
+    <View
+        android:id="@+id/closeIndicator"
+        android:layout_width="56dp"
+        android:layout_height="8dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="18dp"
+        android:background="@drawable/rounded_grey_corner"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/tvResendOTP"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="33dp"
+        android:layout_marginEnd="32dp"
+        android:fontFamily="@font/futura_semi_bold_ttf"
+        android:gravity="center"
+        android:lineSpacingExtra="10sp"
+        android:text="@string/resend_otp_title"
+        android:textColor="@color/offer_title"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/closeIndicator" />
+
+    <View
+        android:id="@+id/sendOTPBySMSview"
+        android:layout_width="0dp"
+        android:layout_height="62dp"
+        android:layout_marginTop="56dp"
+        android:background="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvResendOTP" />
+
+    <ImageView
+        android:id="@+id/imOtpNextSms"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        app:layout_constraintBottom_toBottomOf="@+id/sendOTPBySMSview"
+        app:layout_constraintEnd_toEndOf="@+id/sendOTPBySMSview"
+        app:layout_constraintTop_toTopOf="@+id/sendOTPBySMSview"
+        app:srcCompat="@drawable/ic_caret_black" />
+
+    <TextView
+        android:id="@+id/tvOtpSmsTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="21dp"
+        android:layout_marginEnd="16dp"
+        android:fontFamily="@font/myriad_pro_semi_bold_otf"
+        android:text="@string/resend_sms_to"
+        android:textColor="@android:color/black"
+        android:textSize="17sp"
+        app:layout_constraintBottom_toBottomOf="@+id/sendOTPBySMSview"
+        app:layout_constraintEnd_toStartOf="@+id/imOtpNextSms"
+        app:layout_constraintStart_toEndOf="@+id/imOTPSMS"
+        app:layout_constraintTop_toTopOf="@+id/sendOTPBySMSview"
+        tools:text="@string/resend_sms_to" />
+
+    <ImageView
+        android:id="@+id/imOTPSMS"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="37dp"
+        app:layout_constraintBottom_toBottomOf="@+id/sendOTPBySMSview"
+        app:layout_constraintStart_toStartOf="@+id/sendOTPBySMSview"
+        app:layout_constraintTop_toTopOf="@+id/sendOTPBySMSview"
+        app:srcCompat="@drawable/cart_icon" />
+
+    <View
+        android:id="@+id/smsHorizontalView"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:background="@color/grey_bg"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sendOTPBySMSview" />
+
+
+    <View
+        android:id="@+id/sendOTPByEmailView"
+        android:layout_width="0dp"
+        android:layout_height="62dp"
+        android:background="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/smsHorizontalView" />
+
+
+    <View
+        android:id="@+id/sendToCallCenterView"
+        android:layout_width="0dp"
+        android:layout_height="62dp"
+        android:background="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/emailHorizontalView" />
+
+    <ImageView
+        android:id="@+id/imNextCallIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/sendToCallCenterView"
+        app:layout_constraintEnd_toEndOf="@+id/sendToCallCenterView"
+        app:layout_constraintTop_toBottomOf="@+id/emailHorizontalView"
+        app:srcCompat="@drawable/ic_caret_black" />
+
+    <ImageView
+        android:id="@+id/imOTPNextEmailIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        app:layout_constraintBottom_toBottomOf="@+id/emailHorizontalView"
+        app:layout_constraintEnd_toEndOf="@+id/sendOTPByEmailView"
+        app:layout_constraintTop_toBottomOf="@+id/smsHorizontalView"
+        app:srcCompat="@drawable/ic_caret_black" />
+
+    <TextView
+        android:id="@+id/tvOTPEmailTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="16dp"
+        android:fontFamily="@font/myriad_pro_semi_bold_otf"
+        android:text="@string/send_to_your_email_address"
+        android:textColor="@color/black"
+        android:textSize="17sp"
+        app:layout_constraintBottom_toBottomOf="@+id/sendOTPByEmailView"
+        app:layout_constraintEnd_toStartOf="@+id/imOTPNextEmailIcon"
+        app:layout_constraintStart_toEndOf="@+id/imOTPNextEmail"
+        app:layout_constraintTop_toBottomOf="@+id/smsHorizontalView"
+        tools:text="@string/send_to_your_email_address" />
+
+    <ImageView
+        android:id="@+id/imOTPNextEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="37dp"
+        app:layout_constraintBottom_toBottomOf="@+id/sendOTPByEmailView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/smsHorizontalView"
+        app:srcCompat="@drawable/cart_icon"
+        tools:srcCompat="@drawable/cart_icon" />
+
+    <ImageView
+        android:id="@+id/imCallOtpIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/thirty_seven_dp"
+        app:layout_constraintBottom_toBottomOf="@+id/sendToCallCenterView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/emailHorizontalView"
+        app:srcCompat="@drawable/attachment" />
+
+    <TextView
+        android:id="@+id/tvCallTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="16dp"
+        android:fontFamily="@font/myriad_pro_semi_bold_otf"
+        android:text="@string/call_center_desc"
+        android:textColor="@color/black"
+        android:textSize="17sp"
+        app:layout_constraintBottom_toTopOf="@+id/tvCancel"
+        app:layout_constraintEnd_toStartOf="@+id/imNextCallIcon"
+        app:layout_constraintStart_toEndOf="@+id/imCallOtpIcon"
+        app:layout_constraintTop_toTopOf="@+id/sendToCallCenterView"
+        tools:text="@string/call_center_desc" />
+
+    <View
+        android:id="@+id/callHorizontalView"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:background="@color/grey_bg"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sendToCallCenterView" />
+
+    <TextView
+        android:id="@+id/tvCancel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/futura_semi_bold_ttf"
+        android:gravity="center"
+        android:letterSpacing="0.1"
+        android:paddingTop="@dimen/thirty_one_dp"
+        android:paddingBottom="@dimen/thirty_dp"
+        android:text="@string/cancel"
+        android:textColor="@color/black"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/callHorizontalView"
+        tools:targetApi="lollipop" />
+
+</android.support.constraint.ConstraintLayout>

@@ -21,152 +21,153 @@ import za.co.woolworths.financial.services.android.util.rx.SchedulerProvider;
 
 public class BarcodeViewModel extends BaseViewModel<BarcodeNavigator> {
 
-	private boolean productIsLoading;
-	private ProductRequest mProductRequest;
-	private GetProductDetail mGetProductDetail;
-	private boolean connectionHasFailed = false;
-	private ProductsRequestParams productsRequestParams;
-	private GetProductsRequest mGetProductsRequest;
+    private boolean productIsLoading;
+    private ProductRequest mProductRequest;
+    private GetProductDetail mGetProductDetail;
+    private boolean connectionHasFailed = false;
+    private ProductsRequestParams productsRequestParams;
+    private GetProductsRequest mGetProductsRequest;
 
-	public BarcodeViewModel() {
-		super();
-	}
+    public BarcodeViewModel() {
+        super();
+    }
 
-	public BarcodeViewModel(SchedulerProvider schedulerProvider) {
-		super(schedulerProvider);
-	}
+    public BarcodeViewModel(SchedulerProvider schedulerProvider) {
+        super(schedulerProvider);
+    }
 
-	public void executeGetBarcodeProduct(Context context) {
-		mGetProductsRequest = getBarcodeProduct(context, getProductRequestBody());
-		mGetProductsRequest.execute();
-	}
-	GetProductsRequest getBarcodeProduct(final Context context, final ProductsRequestParams requestParams) {
-		setProductIsLoading(true);
-		getNavigator().onLoadStart();
-		return new GetProductsRequest(context, requestParams, new OnEventListener<ProductView>() {
-			@Override
-			public void onSuccess(ProductView object) {
-				ProductView productView = (ProductView) object;
-				switch (productView.httpCode) {
-					case 200:
-						List<ProductList> productLists = productView.products;
-						if (productLists.size() == 0) {
-							getNavigator().noItemFound();
-							if (context != null) {
-								errorScanCode((AppCompatActivity) context);
-							}
-							setProductIsLoading(false);
-							setConnectionHasFailed(false);
-							return;
-						}
+    public void executeGetBarcodeProduct(Context context) {
+        mGetProductsRequest = getBarcodeProduct(context, getProductRequestBody());
+        mGetProductsRequest.execute();
+    }
 
-						if (productLists != null) {
-							if (productLists.get(0) != null) {
-								mProductRequest = new ProductRequest(productLists.get(0).productId, productLists.get(0).sku);
-								executeProductDetail(mProductRequest);
-							}
-						}
-						break;
+    GetProductsRequest getBarcodeProduct(final Context context, final ProductsRequestParams requestParams) {
+        setProductIsLoading(true);
+        getNavigator().onLoadStart();
+        return new GetProductsRequest(context, requestParams, new OnEventListener<ProductView>() {
+            @Override
+            public void onSuccess(ProductView object) {
+                ProductView productView = (ProductView) object;
+                switch (productView.httpCode) {
+                    case 200:
+                        List<ProductList> productLists = productView.products;
+                        if (productLists.size() == 0) {
+                            getNavigator().noItemFound();
+                            if (context != null) {
+                                errorScanCode((AppCompatActivity) context);
+                            }
+                            setProductIsLoading(false);
+                            setConnectionHasFailed(false);
+                            return;
+                        }
 
-					default:
-						setProductIsLoading(false);
-						setConnectionHasFailed(false);
-						if (productView.response != null) {
-							getNavigator().unhandledResponseCode(productView.response);
-						}
-						break;
-				}
-			}
+                        if (productLists != null) {
+                            if (productLists.get(0) != null) {
+                                mProductRequest = new ProductRequest(productLists.get(0).productId, productLists.get(0).sku);
+                                executeProductDetail(mProductRequest);
+                            }
+                        }
+                        break;
 
-			@Override
-			public void onFailure(final String e) {
-				if (context != null) {
-					Activity activity = (Activity) context;
-					if (activity != null) {
-						activity.runOnUiThread(new Runnable() {
-							@Override
-							public void run() {
-								setConnectionHasFailed(true);
-								getNavigator().failureResponseHandler(e);
-								setProductIsLoading(false);
-							}
-						});
-					}
-				}
-			}
-		});
-	}
+                    default:
+                        setProductIsLoading(false);
+                        setConnectionHasFailed(false);
+                        if (productView.response != null) {
+                            getNavigator().unhandledResponseCode(productView.response);
+                        }
+                        break;
+                }
+            }
 
-	public void setProductIsLoading(boolean productIsLoading) {
-		this.productIsLoading = productIsLoading;
-	}
+            @Override
+            public void onFailure(final String e) {
+                if (context != null) {
+                    Activity activity = (Activity) context;
+                    if (activity != null) {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                setConnectionHasFailed(true);
+                                getNavigator().failureResponseHandler(e);
+                                setProductIsLoading(false);
+                            }
+                        });
+                    }
+                }
+            }
+        });
+    }
 
-	public boolean productIsLoading() {
-		return productIsLoading;
-	}
+    public void setProductIsLoading(boolean productIsLoading) {
+        this.productIsLoading = productIsLoading;
+    }
 
-	/***
-	 * ProductDetails detail calls
-	 */
+    public boolean productIsLoading() {
+        return productIsLoading;
+    }
 
-	public void executeProductDetail(ProductRequest productRequest) {
-		mGetProductDetail = getProductDetail(productRequest);
-		mGetProductDetail.execute();
-	}
+    /***
+     * ProductDetails detail calls
+     */
 
-	public GetProductDetail getProductDetail(ProductRequest productRequest) {
-		setProductIsLoading(true);
-		return new GetProductDetail(productRequest, new OnEventListener() {
-			@Override
-			public void onSuccess(Object object) {
-				ProductDetailResponse productDetail = (ProductDetailResponse) object;
-				String detailProduct = Utils.objectToJson(productDetail);
-				switch (productDetail.httpCode) {
-					case 200:
-						//final WProduct wProduct = (WProduct) Utils.strToJson(detailProduct, WProduct.class);
-						getNavigator().onLoadProductSuccess(productDetail, detailProduct);
-						break;
-					default:
-						if (productDetail.response != null) {
-							getNavigator().unhandledResponseCode(productDetail.response);
-						}
-						break;
-				}
-				setProductIsLoading(false);
-				setConnectionHasFailed(false);
-			}
+    public void executeProductDetail(ProductRequest productRequest) {
+        mGetProductDetail = getProductDetail(productRequest);
+        mGetProductDetail.execute();
+    }
 
-			@Override
-			public void onFailure(String e) {
-				setConnectionHasFailed(true);
-				getNavigator().failureResponseHandler(e);
-				setProductIsLoading(false);
-			}
-		});
-	}
+    public GetProductDetail getProductDetail(ProductRequest productRequest) {
+        setProductIsLoading(true);
+        return new GetProductDetail(productRequest, new OnEventListener() {
+            @Override
+            public void onSuccess(Object object) {
+                ProductDetailResponse productDetail = (ProductDetailResponse) object;
+                String detailProduct = Utils.objectToJson(productDetail);
+                switch (productDetail.httpCode) {
+                    case 200:
+                        //final WProduct wProduct = (WProduct) Utils.strToJson(detailProduct, WProduct.class);
+                        getNavigator().onLoadProductSuccess(productDetail, detailProduct);
+                        break;
+                    default:
+                        if (productDetail.response != null) {
+                            getNavigator().unhandledResponseCode(productDetail.response);
+                        }
+                        break;
+                }
+                setProductIsLoading(false);
+                setConnectionHasFailed(false);
+            }
 
-	public void setProductRequestBody(ProductsRequestParams.SearchType searchType, String searchTerm) {
-		this.productsRequestParams = new ProductsRequestParams(searchTerm, searchType, ProductsRequestParams.ResponseType.DETAIL, 0);
-	}
+            @Override
+            public void onFailure(String e) {
+                setConnectionHasFailed(true);
+                getNavigator().failureResponseHandler(e);
+                setProductIsLoading(false);
+            }
+        });
+    }
 
-	private ProductsRequestParams getProductRequestBody() {
-		return productsRequestParams;
-	}
+    public void setProductRequestBody(ProductsRequestParams.SearchType searchType, String searchTerm) {
+        this.productsRequestParams = new ProductsRequestParams(searchTerm, searchType, ProductsRequestParams.ResponseType.DETAIL, 0);
+    }
 
-	public void setConnectionHasFailed(boolean connectionHasFailed) {
-		this.connectionHasFailed = connectionHasFailed;
-	}
+    private ProductsRequestParams getProductRequestBody() {
+        return productsRequestParams;
+    }
 
-	public boolean connectionHasFailed() {
-		return connectionHasFailed;
-	}
+    public void setConnectionHasFailed(boolean connectionHasFailed) {
+        this.connectionHasFailed = connectionHasFailed;
+    }
 
-	public void cancelRequest() {
-		cancelRequest(mGetProductDetail);
-		cancelRequest(mGetProductsRequest);
-	}
+    public boolean connectionHasFailed() {
+        return connectionHasFailed;
+    }
 
-	private void errorScanCode(Activity activity) {
-		Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.BARCODE_ERROR, "");
-	}
+    public void cancelRequest() {
+        cancelRequest(mGetProductDetail);
+        cancelRequest(mGetProductsRequest);
+    }
+
+    private void errorScanCode(Activity activity) {
+        Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.BARCODE_ERROR, "");
+    }
 }

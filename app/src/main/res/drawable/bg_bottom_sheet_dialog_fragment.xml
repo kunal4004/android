@@ -2,8 +2,8 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
     <corners
-        android:topLeftRadius="@dimen/twenty_four_dp"
-        android:topRightRadius="@dimen/twenty_four_dp" />
-    <padding android:top="@dimen/twenty_four_dp" />
+        android:topLeftRadius="@dimen/sixteen_dp"
+        android:topRightRadius="@dimen/sixteen_dp" />
+    <padding android:top="@dimen/sixteen_dp" />
     <solid android:color="@color/white" />
 </shape>

@@ -13,6 +13,10 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class LinkNewCardActivity : AppCompatActivity() {
 
+    companion object {
+        const val LINK_NEW_CARD_REQUEST_CODE = 5001
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.block_my_card_activity)
@@ -22,8 +26,7 @@ class LinkNewCardActivity : AppCompatActivity() {
             addFragment(
                     fragment = LinkCardFragment.newInstance(),
                     tag = LinkCardFragment::class.java.simpleName,
-                    containerViewId = R.id.flMyCard
-            )
+                    containerViewId = R.id.flMyCard)
         }
     }
 
@@ -43,16 +46,20 @@ class LinkNewCardActivity : AppCompatActivity() {
 
     private fun navigateBack() {
         supportFragmentManager?.apply {
-            if (backStackEntryCount > 0)
+            if (backStackEntryCount > 0) {
+                fragments[backStackEntryCount - 1]?.onResume()
                 popBackStack()
-            else
+
+            } else {
                 finishActivity()
+            }
         }
     }
 
+
     private fun finishActivity() {
-        this.finish()
-        this.overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+        finish()
+        overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
     }
 
 
@@ -67,4 +74,13 @@ class LinkNewCardActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
+
+    fun showBackIcon() {
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            setHomeAsUpIndicator(R.drawable.back24)
+        }
+    }
+
+    fun hideBackIcon() = supportActionBar?.apply { setDisplayHomeAsUpEnabled(false) }
 }

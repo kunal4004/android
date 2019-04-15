@@ -10,15 +10,19 @@ import android.view.View.GONE
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.my_card_activity.*
 import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity.Companion.BLOCK_MY_CARD_REQUEST_CODE
+import za.co.woolworths.financial.services.android.ui.activities.card.LinkNewCardActivity.Companion.LINK_NEW_CARD_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.card.GetReplacementCardFragment
 import za.co.woolworths.financial.services.android.ui.fragments.card.MyCardBlockedFragment
 import za.co.woolworths.financial.services.android.ui.fragments.card.MyCardDetailFragment
+import za.co.woolworths.financial.services.android.ui.fragments.card.MyCardDetailFragment.Companion.CARD
+import za.co.woolworths.financial.services.android.ui.fragments.card.ProcessBlockCardFragment.Companion.NPC_CARD_LINKED_SUCCESS_RESULT_CODE
 import za.co.woolworths.financial.services.android.util.Utils
 
 
 class MyCardDetailActivity : AppCompatActivity() {
 
+    var mCardDetail: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,13 +31,19 @@ class MyCardDetailActivity : AppCompatActivity() {
         actionBar()
 
         if (savedInstanceState == null) {
-            intent?.extras?.apply {
-                addFragment(
-                        fragment = MyCardDetailFragment.newInstance(getString(MyCardDetailFragment.CARD)),
-                        tag = MyCardDetailFragment::class.java.simpleName,
-                        containerViewId = R.id.flMyCard
-                )
-            }
+            intent?.extras?.apply { mCardDetail = getString(CARD) }
+
+            addCardDetailFragment()
+        }
+    }
+
+    private fun addCardDetailFragment() {
+        mCardDetail?.apply {
+            addFragment(
+                    fragment = MyCardDetailFragment.newInstance(this),
+                    tag = MyCardDetailFragment::class.java.simpleName,
+                    containerViewId = R.id.flMyCard
+            )
         }
     }
 
@@ -90,12 +100,22 @@ class MyCardDetailActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == BLOCK_MY_CARD_REQUEST_CODE && resultCode == RESULT_OK) {
-            addFragment(
-                    fragment = MyCardBlockedFragment.newInstance(),
-                    tag = MyCardBlockedFragment::class.java.simpleName,
-                    containerViewId = R.id.flMyCard
-            )
+        when (requestCode) {
+            LINK_NEW_CARD_REQUEST_CODE -> {
+                when (resultCode) {
+                    NPC_CARD_LINKED_SUCCESS_RESULT_CODE -> addCardDetailFragment()
+                }
+            }
+
+            BLOCK_MY_CARD_REQUEST_CODE -> {
+                when (resultCode) {
+                    RESULT_OK -> addFragment(
+                            fragment = MyCardBlockedFragment.newInstance(),
+                            tag = MyCardBlockedFragment::class.java.simpleName,
+                            containerViewId = R.id.flMyCard)
+                }
+            }
+
         }
     }
 

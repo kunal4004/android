@@ -1,30 +1,38 @@
 package za.co.woolworths.financial.services.android.ui.fragments.card
 
 import android.app.Activity.RESULT_OK
-import android.graphics.PorterDuff
 import android.os.Bundle
 import android.os.Handler
-import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
-import kotlinx.android.synthetic.main.process_block_card_fragment.*
 import android.view.MenuInflater
 import android.view.View.GONE
 import android.view.View.VISIBLE
-
+import kotlinx.android.synthetic.main.npc_card_linked_successful_layout.*
+import kotlinx.android.synthetic.main.process_block_card_fragment.*
+import za.co.woolworths.financial.services.android.ui.extension.withArgs
 
 class ProcessBlockCardFragment : MyCardExtension() {
 
+    private var mCardWasBlocked: Boolean? = null
+
     companion object {
-        fun newInstance() = ProcessBlockCardFragment()
+        const val NPC_CARD_LINKED_SUCCESS_RESULT_CODE = 3021
+        private const val CARD_WAS_BLOCKED = "CARD_WAS_BLOCKED"
+        fun newInstance(cardBlocked: Boolean) = ProcessBlockCardFragment().withArgs {
+            putBoolean(CARD_WAS_BLOCKED, cardBlocked)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+        arguments?.apply {
+            mCardWasBlocked = getBoolean(CARD_WAS_BLOCKED, false)
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -36,25 +44,51 @@ class ProcessBlockCardFragment : MyCardExtension() {
 
         //TODO:: TO BE REMOVED, USED ONLY FOR PROTOTYPE DEMONSTRATION
         activity?.apply {
-            pbProcessRequest?.indeterminateDrawable?.setColorFilter(ContextCompat.getColor(this, R.color.black), PorterDuff.Mode.SRC_IN)
-
             val handler = Handler()
             handler.postDelayed({
-                imSuccessBlock?.visibility = VISIBLE
-                pbProcessRequest?.visibility = GONE
-                tvProcessingYourRequestDuration?.visibility = GONE
-                tvProcessBlockCardRequestStatus?.text = getString(R.string.card_block_success)
-                val successHandler = Handler()
-                successHandler.postDelayed({
-                    setResult(RESULT_OK)
-                    finish()
-                    overridePendingTransition(0, 0)
-                }, 1000)
+                when (mCardWasBlocked) {
+                    true -> displayUnblockCardSuccess()
+                    false -> displayBlockedCardSuccess()
+                }
+            }, 1500)
+        }
 
-            }, 2000)
+        btn_ok_got_it?.setOnClickListener { navigateToMyCardActivity() }
+    }
+
+    private fun navigateToMyCardActivity() {
+        activity.apply {
+            setResult(NPC_CARD_LINKED_SUCCESS_RESULT_CODE, null)
+            finish()
+            overridePendingTransition(0, 0)
         }
     }
 
+    private fun displayUnblockCardSuccess() {
+        successProgressAnimation()
+        incLinkCardSuccessFulView?.visibility = VISIBLE
+        incProcessingTextLayout?.visibility = GONE
+    }
+
+    private fun displayBlockedCardSuccess() {
+        val successHandler = Handler()
+        successHandler.postDelayed({
+            activity.apply {
+                setResult(RESULT_OK)
+                finish()
+                overridePendingTransition(0, 0)
+            }
+        }, 800)
+
+        successProgressAnimation()
+        incBlockCardSuccess?.visibility = VISIBLE
+        incProcessingTextLayout?.visibility = GONE
+    }
+
+    private fun successProgressAnimation() {
+        imSuccessAnimation?.visibility = VISIBLE
+        pbProcessRequest?.visibility = GONE
+    }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         super.onCreateOptionsMenu(menu, inflater)

@@ -32,7 +32,6 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginBottom="11dp"
         android:fontFamily="@font/futura_semi_bold_ttf"
         android:gravity="center|start"
         android:lineSpacingMultiplier="1.40"
@@ -103,12 +102,13 @@
         android:background="@color/white"
         android:cursorVisible="false"
         android:ems="10"
-        android:fontFamily="@font/myriad_pro_regular_otf"
+        android:fontFamily="@font/futura_medium_ttf"
         android:gravity="center|start"
         android:hint="@string/enter_new_card_number"
         android:inputType="number"
+        android:maxLength="19"
         android:textColorHint="@color/unavailable"
-        android:textSize="14sp"
+        android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="@+id/vInputCardNumberBackground"
         app:layout_constraintEnd_toStartOf="@+id/vCameraBgTapped"
         app:layout_constraintStart_toStartOf="@+id/vInputCardNumberBackground"
@@ -116,7 +116,7 @@
 
 
     <ImageView
-        android:id="@+id/imNext"
+        android:id="@+id/imNavigateToOTPFragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:alpha="0.5"
@@ -139,7 +139,7 @@
         android:textColor="@color/black"
         android:textSize="@dimen/cli_twelve_sp"
         app:layout_constraintBottom_toBottomOf="@+id/vLinkBottomNavigation"
-        app:layout_constraintEnd_toStartOf="@+id/imNext"
+        app:layout_constraintEnd_toStartOf="@+id/imNavigateToOTPFragment"
         app:layout_constraintStart_toStartOf="@+id/vLinkBottomNavigation"
         app:layout_constraintTop_toTopOf="@+id/vLinkBottomNavigation"
         tools:text="@string/replacement_card_how_to" />
