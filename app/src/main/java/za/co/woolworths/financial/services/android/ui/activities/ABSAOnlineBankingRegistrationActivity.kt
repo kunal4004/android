@@ -9,6 +9,7 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_online_banking_to_device_activity.*
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
+import za.co.woolworths.financial.services.android.ui.fragments.absa.AbsaBoardingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.absa.AbsaEnterAtmPinCodeFragment
 import za.co.woolworths.financial.services.android.ui.fragments.absa.AbsaLoginFragment
 import za.co.woolworths.financial.services.android.ui.fragments.absa.AbsaPinCodeSuccessFragment
@@ -36,9 +37,13 @@ class ABSAOnlineBankingRegistrationActivity : AppCompatActivity(), IDialogListen
                         tag = AbsaLoginFragment::class.java.simpleName,
                         containerViewId = R.id.flAbsaOnlineBankingToDevice)
             } else {
-                addFragment(
+                /*addFragment(
                         fragment = AbsaEnterAtmPinCodeFragment.newInstance(mCreditAccountInfo),
                         tag = AbsaEnterAtmPinCodeFragment::class.java.simpleName,
+                        containerViewId = R.id.flAbsaOnlineBankingToDevice)*/
+                addFragment(
+                        fragment = AbsaBoardingFragment.newInstance(mCreditAccountInfo),
+                        tag = AbsaBoardingFragment::class.java.simpleName,
                         containerViewId = R.id.flAbsaOnlineBankingToDevice)
             }
         }
@@ -90,7 +95,7 @@ class ABSAOnlineBankingRegistrationActivity : AppCompatActivity(), IDialogListen
         }
     }
 
-    private fun finishActivity() {
+    public fun finishActivity() {
         this.finish()
         this.overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right)
     }
