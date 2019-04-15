@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.JavascriptInterface;
 import android.webkit.SslErrorHandler;
 import android.webkit.ValueCallback;
 import android.webkit.WebBackForwardList;
@@ -55,6 +56,7 @@ public class SSOActivity extends WebViewActivity {
 
 	public ErrorHandlerView mErrorHandlerView;
 	private WGlobalState mGlobalState;
+	private boolean isKMSIChecked;
 
 	public enum SSOActivityResult {
 		LAUNCH(1),
@@ -108,6 +110,8 @@ public class SSOActivity extends WebViewActivity {
 		mGlobalState = ((WoolworthsApplication) getApplication()).getWGlobalState();
 		mErrorHandlerView = new ErrorHandlerView(SSOActivity.this, (RelativeLayout) findViewById
 				(R.id.no_connection_layout));
+		isKMSIChecked = Utils.getUserKMSIState();
+		handleUIForKMSIEntry((Utils.getUserKMSIState() && SSOActivity.this.path == Path.SIGNIN));
 	}
 
 	private void instantiateWebView() {
@@ -115,6 +119,7 @@ public class SSOActivity extends WebViewActivity {
 		this.webView.getSettings().setUseWideViewPort(true);
 		this.webView.getSettings().setLoadWithOverviewMode(true);
 		this.webView.getSettings().setDomStorageEnabled(true);
+		this.webView.addJavascriptInterface(new KMSIState(),"injection");
 		if (Build.VERSION.SDK_INT >= 21) {
 			this.webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
 		}
@@ -164,6 +169,7 @@ public class SSOActivity extends WebViewActivity {
 						index--;
 					}
 					mErrorHandlerView.hideErrorHandlerLayout();
+					handleUIForKMSIEntry(Utils.getUserKMSIState());
 				}
 			}
 		});
@@ -351,7 +357,8 @@ public class SSOActivity extends WebViewActivity {
 					.appendQueryParameter("redirect_uri", redirectURIString)
 					.appendQueryParameter("state", this.state)
 					.appendQueryParameter("nonce", this.nonce)
-					.appendQueryParameter("scope", scope);
+					.appendQueryParameter("scope", scope)
+					.appendQueryParameter("appVersion",WoolworthsApplication.getAppVersionName());
 		}
 
 		if (this.extraQueryStringParams != null) {
@@ -369,8 +376,14 @@ public class SSOActivity extends WebViewActivity {
 		return constructedURL;
 	}
 
+	/* Check whether the URL that we pass in
+	 * is one of the URLs that we're listing for.
+	 * The URL parameter may contain url-encoded characters.
+	 *
+	 * When this method is called with a null state
+	 * the local redirectURL is null, do nothing and log to firebase.
+	 * */
 	private boolean isNavigatingToRedirectURL(String url) {
-
 		//Fixes WOP-3286
 		if (redirectURIString == null || this.state == null){
 			//report this to analytics
@@ -395,6 +408,32 @@ public class SSOActivity extends WebViewActivity {
 			if (!url.contains("logout"))
 				showProgressBar();
 			stsParams = SessionUtilities.getInstance().getSTSParameters();
+
+			if (extraQueryStringParams != null) {
+				int indexOfQuestionMark = url.indexOf("?");
+				if (indexOfQuestionMark > -1) {
+					String urlWithoutQueryString = url.substring(0, indexOfQuestionMark);
+
+					if (urlWithoutQueryString.equals(extraQueryStringParams.get("post_logout_redirect_uri"))) {
+						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
+						Intent intent = new Intent();
+						setResult(SSOActivityResult.SIGNED_OUT.rawValue(), intent);
+						Utils.setUserKMSIState(false);
+						closeActivity();
+					} else {
+					}
+				}
+
+			} else if (url.equalsIgnoreCase(WoolworthsApplication.getSsoUpdateDetailsRedirectUri())) {
+				setResult(SSOActivityResult.CHANGE_PASSWORD.rawValue());
+				closeActivity();
+			}
+		}
+
+
+		@Override
+		public void onPageFinished(WebView view, String url) {
+			super.onPageFinished(view, url);
 
 			if (SSOActivity.this.path == Path.SIGNIN || SSOActivity.this.path == Path.REGISTER) {
 				view.evaluateJavascript("(function(){return {'content': [document.forms[0].state.value.toString(), document.forms[0].id_token.value.toString()]}})();", new ValueCallback<String>() {
@@ -434,6 +473,7 @@ public class SSOActivity extends WebViewActivity {
 							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.ACTIVE);
 							QueryBadgeCounter.getInstance().queryBadgeCount();
 							setResult(SSOActivityResult.SUCCESS.rawValue(), intent);
+							Utils.setUserKMSIState(isKMSIChecked);
 						} else {
 							setResult(SSOActivityResult.STATE_MISMATCH.rawValue(), intent);
 						}
@@ -449,35 +489,17 @@ public class SSOActivity extends WebViewActivity {
 						}
 					}
 				});
-			} else if (extraQueryStringParams != null) {
-				int indexOfQuestionMark = url.indexOf("?");
-				if (indexOfQuestionMark > -1) {
-					String urlWithoutQueryString = url.substring(0, indexOfQuestionMark);
-
-					if (urlWithoutQueryString.equals(extraQueryStringParams.get("post_logout_redirect_uri"))) {
-						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
-						Intent intent = new Intent();
-						setResult(SSOActivityResult.SIGNED_OUT.rawValue(), intent);
-						closeActivity();
-					} else {
-					}
-				}
-
-			} else if (url.equalsIgnoreCase(WoolworthsApplication.getSsoUpdateDetailsRedirectUri())) {
-				setResult(SSOActivityResult.CHANGE_PASSWORD.rawValue());
-				closeActivity();
-			} else {
 			}
-		}
 
-		@Override
-		public boolean shouldOverrideUrlLoading(WebView view, String url) {
-			return super.shouldOverrideUrlLoading(view, url);
-		}
+			if(url.contains("/customerid/login") || url.contains("/customerid/userdetails") || url.contains("/customerid/userdetails/password")){
+				handleUIForKMSIEntry(false);
+			}
 
-		@Override
-		public void onPageFinished(WebView view, String url) {
-			super.onPageFinished(view, url);
+			if (SSOActivity.this.path == Path.SIGNIN) {
+				view.evaluateJavascript("jquery:$('#rememberMe').on('change', function() {injection.reportCheckboxStateChange($(this).is(':checked'))})", null);
+				view.evaluateJavascript("jquery:injection.reportCheckboxState($('#rememberMe').is(':checked'))", null);
+			}
+
 			if (isNavigatingToRedirectURL(url)) {
 				//get state and scope from webview posted form
 				if (SSOActivity.this.path.rawValue().equals(Path.LOGOUT.rawValue())) {
@@ -619,8 +641,11 @@ public class SSOActivity extends WebViewActivity {
 	}
 
 	private void showFailureView(String s) {
-		if (!NetworkManager.getInstance().isConnectedToNetwork(SSOActivity.this))
+		if (!NetworkManager.getInstance().isConnectedToNetwork(SSOActivity.this)) {
+			//This handle UI to show the Action bar when UI is transparent
+			handleUIForKMSIEntry(false);
 			mErrorHandlerView.networkFailureHandler(s);
+		}
 	}
 
 	public void finishActivity() {
@@ -631,5 +656,22 @@ public class SSOActivity extends WebViewActivity {
 			overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
 		else
 			overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
+	}
+
+	class KMSIState extends Object{
+		@JavascriptInterface
+		public void reportCheckboxState(boolean isChecked) {
+			isKMSIChecked = isChecked;
+		}
+
+		@JavascriptInterface
+		public void reportCheckboxStateChange(boolean isChecked) {
+			isKMSIChecked = isChecked;
+		}
+	}
+
+	public void handleUIForKMSIEntry(boolean showKMSIView) {
+		ssoLayout.setVisibility(showKMSIView ? View.GONE : View.VISIBLE);
+		loadingProgressBarKMSI.setVisibility(showKMSIView ? View.VISIBLE : View.GONE);
 	}
 }
