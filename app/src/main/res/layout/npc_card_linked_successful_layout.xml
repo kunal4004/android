@@ -38,23 +38,6 @@
         app:layout_constraintTop_toBottomOf="@+id/tvSuccessCardLinkedDesc" />
 
     <TextView
-        android:id="@+id/tvCongratulationTitle2"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="32dp"
-        android:fontFamily="@font/futura_semi_bold_ttf"
-        android:gravity="center"
-        android:lineSpacingExtra="10sp"
-        android:text="@string/congratulations_title_2"
-        android:textColor="@color/offer_title"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvCongratulationTitle1" />
-
-    <TextView
         android:id="@+id/tvCongratulationTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -71,30 +54,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/tvCongratulationTitle1"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="32dp"
-        android:fontFamily="@font/futura_semi_bold_ttf"
-        android:gravity="center"
-        android:lineSpacingExtra="10sp"
-        android:text="@string/congratulations_title_1"
-        android:textColor="@color/offer_title"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvCongratulationTitle" />
-
 
     <TextView
         android:id="@+id/tvSuccessCardLinkedDesc"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="12dp"
         android:layout_marginEnd="16dp"
         android:fontFamily="@font/myriad_pro_regular_otf"
         android:gravity="center"
@@ -103,7 +69,7 @@
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvCongratulationTitle2" />
+        app:layout_constraintTop_toBottomOf="@+id/tvCongratulationTitle" />
 
 
     <Button

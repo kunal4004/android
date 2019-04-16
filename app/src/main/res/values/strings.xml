@@ -947,9 +947,7 @@
     <string name="resend_sms_to">SMS to *** **** 1234</string>
     <string name="send_to_your_email_address">Send to your email address</string>
     <string name="call_center_desc"> Call Centre 0861 50 20 20</string>
-    <string name="congratulations_title">Congratulations!</string>
-    <string name="congratulations_title_1">Your New Card Has Successfully!</string>
-    <string name="congratulations_title_2">Been Linked.</string>
+    <string name="congratulations_title">Congratulations!\nYour New Card Has Successfully Been Linked.</string>
     <string name="congratulations_desc">Please remember to take your SA Identity</string>
     <string name="congratulations_desc_1">Document(ID) along for your first</string>
     <string name="congratulations_desc_2">purchase with this card.</string>

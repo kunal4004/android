@@ -7,11 +7,13 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import android.view.View.GONE
+import android.view.View.VISIBLE
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.my_card_activity.*
 import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity.Companion.BLOCK_MY_CARD_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.card.LinkNewCardActivity.Companion.LINK_NEW_CARD_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
+import za.co.woolworths.financial.services.android.ui.extension.replaceFragmentSafely
 import za.co.woolworths.financial.services.android.ui.fragments.card.GetReplacementCardFragment
 import za.co.woolworths.financial.services.android.ui.fragments.card.MyCardBlockedFragment
 import za.co.woolworths.financial.services.android.ui.fragments.card.MyCardDetailFragment
@@ -22,7 +24,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class MyCardDetailActivity : AppCompatActivity() {
 
-    var mCardDetail: String? = null
+    private var mCardDetail: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,8 +44,7 @@ class MyCardDetailActivity : AppCompatActivity() {
             addFragment(
                     fragment = MyCardDetailFragment.newInstance(this),
                     tag = MyCardDetailFragment::class.java.simpleName,
-                    containerViewId = R.id.flMyCard
-            )
+                    containerViewId = R.id.flMyCard)
         }
     }
 
@@ -96,31 +97,8 @@ class MyCardDetailActivity : AppCompatActivity() {
 
     private fun getCurrentFragment(): Fragment? = supportFragmentManager?.findFragmentById(R.id.flMyCard)
 
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        when (requestCode) {
-            LINK_NEW_CARD_REQUEST_CODE -> {
-                when (resultCode) {
-                    NPC_CARD_LINKED_SUCCESS_RESULT_CODE -> addCardDetailFragment()
-                }
-            }
-
-            BLOCK_MY_CARD_REQUEST_CODE -> {
-                when (resultCode) {
-                    RESULT_OK -> addFragment(
-                            fragment = MyCardBlockedFragment.newInstance(),
-                            tag = MyCardBlockedFragment::class.java.simpleName,
-                            containerViewId = R.id.flMyCard)
-                }
-            }
-
-        }
-    }
-
     private fun showToolbarTitle() {
-        toolbarText?.visibility = GONE
+        toolbarText?.visibility = VISIBLE
     }
 
     fun hideToolbarTitle() {
@@ -129,5 +107,28 @@ class MyCardDetailActivity : AppCompatActivity() {
 
     fun changeToolbarBackground(colorId: Int) {
         tbMyCard?.setBackgroundColor(ContextCompat.getColor(this, colorId))
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            LINK_NEW_CARD_REQUEST_CODE -> {
+                when (resultCode) {
+                    NPC_CARD_LINKED_SUCCESS_RESULT_CODE -> addCardDetailFragment()
+                }
+            }
+            BLOCK_MY_CARD_REQUEST_CODE -> {
+                when (resultCode) {
+                    RESULT_OK -> replaceFragmentSafely(
+                            fragment = MyCardBlockedFragment.newInstance(),
+                            tag = MyCardBlockedFragment::class.java.simpleName,
+                            containerViewId = R.id.flMyCard,
+                            allowBackStack = false,
+                            allowStateLoss = false
+                     )
+                }
+            }
+        }
     }
 }

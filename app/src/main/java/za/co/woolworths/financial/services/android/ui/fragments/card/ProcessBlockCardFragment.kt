@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.card
 import android.app.Activity.RESULT_OK
 import android.os.Bundle
 import android.os.Handler
+import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
@@ -54,10 +55,20 @@ class ProcessBlockCardFragment : MyCardExtension() {
         }
 
         btn_ok_got_it?.setOnClickListener { navigateToMyCardActivity() }
+
+        hideToolbarIcon()
+    }
+
+    private fun hideToolbarIcon() {
+        (activity as? AppCompatActivity)?.supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(false)
+            setDisplayShowTitleEnabled(false)
+            setDisplayUseLogoEnabled(false)
+        }
     }
 
     private fun navigateToMyCardActivity() {
-        activity.apply {
+        activity?.apply {
             setResult(NPC_CARD_LINKED_SUCCESS_RESULT_CODE, null)
             finish()
             overridePendingTransition(0, 0)
