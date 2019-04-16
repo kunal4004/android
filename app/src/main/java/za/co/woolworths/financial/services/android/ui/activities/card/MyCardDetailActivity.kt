@@ -125,7 +125,11 @@ class MyCardDetailActivity : AppCompatActivity() {
                             tag = MyCardBlockedFragment::class.java.simpleName,
                             containerViewId = R.id.flMyCard,
                             allowBackStack = false,
-                            allowStateLoss = false
+                            allowStateLoss = false,
+                            enterAnimation = R.anim.slide_in_from_right,
+                            exitAnimation = R.anim.slide_to_left,
+                            popEnterAnimation = R.anim.slide_from_left,
+                            popExitAnimation = R.anim.slide_to_right
                      )
                 }
             }

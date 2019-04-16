@@ -136,10 +136,12 @@ class EnterOtpFragment : MyCardExtension() {
             true -> {
                 imNextProcessLinkCard?.isEnabled = true
                 imNextProcessLinkCard?.alpha = 1.0f
+                imNextProcessLinkCard?.isFocusable  = false
             }
             false -> {
                 imNextProcessLinkCard?.isEnabled = false
                 imNextProcessLinkCard?.alpha = 0.5f
+                imNextProcessLinkCard?.isFocusable  = true
             }
         }
     }
