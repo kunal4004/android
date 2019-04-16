@@ -16,15 +16,15 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
+    <za.co.woolworths.financial.services.android.ui.views.WButton
         android:id="@+id/setupPasscode"
-        android:layout_width="wrap_content"
+        style="@style/blackButtonStyle"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="@dimen/twenty_four_dp"
-        android:text="SETUP PASSCODE"
-        android:textSize="12sp"
+        android:text="@string/setup_passcode"
         app:layout_constraintBottom_toTopOf="@+id/setupLater"
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
         app:layout_constraintStart_toStartOf="@+id/guideline1" />
@@ -33,8 +33,11 @@
         android:id="@+id/setupLater"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="SETUP LATER"
+        android:text="@string/setup_later"
         android:textSize="12sp"
+        app:WTextView_font="light"
+        android:textColor="@color/gray"
+        android:letterSpacing="0.1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
@@ -44,7 +47,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="For your security and to access secure features in our app, you will need to set up a Passcode"
+        style="@style/absa_page_description_text_style"
+        android:text="@string/absa_on_boarding_desc"
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
         app:layout_constraintStart_toStartOf="@+id/guideline1"
         app:layout_constraintTop_toBottomOf="@+id/title" />
@@ -54,7 +58,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
-        android:text="We've added some secure features."
+        style="@style/absa_page_title_text_style"
+        android:text="@string/absa_on_boarding_title"
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
         app:layout_constraintStart_toStartOf="@+id/guideline1"
         app:layout_constraintTop_toBottomOf="@+id/onBoardingImage" />

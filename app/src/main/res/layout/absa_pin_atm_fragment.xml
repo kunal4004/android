@@ -17,27 +17,14 @@
         android:layout_marginBottom="@dimen/eight_dp"
         android:text="@string/absa_biometric_please_enter_your_pin"
         android:textColor="@color/black"
-        android:textSize="@dimen/nineteen_sp"
+        android:textSize="@dimen/twenty_sp"
         app:WTextView_font="bold" />
-
-
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
-        android:id="@+id/tvABSACardNumber"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tvEnterYourPin"
-        android:alpha="0.5"
-        android:lineSpacingExtra="0.14sp"
-        android:lineSpacingMultiplier="1.40"
-        android:text="@string/absa_biometric_please_card_number"
-        android:textColor="@color/offer_title"
-        android:textSize="@dimen/fifteen_sp"
-        app:WTextView_font="myriadpro_regular" />
 
     <LinearLayout
         android:id="@+id/llPinCodeContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:layout_centerInParent="true"
         android:layout_gravity="center"
         android:layout_marginTop="0dp"
@@ -103,14 +90,16 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="@dimen/twenty_four_dp">
 
-        <TextView
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:id="@+id/tvForgotPin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_centerInParent="true"
+            android:textSize="@dimen/fifteen_sp"
             android:gravity="start"
             android:text="@string/absa_biometric_forgot_atm_pin_code"
+            app:WTextView_font="myriadpro_regular"
             android:textColor="@color/black" />
 
         <ImageView
@@ -126,9 +115,15 @@
 
     <za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView
         android:id="@+id/edtEnterATMPin"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:inputType="number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="numberPassword"
+        android:layout_centerInParent="true"
+        android:background="@color/white"
+        android:textColor="@color/black"
+        android:gravity="center"
+        android:textSize="@dimen/twenty_eight_sp"
+        android:letterSpacing="0.5"
         android:maxLength="4">
 
         <requestFocus />

@@ -25,6 +25,7 @@ import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.contracts.IValidatePinCodeDialogInterface
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GotITDialogFragment
+import za.co.woolworths.financial.services.android.util.AsteriskPasswordTransformationMethod
 
 class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListener, IValidatePinCodeDialogInterface, IDialogListener {
 
@@ -56,14 +57,10 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViewsAndEvents()
-        maskPinNumber()
         createTextListener(edtEnterATMPin)
         clearPinImage(mPinImageViewList)
     }
 
-    private fun maskPinNumber() {
-        tvABSACardNumber?.setText(getString(R.string.absa_biometric_please_card_number, maskedCardNumberWithSpaces(mCreditCardNumber)))
-    }
 
     private fun initViewsAndEvents() {
         mPinImageViewList = mutableListOf(ivPin1, ivPin2, ivPin3, ivPin4)
@@ -71,6 +68,7 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
         tvForgotPin.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         tvForgotPin.setOnClickListener(this)
         ivNavigateToDigitFragment.setOnClickListener(this)
+        edtEnterATMPin.transformationMethod = AsteriskPasswordTransformationMethod()
         edtEnterATMPin.setOnKeyPreImeListener { activity?.onBackPressed() }
         edtEnterATMPin.setOnEditorActionListener { _, actionId, _ ->
             var handled = false

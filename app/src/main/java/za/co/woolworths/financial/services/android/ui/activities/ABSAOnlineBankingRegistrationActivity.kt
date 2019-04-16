@@ -4,15 +4,13 @@ import android.os.Bundle
 import android.os.Handler
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
+import android.view.Menu
 import android.view.MenuItem
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_online_banking_to_device_activity.*
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
-import za.co.woolworths.financial.services.android.ui.fragments.absa.AbsaBoardingFragment
-import za.co.woolworths.financial.services.android.ui.fragments.absa.AbsaEnterAtmPinCodeFragment
-import za.co.woolworths.financial.services.android.ui.fragments.absa.AbsaLoginFragment
-import za.co.woolworths.financial.services.android.ui.fragments.absa.AbsaPinCodeSuccessFragment
+import za.co.woolworths.financial.services.android.ui.fragments.absa.*
 import za.co.woolworths.financial.services.android.util.Utils
 
 class ABSAOnlineBankingRegistrationActivity : AppCompatActivity(), IDialogListener {
@@ -68,7 +66,7 @@ class ABSAOnlineBankingRegistrationActivity : AppCompatActivity(), IDialogListen
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            android.R.id.home -> {
+            android.R.id.home, R.id.itmIconClose -> {
                 navigateBack()
                 return true
             }
@@ -82,8 +80,13 @@ class ABSAOnlineBankingRegistrationActivity : AppCompatActivity(), IDialogListen
 
     private fun navigateBack() {
         // Refrain from navigate to previous fragment when landing fragment is AbsaPinCodeSuccessFragment
-        if (getCurrentFragment() is AbsaPinCodeSuccessFragment) {
+        if ((getCurrentFragment() is AbsaPinCodeSuccessFragment) || (getCurrentFragment() is AbsaLoginFragment)) {
             finishActivity()
+            return
+        }
+
+        if ((getCurrentFragment() is AbsaFiveDigitCodeFragment) || (getCurrentFragment() is AbsaConfirmFiveDigitCodeFragment)) {
+            closeDownActivity()
             return
         }
 
@@ -106,5 +109,17 @@ class ABSAOnlineBankingRegistrationActivity : AppCompatActivity(), IDialogListen
 
     override fun onDialogDismissed() {
         Handler().postDelayed({ finishActivity() }, 200)
+    }
+
+    private fun closeDownActivity() {
+        this.apply {
+            finish()
+            overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.absa_close_activity_menu, menu)
+        return super.onCreateOptionsMenu(menu)
     }
 }

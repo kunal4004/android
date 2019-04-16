@@ -851,9 +851,9 @@
     <string name="tips_tricks_desc_navigation_sign_in">Tap the cart icon in the bottom menu to see the items you’ve added.</string>
     <string name="refinement_see_result_button_text">All\u0020</string>
     <string name="absa_link_banking_to_device_title">Link Online Banking to this Device</string>
-    <string name="absa_biometric_please_enter_your_pin">Please Enter Your ATM Pin.</string>
+    <string name="absa_biometric_please_enter_your_pin">Enter Your Credit Card ATM PIN</string>
     <string name="absa_biometric_please_card_number">Card number %1$s</string>
-    <string name="absa_biometric_forgot_atm_pin_code">Forgot ATM Pin Code</string>
+    <string name="absa_biometric_forgot_atm_pin_code">Forgot ATM PIN</string>
     <string name="absa_forgot_atm_pin_code_title">FORGOT ATM PIN CODE</string>
     <string name="absa_forgot_atm_pin_code_desc">Please contact us on 0861 50 20 20 or email us at queries@wfs.co.za for assistance.</string>
     <string name="absa_enter_five_digit_code_title">Please Enter a 5 Digit Code. </string>
@@ -906,4 +906,12 @@
     <string name="please_wait">Please wait...</string>
     <string name="update_title">Update Available</string>
     <string name="update_desc">Please update to the latest version of the App.</string>
+    <string name="ok_got_it">ok, got it</string>
+    <string name="processing_your_request">Processing Your Request</string>
+    <string name="absa_registration_in_progress_desc">This may take a few seconds</string>
+    <string name="absa_registration_success_desc">Almost there. Complete the final step to \n" +"set up your passcode.</string>
+    <string name="setup_passcode">SETUP PASSCODE</string>
+    <string name="absa_on_boarding_desc">For your security and to access secure features in our app, you will need to set up a Passcode</string>
+    <string name="absa_on_boarding_title">We\'ve added some secure features.</string>
+    <string name="setup_later">SETUP LATER</string>
 </resources>

@@ -4,11 +4,9 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.LayoutInflater
-import android.view.View
+import android.view.*
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
-import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.ImageView
@@ -34,6 +32,12 @@ class AbsaLoginFragment : AbsaFragmentExtension() {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater?.inflate(R.layout.absa_login_fragment, container, false)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+        (activity as AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
@@ -186,4 +190,10 @@ class AbsaLoginFragment : AbsaFragmentExtension() {
     fun displayLoginProgress(state: Boolean) {
         pbLoginProgress.visibility = if (state) VISIBLE else INVISIBLE
     }
+
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        menu?.getItem(0)?.isVisible = false
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
 }
