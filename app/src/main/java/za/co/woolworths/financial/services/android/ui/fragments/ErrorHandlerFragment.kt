@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments
 
 import android.app.Activity
+import android.graphics.Paint
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -42,7 +43,7 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener {
     }
 
     private fun initListeners() {
-
+        cancelButton.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         cancelButton.setOnClickListener(this)
         actionButton.setOnClickListener(this)
 
@@ -58,11 +59,13 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener {
             }
             ErrorHandlerActivity.PASSCODE_LOCKED -> {
                 errorLogo.setImageResource(R.drawable.ic_passcode_locked_icon)
+                errorTitle.text = getString(R.string.unsuccessful_request)
+                cancelButton.text = getString(R.string.error_action_later)
+                actionButton.text = getString(R.string.reset_passcode)
             }
             ErrorHandlerActivity.COMMON -> {
                 errorLogo.setImageResource(R.drawable.ic_error_icon)
                 errorTitle.text = getString(R.string.unsuccessful_request)
-                cancelButton.visibility = View.VISIBLE
                 actionButton.text = getString(R.string.retry)
             }
             ErrorHandlerActivity.WITH_NO_ACTION -> {
@@ -76,10 +79,7 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener {
     override fun onClick(p0: View?) {
         when (p0?.id) {
             R.id.cancelButton -> {
-                activity?.apply {
-                    setResult(Activity.RESULT_CANCELED)
-                    finish()
-                }
+                setResultBAck(Activity.RESULT_CANCELED)
             }
             R.id.actionButton -> {
                 when (errorType) {
@@ -87,16 +87,21 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener {
 
                     }
                     ErrorHandlerActivity.PASSCODE_LOCKED -> {
-
+                        setResultBAck(ErrorHandlerActivity.RESULT_RESET_PASSCODE)
                     }
                     ErrorHandlerActivity.COMMON -> {
-                        activity?.apply {
-                            setResult(ErrorHandlerActivity.RESULT_RETRY)
-                            finish()
-                        }
+                        setResultBAck(ErrorHandlerActivity.RESULT_RETRY)
                     }
+
                 }
             }
+        }
+    }
+
+    private fun setResultBAck(resultCode: Int) {
+        activity?.apply {
+            setResult(resultCode)
+            finish()
         }
     }
 

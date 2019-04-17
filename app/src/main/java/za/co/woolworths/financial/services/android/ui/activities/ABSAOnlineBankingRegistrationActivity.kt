@@ -125,6 +125,11 @@ class ABSAOnlineBankingRegistrationActivity : AppCompatActivity(), IDialogListen
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_CANCELED) {
             closeDownActivity()
+        } else if (requestCode == ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE && resultCode == ErrorHandlerActivity.RESULT_RESET_PASSCODE) {
+            addFragment(
+                    fragment = AbsaEnterAtmPinCodeFragment.newInstance(mCreditAccountInfo),
+                    tag = AbsaEnterAtmPinCodeFragment::class.java.simpleName,
+                    containerViewId = R.id.flAbsaOnlineBankingToDevice)
         } else {
             getCurrentFragment()?.onActivityResult(requestCode, resultCode, data)
         }

@@ -124,13 +124,14 @@ class AbsaLoginFragment : AbsaFragmentExtension() {
        // message?.let { tapAndNavigateBackErrorDialog(it) }
         when {
             message?.trim()?.contains("authentication failed", true)!! -> {
-                //ErrorHandlerView(activity).showToast(getString(R.string.incorrect_pin_alert))
+                ErrorHandlerView(activity).showToast(getString(R.string.incorrect_passcode_alert))
+                clearPin()
             }
-            message.trim().contains("218-invalid card status.", true) -> {
-                //showErrorScreen(ErrorHandlerActivity.ATM_PIN_LOCKED)
+            message.trim().contains("credential revoked", true) -> {
+                showErrorScreen(ErrorHandlerActivity.PASSCODE_LOCKED)
             }
             else -> {
-                //showErrorScreen(ErrorHandlerActivity.COMMON)
+                showErrorScreen(ErrorHandlerActivity.COMMON)
             }
         }
     }
@@ -215,6 +216,18 @@ class AbsaLoginFragment : AbsaFragmentExtension() {
             val intent: Intent = Intent(it, ErrorHandlerActivity::class.java)
             intent.putExtra("errorType", errorType)
             it.startActivityForResult(intent, ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE) {
+            when (resultCode) {
+                ErrorHandlerActivity.RESULT_RETRY -> {
+                    clearPin()
+                    alwaysShowWindowSoftInputMode()
+                }
+            }
         }
     }
 

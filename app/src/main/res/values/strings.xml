@@ -918,5 +918,8 @@
     <string name="unsuccessful_request_desc">Your request was unsuccessful. Please click retry to try again.</string>
     <string name="incorrect_pin_alert">Incorrect PIN. Please note on your third failed attempt your profile will be blocked.</string>
     <string name="error_atm_pin_locked_title">Credit Card ATM PIn Locked</string>
-    <string name="passcode_bot_match_alert">Your Passcode does not match. Please try again.</string>
+    <string name="passcode_not_match_alert">Your Passcode does not match. Please try again.</string>
+    <string name="error_action_later">later</string>
+    <string name="reset_passcode">RESET PASSCODE</string>
+    <string name="incorrect_passcode_alert">Incorrect Passcode. After your third failed attempt your Passcode will be blocked.</string>
 </resources>

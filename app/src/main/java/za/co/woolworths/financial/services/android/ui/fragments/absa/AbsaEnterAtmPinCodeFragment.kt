@@ -60,6 +60,7 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        alwaysShowWindowSoftInputMode()
         initViewsAndEvents()
         createTextListener(edtEnterATMPin)
         clearPinImage(mPinImageViewList)

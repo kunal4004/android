@@ -24,6 +24,7 @@ class ErrorHandlerActivity : AppCompatActivity() {
 
         //RESULT_CODES
         const val RESULT_RETRY: Int = 153
+        const val RESULT_RESET_PASSCODE: Int = 155
         //REQUEST_CODES
         const val ERROR_PAGE_REQUEST_CODE: Int = 190
     }

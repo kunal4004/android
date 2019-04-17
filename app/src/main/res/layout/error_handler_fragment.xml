@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/eighty_dp"
-        android:contentDescription="@string/app_label"/>
+        android:contentDescription="@string/app_label" />
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/errorTitle"
@@ -39,34 +39,33 @@
         android:text="@string/unsuccessful_request_desc" />
 
     <LinearLayout
+        android:id="@+id/actionsLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:id="@+id/actionsLayout"
         android:layout_alignParentBottom="true"
-        >
+        android:orientation="vertical">
 
 
-    <za.co.woolworths.financial.services.android.ui.views.WButton
-        android:id="@+id/actionButton"
-        style="@style/blackButtonStyle"
-        android:layout_marginLeft="@dimen/twenty_four_dp"
-        android:layout_marginRight="@dimen/twenty_four_dp"
-        android:layout_marginBottom="@dimen/twenty_four_dp"
-        android:text="@string/retry" />
+        <za.co.woolworths.financial.services.android.ui.views.WButton
+            android:id="@+id/actionButton"
+            style="@style/blackButtonStyle"
+            android:layout_marginLeft="@dimen/twenty_four_dp"
+            android:layout_marginRight="@dimen/twenty_four_dp"
+            android:layout_marginBottom="@dimen/twenty_four_dp"
+            android:text="@string/retry" />
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
-        android:id="@+id/cancelButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/twenty_four_dp"
-        android:letterSpacing="0.1"
-        android:text="@string/cancel"
-        android:textColor="@color/gray"
-        android:textSize="12sp"
-        app:WTextView_font="light"
-        android:layout_gravity="center_horizontal"
-        />
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/cancelButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/twenty_four_dp"
+            android:letterSpacing="0.1"
+            android:text="@string/cancel"
+            android:textAllCaps="true"
+            android:textColor="@color/gray"
+            android:textSize="12sp"
+            app:WTextView_font="light" />
     </LinearLayout>
 
 </RelativeLayout>

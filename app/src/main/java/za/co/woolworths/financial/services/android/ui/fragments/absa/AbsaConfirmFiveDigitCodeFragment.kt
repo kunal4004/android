@@ -93,7 +93,7 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
             if (fiveDigitPin.toInt() == mBundleFiveDigitCodePinCode) {
                 navigateToAbsaPinCodeSuccessFragment(mAliasId, mDeviceId, fiveDigitPin, mJSession)
             } else {
-                ErrorHandlerView(activity).showToast(getString(R.string.passcode_bot_match_alert))
+                ErrorHandlerView(activity).showToast(getString(R.string.passcode_not_match_alert))
             }
         }
     }
