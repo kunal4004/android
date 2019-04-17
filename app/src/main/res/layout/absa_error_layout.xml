@@ -1,6 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-</android.support.constraint.ConstraintLayout>
+    <ImageView
+        android:id="@+id/ivAppLogo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/eighty_dp"
+        android:contentDescription="@string/app_label"
+        app:srcCompat="@drawable/ic_error_icon" />
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/tvTitle"
+        style="@style/absa_page_title_text_style"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ivAppLogo"
+        android:layout_marginStart="@dimen/thirty_two_dp"
+        android:layout_marginTop="@dimen/fifty_eight_dp"
+        android:layout_marginEnd="@dimen/thirty_two_dp"
+        android:layout_marginBottom="@dimen/eight_dp"
+        android:gravity="center"
+        android:text="@string/unsuccessful_request" />
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/tvDescription"
+        style="@style/absa_page_description_text_style"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvTitle"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="@dimen/sixteen_dp"
+        android:layout_marginEnd="32dp"
+        android:background="@color/white"
+        android:gravity="center"
+        android:text="@string/unsuccessful_request_desc" />
+
+    <za.co.woolworths.financial.services.android.ui.views.WButton
+        android:id="@+id/gotItButton"
+        style="@style/blackButtonStyle"
+        android:layout_above="@+id/cancel"
+        android:layout_marginLeft="@dimen/twenty_four_dp"
+        android:layout_marginRight="@dimen/twenty_four_dp"
+        android:layout_marginBottom="@dimen/twenty_four_dp"
+        android:text="@string/retry"
+        android:visibility="visible" />
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:letterSpacing="0.1"
+        android:text="@string/cancel"
+        android:textColor="@color/gray"
+        android:textSize="12sp"
+        app:WTextView_font="light"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/twenty_four_dp"
+        android:layout_centerHorizontal="true"
+        />
+
+</RelativeLayout>

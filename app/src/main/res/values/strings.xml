@@ -914,4 +914,6 @@
     <string name="absa_on_boarding_desc">For your security and to access secure features in our app, you will need to set up a Passcode</string>
     <string name="absa_on_boarding_title">We\'ve added some secure features.</string>
     <string name="setup_later">SETUP LATER</string>
+    <string name="unsuccessful_request">Unsuccessful Request</string>
+    <string name="unsuccessful_request_desc">Your request was unsuccessful. Please click retry to try again.</string>
 </resources>

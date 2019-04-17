@@ -35,10 +35,6 @@ class ABSAOnlineBankingRegistrationActivity : AppCompatActivity(), IDialogListen
                         tag = AbsaLoginFragment::class.java.simpleName,
                         containerViewId = R.id.flAbsaOnlineBankingToDevice)
             } else {
-                /*addFragment(
-                        fragment = AbsaEnterAtmPinCodeFragment.newInstance(mCreditAccountInfo),
-                        tag = AbsaEnterAtmPinCodeFragment::class.java.simpleName,
-                        containerViewId = R.id.flAbsaOnlineBankingToDevice)*/
                 addFragment(
                         fragment = AbsaBoardingFragment.newInstance(mCreditAccountInfo),
                         tag = AbsaBoardingFragment::class.java.simpleName,
