@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.absa
 
 import android.app.Activity.RESULT_OK
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
@@ -16,6 +17,8 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.RegisterCredentialRe
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse
 import za.co.absa.openbankingapi.woolworths.integration.service.VolleyErrorHandler
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
+import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity.Companion.ERROR_PAGE_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import java.net.HttpCookie
@@ -78,7 +81,6 @@ class AbsaPinCodeSuccessFragment : Fragment() {
 
     private fun registerCredentials(aliasId: String?, deviceId: String?, fiveDigitPin: String, jSession: JSession?) {
         activity?.let {
-            displayRegisterCredentialProgress(true)
             AbsaRegisterCredentialRequest(it).make(aliasId, deviceId, fiveDigitPin, jSession,
                     object : AbsaBankingOpenApiResponse.ResponseDelegate<RegisterCredentialResponse> {
 
@@ -96,21 +98,19 @@ class AbsaPinCodeSuccessFragment : Fragment() {
 
                                     onRegistrationSuccess()
                                 } else {
-                                    //failureHandler(header?.resultMessages?.first()?.responseMessage)
+                                    showErrorScreen(ErrorHandlerActivity.WITH_NO_ACTION)
                                 }
                             }
-
-                            displayRegisterCredentialProgress(false)
 
                         }
 
                         override fun onFailure(errorMessage: String) {
                             Log.d("onSuccess", "onFailure")
-                            displayRegisterCredentialProgress(false)
+                            showErrorScreen(ErrorHandlerActivity.WITH_NO_ACTION)
                         }
 
                         override fun onFatalError(error: VolleyError?) {
-                            (activity as? AppCompatActivity)?.apply { error?.let { error -> VolleyErrorHandler(this, error).show() } }
+                            showErrorScreen(ErrorHandlerActivity.WITH_NO_ACTION)
                         }
                     })
         }
@@ -141,9 +141,12 @@ class AbsaPinCodeSuccessFragment : Fragment() {
         view?.postDelayed({ message?.let { tapAndDismissErrorDialog(it) } }, 200)
     }*/
 
-    fun displayRegisterCredentialProgress(state: Boolean) {
-        //pbRegisterCredential.visibility = if (state) View.VISIBLE else View.INVISIBLE
-        //activity?.let { pbRegisterCredential?.indeterminateDrawable?.setColorFilter(ContextCompat.getColor(it, R.color.black), android.graphics.PorterDuff.Mode.SRC_IN) }
+    private fun showErrorScreen(errorType: Int) {
+        activity.let {
+            val intent: Intent = Intent(it, ErrorHandlerActivity::class.java)
+            intent.putExtra("errorType", errorType)
+            it.startActivityForResult(intent, ERROR_PAGE_REQUEST_CODE)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {

@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.absa
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.text.Editable
@@ -18,6 +19,8 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.LoginResponse
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse
 import za.co.absa.openbankingapi.woolworths.integration.service.VolleyErrorHandler
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import java.net.HttpCookie
 
 class AbsaLoginFragment : AbsaFragmentExtension() {
@@ -101,8 +104,8 @@ class AbsaLoginFragment : AbsaFragmentExtension() {
                         }
 
                         override fun onFailure(errorMessage: String) {
-                            failureHandler(errorMessage)
                             displayLoginProgress(false)
+                            failureHandler(errorMessage)
                         }
 
                         override fun onFatalError(error: VolleyError?) {
@@ -118,7 +121,18 @@ class AbsaLoginFragment : AbsaFragmentExtension() {
 
     private fun failureHandler(message: String?) {
         cancelRequest()
-        message?.let { tapAndNavigateBackErrorDialog(it) }
+       // message?.let { tapAndNavigateBackErrorDialog(it) }
+        when {
+            message?.trim()?.contains("authentication failed", true)!! -> {
+                //ErrorHandlerView(activity).showToast(getString(R.string.incorrect_pin_alert))
+            }
+            message.trim().contains("218-invalid card status.", true) -> {
+                //showErrorScreen(ErrorHandlerActivity.ATM_PIN_LOCKED)
+            }
+            else -> {
+                //showErrorScreen(ErrorHandlerActivity.COMMON)
+            }
+        }
     }
 
     private fun createTextListener(edtEnterATMPin: EditText?) {
@@ -194,6 +208,14 @@ class AbsaLoginFragment : AbsaFragmentExtension() {
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         menu?.getItem(0)?.isVisible = false
         super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    private fun showErrorScreen(errorType: Int) {
+        activity.let {
+            val intent: Intent = Intent(it, ErrorHandlerActivity::class.java)
+            intent.putExtra("errorType", errorType)
+            it.startActivityForResult(intent, ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE)
+        }
     }
 
 }

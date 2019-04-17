@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.activities
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.app.Fragment
@@ -117,5 +119,14 @@ class ABSAOnlineBankingRegistrationActivity : AppCompatActivity(), IDialogListen
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.absa_close_activity_menu, menu)
         return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_CANCELED) {
+            closeDownActivity()
+        } else {
+            getCurrentFragment()?.onActivityResult(requestCode, resultCode, data)
+        }
     }
 }

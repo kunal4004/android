@@ -19,6 +19,7 @@ import android.view.animation.AnimationUtils
 import za.co.absa.openbankingapi.woolworths.integration.AbsaRegisterCredentialRequest
 import za.co.woolworths.financial.services.android.contracts.IVibrateComplete
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 
 class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener, IVibrateComplete {
 
@@ -92,7 +93,7 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
             if (fiveDigitPin.toInt() == mBundleFiveDigitCodePinCode) {
                 navigateToAbsaPinCodeSuccessFragment(mAliasId, mDeviceId, fiveDigitPin, mJSession)
             } else {
-                vibrate(this)
+                ErrorHandlerView(activity).showToast(getString(R.string.passcode_bot_match_alert))
             }
         }
     }
@@ -180,35 +181,6 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
         }
     }
 
-    private fun vibrate(onVibrateComplete: IVibrateComplete) {
-        this.mVibrateComplete = onVibrateComplete
-        activity?.apply {
-            mShakeAnimation = AnimationUtils.loadAnimation(this, R.anim.shake)
-            mShakeAnimation?.setAnimationListener(object : Animation.AnimationListener {
-                override fun onAnimationStart(animation: Animation) {
-
-                }
-
-                override fun onAnimationEnd(animation: Animation) {
-                    if (animation === mShakeAnimation) {
-                        mVibrateComplete?.onAnimationComplete()
-                    }
-                }
-
-                override fun onAnimationRepeat(animation: Animation) {
-
-                }
-            })
-
-            ivEnterFiveDigitCode?.startAnimation(mShakeAnimation)
-            val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                vibrator.vibrate(VibrationEffect.createOneShot(VIBRATE_DURATION, VibrationEffect.DEFAULT_AMPLITUDE))
-            } else {
-                vibrator.vibrate(VIBRATE_DURATION)
-            }
-        }
-    }
 
     override fun onAnimationComplete() {
         clearPin()

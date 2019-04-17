@@ -15,8 +15,8 @@ open class AbsaFragmentExtension : Fragment() {
     fun showKeyboard(editText: EditText) {
         editText.requestFocus()
         activity?.let {
-            editText.requestFocus()
             editText.isFocusableInTouchMode = true
+            editText.requestFocus()
             val imm = it.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
         }
@@ -55,5 +55,8 @@ open class AbsaFragmentExtension : Fragment() {
         VolleySingleton.getInstance()?.apply {
             cancelRequest(name)
         }
+    }
+    fun alwaysShowWindowSoftInputMode() {
+        activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
     }
 }

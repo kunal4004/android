@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.absa
 
+import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -23,9 +24,12 @@ import za.co.absa.openbankingapi.woolworths.integration.dao.JSession
 import za.co.absa.openbankingapi.woolworths.integration.service.VolleyErrorHandler
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.contracts.IValidatePinCodeDialogInterface
+import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
+import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity.Companion.ERROR_PAGE_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GotITDialogFragment
 import za.co.woolworths.financial.services.android.util.AsteriskPasswordTransformationMethod
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 
 class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListener, IValidatePinCodeDialogInterface, IDialogListener {
 
@@ -163,7 +167,7 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
     }
 
     override fun onDialogDismissed() {
-        showKeyboard(edtEnterATMPin)
+        alwaysShowWindowSoftInputMode()
     }
 
     override fun onSuccessHandler(jSession: JSession, aliasId: String, deviceId: String) {
@@ -184,12 +188,24 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
         cancelRequest()
         progressIndicator(View.INVISIBLE)
         clearPin()
-        if (dismissActivity) {
+        /*if (dismissActivity) {
             //  Display error message and dismiss dialog on ok button clicked
             tapAndNavigateBackErrorDialog(responseMessage)
             return
         }
-        view?.postDelayed({ tapAndDismissErrorDialog(responseMessage) }, 200)
+        view?.postDelayed({ tapAndDismissErrorDialog(responseMessage) }, 200)*/
+        when {
+            responseMessage.trim().contains("card number and pin validation failed!", true) -> {
+                ErrorHandlerView(activity).showToast(getString(R.string.incorrect_pin_alert))
+            }
+            responseMessage.trim().contains("218-invalid card status.", true) -> {
+                showErrorScreen(ErrorHandlerActivity.ATM_PIN_LOCKED)
+            }
+            else -> {
+                showErrorScreen(ErrorHandlerActivity.COMMON)
+            }
+        }
+
     }
 
     override fun onFatalError(error: VolleyError?) {
@@ -220,5 +236,25 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
         cancelVolleyRequest(AbsaValidateCardAndPinRequest::class.java.simpleName)
         cancelVolleyRequest(AbsaValidateSureCheckRequest::class.java.simpleName)
         cancelVolleyRequest(AbsaCreateAliasRequest::class.java.simpleName)
+    }
+
+    private fun showErrorScreen(errorType: Int) {
+        activity.let {
+            val intent: Intent = Intent(it, ErrorHandlerActivity::class.java)
+            intent.putExtra("errorType", errorType)
+            it.startActivityForResult(intent, ERROR_PAGE_REQUEST_CODE)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == ERROR_PAGE_REQUEST_CODE) {
+            when (resultCode) {
+                ErrorHandlerActivity.RESULT_RETRY -> {
+                    clearPin()
+                    alwaysShowWindowSoftInputMode()
+                }
+            }
+        }
     }
 }

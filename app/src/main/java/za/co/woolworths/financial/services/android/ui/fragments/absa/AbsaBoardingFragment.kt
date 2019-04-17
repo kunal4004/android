@@ -10,6 +10,9 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_on_boarding_fragment.*
 import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
+import android.content.Context.INPUT_METHOD_SERVICE
+import android.view.inputmethod.InputMethodManager
+
 
 class AbsaBoardingFragment : AbsaFragmentExtension(), View.OnClickListener {
 

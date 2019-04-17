@@ -1528,5 +1528,11 @@
         <item name="WTextView_font">myriadpro_regular</item>
     </style>
 
+    <style name="ErrorHandlerActivityStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowActionBarOverlay">false</item>
+    </style>
 
 </resources>
