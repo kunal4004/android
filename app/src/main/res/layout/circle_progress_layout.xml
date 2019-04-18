@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/success_frame"
+    android:layout_width="80dp"
+    android:layout_height="80dp"
+    android:layout_marginBottom="8dp"
+    app:layout_constraintBottom_toTopOf="@+id/incProcessingTextLayout"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent">
+
+    <za.co.woolworths.financial.services.android.ui.views.tick_animation.CircularProgressIndicator
+        android:id="@+id/circle_progress_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        app:direction="counterclockwise"
+        app:dotColor="@color/black"
+        app:enableProgressAnimation="true"
+        app:layout_constraintBottom_toTopOf="@+id/blockCardRadioGroup"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:progressBackgroundColor="@color/grey_bg"
+        app:progressBackgroundStrokeWidth="4dp"
+        app:progressCap="butt"
+        app:progressColor="@color/black"
+        app:progressStrokeWidth="4dp"
+        app:textColor="@android:color/transparent" />
+
+    <za.co.woolworths.financial.services.android.ui.views.tick_animation.SuccessTickView
+        android:id="@+id/success_tick"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:visibility="visible" />
+</FrameLayout>
