@@ -34,7 +34,7 @@ public class WStockFinderActivity extends AppCompatActivity implements StoreFind
     public GoogleMapViewPager mViewPager;
     public StockFinderFragmentAdapter mPagerAdapter;
     private String mProductName;
-    private String mContactInto;
+    private String mContactInto = null;
 
     public interface RecyclerItemSelected {
         void onRecyclerItemClick(View v, int position, String filterType);
@@ -121,8 +121,8 @@ public class WStockFinderActivity extends AppCompatActivity implements StoreFind
 
     private void setupViewPager(GoogleMapViewPager viewPager) {
         mPagerAdapter = new StockFinderFragmentAdapter(getSupportFragmentManager());
-        mPagerAdapter.addFrag(new StoreFinderMapFragment(), getString(R.string.stock_finder_map_view));
-        mPagerAdapter.addFrag(new StoreFinderListFragment(), getString(R.string.stock_finder_list_view));
+        mPagerAdapter.addFrag(StoreFinderMapFragment.newInstance(mContactInto), getString(R.string.stock_finder_map_view));
+        mPagerAdapter.addFrag(StoreFinderListFragment.newInstance(mContactInto), getString(R.string.stock_finder_list_view));
         viewPager.setAdapter(mPagerAdapter);
     }
 
