@@ -854,8 +854,8 @@
     <string name="absa_biometric_please_enter_your_pin">Enter Your Credit Card ATM PIN</string>
     <string name="absa_biometric_please_card_number">Card number %1$s</string>
     <string name="absa_biometric_forgot_atm_pin_code">Forgot ATM PIN</string>
-    <string name="absa_forgot_atm_pin_code_title">FORGOT ATM PIN CODE</string>
-    <string name="absa_forgot_atm_pin_code_desc">Please contact us on 0861 50 20 20 or email us at queries@wfs.co.za for assistance.</string>
+    <string name="absa_forgot_atm_pin_code_title">Forgot ATM PIN</string>
+    <string name="absa_forgot_atm_pin_code_desc"> Please call on 0861 50 20 20 or  email queries@wfs.co.za for assistance</string>
     <string name="absa_enter_five_digit_code_title">Please Enter a 5 Digit Code. </string>
     <string name="absa_enter_five_digit_code_desc">This will be used for your online banking login credentials </string>
     <string name="absa_confirm_five_digit_code_title">Confirm 5 Digit Code.</string>
@@ -922,4 +922,18 @@
     <string name="error_action_later">later</string>
     <string name="reset_passcode">RESET PASSCODE</string>
     <string name="incorrect_passcode_alert">Incorrect Passcode. After your third failed attempt your Passcode will be blocked.</string>
+    <string name="numberkeyboard_zero">0</string>
+    <string name="numberkeyboard_one">1</string>
+    <string name="numberkeyboard_two">2</string>
+    <string name="numberkeyboard_three">3</string>
+    <string name="numberkeyboard_four">4</string>
+    <string name="numberkeyboard_five">5</string>
+    <string name="numberkeyboard_six">6</string>
+    <string name="numberkeyboard_seven">7</string>
+    <string name="numberkeyboard_eight">8</string>
+    <string name="numberkeyboard_nine">9</string>
+    <string name="error_passcode_locked_title">Passcode Locked</string>
+    <string name="error_passcode_locked_desc">You have entered your Passcode incorrectly 3 times. To log in, please reset your Passcode using your Credit Card ATM PIN.</string>
+    <string name="forgot_passcode">Forgot Passcode</string>
+    <string name="forgot_passcode_dialog_desc">Please select RESET PASSCODE and follow the steps to reset your Passcode</string>
 </resources>

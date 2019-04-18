@@ -57,6 +57,7 @@ class AbsaPinCodeSuccessFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+        (activity as AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
         arguments?.apply {
             getString(FIVE_DIGIT_PIN_CODE)?.apply { fiveDigitPin = this }
             getString(JSESSION)?.apply { mJSession = Gson().fromJson(this, JSession::class.java) }

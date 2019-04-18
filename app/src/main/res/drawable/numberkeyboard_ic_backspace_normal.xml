@@ -14,8 +14,7 @@ A4.9803690872192385,4.9803690872192385,0,0,0,44.2978,7.59337 L20.6467,7.59337
 C19.2592,7.59337,17.3238,8.32966,16.3028,9.23855
 C16.3028,9.23855,0.7184,22.9447,0.7184,25.0022 Z"
         android:strokeWidth="1"
-        android:strokeAlpha=".3"
-        android:strokeColor="#1B1A51" />
+        android:strokeColor="#30979797" />
     <path
         android:fillColor="#1B1A51"
         android:fillType="evenOdd"

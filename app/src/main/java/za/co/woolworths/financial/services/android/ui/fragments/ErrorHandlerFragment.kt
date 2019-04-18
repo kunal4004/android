@@ -59,7 +59,8 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener {
             }
             ErrorHandlerActivity.PASSCODE_LOCKED -> {
                 errorLogo.setImageResource(R.drawable.ic_passcode_locked_icon)
-                errorTitle.text = getString(R.string.unsuccessful_request)
+                errorTitle.text = getString(R.string.error_passcode_locked_title)
+                errorDescription.text = getString(R.string.error_passcode_locked_desc)
                 cancelButton.text = getString(R.string.error_action_later)
                 actionButton.text = getString(R.string.reset_passcode)
             }

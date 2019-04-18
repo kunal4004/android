@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.absa
 
 import android.content.Intent
+import android.graphics.Paint
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.text.Editable
@@ -18,12 +19,15 @@ import za.co.absa.openbankingapi.woolworths.integration.AbsaLoginRequest
 import za.co.absa.openbankingapi.woolworths.integration.dto.LoginResponse
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse
 import za.co.absa.openbankingapi.woolworths.integration.service.VolleyErrorHandler
+import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.GotITDialogFragment
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
+import za.co.woolworths.financial.services.android.util.numberkeyboard.NumberKeyboardListener
 import java.net.HttpCookie
 
-class AbsaLoginFragment : AbsaFragmentExtension() {
+class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDialogListener {
 
     private var mPinImageViewList: MutableList<ImageView>? = null
 
@@ -45,33 +49,35 @@ class AbsaLoginFragment : AbsaFragmentExtension() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        alwaysHideWindowSoftInputMode()
         initViewsAndEvents()
         createTextListener(edtEnterATMPin)
         clearPinImage(mPinImageViewList!!)
     }
 
     private fun initViewsAndEvents() {
-        mPinImageViewList = mutableListOf(ivPin1, ivPin2, ivPin3, ivPin4, ivPin5)
-        edtEnterATMPin.setOnKeyPreImeListener { activity?.onBackPressed() }
-        edtEnterATMPin.setOnEditorActionListener { _, actionId, _ ->
-            var handled = false
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                handled = true
-                requestToLogin()
+        tvForgotPasscode.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+        tvForgotPasscode.setOnClickListener{
+            activity?.let {
+                val openDialogFragment =
+                        GotITDialogFragment.newInstance(getString(R.string.forgot_passcode),
+                               getString(R.string.forgot_passcode_dialog_desc),getString(R.string.cancel),
+                                this)
+                openDialogFragment.show(it.supportFragmentManager, GotITDialogFragment::class.java.simpleName)
             }
-            handled
         }
+        numberKeyboard.setListener(this)
+        mPinImageViewList = mutableListOf(ivPin1, ivPin2, ivPin3, ivPin4, ivPin5)
     }
 
     private fun requestToLogin() {
-        if ((edtEnterATMPin.length() - 1) == MAXIMUM_PIN_ALLOWED) {
-            val userPin = edtEnterATMPin.text.toString()
-            val aliasId = SessionDao.getByKey(SessionDao.KEY.ABSA_ALIASID)?.value ?: ""
-            val deviceId = SessionDao.getByKey(SessionDao.KEY.ABSA_DEVICEID)?.value ?: ""
-            absaLoginRequest(aliasId, deviceId, userPin)
-        } else {
-            clearPin()
-        }
+        if ((edtEnterATMPin.length() - 1) < MAXIMUM_PIN_ALLOWED)
+            return
+        val userPin = edtEnterATMPin.text.toString()
+        val aliasId = SessionDao.getByKey(SessionDao.KEY.ABSA_ALIASID)?.value ?: ""
+        val deviceId = SessionDao.getByKey(SessionDao.KEY.ABSA_DEVICEID)?.value ?: ""
+        absaLoginRequest(aliasId, deviceId, userPin)
+
     }
 
     private fun absaLoginRequest(aliasId: String?, deviceId: String?, userPin: String) {
@@ -121,7 +127,7 @@ class AbsaLoginFragment : AbsaFragmentExtension() {
 
     private fun failureHandler(message: String?) {
         cancelRequest()
-       // message?.let { tapAndNavigateBackErrorDialog(it) }
+        // message?.let { tapAndNavigateBackErrorDialog(it) }
         when {
             message?.trim()?.contains("authentication failed", true)!! -> {
                 ErrorHandlerView(activity).showToast(getString(R.string.incorrect_passcode_alert))
@@ -229,6 +235,23 @@ class AbsaLoginFragment : AbsaFragmentExtension() {
                 }
             }
         }
+    }
+
+    override fun onNumberClicked(number: Int) {
+        edtEnterATMPin.text = Editable.Factory.getInstance().newEditable(edtEnterATMPin.text.append(number.toString()))
+        requestToLogin()
+    }
+
+    override fun onLeftAuxButtonClicked() {
+    }
+
+    override fun onRightAuxButtonClicked() {
+        if (edtEnterATMPin.text.isNotEmpty())
+            edtEnterATMPin.text = Editable.Factory.getInstance().newEditable(edtEnterATMPin.text.substring(0, edtEnterATMPin.text.length - 1))
+    }
+
+    override fun onDialogDismissed() {
+
     }
 
 }

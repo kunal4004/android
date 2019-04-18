@@ -15,9 +15,10 @@
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/errorTitle"
         style="@style/absa_page_title_text_style"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/errorLogo"
+        android:layout_centerHorizontal="true"
         android:layout_marginStart="@dimen/thirty_two_dp"
         android:layout_marginTop="@dimen/fifty_eight_dp"
         android:layout_marginEnd="@dimen/thirty_two_dp"
@@ -28,7 +29,8 @@
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/errorDescription"
         style="@style/absa_page_description_text_style"
-        android:layout_width="match_parent"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/errorTitle"
         android:layout_marginStart="32dp"

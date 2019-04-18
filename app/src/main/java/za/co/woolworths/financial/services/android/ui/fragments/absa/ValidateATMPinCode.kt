@@ -161,7 +161,7 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
             }
 
             override fun onFailure(errorMessage: String) {
-                failureHandler(errorMessage, false)
+               // failureHandler(errorMessage, false)
             }
 
             override fun onFatalError(error: VolleyError?) {

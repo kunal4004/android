@@ -12,7 +12,7 @@ class GotITDialogFragment : ActionSheetDialogFragment(), View.OnClickListener {
 
     companion object {
         private var mOnDialogDismiss: IDialogListener? = null
-        fun newInstance(title: String, desc: String, onDialogDismissListener: IDialogListener): GotITDialogFragment {
+        fun newInstance(title: String, desc: String, dismissDialogText: String, onDialogDismissListener: IDialogListener, actionText: String = ""): GotITDialogFragment {
             mOnDialogDismiss = onDialogDismissListener
             val gotITDialogFragment = GotITDialogFragment()
             val bundle = Bundle()

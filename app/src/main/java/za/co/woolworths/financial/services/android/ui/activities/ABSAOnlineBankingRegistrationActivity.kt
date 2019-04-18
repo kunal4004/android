@@ -77,13 +77,18 @@ class ABSAOnlineBankingRegistrationActivity : AppCompatActivity(), IDialogListen
     }
 
     private fun navigateBack() {
+
+        //Hide back button when moving back to EnterFiveDigitPassCode screen
+        if (getCurrentFragment() is AbsaConfirmFiveDigitCodeFragment)
+            supportActionBar?.setDisplayHomeAsUpEnabled(false)
+
         // Refrain from navigate to previous fragment when landing fragment is AbsaPinCodeSuccessFragment
         if ((getCurrentFragment() is AbsaPinCodeSuccessFragment) || (getCurrentFragment() is AbsaLoginFragment)) {
             finishActivity()
             return
         }
 
-        if ((getCurrentFragment() is AbsaFiveDigitCodeFragment) || (getCurrentFragment() is AbsaConfirmFiveDigitCodeFragment)) {
+        if ((getCurrentFragment() is AbsaFiveDigitCodeFragment) ) {
             closeDownActivity()
             return
         }
