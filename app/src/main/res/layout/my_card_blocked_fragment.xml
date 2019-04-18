@@ -52,7 +52,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/w_credi_card" />
+        app:srcCompat="@drawable/w_silver_credit_card" />
 
     <TextView
         android:id="@+id/tvActive"

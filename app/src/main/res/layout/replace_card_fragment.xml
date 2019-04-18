@@ -101,13 +101,15 @@
 
     <ImageView
         android:id="@+id/imReplacementCard"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
         android:contentDescription="@string/app_name"
         app:layout_constraintBottom_toTopOf="@+id/tvReplacementCardTitle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/w_credi_card" />
+        app:srcCompat="@drawable/card_npc_isometric" />
 
 </android.support.constraint.ConstraintLayout>

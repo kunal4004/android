@@ -18,8 +18,8 @@
 
     <ImageView
         android:id="@+id/imPermanentlyBlockUserLogo"
-        android:layout_width="69.46dp"
-        android:layout_height="69.46dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/closeIndicator"
         android:layout_centerHorizontal="true"
         android:layout_marginStart="32dp"
@@ -30,7 +30,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/closeIndicator"
-        app:srcCompat="@drawable/alerter_ic_notifications" />
+        app:srcCompat="@drawable/icon_block_card" />
 
 
     <TextView

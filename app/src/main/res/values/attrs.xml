@@ -139,18 +139,6 @@
         <attr name="alertText" format="string"/>
     </declare-styleable>
 
-    <declare-styleable name="CircleProgressBar">
-        <attr name="circleWidth" format="dimension"/>
-        <attr name="maxProgress" format="integer"/>
-        <attr name="initProgress" format="integer"/>
-        <attr name="centreColor" format="color"/>
-        <attr name="circleColor" format="color"/>
-        <attr name="progressColor" format="color"/>
-        <attr name="textColor" format="color"/>
-        <attr name="textSize" format="dimension"/>
-        <attr name="startAngle" format="integer"/>
-        <attr name="textProgressEnable" format="boolean"/>
-    </declare-styleable>
     <declare-styleable name="CodeScannerView">
         <attr name="maskColor" format="color"/>
         <attr name="frameColor" format="color"/>
@@ -164,4 +152,47 @@
         <attr name="frameAspectRatioHeight" format="float"/>
         <attr name="frameSize" format="float"/>
     </declare-styleable>
+
+        <declare-styleable name="CircularProgressIndicator">
+
+            <attr name="progressColor" format="color" />
+            <attr name="progressBackgroundColor" format="color" />
+            <attr name="progressStrokeWidth" format="dimension" />
+            <attr name="progressBackgroundStrokeWidth" format="dimension" />
+
+            <attr name="textColor" format="color" />
+            <attr name="textSize" format="dimension" />
+
+            <attr name="formattingPattern" format="string|reference" />
+
+            <attr name="drawDot" format="boolean" />
+            <attr name="dotColor" format="color" />
+            <attr name="dotWidth" format="dimension" />
+
+            <attr name="startAngle" format="integer|reference" />
+
+            <attr name="direction" format="enum">
+                <enum name="clockwise" value="0" />
+                <enum name="counterclockwise" value="1" />
+            </attr>
+
+            <attr name="progressCap" format="enum">
+                <enum name="round" value="0" />
+                <enum name="butt" value="1" />
+            </attr>
+
+            <attr name="enableProgressAnimation" format="boolean" />
+
+            <attr name="fillBackground" format="boolean" />
+
+            <attr name="gradientEndColor" format="color|reference"/>
+            <attr name="gradientType" format="enum">
+                <enum name="no_gradient" value="0"/>
+                <enum name="linear" value="1"/>
+                <enum name="radial" value="2"/>
+                <enum name="sweep" value="3"/>
+            </attr>
+
+        </declare-styleable>
+
 </resources>

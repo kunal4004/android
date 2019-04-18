@@ -71,7 +71,7 @@
         android:id="@+id/tvOtpSmsTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="21dp"
+        android:layout_marginStart="24dp"
         android:layout_marginEnd="16dp"
         android:fontFamily="@font/myriad_pro_semi_bold_otf"
         android:text="@string/resend_sms_to"
@@ -91,7 +91,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/sendOTPBySMSview"
         app:layout_constraintStart_toStartOf="@+id/sendOTPBySMSview"
         app:layout_constraintTop_toTopOf="@+id/sendOTPBySMSview"
-        app:srcCompat="@drawable/cart_icon" />
+        app:srcCompat="@drawable/icon_mobile_phone" />
 
     <View
         android:id="@+id/smsHorizontalView"
@@ -171,8 +171,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/sendOTPByEmailView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/smsHorizontalView"
-        app:srcCompat="@drawable/cart_icon"
-        tools:srcCompat="@drawable/cart_icon" />
+        app:srcCompat="@drawable/icon_email"
+        tools:srcCompat="@drawable/icon_email" />
 
     <ImageView
         android:id="@+id/imCallOtpIcon"
@@ -182,7 +182,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/sendToCallCenterView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/emailHorizontalView"
-        app:srcCompat="@drawable/attachment" />
+        app:srcCompat="@drawable/icon_mobile_call"
+        tools:srcCompat="@drawable/icon_mobile_call" />
 
     <TextView
         android:id="@+id/tvCallTitle"
