@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.activities.card
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -14,11 +13,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.card.BlockMyCard
 import za.co.woolworths.financial.services.android.util.Utils
 
 
-class BlockMyCardActivity : AppCompatActivity(), IPermanentCardBlock {
-
-    companion object {
-        const val BLOCK_MY_CARD_REQUEST_CODE = 5002
-    }
+class BlockMyCardActivity : MyCardActivityExtension(), IPermanentCardBlock {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,6 +63,7 @@ class BlockMyCardActivity : AppCompatActivity(), IPermanentCardBlock {
     private fun finishActivity() {
         this.finish()
         this.overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+        navigateToMyCardActivity(false)
     }
 
 

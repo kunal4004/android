@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.activities.card
 
-import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
@@ -10,21 +9,18 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.my_card_activity.*
-import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity.Companion.BLOCK_MY_CARD_REQUEST_CODE
-import za.co.woolworths.financial.services.android.ui.activities.card.LinkNewCardActivity.Companion.LINK_NEW_CARD_REQUEST_CODE
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
-import za.co.woolworths.financial.services.android.ui.extension.replaceFragmentSafely
 import za.co.woolworths.financial.services.android.ui.fragments.card.GetReplacementCardFragment
 import za.co.woolworths.financial.services.android.ui.fragments.card.MyCardBlockedFragment
 import za.co.woolworths.financial.services.android.ui.fragments.card.MyCardDetailFragment
-import za.co.woolworths.financial.services.android.ui.fragments.card.MyCardDetailFragment.Companion.CARD
-import za.co.woolworths.financial.services.android.ui.fragments.card.ProcessBlockCardFragment.Companion.NPC_CARD_LINKED_SUCCESS_RESULT_CODE
+import za.co.woolworths.financial.services.android.ui.fragments.card.ProcessBlockCardFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
 
 class MyCardDetailActivity : AppCompatActivity() {
 
-    private var mCardDetail: String? = null
+    private var mCardIsBlocked: Boolean? = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,18 +29,29 @@ class MyCardDetailActivity : AppCompatActivity() {
         actionBar()
 
         if (savedInstanceState == null) {
-            intent?.extras?.apply { mCardDetail = getString(CARD) }
-
+            intent?.extras?.apply {
+                mCardIsBlocked = getBoolean(ProcessBlockCardFragment.CARD_BLOCKED, false)
+            }
             addCardDetailFragment()
         }
     }
 
     private fun addCardDetailFragment() {
-        mCardDetail?.apply {
-            addFragment(
-                    fragment = MyCardDetailFragment.newInstance(this),
-                    tag = MyCardDetailFragment::class.java.simpleName,
-                    containerViewId = R.id.flMyCard)
+        SessionDao.getByKey(SessionDao.KEY.STORE_CARD).value?.apply {
+            when (mCardIsBlocked) {
+                true -> {
+                    addFragment(
+                            fragment = MyCardBlockedFragment.newInstance(),
+                            tag = MyCardBlockedFragment::class.java.simpleName,
+                            containerViewId = R.id.flMyCard)
+                }
+                else -> {
+                    addFragment(
+                            fragment = MyCardDetailFragment.newInstance(this),
+                            tag = MyCardDetailFragment::class.java.simpleName,
+                            containerViewId = R.id.flMyCard)
+                }
+            }
         }
     }
 
@@ -82,8 +89,6 @@ class MyCardDetailActivity : AppCompatActivity() {
                         changeToolbarBackground(R.color.grey_bg)
                         showToolbarTitle()
                     }
-                    else -> {
-                    }
                 }
             } else
                 finishActivity()
@@ -107,32 +112,5 @@ class MyCardDetailActivity : AppCompatActivity() {
 
     fun changeToolbarBackground(colorId: Int) {
         tbMyCard?.setBackgroundColor(ContextCompat.getColor(this, colorId))
-    }
-
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            LINK_NEW_CARD_REQUEST_CODE -> {
-                when (resultCode) {
-                    NPC_CARD_LINKED_SUCCESS_RESULT_CODE -> addCardDetailFragment()
-                }
-            }
-            BLOCK_MY_CARD_REQUEST_CODE -> {
-                when (resultCode) {
-                    RESULT_OK -> replaceFragmentSafely(
-                            fragment = MyCardBlockedFragment.newInstance(),
-                            tag = MyCardBlockedFragment::class.java.simpleName,
-                            containerViewId = R.id.flMyCard,
-                            allowBackStack = false,
-                            allowStateLoss = false,
-                            enterAnimation = R.anim.slide_in_from_right,
-                            exitAnimation = R.anim.slide_to_left,
-                            popEnterAnimation = R.anim.slide_from_left,
-                            popExitAnimation = R.anim.slide_to_right
-                     )
-                }
-            }
-        }
     }
 }

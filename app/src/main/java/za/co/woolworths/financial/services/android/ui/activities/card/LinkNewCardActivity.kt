@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities.card
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import com.awfs.coordination.R
@@ -11,11 +10,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.card.LinkCardFra
 import za.co.woolworths.financial.services.android.util.Utils
 
 
-class LinkNewCardActivity : AppCompatActivity() {
-
-    companion object {
-        const val LINK_NEW_CARD_REQUEST_CODE = 5001
-    }
+class LinkNewCardActivity : MyCardActivityExtension() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,13 +51,6 @@ class LinkNewCardActivity : AppCompatActivity() {
         }
     }
 
-
-    private fun finishActivity() {
-        finish()
-        overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
-    }
-
-
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater?.inflate(R.menu.search_item, menu)
         return super.onCreateOptionsMenu(menu)
@@ -75,12 +63,10 @@ class LinkNewCardActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    fun showBackIcon() {
-        supportActionBar?.apply {
-            setDisplayHomeAsUpEnabled(true)
-            setHomeAsUpIndicator(R.drawable.back24)
-        }
+    private fun finishActivity() {
+        finish()
+        overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+        navigateToMyCardActivity(true)
     }
 
-    fun hideBackIcon() = supportActionBar?.apply { setDisplayHomeAsUpEnabled(false) }
 }
