@@ -13,9 +13,9 @@ import android.widget.TextView
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.ui.activities.card.BarcodeScannerActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity
-import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity.Companion.BLOCK_MY_CARD_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.card.LinkNewCardActivity
-import za.co.woolworths.financial.services.android.ui.activities.card.LinkNewCardActivity.Companion.LINK_NEW_CARD_REQUEST_CODE
+import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
+import za.co.woolworths.financial.services.android.ui.fragments.card.ProcessBlockCardFragment.Companion.CARD_BLOCKED
 import za.co.woolworths.financial.services.android.util.KeyboardUtil
 
 open class MyCardExtension : Fragment() {
@@ -27,8 +27,9 @@ open class MyCardExtension : Fragment() {
 
     fun navigateToBlockMyCardActivity(activity: Activity?) {
         activity?.apply {
-            startActivityForResult(Intent(this, BlockMyCardActivity::class.java), BLOCK_MY_CARD_REQUEST_CODE)
+            startActivity(Intent(this, BlockMyCardActivity::class.java))
             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+            finish()
         }
     }
 
@@ -48,8 +49,9 @@ open class MyCardExtension : Fragment() {
 
     internal fun navigateToLinkNewCardActivity(activity: AppCompatActivity?) {
         activity?.apply {
-            startActivityForResult(Intent(this, LinkNewCardActivity::class.java), LINK_NEW_CARD_REQUEST_CODE)
+            startActivity(Intent(this, LinkNewCardActivity::class.java))
             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+            finish()
         }
     }
 
@@ -81,11 +83,21 @@ open class MyCardExtension : Fragment() {
         activity?.apply { KeyboardUtil.hideSoftKeyboard(this) }
     }
 
-    fun TextView.htmlText(text: String){
+    fun TextView.htmlText(text: String) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             setText(Html.fromHtml(text, Html.FROM_HTML_MODE_LEGACY))
         } else {
             setText(Html.fromHtml(text))
+        }
+    }
+
+    fun navigateToMyCardActivity(cardIsBlocked: Boolean) {
+        activity?.apply {
+            val openCardDetailActivity = Intent(this, MyCardDetailActivity::class.java)
+            openCardDetailActivity.putExtra(CARD_BLOCKED, cardIsBlocked)
+            startActivity(openCardDetailActivity)
+            overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
+            finish()
         }
     }
 }

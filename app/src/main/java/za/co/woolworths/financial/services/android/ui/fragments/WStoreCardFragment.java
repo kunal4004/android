@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -653,13 +654,20 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
                                     }
                                 }
 
+                                try {
+                                    SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.STORE_CARD);
+                                    sessionDao.value = new Gson().toJson(selectedCard);
+                                    sessionDao.save();
+                                } catch (Exception e) {
+                                    Log.d("saveAliasId-err",e.toString());
+                                }
+
                                 if (selectedCard == null) {
                                     Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, getString(R.string.card_number_not_found));
                                     return;
                                 }
 
                                 Intent openMyCard = new Intent(activity, MyCardDetailActivity.class);
-                                openMyCard.putExtra(CARD, new Gson().toJson(selectedCard));
                                 activity.startActivity(openMyCard);
                                 activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
                                 break;

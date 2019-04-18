@@ -14,7 +14,6 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.block_my_card_fragment.*
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 
-
 class BlockMyCardReasonFragment : MyCardExtension() {
 
     companion object {
@@ -27,6 +26,7 @@ class BlockMyCardReasonFragment : MyCardExtension() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
 
         blockCardRadioGroup?.setOnCheckedChangeListener { rad, id -> btnBlockCard?.isEnabled = rad.id != -1 }
 

@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.card
 
+import android.graphics.Paint
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.text.Editable
@@ -31,9 +32,14 @@ class EnterOtpFragment : MyCardExtension() {
         super.onViewCreated(view, savedInstanceState)
 
         setupInputListeners()
+        configureUI()
         clickEvent()
         getString(R.string.enter_otp_desc)?.apply { tvEnterOtpDesc.htmlText(this) }
         imNextProcessLinkCard?.isEnabled = false
+    }
+
+    private fun configureUI() {
+        tvDidNotReceivedOTP.paintFlags = Paint.UNDERLINE_TEXT_FLAG
     }
 
     private fun clickEvent() {
