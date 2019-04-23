@@ -948,9 +948,7 @@
     <string name="send_to_your_email_address">Send to your email address</string>
     <string name="call_center_desc"> Call Centre 0861 50 20 20</string>
     <string name="congratulations_title">Congratulations!\nYour New Card Has Successfully Been Linked.</string>
-    <string name="congratulations_desc">Please remember to take your SA Identity</string>
-    <string name="congratulations_desc_1">Document(ID) along for your first</string>
-    <string name="congratulations_desc_2">purchase with this card.</string>
+    <string name="congratulations_desc">Please remember to take your SA Identity Document (ID) along for your first purchase with this card.</string>
     <string name="ok_got_it">OK, GOT IT</string>
     <string name="card_block_success">Your card has been</string>
     <string name="card_block_success_1">successfully blocked.</string>

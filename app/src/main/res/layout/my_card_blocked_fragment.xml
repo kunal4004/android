@@ -57,11 +57,12 @@
     <TextView
         android:id="@+id/tvActive"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="24dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/black_corner_bg"
         android:fontFamily="@font/futura_semi_bold_ttf"
+        android:gravity="center"
         android:letterSpacing="0.12"
         android:paddingStart="4dp"
         android:paddingTop="4dp"
