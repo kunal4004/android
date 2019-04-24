@@ -190,4 +190,9 @@ class GetReplacementCardFragment : MyCardExtension() {
             overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        hideKeyboard()
+    }
 }

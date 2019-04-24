@@ -11,9 +11,10 @@ import com.awfs.coordination.R
 import android.view.MenuInflater
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import kotlinx.android.synthetic.main.circle_progress_layout.*
 import kotlinx.android.synthetic.main.npc_card_linked_successful_layout.*
 import kotlinx.android.synthetic.main.process_block_card_fragment.*
+import za.co.woolworths.financial.services.android.ui.extension.addFragment
+import za.co.woolworths.financial.services.android.ui.extension.findFragmentByTag
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 
 class ProcessBlockCardFragment : MyCardExtension() {
@@ -40,27 +41,29 @@ class ProcessBlockCardFragment : MyCardExtension() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setUpTickAnimation()
+
+        (activity as? AppCompatActivity)?.addFragment(
+                fragment = ProgressStateFragment.newInstance(),
+                tag = ProgressStateFragment::class.java.simpleName,
+                containerViewId = R.id.flProgressIndicator
+        )
+
         //TODO:: TO BE REMOVED, USED ONLY FOR PROTOTYPE DEMONSTRATION
-        activity?.apply {
-            val handler = Handler()
-            handler.postDelayed({
-                success_tick?.visibility = VISIBLE
-                success_tick?.startTickAnim()
-                when (mCardWasBlocked) {
-                    true -> displayUnblockCardSuccess()
-                    false -> displayBlockedCardSuccess()
-                }
-            }, 1500)
-        }
+        val handler = Handler()
+        handler.postDelayed({
+            when (mCardWasBlocked) {
+                true -> displayUnblockCardSuccess()
+                false -> displayBlockedCardSuccess()
+            }
+        }, 800)
 
         btn_ok_got_it?.setOnClickListener { navigateToMyCardActivity(false) }
-
         hideToolbarIcon()
-    }
 
-    private fun setUpTickAnimation() {
-        playAnimation()
+        val successHandler = Handler()
+        successHandler.postDelayed({
+            progressState()?.animationStart()
+        }, 100)
     }
 
     private fun hideToolbarIcon() {
@@ -72,7 +75,6 @@ class ProcessBlockCardFragment : MyCardExtension() {
     }
 
     private fun displayUnblockCardSuccess() {
-        successProgressAnimation()
         incLinkCardSuccessFulView?.visibility = VISIBLE
         incProcessingTextLayout?.visibility = GONE
     }
@@ -80,16 +82,13 @@ class ProcessBlockCardFragment : MyCardExtension() {
     private fun displayBlockedCardSuccess() {
         val successHandler = Handler()
         successHandler.postDelayed({
-            navigateToMyCardActivity(true)
+            //            navigateToMyCardActivity(true)
+            progressState()?.animateSuccessEnd()
         }, 800)
 
-        successProgressAnimation()
         incBlockCardSuccess?.visibility = VISIBLE
         incProcessingTextLayout?.visibility = GONE
-    }
 
-    private fun successProgressAnimation() {
-        success_frame?.visibility = VISIBLE
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
@@ -97,8 +96,7 @@ class ProcessBlockCardFragment : MyCardExtension() {
         menu?.clear()
     }
 
-    private fun playAnimation() {
-        success_tick?.visibility = GONE
-        circle_progress_view?.setProgress(1500.0, 1500.0)
-    }
+
+    private fun progressState(): ProgressStateFragment? = (activity as? AppCompatActivity)?.findFragmentByTag(ProgressStateFragment::class.java.simpleName) as? ProgressStateFragment
+
 }

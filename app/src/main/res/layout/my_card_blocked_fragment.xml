@@ -20,7 +20,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/thirty_two_dp"
-        android:layout_marginTop="@dimen/thirty_four_dp"
         android:layout_marginEnd="@dimen/thirty_two_dp"
         android:fontFamily="@font/futura_semi_bold_ttf"
         android:letterSpacing="0.1"
@@ -29,7 +28,7 @@
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imStoreCard"
+        app:layout_constraintTop_toTopOf="@+id/descriptionGuide"
         tools:targetApi="lollipop" />
 
 
@@ -107,6 +106,7 @@
         android:textAllCaps="true"
         android:textColor="@color/selector_white"
         android:textSize="12sp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
@@ -121,18 +121,25 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="@dimen/twenty_two_dp"
         android:layout_marginEnd="32dp"
+        android:layout_marginBottom="32dp"
         android:background="@drawable/black_button_drawable_state"
         android:fontFamily="@font/futura_semi_bold"
         android:letterSpacing="0.13"
-        android:text="@string/link_a_card"
+        android:text="@string/call_now"
         android:textAllCaps="true"
         android:textColor="@color/white"
         android:textSize="@dimen/twelve_sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnGetReplacementCard"
         tools:ignore="UnusedAttribute" />
+
+    <android.support.constraint.Guideline
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/descriptionGuide"
+        app:layout_constraintGuide_percent="0.38"
+        android:orientation="horizontal"/>
 
 </android.support.constraint.ConstraintLayout>

@@ -952,5 +952,6 @@
     <string name="ok_got_it">OK, GOT IT</string>
     <string name="card_block_success">Your card has been</string>
     <string name="card_block_success_1">successfully blocked.</string>
+    <string name="call_now">Call Now</string>
 
 </resources>

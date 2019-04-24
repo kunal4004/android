@@ -23,7 +23,21 @@ class LinkCardFragment : MyCardExtension() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        tvReplacementCardInfo?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+        tvReplacementCardInfo?.apply {
+            paintFlags = Paint.UNDERLINE_TEXT_FLAG
+            setOnClickListener {
+                replaceFragment(
+                        fragment = GetReplacementCardFragment.newInstance(),
+                        tag = GetReplacementCardFragment::class.java.simpleName,
+                        containerViewId = R.id.flMyCard,
+                        allowStateLoss = true,
+                        enterAnimation = R.anim.slide_in_from_right,
+                        exitAnimation = R.anim.slide_to_left,
+                        popEnterAnimation = R.anim.slide_from_left,
+                        popExitAnimation = R.anim.slide_to_right
+                )
+            }
+        }
         inputTextWatcher()
         tappedEvent()
     }

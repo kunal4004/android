@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.card
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +8,9 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.my_card_blocked_fragment.*
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.util.Utils
+import android.content.Intent
+import android.net.Uri
+
 
 class MyCardBlockedFragment : MyCardExtension() {
 
@@ -25,8 +27,10 @@ class MyCardBlockedFragment : MyCardExtension() {
         super.onViewCreated(view, savedInstanceState)
 
         btnGetReplacementCard?.setOnClickListener { navigateToReplacementCard() }
-        btnLinkACard?.setOnClickListener { (activity as? AppCompatActivity)?.apply { navigateToLinkNewCardActivity(this) } }
-
+       // btnLinkACard?.setOnClickListener { (activity as? AppCompatActivity)?.apply { navigateToLinkNewCardActivity(this) } }
+        btnLinkACard?.setOnClickListener {
+            val intent = Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", "0861502020", null))
+            startActivity(intent) }
     }
 
     private fun navigateToReplacementCard() {
