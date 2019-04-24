@@ -80,14 +80,14 @@ class ProcessBlockCardFragment : MyCardExtension() {
     }
 
     private fun displayBlockedCardSuccess() {
+        progressState()?.animateSuccessEnd()
         val successHandler = Handler()
         successHandler.postDelayed({
-            //            navigateToMyCardActivity(true)
-            progressState()?.animateSuccessEnd()
-        }, 800)
+            navigateToMyCardActivity(true)
+            incBlockCardSuccess?.visibility = VISIBLE
+            incProcessingTextLayout?.visibility = GONE
+        }, 300)
 
-        incBlockCardSuccess?.visibility = VISIBLE
-        incProcessingTextLayout?.visibility = GONE
 
     }
 
