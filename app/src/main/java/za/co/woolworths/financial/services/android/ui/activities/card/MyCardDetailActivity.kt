@@ -75,9 +75,8 @@ class MyCardDetailActivity : AppCompatActivity() {
         }
     }
 
-    override fun onBackPressed() {
-        navigateBack()
-    }
+    override fun onBackPressed() = navigateBack()
+
 
     private fun navigateBack() {
         supportFragmentManager?.apply {
@@ -110,7 +109,6 @@ class MyCardDetailActivity : AppCompatActivity() {
         toolbarText?.visibility = GONE
     }
 
-    fun changeToolbarBackground(colorId: Int) {
-        tbMyCard?.setBackgroundColor(ContextCompat.getColor(this, colorId))
-    }
+
+    fun changeToolbarBackground(colorId: Int) = tbMyCard?.setBackgroundColor(ContextCompat.getColor(this, colorId))
 }
