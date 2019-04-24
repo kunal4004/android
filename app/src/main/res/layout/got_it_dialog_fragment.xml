@@ -21,7 +21,7 @@
             android:background="@color/white"
             android:gravity="center"
             android:lineSpacingExtra="1.4dp"
-            android:paddingBottom="115dp"
+            android:paddingBottom="65dp"
             android:text="@string/app_label"
             android:textColor="@color/gray"
             android:textSize="15sp"
@@ -29,6 +29,18 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
+
+        <za.co.woolworths.financial.services.android.ui.views.WButton
+            android:id="@+id/actionButton"
+            style="@style/blackButtonStyle"
+            android:visibility="invisible"
+            android:text="@string/retry"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvDescription"
+            />
 
         <View
             android:id="@+id/vHorizontalDivider"
@@ -40,7 +52,7 @@
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvDescription" />
+            app:layout_constraintTop_toBottomOf="@+id/actionButton" />
 
 
         <za.co.woolworths.financial.services.android.ui.views.WButton

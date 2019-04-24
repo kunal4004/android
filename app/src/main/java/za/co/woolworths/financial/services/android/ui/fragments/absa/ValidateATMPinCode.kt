@@ -96,8 +96,8 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
                                 when (this) {
                                     in acceptedResultMessages -> {
                                         //SureCheck was accepted, continue with registration process
-                                        createAlias(jSession)
                                         stopPolling()
+                                        createAlias(jSession)
                                     }
                                     in failedResultMessages -> {
                                         // Sending of the SureCheck failed for some reason. Stop registration details.
@@ -161,7 +161,7 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
             }
 
             override fun onFailure(errorMessage: String) {
-               // failureHandler(errorMessage, false)
+                failureHandler(errorMessage, false)
             }
 
             override fun onFatalError(error: VolleyError?) {

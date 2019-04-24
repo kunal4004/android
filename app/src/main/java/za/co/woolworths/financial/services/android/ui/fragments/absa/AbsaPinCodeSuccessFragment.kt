@@ -122,6 +122,8 @@ class AbsaPinCodeSuccessFragment : Fragment() {
         tvTitle.text = getString(R.string.absa_success_title, name)
         tvDescription.text = resources.getString(R.string.absa_registration_success_desc)
         gotItButton.visibility = View.VISIBLE
+        progressBar.visibility = View.GONE
+        ivAppLogo.visibility = View.VISIBLE
     }
 
     private fun navigateToAbsaLoginFragment() {
@@ -154,4 +156,5 @@ class AbsaPinCodeSuccessFragment : Fragment() {
         menu?.getItem(0)?.isVisible = false
         super.onCreateOptionsMenu(menu, inflater)
     }
+
 }

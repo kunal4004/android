@@ -12,6 +12,7 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_online_banking_to_device_activity.*
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
+import za.co.woolworths.financial.services.android.ui.extension.replaceFragmentSafely
 import za.co.woolworths.financial.services.android.ui.fragments.absa.*
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -88,7 +89,7 @@ class ABSAOnlineBankingRegistrationActivity : AppCompatActivity(), IDialogListen
             return
         }
 
-        if ((getCurrentFragment() is AbsaFiveDigitCodeFragment) ) {
+        if ((getCurrentFragment() is AbsaFiveDigitCodeFragment)) {
             closeDownActivity()
             return
         }
@@ -131,12 +132,20 @@ class ABSAOnlineBankingRegistrationActivity : AppCompatActivity(), IDialogListen
         if (resultCode == Activity.RESULT_CANCELED) {
             closeDownActivity()
         } else if (requestCode == ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE && resultCode == ErrorHandlerActivity.RESULT_RESET_PASSCODE) {
-            addFragment(
-                    fragment = AbsaEnterAtmPinCodeFragment.newInstance(mCreditAccountInfo),
-                    tag = AbsaEnterAtmPinCodeFragment::class.java.simpleName,
-                    containerViewId = R.id.flAbsaOnlineBankingToDevice)
+            startAbsaRegistration()
         } else {
             getCurrentFragment()?.onActivityResult(requestCode, resultCode, data)
         }
+    }
+
+    override fun onDialogButtonAction() {
+
+    }
+
+    fun startAbsaRegistration() {
+        replaceFragmentSafely(
+                fragment = AbsaEnterAtmPinCodeFragment.newInstance(mCreditAccountInfo),
+                tag = AbsaEnterAtmPinCodeFragment::class.java.simpleName, allowStateLoss = false, allowBackStack = false,
+                containerViewId = R.id.flAbsaOnlineBankingToDevice)
     }
 }

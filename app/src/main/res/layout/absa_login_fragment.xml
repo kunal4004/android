@@ -93,8 +93,6 @@
         android:inputType="number"
         android:maxLength="5"
         android:visibility="invisible">
-
-        <requestFocus />
     </za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView>
 
     <za.co.woolworths.financial.services.android.util.numberkeyboard.NumberKeyboard

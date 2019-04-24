@@ -9,9 +9,14 @@ import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.error_handler_fragment.*
+import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.GotITDialogFragment
 
-class ErrorHandlerFragment : Fragment(), View.OnClickListener {
+class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
+    override fun onDialogDismissed() {
+
+    }
 
     var errorType: Int = 0
 
@@ -54,6 +59,7 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener {
             ErrorHandlerActivity.ATM_PIN_LOCKED -> {
                 errorLogo.setImageResource(R.drawable.ic_passcode_locked_icon)
                 errorTitle.text = getString(R.string.error_atm_pin_locked_title)
+                errorDescription.visibility = View.INVISIBLE
                 cancelButton.visibility = View.GONE
                 actionButton.text = getString(R.string.absa_biometric_forgot_atm_pin_code)
             }
@@ -85,7 +91,13 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener {
             R.id.actionButton -> {
                 when (errorType) {
                     ErrorHandlerActivity.ATM_PIN_LOCKED -> {
-
+                        val openDialogFragment =
+                                GotITDialogFragment.newInstance(getString(R.string.absa_forgot_atm_pin_code_title),
+                                        getString(R.string.absa_forgot_atm_pin_code_desc), getString(R.string.cli_got_it),
+                                        this)
+                        activity?.let {
+                            openDialogFragment.show(it.supportFragmentManager, GotITDialogFragment::class.java.simpleName)
+                        }
                     }
                     ErrorHandlerActivity.PASSCODE_LOCKED -> {
                         setResultBAck(ErrorHandlerActivity.RESULT_RESET_PASSCODE)
@@ -104,6 +116,9 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener {
             setResult(resultCode)
             finish()
         }
+    }
+
+    override fun onDialogButtonAction() {
     }
 
 }

@@ -17,7 +17,6 @@ import android.view.inputmethod.InputMethodManager
 class AbsaBoardingFragment : AbsaFragmentExtension(), View.OnClickListener {
 
     private var mCreditCardNumber: String? = ""
-    private var originalMode: Int? = null
 
     companion object {
         fun newInstance(creditAccountInfo: String?) = AbsaBoardingFragment().apply {
@@ -34,7 +33,6 @@ class AbsaBoardingFragment : AbsaFragmentExtension(), View.OnClickListener {
                 mCreditCardNumber = arguments?.getString("creditCardToken") ?: ""
             }
         }
-        originalMode = activity?.window?.attributes?.softInputMode
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {

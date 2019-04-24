@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.ui.fragments.absa
 import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.support.v4.content.ContextCompat
 import android.text.Editable
 import android.text.TextWatcher
@@ -13,7 +12,6 @@ import android.view.View.*
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
-import android.widget.ImageView
 import com.android.volley.VolleyError
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_pin_atm_fragment.*
@@ -21,7 +19,6 @@ import za.co.absa.openbankingapi.woolworths.integration.AbsaCreateAliasRequest
 import za.co.absa.openbankingapi.woolworths.integration.AbsaValidateCardAndPinRequest
 import za.co.absa.openbankingapi.woolworths.integration.AbsaValidateSureCheckRequest
 import za.co.absa.openbankingapi.woolworths.integration.dao.JSession
-import za.co.absa.openbankingapi.woolworths.integration.service.VolleyErrorHandler
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.contracts.IValidatePinCodeDialogInterface
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
@@ -33,7 +30,6 @@ import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 
 class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListener, IValidatePinCodeDialogInterface, IDialogListener {
 
-    var mPinImageViewList: MutableList<ImageView>? = null
     private var mCreditCardNumber: String? = ""
 
     companion object {
@@ -55,21 +51,18 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        alwaysShowWindowSoftInputMode()
         return inflater!!.inflate(R.layout.absa_pin_atm_fragment, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        alwaysShowWindowSoftInputMode()
         initViewsAndEvents()
         createTextListener(edtEnterATMPin)
-        clearPinImage(mPinImageViewList)
     }
 
 
     private fun initViewsAndEvents() {
-        mPinImageViewList = mutableListOf(ivPin1, ivPin2, ivPin3, ivPin4)
-        ivPin5.visibility = View.GONE
         tvForgotPin.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         tvForgotPin.setOnClickListener(this)
         ivNavigateToDigitFragment.setOnClickListener(this)
@@ -109,9 +102,9 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 if (previousLength > edtEnterATMPin.length()) { // detect backspace
-                    deletePin((edtEnterATMPin.length()), mPinImageViewList!!)
+                    deletePin((edtEnterATMPin.length()))
                 } else {
-                    updateEnteredPin((edtEnterATMPin.length() - 1), mPinImageViewList!!)
+                    updateEnteredPin((edtEnterATMPin.length() - 1))
                 }
             }
 
@@ -121,9 +114,8 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
         })
     }
 
-    private fun updateEnteredPin(pinEnteredLength: Int, listOfPin: MutableList<ImageView>) {
-        if (pinEnteredLength > -1) {//Check to prevent mutableList[-1] when navigates back
-            listOfPin[pinEnteredLength].setImageResource(R.drawable.pin_fill)
+    private fun updateEnteredPin(pinEnteredLength: Int) {
+        if (pinEnteredLength > -1) {
             if (pinEnteredLength == MAXIMUM_PIN_ALLOWED) {
                 ivNavigateToDigitFragment.alpha = 1.0f
                 ivNavigateToDigitFragment.isEnabled = true
@@ -131,9 +123,8 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
         }
     }
 
-    private fun deletePin(pinEnteredLength: Int, listOfPin: MutableList<ImageView>) {
+    private fun deletePin(pinEnteredLength: Int) {
         if (pinEnteredLength > -1) {
-            listOfPin[pinEnteredLength].setImageResource(R.drawable.pin_empty)
             if (pinEnteredLength <= MAXIMUM_PIN_ALLOWED) {
                 ivNavigateToDigitFragment.alpha = 0.5f
                 ivNavigateToDigitFragment.isEnabled = false
@@ -141,11 +132,6 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
         }
     }
 
-    private fun clearPinImage(listOfPin: MutableList<ImageView>?) {
-        listOfPin?.forEach {
-            it.setImageResource(R.drawable.pin_empty)
-        }
-    }
 
     override fun onClick(view: View?) {
         when (view?.id) {
@@ -189,12 +175,6 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
         cancelRequest()
         progressIndicator(View.INVISIBLE)
         clearPin()
-        /*if (dismissActivity) {
-            //  Display error message and dismiss dialog on ok button clicked
-            tapAndNavigateBackErrorDialog(responseMessage)
-            return
-        }
-        view?.postDelayed({ tapAndDismissErrorDialog(responseMessage) }, 200)*/
         when {
             responseMessage.trim().contains("card number and pin validation failed!", true) -> {
                 ErrorHandlerView(activity).showToast(getString(R.string.incorrect_pin_alert))
@@ -212,7 +192,7 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
     override fun onFatalError(error: VolleyError?) {
         progressIndicator(GONE)
         clearPin()
-        (activity as? AppCompatActivity)?.apply { error?.let { VolleyErrorHandler(this, it).show() } }
+        ErrorHandlerView(activity).showToast()
     }
 
     override fun onResume() {
@@ -222,7 +202,6 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
 
     private fun clearPin() {
         edtEnterATMPin?.apply {
-            clearPinImage(mPinImageViewList!!)
             text.clear()
             showKeyboard(this)
         }
@@ -257,5 +236,8 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
                 }
             }
         }
+    }
+
+    override fun onDialogButtonAction() {
     }
 }

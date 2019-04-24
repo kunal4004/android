@@ -909,7 +909,7 @@
     <string name="ok_got_it">ok, got it</string>
     <string name="processing_your_request">Processing Your Request</string>
     <string name="absa_registration_in_progress_desc">This may take a few seconds</string>
-    <string name="absa_registration_success_desc">Almost there. Complete the final step to \n" +"set up your passcode.</string>
+    <string name="absa_registration_success_desc">Almost there. Complete the final step to \n set up your passcode.</string>
     <string name="setup_passcode">SETUP PASSCODE</string>
     <string name="absa_on_boarding_desc">For your security and to access secure features in our app, you will need to set up a Passcode</string>
     <string name="absa_on_boarding_title">We\'ve added some secure features.</string>

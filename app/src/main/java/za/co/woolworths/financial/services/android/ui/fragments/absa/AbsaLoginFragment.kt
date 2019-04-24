@@ -21,6 +21,7 @@ import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenA
 import za.co.absa.openbankingapi.woolworths.integration.service.VolleyErrorHandler
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GotITDialogFragment
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
@@ -49,7 +50,6 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        alwaysHideWindowSoftInputMode()
         initViewsAndEvents()
         createTextListener(edtEnterATMPin)
         clearPinImage(mPinImageViewList!!)
@@ -57,12 +57,12 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
 
     private fun initViewsAndEvents() {
         tvForgotPasscode.paintFlags = Paint.UNDERLINE_TEXT_FLAG
-        tvForgotPasscode.setOnClickListener{
+        tvForgotPasscode.setOnClickListener {
             activity?.let {
                 val openDialogFragment =
                         GotITDialogFragment.newInstance(getString(R.string.forgot_passcode),
-                               getString(R.string.forgot_passcode_dialog_desc),getString(R.string.cancel),
-                                this)
+                                getString(R.string.forgot_passcode_dialog_desc), getString(R.string.cancel),
+                                this, getString(R.string.reset_passcode))
                 openDialogFragment.show(it.supportFragmentManager, GotITDialogFragment::class.java.simpleName)
             }
         }
@@ -115,7 +115,9 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
                         }
 
                         override fun onFatalError(error: VolleyError?) {
-                            (activity as? AppCompatActivity)?.apply { error?.let { error -> VolleyErrorHandler(this, error).show() } }
+                            displayLoginProgress(false)
+                            clearPin()
+                            ErrorHandlerView(activity).showToast()
                         }
                     })
         }
@@ -195,7 +197,6 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
         edtEnterATMPin?.apply {
             clearPinImage(mPinImageViewList!!)
             text.clear()
-            showKeyboard(this)
         }
     }
 
@@ -254,4 +255,10 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
 
     }
 
+    override fun onDialogButtonAction() {
+
+        activity?.let {
+            (it as ABSAOnlineBankingRegistrationActivity).startAbsaRegistration()
+        }
+    }
 }

@@ -81,19 +81,20 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
             var handled = false
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 handled = true
-                navigateToAbsaBiometricScreen()
+                navigateToAbsaPinCodeSuccessScreen()
             }
             handled
         }
     }
 
-    private fun navigateToAbsaBiometricScreen() {
+    private fun navigateToAbsaPinCodeSuccessScreen() {
         if ((edtEnterATMPin.length() - 1) == MAXIMUM_PIN_ALLOWED) {
             val fiveDigitPin = edtEnterATMPin.text.toString()
             if (fiveDigitPin.toInt() == mBundleFiveDigitCodePinCode) {
                 navigateToAbsaPinCodeSuccessFragment(mAliasId, mDeviceId, fiveDigitPin, mJSession)
             } else {
                 ErrorHandlerView(activity).showToast(getString(R.string.passcode_not_match_alert))
+                clearPin()
             }
         }
     }
@@ -101,7 +102,7 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
     private fun navigateToAbsaPinCodeSuccessFragment(aliasId: String?, deviceId: String?, fiveDigitPin: String, jSession: String?) {
         hideKeyboard()
         replaceFragment(
-                fragment = AbsaPinCodeSuccessFragment.newInstance(aliasId, deviceId, fiveDigitPin,jSession),
+                fragment = AbsaPinCodeSuccessFragment.newInstance(aliasId, deviceId, fiveDigitPin, jSession),
                 tag = AbsaPinCodeSuccessFragment::class.java.simpleName,
                 containerViewId = R.id.flAbsaOnlineBankingToDevice,
                 allowStateLoss = true,
@@ -163,7 +164,7 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.ivEnterFiveDigitCode -> {
-                navigateToAbsaBiometricScreen()
+                navigateToAbsaPinCodeSuccessScreen()
             }
         }
     }

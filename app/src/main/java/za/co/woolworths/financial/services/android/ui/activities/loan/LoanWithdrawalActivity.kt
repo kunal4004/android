@@ -101,4 +101,7 @@ class LoanWithdrawalActivity : AppCompatActivity(), IDialogListener, NetworkChan
            }
        }
     }
+
+    override fun onDialogButtonAction() {
+    }
 }

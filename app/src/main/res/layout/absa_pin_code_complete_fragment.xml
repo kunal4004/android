@@ -6,12 +6,21 @@
 
     <ImageView
         android:id="@+id/ivAppLogo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:layout_above="@+id/tvTitle"
         android:layout_centerHorizontal="true"
         android:contentDescription="@string/app_label"
-        android:src="@drawable/appicon" />
+        android:visibility="gone"
+        app:srcCompat="@drawable/ic_success_icon" />
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_above="@+id/tvTitle"
+        android:indeterminateTint="@color/black"
+        android:visibility="visible"
+        android:layout_centerHorizontal="true"/>
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/tvTitle"
@@ -46,6 +55,6 @@
         android:layout_marginRight="@dimen/twenty_four_dp"
         android:layout_marginBottom="@dimen/twenty_four_dp"
         android:text="@string/ok_got_it"
-        android:visibility="gone" />
+        android:visibility="invisible" />
 
 </RelativeLayout>
