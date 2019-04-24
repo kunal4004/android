@@ -86,9 +86,7 @@ class ProcessBlockCardFragment : MyCardExtension() {
             navigateToMyCardActivity(true)
             incBlockCardSuccess?.visibility = VISIBLE
             incProcessingTextLayout?.visibility = GONE
-        }, 300)
-
-
+        }, 2000)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
