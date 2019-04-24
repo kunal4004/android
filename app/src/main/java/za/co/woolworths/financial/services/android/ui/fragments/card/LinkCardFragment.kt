@@ -43,7 +43,6 @@ class LinkCardFragment : MyCardExtension() {
     }
 
     private fun tappedEvent() {
-        vCameraBgTapped?.setOnClickListener { (activity as? AppCompatActivity)?.apply { navigateToBarCodeScannerActivity(this) } }
         imNavigateToOTPFragment?.setOnClickListener {
             if (imNavigateToOTPFragment?.alpha == 1.0f) {
                 replaceFragment(

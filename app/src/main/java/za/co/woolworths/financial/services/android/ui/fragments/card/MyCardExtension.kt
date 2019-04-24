@@ -11,7 +11,6 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
 import com.awfs.coordination.R
-import za.co.woolworths.financial.services.android.ui.activities.card.BarcodeScannerActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.LinkNewCardActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
@@ -52,13 +51,6 @@ open class MyCardExtension : Fragment() {
             startActivity(Intent(this, LinkNewCardActivity::class.java))
             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
             finish()
-        }
-    }
-
-    internal fun navigateToBarCodeScannerActivity(activity: AppCompatActivity?) {
-        activity?.apply {
-            startActivity(Intent(this, BarcodeScannerActivity::class.java))
-            overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
         }
     }
 
