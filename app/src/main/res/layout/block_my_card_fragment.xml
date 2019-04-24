@@ -53,7 +53,7 @@
         android:layout_marginTop="@dimen/fifty_dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="32dp"
-        android:divider="?android:attr/dividerHorizontal"
+        android:divider="@drawable/radio_button_divider_color"
         android:showDividers="middle"
         app:layout_constraintBottom_toTopOf="@+id/btnBlockCard"
         app:layout_constraintEnd_toEndOf="parent"
@@ -129,10 +129,10 @@
     <View
         android:id="@+id/blockCardRadDivider"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="1.5dp"
         android:layout_marginStart="@dimen/thirty_two_dp"
         android:layout_marginEnd="@dimen/thirty_two_dp"
-        android:background="@color/grey_bg"
+        android:background="@drawable/radio_button_divider_color"
         app:layout_constraintBottom_toBottomOf="@+id/blockCardRadioGroup"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
