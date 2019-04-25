@@ -12,6 +12,7 @@ import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBanki
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.view.inputmethod.InputMethodManager
+import za.co.woolworths.financial.services.android.ui.extension.withArgs
 
 
 class AbsaBoardingFragment : AbsaFragmentExtension(), View.OnClickListener {
@@ -19,10 +20,8 @@ class AbsaBoardingFragment : AbsaFragmentExtension(), View.OnClickListener {
     private var mCreditCardNumber: String? = ""
 
     companion object {
-        fun newInstance(creditAccountInfo: String?) = AbsaBoardingFragment().apply {
-            arguments = Bundle(1).apply {
+        fun newInstance(creditAccountInfo: String?) = AbsaBoardingFragment().withArgs {
                 putString("creditCardToken", creditAccountInfo)
-            }
         }
     }
 

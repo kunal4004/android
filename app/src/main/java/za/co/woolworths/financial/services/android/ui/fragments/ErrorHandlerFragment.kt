@@ -11,6 +11,7 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.error_handler_fragment.*
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
+import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GotITDialogFragment
 
 class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
@@ -21,10 +22,8 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
     var errorType: Int = 0
 
     companion object {
-        fun newInstance(errorType: Int) = ErrorHandlerFragment().apply {
-            arguments = Bundle(1).apply {
+        fun newInstance(errorType: Int) = ErrorHandlerFragment().withArgs {
                 putInt("errorType", errorType)
-            }
         }
     }
 
