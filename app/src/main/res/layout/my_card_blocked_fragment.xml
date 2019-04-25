@@ -51,7 +51,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/w_silver_credit_card" />
+        app:srcCompat="@drawable/w_store_card" />
 
     <TextView
         android:id="@+id/tvActive"
@@ -139,7 +139,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/descriptionGuide"
-        app:layout_constraintGuide_percent="0.38"
+        app:layout_constraintGuide_percent="0.45"
         android:orientation="horizontal"/>
 
 </android.support.constraint.ConstraintLayout>
