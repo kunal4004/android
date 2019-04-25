@@ -279,7 +279,7 @@
     <string name="collect_credit_card_title">When collecting your credit card, bring the following:</string>
     <string name="collect_credit_card_desc_1">Valid South African ID </string>
 
-    <string name="product_search_hint">Search products, brands</string>
+    <string name="product_search_hint">Search products, product codes, brands</string>
     <string name="no_product_found">0 ITEMS FOUND</string>
     <string name="scan_product">SCAN PRODUCT</string>
     <string name="set_manually_enter_barcode">Manually enter the barcode</string>
