@@ -40,7 +40,6 @@ public class BarcodeViewModel extends BaseViewModel<BarcodeNavigator> {
         mGetProductsRequest = getBarcodeProduct(context, getProductRequestBody());
         mGetProductsRequest.execute();
     }
-
     GetProductsRequest getBarcodeProduct(final Context context, final ProductsRequestParams requestParams) {
         setProductIsLoading(true);
         getNavigator().onLoadStart();
