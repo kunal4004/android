@@ -556,8 +556,9 @@ public class MyAccountCardsActivity extends AppCompatActivity
                 || (fragment instanceof WCreditCardFragment)) {
             switch (position) {
                 case 1:
-                    if (fragment instanceof WCreditCardFragment)
-                        ((WCreditCardFragment) fragment).updateABSATitle();
+                    if (fragment instanceof WCreditCardFragment) {
+                        // CAll back to do something after Successful ABSA registration
+                    }
                     break;
 
                 default:

@@ -42,11 +42,11 @@ class AbsaBiometricFragment : AbsaFragmentExtension() {
             }
         }
 
-        tvSkipStep.setOnClickListener { navigateToCompleteFragment() }
-        ivNavigateToNextFragment.setOnClickListener { navigateToCompleteFragment() }
+        //tvSkipStep.setOnClickListener { navigateToCompleteFragment() }
+        //ivNavigateToNextFragment.setOnClickListener { navigateToCompleteFragment() }
     }
 
-    private fun navigateToCompleteFragment() {
+    /*private fun navigateToCompleteFragment() {
         replaceFragment(
                 fragment = AbsaPinCodeSuccessFragment.newInstance(),
                 tag = AbsaPinCodeSuccessFragment::class.java.simpleName,
@@ -57,7 +57,7 @@ class AbsaBiometricFragment : AbsaFragmentExtension() {
                 popEnterAnimation = R.anim.slide_from_left,
                 popExitAnimation = R.anim.slide_to_right
         )
-    }
+    }*/
 
     override fun onResume() {
         super.onResume()
