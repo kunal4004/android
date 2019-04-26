@@ -79,18 +79,17 @@ class ProcessBlockCardFragment : MyCardExtension(), IProgressAnimationState {
     }
 
     private fun displayBlockedCardSuccess() {
-        val successTick = object : CountDownTimer(3000, 100) {
+
+        incBlockCardSuccess?.visibility = VISIBLE
+        incProcessingTextLayout?.visibility = GONE
+        object : CountDownTimer(1500, 100) {
             override fun onTick(millisUntilFinished: Long) {
             }
 
             override fun onFinish() {
                 navigateToMyCardActivity(true)
-                incBlockCardSuccess?.visibility = VISIBLE
-                incProcessingTextLayout?.visibility = GONE
             }
-        }
-
-        successTick.start()
+        }.start()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {

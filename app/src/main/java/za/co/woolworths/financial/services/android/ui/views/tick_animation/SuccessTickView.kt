@@ -47,7 +47,7 @@ class SuccessTickView : View {
         var totalW:Float = width.toFloat()
         var totalH:Float = height.toFloat()
         // rotate canvas first
-        canvas.rotate(45f, (totalW / 2).toFloat(), (totalH / 2).toFloat())
+        canvas.rotate(45f, (totalW / 2), (totalH / 2))
 
         totalW /= 1.2f
         totalH /= 1.4f
