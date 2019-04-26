@@ -181,8 +181,13 @@
     <style name="SSOActivity" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
-        <item name="android:background">@android:color/transparent</item>
+        <item name="android:background">@color/semi_per_black</item>
         <item name="android:homeAsUpIndicator">@drawable/close_24</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:backgroundDimEnabled">false</item>
 
     </style>
 
