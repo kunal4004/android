@@ -13,7 +13,7 @@ open class MyCardActivityExtension : AppCompatActivity() {
         val openCardDetailActivity = Intent(this, MyCardDetailActivity::class.java)
         openCardDetailActivity.putExtra(ProcessBlockCardFragment.CARD_BLOCKED, cardIsBlocked)
         startActivity(openCardDetailActivity)
-        overridePendingTransition(0,0)
+        overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
     }
 
 

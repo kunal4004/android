@@ -2,8 +2,6 @@ package za.co.woolworths.financial.services.android.ui.activities.card
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.util.Log
-import android.view.Menu
 import android.view.MenuItem
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.my_card_activity.*
@@ -34,9 +32,10 @@ class BlockMyCardActivity : MyCardActivityExtension(), IPermanentCardBlock {
         toolbarText?.text = ""
         setSupportActionBar(tbMyCard)
         supportActionBar?.apply {
-            setDisplayHomeAsUpEnabled(false)
+            setDisplayHomeAsUpEnabled(true)
             setDisplayShowTitleEnabled(false)
             setDisplayUseLogoEnabled(false)
+            setHomeAsUpIndicator(R.drawable.back24)
         }
     }
 
@@ -54,7 +53,6 @@ class BlockMyCardActivity : MyCardActivityExtension(), IPermanentCardBlock {
     }
 
     override fun onBlockPermanentCardPermissionGranted() {
-        Log.e("onBlockPermane", "onBlockPermanentCardPermissionGranted")
         if (getCurrentFragment() is BlockMyCardReasonFragment) {
             (getCurrentFragment() as? BlockMyCardReasonFragment)?.processBlockCardRequest()
         }
@@ -62,24 +60,22 @@ class BlockMyCardActivity : MyCardActivityExtension(), IPermanentCardBlock {
 
     private fun finishActivity() {
         this.finish()
-        this.overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+        overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
         navigateToMyCardActivity(false)
-    }
-
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater?.inflate(R.menu.search_item, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_search -> finishActivity()
-        }
-        return super.onOptionsItemSelected(item)
     }
 
     private fun getCurrentFragment(): Fragment? {
         return supportFragmentManager?.findFragmentById(R.id.flMyCard)
     }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                navigateBack()
+                return true
+            }
+            else -> false
+        }
+    }
+
 }
