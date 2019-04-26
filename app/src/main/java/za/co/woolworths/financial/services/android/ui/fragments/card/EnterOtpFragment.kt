@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
+import android.widget.EditText
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.enter_otp_fragment.*
 import za.co.woolworths.financial.services.android.ui.activities.card.LinkNewCardActivity
@@ -47,90 +48,39 @@ class EnterOtpFragment : MyCardExtension() {
         tvDidNotReceivedOTP?.setOnClickListener { (activity as? AppCompatActivity)?.let { navigateToResendOTPFragment(it) } }
     }
 
-    private fun setupInputListeners() {
-        edtVericationCode1?.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                if (s.length == 1) {
-                    edtVerificationCode2?.requestFocus(View.FOCUS_DOWN)
+    private fun setupInputListeners() = arrayOf<EditText>(edtVericationCode1, edtVerificationCode2, edtVerificationCode3, edtVerificationCode4, edtVerificationCode5).apply {
+        val listSize = size - 1
+        for ((index, currentEditText) in withIndex()) {
+            val nextEditText: EditText? = if (index < listSize) this[index + 1] else null
+            val previousEditText: EditText? = if (index > 0) this[index - 1] else null
+            currentEditText.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
                 }
-            }
 
-            override fun afterTextChanged(s: Editable) {
-                validateVerificationCode()
-            }
-        })
-        edtVerificationCode2?.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                if (count == 0) {
-                    edtVericationCode1?.requestFocus(View.FOCUS_DOWN)
-                } else {
-                    if (s.length == 1) {
-                        edtVerificationCode3?.requestFocus(View.FOCUS_DOWN)
+                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                    when (index) {
+                        0 -> if (s.length == 1) nextEditText?.requestFocus(View.FOCUS_DOWN) // First EditText
+                        listSize -> if (count == 0) previousEditText?.requestFocus(View.FOCUS_DOWN) // Last EditText
+                        else -> { // Remaining editText
+                            if (count == 0) {
+                                previousEditText?.requestFocus(View.FOCUS_DOWN)
+                            } else {
+                                if (s.length == 1) {
+                                    nextEditText?.requestFocus(View.FOCUS_DOWN)
+                                }
+                            }
+                        }
                     }
                 }
-            }
 
-            override fun afterTextChanged(s: Editable) {
-                validateVerificationCode()
-            }
-        })
-        edtVerificationCode3?.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                if (count == 0) {
-                    edtVerificationCode2?.requestFocus(View.FOCUS_DOWN)
-                } else {
-                    if (s.length == 1) {
-                        edtVerificationCode4?.requestFocus(View.FOCUS_DOWN)
+                override fun afterTextChanged(s: Editable) {
+                    when (index) {
+                        listSize -> currentEditText.apply { isCursorVisible = s.isEmpty() }
                     }
+                    validateVerificationCode()
                 }
-            }
-
-            override fun afterTextChanged(s: Editable) {
-                validateVerificationCode()
-            }
-        })
-        edtVerificationCode4?.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                if (count == 0) {
-                    edtVerificationCode3?.requestFocus(View.FOCUS_DOWN)
-                } else {
-                    if (s.length == 1) {
-                        edtVerificationCode5?.requestFocus(View.FOCUS_DOWN)
-                    }
-                }
-            }
-
-            override fun afterTextChanged(s: Editable) {
-                validateVerificationCode()
-            }
-        })
-        edtVerificationCode5?.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                if (count == 0) {
-                    edtVerificationCode4?.requestFocus(View.FOCUS_DOWN)
-                }
-            }
-
-            override fun afterTextChanged(s: Editable) {
-                edtVerificationCode5?.apply { isCursorVisible = s.isEmpty() }
-                validateVerificationCode()
-            }
-        })
+            })
+        }
     }
 
     private fun validateVerificationCode() {
@@ -142,12 +92,12 @@ class EnterOtpFragment : MyCardExtension() {
             true -> {
                 imNextProcessLinkCard?.isEnabled = true
                 imNextProcessLinkCard?.alpha = 1.0f
-                imNextProcessLinkCard?.isFocusable  = false
+                imNextProcessLinkCard?.isFocusable = false
             }
             false -> {
                 imNextProcessLinkCard?.isEnabled = false
                 imNextProcessLinkCard?.alpha = 0.5f
-                imNextProcessLinkCard?.isFocusable  = true
+                imNextProcessLinkCard?.isFocusable = true
             }
         }
     }

@@ -27,7 +27,7 @@ open class MyCardExtension : Fragment() {
     fun navigateToBlockMyCardActivity(activity: Activity?) {
         activity?.apply {
             startActivity(Intent(this, BlockMyCardActivity::class.java))
-            overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+            overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
             finish()
         }
     }
