@@ -6,15 +6,15 @@ apply plugin: 'io.fabric'
 android {
 
     def major = "5"
-    def minor = "10"
-    def fix = "1"
+    def minor = "11"
+    def fix = "0"
 
     //placeholder will be temporarily updated by build server during a build.
     //check appcenter-pre-build.sh
     def BUILD_NUMBER = "{BUILD_NUMBER}"
 
     if (!BUILD_NUMBER.isNumber()){
-        BUILD_NUMBER = "100"
+        BUILD_NUMBER = "101"
     }
 
     dataBinding {
