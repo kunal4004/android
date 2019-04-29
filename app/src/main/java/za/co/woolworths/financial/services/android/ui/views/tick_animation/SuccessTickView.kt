@@ -112,8 +112,8 @@ class SuccessTickView : View {
                 }
             }
         }
-        tickAnim.duration = 200
-        tickAnim.startOffset = 100
+        tickAnim.duration = 250
+        tickAnim.startOffset = 50
         startAnimation(tickAnim)
     }
 }
