@@ -241,9 +241,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
 		byte[] hash = null;
 		try {
 			hash = Cryptography.PasswordBasedKeyDerivationFunction2(passphrase,Integer.toString(BuildConfig.VERSION_CODE),1007,256);
-		} catch (KeyGenerationFailureException e) {
-			Log.e(TAG,e.getMessage());
-		} catch (UnsupportedEncodingException e) {
+		} catch (KeyGenerationFailureException | UnsupportedEncodingException e) {
 			Log.e(TAG,e.getMessage());
 		}
 		String hashB64 = Base64.encodeToString(hash,Base64.NO_WRAP);
