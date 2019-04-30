@@ -35,7 +35,6 @@ public class WStockFinderActivity extends AppCompatActivity implements StoreFind
     public StockFinderFragmentAdapter mPagerAdapter;
     private String mProductName;
     private String mContactInto = null;
-
     public interface RecyclerItemSelected {
         void onRecyclerItemClick(View v, int position, String filterType);
 
@@ -186,6 +185,7 @@ public class WStockFinderActivity extends AppCompatActivity implements StoreFind
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        finish();
         onNavigateBack();
     }
 
@@ -226,17 +226,11 @@ public class WStockFinderActivity extends AppCompatActivity implements StoreFind
             case R.id.buttonBackToProducts:
                 finish();
                 onNavigateBack();
+                overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
                 break;
             default:
                 break;
         }
-    }
-
-    private void onNavigateBack() {
-        if (TextUtils.isEmpty(mContactInto))
-            overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
-        else
-            overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right);
     }
 
 
@@ -260,6 +254,13 @@ public class WStockFinderActivity extends AppCompatActivity implements StoreFind
         if (fragmentToShow != null) {
             fragmentToShow.onFragmentUpdate();
         }
+    }
+
+    private void onNavigateBack() {
+        if (TextUtils.isEmpty(mContactInto))
+            overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
+        else
+            overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right);
     }
 
 }
