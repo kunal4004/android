@@ -28,7 +28,7 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:indeterminateTint="@color/white"
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/textInfo"
@@ -42,7 +42,7 @@
                 android:textAllCaps="true"
                 android:textColor="@color/white"
                 android:textSize="12sp"
-                app:WTextView_font="medium"/>
+                app:WTextView_font="medium" />
         </LinearLayout>
 
         <ImageView
@@ -51,21 +51,21 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/linProgressInfo"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="27dp"
             android:layout_marginTop="50dp"
-            android:src="@drawable/barcode_img"/>
+            android:layout_marginBottom="27dp"
+            android:src="@drawable/barcode_img" />
 
         <za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView
             android:id="@+id/editBarcodeNumber"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
             android:layout_below="@+id/imgBarcode"
+            android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="@dimen/bank_spacing_width"
-            android:layout_marginRight="@dimen/bank_spacing_width"
             android:layout_marginStart="8dp"
+            android:layout_marginLeft="@dimen/bank_spacing_width"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="@dimen/bank_spacing_width"
             android:background="@android:color/transparent"
             android:digits="0123456789"
             android:gravity="center"
@@ -80,7 +80,7 @@
             android:textSize="20sp"
             app:WEditTextView_font="medium">
 
-            <requestFocus/>
+            <requestFocus />
 
         </za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView>
 
@@ -90,19 +90,19 @@
             android:layout_height="0.1dp"
             android:layout_below="@+id/editBarcodeNumber"
             android:layout_marginLeft="75dp"
-            android:layout_marginRight="75dp"
             android:layout_marginTop="8dp"
-            android:background="@color/barcode_button_light"/>
+            android:layout_marginRight="75dp"
+            android:background="@color/barcode_button_light" />
 
         <za.co.woolworths.financial.services.android.ui.views.WButton
             android:id="@+id/btnBarcodeConfirm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/horizontalLine"
-            android:layout_marginBottom="@dimen/bank_spacing_width"
             android:layout_marginLeft="@dimen/bank_spacing_width"
-            android:layout_marginRight="@dimen/bank_spacing_width"
             android:layout_marginTop="28dp"
+            android:layout_marginRight="@dimen/bank_spacing_width"
+            android:layout_marginBottom="@dimen/bank_spacing_width"
             android:background="@drawable/barcode_btn_border"
             android:letterSpacing="0.15"
             android:text="@string/confirm"
@@ -110,7 +110,7 @@
             android:textColor="@color/white"
             android:textSize="12sp"
             android:visibility="gone"
-            app:WButton_font="medium"/>
+            app:WButton_font="medium" />
 
     </RelativeLayout>
 </layout>

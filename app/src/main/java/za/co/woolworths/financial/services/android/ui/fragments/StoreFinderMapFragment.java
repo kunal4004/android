@@ -14,6 +14,7 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.text.util.Linkify;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -59,6 +60,18 @@ import za.co.woolworths.financial.services.android.util.WCustomViewPager;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallback, ViewPager.OnPageChangeListener, GoogleMap.OnMarkerClickListener, UpdateStoreFinderFragment {
+
+
+	public static final String CARD_CONTACT_INFO = "CARD_CONTACT_INFO";
+	private String mCardContactInfo;
+
+	public static StoreFinderMapFragment newInstance(String cardContactInfo) {
+		StoreFinderMapFragment myFragment = new StoreFinderMapFragment();
+		Bundle args = new Bundle();
+		args.putString(CARD_CONTACT_INFO, cardContactInfo);
+		myFragment.setArguments(args);
+		return myFragment;
+	}
 
 	public interface SlidePanelEvent {
 		void slidePanelAnchored();
@@ -106,6 +119,17 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 	private PopWindowValidationMessage mPopWindowValidationMessage;
 	private Location mLocation;
 	private StoreFinderMapFragment mFragment;
+
+
+	@Override
+	public void onCreate(@Nullable Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		Bundle argument = getArguments();
+		if (argument != null)
+			mCardContactInfo = getArguments().getString(CARD_CONTACT_INFO, "");
+
+	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -224,6 +248,13 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 
 		initLocationCheck();
 		getActivity().registerReceiver(broadcastCall, new IntentFilter("broadcastCall"));
+
+		// handle store card
+		if (!TextUtils.isEmpty(mCardContactInfo)) {
+			tvFlStockFinderMapHeader.setVisibility(View.VISIBLE);
+			tvFlStockFinderMapHeader.setText(mCardContactInfo);
+			Linkify.addLinks(tvFlStockFinderMapHeader, Linkify.ALL);
+		}
 	}
 
 	@Override

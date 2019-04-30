@@ -603,7 +603,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
                             default:
                                 String creditCardNumber = "";
                                 for (Card card : cards) {
-                                    if (card.cardStatus.equalsIgnoreCase("AAA")) {
+                                    if (card.cardStatus.trim().equalsIgnoreCase("AAA")) {
                                         creditCardNumber = card.absaCardToken;
                                     }
                                 }
