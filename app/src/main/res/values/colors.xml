@@ -80,5 +80,11 @@
     <color name="orders_bg">#F0F0F0</color>
     <color name="shop_search_color">#F6F6F6</color>
     <color name="button_disable">#C1C1C1</color>
+    <color name="active_card_color">#424244</color>
+    <color name="npc_description">#909090</color>
+    <color name="permanent_card_block_desc_color">#7F7F7F</color>
+    <color name="no_active_card_title">#FF222222</color>
+    <color name="success_stroke_color"> #CC196A</color>
+    <color name="trans_success_stroke_color">#307A4183</color>
     <color name="gray">#FF7F7F7F</color>
 </resources>

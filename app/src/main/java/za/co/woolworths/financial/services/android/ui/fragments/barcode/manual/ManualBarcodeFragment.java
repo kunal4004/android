@@ -348,6 +348,4 @@ public class ManualBarcodeFragment extends BaseFragment<ManualBarcodeLayoutBindi
 			executeBarcodeProduct(mEditBarcodeIdText);
 		}
 	}
-
-
 }
