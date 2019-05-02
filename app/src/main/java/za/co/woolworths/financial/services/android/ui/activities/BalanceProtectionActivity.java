@@ -40,11 +40,10 @@ public class BalanceProtectionActivity extends AppCompatActivity {
 	public void currentFragment(Fragment frag) {
 		FragmentManager fm = getSupportFragmentManager();
 		FragmentTransaction fragmentTransaction = fm.beginTransaction();
-		fragmentTransaction.setCustomAnimations(R.anim.fragment_enter, R.anim.fragment_exit, R.anim.fragment_pop_enter, R.anim.fragment_pop_exit);
+		fragmentTransaction.setCustomAnimations( R.anim.slide_in_from_right, R.anim.slide_out_to_left, R.anim.slide_in_from_left, R.anim.slide_out_to_right);
 		fragmentTransaction.replace(R.id.fragment_container, frag);
 		fragmentTransaction.addToBackStack(this.getClass().getSimpleName());
-		fragmentTransaction.show(frag);
-		fragmentTransaction.commit();
+		fragmentTransaction.commitAllowingStateLoss();
 	}
 
 	public void addFragment(Fragment frag) {
@@ -52,8 +51,7 @@ public class BalanceProtectionActivity extends AppCompatActivity {
 		FragmentTransaction fragmentTransaction = fm.beginTransaction();
 		fragmentTransaction.add(R.id.fragment_container, frag);
 		fragmentTransaction.addToBackStack(this.getClass().getSimpleName());
-		fragmentTransaction.show(frag);
-		fragmentTransaction.commit();
+		fragmentTransaction.commitAllowingStateLoss();
 	}
 
 	private void setActionBar() {

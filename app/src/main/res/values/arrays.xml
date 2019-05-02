@@ -75,15 +75,15 @@
 
     <string-array name="death_cover_required_forms">
         <item>@string/balance_protection_claim_form</item>
-        <item>@string/new_disability_claim_form</item>
-        <item>@string/confidential_medical_specialist_report</item>
         <item>@string/personal_medical_attendants_report</item>
+        <item>@string/police_report</item>
     </string-array>
 
     <string-array name="death_cover_required_forms_submit">
-        <item>@string/medical_reports_from_doctor</item>
         <item>@string/certified_id</item>
-        <item>@string/investigation_results_from_doctor</item>
+        <item>@string/death_certificate</item>
+        <item>@string/certified_id_deceased</item>
+        <item>@string/claimant_bank_statement</item>
     </string-array>
 
     <string-array name="retrenchment_form">
@@ -108,7 +108,6 @@
         <item>@string/medical_reports_from_doctor</item>
         <item>@string/certified_id</item>
         <item>@string/sick_note_from_doctor</item>
-        <item>@string/investigation_results_from_doctor</item>
     </string-array>
 
     <string-array name="permanent_disability">

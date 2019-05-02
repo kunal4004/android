@@ -39,8 +39,6 @@
             android:gravity="center|start"
             android:hint="@string/product_search_hint"
             android:inputType="textNoSuggestions"
-            android:maxLines="1"
-            android:paddingRight="@dimen/default_margin"
             android:textColor="@color/black"
             android:textColorHint="@color/product_search_hint"
             android:textSize="15sp"
