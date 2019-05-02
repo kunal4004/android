@@ -234,7 +234,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
             @Override
             public void onSuccess(Object object) {
                 StatementResponse statementResponse = (StatementResponse) object;
-                if (statementResponse != null) {
+                if (statementResponse != null && getActivity() !=null) {
                     Response response = statementResponse.response;
                     switch (statementResponse.httpCode) {
                         case 200:
@@ -263,19 +263,22 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
                             }
                             break;
                     }
+                    onLoadComplete();
                 }
-                onLoadComplete();
             }
 
             @Override
             public void onFailure(final String e) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        onLoadComplete();
-                        mErrorHandlerView.networkFailureHandler(e);
-                    }
-                });
+                Activity activity = getActivity();
+                if (activity !=null) {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            onLoadComplete();
+                            mErrorHandlerView.networkFailureHandler(e);
+                        }
+                    });
+                }
             }
         });
         cliGetStatements.execute();
@@ -306,44 +309,49 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         mGetPdfFile = new GetPdfFile(mGetStatementFile, new OnEventListener() {
             @Override
             public void onSuccess(Object object) {
-                loadSuccess();
-                hideViewProgress();
-                retrofit.client.Response response = (retrofit.client.Response) object;
-                switch (response.getStatus()) {
+                if (getActivity() !=null) {
+                    loadSuccess();
+                    hideViewProgress();
+                    retrofit.client.Response response = (retrofit.client.Response) object;
+                    switch (response.getStatus()) {
 
-                    case 200:
-                        try {
-                            StatementUtils statementUtils = new StatementUtils(activity);
-                            statementUtils.savePDF(response.getBody().in());
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                PreviewStatement previewStatement = new PreviewStatement();
-                                FragmentUtils fragmentUtils = new FragmentUtils(activity);
-                                FragmentManager fragmentManager = activity.getSupportFragmentManager();
-                                fragmentUtils.openFragment(fragmentManager, previewStatement, R.id.flAccountStatement);
-                                showSlideUpPanel();
-                            } else {
-                                launchOpenPDFIntent();
+                        case 200:
+                            try {
+                                StatementUtils statementUtils = new StatementUtils(activity);
+                                statementUtils.savePDF(response.getBody().in());
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                    PreviewStatement previewStatement = new PreviewStatement();
+                                    FragmentUtils fragmentUtils = new FragmentUtils(activity);
+                                    FragmentManager fragmentManager = activity.getSupportFragmentManager();
+                                    fragmentUtils.openFragment(fragmentManager, previewStatement, R.id.flAccountStatement);
+                                    showSlideUpPanel();
+                                } else {
+                                    launchOpenPDFIntent();
+                                }
+                            } catch (Exception ex) {
+                                Log.d(TAG, ex.getMessage());
                             }
-                        } catch (Exception ex) {
-                            Log.d(TAG, ex.getMessage());
-                        }
 
-                        break;
-                    default:
-                        break;
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
 
             @Override
             public void onFailure(String e) {
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mErrorHandlerView.showToast();
-                        loadFailure();
-                        hideViewProgress();
-                    }
-                });
+                Activity activity = getActivity();
+                if (activity!=null) {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mErrorHandlerView.showToast();
+                            loadFailure();
+                            hideViewProgress();
+                        }
+                    });
+                }
             }
         });
 

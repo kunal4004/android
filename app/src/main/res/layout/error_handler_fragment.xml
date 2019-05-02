@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/errorLogo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/eighty_dp"
+        android:contentDescription="@string/app_label" />
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/errorTitle"
+        style="@style/absa_page_title_text_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/errorLogo"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="@dimen/thirty_two_dp"
+        android:layout_marginTop="@dimen/fifty_eight_dp"
+        android:layout_marginEnd="@dimen/thirty_two_dp"
+        android:layout_marginBottom="@dimen/eight_dp"
+        android:gravity="center"
+        android:text="@string/unsuccessful_request" />
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/errorDescription"
+        style="@style/absa_page_description_text_style"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/errorTitle"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="@dimen/sixteen_dp"
+        android:layout_marginEnd="32dp"
+        android:background="@color/white"
+        android:gravity="center"
+        android:text="@string/unsuccessful_request_desc" />
+
+    <LinearLayout
+        android:id="@+id/actionsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical">
+
+
+        <za.co.woolworths.financial.services.android.ui.views.WButton
+            android:id="@+id/actionButton"
+            style="@style/blackButtonStyle"
+            android:layout_marginLeft="@dimen/twenty_four_dp"
+            android:layout_marginRight="@dimen/twenty_four_dp"
+            android:layout_marginBottom="@dimen/twenty_four_dp"
+            android:text="@string/retry" />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/cancelButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/twenty_four_dp"
+            android:letterSpacing="0.1"
+            android:text="@string/cancel"
+            android:textAllCaps="true"
+            android:textColor="@color/gray"
+            android:textSize="12sp"
+            app:WTextView_font="light" />
+    </LinearLayout>
+
+</RelativeLayout>

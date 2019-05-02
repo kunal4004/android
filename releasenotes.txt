@@ -1,1 +1,1 @@
-https://wigroup2.atlassian.net/projects/WOP/versions/23116/tab/release-report-all-issues
+NPC Block Card UI

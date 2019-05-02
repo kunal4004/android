@@ -7,6 +7,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
+import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,16 +24,40 @@ import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.StoreDetailsActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.StockFinderListAdapter;
+import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.RecycleViewClickListner;
 import za.co.woolworths.financial.services.android.util.UpdateStoreFinderFragment;
 import za.co.woolworths.financial.services.android.util.Utils;
 
+import static za.co.woolworths.financial.services.android.ui.fragments.StoreFinderMapFragment.CARD_CONTACT_INFO;
+
 public class StoreFinderListFragment extends Fragment implements UpdateStoreFinderFragment {
+
+	private String mCardContactInfo = null;
+
+	public static StoreFinderListFragment newInstance(String cardContactInfo) {
+		StoreFinderListFragment myFragment = new StoreFinderListFragment();
+		Bundle args = new Bundle();
+		args.putString(CARD_CONTACT_INFO, cardContactInfo);
+		myFragment.setArguments(args);
+		return myFragment;
+	}
 
 	private RecyclerView mFinderInStoreList;
 	private List<StoreDetails> mStoreDetailList;
 	private WGlobalState wGlobalState;
 	private boolean listReceiveUpdate = false;
+
+	@Override
+	public void onCreate(@Nullable Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		Bundle argument = getArguments();
+		if (argument != null)
+			mCardContactInfo = getArguments().getString(CARD_CONTACT_INFO, "");
+
+	}
+
 
 	@Nullable
 	@Override
@@ -45,6 +71,13 @@ public class StoreFinderListFragment extends Fragment implements UpdateStoreFind
 		init(view);
 		onItemSelected();
 		wGlobalState = ((WoolworthsApplication) getActivity().getApplication()).getWGlobalState();
+		// handle store card
+		WTextView tvFlStockFinderMapHeader = view.findViewById(R.id.flStockFinderMapHeader);
+		if (!TextUtils.isEmpty(mCardContactInfo)) {
+			tvFlStockFinderMapHeader.setVisibility(View.VISIBLE);
+			tvFlStockFinderMapHeader.setText(mCardContactInfo);
+			Linkify.addLinks(tvFlStockFinderMapHeader, Linkify.ALL);
+		}
 	}
 
 	@Override

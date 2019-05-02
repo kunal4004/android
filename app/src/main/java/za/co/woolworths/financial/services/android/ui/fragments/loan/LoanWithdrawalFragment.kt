@@ -52,7 +52,7 @@ class LoanWithdrawalFragment : LoanBaseFragment() {
 
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.loan_withdrawal, container, false)
+        return inflater?.inflate(R.layout.loan_withdrawal, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
@@ -262,44 +262,49 @@ class LoanWithdrawalFragment : LoanBaseFragment() {
             showProgressDialog(true)
             mPostLoanIssue = PostLoanIssue(issueLoanRequest,
                     object : OnEventListener<IssueLoanResponse> {
-                        override fun onSuccess(`object`: IssueLoanResponse?) {
-                            val issueLoanResponse = `object` as IssueLoanResponse
-                            autoConnectRequest(false)
-                            showProgressDialog(false)
-                            hideKeyboard()
-                            when (issueLoanResponse.httpCode) {
-                                200 -> {
-                                    replaceFragment(
-                                            fragment = LoanWithdrawalDetailFragment.newInstance(Utils.toJson(issueLoanRequest), issueLoanResponse.installmentAmount),
-                                            tag = LoanWithdrawalDetailFragment::class.java.simpleName,
-                                            containerViewId = R.id.flLoanContent,
-                                            allowStateLoss = true,
-                                            enterAnimation = R.anim.slide_in_from_right,
-                                            exitAnimation = R.anim.slide_to_left,
-                                            popEnterAnimation = R.anim.slide_from_left,
-                                            popExitAnimation = R.anim.slide_to_right
-                                    )
-                                }
-                                440 -> {
-                                    SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, issueLoanResponse.response.stsParams, activity)
-                                }
+                        override fun onSuccess(issueLoanResponse: IssueLoanResponse?) {
+                            activity?.let { activity ->
+                                issueLoanResponse?.apply {
+                                    autoConnectRequest(false)
+                                    showProgressDialog(false)
+                                    hideKeyboard()
+                                    when (httpCode) {
+                                        200 -> {
+                                            replaceFragment(
+                                                    fragment = LoanWithdrawalDetailFragment.newInstance(Utils.toJson(issueLoanRequest), installmentAmount),
+                                                    tag = LoanWithdrawalDetailFragment::class.java.simpleName,
+                                                    containerViewId = R.id.flLoanContent,
+                                                    allowStateLoss = true,
+                                                    enterAnimation = R.anim.slide_in_from_right,
+                                                    exitAnimation = R.anim.slide_to_left,
+                                                    popEnterAnimation = R.anim.slide_from_left,
+                                                    popExitAnimation = R.anim.slide_to_right
+                                            )
+                                        }
+                                        440 -> {
+                                            SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.stsParams, activity)
+                                        }
 
-                                else -> {
-                                    issueLoanResponse.response?.let { result -> DialogManager(activity).showBasicDialog(result.desc) }
+                                        else -> {
+                                            response?.desc?.let { DialogManager(activity).showBasicDialog(it) }
+                                        }
+                                    }
                                 }
                             }
                         }
 
                         override fun onFailure(e: String?) {
-                            autoConnectRequest(true)
-                            showProgressDialog(false)
+                            activity?.apply {
+                                autoConnectRequest(true)
+                                showProgressDialog(false)
+                            }
                         }
                     })
 
-            mPostLoanIssue!!.execute()
+            mPostLoanIssue?.execute()
 
         } else {
-            Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.HIGH_LOAN_AMOUNT, "")
+            activity?.let {  Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.HIGH_LOAN_AMOUNT, "")}
         }
     }
 
@@ -327,30 +332,37 @@ class LoanWithdrawalFragment : LoanBaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        // retrieve drawnDown amount
-        val drawnDownAmount: String = edtWithdrawAmount?.text.toString()
-        // check if drawnDownAmount is empty
-        val drawnDownAmountIsEmpty = TextUtils.isEmpty(drawnDownAmount)
-        // Change icon to close icon
-        activity?.let { (it as? LoanWithdrawalActivity)?.setHomeIndicatorIcon(R.drawable.close_white) }
-        if (!drawnDownAmountIsEmpty)
-            edtWithdrawAmount?.setText(drawnDownAmount)
-        Handler().postDelayed({ mMenu?.let { menuItemVisible(it, !drawnDownAmountIsEmpty) } }, MILIS)
-        showKeyboard()
+        edtWithdrawAmount?.apply {
+            val drawnDownAmount: String = text.toString()
+            // retrieve drawnDown amount
+            // check if drawnDownAmount is empty
+            val drawnDownAmountIsEmpty = TextUtils.isEmpty(drawnDownAmount)
+            // Change icon to close icon
+            activity?.let { (it as? LoanWithdrawalActivity)?.setHomeIndicatorIcon(R.drawable.close_white) }
+            if (!drawnDownAmountIsEmpty)
+                setText(drawnDownAmount)
+            Handler().postDelayed({ mMenu?.let { menuItemVisible(it, !drawnDownAmountIsEmpty) } }, MILIS)
+            showKeyboard()
+        }
     }
 
     private fun hideKeyboard() {
         activity?.let {
-                (it.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)?.hideSoftInputFromWindow(it.currentFocus?.windowToken, 0)
+            it.currentFocus?.windowToken?.apply {
+                (it.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)?.hideSoftInputFromWindow(this, 0)
+            }
         }
     }
 
     private fun showKeyboard() {
         edtWithdrawAmount?.apply {
             requestFocus()
-            isFocusableInTouchMode = true
-            val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-            imm?.showSoftInput(edtWithdrawAmount, InputMethodManager.SHOW_IMPLICIT)
+            activity?.let {
+                requestFocus()
+                isFocusableInTouchMode = true
+                val imm = it.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+                imm?.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
+            }
         }
     }
 

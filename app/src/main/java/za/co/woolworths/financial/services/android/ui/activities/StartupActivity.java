@@ -1,5 +1,4 @@
 package za.co.woolworths.financial.services.android.ui.activities;
-
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -7,7 +6,6 @@ import android.graphics.PorterDuff;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -18,16 +16,10 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-
-import com.awfs.coordination.BuildConfig;
 import com.awfs.coordination.R;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.analytics.FirebaseAnalytics;
-
 import java.util.ArrayList;
 import java.util.Collections;
-
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.OnResultListener;
 import za.co.woolworths.financial.services.android.contracts.RootActivityInterface;
@@ -171,6 +163,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 					WoolworthsApplication.setSsoRedirectURILogout(configResponse.configs.enviroment.getSsoRedirectURILogout());
 					WoolworthsApplication.setSsoUpdateDetailsRedirectUri(configResponse.configs.enviroment.getSsoUpdateDetailsRedirectUri());
 					WoolworthsApplication.setWwTodayURI(configResponse.configs.enviroment.getWwTodayURI());
+					WoolworthsApplication.setAuthenticVersionStamp(configResponse.configs.enviroment.getAuthenticVersionStamp());
 					WoolworthsApplication.setApplyNowLink(configResponse.configs.defaults.getApplyNowLink());
 					WoolworthsApplication.setRegistrationTCLink(configResponse.configs.defaults.getRegisterTCLink());
 					WoolworthsApplication.setFaqLink(configResponse.configs.defaults.getFaqLink());
@@ -179,8 +172,10 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 					WoolworthsApplication.setHowToSaveLink(configResponse.configs.defaults.getHowtosaveLink());
 					WoolworthsApplication.setWrewardsTCLink(configResponse.configs.defaults.getWrewardsTCLink());
 					WoolworthsApplication.setCartCheckoutLink(configResponse.configs.defaults.getCartCheckoutLink());
+
 					mWGlobalState.setStartRadius(configResponse.configs.enviroment.getStoreStockLocatorConfigStartRadius());
 					mWGlobalState.setEndRadius(configResponse.configs.enviroment.getStoreStockLocatorConfigEndRadius());
+
 
 					splashScreenText = configResponse.configs.enviroment.splashScreenText;
 					splashScreenDisplay = configResponse.configs.enviroment.splashScreenDisplay;
@@ -205,6 +200,8 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 			}
 		});
 	}
+
+
 
 	//video player on completion
 	@Override

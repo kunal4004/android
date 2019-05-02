@@ -12,12 +12,14 @@ class GotITDialogFragment : ActionSheetDialogFragment(), View.OnClickListener {
 
     companion object {
         private var mOnDialogDismiss: IDialogListener? = null
-        fun newInstance(title: String, desc: String, onDialogDismissListener: IDialogListener): GotITDialogFragment {
+        fun newInstance(title: String, desc: String, dismissDialogText: String, onDialogDismissListener: IDialogListener, actionButtonText: String = ""): GotITDialogFragment {
             mOnDialogDismiss = onDialogDismissListener
             val gotITDialogFragment = GotITDialogFragment()
             val bundle = Bundle()
             bundle.putString("title", title)
             bundle.putString("desc", desc)
+            bundle.putString("dismissDialogText", dismissDialogText)
+            bundle.putString("actionButtonText", actionButtonText)
             gotITDialogFragment.arguments = bundle
             return gotITDialogFragment
         }
@@ -30,6 +32,8 @@ class GotITDialogFragment : ActionSheetDialogFragment(), View.OnClickListener {
         val bundleArguments = arguments
         val mResponseTitle = bundleArguments.getString("title")
         val mResponseDesc = bundleArguments.getString("desc")
+        val dismissDialogText = bundleArguments.getString("dismissDialogText")
+        val actionButtonText = bundleArguments.getString("actionButtonText")
 
         if (!TextUtils.isEmpty(mResponseTitle))
             tvTitle.setText(mResponseTitle)
@@ -37,9 +41,20 @@ class GotITDialogFragment : ActionSheetDialogFragment(), View.OnClickListener {
         if (!TextUtils.isEmpty(mResponseDesc))
             tvDescription.setText(mResponseDesc)
 
+        if (!TextUtils.isEmpty(dismissDialogText))
+            btnGotIt.text = dismissDialogText
+
+        if (!TextUtils.isEmpty(actionButtonText))
+            actionButton.text = actionButtonText
+
+        actionButton.visibility = if (TextUtils.isEmpty(actionButtonText)) View.INVISIBLE else View.VISIBLE
+        vHorizontalDivider.visibility = if (TextUtils.isEmpty(actionButtonText)) View.VISIBLE else View.INVISIBLE
+
         btnGotIt.setOnClickListener(this)
 
         mRootActionSheetConstraint.setOnClickListener(this)
+
+        actionButton.setOnClickListener(this)
     }
 
     override fun onClick(view: View) {
@@ -48,6 +63,11 @@ class GotITDialogFragment : ActionSheetDialogFragment(), View.OnClickListener {
                 shouldAnimateViewOnCancel(true)
                 mOnDialogDismiss?.onDialogDismissed()
             }
+            R.id.actionButton -> {
+                shouldAnimateViewOnCancel(true)
+                mOnDialogDismiss?.onDialogButtonAction()
+            }
+
         }
     }
 }

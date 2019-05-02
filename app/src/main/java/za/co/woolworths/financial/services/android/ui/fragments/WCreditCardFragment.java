@@ -107,11 +107,11 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
     private View fakeView;
     private RelativeLayout relBalanceProtection;
     private WTextView tvBPIProtectInsurance;
-    private RelativeLayout rlABSALinkOnlineBankingToDevice;
-    private WTextView tvABSALinkOnlineBanking;
+    private RelativeLayout rlViewStatement;
     private AsyncTask<String, String, CreditCardTokenResponse> mGetCreditCardToken;
-    private ProgressBar mPbGetCreditCardToken;
-    private ImageView mImABSAViewOnlineBanking;
+    private ProgressBar mpbViewStatements;
+    private ImageView mimgViewStatementsRightArrow;
+    private boolean mCreditCardFragmentIsVisible = false;
 
     @Nullable
     @Override
@@ -161,14 +161,12 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 
     private void init(View view) {
         availableBalance = (WTextView) view.findViewById(R.id.available_funds);
-        RelativeLayout rlViewStatement = (RelativeLayout) view.findViewById(R.id.rlViewStatement);
-        rlViewStatement.setVisibility(GONE);
         creditLimit = (WTextView) view.findViewById(R.id.creditLimit);
         dueDate = (WTextView) view.findViewById(R.id.dueDate);
         minAmountDue = (WTextView) view.findViewById(R.id.minAmountDue);
-        mPbGetCreditCardToken = (ProgressBar)view.findViewById(R.id.pbGetCreditCardToken);
-        mImABSAViewOnlineBanking = (ImageView)view.findViewById(R.id.imABSAViewOnlineBanking);
-        rlABSALinkOnlineBankingToDevice = view.findViewById(R.id.rlABSALinkOnlineBankingToDevice);
+        mpbViewStatements = (ProgressBar)view.findViewById(R.id.pbViewStatements);
+        mimgViewStatementsRightArrow = (ImageView)view.findViewById(R.id.imgViewStatementsRightArrow);
+        rlViewStatement = view.findViewById(R.id.rlViewStatement);
         currentBalance = (WTextView) view.findViewById(R.id.currentBalance);
         tvViewTransaction = (WTextView) view.findViewById(R.id.tvViewTransaction);
         tvIncreaseLimit = (WTextView) view.findViewById(R.id.tvIncreaseLimit);
@@ -188,7 +186,6 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         llActiveAccount = view.findViewById(R.id.llActiveAccount);
         llChargedOffAccount = view.findViewById(R.id.llChargedOffAccount);
         tvHowToPayArrears = view.findViewById(R.id.howToPayArrears);
-        tvABSALinkOnlineBanking = (WTextView) view.findViewById(R.id.tvABSALinkOnlineBanking);
 
         relDebitOrders = view.findViewById(R.id.relDebitOrders);
         relDebitOrders.setVisibility(GONE);
@@ -203,7 +200,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         }
 
         relBalanceProtection.setOnClickListener(this);
-        rlABSALinkOnlineBankingToDevice.setOnClickListener(this);
+        rlViewStatement.setOnClickListener(this);
         rlViewTransactions.setOnClickListener(this);
         llIncreaseLimitContainer.setOnClickListener(this);
         mRelIncreaseMyLimit.setOnClickListener(this);
@@ -225,7 +222,6 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         infoCurrentBalance.setOnClickListener(this);
         infoCreditLimit.setOnClickListener(this);
 
-        updateABSATitle();
     }
 
     private void addListener() {
@@ -235,13 +231,13 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
     }
 
     private void setAccountDetail() {
-        bolBroacastRegistred = true;
-        accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
-        bindData(accountsResponse);
-        onLoadComplete();
-        mErrorHandlerView = new ErrorHandlerView(getActivity());
-        if (!NetworkManager.getInstance().isConnectedToNetwork(getActivity()))
-            mErrorHandlerView.showToast();
+            bolBroacastRegistred = true;
+            accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
+            bindData(accountsResponse);
+            onLoadComplete();
+            mErrorHandlerView = new ErrorHandlerView(getActivity());
+            if (!NetworkManager.getInstance().isConnectedToNetwork(getActivity()))
+                mErrorHandlerView.showToast();
     }
 
     public void bindData(AccountsResponse response) {
@@ -299,7 +295,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         String accountInfo = myAccountHelper.getAccountInfo(accountsResponse, "CC");
 
         switch (v.getId()) {
-            case R.id.rlABSALinkOnlineBankingToDevice:
+            case R.id.rlViewStatement:
                 SessionDao aliasID = SessionDao.getByKey(SessionDao.KEY.ABSA_ALIASID);
                 SessionDao deviceID = SessionDao.getByKey(SessionDao.KEY.ABSA_DEVICEID);
                 if ((TextUtils.isEmpty(aliasID.value) && TextUtils.isEmpty(deviceID.value))) {
@@ -590,18 +586,12 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         mIncreaseLimitController.cliDefaultView(llCommonLayer, tvIncreaseLimitDescription);
     }
 
-    public void updateABSATitle() {
-        if (tvABSALinkOnlineBanking != null
-                && !TextUtils.isEmpty(SessionDao.getByKey(SessionDao.KEY.ABSA_ALIASID).value)
-                && !TextUtils.isEmpty(SessionDao.getByKey(SessionDao.KEY.ABSA_DEVICEID).value))
-            tvABSALinkOnlineBanking.setText(getString(R.string.online_banking));
-    }
-
     public AsyncTask<String, String, CreditCardTokenResponse> getCreditCardToken(final Activity activity) {
         showGetCreditCardTokenProgressBar(VISIBLE);
         return new GetCreditCardToken(new AsyncAPIResponse.ResponseDelegate<CreditCardTokenResponse>() {
             @Override
             public void onSuccess(CreditCardTokenResponse response) {
+                if (getActivity() ==null && !mCreditCardFragmentIsVisible) return;
                 showGetCreditCardTokenProgressBar(GONE);
                 switch (response.httpCode) {
                     case 200:
@@ -613,7 +603,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
                             default:
                                 String creditCardNumber = "";
                                 for (Card card : cards) {
-                                    if (card.cardStatus.equalsIgnoreCase("AAA")) {
+                                    if (card.cardStatus.trim().equalsIgnoreCase("AAA")) {
                                         creditCardNumber = card.absaCardToken;
                                     }
                                 }
@@ -638,16 +628,19 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 
             @Override
             public void onFailure(@NotNull final String errorMessage) {
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        showGetCreditCardTokenProgressBar(GONE);
-                        if (errorMessage.contains("ConnectException")
-                                || errorMessage.contains("SocketTimeoutException")) {
-                            Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, getString(R.string.check_connection_status));
+                final Activity activity = getActivity();
+                if (activity!=null && mCreditCardFragmentIsVisible) {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            showGetCreditCardTokenProgressBar(GONE);
+                            if (errorMessage.contains("ConnectException")
+                                    || errorMessage.contains("SocketTimeoutException")) {
+                                Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, getString(R.string.check_connection_status));
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
         }).execute();
     }
@@ -670,9 +663,15 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
     public void showGetCreditCardTokenProgressBar(int state) {
         Activity activity = getActivity();
         if (activity != null) {
-            mPbGetCreditCardToken.getIndeterminateDrawable().setColorFilter(ContextCompat.getColor(activity, R.color.black), android.graphics.PorterDuff.Mode.SRC_IN);
-            mPbGetCreditCardToken.setVisibility(state);
-            mImABSAViewOnlineBanking.setVisibility((state == VISIBLE) ? GONE : VISIBLE);
+            mpbViewStatements.getIndeterminateDrawable().setColorFilter(ContextCompat.getColor(activity, R.color.black), android.graphics.PorterDuff.Mode.SRC_IN);
+            mpbViewStatements.setVisibility(state);
+            mimgViewStatementsRightArrow.setVisibility((state == VISIBLE) ? GONE : VISIBLE);
         }
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        mCreditCardFragmentIsVisible = isVisibleToUser;
     }
 }
