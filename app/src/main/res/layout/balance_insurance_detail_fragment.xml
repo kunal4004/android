@@ -23,11 +23,18 @@
                 android:text="@string/apply_loan_info"
                 android:textColor="@color/black_50"/>
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
+            <TextView
                 android:id="@+id/tvRequiredForm"
                 style="@style/insurance_claim_title_style"
+                android:fontFamily="@font/myriad_pro_semi_bold_otf"
+                android:lineSpacingExtra="0.12sp"
                 android:text="@string/required_form"
                 android:textSize="12sp"/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="@color/outside_border" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rlRequiredForm"
@@ -37,11 +44,22 @@
                 android:background="@color/white"
                 android:nestedScrollingEnabled="false"/>
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="@color/outside_border" />
+
+            <TextView
                 android:id="@+id/tvAdditionalInfo"
                 style="@style/insurance_claim_title_style"
                 android:text="@string/you_will_also_need"
+                android:lineSpacingExtra="0.12sp"
+                android:fontFamily="@font/myriad_pro_semi_bold_otf"
                 android:textSize="12sp"/>
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="@color/outside_border" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rlAdditionalSubmission"
@@ -50,6 +68,10 @@
                 android:layout_marginBottom="16dp"
                 android:background="@color/white"
                 android:nestedScrollingEnabled="false"/>
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="@color/outside_border" />
 
             <View
                 android:layout_width="match_parent"

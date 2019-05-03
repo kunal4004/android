@@ -1,62 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
-    android:orientation="vertical">
+    android:background="@color/white">
 
-    <View
-        android:id="@+id/vTopLine"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@color/outside_border"
-        android:visibility="gone"/>
+    <ImageView
+        android:id="@+id/imIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"
+        android:alpha="0.4"
+        android:src="@drawable/transactions"
+        app:layout_constraintBottom_toBottomOf="@+id/tvTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:id="@+id/llRequiredForm"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginEnd="@dimen/default_margin"
-        android:orientation="horizontal"
-        android:paddingEnd="@dimen/default_margin"
-        android:paddingStart="@dimen/default_margin"
-        android:paddingTop="13dp">
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="13dp"
+        android:layout_marginEnd="16dp"
+        android:fontFamily="@font/myriad_pro_regular_otf"
+        android:gravity="center|start"
+        android:hint="@string/product_search_hint"
+        android:textColor="@color/black"
+        android:textColorHint="@color/product_search_hint"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imIcon"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/imIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/default_margin"
-            android:alpha="0.4"
-            android:src="@drawable/transactions"/>
-
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:id="@+id/tvTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center|start"
-            android:hint="@string/product_search_hint"
-            android:inputType="textNoSuggestions"
-            android:textColor="@color/black"
-            android:textColorHint="@color/product_search_hint"
-            android:textSize="15sp"
-            app:WTextView_font="myriadpro_regular"/>
-
-    </LinearLayout>
-
-    <View
-        android:id="@+id/vMiddleLine"
-        android:layout_width="match_parent"
-        android:layout_height="0.8dp"
-        android:background="@color/outside_border"
-        android:visibility="gone"/>
 
     <View
         android:id="@+id/vBottomLine"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="16dp"
         android:background="@color/outside_border"
-        android:visibility="gone"/>
-</LinearLayout>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
+
+</android.support.constraint.ConstraintLayout>

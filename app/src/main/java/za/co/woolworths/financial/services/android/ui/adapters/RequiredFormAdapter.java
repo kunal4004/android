@@ -5,32 +5,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
-
-import za.co.woolworths.financial.services.android.ui.views.WTextView;
-
 
 public class RequiredFormAdapter extends RecyclerView.Adapter<RequiredFormAdapter.MyViewHolder> {
 
 	private String[] item;
 	private boolean imageIsVisible;
 
-	public class MyViewHolder extends RecyclerView.ViewHolder {
-		private WTextView tvTitle;
-		private LinearLayout llRequiredForm;
+	class MyViewHolder extends RecyclerView.ViewHolder {
+		private TextView tvTitle;
 		private ImageView imIcon;
-		private View vTopLine, vBottomLine, vMiddleLine;
 
-		public MyViewHolder(View view) {
+		MyViewHolder(View view) {
 			super(view);
-			tvTitle = (WTextView) view.findViewById(R.id.tvTitle);
-			llRequiredForm = (LinearLayout) view.findViewById(R.id.llRequiredForm);
-			imIcon = (ImageView) view.findViewById(R.id.imIcon);
-			vTopLine = view.findViewById(R.id.vTopLine);
-			vBottomLine = view.findViewById(R.id.vBottomLine);
-			vMiddleLine = view.findViewById(R.id.vMiddleLine);
+			tvTitle = view.findViewById(R.id.tvTitle);
+			imIcon = view.findViewById(R.id.imIcon);
 		}
 	}
 
@@ -47,28 +38,8 @@ public class RequiredFormAdapter extends RecyclerView.Adapter<RequiredFormAdapte
 
 	@Override
 	public void onBindViewHolder(final MyViewHolder holder, final int position) {
-		if (imageIsVisible) {
-			holder.imIcon.setVisibility(View.VISIBLE);
-		} else {
-			holder.imIcon.setVisibility(View.GONE);
-		}
-
-		switch (position) {
-			case 0:
-				holder.vTopLine.setVisibility(View.VISIBLE);
-				holder.vMiddleLine.setVisibility(View.VISIBLE);
-				break;
-			default:
-				holder.vMiddleLine.setVisibility(View.VISIBLE);
-				break;
-		}
-
-		if (position == (getItemCount() - 1)) {
-			holder.vBottomLine.setVisibility(View.VISIBLE);
-		}
-
+		holder.imIcon.setVisibility(imageIsVisible ? View.VISIBLE : View.GONE);
 		holder.tvTitle.setText(item[position]);
-
 	}
 
 	@Override
