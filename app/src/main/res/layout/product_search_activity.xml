@@ -25,7 +25,6 @@
             android:gravity="start|center"
             android:hint="@string/product_search_hint"
             android:imeOptions="actionDone"
-            android:inputType="textNoSuggestions"
             android:maxLength="100"
             android:textColor="@color/black"
             android:textColorHint="@color/product_search_hint"
