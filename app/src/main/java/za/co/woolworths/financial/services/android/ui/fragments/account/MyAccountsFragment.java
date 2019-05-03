@@ -582,16 +582,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			case R.id.storeLocator:
 				pushFragment(new StoresNearbyFragment1());
 				break;
-//			case R.id.myLists:
-//				Bundle bundle = new Bundle();
-//				if (shoppingListsResponse != null) {
-//					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSHOPPINGLIST);
-//					bundle.putString("ShoppingList", Utils.objectToJson(shoppingListsResponse));
-//					ShoppingListFragment shoppingListFragment = new ShoppingListFragment();
-//					shoppingListFragment.setArguments(bundle);
-//					pushFragment(shoppingListFragment);
-//				}
-//				break;
 			case R.id.rlMyPreferences:
 				startActivity(new Intent(getActivity(), MyPreferencesActivity.class));
 				getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
