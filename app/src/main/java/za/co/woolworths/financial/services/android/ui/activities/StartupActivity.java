@@ -150,42 +150,49 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 		MobileConfigServerDao.Companion.getConfig(WoolworthsApplication.getInstance(), new OnResultListener<ConfigResponse>() {
 			@Override
 			public void success(ConfigResponse configResponse) {
-				try {
-					StartupActivity.this.mVideoPlayerShouldPlay = false;
+				switch (configResponse.httpCode) {
+					case 200:
+						try {
+							StartupActivity.this.mVideoPlayerShouldPlay = false;
 
-					if (configResponse.configs.enviroment.stsURI == null || configResponse.configs.enviroment.stsURI.isEmpty()) {
-						showNonVideoViewWithErrorLayout();
-						return;
-					}
+							if (configResponse.configs.enviroment.stsURI == null || configResponse.configs.enviroment.stsURI.isEmpty()) {
+								showNonVideoViewWithErrorLayout();
+								return;
+							}
 
-					WoolworthsApplication.setSsoRedirectURI(configResponse.configs.enviroment.getSsoRedirectURI());
-					WoolworthsApplication.setStsURI(configResponse.configs.enviroment.getStsURI());
-					WoolworthsApplication.setSsoRedirectURILogout(configResponse.configs.enviroment.getSsoRedirectURILogout());
-					WoolworthsApplication.setSsoUpdateDetailsRedirectUri(configResponse.configs.enviroment.getSsoUpdateDetailsRedirectUri());
-					WoolworthsApplication.setWwTodayURI(configResponse.configs.enviroment.getWwTodayURI());
-					WoolworthsApplication.setAuthenticVersionStamp(configResponse.configs.enviroment.getAuthenticVersionStamp());
-					WoolworthsApplication.setApplyNowLink(configResponse.configs.defaults.getApplyNowLink());
-					WoolworthsApplication.setRegistrationTCLink(configResponse.configs.defaults.getRegisterTCLink());
-					WoolworthsApplication.setFaqLink(configResponse.configs.defaults.getFaqLink());
-					WoolworthsApplication.setWrewardsLink(configResponse.configs.defaults.getWrewardsLink());
-					WoolworthsApplication.setRewardingLink(configResponse.configs.defaults.getRewardingLink());
-					WoolworthsApplication.setHowToSaveLink(configResponse.configs.defaults.getHowtosaveLink());
-					WoolworthsApplication.setWrewardsTCLink(configResponse.configs.defaults.getWrewardsTCLink());
-					WoolworthsApplication.setCartCheckoutLink(configResponse.configs.defaults.getCartCheckoutLink());
+							WoolworthsApplication.setSsoRedirectURI(configResponse.configs.enviroment.getSsoRedirectURI());
+							WoolworthsApplication.setStsURI(configResponse.configs.enviroment.getStsURI());
+							WoolworthsApplication.setSsoRedirectURILogout(configResponse.configs.enviroment.getSsoRedirectURILogout());
+							WoolworthsApplication.setSsoUpdateDetailsRedirectUri(configResponse.configs.enviroment.getSsoUpdateDetailsRedirectUri());
+							WoolworthsApplication.setWwTodayURI(configResponse.configs.enviroment.getWwTodayURI());
+							WoolworthsApplication.setAuthenticVersionStamp(configResponse.configs.enviroment.getAuthenticVersionStamp());
+							WoolworthsApplication.setApplyNowLink(configResponse.configs.defaults.getApplyNowLink());
+							WoolworthsApplication.setRegistrationTCLink(configResponse.configs.defaults.getRegisterTCLink());
+							WoolworthsApplication.setFaqLink(configResponse.configs.defaults.getFaqLink());
+							WoolworthsApplication.setWrewardsLink(configResponse.configs.defaults.getWrewardsLink());
+							WoolworthsApplication.setRewardingLink(configResponse.configs.defaults.getRewardingLink());
+							WoolworthsApplication.setHowToSaveLink(configResponse.configs.defaults.getHowtosaveLink());
+							WoolworthsApplication.setWrewardsTCLink(configResponse.configs.defaults.getWrewardsTCLink());
+							WoolworthsApplication.setCartCheckoutLink(configResponse.configs.defaults.getCartCheckoutLink());
 
-					mWGlobalState.setStartRadius(configResponse.configs.enviroment.getStoreStockLocatorConfigStartRadius());
-					mWGlobalState.setEndRadius(configResponse.configs.enviroment.getStoreStockLocatorConfigEndRadius());
+							mWGlobalState.setStartRadius(configResponse.configs.enviroment.getStoreStockLocatorConfigStartRadius());
+							mWGlobalState.setEndRadius(configResponse.configs.enviroment.getStoreStockLocatorConfigEndRadius());
 
 
-					splashScreenText = configResponse.configs.enviroment.splashScreenText;
-					splashScreenDisplay = configResponse.configs.enviroment.splashScreenDisplay;
-					splashScreenPersist = configResponse.configs.enviroment.splashScreenPersist;
+							splashScreenText = configResponse.configs.enviroment.splashScreenText;
+							splashScreenDisplay = configResponse.configs.enviroment.splashScreenDisplay;
+							splashScreenPersist = configResponse.configs.enviroment.splashScreenPersist;
 
-					if (!isVideoPlaying) {
-						presentNextScreenOrServerMessage();
-					}
+							if (!isVideoPlaying) {
+								presentNextScreenOrServerMessage();
+							}
 
-				} catch (NullPointerException ignored) {
+						} catch (NullPointerException ex) {
+							showNonVideoViewWithErrorLayout();
+						}
+						break;
+					default:
+						break;
 				}
 			}
 
