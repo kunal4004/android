@@ -90,7 +90,7 @@ class WToday : Fragment(), IWTodayInterface {
 
     private fun setClient() {
         webWToday?.webViewClient = object : WebViewClient() {
-            @TargetApi(android.os.Build.VERSION_CODES.M)
+            @TargetApi(Build.VERSION_CODES.M)
             override fun onReceivedError(webView: WebView, request: WebResourceRequest, error: WebResourceError) {
                 super.onReceivedError(webView, request, error)
                 handleError(error.errorCode, error.description.toString())
@@ -141,36 +141,42 @@ class WToday : Fragment(), IWTodayInterface {
     }
 
     override fun onShowProductDetail(productId: String, skuId: String) {
-        showProductDetailProgressBar(VISIBLE)
-        mGetProductDetail = GetProductDetails(productId, skuId, object : AsyncAPIResponse.ResponseDelegate<ProductDetailResponse> {
-            override fun onSuccess(response: ProductDetailResponse) {
-                showProductDetailProgressBar(GONE)
-                activity?.apply {
-                    when (response.httpCode) {
-                        200 -> navigateToProductDetail(response, this@apply)
-                        else -> {
-                            Utils.displayValidationMessage(this, CustomPopUpWindow.MODAL_LAYOUT.ERROR, Utils.getString(this, R.string.statement_send_email_false_desc))
-                            val arguments = HashMap<String, String>()
-                            arguments[skuId] = "NO PRICE INFO"
-                            arguments[skuId] = "From WToday Promotions"
-                            Utils.triggerFireBaseEvents(FirebaseAnalytics.Event.VIEW_ITEM, arguments)
+        activity?.runOnUiThread {
+            showProductDetailProgressBar(VISIBLE)
+            mGetProductDetail = GetProductDetails(productId, skuId, object : AsyncAPIResponse.ResponseDelegate<ProductDetailResponse> {
+                override fun onSuccess(response: ProductDetailResponse) {
+                    showProductDetailProgressBar(GONE)
+                    if (isAdded && isVisible && userVisibleHint && !isHidden) {
+                        activity?.apply {
+                            when (response.httpCode) {
+                                200 -> navigateToProductDetail(response, this@apply)
+                                else -> {
+                                    Utils.displayValidationMessage(this, CustomPopUpWindow.MODAL_LAYOUT.ERROR, Utils.getString(this, R.string.statement_send_email_false_desc))
+                                    val arguments = HashMap<String, String>()
+                                    arguments[skuId] = "NO PRICE INFO"
+                                    arguments[skuId] = "From WToday Promotions"
+                                    Utils.triggerFireBaseEvents(FirebaseAnalytics.Event.VIEW_ITEM, arguments)
+                                }
+                            }
                         }
                     }
                 }
-            }
 
-            override fun onFailure(errorMessage: String) {
-                activity?.apply {
+                override fun onFailure(errorMessage: String) {
                     showProductDetailProgressBar(GONE)
-                    ErrorHandlerView(this).showToast()
+                    if (isAdded && isVisible && userVisibleHint && !isHidden) {
+                        activity?.apply {
+                            ErrorHandlerView(this).showToast()
+                        }
+                    }
                 }
-            }
 
-        }).execute() as? HttpAsyncTask<String, String, ProductDetailResponse>?
+            }).execute() as? HttpAsyncTask<String, String, ProductDetailResponse>?
+        }
     }
 
     private fun showProductDetailProgressBar(state: Int) {
-        pbProductDetail?.visibility = state
+        flProgressContainer?.visibility = state
     }
 
     private fun navigateToProductDetail(response: ProductDetailResponse, activity: FragmentActivity) {
@@ -189,13 +195,20 @@ class WToday : Fragment(), IWTodayInterface {
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
-        if (!hidden) {
-            (activity as? BottomNavigationActivity)?.hideToolbar()
+        when (hidden) {
+            false -> (activity as? BottomNavigationActivity)?.hideToolbar()
+            true -> cancelPDPRequest()
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mGetProductDetail?.takeIf { it.isCancelled }?.cancel(true)
+        cancelPDPRequest()
+    }
+
+    private fun cancelPDPRequest() = mGetProductDetail?.apply {
+        if (isCancelled) {
+            cancel(true)
+        }
     }
 }
