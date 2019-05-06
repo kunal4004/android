@@ -423,17 +423,19 @@
     <string name="critical_illness">Critical Illness</string>
     <string name="critical_illness_desc">Pays the outstanding balance on your account.</string>
     <string name="apply_loan_info">In order to process your claim we will need the following documents.</string>
-    <string name="required_form">required forms</string>
-    <string name="you_will_also_need">YOU WILL ALSO NEED TO SUBMIT</string>
-
+    <string name="required_form">required forms (available from woolworths financials solutions)</string>
+    <string name="you_will_also_need">IN ADDITION, YOU WILL ALSO NEED TO SUBMIT THE BELOW DOCUMENTS</string>
     <string name="balance_protection_claim_form">Balance Protection Claim Form</string>
     <string name="new_disability_claim_form">New Disability Claim Form</string>
     <string name="confidential_medical_specialist_report">Confidential Medical Specialist Report</string>
     <string name="medical_reports_from_doctor">Medical Reports from Doctor</string>
+    <string name="death_certificate">Death Certificate</string>
+
     <string name="certified_id">Certified ID</string>
+    <string name="certified_id_claimant">Certified ID Copy of next of Kin/Claimant</string>
     <string name="investigation_results_from_doctor">Investigation Results from Doctor</string>
     <string name="retrenchement_form">Retrenchment Form</string>
-    <string name="certified_id_copy">Certified id Copy</string>
+    <string name="certified_id_copy">Certified ID Copy</string>
     <string name="UI19_form">UI19 Form</string>
     <string name="certified_letter_of_retrenchment_from_employer">Certified Letter of Retrenchment from Employer</string>
     <string name="employee_declaration_form">Employee Declaration Form</string>
@@ -980,4 +982,7 @@
     <string name="error_passcode_locked_desc">You have entered your Passcode incorrectly 3 times. To log in, please reset your Passcode using your Credit Card ATM PIN.</string>
     <string name="forgot_passcode">Forgot Passcode</string>
     <string name="forgot_passcode_dialog_desc">Please select RESET PASSCODE and follow the steps to reset your Passcode</string>
+    <string name="police_report">Police Report</string>
+    <string name="certified_id_deceased">Certified ID Deceased</string>
+    <string name="claimant_bank_statement">Claimant\'s Bank Statement</string>
 </resources>
