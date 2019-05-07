@@ -132,6 +132,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
     private AsyncTask<String, String, CreditCardTokenResponse> mExecuteCardToken;
     private ImageView imMyCardNextArrow;
     private ProgressBar mPbGetCardToken;
+    private String response;
 
     @Nullable
     @Override
@@ -148,6 +149,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
         super.onViewCreated(view, savedInstanceState);
         if (savedInstanceState == null & !viewWasCreated) {
             initUI(view);
+           response  =  getArguments().getString("accounts");
             addListener();
             setAccountDetails();
             disposables.add(woolworthsApplication
@@ -435,7 +437,16 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
                         getActivity().getResources().getString(R.string.cli_got_it));
                 break;
             case R.id.rlMyStoreCard:
-                getCreditCardToken(activity);
+                try {
+                    SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.STORE_CARD);
+                    sessionDao.value = response;
+                    sessionDao.save();
+                } catch (Exception e) {
+                }
+
+                Intent openMyCard = new Intent(activity, MyCardDetailActivity.class);
+                activity.startActivity(openMyCard);
+                activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
                 break;
             default:
                 break;

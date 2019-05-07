@@ -7,14 +7,14 @@ import android.view.ViewGroup
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.my_card_fragment.*
-import za.co.woolworths.financial.services.android.models.dto.Card
+import za.co.woolworths.financial.services.android.models.dto.AccountsResponse
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 
 class MyCardDetailFragment : MyCardExtension() {
 
-    private var mCardDetail: Card? = null
+    private var mCardDetail: AccountsResponse? = null
 
     companion object {
         const val CARD = "CARD"
@@ -27,7 +27,7 @@ class MyCardDetailFragment : MyCardExtension() {
         super.onCreate(savedInstanceState)
         arguments?.apply {
             getString(CARD)?.apply {
-                mCardDetail = Gson().fromJson(this, Card::class.java)
+                mCardDetail = Gson().fromJson(this, AccountsResponse::class.java)
             }
         }
     }
@@ -44,8 +44,8 @@ class MyCardDetailFragment : MyCardExtension() {
     }
 
     private fun populateView() {
-        mCardDetail?.apply {
-            maskedCardNumberWithSpaces(absaCardToken).also {
+        mCardDetail?.accountList?.get(1)?.primaryCard?.cards?.get(0)?.apply {
+            maskedCardNumberWithSpaces(cardNumber).also {
                 tvCardNumberValue?.text = it
                 tvCardNumberHeader?.text = it
             }
