@@ -49,8 +49,6 @@ import za.co.woolworths.financial.services.android.models.service.event.LoadStat
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity;
-import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity;
-import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment;
@@ -66,7 +64,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewards
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.base.WRewardsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.logged_in.WRewardsLoggedinAndLinkedFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.wtoday.WToday;
+import za.co.woolworths.financial.services.android.ui.fragments.wtoday.WTodayFragment;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory;
@@ -568,8 +566,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             switch (item.getItemId()) {
                 case R.id.navigation_today:
                     clearStack();
-                    WToday currentWTodayFragment = (WToday) mNavController.getCurrentFrag();
-                    currentWTodayFragment.scrollToTop();
+                    WTodayFragment currentWTodayFragmentFragment = (WTodayFragment) mNavController.getCurrentFrag();
+                    currentWTodayFragmentFragment.scrollToTop();
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WTODAYMENU);
                     break;
 
@@ -704,7 +702,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     public Fragment getRootFragment(int index) {
         switch (index) {
             case INDEX_TODAY:
-                return new WToday();
+                return new WTodayFragment();
             case INDEX_PRODUCT:
                 return new ShopFragment();
             case INDEX_CART:

@@ -2,6 +2,10 @@ package za.co.woolworths.financial.services.android.models;
 
 import android.app.Activity;
 import android.app.Application;
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.LifecycleObserver;
+import android.arch.lifecycle.OnLifecycleEvent;
+import android.arch.lifecycle.ProcessLifecycleOwner;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageInfo;
@@ -39,7 +43,7 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.util.FirebaseManager;
 
 
-public class WoolworthsApplication extends Application implements Application.ActivityLifecycleCallbacks {
+public class WoolworthsApplication extends Application implements Application.ActivityLifecycleCallbacks, LifecycleObserver {
 
 	private static Context context;
 	private static Context mContextApplication;
@@ -73,6 +77,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
 	public UpdateBankDetail updateBankDetail;
 
 	private RxBus bus;
+	private static boolean isApplicationInForeground = false;
 
 	public static String getApiId() {
 		PackageInfo packageInfo = null;
@@ -206,6 +211,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
 		mInstance = this;
 		WoolworthsApplication.context = this.getApplicationContext();
 		this.registerActivityLifecycleCallbacks(this);
+		ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
 		StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
 		StrictMode.setVmPolicy(builder.build());
 		Fabric.with(WoolworthsApplication.this, new Crashlytics());
@@ -410,4 +416,17 @@ public class WoolworthsApplication extends Application implements Application.Ac
 		WoolworthsApplication.authenticVersionStamp = authenticVersionStamp;
 	}
 
+	public static boolean isApplicationInForeground(){
+		return isApplicationInForeground;
+	}
+
+	@OnLifecycleEvent(Lifecycle.Event.ON_START)
+	void onAppForegrounded() {
+		isApplicationInForeground = true;
+	}
+
+	@OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+	void onAppBackgrounded() {
+		isApplicationInForeground = false;
+	}
 }
