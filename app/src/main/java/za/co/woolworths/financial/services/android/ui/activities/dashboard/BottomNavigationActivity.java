@@ -49,12 +49,9 @@ import za.co.woolworths.financial.services.android.models.service.event.LoadStat
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity;
-import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity;
-import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.barcode.BarcodeFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment;
@@ -647,13 +644,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             }
         }
         if (mNavController.getCurrentFrag() instanceof SubCategoryFragment) {
-            popFragmentSlideDown();
-            return;
-        }
-        /**
-         *  Close barcode fragment with slide down animation
-         */
-        if (mNavController.getCurrentFrag() instanceof BarcodeFragment) {
             popFragmentSlideDown();
             return;
         }
