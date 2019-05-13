@@ -132,7 +132,7 @@ public class WTodayFragment extends BaseFragment<WtodayFragmentBinding, WTodayVi
 						}
 					}
 				} catch (Exception e) {
-					e.printStackTrace();
+					Log.e(TAG, e.getMessage());
 				}
 				return false;
 			}
