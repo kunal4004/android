@@ -59,7 +59,7 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         versionCode BUILD_NUMBER.toInteger()
         buildConfigField("String", "HOST", '"https://wfs-appserver.wigroup.co/wfs/app/v4"')
-        buildConfigField("String", "SHA1", '"431bba408383af191dd6e28edfde6ff7facb37cb"')
+        buildConfigField("String", "SHA1", '"e636af4f626cad1b8126a769e5d33c09345b41fe"')
     }
 
     compileSdkVersion 27
