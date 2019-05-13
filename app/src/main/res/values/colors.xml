@@ -35,7 +35,7 @@
     <color name="divider">#B6B6B6</color>
     <color name="product_divider">#22000000</color>
     <color name="barcode_button">#40ffffff</color>
-    <color name="barcode_button_light">#20ffffff</color>
+    <color name="barcode_button_light">#25ffffff</color>
     <color name="red">#ff0000</color>
     <color name="dark_divider">#dadada</color>
 
