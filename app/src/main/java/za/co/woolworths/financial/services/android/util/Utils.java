@@ -1412,4 +1412,15 @@ public class Utils {
 		((AppCompatActivity) activity).overridePendingTransition(0, 0);
 	}
 
+	public static void setUserKMSIState(Boolean state) {
+		AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+		currentUserObject.kmsi = state;
+		currentUserObject.save();
+	}
+
+	public static Boolean getUserKMSIState() {
+		AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+		return currentUserObject.kmsi;
+	}
+
 }

@@ -1,1 +1,10 @@
-https://wigroup2.atlassian.net/projects/WOP/versions/23118/tab/release-report-all-issues
+call back on checkbox change added
+
+state saved on User AppInstanceObjcet
+kmsi value update after successfull login
+
+ui updated
+session expire popup design update
+I hope that fixes it
+kmsi evaluateJavaScript moved to onPageFinshed
+UI updated for KMSI to align with ios
