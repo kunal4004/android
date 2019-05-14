@@ -8,8 +8,8 @@ import za.co.woolworths.financial.services.android.contracts.AsyncAPIResponse
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse
 import za.co.woolworths.financial.services.android.models.dto.ProductView
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
+import za.co.woolworths.financial.services.android.models.rest.product.GetProductDetails
 import za.co.woolworths.financial.services.android.models.rest.product.ProductRequest
-import za.co.woolworths.financial.services.android.models.rest.product.RetrieveProductDetail
 import za.co.woolworths.financial.services.android.models.rest.product.RetrieveProductIdAndSkuId
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.util.ConnectionBroadcastReceiver
@@ -40,7 +40,7 @@ abstract class BarcodeScanExtension : Fragment() {
                                     0 -> activity?.let { Utils.displayValidationMessage(it, CustomPopUpWindow.MODAL_LAYOUT.BARCODE_ERROR, "") }
                                     else -> {
                                         val productRequest: ProductRequest? = response.products?.get(0)?.let { ProductRequest(it.productId, it.sku) }
-                                        mProductDetailRequest = retrieveProductDetail(productRequest)
+                                        mProductDetailRequest = productRequest?.let { retrieveProductDetail(it) }
                                     }
                                 }
                             }
@@ -57,8 +57,8 @@ abstract class BarcodeScanExtension : Fragment() {
         }).execute()
     }
 
-    private fun retrieveProductDetail(productRequest: ProductRequest?): AsyncTask<String, String, ProductDetailResponse>? {
-        return RetrieveProductDetail(productRequest, object : AsyncAPIResponse.ResponseDelegate<ProductDetailResponse> {
+    private fun retrieveProductDetail(productRequest: ProductRequest): AsyncTask<String, String, ProductDetailResponse>? {
+        return GetProductDetails(productRequest.productId, productRequest.skuId, object : AsyncAPIResponse.ResponseDelegate<ProductDetailResponse> {
             override fun onSuccess(response: ProductDetailResponse) {
                 if (isAdded) {
                     when (response.httpCode) {
