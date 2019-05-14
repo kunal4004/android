@@ -565,8 +565,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             switch (item.getItemId()) {
                 case R.id.navigation_today:
                     clearStack();
-                    WTodayFragment currentWTodayFragmentFragment = (WTodayFragment) mNavController.getCurrentFrag();
-                    currentWTodayFragmentFragment.scrollToTop();
+                    WTodayFragment wTodayFragment = (WTodayFragment) mNavController.getCurrentFrag();
+                    wTodayFragment.scrollToTop();
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WTODAYMENU);
                     break;
 
