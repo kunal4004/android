@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.support.annotation.AnimRes
 import android.support.annotation.IdRes
 import android.support.v4.app.Fragment
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.util.NetworkManager
 
 /**
  * Method to replace the fragment. The [fragment] is added to the container view with id
@@ -36,3 +38,6 @@ inline fun <T : Fragment> T.withArgs(
         this.apply {
             arguments = Bundle().apply(argsBuilder)
         }
+
+fun isConnectedToNetwork(): Boolean? = NetworkManager.getInstance()?.isConnectedToNetwork(WoolworthsApplication.getAppContext())
+        ?: false
