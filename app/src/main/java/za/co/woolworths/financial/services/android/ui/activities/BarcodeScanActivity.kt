@@ -88,7 +88,5 @@ class BarcodeScanActivity : RuntimePermissionActivity() {
         }
     }
 
-    override fun onRuntimePermissonRequestDenied() {
-        onBackPressed()
-    }
+    override fun onRuntimePermissonRequestDenied() = onBackPressed()
 }

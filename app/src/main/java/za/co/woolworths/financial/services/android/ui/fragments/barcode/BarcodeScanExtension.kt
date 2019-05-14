@@ -37,9 +37,7 @@ abstract class BarcodeScanExtension : Fragment() {
                         200 -> {
                             response.products?.apply {
                                 when (size) {
-                                    0 -> {
-                                        // error message to handle product not found
-                                    }
+                                    0 -> activity?.let { Utils.displayValidationMessage(it, CustomPopUpWindow.MODAL_LAYOUT.BARCODE_ERROR, "") }
                                     else -> {
                                         val productRequest: ProductRequest? = response.products?.get(0)?.let { ProductRequest(it.productId, it.sku) }
                                         mProductDetailRequest = retrieveProductDetail(productRequest)
@@ -129,4 +127,5 @@ abstract class BarcodeScanExtension : Fragment() {
             })
         }
     }
+
 }
