@@ -2,8 +2,11 @@ package za.co.woolworths.financial.services.android.ui.fragments.wtoday
 
 import android.animation.ObjectAnimator
 import android.annotation.TargetApi
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Message
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -23,6 +26,7 @@ import za.co.woolworths.financial.services.android.ui.extension.isConnectedToNet
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment
 import za.co.woolworths.financial.services.android.util.*
+import java.lang.Exception
 
 @Suppress("DEPRECATION")
 class WTodayFragment : WTodayExtension(), IWTodayInterface {
@@ -50,6 +54,7 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface {
                 domStorageEnabled = true
                 cacheMode = WebSettings.LOAD_CACHE_ELSE_NETWORK
                 addJavascriptInterface(WebViewJavascriptInterface(this@WTodayFragment), "Android")
+                setSupportMultipleWindows(true)
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
                     mixedContentMode = WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
@@ -69,6 +74,7 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface {
     }
 
     private fun setClient() {
+
         webWToday?.webViewClient = object : WebViewClient() {
             @TargetApi(Build.VERSION_CODES.M)
             override fun onReceivedError(webView: WebView, request: WebResourceRequest, error: WebResourceError) {
@@ -81,6 +87,23 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface {
                 handleError(errorCode)
             }
         }
+
+        webWToday?.webChromeClient = object : WebChromeClient() {
+            override fun onCreateWindow(view: WebView?, isDialog: Boolean, isUserGesture: Boolean, resultMsg: Message?): Boolean {
+                val data = view?.hitTestResult?.extra
+                try {
+                    data?.let {
+                        val uri = Uri.parse(it)
+                        val intent = Intent(Intent.ACTION_VIEW, uri)
+                        if (intent.resolveActivity(activity.packageManager) != null) startActivity(intent)
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, e.message)
+                }
+                return false
+            }
+        }
+
     }
 
     fun scrollToTop() = webWToday?.apply {
