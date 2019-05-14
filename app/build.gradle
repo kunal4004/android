@@ -89,7 +89,7 @@ android {
             applicationId "com.awfs.coordination.qa"
             signingConfig signingConfigs.woneappQa
             buildConfigField("String", "HOST", '"http://wfs-appserver-qa.wigroup.co:8080/wfs/app/v4"')
-            buildConfigField("String", "SHA1", '"68826b286ece905ed633d1367a0d0a9cbbe74be0"')
+            buildConfigField("String", "SHA1", '"ecd631798df6d366535c3a501908cce136d40087"')
             buildConfigField("String", "ENV", '"QA"')
         }
 
