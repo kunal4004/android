@@ -127,5 +127,4 @@ abstract class BarcodeScanExtension : Fragment() {
             })
         }
     }
-
 }
