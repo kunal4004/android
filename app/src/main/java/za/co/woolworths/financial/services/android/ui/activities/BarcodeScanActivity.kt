@@ -51,7 +51,7 @@ class BarcodeScanActivity : RuntimePermissionActivity() {
                 setHomeIndicator(backStackEntryCount == 0)
             } else {
                 finish()
-                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+                overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
             }
         }
     }

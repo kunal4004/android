@@ -107,8 +107,9 @@ class TipsAndTricksViewPagerActivity : AppCompatActivity(), View.OnClickListener
                     }
                 //BARCODE SCAN
                     1 -> {
-                        setResult(RESULT_OK_BARCODE_SCAN)
-                        onBackPressed()
+                        val openBarcodeActivity = Intent(this, BarcodeScanActivity::class.java)
+                        startActivity(openBarcodeActivity)
+                        overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
                     }
                 //DELIVERY LOCATION
                     4 -> {
