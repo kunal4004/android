@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.view.MenuItem
-import android.view.WindowManager
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.barcode_scan_activity.*
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE
@@ -27,7 +26,6 @@ class BarcodeScanActivity : RuntimePermissionActivity() {
                     tag = BarcodeScanFragment::class.java.simpleName,
                     containerViewId = R.id.flBarcodeScanContainer)
         }
-
         setUpRuntimePermission(arrayListOf(android.Manifest.permission.CAMERA))
     }
 
@@ -44,7 +42,6 @@ class BarcodeScanActivity : RuntimePermissionActivity() {
         supportActionBar?.setHomeAsUpIndicator(if (isManualScanFragment) R.drawable.back_white else R.drawable.close_white)
         tvToolbarTitle?.text = if (isManualScanFragment) getString(R.string.enter_barcode) else getString(R.string.scan_product)
         toolbar?.setBackgroundColor(ContextCompat.getColor(this, if (isManualScanFragment) R.color.black else R.color.black))
-        window?.setSoftInputMode(if (isManualScanFragment) WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE else WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
     }
 
     override fun onBackPressed() {

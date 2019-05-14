@@ -22,7 +22,7 @@ open class BarcodeScanFragment : BarcodeScanExtension() {
 
     companion object {
         fun newInstance() = BarcodeScanFragment()
-        private const val SHOW_CODE_SCAN_AFTER_DELAY: Long = 400
+        private const val SHOW_CODE_SCAN_AFTER_DELAY: Long = 100
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,6 +62,7 @@ open class BarcodeScanFragment : BarcodeScanExtension() {
         }, SHOW_CODE_SCAN_AFTER_DELAY)
 
         btnBarcodeManualScan?.setOnClickListener {
+            stopPreview()
             replaceFragment(
                     fragment = BarcodeManualScanFragment.newInstance(),
                     tag = BarcodeManualScanFragment::class.java.simpleName,
@@ -75,7 +76,7 @@ open class BarcodeScanFragment : BarcodeScanExtension() {
         }
     }
 
-    internal fun startPreview() = mCodeScanner?.startPreview()
+    internal fun startPreview() = activity?.apply { runOnUiThread { mCodeScanner?.startPreview() } }
 
     private fun stopPreview() = mCodeScanner?.releaseResources()
 
@@ -103,4 +104,6 @@ open class BarcodeScanFragment : BarcodeScanExtension() {
             mRetrieveProductDetail = retrieveProductDetail()
         }
     }
+
+
 }

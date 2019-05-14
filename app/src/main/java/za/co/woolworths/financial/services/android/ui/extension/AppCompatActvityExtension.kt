@@ -1,21 +1,12 @@
 package za.co.woolworths.financial.services.android.ui.extension
 
 import android.content.Context.INPUT_METHOD_SERVICE
-import android.content.ContextWrapper
 import android.support.annotation.AnimRes
 import android.support.annotation.IdRes
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
-import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT
 import android.widget.EditText
-import android.view.WindowManager
-import android.content.Context.INPUT_METHOD_SERVICE
-import android.content.Context.INPUT_METHOD_SERVICE
-
-
-
 
 
 /**
@@ -110,28 +101,23 @@ fun AppCompatActivity.findFragmentByTag(tag: String): Fragment? {
 }
 
 fun EditText.showKeyboard(activity: AppCompatActivity) {
-    if (requestFocus()) {
-        val imm = activity.getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
-        imm?.toggleSoftInputFromWindow(
-                windowToken,
-                InputMethodManager.SHOW_FORCED, 0)
+    requestFocus()
+    activity.apply {
+        requestFocus()
+        isFocusableInTouchMode = true
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
+        imm?.showSoftInput(this@showKeyboard, InputMethodManager.SHOW_IMPLICIT)
         text?.apply { setSelection(length) }
     }
 }
 
-fun EditText.hideKeyboard() {
-    val inputManager = context.getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
-    inputManager?.hideSoftInputFromWindow(getActivity()?.window?.decorView?.applicationWindowToken, 0)
-    getActivity()?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
-}
-
-fun View.getActivity(): AppCompatActivity? {
-    var context = this.context
-    while (context is ContextWrapper) {
-        if (context is AppCompatActivity) {
-            return context
+fun EditText.hideKeyboard(activity: AppCompatActivity) {
+    activity.apply {
+        val inputManager = getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
+        // check if no view has focus:
+        val currentFocusedView = currentFocus
+        if (currentFocusedView != null) {
+            inputManager?.hideSoftInputFromWindow(currentFocusedView.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
         }
-        context = context.baseContext
     }
-    return null
 }
