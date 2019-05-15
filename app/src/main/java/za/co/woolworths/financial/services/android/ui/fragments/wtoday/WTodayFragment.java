@@ -5,11 +5,16 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Message;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
@@ -91,6 +96,7 @@ public class WTodayFragment extends BaseFragment<WtodayFragmentBinding, WTodayVi
 			webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
 		webView.addJavascriptInterface(new WebAppInterface(getActivity()), "Android");
 		webView.loadUrl(WoolworthsApplication.getWwTodayURI());
+		webView.getSettings().setSupportMultipleWindows(true);
 		webView.setWebViewClient(new WebViewClient() {
 			@TargetApi(android.os.Build.VERSION_CODES.M)
 			@Override
@@ -112,6 +118,26 @@ public class WTodayFragment extends BaseFragment<WtodayFragmentBinding, WTodayVi
 				mErrorHandlerView.networkFailureHandler(description);
 			}
 		});
+
+		webView.setWebChromeClient(new WebChromeClient(){
+			@Override
+			public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture, Message resultMsg) {
+				String data = view.getHitTestResult().getExtra();
+				try {
+					if (!TextUtils.isEmpty(data)) {
+						Uri uri = Uri.parse(data);
+						Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+						if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+							startActivity(intent);
+						}
+					}
+				} catch (Exception e) {
+					Log.e(TAG, e.getMessage());
+				}
+				return false;
+			}
+		});
+		
 	}
 
 	private void retryConnect(View view) {
