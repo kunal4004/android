@@ -10,9 +10,11 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.barcode_scan_fragment.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.barcode.AutoFocusMode
 import za.co.woolworths.financial.services.android.util.barcode.CodeScanner
 import za.co.woolworths.financial.services.android.util.barcode.CodeScannerView
@@ -22,7 +24,7 @@ open class BarcodeScanFragment : BarcodeScanExtension() {
 
     companion object {
         fun newInstance() = BarcodeScanFragment()
-        private const val SHOW_CODE_SCAN_AFTER_DELAY: Long = 100
+        private const val SHOW_CODE_SCAN_AFTER_DELAY: Long = 10
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,8 +52,10 @@ open class BarcodeScanFragment : BarcodeScanExtension() {
                                     .onDecoded { result ->
                                         runOnUiThread {
                                             result.text?.apply {
-                                                setProductRequestBody(ProductsRequestParams.SearchType.BARCODE, this)
-                                                mRetrieveProductDetail = retrieveProductDetail()
+                                                if (!getProductDetailAsyncTaskIsRunning) {
+                                                    setProductRequestBody(ProductsRequestParams.SearchType.BARCODE, this)
+                                                    mRetrieveProductDetail = retrieveProductDetail()
+                                                }
                                             }
                                         }
                                     }
@@ -87,6 +91,11 @@ open class BarcodeScanFragment : BarcodeScanExtension() {
 
     override fun onSuccess() {
         startPreview()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        activity?.let { Utils.setScreenName(it, FirebaseManagerAnalyticsProperties.ScreenNames.SHOP_BARCODE) }
     }
 
     override fun onDetach() {

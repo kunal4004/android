@@ -10,14 +10,15 @@ import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.inputmethod.EditorInfo
-import android.widget.TextView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.barcode_manual_scan_fragment.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity
 import za.co.woolworths.financial.services.android.ui.extension.hideKeyboard
 import za.co.woolworths.financial.services.android.ui.extension.showKeyboard
 import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView
+import za.co.woolworths.financial.services.android.util.Utils
 
 class BarcodeManualScanFragment : BarcodeScanExtension() {
 
@@ -47,6 +48,7 @@ class BarcodeManualScanFragment : BarcodeScanExtension() {
 
     override fun onResume() {
         super.onResume()
+        activity?.let { Utils.setScreenName(it, FirebaseManagerAnalyticsProperties.ScreenNames.SHOP_BARCODE_MANUAL) }
         edtBarcodeNumber?.apply {
             clearFocus()
             requestFocus()
@@ -57,7 +59,13 @@ class BarcodeManualScanFragment : BarcodeScanExtension() {
     private fun setEventAndListener() {
         edtBarcodeNumber?.apply {
             setOnKeyPreImeListener(onKeyPreImeListener)
-            setOnEditorActionListener(onEditorActionListener)
+            setOnEditorActionListener { v, actionId, event ->
+                if ((actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_DONE || event?.action == KeyEvent.ACTION_DOWN && event.keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    if (edtBarcodeNumber.text.isNotEmpty())
+                        setAndRetrieveProductDetail()
+                }
+                true
+            }
             addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
 
@@ -79,10 +87,11 @@ class BarcodeManualScanFragment : BarcodeScanExtension() {
 
     private fun setAndRetrieveProductDetail() {
         if (edtBarcodeNumber.text.isEmpty()) return
-        edtBarcodeNumber?.text?.toString()?.let { barcodeText ->
-            setProductRequestBody(ProductsRequestParams.SearchType.BARCODE, barcodeText)
-            retrieveProductDetail()
-        }
+        if (!getProductDetailAsyncTaskIsRunning)
+            edtBarcodeNumber?.text?.toString()?.let { barcodeText ->
+                setProductRequestBody(ProductsRequestParams.SearchType.BARCODE, barcodeText)
+                retrieveProductDetail()
+            }
     }
 
     private fun showKeyboard() = (activity as? AppCompatActivity)?.let { edtBarcodeNumber?.showKeyboard(it) }
@@ -93,18 +102,6 @@ class BarcodeManualScanFragment : BarcodeScanExtension() {
     }
 
     private val onKeyPreImeListener = WLoanEditTextView.OnKeyPreImeListener { onBackPressed() }
-
-    private val onEditorActionListener = object : TextView.OnEditorActionListener {
-        override fun onEditorAction(v: TextView, actionId: Int, event: KeyEvent): Boolean {
-            if (actionId == EditorInfo.IME_ACTION_SEARCH
-                    || actionId == EditorInfo.IME_ACTION_DONE
-                    || event.action == KeyEvent.ACTION_DOWN && event.keyCode == KeyEvent.KEYCODE_ENTER) {
-                setAndRetrieveProductDetail()
-                return true
-            }
-            return false
-        }
-    }
 
     private fun onBackPressed() = activity?.apply { this.onBackPressed() }
 

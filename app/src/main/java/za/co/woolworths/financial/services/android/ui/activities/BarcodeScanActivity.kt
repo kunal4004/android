@@ -8,8 +8,10 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.barcode_scan_activity.*
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE
+import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListSearchResultActivity.SHOPPING_LIST_SEARCH_RESULT_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.barcode.BarcodeScanFragment
+import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.ADDED_TO_SHOPPING_LIST_RESULT_CODE
 import za.co.woolworths.financial.services.android.util.RuntimePermissionActivity
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -18,7 +20,7 @@ class BarcodeScanActivity : RuntimePermissionActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.barcode_scan_activity)
-        Utils.updateStatusBarBackground(this, R.color.black)
+        Utils.updateStatusBarBackground(this, R.color.black, true)
         configureActionBar()
         if (savedInstanceState == null) {
             addFragment(
@@ -41,7 +43,7 @@ class BarcodeScanActivity : RuntimePermissionActivity() {
     internal fun setHomeIndicator(isManualScanFragment: Boolean) {
         supportActionBar?.setHomeAsUpIndicator(if (isManualScanFragment) R.drawable.back_white else R.drawable.close_white)
         tvToolbarTitle?.text = if (isManualScanFragment) getString(R.string.enter_barcode) else getString(R.string.scan_product)
-        toolbar?.setBackgroundColor(ContextCompat.getColor(this, if (isManualScanFragment) R.color.black else R.color.black))
+        toolbar?.setBackgroundColor(ContextCompat.getColor(this, if (isManualScanFragment) R.color.black else R.color.sem_per_black))
     }
 
     override fun onBackPressed() {
@@ -69,13 +71,24 @@ class BarcodeScanActivity : RuntimePermissionActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == PDP_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE) {
-            setResult(ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE, data)
-            finish()
-            overridePendingTransition(0, 0)
+        if (requestCode == PDP_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE
+                || requestCode == SHOPPING_LIST_SEARCH_RESULT_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE) {
+            data?.let { setActivityResult(it, ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE) }
             return
         }
+
+        if (requestCode == SHOPPING_LIST_SEARCH_RESULT_REQUEST_CODE && resultCode == ADDED_TO_SHOPPING_LIST_RESULT_CODE) {
+            data?.let { setActivityResult(it, ADDED_TO_SHOPPING_LIST_RESULT_CODE) }
+            return
+        }
+
         supportFragmentManager?.findFragmentById(R.id.flBarcodeScanContainer)?.onActivityResult(requestCode, resultCode, data)
+    }
+
+    private fun setActivityResult(data: Intent, addToShoppingListResultCode: Int) {
+        setResult(addToShoppingListResultCode, data)
+        finish()
+        overridePendingTransition(0, 0)
     }
 
     override fun onRuntimePermissionRequestGranted() {

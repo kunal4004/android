@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.contracts.AsyncAPIResponse
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse
 import za.co.woolworths.financial.services.android.models.dto.ProductView
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
@@ -22,6 +23,7 @@ abstract class BarcodeScanExtension : Fragment() {
     private var mProductDetailRequest: AsyncTask<String, String, ProductDetailResponse>? = null
     var mRetrieveProductDetail: AsyncTask<String, String, ProductView>? = null
     var networkNotAvailable: Boolean = true
+    var getProductDetailAsyncTaskIsRunning = false
 
     internal open fun onSuccess() {}
     internal abstract fun networkConnectionState(isConnected: Boolean)
@@ -30,25 +32,34 @@ abstract class BarcodeScanExtension : Fragment() {
     fun retrieveProductDetail(): AsyncTask<String, String, ProductView>? {
         progressBarVisibility(true)
         networkConnectivityStatus()
+        asyncTaskIsRunning(true)
         return RetrieveProductIdAndSkuId(getProductRequestBody(), object : AsyncAPIResponse.ResponseDelegate<ProductView> {
             override fun onSuccess(response: ProductView) {
-                if (isAdded) {
+                if (isAdded && WoolworthsApplication.isApplicationInForeground()) {
                     when (response.httpCode) {
                         200 -> {
                             response.products?.apply {
                                 when (size) {
-                                    0 -> activity?.let { Utils.displayValidationMessage(it, CustomPopUpWindow.MODAL_LAYOUT.BARCODE_ERROR, "") }
+                                    0 -> {
+                                        activity?.let { Utils.displayValidationMessage(it, CustomPopUpWindow.MODAL_LAYOUT.BARCODE_ERROR, "") }
+                                        progressBarVisibility(false)
+                                        asyncTaskIsRunning(false)
+                                    }
                                     else -> {
                                         val productRequest: ProductRequest? = response.products?.get(0)?.let { ProductRequest(it.productId, it.sku) }
                                         mProductDetailRequest = productRequest?.let { retrieveProductDetail(it) }
+                                        asyncTaskIsRunning(true)
                                     }
                                 }
                             }
                         }
-                        else -> response.response?.desc?.let { activity?.apply { Utils.displayValidationMessage(this, CustomPopUpWindow.MODAL_LAYOUT.ERROR, it) } }
+                        else -> {
+                            asyncTaskIsRunning(false)
+                            progressBarVisibility(false)
+                            response.response?.desc?.let { activity?.apply { Utils.displayValidationMessage(this, CustomPopUpWindow.MODAL_LAYOUT.ERROR, it) } }
+                        }
                     }
                 }
-                progressBarVisibility(false)
             }
 
             override fun onFailure(errorMessage: String) {
@@ -57,10 +68,14 @@ abstract class BarcodeScanExtension : Fragment() {
         }).execute()
     }
 
+    private fun asyncTaskIsRunning(status: Boolean) {
+        getProductDetailAsyncTaskIsRunning = status
+    }
+
     private fun retrieveProductDetail(productRequest: ProductRequest): AsyncTask<String, String, ProductDetailResponse>? {
         return GetProductDetails(productRequest.productId, productRequest.skuId, object : AsyncAPIResponse.ResponseDelegate<ProductDetailResponse> {
             override fun onSuccess(response: ProductDetailResponse) {
-                if (isAdded) {
+                if (isAdded && WoolworthsApplication.isApplicationInForeground()) {
                     when (response.httpCode) {
                         200 -> {
                             response.product?.apply {
@@ -73,7 +88,6 @@ abstract class BarcodeScanExtension : Fragment() {
                                         putBoolean("fetchFromJson", true)
                                     }
                                     activity?.let { ScreenManager.presentProductDetails(it, bundle) }
-                                    onSuccess()
                                 }
                             }
                         }
@@ -81,6 +95,8 @@ abstract class BarcodeScanExtension : Fragment() {
                     }
                 }
                 progressBarVisibility(false)
+                onSuccess()
+                asyncTaskIsRunning(false)
             }
 
             override fun onFailure(errorMessage: String) {
@@ -97,7 +113,8 @@ abstract class BarcodeScanExtension : Fragment() {
 
     private fun apiFailure(errorMessage: String) = activity?.runOnUiThread {
         progressBarVisibility(false)
-        if (isAdded) {
+        asyncTaskIsRunning(false)
+        if (isAdded && WoolworthsApplication.isApplicationInForeground()) {
             if (errorMessage.contains("SocketTimeoutException") || errorMessage.contains("ConnectionException")) {
                 networkNotAvailable = false
             }
