@@ -49,8 +49,6 @@ import za.co.woolworths.financial.services.android.models.service.event.LoadStat
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity;
-import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity;
-import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment;
@@ -568,8 +566,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             switch (item.getItemId()) {
                 case R.id.navigation_today:
                     clearStack();
-                    WTodayFragment currentWTodayFragment = (WTodayFragment) mNavController.getCurrentFrag();
-                    currentWTodayFragment.scrollToTop();
+                    WTodayFragment currentWTodayFragmentFragment = (WTodayFragment) mNavController.getCurrentFrag();
+                    currentWTodayFragmentFragment.scrollToTop();
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WTODAYMENU);
                     break;
 
