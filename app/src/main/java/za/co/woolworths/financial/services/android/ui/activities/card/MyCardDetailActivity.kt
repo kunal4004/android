@@ -20,6 +20,10 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class MyCardDetailActivity : AppCompatActivity() {
 
+    companion object {
+        const val STORE_CARD_DETAIL = "STORE_CARD_DETAIL"
+    }
+
     private var mCardIsBlocked: Boolean? = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,6 +34,7 @@ class MyCardDetailActivity : AppCompatActivity() {
 
         if (savedInstanceState == null) {
             intent?.extras?.apply {
+                getString(STORE_CARD_DETAIL)
                 mCardIsBlocked = getBoolean(ProcessBlockCardFragment.CARD_BLOCKED, false)
             }
             addCardDetailFragment()
@@ -37,22 +42,22 @@ class MyCardDetailActivity : AppCompatActivity() {
     }
 
     private fun addCardDetailFragment() {
-        SessionDao.getByKey(SessionDao.KEY.STORE_CARD).value?.apply {
-            when (mCardIsBlocked) {
-                true -> {
-                    addFragment(
-                            fragment = MyCardBlockedFragment.newInstance(),
-                            tag = MyCardBlockedFragment::class.java.simpleName,
-                            containerViewId = R.id.flMyCard)
-                }
-                else -> {
-                    addFragment(
-                            fragment = MyCardDetailFragment.newInstance(this),
-                            tag = MyCardDetailFragment::class.java.simpleName,
-                            containerViewId = R.id.flMyCard)
-                }
-            }
-        }
+//        SessionDao.getByKey(SessionDao.KEY.STORE_CARD).value?.apply {
+//            when (mCardIsBlocked) {
+//                true -> {
+//                    addFragment(
+//                            fragment = MyCardBlockedFragment.newInstance(),
+//                            tag = MyCardBlockedFragment::class.java.simpleName,
+//                            containerViewId = R.id.flMyCard)
+//                }
+//                else -> {
+//                    addFragment(
+//                            fragment = MyCardDetailFragment.newInstance(this),
+//                            tag = MyCardDetailFragment::class.java.simpleName,
+//                            containerViewId = R.id.flMyCard)
+//                }
+//            }
+//        }
     }
 
     private fun actionBar() {
