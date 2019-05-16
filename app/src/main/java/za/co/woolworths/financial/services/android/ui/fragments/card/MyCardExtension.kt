@@ -14,6 +14,7 @@ import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.LinkNewCardActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
+import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
 import za.co.woolworths.financial.services.android.ui.fragments.card.ProcessBlockCardFragment.Companion.CARD_BLOCKED
 import za.co.woolworths.financial.services.android.util.KeyboardUtil
 
@@ -24,9 +25,11 @@ open class MyCardExtension : Fragment() {
                 ?: "")
     }
 
-    fun navigateToBlockMyCardActivity(activity: Activity?) {
+    fun navigateToBlockMyCardActivity(activity: Activity?, storeCardDetail: String?) {
         activity?.apply {
-            startActivity(Intent(this, BlockMyCardActivity::class.java))
+            val openBlockMyCardActivity = Intent(this, BlockMyCardActivity::class.java)
+            openBlockMyCardActivity.putExtra(STORE_CARD_DETAIL, storeCardDetail)
+            startActivity(openBlockMyCardActivity)
             overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
             finish()
         }

@@ -403,6 +403,11 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
 
+        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BarcodeScanActivityStyle"
+            />
+
     </application>
 
 </manifest>

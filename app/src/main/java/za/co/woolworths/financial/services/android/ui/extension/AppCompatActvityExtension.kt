@@ -1,9 +1,13 @@
 package za.co.woolworths.financial.services.android.ui.extension
 
+import android.content.Context.INPUT_METHOD_SERVICE
 import android.support.annotation.AnimRes
 import android.support.annotation.IdRes
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
+
 
 /**
  * Method to add the fragment. The [fragment] is added to the container view with id
@@ -61,14 +65,14 @@ fun AppCompatActivity.replaceFragmentSafely(fragment: Fragment,
 }
 
 fun AppCompatActivity.addFragment(fragment: Fragment,
-                                            tag: String,
-                                            allowStateLoss: Boolean = false,
-                                            allowBackStack: Boolean,
-                                            @IdRes containerViewId: Int,
-                                            @AnimRes enterAnimation: Int = 0,
-                                            @AnimRes exitAnimation: Int = 0,
-                                            @AnimRes popEnterAnimation: Int = 0,
-                                            @AnimRes popExitAnimation: Int = 0) {
+                                  tag: String,
+                                  allowStateLoss: Boolean = false,
+                                  allowBackStack: Boolean,
+                                  @IdRes containerViewId: Int,
+                                  @AnimRes enterAnimation: Int = 0,
+                                  @AnimRes exitAnimation: Int = 0,
+                                  @AnimRes popEnterAnimation: Int = 0,
+                                  @AnimRes popExitAnimation: Int = 0) {
     val ft = supportFragmentManager
             .beginTransaction()
             .setCustomAnimations(enterAnimation, exitAnimation, popEnterAnimation, popExitAnimation)
@@ -81,6 +85,7 @@ fun AppCompatActivity.addFragment(fragment: Fragment,
         ft.commitAllowingStateLoss()
     }
 }
+
 /**
  * Method to check if fragment exists. The operation is performed by the supportFragmentManager.
  */
@@ -93,4 +98,26 @@ fun AppCompatActivity.existsFragmentByTag(tag: String): Boolean {
  */
 fun AppCompatActivity.findFragmentByTag(tag: String): Fragment? {
     return supportFragmentManager.findFragmentByTag(tag)
+}
+
+fun EditText.showKeyboard(activity: AppCompatActivity) {
+    requestFocus()
+    activity.apply {
+        requestFocus()
+        isFocusableInTouchMode = true
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
+        imm?.showSoftInput(this@showKeyboard, InputMethodManager.SHOW_IMPLICIT)
+        text?.apply { setSelection(length) }
+    }
+}
+
+fun EditText.hideKeyboard(activity: AppCompatActivity) {
+    activity.apply {
+        val inputManager = getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
+        // check if no view has focus:
+        val currentFocusedView = currentFocus
+        if (currentFocusedView != null) {
+            inputManager?.hideSoftInputFromWindow(currentFocusedView.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+        }
+    }
 }
