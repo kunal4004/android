@@ -17,16 +17,26 @@ import za.co.woolworths.financial.services.android.ui.extension.findFragmentByTa
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import android.os.CountDownTimer
 import za.co.woolworths.financial.services.android.contracts.IProgressAnimationState
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.models.dto.npc.BlockCardRequestBody
+import za.co.woolworths.financial.services.android.models.dto.npc.BlockMyCardResponse
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
+import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity
+import za.co.woolworths.financial.services.android.util.SessionUtilities
+import za.co.woolworths.financial.services.android.util.Utils
 
 
-class ProcessBlockCardFragment : MyCardExtension(), IProgressAnimationState {
+class ProcessBlockCardFragment : ConfirmBlockCardRequestExtension(), IProgressAnimationState {
 
+    private var mBlockCardReason: Int = 0
     private var mCardWasBlocked: Boolean? = null
 
     companion object {
         const val CARD_BLOCKED = "CARD_BLOCKED"
-        fun newInstance(cardBlocked: Boolean) = ProcessBlockCardFragment().withArgs {
+        const val BLOCK_CARD_REASON = "BLOCK_CARD_REASON"
+        fun newInstance(cardBlocked: Boolean, blockReason: Int?) = ProcessBlockCardFragment().withArgs {
             putBoolean(CARD_BLOCKED, cardBlocked)
+            putInt(BLOCK_CARD_REASON, blockReason ?: 0)
         }
     }
 
@@ -35,6 +45,7 @@ class ProcessBlockCardFragment : MyCardExtension(), IProgressAnimationState {
         setHasOptionsMenu(true)
         arguments?.apply {
             mCardWasBlocked = getBoolean(CARD_BLOCKED, false)
+            mBlockCardReason = getInt(BLOCK_CARD_REASON)
         }
     }
 
@@ -51,18 +62,16 @@ class ProcessBlockCardFragment : MyCardExtension(), IProgressAnimationState {
                 containerViewId = R.id.flProgressIndicator
         )
 
-        //TODO:: TO BE REMOVED, USED ONLY FOR PROTOTYPE DEMONSTRATION
         btn_ok_got_it?.setOnClickListener { navigateToMyCardActivity(false) }
         hideToolbarIcon()
-        val waitingTime = object : CountDownTimer(3000, 100) {
-            override fun onTick(millisUntilFinished: Long) {
-            }
-
-            override fun onFinish() {
-                progressState()?.animateSuccessEnd()
+        if (mCardWasBlocked == true) {
+            // TODO UNBLOCK STORE CARD
+        } else {
+            val account = (activity as? BlockMyCardActivity)?.getStoreCardDetail()
+            (activity as? BlockMyCardActivity)?.getCardDetail()?.apply {
+                account?.productOfferingId?.let { blockMyCardRequest(BlockCardRequestBody(cardNumber, cardNumber, sequenceNumber.toString(), mBlockCardReason.toString()), it.toString()) }
             }
         }
-        waitingTime.start()
     }
 
     private fun hideToolbarIcon() {
@@ -79,7 +88,6 @@ class ProcessBlockCardFragment : MyCardExtension(), IProgressAnimationState {
     }
 
     private fun displayBlockedCardSuccess() {
-
         incBlockCardSuccess?.visibility = VISIBLE
         incProcessingTextLayout?.visibility = GONE
         object : CountDownTimer(1500, 100) {
@@ -87,16 +95,17 @@ class ProcessBlockCardFragment : MyCardExtension(), IProgressAnimationState {
             }
 
             override fun onFinish() {
-                navigateToMyCardActivity(true)
             }
         }.start()
+
+        navigateToMyCardActivity(true)
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         super.onCreateOptionsMenu(menu, inflater)
         menu?.clear()
     }
-
 
     private fun progressState(): ProgressStateFragment? = (activity as? AppCompatActivity)?.findFragmentByTag(ProgressStateFragment::class.java.simpleName) as? ProgressStateFragment
 
@@ -105,5 +114,19 @@ class ProcessBlockCardFragment : MyCardExtension(), IProgressAnimationState {
             true -> displayUnblockCardSuccess()
             false -> displayBlockedCardSuccess()
         }
+    }
+
+    override fun onSuccess(blockMyCardResponse: BlockMyCardResponse?) {
+        blockMyCardResponse?.apply {
+            when (httpCode) {
+                200 -> progressState()?.animateSuccessEnd()
+                440 -> activity?.let { activity -> response?.stsParams?.let { stsParams -> SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, stsParams, activity) } }
+                else -> response?.desc?.let { Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, it) }
+
+            }
+        }
+    }
+
+    override fun progressBarVisibility(visible: Boolean) {
     }
 }

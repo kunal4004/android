@@ -104,7 +104,7 @@ class EnterOtpFragment : MyCardExtension() {
 
     private fun linkCardRequest() {
         replaceFragment(
-                fragment = ProcessBlockCardFragment.newInstance(true),
+                fragment = ProcessBlockCardFragment.newInstance(true,0),
                 tag = ProcessBlockCardFragment::class.java.simpleName,
                 containerViewId = R.id.flMyCard,
                 allowStateLoss = true,

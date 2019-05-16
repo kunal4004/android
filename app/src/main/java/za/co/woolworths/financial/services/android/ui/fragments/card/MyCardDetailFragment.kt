@@ -71,6 +71,6 @@ class MyCardDetailFragment : MyCardExtension() {
     }
 
     private fun onClick() {
-        blockCardView.setOnClickListener { activity?.let { navigateToBlockMyCardActivity(it, (activity as? MyCardDetailActivity)?.getMyStoreCardDetail()) } }
+        blockCardView.setOnClickListener { activity?.let { navigateToBlockMyCardActivity(it, (activity as? MyCardDetailActivity)?.getMyStoreCardDetail(),mCardDetail) } }
     }
 }

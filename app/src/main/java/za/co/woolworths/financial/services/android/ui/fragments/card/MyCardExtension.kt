@@ -11,10 +11,13 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
 import com.awfs.coordination.R
+import com.google.gson.Gson
+import za.co.woolworths.financial.services.android.models.dto.npc.Card
 import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.LinkNewCardActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
+import za.co.woolworths.financial.services.android.ui.fragments.card.MyCardDetailFragment.Companion.CARD
 import za.co.woolworths.financial.services.android.ui.fragments.card.ProcessBlockCardFragment.Companion.CARD_BLOCKED
 import za.co.woolworths.financial.services.android.util.KeyboardUtil
 
@@ -25,10 +28,11 @@ open class MyCardExtension : Fragment() {
                 ?: "")
     }
 
-    fun navigateToBlockMyCardActivity(activity: Activity?, storeCardDetail: String?) {
+    fun navigateToBlockMyCardActivity(activity: Activity?, storeCardDetail: String?, mCardDetail: Card?) {
         activity?.apply {
             val openBlockMyCardActivity = Intent(this, BlockMyCardActivity::class.java)
             openBlockMyCardActivity.putExtra(STORE_CARD_DETAIL, storeCardDetail)
+            openBlockMyCardActivity.putExtra(CARD, Gson().toJson(mCardDetail))
             startActivity(openBlockMyCardActivity)
             overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
             finish()
