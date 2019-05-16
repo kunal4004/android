@@ -8,14 +8,15 @@ import android.view.MenuItem
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import com.awfs.coordination.R
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.my_card_activity.*
-import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.card.GetReplacementCardFragment
 import za.co.woolworths.financial.services.android.ui.fragments.card.MyCardBlockedFragment
 import za.co.woolworths.financial.services.android.ui.fragments.card.MyCardDetailFragment
-import za.co.woolworths.financial.services.android.ui.fragments.card.ProcessBlockCardFragment
 import za.co.woolworths.financial.services.android.util.Utils
+import android.net.ParseException as ParseException1
 
 
 class MyCardDetailActivity : AppCompatActivity() {
@@ -24,8 +25,8 @@ class MyCardDetailActivity : AppCompatActivity() {
         const val STORE_CARD_DETAIL = "STORE_CARD_DETAIL"
     }
 
+    private var myStoreCardDetail: String? = null
     private var mCardIsBlocked: Boolean? = false
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.my_card_activity)
@@ -34,30 +35,34 @@ class MyCardDetailActivity : AppCompatActivity() {
 
         if (savedInstanceState == null) {
             intent?.extras?.apply {
-                getString(STORE_CARD_DETAIL)
-                mCardIsBlocked = getBoolean(ProcessBlockCardFragment.CARD_BLOCKED, false)
+                myStoreCardDetail = getString(STORE_CARD_DETAIL)
+                mCardIsBlocked = Gson().fromJson(myStoreCardDetail, Account::class.java)?.primaryCard?.cardBlocked
+                        ?: false
             }
             addCardDetailFragment()
         }
     }
 
+    /**
+    If cardBlocked == TRUE, display generic card blocked screen
+    Else cardBlocked == FALSE , Build the ‘My Card’ Screen using object with latest openedDate
+     */
+
     private fun addCardDetailFragment() {
-//        SessionDao.getByKey(SessionDao.KEY.STORE_CARD).value?.apply {
-//            when (mCardIsBlocked) {
-//                true -> {
-//                    addFragment(
-//                            fragment = MyCardBlockedFragment.newInstance(),
-//                            tag = MyCardBlockedFragment::class.java.simpleName,
-//                            containerViewId = R.id.flMyCard)
-//                }
-//                else -> {
-//                    addFragment(
-//                            fragment = MyCardDetailFragment.newInstance(this),
-//                            tag = MyCardDetailFragment::class.java.simpleName,
-//                            containerViewId = R.id.flMyCard)
-//                }
-//            }
-//        }
+        when (mCardIsBlocked) {
+            true -> {
+                addFragment(
+                        fragment = MyCardBlockedFragment.newInstance(),
+                        tag = MyCardBlockedFragment::class.java.simpleName,
+                        containerViewId = R.id.flMyCard)
+            }
+            else -> {
+                addFragment(
+                        fragment = myStoreCardDetail?.let { MyCardDetailFragment.newInstance(it) },
+                        tag = MyCardDetailFragment::class.java.simpleName,
+                        containerViewId = R.id.flMyCard)
+            }
+        }
     }
 
     private fun actionBar() {
@@ -114,6 +119,7 @@ class MyCardDetailActivity : AppCompatActivity() {
         toolbarText?.visibility = GONE
     }
 
-
     fun changeToolbarBackground(colorId: Int) = tbMyCard?.setBackgroundColor(ContextCompat.getColor(this, colorId))
+
+    fun getMyStoreCardDetail() = myStoreCardDetail
 }

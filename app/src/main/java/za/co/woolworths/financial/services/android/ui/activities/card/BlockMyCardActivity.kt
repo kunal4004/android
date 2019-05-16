@@ -13,11 +13,17 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class BlockMyCardActivity : MyCardActivityExtension(), IPermanentCardBlock {
 
+    private var mStoreCardDetail: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.block_my_card_activity)
         Utils.updateStatusBarBackground(this)
         actionBar()
+
+        intent?.extras?.apply {
+            mStoreCardDetail = getString(MyCardDetailActivity.STORE_CARD_DETAIL)
+        }
 
         if (savedInstanceState == null) {
             addFragment(
@@ -61,7 +67,7 @@ class BlockMyCardActivity : MyCardActivityExtension(), IPermanentCardBlock {
     private fun finishActivity() {
         this.finish()
         overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
-        navigateToMyCardActivity(false)
+        navigateToMyCardActivity(false,mStoreCardDetail)
     }
 
     private fun getCurrentFragment(): Fragment? {

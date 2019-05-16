@@ -232,6 +232,11 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
             for (Account p : accountList) {
                 if ("SC".equals(p.productGroupCode)) {
                     this.account = p;
+                    /**
+                     * Check if there is a primaryCard[]
+                     * if primarycard[] exists, add a new cell 'My Card" to the store card display
+                     * Else, do not add cell and end journey
+                     */
                     rlMyStoreCard.setVisibility((account.primaryCard == null) ? View.GONE : View.VISIBLE);
                     if (!p.productOfferingGoodStanding && p.productOfferingStatus.equalsIgnoreCase(Utils.ACCOUNT_CHARGED_OFF)) {
                         llActiveAccount.setVisibility(View.GONE);
@@ -420,8 +425,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
             case R.id.rlMyStoreCard:
                 Intent displayStoreCardDetail = new Intent(activity, MyCardDetailActivity.class);
                 displayStoreCardDetail.putExtra(STORE_CARD_DETAIL, new Gson().toJson(account));
+                activity.startActivity(displayStoreCardDetail);
                 activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
-
                 break;
             default:
                 break;
