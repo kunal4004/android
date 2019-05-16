@@ -1,4 +1,4 @@
-<resources xmlns:android="http://schemas.android.com/apk/res/android">
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
@@ -1550,13 +1550,14 @@
     <style name="BottomSheetDialogTheme" parent="BaseBottomSheetDialog" />
 
 
-    <style name="BarcodeScannerActivityStyle" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="BarcodeScanActivityStyle" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowIsTranslucent">false</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:homeAsUpIndicator">@drawable/close_white</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowActionBarOverlay">false</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
     </style>
 
     <style name="absa_page_title_text_style">

@@ -52,7 +52,6 @@ import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksVi
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.barcode.BarcodeFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment;
@@ -566,8 +565,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             switch (item.getItemId()) {
                 case R.id.navigation_today:
                     clearStack();
-                    WTodayFragment currentWTodayFragmentFragment = (WTodayFragment) mNavController.getCurrentFrag();
-                    currentWTodayFragmentFragment.scrollToTop();
+                    WTodayFragment wTodayFragment = (WTodayFragment) mNavController.getCurrentFrag();
+                    wTodayFragment.scrollToTop();
                     Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WTODAYMENU);
                     break;
 
@@ -645,13 +644,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             }
         }
         if (mNavController.getCurrentFrag() instanceof SubCategoryFragment) {
-            popFragmentSlideDown();
-            return;
-        }
-        /**
-         *  Close barcode fragment with slide down animation
-         */
-        if (mNavController.getCurrentFrag() instanceof BarcodeFragment) {
             popFragmentSlideDown();
             return;
         }

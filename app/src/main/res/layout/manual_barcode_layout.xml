@@ -28,7 +28,7 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:indeterminateTint="@color/white"
-                android:visibility="gone" />
+                android:visibility="visible" />
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/textInfo"
@@ -103,7 +103,7 @@
             android:layout_marginTop="28dp"
             android:layout_marginRight="@dimen/bank_spacing_width"
             android:layout_marginBottom="@dimen/bank_spacing_width"
-            android:background="@drawable/barcode_btn_border"
+            android:background="@drawable/barcode_button_default_bg"
             android:letterSpacing="0.15"
             android:text="@string/confirm"
             android:textAllCaps="true"

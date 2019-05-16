@@ -17,12 +17,12 @@ import za.co.woolworths.financial.services.android.models.dto.RootCategories
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE
+import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ShopPagerAdapter
-import za.co.woolworths.financial.services.android.ui.fragments.barcode.BarcodeFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList.Companion.DISPLAY_TOAST_RESULT_CODE
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback
@@ -147,13 +147,10 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
     }
 
     private fun navigateToBarcode() {
-        val barcodeFragment = BarcodeFragment()
-        val bundle = Bundle()
-        bundle.putString("SCAN_MODE", "ONE_D_MODE")
-        barcodeFragment.arguments = bundle
-        (activity as? BottomNavigationActivity)?.apply {
-            hideBottomNavigationMenu()
-            pushFragmentSlideUp(barcodeFragment)
+        activity?.apply {
+            val openBarcodeActivity =  Intent(this, BarcodeScanActivity::class.java)
+            startActivity(openBarcodeActivity)
+            overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
         }
     }
 
