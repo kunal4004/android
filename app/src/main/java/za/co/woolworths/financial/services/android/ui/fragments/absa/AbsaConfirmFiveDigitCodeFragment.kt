@@ -25,26 +25,20 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
 
     private var mPinImageViewList: MutableList<ImageView>? = null
     private var mBundleFiveDigitCodePinCode: Int? = null
-    private var mShakeAnimation: Animation? = null
-    private var mVibrateComplete: IVibrateComplete? = null
     private var mJSession: String? = null
     private var mAliasId: String? = null
-    private var mDeviceId: String? = null
 
     companion object {
         private const val MAXIMUM_PIN_ALLOWED: Int = 4
-        private const val VIBRATE_DURATION: Long = 300
         private const val FIVE_DIGIT_PIN_CODE = "FIVE_DIGIT_PIN_CODE"
         private const val JSESSION = "JSESSION"
         private const val ALIAS_ID = "ALIAS_ID"
-        private const val DEVICE_ID = "DEVICE_ID"
 
-        fun newInstance(fiveDigitCodePinCode: Int, jSession: String?, aliasId: String?, deviceId: String?) = AbsaConfirmFiveDigitCodeFragment().apply {
+        fun newInstance(fiveDigitCodePinCode: Int, jSession: String?, aliasId: String?) = AbsaConfirmFiveDigitCodeFragment().apply {
             arguments = Bundle(4).apply {
                 putInt(FIVE_DIGIT_PIN_CODE, fiveDigitCodePinCode)
                 putString(JSESSION, jSession)
                 putString(ALIAS_ID, aliasId)
-                putString(DEVICE_ID, deviceId)
             }
         }
     }
@@ -57,7 +51,6 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
             mBundleFiveDigitCodePinCode = getInt(FIVE_DIGIT_PIN_CODE, 0)
             getString(JSESSION)?.apply { mJSession = this }
             getString(ALIAS_ID)?.apply { mAliasId = this }
-            getString(DEVICE_ID)?.apply { mDeviceId = this }
         }
     }
 
@@ -91,7 +84,7 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
         if ((edtEnterATMPin.length() - 1) == MAXIMUM_PIN_ALLOWED) {
             val fiveDigitPin = edtEnterATMPin.text.toString()
             if (fiveDigitPin.toInt() == mBundleFiveDigitCodePinCode) {
-                navigateToAbsaPinCodeSuccessFragment(mAliasId, mDeviceId, fiveDigitPin, mJSession)
+                navigateToAbsaPinCodeSuccessFragment(mAliasId, fiveDigitPin, mJSession)
             } else {
                 ErrorHandlerView(activity).showToast(getString(R.string.passcode_not_match_alert))
                 clearPin()
@@ -99,10 +92,10 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
         }
     }
 
-    private fun navigateToAbsaPinCodeSuccessFragment(aliasId: String?, deviceId: String?, fiveDigitPin: String, jSession: String?) {
+    private fun navigateToAbsaPinCodeSuccessFragment(aliasId: String?, fiveDigitPin: String, jSession: String?) {
         hideKeyboard()
         replaceFragment(
-                fragment = AbsaPinCodeSuccessFragment.newInstance(aliasId, deviceId, fiveDigitPin, jSession),
+                fragment = AbsaPinCodeSuccessFragment.newInstance(aliasId, fiveDigitPin, jSession),
                 tag = AbsaPinCodeSuccessFragment::class.java.simpleName,
                 containerViewId = R.id.flAbsaOnlineBankingToDevice,
                 allowStateLoss = true,

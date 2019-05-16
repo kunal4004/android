@@ -33,7 +33,7 @@ public class AbsaValidateSureCheckRequest {
 		headers.put("JSESSIONID", jSession.getId());
 
 		final String body = new ValidateSureCheckRequest(jSession.getId()).getJson();
-		final AbsaBankingOpenApiRequest request = new AbsaBankingOpenApiRequest<>(ValidateSureCheckResponse.class, headers, body, new AbsaBankingOpenApiResponse.Listener<ValidateSureCheckResponse>(){
+		final AbsaBankingOpenApiRequest request = new AbsaBankingOpenApiRequest<>(ValidateSureCheckResponse.class, headers, body, true, new AbsaBankingOpenApiResponse.Listener<ValidateSureCheckResponse>(){
 
 			@Override
 			public void onResponse(ValidateSureCheckResponse response, List<HttpCookie> cookies) {

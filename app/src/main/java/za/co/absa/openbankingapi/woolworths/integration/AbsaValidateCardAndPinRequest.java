@@ -55,7 +55,7 @@ public class AbsaValidateCardAndPinRequest {
 		final String gatewaySymmetricKey = this.sessionKey.getEncryptedKeyBase64Encoded();
 		final String body = new ValidateCardAndPinRequest(cardToken, encryptedPin, gatewaySymmetricKey, sessionKey.getEncryptedIVBase64Encoded()).getJson();
 
-		AbsaBankingOpenApiRequest request = new AbsaBankingOpenApiRequest<>(ValidateCardAndPinResponse.class, headers, body, new AbsaBankingOpenApiResponse.Listener<ValidateCardAndPinResponse>(){
+		AbsaBankingOpenApiRequest request = new AbsaBankingOpenApiRequest<>(ValidateCardAndPinResponse.class, headers, body, true, new AbsaBankingOpenApiResponse.Listener<ValidateCardAndPinResponse>(){
 
 			@Override
 			public void onResponse(ValidateCardAndPinResponse response, List<HttpCookie> cookies) {

@@ -66,7 +66,7 @@ public class AbsaLoginRequest {
 			e.printStackTrace();
 		}
 
-		final AbsaBankingOpenApiRequest request = new AbsaBankingOpenApiRequest<>("https://eu.absa.co.za/wcob/j_pin_security_login", LoginResponse.class, headers, body, new AbsaBankingOpenApiResponse.Listener<LoginResponse>(){
+		final AbsaBankingOpenApiRequest request = new AbsaBankingOpenApiRequest<>("https://eu.absa.co.za/wcob/j_pin_security_login", LoginResponse.class, headers, body, true, new AbsaBankingOpenApiResponse.Listener<LoginResponse>(){
 
 			@Override
 			public void onResponse(LoginResponse loginResponse, List<HttpCookie> cookies) {

@@ -33,16 +33,16 @@ import javax.crypto.NoSuchPaddingException;
 public class AsymmetricCryptoHelper {
     private static final String KEY_FACTORY_ALGORITHM = "RSA";
     private static final String CIPHER_ALGORITHM = "RSA/ECB/PKCS1Padding";
-    private static final String KEY_FILE = "Woolworths_MobileAppPubKey.pem";
 
-    public final byte[] encryptSymmetricKey(Context context, byte[] symmetricKey) throws AsymmetricKeyGenerationFailureException, AsymmetricEncryptionFailureException {
-        PublicKey publicKey = loadPublicKey(context);
+
+    public final byte[] encryptSymmetricKey(Context context, byte[] symmetricKey, String keyFile) throws AsymmetricKeyGenerationFailureException, AsymmetricEncryptionFailureException {
+        PublicKey publicKey = loadPublicKey(context, keyFile);
         return encrypt(publicKey, symmetricKey);
     }
 
-    private PublicKey loadPublicKey(Context context) throws AsymmetricKeyGenerationFailureException {
+    private PublicKey loadPublicKey(Context context, String keyFile) throws AsymmetricKeyGenerationFailureException {
         try {
-            InputStream inputStream = readPublicKeyFile(context);
+            InputStream inputStream = readPublicKeyFile(context, keyFile);
 
             byte[] keyBytes = new byte[inputStream.available()];
             inputStream.read(keyBytes);
@@ -62,9 +62,9 @@ public class AsymmetricCryptoHelper {
         }
     }
 
-    private InputStream readPublicKeyFile(Context context) throws IOException {
+    private InputStream readPublicKeyFile(Context context, String keyFile) throws IOException {
         AssetManager assetManager = context.getAssets();
-        return assetManager.open(KEY_FILE);
+        return assetManager.open(keyFile);
     }
 
     private byte[] encrypt(PublicKey publicKey, byte[] plainData) throws AsymmetricEncryptionFailureException {
