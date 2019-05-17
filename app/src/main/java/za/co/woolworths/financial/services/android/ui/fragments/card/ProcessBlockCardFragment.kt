@@ -16,20 +16,20 @@ import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.extension.findFragmentByTag
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import android.os.CountDownTimer
+import com.google.gson.Gson
+import kotlinx.android.synthetic.main.npc_block_card_failure.*
 import za.co.woolworths.financial.services.android.contracts.IProgressAnimationState
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.npc.BlockCardRequestBody
 import za.co.woolworths.financial.services.android.models.dto.npc.BlockMyCardResponse
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity
+import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.SessionUtilities
-import za.co.woolworths.financial.services.android.util.Utils
-
 
 class ProcessBlockCardFragment : ConfirmBlockCardRequestExtension(), IProgressAnimationState {
 
     private var mBlockCardReason: Int = 0
-    private var mCardWasBlocked: Boolean? = null
+    private var mCardWasBlocked: Boolean = false
 
     companion object {
         const val CARD_BLOCKED = "CARD_BLOCKED"
@@ -64,42 +64,33 @@ class ProcessBlockCardFragment : ConfirmBlockCardRequestExtension(), IProgressAn
 
         btn_ok_got_it?.setOnClickListener { navigateToMyCardActivity(false) }
         hideToolbarIcon()
-        if (mCardWasBlocked == true) {
-            // TODO UNBLOCK STORE CARD
-        } else {
-            val account = (activity as? BlockMyCardActivity)?.getStoreCardDetail()
-            (activity as? BlockMyCardActivity)?.getCardDetail()?.apply {
-                account?.productOfferingId?.let { blockMyCardRequest(BlockCardRequestBody(cardNumber, cardNumber, sequenceNumber.toString(), mBlockCardReason.toString()), it.toString()) }
+
+        if (!mCardWasBlocked)
+            executeBlockCard()
+
+        btnRetry?.setOnClickListener {
+            if (NetworkManager.getInstance().isConnectedToNetwork(activity)) {
+                progressState()?.restartSpinning()
+                incNPCBlockCardFailure?.visibility = GONE
+                incProcessingTextLayout?.visibility = VISIBLE
+                (activity as? BlockMyCardActivity)?.iconVisibility(GONE)
+                executeBlockCard()
             }
+        }
+
+    }
+
+    private fun executeBlockCard() {
+        val account = (activity as? BlockMyCardActivity)?.getStoreCardDetail()
+        (activity as? BlockMyCardActivity)?.getCardDetail()?.apply {
+            account?.productOfferingId?.let { blockMyCardRequest(BlockCardRequestBody(cardNumber, cardNumber, sequenceNumber.toString(), mBlockCardReason.toString()), it.toString()) }
         }
     }
 
-    private fun hideToolbarIcon() {
-        (activity as? AppCompatActivity)?.supportActionBar?.apply {
-            setDisplayHomeAsUpEnabled(false)
-            setDisplayShowTitleEnabled(false)
-            setDisplayUseLogoEnabled(false)
-        }
-    }
 
     private fun displayUnblockCardSuccess() {
         incLinkCardSuccessFulView?.visibility = VISIBLE
         incProcessingTextLayout?.visibility = GONE
-    }
-
-    private fun displayBlockedCardSuccess() {
-        incBlockCardSuccess?.visibility = VISIBLE
-        incProcessingTextLayout?.visibility = GONE
-        object : CountDownTimer(1500, 100) {
-            override fun onTick(millisUntilFinished: Long) {
-            }
-
-            override fun onFinish() {
-            }
-        }.start()
-
-        navigateToMyCardActivity(true)
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
@@ -109,24 +100,48 @@ class ProcessBlockCardFragment : ConfirmBlockCardRequestExtension(), IProgressAn
 
     private fun progressState(): ProgressStateFragment? = (activity as? AppCompatActivity)?.findFragmentByTag(ProgressStateFragment::class.java.simpleName) as? ProgressStateFragment
 
-    override fun onAnimationEnd() {
+    override fun onAnimationEnd(cardIsBlocked: Boolean) {
         when (mCardWasBlocked) {
             true -> displayUnblockCardSuccess()
-            false -> displayBlockedCardSuccess()
+            false -> displayBlockedCardSuccess(cardIsBlocked)
         }
     }
 
-    override fun onSuccess(blockMyCardResponse: BlockMyCardResponse?) {
+    override fun blockCardSuccessResponse(blockMyCardResponse: BlockMyCardResponse?) {
         blockMyCardResponse?.apply {
             when (httpCode) {
-                200 -> progressState()?.animateSuccessEnd()
+                200 -> progressState()?.animateSuccessEnd(true)
                 440 -> activity?.let { activity -> response?.stsParams?.let { stsParams -> SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, stsParams, activity) } }
-                else -> response?.desc?.let { Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, it) }
-
+                else -> progressState()?.animateSuccessEnd(false)
             }
         }
     }
 
-    override fun progressBarVisibility(visible: Boolean) {
+    override fun blockMyCardFailure() {
+        displayBlockedCardSuccess(false)
+    }
+
+    private fun displayBlockedCardSuccess(cardIsBlocked: Boolean) {
+        if (cardIsBlocked) {
+            incBlockCardSuccess?.visibility = VISIBLE
+            incProcessingTextLayout?.visibility = GONE
+            object : CountDownTimer(1500, 100) {
+                override fun onTick(millisUntilFinished: Long) {
+                }
+
+                override fun onFinish() {
+                    activity?.finish()
+                    val account = (activity as? BlockMyCardActivity)?.getStoreCardDetail()
+                    account?.primaryCard?.cardBlocked = true
+
+                    navigateToMyCardActivity(Gson().toJson(account))
+                }
+            }.start()
+        } else {
+            incNPCBlockCardFailure?.visibility = VISIBLE
+            incProcessingTextLayout?.visibility = GONE
+            (activity as? BlockMyCardActivity)?.iconVisibility(VISIBLE)
+        }
+
     }
 }

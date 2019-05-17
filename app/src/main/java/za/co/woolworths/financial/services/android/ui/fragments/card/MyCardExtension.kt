@@ -39,6 +39,16 @@ open class MyCardExtension : Fragment() {
         }
     }
 
+
+    fun navigateToMyCardActivity(storeCardDetail: String?) {
+        activity?.apply {
+            val openCardDetailActivity = Intent(this, MyCardDetailActivity::class.java)
+            openCardDetailActivity.putExtra(STORE_CARD_DETAIL, storeCardDetail)
+            startActivity(openCardDetailActivity)
+            overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+        }
+    }
+
     fun navigateToPermanentCardBlockFragment(activity: AppCompatActivity?) {
         activity?.supportFragmentManager?.apply {
             val permanentCardBlockDialogFragment = PermanentCardBlockDialogFragment.newInstance()
@@ -97,6 +107,22 @@ open class MyCardExtension : Fragment() {
             startActivity(openCardDetailActivity)
             overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
             finish()
+        }
+    }
+
+    fun showToolbar() {
+        (activity as? AppCompatActivity)?.supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            setDisplayShowTitleEnabled(false)
+            setDisplayUseLogoEnabled(false)
+        }
+    }
+
+    fun hideToolbarIcon() {
+        (activity as? AppCompatActivity)?.supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(false)
+            setDisplayShowTitleEnabled(false)
+            setDisplayUseLogoEnabled(false)
         }
     }
 }

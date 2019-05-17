@@ -40,6 +40,11 @@ class BlockMyCardReasonFragment : MyCardExtension() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+       showToolbar()
+    }
+
     fun processBlockCardRequest() {
         replaceFragment(
                 fragment = ProcessBlockCardFragment.newInstance(false, blockReason),

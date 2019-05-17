@@ -8,22 +8,19 @@ import za.co.woolworths.financial.services.android.util.OnEventListener
 
 abstract class ConfirmBlockCardRequestExtension : MyCardExtension() {
 
-    var mPostBlockMyCard: AsyncTask<String, String, BlockMyCardResponse>? = null
-    abstract fun progressBarVisibility(visible: Boolean)
-    abstract fun onSuccess(blockMyCardResponse: BlockMyCardResponse?)
-
+    private var mPostBlockMyCard: AsyncTask<String, String, BlockMyCardResponse>? = null
+    abstract fun blockCardSuccessResponse(blockMyCardResponse: BlockMyCardResponse?)
+    abstract fun blockMyCardFailure()
     fun blockMyCardRequest(blockMyCardRequest: BlockCardRequestBody, productOfferingId: String?) {
-        progressBarVisibility(true)
-        val postBlockMyCard = PostBlockMyCard(blockMyCardRequest,productOfferingId,object : OnEventListener<BlockMyCardResponse> {
+        val postBlockMyCard = PostBlockMyCard(blockMyCardRequest, productOfferingId, object : OnEventListener<BlockMyCardResponse> {
             override fun onSuccess(blockMyCardResponse: BlockMyCardResponse?) {
-                progressBarVisibility(false)
-                onSuccess(blockMyCardResponse)
+                blockCardSuccessResponse(blockMyCardResponse)
             }
 
             override fun onFailure(e: String?) {
                 activity?.apply {
                     runOnUiThread {
-                        progressBarVisibility(false)
+                        blockMyCardFailure()
                     }
                 }
             }

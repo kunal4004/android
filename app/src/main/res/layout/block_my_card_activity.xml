@@ -33,6 +33,15 @@
                 android:textSize="12sp"
                 tools:targetApi="lollipop" />
 
+            <ImageView
+                android:id="@+id/imCloseIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center"
+                android:layout_marginEnd="16dp"
+                android:visibility="gone"
+                app:srcCompat="@drawable/close_24" />
+
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 

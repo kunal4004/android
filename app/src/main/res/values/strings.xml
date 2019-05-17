@@ -985,4 +985,5 @@
     <string name="police_report">Police Report</string>
     <string name="certified_id_deceased">Certified ID Deceased</string>
     <string name="claimant_bank_statement">Claimant\'s Bank Statement</string>
+    <string name="npc_block_card_desc">There was a problem blocking your card</string>
 </resources>
