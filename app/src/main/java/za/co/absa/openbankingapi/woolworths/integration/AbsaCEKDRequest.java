@@ -41,7 +41,7 @@ public class AbsaCEKDRequest {
             byte[] seed = SessionKey.generateKey(SessionKey.OUTPUT_KEY_LENGTH).getEncoded();
             this.contentEncryptionSeed = new AsymmetricCryptoHelper().encryptSymmetricKey(context, seed, SessionKey.CONTENT_ENCRYPTION_KEY_FILE);
             derivedSeed = Cryptography.PasswordBasedKeyDerivationFunction2(deviceId, seed, 1000, 256);
-            this.requestQueue = VolleySingleton.getInstance();
+            //this.requestQueue = VolleySingleton.getInstance();
         } catch (UnsupportedEncodingException | KeyGenerationFailureException | AsymmetricCryptoHelper.AsymmetricEncryptionFailureException | AsymmetricCryptoHelper.AsymmetricKeyGenerationFailureException e) {
             e.printStackTrace();
         }
@@ -81,7 +81,7 @@ public class AbsaCEKDRequest {
             }
         });
 
-        requestQueue.addToRequestQueue(request, AbsaCEKDRequest.class);
+        //requestQueue.addToRequestQueue(request, AbsaCEKDRequest.class);
 
     }
 }

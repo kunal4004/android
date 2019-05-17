@@ -31,7 +31,7 @@ public class AbsaValidateCardAndPinRequest {
 
 		try {
 			this.sessionKey = SessionKey.generate(context.getApplicationContext());
-			this.requestQueue = VolleySingleton.getInstance();
+			//this.requestQueue = VolleySingleton.getInstance();
 		} catch (KeyGenerationFailureException | AsymmetricCryptoHelper.AsymmetricEncryptionFailureException | AsymmetricCryptoHelper.AsymmetricKeyGenerationFailureException e) {
 			e.printStackTrace();
 		}
@@ -75,7 +75,6 @@ public class AbsaValidateCardAndPinRequest {
 
 		request.setTag(AbsaRegisterCredentialRequest.class.getSimpleName());
 
-		requestQueue.addToRequestQueue(request,AbsaValidateCardAndPinRequest.class);
 
 	}
 }

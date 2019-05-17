@@ -25,11 +25,13 @@ public class VolleySingleton {
         if (mRequestQueue == null) {
             mRequestQueue = Volley.newRequestQueue(WoolworthsApplication.getAppContext());
         }
+        mRequestQueue.getCache().clear();
         return mRequestQueue;
     }
 
     public <T> void addToRequestQueue(Request<T> req, Class tag) {
         req.setTag(tag.getSimpleName());
+        req.setShouldCache(false);
         getRequestQueue().add(req);
 
     }

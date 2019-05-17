@@ -35,25 +35,7 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
     private var jSession = JSession()
 
     fun make() {
-        requestContentEncryptionKey()
-    }
-
-    private fun requestContentEncryptionKey() {
-
-        AbsaCEKDRequest(WoolworthsApplication.getAppContext()).make(object : AbsaBankingOpenApiResponse.ResponseDelegate<CEKDResponse> {
-            override fun onSuccess(response: CEKDResponse?, cookies: MutableList<HttpCookie>?) {
-                mCardToken?.let { validateCardAndPin(it, mPinCode) }
-            }
-
-            override fun onFailure(errorMessage: String?) {
-                failureHandler(errorMessage, false)
-            }
-
-            override fun onFatalError(error: VolleyError?) {
-                fatalErrorHandler(error)
-            }
-
-        })
+        mCardToken?.let { validateCardAndPin(it, mPinCode) }
     }
 
     private fun validateCardAndPin(cardToken: String, pin: String) {

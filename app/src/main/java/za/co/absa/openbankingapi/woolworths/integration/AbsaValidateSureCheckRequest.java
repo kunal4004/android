@@ -51,10 +51,10 @@ public class AbsaValidateSureCheckRequest {
 			}
 		});
 
-		List<String> cookies = new ArrayList<>();
+		/*List<String> cookies = new ArrayList<>();
 		cookies.add(jSession.getCookie().toString());
 		request.setCookies(cookies);
-		request.setTag(AbsaValidateSureCheckRequest.class.getSimpleName());
+		request.setTag(AbsaValidateSureCheckRequest.class.getSimpleName());*/
 
 		requestQueue.addToRequestQueue(request,AbsaValidateSureCheckRequest.class);
 	}

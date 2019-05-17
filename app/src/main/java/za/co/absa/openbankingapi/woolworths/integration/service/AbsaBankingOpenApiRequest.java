@@ -1,5 +1,6 @@
 package za.co.absa.openbankingapi.woolworths.integration.service;
 
+import android.text.TextUtils;
 import android.util.Base64;
 
 import com.android.volley.AuthFailureError;
@@ -8,6 +9,7 @@ import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -28,19 +30,22 @@ import za.co.absa.openbankingapi.KeyGenerationFailureException;
 import za.co.absa.openbankingapi.SessionKey;
 import za.co.absa.openbankingapi.SymmetricCipher;
 import za.co.absa.openbankingapi.woolworths.integration.AbsaCEKDRequest;
+import za.co.absa.openbankingapi.woolworths.integration.AbsaValidateCardAndPinRequest;
+import za.co.absa.openbankingapi.woolworths.integration.dto.CEKDResponse;
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 
 public class AbsaBankingOpenApiRequest<T> extends Request<T> {
 
     private final Gson gson = new GsonBuilder().serializeNulls().create();
     private final Class<T> clazz;
     private final Map<String, String> headers;
-    private final String body;
+    private String body;
     private final AbsaBankingOpenApiResponse.Listener<T> listener;
     private List<HttpCookie> mCookies;
     private byte[] iv;
     private boolean isBodyEncryptionRequired;
 
-    private AbsaBankingOpenApiRequest(int method, String url, Class<T> clazz, Map<String, String> headers, String body, boolean isBodyEncryptionRequired, AbsaBankingOpenApiResponse.Listener<T> listener, Response.ErrorListener errorListener) {
+    private AbsaBankingOpenApiRequest(final int method, final String url, final Class<T> clazz, final Map<String, String> headers, String body, final boolean isBodyEncryptionRequired, final AbsaBankingOpenApiResponse.Listener<T> listener, final Response.ErrorListener errorListener) {
         super(method, url, errorListener);
         this.clazz = clazz;
         this.headers = headers;
@@ -55,14 +60,40 @@ public class AbsaBankingOpenApiRequest<T> extends Request<T> {
 
         if (this.isBodyEncryptionRequired) {
 
+            if (TextUtils.isEmpty(AbsaCEKDRequest.keyId) || AbsaCEKDRequest.derivedSeed.length == 0) {
+
+                final String finalBody = body;
+                new AbsaCEKDRequest(WoolworthsApplication.getAppContext()).make(new AbsaBankingOpenApiResponse.ResponseDelegate<CEKDResponse>() {
+
+                    @Override
+                    public void onSuccess(CEKDResponse response, List<HttpCookie> cookies) {
+                        new AbsaBankingOpenApiRequest<>(method, url, clazz, headers, finalBody, isBodyEncryptionRequired, listener, errorListener);
+                    }
+
+                    @Override
+                    public void onFailure(String errorMessage) {
+
+                    }
+
+                    @Override
+                    public void onFatalError(VolleyError error) {
+
+                    }
+
+                });
+
+                return;
+            }
+
             List<String> cookies = new ArrayList<>();
             cookies.add(AbsaCEKDRequest.jSession.getCookie().toString());
             this.setCookies(cookies);
 
             this.headers.put("x-encrypted", body.length() + "|" + AbsaCEKDRequest.keyId);
+            body = getEncryptedBody(body);
         }
 
-        this.body = this.isBodyEncryptionRequired ? getEncryptedBody(body) : body;
+        this.body = body;
 
 
         this.setRetryPolicy(new DefaultRetryPolicy(
@@ -70,6 +101,7 @@ public class AbsaBankingOpenApiRequest<T> extends Request<T> {
                 1,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
+        VolleySingleton.getInstance().addToRequestQueue(this,clazz);
 
     }
 
@@ -93,6 +125,11 @@ public class AbsaBankingOpenApiRequest<T> extends Request<T> {
 
     public void setCookies(List<String> cookies) {
         StringBuilder sb = new StringBuilder();
+
+        
+        //if (!TextUtils.isEmpty(headers.get("Cookie")))
+           // sb.append("; ").append(headers.get("Cookie")).append("; ");
+
         for (String cookie : cookies) {
             sb.append(cookie).append("; ");
         }
