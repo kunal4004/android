@@ -13,13 +13,13 @@ import android.content.Context
 import android.graphics.Paint
 
 
-class PermanentCardBlockDialogFragment : WBottomSheetDialogFragment() {
+class BlockMyCardReasonConfirmationFragment : WBottomSheetDialogFragment() {
 
     private var mPermanentCardBlockCallback: IPermanentCardBlock? = null
 
 
     companion object {
-        fun newInstance() = PermanentCardBlockDialogFragment().withArgs {
+        fun newInstance() = BlockMyCardReasonConfirmationFragment().withArgs {
         }
     }
 
