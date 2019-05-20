@@ -6,7 +6,7 @@ import android.view.MenuItem
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.my_card_activity.*
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
-import za.co.woolworths.financial.services.android.ui.fragments.card.LinkCardFragment
+import za.co.woolworths.financial.services.android.ui.fragments.npc.LinkCardFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
 

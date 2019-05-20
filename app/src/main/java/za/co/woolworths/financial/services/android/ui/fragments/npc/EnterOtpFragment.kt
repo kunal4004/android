@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments.card
+package za.co.woolworths.financial.services.android.ui.fragments.npc
 
 import android.graphics.Paint
 import android.os.Bundle
@@ -104,7 +104,7 @@ class EnterOtpFragment : MyCardExtension() {
 
     private fun linkCardRequest() {
         replaceFragment(
-                fragment = ProcessBlockCardFragment.newInstance(true),
+                fragment = ProcessBlockCardFragment.newInstance(true,0),
                 tag = ProcessBlockCardFragment::class.java.simpleName,
                 containerViewId = R.id.flMyCard,
                 allowStateLoss = true,

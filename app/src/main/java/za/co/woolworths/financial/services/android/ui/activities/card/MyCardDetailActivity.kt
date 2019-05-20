@@ -10,22 +10,18 @@ import android.view.View.VISIBLE
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.my_card_activity.*
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
-import za.co.woolworths.financial.services.android.ui.fragments.card.GetReplacementCardFragment
-import za.co.woolworths.financial.services.android.ui.fragments.card.MyCardBlockedFragment
-import za.co.woolworths.financial.services.android.ui.fragments.card.MyCardDetailFragment
+import za.co.woolworths.financial.services.android.ui.fragments.npc.GetReplacementCardFragment
+import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardBlockedFragment
+import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardDetailFragment
 import za.co.woolworths.financial.services.android.util.Utils
 import android.net.ParseException as ParseException1
 
 
 class MyCardDetailActivity : AppCompatActivity() {
 
-    companion object {
-        const val STORE_CARD_DETAIL = "STORE_CARD_DETAIL"
-    }
-
-    private var myStoreCardDetail: String? = null
     private var mCardIsBlocked: Boolean? = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,14 +29,9 @@ class MyCardDetailActivity : AppCompatActivity() {
         Utils.updateStatusBarBackground(this)
         actionBar()
 
-        if (savedInstanceState == null) {
-            intent?.extras?.apply {
-                myStoreCardDetail = getString(STORE_CARD_DETAIL)
-                mCardIsBlocked = Gson().fromJson(myStoreCardDetail, Account::class.java)?.primaryCard?.cardBlocked
-                        ?: false
-            }
-            addCardDetailFragment()
-        }
+        mCardIsBlocked = Gson().fromJson(getMyStoreCardDetail(), Account::class.java)?.primaryCard?.cardBlocked
+                ?: false
+        addCardDetailFragment()
     }
 
     /**
@@ -58,7 +49,7 @@ class MyCardDetailActivity : AppCompatActivity() {
             }
             else -> {
                 addFragment(
-                        fragment = myStoreCardDetail?.let { MyCardDetailFragment.newInstance(it) },
+                        fragment = MyCardDetailFragment.newInstance(),
                         tag = MyCardDetailFragment::class.java.simpleName,
                         containerViewId = R.id.flMyCard)
             }
@@ -121,5 +112,6 @@ class MyCardDetailActivity : AppCompatActivity() {
 
     fun changeToolbarBackground(colorId: Int) = tbMyCard?.setBackgroundColor(ContextCompat.getColor(this, colorId))
 
-    fun getMyStoreCardDetail() = myStoreCardDetail
+    private fun getMyStoreCardDetail(): String? = Utils.getSessionDaoValue(this, SessionDao.KEY.STORE_CARD_DETAIL)
+            ?: ""
 }

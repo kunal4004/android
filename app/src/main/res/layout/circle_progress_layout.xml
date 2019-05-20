@@ -21,21 +21,21 @@
         CircleProgressView:cpv_barColor3="@color/black"
         CircleProgressView:cpv_barStartEndLineColor="@color/black"
         CircleProgressView:cpv_barWidth="4dp"
+        CircleProgressView:cpv_direction="CW"
         CircleProgressView:cpv_innerContourColor="@color/black"
         CircleProgressView:cpv_innerContourSize="0dp"
         CircleProgressView:cpv_maxValue="100"
         CircleProgressView:cpv_maxValueAllowed="100"
-        CircleProgressView:cpv_spin="true"
         CircleProgressView:cpv_minValueAllowed="0"
         CircleProgressView:cpv_outerContourSize="0dp"
         CircleProgressView:cpv_rimColor="@color/grey_bg"
         CircleProgressView:cpv_rimWidth="4dp"
-        CircleProgressView:cpv_spinSpeed="4.5"
-        CircleProgressView:cpv_direction="CW"
         CircleProgressView:cpv_seekMode="false"
         CircleProgressView:cpv_showUnit="false"
+        CircleProgressView:cpv_spin="true"
         CircleProgressView:cpv_spinBarLength="200"
         CircleProgressView:cpv_spinColor="@color/black"
+        CircleProgressView:cpv_spinSpeed="4.5"
         CircleProgressView:cpv_textColor="@android:color/transparent"
         CircleProgressView:cpv_textScale="1"
         CircleProgressView:cpv_unit="%"
@@ -50,4 +50,13 @@
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/imFailureIcon"
+        android:layout_width="38dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        CircleProgressView:srcCompat="@drawable/npc_failure_icon" />
+
 </FrameLayout>

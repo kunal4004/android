@@ -1,8 +1,7 @@
-package za.co.woolworths.financial.services.android.ui.fragments.card
+package za.co.woolworths.financial.services.android.ui.fragments.npc
 
 import android.graphics.Paint
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
