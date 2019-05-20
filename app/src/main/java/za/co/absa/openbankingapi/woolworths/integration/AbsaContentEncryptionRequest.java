@@ -8,6 +8,7 @@ import com.android.volley.VolleyError;
 
 import java.io.UnsupportedEncodingException;
 import java.net.HttpCookie;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,24 +25,22 @@ import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenA
 import za.co.absa.openbankingapi.woolworths.integration.service.VolleySingleton;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class AbsaCEKDRequest {
+public class AbsaContentEncryptionRequest {
 
-    private VolleySingleton requestQueue;
     private byte[] contentEncryptionSeed;
     public static byte[] derivedSeed;
     private String deviceId;
-    public static JSession jSession = new JSession();
+    public static JSession jSession;
     public static String keyId;
 
 
-    public AbsaCEKDRequest(final Context context) {
+    public AbsaContentEncryptionRequest(final Context context) {
 
         try {
             this.deviceId = Utils.getAbsaUniqueDeviceID();
             byte[] seed = SessionKey.generateKey(SessionKey.OUTPUT_KEY_LENGTH).getEncoded();
             this.contentEncryptionSeed = new AsymmetricCryptoHelper().encryptSymmetricKey(context, seed, SessionKey.CONTENT_ENCRYPTION_KEY_FILE);
             derivedSeed = Cryptography.PasswordBasedKeyDerivationFunction2(deviceId, seed, 1000, 256);
-            //this.requestQueue = VolleySingleton.getInstance();
         } catch (UnsupportedEncodingException | KeyGenerationFailureException | AsymmetricCryptoHelper.AsymmetricEncryptionFailureException | AsymmetricCryptoHelper.AsymmetricKeyGenerationFailureException e) {
             e.printStackTrace();
         }
@@ -59,12 +58,13 @@ public class AbsaCEKDRequest {
             e.printStackTrace();
         }
 
-        final AbsaBankingOpenApiRequest request = new AbsaBankingOpenApiRequest<>("https://eu.absa.co.za/wcob/cekd", CEKDResponse.class, headers, body, false, new AbsaBankingOpenApiResponse.Listener<CEKDResponse>() {
+        new AbsaBankingOpenApiRequest<>("https://eu.absa.co.za/wcob/cekd", CEKDResponse.class, headers, body, false, new AbsaBankingOpenApiResponse.Listener<CEKDResponse>() {
 
             @Override
             public void onResponse(CEKDResponse response, List<HttpCookie> cookies) {
                 for (HttpCookie cookie : cookies) {
                     if (cookie.getName().equalsIgnoreCase("jsessionid")) {
+                        jSession = new JSession();
                         jSession.setCookie(cookie);
                     }
                 }
@@ -81,7 +81,11 @@ public class AbsaCEKDRequest {
             }
         });
 
-        //requestQueue.addToRequestQueue(request, AbsaCEKDRequest.class);
+    }
 
+    public static void clearContentEncryptionData(){
+        derivedSeed = null;
+        jSession = null;
+        keyId = null;
     }
 }

@@ -58,7 +58,7 @@ public class ValidateSureCheckRequest {
 	@SerializedName("httpNotOkExceptionEnabled")
 	private boolean httpNotOkExceptionEnabled;
 
-	public ValidateSureCheckRequest(String jSessionId){
+	public ValidateSureCheckRequest(){
 
 		connectionTimeout = 5000;
 		readTimeout = 180000;
@@ -72,9 +72,7 @@ public class ValidateSureCheckRequest {
 		proxyAuthenticationEnabled = false;
 		httpNotOkExceptionEnabled = false;
 		headers = new Headers();
-
-		rawJSessionId = jSessionId;
-	}
+		}
 
 	public final String getJson(){
 		Gson gson = new GsonBuilder().disableHtmlEscaping().create();

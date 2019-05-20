@@ -8,7 +8,6 @@ import com.android.volley.VolleyError;
 
 import java.net.HttpCookie;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,37 +17,33 @@ import za.co.absa.openbankingapi.DecryptionFailureException;
 import za.co.absa.openbankingapi.KeyGenerationFailureException;
 import za.co.absa.openbankingapi.SessionKey;
 import za.co.absa.openbankingapi.SymmetricCipher;
-import za.co.absa.openbankingapi.woolworths.integration.dao.JSession;
 import za.co.absa.openbankingapi.woolworths.integration.dto.CreateAliasRequest;
 import za.co.absa.openbankingapi.woolworths.integration.dto.CreateAliasResponse;
 import za.co.absa.openbankingapi.woolworths.integration.dto.Header;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiRequest;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse;
-import za.co.absa.openbankingapi.woolworths.integration.service.VolleySingleton;
 
 public class AbsaCreateAliasRequest {
 
-	private VolleySingleton requestQueue;
 	private SessionKey sessionKey;
 
 	public AbsaCreateAliasRequest(final Context context){
 
 		try {
 			this.sessionKey = SessionKey.generate(context.getApplicationContext());
-			this.requestQueue = VolleySingleton.getInstance();
 		} catch (KeyGenerationFailureException | AsymmetricCryptoHelper.AsymmetricEncryptionFailureException | AsymmetricCryptoHelper.AsymmetricKeyGenerationFailureException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void make(final String deviceId, final JSession jSession, final AbsaBankingOpenApiResponse.ResponseDelegate<CreateAliasResponse> responseDelegate){
+	public void make(final String deviceId, final AbsaBankingOpenApiResponse.ResponseDelegate<CreateAliasResponse> responseDelegate){
 		Map<String, String> headers = new HashMap<>();
 		headers.put("Accept", "application/json");
 		headers.put("action", "createAlias");
-		headers.put("JSESSIONID", jSession.getId());
+		//headers.put("JSESSIONID", jSession.getId());
 
 		final String body = new CreateAliasRequest(deviceId, sessionKey.getEncryptedKeyBase64Encoded(), sessionKey.getEncryptedIVBase64Encoded()).getJson();
-		final AbsaBankingOpenApiRequest request = new AbsaBankingOpenApiRequest<>(CreateAliasResponse.class, headers, body, true, new AbsaBankingOpenApiResponse.Listener<CreateAliasResponse>(){
+		new AbsaBankingOpenApiRequest<>(CreateAliasResponse.class, headers, body, true, new AbsaBankingOpenApiResponse.Listener<CreateAliasResponse>(){
 
 			@Override
 			public void onResponse(CreateAliasResponse response, List<HttpCookie> cookies) {
@@ -81,10 +76,5 @@ public class AbsaCreateAliasRequest {
 			}
 		});
 
-		List<String> cookies = new ArrayList<>();
-		cookies.add(jSession.getCookie().toString());
-		request.setCookies(cookies);
-
-        requestQueue.addToRequestQueue(request, AbsaCreateAliasRequest.class);
-	}
+		}
 }

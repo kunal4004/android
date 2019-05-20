@@ -25,6 +25,7 @@ import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBanki
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GotITDialogFragment
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.numberkeyboard.NumberKeyboardListener
 import java.net.HttpCookie
 
@@ -75,7 +76,7 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
             return
         val userPin = edtEnterATMPin.text.toString()
         val aliasId = SessionDao.getByKey(SessionDao.KEY.ABSA_ALIASID)?.value ?: ""
-        val deviceId = SessionDao.getByKey(SessionDao.KEY.ABSA_DEVICEID)?.value ?: ""
+        val deviceId = Utils.getAbsaUniqueDeviceID()
         absaLoginRequest(aliasId, deviceId, userPin)
 
     }

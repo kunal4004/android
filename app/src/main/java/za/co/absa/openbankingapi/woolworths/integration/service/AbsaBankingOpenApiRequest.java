@@ -29,8 +29,7 @@ import za.co.absa.openbankingapi.DecryptionFailureException;
 import za.co.absa.openbankingapi.KeyGenerationFailureException;
 import za.co.absa.openbankingapi.SessionKey;
 import za.co.absa.openbankingapi.SymmetricCipher;
-import za.co.absa.openbankingapi.woolworths.integration.AbsaCEKDRequest;
-import za.co.absa.openbankingapi.woolworths.integration.AbsaValidateCardAndPinRequest;
+import za.co.absa.openbankingapi.woolworths.integration.AbsaContentEncryptionRequest;
 import za.co.absa.openbankingapi.woolworths.integration.dto.CEKDResponse;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 
@@ -60,10 +59,10 @@ public class AbsaBankingOpenApiRequest<T> extends Request<T> {
 
         if (this.isBodyEncryptionRequired) {
 
-            if (TextUtils.isEmpty(AbsaCEKDRequest.keyId) || AbsaCEKDRequest.derivedSeed.length == 0) {
+            if (TextUtils.isEmpty(AbsaContentEncryptionRequest.keyId) || AbsaContentEncryptionRequest.derivedSeed.length == 0) {
 
                 final String finalBody = body;
-                new AbsaCEKDRequest(WoolworthsApplication.getAppContext()).make(new AbsaBankingOpenApiResponse.ResponseDelegate<CEKDResponse>() {
+                new AbsaContentEncryptionRequest(WoolworthsApplication.getAppContext()).make(new AbsaBankingOpenApiResponse.ResponseDelegate<CEKDResponse>() {
 
                     @Override
                     public void onSuccess(CEKDResponse response, List<HttpCookie> cookies) {
@@ -86,10 +85,10 @@ public class AbsaBankingOpenApiRequest<T> extends Request<T> {
             }
 
             List<String> cookies = new ArrayList<>();
-            cookies.add(AbsaCEKDRequest.jSession.getCookie().toString());
+            cookies.add(AbsaContentEncryptionRequest.jSession.getCookie().toString());
             this.setCookies(cookies);
 
-            this.headers.put("x-encrypted", body.length() + "|" + AbsaCEKDRequest.keyId);
+            this.headers.put("x-encrypted", body.length() + "|" + AbsaContentEncryptionRequest.keyId);
             body = getEncryptedBody(body);
         }
 
@@ -191,7 +190,7 @@ public class AbsaBankingOpenApiRequest<T> extends Request<T> {
         String encryptionResult = null;
 
         try {
-            encryptionResult = Base64.encodeToString(SymmetricCipher.Aes256Encrypt(AbsaCEKDRequest.derivedSeed, outputStream.toByteArray(), this.iv), Base64.NO_WRAP);
+            encryptionResult = Base64.encodeToString(SymmetricCipher.Aes256Encrypt(AbsaContentEncryptionRequest.derivedSeed, outputStream.toByteArray(), this.iv), Base64.NO_WRAP);
         } catch (DecryptionFailureException e) {
             e.printStackTrace();
         }
@@ -208,7 +207,7 @@ public class AbsaBankingOpenApiRequest<T> extends Request<T> {
         String decryptedResponse = null;
 
         try {
-            decryptedResponse = new String(SymmetricCipher.Aes256Decrypt(AbsaCEKDRequest.derivedSeed, encryptedResponse, ivForDecrypt), StandardCharsets.UTF_8);
+            decryptedResponse = new String(SymmetricCipher.Aes256Decrypt(AbsaContentEncryptionRequest.derivedSeed, encryptedResponse, ivForDecrypt), StandardCharsets.UTF_8);
         } catch (DecryptionFailureException e) {
             e.printStackTrace();
         }

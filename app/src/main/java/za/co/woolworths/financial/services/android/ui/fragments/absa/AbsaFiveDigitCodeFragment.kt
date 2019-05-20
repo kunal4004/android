@@ -9,25 +9,20 @@ import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.ImageView
 import com.awfs.coordination.R
-import com.google.gson.Gson
 import kotlinx.android.synthetic.main.absa_five_digit_code_fragment.*
-import za.co.absa.openbankingapi.woolworths.integration.dao.JSession
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 
 class AbsaFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener {
 
     private var mPinImageViewList: MutableList<ImageView>? = null
-    private var jSession: String? = null
     private var mAliasId: String? = null
 
     companion object {
         private const val MAXIMUM_PIN_ALLOWED: Int = 4
-        private const val JSESSION = "JSESSION"
         private const val ALIAS_ID = "ALIAS_ID"
 
-        fun newInstance(jSession: JSession, aliasId: String?) = AbsaFiveDigitCodeFragment().apply {
+        fun newInstance(aliasId: String?) = AbsaFiveDigitCodeFragment().apply {
             arguments = Bundle(3).apply {
-                putString(JSESSION, Gson().toJson(jSession))
                 putString(ALIAS_ID, aliasId)
             }
         }
@@ -38,7 +33,6 @@ class AbsaFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener 
         setHasOptionsMenu(true)
         (activity as AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
         arguments?.apply {
-            getString(JSESSION)?.apply { jSession = this }
             getString(ALIAS_ID)?.apply { mAliasId = this }
         }
     }
@@ -73,7 +67,7 @@ class AbsaFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener 
         if ((edtEnterATMPin.length() - 1) == MAXIMUM_PIN_ALLOWED) {
             val enteredPin = edtEnterATMPin.text.toString()
             replaceFragment(
-                    fragment = AbsaConfirmFiveDigitCodeFragment.newInstance(enteredPin.toInt(), jSession, mAliasId),
+                    fragment = AbsaConfirmFiveDigitCodeFragment.newInstance(enteredPin.toInt(), mAliasId),
                     tag = AbsaConfirmFiveDigitCodeFragment::class.java.simpleName,
                     containerViewId = R.id.flAbsaOnlineBankingToDevice,
                     allowStateLoss = true,

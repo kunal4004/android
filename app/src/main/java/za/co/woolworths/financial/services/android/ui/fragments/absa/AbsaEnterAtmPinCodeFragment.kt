@@ -157,9 +157,9 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
         alwaysShowWindowSoftInputMode()
     }
 
-    override fun onSuccessHandler(jSession: JSession, aliasId: String) {
+    override fun onSuccessHandler(aliasId: String) {
         replaceFragment(
-                fragment = AbsaFiveDigitCodeFragment.newInstance(jSession, aliasId),
+                fragment = AbsaFiveDigitCodeFragment.newInstance(aliasId),
                 tag = AbsaFiveDigitCodeFragment::class.java.simpleName,
                 containerViewId = R.id.flAbsaOnlineBankingToDevice,
                 allowStateLoss = true,

@@ -1,12 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.fragments.absa
 
 import com.android.volley.VolleyError
-import za.co.absa.openbankingapi.woolworths.integration.AbsaCEKDRequest
 import za.co.absa.openbankingapi.woolworths.integration.AbsaCreateAliasRequest
 import za.co.absa.openbankingapi.woolworths.integration.AbsaValidateCardAndPinRequest
 import za.co.absa.openbankingapi.woolworths.integration.AbsaValidateSureCheckRequest
-import za.co.absa.openbankingapi.woolworths.integration.dao.JSession
-import za.co.absa.openbankingapi.woolworths.integration.dto.CEKDResponse
 import za.co.absa.openbankingapi.woolworths.integration.dto.CreateAliasResponse
 import za.co.absa.openbankingapi.woolworths.integration.dto.ValidateCardAndPinResponse
 import za.co.absa.openbankingapi.woolworths.integration.dto.ValidateSureCheckResponse
@@ -32,7 +29,6 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
     private var mCardToken: String? = cardToken
     private var mPinCode = pinCode
     private var mPollingCount: Int = 0
-    private var jSession = JSession()
 
     fun make() {
         mCardToken?.let { validateCardAndPin(it, mPinCode) }
@@ -43,17 +39,10 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
                 object : AbsaBankingOpenApiResponse.ResponseDelegate<ValidateCardAndPinResponse> {
                     override fun onSuccess(response: ValidateCardAndPinResponse?, cookies: MutableList<HttpCookie>?) {
                         response?.apply {
-                            jSession.id = header?.jsessionId
-
-                            cookies?.forEach { cookie ->
-                                if (cookie.name.equals("jsessionid", ignoreCase = true)) {
-                                    jSession.cookie = cookie
-                                }
-                            }
 
                             result?.toLowerCase().apply {
                                 if (this in acceptedResultMessages) { // in == contains
-                                    validateSureCheck(jSession)
+                                    validateSureCheck()
                                     return
                                 }
                             }
@@ -81,13 +70,11 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
                 ?: "Technical error occured", shouldDismissActivity)
     }
 
-    private fun validateSureCheck(jSession: JSession) {
+    private fun validateSureCheck() {
         mScheduleValidateSureCheck = Executors.newSingleThreadScheduledExecutor().scheduleWithFixedDelay({
-            AbsaValidateSureCheckRequest().make(jSession,
+            AbsaValidateSureCheckRequest().make(
                     object : AbsaBankingOpenApiResponse.ResponseDelegate<ValidateSureCheckResponse> {
                         override fun onSuccess(response: ValidateSureCheckResponse?, cookies: MutableList<HttpCookie>?) {
-
-                            jSession.id = response?.header?.jsessionId
 
                             val acceptedResultMessages = mutableListOf("success", "processed")
                             val failedResultMessages = mutableListOf("failed", "rejected")
@@ -99,7 +86,7 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
                                     in acceptedResultMessages -> {
                                         //SureCheck was accepted, continue with registration process
                                         stopPolling()
-                                        createAlias(jSession)
+                                        createAlias()
                                     }
                                     in failedResultMessages -> {
                                         // Sending of the SureCheck failed for some reason. Stop registration details.
@@ -144,17 +131,15 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
         }, 0, POLLING_INTERVAL, TimeUnit.SECONDS)
     }
 
-    fun createAlias(jSession: JSession) {
+    fun createAlias() {
         var deviceId = Utils.getAbsaUniqueDeviceID()
-        AbsaCreateAliasRequest(WoolworthsApplication.getAppContext()).make(deviceId, jSession, object : AbsaBankingOpenApiResponse.ResponseDelegate<CreateAliasResponse> {
+        AbsaCreateAliasRequest(WoolworthsApplication.getAppContext()).make(deviceId, object : AbsaBankingOpenApiResponse.ResponseDelegate<CreateAliasResponse> {
 
             override fun onSuccess(response: CreateAliasResponse?, cookies: MutableList<HttpCookie>?) {
                 response?.apply {
 
-                    jSession.id = header?.jsessionId
-
                     if (header?.resultMessages?.size == 0 || aliasId != null) {
-                        navigateToRegisterCredential(jSession, aliasId)
+                        navigateToRegisterCredential(aliasId)
                     } else {
                         failureHandler(header?.resultMessages?.first()?.responseMessage
                                 ?: technical_error_occurred, true)
@@ -180,8 +165,8 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
         }
     }
 
-    private fun navigateToRegisterCredential(jSession: JSession, aliasId: String?) {
-        mValidatePinCodeDialogInterface?.onSuccessHandler(jSession, aliasId!!)
+    private fun navigateToRegisterCredential(aliasId: String?) {
+        mValidatePinCodeDialogInterface?.onSuccessHandler(aliasId!!)
     }
 
 }
