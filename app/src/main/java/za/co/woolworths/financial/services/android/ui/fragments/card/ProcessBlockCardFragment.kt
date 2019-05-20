@@ -17,6 +17,7 @@ import za.co.woolworths.financial.services.android.ui.extension.findFragmentByTa
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import android.os.CountDownTimer
 import com.google.gson.Gson
+import kotlinx.android.synthetic.main.circle_progress_layout.*
 import kotlinx.android.synthetic.main.npc_block_card_failure.*
 import za.co.woolworths.financial.services.android.contracts.IProgressAnimationState
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -113,13 +114,14 @@ class ProcessBlockCardFragment : ConfirmBlockCardRequestExtension(), IProgressAn
         blockMyCardResponse?.apply {
             when (httpCode) {
                 200 -> progressState()?.animateSuccessEnd(true)
-                440 -> activity?.let { activity -> response?.stsParams?.let { stsParams -> SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, stsParams, activity) } }
+                440 -> activity?.let { activity -> response?.let { SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, "", activity) } }
                 else -> progressState()?.animateSuccessEnd(false)
             }
         }
     }
 
     override fun blockMyCardFailure() {
+        progressState()?.animateSuccessEnd(false)
         displayBlockedCardSuccess(false)
     }
 
@@ -148,5 +150,14 @@ class ProcessBlockCardFragment : ConfirmBlockCardRequestExtension(), IProgressAn
             (activity as? BlockMyCardActivity)?.iconVisibility(VISIBLE)
         }
 
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        activity?.supportFragmentManager?.apply {
+            if (findFragmentById(R.id.flProgressIndicator) != null) {
+                beginTransaction().remove(findFragmentById(R.id.flProgressIndicator)).commitAllowingStateLoss()
+            }
+        }
     }
 }
