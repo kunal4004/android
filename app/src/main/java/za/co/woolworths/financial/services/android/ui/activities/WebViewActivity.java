@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -13,8 +12,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -29,7 +26,6 @@ import java.lang.reflect.Method;
 
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
-import za.co.woolworths.financial.services.android.util.SessionUtilities;
 
 public class WebViewActivity extends AppCompatActivity {
 
@@ -61,7 +57,6 @@ public class WebViewActivity extends AppCompatActivity {
 
 		String url = b.getString("link");
 		webView.getSettings().setJavaScriptEnabled(true);
-		webView.getSettings().setUserAgentString("iphone");
 		webView.getSettings().setDomStorageEnabled(true);
 		webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
@@ -139,25 +134,4 @@ public class WebViewActivity extends AppCompatActivity {
 		}
 
 	}
-
-	@SuppressWarnings("deprecation")
-	public static void clearCookies(Context context) {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
-			// Log.d(TAG, "Using clearCookies code for API >=" + String.valueOf(Build.VERSION_CODES.LOLLIPOP_MR1));
-			CookieManager.getInstance().removeAllCookies(null);
-			CookieManager.getInstance().flush();
-		} else {
-			//  Log.d(C.TAG, "Using clearCookies code for API <" + String.valueOf(Build.VERSION_CODES.LOLLIPOP_MR1));
-			CookieSyncManager cookieSyncMngr = CookieSyncManager.createInstance(context);
-			cookieSyncMngr.startSync();
-			CookieManager cookieManager = CookieManager.getInstance();
-			cookieManager.removeAllCookie();
-			cookieManager.removeSessionCookie();
-			cookieSyncMngr.stopSync();
-			cookieSyncMngr.sync();
-		}
-	}
-
-
-
 }

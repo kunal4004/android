@@ -1,14 +1,9 @@
-package za.co.woolworths.financial.services.android.ui.fragments.card
+package za.co.woolworths.financial.services.android.ui.fragments.npc
 
-import android.graphics.Color
-import android.graphics.PorterDuff
 import android.os.Bundle
-import android.os.Handler
 import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.block_my_card_fragment.*
@@ -18,6 +13,7 @@ class BlockMyCardReasonFragment : MyCardExtension() {
 
     companion object {
         fun newInstance() = BlockMyCardReasonFragment()
+        var blockReason: Int? = null
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -27,32 +23,33 @@ class BlockMyCardReasonFragment : MyCardExtension() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-        blockCardRadioGroup?.setOnCheckedChangeListener { rad, id -> btnBlockCard?.isEnabled = rad.id != -1 }
-
         btnBlockCard?.setOnClickListener {
             (activity as? AppCompatActivity)?.let {
-                btnBlockCard?.text = ""
-                blockUIProgressState(VISIBLE)
-                Handler().postDelayed({
-                    blockUIProgressState(GONE)
-                    btnBlockCard?.text = activity?.resources?.getString(R.string.block_card_title)
-                            ?: ""
-                    navigateToPermanentCardBlockFragment(it)
-                }, 2000)
+                navigateToPermanentCardBlockFragment(it)
+            }
+        }
 
+        blockCardRadioGroup?.setOnCheckedChangeListener { radioGroup, index ->
+            btnBlockCard?.isEnabled = radioGroup.id != -1
+
+            blockReason = when (radioGroup?.checkedRadioButtonId) {
+                R.id.radDamaged -> 1
+                R.id.radLost -> 2
+                R.id.radStolen ->   3
+                R.id.radNotReceived -> 4
+                else -> 0
             }
         }
     }
 
-    private fun blockUIProgressState(state: Int) {
-        pbBlockUI?.visibility = state
-        pbBlockUI?.indeterminateDrawable?.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN)
+    override fun onResume() {
+        super.onResume()
+       showToolbar()
     }
 
     fun processBlockCardRequest() {
         replaceFragment(
-                fragment = ProcessBlockCardFragment.newInstance(false),
+                fragment = ProcessBlockCardFragment.newInstance(false, blockReason),
                 tag = ProcessBlockCardFragment::class.java.simpleName,
                 containerViewId = R.id.flMyCard,
                 allowStateLoss = true,

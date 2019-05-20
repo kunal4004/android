@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments.card
+package za.co.woolworths.financial.services.android.ui.fragments.npc
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,13 +13,13 @@ import android.content.Context
 import android.graphics.Paint
 
 
-class PermanentCardBlockDialogFragment : WBottomSheetDialogFragment() {
+class BlockMyCardReasonConfirmationFragment : WBottomSheetDialogFragment() {
 
     private var mPermanentCardBlockCallback: IPermanentCardBlock? = null
 
 
     companion object {
-        fun newInstance() = PermanentCardBlockDialogFragment().withArgs {
+        fun newInstance() = BlockMyCardReasonConfirmationFragment().withArgs {
         }
     }
 

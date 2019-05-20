@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white">
+
 
     <FrameLayout
         android:id="@+id/flProgressIndicator"
@@ -45,6 +47,18 @@
     <include
         android:id="@+id/incLinkCardSuccessFulView"
         layout="@layout/npc_card_linked_successful_layout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline" />
+
+
+    <include
+        android:id="@+id/incNPCBlockCardFailure"
+        layout="@layout/npc_block_card_failure"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:visibility="gone"

@@ -14,7 +14,7 @@ android {
     def BUILD_NUMBER = "{BUILD_NUMBER}"
 
     if (!BUILD_NUMBER.isNumber()){
-        BUILD_NUMBER = "101"
+        BUILD_NUMBER = "103"
     }
 
     dataBinding {

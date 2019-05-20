@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments.card
+package za.co.woolworths.financial.services.android.ui.fragments.npc
 
 import android.app.Activity
 import android.content.Context
@@ -11,11 +11,13 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
 import com.awfs.coordination.R
+import com.google.gson.Gson
+import za.co.woolworths.financial.services.android.models.dto.npc.Card
 import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.LinkNewCardActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
-import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
-import za.co.woolworths.financial.services.android.ui.fragments.card.ProcessBlockCardFragment.Companion.CARD_BLOCKED
+import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardDetailFragment.Companion.CARD
+import za.co.woolworths.financial.services.android.ui.fragments.npc.ProcessBlockCardFragment.Companion.CARD_BLOCKED
 import za.co.woolworths.financial.services.android.util.KeyboardUtil
 
 open class MyCardExtension : Fragment() {
@@ -25,20 +27,29 @@ open class MyCardExtension : Fragment() {
                 ?: "")
     }
 
-    fun navigateToBlockMyCardActivity(activity: Activity?, storeCardDetail: String?) {
+    fun navigateToBlockMyCardActivity(activity: Activity?, mCardDetail: Card?) {
         activity?.apply {
             val openBlockMyCardActivity = Intent(this, BlockMyCardActivity::class.java)
-            openBlockMyCardActivity.putExtra(STORE_CARD_DETAIL, storeCardDetail)
+            openBlockMyCardActivity.putExtra(CARD, Gson().toJson(mCardDetail))
             startActivity(openBlockMyCardActivity)
             overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
             finish()
         }
     }
 
+
+    fun navigateToMyCardActivity() {
+        activity?.apply {
+            val openCardDetailActivity = Intent(this, MyCardDetailActivity::class.java)
+            startActivity(openCardDetailActivity)
+            overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+        }
+    }
+
     fun navigateToPermanentCardBlockFragment(activity: AppCompatActivity?) {
         activity?.supportFragmentManager?.apply {
-            val permanentCardBlockDialogFragment = PermanentCardBlockDialogFragment.newInstance()
-            permanentCardBlockDialogFragment.show((this), PermanentCardBlockDialogFragment::class.java.simpleName)
+            val permanentCardBlockDialogFragment = BlockMyCardReasonConfirmationFragment.newInstance()
+            permanentCardBlockDialogFragment.show((this), BlockMyCardReasonConfirmationFragment::class.java.simpleName)
         }
     }
 
@@ -93,6 +104,22 @@ open class MyCardExtension : Fragment() {
             startActivity(openCardDetailActivity)
             overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
             finish()
+        }
+    }
+
+    fun showToolbar() {
+        (activity as? AppCompatActivity)?.supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            setDisplayShowTitleEnabled(false)
+            setDisplayUseLogoEnabled(false)
+        }
+    }
+
+    fun hideToolbarIcon() {
+        (activity as? AppCompatActivity)?.supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(false)
+            setDisplayShowTitleEnabled(false)
+            setDisplayUseLogoEnabled(false)
         }
     }
 }

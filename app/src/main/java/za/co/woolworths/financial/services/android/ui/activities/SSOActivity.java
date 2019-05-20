@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
@@ -21,6 +22,7 @@ import android.webkit.WebBackForwardList;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -120,6 +122,7 @@ public class SSOActivity extends WebViewActivity {
 		this.webView.getSettings().setLoadWithOverviewMode(true);
 		this.webView.getSettings().setDomStorageEnabled(true);
 		this.webView.addJavascriptInterface(new KMSIState(),"injection");
+		webView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
 		if (Build.VERSION.SDK_INT >= 21) {
 			this.webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
 		}
@@ -431,65 +434,25 @@ public class SSOActivity extends WebViewActivity {
 		}
 
 
+		@Nullable
 		@Override
-		public void onPageFinished(WebView view, String url) {
-			super.onPageFinished(view, url);
+		public WebResourceResponse shouldInterceptRequest(final WebView view, WebResourceRequest request) {
 
 			if (SSOActivity.this.path == Path.SIGNIN || SSOActivity.this.path == Path.REGISTER) {
-				view.evaluateJavascript("(function(){return {'content': [document.forms[0].state.value.toString(), document.forms[0].id_token.value.toString()]}})();", new ValueCallback<String>() {
+
+				runOnUiThread(new Runnable() {
 					@Override
-					public void onReceiveValue(String value) {
-						//this is sign in
-						if (value.equals("null"))
-							return;
-
-						JsonParser jsonParser = new JsonParser();
-						JsonObject jsonObject = (JsonObject) jsonParser.parse(value);
-						ArrayList<String> list = new Gson().fromJson(jsonObject.getAsJsonArray("content"), ArrayList.class);
-
-						String webviewState = list.get(0);
-
-						Intent intent = new Intent();
-
-						if (state.equals(webviewState)) {
-							String jwt = list.get(1);
-							intent.putExtra(SSOActivity.TAG_JWT, jwt);
-							//Save JWT
-							SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.USER_TOKEN);
-							sessionDao.value = jwt;
-							try {
-								sessionDao.save();
-							} catch (Exception e) {
-								Log.e(TAG, e.getMessage());
-							}
-
-							//Trigger Firebase Tag.
-							JWTDecodedModel jwtDecodedModel = SessionUtilities.getInstance().getJwt();
-							Map<String, String> arguments = new HashMap<>();
-							arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, (jwtDecodedModel.C2Id != null) ? jwtDecodedModel.C2Id : "");
-							Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.LOGIN, arguments);
-
-							NotificationUtils.getInstance().sendRegistrationToServer();
-							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.ACTIVE);
-							QueryBadgeCounter.getInstance().queryBadgeCount();
-							setResult(SSOActivityResult.SUCCESS.rawValue(), intent);
-							Utils.setUserKMSIState(isKMSIChecked);
-						} else {
-							setResult(SSOActivityResult.STATE_MISMATCH.rawValue(), intent);
-						}
-
-						try {
-							if (!TextUtils.isEmpty(stsParams)) {
-								SessionUtilities.getInstance().setSTSParameters(null);
-							}
-							closeActivity();
-
-						} catch (NullPointerException ex) {
-							closeActivity();
-						}
+					public void run() {
+						extractFormDataAndCloseSSOIfNeeded();
 					}
 				});
 			}
+			return super.shouldInterceptRequest(view, request);
+		}
+
+		@Override
+		public void onPageFinished(WebView view, String url) {
+			super.onPageFinished(view, url);
 
 			if(url.contains("/customerid/login") || url.contains("/customerid/userdetails") || url.contains("/customerid/userdetails/password")){
 				handleUIForKMSIEntry(false);
@@ -509,7 +472,6 @@ public class SSOActivity extends WebViewActivity {
 				} else if (SSOActivity.this.path.rawValue().equals(Path.UPDATE_PROFILE.rawValue()) || SSOActivity.this.path.rawValue().equals(Path.UPDATE_PASSWORD.rawValue())) {
 							/*Intent intent = new Intent();
 							setResult(SSOActivityResult.CHANGE_PASSWORD.rawValue(), intent);*/
-				} else {
 				}
 			}
 			hideProgressBar();
@@ -552,6 +514,63 @@ public class SSOActivity extends WebViewActivity {
 		}
 
 	};
+
+
+	private void extractFormDataAndCloseSSOIfNeeded(){
+		SSOActivity.this.webView.evaluateJavascript("(function(){return {'content': [document.forms[0].state.value.toString(), document.forms[0].id_token.value.toString()]}})();", new ValueCallback<String>() {
+			@Override
+			public void onReceiveValue(String value) {
+				//this is sign in
+				if (value.equals("null"))
+					return;
+
+				JsonParser jsonParser = new JsonParser();
+				JsonObject jsonObject = (JsonObject) jsonParser.parse(value);
+				ArrayList<String> list = new Gson().fromJson(jsonObject.getAsJsonArray("content"), ArrayList.class);
+
+				String webviewState = list.get(0);
+
+				Intent intent = new Intent();
+
+				if (state.equals(webviewState)) {
+					String jwt = list.get(1);
+					intent.putExtra(SSOActivity.TAG_JWT, jwt);
+					//Save JWT
+					SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.USER_TOKEN);
+					sessionDao.value = jwt;
+					try {
+						sessionDao.save();
+					} catch (Exception e) {
+						Log.e(TAG, e.getMessage());
+					}
+
+					//Trigger Firebase Tag.
+					JWTDecodedModel jwtDecodedModel = SessionUtilities.getInstance().getJwt();
+					Map<String, String> arguments = new HashMap<>();
+					arguments.put(FirebaseManagerAnalyticsProperties.PropertyNames.C2ID, (jwtDecodedModel.C2Id != null) ? jwtDecodedModel.C2Id : "");
+					Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.LOGIN, arguments);
+
+					NotificationUtils.getInstance().sendRegistrationToServer();
+					SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.ACTIVE);
+					QueryBadgeCounter.getInstance().queryBadgeCount();
+					setResult(SSOActivityResult.SUCCESS.rawValue(), intent);
+					Utils.setUserKMSIState(isKMSIChecked);
+				} else {
+					setResult(SSOActivityResult.STATE_MISMATCH.rawValue(), intent);
+				}
+
+				try {
+					if (!TextUtils.isEmpty(stsParams)) {
+						SessionUtilities.getInstance().setSTSParameters(null);
+					}
+					closeActivity();
+
+				} catch (NullPointerException ex) {
+					closeActivity();
+				}
+			}
+		});
+	}
 
 
 	private void unknownNetworkFailure(WebView webView, String description) {

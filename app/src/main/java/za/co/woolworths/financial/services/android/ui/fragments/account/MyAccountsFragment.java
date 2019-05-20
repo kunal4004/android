@@ -57,6 +57,7 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.MyAccountHelper;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
@@ -290,6 +291,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			Account account = item.getValue();
 			switch (account.productGroupCode) {
 				case "SC":
+					Utils.sessionDaoSave(getActivity(), SessionDao.KEY.STORE_CARD_DETAIL,new MyAccountHelper().getAccountInfo(accountsResponse,"SC"));
 					linkedStoreCardView.setVisibility(View.VISIBLE);
 					applyStoreCardView.setVisibility(View.GONE);
 					imgStoreCardStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
