@@ -31,11 +31,13 @@ class BlockMyCardReasonFragment : MyCardExtension() {
 
         blockCardRadioGroup?.setOnCheckedChangeListener { radioGroup, index ->
             btnBlockCard?.isEnabled = radioGroup.id != -1
-            when (radioGroup?.checkedRadioButtonId) {
-                R.id.radDamaged -> blockReason = 1
-                R.id.radLost -> blockReason = 2
-                R.id.radStolen -> blockReason = 3
-                R.id.radNotReceived -> blockReason = 4
+
+            blockReason = when (radioGroup?.checkedRadioButtonId) {
+                R.id.radDamaged -> 1
+                R.id.radLost -> 2
+                R.id.radStolen ->   3
+                R.id.radNotReceived -> 4
+                else -> 0
             }
         }
     }
