@@ -6,7 +6,7 @@ import za.co.woolworths.financial.services.android.models.dto.npc.BlockMyCardRes
 import za.co.woolworths.financial.services.android.models.rest.npc.PostBlockMyCard
 import za.co.woolworths.financial.services.android.util.OnEventListener
 
-abstract class ConfirmBlockCardRequestExtension : MyCardExtension() {
+abstract class BlockMyCardRequestExtension : MyCardExtension() {
 
     private var mPostBlockMyCard: AsyncTask<String, String, BlockMyCardResponse>? = null
     abstract fun blockCardSuccessResponse(blockMyCardResponse: BlockMyCardResponse?)

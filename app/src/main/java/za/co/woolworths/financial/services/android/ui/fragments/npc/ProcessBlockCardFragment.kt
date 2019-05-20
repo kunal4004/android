@@ -28,7 +28,7 @@ import za.co.woolworths.financial.services.android.util.PersistenceLayer
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 
-class ProcessBlockCardFragment : ConfirmBlockCardRequestExtension(), IProgressAnimationState {
+class ProcessBlockCardFragment : BlockMyCardRequestExtension(), IProgressAnimationState {
 
     private var mBlockCardReason: Int = 0
     private var mCardWasBlocked: Boolean = false
