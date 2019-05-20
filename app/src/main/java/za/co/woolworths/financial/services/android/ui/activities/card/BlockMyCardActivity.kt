@@ -20,7 +20,6 @@ import za.co.woolworths.financial.services.android.util.Utils
 class BlockMyCardActivity : MyCardActivityExtension(), IPermanentCardBlock {
 
     private var mCard: String? = null
-    private var slideDownAnim: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,7 +40,6 @@ class BlockMyCardActivity : MyCardActivityExtension(), IPermanentCardBlock {
         }
 
         imCloseIcon?.setOnClickListener {
-            slideDownAnim = true
             finishActivity()
         }
     }
@@ -77,13 +75,8 @@ class BlockMyCardActivity : MyCardActivityExtension(), IPermanentCardBlock {
     }
 
     private fun finishActivity() {
-        if (slideDownAnim) {
-            this.finish()
-            navigateToCardActivity(false)
-        } else {
             this.finish()
             navigateToMyCardActivity(false)
-        }
     }
 
     private fun getCurrentFragment(): Fragment? {
