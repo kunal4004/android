@@ -13,9 +13,9 @@ import kotlinx.android.synthetic.main.my_card_activity.*
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
-import za.co.woolworths.financial.services.android.ui.fragments.card.GetReplacementCardFragment
-import za.co.woolworths.financial.services.android.ui.fragments.card.MyCardBlockedFragment
-import za.co.woolworths.financial.services.android.ui.fragments.card.MyCardDetailFragment
+import za.co.woolworths.financial.services.android.ui.fragments.npc.GetReplacementCardFragment
+import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardBlockedFragment
+import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardDetailFragment
 import za.co.woolworths.financial.services.android.util.Utils
 import android.net.ParseException as ParseException1
 

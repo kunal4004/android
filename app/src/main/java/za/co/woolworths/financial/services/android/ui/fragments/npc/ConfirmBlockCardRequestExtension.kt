@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments.card
+package za.co.woolworths.financial.services.android.ui.fragments.npc
 
 import android.os.AsyncTask
 import za.co.woolworths.financial.services.android.models.dto.npc.BlockCardRequestBody

@@ -13,8 +13,8 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.npc.Card
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
-import za.co.woolworths.financial.services.android.ui.fragments.card.BlockMyCardReasonFragment
-import za.co.woolworths.financial.services.android.ui.fragments.card.MyCardDetailFragment.Companion.CARD
+import za.co.woolworths.financial.services.android.ui.fragments.npc.BlockMyCardReasonFragment
+import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardDetailFragment.Companion.CARD
 import za.co.woolworths.financial.services.android.util.Utils
 
 class BlockMyCardActivity : MyCardActivityExtension(), IPermanentCardBlock {

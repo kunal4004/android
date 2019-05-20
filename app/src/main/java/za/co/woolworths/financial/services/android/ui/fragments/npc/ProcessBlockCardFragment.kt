@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments.card
+package za.co.woolworths.financial.services.android.ui.fragments.npc
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -17,7 +17,6 @@ import za.co.woolworths.financial.services.android.ui.extension.findFragmentByTa
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import android.os.CountDownTimer
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.circle_progress_layout.*
 import kotlinx.android.synthetic.main.npc_block_card_failure.*
 import za.co.woolworths.financial.services.android.contracts.IProgressAnimationState
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
