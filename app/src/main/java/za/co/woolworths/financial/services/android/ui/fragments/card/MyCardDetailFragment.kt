@@ -8,10 +8,9 @@ import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.my_card_fragment.*
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.npc.Card
-import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
-import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.*
@@ -22,24 +21,22 @@ class MyCardDetailFragment : MyCardExtension() {
 
     companion object {
         const val CARD = "CARD"
-        fun newInstance(card: String) = MyCardDetailFragment().withArgs {
-            putString(CARD, card)
-        }
+        fun newInstance() = MyCardDetailFragment()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            // Extract latest openedDate
-            it.getString(CARD)?.let { cardValue ->
+        // Extract latest openedDate
+        activity?.let {
+            Utils.getSessionDaoValue(it, SessionDao.KEY.STORE_CARD_DETAIL)?.let { cardValue ->
                 mCardDetail = Gson().fromJson(cardValue, Account::class.java)?.primaryCard?.cards
                         ?.let { cards -> Collections.max(cards) { card, nextCard -> card.openedDate().compareTo(nextCard.openedDate()) } }
+                Utils.updateStatusBarBackground(it, R.color.grey_bg)
             }
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        activity?.let { Utils.updateStatusBarBackground(it, R.color.grey_bg) }
         return inflater.inflate(R.layout.my_card_fragment, container, false)
     }
 
@@ -71,6 +68,6 @@ class MyCardDetailFragment : MyCardExtension() {
     }
 
     private fun onClick() {
-        blockCardView.setOnClickListener { activity?.let { navigateToBlockMyCardActivity(it, (activity as? MyCardDetailActivity)?.getMyStoreCardDetail(),mCardDetail) } }
+        blockCardView.setOnClickListener { activity?.let { navigateToBlockMyCardActivity(it, mCardDetail) } }
     }
 }

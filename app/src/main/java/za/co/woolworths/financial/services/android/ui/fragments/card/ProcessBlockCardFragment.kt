@@ -24,7 +24,9 @@ import za.co.woolworths.financial.services.android.models.dto.npc.BlockCardReque
 import za.co.woolworths.financial.services.android.models.dto.npc.BlockMyCardResponse
 import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity
 import za.co.woolworths.financial.services.android.util.NetworkManager
+import za.co.woolworths.financial.services.android.util.PersistenceLayer
 import za.co.woolworths.financial.services.android.util.SessionUtilities
+import za.co.woolworths.financial.services.android.util.Utils
 
 class ProcessBlockCardFragment : ConfirmBlockCardRequestExtension(), IProgressAnimationState {
 
@@ -130,11 +132,14 @@ class ProcessBlockCardFragment : ConfirmBlockCardRequestExtension(), IProgressAn
                 }
 
                 override fun onFinish() {
-                    activity?.finish()
-                    val account = (activity as? BlockMyCardActivity)?.getStoreCardDetail()
-                    account?.primaryCard?.cardBlocked = true
-
-                    navigateToMyCardActivity(Gson().toJson(account))
+                    activity?.apply {
+                        finish()
+                        val account = (this as? BlockMyCardActivity)?.getStoreCardDetail()
+                        account?.primaryCard?.cardBlocked = true
+                        PersistenceLayer.getInstance().executeDeleteQuery("DELETE FROM ApiRequest WHERE endpoint LIKE '%user/accounts'")
+                        Utils.sessionDaoSave(this, SessionDao.KEY.STORE_CARD_DETAIL, Gson().toJson(account))
+                        navigateToMyCardActivity()
+                    }
                 }
             }.start()
         } else {

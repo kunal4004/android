@@ -9,19 +9,17 @@ import kotlinx.android.synthetic.main.block_my_card_activity.*
 import kotlinx.android.synthetic.main.my_card_activity.tbMyCard
 import kotlinx.android.synthetic.main.my_card_activity.toolbarText
 import za.co.woolworths.financial.services.android.contracts.IPermanentCardBlock
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.npc.Card
-import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.card.BlockMyCardReasonFragment
 import za.co.woolworths.financial.services.android.ui.fragments.card.MyCardDetailFragment.Companion.CARD
 import za.co.woolworths.financial.services.android.util.Utils
 
-
 class BlockMyCardActivity : MyCardActivityExtension(), IPermanentCardBlock {
 
     private var mCard: String? = null
-    var mStoreCardDetail: String? = null
     private var slideDownAnim: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,7 +29,6 @@ class BlockMyCardActivity : MyCardActivityExtension(), IPermanentCardBlock {
         actionBar()
 
         intent?.extras?.apply {
-            mStoreCardDetail = getString(STORE_CARD_DETAIL)
             mCard = getString(CARD)
         }
 
@@ -82,10 +79,10 @@ class BlockMyCardActivity : MyCardActivityExtension(), IPermanentCardBlock {
     private fun finishActivity() {
         if (slideDownAnim) {
             this.finish()
-            navigateToCardActivity(false, mStoreCardDetail)
+            navigateToCardActivity(false)
         } else {
             this.finish()
-            navigateToMyCardActivity(false, mStoreCardDetail)
+            navigateToMyCardActivity(false)
         }
     }
 
@@ -105,7 +102,7 @@ class BlockMyCardActivity : MyCardActivityExtension(), IPermanentCardBlock {
 
     fun getCardDetail(): Card = Gson().fromJson(mCard, Card::class.java)
 
-    fun getStoreCardDetail(): Account = Gson().fromJson(mStoreCardDetail, Account::class.java)
+    fun getStoreCardDetail(): Account = Gson().fromJson(Utils.getSessionDaoValue(this,SessionDao.KEY.STORE_CARD_DETAIL), Account::class.java)
 
     fun iconVisibility(state: Int) {
         imCloseIcon?.visibility = state

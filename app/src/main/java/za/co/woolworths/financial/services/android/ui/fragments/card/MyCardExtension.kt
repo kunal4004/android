@@ -16,7 +16,6 @@ import za.co.woolworths.financial.services.android.models.dto.npc.Card
 import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.LinkNewCardActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
-import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
 import za.co.woolworths.financial.services.android.ui.fragments.card.MyCardDetailFragment.Companion.CARD
 import za.co.woolworths.financial.services.android.ui.fragments.card.ProcessBlockCardFragment.Companion.CARD_BLOCKED
 import za.co.woolworths.financial.services.android.util.KeyboardUtil
@@ -28,10 +27,9 @@ open class MyCardExtension : Fragment() {
                 ?: "")
     }
 
-    fun navigateToBlockMyCardActivity(activity: Activity?, storeCardDetail: String?, mCardDetail: Card?) {
+    fun navigateToBlockMyCardActivity(activity: Activity?, mCardDetail: Card?) {
         activity?.apply {
             val openBlockMyCardActivity = Intent(this, BlockMyCardActivity::class.java)
-            openBlockMyCardActivity.putExtra(STORE_CARD_DETAIL, storeCardDetail)
             openBlockMyCardActivity.putExtra(CARD, Gson().toJson(mCardDetail))
             startActivity(openBlockMyCardActivity)
             overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
@@ -40,10 +38,9 @@ open class MyCardExtension : Fragment() {
     }
 
 
-    fun navigateToMyCardActivity(storeCardDetail: String?) {
+    fun navigateToMyCardActivity() {
         activity?.apply {
             val openCardDetailActivity = Intent(this, MyCardDetailActivity::class.java)
-            openCardDetailActivity.putExtra(STORE_CARD_DETAIL, storeCardDetail)
             startActivity(openCardDetailActivity)
             overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
         }
