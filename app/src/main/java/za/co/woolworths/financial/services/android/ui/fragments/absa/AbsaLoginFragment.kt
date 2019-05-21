@@ -61,6 +61,10 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
         tvForgotPasscode.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         tvForgotPasscode.setOnClickListener {
             activity?.let {
+
+                //Clear content encryption data if any, before making new registration process.
+                AbsaContentEncryptionRequest.clearContentEncryptionData()
+
                 val openDialogFragment =
                         GotITDialogFragment.newInstance(getString(R.string.forgot_passcode),
                                 getString(R.string.forgot_passcode_dialog_desc), getString(R.string.cancel),
