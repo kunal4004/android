@@ -43,108 +43,30 @@
         tools:ignore="UnusedAttribute" />
 
 
-    <RadioGroup
-        android:id="@+id/blockCardRadioGroup"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rclBlockCardReason"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="32dp"
+        android:layout_marginTop="61dp"
         android:layout_marginBottom="32dp"
         android:divider="@drawable/radio_button_divider_color"
-        android:showDividers="middle"
+        android:overScrollMode="never"
         app:layout_constraintBottom_toTopOf="@+id/btnBlockCard"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvBlockCardDescription">
+        app:layout_constraintTop_toBottomOf="@+id/tvBlockCardDescription" />
 
-        <RadioButton
-            android:id="@+id/radDamaged"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@null"
-            android:button="@drawable/radio_button_tick_drawable"
-            android:fontFamily="@font/myriad_pro_regular_otf"
-            android:lineSpacingExtra="1.18sp"
-            android:paddingStart="@dimen/twenty_four_dp"
-            android:paddingTop="24dp"
-            android:paddingEnd="0dp"
-            android:paddingBottom="24dp"
-            android:text="@string/Damaged"
-            android:textColor="@color/offer_title"
-            android:textSize="17sp" />
-
-        <RadioButton
-            android:id="@+id/radLost"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@null"
-            android:button="@drawable/radio_button_tick_drawable"
-            android:fontFamily="@font/myriad_pro_regular_otf"
-            android:lineSpacingExtra="1.18sp"
-            android:paddingStart="@dimen/twenty_four_dp"
-            android:paddingTop="24dp"
-            android:paddingEnd="0dp"
-            android:paddingBottom="24dp"
-            android:text="@string/rad_lost"
-            android:textColor="@color/offer_title"
-            android:textSize="17sp" />
-
-        <RadioButton
-            android:id="@+id/radStolen"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@null"
-            android:button="@drawable/radio_button_tick_drawable"
-            android:fontFamily="@font/myriad_pro_regular_otf"
-            android:lineSpacingExtra="1.18sp"
-            android:paddingStart="@dimen/twenty_four_dp"
-            android:paddingTop="24dp"
-            android:paddingEnd="0dp"
-            android:paddingBottom="24dp"
-            android:text="@string/radStolen"
-            android:textColor="@color/offer_title"
-            android:textSize="17sp" />
-
-        <RadioButton
-            android:id="@+id/radNotReceived"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@null"
-            android:button="@drawable/radio_button_tick_drawable"
-            android:fontFamily="@font/myriad_pro_regular_otf"
-            android:lineSpacingExtra="1.18sp"
-            android:paddingStart="@dimen/twenty_four_dp"
-            android:paddingTop="24dp"
-            android:paddingEnd="0dp"
-            android:paddingBottom="24dp"
-            android:text="@string/rad_not_received"
-            android:textColor="@color/offer_title"
-            android:textSize="17sp" />
-    </RadioGroup>
-
-
-    <View
-        android:id="@+id/blockCardRadDivider"
-        android:layout_width="match_parent"
-        android:layout_height="1.5dp"
-        android:layout_marginStart="@dimen/thirty_two_dp"
-        android:layout_marginEnd="@dimen/thirty_two_dp"
-        android:background="@drawable/radio_button_divider_color"
-        app:layout_constraintBottom_toBottomOf="@+id/blockCardRadioGroup"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/btnBlockCard"
         style="?android:attr/borderlessButtonStyle"
         android:layout_width="0dp"
         android:layout_height="50dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="32dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
         android:background="@drawable/black_button_drawable_state"
         android:enabled="false"
         android:fontFamily="@font/futura_semi_bold_ttf"

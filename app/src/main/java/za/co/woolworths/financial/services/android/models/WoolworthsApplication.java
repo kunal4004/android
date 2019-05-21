@@ -27,8 +27,10 @@ import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
+import com.google.gson.JsonElement;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 
 import io.fabric.sdk.android.Fabric;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
@@ -59,6 +61,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
 	private static String howToSaveLink;
 	private static String wrewardsTCLink;
 	private static String cartCheckoutLink;
+	private static JsonElement storeCardBlockReasons;
 
 
 	private WGlobalState mWGlobalState;
@@ -418,6 +421,15 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
 	public static boolean isApplicationInForeground(){
 		return isApplicationInForeground;
+	}
+
+
+	public static void setStoreCardBlockReasons(JsonElement storeCardBlockReason) {
+		WoolworthsApplication.storeCardBlockReasons = storeCardBlockReason;
+	}
+
+	public JsonElement getStoreCardBlockReasons() {
+		 return storeCardBlockReasons;
 	}
 
 	@OnLifecycleEvent(Lifecycle.Event.ON_START)

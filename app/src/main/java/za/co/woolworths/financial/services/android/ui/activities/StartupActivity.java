@@ -18,8 +18,16 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import com.awfs.coordination.R;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Map;
+
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.OnResultListener;
 import za.co.woolworths.financial.services.android.contracts.RootActivityInterface;
@@ -160,6 +168,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 								return;
 							}
 
+							WoolworthsApplication.setStoreCardBlockReasons(configResponse.configs.enviroment.storeCardBlockReasons);
 							WoolworthsApplication.setSsoRedirectURI(configResponse.configs.enviroment.getSsoRedirectURI());
 							WoolworthsApplication.setStsURI(configResponse.configs.enviroment.getStsURI());
 							WoolworthsApplication.setSsoRedirectURILogout(configResponse.configs.enviroment.getSsoRedirectURILogout());

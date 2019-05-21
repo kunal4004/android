@@ -2,11 +2,16 @@ package za.co.woolworths.financial.services.android.ui.fragments.npc
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.block_my_card_fragment.*
+import org.json.JSONObject
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.dto.npc.BlockReason
+import za.co.woolworths.financial.services.android.ui.adapters.BlockCardReasonAdapter
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 
 class BlockMyCardReasonFragment : MyCardExtension() {
@@ -29,22 +34,28 @@ class BlockMyCardReasonFragment : MyCardExtension() {
             }
         }
 
-        blockCardRadioGroup?.setOnCheckedChangeListener { radioGroup, index ->
-            btnBlockCard?.isEnabled = radioGroup.id != -1
+        val blockReasonList = mutableListOf<BlockReason>()
+        WoolworthsApplication.getInstance()?.storeCardBlockReasons?.asJsonArray?.forEach {
+            val blockReasonJsObject = JSONObject(it.toString())
+            val key = blockReasonJsObject.keys().next()
+            val value = blockReasonJsObject.get(key)
+            blockReasonList.add(BlockReason(key.toInt(), value.toString(), false))
+        }
 
-            blockReason = when (radioGroup?.checkedRadioButtonId) {
-                R.id.radDamaged -> 1
-                R.id.radLost -> 2
-                R.id.radStolen ->   3
-                R.id.radNotReceived -> 4
-                else -> 0
+        activity?.let {
+            rclBlockCardReason?.apply {
+                layoutManager = LinearLayoutManager(it, LinearLayoutManager.VERTICAL, false)
+                adapter = BlockCardReasonAdapter(blockReasonList) {
+                    btnBlockCard?.isEnabled = true
+                    blockReason = it.key
+                }
             }
         }
     }
 
     override fun onResume() {
         super.onResume()
-       showToolbar()
+        showToolbar()
     }
 
     fun processBlockCardRequest() {

@@ -85,7 +85,7 @@ class ProcessBlockCardFragment : BlockMyCardRequestExtension(), IProgressAnimati
     private fun executeBlockCard() {
         val account = (activity as? BlockMyCardActivity)?.getStoreCardDetail()
         (activity as? BlockMyCardActivity)?.getCardDetail()?.apply {
-            account?.productOfferingId?.let { blockMyCardRequest(BlockCardRequestBody(cardNumber, cardNumber, sequenceNumber.toString(), mBlockCardReason.toString()), it.toString()) }
+            account?.productOfferingId?.let { blockMyCardRequest(BlockCardRequestBody(cardNumber, cardNumber, sequenceNumber, mBlockCardReason), it.toString()) }
         }
     }
 
@@ -148,7 +148,6 @@ class ProcessBlockCardFragment : BlockMyCardRequestExtension(), IProgressAnimati
             incProcessingTextLayout?.visibility = GONE
             (activity as? BlockMyCardActivity)?.iconVisibility(VISIBLE)
         }
-
     }
 
     override fun onDestroy() {
