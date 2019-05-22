@@ -49,7 +49,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
 	private static Context mContextApplication;
 	private UserManager mUserManager;
 	private WfsApi mWfsApi;
-	private RetrofitAsyncClient mRetrofitClient;
 	private Tracker mTracker;
 	private static String applyNowLink;
 	private static String registrationTCLink;
@@ -322,19 +321,11 @@ public class WoolworthsApplication extends Application implements Application.Ac
 		return mWfsApi;
 	}
 
-	public RetrofitAsyncClient getAsyncApi() {
-		if (mRetrofitClient == null) {
-			mRetrofitClient = new RetrofitAsyncClient(this);
-		}
-		return mRetrofitClient;
-	}
-
 	@Override
 	public void onLowMemory() {
 		super.onLowMemory();
 		mUserManager = null;
 		mWfsApi = null;
-		mRetrofitClient = null;
 	}
 
 	public Tracker getTracker() {
