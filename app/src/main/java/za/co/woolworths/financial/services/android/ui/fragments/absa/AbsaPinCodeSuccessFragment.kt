@@ -9,13 +9,11 @@ import android.util.Log
 import android.view.*
 import com.android.volley.VolleyError
 import com.awfs.coordination.R
-import com.google.gson.Gson
 import kotlinx.android.synthetic.main.absa_pin_code_complete_fragment.*
+import za.co.absa.openbankingapi.woolworths.integration.AbsaContentEncryptionRequest
 import za.co.absa.openbankingapi.woolworths.integration.AbsaRegisterCredentialRequest
-import za.co.absa.openbankingapi.woolworths.integration.dao.JSession
 import za.co.absa.openbankingapi.woolworths.integration.dto.RegisterCredentialResponse
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse
-import za.co.absa.openbankingapi.woolworths.integration.service.VolleyErrorHandler
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity.Companion.ERROR_PAGE_REQUEST_CODE
@@ -25,22 +23,16 @@ import java.net.HttpCookie
 
 class AbsaPinCodeSuccessFragment : Fragment() {
 
-    private var mJSession: JSession? = null
     private var mAliasId: String? = null
-    private var mDeviceId: String? = null
     private var fiveDigitPin: String? = null
 
     companion object {
         private const val FIVE_DIGIT_PIN_CODE = "FIVE_DIGIT_PIN_CODE"
-        private const val JSESSION = "JSESSION"
         private const val ALIAS_ID = "ALIAS_ID"
-        private const val DEVICE_ID = "DEVICE_ID"
-        fun newInstance(aliasId: String?, deviceId: String?, fiveDigitPin: String, jSession: String?) = AbsaPinCodeSuccessFragment().apply {
+        fun newInstance(aliasId: String?, fiveDigitPin: String) = AbsaPinCodeSuccessFragment().apply {
             arguments = Bundle(4).apply {
                 putString(FIVE_DIGIT_PIN_CODE, fiveDigitPin)
-                putString(JSESSION, jSession)
                 putString(ALIAS_ID, aliasId)
-                putString(DEVICE_ID, deviceId)
             }
         }
     }
@@ -60,10 +52,8 @@ class AbsaPinCodeSuccessFragment : Fragment() {
         (activity as AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
         arguments?.apply {
             getString(FIVE_DIGIT_PIN_CODE)?.apply { fiveDigitPin = this }
-            getString(JSESSION)?.apply { mJSession = Gson().fromJson(this, JSession::class.java) }
             getString(ALIAS_ID)?.apply { mAliasId = this }
-            getString(DEVICE_ID)?.apply { mDeviceId = this }
-        }
+         }
     }
 
 
@@ -77,26 +67,21 @@ class AbsaPinCodeSuccessFragment : Fragment() {
 
     private fun initView() {
         gotItButton.setOnClickListener { navigateToAbsaLoginFragment() }
-        registerCredentials(mAliasId, mDeviceId, fiveDigitPin!!, mJSession)
+        registerCredentials(mAliasId,fiveDigitPin!!)
     }
 
-    private fun registerCredentials(aliasId: String?, deviceId: String?, fiveDigitPin: String, jSession: JSession?) {
+    private fun registerCredentials(aliasId: String?, fiveDigitPin: String) {
         activity?.let {
-            AbsaRegisterCredentialRequest(it).make(aliasId, deviceId, fiveDigitPin, jSession,
+            AbsaRegisterCredentialRequest(it).make(aliasId, fiveDigitPin,
                     object : AbsaBankingOpenApiResponse.ResponseDelegate<RegisterCredentialResponse> {
 
                         override fun onSuccess(response: RegisterCredentialResponse, cookies: List<HttpCookie>) {
                             Log.d("onSuccess", "onSuccess")
                             response.apply {
                                 if (header?.resultMessages?.size == 0 || aliasId != null) {
-                                    var sessionDao: SessionDao? = SessionDao.getByKey(SessionDao.KEY.ABSA_DEVICEID)
-                                    sessionDao?.value = deviceId
-                                    sessionDao?.save()
-
-                                    sessionDao = SessionDao.getByKey(SessionDao.KEY.ABSA_ALIASID)
+                                    val sessionDao = SessionDao.getByKey(SessionDao.KEY.ABSA_ALIASID)
                                     sessionDao?.value = aliasId
                                     sessionDao?.save()
-
                                     onRegistrationSuccess()
                                 } else {
                                     showErrorScreen(ErrorHandlerActivity.WITH_NO_ACTION)
@@ -118,6 +103,7 @@ class AbsaPinCodeSuccessFragment : Fragment() {
     }
 
     fun onRegistrationSuccess() {
+        AbsaContentEncryptionRequest.clearContentEncryptionData()
         val name = SessionUtilities.getInstance().jwt?.name?.get(0)
         tvTitle.text = getString(R.string.absa_success_title, name)
         tvDescription.text = resources.getString(R.string.absa_registration_success_desc)

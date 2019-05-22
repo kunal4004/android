@@ -79,6 +79,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
@@ -362,20 +363,12 @@ public class Utils {
 
 
 	public static void sessionDaoSave(Context context, SessionDao.KEY key, String value) {
-		SessionDao sessionDao = SessionDao.getByKey(key);
-		sessionDao.value = value;
-		try {
-			sessionDao.save();
-		} catch (Exception e) {
-			Log.e("TAG", e.getMessage());
-		}
+		sessionDaoSave(key,value);
 	}
 
-	public static String getSessionDaoValue(Context context, SessionDao.KEY key) {
-		SessionDao sessionDao = SessionDao.getByKey(key);
-		;
-		return sessionDao.value;
-	}
+    public static String getSessionDaoValue(Context context, SessionDao.KEY key) {
+        return getSessionDaoValue(key);
+    }
 
 	public static void setBadgeCounter(int badgeCount) {
 
@@ -1423,5 +1416,31 @@ public class Utils {
 		AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
 		return currentUserObject.kmsi;
 	}
+
+    public static String getAbsaUniqueDeviceID() {
+
+        String deviceID = getSessionDaoValue(SessionDao.KEY.ABSA_DEVICEID);
+        if (TextUtils.isEmpty(deviceID)) {
+            deviceID = UUID.randomUUID().toString().replace("-", "");
+            sessionDaoSave(SessionDao.KEY.ABSA_DEVICEID, deviceID);
+        }
+
+        return deviceID;
+    }
+
+    private static void sessionDaoSave(SessionDao.KEY key, String value) {
+        SessionDao sessionDao = SessionDao.getByKey(key);
+        sessionDao.value = value;
+        try {
+            sessionDao.save();
+        } catch (Exception e) {
+            Log.e("TAG", e.getMessage());
+        }
+    }
+
+    private static String getSessionDaoValue(SessionDao.KEY key) {
+        SessionDao sessionDao = SessionDao.getByKey(key);
+        return sessionDao.value;
+    }
 
 }

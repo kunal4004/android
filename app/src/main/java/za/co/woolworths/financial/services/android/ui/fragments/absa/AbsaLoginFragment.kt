@@ -15,6 +15,7 @@ import android.widget.ImageView
 import com.android.volley.VolleyError
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_login_fragment.*
+import za.co.absa.openbankingapi.woolworths.integration.AbsaContentEncryptionRequest
 import za.co.absa.openbankingapi.woolworths.integration.AbsaLoginRequest
 import za.co.absa.openbankingapi.woolworths.integration.dto.LoginResponse
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse
@@ -25,6 +26,7 @@ import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBanki
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GotITDialogFragment
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.numberkeyboard.NumberKeyboardListener
 import java.net.HttpCookie
 
@@ -59,6 +61,10 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
         tvForgotPasscode.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         tvForgotPasscode.setOnClickListener {
             activity?.let {
+
+                //Clear content encryption data if any, before making new registration process.
+                AbsaContentEncryptionRequest.clearContentEncryptionData()
+
                 val openDialogFragment =
                         GotITDialogFragment.newInstance(getString(R.string.forgot_passcode),
                                 getString(R.string.forgot_passcode_dialog_desc), getString(R.string.cancel),
@@ -75,12 +81,17 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
             return
         val userPin = edtEnterATMPin.text.toString()
         val aliasId = SessionDao.getByKey(SessionDao.KEY.ABSA_ALIASID)?.value ?: ""
-        val deviceId = SessionDao.getByKey(SessionDao.KEY.ABSA_DEVICEID)?.value ?: ""
+        val deviceId = Utils.getAbsaUniqueDeviceID()
         absaLoginRequest(aliasId, deviceId, userPin)
 
     }
 
     private fun absaLoginRequest(aliasId: String?, deviceId: String?, userPin: String) {
+
+        //Clear content encryption data be fore making login request.
+        AbsaContentEncryptionRequest.clearContentEncryptionData()
+
+
         activity?.let {
             displayLoginProgress(true)
             AbsaLoginRequest(it).make(userPin, aliasId, deviceId,
@@ -232,7 +243,7 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
             when (resultCode) {
                 ErrorHandlerActivity.RESULT_RETRY -> {
                     clearPin()
-                    alwaysShowWindowSoftInputMode()
+                    alwaysHideWindowSoftInputMode()
                 }
             }
         }

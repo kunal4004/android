@@ -23,8 +23,10 @@ import javax.crypto.SecretKey;
 
 public class SessionKey {
     private static final String OUTPUT_KEY_DERIVATION_ALGORITHM = "AES";
-    private static final int OUTPUT_KEY_LENGTH = 256;
-    private static final int OUTPUT_KEY_LENGTH_IV = 128;
+    public static final int OUTPUT_KEY_LENGTH = 256;
+    public static final int OUTPUT_KEY_LENGTH_IV = 128;
+    private static final String MOBILE_APP_PUBLIC_KEY_FILE = "Woolworths_MobileAppPubKey.pem";
+    public static final String CONTENT_ENCRYPTION_KEY_FILE = "Woolworths_Content_Encyption_Key.pem";
     private byte[] key;
     private byte[] encryptedKey;
     private byte[] iv;
@@ -57,12 +59,12 @@ public class SessionKey {
             AsymmetricCryptoHelper.AsymmetricEncryptionFailureException,
             AsymmetricCryptoHelper.AsymmetricKeyGenerationFailureException {
         byte[] symmetricKey = generateKey(OUTPUT_KEY_LENGTH).getEncoded();
-        byte[] encryptedSymmetricKeyBuffer = new AsymmetricCryptoHelper().encryptSymmetricKey(context, symmetricKey);
+        byte[] encryptedSymmetricKeyBuffer = new AsymmetricCryptoHelper().encryptSymmetricKey(context, symmetricKey, MOBILE_APP_PUBLIC_KEY_FILE);
         byte[] symmetricKeyIV = generateKey(OUTPUT_KEY_LENGTH_IV).getEncoded();
         return new SessionKey(symmetricKey, encryptedSymmetricKeyBuffer, symmetricKeyIV);
     }
 
-    private static SecretKey generateKey(int keySize) throws KeyGenerationFailureException {
+    public static SecretKey generateKey(int keySize) throws KeyGenerationFailureException {
         try {
             KeyGenerator keyGenerator = KeyGenerator.getInstance(OUTPUT_KEY_DERIVATION_ALGORITHM);
             SecureRandom secureRandom = new SecureRandom();
