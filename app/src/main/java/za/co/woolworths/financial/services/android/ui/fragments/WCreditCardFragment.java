@@ -298,7 +298,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
             case R.id.rlViewStatement:
                 SessionDao aliasID = SessionDao.getByKey(SessionDao.KEY.ABSA_ALIASID);
                 SessionDao deviceID = SessionDao.getByKey(SessionDao.KEY.ABSA_DEVICEID);
-                if ((TextUtils.isEmpty(aliasID.value) && TextUtils.isEmpty(deviceID.value))) {
+                if (TextUtils.isEmpty(aliasID.value) || TextUtils.isEmpty(deviceID.value)) {
                     mGetCreditCardToken = getCreditCardToken(activity);
                 } else {
                     openAbsaOnLineBankingActivity(activity);
