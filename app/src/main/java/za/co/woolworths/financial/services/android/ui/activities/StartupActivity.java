@@ -1,5 +1,4 @@
 package za.co.woolworths.financial.services.android.ui.activities;
-
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -17,11 +16,8 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-
-import com.awfs.coordination.BuildConfig;
 import com.awfs.coordination.R;
 import com.google.firebase.analytics.FirebaseAnalytics;
-
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -30,15 +26,16 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.RequestListener;
 import za.co.woolworths.financial.services.android.contracts.RootActivityInterface;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
-import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
+import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WVideoView;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
+import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
@@ -90,7 +87,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 
         try {
             this.appVersion = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
-            this.environment = BuildConfig.FLAVOR;
+            this.environment = com.awfs.coordination.BuildConfig.FLAVOR;
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
@@ -119,7 +116,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
         pBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
         //Mobile Config Server
         if (NetworkManager.getInstance().isConnectedToNetwork(this)) {
-            mFirebaseAnalytics.setUserProperty(APP_SERVER_ENVIRONMENT_KEY, StartupActivity.this.environment.isEmpty() ? "prod" : StartupActivity.this.environment.toLowerCase());
+            mFirebaseAnalytics.setUserProperty(APP_SERVER_ENVIRONMENT_KEY, StartupActivity.this.environment.isEmpty() ? "prod": StartupActivity.this.environment.toLowerCase());
             mFirebaseAnalytics.setUserProperty(APP_VERSION_KEY, StartupActivity.this.appVersion);
 
             setUpScreen();
@@ -132,7 +129,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
             @Override
             public void onClick(View v) {
                 if (NetworkManager.getInstance().isConnectedToNetwork(StartupActivity.this)) {
-                    mFirebaseAnalytics.setUserProperty(APP_SERVER_ENVIRONMENT_KEY, StartupActivity.this.environment.isEmpty() ? "prod" : StartupActivity.this.environment.toLowerCase());
+                    mFirebaseAnalytics.setUserProperty(APP_SERVER_ENVIRONMENT_KEY, StartupActivity.this.environment.isEmpty() ? "prod": StartupActivity.this.environment.toLowerCase());
                     mFirebaseAnalytics.setUserProperty(APP_VERSION_KEY, StartupActivity.this.appVersion);
 
                     setUpScreen();
@@ -212,6 +209,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
     }
 
 
+
     //video player on completion
     @Override
     public void onCompletion(MediaPlayer mp) {
@@ -242,11 +240,11 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
             if (isServerMessageShown) {
                 showNonVideoViewWithOutErrorLayout();
                 executeConfigServer();
-            } else {
+            } else{
                 startActivity(new Intent(this, StartupActivity.class));
                 finish();
             }
-        } else {
+        }else{
             executeConfigServer();
         }
     }
@@ -384,12 +382,12 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
     }
 
     @VisibleForTesting
-    public boolean testIsFirstTime() {
+    public boolean testIsFirstTime(){
         return this.isFirstTime();
     }
 
     @VisibleForTesting
-    public String testGetRandomVideos() {
+    public String testGetRandomVideos(){
         return getRandomVideos();
     }
 }
