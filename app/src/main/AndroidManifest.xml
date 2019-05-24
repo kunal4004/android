@@ -103,6 +103,8 @@
         android:label="@string/app_label"
         android:largeHeap="true"
         android:theme="@style/AppTheme"
+        android:allowBackup="false"
+        android:fullBackupOnly="false"
         tools:replace="android:label">
         <meta-data android:name="android.webkit.WebView.EnableSafeBrowsing"
             android:value="true" />
