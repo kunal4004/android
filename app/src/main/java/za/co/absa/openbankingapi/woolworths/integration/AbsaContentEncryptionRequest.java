@@ -23,6 +23,7 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.CEKDResponse;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiRequest;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse;
 import za.co.absa.openbankingapi.woolworths.integration.service.VolleySingleton;
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class AbsaContentEncryptionRequest {
@@ -58,7 +59,7 @@ public class AbsaContentEncryptionRequest {
             e.printStackTrace();
         }
 
-        new AbsaBankingOpenApiRequest<>("https://eu.absa.co.za/wcob/cekd", CEKDResponse.class, headers, body, false, new AbsaBankingOpenApiResponse.Listener<CEKDResponse>() {
+        new AbsaBankingOpenApiRequest<>(WoolworthsApplication.getAbsaBankingOpenApiServices().getBaseURL() + "/wcob/cekd", CEKDResponse.class, headers, body, false, new AbsaBankingOpenApiResponse.Listener<CEKDResponse>() {
 
             @Override
             public void onResponse(CEKDResponse response, List<HttpCookie> cookies) {

@@ -22,6 +22,7 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.LoginRequest;
 import za.co.absa.openbankingapi.woolworths.integration.dto.LoginResponse;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiRequest;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse;
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 
 public class AbsaLoginRequest {
 
@@ -63,7 +64,7 @@ public class AbsaLoginRequest {
 			e.printStackTrace();
 		}
 
-		new AbsaBankingOpenApiRequest<>("https://eu.absa.co.za/wcob/j_pin_security_login", LoginResponse.class, headers, body, true, new AbsaBankingOpenApiResponse.Listener<LoginResponse>(){
+		new AbsaBankingOpenApiRequest<>(WoolworthsApplication.getAbsaBankingOpenApiServices().getBaseURL() + "/wcob/j_pin_security_login", LoginResponse.class, headers, body, true, new AbsaBankingOpenApiResponse.Listener<LoginResponse>() {
 
 			@Override
 			public void onResponse(LoginResponse loginResponse, List<HttpCookie> cookies) {
