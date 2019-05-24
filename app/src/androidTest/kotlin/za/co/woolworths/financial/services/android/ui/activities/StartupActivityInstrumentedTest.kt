@@ -12,7 +12,6 @@ import com.microsoft.appcenter.espresso.Factory
 import org.junit.*
 import org.junit.runner.RunWith
 import za.co.woolworths.financial.services.android.contracts.OnResultListener
-import za.co.woolworths.financial.services.android.models.dao.MobileConfigServerDao
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask
 import za.co.woolworths.financial.services.android.util.NetworkManager

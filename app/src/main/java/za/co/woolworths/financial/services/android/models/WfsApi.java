@@ -6,7 +6,6 @@ import android.text.TextUtils;
 
 import com.jakewharton.retrofit.Ok3Client;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -14,6 +13,7 @@ import okhttp3.OkHttpClient;
 import retrofit.RestAdapter;
 import retrofit.client.Response;
 import za.co.wigroup.androidutils.Util;
+import za.co.woolworths.financial.services.android.models.network.WfsApiInterceptor;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
@@ -36,7 +36,6 @@ import za.co.woolworths.financial.services.android.models.dto.DeaBanks;
 import za.co.woolworths.financial.services.android.models.dto.DeleteMessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.FAQ;
 import za.co.woolworths.financial.services.android.models.dto.IssueLoan;
-import za.co.woolworths.financial.services.android.models.dto.IssueLoanRequest;
 import za.co.woolworths.financial.services.android.models.dto.IssueLoanResponse;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.LoginRequest;
@@ -76,11 +75,9 @@ import za.co.woolworths.financial.services.android.models.dto.statement.SendUser
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementResponse;
 import za.co.woolworths.financial.services.android.models.dto.statement.StatementResponse;
 import za.co.woolworths.financial.services.android.models.dto.statement.UserStatement;
-import za.co.woolworths.financial.services.android.models.rest.product.OrderToShoppingListRequest;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-import static za.co.wigroup.androidutils.Util.getDeviceManufacturer;
 public class WfsApi {
 
 	private Context mContext;
@@ -91,7 +88,7 @@ public class WfsApi {
 	WfsApi(Context mContext) {
 		this.mContext = mContext;
 		OkHttpClient.Builder httpBuilder = new OkHttpClient.Builder();
-		httpBuilder.addInterceptor(new WfsApiInterceptor(mContext));
+		httpBuilder.addInterceptor(new WfsApiInterceptor());
 		httpBuilder.readTimeout(45, TimeUnit.SECONDS);
 		httpBuilder.connectTimeout(45, TimeUnit.SECONDS);
 		mApiInterface = new RestAdapter.Builder()

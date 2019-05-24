@@ -120,4 +120,5 @@ fun EditText.hideKeyboard(activity: AppCompatActivity) {
             inputManager?.hideSoftInputFromWindow(currentFocusedView.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
         }
     }
+
 }
