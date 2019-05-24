@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.models.dto;
 
+import com.google.gson.JsonElement;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -17,6 +18,7 @@ public class Environment {
 	public int storeStockLocatorConfigEndRadius;
 	public boolean storeStockLocatorConfigFoodProducts;
 	public boolean storeStockLocatorConfigClothingProducts;
+	public JsonElement storeCardBlockReasons;
 	public long emailSizeKB;
 
 	@SerializedName("splashScreen.display")

@@ -48,7 +48,7 @@ class MyCardDetailFragment : MyCardExtension() {
 
     private fun populateView() {
         mCardDetail?.apply {
-            maskedCardNumberWithSpaces(cardNumber).also {
+            maskedCardNumberWithSpaces(cardNumber?.toString()).also {
                 tvCardNumberValue?.text = it
                 tvCardNumberHeader?.text = it
             }
