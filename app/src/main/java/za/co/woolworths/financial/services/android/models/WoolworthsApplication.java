@@ -35,6 +35,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import za.co.absa.openbankingapi.Cryptography;
 import za.co.absa.openbankingapi.KeyGenerationFailureException;
 import za.co.wigroup.androidutils.Util;
+import za.co.woolworths.financial.services.android.models.dto.AbsaBankingOpenApiServices;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.service.RxBus;
@@ -78,6 +79,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
 	private RxBus bus;
 	private static boolean isApplicationInForeground = false;
+	private static AbsaBankingOpenApiServices absaBankingOpenApiServices;
 
 	public static String getApiId() {
 		PackageInfo packageInfo = null;
@@ -428,5 +430,13 @@ public class WoolworthsApplication extends Application implements Application.Ac
 	@OnLifecycleEvent(Lifecycle.Event.ON_STOP)
 	void onAppBackgrounded() {
 		isApplicationInForeground = false;
+	}
+
+	public static AbsaBankingOpenApiServices getAbsaBankingOpenApiServices() {
+		return absaBankingOpenApiServices;
+	}
+
+	public static void setAbsaBankingOpenApiServices(AbsaBankingOpenApiServices absaBankingOpenApiServices) {
+		WoolworthsApplication.absaBankingOpenApiServices = absaBankingOpenApiServices;
 	}
 }
