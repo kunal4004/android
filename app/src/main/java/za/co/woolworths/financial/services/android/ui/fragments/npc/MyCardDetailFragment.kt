@@ -8,30 +8,38 @@ import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.my_card_fragment.*
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel
-import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.npc.Card
+import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
+import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.*
 
 class MyCardDetailFragment : MyCardExtension() {
 
-    private var mCardDetail: Card? = null
+    private var mLatestOpenedDateStoreCard: Card? = null
+    private var mStoreCardDetail: String? = null
 
     companion object {
         const val CARD = "CARD"
-        fun newInstance() = MyCardDetailFragment()
+        fun newInstance(storeCardDetail: String?) = MyCardDetailFragment().withArgs {
+            putString(STORE_CARD_DETAIL, storeCardDetail)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Extract latest openedDate
-        activity?.let {
-            Utils.getSessionDaoValue(it, SessionDao.KEY.STORE_CARD_DETAIL)?.let { cardValue ->
-                mCardDetail = Gson().fromJson(cardValue, Account::class.java)?.primaryCard?.cards
-                        ?.let { cards -> Collections.max(cards) { card, nextCard -> card.openedDate().compareTo(nextCard.openedDate()) } }
-                Utils.updateStatusBarBackground(it, R.color.grey_bg)
+
+        arguments?.apply {
+            mStoreCardDetail = getString(STORE_CARD_DETAIL,"")
+            // Extract latest openedDate
+            activity?.let {
+                mStoreCardDetail.let { cardValue ->
+                    mLatestOpenedDateStoreCard = Gson().fromJson(cardValue, Account::class.java)?.primaryCard?.cards
+                            ?.let { cards -> Collections.max(cards) { card, nextCard -> card.openedDate().compareTo(nextCard.openedDate()) } }
+                    Utils.updateStatusBarBackground(it, R.color.grey_bg)
+                }
             }
         }
     }
@@ -47,7 +55,7 @@ class MyCardDetailFragment : MyCardExtension() {
     }
 
     private fun populateView() {
-        mCardDetail?.apply {
+        mLatestOpenedDateStoreCard?.apply {
             maskedCardNumberWithSpaces(cardNumber?.toString()).also {
                 tvCardNumberValue?.text = it
                 tvCardNumberHeader?.text = it
@@ -68,6 +76,6 @@ class MyCardDetailFragment : MyCardExtension() {
     }
 
     private fun onClick() {
-        blockCardView.setOnClickListener { activity?.let { navigateToBlockMyCardActivity(it, mCardDetail) } }
+        blockCardView.setOnClickListener { activity?.let { navigateToBlockMyCardActivity(it, mStoreCardDetail, mLatestOpenedDateStoreCard) } }
     }
 }

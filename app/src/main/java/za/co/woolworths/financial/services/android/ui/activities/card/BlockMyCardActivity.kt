@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities.card
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.MenuItem
@@ -9,9 +10,9 @@ import kotlinx.android.synthetic.main.block_my_card_activity.*
 import kotlinx.android.synthetic.main.my_card_activity.tbMyCard
 import kotlinx.android.synthetic.main.my_card_activity.toolbarText
 import za.co.woolworths.financial.services.android.contracts.IPermanentCardBlock
-import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.npc.Card
+import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.BlockMyCardReasonFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardDetailFragment.Companion.CARD
@@ -19,7 +20,12 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class BlockMyCardActivity : MyCardActivityExtension(), IPermanentCardBlock {
 
+    private var mStoreCardDetail: String? = null
     private var mCard: String? = null
+
+    companion object {
+        const val REQUEST_CODE_BLOCK_MY_CARD = 8073
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +35,7 @@ class BlockMyCardActivity : MyCardActivityExtension(), IPermanentCardBlock {
 
         intent?.extras?.apply {
             mCard = getString(CARD)
+            mStoreCardDetail = getString(STORE_CARD_DETAIL)
         }
 
         if (savedInstanceState == null) {
@@ -75,8 +82,11 @@ class BlockMyCardActivity : MyCardActivityExtension(), IPermanentCardBlock {
     }
 
     private fun finishActivity() {
-            this.finish()
-            navigateToMyCardActivity(false)
+        val storeCardIntent = Intent()
+        storeCardIntent.putExtra(STORE_CARD_DETAIL, mStoreCardDetail)
+        setResult(RESULT_OK, storeCardIntent)
+        this.finish()
+        overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
     }
 
     private fun getCurrentFragment(): Fragment? {
@@ -95,10 +105,9 @@ class BlockMyCardActivity : MyCardActivityExtension(), IPermanentCardBlock {
 
     fun getCardDetail(): Card = Gson().fromJson(mCard, Card::class.java)
 
-    fun getStoreCardDetail(): Account = Gson().fromJson(Utils.getSessionDaoValue(this,SessionDao.KEY.STORE_CARD_DETAIL), Account::class.java)
+    fun getStoreCardDetail(): Account = Gson().fromJson(mStoreCardDetail, Account::class.java)
 
     fun iconVisibility(state: Int) {
         imCloseIcon?.visibility = state
     }
-
 }
