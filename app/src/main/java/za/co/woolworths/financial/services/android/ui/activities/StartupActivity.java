@@ -197,7 +197,6 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
                         showNonVideoViewWithErrorLayout();
                     }
                 }
-
             }
 
             @Override

@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.models.network
 import android.content.Context
 import android.os.Build
 import android.text.TextUtils
+import com.awfs.coordination.BuildConfig
 import za.co.wigroup.androidutils.Util
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.util.SessionUtilities
@@ -16,7 +17,11 @@ open class NetworkConfig {
 
     fun getDeviceModel(): String = Build.MODEL
 
+    fun getSha1Password(): String = BuildConfig.SHA1
+
     fun getOS(): String = "Android"
+
+    fun getApiId(): String = WoolworthsApplication.getApiId()
 
     fun getNetworkCarrier(context: Context): String {
         val networkCarrier = Util.getNetworkCarrier(context)
@@ -36,4 +41,6 @@ open class NetworkConfig {
         val sessionToken = SessionUtilities.getInstance().sessionToken
         return if (sessionToken.isEmpty()) "." else sessionToken
     }
+
+
 }
