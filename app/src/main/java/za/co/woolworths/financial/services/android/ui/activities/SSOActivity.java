@@ -59,7 +59,7 @@ public class SSOActivity extends WebViewActivity {
 	public ErrorHandlerView mErrorHandlerView;
 	private WGlobalState mGlobalState;
 	private boolean isKMSIChecked;
-
+	private boolean isExtractFormDataCompleted;
 	public enum SSOActivityResult {
 		LAUNCH(1),
 		NO_CACHED_STATE(2),
@@ -515,14 +515,17 @@ public class SSOActivity extends WebViewActivity {
 
 	};
 
-
 	private void extractFormDataAndCloseSSOIfNeeded(){
 		SSOActivity.this.webView.evaluateJavascript("(function(){return {'content': [document.forms[0].state.value.toString(), document.forms[0].id_token.value.toString()]}})();", new ValueCallback<String>() {
 			@Override
 			public void onReceiveValue(String value) {
-				//this is sign in
-				if (value.equals("null"))
+
+				//this is sign in and
+				//isExtractFormDataCompleted - ensure one time value received
+				if (value.equals("null") || isExtractFormDataCompleted)
 					return;
+
+				isExtractFormDataCompleted = true;
 
 				JsonParser jsonParser = new JsonParser();
 				JsonObject jsonObject = (JsonObject) jsonParser.parse(value);
