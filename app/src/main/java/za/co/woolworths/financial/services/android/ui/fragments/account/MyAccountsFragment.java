@@ -291,7 +291,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			Account account = item.getValue();
 			switch (account.productGroupCode) {
 				case "SC":
-					Utils.sessionDaoSave(getActivity(), SessionDao.KEY.STORE_CARD_DETAIL,new MyAccountHelper().getAccountInfo(accountsResponse,"SC"));
 					linkedStoreCardView.setVisibility(View.VISIBLE);
 					applyStoreCardView.setVisibility(View.GONE);
 					imgStoreCardStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);

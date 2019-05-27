@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities.card
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
@@ -10,8 +11,8 @@ import android.view.View.VISIBLE
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.my_card_activity.*
-import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity.Companion.REQUEST_CODE_BLOCK_MY_CARD
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.GetReplacementCardFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardBlockedFragment
@@ -22,15 +23,20 @@ import android.net.ParseException as ParseException1
 
 class MyCardDetailActivity : AppCompatActivity() {
 
-    private var mCardIsBlocked: Boolean? = false
+    companion object {
+        const val STORE_CARD_DETAIL = "STORE_CARD_DETAIL"
+    }
+
+    private var mStoreCardDetail: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.my_card_activity)
         Utils.updateStatusBarBackground(this)
         actionBar()
 
-        mCardIsBlocked = Gson().fromJson(getMyStoreCardDetail(), Account::class.java)?.primaryCard?.cardBlocked
-                ?: false
+        intent?.extras?.apply {
+            mStoreCardDetail = getString(STORE_CARD_DETAIL, "")
+        }
         addCardDetailFragment()
     }
 
@@ -40,7 +46,8 @@ class MyCardDetailActivity : AppCompatActivity() {
      */
 
     private fun addCardDetailFragment() {
-        when (mCardIsBlocked) {
+        when (Gson().fromJson(getMyStoreCardDetail(), Account::class.java)?.primaryCard?.cardBlocked
+                ?: false) {
             true -> {
                 addFragment(
                         fragment = MyCardBlockedFragment.newInstance(),
@@ -49,7 +56,7 @@ class MyCardDetailActivity : AppCompatActivity() {
             }
             else -> {
                 addFragment(
-                        fragment = MyCardDetailFragment.newInstance(),
+                        fragment = MyCardDetailFragment.newInstance(mStoreCardDetail),
                         tag = MyCardDetailFragment::class.java.simpleName,
                         containerViewId = R.id.flMyCard)
             }
@@ -96,6 +103,7 @@ class MyCardDetailActivity : AppCompatActivity() {
     }
 
     private fun finishActivity() {
+        setResult(RESULT_OK, Intent().putExtra(STORE_CARD_DETAIL, mStoreCardDetail))
         this.finish()
         this.overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right)
     }
@@ -112,6 +120,15 @@ class MyCardDetailActivity : AppCompatActivity() {
 
     fun changeToolbarBackground(colorId: Int) = tbMyCard?.setBackgroundColor(ContextCompat.getColor(this, colorId))
 
-    private fun getMyStoreCardDetail(): String? = Utils.getSessionDaoValue(this, SessionDao.KEY.STORE_CARD_DETAIL)
-            ?: ""
+    private fun getMyStoreCardDetail(): String? = mStoreCardDetail ?: ""
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == REQUEST_CODE_BLOCK_MY_CARD && resultCode == RESULT_OK) {
+            mStoreCardDetail = data?.getStringExtra(STORE_CARD_DETAIL)
+            addCardDetailFragment()
+        }
+
+    }
 }
