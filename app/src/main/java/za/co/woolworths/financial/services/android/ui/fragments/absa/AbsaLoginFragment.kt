@@ -94,7 +94,7 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
 
         activity?.let {
             displayLoginProgress(true)
-            AbsaLoginRequest(it).make(userPin, aliasId, deviceId,
+            AbsaLoginRequest().make(userPin, aliasId, deviceId,
                     object : AbsaBankingOpenApiResponse.ResponseDelegate<LoginResponse> {
 
                         override fun onSuccess(response: LoginResponse?, cookies: MutableList<HttpCookie>?) {

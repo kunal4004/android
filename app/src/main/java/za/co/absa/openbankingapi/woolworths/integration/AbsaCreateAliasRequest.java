@@ -27,10 +27,10 @@ public class AbsaCreateAliasRequest {
 
 	private SessionKey sessionKey;
 
-	public AbsaCreateAliasRequest(final Context context){
+	public AbsaCreateAliasRequest(){
 
 		try {
-			this.sessionKey = SessionKey.generate(context.getApplicationContext());
+			this.sessionKey = SessionKey.generate();
 		} catch (KeyGenerationFailureException | AsymmetricCryptoHelper.AsymmetricEncryptionFailureException | AsymmetricCryptoHelper.AsymmetricKeyGenerationFailureException e) {
 			e.printStackTrace();
 		}
