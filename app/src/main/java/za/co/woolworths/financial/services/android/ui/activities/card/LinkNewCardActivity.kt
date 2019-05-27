@@ -66,7 +66,7 @@ class LinkNewCardActivity : MyCardActivityExtension() {
     private fun finishActivity() {
         finish()
         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
-        navigateToMyCardActivity(true)
+        navigateToMyCardActivity("",true) // TODO:: Replace "" by store card object
     }
 
 }

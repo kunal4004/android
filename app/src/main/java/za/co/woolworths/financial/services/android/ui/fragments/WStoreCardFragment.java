@@ -60,10 +60,12 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
 
 import static android.app.Activity.RESULT_OK;
+import static za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.STORE_CARD_DETAIL;
 
 public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle, NetworkChangeListener {
 
-    public static int RESULT_CODE_FUNDS_INFO = 50;
+    public static final int RESULT_CODE_FUNDS_INFO = 50;
+    public static final int REQUEST_CODE_BLOCK_MY_STORE_CARD = 3021;
 
     public WTextView availableBalance;
     public WTextView creditLimit;
@@ -75,7 +77,6 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
     public WTextView tvIncreaseLimitDescription;
 
     private ImageView iconAvailableFundsInfo, infoCreditLimit, infoCurrentBalance, infoNextPaymentDue, infoAmountOverdue, infoMinimumAmountDue;
-
 
     String productOfferingId;
     WoolworthsApplication woolworthsApplication;
@@ -115,6 +116,15 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
     private boolean mStoreCardFragmentIsVisible = false;
     private RelativeLayout rlMyStoreCard;
     private MyAccountHelper myAccountHelper;
+    private String mStoreCardAccountDetail;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
+        myAccountHelper = new MyAccountHelper();
+        mStoreCardAccountDetail = myAccountHelper.getAccountInfo(accountsResponse, "SC");
+    }
 
     @Nullable
     @Override
@@ -130,7 +140,6 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if (savedInstanceState == null & !viewWasCreated) {
-            myAccountHelper = new MyAccountHelper();
             initUI(view);
             addListener();
             setAccountDetails();
@@ -286,7 +295,6 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
         bolBroacastRegistred = true;
         connectionBroadcast = Utils.connectionBroadCast(getActivity(), networkChangeListener);
         getActivity().registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
-        accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
         bindData(accountsResponse);
         onLoadComplete();
         mErrorHandlerView = new ErrorHandlerView(getActivity());
@@ -300,7 +308,6 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
         MultiClickPreventer.preventMultiClick(v);
         Activity activity = getActivity();
         if (activity == null) return;
-        String accountInfo = myAccountHelper.getAccountInfo(accountsResponse, "SC");
         if (accountsResponse != null) {
             productOfferingId = Utils.getProductOfferingId(accountsResponse, "SC");
         }
@@ -316,7 +323,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
                 break;
             case R.id.relBalanceProtection:
                 Intent intBalanceProtection = new Intent(getActivity(), BPIBalanceProtectionActivity.class);
-                intBalanceProtection.putExtra("account_info", accountInfo);
+                intBalanceProtection.putExtra("account_info", mStoreCardAccountDetail);
                 startActivity(intBalanceProtection);
                 activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
                 break;
@@ -423,7 +430,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
                 break;
             case R.id.rlMyStoreCard:
                 Intent displayStoreCardDetail = new Intent(activity, MyCardDetailActivity.class);
-                activity.startActivity(displayStoreCardDetail);
+                displayStoreCardDetail.putExtra(STORE_CARD_DETAIL, mStoreCardAccountDetail);
+                activity.startActivityForResult(displayStoreCardDetail, REQUEST_CODE_BLOCK_MY_STORE_CARD);
                 activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
                 break;
             default:
@@ -571,8 +579,18 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RESULT_CODE_FUNDS_INFO && resultCode == RESULT_OK) {
-            ScreenManager.presentHowToPayActivity(getActivity(), account);
+        switch (requestCode) {
+            case RESULT_CODE_FUNDS_INFO:
+                if (resultCode == RESULT_OK) {
+                    ScreenManager.presentHowToPayActivity(getActivity(), account);
+                }
+                break;
+            case REQUEST_CODE_BLOCK_MY_STORE_CARD:
+                if (data != null)
+                    mStoreCardAccountDetail = data.getStringExtra(STORE_CARD_DETAIL);
+                break;
+            default:
+                break;
         }
         retryConnect();
     }
