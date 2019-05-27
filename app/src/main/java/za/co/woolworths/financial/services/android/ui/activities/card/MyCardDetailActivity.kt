@@ -103,9 +103,7 @@ class MyCardDetailActivity : AppCompatActivity() {
     }
 
     private fun finishActivity() {
-        val intentStoreCardDetail = Intent()
-        intentStoreCardDetail.putExtra(STORE_CARD_DETAIL, mStoreCardDetail)
-        setResult(RESULT_OK, intentStoreCardDetail)
+        setResult(RESULT_OK, Intent().putExtra(STORE_CARD_DETAIL, mStoreCardDetail))
         this.finish()
         this.overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right)
     }

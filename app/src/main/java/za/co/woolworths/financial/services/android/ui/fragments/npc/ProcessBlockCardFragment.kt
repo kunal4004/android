@@ -139,9 +139,7 @@ class ProcessBlockCardFragment : BlockMyCardRequestExtension(), IProgressAnimati
                         val account = (this as? BlockMyCardActivity)?.getStoreCardDetail()
                         account?.primaryCard?.cardBlocked = true
                         PersistenceLayer.getInstance().executeDeleteQuery("DELETE FROM ApiRequest WHERE endpoint LIKE '%user/accounts'")
-                        val storeCardIntent = Intent()
-                        storeCardIntent.putExtra(STORE_CARD_DETAIL, Gson().toJson(account))
-                        setResult(RESULT_OK, storeCardIntent)
+                        setResult(RESULT_OK, Intent().putExtra(STORE_CARD_DETAIL, Gson().toJson(account)))
                         finish()
                         overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
                     }

@@ -94,17 +94,13 @@ open class MyCardExtension : Fragment() {
 
     fun navigateToMyCardActivity(storeCardDetail: String?) {
         activity?.apply {
-            val openCardDetailActivity = Intent(this, MyCardDetailActivity::class.java)
-            openCardDetailActivity.putExtra(STORE_CARD_DETAIL, storeCardDetail)
-            startActivityForResult(openCardDetailActivity, REQUEST_CODE_BLOCK_MY_STORE_CARD)
+            startActivityForResult(Intent(this, MyCardDetailActivity::class.java).putExtra(STORE_CARD_DETAIL, storeCardDetail), REQUEST_CODE_BLOCK_MY_STORE_CARD)
             overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
         }
     }
     fun navigateToMyCardActivity(cardIsBlocked: Boolean) {
         activity?.apply {
-            val openCardDetailActivity = Intent(this, MyCardDetailActivity::class.java)
-            openCardDetailActivity.putExtra(CARD_BLOCKED, cardIsBlocked)
-            startActivity(openCardDetailActivity)
+            startActivity(Intent(this, MyCardDetailActivity::class.java).putExtra(CARD_BLOCKED, cardIsBlocked))
             overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
             finish()
         }
