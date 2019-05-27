@@ -1071,7 +1071,6 @@ public class Utils {
 			Utils.removeFromDb(SessionDao.KEY.DELIVERY_LOCATION_HISTORY, context);
 			Utils.removeFromDb(SessionDao.KEY.STORES_USER_SEARCH, context);
 			Utils.removeFromDb(SessionDao.KEY.STORES_USER_LAST_LOCATION, context);
-			Utils.removeFromDb(SessionDao.KEY.STORE_CARD_DETAIL,context);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

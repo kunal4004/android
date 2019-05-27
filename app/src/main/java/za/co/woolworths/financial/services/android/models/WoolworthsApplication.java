@@ -27,14 +27,17 @@ import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
+import com.google.gson.JsonElement;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 
 import io.fabric.sdk.android.Fabric;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import za.co.absa.openbankingapi.Cryptography;
 import za.co.absa.openbankingapi.KeyGenerationFailureException;
 import za.co.wigroup.androidutils.Util;
+import za.co.woolworths.financial.services.android.models.dto.AbsaBankingOpenApiServices;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.service.RxBus;
@@ -58,6 +61,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
 	private static String howToSaveLink;
 	private static String wrewardsTCLink;
 	private static String cartCheckoutLink;
+	private static JsonElement storeCardBlockReasons;
 
 
 	private WGlobalState mWGlobalState;
@@ -77,6 +81,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
 	private RxBus bus;
 	private static boolean isApplicationInForeground = false;
+	private static AbsaBankingOpenApiServices absaBankingOpenApiServices;
 
 	public static String getApiId() {
 		PackageInfo packageInfo = null;
@@ -411,6 +416,15 @@ public class WoolworthsApplication extends Application implements Application.Ac
 		return isApplicationInForeground;
 	}
 
+
+	public static void setStoreCardBlockReasons(JsonElement storeCardBlockReason) {
+		WoolworthsApplication.storeCardBlockReasons = storeCardBlockReason;
+	}
+
+	public JsonElement getStoreCardBlockReasons() {
+		 return storeCardBlockReasons;
+	}
+
 	@OnLifecycleEvent(Lifecycle.Event.ON_START)
 	void onAppForegrounded() {
 		isApplicationInForeground = true;
@@ -419,5 +433,13 @@ public class WoolworthsApplication extends Application implements Application.Ac
 	@OnLifecycleEvent(Lifecycle.Event.ON_STOP)
 	void onAppBackgrounded() {
 		isApplicationInForeground = false;
+	}
+
+	public static AbsaBankingOpenApiServices getAbsaBankingOpenApiServices() {
+		return absaBankingOpenApiServices;
+	}
+
+	public static void setAbsaBankingOpenApiServices(AbsaBankingOpenApiServices absaBankingOpenApiServices) {
+		WoolworthsApplication.absaBankingOpenApiServices = absaBankingOpenApiServices;
 	}
 }

@@ -222,6 +222,8 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         infoCurrentBalance.setOnClickListener(this);
         infoCreditLimit.setOnClickListener(this);
 
+        rlViewStatement.setVisibility(WoolworthsApplication.getAbsaBankingOpenApiServices().isEnabled() ? VISIBLE : GONE);
+
     }
 
     private void addListener() {

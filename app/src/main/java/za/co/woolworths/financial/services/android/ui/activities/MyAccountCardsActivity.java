@@ -49,6 +49,8 @@ import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.PersonalLoanAmount;
 import za.co.woolworths.financial.services.android.util.Utils;
 
+import static za.co.woolworths.financial.services.android.ui.fragments.WStoreCardFragment.REQUEST_CODE_BLOCK_MY_STORE_CARD;
+
 public class MyAccountCardsActivity extends AppCompatActivity
         implements View.OnClickListener,
         PersonalLoanAmount {
@@ -543,28 +545,17 @@ public class MyAccountCardsActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         //Absa registration activity request and result code
-        if (requestCode == ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE
+        // requestCode == REQUEST_CODE_BLOCK_MY_STORE_CARD updates cardBlocked state on back pressed
+        if ((requestCode == ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE || (requestCode == REQUEST_CODE_BLOCK_MY_STORE_CARD))
                 && resultCode == RESULT_OK) {
-            if (fragmentPager != null) getCurrentFragmentFromViewpager(pager.getCurrentItem());
+            if (fragmentPager != null) getCurrentFragmentFromViewpager(pager.getCurrentItem(),requestCode,resultCode,data);
         }
     }
 
-    private void getCurrentFragmentFromViewpager(int position) {
+    private void getCurrentFragmentFromViewpager(int position,int requestCode, int resultCode, Intent data) {
         Fragment fragment = (Fragment) fragmentPager.getAdapter().instantiateItem(fragmentPager, position);
-        if ((fragment instanceof WStoreCardFragment)
-                || (fragment instanceof WPersonalLoanFragment)
-                || (fragment instanceof WCreditCardFragment)) {
-            switch (position) {
-                case 1:
-                    if (fragment instanceof WCreditCardFragment) {
-                        // CAll back to do something after Successful ABSA registration
-                    }
-                    break;
-
-                default:
-                    break;
-
-            }
+        if (fragment instanceof WStoreCardFragment) {
+            fragment.onActivityResult(requestCode,resultCode,data);
         }
     }
 }
