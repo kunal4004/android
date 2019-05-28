@@ -57,7 +57,7 @@ public class AbsaContentEncryptionRequest {
             e.printStackTrace();
         }
 
-        new AbsaBankingOpenApiRequest<>(WoolworthsApplication.getAbsaBankingOpenApiServices().getBaseURL() + "/cekd", CEKDResponse.class, headers, body, false, new AbsaBankingOpenApiResponse.Listener<CEKDResponse>() {
+        new AbsaBankingOpenApiRequest<>(WoolworthsApplication.getAbsaBankingOpenApiServices().getBaseURL() + "/wcob/cekd", CEKDResponse.class, headers, body, false, new AbsaBankingOpenApiResponse.Listener<CEKDResponse>() {
 
             @Override
             public void onResponse(CEKDResponse response, List<HttpCookie> cookies) {

@@ -105,7 +105,7 @@ public class AbsaBankingOpenApiRequest<T> extends Request<T> {
     }
 
     public AbsaBankingOpenApiRequest(Class<T> clazz, Map<String, String> headers, String body, boolean isBodyEncryptionRequired, AbsaBankingOpenApiResponse.Listener<T> listener, Response.ErrorListener errorListener) {
-        this(Method.POST, WoolworthsApplication.getAbsaBankingOpenApiServices().getBaseURL() + "/wfsMobileRegistration", clazz, headers, body, isBodyEncryptionRequired, listener, errorListener);
+        this(Method.POST, WoolworthsApplication.getAbsaBankingOpenApiServices().getBaseURL() + "/wcob/wfsMobileRegistration", clazz, headers, body, isBodyEncryptionRequired, listener, errorListener);
     }
 
     public AbsaBankingOpenApiRequest(String url, Class<T> clazz, Map<String, String> headers, String body, boolean isBodyEncryptionRequired, AbsaBankingOpenApiResponse.Listener<T> listener, Response.ErrorListener errorListener) {
