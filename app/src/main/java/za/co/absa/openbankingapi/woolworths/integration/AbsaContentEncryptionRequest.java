@@ -8,7 +8,6 @@ import com.android.volley.VolleyError;
 
 import java.io.UnsupportedEncodingException;
 import java.net.HttpCookie;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +21,6 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.CEKDRequest;
 import za.co.absa.openbankingapi.woolworths.integration.dto.CEKDResponse;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiRequest;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse;
-import za.co.absa.openbankingapi.woolworths.integration.service.VolleySingleton;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -35,12 +33,12 @@ public class AbsaContentEncryptionRequest {
     public static String keyId;
 
 
-    public AbsaContentEncryptionRequest(final Context context) {
+    public AbsaContentEncryptionRequest() {
 
         try {
             this.deviceId = Utils.getAbsaUniqueDeviceID();
             byte[] seed = SessionKey.generateKey(SessionKey.OUTPUT_KEY_LENGTH).getEncoded();
-            this.contentEncryptionSeed = new AsymmetricCryptoHelper().encryptSymmetricKey(context, seed, SessionKey.CONTENT_ENCRYPTION_KEY_FILE);
+            this.contentEncryptionSeed = new AsymmetricCryptoHelper().encryptSymmetricKey(seed, WoolworthsApplication.getAbsaBankingOpenApiServices().getContentEncryptionPublicKey());
             derivedSeed = Cryptography.PasswordBasedKeyDerivationFunction2(deviceId, seed, 1000, 256);
         } catch (UnsupportedEncodingException | KeyGenerationFailureException | AsymmetricCryptoHelper.AsymmetricEncryptionFailureException | AsymmetricCryptoHelper.AsymmetricKeyGenerationFailureException e) {
             e.printStackTrace();

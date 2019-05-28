@@ -28,10 +28,10 @@ public class AbsaLoginRequest {
 
 	private SessionKey sessionKey;
 
-	public AbsaLoginRequest(final Context context){
+	public AbsaLoginRequest(){
 
 		try {
-			this.sessionKey = SessionKey.generate(context.getApplicationContext());
+			this.sessionKey = SessionKey.generate();
 		} catch (KeyGenerationFailureException | AsymmetricCryptoHelper.AsymmetricEncryptionFailureException | AsymmetricCryptoHelper.AsymmetricKeyGenerationFailureException e) {
 			e.printStackTrace();
 		}

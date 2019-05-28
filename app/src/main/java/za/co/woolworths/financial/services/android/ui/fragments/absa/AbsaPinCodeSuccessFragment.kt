@@ -72,7 +72,7 @@ class AbsaPinCodeSuccessFragment : Fragment() {
 
     private fun registerCredentials(aliasId: String?, fiveDigitPin: String) {
         activity?.let {
-            AbsaRegisterCredentialRequest(it).make(aliasId, fiveDigitPin,
+            AbsaRegisterCredentialRequest().make(aliasId, fiveDigitPin,
                     object : AbsaBankingOpenApiResponse.ResponseDelegate<RegisterCredentialResponse> {
 
                         override fun onSuccess(response: RegisterCredentialResponse, cookies: List<HttpCookie>) {
