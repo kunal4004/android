@@ -64,7 +64,7 @@ public class AbsaLoginRequest {
 			e.printStackTrace();
 		}
 
-		new AbsaBankingOpenApiRequest<>(WoolworthsApplication.getAbsaBankingOpenApiServices().getBaseURL() + "/wcob/j_pin_security_login", LoginResponse.class, headers, body, true, new AbsaBankingOpenApiResponse.Listener<LoginResponse>() {
+		new AbsaBankingOpenApiRequest<>(WoolworthsApplication.getAbsaBankingOpenApiServices().getBaseURL() + "/j_pin_security_login", LoginResponse.class, headers, body, true, new AbsaBankingOpenApiResponse.Listener<LoginResponse>() {
 
 			@Override
 			public void onResponse(LoginResponse loginResponse, List<HttpCookie> cookies) {
