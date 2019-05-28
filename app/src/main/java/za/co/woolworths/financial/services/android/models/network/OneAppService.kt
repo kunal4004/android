@@ -5,6 +5,7 @@ import retrofit2.Call
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse
 import za.co.woolworths.financial.services.android.models.dto.RootCategories
+import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
 
 object OneAppService : RetrofitService() {
     fun getConfig(): Call<ConfigResponse> = mApiInterface.getConfig(
@@ -12,7 +13,7 @@ object OneAppService : RetrofitService() {
             BuildConfig.SHA1,
             getDeviceManufacturer(),
             getDeviceModel(),
-            getNetworkCarrier(appContext()),
+            getNetworkCarrier(),
             getOS(),
             getOsVersion(),
             getSessionToken(),
@@ -24,9 +25,17 @@ object OneAppService : RetrofitService() {
             getOS(),
             getSha1Password(),
             getDeviceModel(),
-            getNetworkCarrier(appContext()),
+            getNetworkCarrier(),
             getDeviceManufacturer(),
             "Android",
+            getSessionToken())
+
+    fun getShoppingLists(): Call<ShoppingListsResponse> = mApiInterface.getShoppingLists(
+            getApiId(),
+            getSha1Password(),
+            getDeviceManufacturer(),
+            getDeviceModel(), getNetworkCarrier(),
+            getOS(), getOsVersion(),
             getSessionToken())
 
 

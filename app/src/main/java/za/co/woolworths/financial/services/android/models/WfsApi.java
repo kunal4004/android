@@ -13,6 +13,7 @@ import okhttp3.OkHttpClient;
 import retrofit.RestAdapter;
 import retrofit.client.Response;
 import za.co.wigroup.androidutils.Util;
+import za.co.woolworths.financial.services.android.models.network.NetworkConfig;
 import za.co.woolworths.financial.services.android.models.network.WfsApiInterceptor;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;

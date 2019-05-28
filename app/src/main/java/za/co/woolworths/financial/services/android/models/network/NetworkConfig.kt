@@ -23,8 +23,8 @@ open class NetworkConfig {
 
     fun getApiId(): String = WoolworthsApplication.getApiId()
 
-    fun getNetworkCarrier(context: Context): String {
-        val networkCarrier = Util.getNetworkCarrier(context)
+    fun getNetworkCarrier(): String {
+        val networkCarrier = Util.getNetworkCarrier(appContext())
         return if (networkCarrier.isEmpty()) "Unavailable" else Utils.removeUnicodesFromString(networkCarrier)
     }
 
