@@ -12,7 +12,6 @@
  */
 package za.co.absa.openbankingapi;
 
-import android.content.Context;
 import android.util.Base64;
 
 import java.security.NoSuchAlgorithmException;
@@ -21,12 +20,12 @@ import java.security.SecureRandom;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+
 public class SessionKey {
     private static final String OUTPUT_KEY_DERIVATION_ALGORITHM = "AES";
     public static final int OUTPUT_KEY_LENGTH = 256;
     public static final int OUTPUT_KEY_LENGTH_IV = 128;
-    private static final String MOBILE_APP_PUBLIC_KEY_FILE = "Woolworths_MobileAppPubKey.pem";
-    public static final String CONTENT_ENCRYPTION_KEY_FILE = "Woolworths_Content_Encyption_Key.pem";
     private byte[] key;
     private byte[] encryptedKey;
     private byte[] iv;
@@ -55,11 +54,11 @@ public class SessionKey {
         return Base64.encodeToString(iv, Base64.NO_WRAP);
     }
 
-    public static SessionKey generate(Context context) throws KeyGenerationFailureException,
+    public static SessionKey generate() throws KeyGenerationFailureException,
             AsymmetricCryptoHelper.AsymmetricEncryptionFailureException,
             AsymmetricCryptoHelper.AsymmetricKeyGenerationFailureException {
         byte[] symmetricKey = generateKey(OUTPUT_KEY_LENGTH).getEncoded();
-        byte[] encryptedSymmetricKeyBuffer = new AsymmetricCryptoHelper().encryptSymmetricKey(context, symmetricKey, MOBILE_APP_PUBLIC_KEY_FILE);
+        byte[] encryptedSymmetricKeyBuffer = new AsymmetricCryptoHelper().encryptSymmetricKey(symmetricKey, WoolworthsApplication.getAbsaBankingOpenApiServices().getAppPublicKey());
         byte[] symmetricKeyIV = generateKey(OUTPUT_KEY_LENGTH_IV).getEncoded();
         return new SessionKey(symmetricKey, encryptedSymmetricKeyBuffer, symmetricKeyIV);
     }

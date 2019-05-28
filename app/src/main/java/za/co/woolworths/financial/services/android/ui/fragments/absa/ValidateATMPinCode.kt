@@ -35,7 +35,7 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
     }
 
     private fun validateCardAndPin(cardToken: String, pin: String) {
-        AbsaValidateCardAndPinRequest(WoolworthsApplication.getAppContext()).make(cardToken,pin,
+        AbsaValidateCardAndPinRequest().make(cardToken,pin,
                 object : AbsaBankingOpenApiResponse.ResponseDelegate<ValidateCardAndPinResponse> {
                     override fun onSuccess(response: ValidateCardAndPinResponse?, cookies: MutableList<HttpCookie>?) {
                         response?.apply {
@@ -133,7 +133,7 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
 
     fun createAlias() {
         var deviceId = Utils.getAbsaUniqueDeviceID()
-        AbsaCreateAliasRequest(WoolworthsApplication.getAppContext()).make(deviceId, object : AbsaBankingOpenApiResponse.ResponseDelegate<CreateAliasResponse> {
+        AbsaCreateAliasRequest().make(deviceId, object : AbsaBankingOpenApiResponse.ResponseDelegate<CreateAliasResponse> {
 
             override fun onSuccess(response: CreateAliasResponse?, cookies: MutableList<HttpCookie>?) {
                 response?.apply {
