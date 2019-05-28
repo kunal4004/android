@@ -12,6 +12,7 @@ import android.view.View.VISIBLE
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.Toast
 import com.android.volley.VolleyError
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_login_fragment.*
@@ -104,18 +105,6 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
                                 } else {
                                     failureHandler(resultMessage ?: technical_error_occurred)
                                 }
-                                /* Work for WOP-3881
-                                   Commented because header returning nil
-                                    header?.apply {
-                                        if (statusCode == "0" || resultMessages.isEmpty()) {
-                                            successHandler(response)
-                                        } else {
-                                            if (statusCode == "1") {
-                                                failureHandler(header.resultMessages.first()?.responseMessage
-                                                        ?: technical_error_occurred)
-                                            }
-                                        }
-                                    }*/
                             }
                             displayLoginProgress(false)
                         }
@@ -135,7 +124,8 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
     }
 
     private fun successHandler() {
-        tapAndDismissErrorDialog("Login Successful")
+        Toast.makeText(activity,"Login Successful",Toast.LENGTH_SHORT).show()
+        clearPin()
     }
 
     private fun failureHandler(message: String?) {
@@ -222,6 +212,7 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
 
     fun displayLoginProgress(state: Boolean) {
         pbLoginProgress.visibility = if (state) VISIBLE else INVISIBLE
+        if (state) numberKeyboard.hideRightAuxButton() else numberKeyboard.showRightAuxButton()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
