@@ -3,9 +3,7 @@ package za.co.woolworths.financial.services.android.models.network
 import com.awfs.coordination.BuildConfig
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.models.dto.ConfigResponse
-import za.co.woolworths.financial.services.android.models.dto.RootCategories
-import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
+import za.co.woolworths.financial.services.android.models.dto.*
 
 object OneAppService : RetrofitService() {
     fun getConfig(): Call<ConfigResponse> = mApiInterface.getConfig(
@@ -38,5 +36,27 @@ object OneAppService : RetrofitService() {
             getOS(), getOsVersion(),
             getSessionToken())
 
+    fun getOrders(): Call<OrdersResponse> = mApiInterface.getOrders(
+            getApiId(),
+            getSha1Password(),
+            getDeviceManufacturer(),
+            getDeviceModel(),
+            getNetworkCarrier(),
+            getOS(),
+            getOsVersion(),
+            getSessionToken())
+
+
+    fun getAccounts(): Call<AccountsResponse> = mApiInterface.getAccounts(
+            getApiId(),
+            getSha1Password(),
+            getDeviceManufacturer(),
+            getDeviceModel(),
+            getNetworkCarrier(),
+            getOS(),
+            getOsVersion(),
+            "",
+            "",
+            getSessionToken())
 
 }

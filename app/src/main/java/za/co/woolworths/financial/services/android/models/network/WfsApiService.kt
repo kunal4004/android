@@ -4,9 +4,7 @@ import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
-import za.co.woolworths.financial.services.android.models.dto.ConfigResponse
-import za.co.woolworths.financial.services.android.models.dto.RootCategories
-import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
+import za.co.woolworths.financial.services.android.models.dto.*
 
 interface WfsApiService {
 
@@ -49,4 +47,32 @@ interface WfsApiService {
             @Header("os") os: String,
             @Header("osVersion") osVersion: String,
             @Header("sessionToken") sessionToken: String): Call<ShoppingListsResponse>
+
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("order")
+    fun getOrders(
+            @Header("apiId") apiId: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("network") network: String,
+            @Header("os") os: String,
+            @Header("osVersion") osVersion: String,
+            @Header("sessionToken") sessionToken: String): Call<OrdersResponse>
+
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:28800")
+    @GET("user/accounts")
+    fun getAccounts(
+            @Header("apiId") apiId: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("network") network: String,
+            @Header("os") os: String,
+            @Header("osVersion") osVersion: String,
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String): Call<AccountsResponse>
 }

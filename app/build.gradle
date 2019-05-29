@@ -63,7 +63,6 @@ android {
     }
 
     compileSdkVersion 27
-    buildToolsVersion '27.0.3'
     buildTypes {
         debug {
             debuggable true
