@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
@@ -76,6 +77,14 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
             }
             handled
         }
+
+        edtEnterATMPin.setOnKeyListener(OnKeyListener { v, keyCode, event ->
+            if (keyCode == KeyEvent.KEYCODE_DEL) {
+
+                return@OnKeyListener (pbEnterAtmPin.visibility == VISIBLE)
+            }
+            false
+        })
     }
 
     private fun navigateToFiveDigitCodeFragment() {

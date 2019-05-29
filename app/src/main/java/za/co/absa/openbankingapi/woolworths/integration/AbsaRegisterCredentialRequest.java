@@ -30,10 +30,10 @@ public class AbsaRegisterCredentialRequest {
 	private SessionKey sessionKey;
 	private String deviceId;
 
-	public AbsaRegisterCredentialRequest(final Context context){
+	public AbsaRegisterCredentialRequest(){
 
 		try {
-			this.sessionKey = SessionKey.generate(context.getApplicationContext());
+			this.sessionKey = SessionKey.generate();
 			this.deviceId = Utils.getAbsaUniqueDeviceID();
 		} catch (KeyGenerationFailureException | AsymmetricCryptoHelper.AsymmetricEncryptionFailureException | AsymmetricCryptoHelper.AsymmetricKeyGenerationFailureException e) {
 			e.printStackTrace();

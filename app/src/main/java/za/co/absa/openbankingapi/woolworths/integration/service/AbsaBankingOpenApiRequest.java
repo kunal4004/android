@@ -62,7 +62,7 @@ public class AbsaBankingOpenApiRequest<T> extends Request<T> {
             if (TextUtils.isEmpty(AbsaContentEncryptionRequest.keyId) || AbsaContentEncryptionRequest.derivedSeed.length == 0) {
 
                 final String finalBody = body;
-                new AbsaContentEncryptionRequest(WoolworthsApplication.getAppContext()).make(new AbsaBankingOpenApiResponse.ResponseDelegate<CEKDResponse>() {
+                new AbsaContentEncryptionRequest().make(new AbsaBankingOpenApiResponse.ResponseDelegate<CEKDResponse>() {
 
                     @Override
                     public void onSuccess(CEKDResponse response, List<HttpCookie> cookies) {

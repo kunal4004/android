@@ -25,10 +25,10 @@ public class AbsaValidateCardAndPinRequest {
 
 	private SessionKey sessionKey;
 
-	public AbsaValidateCardAndPinRequest(final Context context){
+	public AbsaValidateCardAndPinRequest(){
 
 		try {
-			this.sessionKey = SessionKey.generate(context.getApplicationContext());
+			this.sessionKey = SessionKey.generate();
 		} catch (KeyGenerationFailureException | AsymmetricCryptoHelper.AsymmetricEncryptionFailureException | AsymmetricCryptoHelper.AsymmetricKeyGenerationFailureException e) {
 			e.printStackTrace();
 		}
