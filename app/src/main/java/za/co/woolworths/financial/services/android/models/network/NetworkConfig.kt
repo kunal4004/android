@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.models.network
 
 import android.content.Context
+import android.location.Location
 import android.os.Build
 import android.text.TextUtils
 import com.awfs.coordination.BuildConfig
@@ -42,5 +43,6 @@ open class NetworkConfig {
         return if (sessionToken.isEmpty()) "." else sessionToken
     }
 
-
+    fun getMyLocation(): Location? = (Utils.getLastSavedLocation(appContext())
+            ?: Location("myLocation"))
 }

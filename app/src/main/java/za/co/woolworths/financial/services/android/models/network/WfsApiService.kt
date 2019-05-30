@@ -1,10 +1,7 @@
 package za.co.woolworths.financial.services.android.models.network
 
 import retrofit2.Call
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.Headers
-import retrofit2.http.Path
+import retrofit2.http.*
 import za.co.woolworths.financial.services.android.models.dto.*
 
 interface WfsApiService {
@@ -91,4 +88,50 @@ interface WfsApiService {
             @Header("apiKey") apiKey: String,
             @Header("sessionToken") sessionToken: String,
             @Path("cat") category: String): Call<SubCategories>
+
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
+    @GET("searchSortAndFilter")
+    fun getProducts(
+            @Header("osVersion") osVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("os") os: String,
+            @Header("network") network: String,
+            @Header("apiId") apiId: String,
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("longitude") longitude: Double,
+            @Header("latitude") latitude: Double,
+            @Header("sessionToken") sessionToken: String,
+            @Query("searchTerm") searchTerm: String,
+            @Query("searchType") searchType: String,
+            @Query("responseType") responseType: String,
+            @Query("pageOffset") pageOffset: Int,
+            @Query("pageSize") pageSize: Int,
+            @Query("sortOption") sortOption: String,
+            @Query("refinement") refinement: String): Call<ProductView>
+
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
+    @GET("/searchSortAndFilter")
+    fun getProductsWithoutLocation(
+            @Header("osVersion") osVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("os") os: String,
+            @Header("network") network: String,
+            @Header("apiId") apiId: String,
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("sessionToken") sessionToken: String,
+            @Query("searchTerm") searchTerm: String,
+            @Query("searchType") searchType: String,
+            @Query("responseType") responseType: String,
+            @Query("pageOffset") pageOffset: Int,
+            @Query("pageSize") pageSize: Int,
+            @Query("sortOption") sortOption: String,
+            @Query("refinement") refinement: String): Call<ProductView>
 }
