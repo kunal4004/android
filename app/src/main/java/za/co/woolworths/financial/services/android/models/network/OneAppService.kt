@@ -59,4 +59,19 @@ object OneAppService : RetrofitService() {
             "",
             getSessionToken())
 
+    fun getSubCategory(category_id: String): Call<SubCategories> {
+        return mApiInterface.getSubCategory(
+                getOsVersion(),
+                getApiId(),
+                getOS(),
+                getSha1Password(),
+                getDeviceModel(),
+                getNetworkCarrier(),
+                getDeviceManufacturer(),
+                "Android",
+                getSessionToken(),
+                category_id)
+    }
+
+
 }

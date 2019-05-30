@@ -8,18 +8,18 @@ import retrofit2.Response
 import za.co.woolworths.financial.services.android.contracts.RequestListener
 import java.io.InputStreamReader
 
-open class CompletionHandler<T>(protected var listener: RequestListener<T>?) : Callback<T> {
+open class CompletionHandler<Result>(protected var listener: RequestListener<Result>?) : Callback<Result> {
 
     val jsonMimeTypes = arrayListOf("application/json", "application/json; charset=utf-8")
 
-    override fun onResponse(call: Call<T>, response: Response<T>?) {
+    override fun onResponse(call: Call<Result>, response: Response<Result>?) {
         this.listener?.apply {
             response?.apply {
                 when (isSuccessful) {
                     true -> onSuccess(body())
                     else -> {
                         val stream = InputStreamReader(errorBody()?.byteStream())
-                        val result = Gson().fromJson<T>(stream, object : TypeToken<T>() {}.type)
+                        val result = Gson().fromJson<Result>(stream, object : TypeToken<Result>() {}.type) as Result
                         onSuccess(result)
                     }
                 }
@@ -27,7 +27,7 @@ open class CompletionHandler<T>(protected var listener: RequestListener<T>?) : C
         }
     }
 
-    override fun onFailure(call: Call<T>, t: Throwable) {
+    override fun onFailure(call: Call<Result>, t: Throwable) {
         this.listener?.onFailure(t)
     }
 }
