@@ -61,6 +61,9 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
     private fun initViewsAndEvents() {
         tvForgotPasscode.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         tvForgotPasscode.setOnClickListener {
+
+            if (pbLoginProgress.visibility == VISIBLE) return@setOnClickListener
+
             activity?.let {
 
                 //Clear content encryption data if any, before making new registration process.
@@ -211,8 +214,7 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
     }
 
     fun displayLoginProgress(state: Boolean) {
-        pbLoginProgress.visibility = if (state) VISIBLE else INVISIBLE
-        if (state) numberKeyboard.hideRightAuxButton() else numberKeyboard.showRightAuxButton()
+        pbLoginProgress?.visibility = if (state) VISIBLE else INVISIBLE
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
@@ -221,7 +223,7 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
     }
 
     private fun showErrorScreen(errorType: Int) {
-        activity.let {
+        activity?.let {
             val intent: Intent = Intent(it, ErrorHandlerActivity::class.java)
             intent.putExtra("errorType", errorType)
             it.startActivityForResult(intent, ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE)
@@ -241,6 +243,10 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
     }
 
     override fun onNumberClicked(number: Int) {
+
+        if (pbLoginProgress.visibility == VISIBLE)
+            return
+
         edtEnterATMPin.text = Editable.Factory.getInstance().newEditable(edtEnterATMPin.text.append(number.toString()))
         requestToLogin()
     }
@@ -249,7 +255,7 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
     }
 
     override fun onRightAuxButtonClicked() {
-        if (edtEnterATMPin.text.isNotEmpty())
+        if (edtEnterATMPin.text.isNotEmpty() && pbLoginProgress.visibility != VISIBLE)
             edtEnterATMPin.text = Editable.Factory.getInstance().newEditable(edtEnterATMPin.text.substring(0, edtEnterATMPin.text.length - 1))
     }
 
