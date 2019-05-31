@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.fragments.shop
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
@@ -31,10 +30,10 @@ class MyOrdersFragment : Fragment() {
 
     companion object {
         const val ORDERS_LOGIN_REQUEST = 2025
-        private val ARG_PARAM = "listner"
+        private const val ARG_PARAM = "listener"
 
-        fun getInstance(listner: OnChildFragmentEvents) = MyOrdersFragment().withArgs {
-            putSerializable(ARG_PARAM, listner)
+        fun getInstance(listener: OnChildFragmentEvents) = MyOrdersFragment().withArgs {
+            putSerializable(ARG_PARAM, listener)
         }
     }
 
@@ -62,18 +61,16 @@ class MyOrdersFragment : Fragment() {
         mErrorHandlerView = ErrorHandlerView(activity, relEmptyStateHandler, imgEmpyStateIcon, txtEmptyStateTitle, txtEmptyStateDesc, btnGoToProduct)
         myOrdersList.layoutManager = LinearLayoutManager(activity)
         btnGoToProduct.setOnClickListener { onActionClick() }
-        swipeToRefresh.setOnRefreshListener(object : SwipeRefreshLayout.OnRefreshListener {
-            override fun onRefresh() {
-                swipeToRefresh.isRefreshing = true
-                executeOrdersRequest(true)
-            }
-        })
+        swipeToRefresh.setOnRefreshListener {
+            swipeToRefresh.isRefreshing = true
+            executeOrdersRequest(true)
+        }
         configureUI(false)
     }
 
     fun configureUI(isNewSession: Boolean) {
 
-        if (SessionUtilities.getInstance().isUserAuthenticated()) {
+        if (SessionUtilities.getInstance().isUserAuthenticated) {
             val orderResponse = parentFragment?.getOrdersResponseData()
             if (orderResponse != null && !isNewSession && !parentFragment?.isDifferentUser()!!) showSignInView(orderResponse) else {
                 parentFragment?.clearCachedData()
@@ -112,15 +109,15 @@ class MyOrdersFragment : Fragment() {
     }
 
     private fun showErrorView() {
-        myOrdersList.visibility = View.GONE
-        swipeToRefresh.isEnabled = false
+        myOrdersList?.visibility = View.GONE
+        swipeToRefresh?.isEnabled = false
         mErrorHandlerView?.setEmptyStateWithAction(8, R.string.retry, ErrorHandlerView.ACTION_TYPE.RETRY)
 
     }
 
     private fun showSignInView(ordersResponse: OrdersResponse) {
         dataList = buildDataToDisplayOrders(ordersResponse)
-        if (dataList.size > 0) {
+            if (dataList.size > 0) {
             mErrorHandlerView?.hideEmpyState()
             myOrdersList.adapter = OrdersAdapter(activity, dataList)
             myOrdersList.visibility = View.VISIBLE
@@ -157,7 +154,7 @@ class MyOrdersFragment : Fragment() {
         return GetOrdersRequest(context, object : OnEventListener<OrdersResponse> {
             override fun onSuccess(ordersResponse: OrdersResponse) {
                 if (isAdded) {
-                    if (isPullToRefresh) swipeToRefresh.isRefreshing = false
+                    if (isPullToRefresh) swipeToRefresh?.isRefreshing = false
                     parentFragment?.setOrdersResponseData(ordersResponse)
                     updateUI()
                 }
@@ -165,10 +162,12 @@ class MyOrdersFragment : Fragment() {
 
             override fun onFailure(e: String?) {
                 if (isAdded) {
-                    activity.runOnUiThread(java.lang.Runnable {
-                        loadingBar.visibility = View.GONE
-                        showErrorView()
-                    })
+                    activity?.apply {
+                        runOnUiThread {
+                            loadingBar?.visibility = View.GONE
+                            showErrorView()
+                        }
+                    }
                 }
             }
 
@@ -177,11 +176,13 @@ class MyOrdersFragment : Fragment() {
     }
 
     fun updateUI() {
-        var ordersResponse = parentFragment?.getOrdersResponseData()
-        loadingBar.visibility = View.GONE
+        // Proceed with onPostExecute block code if UI exist
+        if (myOrdersList == null) return
+        val ordersResponse = parentFragment?.getOrdersResponseData()
+        loadingBar?.visibility = View.GONE
         when (ordersResponse?.httpCode) {
             0 -> {
-                showSignInView(ordersResponse!!)
+                showSignInView(ordersResponse)
             }
             440 -> {
                 SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
@@ -195,8 +196,8 @@ class MyOrdersFragment : Fragment() {
     }
 
     private fun showLoading() {
-        loadingBar.visibility = View.VISIBLE
-        myOrdersList.visibility = View.GONE
+        loadingBar?.visibility = View.VISIBLE
+        myOrdersList?.visibility = View.GONE
     }
 
     fun scrollToTop() {
@@ -212,9 +213,9 @@ class MyOrdersFragment : Fragment() {
     }
 
     fun cancelRequest() {
-        requestOrders.let {
-            if (!requestOrders?.isCancelled!!)
-                requestOrders?.cancel(true)
+        requestOrders?.let {
+            if (!it.isCancelled)
+                it.cancel(true)
         }
     }
 }

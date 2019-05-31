@@ -18,7 +18,7 @@
         android:paddingRight="@dimen/twenty_four_dp">
 
         <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
-            android:id="@+id/productImage"
+            android:id="@+id/imProductImage"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_alignParentLeft="true"
@@ -33,7 +33,7 @@
             android:layout_marginLeft="@dimen/sixteen_dp"
             android:layout_marginRight="@dimen/eight_dp"
             android:layout_toLeftOf="@+id/price"
-            android:layout_toRightOf="@+id/productImage"
+            android:layout_toRightOf="@+id/imProductImage"
             android:ellipsize="end"
             android:singleLine="true"
             android:textColor="@color/black" />

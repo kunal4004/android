@@ -1,48 +1,39 @@
 package za.co.woolworths.financial.services.android.ui.fragments.absa
 
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.ImageView
 import com.awfs.coordination.R
-import com.google.gson.Gson
 import kotlinx.android.synthetic.main.absa_five_digit_code_fragment.*
-import za.co.absa.openbankingapi.woolworths.integration.dao.JSession
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 
 class AbsaFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener {
 
     private var mPinImageViewList: MutableList<ImageView>? = null
-    private var jSession: String? = null
     private var mAliasId: String? = null
-    private var mDeviceId: String? = null
 
     companion object {
         private const val MAXIMUM_PIN_ALLOWED: Int = 4
-        private const val JSESSION = "JSESSION"
         private const val ALIAS_ID = "ALIAS_ID"
-        private const val DEVICE_ID = "DEVICE_ID"
 
-        fun newInstance(jSession: JSession, aliasId: String?, deviceId: String?) = AbsaFiveDigitCodeFragment().apply {
+        fun newInstance(aliasId: String?) = AbsaFiveDigitCodeFragment().apply {
             arguments = Bundle(3).apply {
-                putString(JSESSION, Gson().toJson(jSession))
                 putString(ALIAS_ID, aliasId)
-                putString(DEVICE_ID, deviceId)
             }
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+        (activity as AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
         arguments?.apply {
-            getString(JSESSION)?.apply { jSession = this }
             getString(ALIAS_ID)?.apply { mAliasId = this }
-            getString(DEVICE_ID)?.apply { mDeviceId = this }
         }
     }
 
@@ -76,7 +67,7 @@ class AbsaFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener 
         if ((edtEnterATMPin.length() - 1) == MAXIMUM_PIN_ALLOWED) {
             val enteredPin = edtEnterATMPin.text.toString()
             replaceFragment(
-                    fragment = AbsaConfirmFiveDigitCodeFragment.newInstance(enteredPin.toInt(), jSession, mAliasId, mDeviceId),
+                    fragment = AbsaConfirmFiveDigitCodeFragment.newInstance(enteredPin.toInt(), mAliasId),
                     tag = AbsaConfirmFiveDigitCodeFragment::class.java.simpleName,
                     containerViewId = R.id.flAbsaOnlineBankingToDevice,
                     allowStateLoss = true,
@@ -150,5 +141,10 @@ class AbsaFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener 
             text.clear()
             showKeyboard(this)
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        menu?.getItem(0)?.isVisible = true
+        super.onCreateOptionsMenu(menu, inflater)
     }
 }

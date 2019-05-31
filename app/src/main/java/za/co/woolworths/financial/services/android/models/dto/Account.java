@@ -1,8 +1,13 @@
 package za.co.woolworths.financial.services.android.models.dto;
 
 import com.google.gson.JsonElement;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
+
+import za.co.woolworths.financial.services.android.models.dto.npc.PrimaryCard;
+import za.co.woolworths.financial.services.android.models.dto.npc.SecondaryCard;
 
 public class Account {
     public int productOfferingId;
@@ -25,5 +30,14 @@ public class Account {
     public DebitOrder debitOrder;
     public boolean insuranceCovered;
     public List<InsuranceType> insuranceTypes;
+    @SerializedName("accountNumber")
+    @Expose
+    public String accountNumber;
+    @SerializedName("primaryCard")
+    @Expose
+    public PrimaryCard primaryCard;
+    @SerializedName("secondaryCard")
+    @Expose
+    public SecondaryCard secondaryCard;
 
 }
