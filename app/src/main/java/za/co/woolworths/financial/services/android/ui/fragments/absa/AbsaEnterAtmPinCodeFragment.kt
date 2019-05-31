@@ -228,7 +228,7 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
     }
 
     private fun showErrorScreen(errorType: Int) {
-        activity.let {
+        activity?.let {
             val intent: Intent = Intent(it, ErrorHandlerActivity::class.java)
             intent.putExtra("errorType", errorType)
             it.startActivityForResult(intent, ERROR_PAGE_REQUEST_CODE)
