@@ -88,7 +88,7 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
     }
 
     private fun navigateToFiveDigitCodeFragment() {
-        if ((edtEnterATMPin.length() - 1) == AbsaEnterAtmPinCodeFragment.MAXIMUM_PIN_ALLOWED) {
+        if ((edtEnterATMPin.length() - 1) == AbsaEnterAtmPinCodeFragment.MAXIMUM_PIN_ALLOWED && pbEnterAtmPin.visibility != VISIBLE) {
             activity?.let {
                 val pinCode = edtEnterATMPin.text.toString()
                 progressIndicator(VISIBLE)
@@ -146,6 +146,8 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
         when (view?.id) {
             R.id.tvForgotPin -> {
                 activity?.let {
+                    if (pbEnterAtmPin.visibility == VISIBLE) return
+
                     hideKeyboard()
                     val openDialogFragment =
                             GotITDialogFragment.newInstance(getString(R.string.absa_forgot_atm_pin_code_title),
