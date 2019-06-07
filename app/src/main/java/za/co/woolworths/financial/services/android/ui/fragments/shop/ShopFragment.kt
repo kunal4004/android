@@ -85,6 +85,10 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
             override fun onPageSelected(position: Int) {
                 shopPagerAdapter?.notifyDataSetChanged()
                 updateTabIconUI(position)
+                when(position){
+                    1->Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYLISTS)
+                    2->Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYORDERS)
+                }
             }
         })
         tabs_main?.setupWithViewPager(viewpager_main)
