@@ -162,7 +162,6 @@ dependencies {
     implementation 'com.facebook.android:facebook-android-sdk:4.26.0'
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
     implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
-    implementation 'com.jakewharton.retrofit:retrofit1-okhttp3-client:1.1.0'
 
     implementation(name:'utils-1.1.8', ext:'aar')
     implementation(name:'Logger-1', ext:'aar')

@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.fragments.wreward.logged_
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -28,8 +27,6 @@ import za.co.woolworths.financial.services.android.models.dto.CardDetailsRespons
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
-import za.co.woolworths.financial.services.android.models.rest.reward.GetVoucher;
-import za.co.woolworths.financial.services.android.models.rest.reward.WRewardsCardDetails;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WRewardsErrorFragment;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
@@ -42,7 +39,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.wreward.base.WRe
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
-import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 
@@ -65,7 +61,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	public VoucherResponse voucherResponse;
 	private WRewardLoggedInViewModel wRewardViewModel;
 	private Call<VoucherResponse> getVoucherAsync;
-	private AsyncTask<String, String, CardDetailsResponse> wRewardsCardDetails;
+	private Call<CardDetailsResponse> wRewardsCardDetails;
 	private String TAG = this.getClass().getSimpleName();
 	boolean isActivityInForeground;
 
@@ -248,20 +244,22 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	}
 
 	public void loadCardDetails() {
-		wRewardsCardDetails = new WRewardsCardDetails(getActivity(), new OnEventListener() {
+
+		wRewardsCardDetails = OneAppService.INSTANCE.getCardDetails();
+		wRewardsCardDetails.enqueue(new CompletionHandler<>(new RequestListener<CardDetailsResponse>() {
 			@Override
-			public void onSuccess(Object object) {
+			public void onSuccess(CardDetailsResponse cardDetailsResponse) {
+				//TODO:: Handle httpCode
 				isCardDetailsCalled = true;
-				cardDetailsResponse = (CardDetailsResponse) object;
 				handleWrewardsAndCardDetailsResponse();
 			}
 
 			@Override
-			public void onFailure(String e) {
+			public void onFailure(Throwable error) {
 				isCardDetailsCalled = true;
 				handleWrewardsAndCardDetailsResponse();
 			}
-		}).execute();
+		}));
 	}
 
 	public void handleWrewardsAndCardDetailsResponse() {
@@ -284,8 +282,12 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	public void onDestroy() {
 		super.onDestroy();
 		hideToolbar();
-		if (wRewardsCardDetails != null && !wRewardsCardDetails.isCancelled()) {
-			wRewardsCardDetails.cancel(true);
+		if (wRewardsCardDetails != null && !wRewardsCardDetails.isCanceled()) {
+			wRewardsCardDetails.cancel();
+		}
+
+		if (getVoucherAsync !=null && !getVoucherAsync.isCanceled()){
+			getVoucherAsync.cancel();
 		}
 	}
 

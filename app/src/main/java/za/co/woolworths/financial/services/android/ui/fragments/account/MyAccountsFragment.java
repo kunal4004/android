@@ -59,7 +59,6 @@ import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseVie
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
-import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
@@ -705,9 +704,10 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	@SuppressLint("StaticFieldLeak")
 	private void onSignOut() {
 		try {
-			AsyncTask<Void, Void, Void> httpAsyncTask = new HttpAsyncTask<Void, Void, Void>() {
+			AsyncTask<Void, Void, Void> httpAsyncTask = new AsyncTask<Void, Void, Void>() {
+
 				@Override
-				protected Void httpDoInBackground(Void... params) {
+				protected Void doInBackground(Void... voids) {
 					try {
 						Activity activity = getActivity();
 						if (activity != null) {
@@ -720,19 +720,9 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 				}
 
 				@Override
-				protected Void httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-					return null;
-				}
-
-				@Override
 				protected void onPostExecute(Void aVoid) {
 					super.onPostExecute(aVoid);
 					mScrollView.scrollTo(0, 0);
-				}
-
-				@Override
-				protected Class<Void> httpDoInBackgroundReturnType() {
-					return null;
 				}
 			};
 			httpAsyncTask.execute();

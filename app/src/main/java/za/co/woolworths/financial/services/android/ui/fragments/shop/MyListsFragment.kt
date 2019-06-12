@@ -12,7 +12,6 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import com.awfs.coordination.R
-import za.co.woolworths.financial.services.android.contracts.AsyncAPIResponse
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
 import za.co.woolworths.financial.services.android.ui.adapters.ViewShoppingListAdapter
@@ -28,7 +27,6 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.models.rest.shoppinglist.DeleteShoppingLists
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.DepartmentExtensionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
@@ -122,7 +120,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
     }
 
     private fun bindShoppingListToUI() {
-        var shoppingList: MutableList<ShoppingList>? = parentFragment?.getShoppingListResponseData()?.lists ?: mutableListOf()
+        val shoppingList: MutableList<ShoppingList>? = parentFragment?.getShoppingListResponseData()?.lists ?: mutableListOf()
         shoppingList.let {
             when (it?.size) {
                 0 -> showEmptyShoppingListView() //no list found
@@ -257,22 +255,25 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
     }
 
     private fun deleteShoppingListItem(shoppingList: ShoppingList) {
-        DeleteShoppingLists(shoppingList.listId, object : AsyncAPIResponse.ResponseDelegate<ShoppingListsResponse> {
-            override fun onSuccess(response: ShoppingListsResponse) {
-                when (response.httpCode) {
-                    200 -> {
-                        parentFragment?.setShoppingListResponseData(response)
-                        if (mAddToShoppingListAdapter?.getShoppingList()?.size == 0)
-                            showEmptyShoppingListView()
+        val deleteShoppingList =  OneAppService.deleteShoppingList(shoppingList.listId)
+        deleteShoppingList.enqueue(CompletionHandler(object: RequestListener<ShoppingListsResponse>{
+            override fun onSuccess(shoppingListsResponse: ShoppingListsResponse?) {
+                shoppingListsResponse?.apply {
+                    when (httpCode) {
+                        200 -> {
+                            parentFragment?.setShoppingListResponseData(this)
+                            if (mAddToShoppingListAdapter?.getShoppingList()?.size == 0)
+                                showEmptyShoppingListView()
+                        }
                     }
                 }
             }
 
-            override fun onFailure(errorMessage: String) {
+            override fun onFailure(error: Throwable?) {
                 activity?.let { it.runOnUiThread { ErrorHandlerView(it).showToast() } }
             }
 
-        }).execute()
+        }))
     }
 
     override fun onShoppingListItemDeleted(shoppingList: ShoppingList, position: Int) {

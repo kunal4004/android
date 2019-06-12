@@ -12,7 +12,7 @@ import za.co.woolworths.financial.services.android.models.dto.statement.SendUser
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementResponse
 import za.co.woolworths.financial.services.android.models.dto.statement.StatementResponse
 
-interface WfsApiService {
+interface ApiInterface {
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:28800")
     @GET("user/accounts")
@@ -884,7 +884,7 @@ interface WfsApiService {
             @Header("os") os: String,
             @Header("osVersion") osVersion: String,
             @Header("sessionToken") sessionToken: String,
-            @Body checkoutSuccess: CheckoutSuccess): Void
+            @Body checkoutSuccess: CheckoutSuccess): Call<Void>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("order")

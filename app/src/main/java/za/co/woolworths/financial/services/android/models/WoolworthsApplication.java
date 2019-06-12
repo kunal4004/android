@@ -51,7 +51,6 @@ public class WoolworthsApplication extends Application implements Application.Ac
 	private static Context context;
 	private static Context mContextApplication;
 	private UserManager mUserManager;
-	private WfsApi mWfsApi;
 	private Tracker mTracker;
 	private static String applyNowLink;
 	private static String registrationTCLink;
@@ -319,18 +318,10 @@ public class WoolworthsApplication extends Application implements Application.Ac
 		return mUserManager;
 	}
 
-	public WfsApi getApi() {
-		if (mWfsApi == null) {
-			mWfsApi = new WfsApi(this);
-		}
-		return mWfsApi;
-	}
-
 	@Override
 	public void onLowMemory() {
 		super.onLowMemory();
 		mUserManager = null;
-		mWfsApi = null;
 	}
 
 	public Tracker getTracker() {

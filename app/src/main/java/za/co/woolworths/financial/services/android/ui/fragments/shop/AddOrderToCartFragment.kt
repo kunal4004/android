@@ -23,15 +23,12 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.models.rest.product.GetInventorySkusForStore
-import za.co.woolworths.financial.services.android.models.rest.product.PostAddItemToCart
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity
 import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity
 import za.co.woolworths.financial.services.android.ui.adapters.AddOrderToCartAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.FragmentsEventsListner
 import za.co.woolworths.financial.services.android.util.MultiMap
-import za.co.woolworths.financial.services.android.util.OnEventListener
 import za.co.woolworths.financial.services.android.util.Utils
 
 

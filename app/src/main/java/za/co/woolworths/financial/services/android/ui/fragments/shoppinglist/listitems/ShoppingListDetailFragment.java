@@ -49,7 +49,6 @@ import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForSt
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
-import za.co.woolworths.financial.services.android.models.rest.shoppinglist.DeleteShoppingListItem;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
@@ -64,7 +63,6 @@ import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.MultiMap;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
-import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
@@ -362,8 +360,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
 
     @Override
     public void onItemDeleteClick(String id, String productId, String catalogRefId) {
-        DeleteShoppingListItem deleteShoppingListItem = deleteShoppingListItem(listId, id, productId, catalogRefId);
-        deleteShoppingListItem.execute();
+       deleteShoppingListItem(listId, id, productId, catalogRefId);
     }
 
     @Override
@@ -916,19 +913,22 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     }
 
 
-    public DeleteShoppingListItem deleteShoppingListItem(String listId, String id, String productId, String catalogRefId) {
-        return new DeleteShoppingListItem(new OnEventListener() {
+    public Call<ShoppingListItemsResponse> deleteShoppingListItem(String listId, String id, String productId, String catalogRefId) {
+
+       Call<ShoppingListItemsResponse> shoppingListItemsResponseCall =  OneAppService.INSTANCE.deleteShoppingListItem(listId,id,productId,catalogRefId);
+        shoppingListItemsResponseCall.enqueue(new CompletionHandler<>(new RequestListener<ShoppingListItemsResponse>() {
             @Override
-            public void onSuccess(Object object) {
-                ShoppingListItemsResponse shoppingListItemsResponse = (ShoppingListItemsResponse) object;
+            public void onSuccess(ShoppingListItemsResponse shoppingListItemsResponse) {
                 onShoppingListItemDelete(shoppingListItemsResponse);
             }
 
             @Override
-            public void onFailure(String e) {
+            public void onFailure(Throwable error) {
                 onDeleteItemFailed();
             }
-        }, listId, id, productId, catalogRefId);
+        }));
+
+        return shoppingListItemsResponseCall;
     }
 
     protected Call<AddItemToCartResponse> postAddItemToCart(List<AddItemToCart> addItemToCart) {

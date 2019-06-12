@@ -8,11 +8,11 @@ import retrofit2.converter.gson.GsonConverterFactory
 import za.co.wigroup.androidutils.Util
 import java.util.concurrent.TimeUnit
 
-abstract class RetrofitService : NetworkConfig() {
+abstract class RetrofitConfig : NetworkConfig() {
 
     companion object {
         private const val READ_CONNECT_TIMEOUT_UNIT: Long = 45
-        lateinit var mApiInterface: WfsApiService
+        lateinit var mApiInterface: ApiInterface
     }
 
     init {
@@ -33,6 +33,6 @@ abstract class RetrofitService : NetworkConfig() {
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(httpBuilder.build())
                 .build()
-                .create(WfsApiService::class.java)
+                .create(ApiInterface::class.java)
     }
 }

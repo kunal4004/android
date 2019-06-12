@@ -10,7 +10,7 @@ import za.co.woolworths.financial.services.android.models.dto.npc.BlockMyCardRes
 import za.co.woolworths.financial.services.android.models.dto.statement.*
 import za.co.woolworths.financial.services.android.util.Utils
 
-object OneAppService : RetrofitService() {
+object OneAppService : RetrofitConfig() {
 
     fun getConfig(): Call<ConfigResponse> = mApiInterface.getConfig(
             WoolworthsApplication.getApiId(),
@@ -242,7 +242,7 @@ object OneAppService : RetrofitService() {
         return mApiInterface.getStatement(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), getStatement.docId, getStatement.productOfferingId, getStatement.docDesc)
     }
 
-    fun postCheckoutSuccess(checkoutSuccess: CheckoutSuccess): Void {
+    fun postCheckoutSuccess(checkoutSuccess: CheckoutSuccess): Call<Void> {
         return mApiInterface.postCheckoutSuccess(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), checkoutSuccess)
     }
 

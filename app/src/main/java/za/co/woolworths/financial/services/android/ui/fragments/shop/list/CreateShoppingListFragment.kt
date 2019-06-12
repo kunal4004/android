@@ -15,13 +15,11 @@ import android.view.inputmethod.EditorInfo
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.create_new_list.*
 import retrofit2.Call
-import za.co.woolworths.financial.services.android.contracts.AsyncAPIResponse
 import za.co.woolworths.financial.services.android.contracts.RequestListener
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostOrderToShoppingList
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity
@@ -414,31 +412,37 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
     private fun addOrderToShoppingList(orderId: String?, shoppingList: ShoppingList) {
         shoppingListPostProgress(true)
         val orderRequestList = OrderToShoppingListRequestBody(shoppingList.listId, shoppingList.listName)
-        PostOrderToShoppingList(orderId, orderRequestList, object : AsyncAPIResponse.ResponseDelegate<OrderToListReponse> {
-            override fun onSuccess(response: OrderToListReponse) {
-                response.apply {
-                    response.apply {
-                        when (httpCode) {
-                            0 -> addToListWasSendSuccessfully(orderRequestList.shoppingListId)
-                            440 -> sessionExpiredHandler()
-                            else -> response.response?.let { otherHttpCodeHandler(it) }
-                        }
-                    }
-                }
-            }
 
-            override fun onFailure(errorMessage: String) {
-                activity?.let {
-                    it.runOnUiThread {
-                        if (!networkConnectionAvailable(it)) {
-                            mAutoConnect = AutoConnect.ADD_ORDER_TO_LIST
-                            shoppingListPostProgress(false)
-                            ErrorHandlerView(it).showToast()
+        orderId?.let {
+             orderID ->
+           val addOrderToListRequest =  OneAppService.addOrderToList(orderID, orderRequestList)
+            addOrderToListRequest.enqueue(CompletionHandler(object:RequestListener<OrderToListReponse>{
+                override fun onSuccess(orderToListReponse: OrderToListReponse?) {
+                    orderToListReponse?.apply {
+                        response.apply {
+                            when (httpCode) {
+                                0 -> addToListWasSendSuccessfully(orderRequestList.shoppingListId)
+                                440 -> sessionExpiredHandler()
+                                else -> response?.let { otherHttpCodeHandler(it) }
+                            }
                         }
                     }
                 }
-            }
-        }).execute()
+
+                override fun onFailure(error: Throwable?) {
+                    activity?.let { activity ->
+                        activity.runOnUiThread {
+                            if (!networkConnectionAvailable(activity)) {
+                                mAutoConnect = AutoConnect.ADD_ORDER_TO_LIST
+                                shoppingListPostProgress(false)
+                                ErrorHandlerView(activity).showToast()
+                            }
+                        }
+                    }
+                }
+
+            }))
+        }
     }
 
     private fun otherHttpCodeHandler(response: Response) {

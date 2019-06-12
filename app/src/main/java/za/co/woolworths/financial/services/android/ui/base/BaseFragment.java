@@ -30,7 +30,6 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -249,14 +248,6 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 
 	public void fadeOutToolbar(int color) {
 		getBottomNavigator().fadeOutToolbar(color);
-	}
-
-	public void cancelRequest(HttpAsyncTask httpAsyncTask) {
-		if (httpAsyncTask != null) {
-			if (!httpAsyncTask.isCancelled()) {
-				httpAsyncTask.cancel(true);
-			}
-		}
 	}
 
 	public void cancelRequest(Call call) {

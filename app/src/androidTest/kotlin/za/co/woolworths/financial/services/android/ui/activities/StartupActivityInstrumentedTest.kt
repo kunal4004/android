@@ -11,9 +11,7 @@ import com.awfs.coordination.R
 import com.microsoft.appcenter.espresso.Factory
 import org.junit.*
 import org.junit.runner.RunWith
-import za.co.woolworths.financial.services.android.contracts.OnResultListener
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse
-import za.co.woolworths.financial.services.android.util.HttpAsyncTask
 import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.concurrent.CountDownLatch
@@ -72,7 +70,7 @@ public class StartupActivityInstrumentedTest {
 
         val mcsAppVersion = appVersion.substring(0, 3) + if (environment === "production") "" else "-$environment"
 
-        MobileConfigServerDao.getConfig(mcsAppVersion, Utils.getUniqueDeviceID(activityRule.activity), object :OnResultListener<ConfigResponse> {
+        MobileConfigServerDao.getConfig(mcsAppVersion, Utils.getUniqueDeviceID(activityRule.activity), object {
             override fun success(responseObject: ConfigResponse) {
                 Assert.assertTrue(responseObject is ConfigResponse)
                 success = true

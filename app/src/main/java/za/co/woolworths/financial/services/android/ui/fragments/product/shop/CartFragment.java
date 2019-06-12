@@ -61,7 +61,6 @@ import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForSt
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
-import za.co.woolworths.financial.services.android.models.rest.shop.SetDeliveryLocationSuburb;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
@@ -93,7 +92,6 @@ import static za.co.woolworths.financial.services.android.ui.activities.CustomPo
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.views.actionsheet.ActionSheetDialogFragment.DIALOG_REQUEST_CODE;
-
 
 public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick, View.OnClickListener, NetworkChangeListener, ToastUtils.ToastInterface, WMaterialShowcaseView.IWalkthroughActionListener {
 
@@ -852,29 +850,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					// Checkout completed successfully
                     final ShoppingDeliveryLocation lastDeliveryLocation = Utils.getPreferredDeliveryLocation();
                     if (lastDeliveryLocation != null) {
-                        SetDeliveryLocationSuburb setDeliveryLocationSuburb = new SetDeliveryLocationSuburb(lastDeliveryLocation.suburb.id, new OnEventListener() {
-                            @Override
-                            public void onSuccess(Object object) {
-                                SetDeliveryLocationSuburbResponse response = (SetDeliveryLocationSuburbResponse) object;
-                                if(response.httpCode == 200) {
-                                    Utils.savePreferredDeliveryLocation(lastDeliveryLocation);
-                                    Utils.sendBus(new CartState(lastDeliveryLocation.suburb.name + ", " + lastDeliveryLocation.province.name));
-                                }
-
-                                loadShoppingCartAndSetDeliveryLocation();
-                            }
-
-                            @Override
-                            public void onFailure(final String errorMessage) {
-                                getActivity().runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        loadShoppingCartAndSetDeliveryLocation();
-                                    }
-                                });
-
-                            }
-                        });
 
 						// Show loading state
 						rlCheckOut.setVisibility(View.GONE);
@@ -887,8 +862,31 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 							CartActivity cartActivity = (CartActivity) activity;
 							cartActivity.hideEditCart();
 						}
+						Call<SetDeliveryLocationSuburbResponse> setDeliveryLocationSuburb = OneAppService.INSTANCE.setSuburb(lastDeliveryLocation.suburb.id);
+						setDeliveryLocationSuburb.enqueue(new CompletionHandler<>(new RequestListener<SetDeliveryLocationSuburbResponse>() {
+							@Override
+							public void onSuccess(SetDeliveryLocationSuburbResponse setDeliveryLocationSuburbResponse) {
+								if(setDeliveryLocationSuburbResponse.httpCode == 200) {
+									Utils.savePreferredDeliveryLocation(lastDeliveryLocation);
+									Utils.sendBus(new CartState(lastDeliveryLocation.suburb.name + ", " + lastDeliveryLocation.province.name));
+								}
+								loadShoppingCartAndSetDeliveryLocation();
+							}
 
-                        setDeliveryLocationSuburb.execute();
+							@Override
+							public void onFailure(Throwable error) {
+								Activity activity = getActivity();
+								if (activity == null || error.getMessage() == null)return;
+
+								activity.runOnUiThread(new Runnable() {
+									@Override
+									public void run() {
+										loadShoppingCartAndSetDeliveryLocation();
+									}
+								});
+
+							}
+						}));
                     } else {
                     	// Fallback if there is no cached location
                         loadShoppingCartAndSetDeliveryLocation();

@@ -10,7 +10,6 @@ import com.google.gson.reflect.TypeToken
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment
-import za.co.woolworths.financial.services.android.util.HttpAsyncTask
 import za.co.woolworths.financial.services.android.util.NetworkManager
 
 open class DepartmentExtensionFragment : Fragment() {
@@ -44,14 +43,6 @@ open class DepartmentExtensionFragment : Fragment() {
             val fm = it.supportFragmentManager
             val singleButtonDialogFragment = SingleButtonDialogFragment.newInstance(message)
             singleButtonDialogFragment.show(fm, SingleButtonDialogFragment::class.java.simpleName)
-        }
-    }
-
-    fun cancelRequest(httpAsyncTask: HttpAsyncTask<*, *, *>?) {
-        httpAsyncTask?.let {
-            if (!httpAsyncTask.isCancelled) {
-                httpAsyncTask.cancel(true)
-            }
         }
     }
 

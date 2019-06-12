@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment
 import com.awfs.coordination.R
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.Gson
+import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.RequestListener
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse
@@ -12,7 +13,6 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
-import za.co.woolworths.financial.services.android.util.HttpAsyncTask
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.HashMap
@@ -27,11 +27,11 @@ abstract class WTodayExtension : Fragment() {
 
     abstract fun progressBarVisibility(isDisplayed: Boolean)
 
-    var mGetProductDetail: HttpAsyncTask<String, String, ProductDetailResponse>? = null
+    var mGetProductDetail: Call<ProductDetailResponse>? = null
 
     fun retrieveProduct(productId: String, skuId: String) {
         progressBarVisibility(true)
-        OneAppService.productDetail(productId, skuId).apply {
+        mGetProductDetail =  OneAppService.productDetail(productId, skuId).apply {
             enqueue(CompletionHandler(object : RequestListener<ProductDetailResponse> {
                 override fun onSuccess(response: ProductDetailResponse?) {
                     if (!WoolworthsApplication.isApplicationInForeground() && !isAdded && !isVisible && !userVisibleHint && !isHidden)

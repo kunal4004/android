@@ -13,7 +13,6 @@ import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
-import za.co.woolworths.financial.services.android.models.rest.product.GetProductsRequest;
 import za.co.woolworths.financial.services.android.ui.base.BaseViewModel;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.rx.SchedulerProvider;
@@ -28,7 +27,7 @@ public class GridViewModel extends BaseViewModel<GridNavigator> {
     private int mLoadStatus;
     private boolean productIsLoading = false;
     private ProductsRequestParams productsRequestParams;
-    private GetProductsRequest mGetProductsRequest;
+    Call<ProductView> retrieveProduct;
 
     public void setLoadStatus(int status) {
         this.mLoadStatus = status;
@@ -77,7 +76,7 @@ public class GridViewModel extends BaseViewModel<GridNavigator> {
     public void executeLoadProduct(final Activity acivity, ProductsRequestParams requestParams) {
         getNavigator().onLoadStart(getLoadMoreData());
         setProductIsLoading(true);
-        Call<ProductView> retrieveProduct =  OneAppService.INSTANCE.getProducts(requestParams);
+        retrieveProduct =  OneAppService.INSTANCE.getProducts(requestParams);
         retrieveProduct.enqueue(new CompletionHandler<>(new RequestListener<ProductView>() {
             @Override
             public void onSuccess(ProductView productView) {
@@ -114,8 +113,8 @@ public class GridViewModel extends BaseViewModel<GridNavigator> {
         }));
     }
 
-    public GetProductsRequest getLoadProductRequest() {
-        return mGetProductsRequest;
+    public Call<ProductView> getLoadProductRequest() {
+        return retrieveProduct;
     }
 
 

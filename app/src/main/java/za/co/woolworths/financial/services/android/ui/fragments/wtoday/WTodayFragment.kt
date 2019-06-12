@@ -159,8 +159,8 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface {
     }
 
     private fun cancelPDPRequest() = mGetProductDetail?.apply {
-        if (isCancelled) {
-            cancel(true)
+        if (isCanceled) {
+            cancel()
         }
     }
 
