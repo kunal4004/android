@@ -22,6 +22,7 @@ import android.support.v7.widget.DividerItemDecoration
 import kotlinx.android.synthetic.main.no_connection_handler.*
 import kotlinx.android.synthetic.main.sign_out_template.*
 import kotlinx.android.synthetic.main.shopping_list_fragment.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity
 import za.co.woolworths.financial.services.android.contracts.IShoppingList
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
@@ -183,6 +184,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
             }
 
             R.id.rlCreateAList -> {
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPNEWLIST)
                 navigateToCreateListFragment(mutableListOf())
             }
         }

@@ -51,6 +51,8 @@ class FirebaseManagerAnalyticsProperties {
         const val REFINE_EVENT_BACK_BUTTON: String = "GA_Event_ONE_SORTSFILTERS_SEERSBB"
 
         const val CRASH_CAUTION: String = "GA_Event_ONE_CRASH_CAUTION"
+        const val SHOPMYLISTS: String = "GA_Event_ONE_SHOP_MYLISTS"
+        const val SHOPMYORDERS: String = "GA_Event_ONE_SHOP_MYORDERS"
 
     }
 
