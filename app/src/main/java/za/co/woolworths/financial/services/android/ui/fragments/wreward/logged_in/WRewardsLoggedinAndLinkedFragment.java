@@ -20,10 +20,14 @@ import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.WrewardsLoggedinAndLinkedFragmentBinding;
 import com.crashlytics.android.Crashlytics;
 
+import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
+import za.co.woolworths.financial.services.android.contracts.RequestListener;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dto.CardDetailsResponse;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
+import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.models.rest.reward.GetVoucher;
 import za.co.woolworths.financial.services.android.models.rest.reward.WRewardsCardDetails;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
@@ -60,7 +64,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	public CardDetailsResponse cardDetailsResponse;
 	public VoucherResponse voucherResponse;
 	private WRewardLoggedInViewModel wRewardViewModel;
-	private GetVoucher getVoucherAsync;
+	private Call<VoucherResponse> getVoucherAsync;
 	private AsyncTask<String, String, CardDetailsResponse> wRewardsCardDetails;
 	private String TAG = this.getClass().getSimpleName();
 	boolean isActivityInForeground;
@@ -161,21 +165,25 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 
 	private void loadReward() {
 		getVoucherAsync = getWRewards();
-		getVoucherAsync.execute();
 	}
 
-	private GetVoucher getWRewards() {
-		return new GetVoucher(new OnEventListener() {
+	private Call<VoucherResponse> getWRewards() {
+
+		Call<VoucherResponse> voucherRequestCall =  OneAppService.INSTANCE.getVouchers();
+		voucherRequestCall.enqueue(new CompletionHandler<>(new RequestListener<VoucherResponse>() {
 			@Override
-			public void onSuccess(Object object) {
-				handleVoucherResponse(((VoucherResponse) object));
+			public void onSuccess(VoucherResponse voucherResponse) {
+				handleVoucherResponse((voucherResponse));
 			}
 
 			@Override
-			public void onFailure(String errorMessage) {
-				mErrorHandlerView.networkFailureHandler(errorMessage);
+			public void onFailure(Throwable error) {
+				if (error==null)return;
+				mErrorHandlerView.networkFailureHandler(error.getMessage());
 			}
-		});
+		}));
+
+		return voucherRequestCall;
 	}
 
 	public void handleVoucherResponse(VoucherResponse response) {

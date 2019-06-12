@@ -13,7 +13,7 @@ import okhttp3.OkHttpClient;
 import retrofit.RestAdapter;
 import retrofit.client.Response;
 import za.co.wigroup.androidutils.Util;
-import za.co.woolworths.financial.services.android.models.network.NetworkConfig;
+import za.co.woolworths.financial.services.android.models.ApiInterface;
 import za.co.woolworths.financial.services.android.models.network.WfsApiInterceptor;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
@@ -82,10 +82,9 @@ import za.co.woolworths.financial.services.android.util.Utils;
 public class WfsApi {
 
 	private Context mContext;
-	private ApiInterface mApiInterface;
 	public static final String TAG = "WfsApi";
 	private Location loc;
-
+	private ApiInterface mApiInterface;
 	WfsApi(Context mContext) {
 		this.mContext = mContext;
 		OkHttpClient.Builder httpBuilder = new OkHttpClient.Builder();

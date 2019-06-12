@@ -19,7 +19,7 @@ import za.co.woolworths.financial.services.android.util.GZIPCompression;
  * Created by eesajacobs on 2016/12/29.
  */
 
-public class WfsApiInterceptor implements Interceptor {
+public class WfsApiInterceptor extends NetworkConfig implements Interceptor {
     public static final String TAG = "WfsApiInterceptor";
 
     @Override
@@ -30,7 +30,7 @@ public class WfsApiInterceptor implements Interceptor {
         long t1 = System.nanoTime();
 
         String requestLog = String.format("Sending request %s on %s%n%s", request.url(), chain.connection(), request.headers());
-        Log.d(TAG, "request" + "\n" + requestLog);
+        Log.d(TAG,"request" + "\n" + requestLog);
 
         String cacheTimeHeaderValue = request.header("cacheTime");
         final long cacheTime = Integer.parseInt(cacheTimeHeaderValue == null ? "0" : cacheTimeHeaderValue);//cache time in seconds

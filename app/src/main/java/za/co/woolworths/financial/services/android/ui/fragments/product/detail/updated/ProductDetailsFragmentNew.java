@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
 import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -42,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 
 import me.relex.circleindicator.CircleIndicator;
+import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
@@ -147,7 +147,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
     private final int SET_DELIVERY_LOCATION_REQUEST_CODE = 180;
     private ToastUtils mToastUtils;
     private FuseLocationAPISingleton mFuseLocationAPISingleton;
-    private AsyncTask<String, String, SkusInventoryForStoreResponse> mExecuteInventoryForSku;
+    private Call<SkusInventoryForStoreResponse> mExecuteInventoryForSku;
 
     @Override
     public ProductDetailsViewModelNew getViewModel() {
@@ -255,7 +255,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
             this.onSuccessResponse(productDetails);
         } else {
             //loadProductDetails.
-            getViewModel().productDetail(new ProductRequest(productDetails.productId, productDetails.sku)).execute();
+            getViewModel().productDetail(new ProductRequest(productDetails.productId, productDetails.sku));
         }
     }
 
@@ -367,7 +367,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
         ShoppingDeliveryLocation deliveryLocation = Utils.getPreferredDeliveryLocation();
         if (deliveryLocation == null) {
             enableAddToCartButton(true);
-            getViewModel().getCartSummary().execute();
+            getViewModel().getCartSummary();
             return;
         }
 
@@ -387,10 +387,10 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
             }
 
             if (this.otherSKUForCart != null)
-              mExecuteInventoryForSku =  getViewModel().queryInventoryForSKUs(storeId, this.otherSKUForCart.sku, false).execute();
+              mExecuteInventoryForSku =  getViewModel().queryInventoryForSKUs(storeId, this.otherSKUForCart.sku, false);
             else {
                 String multiSKUs = getViewModel().getMultiSKUsStringForInventory(this.otherSKUsByGroupKey.get(this.selectedGroupKey));
-                mExecuteInventoryForSku = getViewModel().queryInventoryForSKUs(storeId, multiSKUs, true).execute();
+                mExecuteInventoryForSku = getViewModel().queryInventoryForSKUs(storeId, multiSKUs, true);
             }
 
         }
@@ -782,7 +782,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
             String multiSKUS = getViewModel().getMultiSKUsStringForInventory(this.otherSKUsByGroupKey.get(this.selectedGroupKey));
             String storeId = Utils.retrieveStoreId(productDetails.fulfillmentType);
-            getViewModel().queryInventoryForSKUs(storeId, multiSKUS, true).execute();
+            getViewModel().queryInventoryForSKUs(storeId, multiSKUS, true);
 
         } else {
             openQuantityPicker(quantityInStock, false);
@@ -1013,7 +1013,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
         AddItemToCart item = new AddItemToCart(productDetails.productId, this.otherSKUForCart.sku, quantity);
         ArrayList<AddItemToCart> listOfItems = new ArrayList<>();
         listOfItems.add(item);
-        getViewModel().postAddItemToCart(listOfItems).execute();
+        getViewModel().postAddItemToCart(listOfItems);
         this.dismissPickerDialog(multiPickerDialog);
     }
 
@@ -1141,7 +1141,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
     }
 
     private void executeLocationItemTask() {
-        getViewModel().locationItemTask(getActivity(), this.otherSKUForFindInStore).execute();
+        getViewModel().locationItemTask(getActivity(), this.otherSKUForFindInStore);
     }
 
     @Override
@@ -1307,8 +1307,8 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mExecuteInventoryForSku!=null &&  !mExecuteInventoryForSku.isCancelled()){
-            mExecuteInventoryForSku.cancel(true);
+        if (mExecuteInventoryForSku!=null &&  !mExecuteInventoryForSku.isCanceled()){
+            mExecuteInventoryForSku.cancel();
         }
     }
 }

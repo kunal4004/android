@@ -17,8 +17,12 @@ import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_add_order_to_cart.*
 import org.json.JSONObject
+import retrofit2.Call
+import za.co.woolworths.financial.services.android.contracts.RequestListener
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.models.rest.product.GetInventorySkusForStore
 import za.co.woolworths.financial.services.android.models.rest.product.PostAddItemToCart
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity
@@ -227,7 +231,7 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
 
     private fun executeGetInventoryForStore(storeId: String, multiSku: String) {
         setSelectAllTextVisibility(false)
-        getInventoryStockForStore(storeId, multiSku)?.execute()
+        getInventoryStockForStore(storeId, multiSku)
 
     }
 
@@ -283,8 +287,9 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
         addOrderToCartAdapter?.updateList(dataList)
     }
 
-    fun getInventoryStockForStore(storeId: String, multiSku: String): GetInventorySkusForStore {
-        return GetInventorySkusForStore(storeId, multiSku, object : OnEventListener<SkusInventoryForStoreResponse> {
+    private fun getInventoryStockForStore(storeId: String, multiSku: String): Call<SkusInventoryForStoreResponse> {
+      val skusInventoryForStoreRequest =    OneAppService.getInventorySkuForStore(storeId, multiSku)
+        skusInventoryForStoreRequest.enqueue(CompletionHandler(object: RequestListener<SkusInventoryForStoreResponse>{
             override fun onSuccess(skusInventoryForStoreResponse: SkusInventoryForStoreResponse?) {
                 when (skusInventoryForStoreResponse?.httpCode) {
                     200 -> {
@@ -333,13 +338,14 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
 
                     }
                 }
-
             }
 
-            override fun onFailure(e: String?) {
+            override fun onFailure(error: Throwable?) {
             }
 
-        })
+        }))
+
+        return skusInventoryForStoreRequest
     }
 
     private fun setSelectAllTextVisibility(state: Boolean) {
@@ -372,7 +378,7 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
         }
     }
 
-    fun addItemsToCart() {
+    private fun addItemsToCart() {
         executeAddToCart(dataList)
     }
 
@@ -387,7 +393,7 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
             }
         }
 
-        postAddItemToCart(selectedItems).execute()
+        postAddItemToCart(selectedItems)
     }
 
     private fun onAddToCartPreExecute() {
@@ -395,15 +401,18 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
         loadingBar.visibility = View.VISIBLE
     }
 
-    private fun postAddItemToCart(addItemToCart: List<AddItemToCart>): PostAddItemToCart {
-        return PostAddItemToCart(addItemToCart, object : OnEventListener<AddItemToCartResponse> {
+    private fun postAddItemToCart(addItemToCart: List<AddItemToCart>): Call<AddItemToCartResponse> {
+        val addItemToCartRequest = OneAppService.addItemToCart(addItemToCart)
+        addItemToCartRequest.enqueue(CompletionHandler(object:RequestListener<AddItemToCartResponse>{
             override fun onSuccess(addItemToCartResponse: AddItemToCartResponse?) {
-                onAddToCartSuccess(addItemToCartResponse!!)
+                addItemToCartResponse?.let { onAddToCartSuccess(it) }
             }
 
-            override fun onFailure(e: String?) {
+            override fun onFailure(error: Throwable?) {
             }
-        })
+
+        }))
+        return addItemToCartRequest
     }
 
     fun onAddToCartSuccess(addItemToCartResponse: AddItemToCartResponse) {

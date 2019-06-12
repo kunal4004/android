@@ -751,7 +751,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 					&& (currentFragment instanceof MyAccountsFragment)) {
 				if (SessionUtilities.getInstance().isUserAuthenticated()
 						&& SessionUtilities.getInstance().isC2User()) {
-					getViewModel().loadMessageCount().execute();
+					getViewModel().loadMessageCount();
 				}
 			}
 		}

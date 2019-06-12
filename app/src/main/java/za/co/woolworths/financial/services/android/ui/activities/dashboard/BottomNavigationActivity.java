@@ -52,7 +52,7 @@ import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksVi
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragmentNew;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment;
@@ -96,8 +96,6 @@ import static za.co.woolworths.financial.services.android.ui.activities.CustomPo
 import static za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity.DELIVERY_LOCATION_CLOSE_CLICKED;
 import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.RESULT_OK_ACCOUNTS;
 import static za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity.RESULT_OK_BARCODE_SCAN;
-import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.DELIVERY_LOCATION_FROM_PDP_REQUEST;
-import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.INDEX_ADD_TO_CART;
 import static za.co.woolworths.financial.services.android.ui.fragments.shop.list.AddToShoppingListFragment.POST_ADD_TO_SHOPPING_LIST;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.listitems.ShoppingListDetailFragment.ADD_TO_CART_SUCCESS_RESULT;
 import static za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment.LOCK_REQUEST_CODE_WREWARDS;
@@ -367,14 +365,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     case COLLAPSED:
                         showStatusBar();
                         onActivityResult(SLIDE_UP_COLLAPSE_REQUEST_CODE, SLIDE_UP_COLLAPSE_RESULT_CODE, null);
-                        try {
-                            //detach detail fragment
-                            if (getBottomFragmentById() instanceof ProductDetailFragment) {
-                                removeBottomFragment();
-                            }
-                        } catch (ClassCastException e) {
-                            // not that fragment
-                        }
+
                         break;
 
                     case EXPANDED:
@@ -800,7 +791,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 break;
 
             default:
-                sendBus(new ProductDetailFragment());
                 break;
         }
         ;
@@ -965,7 +955,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 default:
                     Fragment fragmentById = getBottomFragmentById();
                     if (fragmentById == null) break;
-                    if (fragmentById instanceof ProductDetailFragment)
+                    if (fragmentById instanceof ProductDetailsFragmentNew)
                         fragmentById.onActivityResult(requestCode, resultCode, data);
                     break;
             }
@@ -978,7 +968,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
         //Call product detail onActivityResult
         if (resultCode == RESULT_TAP_FIND_INSTORE_BTN) {
-            if (getBottomFragmentById() instanceof ProductDetailFragment) {
+            if (getBottomFragmentById() instanceof ProductDetailsFragmentNew) {
                 getBottomFragmentById().onActivityResult(requestCode, resultCode, null);
             }
 
@@ -998,30 +988,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
             }
         }
 
-        if (requestCode == DELIVERY_LOCATION_FROM_PDP_REQUEST) {
-            /***
-             * Activated when set delivery location process is successfully set
-             */
-
-            if (resultCode == RESULT_OK) {
-                if (getGlobalState().getSaveButtonClick() == INDEX_ADD_TO_CART) {
-                    Fragment fragmentById = getBottomFragmentById();
-                    fragmentById.onActivityResult(requestCode, resultCode, null);
-                    return;
-                }
-            }
-
-            /***
-             * Activated when set delivery location process is canceled
-             */
-
-            if (resultCode == DELIVERY_LOCATION_CLOSE_CLICKED) {
-                Fragment fragmentById = getBottomFragmentById();
-                fragmentById.onActivityResult(requestCode, resultCode, null);
-                return;
-            }
-        }
-
         if (requestCode == ADD_TO_CART_SUCCESS_RESULT) {
             if (resultCode == ADD_TO_CART_SUCCESS_RESULT) {
                 String itemAddToCartMessage = data.getStringExtra("addedToCartMessage");
@@ -1033,7 +999,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
         if (requestCode == BOTTOM_FRAGMENT_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                if (getBottomFragmentById() instanceof ProductDetailFragment) {
+                if (getBottomFragmentById() instanceof ProductDetailsFragmentNew) {
                     getBottomFragmentById().onActivityResult(requestCode, resultCode, data);
                 }
             }

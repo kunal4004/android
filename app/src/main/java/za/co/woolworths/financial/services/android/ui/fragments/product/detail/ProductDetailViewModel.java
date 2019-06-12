@@ -19,17 +19,24 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import retrofit2.Call;
+import za.co.woolworths.financial.services.android.contracts.RequestListener;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
+import za.co.woolworths.financial.services.android.models.dto.AddToCartDaTum;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
+import za.co.woolworths.financial.services.android.models.dto.FormException;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
+import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
+import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.models.rest.product.GetCartSummary;
 import za.co.woolworths.financial.services.android.models.rest.product.GetProductDetail;
 import za.co.woolworths.financial.services.android.models.rest.product.PostAddItemToCart;
@@ -89,13 +96,15 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 		return addedToCart;
 	}
 
-	public GetProductDetail productDetail(ProductRequest productRequest) {
+
+	public Call<ProductDetailResponse> productDetail(ProductRequest productRequest) {
 		getNavigator().onLoadStart();
 		setProductLoadFail(false);
-		return new GetProductDetail(productRequest, new OnEventListener() {
+		Call<ProductDetailResponse> productDetailRequest = OneAppService.INSTANCE.productDetail(productRequest.getProductId(), productRequest.getSkuId());
+		productDetailRequest.enqueue(new CompletionHandler<>(new RequestListener<ProductDetailResponse>() {
 			@Override
-			public void onSuccess(Object object) {
-				ProductDetailResponse productDetail = (ProductDetailResponse) object;
+			public void onSuccess(ProductDetailResponse productDetailResponse) {
+				ProductDetailResponse productDetail = productDetailResponse;
 				String detailProduct = Utils.objectToJson(productDetail);
 				switch (productDetail.httpCode) {
 					case 200:
@@ -115,43 +124,51 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 			}
 
 			@Override
-			public void onFailure(String e) {
-				setProductLoadFail(true);
-				getNavigator().onFailureResponse(e.toString());
+			public void onFailure(Throwable error) {
+				if (error!=null) {
+					setProductLoadFail(true);
+					getNavigator().onFailureResponse(error.getMessage());
+				}
 			}
-		});
+		}));
+
+		return productDetailRequest;
 	}
 
-	public LocationItemTask locationItemTask(final Context context) {
+
+	public Call<LocationResponse> locationItemTask(final Context context) {
+		WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
+		WGlobalState mWGlobalState = woolworthsApplication.getWGlobalState();
 		setFindInStoreLoadFail(false);
 		getNavigator().showFindInStoreProgress();
-		return new LocationItemTask(new OnEventListener() {
+		Call<LocationResponse> locationResponseCall = OneAppService.INSTANCE.getLocationsItem(mWGlobalState.getSelectedSKUId().sku, String.valueOf(mWGlobalState.getStartRadius()), String.valueOf(mWGlobalState.getEndRadius()));
+		locationResponseCall.enqueue(new CompletionHandler<>(new RequestListener<LocationResponse>() {
 			@Override
-			public void onSuccess(Object object) {
-				if (object != null) {
-					List<StoreDetails> location = ((LocationResponse) object).Locations;
-					if (location != null && location.size() > 0) {
-						getNavigator().onLocationItemSuccess(location);
-					} else {
-						getNavigator().outOfStockDialog();
-					}
+			public void onSuccess(LocationResponse locationResponse) {
+				if (locationResponse != null && locationResponse.Locations.size() > 0) {
+					getNavigator().onLocationItemSuccess(locationResponse.Locations);
+				} else {
+					getNavigator().outOfStockDialog();
 				}
+
 				getNavigator().dismissFindInStoreProgress();
 				setFindInStoreLoadFail(false);
 			}
 
 			@Override
-			public void onFailure(final String e) {
-				if (context != null) {
+			public void onFailure(Throwable error) {
+				if (context != null && error != null) {
 					Activity activity = (Activity) context;
 					if (activity != null) {
 						setFindInStoreLoadFail(true);
 						getNavigator().dismissFindInStoreProgress();
-						getNavigator().onFailureResponse(e);
+						getNavigator().onFailureResponse(error.getMessage());
 					}
 				}
 			}
-		});
+		}));
+
+		return locationResponseCall;
 	}
 
 	public String getProductType() {
@@ -482,76 +499,83 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 		return productLoadFail;
 	}
 
-	protected GetCartSummary getCartSummary() {
+	protected Call<CartSummaryResponse> getCartSummary() {
 		setAddedToCart(true);
 		getNavigator().onAddToCartLoad();
-		return new GetCartSummary(new OnEventListener() {
+		Call<CartSummaryResponse> cartSummaryResponseCall = OneAppService.INSTANCE.getCartSummary();
+		cartSummaryResponseCall.enqueue(new CompletionHandler<>(new RequestListener<CartSummaryResponse>() {
 			@Override
-			public void onSuccess(Object object) {
-				if (object != null) {
-					CartSummaryResponse cartSummaryResponse = (CartSummaryResponse) object;
-					if (cartSummaryResponse != null) {
-						switch (cartSummaryResponse.httpCode) {
-							case 200:
-								getNavigator().onCartSummarySuccess(cartSummaryResponse);
-								break;
+			public void onSuccess(CartSummaryResponse cartSummaryResponse) {
+				if (cartSummaryResponse != null) {
+					switch (cartSummaryResponse.httpCode) {
+						case 200:
+							getNavigator().onCartSummarySuccess(cartSummaryResponse);
+							break;
 
-							case 440:
-								if (cartSummaryResponse.response != null)
-									getNavigator().onSessionTokenExpired(cartSummaryResponse.response);
-								break;
+						case 440:
+							if (cartSummaryResponse.response != null)
+								getNavigator().onSessionTokenExpired(cartSummaryResponse.response);
+							break;
 
-							default:
-								getNavigator().otherHttpCode(cartSummaryResponse.response);
-								break;
-						}
+						default:
+							getNavigator().otherHttpCode(cartSummaryResponse.response);
+							break;
 					}
 				}
 				setAddedToCart(true);
 			}
 
 			@Override
-			public void onFailure(String e) {
-				setAddedToCart(false);
-				getNavigator().onTokenFailure(e);
-			}
-		});
-	}
-
-	protected PostAddItemToCart postAddItemToCart(List<AddItemToCart> addItemToCart) {
-		setAddedToCart(true);
-		getNavigator().onAddToCartLoad();
-		return new PostAddItemToCart(addItemToCart, new OnEventListener() {
-			@Override
-			public void onSuccess(Object object) {
-				if (object != null) {
-					AddItemToCartResponse addItemToCartResponse = (AddItemToCartResponse) object;
-					if (addItemToCartResponse != null) {
-						switch (addItemToCartResponse.httpCode) {
-							case 200:
-								getNavigator().addItemToCartResponse(addItemToCartResponse);
-								break;
-
-							case 440:
-								if (addItemToCartResponse.response != null)
-									getNavigator().onSessionTokenExpired(addItemToCartResponse.response);
-								break;
-
-							default:
-								if (addItemToCartResponse.response != null)
-									getNavigator().otherHttpCode(addItemToCartResponse.response);
-								break;
-						}
-					}
-					setAddedToCart(true);
+			public void onFailure(Throwable error) {
+				if (error != null) {
+					setAddedToCart(false);
+					getNavigator().onTokenFailure(error.getMessage());
 				}
 			}
+		}));
+
+		return cartSummaryResponseCall;
+	}
+
+
+
+	protected Call<AddItemToCartResponse> postAddItemToCart(List<AddItemToCart> addItemToCart) {
+		setAddedToCart(true);
+		getNavigator().onAddToCartLoad();
+		Call<AddItemToCartResponse> addItemToCartResponseCall = OneAppService.INSTANCE.addItemToCart(addItemToCart);
+		addItemToCartResponseCall.enqueue(new CompletionHandler<>(new RequestListener<AddItemToCartResponse>() {
+			@Override
+			public void onSuccess(AddItemToCartResponse addItemToCartResponse) {
+				if (addItemToCartResponse != null) {
+					switch (addItemToCartResponse.httpCode) {
+						case 200:
+							getNavigator().addItemToCartResponse(addItemToCartResponse);
+							break;
+
+						case 440:
+							if (addItemToCartResponse.response != null)
+								getNavigator().onSessionTokenExpired(addItemToCartResponse.response);
+							break;
+
+						default:
+							if (addItemToCartResponse.response != null)
+								getNavigator().otherHttpCode(addItemToCartResponse.response);
+							break;
+					}
+				}
+				setAddedToCart(true);
+			}
 
 			@Override
-			public void onFailure(String e) {
-				setAddedToCart(false);
-				getNavigator().onAddItemToCartFailure(e);
+			public void onFailure(Throwable error) {
+				if (error != null) {
+					setAddedToCart(false);
+					getNavigator().onAddItemToCartFailure(error.getMessage());
+				}
 			}
-		});
+		}));
+
+		return addItemToCartResponseCall;
 	}
+
 }
