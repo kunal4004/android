@@ -9,7 +9,6 @@ import android.text.TextWatcher
 import android.view.*
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
-import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
@@ -20,10 +19,12 @@ import za.co.absa.openbankingapi.woolworths.integration.AbsaContentEncryptionReq
 import za.co.absa.openbankingapi.woolworths.integration.AbsaLoginRequest
 import za.co.absa.openbankingapi.woolworths.integration.dto.LoginResponse
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse
-import za.co.absa.openbankingapi.woolworths.integration.service.VolleyErrorHandler
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
+import za.co.woolworths.financial.services.android.ui.activities.AbsaStatementsActivity
+import za.co.woolworths.financial.services.android.ui.activities.AbsaStatementsActivity.Companion.E_SESSION_ID
+import za.co.woolworths.financial.services.android.ui.activities.AbsaStatementsActivity.Companion.NONCE
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GotITDialogFragment
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
@@ -104,7 +105,7 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
                         override fun onSuccess(response: LoginResponse?, cookies: MutableList<HttpCookie>?) {
                             response?.apply {
                                 if (result?.toLowerCase() == "success") {
-                                    successHandler()
+                                    successHandler(this.nonce, this.esessionid)
                                 } else {
                                     failureHandler(resultMessage ?: technical_error_occurred)
                                 }
@@ -126,9 +127,18 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
         }
     }
 
-    private fun successHandler() {
-        Toast.makeText(activity,"Login Successful",Toast.LENGTH_SHORT).show()
-        clearPin()
+    private fun successHandler(nonce: String, esessionid: String) {
+
+        activity?.apply {
+            Intent(activity, AbsaStatementsActivity::class.java).let {
+                it.putExtra(NONCE, nonce)
+                it.putExtra(E_SESSION_ID, esessionid)
+                startActivity(it)
+                overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
+                finish()
+            }
+        }
+
     }
 
     private fun failureHandler(message: String?) {
@@ -269,4 +279,5 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
             (it as ABSAOnlineBankingRegistrationActivity).startAbsaRegistration()
         }
     }
+
 }
