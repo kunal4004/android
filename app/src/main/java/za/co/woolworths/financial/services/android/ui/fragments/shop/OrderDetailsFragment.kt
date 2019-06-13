@@ -87,7 +87,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick {
             override fun onFailure(error: Throwable?) {
             }
 
-        }))
+        },OrderDetailsResponse::class.java))
 
         return orderDetailRequest
     }

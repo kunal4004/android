@@ -112,7 +112,7 @@ class LoanWithdrawalDetailFragment : LoanBaseFragment() {
                     autoIssueLoanConnectIsActivated = true
                 }
             }
-        }))
+        },AuthoriseLoanResponse::class.java))
     }
 
     private fun progressBarVisibility(visible: Boolean) {

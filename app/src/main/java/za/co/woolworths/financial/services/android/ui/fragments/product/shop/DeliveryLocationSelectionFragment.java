@@ -145,7 +145,7 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
 					}
 				});
 			}
-		}));
+		},SetDeliveryLocationSuburbResponse.class));
 
 	}
 

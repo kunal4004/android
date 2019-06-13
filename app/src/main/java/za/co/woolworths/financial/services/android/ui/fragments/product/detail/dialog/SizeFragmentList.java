@@ -185,7 +185,7 @@ public class SizeFragmentList extends Fragment implements StockFinderSizeColorAd
 			public void onFailure(Throwable error) {
 				showInventoryProgressBar(false);
 			}
-		}));
+		},SkusInventoryForStoreResponse.class));
 
 		return skusInventoryForStoreRequestCall;
 	}

@@ -177,7 +177,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 				if (error==null)return;
 				mErrorHandlerView.networkFailureHandler(error.getMessage());
 			}
-		}));
+		},VoucherResponse.class));
 
 		return voucherRequestCall;
 	}
@@ -259,7 +259,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 				isCardDetailsCalled = true;
 				handleWrewardsAndCardDetailsResponse();
 			}
-		}));
+		},CardDetailsResponse.class));
 	}
 
 	public void handleWrewardsAndCardDetailsResponse() {

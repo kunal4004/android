@@ -548,7 +548,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 				});
 
 			}
-		}));
+		},LocationResponse.class));
 
 		return locationResponseCall;
 	}

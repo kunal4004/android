@@ -49,7 +49,7 @@ public class SubCategoryViewModel extends BaseViewModel<SubCategoryNavigator> {
 				getNavigator().onLoadComplete();
 				getNavigator().onFailureResponse(error.toString());
 			}
-		}));
+		},SubCategories.class));
 	}
 
 	public ObservableBoolean getLoading() {

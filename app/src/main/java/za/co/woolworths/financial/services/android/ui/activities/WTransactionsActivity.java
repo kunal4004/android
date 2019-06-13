@@ -125,7 +125,7 @@ public class WTransactionsActivity extends AppCompatActivity {
 					if(error != null)
 						networkFailureHandler(error.getMessage());
 			}
-		}));
+		},TransactionHistoryResponse.class));
 		return transactionHistoryRequestCall;
 	}
 

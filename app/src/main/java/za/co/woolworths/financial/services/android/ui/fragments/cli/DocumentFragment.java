@@ -231,7 +231,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 					onLoadComplete(pbDeaBank);
 				}
 			}
-		}));
+		},DeaBanks.class));
 	}
 
 	public void showProofOfIncomePopup() {
@@ -276,7 +276,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 					mErrorHandlerView.responseError(view, error.getMessage());
 				}
 			}
-		}));
+		},BankAccountTypes.class));
 	}
 
 	private void init(View view) {
@@ -636,7 +636,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				loadFailure();
 				enableSubmitButton();
 			}
-		}));
+		},UpdateBankDetailResponse.class));
 	}
 
 	public void disableSubmitButton() {
@@ -681,7 +681,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				loadFailure();
 				enableSubmitButton();
 			}
-		}));
+		},CLIEmailResponse.class));
 	}
 
 	private void cancelRequest(Call httpAsyncTask) {

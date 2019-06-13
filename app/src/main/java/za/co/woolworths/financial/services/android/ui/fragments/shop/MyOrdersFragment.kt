@@ -152,7 +152,7 @@ class MyOrdersFragment : Fragment() {
                         }
                     }
                 }
-            }))
+            },OrdersResponse::class.java))
         }
     }
 

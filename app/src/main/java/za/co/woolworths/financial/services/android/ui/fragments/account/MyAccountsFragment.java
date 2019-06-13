@@ -657,7 +657,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
                     mErrorHandlerView.networkFailureHandler(error.getMessage());
 
             }
-        }));
+        },AccountsResponse.class));
     }
 
 	public void redirectToMyAccountsCardsActivity(int position) {

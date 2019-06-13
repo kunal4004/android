@@ -122,7 +122,7 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 					getNavigator().onFailureResponse(error.getMessage());
 				}
 			}
-		}));
+		},ProductDetailResponse.class));
 
 		return productDetailRequest;
 	}
@@ -158,7 +158,7 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 					}
 				}
 			}
-		}));
+		},LocationResponse.class));
 
 		return locationResponseCall;
 	}
@@ -524,7 +524,7 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 					getNavigator().onTokenFailure(error.getMessage());
 				}
 			}
-		}));
+		},CartSummaryResponse.class));
 
 		return cartSummaryResponseCall;
 	}
@@ -565,7 +565,7 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 					getNavigator().onAddItemToCartFailure(error.getMessage());
 				}
 			}
-		}));
+		},AddItemToCartResponse.class));
 
 		return addItemToCartResponseCall;
 	}

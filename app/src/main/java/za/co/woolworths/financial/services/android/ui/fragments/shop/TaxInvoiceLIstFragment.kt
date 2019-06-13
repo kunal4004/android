@@ -117,7 +117,7 @@ class TaxInvoiceLIstFragment : Fragment(), TaxInvoiceAdapter.OnItemClick, Permis
                         hideProgressBar()
                     }
 
-                }))
+                },OrderTaxInvoiceResponse::class.java))
             }
         }
     }

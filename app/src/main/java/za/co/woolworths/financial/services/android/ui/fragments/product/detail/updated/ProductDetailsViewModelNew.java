@@ -55,7 +55,7 @@ public class ProductDetailsViewModelNew extends BaseViewModel<ProductDetailNavig
             public void onFailure(Throwable error) {
                 getNavigator().onFailureResponse(error.toString());
             }
-        }));
+        },ProductDetailResponse.class));
 
         return productDetailRequest;
     }
@@ -87,7 +87,7 @@ public class ProductDetailsViewModelNew extends BaseViewModel<ProductDetailNavig
                     getNavigator().dismissFindInStoreProgress();
                 }
             }
-        }));
+        },LocationResponse.class));
 
         return locationResponseCall;
     }
@@ -170,7 +170,7 @@ public class ProductDetailsViewModelNew extends BaseViewModel<ProductDetailNavig
             public void onFailure(Throwable error) {
                 getNavigator().onTokenFailure(error.toString());
             }
-        }));
+        },CartSummaryResponse.class));
         return cartSummaryResponseCall;
     }
 
@@ -225,7 +225,7 @@ public class ProductDetailsViewModelNew extends BaseViewModel<ProductDetailNavig
             public void onFailure(Throwable error) {
                 getNavigator().onAddItemToCartFailure(error.toString());
             }
-        }));
+        },AddItemToCartResponse.class));
 
         return addItemToCartResponseCall;
     }
@@ -253,7 +253,7 @@ public class ProductDetailsViewModelNew extends BaseViewModel<ProductDetailNavig
             public void onFailure(Throwable error) {
 
             }
-        }));
+        },SkusInventoryForStoreResponse.class));
         return skusInventoryForStoreResponseCall;
     }
 

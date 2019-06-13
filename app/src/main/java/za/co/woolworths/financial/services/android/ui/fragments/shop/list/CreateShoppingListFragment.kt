@@ -321,7 +321,7 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
                     }
                 }
             }
-        }))
+        },ShoppingListsResponse::class.java))
     }
 
     private fun addProductToShoppingList(listId: String?) {
@@ -354,7 +354,7 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
                 }
             }
 
-        }))
+        },ShoppingListItemsResponse::class.java))
     }
 
     private fun addToListWasSendSuccessfully(listId: String?) {
@@ -441,7 +441,7 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
                     }
                 }
 
-            }))
+            },OrderToListReponse::class.java))
         }
     }
 

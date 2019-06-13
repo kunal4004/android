@@ -28,6 +28,7 @@ import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.RequestListener;
@@ -280,7 +281,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
                     });
                 }
             }
-        }));
+        },StatementResponse.class));
 
     }
 
@@ -307,9 +308,9 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         final FragmentActivity activity = getActivity();
         if (activity == null) return;
         mGetPdfFile = OneAppService.INSTANCE.getPDFResponse(mGetStatementFile);
-        mGetPdfFile.enqueue(new CompletionHandler<>(new RequestListener<Response<ResponseBody>>() {
+        mGetPdfFile.enqueue(new Callback<Response<ResponseBody>>() {
             @Override
-            public void onSuccess(Response<ResponseBody> response) {
+            public void onResponse(Call<Response<ResponseBody>> call, Response<Response<ResponseBody>> response) {
                 if (getActivity() != null) {
                     loadSuccess();
                     hideViewProgress();
@@ -317,7 +318,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
                         try {
                             StatementUtils statementUtils = new StatementUtils(activity);
                             if (response.body() != null) {
-                                statementUtils.savePDF(response.body().byteStream());
+                                statementUtils.savePDF(response.body().body().byteStream());
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                                     PreviewStatement previewStatement = new PreviewStatement();
                                     FragmentUtils fragmentUtils = new FragmentUtils(activity);
@@ -336,7 +337,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
             }
 
             @Override
-            public void onFailure(Throwable error) {
+            public void onFailure(Call<Response<ResponseBody>> call, Throwable t) {
                 Activity activity = getActivity();
                 if (activity != null) {
                     activity.runOnUiThread(new Runnable() {
@@ -349,7 +350,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
                     });
                 }
             }
-        }));
+        });
     }
 
     private void slideUpPanelListener() {

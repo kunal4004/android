@@ -159,7 +159,7 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 					}
 				});
 			}
-		}));
+		},SuburbsResponse.class));
 
 		return suburbsResponseCall;
 	}
@@ -287,7 +287,7 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 					}
 				});
 			}
-		}));
+		},SetDeliveryLocationSuburbResponse.class));
 	}
 
 	private void handleSetSuburbResponse(SetDeliveryLocationSuburbResponse response, final Province province, final Suburb suburb) {

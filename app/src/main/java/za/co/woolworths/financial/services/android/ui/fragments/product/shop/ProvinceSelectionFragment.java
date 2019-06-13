@@ -126,7 +126,7 @@ public class ProvinceSelectionFragment extends Fragment implements ProvinceSelec
 					}
 				});
 			}
-		}));
+		},ProvincesResponse.class));
 
 		return provincesResponseCall;
 	}

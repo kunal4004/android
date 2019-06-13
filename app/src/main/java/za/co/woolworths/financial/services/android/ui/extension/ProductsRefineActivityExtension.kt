@@ -28,7 +28,7 @@ fun refineProducts(context: Context, productsRequestParams: ProductsRequestParam
             error?.message?.let { message -> resultListener?.onProductRefineFailure(message)}
         }
 
-    }))
+    },ProductView::class.java))
    return productRequest
 
 }

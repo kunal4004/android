@@ -135,7 +135,7 @@ public class QueryBadgeCounter extends Observable {
             public void onFailure(Throwable error) {
 
             }
-        }));
+        },VoucherResponse.class));
 
         return voucherCall;
     }
@@ -166,7 +166,7 @@ public class QueryBadgeCounter extends Observable {
             public void onFailure(Throwable error) {
 
             }
-        }));
+        },CartSummaryResponse.class));
         return cartSummaryRequest;
     }
 
@@ -182,7 +182,7 @@ public class QueryBadgeCounter extends Observable {
             public void onFailure(Throwable error) {
 
             }
-        }));
+        },MessageResponse.class));
         return messageResponseCall;
     }
 

@@ -6,29 +6,24 @@ import retrofit2.Callback
 import retrofit2.Response
 import za.co.woolworths.financial.services.android.contracts.RequestListener
 import za.co.woolworths.financial.services.android.ui.activities.maintenance.MaintenanceMessageViewController
-import za.co.woolworths.financial.services.android.ui.extension.fromJson
+import java.io.InputStreamReader
 
-open class CompletionHandler<Result>(protected var listener: RequestListener<Result>?) : Callback<Result> {
+open class CompletionHandler<ResponseObj>(private val requestListener: RequestListener<ResponseObj>?, private val genericClassType: Class<ResponseObj>) : Callback<ResponseObj> {
 
     private val jsonMimeTypes = arrayListOf("application/json", "application/json; charset=utf-8")
 
-    override fun onResponse(call: Call<Result>, response: Response<Result>?) {
-        this.listener?.apply {
+    override fun onResponse(call: Call<ResponseObj>, response: Response<ResponseObj>?) {
+        this.requestListener?.apply {
             response?.apply {
                 if (displayMaintenanceScreenIfNeeded(this)) return
                 when (isSuccessful) {
                     true -> onSuccess(body())
                     else -> errorBody()?.apply {
-                        when (jsonMimeTypes.contains(contentType()?.subtype())) {
-                            true -> {
-                                string().apply {
-                                    val result: Class<Result> = Gson().fromJson(this)
-                                    //onSuccess(result.cast())
-                                }
-                            }
-                            else -> {
-                                displayMaintenanceScreenIfNeeded(response)
-                            }
+                        val mimeType = contentType()?.type() + "/" + contentType()?.subtype()
+                        val charsetMimType = mimeType + "; charset=" + contentType()?.charset()
+                        when (jsonMimeTypes.contains(mimeType.toLowerCase()) || jsonMimeTypes.contains(charsetMimType.toLowerCase())) {
+                            true -> onSuccess(Gson().fromJson(InputStreamReader(byteStream()), genericClassType))
+                            else -> displayMaintenanceScreenIfNeeded(response)
                         }
                     }
                 }
@@ -36,11 +31,11 @@ open class CompletionHandler<Result>(protected var listener: RequestListener<Res
         }
     }
 
-    override fun onFailure(call: Call<Result>, t: Throwable) {
-        this.listener?.onFailure(t)
+    override fun onFailure(call: Call<ResponseObj>, t: Throwable) {
+        this.requestListener?.onFailure(t)
     }
 
-    private fun displayMaintenanceScreenIfNeeded(response: Response<Result>): Boolean {
+    private fun displayMaintenanceScreenIfNeeded(response: Response<ResponseObj>): Boolean {
         if (response.code() == 404 || response.code() == 503) {
             val maintenanceMessageViewController = MaintenanceMessageViewController(MaintenanceMessageViewController::class.java.simpleName)
             maintenanceMessageViewController.openActivity()

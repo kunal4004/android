@@ -302,7 +302,7 @@ public class AlternativeEmailFragment extends Fragment implements View.OnClickLi
 					});
 				}
 			}
-		}));
+		},SendUserStatementResponse.class));
 	}
 
 	public void onLoad() {

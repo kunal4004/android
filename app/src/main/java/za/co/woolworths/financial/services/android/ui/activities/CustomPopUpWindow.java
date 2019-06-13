@@ -1081,7 +1081,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
                     }
                 });
             }
-        }));
+        },SendUserStatementResponse.class));
     }
 
     public void onLoad() {

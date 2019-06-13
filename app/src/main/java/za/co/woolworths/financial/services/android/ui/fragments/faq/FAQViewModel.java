@@ -52,7 +52,7 @@ public class FAQViewModel extends BaseViewModel<FAQNavigator> {
                 }
                 setIsLoading(false);
             }
-        }));
+        },FAQ.class));
         return faqCall;
     }
 }

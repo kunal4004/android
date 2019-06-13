@@ -79,7 +79,7 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
                         }
                     }
                 }
-            }))
+            },RootCategories::class.java))
         } else {
             noConnectionLayout(true)
         }

@@ -161,7 +161,7 @@ public class MessagesActivity extends AppCompatActivity implements MesssagesList
 				if (error!=null)
 				networkFailureHandler(error.getMessage(), 0);
 			}
-		}));
+		},MessageResponse.class));
 
 		return messageResponseCall;
 	}
@@ -220,7 +220,7 @@ public class MessagesActivity extends AppCompatActivity implements MesssagesList
 				if (error!=null)
 				networkFailureHandler(error.getMessage(), 1);
 			}
-		}));
+		},MessageResponse.class));
 
 		return moreMessageRequestCall;
 	}
@@ -237,7 +237,7 @@ public class MessagesActivity extends AppCompatActivity implements MesssagesList
                     public void onFailure(Throwable error) {
 
                     }
-                })
+                },ReadMessagesResponse.class)
         );
 	}
 
@@ -398,7 +398,7 @@ public class MessagesActivity extends AppCompatActivity implements MesssagesList
 			public void onFailure(Throwable error) {
 
 			}
-		}));
+		},DeleteMessageResponse.class));
 
 		return mDeleteMessageRequest;
 	}

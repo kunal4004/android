@@ -431,7 +431,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
                 });
 
             }
-        }));
+        },OfferActive.class));
     }
 
     private void onLoad() {
@@ -642,7 +642,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
                     });
                 }
             }
-        }));
+        },CreditCardTokenResponse.class));
 
         return creditCardTokenResponseCall;
     }

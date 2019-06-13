@@ -304,7 +304,7 @@ class LoanWithdrawalFragment : LoanBaseFragment() {
                     }
                 }
 
-            }))
+            },IssueLoanResponse::class.java))
 
         } else {
             activity?.let {  Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.HIGH_LOAN_AMOUNT, "")}

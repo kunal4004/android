@@ -110,7 +110,7 @@ public class GridViewModel extends BaseViewModel<GridNavigator> {
                         }
                     });
                 }
-        }));
+        },ProductView.class));
     }
 
     public Call<ProductView> getLoadProductRequest() {

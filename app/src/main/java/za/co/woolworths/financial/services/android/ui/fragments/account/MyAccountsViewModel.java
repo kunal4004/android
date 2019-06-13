@@ -31,7 +31,7 @@ public class MyAccountsViewModel extends BaseViewModel<MyAccountsNavigator> {
 			public void onFailure(Throwable error) {
 
 			}
-		}));
+		},MessageResponse.class));
 		return messageRequestCall;
 	}
 }

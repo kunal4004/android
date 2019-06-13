@@ -289,7 +289,7 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
 				if (error != null)
 					mErrorHandlerView.networkFailureHandler(error.getMessage());
 			}
-		}));
+		},LocationResponse.class));
 
 		return locationRequestCall;
 	}

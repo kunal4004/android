@@ -601,7 +601,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					});
 				}
 			}
-		}));
+		},ShoppingCartResponse.class));
 
 		return shoppingCartResponseCall;
 	}
@@ -640,7 +640,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					});
 				}
 			}
-		}));
+		},ShoppingCartResponse.class));
 		return shoppingCartResponseCall;
 	}
 
@@ -685,7 +685,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					});
 				}
 			}
-		}));
+		},ShoppingCartResponse.class));
 		return shoppingCartResponseCall;
 	}
 
@@ -727,7 +727,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					});
 				}
 			}
-		}));
+		},ShoppingCartResponse.class));
 
 		return shoppingCartResponseCall;
 	}
@@ -886,7 +886,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 								});
 
 							}
-						}));
+						},SetDeliveryLocationSuburbResponse.class));
                     } else {
                     	// Fallback if there is no cached location
                         loadShoppingCartAndSetDeliveryLocation();
@@ -998,7 +998,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			public void onFailure(Throwable error) {
 
 			}
-		}));
+		},SkusInventoryForStoreResponse.class));
 		return skusInventoryForStoreResponseCall;
 	}
 

@@ -469,7 +469,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
                    });
                }
            }
-       }));
+       },OfferActive.class));
     }
 
     private void bindUI(OfferActive offerActive) {

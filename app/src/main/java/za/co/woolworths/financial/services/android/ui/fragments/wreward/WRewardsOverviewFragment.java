@@ -137,7 +137,7 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 				if (error.getMessage() == null) return;
 				mErrorHandlerView.networkFailureHandler(error.getMessage());
 			}
-		}));
+		},PromotionsResponse.class));
 
 	}
 

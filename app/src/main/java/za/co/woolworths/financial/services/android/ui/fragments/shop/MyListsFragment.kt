@@ -115,7 +115,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
                         }
                     }
                 }
-            }))
+            },ShoppingListsResponse::class.java))
         }
     }
 
@@ -273,7 +273,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
                 activity?.let { it.runOnUiThread { ErrorHandlerView(it).showToast() } }
             }
 
-        }))
+        },ShoppingListsResponse::class.java))
     }
 
     override fun onShoppingListItemDeleted(shoppingList: ShoppingList, position: Int) {

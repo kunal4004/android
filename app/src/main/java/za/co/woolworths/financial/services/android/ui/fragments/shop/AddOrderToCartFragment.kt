@@ -340,7 +340,7 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
             override fun onFailure(error: Throwable?) {
             }
 
-        }))
+        },SkusInventoryForStoreResponse::class.java))
 
         return skusInventoryForStoreRequest
     }
@@ -408,7 +408,7 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
             override fun onFailure(error: Throwable?) {
             }
 
-        }))
+        },AddItemToCartResponse::class.java))
         return addItemToCartRequest
     }
 

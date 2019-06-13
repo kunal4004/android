@@ -51,7 +51,7 @@ public abstract class InventoryForStore {
 					setOnConnectFailure(true);
 				}
 			}
-		}));
+		},SkusInventoryForStoreResponse.class));
 
 		return skusInventoryForStoreRequestCall;
 	}

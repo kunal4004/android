@@ -69,7 +69,7 @@ abstract class BarcodeScanExtension : Fragment() {
                 }
             }
 
-        }))
+        },ProductView::class.java))
 
         return mRetrieveProductDetail
     }
@@ -113,7 +113,7 @@ abstract class BarcodeScanExtension : Fragment() {
                     apiFailure(it)
                 }
             }
-        }))
+        },ProductDetailResponse::class.java))
 
         return productDetailRequestCall
     }

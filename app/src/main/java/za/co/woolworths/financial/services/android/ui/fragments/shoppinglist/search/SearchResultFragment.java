@@ -749,7 +749,7 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
                     });
                 }
             }
-        }));
+        },ProductView.class));
 
         return productListCall;
     }
@@ -782,7 +782,7 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
                 if (error == null) return;
                 onAddToListFailure(error.getMessage());
             }
-        }));
+        },ShoppingListItemsResponse.class));
 
             return shoppingListItemsResponseCall;
     }
@@ -953,7 +953,7 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
                 if (error== null) return;
                 onLoadDetailFailure(error.getMessage());
             }
-        }));
+        },ProductDetailResponse.class));
 
        return productDetailRequest;
     }

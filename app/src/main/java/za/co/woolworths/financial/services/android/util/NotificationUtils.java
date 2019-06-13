@@ -236,6 +236,6 @@ public class NotificationUtils {
             public void onFailure(Throwable error) {
 
             }
-        }));
+        },CreateUpdateDeviceResponse.class));
     }
 }

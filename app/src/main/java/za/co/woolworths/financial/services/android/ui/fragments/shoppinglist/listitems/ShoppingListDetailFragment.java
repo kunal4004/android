@@ -504,7 +504,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             public void onFailure(Throwable error) {
 
             }
-        }));
+        },ShoppingListItemsResponse.class));
     }
 
     @Override
@@ -926,7 +926,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             public void onFailure(Throwable error) {
                 onDeleteItemFailed();
             }
-        }));
+        },ShoppingListItemsResponse.class));
 
         return shoppingListItemsResponseCall;
     }
@@ -967,7 +967,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             public void onFailure(Throwable error) {
                 addedToCartFail(true);
             }
-        }));
+        },AddItemToCartResponse.class));
 
      return addItemToCartRequest;
     }
@@ -997,7 +997,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
                 setInternetConnectionWasLost(true);
                 geInventoryForStoreFailure(error.getMessage());
             }
-        }));
+        },SkusInventoryForStoreResponse.class));
 
        return skusInventoryForStoreResponseCall;
     }

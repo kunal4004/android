@@ -65,7 +65,7 @@ abstract class WTodayExtension : Fragment() {
                         activity?.apply { runOnUiThread { ErrorHandlerView(this).showToast() } }
                 }
 
-            }))
+            },ProductDetailResponse::class.java))
         }
     }
 }

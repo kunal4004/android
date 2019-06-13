@@ -142,7 +142,7 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
                 }
             }
 
-        }))
+        },ShoppingListsResponse::class.java))
     }
 
     private fun bindShoppingListToUI(shoppingList: MutableList<ShoppingList>) {
@@ -295,7 +295,7 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
                 }
             }
 
-        }))
+        },ShoppingListItemsResponse::class.java))
     }
 
     private fun addOrderToShoppingList(orderId: String, shoppingList: ShoppingList) {
@@ -319,7 +319,7 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
                     }
                 }
             }
-        }))
+        },OrderToListReponse::class.java))
     }
 
     private fun addOrderResponseHandler(listId: String, ordersResponse: OrderToListReponse) {

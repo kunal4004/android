@@ -295,6 +295,6 @@ public class CheckOutFragment extends Fragment {
 			public void onFailure(Throwable error) {
 
 			}
-		}));
+		},Void.class));
 	}
 }

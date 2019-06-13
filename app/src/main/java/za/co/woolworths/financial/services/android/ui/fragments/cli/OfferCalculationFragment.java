@@ -258,7 +258,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 					});
 				}
 			}
-		}));
+		},OfferActive.class));
 	}
 
 	private void cliUpdateApplication(CreateOfferRequest createOfferRequest, String cliId) {
@@ -303,7 +303,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 					});
 				}
 			}
-		}));
+		},OfferActive.class));
 	}
 
 	private void cliDelcineOfferRequest(CLIOfferDecision createOfferDecision) {
@@ -342,7 +342,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 					});
 				}
 			}
-		}));
+		},OfferActive.class));
 	}
 
 	private void init(View view) {
@@ -571,7 +571,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 							});
 						}
 					}
-				}));
+				},OfferActive.class));
 				break;
 
 			case R.id.tvSlideToEditAmount:
