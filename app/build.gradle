@@ -171,12 +171,11 @@ dependencies {
     implementation 'me.leolin:ShortcutBadger:1.1.22@aar'
     implementation 'com.daimajia.swipelayout:library:1.2.0'
     implementation 'com.github.barteksc:android-pdf-viewer:2.8.2'
-    api 'com.google.zxing:core:3.3.2'
+    api 'com.google.zxing:core:3.3.3'
     api 'com.google.zxing:android-core:3.3.0'
     annotationProcessor "android.arch.lifecycle:compiler:1.1.1"
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'me.relex:circleindicator:1.2.2@aar'
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.4'
     implementation 'com.github.deano2390:MaterialShowcaseView:1.2.0'
     implementation 'com.daasuu:BubbleLayout:1.2.0'
     implementation 'com.android.volley:volley:1.1.1'
@@ -187,6 +186,11 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.12.1'
     compile 'com.squareup.retrofit2:adapter-java8:2.5.0'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
+    compile 'com.github.deano2390:MaterialShowcaseView:1.2.0'
+    compile 'com.daasuu:BubbleLayout:1.2.0'
+    compile 'com.android.volley:volley:1.1.1'
+
     //
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:2.4.0'

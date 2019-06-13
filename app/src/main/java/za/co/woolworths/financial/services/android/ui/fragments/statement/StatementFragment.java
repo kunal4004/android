@@ -318,7 +318,9 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
                         try {
                             StatementUtils statementUtils = new StatementUtils(activity);
                             if (response.body() != null) {
-                                statementUtils.savePDF(response.body().body().byteStream());
+                                if (response.body().body() != null) {
+                                    statementUtils.savePDF(response.body().body().byteStream());
+                                }
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                                     PreviewStatement previewStatement = new PreviewStatement();
                                     FragmentUtils fragmentUtils = new FragmentUtils(activity);

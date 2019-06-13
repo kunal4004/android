@@ -296,13 +296,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 
         switch (v.getId()) {
             case R.id.rlViewStatement:
-                SessionDao aliasID = SessionDao.getByKey(SessionDao.KEY.ABSA_ALIASID);
-                SessionDao deviceID = SessionDao.getByKey(SessionDao.KEY.ABSA_DEVICEID);
-                if (TextUtils.isEmpty(aliasID.value) || TextUtils.isEmpty(deviceID.value)) {
-                    mGetCreditCardToken = getCreditCardToken(activity);
-                } else {
-                    openAbsaOnLineBankingActivity(activity);
-                }
+                mGetCreditCardToken = getCreditCardToken(activity);
                 break;
             case R.id.rlViewTransactions:
             case R.id.tvViewTransaction:
@@ -608,11 +602,16 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
                                 }
                             }
 
-                            if (TextUtils.isEmpty(creditCardNumber)) {
-                                Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, getString(R.string.card_number_not_found));
-                                return;
-                            }
-                            openAbsaOnLineBankingActivity(creditCardNumber, activity);
+                                if (TextUtils.isEmpty(creditCardNumber)) {
+                                    Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, getString(R.string.card_number_not_found));
+                                    return;
+                                }
+
+                                SessionDao aliasID = SessionDao.getByKey(SessionDao.KEY.ABSA_ALIASID);
+                                SessionDao deviceID = SessionDao.getByKey(SessionDao.KEY.ABSA_DEVICEID);
+                                openAbsaOnLineBankingActivity(creditCardNumber, activity, !(TextUtils.isEmpty(aliasID.value) || TextUtils.isEmpty(deviceID.value)));
+
+                                break;
                         }
                         break;
 
@@ -647,17 +646,10 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         return creditCardTokenResponseCall;
     }
 
-    private void openAbsaOnLineBankingActivity(String creditCardNumber, Activity activity) {
+    private void openAbsaOnLineBankingActivity(String creditCardNumber, Activity activity, boolean isRegistered) {
         Intent openABSAOnlineBanking = new Intent(getActivity(), ABSAOnlineBankingRegistrationActivity.class);
-        openABSAOnlineBanking.putExtra(SHOULD_DISPLAY_LOGIN_SCREEN, false);
+        openABSAOnlineBanking.putExtra(SHOULD_DISPLAY_LOGIN_SCREEN, isRegistered);
         openABSAOnlineBanking.putExtra("creditCardToken", creditCardNumber);
-        activity.startActivityForResult(openABSAOnlineBanking, MyAccountCardsActivity.ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE);
-        activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
-    }
-
-    private void openAbsaOnLineBankingActivity(Activity activity) {
-        Intent openABSAOnlineBanking = new Intent(getActivity(), ABSAOnlineBankingRegistrationActivity.class);
-        openABSAOnlineBanking.putExtra(SHOULD_DISPLAY_LOGIN_SCREEN, true);
         activity.startActivityForResult(openABSAOnlineBanking, MyAccountCardsActivity.ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE);
         activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
     }
