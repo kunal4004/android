@@ -6,6 +6,7 @@ import android.graphics.PorterDuff;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -17,7 +18,11 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import com.awfs.coordination.R;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
+import com.google.firebase.dynamiclinks.PendingDynamicLinkData;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -79,77 +84,78 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-				WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		setContentView(R.layout.activity_startup);
-		Toolbar toolbar = findViewById(R.id.mToolbar);
-		setSupportActionBar(toolbar);
-		ActionBar actionBar = getSupportActionBar();
-		if (actionBar != null) {
-			actionBar.hide();
-		}
+        super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        setContentView(R.layout.activity_startup);
+        Toolbar toolbar = findViewById(R.id.mToolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
 
-		try {
-			this.appVersion = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
-			this.environment = com.awfs.coordination.BuildConfig.FLAVOR;
-		} catch (PackageManager.NameNotFoundException e) {
-			e.printStackTrace();
-		}
+        try {
+            this.appVersion = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+            this.environment = com.awfs.coordination.BuildConfig.FLAVOR;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
 
-		if (mFirebaseAnalytics == null)
-			mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-
-
-		Bundle bundle = getIntent().getExtras();
-		if (bundle != null) {
-			mPushNotificationUpdate = bundle.getString(NotificationUtils.PUSH_NOTIFICATION_INTENT);
-		}
+        if (mFirebaseAnalytics == null)
+            mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
 
-		WoolworthsApplication woolworthsApplication = (WoolworthsApplication) StartupActivity.this.getApplication();
-		mWGlobalState = woolworthsApplication.getWGlobalState();
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            mPushNotificationUpdate = bundle.getString(NotificationUtils.PUSH_NOTIFICATION_INTENT);
+        }
 
-		videoView = (WVideoView) findViewById(R.id.activity_wsplash_screen_videoview);
-		errorLayout = (LinearLayout) findViewById(R.id.errorLayout);
-		noVideoView = (View) findViewById(R.id.splashNoVideoView);
-		serverMessageView = (View) findViewById(R.id.splashServerMessageView);
-		serverMessageLabel = (WTextView) findViewById(R.id.messageLabel);
-		videoViewLayout = (RelativeLayout) findViewById(R.id.videoViewLayout);
-		pBar = (ProgressBar) findViewById(R.id.progressBar);
 
-		pBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
-		//Mobile Config Server
-		if (NetworkManager.getInstance().isConnectedToNetwork(this)) {
-			mFirebaseAnalytics.setUserProperty(APP_SERVER_ENVIRONMENT_KEY, StartupActivity.this.environment.isEmpty() ? "prod": StartupActivity.this.environment.toLowerCase());
-			mFirebaseAnalytics.setUserProperty(APP_VERSION_KEY, StartupActivity.this.appVersion);
+        WoolworthsApplication woolworthsApplication = (WoolworthsApplication) StartupActivity.this.getApplication();
+        mWGlobalState = woolworthsApplication.getWGlobalState();
 
-			setUpScreen();
-			notifyIfNeeded();
-		} else {
-			showNonVideoViewWithErrorLayout();
-		}
-		findViewById(R.id.retry).setOnClickListener(new View.OnClickListener() {
+        videoView = (WVideoView) findViewById(R.id.activity_wsplash_screen_videoview);
+        errorLayout = (LinearLayout) findViewById(R.id.errorLayout);
+        noVideoView = (View) findViewById(R.id.splashNoVideoView);
+        serverMessageView = (View) findViewById(R.id.splashServerMessageView);
+        serverMessageLabel = (WTextView) findViewById(R.id.messageLabel);
+        videoViewLayout = (RelativeLayout) findViewById(R.id.videoViewLayout);
+        pBar = (ProgressBar) findViewById(R.id.progressBar);
 
-			@Override
-			public void onClick(View v) {
-				if (NetworkManager.getInstance().isConnectedToNetwork(StartupActivity.this)) {
-					mFirebaseAnalytics.setUserProperty(APP_SERVER_ENVIRONMENT_KEY, StartupActivity.this.environment.isEmpty() ? "prod": StartupActivity.this.environment.toLowerCase());
-					mFirebaseAnalytics.setUserProperty(APP_VERSION_KEY, StartupActivity.this.appVersion);
+        pBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
+        //Mobile Config Server
+        if (NetworkManager.getInstance().isConnectedToNetwork(this)) {
+            mFirebaseAnalytics.setUserProperty(APP_SERVER_ENVIRONMENT_KEY, StartupActivity.this.environment.isEmpty() ? "prod" : StartupActivity.this.environment.toLowerCase());
+            mFirebaseAnalytics.setUserProperty(APP_VERSION_KEY, StartupActivity.this.appVersion);
 
-					setUpScreen();
-					notifyIfNeeded();
-				} else {
-					showNonVideoViewWithErrorLayout();
-				}
-			}
+            setUpScreen();
+            notifyIfNeeded();
+        } else {
+            showNonVideoViewWithErrorLayout();
+        }
+        findViewById(R.id.retry).setOnClickListener(new View.OnClickListener() {
 
-		});
+            @Override
+            public void onClick(View v) {
+                if (NetworkManager.getInstance().isConnectedToNetwork(StartupActivity.this)) {
+                    mFirebaseAnalytics.setUserProperty(APP_SERVER_ENVIRONMENT_KEY, StartupActivity.this.environment.isEmpty() ? "prod" : StartupActivity.this.environment.toLowerCase());
+                    mFirebaseAnalytics.setUserProperty(APP_VERSION_KEY, StartupActivity.this.appVersion);
 
-		//Remove old usage of SharedPreferences data.
-		Utils.clearSharedPreferences(StartupActivity.this);
-		AuthenticateUtils.getInstance(StartupActivity.this).enableBiometricForCurrentSession(true);
-	}
+                    setUpScreen();
+                    notifyIfNeeded();
+                } else {
+                    showNonVideoViewWithErrorLayout();
+                }
+            }
+
+        });
+
+        //Remove old usage of SharedPreferences data.
+        Utils.clearSharedPreferences(StartupActivity.this);
+        AuthenticateUtils.getInstance(StartupActivity.this).enableBiometricForCurrentSession(true);
+        // ATTENTION: This was auto-generated to handle app links.
+    }
 
 
 	private void executeConfigServer() {
