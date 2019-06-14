@@ -133,13 +133,6 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.deep_link.DynamicLinkActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar">
             <intent-filter
                 android:autoVerify="true"
                 tools:targetApi="m">

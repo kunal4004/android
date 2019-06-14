@@ -76,6 +76,11 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface {
     private fun setClient() {
 
         webWToday?.webViewClient = object : WebViewClient() {
+
+            override fun onLoadResource(view: WebView?, url: String?) {
+                super.onLoadResource(view, url)
+                Log.e("urlWeb",url)
+            }
             @TargetApi(Build.VERSION_CODES.M)
             override fun onReceivedError(webView: WebView, request: WebResourceRequest, error: WebResourceError) {
                 super.onReceivedError(webView, request, error)
