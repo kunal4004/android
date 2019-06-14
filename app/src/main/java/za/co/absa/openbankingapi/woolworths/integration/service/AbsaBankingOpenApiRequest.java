@@ -84,9 +84,7 @@ public class AbsaBankingOpenApiRequest<T> extends Request<T> {
 
                 return;
             }
-
-           /* List<String> cookies = new ArrayList<>();
-            cookies.add(AbsaContentEncryptionRequest.jSession.getCookie().toString());*/
+            
             this.setCookies();
 
             this.headers.put("x-encrypted", body.length() + "|" + AbsaContentEncryptionRequest.keyId);
