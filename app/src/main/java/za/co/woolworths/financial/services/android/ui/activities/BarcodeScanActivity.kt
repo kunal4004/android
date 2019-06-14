@@ -3,32 +3,24 @@ package za.co.woolworths.financial.services.android.ui.activities
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
-import android.text.TextUtils
 import android.view.MenuItem
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.barcode_scan_activity.*
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListSearchResultActivity.SHOPPING_LIST_SEARCH_RESULT_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.barcode.BarcodeScanFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.ADDED_TO_SHOPPING_LIST_RESULT_CODE
-import za.co.woolworths.financial.services.android.util.NotificationUtils
 import za.co.woolworths.financial.services.android.util.RuntimePermissionActivity
 import za.co.woolworths.financial.services.android.util.Utils
 
 class BarcodeScanActivity : RuntimePermissionActivity() {
 
-    private var mDeepLinkingValue: String? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.barcode_scan_activity)
 
-        intent?.extras?.apply {
-           mDeepLinkingValue =  getString("deepLink","")
-        }
         Utils.updateStatusBarBackground(this, R.color.black, true)
         configureActionBar()
         if (savedInstanceState == null) {
