@@ -20,7 +20,6 @@ class BarcodeScanActivity : RuntimePermissionActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.barcode_scan_activity)
-
         Utils.updateStatusBarBackground(this, R.color.black, true)
         configureActionBar()
         if (savedInstanceState == null) {
@@ -53,8 +52,8 @@ class BarcodeScanActivity : RuntimePermissionActivity() {
                 popBackStack()
                 setHomeIndicator(backStackEntryCount == 0)
             } else {
-                    finish()
-                    overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+                finish()
+                overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
             }
         }
     }
@@ -88,7 +87,8 @@ class BarcodeScanActivity : RuntimePermissionActivity() {
 
     private fun setActivityResult(data: Intent, addToShoppingListResultCode: Int) {
         setResult(addToShoppingListResultCode, data)
-         overridePendingTransition(0, 0)
+        finish()
+        overridePendingTransition(0, 0)
     }
 
     override fun onRuntimePermissionRequestGranted() {
