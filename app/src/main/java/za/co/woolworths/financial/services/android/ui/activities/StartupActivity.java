@@ -39,7 +39,6 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
-import za.co.woolworths.financial.services.android.ui.fragments.help.tipstricks.TipsAndTricksFragment;
 import za.co.woolworths.financial.services.android.ui.activities.deep_link.RetrieveProductDetail;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -259,6 +258,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
                         // Get deep link from result (may be null if no link is found)
                         if (pendingDynamicLinkData != null) {
                             mDeepLinkUrl = pendingDynamicLinkData.getLink().getPath();
+                                Log.e("deepLinkUrl",pendingDynamicLinkData.getLink().getPath());
                         }
 
                     }
@@ -394,7 +394,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
                     finish();
                 } else if ((mDeepLinkUrl.contains("/help/"))) { // land on tips and trick activity
                     openDeepLinkBackgroundActivity(isFirstTime);
-                    Intent openTipsAndTrickActivity = new Intent(this, TipsAndTricksFragment.class);
+                    Intent openTipsAndTrickActivity = new Intent(this, TipsAndTricksViewPagerActivity.class);
                     startActivity(openTipsAndTrickActivity);
                     overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
                     finish();
