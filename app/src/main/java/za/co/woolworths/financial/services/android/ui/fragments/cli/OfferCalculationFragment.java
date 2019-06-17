@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -35,6 +36,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
+import za.co.woolworths.financial.services.android.contracts.ICreditLimitDecrease;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CLIOfferDecision;
@@ -48,6 +50,7 @@ import za.co.woolworths.financial.services.android.models.rest.cli.CLIUpdateAppl
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
+import za.co.woolworths.financial.services.android.ui.activities.StartupActivity;
 import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -67,7 +70,7 @@ import za.co.woolworths.financial.services.android.util.controller.CLIFragment;
 import za.co.woolworths.financial.services.android.util.controller.EventStatus;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
 
-public class OfferCalculationFragment extends CLIFragment implements View.OnClickListener, NetworkChangeListener {
+public class OfferCalculationFragment extends CLIFragment implements View.OnClickListener, ICreditLimitDecrease,NetworkChangeListener {
 
 	private DeclineOfferInterface declineOfferInterface;
 	private static final int INCREASE_PROGRESS_BY = 100;
@@ -856,4 +859,16 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	private void enableDeclineButton() {
 		mCliPhase2Activity.enableDeclineButton();
 	}
+
+    @Override
+    public void onCreditDecreaseProceedWithMaximum() {
+        animSeekBarToMaximum();
+    }
+
+    public void openCreditLimitDecreaseFragmentDialog() {
+        FragmentActivity activity = getActivity();
+        if (activity == null && !isAdded()) return;
+        CreditLimitDecreaseConfirmationFragment creditLimitDecreaseConfirmationFragment = CreditLimitDecreaseConfirmationFragment.Companion.newInstance();
+        creditLimitDecreaseConfirmationFragment.show(activity.getSupportFragmentManager(), StartupActivity.class.getSimpleName());
+    }
 }
