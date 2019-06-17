@@ -35,7 +35,7 @@ public class ErrorHandlerView {
 	private Context mContext;
 	private WButton actionButton;
 	private ACTION_TYPE actionType;
-	public enum ACTION_TYPE {SIGN_IN, RETRY, REDIRECT}
+	public enum ACTION_TYPE {SIGN_IN, RETRY, REDIRECT, CALL_NOW}
 
 	public ErrorHandlerView(Context context) {
 		this.mContext = context;

@@ -63,8 +63,7 @@ public class AbsaContentEncryptionRequest {
             public void onResponse(CEKDResponse response, List<HttpCookie> cookies) {
                 for (HttpCookie cookie : cookies) {
                     if (cookie.getName().equalsIgnoreCase("jsessionid")) {
-                        jSession = new JSession();
-                        jSession.setCookie(cookie);
+                        jSession = new JSession(cookie.getName(),cookie);
                     }
                 }
                 keyId = response.keyId;

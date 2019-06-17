@@ -410,6 +410,11 @@
             android:theme="@style/BarcodeScanActivityStyle"
             />
 
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.AbsaStatementsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/FaqStyle" />
+
     </application>
 
 </manifest>
