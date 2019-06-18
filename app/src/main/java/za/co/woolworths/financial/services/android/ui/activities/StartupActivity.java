@@ -10,6 +10,7 @@ import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -36,6 +37,8 @@ import za.co.woolworths.financial.services.android.models.dao.MobileConfigServer
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
+import za.co.woolworths.financial.services.android.ui.activities.deep_link.RetrieveProductDetail;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WVideoView;
@@ -76,6 +79,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 	private ProgressBar pBar;
 	private WGlobalState mWGlobalState;
 	private String mPushNotificationUpdate;
+    private String mDeepLinkUrl = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -354,18 +358,6 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 		}
 	}
 
-	private void presentNextScreen() {
-		try {
-			String isFirstTime = Utils.getSessionDaoValue(StartupActivity.this, SessionDao.KEY.ON_BOARDING_SCREEN);
-			if (isFirstTime == null || isAppUpdated())
-				ScreenManager.presentOnboarding(StartupActivity.this);
-			else {
-				ScreenManager.presentMain(StartupActivity.this, mPushNotificationUpdate);
-			}
-		} catch (NullPointerException ignored) {
-		}
-	}
-
 	private boolean isAppUpdated() {
 		String appVersionFromDB = Utils.getSessionDaoValue(StartupActivity.this, SessionDao.KEY.APP_VERSION);
 		String appLatestVersion = null;
@@ -400,4 +392,51 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 	public String testGetRandomVideos(){
 		return getRandomVideos();
 	}
+
+    private void presentNextScreen() {
+        try {
+            showNonVideoViewWithOutErrorLayout();
+            String isFirstTime = Utils.getSessionDaoValue(StartupActivity.this, SessionDao.KEY.ON_BOARDING_SCREEN);
+            // DeepLinking redirection
+            if (!TextUtils.isEmpty(mDeepLinkUrl)) {
+                if (mDeepLinkUrl.endsWith("/barcode/")) {// land on barcode activity
+                    openDeepLinkBackgroundActivity(isFirstTime);
+                    Intent openBarcodeActivity = new Intent(this, BarcodeScanActivity.class);
+                    startActivity(openBarcodeActivity);
+                    overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+                } else if (mDeepLinkUrl.endsWith("/")) { // land on wToday
+                    ScreenManager.presentMain(StartupActivity.this, mPushNotificationUpdate);
+                    finish();
+                } else if ((mDeepLinkUrl.contains("/help/"))) { // land on tips and trick activity
+                    openDeepLinkBackgroundActivity(isFirstTime);
+                    Intent openTipsAndTrickActivity = new Intent(this, TipsAndTricksViewPagerActivity.class);
+                    startActivity(openTipsAndTrickActivity);
+                    overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+                    finish();
+                } else if ((mDeepLinkUrl.contains("/products/"))) { // land on product detail activity
+                    String productIdAndSkuId = mDeepLinkUrl.substring(mDeepLinkUrl.lastIndexOf('/') + 1);
+                    String[] arrayOfProductAndSKuId = productIdAndSkuId.split("&sku=");
+                    new RetrieveProductDetail(this, arrayOfProductAndSKuId[0], arrayOfProductAndSKuId[1], isFirstTime == null || isAppUpdated()).retrieveProduct();
+                }
+            }else if (isFirstTime == null || isAppUpdated())
+                ScreenManager.presentOnboarding(StartupActivity.this);
+            else {
+                ScreenManager.presentMain(StartupActivity.this, mPushNotificationUpdate);
+            }
+        } catch (NullPointerException ex) {
+            if (ex.getMessage() != null)
+                Log.e(TAG, ex.getMessage());
+        }
+    }
+
+    private void openDeepLinkBackgroundActivity(String isFirstTime) {
+        if (isFirstTime == null || isAppUpdated()) {
+            ScreenManager.presentOnboarding(StartupActivity.this);
+        } else {
+            Intent openBottomActivity = new Intent(this, BottomNavigationActivity.class);
+            openBottomActivity.putExtra(NotificationUtils.PUSH_NOTIFICATION_INTENT, "");
+            startActivity(openBottomActivity);
+            overridePendingTransition(0, 0);
+        }
+    }
 }
