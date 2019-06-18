@@ -36,7 +36,6 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
-import za.co.woolworths.financial.services.android.contracts.ICreditLimitDecrease;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CLIOfferDecision;
@@ -70,7 +69,7 @@ import za.co.woolworths.financial.services.android.util.controller.CLIFragment;
 import za.co.woolworths.financial.services.android.util.controller.EventStatus;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
 
-public class OfferCalculationFragment extends CLIFragment implements View.OnClickListener,NetworkChangeListener {
+public class OfferCalculationFragment extends CLIFragment implements View.OnClickListener, NetworkChangeListener {
 
 	private DeclineOfferInterface declineOfferInterface;
 	private static final int INCREASE_PROGRESS_BY = 100;
