@@ -1,5 +1,4 @@
 package za.co.woolworths.financial.services.android.ui.activities;
-
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -19,16 +18,21 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-
 import com.awfs.coordination.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import com.google.firebase.dynamiclinks.PendingDynamicLinkData;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Map;
 
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.OnResultListener;
@@ -126,7 +130,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
         pBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
         //Mobile Config Server
         if (NetworkManager.getInstance().isConnectedToNetwork(this)) {
-            mFirebaseAnalytics.setUserProperty(APP_SERVER_ENVIRONMENT_KEY, StartupActivity.this.environment.isEmpty() ? "prod" : StartupActivity.this.environment.toLowerCase());
+            mFirebaseAnalytics.setUserProperty(APP_SERVER_ENVIRONMENT_KEY, StartupActivity.this.environment.isEmpty() ? "prod": StartupActivity.this.environment.toLowerCase());
             mFirebaseAnalytics.setUserProperty(APP_VERSION_KEY, StartupActivity.this.appVersion);
 
             setUpScreen();
@@ -139,7 +143,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
             @Override
             public void onClick(View v) {
                 if (NetworkManager.getInstance().isConnectedToNetwork(StartupActivity.this)) {
-                    mFirebaseAnalytics.setUserProperty(APP_SERVER_ENVIRONMENT_KEY, StartupActivity.this.environment.isEmpty() ? "prod" : StartupActivity.this.environment.toLowerCase());
+                    mFirebaseAnalytics.setUserProperty(APP_SERVER_ENVIRONMENT_KEY, StartupActivity.this.environment.isEmpty() ? "prod": StartupActivity.this.environment.toLowerCase());
                     mFirebaseAnalytics.setUserProperty(APP_VERSION_KEY, StartupActivity.this.appVersion);
 
                     setUpScreen();
@@ -154,7 +158,6 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
         //Remove old usage of SharedPreferences data.
         Utils.clearSharedPreferences(StartupActivity.this);
         AuthenticateUtils.getInstance(StartupActivity.this).enableBiometricForCurrentSession(true);
-        // ATTENTION: This was auto-generated to handle app links.
     }
 
 
@@ -225,6 +228,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
     }
 
 
+
     //video player on completion
     @Override
     public void onCompletion(MediaPlayer mp) {
@@ -258,7 +262,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
                         // Get deep link from result (may be null if no link is found)
                         if (pendingDynamicLinkData != null) {
                             mDeepLinkUrl = pendingDynamicLinkData.getLink().getPath();
-                                Log.e("deepLinkUrl",pendingDynamicLinkData.getLink().getPath());
+                            Log.e("deepLinkUrl",pendingDynamicLinkData.getLink().getPath());
                         }
 
                     }
@@ -282,6 +286,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
             executeConfigServer();
         }
     }
+
 
     private String getRandomVideos() {
         ArrayList<String> listOfVideo = new ArrayList<>();
@@ -378,6 +383,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
         }
     }
 
+
     private void presentNextScreen() {
         try {
             showNonVideoViewWithOutErrorLayout();
@@ -414,17 +420,6 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
         }
     }
 
-    private void openDeepLinkBackgroundActivity(String isFirstTime) {
-        if (isFirstTime == null || isAppUpdated()) {
-            ScreenManager.presentOnboarding(StartupActivity.this);
-        } else {
-            Intent openBottomActivity = new Intent(this, BottomNavigationActivity.class);
-            openBottomActivity.putExtra(NotificationUtils.PUSH_NOTIFICATION_INTENT, "");
-            startActivity(openBottomActivity);
-            overridePendingTransition(0, 0);
-        }
-    }
-
     private boolean isAppUpdated() {
         String appVersionFromDB = Utils.getSessionDaoValue(StartupActivity.this, SessionDao.KEY.APP_VERSION);
         String appLatestVersion = null;
@@ -447,12 +442,24 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
     }
 
     @VisibleForTesting
-    public boolean testIsFirstTime() {
+    public boolean testIsFirstTime(){
         return this.isFirstTime();
     }
 
     @VisibleForTesting
-    public String testGetRandomVideos() {
+    public String testGetRandomVideos(){
         return getRandomVideos();
+    }
+
+
+    private void openDeepLinkBackgroundActivity(String isFirstTime) {
+        if (isFirstTime == null || isAppUpdated()) {
+            ScreenManager.presentOnboarding(StartupActivity.this);
+        } else {
+            Intent openBottomActivity = new Intent(this, BottomNavigationActivity.class);
+            openBottomActivity.putExtra(NotificationUtils.PUSH_NOTIFICATION_INTENT, "");
+            startActivity(openBottomActivity);
+            overridePendingTransition(0, 0);
+        }
     }
 }
