@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.credit_limit_increase_fragment.*
 import za.co.woolworths.financial.services.android.contracts.ICreditLimitDecrease
+import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 
 class CreditLimitDecreaseConfirmationFragment : WBottomSheetDialogFragment() {
@@ -16,17 +17,25 @@ class CreditLimitDecreaseConfirmationFragment : WBottomSheetDialogFragment() {
     private var mCreditLimitDecreaseListener: ICreditLimitDecrease? = null
 
     companion object {
-        fun newInstance() = CreditLimitDecreaseConfirmationFragment()
+        private var mTrackedAmount: String? = null
+        fun newInstance(trackedAmount: String) = CreditLimitDecreaseConfirmationFragment().withArgs {
+            putString("TRACKED_AMOUNT", trackedAmount)
+        }
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        activity?.apply {
-            try {
-                mCreditLimitDecreaseListener = this as? ICreditLimitDecrease
-            } catch (e: ClassCastException) {
-                throw ClassCastException("$this must implement MyInterface ")
-            }
+        try {
+            mCreditLimitDecreaseListener = context as? ICreditLimitDecrease
+        } catch (e: ClassCastException) {
+            throw ClassCastException("$this must implement MyInterface ")
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.apply {
+            mTrackedAmount = getString("TRACKED_AMOUNT", "")
         }
     }
 
@@ -37,11 +46,19 @@ class CreditLimitDecreaseConfirmationFragment : WBottomSheetDialogFragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         tvGotIt?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
-
-        mCreditLimitDecreaseListener?.apply {
-            btnProceedWithMaximum?.setOnClickListener { onCreditDecreaseProceedWithMaximum() }
-            tvGotIt?.setOnClickListener { dismissAllowingStateLoss() }
+        tvDescriptionPart2?.text = getString(R.string.credit_limit_decrease_desc_part_2, mTrackedAmount)
+        btnProceedWithMaximum?.setOnClickListener {
+            mCreditLimitDecreaseListener?.apply {
+                dismissAllowingStateLoss()
+                onCreditDecreaseProceedWithMaximum()
+            }
         }
+        tvGotIt?.setOnClickListener { dismissAllowingStateLoss() }
     }
 
+    override fun onDetach() {
+        super.onDetach()
+        // Reset callback
+        mCreditLimitDecreaseListener = null
+    }
 }

@@ -70,7 +70,7 @@ import za.co.woolworths.financial.services.android.util.controller.CLIFragment;
 import za.co.woolworths.financial.services.android.util.controller.EventStatus;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
 
-public class OfferCalculationFragment extends CLIFragment implements View.OnClickListener, ICreditLimitDecrease,NetworkChangeListener {
+public class OfferCalculationFragment extends CLIFragment implements View.OnClickListener,NetworkChangeListener {
 
 	private DeclineOfferInterface declineOfferInterface;
 	private static final int INCREASE_PROGRESS_BY = 100;
@@ -105,6 +105,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	private int mCreditRequestMax;
 	public RelativeLayout relConnectionLayout;
 	private int currentCredit;
+	private int mNewCLIAmount = 0;
 
 	private enum LATEST_BACKGROUND_CALL {CREATE_OFFER, DECLINE_OFFER, UPDATE_APPLICATION, ACCEPT_OFFER}
 
@@ -180,7 +181,9 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 									sbSlideAmount.post(new Runnable() {
 										@Override
 										public void run() {
-											sbSlideAmount.setProgress(busStation.getNumber());
+											mNewCLIAmount = busStation.getNumber();
+											sbSlideAmount.setProgress(mNewCLIAmount);
+											openCreditLimitDecreaseFragmentDialog();
 										}
 									});
 								}
@@ -198,6 +201,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 
 			@Override
 			public void onStopTrackingTouch(SeekBar seekBar) {
+					openCreditLimitDecreaseFragmentDialog();
 			}
 
 			@Override
@@ -208,8 +212,8 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 				progress = progress / INCREASE_PROGRESS_BY;
 				progress = progress * INCREASE_PROGRESS_BY;
-				int newCLIAmount = mCurrentCredit + progress;
-				tvSlideToEditAmount.setText(formatAmount(newCLIAmount));
+				mNewCLIAmount = mCurrentCredit + progress;
+				tvSlideToEditAmount.setText(formatAmount(mNewCLIAmount));
 				String amount = tvSlideToEditAmount.getText().toString();
 				tvNewCreditLimitAmount.setText(amount);
 				mGlobalState.setCreditLimit(amount);
@@ -860,15 +864,16 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		mCliPhase2Activity.enableDeclineButton();
 	}
 
-    @Override
-    public void onCreditDecreaseProceedWithMaximum() {
-        animSeekBarToMaximum();
-    }
-
     public void openCreditLimitDecreaseFragmentDialog() {
-        FragmentActivity activity = getActivity();
-        if (activity == null && !isAdded()) return;
-        CreditLimitDecreaseConfirmationFragment creditLimitDecreaseConfirmationFragment = CreditLimitDecreaseConfirmationFragment.Companion.newInstance();
-        creditLimitDecreaseConfirmationFragment.show(activity.getSupportFragmentManager(), StartupActivity.class.getSimpleName());
+		/**
+		 * mNewCLIAmount represents the actual tracked value
+		 * mCreditRequestMax represents the maximum credit amount allowed
+		 */
+		if (mNewCLIAmount < mCreditRequestMax) {
+			FragmentActivity activity = getActivity();
+			if (activity == null && !isAdded()) return;
+			CreditLimitDecreaseConfirmationFragment creditLimitDecreaseConfirmationFragment = CreditLimitDecreaseConfirmationFragment.Companion.newInstance(formatAmount(mNewCLIAmount));
+			creditLimitDecreaseConfirmationFragment.show(getFragmentManager(), StartupActivity.class.getSimpleName());
+		}
     }
 }
