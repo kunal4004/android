@@ -627,7 +627,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
-            @Body addItemToCart: List<AddItemToCart>): Call<AddItemToCartResponse>
+            @Body addItemToCart: MutableList<AddItemToCart>): Call<AddItemToCartResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @DELETE("cart/item")
@@ -771,7 +771,7 @@ interface ApiInterface {
             @Header("osVersion") osVersion: String,
             @Header("sessionToken") sessionToken: String,
             @Path("productId") productId: String,
-            @Body addToListRequest: List<AddToListRequest>): Call<ShoppingListItemsResponse>
+            @Body addToListRequest: MutableList<AddToListRequest>): Call<ShoppingListItemsResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @DELETE("list/{id}")

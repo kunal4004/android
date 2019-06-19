@@ -398,7 +398,7 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
         loadingBar.visibility = View.VISIBLE
     }
 
-    private fun postAddItemToCart(addItemToCart: List<AddItemToCart>): Call<AddItemToCartResponse> {
+    private fun postAddItemToCart(addItemToCart: MutableList<AddItemToCart>): Call<AddItemToCartResponse> {
         val addItemToCartRequest = OneAppService.addItemToCart(addItemToCart)
         addItemToCartRequest.enqueue(CompletionHandler(object:RequestListener<AddItemToCartResponse>{
             override fun onSuccess(addItemToCartResponse: AddItemToCartResponse?) {

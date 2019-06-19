@@ -115,7 +115,7 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.issueLoan(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), issueLoan)
     }
 
-    fun addToList(addToListRequest: List<AddToListRequest>, listId: String): Call<ShoppingListItemsResponse> {
+    fun addToList(addToListRequest: MutableList<AddToListRequest>, listId: String): Call<ShoppingListItemsResponse> {
         return mApiInterface.addToList(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), listId, addToListRequest)
     }
 
@@ -173,7 +173,7 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.sendUserStatement(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), statement)
     }
 
-    fun addItemToCart(addToCart: List<AddItemToCart>): Call<AddItemToCartResponse> {
+    fun addItemToCart(addToCart: MutableList<AddItemToCart>): Call<AddItemToCartResponse> {
         return mApiInterface.addItemToCart(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), addToCart)
     }
 
