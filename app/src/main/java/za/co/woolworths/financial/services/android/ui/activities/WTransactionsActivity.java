@@ -1,8 +1,11 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.annotation.SuppressLint;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
@@ -12,12 +15,15 @@ import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
+import java.util.ArrayList;
+
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.TransactionHistoryResponse;
 import za.co.woolworths.financial.services.android.ui.adapters.WTransactionsAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
@@ -31,6 +37,7 @@ public class WTransactionsActivity extends AppCompatActivity {
 	public String productOfferingId;
 	private ErrorHandlerView mErrorHandlerView;
 	private ProgressBar pbTransaction;
+	private AsyncTask<String, String, TransactionHistoryResponse> mExecuteTransactionRequest;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -72,13 +79,11 @@ public class WTransactionsActivity extends AppCompatActivity {
 	}
 
 	public void loadTransactionHistory(final String prOfferId) {
-		try {
 			pbTransaction.setVisibility(View.VISIBLE);
-			transactionAsyncAPI(prOfferId).execute();
-		} catch (NullPointerException ignored) {
-		}
+			mExecuteTransactionRequest = transactionAsyncAPI(prOfferId).execute();
 	}
 
+	@SuppressLint("StaticFieldLeak")
 	private HttpAsyncTask<String, String, TransactionHistoryResponse> transactionAsyncAPI(final String prOfferId) {
 		return new HttpAsyncTask<String, String, TransactionHistoryResponse>() {
 			@Override
@@ -108,19 +113,17 @@ public class WTransactionsActivity extends AppCompatActivity {
 			@Override
 			protected void onPostExecute(TransactionHistoryResponse transactionHistoryResponse) {
 				super.onPostExecute(transactionHistoryResponse);
-				dismissProgress();
-				try {
-
-					int httpCode = transactionHistoryResponse.httpCode;
-					switch (httpCode) {
+				if (WTransactionsActivity.this != null && getSupportFragmentManager() != null) {
+					dismissProgress();
+					switch (transactionHistoryResponse.httpCode) {
 						case 200:
 							if (transactionHistoryResponse.transactions.size() > 0) {
 								transactionListview.setVisibility(View.VISIBLE);
 								mErrorHandlerView.hideEmpyState();
 								transactionListview.setAdapter(new WTransactionsAdapter(WTransactionsActivity.this, Utils.getdata(transactionHistoryResponse.transactions)));
 							} else {
-//								transactionListview.setVisibility(View.GONE);
-//								mErrorHandlerView.showEmptyState(3);
+								transactionListview.setVisibility(View.GONE);
+								mErrorHandlerView.showEmptyState(3);
 							}
 							break;
 						case 440:
@@ -130,14 +133,14 @@ public class WTransactionsActivity extends AppCompatActivity {
 							}
 							break;
 						default:
-							try {
-								Utils.alertErrorMessage(WTransactionsActivity.this,
-										transactionHistoryResponse.response.desc);
-							} catch (NullPointerException ignored) {
+							if (transactionHistoryResponse.response != null) {
+								if (!TextUtils.isEmpty(transactionHistoryResponse.response.desc)) {
+									SingleButtonDialogFragment singleButtonDialogFragment = SingleButtonDialogFragment.newInstance(transactionHistoryResponse.response.desc);
+									singleButtonDialogFragment.show(getSupportFragmentManager(), SingleButtonDialogFragment.class.getSimpleName());
+								}
 							}
 							break;
 					}
-				} catch (NullPointerException ignored) {
 				}
 			}
 		};
@@ -173,5 +176,14 @@ public class WTransactionsActivity extends AppCompatActivity {
 				dismissProgress();
 			}
 		});
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+
+		if (mExecuteTransactionRequest != null && !mExecuteTransactionRequest.isCancelled()) {
+			mExecuteTransactionRequest.cancel(true);
+		}
 	}
 }

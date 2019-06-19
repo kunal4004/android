@@ -18,9 +18,9 @@ import java.io.UnsupportedEncodingException;
 
 public class AccountHolder {
 
-    public PasscodeCredential generatePasscodeCredential(Context context, String passcode, String alias, String applicationIdentifier) throws AsymmetricCryptoHelper.AsymmetricEncryptionFailureException, AsymmetricCryptoHelper.AsymmetricKeyGenerationFailureException, KeyGenerationFailureException, UnsupportedEncodingException, DecryptionFailureException {
+    public PasscodeCredential generatePasscodeCredential(String passcode, String alias, String applicationIdentifier) throws AsymmetricCryptoHelper.AsymmetricEncryptionFailureException, AsymmetricCryptoHelper.AsymmetricKeyGenerationFailureException, KeyGenerationFailureException, UnsupportedEncodingException, DecryptionFailureException {
 
-        SessionKey sessionKey = SessionKey.generate(context);
+        SessionKey sessionKey = SessionKey.generate();
 
         byte[] encryptedAlias = SymmetricCipher.Aes256Encrypt(sessionKey.getKey(), alias);
 

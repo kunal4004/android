@@ -187,7 +187,9 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="@dimen/default_margin"
                         android:layout_marginStart="@dimen/default_margin"
+                        android:letterSpacing="0.15"
                         android:enabled="false"
+                        app:WButton_font="medium_bold"
                         android:text="@string/add_to_shopping_list" />
 
                     <za.co.woolworths.financial.services.android.ui.views.WrapContentWebView

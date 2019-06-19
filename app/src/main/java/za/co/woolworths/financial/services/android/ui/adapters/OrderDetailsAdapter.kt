@@ -12,6 +12,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.holder.OrdersBase
 import kotlinx.android.synthetic.main.my_orders_past_orders_header.view.*
 import kotlinx.android.synthetic.main.order_deatils_status_item.view.*
 import kotlinx.android.synthetic.main.order_details_commerce_item.view.*
+import kotlinx.android.synthetic.main.product_details_fragment_new.view.*
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
 import za.co.woolworths.financial.services.android.util.Utils
@@ -67,7 +68,7 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
     inner class OrderItemViewHolder(itemView: View) : OrdersBaseViewHolder(itemView) {
         override fun bind(position: Int) {
             val item = dataList[position].item as CommerceItem
-            setProductImage(itemView.productImage, item.commerceItemInfo.externalImageURL)
+            setProductImage(itemView.imProductImage, item.commerceItemInfo.externalImageURL)
             itemView.itemName.text = item.commerceItemInfo.quantity.toString()+" x "+item.commerceItemInfo.productDisplayName
             itemView.price.text = WFormatter.formatAmount(item.priceInfo.amount)
             itemView.price.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);

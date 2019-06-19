@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.absa
 
 import android.content.Context
 import android.support.v4.app.Fragment
+import android.support.v7.app.AppCompatActivity
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
@@ -14,8 +15,8 @@ open class AbsaFragmentExtension : Fragment() {
     fun showKeyboard(editText: EditText) {
         editText.requestFocus()
         activity?.let {
-            editText.requestFocus()
             editText.isFocusableInTouchMode = true
+            editText.requestFocus()
             val imm = it.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
         }
@@ -32,11 +33,6 @@ open class AbsaFragmentExtension : Fragment() {
 
     fun alwaysHideWindowSoftInputMode() {
         activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
-    }
-
-    fun maskedCardNumberWithSpaces(cardNumber: String?): String {
-        return " **** **** **** ".plus(cardNumber?.let { it.substring(it.length - 4, it.length) }
-                ?: "")
     }
 
     fun tapAndNavigateBackErrorDialog(message: String) {
@@ -59,5 +55,8 @@ open class AbsaFragmentExtension : Fragment() {
         VolleySingleton.getInstance()?.apply {
             cancelRequest(name)
         }
+    }
+    fun alwaysShowWindowSoftInputMode() {
+        activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
     }
 }

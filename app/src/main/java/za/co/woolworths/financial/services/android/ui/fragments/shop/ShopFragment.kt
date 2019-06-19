@@ -17,12 +17,12 @@ import za.co.woolworths.financial.services.android.models.dto.RootCategories
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE
+import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ShopPagerAdapter
-import za.co.woolworths.financial.services.android.ui.fragments.barcode.BarcodeFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChildFragmentEvents
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList.Companion.DISPLAY_TOAST_RESULT_CODE
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback
@@ -39,13 +39,21 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
     private var mTabTitle: MutableList<String>? = null
     private var permissionUtils: PermissionUtils? = null
     var permissions: ArrayList<String> = arrayListOf()
-    var bottomNavigationActivity: BottomNavigationActivity? = null
     var shopPagerAdapter: ShopPagerAdapter? = null
     private var rootCategories: RootCategories? = null
     private var ordersResponse: OrdersResponse? = null
     private var shoppingListsResponse: ShoppingListsResponse? = null
-    public var user: String = ""
+    private var user: String = ""
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        activity?.resources?.apply {
+            mTabTitle = mutableListOf(
+                    getString(R.string.shop_department_title_category),
+                    getString(R.string.shop_department_title_list),
+                    getString(R.string.shop_department_title_order))
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -55,15 +63,13 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        permissionUtils = PermissionUtils(activity, this)
-        permissions.add(android.Manifest.permission.CAMERA)
-        bottomNavigationActivity = activity as BottomNavigationActivity
+        activity?.apply {
+            permissionUtils = PermissionUtils(this, this@ShopFragment)
+            permissions.add(android.Manifest.permission.CAMERA)
+        }
         tvSearchProduct.setOnClickListener { navigateToProductSearch() }
         imBarcodeScanner.setOnClickListener { checkCameraPermission() }
-        mTabTitle = mutableListOf(resources.getString(R.string.shop_department_title_category),
-                resources.getString(R.string.shop_department_title_list),
-                resources.getString(R.string.shop_department_title_order))
-        shopPagerAdapter = ShopPagerAdapter(fragmentManager, mTabTitle, this)
+        fragmentManager?.let {  shopPagerAdapter = ShopPagerAdapter(it, mTabTitle, this)}
         viewpager_main.adapter = shopPagerAdapter
         viewpager_main.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
 
@@ -76,22 +82,24 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
 
             override fun onPageSelected(position: Int) {
                 shopPagerAdapter?.notifyDataSetChanged()
+                updateTabIconUI(position)
             }
-
         })
-        tabs_main.setupWithViewPager(viewpager_main)
-        setupTabIcons(0)
+        tabs_main?.setupWithViewPager(viewpager_main)
+        updateTabIconUI(0)
     }
 
     private fun checkCameraPermission() {
         permissionUtils?.check_permission(permissions, "Explain here why the app needs permissions", 1)
     }
 
-    private fun setupTabIcons(selectedTab: Int) {
-        for (i in mTabTitle?.indices!!) {
-            tabs_main.getTabAt(i)!!.customView = prepareTabView(i, mTabTitle)
+    private fun updateTabIconUI(selectedTab: Int) {
+        tabs_main?.let { tab ->
+            for (i in mTabTitle?.indices!!) {
+                tab.getTabAt(i)?.customView = prepareTabView(i, mTabTitle)
+            }
+            tab.getTabAt(selectedTab)?.customView?.isSelected = true
         }
-        tabs_main.getTabAt(selectedTab)!!.customView!!.isSelected = true
     }
 
     private fun prepareTabView(pos: Int, tabTitle: MutableList<String>?): View {
@@ -101,18 +109,22 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
     }
 
     private fun navigateToProductSearch() {
-        val openProductSearch = Intent(activity, ProductSearchActivity::class.java)
-        startActivity(openProductSearch)
-        activity.overridePendingTransition(0, 0)
+        activity?.apply {
+            val openProductSearch = Intent(this, ProductSearchActivity::class.java)
+            startActivity(openProductSearch)
+            overridePendingTransition(0, 0)
+        }
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         if (!hidden) {
             //do when hidden
-            (activity as BottomNavigationActivity).fadeOutToolbar(R.color.recent_search_bg)
-            (activity as BottomNavigationActivity).showBackNavigationIcon(false)
-            refreshViewPagerFragment(false)
+            (activity as?  BottomNavigationActivity)?.apply {
+                fadeOutToolbar(R.color.recent_search_bg)
+                showBackNavigationIcon(false)
+                refreshViewPagerFragment(false)
+            }
         }
     }
 
@@ -135,12 +147,11 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
     }
 
     private fun navigateToBarcode() {
-        val barcodeFragment = BarcodeFragment()
-        val bundle = Bundle()
-        bundle.putString("SCAN_MODE", "ONE_D_MODE")
-        barcodeFragment.arguments = bundle
-        bottomNavigationActivity?.hideBottomNavigationMenu()
-        bottomNavigationActivity?.pushFragmentSlideUp(barcodeFragment)
+        activity?.apply {
+            val openBarcodeActivity =  Intent(this, BarcodeScanActivity::class.java)
+            startActivity(openBarcodeActivity)
+            overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

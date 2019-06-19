@@ -69,6 +69,8 @@ import za.co.woolworths.financial.services.android.models.dto.TransactionHistory
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
+import za.co.woolworths.financial.services.android.models.dto.npc.BlockCardRequestBody;
+import za.co.woolworths.financial.services.android.models.dto.npc.BlockMyCardResponse;
 import za.co.woolworths.financial.services.android.models.dto.statement.GetStatement;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementResponse;
@@ -341,6 +343,10 @@ public class WfsApi {
 
 	public CreditCardTokenResponse getCreditCardToken() {
 		return mApiInterface.getCreditCardToken(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken());
+	}
+
+	public BlockMyCardResponse postBlockMyCard(BlockCardRequestBody blockCardRequestBody, String productOfferingId) {
+		return mApiInterface.blockStoreCard(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(),getOsVersion(), getOsVersion(),"",getSessionToken(),productOfferingId , blockCardRequestBody);
 	}
 
 	private String getOsVersion() {

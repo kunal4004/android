@@ -2,15 +2,19 @@ package za.co.woolworths.financial.services.android.models.dao
 
 import android.content.Context
 import android.text.TextUtils
+import com.jakewharton.retrofit.Ok3Client
+import okhttp3.OkHttpClient
 import retrofit.RestAdapter
 import za.co.wigroup.androidutils.Util
 import za.co.woolworths.financial.services.android.contracts.OnResultListener
 import za.co.woolworths.financial.services.android.models.ApiInterface
+import za.co.woolworths.financial.services.android.models.WfsApiInterceptor
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
+import java.util.concurrent.TimeUnit
 
 
 class MobileConfigServerDao {
@@ -24,8 +28,14 @@ class MobileConfigServerDao {
             val task = object : HttpAsyncTask<String, String, ConfigResponse>() {
                 override fun httpDoInBackground(vararg strings: String): ConfigResponse {
 
+                    val httpBuilder = OkHttpClient.Builder()
+                    httpBuilder.addInterceptor(WfsApiInterceptor(appInstance.applicationContext))
+                    httpBuilder.readTimeout(45, TimeUnit.SECONDS)
+                    httpBuilder.connectTimeout(45, TimeUnit.SECONDS)
+
                     val mApiInterface = RestAdapter.Builder()
                             .setEndpoint(com.awfs.coordination.BuildConfig.HOST)
+                            .setClient(Ok3Client(httpBuilder.build()))
                             .build()
                             .create(ApiInterface::class.java)
 

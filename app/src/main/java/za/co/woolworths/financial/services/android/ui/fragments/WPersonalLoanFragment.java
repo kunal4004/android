@@ -1,10 +1,10 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
@@ -12,7 +12,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.v4.widget.NestedScrollView;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +26,7 @@ import com.awfs.coordination.R;
 import com.crashlytics.android.Crashlytics;
 import com.google.gson.Gson;
 
+import java.lang.ref.WeakReference;
 import java.text.ParseException;
 import java.util.List;
 
@@ -107,7 +108,9 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
     private RelativeLayout relDebitOrders;
 
     private View fakeView;
-    private NestedScrollView mScrollAccountCard;
+    private boolean mPersonalLoanFragmentIsVisible = false;
+private static AsyncTask<Void, Void, Void> async;
+    private AsyncTask<Void, Void, Void> mWalThroughStatementEducationFeature;
 
     @Nullable
     @Override
@@ -195,11 +198,10 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
         tvHowToPayArrears = view.findViewById(R.id.howToPayArrears);
 
         relDebitOrders = view.findViewById(R.id.relDebitOrders);
-        imViewStatementLogo = view.findViewById(R.id.imViewStatementLogo);
+        imViewStatementLogo =  view.findViewById(R.id.imViewStatementLogo);
         relDebitOrders.setOnClickListener(this);
 
         fakeView = view.findViewById(R.id.fakeView);
-        mScrollAccountCard = getActivity().findViewById(R.id.nest_scrollview);
         infoMinimumAmountDue = view.findViewById(R.id.infoMinimumAmountDue);
         infoAmountOverdue = view.findViewById(R.id.infoAmountOverdue);
         infoNextPaymentDue = view.findViewById(R.id.infoNextPaymentDue);
@@ -230,17 +232,17 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
     }
 
     private void setAccountDetails() {
-        boolBroadcastRegistered = true;
-        getActivity().registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
-        accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
-        onLoadComplete();
-        mErrorHandlerView = new ErrorHandlerView(getActivity());
-        if (!NetworkManager.getInstance().isConnectedToNetwork(getActivity()))
-            mErrorHandlerView.showToast();
-        if (accountsResponse != null)
-            bindData(accountsResponse);
+            boolBroadcastRegistered = true;
+            getActivity().registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+            accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
+            onLoadComplete();
+            mErrorHandlerView = new ErrorHandlerView(getActivity());
+            if (!NetworkManager.getInstance().isConnectedToNetwork(getActivity()))
+                mErrorHandlerView.showToast();
+            if (accountsResponse != null)
+                bindData(accountsResponse);
 
-        mIncreaseLimitController.defaultIncreaseLimitView(logoIncreaseLimit, llCommonLayer, tvIncreaseLimit);
+            mIncreaseLimitController.defaultIncreaseLimitView(logoIncreaseLimit, llCommonLayer, tvIncreaseLimit);
     }
 
     public void bindData(AccountsResponse response) {
@@ -436,20 +438,26 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
         cliGetOfferActive = new CLIGetOfferActive(getActivity(), productOfferingId, new OnEventListener() {
             @Override
             public void onSuccess(Object object) {
-                offerActive = ((OfferActive) object);
-                bindUI(offerActive);
-                personalWasAlreadyRunOnce = true;
-                onLoadComplete();
+                if (getActivity()==null && !mPersonalLoanFragmentIsVisible) return;
+                    offerActive = ((OfferActive) object);
+                    bindUI(offerActive);
+                    personalWasAlreadyRunOnce = true;
+                    onLoadComplete();
+
             }
 
             @Override
             public void onFailure(String e) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        networkFailureHandler();
-                    }
-                });
+                Activity activity = getActivity();
+                if (activity!=null && mPersonalLoanFragmentIsVisible) {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            personalWasAlreadyRunOnce = false;
+                            onLoadComplete();
+                        }
+                    });
+                }
             }
         });
         cliGetOfferActive.execute();
@@ -539,16 +547,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
         });
     }
 
-    public void networkFailureHandler() {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                personalWasAlreadyRunOnce = false;
-                onLoadComplete();
-            }
-        });
-    }
-
     @Override
     public void onPause() {
         super.onPause();
@@ -601,6 +599,12 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
                 cliGetOfferActive.cancel(true);
             }
         }
+
+        // Cancelling walkThrough statement asyncTask
+        if (mWalThroughStatementEducationFeature != null && !mWalThroughStatementEducationFeature.isCancelled()) {
+            mWalThroughStatementEducationFeature.cancel(true);
+        }
+
     }
 
     private void cliOfferStatus(OfferActive offerActive) {
@@ -611,7 +615,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
         mIncreaseLimitController.cliDefaultView(llCommonLayer, tvIncreaseLimitDescription);
     }
 
-    @SuppressLint("StaticFieldLeak")
     private void showFeatureWalkthroughStatements() {
         if (!AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.statements)
             return;
@@ -623,37 +626,59 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
             }
         }, 500);
         final WMaterialShowcaseView.IWalkthroughActionListener listener = this;
-        new AsyncTask<Void, Void, Void>() {
 
-            @Override
-            protected Void doInBackground(Void... voids) {
-                getActivity().runOnUiThread(new Runnable() {
+       mWalThroughStatementEducationFeature =  new WalkThroughStatementEducationFeature(getActivity(),imViewStatementLogo,listener).execute();
+    }
+
+    private static class WalkThroughStatementEducationFeature extends AsyncTask<Void, Void, Void> {
+
+        private final WMaterialShowcaseView.IWalkthroughActionListener mWalkThroughActionListener;
+        private WeakReference<Activity> activityReference;
+        private WeakReference<ImageView> viewStatementLogo;
+
+        // only retain a weak reference to the activity
+        WalkThroughStatementEducationFeature(Activity context, ImageView imViewStatementLogo, WMaterialShowcaseView.IWalkthroughActionListener walkThroughActionListener) {
+            activityReference = new WeakReference<>(context);
+            viewStatementLogo = new WeakReference<>(imViewStatementLogo);
+            mWalkThroughActionListener = walkThroughActionListener;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            Activity activity = activityReference.get();
+            if (activity != null) {
+                activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        imViewStatementLogo.invalidate();
+                        if (viewStatementLogo != null)
+                            viewStatementLogo.get().invalidate();
                     }
                 });
-                return null;
             }
+            return null;
+        }
 
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-                Crashlytics.setString(getString(R.string.crashlytics_materialshowcase_key),this.getClass().getCanonicalName());
-                MyAccountCardsActivity.walkThroughPromtView = new WMaterialShowcaseView.Builder(getActivity(), WMaterialShowcaseView.Feature.STATEMENTS)
-                        .setTarget(getActivity().getWindow().getDecorView().findViewById(R.id.imViewStatementLogo))
-                        .setTitle(R.string.walkthrough_statement_title)
-                        .setDescription(R.string.walkthrough_statement_desc)
-                        .setActionText(R.string.walkthrough_statement_action)
-                        .setImage(R.drawable.tips_tricks_statements)
-                        .setAction(listener)
-                        .setShapePadding(48)
-                        .setArrowPosition(WMaterialShowcaseView.Arrow.BOTTOM_LEFT)
-                        .setMaskColour(getResources().getColor(R.color.semi_transparent_black)).build();
-                MyAccountCardsActivity.walkThroughPromtView.show(getActivity());
-            }
-        }.execute();
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            Activity activity = activityReference.get();
+            if (activity == null) return;
+            Resources resources = activity.getResources();
+            if (resources == null) return;
 
+            Crashlytics.setString(resources.getString(R.string.crashlytics_materialshowcase_key), this.getClass().getCanonicalName());
+            WMaterialShowcaseView walkThroughPromptView = new WMaterialShowcaseView.Builder(activity, WMaterialShowcaseView.Feature.STATEMENTS)
+                    .setTarget(activity.getWindow().getDecorView().findViewById(R.id.imViewStatementLogo))
+                    .setTitle(R.string.walkthrough_statement_title)
+                    .setDescription(R.string.walkthrough_statement_desc)
+                    .setActionText(R.string.walkthrough_statement_action)
+                    .setImage(R.drawable.tips_tricks_statements)
+                    .setAction(mWalkThroughActionListener)
+                    .setShapePadding(48)
+                    .setArrowPosition(WMaterialShowcaseView.Arrow.BOTTOM_LEFT)
+                    .setMaskColour(ContextCompat.getColor(activity, R.color.semi_transparent_black)).build();
+            walkThroughPromptView.show(activity);
+        }
     }
 
     @Override
@@ -664,6 +689,12 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
     @Override
     public void onPromptDismiss() {
 
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        mPersonalLoanFragmentIsVisible = isVisibleToUser;
     }
 }
 

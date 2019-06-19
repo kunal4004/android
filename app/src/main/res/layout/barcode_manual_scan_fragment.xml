@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black">
+
+    <ImageView
+        android:id="@+id/imgBarcode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="28dp"
+        android:layout_marginEnd="28dp"
+        android:contentDescription="@string/barcode_error_title"
+        android:src="@drawable/barcode_img"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/bottomGuide" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/bottomGuide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.24" />
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="28dp"
+        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="50dp"
+        android:fontFamily="@font/futura_medium_ttf"
+        android:gravity="center"
+        android:letterSpacing="0.2"
+        android:lineSpacingExtra="1.6dp"
+        android:text="@string/enter_barcode_desc"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@+id/bottomGuide"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="UnusedAttribute" />
+
+    <ProgressBar
+        android:id="@+id/mProgressBar"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="50dp"
+        android:indeterminateTint="@color/white"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/bottomGuide"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="UnusedAttribute" />
+
+
+    <za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView
+        android:id="@+id/edtBarcodeNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imgBarcode"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="28dp"
+        android:background="@android:color/transparent"
+        android:digits="0123456789"
+        android:gravity="center"
+        android:imeOptions="actionDone"
+        android:inputType="phone"
+        android:letterSpacing="0.25"
+        android:maxLength="50"
+        android:maxLines="1"
+        android:textColor="@color/white"
+        android:textColorHint="@color/recent_search_bg"
+        android:textCursorDrawable="@drawable/colorcursor"
+        android:textSize="20sp"
+        app:WEditTextView_font="medium"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imgBarcode"
+        tools:ignore="UnusedAttribute">
+
+        <requestFocus />
+
+    </za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView>
+
+    <View
+        android:id="@+id/horizontalLine"
+        android:layout_width="0dp"
+        android:layout_height="0.1dp"
+        android:layout_below="@+id/edtBarcodeNumber"
+        android:layout_marginStart="75dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="75dp"
+        android:background="@color/barcode_button_light"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edtBarcodeNumber" />
+
+    <Button
+        android:id="@+id/btnBarcodeConfirm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/horizontalLine"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="32dp"
+        android:background="@drawable/barcode_black_button_press_state"
+        android:fontFamily="@font/futura_medium_ttf"
+        android:letterSpacing="0.15"
+        android:text="@string/confirm"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/horizontalLine"
+        tools:ignore="UnusedAttribute" />
+
+
+    <android.support.constraint.Group
+        android:id="@+id/confirmedBarcodeGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="btnBarcodeConfirm,horizontalLine" />
+
+</android.support.constraint.ConstraintLayout>

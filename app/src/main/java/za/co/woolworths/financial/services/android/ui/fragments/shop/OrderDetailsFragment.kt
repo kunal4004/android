@@ -5,13 +5,13 @@ import android.os.Bundle
 import android.os.Handler
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.awfs.coordination.R
 import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import org.json.JSONObject
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.rest.product.GetOrderDetailsRequest
@@ -23,6 +23,7 @@ import kotlinx.android.synthetic.main.order_details_fragment.*
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.FragmentsEventsListner
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
+import java.lang.IllegalStateException
 
 class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick {
 
@@ -53,17 +54,17 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Handler().postDelayed(Runnable {
-            activity.runOnUiThread(Runnable {
+        Handler().postDelayed({
+            activity?.runOnUiThread {
                 initViews()
-            })
+            }
         }, 100)
     }
 
     private fun initViews() {
         tvSelectAll = activity.findViewById(R.id.tvSelectAll)
         tvSelectAll?.visibility = View.GONE
-        orderDetails.layoutManager = LinearLayoutManager(activity) as RecyclerView.LayoutManager?
+        orderDetails.layoutManager = LinearLayoutManager(activity)
         orderItemsBtn.setOnClickListener {
             listener.onOrderItemsClicked(orderDetailsResponse!!)
         }
@@ -102,28 +103,31 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick {
         val itemsObject = JSONObject(Gson().toJson(ordersResponse.items))
         val keys = itemsObject.keys()
         while ((keys.hasNext())) {
-            val key = keys.next()
-            if (key.contains("default"))
-                dataList.add(OrderDetailsItem("YOUR GENERAL ITEMS", OrderDetailsItem.ViewType.HEADER))
-            else if (key.contains("homeCommerceItem"))
-                dataList.add(OrderDetailsItem("YOUR HOME ITEMS", OrderDetailsItem.ViewType.HEADER))
-            else if (key.contains("foodCommerceItem"))
-                dataList.add(OrderDetailsItem("YOUR FOOD ITEMS", OrderDetailsItem.ViewType.HEADER))
-            else if (key.contains("clothingCommerceItem"))
-                dataList.add(OrderDetailsItem("YOUR CLOTHING ITEMS", OrderDetailsItem.ViewType.HEADER))
-            else if (key.contains("premiumBrandCommerceItem"))
-                dataList.add(OrderDetailsItem("YOUR PREMIUM BRAND ITEMS", OrderDetailsItem.ViewType.HEADER))
-            else
-                dataList.add(OrderDetailsItem("YOUR OTHER ITEMS", OrderDetailsItem.ViewType.HEADER))
+            val key = keys?.next()?.apply {
+                when {
+                    contains("default") -> dataList.add(OrderDetailsItem("YOUR GENERAL ITEMS", OrderDetailsItem.ViewType.HEADER))
+                    contains("homeCommerceItem") -> dataList.add(OrderDetailsItem("YOUR HOME ITEMS", OrderDetailsItem.ViewType.HEADER))
+                    contains("foodCommerceItem") -> dataList.add(OrderDetailsItem("YOUR FOOD ITEMS", OrderDetailsItem.ViewType.HEADER))
+                    contains("clothingCommerceItem") -> dataList.add(OrderDetailsItem("YOUR CLOTHING ITEMS", OrderDetailsItem.ViewType.HEADER))
+                    contains("premiumBrandCommerceItem") -> dataList.add(OrderDetailsItem("YOUR PREMIUM BRAND ITEMS", OrderDetailsItem.ViewType.HEADER))
+                    else -> dataList.add(OrderDetailsItem("YOUR OTHER ITEMS", OrderDetailsItem.ViewType.HEADER))
+                }
+            }
 
             val productsArray = itemsObject.getJSONArray(key)
             if (productsArray.length() > 0) {
                 for (i in 0 until productsArray.length()) {
-                    var commerceItem = CommerceItem()
-                    commerceItem = Gson().fromJson(productsArray.getJSONObject(i).toString(), CommerceItem::class.java)
-                    val fulfillmentStoreId = Utils.retrieveStoreId(commerceItem.fulfillmentType)
-                    commerceItem.fulfillmentStoreId = fulfillmentStoreId!!.replace("\"".toRegex(), "")
-                    dataList.add(OrderDetailsItem(commerceItem, OrderDetailsItem.ViewType.COMMERCE_ITEM))
+                    try {
+                        val commerceItem = Gson().fromJson(productsArray.getJSONObject(i).toString(), CommerceItem::class.java)
+                        val fulfillmentStoreId = Utils.retrieveStoreId(commerceItem.fulfillmentType)
+                        commerceItem.fulfillmentStoreId = fulfillmentStoreId!!.replace("\"".toRegex(), "")
+                        dataList.add(OrderDetailsItem(commerceItem, OrderDetailsItem.ViewType.COMMERCE_ITEM))
+                    } catch (e: Exception) {
+                        when (e) {
+                            is IllegalStateException,
+                            is JsonSyntaxException -> dataList.add(OrderDetailsItem(CommerceItem(), OrderDetailsItem.ViewType.COMMERCE_ITEM))
+                        }
+                    }
                 }
             }
         }

@@ -26,6 +26,7 @@
     <color name="charcoal_grey">#4F5051</color>
     <color name="bg_overlay">#20000000</color>
     <color name="bg_light_overlay">#10000000</color>
+    <color name="sem_per_black">#99000000</color>
 
     <!-- step indicator -->
     <color name="horizontal_line">#10000000</color>
@@ -35,7 +36,7 @@
     <color name="divider">#B6B6B6</color>
     <color name="product_divider">#22000000</color>
     <color name="barcode_button">#40ffffff</color>
-    <color name="barcode_button_light">#20ffffff</color>
+    <color name="barcode_button_light">#25ffffff</color>
     <color name="red">#ff0000</color>
     <color name="dark_divider">#dadada</color>
 
@@ -80,4 +81,11 @@
     <color name="orders_bg">#F0F0F0</color>
     <color name="shop_search_color">#F6F6F6</color>
     <color name="button_disable">#C1C1C1</color>
+    <color name="active_card_color">#424244</color>
+    <color name="npc_description">#909090</color>
+    <color name="permanent_card_block_desc_color">#7F7F7F</color>
+    <color name="no_active_card_title">#FF222222</color>
+    <color name="success_stroke_color"> #CC196A</color>
+    <color name="trans_success_stroke_color">#307A4183</color>
+    <color name="gray">#FF7F7F7F</color>
 </resources>

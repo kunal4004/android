@@ -116,6 +116,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	}
 
 	private void setupViewPager(ViewPager viewPager, VoucherResponse voucherResponse, CardDetailsResponse cardResponse) {
+		if (!isAdded()) return;
 		Bundle bundle = new Bundle();
 		bundle.putString("WREWARDS", Utils.objectToJson(voucherResponse));
 		if (cardResponse != null)
@@ -217,6 +218,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	}
 
 	private void setupErrorViewPager(ViewPager viewPager) {
+		if (!isAdded()) return;
 		Bundle bundle = new Bundle();
 		bundle.putString("WREWARDS", "");
 		adapter = new WRewardsFragmentPagerAdapter(getChildFragmentManager(), bundle);
@@ -280,6 +282,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	}
 
 	public void scrollToTop() {
+		if (!isAdded()) return;
 		if (adapter != null) {
 			Fragment page = getChildFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + viewPager.getCurrentItem());
 			switch (viewPager.getCurrentItem()) {

@@ -33,38 +33,32 @@ import javax.crypto.NoSuchPaddingException;
 public class AsymmetricCryptoHelper {
     private static final String KEY_FACTORY_ALGORITHM = "RSA";
     private static final String CIPHER_ALGORITHM = "RSA/ECB/PKCS1Padding";
-    private static final String KEY_FILE = "Woolworths_MobileAppPubKey.pem";
 
-    public final byte[] encryptSymmetricKey(Context context, byte[] symmetricKey) throws AsymmetricKeyGenerationFailureException, AsymmetricEncryptionFailureException {
-        PublicKey publicKey = loadPublicKey(context);
+
+    public final byte[] encryptSymmetricKey(byte[] symmetricKey, String pubKey) throws AsymmetricKeyGenerationFailureException, AsymmetricEncryptionFailureException {
+        PublicKey publicKey = loadPublicKey(pubKey);
         return encrypt(publicKey, symmetricKey);
     }
 
-    private PublicKey loadPublicKey(Context context) throws AsymmetricKeyGenerationFailureException {
+    private PublicKey loadPublicKey(String pubKey) throws AsymmetricKeyGenerationFailureException {
         try {
-            InputStream inputStream = readPublicKeyFile(context);
 
-            byte[] keyBytes = new byte[inputStream.available()];
-            inputStream.read(keyBytes);
-            inputStream.close();
+            String key = pubKey.replaceAll("(-+BEGIN PUBLIC KEY-+\\r?\\n|-+END PUBLIC KEY-+\\r?\\n?)", "");
 
-            String pubKey = new String(keyBytes, "UTF-8");
-            pubKey = pubKey.replaceAll("(-+BEGIN PUBLIC KEY-+\\r?\\n|-+END PUBLIC KEY-+\\r?\\n?)", "");
-
-            keyBytes = Base64.decode(pubKey, Base64.DEFAULT);
+            byte[] keyBytes = Base64.decode(key, Base64.DEFAULT);
 
             X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
             KeyFactory keyFactory = KeyFactory.getInstance(KEY_FACTORY_ALGORITHM);
             return keyFactory.generatePublic(keySpec);
 
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException | IOException | NullPointerException e) {
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException | NullPointerException e) {
             throw new AsymmetricKeyGenerationFailureException(e);
         }
     }
 
-    private InputStream readPublicKeyFile(Context context) throws IOException {
+    private InputStream readPublicKeyFile(Context context, String keyFile) throws IOException {
         AssetManager assetManager = context.getAssets();
-        return assetManager.open(KEY_FILE);
+        return assetManager.open(keyFile);
     }
 
     private byte[] encrypt(PublicKey publicKey, byte[] plainData) throws AsymmetricEncryptionFailureException {

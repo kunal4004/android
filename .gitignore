@@ -6,3 +6,4 @@ app.iml
 library/*
 google-services.json
 Woolworths_MobileAppPubKey.pem
+Woolworths_Content_Encyption_Key.pem

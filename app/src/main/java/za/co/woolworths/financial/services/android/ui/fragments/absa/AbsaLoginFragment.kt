@@ -1,28 +1,37 @@
 package za.co.woolworths.financial.services.android.ui.fragments.absa
 
+import android.content.Intent
+import android.graphics.Paint
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.LayoutInflater
-import android.view.View
+import android.view.*
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
-import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.Toast
 import com.android.volley.VolleyError
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_login_fragment.*
+import za.co.absa.openbankingapi.woolworths.integration.AbsaContentEncryptionRequest
 import za.co.absa.openbankingapi.woolworths.integration.AbsaLoginRequest
 import za.co.absa.openbankingapi.woolworths.integration.dto.LoginResponse
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse
 import za.co.absa.openbankingapi.woolworths.integration.service.VolleyErrorHandler
+import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
+import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.GotITDialogFragment
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView
+import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.numberkeyboard.NumberKeyboardListener
 import java.net.HttpCookie
 
-class AbsaLoginFragment : AbsaFragmentExtension() {
+class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDialogListener {
 
     private var mPinImageViewList: MutableList<ImageView>? = null
 
@@ -36,6 +45,12 @@ class AbsaLoginFragment : AbsaFragmentExtension() {
         return inflater?.inflate(R.layout.absa_login_fragment, container, false)
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+        (activity as AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    }
+
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViewsAndEvents()
@@ -44,33 +59,46 @@ class AbsaLoginFragment : AbsaFragmentExtension() {
     }
 
     private fun initViewsAndEvents() {
-        mPinImageViewList = mutableListOf(ivPin1, ivPin2, ivPin3, ivPin4, ivPin5)
-        edtEnterATMPin.setOnKeyPreImeListener { activity?.onBackPressed() }
-        edtEnterATMPin.setOnEditorActionListener { _, actionId, _ ->
-            var handled = false
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                handled = true
-                requestToLogin()
+        tvForgotPasscode.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+        tvForgotPasscode.setOnClickListener {
+
+            if (pbLoginProgress.visibility == VISIBLE) return@setOnClickListener
+
+            activity?.let {
+
+                //Clear content encryption data if any, before making new registration process.
+                AbsaContentEncryptionRequest.clearContentEncryptionData()
+
+                val openDialogFragment =
+                        GotITDialogFragment.newInstance(getString(R.string.forgot_passcode),
+                                getString(R.string.forgot_passcode_dialog_desc), getString(R.string.cancel),
+                                this, getString(R.string.reset_passcode))
+                openDialogFragment.show(it.supportFragmentManager, GotITDialogFragment::class.java.simpleName)
             }
-            handled
         }
+        numberKeyboard.setListener(this)
+        mPinImageViewList = mutableListOf(ivPin1, ivPin2, ivPin3, ivPin4, ivPin5)
     }
 
     private fun requestToLogin() {
-        if ((edtEnterATMPin.length() - 1) == MAXIMUM_PIN_ALLOWED) {
-            val userPin = edtEnterATMPin.text.toString()
-            val aliasId = SessionDao.getByKey(SessionDao.KEY.ABSA_ALIASID)?.value ?: ""
-            val deviceId = SessionDao.getByKey(SessionDao.KEY.ABSA_DEVICEID)?.value ?: ""
-            absaLoginRequest(aliasId, deviceId, userPin)
-        } else {
-            clearPin()
-        }
+        if ((edtEnterATMPin.length() - 1) < MAXIMUM_PIN_ALLOWED)
+            return
+        val userPin = edtEnterATMPin.text.toString()
+        val aliasId = SessionDao.getByKey(SessionDao.KEY.ABSA_ALIASID)?.value ?: ""
+        val deviceId = Utils.getAbsaUniqueDeviceID()
+        absaLoginRequest(aliasId, deviceId, userPin)
+
     }
 
     private fun absaLoginRequest(aliasId: String?, deviceId: String?, userPin: String) {
+
+        //Clear content encryption data be fore making login request.
+        AbsaContentEncryptionRequest.clearContentEncryptionData()
+
+
         activity?.let {
             displayLoginProgress(true)
-            AbsaLoginRequest(it).make(userPin, aliasId, deviceId,
+            AbsaLoginRequest().make(userPin, aliasId, deviceId,
                     object : AbsaBankingOpenApiResponse.ResponseDelegate<LoginResponse> {
 
                         override fun onSuccess(response: LoginResponse?, cookies: MutableList<HttpCookie>?) {
@@ -80,41 +108,44 @@ class AbsaLoginFragment : AbsaFragmentExtension() {
                                 } else {
                                     failureHandler(resultMessage ?: technical_error_occurred)
                                 }
-                                /* Work for WOP-3881
-                                   Commented because header returning nil
-                                    header?.apply {
-                                        if (statusCode == "0" || resultMessages.isEmpty()) {
-                                            successHandler(response)
-                                        } else {
-                                            if (statusCode == "1") {
-                                                failureHandler(header.resultMessages.first()?.responseMessage
-                                                        ?: technical_error_occurred)
-                                            }
-                                        }
-                                    }*/
                             }
                             displayLoginProgress(false)
                         }
 
                         override fun onFailure(errorMessage: String) {
-                            failureHandler(errorMessage)
                             displayLoginProgress(false)
+                            failureHandler(errorMessage)
                         }
 
                         override fun onFatalError(error: VolleyError?) {
-                            (activity as? AppCompatActivity)?.apply { error?.let { error -> VolleyErrorHandler(this, error).show() } }
+                            displayLoginProgress(false)
+                            clearPin()
+                            ErrorHandlerView(activity).showToast()
                         }
                     })
         }
     }
 
     private fun successHandler() {
-        tapAndDismissErrorDialog("Login Successful")
+        Toast.makeText(activity,"Login Successful",Toast.LENGTH_SHORT).show()
+        clearPin()
     }
 
     private fun failureHandler(message: String?) {
         cancelRequest()
-        message?.let { tapAndNavigateBackErrorDialog(it) }
+        // message?.let { tapAndNavigateBackErrorDialog(it) }
+        when {
+            message?.trim()?.contains("authentication failed", true)!! -> {
+                ErrorHandlerView(activity).showToast(getString(R.string.incorrect_passcode_alert))
+                clearPin()
+            }
+            message.trim().contains("credential revoked", true) -> {
+                showErrorScreen(ErrorHandlerActivity.PASSCODE_LOCKED)
+            }
+            else -> {
+                showErrorScreen(ErrorHandlerActivity.COMMON)
+            }
+        }
     }
 
     private fun createTextListener(edtEnterATMPin: EditText?) {
@@ -170,7 +201,6 @@ class AbsaLoginFragment : AbsaFragmentExtension() {
         edtEnterATMPin?.apply {
             clearPinImage(mPinImageViewList!!)
             text.clear()
-            showKeyboard(this)
         }
     }
 
@@ -184,6 +214,59 @@ class AbsaLoginFragment : AbsaFragmentExtension() {
     }
 
     fun displayLoginProgress(state: Boolean) {
-        pbLoginProgress.visibility = if (state) VISIBLE else INVISIBLE
+        pbLoginProgress?.visibility = if (state) VISIBLE else INVISIBLE
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        menu?.getItem(0)?.isVisible = false
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    private fun showErrorScreen(errorType: Int) {
+        activity?.let {
+            val intent: Intent = Intent(it, ErrorHandlerActivity::class.java)
+            intent.putExtra("errorType", errorType)
+            it.startActivityForResult(intent, ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE) {
+            when (resultCode) {
+                ErrorHandlerActivity.RESULT_RETRY -> {
+                    clearPin()
+                    alwaysHideWindowSoftInputMode()
+                }
+            }
+        }
+    }
+
+    override fun onNumberClicked(number: Int) {
+
+        if (pbLoginProgress.visibility == VISIBLE)
+            return
+
+        edtEnterATMPin.text = Editable.Factory.getInstance().newEditable(edtEnterATMPin.text.append(number.toString()))
+        requestToLogin()
+    }
+
+    override fun onLeftAuxButtonClicked() {
+    }
+
+    override fun onRightAuxButtonClicked() {
+        if (edtEnterATMPin.text.isNotEmpty() && pbLoginProgress.visibility != VISIBLE)
+            edtEnterATMPin.text = Editable.Factory.getInstance().newEditable(edtEnterATMPin.text.substring(0, edtEnterATMPin.text.length - 1))
+    }
+
+    override fun onDialogDismissed() {
+
+    }
+
+    override fun onDialogButtonAction() {
+
+        activity?.let {
+            (it as ABSAOnlineBankingRegistrationActivity).startAbsaRegistration()
+        }
     }
 }
