@@ -33,16 +33,18 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.contracts.RequestListener;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.SearchHistory;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
+import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.ui.adapters.StoreSearchListAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
-import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.RecycleViewClickListner;
 import za.co.woolworths.financial.services.android.util.SpannableMenuOption;
@@ -63,14 +65,13 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
 	public static final String TAG = "SearchStoresActivity";
 	private ErrorHandlerView mErrorHandlerView;
 	public String mSearchText = "";
-	private WoolworthsApplication mWoolworthsApplication;
+	private Call<LocationResponse> mSearchRequest;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.search_store_activity);
 		Utils.updateStatusBarBackground(this);
-		mWoolworthsApplication = (WoolworthsApplication) SearchStoresActivity.this.getApplication();
 		toolbar = (Toolbar) findViewById(R.id.toolbar);
 		recyclerView = (RecyclerView) findViewById(R.id.storeList);
 		recentSearchLayout = (LinearLayout) findViewById(R.id.recentSearchLayout);
@@ -129,7 +130,7 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
 			public void onClick(View v) {
 				if (NetworkManager.getInstance().isConnectedToNetwork(SearchStoresActivity.this)) {
 					if (mSearchText.length() >= 2)
-						startSearch(mSearchText).execute();
+						mSearchRequest = startSearch(mSearchText);
 				}
 			}
 		});
@@ -227,7 +228,7 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
 							showRecentSearchHistoryView(false);
 							if (newText.length() >= 2) {
 								mSearchText = newText;
-								startSearch(newText).execute();
+								mSearchRequest = startSearch(newText);
 							}
 						}
 					}
@@ -239,47 +240,18 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
 		return super.onCreateOptionsMenu(menu);
 	}
 
-	public HttpAsyncTask<String, String, LocationResponse> startSearch(final String query) {
-		return new HttpAsyncTask<String, String, LocationResponse>() {
+	public Call<LocationResponse> startSearch(final String query) {
+		Location location = Utils.getLastSavedLocation(SearchStoresActivity.this);
+		Call<LocationResponse> locationRequestCall = (location == null) ? OneAppService.INSTANCE.getLocations(null, null, query, null) : OneAppService.INSTANCE.getLocations(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()), query, "50000");
+		locationRequestCall.enqueue(new CompletionHandler<>(new RequestListener<LocationResponse>() {
 			@Override
-			protected void onPreExecute() {
-				super.onPreExecute();
-				mErrorHandlerView.hideErrorHandlerLayout();
-			}
-
-			@Override
-			protected LocationResponse httpDoInBackground(String... params) {
-				Location location = Utils.getLastSavedLocation(SearchStoresActivity.this);
-				if (location != null) {
-					return mWoolworthsApplication.getApi().getLocations(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()), query, "50000");
-
-				} else {
-					return mWoolworthsApplication.getApi().getLocations(null, null, query, null);
-				}
-			}
-
-			@Override
-			protected Class<LocationResponse> httpDoInBackgroundReturnType() {
-				return LocationResponse.class;
-			}
-
-			@Override
-			protected LocationResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-				hideSoftKeyboard();
-				mErrorHandlerView.networkFailureHandler(errorMessage);
-				return new LocationResponse();
-			}
-
-			@Override
-			protected void onPostExecute(LocationResponse locationResponse) {
-				super.onPostExecute(locationResponse);
+			public void onSuccess(LocationResponse locationResponse) {
 				storeDetailsList = new ArrayList<>();
 				storeDetailsList = locationResponse.Locations;
 				if (storeDetailsList != null && storeDetailsList.size() != 0) {
 					searchAdapter = new StoreSearchListAdapter(SearchStoresActivity.this, storeDetailsList);
 					recyclerView.setAdapter(searchAdapter);
-					final TextView searchText = (TextView)
-							searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+					final TextView searchText = searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
 					searchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 						@Override
 						public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -292,8 +264,7 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
 						}
 					});
 				} else {
-					final TextView searchText = (TextView)
-							searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+					final TextView searchText = searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
 					searchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 						@Override
 						public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -310,10 +281,17 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
 						}
 					});
 				}
-
-
 			}
-		};
+
+			@Override
+			public void onFailure(Throwable error) {
+				hideSoftKeyboard();
+				if (error != null)
+					mErrorHandlerView.networkFailureHandler(error.getMessage());
+			}
+		},LocationResponse.class));
+
+		return locationRequestCall;
 	}
 
 	@Override
@@ -418,5 +396,13 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
 			Log.e(TAG, e.getMessage());
 		}
 		return historyList;
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		if (mSearchRequest!=null && !mSearchRequest.isCanceled()){
+			mSearchRequest.cancel();
+		}
 	}
 }

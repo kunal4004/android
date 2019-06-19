@@ -20,12 +20,14 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import java.util.List;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
-import za.co.woolworths.financial.services.android.models.WfsApi;
+import retrofit2.Call;
+import za.co.woolworths.financial.services.android.contracts.RequestListener;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDeviceResponse;
-import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
+import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.ui.activities.StartupActivity;
 
 public class NotificationUtils {
@@ -223,39 +225,17 @@ public class NotificationUtils {
         //Sending Token and app instance Id to App server
         //Need to be done after Login
 
-        new HttpAsyncTask<String, String, CreateUpdateDeviceResponse>() {
+        Call<CreateUpdateDeviceResponse> createUpdateDeviceCall = OneAppService.INSTANCE.getResponseOnCreateUpdateDevice(device);
+        createUpdateDeviceCall.enqueue(new CompletionHandler<>(new RequestListener<CreateUpdateDeviceResponse>() {
             @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
+            public void onSuccess(CreateUpdateDeviceResponse response) {
+
             }
 
             @Override
-            protected CreateUpdateDeviceResponse httpDoInBackground(String... params) {
-                WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
-                WfsApi api = woolworthsApplication.getApi();
-                return api.getResponseOnCreateUpdateDevice(device);
+            public void onFailure(Throwable error) {
+
             }
-
-            @Override
-            protected Class<CreateUpdateDeviceResponse> httpDoInBackgroundReturnType() {
-                return CreateUpdateDeviceResponse.class;
-            }
-
-            @Override
-            protected CreateUpdateDeviceResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                CreateUpdateDeviceResponse createUpdateResponse = new CreateUpdateDeviceResponse();
-                createUpdateResponse.response = new Response();
-
-                Log.d("PushNotificationHandler", "Error: " + createUpdateResponse.response.desc);
-
-
-                return createUpdateResponse;
-            }
-
-            @Override
-            protected void onPostExecute(CreateUpdateDeviceResponse createUpdateResponse) {
-                super.onPostExecute(createUpdateResponse);
-            }
-        }.execute();
+        },CreateUpdateDeviceResponse.class));
     }
 }

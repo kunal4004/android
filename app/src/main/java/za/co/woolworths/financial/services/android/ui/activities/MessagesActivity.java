@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -25,7 +24,9 @@ import com.daimajia.swipe.util.Attributes;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
+import za.co.woolworths.financial.services.android.contracts.RequestListener;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.DeleteMessageResponse;
@@ -34,12 +35,12 @@ import za.co.woolworths.financial.services.android.models.dto.MessageRead;
 import za.co.woolworths.financial.services.android.models.dto.MessageReadRequest;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
-import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
+import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MesssagesListAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
-import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
@@ -63,7 +64,9 @@ public class MessagesActivity extends AppCompatActivity implements MesssagesList
 	private ErrorHandlerView mErrorHandlerView;
 	private boolean paginationIsEnabled = false;
 	private int unreadMessageCount = 0;
-	private HttpAsyncTask<String, String, DeleteMessageResponse> mDeleteMessageRequest;
+	private Call<DeleteMessageResponse>  mDeleteMessageRequest;
+	private Call<MessageResponse> mMessageAsyncRequest;
+	private Call<MessageResponse> mMoreMessageAsyncRequest;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -137,46 +140,30 @@ public class MessagesActivity extends AppCompatActivity implements MesssagesList
 	}
 
 	public void loadMessages() {
-		messageAsyncRequest().execute();
+		mMessageAsyncRequest = messageAsyncRequest();
 	}
 
-	public HttpAsyncTask<String, String, MessageResponse> messageAsyncRequest() {
+	public Call<MessageResponse> messageAsyncRequest() {
 		fm.set(getSupportFragmentManager());
-		return new HttpAsyncTask<String, String, MessageResponse>() {
+		mErrorHandlerView.hideErrorHandlerLayout();
+		mCurrentPage = 1;
+		mIsLastPage = false;
+		Call<MessageResponse> messageResponseCall = OneAppService.INSTANCE.getMessagesResponse(PAGE_SIZE, mCurrentPage);
+		messageResponseCall.enqueue(new CompletionHandler<>(new RequestListener<MessageResponse>() {
 			@Override
-			protected void onPreExecute() {
-				super.onPreExecute();
-				mErrorHandlerView.hideErrorHandlerLayout();
-			}
-
-			@Override
-			protected MessageResponse httpDoInBackground(String... params) {
-				mCurrentPage = 1;
-				mIsLastPage = false;
-				return ((WoolworthsApplication) MessagesActivity.this.getApplication()).getApi()
-						.getMessagesResponse
-								(PAGE_SIZE, mCurrentPage);
-			}
-
-			@Override
-			protected Class<MessageResponse> httpDoInBackgroundReturnType() {
-				return MessageResponse.class;
-			}
-
-			@Override
-			protected MessageResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-				networkFailureHandler(errorMessage, 0);
-				return new MessageResponse();
-			}
-
-
-			@Override
-			protected void onPostExecute(MessageResponse messageResponse) {
-				super.onPostExecute(messageResponse);
+			public void onSuccess(MessageResponse messageResponse) {
 				messsageListview.setVisibility(View.GONE);
 				handleLoadMessagesResponse(messageResponse);
 			}
-		};
+
+			@Override
+			public void onFailure(Throwable error) {
+				if (error!=null)
+				networkFailureHandler(error.getMessage(), 0);
+			}
+		},MessageResponse.class));
+
+		return messageResponseCall;
 	}
 
 	public void bindDataWithUI(List<MessageDetails> messageDetailsList) {
@@ -189,39 +176,16 @@ public class MessagesActivity extends AppCompatActivity implements MesssagesList
 	}
 
 	private void loadMoreMessages() {
-		moreMessageAsyncRequest().execute();
+	mMoreMessageAsyncRequest =	moreMessageAsyncRequest();
 	}
 
-	public HttpAsyncTask<String, String, MessageResponse> moreMessageAsyncRequest() {
-		return new HttpAsyncTask<String, String, MessageResponse>() {
+	public Call<MessageResponse> moreMessageAsyncRequest() {
+		mErrorHandlerView.hideErrorHandlerLayout();
+		mIsLoading = true;
+		Call<MessageResponse> moreMessageRequestCall = OneAppService.INSTANCE.getMessagesResponse(PAGE_SIZE,mCurrentPage);
+		moreMessageRequestCall.enqueue(new CompletionHandler<>(new RequestListener<MessageResponse>() {
 			@Override
-			protected void onPreExecute() {
-				super.onPreExecute();
-				mErrorHandlerView.hideErrorHandlerLayout();
-				mIsLoading = true;
-			}
-
-			@Override
-			protected MessageResponse httpDoInBackground(String... params) {
-				return ((WoolworthsApplication) MessagesActivity.this.getApplication()).getApi()
-						.getMessagesResponse
-								(PAGE_SIZE, mCurrentPage);
-			}
-
-			@Override
-			protected Class<MessageResponse> httpDoInBackgroundReturnType() {
-				return MessageResponse.class;
-			}
-
-			@Override
-			protected MessageResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-				networkFailureHandler(errorMessage, 1);
-				return new MessageResponse();
-			}
-
-			@Override
-			protected void onPostExecute(MessageResponse messageResponse) {
-				super.onPostExecute(messageResponse);
+			public void onSuccess(MessageResponse messageResponse) {
 				int httpCode = messageResponse.httpCode;
 				switch (httpCode) {
 					case 200:
@@ -249,42 +213,32 @@ public class MessagesActivity extends AppCompatActivity implements MesssagesList
 						break;
 				}
 
-
 			}
-		};
+
+			@Override
+			public void onFailure(Throwable error) {
+				if (error!=null)
+				networkFailureHandler(error.getMessage(), 1);
+			}
+		},MessageResponse.class));
+
+		return moreMessageRequestCall;
 	}
 
 	public void setMeassagesAsRead(final List<MessageDetails> readMessages) {
-		new HttpAsyncTask<String, String, ReadMessagesResponse>() {
-			@Override
-			protected void onPreExecute() {
-				super.onPreExecute();
-			}
+	    OneAppService.INSTANCE.getReadMessagesResponse(getJsonString(readMessages)).enqueue(
+	            new CompletionHandler<>(new RequestListener<ReadMessagesResponse>() {
+                    @Override
+                    public void onSuccess(ReadMessagesResponse response) {
 
-			@Override
-			protected ReadMessagesResponse httpDoInBackground(String... params) {
-				return ((WoolworthsApplication) MessagesActivity.this.getApplication()).getApi()
-						.getReadMessagesResponse(getJsonString(readMessages));
-			}
+                    }
 
-			@Override
-			protected Class<ReadMessagesResponse> httpDoInBackgroundReturnType() {
-				return ReadMessagesResponse.class;
-			}
+                    @Override
+                    public void onFailure(Throwable error) {
 
-			@Override
-			protected ReadMessagesResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-				ReadMessagesResponse readmessageResponse = new ReadMessagesResponse();
-				readmessageResponse.response = new Response();
-				return readmessageResponse;
-			}
-
-			@Override
-			protected void onPostExecute(ReadMessagesResponse readmessageResponse) {
-				super.onPostExecute(readmessageResponse);
-
-			}
-		}.execute();
+                    }
+                },ReadMessagesResponse.class)
+        );
 	}
 
 	public MessageReadRequest getJsonString(List<MessageDetails> readMessages) {
@@ -422,7 +376,6 @@ public class MessagesActivity extends AppCompatActivity implements MesssagesList
 	@Override
 	public void onDeleteItemClicked(String id) {
 		mDeleteMessageRequest = deleteMessage(id);
-		mDeleteMessageRequest.execute();
 	}
 
 	@Override
@@ -432,38 +385,35 @@ public class MessagesActivity extends AppCompatActivity implements MesssagesList
 		}
 	}
 
-	@SuppressLint("StaticFieldLeak")
-	public HttpAsyncTask<String, String, DeleteMessageResponse> deleteMessage(final String id) {
-		return new HttpAsyncTask<String, String, DeleteMessageResponse>() {
+	public Call<DeleteMessageResponse>  deleteMessage(final String id) {
+
+		Call<DeleteMessageResponse> deleteMessageRequestCall = OneAppService.INSTANCE.getDeleteMessagesResponse(id);
+		deleteMessageRequestCall.enqueue(new CompletionHandler<>(new RequestListener<DeleteMessageResponse>() {
 			@Override
-			protected void onPreExecute() {
-				super.onPreExecute();
+			public void onSuccess(DeleteMessageResponse response) {
+
 			}
 
 			@Override
-			protected DeleteMessageResponse httpDoInBackground(String... params) {
-				return (WoolworthsApplication.getInstance()).getApi().getDeleteMessagesResponse(id);
-			}
+			public void onFailure(Throwable error) {
 
-			@Override
-			protected Class<DeleteMessageResponse> httpDoInBackgroundReturnType() {
-				return DeleteMessageResponse.class;
 			}
+		},DeleteMessageResponse.class));
 
-			@Override
-			protected DeleteMessageResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-				DeleteMessageResponse deleteMessageResponse = new DeleteMessageResponse();
-				deleteMessageResponse.response = new Response();
-				return deleteMessageResponse;
-			}
-		};
+		return mDeleteMessageRequest;
 	}
 
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		if (mDeleteMessageRequest != null && !mDeleteMessageRequest.isCancelled()) {
-			mDeleteMessageRequest.cancel(true);
+		if (mMessageAsyncRequest != null && !mMessageAsyncRequest.isCanceled())
+			mMessageAsyncRequest.cancel();
+
+		if (mMoreMessageAsyncRequest != null && !mMoreMessageAsyncRequest.isCanceled())
+			mMoreMessageAsyncRequest.cancel();
+
+		if (mDeleteMessageRequest != null && !mDeleteMessageRequest.isCanceled()) {
+			mDeleteMessageRequest.cancel();
 		}
 	}
 }

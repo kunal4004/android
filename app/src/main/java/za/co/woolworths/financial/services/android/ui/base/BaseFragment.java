@@ -21,6 +21,7 @@ import com.awfs.coordination.R;
 import java.util.ArrayList;
 
 import io.reactivex.functions.Consumer;
+import retrofit2.Call;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
@@ -29,7 +30,6 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -250,12 +250,10 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 		getBottomNavigator().fadeOutToolbar(color);
 	}
 
-	public void cancelRequest(HttpAsyncTask httpAsyncTask) {
-		if (httpAsyncTask != null) {
-			if (!httpAsyncTask.isCancelled()) {
-				httpAsyncTask.cancel(true);
+	public void cancelRequest(Call call) {
+		if (call != null && !call.isCanceled()) {
+				call.cancel();
 			}
-		}
 	}
 
 	public void popFragment() {

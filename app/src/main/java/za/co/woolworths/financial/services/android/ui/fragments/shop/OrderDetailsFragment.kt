@@ -14,12 +14,14 @@ import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import org.json.JSONObject
 import za.co.woolworths.financial.services.android.models.dto.*
-import za.co.woolworths.financial.services.android.models.rest.product.GetOrderDetailsRequest
 import za.co.woolworths.financial.services.android.ui.adapters.OrderDetailsAdapter
-import za.co.woolworths.financial.services.android.util.OnEventListener
 import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
 import kotlinx.android.synthetic.main.order_details_fragment.*
+import retrofit2.Call
+import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.FragmentsEventsListner
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
@@ -68,12 +70,13 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick {
         orderItemsBtn.setOnClickListener {
             listener.onOrderItemsClicked(orderDetailsResponse!!)
         }
-        requestOrderDetails(order?.orderId!!).execute()
+        order?.orderId?.let { orderId -> requestOrderDetails(orderId) }
     }
 
-    private fun requestOrderDetails(orderId: String): GetOrderDetailsRequest {
-        return GetOrderDetailsRequest(activity, orderId, object : OnEventListener<OrderDetailsResponse> {
-            override fun onSuccess(ordersResponse: OrderDetailsResponse) {
+    private fun requestOrderDetails(orderId: String): Call<OrderDetailsResponse> {
+        val orderDetailRequest = OneAppService.getOrderDetails(orderId)
+        orderDetailRequest.enqueue(CompletionHandler(object : RequestListener<OrderDetailsResponse> {
+            override fun onSuccess(ordersResponse: OrderDetailsResponse?) {
                 if (!isAdded) return
                 mainLayout.visibility = View.VISIBLE
                 loadingBar.visibility = View.GONE
@@ -81,12 +84,12 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick {
                 bindData(orderDetailsResponse!!)
             }
 
-            override fun onFailure(e: String?) {
-
+            override fun onFailure(error: Throwable?) {
             }
 
-        })
+        },OrderDetailsResponse::class.java))
 
+        return orderDetailRequest
     }
 
     private fun bindData(ordersResponse: OrderDetailsResponse) {

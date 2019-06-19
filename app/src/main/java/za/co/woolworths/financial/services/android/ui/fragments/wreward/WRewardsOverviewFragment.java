@@ -22,18 +22,20 @@ import com.google.gson.Gson;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 
+import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.contracts.RequestListener;
 import za.co.woolworths.financial.services.android.models.dto.CardDetailsResponse;
 import za.co.woolworths.financial.services.android.models.dto.PromotionsResponse;
 import za.co.woolworths.financial.services.android.models.dto.TierInfo;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
+import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.ui.activities.WRewardsMembersInfoActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.FeaturedPromotionsAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.CardType;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
-import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
@@ -106,7 +108,7 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 			@Override
 			public void onClick(View v) {
 				if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
-					loadPromotions();
+					loadPromotionsAPI();
 				}
 			}
 
@@ -120,52 +122,31 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.WREWARDS_OVERVIEW);
 	}
 
-	public void loadPromotions() {
-		loadPromotionsAPI().execute();
-	}
 
-	public HttpAsyncTask<String, String, PromotionsResponse> loadPromotionsAPI() {
-		return new HttpAsyncTask<String, String, PromotionsResponse>() {
+	public void loadPromotionsAPI() {
+		mErrorHandlerView.hideErrorHandlerLayout();
+		Call<PromotionsResponse> promotionsResponseCall = OneAppService.INSTANCE.getPromotions();
+		promotionsResponseCall.enqueue(new CompletionHandler<>(new RequestListener<PromotionsResponse>() {
 			@Override
-			protected void onPreExecute() {
-				super.onPreExecute();
-				mErrorHandlerView.hideErrorHandlerLayout();
-			}
-
-			@Override
-			protected PromotionsResponse httpDoInBackground(String... params) {
-				return ((WoolworthsApplication) getActivity().getApplication()).getApi().getPromotions();
-			}
-
-			@Override
-			protected Class<PromotionsResponse> httpDoInBackgroundReturnType() {
-				return PromotionsResponse.class;
-			}
-
-			@Override
-			protected PromotionsResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-				mErrorHandlerView.networkFailureHandler(errorMessage);
-				return new PromotionsResponse();
-			}
-
-			@Override
-			protected void onPostExecute(PromotionsResponse promotionsResponse) {
-				super.onPostExecute(promotionsResponse);
+			public void onSuccess(PromotionsResponse promotionsResponse) {
 				handlePromotionResponse(promotionsResponse);
 			}
-		};
+
+			@Override
+			public void onFailure(Throwable error) {
+				if (error.getMessage() == null) return;
+				mErrorHandlerView.networkFailureHandler(error.getMessage());
+			}
+		},PromotionsResponse.class));
+
 	}
 
 	public void handlePromotionResponse(PromotionsResponse promotionsResponse) {
 		try {
-			switch (promotionsResponse.httpCode) {
-				case 200:
-					if (promotionsResponse.promotions.size() > 0) {
-						promotionViewPager.setAdapter(new FeaturedPromotionsAdapter(getActivity(), promotionsResponse.promotions));
-					}
-					break;
-				default:
-					break;
+			if (promotionsResponse.httpCode == 200) {
+				if (promotionsResponse.promotions.size() > 0) {
+					promotionViewPager.setAdapter(new FeaturedPromotionsAdapter(getActivity(), promotionsResponse.promotions));
+				}
 			}
 		} catch (NullPointerException ignored) {
 		}
@@ -194,7 +175,7 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 			toNextTireLayout.setVisibility(View.VISIBLE);
 			toNextTire.setText(WFormatter.formatAmount(tireInfo.toSpend));
 		}
-		loadPromotions();
+		loadPromotionsAPI();
 
 	}
 

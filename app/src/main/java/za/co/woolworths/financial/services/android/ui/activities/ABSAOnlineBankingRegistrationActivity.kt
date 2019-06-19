@@ -29,6 +29,7 @@ class ABSAOnlineBankingRegistrationActivity : AppCompatActivity(), IDialogListen
         super.onCreate(savedInstanceState)
         setContentView(R.layout.absa_online_banking_to_device_activity)
         Utils.updateStatusBarBackground(this)
+
         actionBar()
         if (savedInstanceState == null) {
             getBundleArgument()

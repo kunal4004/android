@@ -11,12 +11,14 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_shop_department.*
 import za.co.woolworths.financial.services.android.models.dto.RootCategories
 import za.co.woolworths.financial.services.android.models.dto.RootCategory
-import za.co.woolworths.financial.services.android.models.rest.product.ProductCategoryRequest
 import za.co.woolworths.financial.services.android.ui.adapters.DepartmentAdapter
-import za.co.woolworths.financial.services.android.util.OnEventListener
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import kotlinx.android.synthetic.main.no_connection_layout.*
+import retrofit2.Call
+import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment
@@ -26,7 +28,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class DepartmentsFragment : DepartmentExtensionFragment() {
 
-    private var mProductDepartmentRequest: ProductCategoryRequest? = null
+    private var rootCategoryCall: Call<RootCategories>? = null
     private var mDepartmentAdapter: DepartmentAdapter? = null
     private var isFragmentVisible: Boolean = false
     private var parentFragment: ShopFragment? = null
@@ -57,35 +59,32 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
     private fun executeDepartmentRequest() {
         if (networkConnectionStatus()) {
             noConnectionLayout(false)
-            mProductDepartmentRequest = requestDepartment()
-            mProductDepartmentRequest?.execute()
+            rootCategoryCall = OneAppService.getRootCategory()
+            rootCategoryCall?.enqueue(CompletionHandler(object : RequestListener<RootCategories> {
+                override fun onSuccess(rootCategories: RootCategories) {
+                    when (rootCategories.httpCode) {
+                        200 -> {
+                            parentFragment?.setCategoryResponseData(rootCategories)
+                            bindDepartment()
+                        }
+                        else -> rootCategories.response?.desc?.let { showErrorDialog(it) }
+                    }
+                }
+
+                override fun onFailure(error: Throwable) {
+                    if (isAdded) {
+                        activity?.runOnUiThread {
+                            if (networkConnectionStatus())
+                                noConnectionLayout(true)
+                        }
+                    }
+                }
+            },RootCategories::class.java))
         } else {
             noConnectionLayout(true)
         }
     }
 
-    private fun requestDepartment(): ProductCategoryRequest {
-        return ProductCategoryRequest(object : OnEventListener<RootCategories> {
-            override fun onSuccess(rootCategories: RootCategories) {
-                when (rootCategories.httpCode) {
-                    200 -> {
-                        parentFragment?.setCategoryResponseData(rootCategories)
-                        bindDepartment()
-                    }
-                    else -> rootCategories.response?.desc?.let { showErrorDialog(it) }
-                }
-            }
-
-            override fun onFailure(e: String?) {
-                if(isAdded){
-                   activity.runOnUiThread {
-                       if (networkConnectionStatus())
-                           noConnectionLayout(true)
-                   }
-                }
-            }
-        })
-    }
 
     private fun bindDepartment() {
         mDepartmentAdapter?.setRootCategories(parentFragment?.getCategoryResponseData()!!.rootCategories)
@@ -136,8 +135,10 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        cancelRequest(mProductDepartmentRequest)
-
+        rootCategoryCall?.apply {
+            if (isCanceled)
+                cancel()
+        }
     }
 
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
