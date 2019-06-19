@@ -19,6 +19,10 @@
             type="za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsViewModel" />
     </data>
 
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipeToRefresh"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -365,4 +369,5 @@
 
         <include layout="@layout/no_connection_handler" />
     </FrameLayout>
+    </android.support.v4.widget.SwipeRefreshLayout>
 </layout>
