@@ -85,7 +85,7 @@ android {
 
     // configs for MS App Center goes here...
     // MS App Center doesn't currently support productFlavors, only supports release/debug.
-    if (!isAppCenter) {
+    if (isAppCenter) {
 
         def appServerEnv = System.getenv("APP_SERVER_ENV")
         if (appServerEnv == null){
