@@ -5,6 +5,7 @@ import android.util.Base64;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Header;
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
@@ -83,10 +84,8 @@ public class AbsaBankingOpenApiRequest<T> extends Request<T> {
 
                 return;
             }
-
-            List<String> cookies = new ArrayList<>();
-            cookies.add(AbsaContentEncryptionRequest.jSession.getCookie().toString());
-            this.setCookies(cookies);
+            
+            this.setCookies();
 
             this.headers.put("x-encrypted", body.length() + "|" + AbsaContentEncryptionRequest.keyId);
             body = getEncryptedBody(body);
@@ -122,17 +121,18 @@ public class AbsaBankingOpenApiRequest<T> extends Request<T> {
     }
 
 
-    public void setCookies(List<String> cookies) {
-        StringBuilder sb = new StringBuilder();
+    public void setCookies() {
 
-        
-        //if (!TextUtils.isEmpty(headers.get("Cookie")))
-           // sb.append("; ").append(headers.get("Cookie")).append("; ");
+        //1. if Header's contain Cookie, check for JSESSION.
+        //1.1 If JSESSION is not found, use the JSESSION from Content Encryption Response (JSESSION Cookie) + whatever Cookies was included in #1 above
+        //2. If Headers do not contain Cookies, set the Cookie header with the Content Encryption JSESSIONID
 
-        for (String cookie : cookies) {
-            sb.append(cookie).append("; ");
+        if (headers.containsKey("Cookie")) {
+            if (!headers.get("Cookie").contains("JSESSIONID"))
+                headers.put("Cookie", AbsaContentEncryptionRequest.jSession.getCookie().toString() + headers.get("Cookie"));
+        } else {
+            headers.put("Cookie", AbsaContentEncryptionRequest.jSession.getCookie().toString());
         }
-        headers.put("Cookie", sb.toString());
     }
 
     @Override
@@ -162,9 +162,13 @@ public class AbsaBankingOpenApiRequest<T> extends Request<T> {
         try {
             String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
 
-            final String cookies = response.headers.get("Set-Cookie");
-            if (cookies != null && !cookies.isEmpty()) {
-                mCookies = HttpCookie.parse(cookies);
+
+            for (Header header : response.allHeaders) {
+                if (header.getName().equalsIgnoreCase("set-cookie"))
+                    if (mCookies == null)
+                        mCookies = HttpCookie.parse(header.getValue());
+                    else
+                        mCookies.add(HttpCookie.parse(header.getValue()).get(0));
             }
 
             if (isBodyEncryptionRequired)
