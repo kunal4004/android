@@ -50,7 +50,7 @@ public class WfsApiInterceptor extends NetworkConfig implements Interceptor {
         ApiResponseDao apiResponseDao = new ApiResponseDao().getByApiRequestId(apiRequestDao.id);
 
         //cache exists + force network update false = return cached response
-        if (apiResponseDao.id != null && getForceNetworkUpdate()) {
+        if (apiResponseDao.id != null && !getForceNetworkUpdate()) {
             return new Response.Builder()
                     .code(apiResponseDao.code)
                     .message(apiResponseDao.message)
