@@ -116,12 +116,12 @@ class BPIOverviewFragment : BPIFragment(), BPIOverviewAdapter.OnBPIAdapterClickL
     }
 
     @VisibleForTesting
-    public fun testGetInsuranceType():  MutableList<InsuranceType>? {
+    public fun testGetInsuranceType(): MutableList<InsuranceType>? {
         return getInsuranceType()
     }
 
     @VisibleForTesting
-    public fun testClaimButtonVisibility(){
+    public fun testClaimButtonVisibility() {
         setClaimButtonVisibility(updateBPIList())
     }
 }

@@ -6,15 +6,15 @@ apply plugin: 'io.fabric'
 android {
 
     def major = "5"
-    def minor = "11"
-    def fix = "1"
+    def minor = "12"
+    def fix = "0"
 
     //placeholder will be temporarily updated by build server during a build.
     //check appcenter-pre-build.sh
     def BUILD_NUMBER = "{BUILD_NUMBER}"
 
     if (!BUILD_NUMBER.isNumber()){
-        BUILD_NUMBER = "103"
+        BUILD_NUMBER = "104"
     }
 
     dataBinding {
@@ -59,7 +59,7 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         versionCode BUILD_NUMBER.toInteger()
         buildConfigField("String", "HOST", '"https://wfs-appserver.wigroup.co/wfs/app/v4"')
-        buildConfigField("String", "SHA1", '"e636af4f626cad1b8126a769e5d33c09345b41fe"')
+        buildConfigField("String", "SHA1", '"c3cd271cb06f2af6d538b1308c1f3d4139cf8b09"')
     }
 
     compileSdkVersion 27
@@ -89,7 +89,7 @@ android {
             applicationId "com.awfs.coordination.qa"
             signingConfig signingConfigs.woneappQa
             buildConfigField("String", "HOST", '"http://wfs-appserver-qa.wigroup.co:8080/wfs/app/v4"')
-            buildConfigField("String", "SHA1", '"436d9920af27b1a210233acd643ce39f4356296c"')
+            buildConfigField("String", "SHA1", '"ecd631798df6d366535c3a501908cce136d40087"')
             buildConfigField("String", "ENV", '"QA"')
         }
 

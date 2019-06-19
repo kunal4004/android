@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.models.dto;
 
+import com.google.gson.JsonElement;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -12,10 +13,12 @@ public class Environment {
 	public String ssoRedirectURILogout;
 	public String ssoUpdateDetailsRedirectUri;
 	public String wwTodayURI;
+	public String authenticVersionStamp = "";
 	public int storeStockLocatorConfigStartRadius;
 	public int storeStockLocatorConfigEndRadius;
 	public boolean storeStockLocatorConfigFoodProducts;
 	public boolean storeStockLocatorConfigClothingProducts;
+	public JsonElement storeCardBlockReasons;
 	public long emailSizeKB;
 
 	@SerializedName("splashScreen.display")
@@ -119,5 +122,13 @@ public class Environment {
 
 	public String getSplashScreenText() {
 		return splashScreenText;
+	}
+
+	public String getAuthenticVersionStamp() {
+		return authenticVersionStamp;
+	}
+
+	public void setAuthenticVersionStamp(String authenticVersionStamp) {
+		this.authenticVersionStamp = authenticVersionStamp;
 	}
 }

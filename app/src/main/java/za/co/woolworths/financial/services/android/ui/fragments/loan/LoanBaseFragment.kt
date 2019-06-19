@@ -14,12 +14,7 @@ open class LoanBaseFragment : Fragment() {
     var arrowIsVisible = false
 
     private fun getPersonalLoanInfo(): Account? {
-        if (arguments != null) {
-            if (arguments.containsKey(LoanWithdrawalFragment.PERSONAL_LOAN_INFO)) {
-                return Gson().fromJson(arguments.get(LoanWithdrawalFragment.PERSONAL_LOAN_INFO) as String, Account::class.java)
-            }
-        }
-        return null
+        return (arguments?.get(LoanWithdrawalFragment.PERSONAL_LOAN_INFO) as? String)?.let {  Gson().fromJson(it, Account::class.java)}
     }
 
     fun getAvailableFund(): Int {
@@ -44,8 +39,10 @@ open class LoanBaseFragment : Fragment() {
     }
 
     fun finishActivity(activity: Activity) {
-        activity.finish()
-        activity.overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+        activity?.apply {
+            finish()
+            overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+        }
     }
 
     fun currencyFormatter(amount: Int, activity: Activity): String = Utils.removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(amount), 1, activity))

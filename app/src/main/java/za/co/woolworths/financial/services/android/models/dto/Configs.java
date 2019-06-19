@@ -5,4 +5,5 @@ public class Configs {
     public int checkInterval;
     public Expiry expiry;
     public Defaults defaults;
+    public AbsaBankingOpenApiServices absaBankingOpenApiServices;
 }

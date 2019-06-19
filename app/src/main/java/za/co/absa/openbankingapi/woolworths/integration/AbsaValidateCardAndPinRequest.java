@@ -20,18 +20,15 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.ValidateCardAndPinRe
 import za.co.absa.openbankingapi.woolworths.integration.dto.ValidateCardAndPinResponse;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiRequest;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse;
-import za.co.absa.openbankingapi.woolworths.integration.service.VolleySingleton;
 
 public class AbsaValidateCardAndPinRequest {
 
 	private SessionKey sessionKey;
-	private VolleySingleton requestQueue;
 
-	public AbsaValidateCardAndPinRequest(final Context context){
+	public AbsaValidateCardAndPinRequest(){
 
 		try {
-			this.sessionKey = SessionKey.generate(context.getApplicationContext());
-			this.requestQueue = VolleySingleton.getInstance();
+			this.sessionKey = SessionKey.generate();
 		} catch (KeyGenerationFailureException | AsymmetricCryptoHelper.AsymmetricEncryptionFailureException | AsymmetricCryptoHelper.AsymmetricKeyGenerationFailureException e) {
 			e.printStackTrace();
 		}
@@ -55,7 +52,7 @@ public class AbsaValidateCardAndPinRequest {
 		final String gatewaySymmetricKey = this.sessionKey.getEncryptedKeyBase64Encoded();
 		final String body = new ValidateCardAndPinRequest(cardToken, encryptedPin, gatewaySymmetricKey, sessionKey.getEncryptedIVBase64Encoded()).getJson();
 
-		AbsaBankingOpenApiRequest request = new AbsaBankingOpenApiRequest<>(ValidateCardAndPinResponse.class, headers, body, new AbsaBankingOpenApiResponse.Listener<ValidateCardAndPinResponse>(){
+		new AbsaBankingOpenApiRequest<>(ValidateCardAndPinResponse.class, headers, body, true, new AbsaBankingOpenApiResponse.Listener<ValidateCardAndPinResponse>(){
 
 			@Override
 			public void onResponse(ValidateCardAndPinResponse response, List<HttpCookie> cookies) {
@@ -73,9 +70,6 @@ public class AbsaValidateCardAndPinRequest {
 			}
 		});
 
-		request.setTag(AbsaRegisterCredentialRequest.class.getSimpleName());
-
-		requestQueue.addToRequestQueue(request,AbsaValidateCardAndPinRequest.class);
 
 	}
 }

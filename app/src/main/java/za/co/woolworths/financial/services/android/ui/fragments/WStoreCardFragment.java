@@ -20,6 +20,7 @@ import android.widget.RelativeLayout;
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
 
+
 import java.text.ParseException;
 import java.util.List;
 
@@ -39,6 +40,7 @@ import za.co.woolworths.financial.services.android.models.service.event.BusStati
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.DebitOrderActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
+import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.bpi.BPIBalanceProtectionActivity;
@@ -58,10 +60,12 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
 
 import static android.app.Activity.RESULT_OK;
+import static za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.STORE_CARD_DETAIL;
 
 public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle, NetworkChangeListener {
 
-    public static int RESULT_CODE_FUNDS_INFO = 50;
+    public static final int RESULT_CODE_FUNDS_INFO = 50;
+    public static final int REQUEST_CODE_BLOCK_MY_STORE_CARD = 3021;
 
     public WTextView availableBalance;
     public WTextView creditLimit;
@@ -73,7 +77,6 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
     public WTextView tvIncreaseLimitDescription;
 
     private ImageView iconAvailableFundsInfo, infoCreditLimit, infoCurrentBalance, infoNextPaymentDue, infoAmountOverdue, infoMinimumAmountDue;
-
 
     String productOfferingId;
     WoolworthsApplication woolworthsApplication;
@@ -110,6 +113,18 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
     private RelativeLayout relDebitOrders;
 
     private View fakeView;
+    private boolean mStoreCardFragmentIsVisible = false;
+    private RelativeLayout rlMyStoreCard;
+    private MyAccountHelper myAccountHelper;
+    private String mStoreCardAccountDetail;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
+        myAccountHelper = new MyAccountHelper();
+        mStoreCardAccountDetail = myAccountHelper.getAccountInfo(accountsResponse, "SC");
+    }
 
     @Nullable
     @Override
@@ -169,6 +184,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
         relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
         tvBPIProtectInsurance = view.findViewById(R.id.tvBPIProtectInsurance);
         rlViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
+        rlMyStoreCard = (RelativeLayout) view.findViewById(R.id.rlMyStoreCard);
+        rlMyStoreCard.setOnClickListener(this);
 
         iconAvailableFundsInfo = view.findViewById(R.id.iconAvailableFundsInfo);
         iconAvailableFundsInfo.setOnClickListener(this);
@@ -216,11 +233,19 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
     }
 
     public void bindData(AccountsResponse response) {
+
+
         List<Account> accountList = response.accountList;
         if (accountList != null) {
             for (Account p : accountList) {
                 if ("SC".equals(p.productGroupCode)) {
                     this.account = p;
+                    /**
+                     * Check if there is a primaryCard[]
+                     * if primarycard[] exists, add a new cell 'My Card" to the store card display
+                     * Else, do not add cell and end journey
+                     */
+                    rlMyStoreCard.setVisibility((account.primaryCard == null) ? View.GONE : View.VISIBLE);
                     if (!p.productOfferingGoodStanding && p.productOfferingStatus.equalsIgnoreCase(Utils.ACCOUNT_CHARGED_OFF)) {
                         llActiveAccount.setVisibility(View.GONE);
                         llChargedOffAccount.setVisibility(View.VISIBLE);
@@ -270,7 +295,6 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
         bolBroacastRegistred = true;
         connectionBroadcast = Utils.connectionBroadCast(getActivity(), networkChangeListener);
         getActivity().registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
-        accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
         bindData(accountsResponse);
         onLoadComplete();
         mErrorHandlerView = new ErrorHandlerView(getActivity());
@@ -294,14 +318,12 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
                 Intent intent = new Intent(getActivity(), WTransactionsActivity.class);
                 intent.putExtra("productOfferingId", productOfferingId);
                 startActivityForResult(intent, 0);
-                getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim
+                activity.overridePendingTransition(R.anim.slide_up_anim, R.anim
                         .stay);
                 break;
             case R.id.relBalanceProtection:
-                MyAccountHelper myAccountHelper = new MyAccountHelper();
-                String accountInfo = myAccountHelper.getAccountInfo(accountsResponse, "SC");
                 Intent intBalanceProtection = new Intent(getActivity(), BPIBalanceProtectionActivity.class);
-                intBalanceProtection.putExtra("account_info", accountInfo);
+                intBalanceProtection.putExtra("account_info", mStoreCardAccountDetail);
                 startActivity(intBalanceProtection);
                 activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
                 break;
@@ -406,6 +428,12 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
                         getActivity().getResources().getString(R.string.info_credit_limit_desc),
                         getActivity().getResources().getString(R.string.cli_got_it));
                 break;
+            case R.id.rlMyStoreCard:
+                Intent displayStoreCardDetail = new Intent(activity, MyCardDetailActivity.class);
+                displayStoreCardDetail.putExtra(STORE_CARD_DETAIL, mStoreCardAccountDetail);
+                activity.startActivityForResult(displayStoreCardDetail, REQUEST_CODE_BLOCK_MY_STORE_CARD);
+                activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+                break;
             default:
                 break;
         }
@@ -420,18 +448,23 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
         cliGetOfferActive = new CLIGetOfferActive(getActivity(), productOfferingId, new OnEventListener() {
             @Override
             public void onSuccess(Object object) {
-                offerActive = ((OfferActive) object);
-                bindUI(offerActive);
+                if (getActivity() != null && mStoreCardFragmentIsVisible) {
+                    offerActive = ((OfferActive) object);
+                    bindUI(offerActive);
+                }
             }
 
             @Override
             public void onFailure(String e) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        networkFailureHandler();
-                    }
-                });
+                Activity activity = getActivity();
+                if (activity != null && mStoreCardFragmentIsVisible) {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            networkFailureHandler();
+                        }
+                    });
+                }
             }
         });
         cliGetOfferActive.execute();
@@ -496,7 +529,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 
     @Override
     public void onResumeFragment() {
-        Activity activity  = getActivity();
+        Activity activity = getActivity();
         if (activity == null) return;
 
         Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.FINANCIAL_SERVICES_STORE_CARD);
@@ -546,8 +579,18 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RESULT_CODE_FUNDS_INFO && resultCode == RESULT_OK) {
-            ScreenManager.presentHowToPayActivity(getActivity(), account);
+        switch (requestCode) {
+            case RESULT_CODE_FUNDS_INFO:
+                if (resultCode == RESULT_OK) {
+                    ScreenManager.presentHowToPayActivity(getActivity(), account);
+                }
+                break;
+            case REQUEST_CODE_BLOCK_MY_STORE_CARD:
+                if (data != null)
+                    mStoreCardAccountDetail = data.getStringExtra(STORE_CARD_DETAIL);
+                break;
+            default:
+                break;
         }
         retryConnect();
     }
@@ -573,10 +616,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
         if (!disposables.isDisposed()) {
             disposables.clear();
         }
-        if (cliGetOfferActive != null) {
-            if (!cliGetOfferActive.isCancelled()) {
-                cliGetOfferActive.cancel(true);
-            }
+        if (cliGetOfferActive != null && !cliGetOfferActive.isCancelled()) {
+            cliGetOfferActive.cancel(true);
         }
     }
 
@@ -586,5 +627,11 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 
     private void hideCLIView() {
         mIncreaseLimitController.cliDefaultView(llCommonLayer, tvIncreaseLimitDescription);
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        mStoreCardFragmentIsVisible = isVisibleToUser;
     }
 }

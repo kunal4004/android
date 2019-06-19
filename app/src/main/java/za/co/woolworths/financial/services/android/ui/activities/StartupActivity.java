@@ -1,5 +1,4 @@
 package za.co.woolworths.financial.services.android.ui.activities;
-
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -7,7 +6,6 @@ import android.graphics.PorterDuff;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -18,15 +16,17 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-
-import com.awfs.coordination.BuildConfig;
 import com.awfs.coordination.R;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Map;
 
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.OnResultListener;
@@ -158,39 +158,51 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 		MobileConfigServerDao.Companion.getConfig(WoolworthsApplication.getInstance(), new OnResultListener<ConfigResponse>() {
 			@Override
 			public void success(ConfigResponse configResponse) {
-				try {
-					StartupActivity.this.mVideoPlayerShouldPlay = false;
+				switch (configResponse.httpCode) {
+					case 200:
+						try {
+							StartupActivity.this.mVideoPlayerShouldPlay = false;
 
-					if (configResponse.configs.enviroment.stsURI == null || configResponse.configs.enviroment.stsURI.isEmpty()) {
-						showNonVideoViewWithErrorLayout();
-						return;
-					}
+							if (configResponse.configs.enviroment.stsURI == null || configResponse.configs.enviroment.stsURI.isEmpty()) {
+								showNonVideoViewWithErrorLayout();
+								return;
+							}
 
-					WoolworthsApplication.setSsoRedirectURI(configResponse.configs.enviroment.getSsoRedirectURI());
-					WoolworthsApplication.setStsURI(configResponse.configs.enviroment.getStsURI());
-					WoolworthsApplication.setSsoRedirectURILogout(configResponse.configs.enviroment.getSsoRedirectURILogout());
-					WoolworthsApplication.setSsoUpdateDetailsRedirectUri(configResponse.configs.enviroment.getSsoUpdateDetailsRedirectUri());
-					WoolworthsApplication.setWwTodayURI(configResponse.configs.enviroment.getWwTodayURI());
-					WoolworthsApplication.setApplyNowLink(configResponse.configs.defaults.getApplyNowLink());
-					WoolworthsApplication.setRegistrationTCLink(configResponse.configs.defaults.getRegisterTCLink());
-					WoolworthsApplication.setFaqLink(configResponse.configs.defaults.getFaqLink());
-					WoolworthsApplication.setWrewardsLink(configResponse.configs.defaults.getWrewardsLink());
-					WoolworthsApplication.setRewardingLink(configResponse.configs.defaults.getRewardingLink());
-					WoolworthsApplication.setHowToSaveLink(configResponse.configs.defaults.getHowtosaveLink());
-					WoolworthsApplication.setWrewardsTCLink(configResponse.configs.defaults.getWrewardsTCLink());
-					WoolworthsApplication.setCartCheckoutLink(configResponse.configs.defaults.getCartCheckoutLink());
-					mWGlobalState.setStartRadius(configResponse.configs.enviroment.getStoreStockLocatorConfigStartRadius());
-					mWGlobalState.setEndRadius(configResponse.configs.enviroment.getStoreStockLocatorConfigEndRadius());
+							WoolworthsApplication.setStoreCardBlockReasons(configResponse.configs.enviroment.storeCardBlockReasons);
+							WoolworthsApplication.setSsoRedirectURI(configResponse.configs.enviroment.getSsoRedirectURI());
+							WoolworthsApplication.setStsURI(configResponse.configs.enviroment.getStsURI());
+							WoolworthsApplication.setSsoRedirectURILogout(configResponse.configs.enviroment.getSsoRedirectURILogout());
+							WoolworthsApplication.setSsoUpdateDetailsRedirectUri(configResponse.configs.enviroment.getSsoUpdateDetailsRedirectUri());
+							WoolworthsApplication.setWwTodayURI(configResponse.configs.enviroment.getWwTodayURI());
+							WoolworthsApplication.setAuthenticVersionStamp(configResponse.configs.enviroment.getAuthenticVersionStamp());
+							WoolworthsApplication.setApplyNowLink(configResponse.configs.defaults.getApplyNowLink());
+							WoolworthsApplication.setRegistrationTCLink(configResponse.configs.defaults.getRegisterTCLink());
+							WoolworthsApplication.setFaqLink(configResponse.configs.defaults.getFaqLink());
+							WoolworthsApplication.setWrewardsLink(configResponse.configs.defaults.getWrewardsLink());
+							WoolworthsApplication.setRewardingLink(configResponse.configs.defaults.getRewardingLink());
+							WoolworthsApplication.setHowToSaveLink(configResponse.configs.defaults.getHowtosaveLink());
+							WoolworthsApplication.setWrewardsTCLink(configResponse.configs.defaults.getWrewardsTCLink());
+							WoolworthsApplication.setCartCheckoutLink(configResponse.configs.defaults.getCartCheckoutLink());
+							WoolworthsApplication.setAbsaBankingOpenApiServices(configResponse.configs.absaBankingOpenApiServices);
 
-					splashScreenText = configResponse.configs.enviroment.splashScreenText;
-					splashScreenDisplay = configResponse.configs.enviroment.splashScreenDisplay;
-					splashScreenPersist = configResponse.configs.enviroment.splashScreenPersist;
+							mWGlobalState.setStartRadius(configResponse.configs.enviroment.getStoreStockLocatorConfigStartRadius());
+							mWGlobalState.setEndRadius(configResponse.configs.enviroment.getStoreStockLocatorConfigEndRadius());
 
-					if (!isVideoPlaying) {
-						presentNextScreenOrServerMessage();
-					}
 
-				} catch (NullPointerException ignored) {
+							splashScreenText = configResponse.configs.enviroment.splashScreenText;
+							splashScreenDisplay = configResponse.configs.enviroment.splashScreenDisplay;
+							splashScreenPersist = configResponse.configs.enviroment.splashScreenPersist;
+
+							if (!isVideoPlaying) {
+								presentNextScreenOrServerMessage();
+							}
+
+						} catch (NullPointerException ex) {
+							showNonVideoViewWithErrorLayout();
+						}
+						break;
+					default:
+						break;
 				}
 			}
 
@@ -205,6 +217,8 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 			}
 		});
 	}
+
+
 
 	//video player on completion
 	@Override

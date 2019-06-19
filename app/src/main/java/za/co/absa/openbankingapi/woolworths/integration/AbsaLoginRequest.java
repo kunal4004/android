@@ -22,18 +22,16 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.LoginRequest;
 import za.co.absa.openbankingapi.woolworths.integration.dto.LoginResponse;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiRequest;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse;
-import za.co.absa.openbankingapi.woolworths.integration.service.VolleySingleton;
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 
 public class AbsaLoginRequest {
 
 	private SessionKey sessionKey;
-	private VolleySingleton requestQueue;
 
-	public AbsaLoginRequest(final Context context){
+	public AbsaLoginRequest(){
 
 		try {
-			this.sessionKey = SessionKey.generate(context.getApplicationContext());
-			this.requestQueue = VolleySingleton.getInstance();
+			this.sessionKey = SessionKey.generate();
 		} catch (KeyGenerationFailureException | AsymmetricCryptoHelper.AsymmetricEncryptionFailureException | AsymmetricCryptoHelper.AsymmetricKeyGenerationFailureException e) {
 			e.printStackTrace();
 		}
@@ -66,7 +64,7 @@ public class AbsaLoginRequest {
 			e.printStackTrace();
 		}
 
-		final AbsaBankingOpenApiRequest request = new AbsaBankingOpenApiRequest<>("https://eu.absa.co.za/wcob/j_pin_security_login", LoginResponse.class, headers, body, new AbsaBankingOpenApiResponse.Listener<LoginResponse>(){
+		new AbsaBankingOpenApiRequest<>(WoolworthsApplication.getAbsaBankingOpenApiServices().getBaseURL() + "/wcob/j_pin_security_login", LoginResponse.class, headers, body, true, new AbsaBankingOpenApiResponse.Listener<LoginResponse>() {
 
 			@Override
 			public void onResponse(LoginResponse loginResponse, List<HttpCookie> cookies) {
@@ -86,6 +84,5 @@ public class AbsaLoginRequest {
 			}
 		});
 
-		requestQueue.addToRequestQueue(request,AbsaLoginRequest.class);
 	}
 }
