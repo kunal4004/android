@@ -80,7 +80,7 @@ import za.co.woolworths.financial.services.android.models.dto.statement.Statemen
 
 public interface ApiInterface {
 
-	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:28800"})
+	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:7200"})
 	@GET("/user/accounts")
 	AccountsResponse getAccounts(
 			@Header("apiId") String apiId,
