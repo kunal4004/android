@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:clickable="true"
+    android:focusable="true"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/incSwipeCloseIndicator"
+        layout="@layout/popup_close_header_bar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="58dp"
+        app:layout_constraintBottom_toTopOf="@+id/tvTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="@font/futura_semi_bold_ttf"
+        android:gravity="center"
+        android:lineSpacingMultiplier="1.40"
+        android:text="@string/credit_limit_decrease"
+        android:textColor="@color/black"
+        android:textSize="@dimen/twenty_sp"
+        app:layout_constraintBottom_toTopOf="@+id/tvDescriptionPart1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="@string/credit_limit_decrease" />
+
+
+    <TextView
+        android:id="@+id/tvDescriptionPart1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="@font/myriad_pro_regular_otf"
+        android:gravity="center"
+        android:lineSpacingExtra="1.dp"
+        android:lineSpacingMultiplier="1.40"
+        android:text="@string/credit_limit_decrease_desc_part_1"
+        android:textColor="@color/permanent_card_block_desc_color"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toTopOf="@+id/tvDescriptionPart2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+    <TextView
+        android:id="@+id/tvDescriptionPart2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="48dp"
+        android:fontFamily="@font/myriad_pro_regular_otf"
+        android:gravity="center"
+        android:lineSpacingExtra="1.dp"
+        android:lineSpacingMultiplier="1.40"
+        android:text="@string/credit_limit_decrease_desc_part_2"
+        android:textColor="@color/permanent_card_block_desc_color"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toTopOf="@+id/btnProceedWithMaximum"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+    <Button
+        android:id="@+id/btnProceedWithMaximum"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginBottom="24dp"
+        android:layout_marginEnd="32dp"
+        android:background="@drawable/black_button_drawable_state"
+        android:fontFamily="@font/futura_semi_bold_ttf"
+        android:letterSpacing="0.18"
+        android:text="@string/credit_limit_decrease_max_button"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@+id/tvGotIt"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="UnusedAttribute" />
+
+
+    <TextView
+        android:id="@+id/tvGotIt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="@font/futura_medium_ttf"
+        android:gravity="center"
+        android:letterSpacing="0.1"
+        android:text="@string/cli_got_it"
+        android:textColor="@color/permanent_card_block_desc_color"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:targetApi="lollipop" />
+
+</android.support.constraint.ConstraintLayout>
