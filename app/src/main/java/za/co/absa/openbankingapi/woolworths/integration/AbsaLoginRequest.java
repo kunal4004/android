@@ -18,6 +18,7 @@ import za.co.absa.openbankingapi.DecryptionFailureException;
 import za.co.absa.openbankingapi.KeyGenerationFailureException;
 import za.co.absa.openbankingapi.SessionKey;
 import za.co.absa.openbankingapi.SymmetricCipher;
+import za.co.absa.openbankingapi.woolworths.integration.dao.JSession;
 import za.co.absa.openbankingapi.woolworths.integration.dto.LoginRequest;
 import za.co.absa.openbankingapi.woolworths.integration.dto.LoginResponse;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiRequest;
@@ -27,6 +28,9 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 public class AbsaLoginRequest {
 
 	private SessionKey sessionKey;
+	public static JSession jsessionCookie;
+	public static JSession xfpt;
+	public static JSession wfpt;
 
 	public AbsaLoginRequest(){
 
@@ -71,8 +75,17 @@ public class AbsaLoginRequest {
 				final String nonce = loginResponse.getNonce();
 				final String resultMessage = loginResponse.getResultMessage();
 
-				if (resultMessage == null && nonce != null && !nonce.isEmpty())
+				if (resultMessage == null && nonce != null && !nonce.isEmpty() && cookies != null) {
+					for (HttpCookie cookie : cookies) {
+						if (cookie.getName().equalsIgnoreCase("jsessionid"))
+							jsessionCookie = new JSession(cookie.getName(), cookie);
+						else if (cookie.getName().equalsIgnoreCase("wfpt"))
+							wfpt = new JSession(cookie.getName(), cookie);
+						else if (cookie.getName().equalsIgnoreCase("xfpt"))
+							xfpt = new JSession(cookie.getName(), cookie);
+					}
 					responseDelegate.onSuccess(loginResponse, cookies);
+				}
 
 				else
 					responseDelegate.onFailure(resultMessage);

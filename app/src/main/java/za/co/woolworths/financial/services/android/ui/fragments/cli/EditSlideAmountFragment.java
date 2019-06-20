@@ -28,6 +28,7 @@ import za.co.woolworths.financial.services.android.models.service.event.BusStati
 import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
+import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 import za.co.woolworths.financial.services.android.util.controller.CLIFragment;
@@ -89,8 +90,8 @@ public class EditSlideAmountFragment extends CLIFragment {
 				new WLoanEditTextView.OnKeyPreImeListener() {
 					@Override
 					public void onBackPressed() {
-						hideKeyboard();
 						Activity activity = getActivity();
+						KeyboardUtil.hideSoftKeyboard(activity);
 						if (activity instanceof CLIPhase2Activity) {
 							activity.onBackPressed();
 						}
@@ -238,5 +239,11 @@ public class EditSlideAmountFragment extends CLIFragment {
 				etAmount.addTextChangedListener(this);
 			}
 		};
+	}
+
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 	}
 }

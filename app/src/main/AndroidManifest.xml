@@ -131,8 +131,20 @@
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter
+                android:autoVerify="true"
+                tools:targetApi="m">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="www.woolworths.co.za"
+                    android:pathPrefix="/"
+                    android:scheme="https" />
             </intent-filter>
         </activity>
         <activity
@@ -287,10 +299,6 @@
             android:theme="@style/bottomNavigationStyle"
             android:windowSoftInputMode="adjustNothing" />
         <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListActivity"
-            android:label="@string/title_activity_main"
-            android:theme="@style/bottomNavigationStyle" />
-        <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.CartActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Cart" />
@@ -410,6 +418,11 @@
             android:screenOrientation="portrait"
             android:theme="@style/BarcodeScanActivityStyle"
             />
+
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.AbsaStatementsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/FaqStyle" />
 
     </application>
 
