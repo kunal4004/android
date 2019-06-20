@@ -21,6 +21,7 @@ import com.awfs.coordination.R;
 
 import java.util.HashMap;
 
+import za.co.woolworths.financial.services.android.contracts.ICreditLimitDecrease;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
@@ -41,7 +42,7 @@ import za.co.woolworths.financial.services.android.util.controller.CLIStepIndica
 import za.co.woolworths.financial.services.android.util.controller.EventStatus;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
 
-public class CLIPhase2Activity extends AppCompatActivity implements View.OnClickListener, DeclineOfferInterface {
+public class CLIPhase2Activity extends AppCompatActivity implements View.OnClickListener, ICreditLimitDecrease, DeclineOfferInterface {
 
 	private WTextView tvDeclineOffer;
 	private ProgressBar pbDecline;
@@ -375,5 +376,12 @@ public class CLIPhase2Activity extends AppCompatActivity implements View.OnClick
 	@Override
 	public void onLoadComplete() {
 		onDeclineComplete();
+	}
+
+	@Override
+	public void onCreditDecreaseProceedWithMaximum() {
+		OfferCalculationFragment offerCalculationFragment = (OfferCalculationFragment)
+				getSupportFragmentManager().findFragmentById(R.id.cli_steps_container);
+		offerCalculationFragment.animSeekBarToMaximum();
 	}
 }

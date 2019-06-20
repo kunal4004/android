@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -50,6 +51,7 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
+import za.co.woolworths.financial.services.android.ui.activities.StartupActivity;
 import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -99,7 +101,10 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	private final CompositeDisposable disposables = new CompositeDisposable();
 	private int mCreditRequestMax;
 	public RelativeLayout relConnectionLayout;
+
 	private int currentCredit;
+	private int mNewCLIAmount = 0;
+
 	private Call<OfferActive> cliUpdateApplication;
 	private Call<OfferActive> createOfferTask;
 	private Call<OfferActive> cliOfferDecision;
@@ -179,7 +184,9 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 									sbSlideAmount.post(new Runnable() {
 										@Override
 										public void run() {
-											sbSlideAmount.setProgress(busStation.getNumber());
+											mNewCLIAmount = busStation.getNumber();
+											sbSlideAmount.setProgress(mNewCLIAmount);
+											openCreditLimitDecreaseFragmentDialog();
 										}
 									});
 								}
@@ -197,6 +204,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 
 			@Override
 			public void onStopTrackingTouch(SeekBar seekBar) {
+					openCreditLimitDecreaseFragmentDialog();
 			}
 
 			@Override
@@ -207,8 +215,8 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 				progress = progress / INCREASE_PROGRESS_BY;
 				progress = progress * INCREASE_PROGRESS_BY;
-				int newCLIAmount = mCurrentCredit + progress;
-				tvSlideToEditAmount.setText(formatAmount(newCLIAmount));
+				mNewCLIAmount = mCurrentCredit + progress;
+				tvSlideToEditAmount.setText(formatAmount(mNewCLIAmount));
 				String amount = tvSlideToEditAmount.getText().toString();
 				tvNewCreditLimitAmount.setText(amount);
 				mGlobalState.setCreditLimit(amount);
@@ -858,4 +866,17 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	private void enableDeclineButton() {
 		mCliPhase2Activity.enableDeclineButton();
 	}
+
+    public void openCreditLimitDecreaseFragmentDialog() {
+		/**
+		 * mNewCLIAmount represents the actual tracked value
+		 * mCreditRequestMax represents the maximum credit amount allowed
+		 */
+		if (mNewCLIAmount < mCreditRequestMax) {
+			FragmentActivity activity = getActivity();
+			if (activity == null && !isAdded()) return;
+			CreditLimitDecreaseConfirmationFragment creditLimitDecreaseConfirmationFragment = CreditLimitDecreaseConfirmationFragment.Companion.newInstance(formatAmount(mNewCLIAmount));
+			creditLimitDecreaseConfirmationFragment.show(getFragmentManager(), StartupActivity.class.getSimpleName());
+		}
+    }
 }

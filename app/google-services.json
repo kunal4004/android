@@ -8,63 +8,20 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:26127746311:android:3dd958f34241af01",
-        "android_client_info": {
-          "package_name": "com.awfs.coordination.qa"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "26127746311-mj3jjtegol6l3drpuhf84ugk0lup9vmd.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.awfs.coordination.qa",
-            "certificate_hash": "3302c160772d64984b36e56bf4fc07c77c5bee1c"
-          }
-        },
-        {
-          "client_id": "26127746311-d28icif4e2p4j1ragui2kt32idvft30a.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyC7zspB_GMuPeNkDMfvcHJxCUUQy27gF-g"
-        }
-      ],
-      "services": {
-        "analytics_service": {
-          "status": 1
-        },
-        "appinvite_service": {
-          "status": 2,
-          "other_platform_oauth_client": [
-            {
-              "client_id": "26127746311-aha84q54jq3rpc9vcb6mgcsj9s8utokl.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.virtualmobiletech.wfsdev"
-              }
-            },
-            {
-              "client_id": "26127746311-d28icif4e2p4j1ragui2kt32idvft30a.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        },
-        "ads_service": {
-          "status": 2
-        }
-      }
-    },
-    {
-      "client_info": {
         "mobilesdk_app_id": "1:26127746311:android:23b8ba4c075decfa",
         "android_client_info": {
           "package_name": "com.awfs.coordination"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "26127746311-h59bkghoqr841b7psv43cnqit87scobb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.awfs.coordination",
+            "certificate_hash": "dde3395220c6c62b7a79756591dfd5188f2f4d33"
+          }
+        },
         {
           "client_id": "26127746311-ean6ftd7ovs7qedqdt0su9p54ucn7k5q.apps.googleusercontent.com",
           "client_type": 1,
@@ -92,27 +49,20 @@
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 2,
           "other_platform_oauth_client": [
+            {
+              "client_id": "26127746311-d28icif4e2p4j1ragui2kt32idvft30a.apps.googleusercontent.com",
+              "client_type": 3
+            },
             {
               "client_id": "26127746311-aha84q54jq3rpc9vcb6mgcsj9s8utokl.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
                 "bundle_id": "com.virtualmobiletech.wfsdev"
               }
-            },
-            {
-              "client_id": "26127746311-d28icif4e2p4j1ragui2kt32idvft30a.apps.googleusercontent.com",
-              "client_type": 3
             }
           ]
-        },
-        "ads_service": {
-          "status": 2
         }
       }
     },
@@ -143,27 +93,64 @@
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 2,
           "other_platform_oauth_client": [
+            {
+              "client_id": "26127746311-d28icif4e2p4j1ragui2kt32idvft30a.apps.googleusercontent.com",
+              "client_type": 3
+            },
             {
               "client_id": "26127746311-aha84q54jq3rpc9vcb6mgcsj9s8utokl.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
                 "bundle_id": "com.virtualmobiletech.wfsdev"
               }
-            },
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:26127746311:android:3dd958f34241af01",
+        "android_client_info": {
+          "package_name": "com.awfs.coordination.qa"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "26127746311-mj3jjtegol6l3drpuhf84ugk0lup9vmd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.awfs.coordination.qa",
+            "certificate_hash": "3302c160772d64984b36e56bf4fc07c77c5bee1c"
+          }
+        },
+        {
+          "client_id": "26127746311-d28icif4e2p4j1ragui2kt32idvft30a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7zspB_GMuPeNkDMfvcHJxCUUQy27gF-g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
             {
               "client_id": "26127746311-d28icif4e2p4j1ragui2kt32idvft30a.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "26127746311-aha84q54jq3rpc9vcb6mgcsj9s8utokl.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.virtualmobiletech.wfsdev"
+              }
             }
           ]
-        },
-        "ads_service": {
-          "status": 2
         }
       }
     },
@@ -184,14 +171,6 @@
           }
         },
         {
-          "client_id": "26127746311-orasve6oq5ueavv7icu8lcln98r0nn7r.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.awfs.coordination.staging",
-            "certificate_hash": "4fef70e6eb2bd859b72f534e492e2cb32043a80f"
-          }
-        },
-        {
           "client_id": "26127746311-d28icif4e2p4j1ragui2kt32idvft30a.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -202,27 +181,20 @@
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 2,
           "other_platform_oauth_client": [
+            {
+              "client_id": "26127746311-d28icif4e2p4j1ragui2kt32idvft30a.apps.googleusercontent.com",
+              "client_type": 3
+            },
             {
               "client_id": "26127746311-aha84q54jq3rpc9vcb6mgcsj9s8utokl.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
                 "bundle_id": "com.virtualmobiletech.wfsdev"
               }
-            },
-            {
-              "client_id": "26127746311-d28icif4e2p4j1ragui2kt32idvft30a.apps.googleusercontent.com",
-              "client_type": 3
             }
           ]
-        },
-        "ads_service": {
-          "status": 2
         }
       }
     }
