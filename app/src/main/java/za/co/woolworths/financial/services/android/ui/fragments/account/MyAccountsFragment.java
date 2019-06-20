@@ -17,10 +17,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableString;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
@@ -33,7 +36,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.RequestListener;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
@@ -43,8 +45,6 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
-import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
-import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
@@ -102,7 +102,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	WTextView cc_available_funds;
 	WTextView pl_available_funds;
 	WTextView messageCounter;
-	WTextView userName;
+	TextView userName;
 	private ImageView imgCreditCard;
 	private FrameLayout imgStoreCardContainer;
 	private FrameLayout imgPersonalLoanCardContainer;
@@ -121,12 +121,23 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	ImageView imgCreditCardStatusIndicator;
 	ImageView imgPersonalLoanStatusIndicator;
 	ImageView imgStoreCardApplyNow;
+	ImageView imRefreshAccount;
 	int promptsActionListener;
 	boolean isActivityInForeground;
 	boolean isPromptsShown;
 	boolean isAccountsCallMade;
     private RelativeLayout mUpdatePasswordBtn;
 	private SwipeRefreshLayout mSwipeToRefreshAccount;
+	RotateAnimation mRotateAnimation = null;// = new RotateAnimation(ROTATE_FROM, ROTATE_TO);
+	private Long ROTATE_ACCOUNT_UPDATE_DURATION = (long) (2 * 500);
+
+	public enum RefreshAccountType {
+		CLICK_TO_REFRESH,
+		SWIPE_TO_REFRESH,
+		NONE
+	}
+
+	private RefreshAccountType mRefreshAccountType = RefreshAccountType.NONE;
 
 	public MyAccountsFragment() {
 		// Required empty public constructor
@@ -184,6 +195,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			linkedPersonalCardView = view.findViewById(R.id.linkedPersonalLoan);
 			linkedAccountsLayout = view.findViewById(R.id.linkedLayout);
 			mScrollView = view.findViewById(R.id.nest_scrollview);
+			imRefreshAccount = view.findViewById(R.id.imRefreshAccount);
 			applyNowAccountsLayout = view.findViewById(R.id.applyNowLayout);
 			loggedOutHeaderLayout = view.findViewById(R.id.loggedOutHeaderLayout);
 			loggedInHeaderLayout = view.findViewById(R.id.loggedInHeaderLayout);
@@ -226,6 +238,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			signOutBtn.setOnClickListener(this);
 			mProfileBtn.setOnClickListener(this);
 			mUpdatePasswordBtn.setOnClickListener(this);
+			imRefreshAccount.setOnClickListener(this);
 			helpSection.setOnClickListener(this);
 			storeLocator.setOnClickListener(this);
 			adapter = new MyAccountOverViewPagerAdapter(getActivity());
@@ -251,7 +264,8 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		mSwipeToRefreshAccount.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 			@Override
 			public void onRefresh() {
-					loadAccounts(true);
+				mRefreshAccountType = RefreshAccountType.SWIPE_TO_REFRESH;
+				loadAccounts(true);
 			}
 		});
 	}
@@ -263,13 +277,16 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		this.unavailableAccounts.clear();
 		this.unavailableAccounts.addAll(Arrays.asList("SC", "CC", "PL"));
 		this.mScrollView.scrollTo(0, 0);
+		this.mRefreshAccountType = RefreshAccountType.NONE;
 		if (SessionUtilities.getInstance().isUserAuthenticated()) {
+			mSwipeToRefreshAccount.setEnabled(true);
 			if (SessionUtilities.getInstance().isC2User())
 				this.loadAccounts(false);
 			else
 				this.configureSignInNoC2ID();
 		} else {
 			if (getActivity() == null) return;
+			mSwipeToRefreshAccount.setEnabled(false);
 			removeAllBottomNavigationIconBadgeCount();
 			configureView();
 		}
@@ -453,27 +470,24 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
             showView(mUpdatePasswordBtn);
 			showView(myPreferences);
 			showView(loginUserOptionsLayout);
-			enableSwipeToRefreshAccount(true);
+			swipeToRefreshAccount(true);
 			if (SessionUtilities.getInstance().isC2User())
 				showView(linkedAccountsLayout);
 			else {
 				//user is not linked
 				//but signed in
-				enableSwipeToRefreshAccount(true);
+				swipeToRefreshAccount(true);
 				showView(unlinkedLayout);
 				setUiPageViewController();
 			}
 		} else {
 			//user is signed out
-			enableSwipeToRefreshAccount(false);
+			swipeToRefreshAccount(false);
 			showView(loggedOutHeaderLayout);
 			setUiPageViewController();
 		}
 	}
 
-	private void enableSwipeToRefreshAccount(boolean enablePullToSwipe) {
-		mSwipeToRefreshAccount.setEnabled(enablePullToSwipe);
-	}
 
 	private void hideAllLayers() {
 		hideView(loggedInHeaderLayout);
@@ -518,6 +532,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	private View.OnClickListener btnSignin_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
+			if (mRefreshAccountType != RefreshAccountType.NONE) return;
 			Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSIGNIN);
 			ScreenManager.presentSSOSignin(getActivity());
 		}
@@ -526,6 +541,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	private View.OnClickListener btnRegister_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
+			if (mRefreshAccountType != RefreshAccountType.NONE) return; // disable tap to next view until account response completed
 			Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSREGISTER);
 			ScreenManager.presentSSORegister(getActivity());
 		}
@@ -534,6 +550,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	private View.OnClickListener btnLinkAccounts_onClick = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
+			if (mRefreshAccountType != RefreshAccountType.NONE) return;
 			ScreenManager.presentSSOLinkAccounts(getActivity());
 		}
 	};
@@ -541,7 +558,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	@Override
 	public void onClick(View v) {
         Activity activity = getActivity();
-        if (activity == null) return;
+        if (activity == null || mRefreshAccountType != RefreshAccountType.NONE) return;
 		switch (v.getId()) {
 			case R.id.openMessageActivity:
 				Intent openMessageActivity = new Intent(getActivity(), MessagesActivity.class);
@@ -598,6 +615,10 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 				startActivity(new Intent(getActivity(), MyPreferencesActivity.class));
 				getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
 				break;
+			case R.id.imRefreshAccount:
+				mRefreshAccountType = RefreshAccountType.CLICK_TO_REFRESH;
+				loadAccounts(true);
+				break;
 			default:
 				break;
 
@@ -623,12 +644,12 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
     private void loadAccounts(boolean forceNetworkUpdate) {
 		mErrorHandlerView.hideErrorHandlerLayout();
 		mScrollView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.recent_search_bg));
-		if (!forceNetworkUpdate) showProgressBar();
-		else mSwipeToRefreshAccount.setRefreshing(true);
-		OneAppService oneAppService = OneAppService.INSTANCE;
-		oneAppService.setForceNetworkUpdate(forceNetworkUpdate);
-		Call<AccountsResponse> accountCall = oneAppService.getAccounts();
-        accountCall.enqueue(new CompletionHandler<>(new RequestListener<AccountsResponse>() {
+		if (forceNetworkUpdate)
+			swipeToRefreshAccount(true);
+		else
+			showProgressBar();
+        AccountRequest accountRequest = new AccountRequest();
+        accountRequest.make(forceNetworkUpdate, new RequestListener<AccountsResponse>() {
             @Override
             public void onSuccess(AccountsResponse accountsResponse) {
                 try {
@@ -667,8 +688,8 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
                     ex.printStackTrace();
                 }
                 hideProgressBar();
-				mSwipeToRefreshAccount.setRefreshing(false);
-			}
+				swipeToRefreshAccount(false);
+            }
 
             @Override
             public void onFailure(Throwable error) {
@@ -677,7 +698,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
                     mErrorHandlerView.networkFailureHandler(error.getMessage());
 
             }
-        },AccountsResponse.class));
+        });
     }
 
 	public void redirectToMyAccountsCardsActivity(int position) {
@@ -714,12 +735,48 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			@Override
 			public void run() {
 				try {
-					mSwipeToRefreshAccount.setRefreshing(false);
+					swipeToRefreshAccount(false);
 					hideProgressBar();
 				} catch (Exception ignored) {
 				}
 			}
 		});
+	}
+
+	private void swipeToRefreshAccount(Boolean shouldRefreshMyAccount) {
+		// prevent swipe to refresh to appear when refresh button is pressed
+		switch (mRefreshAccountType) {
+			case CLICK_TO_REFRESH:
+				mSwipeToRefreshAccount.setRefreshing(false);
+				if (shouldRefreshMyAccount) {
+					mRotateAnimation = new RotateAnimation(0, 360,
+							Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+					mRotateAnimation.setDuration((long) 2 * 500);
+					mRotateAnimation.setRepeatCount(45);
+					mRotateAnimation.setRepeatCount(Animation.INFINITE);
+					imRefreshAccount.startAnimation(mRotateAnimation);
+				} else {
+					mRefreshAccountType = RefreshAccountType.NONE;
+					if (mRotateAnimation != null)
+						mRotateAnimation.cancel();
+				}
+				break;
+
+			case SWIPE_TO_REFRESH:
+				if (mRotateAnimation != null)
+					mRotateAnimation.cancel();
+
+				if (shouldRefreshMyAccount) {
+					mSwipeToRefreshAccount.setRefreshing(true);
+				} else {
+					mRefreshAccountType = RefreshAccountType.NONE;
+					mSwipeToRefreshAccount.setRefreshing(false);
+				}
+
+				break;
+			default:
+				break;
+		}
 	}
 
 	@SuppressLint("StaticFieldLeak")
