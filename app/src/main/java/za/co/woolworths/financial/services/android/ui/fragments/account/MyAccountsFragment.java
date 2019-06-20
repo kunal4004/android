@@ -32,7 +32,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
+import za.co.woolworths.financial.services.android.contracts.RequestListener;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
@@ -40,7 +42,8 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse;
-import za.co.woolworths.financial.services.android.models.rest.shoppinglist.GetShoppingLists;
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
+import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
@@ -56,8 +59,6 @@ import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseVie
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
-import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
-import za.co.woolworths.financial.services.android.util.MyAccountHelper;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
@@ -107,7 +108,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 
 	Map<String, Account> accounts;
 	List<String> unavailableAccounts;
-	private AccountsResponse accountsResponse; //purely referenced to be passed forward as Intent Extra
+	private AccountsResponse mAccountResponse; //purely referenced to be passed forward as Intent Extra
 
 	private int dotsCount;
 	private ImageView[] dots;
@@ -115,7 +116,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	private ErrorHandlerView mErrorHandlerView;
 	private LinearLayout allUserOptionsLayout;
 	private LinearLayout loginUserOptionsLayout;
-	private GetShoppingLists mGetShoppingLists;
 	ImageView imgStoreCardStatusIndicator;
 	ImageView imgCreditCardStatusIndicator;
 	ImageView imgPersonalLoanStatusIndicator;
@@ -126,11 +126,11 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	boolean isAccountsCallMade;
     private RelativeLayout mUpdatePasswordBtn;
 
-    public MyAccountsFragment() {
+	public MyAccountsFragment() {
 		// Required empty public constructor
 		this.accounts = new HashMap<>();
 		this.unavailableAccounts = new ArrayList<>();
-		this.accountsResponse = null;
+		this.mAccountResponse = null;
 	}
 
 	WoolworthsApplication woolworthsApplication;
@@ -247,7 +247,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	}
 
 	private void initialize() {
-		this.accountsResponse = null;
+		this.mAccountResponse = null;
 		this.hideAllLayers();
 		this.accounts.clear();
 		this.unavailableAccounts.clear();
@@ -559,9 +559,9 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 				break;
 			case R.id.helpSection:
 				HelpSectionFragment helpSectionFragment = new HelpSectionFragment();
-				if (accountsResponse != null) {
+				if (mAccountResponse != null) {
 					Bundle bundle = new Bundle();
-					bundle.putString("accounts", Utils.objectToJson(accountsResponse));
+					bundle.putString("accounts", Utils.objectToJson(mAccountResponse));
 					helpSectionFragment.setArguments(bundle);
 				}
 				pushFragment(helpSectionFragment);
@@ -604,99 +604,72 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	public void onPageScrollStateChanged(int state) {
 	}
 
-	private void loadAccounts() {
-		accountAsyncRequest().execute();
-	}
+    private void loadAccounts() {
+        mErrorHandlerView.hideErrorHandlerLayout();
+        mScrollView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.recent_search_bg));
+        showProgressBar();
+        Call<AccountsResponse> accountCall = OneAppService.INSTANCE.getAccounts();
+        accountCall.enqueue(new CompletionHandler<>(new RequestListener<AccountsResponse>() {
+            @Override
+            public void onSuccess(AccountsResponse accountsResponse) {
+                try {
+                    int httpCode = accountsResponse.httpCode;
+                    switch (httpCode) {
+                        case 200:
+                            mAccountResponse = accountsResponse;
+                            List<Account> accountList = accountsResponse.accountList;
+                            for (Account p : accountList) {
+                                accounts.put(p.productGroupCode.toUpperCase(), p);
+                                int indexOfUnavailableAccount = unavailableAccounts.indexOf(p.productGroupCode.toUpperCase());
+                                if (indexOfUnavailableAccount > -1) {
+                                    try {
+                                        unavailableAccounts.remove(indexOfUnavailableAccount);
+                                    } catch (Exception e) {
+                                        Log.e("", e.getMessage());
+                                    }
+                                }
+                            }
+                            isAccountsCallMade = true;
+                            configureView();
+                            break;
+                        case 440:
+                            SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, accountsResponse.response.stsParams);
+                            onSessionExpired(getActivity());
+                            initialize();
+                            break;
+                        default:
+                            if (accountsResponse.response != null) {
+                                Utils.alertErrorMessage(getActivity(), accountsResponse.response.desc);
+                            }
 
-	@SuppressLint("StaticFieldLeak")
-	private HttpAsyncTask<String, String, AccountsResponse> accountAsyncRequest() {
-		return new HttpAsyncTask<String, String, AccountsResponse>() {
+                            break;
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                hideProgressBar();
+            }
 
-			@Override
-			protected void onPreExecute() {
-				mErrorHandlerView.hideErrorHandlerLayout();
-				mScrollView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.recent_search_bg));
-				showProgressBar();
-			}
+            @Override
+            public void onFailure(Throwable error) {
+                networkFailureHandler();
+                if (error != null)
+                    mErrorHandlerView.networkFailureHandler(error.getMessage());
 
-			@Override
-			protected Class<AccountsResponse> httpDoInBackgroundReturnType() {
-				return AccountsResponse.class;
-			}
-
-			@Override
-			protected AccountsResponse httpDoInBackground(String... params) {
-				return ((WoolworthsApplication) getActivity().getApplication()).getApi().getAccounts();
-			}
-
-			@Override
-			protected AccountsResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-				networkFailureHandler();
-				mErrorHandlerView.networkFailureHandler(errorMessage);
-				return new AccountsResponse();
-			}
-
-			@Override
-			protected void onPostExecute(AccountsResponse accountsResponse) {
-				try {
-					int httpCode = accountsResponse.httpCode;
-					switch (httpCode) {
-						case 200:
-							MyAccountsFragment.this.accountsResponse = accountsResponse;
-							List<Account> accountList = accountsResponse.accountList;
-							for (Account p : accountList) {
-								accounts.put(p.productGroupCode.toUpperCase(), p);
-								int indexOfUnavailableAccount = unavailableAccounts.indexOf(p.productGroupCode.toUpperCase());
-								if (indexOfUnavailableAccount > -1) {
-									try {
-										unavailableAccounts.remove(indexOfUnavailableAccount);
-									} catch (Exception e) {
-										Log.e("", e.getMessage());
-									}
-								}
-							}
-							isAccountsCallMade = true;
-							configureView();
-							break;
-						case 440:
-							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, accountsResponse.response.stsParams);
-							onSessionExpired(getActivity());
-							initialize();
-							break;
-						default:
-							if (accountsResponse.response != null) {
-								Utils.alertErrorMessage(getActivity(), accountsResponse.response.desc);
-							}
-
-							break;
-					}
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-				hideProgressBar();
-			}
-		};
-	}
+            }
+        },AccountsResponse.class));
+    }
 
 	public void redirectToMyAccountsCardsActivity(int position) {
 		Intent intent = new Intent(getActivity(), MyAccountCardsActivity.class);
 		intent.putExtra("position", position);
-		if (accountsResponse != null) {
-			intent.putExtra("accounts", Utils.objectToJson(accountsResponse));
+		if (mAccountResponse != null) {
+			intent.putExtra("accounts", Utils.objectToJson(mAccountResponse));
 		}
 		startActivityForResult(intent, 0);
 		getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
 
 	}
-
-    @Override
-    public void onDestroy() {
-        if (getActivity() != null && getViewDataBinding().pbAccount != null) {
-            hideProgressBar();
-            cancelRequest(mGetShoppingLists);
-        }
-        super.onDestroy();
-    }
 
 	@Override
 	public void onDetach() {
@@ -731,9 +704,10 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	@SuppressLint("StaticFieldLeak")
 	private void onSignOut() {
 		try {
-			AsyncTask<Void, Void, Void> httpAsyncTask = new HttpAsyncTask<Void, Void, Void>() {
+			AsyncTask<Void, Void, Void> httpAsyncTask = new AsyncTask<Void, Void, Void>() {
+
 				@Override
-				protected Void httpDoInBackground(Void... params) {
+				protected Void doInBackground(Void... voids) {
 					try {
 						Activity activity = getActivity();
 						if (activity != null) {
@@ -746,19 +720,9 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 				}
 
 				@Override
-				protected Void httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-					return null;
-				}
-
-				@Override
 				protected void onPostExecute(Void aVoid) {
 					super.onPostExecute(aVoid);
 					mScrollView.scrollTo(0, 0);
-				}
-
-				@Override
-				protected Class<Void> httpDoInBackgroundReturnType() {
-					return null;
 				}
 			};
 			httpAsyncTask.execute();
@@ -777,7 +741,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 					&& (currentFragment instanceof MyAccountsFragment)) {
 				if (SessionUtilities.getInstance().isUserAuthenticated()
 						&& SessionUtilities.getInstance().isC2User()) {
-					getViewModel().loadMessageCount().execute();
+					getViewModel().loadMessageCount();
 				}
 			}
 		}

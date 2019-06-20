@@ -35,7 +35,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
+import za.co.woolworths.financial.services.android.contracts.RequestListener;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CLIOfferDecision;
@@ -44,8 +46,8 @@ import za.co.woolworths.financial.services.android.models.dto.Offer;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
-import za.co.woolworths.financial.services.android.models.rest.cli.CLICreateApplication;
-import za.co.woolworths.financial.services.android.models.rest.cli.CLIUpdateApplication;
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
+import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
@@ -57,11 +59,9 @@ import za.co.woolworths.financial.services.android.util.DeclineOfferInterface;
 import za.co.woolworths.financial.services.android.util.DrawImage;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FragmentUtils;
-import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
-import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
@@ -96,15 +96,19 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	private FrameLayout flTopLayout;
 	private LinearLayout llEmptyLayout;
 	private EventStatus mEventStatus;
-	private CLIUpdateApplication cliUpdateApplication;
-	private CLICreateApplication createOfferTask;
-	private za.co.woolworths.financial.services.android.models.rest.cli.CLIOfferDecision cliAcceptOfferDecision;
+
 	private LoadState loadState;
 	private final CompositeDisposable disposables = new CompositeDisposable();
 	private int mCreditRequestMax;
 	public RelativeLayout relConnectionLayout;
+
 	private int currentCredit;
 	private int mNewCLIAmount = 0;
+
+	private Call<OfferActive> cliUpdateApplication;
+	private Call<OfferActive> createOfferTask;
+	private Call<OfferActive> cliOfferDecision;
+	private Call<OfferActive> cliAcceptOfferDecision;
 
 	private enum LATEST_BACKGROUND_CALL {CREATE_OFFER, DECLINE_OFFER, UPDATE_APPLICATION, ACCEPT_OFFER}
 
@@ -224,22 +228,22 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	private void cliCreateApplication(CreateOfferRequest createOfferRequest) {
 		onLoad();
 		showView(llNextButtonLayout);
-		createOfferTask = new CLICreateApplication(getActivity(), createOfferRequest, new OnEventListener() {
+		createOfferTask = OneAppService.INSTANCE.cliCreateApplication(createOfferRequest);
+		createOfferTask.enqueue(new CompletionHandler<>(new RequestListener<OfferActive>() {
 			@Override
-			public void onSuccess(Object object) {
-				mObjOffer = ((OfferActive) object);
-				switch (mObjOffer.httpCode) {
+			public void onSuccess(OfferActive offerActive) {
+				switch (offerActive.httpCode) {
 					case 200:
 						enableDeclineButton();
-						displayApplication(mObjOffer);
+						displayApplication(offerActive);
 						break;
 
 					case 440:
-						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, mObjOffer.response.stsParams, getActivity());
+						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, offerActive.response.stsParams, getActivity());
 						break;
 
 					default:
-						displayMessageError(mObjOffer);
+						displayMessageError(offerActive);
 						break;
 				}
 				loadSuccess();
@@ -247,29 +251,32 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 			}
 
 			@Override
-			public void onFailure(final String e) {
-				getActivity().runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						latestBackgroundTask(LATEST_BACKGROUND_CALL.CREATE_OFFER);
-						hideView(llNextButtonLayout);
-						loadFailure();
-						hideDeclineButton();
-						mErrorHandlerView.responseError(view, e);
-					}
-				});
+			public void onFailure(final Throwable error) {
+				Activity activity = getActivity();
+				if (activity != null && error != null) {
+					activity.runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							latestBackgroundTask(LATEST_BACKGROUND_CALL.CREATE_OFFER);
+							hideView(llNextButtonLayout);
+							loadFailure();
+							hideDeclineButton();
+							mErrorHandlerView.responseError(view, error.getMessage());
+						}
+					});
+				}
 			}
-		});
-		createOfferTask.execute();
+		},OfferActive.class));
 	}
 
 	private void cliUpdateApplication(CreateOfferRequest createOfferRequest, String cliId) {
 		onLoad();
 		showView(llNextButtonLayout);
-		cliUpdateApplication = new CLIUpdateApplication(getActivity(), createOfferRequest, cliId, new OnEventListener() {
+		cliUpdateApplication = OneAppService.INSTANCE.cliUpdateApplication(createOfferRequest, cliId);
+		cliUpdateApplication.enqueue(new CompletionHandler<>(new RequestListener<OfferActive>() {
 			@Override
-			public void onSuccess(Object object) {
-				mObjOffer = ((OfferActive) object);
+			public void onSuccess(OfferActive offerActive) {
+				mObjOffer = offerActive;
 				switch (mObjOffer.httpCode) {
 					case 200:
 						enableDeclineButton();
@@ -289,36 +296,36 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 			}
 
 			@Override
-			public void onFailure(final String e) {
-				getActivity().runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						latestBackgroundTask(LATEST_BACKGROUND_CALL.UPDATE_APPLICATION);
-						loadFailure();
-						hideView(llNextButtonLayout);
-						hideDeclineButton();
-						mErrorHandlerView.responseError(view, e);
-					}
-				});
+			public void onFailure(final Throwable error) {
+				Activity activity = getActivity();
+				if (activity!=null&& error!=null){
+					activity.runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							latestBackgroundTask(LATEST_BACKGROUND_CALL.UPDATE_APPLICATION);
+							loadFailure();
+							hideView(llNextButtonLayout);
+							hideDeclineButton();
+							mErrorHandlerView.responseError(view, error.getMessage());
+						}
+					});
+				}
 			}
-		});
-		cliUpdateApplication.execute();
+		},OfferActive.class));
 	}
 
 	private void cliDelcineOfferRequest(CLIOfferDecision createOfferDecision) {
 		declineOfferInterface.onLoad();
-		za.co.woolworths.financial.services.android.models.rest.cli.CLIOfferDecision cliOfferDecision = new za.co.woolworths.financial.services.android.models.rest.cli.CLIOfferDecision(getActivity(), createOfferDecision, String.valueOf(mObjOffer.cliId), new OnEventListener() {
-
+		cliOfferDecision = OneAppService.INSTANCE.createOfferDecision(createOfferDecision, String.valueOf(mObjOffer.cliId));
+		cliOfferDecision.enqueue(new CompletionHandler<>(new RequestListener<OfferActive>() {
 			@Override
-			public void onSuccess(Object object) {
-				OfferActive mObjOffer = ((OfferActive) object);
+			public void onSuccess(OfferActive response) {
 				switch (mObjOffer.httpCode) {
 					case 200:
 						finishActivity();
 						break;
 					case 440:
 						SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, mObjOffer.response.stsParams, getActivity());
-						;
 						break;
 					default:
 						Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, mObjOffer.response.desc);
@@ -330,7 +337,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 			}
 
 			@Override
-			public void onFailure(String e) {
+			public void onFailure(Throwable error) {
 				Activity activity = getActivity();
 				if (activity != null) {
 					activity.runOnUiThread(new Runnable() {
@@ -343,9 +350,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 					});
 				}
 			}
-		});
-
-		cliOfferDecision.execute();
+		},OfferActive.class));
 	}
 
 	private void init(View view) {
@@ -520,61 +525,61 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 				onAcceptOfferLoad();
 				int newCreditLimitAmount = Utils.numericFieldOnly(tvNewCreditLimitAmount.getText().toString());
 				CLIOfferDecision createOfferDecision = new CLIOfferDecision(woolworthsApplication.getProductOfferingId(), newCreditLimitAmount, true);
-				cliAcceptOfferDecision =
-						new za.co.woolworths.financial.services.android.models.rest.cli.CLIOfferDecision(getActivity(), createOfferDecision, String.valueOf(mCLiId), new OnEventListener() {
-							@Override
-							public void onSuccess(Object object) {
-								mObjOffer = ((OfferActive) object);
-								switch (mObjOffer.httpCode) {
-									case 200:
-										String nextStep = mObjOffer.nextStep;
-										if (nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_poi_required))) {
-											Bundle bundle = new Bundle();
-											bundle.putString("OFFER_ACTIVE_PAYLOAD", Utils.objectToJson(mObjOffer));
-											DocumentFragment documentFragment = new DocumentFragment();
-											documentFragment.setArguments(bundle);
-											documentFragment.setStepIndicatorListener(mCliStepIndicatorListener);
-											FragmentUtils fragmentUtils = new FragmentUtils();
-											fragmentUtils.nextFragment((AppCompatActivity) OfferCalculationFragment.this.getActivity(), getFragmentManager().beginTransaction(), documentFragment, R.id.cli_steps_container);
-										} else if (nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_complete)) && mObjOffer.cliStatus.equalsIgnoreCase(getString(R.string.cli_status_concluded))) {
-											ProcessCompleteNoPOIFragment processCompleteNoPOIFragment = new ProcessCompleteNoPOIFragment();
-											processCompleteNoPOIFragment.setStepIndicatorListener(mCliStepIndicatorListener);
-											FragmentUtils fragmentUtils = new FragmentUtils();
-											fragmentUtils.nextFragment((AppCompatActivity) OfferCalculationFragment.this.getActivity(), getFragmentManager().beginTransaction(), processCompleteNoPOIFragment, R.id.cli_steps_container);
-											hideDeclineButton();
-										} else {
-											finishActivity();
-										}
-										break;
-									case 440:
-										SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, mObjOffer.response.stsParams, getActivity());
-										break;
-									default:
-										if (mObjOffer != null) {
-											Response response = mObjOffer.response;
-											if (response != null) {
-												Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
-											}
-										}
-										break;
+				cliAcceptOfferDecision = OneAppService.INSTANCE.createOfferDecision(createOfferDecision, String.valueOf(mCLiId));
+				cliAcceptOfferDecision.enqueue(new CompletionHandler<>(new RequestListener<OfferActive>() {
+					@Override
+					public void onSuccess(OfferActive offerActive) {
+						mObjOffer = offerActive;
+						switch (offerActive.httpCode) {
+							case 200:
+								String nextStep = mObjOffer.nextStep;
+								if (nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_poi_required))) {
+									Bundle bundle = new Bundle();
+									bundle.putString("OFFER_ACTIVE_PAYLOAD", Utils.objectToJson(mObjOffer));
+									DocumentFragment documentFragment = new DocumentFragment();
+									documentFragment.setArguments(bundle);
+									documentFragment.setStepIndicatorListener(mCliStepIndicatorListener);
+									FragmentUtils fragmentUtils = new FragmentUtils();
+									fragmentUtils.nextFragment((AppCompatActivity) OfferCalculationFragment.this.getActivity(), getFragmentManager().beginTransaction(), documentFragment, R.id.cli_steps_container);
+								} else if (nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_complete)) && mObjOffer.cliStatus.equalsIgnoreCase(getString(R.string.cli_status_concluded))) {
+									ProcessCompleteNoPOIFragment processCompleteNoPOIFragment = new ProcessCompleteNoPOIFragment();
+									processCompleteNoPOIFragment.setStepIndicatorListener(mCliStepIndicatorListener);
+									FragmentUtils fragmentUtils = new FragmentUtils();
+									fragmentUtils.nextFragment((AppCompatActivity) OfferCalculationFragment.this.getActivity(), getFragmentManager().beginTransaction(), processCompleteNoPOIFragment, R.id.cli_steps_container);
+									hideDeclineButton();
+								} else {
+									finishActivity();
 								}
-								loadSuccess();
-								onAcceptOfferCompleted();
-							}
-
-							@Override
-							public void onFailure(String e) {
-								getActivity().runOnUiThread(new Runnable() {
-									@Override
-									public void run() {
-										latestBackgroundTask(LATEST_BACKGROUND_CALL.ACCEPT_OFFER);
-										loadFailure();
-										onAcceptOfferCompleted();
+								break;
+							case 440:
+								SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, mObjOffer.response.stsParams, getActivity());
+								break;
+							default:
+									Response response = mObjOffer.response;
+									if (response != null) {
+										Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
 									}
-								});
-							}
-						});
-				cliAcceptOfferDecision.execute();
+								break;
+						}
+						loadSuccess();
+						onAcceptOfferCompleted();
+					}
+
+					@Override
+					public void onFailure(Throwable error) {
+						Activity activity = getActivity();
+						if (activity!=null){
+							activity.runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									latestBackgroundTask(LATEST_BACKGROUND_CALL.ACCEPT_OFFER);
+									loadFailure();
+									onAcceptOfferCompleted();
+								}
+							});
+						}
+					}
+				},OfferActive.class));
 				break;
 
 			case R.id.tvSlideToEditAmount:
@@ -820,6 +825,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		cancelRequest(cliUpdateApplication);
 		cancelRequest(createOfferTask);
 		cancelRequest(cliAcceptOfferDecision);
+		cancelRequest(cliOfferDecision);
 	}
 
 	public void finishActivity() {
@@ -851,12 +857,10 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		mCliPhase2Activity.hideDeclineOffer();
 	}
 
-	private void cancelRequest(HttpAsyncTask httpAsyncTask) {
-		if (httpAsyncTask != null) {
-			if (!httpAsyncTask.isCancelled()) {
-				httpAsyncTask.cancel(true);
+	private void cancelRequest(Call call) {
+		if (call != null && !call.isCanceled()) {
+				call.cancel();
 			}
-		}
 	}
 
 	private void enableDeclineButton() {

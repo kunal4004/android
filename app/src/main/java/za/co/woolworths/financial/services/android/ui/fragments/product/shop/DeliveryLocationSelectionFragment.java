@@ -22,16 +22,18 @@ import com.awfs.coordination.R;
 
 import java.util.List;
 
+import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
+import za.co.woolworths.financial.services.android.contracts.RequestListener;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
-import za.co.woolworths.financial.services.android.models.rest.shop.SetDeliveryLocationSuburb;
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
+import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
 import za.co.woolworths.financial.services.android.ui.adapters.DeliveryLocationAdapter;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
-import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -112,17 +114,18 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
 	private void setSuburb(final ShoppingDeliveryLocation location) {
 		// TODO: confirm loading when doing this request
 		toggleLoading(true);
-
-		SetDeliveryLocationSuburb setDeliveryLocationSuburb = new SetDeliveryLocationSuburb(location.suburb.id, new OnEventListener() {
+		Call<SetDeliveryLocationSuburbResponse> setDeliveryLocationSuburbResponseCall =  OneAppService.INSTANCE.setSuburb(location.suburb.id);
+		setDeliveryLocationSuburbResponseCall.enqueue(new CompletionHandler<>(new RequestListener<SetDeliveryLocationSuburbResponse>() {
 			@Override
-			public void onSuccess(Object object) {
+			public void onSuccess(SetDeliveryLocationSuburbResponse setDeliveryLocationSuburbResponse) {
 				Log.i("SuburbSelectionFragment", "setSuburb Succeeded");
-				handleSetSuburbResponse((SetDeliveryLocationSuburbResponse) object, location);
+				handleSetSuburbResponse(setDeliveryLocationSuburbResponse, location);
 			}
 
 			@Override
-			public void onFailure(final String errorMessage) {
-				Log.e("SuburbSelectionFragment", "setSuburb Error: " + errorMessage);
+			public void onFailure(final Throwable error) {
+				if (error == null) return;
+				Log.e("SuburbSelectionFragment", "setSuburb Error: " + error.getMessage());
 
 				getActivity().runOnUiThread(new Runnable() {
 					@Override
@@ -138,13 +141,12 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
 							}
 
 						});
-						mErrorHandlerView.networkFailureHandler(errorMessage);
+						mErrorHandlerView.networkFailureHandler(error.getMessage());
 					}
 				});
-
 			}
-		});
-		setDeliveryLocationSuburb.execute();
+		},SetDeliveryLocationSuburbResponse.class));
+
 	}
 
 	private void handleSetSuburbResponse(SetDeliveryLocationSuburbResponse response, final ShoppingDeliveryLocation location) {

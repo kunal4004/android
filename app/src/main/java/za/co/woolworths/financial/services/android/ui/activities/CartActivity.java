@@ -97,7 +97,7 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
                 break;
             case R.id.btnClearCart:
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTREMOVEALL);
-                cartFragment.removeAllCartItem(null).execute();
+                cartFragment.removeAllCartItem(null);
                 break;
         }
     }

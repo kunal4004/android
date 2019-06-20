@@ -22,24 +22,26 @@ import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
-
 import java.io.File;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
+import za.co.woolworths.financial.services.android.contracts.RequestListener;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
-import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.statement.GetStatement;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.models.dto.statement.StatementResponse;
 import za.co.woolworths.financial.services.android.models.dto.statement.USDocument;
 import za.co.woolworths.financial.services.android.models.dto.statement.USDocuments;
 import za.co.woolworths.financial.services.android.models.dto.statement.UserStatement;
-import za.co.woolworths.financial.services.android.models.rest.statement.GetPdfFile;
-import za.co.woolworths.financial.services.android.models.rest.statement.GetStatements;
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
+import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
@@ -50,7 +52,6 @@ import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FragmentUtils;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
-import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.StatementUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -68,14 +69,14 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
     private GetStatement mGetStatementFile;
     private SlidingUpPanelLayout mSlideUpPanelLayout;
     private int mViewIsLoadingPosition = -1;
-    private GetStatements cliGetStatements;
+    private Call<StatementResponse> cliGetStatements;
     private BroadcastReceiver mConnectionBroadcast;
     private LoadState loadState;
     private SlidingUpPanelLayout.PanelState panelIsCollapsed = SlidingUpPanelLayout.PanelState.COLLAPSED;
     private boolean viewWasCreated = false;
     private final String TAG = StatementFragment.this.getClass().getSimpleName();
     View view;
-    private GetPdfFile mGetPdfFile;
+    private Call<retrofit2.Response<ResponseBody>> mGetPdfFile;
 
     public StatementFragment() {
     }
@@ -229,13 +230,12 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 
     public void getStatement() {
         onLoad();
-        UserStatement statement1 = new UserStatement(String.valueOf(WoolworthsApplication.getProductOfferingId()), Utils.getDate(6), Utils.getDate(0));
-        cliGetStatements = new GetStatements(getActivity(), statement1, new OnEventListener() {
+        UserStatement userStatement = new UserStatement(String.valueOf(WoolworthsApplication.getProductOfferingId()), Utils.getDate(6), Utils.getDate(0));
+        cliGetStatements = OneAppService.INSTANCE.getStatementResponse(userStatement);
+        cliGetStatements.enqueue(new CompletionHandler<>(new RequestListener<StatementResponse>() {
             @Override
-            public void onSuccess(Object object) {
-                StatementResponse statementResponse = (StatementResponse) object;
+            public void onSuccess(StatementResponse statementResponse) {
                 if (statementResponse != null && getActivity() !=null) {
-                    Response response = statementResponse.response;
                     switch (statementResponse.httpCode) {
                         case 200:
                             List<UserStatement> statement = statementResponse.data;
@@ -254,12 +254,12 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 
                         case 440:
 
-                            SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.stsParams, getActivity());
+                            SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, statementResponse.response.stsParams, getActivity());
                             break;
 
                         default:
-                            if (response != null) {
-                                Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.STATEMENT_ERROR, response.desc);
+                            if (statementResponse.response != null) {
+                                Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.STATEMENT_ERROR, statementResponse.response.desc);
                             }
                             break;
                     }
@@ -268,20 +268,21 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
             }
 
             @Override
-            public void onFailure(final String e) {
+            public void onFailure(final Throwable error) {
+                if (error == null)return;
                 Activity activity = getActivity();
                 if (activity !=null) {
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             onLoadComplete();
-                            mErrorHandlerView.networkFailureHandler(e);
+                            mErrorHandlerView.networkFailureHandler(error.getMessage());
                         }
                     });
                 }
             }
-        });
-        cliGetStatements.execute();
+        },StatementResponse.class));
+
     }
 
     public void hideView(View view) {
@@ -306,19 +307,20 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         showViewProgress();
         final FragmentActivity activity = getActivity();
         if (activity == null) return;
-        mGetPdfFile = new GetPdfFile(mGetStatementFile, new OnEventListener() {
+        mGetPdfFile = OneAppService.INSTANCE.getPDFResponse(mGetStatementFile);
+        mGetPdfFile.enqueue(new Callback<Response<ResponseBody>>() {
             @Override
-            public void onSuccess(Object object) {
-                if (getActivity() !=null) {
+            public void onResponse(Call<Response<ResponseBody>> call, Response<Response<ResponseBody>> response) {
+                if (getActivity() != null) {
                     loadSuccess();
                     hideViewProgress();
-                    retrofit.client.Response response = (retrofit.client.Response) object;
-                    switch (response.getStatus()) {
-
-                        case 200:
-                            try {
-                                StatementUtils statementUtils = new StatementUtils(activity);
-                                statementUtils.savePDF(response.getBody().in());
+                    if (response.code() == 200) {
+                        try {
+                            StatementUtils statementUtils = new StatementUtils(activity);
+                            if (response.body() != null) {
+                                if (response.body().body() != null) {
+                                    statementUtils.savePDF(response.body().body().byteStream());
+                                }
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                                     PreviewStatement previewStatement = new PreviewStatement();
                                     FragmentUtils fragmentUtils = new FragmentUtils(activity);
@@ -328,21 +330,18 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
                                 } else {
                                     launchOpenPDFIntent();
                                 }
-                            } catch (Exception ex) {
-                                Log.d(TAG, ex.getMessage());
                             }
-
-                            break;
-                        default:
-                            break;
+                        } catch (Exception ex) {
+                            Log.d(TAG, ex.getMessage());
+                        }
                     }
                 }
             }
 
             @Override
-            public void onFailure(String e) {
+            public void onFailure(Call<Response<ResponseBody>> call, Throwable t) {
                 Activity activity = getActivity();
-                if (activity!=null) {
+                if (activity != null) {
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -354,8 +353,6 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
                 }
             }
         });
-
-        mGetPdfFile.execute();
     }
 
     private void slideUpPanelListener() {
@@ -409,10 +406,8 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
             StatementUtils statementUtils = new StatementUtils(activity);
             statementUtils.cancelRequest(cliGetStatements);
 
-            if (mGetPdfFile != null) {
-                if (!mGetPdfFile.isCancelled())
-                    mGetPdfFile.cancel(true);
-            }
+            if ((mGetPdfFile != null) && !mGetPdfFile.isCanceled())
+                mGetPdfFile.cancel();
         }
 
     }

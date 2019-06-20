@@ -7,19 +7,17 @@ import android.os.Environment
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.text.TextUtils
 import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import com.awfs.coordination.R
-import com.facebook.FacebookSdk.getApplicationContext
-import kotlinx.android.synthetic.main.activity_products_refine.*
 import kotlinx.android.synthetic.main.fragment_tax_invoice_list.*
-import za.co.woolworths.financial.services.android.contracts.AsyncAPIResponse
+import za.co.woolworths.financial.services.android.contracts.RequestListener
 import za.co.woolworths.financial.services.android.models.dto.OrderTaxInvoiceResponse
-import za.co.woolworths.financial.services.android.models.rest.product.GetOrderInvoiceRequest
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.OrdersTaxInvoiceActivity
 import za.co.woolworths.financial.services.android.ui.adapters.TaxInvoiceAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
@@ -107,18 +105,20 @@ class TaxInvoiceLIstFragment : Fragment(), TaxInvoiceAdapter.OnItemClick, Permis
             hideProgressBar()
             showTAxInvoice(file.path)
         } else {
-            GetOrderInvoiceRequest(selectedInvoiceNumber!!, object : AsyncAPIResponse.ResponseDelegate<OrderTaxInvoiceResponse> {
-                override fun onSuccess(response: OrderTaxInvoiceResponse) {
-                    hideProgressBar()
-                    buildTaxInvoicePDF(response.data!!)
+            selectedInvoiceNumber?.let { selectedInvoiceNumber ->
+               val  getInvoiceOrderRequest = OneAppService.getOrderTaxInvoice(selectedInvoiceNumber)
+                getInvoiceOrderRequest.enqueue(CompletionHandler(object: RequestListener<OrderTaxInvoiceResponse> {
+                    override fun onSuccess(orderTaxInvoiceResponse: OrderTaxInvoiceResponse?) {
+                        hideProgressBar()
+                        orderTaxInvoiceResponse?.data?.let { response -> buildTaxInvoicePDF(response)  }
+                    }
 
-                }
+                    override fun onFailure(error: Throwable?) {
+                        hideProgressBar()
+                    }
 
-                override fun onFailure(errorMessage: String) {
-                    hideProgressBar()
-                }
-
-            }).execute()
+                },OrderTaxInvoiceResponse::class.java))
+            }
         }
     }
 

@@ -19,31 +19,26 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import com.awfs.coordination.R;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Map;
 
+import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
-import za.co.woolworths.financial.services.android.contracts.OnResultListener;
+import za.co.woolworths.financial.services.android.contracts.RequestListener;
 import za.co.woolworths.financial.services.android.contracts.RootActivityInterface;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.dao.MobileConfigServerDao;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
+import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.deep_link.RetrieveProductDetail;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WVideoView;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
-import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
@@ -159,67 +154,61 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 	private void executeConfigServer() {
 		//if app is expired, don't execute MCS.
 
-		MobileConfigServerDao.Companion.getConfig(WoolworthsApplication.getInstance(), new OnResultListener<ConfigResponse>() {
-			@Override
-			public void success(ConfigResponse configResponse) {
-				switch (configResponse.httpCode) {
-					case 200:
-						try {
-							StartupActivity.this.mVideoPlayerShouldPlay = false;
+        Call<ConfigResponse> configResponseCall = OneAppService.INSTANCE.getConfig();
+        configResponseCall.enqueue(new CompletionHandler<>(new RequestListener<ConfigResponse>(){
 
-							if (configResponse.configs.enviroment.stsURI == null || configResponse.configs.enviroment.stsURI.isEmpty()) {
-								showNonVideoViewWithErrorLayout();
-								return;
-							}
+            @Override
+            public void onSuccess(ConfigResponse configResponse) {
+                if (configResponse.httpCode == 200) {
+                    try {
+                        StartupActivity.this.mVideoPlayerShouldPlay = false;
 
-							WoolworthsApplication.setStoreCardBlockReasons(configResponse.configs.enviroment.storeCardBlockReasons);
-							WoolworthsApplication.setSsoRedirectURI(configResponse.configs.enviroment.getSsoRedirectURI());
-							WoolworthsApplication.setStsURI(configResponse.configs.enviroment.getStsURI());
-							WoolworthsApplication.setSsoRedirectURILogout(configResponse.configs.enviroment.getSsoRedirectURILogout());
-							WoolworthsApplication.setSsoUpdateDetailsRedirectUri(configResponse.configs.enviroment.getSsoUpdateDetailsRedirectUri());
-							WoolworthsApplication.setWwTodayURI(configResponse.configs.enviroment.getWwTodayURI());
-							WoolworthsApplication.setAuthenticVersionStamp(configResponse.configs.enviroment.getAuthenticVersionStamp());
-							WoolworthsApplication.setApplyNowLink(configResponse.configs.defaults.getApplyNowLink());
-							WoolworthsApplication.setRegistrationTCLink(configResponse.configs.defaults.getRegisterTCLink());
-							WoolworthsApplication.setFaqLink(configResponse.configs.defaults.getFaqLink());
-							WoolworthsApplication.setWrewardsLink(configResponse.configs.defaults.getWrewardsLink());
-							WoolworthsApplication.setRewardingLink(configResponse.configs.defaults.getRewardingLink());
-							WoolworthsApplication.setHowToSaveLink(configResponse.configs.defaults.getHowtosaveLink());
-							WoolworthsApplication.setWrewardsTCLink(configResponse.configs.defaults.getWrewardsTCLink());
-							WoolworthsApplication.setCartCheckoutLink(configResponse.configs.defaults.getCartCheckoutLink());
-							WoolworthsApplication.setAbsaBankingOpenApiServices(configResponse.configs.absaBankingOpenApiServices);
+                        if (configResponse.configs.enviroment.stsURI == null || configResponse.configs.enviroment.stsURI.isEmpty()) {
+                            showNonVideoViewWithErrorLayout();
+                            return;
+                        }
 
-							mWGlobalState.setStartRadius(configResponse.configs.enviroment.getStoreStockLocatorConfigStartRadius());
-							mWGlobalState.setEndRadius(configResponse.configs.enviroment.getStoreStockLocatorConfigEndRadius());
+                        WoolworthsApplication.setStoreCardBlockReasons(configResponse.configs.enviroment.storeCardBlockReasons);
+                        WoolworthsApplication.setSsoRedirectURI(configResponse.configs.enviroment.getSsoRedirectURI());
+                        WoolworthsApplication.setStsURI(configResponse.configs.enviroment.getStsURI());
+                        WoolworthsApplication.setSsoRedirectURILogout(configResponse.configs.enviroment.getSsoRedirectURILogout());
+                        WoolworthsApplication.setSsoUpdateDetailsRedirectUri(configResponse.configs.enviroment.getSsoUpdateDetailsRedirectUri());
+                        WoolworthsApplication.setWwTodayURI(configResponse.configs.enviroment.getWwTodayURI());
+                        WoolworthsApplication.setAuthenticVersionStamp(configResponse.configs.enviroment.getAuthenticVersionStamp());
+                        WoolworthsApplication.setApplyNowLink(configResponse.configs.defaults.getApplyNowLink());
+                        WoolworthsApplication.setRegistrationTCLink(configResponse.configs.defaults.getRegisterTCLink());
+                        WoolworthsApplication.setFaqLink(configResponse.configs.defaults.getFaqLink());
+                        WoolworthsApplication.setWrewardsLink(configResponse.configs.defaults.getWrewardsLink());
+                        WoolworthsApplication.setRewardingLink(configResponse.configs.defaults.getRewardingLink());
+                        WoolworthsApplication.setHowToSaveLink(configResponse.configs.defaults.getHowtosaveLink());
+                        WoolworthsApplication.setWrewardsTCLink(configResponse.configs.defaults.getWrewardsTCLink());
+                        WoolworthsApplication.setCartCheckoutLink(configResponse.configs.defaults.getCartCheckoutLink());
+                        WoolworthsApplication.setAbsaBankingOpenApiServices(configResponse.configs.absaBankingOpenApiServices);
+
+                        mWGlobalState.setStartRadius(configResponse.configs.enviroment.getStoreStockLocatorConfigStartRadius());
+                        mWGlobalState.setEndRadius(configResponse.configs.enviroment.getStoreStockLocatorConfigEndRadius());
 
 
-							splashScreenText = configResponse.configs.enviroment.splashScreenText;
-							splashScreenDisplay = configResponse.configs.enviroment.splashScreenDisplay;
-							splashScreenPersist = configResponse.configs.enviroment.splashScreenPersist;
+                        splashScreenText = configResponse.configs.enviroment.splashScreenText;
+                        splashScreenDisplay = configResponse.configs.enviroment.splashScreenDisplay;
+                        splashScreenPersist = configResponse.configs.enviroment.splashScreenPersist;
 
-							if (!isVideoPlaying) {
-								presentNextScreenOrServerMessage();
-							}
+                        if (!isVideoPlaying) {
+                            presentNextScreenOrServerMessage();
+                        }
 
-						} catch (NullPointerException ex) {
-							showNonVideoViewWithErrorLayout();
-						}
-						break;
-					default:
-						break;
-				}
-			}
+                    } catch (NullPointerException ex) {
+                        showNonVideoViewWithErrorLayout();
+                    }
+                }
+            }
 
-			@Override
-			public void failure(String errorMessage, HttpAsyncTask.HttpErrorCode httpErrorCode) {
-				showNonVideoViewWithErrorLayout();
-			}
+            @Override
+            public void onFailure(Throwable error) {
+                showNonVideoViewWithErrorLayout();
 
-			@Override
-			public void complete() {
-
-			}
-		});
+            }
+        },ConfigResponse.class));
 	}
 
 

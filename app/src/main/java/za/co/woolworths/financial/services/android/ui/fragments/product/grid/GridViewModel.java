@@ -1,18 +1,19 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.grid;
 
 import android.app.Activity;
-import android.content.Context;
 import android.util.Log;
 
 import java.util.List;
 
+import retrofit2.Call;
+import za.co.woolworths.financial.services.android.contracts.RequestListener;
 import za.co.woolworths.financial.services.android.models.dto.PagingResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
-import za.co.woolworths.financial.services.android.models.rest.product.GetProductsRequest;
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
+import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.ui.base.BaseViewModel;
-import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.rx.SchedulerProvider;
 
@@ -26,7 +27,7 @@ public class GridViewModel extends BaseViewModel<GridNavigator> {
     private int mLoadStatus;
     private boolean productIsLoading = false;
     private ProductsRequestParams productsRequestParams;
-    private GetProductsRequest mGetProductsRequest;
+    Call<ProductView> retrieveProduct;
 
     public void setLoadStatus(int status) {
         this.mLoadStatus = status;
@@ -68,67 +69,52 @@ public class GridViewModel extends BaseViewModel<GridNavigator> {
         this.productsRequestParams = new ProductsRequestParams(searchTerm, searchType, ProductsRequestParams.ResponseType.DETAIL, pageOffset);
     }
 
-
     public ProductsRequestParams getProductRequestBody() {
         return productsRequestParams;
     }
 
-    public void executeLoadProduct(Context context, ProductsRequestParams lp) {
-        this.mGetProductsRequest = loadProducts(context, lp);
-        this.mGetProductsRequest.execute();
-    }
-
-    public GetProductsRequest getLoadProductRequest() {
-        return mGetProductsRequest;
-    }
-
-
-    GetProductsRequest loadProducts(final Context context, final ProductsRequestParams requestParams) {
+    public void executeLoadProduct(final Activity acivity, ProductsRequestParams requestParams) {
         getNavigator().onLoadStart(getLoadMoreData());
         setProductIsLoading(true);
-        return new GetProductsRequest(context, requestParams, new OnEventListener<ProductView>() {
+        retrieveProduct =  OneAppService.INSTANCE.getProducts(requestParams);
+        retrieveProduct.enqueue(new CompletionHandler<>(new RequestListener<ProductView>() {
             @Override
-            public void onSuccess(ProductView object) {
-                ProductView productView = (ProductView) object;
-                switch (productView.httpCode) {
-                    case 200:
-                        List<ProductList> productLists = productView.products;
-                        if (productLists != null) {
-                            numItemsInTotal(productView);
-                            calculatePageOffset();
-                            getNavigator().onLoadProductSuccess(productView, getLoadMoreData());
-                            getNavigator().onLoadComplete(getLoadMoreData());
-                            setLoadMoreData(true);
-                        }
-                        break;
-
-                    default:
-                        if (productView.response != null) {
-                            getNavigator().onLoadComplete(getLoadMoreData());
-                            getNavigator().unhandledResponseCode(productView.response);
-                        }
-                        break;
+            public void onSuccess(ProductView productView) {
+                if (productView.httpCode == 200) {
+                    List<ProductList> productLists = productView.products;
+                    if (productLists != null) {
+                        numItemsInTotal(productView);
+                        calculatePageOffset();
+                        getNavigator().onLoadProductSuccess(productView, getLoadMoreData());
+                        getNavigator().onLoadComplete(getLoadMoreData());
+                        setLoadMoreData(true);
+                    }
+                } else {
+                    if (productView.response != null) {
+                        getNavigator().onLoadComplete(getLoadMoreData());
+                        getNavigator().unhandledResponseCode(productView.response);
+                    }
                 }
                 setProductIsLoading(false);
             }
 
             @Override
-            public void onFailure(final String e) {
-                if (context != null) {
-                    Activity activity = (Activity) context;
-                    if (activity != null) {
-                        activity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                getNavigator().failureResponseHandler(e);
-                                getNavigator().onLoadComplete(getLoadMoreData());
-                                setProductIsLoading(false);
-                            }
-                        });
-                    }
+            public void onFailure(final Throwable error) {
+                if (acivity == null) return;
+                acivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            getNavigator().failureResponseHandler(error.toString());
+                            getNavigator().onLoadComplete(getLoadMoreData());
+                            setProductIsLoading(false);
+                        }
+                    });
                 }
-            }
-        });
+        },ProductView.class));
+    }
+
+    public Call<ProductView> getLoadProductRequest() {
+        return retrieveProduct;
     }
 
 

@@ -6,10 +6,11 @@ import android.os.Bundle
 import com.awfs.coordination.R
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.Gson
-import za.co.woolworths.financial.services.android.contracts.AsyncAPIResponse
+import za.co.woolworths.financial.services.android.contracts.RequestListener
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse
-import za.co.woolworths.financial.services.android.models.rest.product.GetProductDetails
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
@@ -18,12 +19,12 @@ import za.co.woolworths.financial.services.android.util.ScreenManager
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.HashMap
 
-open class RetrieveProductDetail(private val activity: Activity?, private val productId: String?, private val skuId: String?, private val presentScreenIsFirstTime: Boolean) {
+open class RetrieveProductDetail(private val activity: Activity?, private val productId: String, private val skuId: String, private val presentScreenIsFirstTime: Boolean) {
     fun retrieveProduct() {
-        GetProductDetails(productId, skuId, object : AsyncAPIResponse.ResponseDelegate<ProductDetailResponse> {
-            override fun onSuccess(response: ProductDetailResponse) {
+        OneAppService.productDetail(productId, skuId).enqueue(CompletionHandler(object : RequestListener<ProductDetailResponse> {
+            override fun onSuccess(response: ProductDetailResponse?) {
                 if (WoolworthsApplication.isApplicationInForeground() && activity != null) {
-                    when (response.httpCode) {
+                    when (response?.httpCode) {
                         200 -> {
 
                             if (presentScreenIsFirstTime) {
@@ -45,7 +46,7 @@ open class RetrieveProductDetail(private val activity: Activity?, private val pr
                         else -> {
                             Utils.displayValidationMessage(WoolworthsApplication.getAppContext(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, Utils.getString(WoolworthsApplication.getAppContext(), R.string.statement_send_email_false_desc))
                             val arguments = HashMap<String, String>()
-                            skuId?.apply {
+                            skuId.run {
                                 arguments[this] = "NO PRICE INFO"
                                 arguments[this] = "From WTodayFragment Promotions"
                             }
@@ -55,12 +56,12 @@ open class RetrieveProductDetail(private val activity: Activity?, private val pr
                 }
             }
 
-            override fun onFailure(errorMessage: String) {
+            override fun onFailure(error: Throwable?) {
                 if (WoolworthsApplication.isApplicationInForeground()) {
                     activity?.apply { runOnUiThread { ErrorHandlerView(this).showToast() } }
                 }
             }
 
-        }).execute()
+        }, ProductDetailResponse::class.java))
     }
 }

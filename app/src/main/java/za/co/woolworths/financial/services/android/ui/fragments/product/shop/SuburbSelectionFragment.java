@@ -27,21 +27,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
+import za.co.woolworths.financial.services.android.contracts.RequestListener;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.dto.SuburbsResponse;
-import za.co.woolworths.financial.services.android.models.rest.shop.GetSuburbs;
-import za.co.woolworths.financial.services.android.models.rest.shop.SetDeliveryLocationSuburb;
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
+import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
 import za.co.woolworths.financial.services.android.ui.adapters.SuburbSelectionAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
-import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -61,8 +62,8 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 	private RecyclerView suburbList;
 	private LinearLayout scrollbarLayout;
 	private SuburbSelectionAdapter suburbAdapter;
-	private GetSuburbs getSuburbsAsync;
-	private SetDeliveryLocationSuburb setDeliveryLocationSuburb;
+	private Call<SuburbsResponse>  getSuburbsAsync;
+	private Call<SetDeliveryLocationSuburbResponse> setDeliveryLocationSuburb;
 
 	private SuburbAdapterAsyncTask listConfiguration;
 
@@ -126,20 +127,22 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 		toggleLoading(true);
 		mErrorHandlerView.hideErrorHandler();
 		getSuburbsAsync = getSuburbs(selectedProvince.id);
-		getSuburbsAsync.execute();
 	}
 
-	private GetSuburbs getSuburbs(final String locationId) {
-		return new GetSuburbs(locationId, new OnEventListener() {
+	private Call<SuburbsResponse>  getSuburbs(final String locationId) {
+
+	Call<SuburbsResponse> suburbsResponseCall =  OneAppService.INSTANCE.getSuburbs(locationId);
+		suburbsResponseCall.enqueue(new CompletionHandler<>(new RequestListener<SuburbsResponse>() {
 			@Override
-			public void onSuccess(Object object) {
-				handleSuburbsResponse((SuburbsResponse) object);
+			public void onSuccess(SuburbsResponse suburbsResponse) {
+				handleSuburbsResponse(suburbsResponse);
 			}
 
 			@Override
-			public void onFailure(final String errorMessage) {
-
-				getActivity().runOnUiThread(new Runnable() {
+			public void onFailure(final Throwable error) {
+				Activity activity = getActivity();
+				if (error == null && activity == null) return;
+				activity.runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
 						// hide loading
@@ -152,11 +155,13 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 								}
 							}
 						});
-						mErrorHandlerView.networkFailureHandler(errorMessage);
+						mErrorHandlerView.networkFailureHandler(error.getMessage());
 					}
 				});
 			}
-		});
+		},SuburbsResponse.class));
+
+		return suburbsResponseCall;
 	}
 
 	public void handleSuburbsResponse(SuburbsResponse response) {
@@ -253,17 +258,18 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 		// TODO: confirm loading when doing this request
 		mErrorHandlerView.hideErrorHandlerLayout();
 		toggleLoading(true);
-
-		setDeliveryLocationSuburb = new SetDeliveryLocationSuburb(suburb.id, new OnEventListener() {
+		setDeliveryLocationSuburb =  OneAppService.INSTANCE.setSuburb(suburb.id);
+		setDeliveryLocationSuburb.enqueue(new CompletionHandler<>(new RequestListener<SetDeliveryLocationSuburbResponse>() {
 			@Override
-			public void onSuccess(Object object) {
-				handleSetSuburbResponse((SetDeliveryLocationSuburbResponse) object, province, suburb);
+			public void onSuccess(SetDeliveryLocationSuburbResponse setDeliveryLocationSuburbResponse) {
+				handleSetSuburbResponse(setDeliveryLocationSuburbResponse, province, suburb);
 			}
 
 			@Override
-			public void onFailure(final String errorMessage) {
-
-				getActivity().runOnUiThread(new Runnable() {
+			public void onFailure(final Throwable error) {
+				Activity activity = getActivity();
+				if (activity == null || error == null) return;
+				activity.runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
 						// hide loading
@@ -277,12 +283,11 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 							}
 
 						});
-						mErrorHandlerView.networkFailureHandler(errorMessage);
+						mErrorHandlerView.networkFailureHandler(error.getMessage());
 					}
 				});
 			}
-		});
-		setDeliveryLocationSuburb.execute();
+		},SetDeliveryLocationSuburbResponse.class));
 	}
 
 	private void handleSetSuburbResponse(SetDeliveryLocationSuburbResponse response, final Province province, final Suburb suburb) {
@@ -383,6 +388,18 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 
 			configureSectionScrollbar();
 			toggleLoading(false);
+		}
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		if (getSuburbsAsync !=null && !getSuburbsAsync.isCanceled()){
+			getSuburbsAsync.cancel();
+		}
+
+		if (setDeliveryLocationSuburb !=null && !setDeliveryLocationSuburb.isCanceled()){
+			setDeliveryLocationSuburb.cancel();
 		}
 	}
 }

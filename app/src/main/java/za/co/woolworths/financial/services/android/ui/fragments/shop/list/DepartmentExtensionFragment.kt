@@ -7,9 +7,9 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import retrofit2.Call
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment
-import za.co.woolworths.financial.services.android.util.HttpAsyncTask
 import za.co.woolworths.financial.services.android.util.NetworkManager
 
 open class DepartmentExtensionFragment : Fragment() {
@@ -46,11 +46,10 @@ open class DepartmentExtensionFragment : Fragment() {
         }
     }
 
-    fun cancelRequest(httpAsyncTask: HttpAsyncTask<*, *, *>?) {
-        httpAsyncTask?.let {
-            if (!httpAsyncTask.isCancelled) {
-                httpAsyncTask.cancel(true)
-            }
+    fun cancelRequest(call: Call<*>?){
+        call?.apply {
+            if (!isCanceled)
+                cancel()
         }
     }
 
