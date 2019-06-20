@@ -12,8 +12,6 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 open class NetworkConfig {
 
-    var forceNetworkUpdate: Boolean = false
-
     fun appContext(): Context = WoolworthsApplication.getAppContext()
 
     fun getDeviceManufacturer(): String = Build.MANUFACTURER

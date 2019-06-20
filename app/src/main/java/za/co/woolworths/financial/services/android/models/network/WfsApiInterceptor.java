@@ -36,7 +36,8 @@ public class WfsApiInterceptor extends NetworkConfig implements Interceptor {
         final long cacheTime = Integer.parseInt(cacheTimeHeaderValue == null ? "0" : cacheTimeHeaderValue);//cache time in seconds
 
         // getForceNetworkUpdate() will force the request to update
-        if (cacheTime == 0 || getForceNetworkUpdate()) {
+        if (cacheTime == 0 || OneAppService.INSTANCE.getForceNetworkUpdate()) {
+            OneAppService.INSTANCE.setForceNetworkUpdate(false);
             Response originalResponse = chain.proceed(request);
             return originalResponse.newBuilder()
                     .header("Accept-Encoding", "gzip")
@@ -50,8 +51,8 @@ public class WfsApiInterceptor extends NetworkConfig implements Interceptor {
         ApiRequestDao apiRequestDao = new ApiRequestDao(cacheTime).get(request.method(), endpoint, headers, parametersJson);
         ApiResponseDao apiResponseDao = new ApiResponseDao().getByApiRequestId(apiRequestDao.id);
 
-        //cache exists + not forcing network update = return cached response
-        if (apiResponseDao.id != null && !getForceNetworkUpdate()) {
+        //cache exists. return cached response
+        if (apiResponseDao.id != null) {
             return new Response.Builder()
                     .code(apiResponseDao.code)
                     .message(apiResponseDao.message)

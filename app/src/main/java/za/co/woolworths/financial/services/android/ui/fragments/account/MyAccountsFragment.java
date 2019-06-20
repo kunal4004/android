@@ -623,7 +623,8 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
     private void loadAccounts(boolean forceNetworkUpdate) {
 		mErrorHandlerView.hideErrorHandlerLayout();
 		mScrollView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.recent_search_bg));
-		showProgressBar();
+		if (!forceNetworkUpdate) showProgressBar();
+		else mSwipeToRefreshAccount.setRefreshing(true);
 		OneAppService oneAppService = OneAppService.INSTANCE;
 		oneAppService.setForceNetworkUpdate(forceNetworkUpdate);
 		Call<AccountsResponse> accountCall = oneAppService.getAccounts();
@@ -666,7 +667,8 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
                     ex.printStackTrace();
                 }
                 hideProgressBar();
-            }
+				mSwipeToRefreshAccount.setRefreshing(false);
+			}
 
             @Override
             public void onFailure(Throwable error) {
@@ -712,6 +714,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			@Override
 			public void run() {
 				try {
+					mSwipeToRefreshAccount.setRefreshing(false);
 					hideProgressBar();
 				} catch (Exception ignored) {
 				}
