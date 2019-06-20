@@ -751,7 +751,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 				if (shouldRefreshMyAccount) {
 					mRotateAnimation = new RotateAnimation(0, 360,
 							Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-					mRotateAnimation.setDuration((long) 2 * 500);
+					mRotateAnimation.setDuration(ROTATE_ACCOUNT_UPDATE_DURATION);
 					mRotateAnimation.setRepeatCount(45);
 					mRotateAnimation.setRepeatCount(Animation.INFINITE);
 					imRefreshAccount.startAnimation(mRotateAnimation);
