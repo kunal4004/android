@@ -8,7 +8,7 @@ import com.awfs.coordination.R
 import za.co.absa.openbankingapi.woolworths.integration.dto.ArchivedStatement
 import kotlinx.android.synthetic.main.account_e_statement_row.view.*
 
-class AbsaStatementsAdapter(var data: List<ArchivedStatement>) : RecyclerView.Adapter<AbsaStatementsAdapter.ViewHolder>() {
+class AbsaStatementsAdapter(var data: List<ArchivedStatement>, var listner: ActionListners) : RecyclerView.Adapter<AbsaStatementsAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
@@ -19,12 +19,19 @@ class AbsaStatementsAdapter(var data: List<ArchivedStatement>) : RecyclerView.Ad
 
     override fun getItemCount() = data.size
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(data[position])
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.bind(data[position])
+        holder.itemView.tvViewStatement.setOnClickListener { listner.onViewStatement(data[position]) }
+    }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun bind(item: ArchivedStatement) {
             itemView.tvStatementName.text = item?.documentWorkingDate
         }
+    }
+
+    interface ActionListners {
+        fun onViewStatement(item: ArchivedStatement)
     }
 }

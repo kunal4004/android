@@ -12,17 +12,15 @@ import kotlinx.android.synthetic.main.absa_statements_activity.*
 import kotlinx.android.synthetic.main.empty_state_template.*
 import za.co.absa.openbankingapi.woolworths.integration.AbsaBalanceEnquiryFacadeGetAllBalances
 import za.co.absa.openbankingapi.woolworths.integration.AbsaGetArchivedStatementListRequest
-import za.co.absa.openbankingapi.woolworths.integration.dto.AbsaBalanceEnquiryResponse
-import za.co.absa.openbankingapi.woolworths.integration.dto.ArchivedStatement
-import za.co.absa.openbankingapi.woolworths.integration.dto.Header
-import za.co.absa.openbankingapi.woolworths.integration.dto.StatementListResponse
+import za.co.absa.openbankingapi.woolworths.integration.AbsaGetIndividualStatementRequest
+import za.co.absa.openbankingapi.woolworths.integration.dto.*
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse
 import za.co.woolworths.financial.services.android.ui.adapters.AbsaStatementsAdapter
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import java.net.HttpCookie
 import java.util.ArrayList
 
-class AbsaStatementsActivity : AppCompatActivity() {
+class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.ActionListners {
 
     private var nonce: String? = null
     private var eSessionId: String? = null
@@ -117,7 +115,7 @@ class AbsaStatementsActivity : AppCompatActivity() {
                 hideProgress()
                 rcvStatements.apply {
                     layoutManager = LinearLayoutManager(this@AbsaStatementsActivity, LinearLayoutManager.VERTICAL, false)
-                    adapter = AbsaStatementsAdapter(it)
+                    adapter = AbsaStatementsAdapter(it, this@AbsaStatementsActivity)
                     rcvStatements.visibility = View.VISIBLE
                 }
             } else {
@@ -173,5 +171,24 @@ class AbsaStatementsActivity : AppCompatActivity() {
 
             }
         }
+    }
+
+    override fun onViewStatement(item: ArchivedStatement) {
+        getIndivisualStatement(item)
+    }
+
+    private fun getIndivisualStatement(archivedStatement: ArchivedStatement) {
+        AbsaGetIndividualStatementRequest().make(archivedStatement, object : AbsaBankingOpenApiResponse.ResponseDelegate<AbsaIndividualStatementResponse> {
+            override fun onSuccess(response: AbsaIndividualStatementResponse?, cookies: MutableList<HttpCookie>?) {
+
+            }
+
+            override fun onFailure(errorMessage: String?) {
+            }
+
+            override fun onFatalError(error: VolleyError?) {
+            }
+
+        })
     }
 }
