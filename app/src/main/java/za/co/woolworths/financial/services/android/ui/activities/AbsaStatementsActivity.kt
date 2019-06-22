@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.MenuItem
 import android.view.View
+import com.android.volley.NetworkResponse
 import com.android.volley.VolleyError
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.util.Utils
@@ -178,8 +179,8 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
     }
 
     private fun getIndivisualStatement(archivedStatement: ArchivedStatement) {
-        AbsaGetIndividualStatementRequest().make(archivedStatement, object : AbsaBankingOpenApiResponse.ResponseDelegate<AbsaIndividualStatementResponse> {
-            override fun onSuccess(response: AbsaIndividualStatementResponse?, cookies: MutableList<HttpCookie>?) {
+        AbsaGetIndividualStatementRequest().make(archivedStatement, object : AbsaBankingOpenApiResponse.ResponseDelegate<NetworkResponse> {
+            override fun onSuccess(response: NetworkResponse?, cookies: MutableList<HttpCookie>?) {
 
             }
 
