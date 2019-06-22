@@ -111,7 +111,7 @@ public class AbsaSecureCredentials {
 		if (this.deviceId == null || this.deviceId.isEmpty())
 			return;
 
-		final String encryptedDeviceId = encrypt(context, this.aliasId.getBytes());
+		final String encryptedDeviceId = encrypt(context, this.deviceId.getBytes());
 		SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.DEVICE_ID);
 		sessionDao.value = encryptedDeviceId;
 		sessionDao.save();
