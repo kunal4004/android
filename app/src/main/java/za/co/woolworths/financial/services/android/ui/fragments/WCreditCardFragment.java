@@ -31,6 +31,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
+import za.co.absa.openbankingapi.woolworths.integration.AbsaSecureCredentials;
 import za.co.wigroup.logger.lib.WiGroupLogger;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.RequestListener;
@@ -607,9 +608,10 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
                                     return;
                                 }
 
-                                SessionDao aliasID = SessionDao.getByKey(SessionDao.KEY.ABSA_ALIASID);
-                                SessionDao deviceID = SessionDao.getByKey(SessionDao.KEY.ABSA_DEVICEID);
-                                openAbsaOnLineBankingActivity(creditCardNumber, activity, !(TextUtils.isEmpty(aliasID.value) || TextUtils.isEmpty(deviceID.value)));
+                                AbsaSecureCredentials absaSecureCredentials = new AbsaSecureCredentials();
+                                String aliasID = absaSecureCredentials.getAliasId();
+                                String deviceID = absaSecureCredentials.getDeviceId();
+                                openAbsaOnLineBankingActivity(creditCardNumber, activity, !(TextUtils.isEmpty(aliasID) || TextUtils.isEmpty(deviceID)));
 
                                 break;
                         }
