@@ -110,7 +110,7 @@ public class AbsaSecureCredentials {
 			return;
 
 		final String encryptedDeviceId = encrypt(context, this.deviceId.getBytes());
-		SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.DEVICE_ID);
+		SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.ABSA_DEVICEID);
 		sessionDao.value = encryptedDeviceId;
 		sessionDao.save();
 	}
