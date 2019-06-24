@@ -18,7 +18,11 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import com.awfs.coordination.R;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
+import com.google.firebase.dynamiclinks.PendingDynamicLinkData;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -238,6 +242,23 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 	@Override
 	protected void onStart() {
 		super.onStart();
+		FirebaseDynamicLinks.getInstance()
+				.getDynamicLink(getIntent())
+				.addOnSuccessListener(this, new OnSuccessListener<PendingDynamicLinkData>() {
+					@Override
+					public void onSuccess(PendingDynamicLinkData pendingDynamicLinkData) {
+						// Get deep link from result (may be null if no link is found)
+						if (pendingDynamicLinkData!=null && pendingDynamicLinkData.getLink() !=null) {
+							mDeepLinkUrl = pendingDynamicLinkData.getLink().toString();
+						}
+					}
+				})
+				.addOnFailureListener(this, new OnFailureListener() {
+					@Override
+					public void onFailure(Exception e) {
+						Log.w(TAG, "getDynamicLink:onFailure", e);
+					}
+				});
 		if (isMinimized) {
 			isMinimized = false;
 			if (isServerMessageShown) {
