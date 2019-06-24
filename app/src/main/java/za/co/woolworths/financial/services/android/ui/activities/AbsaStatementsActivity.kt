@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
@@ -18,8 +19,10 @@ import za.co.absa.openbankingapi.woolworths.integration.dto.*
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse
 import za.co.woolworths.financial.services.android.ui.adapters.AbsaStatementsAdapter
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
+import za.co.woolworths.financial.services.android.util.WFormatter
 import java.net.HttpCookie
 import java.util.ArrayList
+
 
 class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.ActionListners {
 
@@ -175,21 +178,44 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
     }
 
     override fun onViewStatement(item: ArchivedStatement) {
-        getIndivisualStatement(item)
+        if (pbCircular.visibility != View.VISIBLE)
+            getIndivisualStatement(item)
     }
 
     private fun getIndivisualStatement(archivedStatement: ArchivedStatement) {
+        showProgress()
         AbsaGetIndividualStatementRequest().make(archivedStatement, object : AbsaBankingOpenApiResponse.ResponseDelegate<NetworkResponse> {
             override fun onSuccess(response: NetworkResponse?, cookies: MutableList<HttpCookie>?) {
-
+                hideProgress()
+                response?.apply {
+                    allHeaders?.apply {
+                        forEach {
+                            if (it.value.equals("application/pdf", true)) {
+                                showTAxInvoice(data, archivedStatement.documentWorkingDate)
+                                return
+                            }
+                        }
+                    }
+                }
             }
 
             override fun onFailure(errorMessage: String?) {
+                hideProgress()
             }
 
             override fun onFatalError(error: VolleyError?) {
+                hideProgress()
             }
 
         })
+    }
+
+    private fun showTAxInvoice(data: ByteArray?, fileName: String) {
+        Intent(this, WPdfViewerActivity::class.java).apply {
+            putExtra(WPdfViewerActivity.FILE_NAME, fileName)
+            putExtra(WPdfViewerActivity.FILE_VALUE, data)
+            putExtra(WPdfViewerActivity.PAGE_TITLE, WFormatter.formatStatementsDate(fileName))
+            startActivity(this)
+        }
     }
 }

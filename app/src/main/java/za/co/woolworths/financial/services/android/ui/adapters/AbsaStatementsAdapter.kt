@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import com.awfs.coordination.R
 import za.co.absa.openbankingapi.woolworths.integration.dto.ArchivedStatement
 import kotlinx.android.synthetic.main.account_e_statement_row.view.*
+import za.co.woolworths.financial.services.android.util.WFormatter
 
 class AbsaStatementsAdapter(var data: List<ArchivedStatement>, var listner: ActionListners) : RecyclerView.Adapter<AbsaStatementsAdapter.ViewHolder>() {
 
@@ -27,7 +28,8 @@ class AbsaStatementsAdapter(var data: List<ArchivedStatement>, var listner: Acti
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun bind(item: ArchivedStatement) {
-            itemView.tvStatementName.text = item?.documentWorkingDate
+            itemView.tvStatementName.text = WFormatter.formatStatementsDate(item?.documentWorkingDate)
+            itemView.imCheckItem.visibility = View.GONE
         }
     }
 
