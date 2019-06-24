@@ -89,14 +89,14 @@ public class AbsaSecureCredentials {
 
 		final Context context = WoolworthsApplication.getAppContext();
 		try {
-			saveAliasIdToKeyStore(context);
-			saveDeviceIdToKeyStore(context);
+			saveAliasIdToSqlite(context);
+			saveDeviceIdToSqlite(context);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	private void saveAliasIdToKeyStore(final Context context) throws Exception{
+	private void saveAliasIdToSqlite(final Context context) throws Exception{
 		if (this.aliasId == null || this.aliasId.isEmpty())
 			return;
 
@@ -106,7 +106,7 @@ public class AbsaSecureCredentials {
 		sessionDao.save();
 	}
 
-	private void saveDeviceIdToKeyStore(final Context context) throws Exception{
+	private void saveDeviceIdToSqlite(final Context context) throws Exception{
 		if (this.deviceId == null || this.deviceId.isEmpty())
 			return;
 
