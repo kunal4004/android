@@ -407,6 +407,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         cliGetOfferActive.enqueue(new CompletionHandler<>(new RequestListener<OfferActive>() {
             @Override
             public void onSuccess(OfferActive response) {
+                offerActive = response;
                 if (getActivity()==null && !mCreditCardFragmentIsVisible) return;
                 bindUI(offerActive);
                 creditWasAlreadyRunOnce = true;
