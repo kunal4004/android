@@ -11,16 +11,15 @@ import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.Toast
 import com.android.volley.VolleyError
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_login_fragment.*
 import za.co.absa.openbankingapi.woolworths.integration.AbsaContentEncryptionRequest
 import za.co.absa.openbankingapi.woolworths.integration.AbsaLoginRequest
+import za.co.absa.openbankingapi.woolworths.integration.AbsaSecureCredentials
 import za.co.absa.openbankingapi.woolworths.integration.dto.LoginResponse
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
-import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
 import za.co.woolworths.financial.services.android.ui.activities.AbsaStatementsActivity
 import za.co.woolworths.financial.services.android.ui.activities.AbsaStatementsActivity.Companion.E_SESSION_ID
@@ -84,8 +83,11 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
     private fun requestToLogin() {
         if ((edtEnterATMPin.length() - 1) < MAXIMUM_PIN_ALLOWED)
             return
+
+        val absaSecureCredentials = AbsaSecureCredentials();
+
         val userPin = edtEnterATMPin.text.toString()
-        val aliasId = SessionDao.getByKey(SessionDao.KEY.ABSA_ALIASID)?.value ?: ""
+        val aliasId = absaSecureCredentials.aliasId
         val deviceId = Utils.getAbsaUniqueDeviceID()
         absaLoginRequest(aliasId, deviceId, userPin)
 
