@@ -1,7 +1,6 @@
 package za.co.absa.openbankingapi.woolworths.integration;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.security.KeyPairGeneratorSpec;
 import android.util.Base64;
 import android.util.Log;
@@ -37,7 +36,6 @@ public class AbsaSecureCredentials {
 
 	private static final String RSA_MODE =  "RSA/ECB/PKCS1Padding";
 	private final String AES_MODE = "AES/ECB/PKCS7Padding";
-	private final String ENCRYPTED_KEY = "ABSA_ENCRYPTED_KEY";
 
 	public AbsaSecureCredentials(){
 		super();
@@ -147,17 +145,17 @@ public class AbsaSecureCredentials {
 				Log.d("", keyPair.toString());
 			}
 
-			SharedPreferences pref = context.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
-			String enryptedKeyB64 = pref.getString(ENCRYPTED_KEY, null);
+
+			SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.ABSA_ENCRYPTION_KEY);
+			String enryptedKeyB64 = sessionDao.value;
 			if (enryptedKeyB64 == null) {
 				byte[] key = new byte[16];
 				SecureRandom secureRandom = new SecureRandom();
 				secureRandom.nextBytes(key);
 				byte[] encryptedKey = rsaEncrypt(key);
 				enryptedKeyB64 = Base64.encodeToString(encryptedKey, Base64.DEFAULT);
-				SharedPreferences.Editor edit = pref.edit();
-				edit.putString(ENCRYPTED_KEY, enryptedKeyB64);
-				edit.commit();
+				sessionDao.value = enryptedKeyB64;
+				sessionDao.save();
 			}
 
 		} catch (Exception e) {
@@ -181,8 +179,8 @@ public class AbsaSecureCredentials {
 	}
 
 	private  byte[]  rsaDecrypt(byte[] encrypted) throws Exception {
-		KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry)keyStore.getEntry(BuildConfig.APPLICATION_ID, null);
-		Cipher output = Cipher.getInstance(RSA_MODE, "AndroidOpenSSL");
+		KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry) keyStore.getEntry(BuildConfig.APPLICATION_ID, null);
+		Cipher output = Cipher.getInstance(RSA_MODE);
 		output.init(Cipher.DECRYPT_MODE, privateKeyEntry.getPrivateKey());
 		CipherInputStream cipherInputStream = new CipherInputStream(
 				new ByteArrayInputStream(encrypted), output);
@@ -200,8 +198,7 @@ public class AbsaSecureCredentials {
 	}
 
 	private Key getSecretKey(Context context) throws Exception{
-		SharedPreferences pref = context.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE);
-		String enryptedKeyB64 = pref.getString(ENCRYPTED_KEY, null);
+		String enryptedKeyB64 = SessionDao.getByKey(SessionDao.KEY.ABSA_ENCRYPTION_KEY).value;
 		// need to check null, omitted here
 		byte[] encryptedKey = Base64.decode(enryptedKeyB64, Base64.DEFAULT);
 		byte[] key = rsaDecrypt(encryptedKey);
