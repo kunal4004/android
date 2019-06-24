@@ -3,7 +3,6 @@ package za.co.absa.openbankingapi.woolworths.integration;
 import android.content.Context;
 import android.security.KeyPairGeneratorSpec;
 import android.util.Base64;
-import android.util.Log;
 
 import com.awfs.coordination.BuildConfig;
 
@@ -51,7 +50,8 @@ public class AbsaSecureCredentials {
 			aliasId = "";
 		else{
 			try{
-				aliasId = new String(decrypt(context, aliasId.getBytes()));
+				byte[] base64DecodedAlias = Base64.decode(aliasId.getBytes(), Base64.DEFAULT);
+				aliasId = new String(decrypt(context, base64DecodedAlias));
 			}catch(Exception e){
 				aliasId = "";
 			}
@@ -61,7 +61,8 @@ public class AbsaSecureCredentials {
 			deviceId = "";
 		else{
 			try{
-				deviceId = new String(decrypt(context, aliasId.getBytes()));
+				byte[] base64DecodedDeviceId = Base64.decode(deviceId.getBytes(), Base64.DEFAULT);
+				deviceId = new String(decrypt(context, base64DecodedDeviceId));
 			}catch(Exception e){
 				deviceId = "";
 			}
@@ -122,7 +123,6 @@ public class AbsaSecureCredentials {
 			keyStore.load(null);
 
 			Enumeration<String> aliases = keyStore.aliases();
-			Log.d("", aliases.toString());
 
 			// Create new key if needed
 			if (!keyStore.containsAlias(BuildConfig.APPLICATION_ID)) {
@@ -142,7 +142,6 @@ public class AbsaSecureCredentials {
 				generator.initialize(spec);
 
 				KeyPair keyPair = generator.generateKeyPair();
-				Log.d("", keyPair.toString());
 			}
 
 
