@@ -1,7 +1,5 @@
 package za.co.absa.openbankingapi.woolworths.integration;
 
-import android.net.Uri;
-
 import com.android.volley.NetworkResponse;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
