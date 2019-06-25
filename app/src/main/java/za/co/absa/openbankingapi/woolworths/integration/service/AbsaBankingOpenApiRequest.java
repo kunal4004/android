@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpCookie;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -160,8 +159,17 @@ public class AbsaBankingOpenApiRequest<T> extends Request<T> {
     @Override
     protected Response<T> parseNetworkResponse(NetworkResponse response) {
         try {
-            if (clazz == NetworkResponse.class)
-                return Response.success(clazz.cast(response), HttpHeaderParser.parseCacheHeaders(response));
+            if (clazz == NetworkResponse.class) {
+
+                if (isBodyEncryptionRequired) {
+                    byte[] decryptedData = getDecryptedResponseInByteArray(new String(response.data));
+                    NetworkResponse decryptedResponse = new NetworkResponse(response.statusCode, decryptedData, response.notModified, response.networkTimeMs, response.allHeaders);
+                    return Response.success(clazz.cast(decryptedResponse), HttpHeaderParser.parseCacheHeaders(response));
+                } else {
+                    return Response.success(clazz.cast(response), HttpHeaderParser.parseCacheHeaders(response));
+                }
+
+            }
 
             String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
 
@@ -215,6 +223,23 @@ public class AbsaBankingOpenApiRequest<T> extends Request<T> {
 
         try {
             decryptedResponse = new String(SymmetricCipher.Aes256Decrypt(AbsaContentEncryptionRequest.derivedSeed, encryptedResponse, ivForDecrypt), StandardCharsets.UTF_8);
+        } catch (DecryptionFailureException e) {
+            e.printStackTrace();
+        }
+
+        return decryptedResponse;
+    }
+
+    private byte[] getDecryptedResponseInByteArray(String json) {
+
+        byte[] response = Base64.decode(json, Base64.DEFAULT);
+        byte[] ivForDecrypt = Arrays.copyOfRange(response, 0, 16);
+        byte[] encryptedResponse = Arrays.copyOfRange(response, 16, response.length);
+
+        byte[] decryptedResponse = null;
+
+        try {
+            decryptedResponse = SymmetricCipher.Aes256Decrypt(AbsaContentEncryptionRequest.derivedSeed, encryptedResponse, ivForDecrypt);
         } catch (DecryptionFailureException e) {
             e.printStackTrace();
         }
