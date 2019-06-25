@@ -31,7 +31,9 @@ import com.google.gson.Gson;
 import java.util.List;
 import java.util.Random;
 
+import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
+import za.co.woolworths.financial.services.android.contracts.RequestListener;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Bank;
 import za.co.woolworths.financial.services.android.models.dto.BankAccountType;
@@ -41,10 +43,8 @@ import za.co.woolworths.financial.services.android.models.dto.DeaBanks;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetailResponse;
-import za.co.woolworths.financial.services.android.models.rest.cli.CLIGetBankAccountTypes;
-import za.co.woolworths.financial.services.android.models.rest.cli.CLIGetDeaBank;
-import za.co.woolworths.financial.services.android.models.rest.cli.CLISendEmailRequest;
-import za.co.woolworths.financial.services.android.models.rest.cli.CLIUpdateBankDetails;
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
+import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity;
@@ -56,11 +56,9 @@ import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FragmentUtils;
-import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
-import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.controller.CLIFragment;
@@ -95,12 +93,11 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	private List<Bank> mDeaBankList;
 	public String selectedBankType;
 	public String selectedAccountType;
-	public UpdateBankDetailResponse updateBankDetailResponse;
-	private CLIGetBankAccountTypes cliGetBankAccountTypes;
-	private CLIGetDeaBank cliGetDeaBank;
+	private Call<BankAccountTypes> cliGetBankAccountTypes;
+	private Call<DeaBanks> cliGetDeaBank;
 	private ProgressBar pbAccountType, pbSubmit;
-	private CLIUpdateBankDetails cliUpdateBankDetails;
-	private CLISendEmailRequest cliSendEmail;
+	private Call<UpdateBankDetailResponse> cliUpdateBankDetails;
+	private Call<CLIEmailResponse> cliSendEmail;
 	private WTextView tvCLIAccountTypeTitle, tvAccountSavingTitle;
 	private LoadState loadState;
 	private OfferActive activeOfferObj;
@@ -197,14 +194,14 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 
 	private void cliDeaBankRequest() {
 		onLoad(pbDeaBank);
-		cliGetDeaBank = new CLIGetDeaBank(getActivity(), new OnEventListener() {
+		cliGetDeaBank = OneAppService.INSTANCE.getDeaBanks();
+		cliGetDeaBank.enqueue(new CompletionHandler<>(new RequestListener<DeaBanks>() {
 			@Override
-			public void onSuccess(Object object) {
-				deaBankList = ((DeaBanks) object);
-				int httpCode = deaBankList.httpCode;
-				switch (httpCode) {
+			public void onSuccess(DeaBanks deaBanks) {
+				switch (deaBanks.httpCode) {
 					case 200:
-						mDeaBankList = deaBankList.banks;
+						deaBankList = deaBanks;
+						mDeaBankList = deaBanks.banks;
 						if (mDeaBankList != null) {
 							Random rand = new Random();
 							int n = rand.nextInt(50) + 1;
@@ -226,14 +223,15 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			}
 
 			@Override
-			public void onFailure(String e) {
-				loadFailure();
-				setNetworkFailureRequest(NetworkFailureRequest.DEA_BANK);
-				mErrorHandlerView.responseError(view, e);
-				onLoadComplete(pbDeaBank);
+			public void onFailure(Throwable error) {
+				if (error !=null) {
+					loadFailure();
+					setNetworkFailureRequest(NetworkFailureRequest.DEA_BANK);
+					mErrorHandlerView.responseError(view, error.getMessage());
+					onLoadComplete(pbDeaBank);
+				}
 			}
-		});
-		cliGetDeaBank.execute();
+		},DeaBanks.class));
 	}
 
 	public void showProofOfIncomePopup() {
@@ -251,10 +249,10 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			accountTypeAdapter.notifyDataSetChanged();
 		}
 
-		cliGetBankAccountTypes = new CLIGetBankAccountTypes(getActivity(), new OnEventListener() {
+		cliGetBankAccountTypes = OneAppService.INSTANCE.getBankAccountTypes();
+		cliGetBankAccountTypes.enqueue(new CompletionHandler<>(new RequestListener<BankAccountTypes>() {
 			@Override
-			public void onSuccess(Object object) {
-				BankAccountTypes bankAccountTypes = (BankAccountTypes) object;
+			public void onSuccess(BankAccountTypes bankAccountTypes) {
 				switch (bankAccountTypes.httpCode) {
 					case 200:
 						bankAccountTypesList = bankAccountTypes.bankAccountTypes;
@@ -271,13 +269,14 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			}
 
 			@Override
-			public void onFailure(String e) {
-				onLoadComplete(pbAccountType);
-				setNetworkFailureRequest(NetworkFailureRequest.ACCOUNT_TYPE);
-				mErrorHandlerView.responseError(view, e);
+			public void onFailure(Throwable error) {
+				if (error!=null) {
+					onLoadComplete(pbAccountType);
+					setNetworkFailureRequest(NetworkFailureRequest.ACCOUNT_TYPE);
+					mErrorHandlerView.responseError(view, error.getMessage());
+				}
 			}
-		});
-		cliGetBankAccountTypes.execute();
+		},BankAccountTypes.class));
 	}
 
 	private void init(View view) {
@@ -369,14 +368,10 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 
 	@Override
 	public void onSubmitTypeSelected(View view, int position) {
-		switch (position) {
-			case 1:
-				submitType = SubmitType.LATER;
-				scrollUpDocumentSubmitTypeLayout();
-				showView(rlSubmitCli);
-				break;
-			default:
-				break;
+		if (position == 1) {
+			submitType = SubmitType.LATER;
+			scrollUpDocumentSubmitTypeLayout();
+			showView(rlSubmitCli);
 		}
 	}
 
@@ -626,23 +621,22 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		bankDetail.setAccountType(getSelectedAccountType());
 		bankDetail.setBankName(getSelectedBankType());
 		bankDetail.setAccountNumber(etAccountNumber.getText().toString().trim());
-		cliUpdateBankDetails = new CLIUpdateBankDetails(getActivity(), bankDetail, new OnEventListener() {
+		cliUpdateBankDetails = OneAppService.INSTANCE.cliUpdateBankDetail(bankDetail);
+		cliUpdateBankDetails.enqueue(new CompletionHandler<>(new RequestListener<UpdateBankDetailResponse>() {
 			@Override
-			public void onSuccess(Object object) {
+			public void onSuccess(UpdateBankDetailResponse updateBankDetailResponse) {
 				enableSubmitButton();
-				updateBankDetailResponse = (UpdateBankDetailResponse) object;
 				ProcessCompleteFragment processCompleteFragment = new ProcessCompleteFragment();
 				moveToProcessCompleteFragment(processCompleteFragment);
 				loadSuccess();
 			}
 
 			@Override
-			public void onFailure(String e) {
+			public void onFailure(Throwable error) {
 				loadFailure();
 				enableSubmitButton();
 			}
-		});
-		cliUpdateBankDetails.execute();
+		},UpdateBankDetailResponse.class));
 	}
 
 	public void disableSubmitButton() {
@@ -668,11 +662,11 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 
 	public void initSendEmailRequest() {
 		disableSubmitButton();
-		cliSendEmail = new CLISendEmailRequest(getActivity(), new OnEventListener() {
+		cliSendEmail = OneAppService.INSTANCE.cliEmailResponse();
+		cliSendEmail.enqueue(new CompletionHandler<>(new RequestListener<CLIEmailResponse>() {
 			@Override
-			public void onSuccess(Object object) {
-				CLIEmailResponse response = (CLIEmailResponse) object;
-				if (response.httpCode == 200) {
+			public void onSuccess(CLIEmailResponse cliEmailResponse) {
+				if (cliEmailResponse.httpCode == 200) {
 					CliEmailSentFragment cliEmailSentFragment = new CliEmailSentFragment();
 					moveToProcessCompleteFragment(cliEmailSentFragment);
 				} else {
@@ -683,19 +677,17 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			}
 
 			@Override
-			public void onFailure(String e) {
+			public void onFailure(Throwable error) {
 				loadFailure();
 				enableSubmitButton();
 			}
-		});
-
-		cliSendEmail.execute();
+		},CLIEmailResponse.class));
 	}
 
-	private void cancelRequest(HttpAsyncTask httpAsyncTask) {
+	private void cancelRequest(Call httpAsyncTask) {
 		if (httpAsyncTask != null) {
-			if (!httpAsyncTask.isCancelled()) {
-				httpAsyncTask.cancel(true);
+			if (!httpAsyncTask.isCanceled()) {
+				httpAsyncTask.cancel();
 			}
 		}
 	}

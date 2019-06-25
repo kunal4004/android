@@ -1,10 +1,6 @@
-package za.co.woolworths.financial.services.android.models;
+package za.co.woolworths.financial.services.android.models.network;
 
-import android.content.Context;
 import android.util.Log;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
 
@@ -23,15 +19,8 @@ import za.co.woolworths.financial.services.android.util.GZIPCompression;
  * Created by eesajacobs on 2016/12/29.
  */
 
-public class WfsApiInterceptor implements Interceptor {
+public class WfsApiInterceptor extends NetworkConfig implements Interceptor {
     public static final String TAG = "WfsApiInterceptor";
-    private final Context mContext;
-    private final Gson gson;
-
-    public WfsApiInterceptor(Context mContext) {
-        this.mContext = mContext;
-        this.gson = new GsonBuilder().create();
-    }
 
     @Override
     public Response intercept(Chain chain) throws IOException {
@@ -41,7 +30,7 @@ public class WfsApiInterceptor implements Interceptor {
         long t1 = System.nanoTime();
 
         String requestLog = String.format("Sending request %s on %s%n%s", request.url(), chain.connection(), request.headers());
-        Log.d(TAG, "request" + "\n" + requestLog);
+        Log.d(TAG,"request" + "\n" + requestLog);
 
         String cacheTimeHeaderValue = request.header("cacheTime");
         final long cacheTime = Integer.parseInt(cacheTimeHeaderValue == null ? "0" : cacheTimeHeaderValue);//cache time in seconds

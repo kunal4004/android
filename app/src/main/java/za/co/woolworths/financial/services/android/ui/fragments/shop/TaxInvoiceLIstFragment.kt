@@ -13,13 +13,14 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_tax_invoice_list.*
-import za.co.woolworths.financial.services.android.contracts.AsyncAPIResponse
+import za.co.woolworths.financial.services.android.contracts.RequestListener
 import za.co.woolworths.financial.services.android.models.dto.OrderTaxInvoiceResponse
-import za.co.woolworths.financial.services.android.models.rest.product.GetOrderInvoiceRequest
 import za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity
 import za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity.Companion.FILE_NAME
 import za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity.Companion.FILE_VALUE
 import za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity.Companion.PAGE_TITLE
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.adapters.TaxInvoiceAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import java.io.UnsupportedEncodingException
@@ -67,22 +68,21 @@ class TaxInvoiceLIstFragment : Fragment(), TaxInvoiceAdapter.OnItemClick {
         loadTaxInvoice(taxNumber)
     }
 
-
     private fun loadTaxInvoice(taxNumber: String) {
         showProgressBar()
 
-        GetOrderInvoiceRequest(taxNumber, object : AsyncAPIResponse.ResponseDelegate<OrderTaxInvoiceResponse> {
-            override fun onSuccess(response: OrderTaxInvoiceResponse) {
+        val getInvoiceOrderRequest = OneAppService.getOrderTaxInvoice(taxNumber)
+        getInvoiceOrderRequest.enqueue(CompletionHandler(object : RequestListener<OrderTaxInvoiceResponse> {
+            override fun onSuccess(orderTaxInvoiceResponse: OrderTaxInvoiceResponse?) {
                 hideProgressBar()
-                buildTaxInvoicePDF(response.data!!)
-
+                orderTaxInvoiceResponse?.data?.let { response -> buildTaxInvoicePDF(response) }
             }
 
-            override fun onFailure(errorMessage: String) {
+            override fun onFailure(error: Throwable?) {
                 hideProgressBar()
             }
 
-        }).execute()
+        }, OrderTaxInvoiceResponse::class.java))
 
     }
 

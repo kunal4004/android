@@ -4,15 +4,12 @@ import android.arch.lifecycle.ViewModel;
 import android.databinding.ObservableBoolean;
 import android.text.TextUtils;
 
-import java.util.ArrayList;
-
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import retrofit2.Call;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
-import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.rx.SchedulerProvider;
 
 public abstract class BaseViewModel<N> extends ViewModel {
@@ -71,13 +68,11 @@ public abstract class BaseViewModel<N> extends ViewModel {
 		super.onCleared();
 	}
 
-	public void cancelRequest(HttpAsyncTask httpAsyncTask) {
+	public void cancelRequest(Call httpAsyncTask) {
 		setIsLoading(false);
-		if (httpAsyncTask != null) {
-			if (httpAsyncTask.isCancelled()) {
-				httpAsyncTask.cancel(true);
+		if (httpAsyncTask != null && httpAsyncTask.isCanceled()) {
+				httpAsyncTask.cancel();
 			}
-		}
 	}
 
 	public void consumeObservable(Consumer consumer) {

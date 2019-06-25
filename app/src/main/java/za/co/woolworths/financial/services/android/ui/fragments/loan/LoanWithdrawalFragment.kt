@@ -17,7 +17,6 @@ import kotlinx.android.synthetic.main.loan_withdrawal.*
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.IssueLoan
 import za.co.woolworths.financial.services.android.models.dto.IssueLoanResponse
-import za.co.woolworths.financial.services.android.models.rest.loan.PostLoanIssue
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
@@ -25,6 +24,10 @@ import java.util.*
 import android.content.Context
 import android.os.Handler
 import android.view.inputmethod.InputMethodManager
+import retrofit2.Call
+import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
 import za.co.woolworths.financial.services.android.util.*
 
@@ -32,7 +35,7 @@ import za.co.woolworths.financial.services.android.util.*
 class LoanWithdrawalFragment : LoanBaseFragment() {
 
     private var mMenu: Menu? = null
-    private var mPostLoanIssue: PostLoanIssue? = null
+    private var mPostLoanIssue: Call<IssueLoanResponse>? = null
     private var mErrorHandlerView: ErrorHandlerView? = null
     private var autoPostLoanConnectIsActivated: Boolean = false
     private var MILIS: Long = 200
@@ -260,48 +263,48 @@ class LoanWithdrawalFragment : LoanBaseFragment() {
             val issueLoanRequest = IssueLoan(productOfferingId,
                     drawnDownAmountInCent, repaymentPeriod(drawnDownAmountInCent), creditLimit)
             showProgressDialog(true)
-            mPostLoanIssue = PostLoanIssue(issueLoanRequest,
-                    object : OnEventListener<IssueLoanResponse> {
-                        override fun onSuccess(issueLoanResponse: IssueLoanResponse?) {
-                            activity?.let { activity ->
-                                issueLoanResponse?.apply {
-                                    autoConnectRequest(false)
-                                    showProgressDialog(false)
-                                    hideKeyboard()
-                                    when (httpCode) {
-                                        200 -> {
-                                            replaceFragment(
-                                                    fragment = LoanWithdrawalDetailFragment.newInstance(Utils.toJson(issueLoanRequest), installmentAmount),
-                                                    tag = LoanWithdrawalDetailFragment::class.java.simpleName,
-                                                    containerViewId = R.id.flLoanContent,
-                                                    allowStateLoss = true,
-                                                    enterAnimation = R.anim.slide_in_from_right,
-                                                    exitAnimation = R.anim.slide_to_left,
-                                                    popEnterAnimation = R.anim.slide_from_left,
-                                                    popExitAnimation = R.anim.slide_to_right
-                                            )
-                                        }
-                                        440 -> {
-                                            SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.stsParams, activity)
-                                        }
 
-                                        else -> {
-                                            response?.desc?.let { DialogManager(activity).showBasicDialog(it) }
-                                        }
-                                    }
+            mPostLoanIssue =  OneAppService.issueLoan(issueLoanRequest)
+            mPostLoanIssue?.enqueue(CompletionHandler(object: RequestListener<IssueLoanResponse>{
+                override fun onSuccess(issueLoanResponse: IssueLoanResponse?) {
+                    activity?.let { activity ->
+                        issueLoanResponse?.apply {
+                            autoConnectRequest(false)
+                            showProgressDialog(false)
+                            hideKeyboard()
+                            when (httpCode) {
+                                200 -> {
+                                    replaceFragment(
+                                            fragment = LoanWithdrawalDetailFragment.newInstance(Utils.toJson(issueLoanRequest), installmentAmount),
+                                            tag = LoanWithdrawalDetailFragment::class.java.simpleName,
+                                            containerViewId = R.id.flLoanContent,
+                                            allowStateLoss = true,
+                                            enterAnimation = R.anim.slide_in_from_right,
+                                            exitAnimation = R.anim.slide_to_left,
+                                            popEnterAnimation = R.anim.slide_from_left,
+                                            popExitAnimation = R.anim.slide_to_right
+                                    )
+                                }
+                                440 -> {
+                                    SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.stsParams, activity)
+                                }
+
+                                else -> {
+                                    response?.desc?.let { DialogManager(activity).showBasicDialog(it) }
                                 }
                             }
                         }
+                    }
+                }
 
-                        override fun onFailure(e: String?) {
-                            activity?.apply {
-                                autoConnectRequest(true)
-                                showProgressDialog(false)
-                            }
-                        }
-                    })
+                override fun onFailure(error: Throwable?) {
+                    activity?.apply {
+                        autoConnectRequest(true)
+                        showProgressDialog(false)
+                    }
+                }
 
-            mPostLoanIssue?.execute()
+            },IssueLoanResponse::class.java))
 
         } else {
             activity?.let {  Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.HIGH_LOAN_AMOUNT, "")}
@@ -325,8 +328,8 @@ class LoanWithdrawalFragment : LoanBaseFragment() {
             }
         }
         mPostLoanIssue?.let {
-            if (!it.isCancelled)
-                it.cancel(true)
+            if (!it.isCanceled)
+                it.cancel()
         }
     }
 

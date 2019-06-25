@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -22,7 +21,6 @@ import android.widget.RelativeLayout;
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
 
-import org.jetbrains.annotations.NotNull;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -32,9 +30,11 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import retrofit2.Call;
+import za.co.absa.openbankingapi.woolworths.integration.AbsaSecureCredentials;
 import za.co.wigroup.logger.lib.WiGroupLogger;
-import za.co.woolworths.financial.services.android.contracts.AsyncAPIResponse;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
+import za.co.woolworths.financial.services.android.contracts.RequestListener;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
@@ -42,8 +42,8 @@ import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.Card;
 import za.co.woolworths.financial.services.android.models.dto.CreditCardTokenResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
-import za.co.woolworths.financial.services.android.models.rest.cli.CLIGetOfferActive;
-import za.co.woolworths.financial.services.android.models.rest.shoppinglist.GetCreditCardToken;
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
+import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
@@ -58,7 +58,6 @@ import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.MyAccountHelper;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
-import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -89,7 +88,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
     private OfferActive offerActive;
     private boolean viewWasCreated = false;
     private final CompositeDisposable disposables = new CompositeDisposable();
-    private CLIGetOfferActive cliGetOfferActive;
+    private Call<OfferActive> cliGetOfferActive;
     private AccountsResponse accountsResponse;
     private LinearLayout accountInArrearsLayout;
     private WTextView tvHowToPayAccountStatus;
@@ -108,7 +107,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
     private RelativeLayout relBalanceProtection;
     private WTextView tvBPIProtectInsurance;
     private RelativeLayout rlViewStatement;
-    private AsyncTask<String, String, CreditCardTokenResponse> mGetCreditCardToken;
+    private Call<CreditCardTokenResponse>  mGetCreditCardToken;
     private ProgressBar mpbViewStatements;
     private ImageView mimgViewStatementsRightArrow;
     private boolean mCreditCardFragmentIsVisible = false;
@@ -401,31 +400,34 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
     }
 
     private void getActiveOffer() {
-
         if (!productOfferingGoodStanding)
             return;
-
         onLoad();
-        cliGetOfferActive = new CLIGetOfferActive(getActivity(), productOfferingId, new OnEventListener() {
+        cliGetOfferActive = OneAppService.INSTANCE.getActiveOfferRequest(productOfferingId);
+        cliGetOfferActive.enqueue(new CompletionHandler<>(new RequestListener<OfferActive>() {
             @Override
-            public void onSuccess(Object object) {
-                offerActive = ((OfferActive) object);
+            public void onSuccess(OfferActive response) {
+                offerActive = response;
+                if (getActivity()==null && !mCreditCardFragmentIsVisible) return;
                 bindUI(offerActive);
                 creditWasAlreadyRunOnce = true;
                 onLoadComplete();
             }
 
             @Override
-            public void onFailure(String e) {
-                getActivity().runOnUiThread(new Runnable() {
+            public void onFailure(Throwable error) {
+                Activity activity = getActivity();
+                if (activity == null || error.getMessage() == null || !isAdded()) return;
+
+                activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         networkFailureHandler();
                     }
                 });
+
             }
-        });
-        cliGetOfferActive.execute();
+        },OfferActive.class));
     }
 
     private void onLoad() {
@@ -563,14 +565,13 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         super.onDestroy();
         if (!disposables.isDisposed())
             disposables.clear(); // do not send event after activity has been destroyed
-        if (cliGetOfferActive != null) {
-            if (!cliGetOfferActive.isCancelled()) {
-                cliGetOfferActive.cancel(true);
+        if (cliGetOfferActive != null && !cliGetOfferActive.isCanceled()) {
+                cliGetOfferActive.cancel();
             }
-        }
+
         //  Cancel creditCardToken api if running
-        if (mGetCreditCardToken != null && !mGetCreditCardToken.isCancelled()) {
-            mGetCreditCardToken.cancel(true);
+        if (mGetCreditCardToken != null && !mGetCreditCardToken.isCanceled()) {
+            mGetCreditCardToken.cancel();
         }
     }
 
@@ -582,36 +583,36 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         mIncreaseLimitController.cliDefaultView(llCommonLayer, tvIncreaseLimitDescription);
     }
 
-    public AsyncTask<String, String, CreditCardTokenResponse> getCreditCardToken(final Activity activity) {
+    public Call<CreditCardTokenResponse>  getCreditCardToken(final Activity activity) {
         showGetCreditCardTokenProgressBar(VISIBLE);
-        return new GetCreditCardToken(new AsyncAPIResponse.ResponseDelegate<CreditCardTokenResponse>() {
+       Call<CreditCardTokenResponse> creditCardTokenResponseCall =  OneAppService.INSTANCE.getCreditCardToken();
+        creditCardTokenResponseCall.enqueue(new CompletionHandler<>(new RequestListener<CreditCardTokenResponse>() {
             @Override
-            public void onSuccess(CreditCardTokenResponse response) {
+            public void onSuccess(CreditCardTokenResponse creditCardTokenResponse) {
                 if (getActivity() ==null && !mCreditCardFragmentIsVisible) return;
                 showGetCreditCardTokenProgressBar(GONE);
-                switch (response.httpCode) {
+                switch (creditCardTokenResponse.httpCode) {
                     case 200:
-                        ArrayList<Card> cards = response.cards;
-                        switch (cards.size()) {
-                            case 0:
-                                Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, getString(R.string.card_number_not_found));
-                                break;
-                            default:
-                                String creditCardNumber = "";
-                                for (Card card : cards) {
-                                    if (card.cardStatus.trim().equalsIgnoreCase("AAA")) {
-                                        creditCardNumber = card.absaCardToken;
-                                    }
+                        ArrayList<Card> cards = creditCardTokenResponse.cards;
+                        if (cards.size() == 0) {
+                            Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, getString(R.string.card_number_not_found));
+                        } else {
+                            String creditCardNumber = "";
+                            for (Card card : cards) {
+                                if (card.cardStatus.trim().equalsIgnoreCase("AAA")) {
+                                    creditCardNumber = card.absaCardToken;
                                 }
+                            }
 
                                 if (TextUtils.isEmpty(creditCardNumber)) {
                                     Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, getString(R.string.card_number_not_found));
                                     return;
                                 }
 
-                                SessionDao aliasID = SessionDao.getByKey(SessionDao.KEY.ABSA_ALIASID);
-                                SessionDao deviceID = SessionDao.getByKey(SessionDao.KEY.ABSA_DEVICEID);
-                                openAbsaOnLineBankingActivity(creditCardNumber, activity, !(TextUtils.isEmpty(aliasID.value) || TextUtils.isEmpty(deviceID.value)));
+                                AbsaSecureCredentials absaSecureCredentials = new AbsaSecureCredentials();
+                                String aliasID = absaSecureCredentials.getAliasId();
+                                String deviceID = absaSecureCredentials.getDeviceId();
+                                openAbsaOnLineBankingActivity(creditCardNumber, activity, !(TextUtils.isEmpty(aliasID) || TextUtils.isEmpty(deviceID)));
 
                                 break;
                         }
@@ -627,22 +628,25 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
             }
 
             @Override
-            public void onFailure(@NotNull final String errorMessage) {
+            public void onFailure(final Throwable error) {
+                if (error == null)return;
                 final Activity activity = getActivity();
                 if (activity!=null && mCreditCardFragmentIsVisible) {
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             showGetCreditCardTokenProgressBar(GONE);
-                            if (errorMessage.contains("ConnectException")
-                                    || errorMessage.contains("SocketTimeoutException")) {
+                            if (error.getMessage().contains("ConnectException")
+                                    || error.getMessage().contains("SocketTimeoutException")) {
                                 Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, getString(R.string.check_connection_status));
                             }
                         }
                     });
                 }
             }
-        }).execute();
+        },CreditCardTokenResponse.class));
+
+        return creditCardTokenResponseCall;
     }
 
     private void openAbsaOnLineBankingActivity(String creditCardNumber, Activity activity, boolean isRegistered) {

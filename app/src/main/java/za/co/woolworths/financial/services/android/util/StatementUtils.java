@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import retrofit2.Call;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
@@ -87,11 +88,9 @@ public class StatementUtils {
 
 	}
 
-	public void cancelRequest(HttpAsyncTask httpAsyncTask) {
-		if (httpAsyncTask != null) {
-			if (!httpAsyncTask.isCancelled()) {
-				httpAsyncTask.cancel(true);
-			}
+	public void cancelRequest(Call call) {
+		if (call != null && !call.isCanceled()) {
+			call.cancel();
 		}
 	}
 }
