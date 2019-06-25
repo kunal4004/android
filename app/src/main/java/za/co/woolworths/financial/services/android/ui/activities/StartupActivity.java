@@ -30,7 +30,6 @@ import java.util.Collections;
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.RequestListener;
-import za.co.woolworths.financial.services.android.contracts.RootActivityInterface;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
@@ -48,7 +47,7 @@ import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class StartupActivity extends AppCompatActivity implements MediaPlayer.OnCompletionListener, RootActivityInterface {
+public class StartupActivity extends AppCompatActivity implements MediaPlayer.OnCompletionListener {
 
 	private FirebaseAnalytics mFirebaseAnalytics = null;
 
@@ -128,7 +127,6 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 			mFirebaseAnalytics.setUserProperty(APP_VERSION_KEY, StartupActivity.this.appVersion);
 
 			setUpScreen();
-			notifyIfNeeded();
 		} else {
 			showNonVideoViewWithErrorLayout();
 		}
@@ -141,7 +139,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 					mFirebaseAnalytics.setUserProperty(APP_VERSION_KEY, StartupActivity.this.appVersion);
 
 					setUpScreen();
-					notifyIfNeeded();
+					executeConfigServer();
 				} else {
 					showNonVideoViewWithErrorLayout();
 				}
@@ -387,10 +385,6 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 		super.onResume();
 		Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.STARTUP);
 		NotificationUtils.clearNotifications(StartupActivity.this);
-	}
-
-	@Override
-	public void notifyIfNeeded() {
 	}
 
 	@VisibleForTesting
