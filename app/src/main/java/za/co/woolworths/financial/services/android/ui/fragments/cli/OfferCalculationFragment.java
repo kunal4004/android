@@ -186,7 +186,8 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 										public void run() {
 											mNewCLIAmount = busStation.getNumber();
 											sbSlideAmount.setProgress(mNewCLIAmount);
-											openCreditLimitDecreaseFragmentDialog();
+											// Parse minimum credit amount if amount received is of negative type
+											openCreditLimitDecreaseFragmentDialog(mNewCLIAmount <= 0 ? currentCredit : mNewCLIAmount);
 										}
 									});
 								}
@@ -204,7 +205,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 
 			@Override
 			public void onStopTrackingTouch(SeekBar seekBar) {
-					openCreditLimitDecreaseFragmentDialog();
+				openCreditLimitDecreaseFragmentDialog(mNewCLIAmount);
 			}
 
 			@Override
@@ -555,10 +556,10 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 								SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, mObjOffer.response.stsParams, getActivity());
 								break;
 							default:
-									Response response = mObjOffer.response;
-									if (response != null) {
-										Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
-									}
+								Response response = mObjOffer.response;
+								if (response != null) {
+									Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
+								}
 								break;
 						}
 						loadSuccess();
@@ -859,15 +860,15 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 
 	private void cancelRequest(Call call) {
 		if (call != null && !call.isCanceled()) {
-				call.cancel();
-			}
+			call.cancel();
+		}
 	}
 
 	private void enableDeclineButton() {
 		mCliPhase2Activity.enableDeclineButton();
 	}
 
-    public void openCreditLimitDecreaseFragmentDialog() {
+	public void openCreditLimitDecreaseFragmentDialog(int slideProgressAmount) {
 		/**
 		 * mNewCLIAmount represents the actual tracked value
 		 * mCreditRequestMax represents the maximum credit amount allowed
@@ -875,8 +876,8 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		if (mNewCLIAmount < mCreditRequestMax) {
 			FragmentActivity activity = getActivity();
 			if (activity == null && !isAdded()) return;
-			CreditLimitDecreaseConfirmationFragment creditLimitDecreaseConfirmationFragment = CreditLimitDecreaseConfirmationFragment.Companion.newInstance(formatAmount(mNewCLIAmount));
+			CreditLimitDecreaseConfirmationFragment creditLimitDecreaseConfirmationFragment = CreditLimitDecreaseConfirmationFragment.Companion.newInstance(formatAmount(slideProgressAmount));
 			creditLimitDecreaseConfirmationFragment.show(getFragmentManager(), StartupActivity.class.getSimpleName());
 		}
-    }
+	}
 }
