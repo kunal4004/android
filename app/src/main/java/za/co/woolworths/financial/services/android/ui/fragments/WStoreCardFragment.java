@@ -451,7 +451,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
        cliGetOfferActive = OneAppService.INSTANCE.getActiveOfferRequest(productOfferingId);
        cliGetOfferActive.enqueue(new CompletionHandler<>(new RequestListener<OfferActive>() {
            @Override
-           public void onSuccess(OfferActive offerActive) {
+           public void onSuccess(OfferActive response) {
+               offerActive  = response;
                if (getActivity() != null && mStoreCardFragmentIsVisible) {
                    bindUI(offerActive);
                }

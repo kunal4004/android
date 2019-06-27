@@ -441,8 +441,9 @@ private static AsyncTask<Void, Void, Void> async;
         cliGetOfferActive = OneAppService.INSTANCE.getActiveOfferRequest(productOfferingId);
         cliGetOfferActive.enqueue(new CompletionHandler<>(new RequestListener<OfferActive>() {
             @Override
-            public void onSuccess(OfferActive offerActive) {
+            public void onSuccess(OfferActive response) {
                 if (getActivity()==null && !mPersonalLoanFragmentIsVisible) return;
+                offerActive = response;
                 bindUI(offerActive);
                 personalWasAlreadyRunOnce = true;
                 onLoadComplete();
