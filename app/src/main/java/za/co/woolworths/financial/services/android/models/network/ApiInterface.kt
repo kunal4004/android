@@ -121,7 +121,7 @@ interface ApiInterface {
     ): Call<ConfigResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("/user/locations")
+    @GET("user/locations")
     fun getStoresLocation(
             @Header("apiId") apiId: String,
             @Header("sha1Password") sha1Password: String,
@@ -968,6 +968,5 @@ interface ApiInterface {
             @Header("sessionToken") sessionToken: String,
             @Path("productOfferingId") productOfferingId: String,
             @Body blockCardRequestBody: BlockCardRequestBody): Call<BlockMyCardResponse>
-
 
 }
