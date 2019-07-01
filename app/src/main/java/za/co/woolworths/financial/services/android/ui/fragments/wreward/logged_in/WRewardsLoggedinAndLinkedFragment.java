@@ -248,8 +248,8 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 		wRewardsCardDetails = OneAppService.INSTANCE.getCardDetails();
 		wRewardsCardDetails.enqueue(new CompletionHandler<>(new RequestListener<CardDetailsResponse>() {
 			@Override
-			public void onSuccess(CardDetailsResponse cardDetailsResponse) {
-				//TODO:: Handle httpCode
+			public void onSuccess(CardDetailsResponse response) {
+				cardDetailsResponse = response;
 				isCardDetailsCalled = true;
 				handleWrewardsAndCardDetailsResponse();
 			}
