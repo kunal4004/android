@@ -166,7 +166,7 @@ object OneAppService : RetrofitConfig() {
     }
 
     fun getStatementResponse(statement: UserStatement): Call<StatementResponse> {
-        return mApiInterface.getUserStatement(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), statement.productOfferingId, statement.accountNumber, statement.startDate, statement.endDate)
+        return mApiInterface.getUserStatement(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), statement.productOfferingId, statement.accountNumber ?: "" , statement.startDate, statement.endDate)
     }
 
     fun sendStatementRequest(statement: SendUserStatementRequest): Call<SendUserStatementResponse> {
