@@ -74,7 +74,7 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         getBundleArguments()
         return if (mShouldDisplayCreateListOnly)
             inflater?.inflate(R.layout.create_list_from_shopping_list_view, container, false)
@@ -83,7 +83,7 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
 
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         toolbarIconVisibility()
         clickListener()
@@ -124,7 +124,7 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
 
     private fun getBundleArguments() {
         mAddToListRequest = mutableListOf()
-        arguments.apply {
+        arguments?.apply {
 
             if (this.containsKey(SHOPPING_LIST_SELECTED_LIST_ID)) {
                 mShoppingListGroup = this.getSerializable(SHOPPING_LIST_SELECTED_LIST_ID) as HashMap<String, ShoppingList>?
@@ -246,10 +246,12 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
         val listName = etNewList.text.toString()
         if (listName.isNotEmpty()) {
             showKeyboard(etNewList)
-            if (networkConnectionAvailable(activity)) {
-                createShoppingListRequest()
-            } else {
-                ErrorHandlerView(activity).showToast()
+            activity?.let {
+                if (networkConnectionAvailable(it)) {
+                    createShoppingListRequest()
+                } else {
+                    ErrorHandlerView(it).showToast()
+                }
             }
         } else {
             onBackPressed()

@@ -63,7 +63,7 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
         return inflater.inflate(R.layout.fragment_shop, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activity?.apply {
             permissionUtils = PermissionUtils(this, this@ShopFragment)
@@ -110,7 +110,7 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
     }
 
     private fun prepareTabView(pos: Int, tabTitle: MutableList<String>?): View {
-        val view = activity.layoutInflater.inflate(R.layout.shop_custom_tab, null)
+        val view = activity?.layoutInflater!!.inflate(R.layout.shop_custom_tab, null)
         view.tvTitle.text = tabTitle!![pos]
         return view
     }

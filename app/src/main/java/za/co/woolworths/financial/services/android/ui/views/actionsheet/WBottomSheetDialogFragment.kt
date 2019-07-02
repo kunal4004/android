@@ -19,9 +19,9 @@ open class WBottomSheetDialogFragment : BottomSheetDialogFragment() {
 
     override fun getTheme(): Int = R.style.BottomSheetDialogTheme
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = BottomSheetDialog(context, theme)
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = context?.let { BottomSheetDialog(it, theme) }!!
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         dialog?.apply {

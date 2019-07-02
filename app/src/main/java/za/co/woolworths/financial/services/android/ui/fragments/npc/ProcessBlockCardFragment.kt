@@ -57,7 +57,7 @@ class ProcessBlockCardFragment : BlockMyCardRequestExtension(), IProgressAnimati
         return inflater.inflate(R.layout.process_block_card_fragment, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         (activity as? AppCompatActivity)?.addFragment(

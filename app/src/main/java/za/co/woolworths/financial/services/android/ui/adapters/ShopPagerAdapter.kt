@@ -32,7 +32,7 @@ class ShopPagerAdapter(fm: FragmentManager, tabTitle: MutableList<String>?, var 
         }
     }
 
-    override fun getItemPosition(`object`: Any?): Int {
+    override fun getItemPosition(`object`: Any): Int {
         return PagerAdapter.POSITION_NONE
     }
 }

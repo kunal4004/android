@@ -18,11 +18,11 @@ class LoanWithdrawalSuccessFragment : LoanBaseFragment() {
         setHasOptionsMenu(true)
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater?.inflate(R.layout.loan_withdrawal_success, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         activity?.let { (it as? LoanWithdrawalActivity)?.setHomeIndicatorIcon(R.drawable.close_white) }
@@ -40,6 +40,6 @@ class LoanWithdrawalSuccessFragment : LoanBaseFragment() {
     }
 
     private fun onBackPressed() {
-        finishActivity(activity)
+        activity?.let { finishActivity(it) }
     }
 }

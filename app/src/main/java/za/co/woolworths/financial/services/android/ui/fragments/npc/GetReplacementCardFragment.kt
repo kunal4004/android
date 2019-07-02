@@ -27,7 +27,7 @@ class GetReplacementCardFragment : MyCardExtension() {
         return inflater.inflate(R.layout.replace_card_fragment, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activity?.let { Utils.updateStatusBarBackground(it) }
         updateToolbarBg()

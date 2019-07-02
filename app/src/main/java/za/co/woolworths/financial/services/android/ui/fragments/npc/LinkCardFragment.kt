@@ -20,7 +20,7 @@ class LinkCardFragment : MyCardExtension() {
         return inflater.inflate(R.layout.link_card_fragment, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         tvReplacementCardInfo?.apply {
             paintFlags = Paint.UNDERLINE_TEXT_FLAG

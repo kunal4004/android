@@ -37,11 +37,11 @@ class AbsaPinCodeSuccessFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater?.inflate(R.layout.absa_pin_code_complete_fragment, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
     }
@@ -131,7 +131,7 @@ class AbsaPinCodeSuccessFragment : Fragment() {
     }*/
 
     private fun showErrorScreen(errorType: Int) {
-        activity.let {
+        activity?.let {
             val intent: Intent = Intent(it, ErrorHandlerActivity::class.java)
             intent.putExtra("errorType", errorType)
             it.startActivityForResult(intent, ERROR_PAGE_REQUEST_CODE)

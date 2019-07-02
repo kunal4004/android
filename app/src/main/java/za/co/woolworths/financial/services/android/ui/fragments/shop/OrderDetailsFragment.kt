@@ -49,12 +49,12 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (arguments != null) {
-            order = arguments.getSerializable(ARG_PARAM) as Order
+        arguments?.let {
+            order = it.getSerializable(ARG_PARAM) as Order
         }
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Handler().postDelayed({
             activity?.runOnUiThread {
@@ -64,7 +64,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick {
     }
 
     private fun initViews() {
-        tvSelectAll = activity.findViewById(R.id.tvSelectAll)
+        tvSelectAll = activity?.findViewById(R.id.tvSelectAll)
         tvSelectAll?.visibility = View.GONE
         orderDetails.layoutManager = LinearLayoutManager(activity)
         orderItemsBtn.setOnClickListener {
@@ -94,7 +94,7 @@ class OrderDetailsFragment : Fragment(), OrderDetailsAdapter.OnItemClick {
 
     private fun bindData(ordersResponse: OrderDetailsResponse) {
         dataList = buildDataForOrderDetailsView(ordersResponse)
-        orderDetails.adapter = OrderDetailsAdapter(activity, this, dataList)
+        orderDetails.adapter = activity?.let { OrderDetailsAdapter(it, this, dataList) }
     }
 
     private fun buildDataForOrderDetailsView(ordersResponse: OrderDetailsResponse): ArrayList<OrderDetailsItem> {

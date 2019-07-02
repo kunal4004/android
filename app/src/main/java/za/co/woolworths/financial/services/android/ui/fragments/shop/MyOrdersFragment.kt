@@ -48,12 +48,12 @@ class MyOrdersFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (arguments != null) {
-            listner = arguments.getSerializable(ARG_PARAM) as OnChildFragmentEvents
+        arguments?.let {
+            listner = it.getSerializable(ARG_PARAM) as OnChildFragmentEvents
         }
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (isFragmentVisible)
             initViews()
@@ -121,7 +121,7 @@ class MyOrdersFragment : Fragment() {
         dataList = buildDataToDisplayOrders(ordersResponse)
             if (dataList.size > 0) {
             mErrorHandlerView?.hideEmpyState()
-            myOrdersList.adapter = OrdersAdapter(activity, dataList)
+            myOrdersList.adapter = activity?.let { OrdersAdapter(it, dataList) }
             myOrdersList.visibility = View.VISIBLE
             swipeToRefresh.isEnabled = true
         } else

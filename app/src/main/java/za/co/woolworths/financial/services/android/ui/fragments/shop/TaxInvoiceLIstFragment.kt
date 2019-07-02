@@ -48,13 +48,13 @@ class TaxInvoiceLIstFragment : Fragment(), TaxInvoiceAdapter.OnItemClick {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (arguments != null) {
-            taxNoteNumbers = arguments.getSerializable(ARG_PARAM) as ArrayList<String>
-            orderId = arguments.getString(ORDER_ID)
+        arguments?.apply {
+            taxNoteNumbers = getSerializable(ARG_PARAM) as ArrayList<String>
+            orderId = getString(ORDER_ID)
         }
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
     }

@@ -54,11 +54,11 @@ class LoanWithdrawalFragment : LoanBaseFragment() {
     }
 
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater?.inflate(R.layout.loan_withdrawal, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mErrorHandlerView = ErrorHandlerView(activity)
         configureEditText()
@@ -74,7 +74,7 @@ class LoanWithdrawalFragment : LoanBaseFragment() {
     private fun configureEditText() {
         edtWithdrawAmount.keyListener = DigitsKeyListener.getInstance("0123456789")
         edtWithdrawAmount.addTextChangedListener(NumberTextWatcherForThousand(edtWithdrawAmount))
-        edtWithdrawAmount.setOnKeyPreImeListener { activity.onBackPressed() }
+        edtWithdrawAmount.setOnKeyPreImeListener { activity?.onBackPressed() }
         edtWithdrawAmount.setRawInputType(Configuration.KEYBOARD_12KEY)
         edtWithdrawAmount.imeOptions = EditorInfo.IME_ACTION_DONE
         edtWithdrawAmount.setOnEditorActionListener { _, actionId, _ ->
@@ -101,7 +101,7 @@ class LoanWithdrawalFragment : LoanBaseFragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                finishActivity(activity)
+                activity?.let { finishActivity(it) }
                 return true
             }
             R.id.itemNextArrow -> {

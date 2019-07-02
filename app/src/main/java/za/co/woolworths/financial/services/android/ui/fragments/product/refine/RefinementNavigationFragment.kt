@@ -49,23 +49,25 @@ class RefinementNavigationFragment : BaseRefinementFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (arguments != null) {
-            productView = Utils.jsonStringToObject(arguments.getString(ARG_PARAM), ProductView::class.java) as ProductView
-            baseNavigationState = arguments.getString(NAVIGATION_STATE, "")
-            updatedNavigationState = arguments.getString(UPDATED_NAVIGATION_STATE, "")
+        arguments?.let {
+            productView = Utils.jsonStringToObject(it.getString(ARG_PARAM), ProductView::class.java) as ProductView
+            baseNavigationState = it.getString(NAVIGATION_STATE, "")
+            updatedNavigationState = it.getString(UPDATED_NAVIGATION_STATE, "")
         }
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
     }
 
     private fun initViews() {
-        backButton = activity.findViewById(R.id.btnClose)
+        activity?.let {
+            backButton = it.findViewById(R.id.btnClose)
+            clearOrRresetRefinement = it.findViewById(R.id.resetRefinement)
+            pageTitle = it.findViewById(R.id.toolbarText)
+        }
         backButton?.setImageResource(R.drawable.close_24)
-        clearOrRresetRefinement = activity.findViewById(R.id.resetRefinement)
-        pageTitle = activity.findViewById(R.id.toolbarText)
         pageTitle?.text = resources.getString(R.string.refine)
         backButton?.setOnClickListener { onBackPressed() }
         clearOrRresetRefinement?.setOnClickListener { if (showReset()) listener.onRefinementReset() else listener.onRefinementClear() }
@@ -79,7 +81,7 @@ class RefinementNavigationFragment : BaseRefinementFragment() {
         if (productView!!.navigation != null && productView!!.navigation.size > 0) {
             setResultCount(productView?.pagingResponse?.numItemsInTotal)
             dataList = getRefinementSelectableItems(productView?.navigation!!)
-            refinementNavigationAdapter = RefinementNavigationAdapter(activity, listener, dataList, productView?.history!!)
+            refinementNavigationAdapter = activity?.let { RefinementNavigationAdapter(it, listener, dataList, productView?.history!!) }
             refinementList.adapter = refinementNavigationAdapter!!
         }
     }

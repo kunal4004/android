@@ -78,7 +78,7 @@ class WPdfViewerActivity : AppCompatActivity() {
         }
 
 
-        val uri = FileProvider.getUriForFile(this, "za.co.woolworths.financial.services.android.util.WFileProvider", cacheFile)
+        val uri = cacheFile?.let { FileProvider.getUriForFile(this, "za.co.woolworths.financial.services.android.util.WFileProvider", it) }
 
         val intent = ShareCompat.IntentBuilder.from(this)
                 .setType("application/pdf")

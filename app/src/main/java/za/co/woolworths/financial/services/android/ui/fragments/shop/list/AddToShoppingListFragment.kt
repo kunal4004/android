@@ -54,11 +54,11 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater!!.inflate(R.layout.add_to_list_content, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         getBundleArguments()
         initAndConfigureUI()
@@ -453,7 +453,7 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
 
     private fun displayListItem() {
         if (getLatestShoppingList() == null) {
-            if (networkConnectionAvailable(activity)) retrieveShoppingList() else noNetworkConnection(true)
+            activity?.let { if (networkConnectionAvailable(it)) retrieveShoppingList() else noNetworkConnection(true) }
         } else {
             val cachedShoppingList = getLatestShoppingList()
             var atLeastOneShoppingListItemSelected = false

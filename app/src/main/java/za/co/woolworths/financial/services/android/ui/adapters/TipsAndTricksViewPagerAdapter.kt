@@ -19,7 +19,7 @@ class TipsAndTricksViewPagerAdapter(context: Activity) : PagerAdapter() {
         return images.length()
     }
 
-    override fun isViewFromObject(view: View?, `object`: Any?): Boolean {
+    override fun isViewFromObject(view: View, `object`: Any): Boolean {
         // Return the current view
         return view === `object` as View
     }
@@ -32,7 +32,7 @@ class TipsAndTricksViewPagerAdapter(context: Activity) : PagerAdapter() {
         return view
     }
 
-    override fun destroyItem(container: ViewGroup, position: Int, `object`: Any?) {
+    override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
         container.removeView(`object` as View)
     }
 
