@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.util
 
+import android.text.TextUtils
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.RequestListener
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
@@ -27,15 +28,24 @@ class GetCartSummary {
 
     private fun cacheSuburbFromCartSummary(cartSummaryResponse: CartSummaryResponse?) {
         cartSummaryResponse?.data?.get(0)?.apply {
-            val province = Province().also { province ->
-                province.name = provinceName
-            }
-            val suburb = Suburb().also { suburb ->
-                suburb.id = suburbId
-                suburb.name = suburbName
-                suburb.fulfillmentStores = suburb.fulfillmentStores
-            }
+            if (TextUtils.isEmpty(suburbName) || TextUtils.isEmpty(provinceName)) return
+            val province = getProvince(this)
+            val suburb = getSuburb(this)
             Utils.savePreferredDeliveryLocation(ShoppingDeliveryLocation(province, suburb))
         }
+    }
+
+    private fun getSuburb(cart: CartSummary): Suburb {
+        val suburb = Suburb()
+        suburb.id = cart.suburbId.toString()
+        suburb.name = cart.suburbName
+        suburb.fulfillmentStores = cart.suburb.fulfillmentStores
+        return suburb
+    }
+
+    private fun getProvince(cart: CartSummary): Province {
+        val province = Province()
+        province.name = cart.provinceName
+        return province
     }
 }

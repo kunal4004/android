@@ -175,9 +175,9 @@ public class ProductDetailsViewModelNew extends BaseViewModel<ProductDetailNavig
         });
     }
 
-    protected Call<AddItemToCartResponse> postAddItemToCart(List<AddItemToCart> addItemToCart) {
+    protected void postAddItemToCart(List<AddItemToCart> addItemToCart) {
         PostItemToCart postItemToCart = new PostItemToCart();
-        return postItemToCart.make(addItemToCart, new RequestListener<AddItemToCartResponse>() {
+        postItemToCart.make(addItemToCart, new RequestListener<AddItemToCartResponse>() {
             @Override
             public void onSuccess(AddItemToCartResponse addItemToCartResponse) {
                 if (addItemToCartResponse != null) {
