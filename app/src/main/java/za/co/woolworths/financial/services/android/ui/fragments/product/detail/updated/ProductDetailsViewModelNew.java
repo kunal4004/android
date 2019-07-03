@@ -27,6 +27,7 @@ import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.ui.base.BaseViewModel;
+import za.co.woolworths.financial.services.android.util.GetCartSummary;
 
 /**
  * Created by W7099877 on 2018/07/14.
@@ -144,8 +145,8 @@ public class ProductDetailsViewModelNew extends BaseViewModel<ProductDetailNavig
     }
 
     protected Call<CartSummaryResponse> getCartSummary() {
-        Call<CartSummaryResponse> cartSummaryResponseCall = OneAppService.INSTANCE.getCartSummary();
-        cartSummaryResponseCall.enqueue(new CompletionHandler<>(new RequestListener<CartSummaryResponse>() {
+        GetCartSummary cartSummary = new GetCartSummary();
+        return cartSummary.getCartSummary(new RequestListener<CartSummaryResponse>() {
             @Override
             public void onSuccess(CartSummaryResponse cartSummaryResponse) {
                 if (cartSummaryResponse != null) {
@@ -170,8 +171,7 @@ public class ProductDetailsViewModelNew extends BaseViewModel<ProductDetailNavig
             public void onFailure(Throwable error) {
                 getNavigator().onTokenFailure(error.toString());
             }
-        },CartSummaryResponse.class));
-        return cartSummaryResponseCall;
+        });
     }
 
     protected Call<AddItemToCartResponse> postAddItemToCart(List<AddItemToCart> addItemToCart) {
