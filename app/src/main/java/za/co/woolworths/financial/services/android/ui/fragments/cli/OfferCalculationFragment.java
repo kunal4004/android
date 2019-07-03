@@ -185,9 +185,16 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 										@Override
 										public void run() {
 											mNewCLIAmount = busStation.getNumber();
+											int drawnDownAmount = busStation.getDrawnDownAmount();
 											sbSlideAmount.setProgress(mNewCLIAmount);
 											// Parse minimum credit amount if amount received is of negative type
-											openCreditLimitDecreaseFragmentDialog(mNewCLIAmount <= 0 ? currentCredit : mNewCLIAmount);
+											if (mNewCLIAmount <= 0 || drawnDownAmount < currentCredit) {
+												openCreditLimitDecreaseFragmentDialog(currentCredit);
+											} else {
+												if (drawnDownAmount < mCreditRequestMax && drawnDownAmount > currentCredit) {
+													openCreditLimitDecreaseFragmentDialog(drawnDownAmount);
+												}
+											}
 										}
 									});
 								}
