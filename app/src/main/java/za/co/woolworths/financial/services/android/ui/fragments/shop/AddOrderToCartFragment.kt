@@ -29,6 +29,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.AddOrderToCartAda
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.FragmentsEventsListner
 import za.co.woolworths.financial.services.android.util.MultiMap
+import za.co.woolworths.financial.services.android.util.PostItemToCart
 import za.co.woolworths.financial.services.android.util.Utils
 
 
@@ -399,8 +400,8 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
     }
 
     private fun postAddItemToCart(addItemToCart: MutableList<AddItemToCart>): Call<AddItemToCartResponse> {
-        val addItemToCartRequest = OneAppService.addItemToCart(addItemToCart)
-        addItemToCartRequest.enqueue(CompletionHandler(object:RequestListener<AddItemToCartResponse>{
+        val postItemToCart = PostItemToCart()
+        return postItemToCart.make(addItemToCart, object : RequestListener<AddItemToCartResponse> {
             override fun onSuccess(addItemToCartResponse: AddItemToCartResponse?) {
                 addItemToCartResponse?.let { onAddToCartSuccess(it) }
             }
@@ -408,8 +409,7 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
             override fun onFailure(error: Throwable?) {
             }
 
-        },AddItemToCartResponse::class.java))
-        return addItemToCartRequest
+        })
     }
 
     fun onAddToCartSuccess(addItemToCartResponse: AddItemToCartResponse) {

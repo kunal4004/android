@@ -28,6 +28,7 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.ui.base.BaseViewModel;
 import za.co.woolworths.financial.services.android.util.GetCartSummary;
+import za.co.woolworths.financial.services.android.util.PostItemToCart;
 
 /**
  * Created by W7099877 on 2018/07/14.
@@ -175,8 +176,8 @@ public class ProductDetailsViewModelNew extends BaseViewModel<ProductDetailNavig
     }
 
     protected Call<AddItemToCartResponse> postAddItemToCart(List<AddItemToCart> addItemToCart) {
-        Call<AddItemToCartResponse> addItemToCartResponseCall = OneAppService.INSTANCE.addItemToCart(addItemToCart);
-        addItemToCartResponseCall.enqueue(new CompletionHandler<>(new RequestListener<AddItemToCartResponse>() {
+        PostItemToCart postItemToCart = new PostItemToCart();
+        return postItemToCart.make(addItemToCart, new RequestListener<AddItemToCartResponse>() {
             @Override
             public void onSuccess(AddItemToCartResponse addItemToCartResponse) {
                 if (addItemToCartResponse != null) {
@@ -218,16 +219,13 @@ public class ProductDetailsViewModelNew extends BaseViewModel<ProductDetailNavig
                             break;
                     }
                 }
-
             }
 
             @Override
             public void onFailure(Throwable error) {
                 getNavigator().onAddItemToCartFailure(error.toString());
             }
-        },AddItemToCartResponse.class));
-
-        return addItemToCartResponseCall;
+        });
     }
 
     public Call<SkusInventoryForStoreResponse> queryInventoryForSKUs(String storeId, String multiSku, final boolean isMultiSKUs) {
