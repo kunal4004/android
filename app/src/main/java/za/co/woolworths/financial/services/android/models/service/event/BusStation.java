@@ -5,12 +5,17 @@ import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 public class BusStation {
 
 	private String mObject;
-	private Integer intValue;
+	private Integer intValue,drawnDownAmount;
 	private OfferActive offerActive;
 	private boolean makeApiCall;
 
 	public BusStation(int intValue) {
 		this.intValue = intValue;
+	}
+
+	public BusStation(int intValue,int drawnDownAmount) {
+		this.intValue = intValue;
+		this.drawnDownAmount = drawnDownAmount;
 	}
 
 	public BusStation(boolean makeApiCall) {
@@ -39,5 +44,9 @@ public class BusStation {
 
 	public String getString() {
 		return mObject;
+	}
+
+	public Integer getDrawnDownAmount() {
+		return drawnDownAmount;
 	}
 }

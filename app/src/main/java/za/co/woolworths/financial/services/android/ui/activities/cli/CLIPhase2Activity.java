@@ -389,7 +389,7 @@ public class CLIPhase2Activity extends AppCompatActivity implements View.OnClick
 	}
 
 	@Override
-	public void slideAmount(Integer amount) {
+	public void slideAmount(Integer amount, Integer drawnDownAmount) {
 		// TODO:: Remove EventBus
 
 		FragmentManager fm = getSupportFragmentManager();
@@ -397,6 +397,6 @@ public class CLIPhase2Activity extends AppCompatActivity implements View.OnClick
 
 		((WoolworthsApplication) getApplication())
 				.bus()
-				.send(new BusStation(amount));
+				.send(new BusStation(amount,drawnDownAmount));
 	}
 }
