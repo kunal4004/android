@@ -88,7 +88,7 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
     }
 
     private fun navigateToFiveDigitCodeFragment() {
-        if ((edtEnterATMPin.length() - 1) == AbsaEnterAtmPinCodeFragment.MAXIMUM_PIN_ALLOWED && pbEnterAtmPin.visibility != VISIBLE) {
+        if ((edtEnterATMPin.length() - 1) >= AbsaEnterAtmPinCodeFragment.MAXIMUM_PIN_ALLOWED && pbEnterAtmPin.visibility != VISIBLE) {
             activity?.let {
                 val pinCode = edtEnterATMPin.text.toString()
                 progressIndicator(VISIBLE)
@@ -124,8 +124,9 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
     }
 
     private fun updateEnteredPin(pinEnteredLength: Int) {
+        //Submit button will be enabled when the pin length is 4 & above(at most 5 : As EditText maxLength="5" )
         if (pinEnteredLength > -1) {
-            if (pinEnteredLength == MAXIMUM_PIN_ALLOWED) {
+            if (pinEnteredLength >= MAXIMUM_PIN_ALLOWED) {
                 ivNavigateToDigitFragment.alpha = 1.0f
                 ivNavigateToDigitFragment.isEnabled = true
             }

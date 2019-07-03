@@ -18,7 +18,11 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import com.awfs.coordination.R;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
+import com.google.firebase.dynamiclinks.PendingDynamicLinkData;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,7 +30,6 @@ import java.util.Collections;
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.RequestListener;
-import za.co.woolworths.financial.services.android.contracts.RootActivityInterface;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
@@ -44,7 +47,7 @@ import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class StartupActivity extends AppCompatActivity implements MediaPlayer.OnCompletionListener, RootActivityInterface {
+public class StartupActivity extends AppCompatActivity implements MediaPlayer.OnCompletionListener {
 
 	private FirebaseAnalytics mFirebaseAnalytics = null;
 
@@ -124,7 +127,6 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 			mFirebaseAnalytics.setUserProperty(APP_VERSION_KEY, StartupActivity.this.appVersion);
 
 			setUpScreen();
-			notifyIfNeeded();
 		} else {
 			showNonVideoViewWithErrorLayout();
 		}
@@ -137,7 +139,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 					mFirebaseAnalytics.setUserProperty(APP_VERSION_KEY, StartupActivity.this.appVersion);
 
 					setUpScreen();
-					notifyIfNeeded();
+					executeConfigServer();
 				} else {
 					showNonVideoViewWithErrorLayout();
 				}
@@ -238,6 +240,23 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 	@Override
 	protected void onStart() {
 		super.onStart();
+		FirebaseDynamicLinks.getInstance()
+				.getDynamicLink(getIntent())
+				.addOnSuccessListener(this, new OnSuccessListener<PendingDynamicLinkData>() {
+					@Override
+					public void onSuccess(PendingDynamicLinkData pendingDynamicLinkData) {
+						// Get deep link from result (may be null if no link is found)
+						if (pendingDynamicLinkData!=null && pendingDynamicLinkData.getLink() !=null) {
+							mDeepLinkUrl = pendingDynamicLinkData.getLink().toString();
+						}
+					}
+				})
+				.addOnFailureListener(this, new OnFailureListener() {
+					@Override
+					public void onFailure(Exception e) {
+						Log.w(TAG, "getDynamicLink:onFailure", e);
+					}
+				});
 		if (isMinimized) {
 			isMinimized = false;
 			if (isServerMessageShown) {
@@ -366,10 +385,6 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 		super.onResume();
 		Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.STARTUP);
 		NotificationUtils.clearNotifications(StartupActivity.this);
-	}
-
-	@Override
-	public void notifyIfNeeded() {
 	}
 
 	@VisibleForTesting

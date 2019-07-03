@@ -11,6 +11,8 @@ import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import android.content.Context
 import android.graphics.Paint
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.util.Utils
 
 
 class BlockMyCardReasonConfirmationFragment : WBottomSheetDialogFragment() {
@@ -41,8 +43,12 @@ class BlockMyCardReasonConfirmationFragment : WBottomSheetDialogFragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         tvCancel?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
-        tvCancel?.setOnClickListener { dismiss() }
+        tvCancel?.setOnClickListener {
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.BLOCK_CARD_CANCEL)
+            dismiss()
+        }
         btnBlockPermanentCard?.setOnClickListener {
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.BLOCK_CARD_CONFIRM)
             mPermanentCardBlockCallback?.onBlockPermanentCardPermissionGranted()
             dismiss()
         }
