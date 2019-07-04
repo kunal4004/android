@@ -108,7 +108,7 @@ android {
             dev {
                 applicationId "com.awfs.coordination.dev"
                 signingConfig signingConfigs.woneappDev
-                buildConfigField("String", "HOST", '"http://wfs-appserver-dev.wigroup.co:8080/wfs/app/v4"')
+                buildConfigField("String", "HOST", '"https://wfs-appserver-dev.wigroup.co/wfs/app/v4"')
                 buildConfigField("String", "SHA1", '"2f8f87cbf5933ea469c0e9c9d0793de4d8fe3744"')
                 buildConfigField("String", "ENV", '"DEV"')
             }
@@ -116,7 +116,7 @@ android {
             qa {
                 applicationId "com.awfs.coordination.qa"
                 signingConfig signingConfigs.woneappQa
-                buildConfigField("String", "HOST", '"http://wfs-appserver-qa.wigroup.co:8080/wfs/app/v4"')
+                buildConfigField("String", "HOST", '"https://wfs-appserver-qa.wigroup.co/wfs/app/v4"')
                 buildConfigField("String", "SHA1", '"ecd631798df6d366535c3a501908cce136d40087"')
                 buildConfigField("String", "ENV", '"QA"')
             }
