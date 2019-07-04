@@ -36,6 +36,8 @@ import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.ui.base.BaseViewModel;
+import za.co.woolworths.financial.services.android.util.GetCartSummary;
+import za.co.woolworths.financial.services.android.util.PostItemToCart;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.rx.SchedulerProvider;
 
@@ -494,8 +496,8 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 	protected Call<CartSummaryResponse> getCartSummary() {
 		setAddedToCart(true);
 		getNavigator().onAddToCartLoad();
-		Call<CartSummaryResponse> cartSummaryResponseCall = OneAppService.INSTANCE.getCartSummary();
-		cartSummaryResponseCall.enqueue(new CompletionHandler<>(new RequestListener<CartSummaryResponse>() {
+		GetCartSummary getCartSummary = new GetCartSummary();
+		return getCartSummary.getCartSummary(new RequestListener<CartSummaryResponse>() {
 			@Override
 			public void onSuccess(CartSummaryResponse cartSummaryResponse) {
 				if (cartSummaryResponse != null) {
@@ -524,9 +526,7 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 					getNavigator().onTokenFailure(error.getMessage());
 				}
 			}
-		},CartSummaryResponse.class));
-
-		return cartSummaryResponseCall;
+		});
 	}
 
 
@@ -534,8 +534,8 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 	protected Call<AddItemToCartResponse> postAddItemToCart(List<AddItemToCart> addItemToCart) {
 		setAddedToCart(true);
 		getNavigator().onAddToCartLoad();
-		Call<AddItemToCartResponse> addItemToCartResponseCall = OneAppService.INSTANCE.addItemToCart(addItemToCart);
-		addItemToCartResponseCall.enqueue(new CompletionHandler<>(new RequestListener<AddItemToCartResponse>() {
+		PostItemToCart postItemToCart = new PostItemToCart();
+		return postItemToCart.make(addItemToCart, new RequestListener<AddItemToCartResponse>() {
 			@Override
 			public void onSuccess(AddItemToCartResponse addItemToCartResponse) {
 				if (addItemToCartResponse != null) {
@@ -565,9 +565,8 @@ public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator
 					getNavigator().onAddItemToCartFailure(error.getMessage());
 				}
 			}
-		},AddItemToCartResponse.class));
+		});
 
-		return addItemToCartResponseCall;
 	}
 
 }
