@@ -65,7 +65,6 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
             pageTitle = it.findViewById(R.id.toolbarText)
         }
         backButton?.setImageResource(R.drawable.back24)
-        activity?.let {  }
         pageTitle?.text = refinementNavigation?.displayName
         clearRefinement?.text = getString(R.string.refinement_clear)
         clearRefinement?.setOnClickListener { refinementAdapter?.clearRefinement() }
