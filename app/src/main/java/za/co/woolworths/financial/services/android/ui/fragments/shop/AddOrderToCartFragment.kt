@@ -66,19 +66,19 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (arguments != null) {
-            orderDetailsResponse = Utils.jsonStringToObject(arguments.getString(ARG_PARAM), OrderDetailsResponse::class.java) as OrderDetailsResponse
+        arguments?.let{
+            orderDetailsResponse = Utils.jsonStringToObject(it.getString(ARG_PARAM), OrderDetailsResponse::class.java) as OrderDetailsResponse
         }
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mWoolWorthsApplication = activity.application as WoolworthsApplication
+        mWoolWorthsApplication = activity?.application as WoolworthsApplication
         initViews()
     }
 
     private fun initViews() {
-        tvSelectAll = activity.findViewById(R.id.tvSelectAll)
+        tvSelectAll = activity?.findViewById(R.id.tvSelectAll)
         rvItemsToCart.layoutManager = LinearLayoutManager(activity) as RecyclerView.LayoutManager?
         addToCartButton.isEnabled = isAnyItemSelected
         tvSelectAll?.setOnClickListener { onSelectAll() }
@@ -90,7 +90,7 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
 
     fun bindData() {
         dataList = buildDataForOrderDetailsView(orderDetailsResponse!!)
-        addOrderToCartAdapter = AddOrderToCartAdapter(activity, this, dataList)
+        addOrderToCartAdapter = activity?.let { AddOrderToCartAdapter(it, this, dataList) }
         rvItemsToCart.adapter = addOrderToCartAdapter
         makeInventoryCall()
     }
@@ -119,12 +119,12 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
     override fun onQuantityUpdate(position: Int, item: OrderHistoryCommerceItem) {
         updateQuantityPosition = position
         navigateFromQuantity()
-        if (activity != null) {
-            val editQuantityIntent = Intent(activity, ConfirmColorSizeActivity::class.java)
+        activity?.apply {
+            val editQuantityIntent = Intent(this, ConfirmColorSizeActivity::class.java)
             editQuantityIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, ConfirmColorSizeActivity.QUANTITY)
             editQuantityIntent.putExtra("ORDER_QUANTITY_IN_STOCK", item.quantityInStock)
-            activity.startActivityForResult(editQuantityIntent, QUANTITY_CHANGED)
-            activity.overridePendingTransition(0, 0)
+            startActivityForResult(editQuantityIntent, QUANTITY_CHANGED)
+            overridePendingTransition(0, 0)
         }
     }
 
@@ -426,9 +426,11 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
     }
 
     override fun openSetSuburbProcess() {
-        val openDeliveryLocationSelectionActivity = Intent(activity, DeliveryLocationSelectionActivity::class.java)
-        startActivityForResult(openDeliveryLocationSelectionActivity, REQUEST_SUBURB_CHANGE)
-        activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay)
+        activity?.apply {
+            val openDeliveryLocationSelectionActivity = Intent(this, DeliveryLocationSelectionActivity::class.java)
+            startActivityForResult(openDeliveryLocationSelectionActivity, REQUEST_SUBURB_CHANGE)
+            overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay)
+        }
     }
 
 }

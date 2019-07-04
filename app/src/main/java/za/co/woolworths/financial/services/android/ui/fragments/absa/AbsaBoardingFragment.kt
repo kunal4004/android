@@ -34,11 +34,11 @@ class AbsaBoardingFragment : AbsaFragmentExtension(), View.OnClickListener {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater!!.inflate(R.layout.absa_on_boarding_fragment, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupLater.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         setupPasscode.setOnClickListener(this)

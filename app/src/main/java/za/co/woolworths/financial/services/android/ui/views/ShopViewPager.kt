@@ -9,7 +9,7 @@ import android.view.View
 import com.facebook.drawee.gestures.GestureDetector
 
 
-class ShopViewPager(context: Context?, attrs: AttributeSet?) : ViewPager(context, attrs) {
+class ShopViewPager(context: Context, attrs: AttributeSet?) : ViewPager(context, attrs) {
 
     override fun onTouchEvent(ev: MotionEvent?): Boolean {
         return false

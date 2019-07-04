@@ -60,9 +60,9 @@ open class BPIFragment : Fragment() {
     }
 
     fun getInsuranceType(): MutableList<InsuranceType>? {
-        if (arguments != null) {
-            if (arguments.containsKey("accountInfo")) {
-                val account: Account? = Gson().fromJson(arguments.get("accountInfo") as String, Account::class.java)
+        arguments?.let {
+            if (it.containsKey("accountInfo")) {
+                val account: Account? = Gson().fromJson(it.get("accountInfo") as String, Account::class.java)
                 return account?.insuranceTypes ?: mutableListOf()
             }
         }

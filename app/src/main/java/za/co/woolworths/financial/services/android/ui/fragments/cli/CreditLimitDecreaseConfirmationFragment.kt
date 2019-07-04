@@ -43,7 +43,7 @@ class CreditLimitDecreaseConfirmationFragment : WBottomSheetDialogFragment() {
         return inflater.inflate(R.layout.credit_limit_decrease_bottom_sheet_fragment, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         tvGotIt?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         tvDescriptionPart2?.text = getString(R.string.credit_limit_decrease_desc_part_2, mTrackedAmount)

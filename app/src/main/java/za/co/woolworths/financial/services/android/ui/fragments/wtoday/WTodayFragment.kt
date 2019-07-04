@@ -36,11 +36,11 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface {
         activity?.let { Utils.updateStatusBarBackground(it) }
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater?.inflate(R.layout.wtoday_main_fragment, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         configureUI()
         setClient()
@@ -95,7 +95,7 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface {
                     data?.let {
                         val uri = Uri.parse(it)
                         val intent = Intent(Intent.ACTION_VIEW, uri)
-                        if (intent.resolveActivity(activity.packageManager) != null) startActivity(intent)
+                        if (intent.resolveActivity(activity?.packageManager) != null) startActivity(intent)
                     }
                 } catch (e: Exception) {
                     Log.e(TAG, e.message)

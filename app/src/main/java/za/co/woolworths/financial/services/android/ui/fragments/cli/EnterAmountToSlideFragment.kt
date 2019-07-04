@@ -59,7 +59,7 @@ class EnterAmountToSlideFragment : WBottomSheetDialogFragment() {
         return inflater.inflate(R.layout.cli_slider_error_dialog, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         tvTitle?.text = mTitle
         tvDescription?.text = mDescription
