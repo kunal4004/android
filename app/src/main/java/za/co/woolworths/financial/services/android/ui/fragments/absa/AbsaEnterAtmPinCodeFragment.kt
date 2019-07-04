@@ -13,6 +13,7 @@ import android.view.View.*
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
+import com.android.volley.NoConnectionError
 import com.android.volley.VolleyError
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_pin_atm_fragment.*
@@ -204,7 +205,7 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
     override fun onFatalError(error: VolleyError?) {
         progressIndicator(GONE)
         clearPin()
-        ErrorHandlerView(activity).showToast()
+        if (error is NoConnectionError) ErrorHandlerView(activity).showToast() else showErrorScreen(ErrorHandlerActivity.COMMON)
     }
 
     override fun onResume() {

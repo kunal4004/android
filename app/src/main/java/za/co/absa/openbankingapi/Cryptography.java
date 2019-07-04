@@ -1,5 +1,7 @@
 package za.co.absa.openbankingapi;
 
+import com.crashlytics.android.Crashlytics;
+
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
@@ -23,6 +25,7 @@ public class Cryptography {
             SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
             return secretKeyFactory.generateSecret(keySpec).getEncoded();
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            Crashlytics.logException(e);
             throw new KeyGenerationFailureException(e);
         }
     }

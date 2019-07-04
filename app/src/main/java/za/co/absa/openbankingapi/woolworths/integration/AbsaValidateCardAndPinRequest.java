@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.crashlytics.android.Crashlytics;
 
 import java.net.HttpCookie;
 import java.util.HashMap;
@@ -30,7 +31,7 @@ public class AbsaValidateCardAndPinRequest {
 		try {
 			this.sessionKey = SessionKey.generate();
 		} catch (KeyGenerationFailureException | AsymmetricCryptoHelper.AsymmetricEncryptionFailureException | AsymmetricCryptoHelper.AsymmetricKeyGenerationFailureException e) {
-			e.printStackTrace();
+			Crashlytics.logException(e);
 		}
 	}
 
@@ -43,7 +44,7 @@ public class AbsaValidateCardAndPinRequest {
 		try {
 			encryptedPin = SymmetricCipher.Aes256EncryptAndBase64Encode(cardPin, sessionKey.getKey(), sessionKey.getIV());
 		} catch (DecryptionFailureException e) {
-			e.printStackTrace();
+			Crashlytics.logException(e);
 		}
 
 		if (encryptedPin == null)
