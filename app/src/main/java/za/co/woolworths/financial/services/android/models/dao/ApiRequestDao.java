@@ -21,7 +21,7 @@ public class ApiRequestDao extends BaseDao {
     public static final String TAG = "ApiRequestDao";
     public static final byte[] SYMMETRIC_KEY = "K7MZpM6owN0VIjRbwfN3Xw==".getBytes();
 
-    String requestType = "";
+    public String requestType = "";
     String endpoint = "";
     String headers;
     String parameters;
