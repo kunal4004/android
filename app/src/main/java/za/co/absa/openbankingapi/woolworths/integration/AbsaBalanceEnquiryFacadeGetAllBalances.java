@@ -2,6 +2,7 @@ package za.co.absa.openbankingapi.woolworths.integration;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.crashlytics.android.Crashlytics;
 
 import java.net.HttpCookie;
 import java.util.HashMap;
@@ -32,7 +33,7 @@ public class AbsaBalanceEnquiryFacadeGetAllBalances {
         try {
             body = new AbsaBalanceEnquiryRequest(header).getJson();
         } catch (Exception e) {
-            e.printStackTrace();
+            Crashlytics.logException(e);
         }
 
         new AbsaBankingOpenApiRequest<>(WoolworthsApplication.getAbsaBankingOpenApiServices().getBaseURL() + "/wcob/BalanceEnquiryFacadeGetAllBalances.exp", AbsaBalanceEnquiryResponse.class, headers, body, true, new AbsaBankingOpenApiResponse.Listener<AbsaBalanceEnquiryResponse>() {

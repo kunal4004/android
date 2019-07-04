@@ -5,6 +5,7 @@ import android.security.KeyPairGeneratorSpec;
 import android.util.Base64;
 
 import com.awfs.coordination.BuildConfig;
+import com.crashlytics.android.Crashlytics;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -53,6 +54,7 @@ public class AbsaSecureCredentials {
 				byte[] base64DecodedAlias = Base64.decode(aliasId.getBytes(), Base64.DEFAULT);
 				aliasId = new String(decrypt(context, base64DecodedAlias));
 			}catch(Exception e){
+				Crashlytics.logException(e);
 				aliasId = "";
 			}
 		}
@@ -64,6 +66,7 @@ public class AbsaSecureCredentials {
 				byte[] base64DecodedDeviceId = Base64.decode(deviceId.getBytes(), Base64.DEFAULT);
 				deviceId = new String(decrypt(context, base64DecodedDeviceId));
 			}catch(Exception e){
+				Crashlytics.logException(e);
 				deviceId = "";
 			}
 		}
@@ -92,7 +95,7 @@ public class AbsaSecureCredentials {
 			saveAliasIdToSqlite(context);
 			saveDeviceIdToSqlite(context);
 		} catch (Exception e) {
-			e.printStackTrace();
+			Crashlytics.logException(e);
 		}
 	}
 
@@ -158,7 +161,7 @@ public class AbsaSecureCredentials {
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			Crashlytics.logException(e);
 		}
 	}
 
