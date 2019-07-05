@@ -9,7 +9,7 @@ android {
     def minor = "12"
     def fix = "0"
 
-    def jobNumber = 323
+    def jobNumber = 324
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
 
     dataBinding {
