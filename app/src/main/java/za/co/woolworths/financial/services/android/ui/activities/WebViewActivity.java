@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -23,9 +24,12 @@ import android.widget.RelativeLayout;
 import com.awfs.coordination.R;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.SessionUtilities;
 
 public class WebViewActivity extends AppCompatActivity {
 
@@ -80,7 +84,7 @@ public class WebViewActivity extends AppCompatActivity {
 		}
 		//clearCookies(this);
 		if (TextUtils.isEmpty(url)) mErrorView.networkFailureHandler("");
-		webView.loadUrl(url);
+		webView.loadUrl(url, getExtraHeader());
 	}
 
 	public void toggleLoading(boolean show) {
@@ -133,5 +137,11 @@ public class WebViewActivity extends AppCompatActivity {
 			}
 		}
 
+	}
+
+	private Map<String, String> getExtraHeader() {
+		Map<String, String> extraHeaders = new HashMap<>();
+		extraHeaders.put("bearer", SessionUtilities.getInstance().getSessionToken());
+		return extraHeaders;
 	}
 }
