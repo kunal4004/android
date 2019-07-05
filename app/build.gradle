@@ -95,7 +95,7 @@ android {
             defaultConfig {
                 applicationId "com.awfs.coordination.qa"
                 signingConfig signingConfigs.woneappQa
-                buildConfigField("String", "HOST", '"http://wfs-appserver-qa.wigroup.co:8080/wfs/app/v4"')
+                buildConfigField("String", "HOST", '"https://wfs-appserver-qa.wigroup.co/wfs/app/v4"')
                 buildConfigField("String", "SHA1", '"ecd631798df6d366535c3a501908cce136d40087"')
                 buildConfigField("String", "ENV", '"QA"')
             }
@@ -179,6 +179,7 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:26.1.0'
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+
     implementation 'android.arch.lifecycle:extensions:1.1.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.facebook.fresco:fresco:1.12.1'
