@@ -6,6 +6,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -22,6 +23,7 @@ import za.co.woolworths.financial.services.android.models.dto.TransactionHistory
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.ui.adapters.WTransactionsAdapter;
+import za.co.woolworths.financial.services.android.ui.views.FloatingActionButtonExpandable;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -37,6 +39,7 @@ public class WTransactionsActivity extends AppCompatActivity {
 	private ErrorHandlerView mErrorHandlerView;
 	private ProgressBar pbTransaction;
 	private Call<TransactionHistoryResponse> mExecuteTransactionRequest;
+	private FloatingActionButtonExpandable chatIcon;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +61,7 @@ public class WTransactionsActivity extends AppCompatActivity {
 		getSupportActionBar().setElevation(0);
 		transactionListview = findViewById(R.id.transactionListView);
 		pbTransaction = findViewById(R.id.pbTransaction);
+		chatIcon = findViewById(R.id.chatIcon);
 		productOfferingId = getIntent().getStringExtra("productOfferingId");
 		loadTransactionHistory(productOfferingId);
 		findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
@@ -68,6 +72,35 @@ public class WTransactionsActivity extends AppCompatActivity {
 				}
 			}
 
+		});
+		chatIcon.expand(true);
+		transactionListview.setOnScrollListener(new AbsListView.OnScrollListener(){
+			private int lastPosition = -1;
+			@Override
+			public void onScrollStateChanged(AbsListView absListView, int i) {
+
+			}
+
+			@Override
+			public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+				if(lastPosition == firstVisibleItem)
+				{
+					return;
+				}
+
+				if(firstVisibleItem > lastPosition)
+				{
+					if (transactionListview.getVisibility() == View.VISIBLE)
+						chatIcon.collapse(true);
+				}
+				else
+				{
+					if (transactionListview.getVisibility() == View.VISIBLE)
+						chatIcon.expand(true);
+				}
+
+				lastPosition = firstVisibleItem;
+			}
 		});
 	}
 
@@ -93,9 +126,9 @@ public class WTransactionsActivity extends AppCompatActivity {
 					switch (transactionHistoryResponse.httpCode) {
 						case 200:
 							if (transactionHistoryResponse.transactions.size() > 0) {
-								transactionListview.setVisibility(View.VISIBLE);
 								mErrorHandlerView.hideEmpyState();
 								transactionListview.setAdapter(new WTransactionsAdapter(WTransactionsActivity.this, Utils.getdata(transactionHistoryResponse.transactions)));
+								transactionListview.setVisibility(View.VISIBLE);
 							} else {
 								transactionListview.setVisibility(View.GONE);
 								mErrorHandlerView.showEmptyState(3);
