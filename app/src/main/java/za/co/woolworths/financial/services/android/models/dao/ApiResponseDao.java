@@ -94,6 +94,8 @@ public class ApiResponseDao extends BaseDao {
         //ApiRequest will never be updated, only new records will be inserted.
         try {
 
+            PersistenceLayer persistenceLayer = PersistenceLayer.getInstance();
+
             String headersEncrypted = Base64.encodeToString(SymmetricCipher.Aes256Encrypt(ApiRequestDao.SYMMETRIC_KEY, this.headers), Base64.DEFAULT);
             String bodyEncrypted = Base64.encodeToString(SymmetricCipher.Aes256Encrypt(ApiRequestDao.SYMMETRIC_KEY, this.body), Base64.DEFAULT);
 
@@ -105,8 +107,14 @@ public class ApiResponseDao extends BaseDao {
             arguments.put("contentType", this.contentType);
             arguments.put("headers", headersEncrypted);
             arguments.put("body", bodyEncrypted);
-            long rowid = PersistenceLayer.getInstance().executeInsertQuery(getTableName(), arguments);
-            this.id = "" + rowid;
+
+            long rowid;
+            if (persistenceLayer.requestQueryExist(getTableName(), persistenceLayer.RESPONSE_REQUEST_ID + " =?", new String[]{apiRequestId})) {
+                persistenceLayer.executeUpdateQuery(getTableName(), arguments, persistenceLayer.RESPONSE_REQUEST_ID + " =?", new String[]{"%" + this.apiRequestId});
+            } else {
+                rowid = persistenceLayer.executeInsertQuery(getTableName(), arguments);
+                this.id = "" + rowid;
+            }
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
