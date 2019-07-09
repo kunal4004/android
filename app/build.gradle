@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.github.triplet.play'
 apply plugin: 'kotlin-android'
 apply plugin: 'io.fabric'
+apply plugin: 'com.google.firebase.firebase-perf'
 
 android {
 
@@ -169,6 +170,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-config:17.0.0'
     implementation 'com.google.firebase:firebase-dynamic-links:17.0.0'
     implementation 'com.google.firebase:firebase-invites:17.0.0'
+    implementation 'com.google.firebase:firebase-perf:17.0.2'
 
     implementation 'com.google.android:flexbox:0.2.5'
     //noinspection GradleCompatible
