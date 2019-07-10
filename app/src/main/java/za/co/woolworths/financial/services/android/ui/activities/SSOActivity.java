@@ -433,20 +433,20 @@ public class SSOActivity extends WebViewActivity {
 			}
 		}
 
+		@Nullable
+		@Override
+		public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
+			
+			//fixes WOP-4401
+			extractFormDataOnUIThreadForLoginRegisterAndCloseSSOIfNeeded();
+			return super.shouldInterceptRequest(view, url);
+		}
 
 		@Nullable
 		@Override
 		public WebResourceResponse shouldInterceptRequest(final WebView view, WebResourceRequest request) {
 
-			if (SSOActivity.this.path == Path.SIGNIN || SSOActivity.this.path == Path.REGISTER) {
-
-				runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						extractFormDataAndCloseSSOIfNeeded();
-					}
-				});
-			}
+			extractFormDataOnUIThreadForLoginRegisterAndCloseSSOIfNeeded();
 			return super.shouldInterceptRequest(view, request);
 		}
 
@@ -514,6 +514,18 @@ public class SSOActivity extends WebViewActivity {
 		}
 
 	};
+
+	private void extractFormDataOnUIThreadForLoginRegisterAndCloseSSOIfNeeded(){
+		if (SSOActivity.this.path == Path.SIGNIN || SSOActivity.this.path == Path.REGISTER) {
+
+			runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					extractFormDataAndCloseSSOIfNeeded();
+				}
+			});
+		}
+	}
 
 	private void extractFormDataAndCloseSSOIfNeeded(){
 		SSOActivity.this.webView.evaluateJavascript("(function(){return {'content': [document.forms[0].state.value.toString(), document.forms[0].id_token.value.toString()]}})();", new ValueCallback<String>() {
