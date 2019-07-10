@@ -50,7 +50,7 @@ android {
         abortOnError false
     }
 
-    compileSdkVersion 27
+    compileSdkVersion 28
     buildTypes {
         debug {
             debuggable true
@@ -66,7 +66,7 @@ android {
 
     defaultConfig {
         minSdkVersion 19 //kitkat 4.4
-        targetSdkVersion 27
+        targetSdkVersion 28
         multiDexEnabled true
         versionName(major + "." + minor + "." + fix)
         vectorDrawables.useSupportLibrary = true
@@ -215,10 +215,8 @@ dependencies {
     compile 'com.github.deano2390:MaterialShowcaseView:1.2.0'
     compile 'com.daasuu:BubbleLayout:1.2.0'
 
-    implementation 'com.google.code.gson:gson:2.8.2'
-
     implementation 'com.android.volley:volley:1.1.1'
-    //
+
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:2.4.0'
     testImplementation 'org.powermock:powermock-core:1.7.0RC2'
