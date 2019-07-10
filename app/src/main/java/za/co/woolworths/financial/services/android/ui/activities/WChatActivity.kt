@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.activities
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.view.MenuItem
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.util.Utils
 import kotlinx.android.synthetic.main.chat_activity.*
@@ -21,6 +22,7 @@ class WChatActivity : AppCompatActivity() {
         actionBar()
         if (savedInstanceState == null)
             getBundleArgument()
+        initViews()
     }
 
     private fun actionBar() {
@@ -43,6 +45,21 @@ class WChatActivity : AppCompatActivity() {
         reyclerview_message_list.layoutManager = LinearLayoutManager(this)
         adapter = WChatAdapter()
         reyclerview_message_list.adapter = adapter
+    }
+
+    override fun onBackPressed() {
+        finish()
+        overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+
+        when (item?.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+            }
+        }
+        return false
     }
 
     fun updateMessageList(message: ChatMessage) {

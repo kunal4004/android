@@ -423,7 +423,9 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.AbsaStatementsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/FaqStyle" />
-        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.WChatActivity" />
+        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.WChatActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/FaqStyle" />
 
         <provider
             android:name="za.co.woolworths.financial.services.android.util.WFileProvider"

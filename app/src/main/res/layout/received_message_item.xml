@@ -18,17 +18,19 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/text_message_body"
+        android:id="@+id/received_message_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
+        android:layout_marginLeft="@dimen/sixteen_dp"
         android:background="@drawable/received_message_bubble_bg"
         android:maxWidth="240dp"
+        android:minHeight="@dimen/fourty_five_dp"
         android:padding="8dp"
         android:text="hi man, how are you?"
+        android:gravity="center_vertical"
         android:textColor="@color/white"
         app:layout_constraintLeft_toRightOf="@+id/image_message_profile"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/text_message_time"
@@ -37,7 +39,8 @@
         android:layout_marginLeft="4dp"
         android:text="11:40"
         android:textSize="10sp"
-        app:layout_constraintBottom_toBottomOf="@+id/text_message_body"
-        app:layout_constraintLeft_toRightOf="@+id/text_message_body" />
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/received_message_text"
+        app:layout_constraintLeft_toRightOf="@+id/received_message_text" />
 
 </android.support.constraint.ConstraintLayout>

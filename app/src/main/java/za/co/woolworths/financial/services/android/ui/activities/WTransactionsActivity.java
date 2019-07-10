@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -31,7 +32,7 @@ import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class WTransactionsActivity extends AppCompatActivity {
+public class WTransactionsActivity extends AppCompatActivity implements View.OnClickListener {
 
 	public Toolbar toolbar;
 	public ExpandableListView transactionListview;
@@ -102,6 +103,7 @@ public class WTransactionsActivity extends AppCompatActivity {
 				lastPosition = firstVisibleItem;
 			}
 		});
+		chatIcon.setOnClickListener(this);
 	}
 
 	@Override
@@ -199,6 +201,17 @@ public class WTransactionsActivity extends AppCompatActivity {
 
 		if (mExecuteTransactionRequest != null && !mExecuteTransactionRequest.isCanceled()) {
 			mExecuteTransactionRequest.cancel();
+		}
+	}
+
+	@Override
+	public void onClick(View view) {
+		switch (view.getId()) {
+			case R.id.chatIcon:
+				startActivity(new Intent(this, WChatActivity.class));
+				break;
+			default:
+				break;
 		}
 	}
 }
