@@ -45,11 +45,13 @@ class WChatActivity : AppCompatActivity() {
         reyclerview_message_list.layoutManager = LinearLayoutManager(this)
         adapter = WChatAdapter()
         reyclerview_message_list.adapter = adapter
+        button_send.setOnClickListener { sendMessage() }
+
     }
 
     override fun onBackPressed() {
         finish()
-        overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
+        overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -62,12 +64,20 @@ class WChatActivity : AppCompatActivity() {
         return false
     }
 
-    fun updateMessageList(message: ChatMessage) {
+    private fun updateMessageList(message: ChatMessage) {
         runOnUiThread {
             adapter?.let {
                 it.addMessage(message)
-                reyclerview_message_list.scrollToPosition(it.itemCount - 1);
+                reyclerview_message_list.scrollToPosition(it.itemCount - 1)
             }
+        }
+    }
+
+    private fun sendMessage() {
+        if (edittext_chatbox.text.isNotEmpty()) {
+            val message = edittext_chatbox.text.toString().trim()
+            updateMessageList(ChatMessage(if (message.contains("R:")) ChatMessage.Type.RECEIVED else ChatMessage.Type.SENT, if (message.contains("R:")) message.replace("R:", "") else message))
+            edittext_chatbox.text.clear()
         }
     }
 }

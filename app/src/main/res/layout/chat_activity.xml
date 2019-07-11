@@ -4,13 +4,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/default_background">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/default_background"
+    android:fitsSystemWindows="false"
+    tools:context="za.co.woolworths.financial.services.android.ui.activities.WChatActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/FaqStyle"
+        android:theme="@style/ChatActivityStyle"
         app:elevation="0dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -44,27 +47,23 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/reyclerview_message_list"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/appbar" />
-
-    <View
-        android:layout_width="0dp"
-        android:layout_height="2dp"
-        android:layout_marginBottom="0dp"
-        android:background="#dfdfdf"
+        app:layout_constraintTop_toBottomOf="@id/appbar"
         app:layout_constraintBottom_toTopOf="@+id/layout_chatbox"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        android:clipToPadding="false"
+        />
+
 
     <LinearLayout
         android:id="@+id/layout_chatbox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="#ffffff"
-        android:minHeight="48dp"
+        android:minHeight="@dimen/fifteen_dp"
         android:orientation="horizontal"
+        android:layout_margin="@dimen/thirty_two_dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent">
@@ -78,11 +77,11 @@
             android:layout_marginRight="16dp"
             android:layout_weight="1"
             android:background="@android:color/transparent"
-            android:hint="Enter message"
+            android:hint="Start typing..."
             android:maxLines="6" />
 
         <Button
-            android:id="@+id/button_chatbox_send"
+            android:id="@+id/button_send"
             android:layout_width="64dp"
             android:layout_height="48dp"
             android:layout_gravity="bottom"
