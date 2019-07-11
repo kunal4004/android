@@ -74,10 +74,10 @@ android {
         versionCode jobNumber
         applicationId "com.awfs.coordination"
         signingConfig signingConfigs.woolworths
+        ndk.abiFilters 'armeabi-v7a','arm64-v8a','x86','x86_64'
         buildConfigField("String", "HOST", '"https://wfs-appserver.wigroup.co/wfs/app/v4"')
         buildConfigField("String", "SHA1", '"e636af4f626cad1b8126a769e5d33c09345b41fe"')
         buildConfigField("String", "ENV", '""')
-
         dexOptions {
             javaMaxHeapSize "2560M"
         }
