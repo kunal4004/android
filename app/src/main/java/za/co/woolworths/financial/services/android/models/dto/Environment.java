@@ -14,6 +14,7 @@ public class Environment {
 	public String ssoUpdateDetailsRedirectUri;
 	public String wwTodayURI;
 	public String authenticVersionStamp = "";
+	public String authenticVersionReleaseNote;
 	public int storeStockLocatorConfigStartRadius;
 	public int storeStockLocatorConfigEndRadius;
 	public boolean storeStockLocatorConfigFoodProducts;
@@ -130,5 +131,9 @@ public class Environment {
 
 	public void setAuthenticVersionStamp(String authenticVersionStamp) {
 		this.authenticVersionStamp = authenticVersionStamp;
+	}
+
+	public String getAuthenticVersionReleaseNote() {
+		return authenticVersionReleaseNote;
 	}
 }

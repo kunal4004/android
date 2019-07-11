@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.StrictMode;
 
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 
@@ -64,6 +65,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
 	private static String wrewardsTCLink;
 	private static String cartCheckoutLink;
 	private static JsonElement storeCardBlockReasons;
+	private static String authenticVersionReleaseNote;
 
 
 	private WGlobalState mWGlobalState;
@@ -260,7 +262,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
 		if(!authenticVersionStamp.isEmpty() && !hashB64.equals(authenticVersionStamp)){
 			final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 			builder.setTitle(getString(R.string.update_title));
-			builder.setMessage(getString(R.string.update_desc));
+			builder.setMessage(TextUtils.isEmpty(getAuthenticVersionReleaseNote()) ? getString(R.string.update_desc) : getAuthenticVersionReleaseNote());
 			builder.setCancelable(false);
 			builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 				@Override
@@ -435,5 +437,13 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
 	public static void setAbsaBankingOpenApiServices(AbsaBankingOpenApiServices absaBankingOpenApiServices) {
 		WoolworthsApplication.absaBankingOpenApiServices = absaBankingOpenApiServices;
+	}
+
+	public static void setAuthenticVersionReleaseNote(String authenticVersionReleaseNote) {
+		WoolworthsApplication.authenticVersionReleaseNote = authenticVersionReleaseNote;
+	}
+
+	public static String getAuthenticVersionReleaseNote() {
+		return authenticVersionReleaseNote;
 	}
 }

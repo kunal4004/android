@@ -10,7 +10,7 @@ android {
     def minor = "12"
     def fix = "0"
 
-    def jobNumber = 325
+    def jobNumber = 326
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
 
     dataBinding {
@@ -160,17 +160,17 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.google.android.gms:play-services-maps:16.0.0'
-    implementation 'com.google.android.gms:play-services-location:16.0.0'
-    implementation 'com.google.android.gms:play-services-gcm:16.1.0'
-    implementation 'com.google.android.gms:play-services-tagmanager:16.0.8'
-    implementation 'com.google.android.gms:play-services-analytics:16.0.8'
-    implementation 'com.google.firebase:firebase-messaging:18.0.0'
-    implementation 'com.google.firebase:firebase-core:16.0.9'
-    implementation 'com.google.firebase:firebase-config:17.0.0'
-    implementation 'com.google.firebase:firebase-dynamic-links:17.0.0'
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
+    implementation 'com.google.android.gms:play-services-location:17.0.0'
+    implementation 'com.google.android.gms:play-services-gcm:17.0.0'
+    implementation 'com.google.android.gms:play-services-tagmanager:17.0.0'
+    implementation 'com.google.android.gms:play-services-analytics:17.0.0'
+    implementation 'com.google.firebase:firebase-messaging:19.0.1'
+    implementation 'com.google.firebase:firebase-core:17.0.0'
+    implementation 'com.google.firebase:firebase-config:18.0.0'
+    implementation 'com.google.firebase:firebase-dynamic-links:18.0.0'
     implementation 'com.google.firebase:firebase-invites:17.0.0'
-    implementation 'com.google.firebase:firebase-perf:17.0.2'
+    implementation 'com.google.firebase:firebase-perf:18.0.1'
 
     implementation 'com.google.android:flexbox:0.2.5'
     //noinspection GradleCompatible
@@ -186,8 +186,8 @@ dependencies {
     implementation 'com.facebook.fresco:fresco:1.12.1'
     implementation 'com.facebook.fresco:animated-gif:1.12.1'
     implementation 'com.facebook.android:facebook-android-sdk:5.1.1'
-    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
-    implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.9'
 
     implementation(name: 'utils-1.1.8', ext: 'aar')
     implementation(name: 'Logger-1', ext: 'aar')
