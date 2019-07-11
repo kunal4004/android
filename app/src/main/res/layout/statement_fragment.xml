@@ -27,7 +27,7 @@
             sothree:umanoScrollableView="@+id/scrollProduct"
             sothree:umanoShadowHeight="0dp">
 
-            <androidx.constraintlayout.ConstraintLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/ccRecyclerViewContainer"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -89,7 +89,7 @@
                     </RelativeLayout>
                 </LinearLayout>
 
-            </androidx.constraintlayout.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <LinearLayout
                 android:id="@+id/detailsView"
