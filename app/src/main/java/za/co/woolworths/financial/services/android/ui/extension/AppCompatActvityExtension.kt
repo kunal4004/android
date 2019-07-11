@@ -5,6 +5,8 @@ import android.support.annotation.AnimRes
 import android.support.annotation.IdRes
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import com.google.gson.Gson
@@ -126,3 +128,29 @@ fun EditText.hideKeyboard(activity: AppCompatActivity) {
 }
 
 inline fun <reified T> Gson.fromJson(json: String): T = this.fromJson<T>(json, object: TypeToken<T>() {}.type)
+
+fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
+    this.addTextChangedListener(object : TextWatcher {
+        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+        }
+
+        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+        }
+
+        override fun afterTextChanged(editable: Editable?) {
+            afterTextChanged.invoke(editable.toString())
+        }
+    })
+}
+
+fun EditText.onAction(action: Int, runAction: () -> Unit) {
+    this.setOnEditorActionListener { v, actionId, event ->
+        return@setOnEditorActionListener when (actionId) {
+            action -> {
+                runAction.invoke()
+                true
+            }
+            else -> false
+        }
+    }
+}

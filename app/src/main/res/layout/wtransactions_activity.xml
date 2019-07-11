@@ -77,7 +77,7 @@
         android:layout_margin="@dimen/sixteen_dp"
         app:fab_content="@string/chat_button_text"
         app:fab_duration="@integer/chat_button_animation_duration"
-        app:fab_icon="@drawable/icon_next_active"
+        app:fab_icon="@drawable/ic_chat_icon"
         app:fab_padding="@dimen/fourteen_dp"
         app:fab_padding_text_icon="@dimen/twenty_four_dp"
         app:fab_text_size="@dimen/fourteen_sp" />

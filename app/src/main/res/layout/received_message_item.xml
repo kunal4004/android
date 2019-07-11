@@ -6,14 +6,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/default_background"
-    android:paddingTop="8dp">
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp">
 
     <ImageView
         android:id="@+id/image_message_profile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
-        android:background="@drawable/appicon"
+        android:background="@drawable/ic_bot"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -23,11 +24,11 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/sixteen_dp"
         android:background="@drawable/received_message_bubble_bg"
+        android:gravity="center_vertical"
         android:maxWidth="240dp"
         android:minHeight="@dimen/fourty_five_dp"
         android:padding="8dp"
         android:text="hi man, how are you?"
-        android:gravity="center_vertical"
         android:textColor="@color/white"
         app:layout_constraintLeft_toRightOf="@+id/image_message_profile"
         app:layout_constraintTop_toTopOf="parent" />

@@ -991,4 +991,5 @@
     <string name="credit_limit_decrease_desc_part_2">Do you still want to reduce your limit to %1$s, or would you like to proceed with the maximum credit limit you have qualified for?</string>
     <string name="credit_limit_decrease_max_button">proceed with the maximum</string>
     <string name="chat_button_text">Chat With Us</string>
+    <string name="start_typing">Start typing...</string>
 </resources>

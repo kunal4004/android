@@ -4,11 +4,14 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.MenuItem
+import android.view.inputmethod.EditorInfo
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.util.Utils
 import kotlinx.android.synthetic.main.chat_activity.*
 import za.co.woolworths.financial.services.android.models.dto.ChatMessage
 import za.co.woolworths.financial.services.android.ui.adapters.WChatAdapter
+import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
+import za.co.woolworths.financial.services.android.ui.extension.onAction
 
 
 class WChatActivity : AppCompatActivity() {
@@ -46,6 +49,8 @@ class WChatActivity : AppCompatActivity() {
         adapter = WChatAdapter()
         reyclerview_message_list.adapter = adapter
         button_send.setOnClickListener { sendMessage() }
+        edittext_chatbox.afterTextChanged { button_send.isEnabled = it.isNotEmpty() }
+        edittext_chatbox.onAction(EditorInfo.IME_ACTION_DONE){sendMessage()}
 
     }
 
