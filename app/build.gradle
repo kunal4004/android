@@ -185,7 +185,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.facebook.fresco:fresco:1.12.1'
     implementation 'com.facebook.fresco:animated-gif:1.12.1'
-    implementation 'com.facebook.android:facebook-android-sdk:5.1.0'
+    implementation 'com.facebook.android:facebook-android-sdk:5.1.1'
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
     implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
 
