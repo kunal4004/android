@@ -2,8 +2,8 @@ package za.co.woolworths.financial.services.android.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
 import com.google.gson.JsonElement
 import kotlinx.android.synthetic.main.order_details_activity.*
@@ -85,13 +85,13 @@ class OrderDetailsActivity : AppCompatActivity(), FragmentsEventsListner, IToast
             return
         }
         val fragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
-        fragment.onActivityResult(requestCode, resultCode, data)
+        fragment?.onActivityResult(requestCode, resultCode, data)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         val fragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer)
-        fragment.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        fragment?.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
     override fun onItemsAddedToCart(addItemToCartResponse: AddItemToCartResponse) {

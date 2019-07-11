@@ -1,7 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.loan
 
 import android.app.Activity
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.models.dto.Account

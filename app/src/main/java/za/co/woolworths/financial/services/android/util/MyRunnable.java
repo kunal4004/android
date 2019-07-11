@@ -1,6 +1,6 @@
 package za.co.woolworths.financial.services.android.util;
 
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * Created by dimitrij on 2017/02/24.

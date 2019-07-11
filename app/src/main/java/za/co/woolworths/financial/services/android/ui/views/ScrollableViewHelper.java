@@ -1,6 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.views;
 
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.ScrollView;

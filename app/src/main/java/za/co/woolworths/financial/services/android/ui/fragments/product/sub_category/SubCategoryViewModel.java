@@ -1,6 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.sub_category;
 
-import android.databinding.ObservableBoolean;
+import androidx.databinding.ObservableBoolean;
 
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.RequestListener;

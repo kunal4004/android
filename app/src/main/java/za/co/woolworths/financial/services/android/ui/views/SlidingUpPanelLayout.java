@@ -10,8 +10,8 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v4.view.MotionEventCompat;
-import android.support.v4.view.ViewCompat;
+import androidx.core.view.MotionEventCompat;
+import androidx.core.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
@@ -26,8 +26,6 @@ import com.awfs.coordination.R;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static android.graphics.Canvas.ALL_SAVE_FLAG;
 
 public class SlidingUpPanelLayout extends ViewGroup {
 

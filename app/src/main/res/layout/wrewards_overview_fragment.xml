@@ -245,7 +245,7 @@
                         app:WTextView_font="medium_bold"
                         />
 
-                    <android.support.v4.view.ViewPager
+                    <androidx.viewpager.widget.ViewPager
                         android:id="@+id/promotionViewPager"
                         android:layout_width="match_parent"
                         android:layout_height="270dp"

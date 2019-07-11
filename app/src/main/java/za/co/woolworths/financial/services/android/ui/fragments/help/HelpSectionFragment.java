@@ -2,10 +2,10 @@ package za.co.woolworths.financial.services.android.ui.fragments.help;
 
 
 import android.app.Fragment;
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.view.View;
 import android.widget.RelativeLayout;
 

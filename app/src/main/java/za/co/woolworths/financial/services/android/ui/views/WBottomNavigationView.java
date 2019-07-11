@@ -5,14 +5,11 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Paint;
 import android.graphics.Typeface;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.internal.BottomNavigationItemView;
-import android.support.design.internal.BottomNavigationMenuView;
-import android.support.design.widget.BottomNavigationView;
-import android.support.transition.Transition;
-import android.support.transition.TransitionSet;
-import android.support.v4.view.ViewPager;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.transition.Transition;
+import androidx.transition.TransitionSet;
+import androidx.viewpager.widget.ViewPager;
 import android.util.AttributeSet;
 import android.util.SparseIntArray;
 import android.util.TypedValue;
@@ -22,6 +19,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.google.android.material.bottomnavigation.BottomNavigationItemView;
+import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
@@ -987,7 +988,7 @@ public class WBottomNavigationView extends BottomNavigationView {
 
 	@SuppressLint("RestrictedApi")
 	public void enableShiftingMode(int position, boolean enable) {
-		getBottomNavigationItemView(position).setShiftingMode(enable);
+		getBottomNavigationItemView(position).setShifting(enable);
 	}
 
 	@SuppressLint("RestrictedApi")

@@ -1,7 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.wtoday
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.gson.Gson

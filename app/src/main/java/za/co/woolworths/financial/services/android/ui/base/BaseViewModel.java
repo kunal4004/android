@@ -1,7 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.base;
 
-import android.arch.lifecycle.ViewModel;
-import android.databinding.ObservableBoolean;
+import androidx.databinding.ObservableBoolean;
+import androidx.lifecycle.ViewModel;
+
 import android.text.TextUtils;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
