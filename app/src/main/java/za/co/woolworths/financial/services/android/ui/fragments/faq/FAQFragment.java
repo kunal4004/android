@@ -1,10 +1,10 @@
 package za.co.woolworths.financial.services.android.ui.fragments.faq;
 
 import android.app.Activity;
-import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import android.view.View;
 import android.widget.ProgressBar;
 

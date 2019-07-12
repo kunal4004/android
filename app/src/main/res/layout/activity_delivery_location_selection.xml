@@ -7,7 +7,7 @@
     android:orientation="vertical"
     tools:context="za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -50,7 +50,7 @@
                 android:layout_marginRight="16dp"
                 android:src="@drawable/close_24" />
         </RelativeLayout>
-    </android.support.v7.widget.Toolbar>
+    </androidx.appcompat.widget.Toolbar>
 
     <View
         android:layout_width="match_parent"

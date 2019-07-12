@@ -1,7 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.adapters
 
 import android.content.Context
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.text.TextUtils.isEmpty
 import android.util.Log
 import android.view.LayoutInflater
@@ -21,7 +21,7 @@ class AddOrderToCartAdapter(val context: Context, val listner: OnItemClick, var 
 
     private var mAdapterIsClickable: Boolean = false
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): OrdersBaseViewHolder? {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OrdersBaseViewHolder {
         when (viewType) {
             OrderDetailsItem.ViewType.HEADER.value -> {
                 return HeaderViewHolder(LayoutInflater.from(context).inflate(R.layout.my_orders_past_orders_header, parent, false))
@@ -29,16 +29,16 @@ class AddOrderToCartAdapter(val context: Context, val listner: OnItemClick, var 
             OrderDetailsItem.ViewType.COMMERCE_ITEM.value -> {
                 return OrderItemViewHolder(LayoutInflater.from(context).inflate(R.layout.orders_to_cart_commerce_item, parent, false))
             }
+            else -> return HeaderViewHolder(LayoutInflater.from(context).inflate(R.layout.my_orders_past_orders_header, parent, false))
         }
-        return null
     }
 
     override fun getItemCount(): Int {
         return dataList.size
     }
 
-    override fun onBindViewHolder(holder: OrdersBaseViewHolder?, position: Int) {
-        holder?.bind(position)
+    override fun onBindViewHolder(holder: OrdersBaseViewHolder, position: Int) {
+        holder.bind(position)
     }
 
 

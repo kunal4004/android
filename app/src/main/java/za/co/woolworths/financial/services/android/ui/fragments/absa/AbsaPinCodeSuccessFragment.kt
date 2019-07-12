@@ -3,8 +3,8 @@ package za.co.woolworths.financial.services.android.ui.fragments.absa
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.*
 import com.android.volley.VolleyError

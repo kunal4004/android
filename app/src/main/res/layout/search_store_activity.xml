@@ -14,7 +14,7 @@
         android:background="@color/recent_search_bg"
         android:orientation="vertical">
 
-        <android.support.design.widget.AppBarLayout
+        <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -22,7 +22,7 @@
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:elevation="0dp">
 
-            <android.support.v7.widget.Toolbar
+            <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -31,7 +31,7 @@
                 android:minHeight="?attr/actionBarSize"
                 app:popupTheme="@style/StoreSearch"
                 app:theme="@style/StoreSearch"/>
-        </android.support.design.widget.AppBarLayout>
+        </com.google.android.material.appbar.AppBarLayout >
 
         <include
             android:id="@+id/recentSearchLayout"
@@ -74,7 +74,7 @@
                 app:WTextView_font="myriadpro_regular"/>
         </RelativeLayout>
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/storeList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

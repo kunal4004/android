@@ -17,7 +17,7 @@
             android:layout_gravity="fill_vertical"
             android:clipToPadding="false">
 
-            <android.support.v4.widget.NestedScrollView
+            <androidx.core.widget.NestedScrollView
                 android:id="@+id/nest_scrollview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -30,7 +30,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <android.support.v7.widget.Toolbar
+                    <androidx.appcompat.widget.Toolbar
                         android:id="@+id/toolbar"
                         android:layout_width="match_parent"
                         android:layout_height="?attr/actionBarSize"
@@ -48,7 +48,7 @@
                             android:textSize="12sp"
                             app:WTextView_font="medium_bold"/>
 
-                    </android.support.v7.widget.Toolbar>
+                    </androidx.appcompat.widget.Toolbar>
 
                     <za.co.woolworths.financial.services.android.ui.views.WViewPager
                         android:id="@+id/myAccountsCardPager"
@@ -70,7 +70,7 @@
                         app:layout_collapseMode="pin"/>
 
                 </LinearLayout>
-            </android.support.v4.widget.NestedScrollView>
+            </androidx.core.widget.NestedScrollView>
 
             <za.co.woolworths.financial.services.android.ui.views.WButton
                 android:id="@+id/btnApplyNow"

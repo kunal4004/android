@@ -1,7 +1,7 @@
 package za.co.woolworths.financial.services.android.util
 
 import android.app.Activity
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment
 
 class DialogManager constructor(private val activity: Activity) {
