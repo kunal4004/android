@@ -48,10 +48,7 @@ public class SupplyIncomeDetailFragment extends CLIFragment implements View.OnCl
 	private IncreaseLimitController mIncreaseLimitController;
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		if (rootView == null) {
-			rootView = inflater.inflate(R.layout.supply_income_detail_fragment, container, false);
-		}
-		return rootView;
+		return inflater.inflate(R.layout.supply_income_detail_fragment, container, false);
 	}
 
 	@Override
