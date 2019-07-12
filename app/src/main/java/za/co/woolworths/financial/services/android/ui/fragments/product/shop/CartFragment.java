@@ -762,6 +762,11 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				mProvinceName = data.provinceName;
 				if (activity != null)
 					setDeliveryLocation(mSuburbName + ", " + mProvinceName);
+
+				Province province = new Province();
+				province.name = mProvinceName;
+				if (cartResponse.orderSummary.suburb != null)
+					Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(province, cartResponse.orderSummary.suburb));
 			}
 			JSONObject itemsObject = new JSONObject(new Gson().toJson(data.items));
 			Iterator<String> keys = itemsObject.keys();
@@ -788,11 +793,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					cartItemGroup.setType("PREMIUM BRAND");
 				else
 					cartItemGroup.setType("OTHER");
-
-				Province province = new Province();
-				province.name = mProvinceName;
-				if (cartResponse.orderSummary.suburb != null)
-					Utils.savePreferredDeliveryLocation(new ShoppingDeliveryLocation(province, cartResponse.orderSummary.suburb));
 
 				JSONArray productsArray = itemsObject.getJSONArray(key);
 				if (productsArray.length() > 0) {

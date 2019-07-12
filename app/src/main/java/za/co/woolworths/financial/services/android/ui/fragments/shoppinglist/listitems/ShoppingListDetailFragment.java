@@ -63,6 +63,7 @@ import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.MultiMap;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
+import za.co.woolworths.financial.services.android.util.PostItemToCart;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
@@ -934,8 +935,9 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     protected Call<AddItemToCartResponse> postAddItemToCart(List<AddItemToCart> addItemToCart) {
         onAddToCartPreExecute();
         addedToCartFail(false);
-        Call<AddItemToCartResponse> addItemToCartRequest = OneAppService.INSTANCE.addItemToCart(addItemToCart);
-        addItemToCartRequest.enqueue(new CompletionHandler<>(new RequestListener<AddItemToCartResponse>() {
+
+        PostItemToCart postItemToCart  = new PostItemToCart();
+        return postItemToCart.make(addItemToCart, new RequestListener<AddItemToCartResponse>() {
             @Override
             public void onSuccess(AddItemToCartResponse addItemToCartResponse) {
                 switch (addItemToCartResponse.httpCode) {
@@ -967,9 +969,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             public void onFailure(Throwable error) {
                 addedToCartFail(true);
             }
-        },AddItemToCartResponse.class));
-
-     return addItemToCartRequest;
+        });
     }
 
     public void addedToCartFail(boolean addedToCart) {

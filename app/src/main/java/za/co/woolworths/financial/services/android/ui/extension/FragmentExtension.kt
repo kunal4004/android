@@ -19,18 +19,20 @@ fun Fragment.replaceFragment(fragment: Fragment,
                              @AnimRes exitAnimation: Int = 0,
                              @AnimRes popEnterAnimation: Int = 0,
                              @AnimRes popExitAnimation: Int = 0) {
-    if (activity != null) {
-        val ft = activity.supportFragmentManager
+
+    activity?.apply {
+        val ft = supportFragmentManager
                 .beginTransaction()
                 .setCustomAnimations(enterAnimation, exitAnimation, popEnterAnimation, popExitAnimation)
                 .addToBackStack(fragment.javaClass.name)
                 .replace(containerViewId, fragment, tag)
-        if (!activity.supportFragmentManager.isStateSaved) {
+        if (!supportFragmentManager.isStateSaved) {
             ft.commit()
         } else if (allowStateLoss) {
             ft.commitAllowingStateLoss()
         }
     }
+
 }
 
 inline fun <T : Fragment> T.withArgs(

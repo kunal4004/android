@@ -48,7 +48,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
         return inflater.inflate(R.layout.shopping_list_fragment, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (isFragmentVisible) {
             initUI()
@@ -60,7 +60,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
     private fun initUI() {
         activity?.let {
             val itemDecorator = DividerItemDecoration(it, DividerItemDecoration.VERTICAL)
-            itemDecorator.setDrawable(ContextCompat.getDrawable(it, R.drawable.divider))
+            ContextCompat.getDrawable(it, R.drawable.divider)?.let { it1 -> itemDecorator.setDrawable(it1) }
             rcvShoppingLists.addItemDecoration(itemDecorator)
             rcvShoppingLists.layoutManager = LinearLayoutManager(it, LinearLayout.VERTICAL, false)
             mAddToShoppingListAdapter = ViewShoppingListAdapter(mutableListOf(), this)

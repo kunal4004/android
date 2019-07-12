@@ -21,7 +21,7 @@ class ResendOTPFragment : WBottomSheetDialogFragment() {
         return inflater.inflate(R.layout.npc_resend_otp_fragment, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         tvCancel?.setOnClickListener { dismiss() }

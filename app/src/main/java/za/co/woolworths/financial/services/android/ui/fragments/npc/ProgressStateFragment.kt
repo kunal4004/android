@@ -27,7 +27,7 @@ class ProgressStateFragment : Fragment() {
         return inflater.inflate(R.layout.circle_progress_layout, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         circularProgressIndicator?.setOnAnimationStateChangedListener { _animationState ->
             _animationState?.apply {

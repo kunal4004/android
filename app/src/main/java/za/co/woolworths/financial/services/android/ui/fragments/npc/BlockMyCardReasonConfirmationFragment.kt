@@ -40,7 +40,7 @@ class BlockMyCardReasonConfirmationFragment : WBottomSheetDialogFragment() {
         return inflater.inflate(R.layout.npc_permanent_card_block_layout, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         tvCancel?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         tvCancel?.setOnClickListener {

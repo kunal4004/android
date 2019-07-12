@@ -63,7 +63,7 @@ public class ProductSearchActivity extends AppCompatActivity
 		mEditSearchProduct.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 			@Override
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId == EditorInfo.IME_ACTION_DONE || event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
 					searchProduct(mEditSearchProduct.getText().toString());
 					return true;
 				}

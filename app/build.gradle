@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.github.triplet.play'
 apply plugin: 'kotlin-android'
 apply plugin: 'io.fabric'
+apply plugin: 'com.google.firebase.firebase-perf'
 
 android {
 
@@ -9,7 +10,7 @@ android {
     def minor = "12"
     def fix = "0"
 
-    def jobNumber = 322
+    def jobNumber = 326
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
 
     dataBinding {
@@ -95,7 +96,7 @@ android {
             defaultConfig {
                 applicationId "com.awfs.coordination.qa"
                 signingConfig signingConfigs.woneappQa
-                buildConfigField("String", "HOST", '"http://wfs-appserver-qa.wigroup.co:8080/wfs/app/v4"')
+                buildConfigField("String", "HOST", '"https://wfs-appserver-qa.wigroup.co/wfs/app/v4"')
                 buildConfigField("String", "SHA1", '"ecd631798df6d366535c3a501908cce136d40087"')
                 buildConfigField("String", "ENV", '"QA"')
             }
@@ -108,7 +109,7 @@ android {
             dev {
                 applicationId "com.awfs.coordination.dev"
                 signingConfig signingConfigs.woneappDev
-                buildConfigField("String", "HOST", '"http://wfs-appserver-dev.wigroup.co:8080/wfs/app/v4"')
+                buildConfigField("String", "HOST", '"https://wfs-appserver-dev.wigroup.co/wfs/app/v4"')
                 buildConfigField("String", "SHA1", '"2f8f87cbf5933ea469c0e9c9d0793de4d8fe3744"')
                 buildConfigField("String", "ENV", '"DEV"')
             }
@@ -116,7 +117,7 @@ android {
             qa {
                 applicationId "com.awfs.coordination.qa"
                 signingConfig signingConfigs.woneappQa
-                buildConfigField("String", "HOST", '"http://wfs-appserver-qa.wigroup.co:8080/wfs/app/v4"')
+                buildConfigField("String", "HOST", '"https://wfs-appserver-qa.wigroup.co/wfs/app/v4"')
                 buildConfigField("String", "SHA1", '"ecd631798df6d366535c3a501908cce136d40087"')
                 buildConfigField("String", "ENV", '"QA"')
             }
@@ -159,7 +160,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.google.android.gms:play-services-maps:16.1.0'
+    implementation 'com.google.android.gms:play-services-maps:16.0.0'
     implementation 'com.google.android.gms:play-services-location:16.0.0'
     implementation 'com.google.android.gms:play-services-gcm:16.1.0'
     implementation 'com.google.android.gms:play-services-tagmanager:16.0.8'
@@ -169,6 +170,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-config:17.0.0'
     implementation 'com.google.firebase:firebase-dynamic-links:17.0.0'
     implementation 'com.google.firebase:firebase-invites:17.0.0'
+    implementation 'com.google.firebase:firebase-perf:17.0.2'
 
     implementation 'com.google.android:flexbox:0.2.5'
     //noinspection GradleCompatible
@@ -179,11 +181,12 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:26.1.0'
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+
     implementation 'android.arch.lifecycle:extensions:1.1.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.facebook.fresco:fresco:1.12.1'
     implementation 'com.facebook.fresco:animated-gif:1.12.1'
-    implementation 'com.facebook.android:facebook-android-sdk:4.26.0'
+    implementation 'com.facebook.android:facebook-android-sdk:5.0.3'
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
     implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
 

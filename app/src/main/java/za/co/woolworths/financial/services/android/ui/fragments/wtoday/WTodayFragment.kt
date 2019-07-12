@@ -25,8 +25,7 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.extension.isConnectedToNetwork
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment
-import za.co.woolworths.financial.services.android.util.*
-import java.lang.Exception
+import za.co.woolworths.financial.services.android.util.Utils
 
 @Suppress("DEPRECATION")
 class WTodayFragment : WTodayExtension(), IWTodayInterface {
@@ -36,11 +35,11 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface {
         activity?.let { Utils.updateStatusBarBackground(it) }
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater?.inflate(R.layout.wtoday_main_fragment, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         configureUI()
         setClient()
@@ -52,7 +51,7 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface {
                 javaScriptEnabled = true
                 mediaPlaybackRequiresUserGesture = true
                 domStorageEnabled = true
-                cacheMode = WebSettings.LOAD_CACHE_ELSE_NETWORK
+                cacheMode = WebSettings.LOAD_NO_CACHE
                 addJavascriptInterface(WebViewJavascriptInterface(this@WTodayFragment), "Android")
                 setSupportMultipleWindows(true)
 
@@ -95,7 +94,7 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface {
                     data?.let {
                         val uri = Uri.parse(it)
                         val intent = Intent(Intent.ACTION_VIEW, uri)
-                        if (intent.resolveActivity(activity.packageManager) != null) startActivity(intent)
+                        if (intent.resolveActivity(activity?.packageManager) != null) startActivity(intent)
                     }
                 } catch (e: Exception) {
                     Log.e(TAG, e.message)

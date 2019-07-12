@@ -103,14 +103,17 @@ public class EditSlideAmountFragment extends CLIFragment {
 	private void retrieveNumber(String slideAmount) {
 		int newAmount = Utils.numericFieldOnly(slideAmount);
 		if (newAmount < currentCredit) {
-			minAmountMessage(drawnDownAmount(newAmount));
+			minAmountMessage(drawnDownAmount(newAmount),newAmount);
 		} else if (newAmount > creditRequestMax) {
-			maxAmountMessage(drawnDownAmount(newAmount));
+			maxAmountMessage(drawnDownAmount(newAmount),newAmount);
 		}else {
             setDrawnDownOnSlider(newAmount);
         }
     }
 
+	/**
+	 * TODO :: Replace event bus by onActivityForResult()
+	 */
 	private void setDrawnDownOnSlider(int newAmount) {
 		int progressValue = drawnDownAmount(newAmount);
 		Activity activity = getActivity();
@@ -118,7 +121,7 @@ public class EditSlideAmountFragment extends CLIFragment {
 			CLIPhase2Activity cliPhase2Activity = ((CLIPhase2Activity) activity);
 			((WoolworthsApplication) activity.getApplication())
 					.bus()
-					.send(new BusStation(progressValue));
+					.send(new BusStation(progressValue,newAmount));
 			FragmentManager fm = cliPhase2Activity.getSupportFragmentManager();
 			fm.popBackStack(EditSlideAmountFragment.class.getSimpleName(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
 		}
@@ -185,13 +188,13 @@ public class EditSlideAmountFragment extends CLIFragment {
 			etAmount.requestFocus();
 	}
 
-	private void minAmountMessage(int progressValue) {
-		EnterAmountToSlideFragment minAmountDialog = EnterAmountToSlideFragment.Companion.newInstance(progressValue,title, getString(R.string.amount_too_low_modal_desc).replaceAll("#R", WFormatter.escapeDecimalFormat(currentCredit)));
+	private void minAmountMessage(int progressValue, int drawnDownAmount) {
+		EnterAmountToSlideFragment minAmountDialog = EnterAmountToSlideFragment.Companion.newInstance(progressValue,drawnDownAmount,title, getString(R.string.amount_too_low_modal_desc).replaceAll("#R", WFormatter.escapeDecimalFormat(currentCredit)));
 		minAmountDialog.show(getFragmentManager(),EnterAmountToSlideFragment.class.getSimpleName());
 	}
 
-	private void maxAmountMessage(int progressValue) {
-		EnterAmountToSlideFragment minAmountDialog = EnterAmountToSlideFragment.Companion.newInstance(progressValue,title, getString(R.string.amount_too_high_modal_desc).replaceAll("#R", WFormatter.escapeDecimalFormat(creditRequestMax)));
+	private void maxAmountMessage(int progressValue, int drawnDownAmount) {
+		EnterAmountToSlideFragment minAmountDialog = EnterAmountToSlideFragment.Companion.newInstance(progressValue,drawnDownAmount,title, getString(R.string.amount_too_high_modal_desc).replaceAll("#R", WFormatter.escapeDecimalFormat(creditRequestMax)));
 		minAmountDialog.show(getFragmentManager(),EnterAmountToSlideFragment.class.getSimpleName());
 	}
 

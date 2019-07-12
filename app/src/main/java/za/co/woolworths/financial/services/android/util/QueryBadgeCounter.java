@@ -135,30 +135,22 @@ public class QueryBadgeCounter extends Observable {
             public void onFailure(Throwable error) {
 
             }
-        },VoucherResponse.class));
+        }, VoucherResponse.class));
 
         return voucherCall;
     }
 
     private Call<CartSummaryResponse> loadShoppingCartCount() {
-        Call<CartSummaryResponse> cartSummaryRequest = OneAppService.INSTANCE.getCartSummary();
-        cartSummaryRequest.enqueue(new CompletionHandler<>(new RequestListener<CartSummaryResponse>() {
+        GetCartSummary cartSummary = new GetCartSummary();
+        return cartSummary.getCartSummary(new RequestListener<CartSummaryResponse>() {
             @Override
             public void onSuccess(CartSummaryResponse cartSummaryResponse) {
-                if (cartSummaryResponse == null) return;
-                switch (cartSummaryResponse.httpCode) {
-                    case 200:
-                        if (cartSummaryResponse.data == null) return;
-                        List<CartSummary> cartSummary = cartSummaryResponse.data;
-                        if (cartSummary.get(0) != null) {
-                            setCartCount(cartSummary.get(0).totalItemsCount, INDEX_CART);
-                        }
-                        break;
-                    case 400:
-                        break;
-                    default:
-                        break;
-
+                if (cartSummaryResponse.httpCode == 200) {
+                    if (cartSummaryResponse.data == null) return;
+                    List<CartSummary> cartSummary = cartSummaryResponse.data;
+                    if (cartSummary.get(0) != null) {
+                        setCartCount(cartSummary.get(0).totalItemsCount, INDEX_CART);
+                    }
                 }
             }
 
@@ -166,8 +158,7 @@ public class QueryBadgeCounter extends Observable {
             public void onFailure(Throwable error) {
 
             }
-        },CartSummaryResponse.class));
-        return cartSummaryRequest;
+        });
     }
 
     private Call<MessageResponse> loadMessageCount() {
@@ -182,7 +173,7 @@ public class QueryBadgeCounter extends Observable {
             public void onFailure(Throwable error) {
 
             }
-        },MessageResponse.class));
+        }, MessageResponse.class));
         return messageResponseCall;
     }
 

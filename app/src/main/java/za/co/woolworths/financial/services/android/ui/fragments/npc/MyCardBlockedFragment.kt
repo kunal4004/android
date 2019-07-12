@@ -23,7 +23,7 @@ class MyCardBlockedFragment : MyCardExtension() {
         return inflater.inflate(R.layout.my_card_blocked_fragment, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         btnGetReplacementCard?.setOnClickListener { navigateToReplacementCard() }

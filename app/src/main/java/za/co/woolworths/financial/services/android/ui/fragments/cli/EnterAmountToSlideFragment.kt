@@ -16,6 +16,7 @@ class EnterAmountToSlideFragment : WBottomSheetDialogFragment() {
 
     private var mTitle: String? = null
     private var mProgressValue: Int? = null
+    private var mDrawnDownAmount: Int? = null
     private var mDescription: String? = null
     private var mEditAmountSlider: IEditAmountSlider? = null
 
@@ -23,8 +24,11 @@ class EnterAmountToSlideFragment : WBottomSheetDialogFragment() {
         private const val ERROR_TITLE = "TITLE"
         private const val ERROR_DESCRIPTION = "DESCRIPTION"
         private const val PROGRESS_VALUE = "PROGRESS_VALUE"
-        fun newInstance(amount: Int, title: String, description: String) = EnterAmountToSlideFragment().withArgs {
+        private const val DRAWN_DOWN_AMOUNT = "DRAWN_DOWN_AMOUNT"
+
+        fun newInstance(amount: Int, drawnDownAmount: Int, title: String, description: String) = EnterAmountToSlideFragment().withArgs {
             putInt(PROGRESS_VALUE, amount)
+            putInt(DRAWN_DOWN_AMOUNT, drawnDownAmount)
             putString(ERROR_TITLE, title)
             putString(ERROR_DESCRIPTION, description)
         }
@@ -47,6 +51,7 @@ class EnterAmountToSlideFragment : WBottomSheetDialogFragment() {
             mProgressValue = getInt(PROGRESS_VALUE, 0)
             mTitle = getString(ERROR_TITLE, "")
             mDescription = getString(ERROR_DESCRIPTION, "")
+            mDrawnDownAmount = getInt(DRAWN_DOWN_AMOUNT, 0)
         }
     }
 
@@ -54,7 +59,7 @@ class EnterAmountToSlideFragment : WBottomSheetDialogFragment() {
         return inflater.inflate(R.layout.cli_slider_error_dialog, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         tvTitle?.text = mTitle
         tvDescription?.text = mDescription
@@ -65,6 +70,6 @@ class EnterAmountToSlideFragment : WBottomSheetDialogFragment() {
 
     override fun onDismiss(dialog: DialogInterface?) {
         super.onDismiss(dialog)
-        mEditAmountSlider?.slideAmount(mProgressValue)
+        mEditAmountSlider?.slideAmount(mProgressValue,mDrawnDownAmount)
     }
 }

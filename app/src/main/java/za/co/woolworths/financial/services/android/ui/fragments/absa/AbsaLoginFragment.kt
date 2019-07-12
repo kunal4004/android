@@ -11,6 +11,7 @@ import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.widget.EditText
 import android.widget.ImageView
+import com.android.volley.NoConnectionError
 import com.android.volley.VolleyError
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_login_fragment.*
@@ -41,7 +42,7 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
         fun newInstance() = AbsaLoginFragment()
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater?.inflate(R.layout.absa_login_fragment, container, false)
     }
 
@@ -51,7 +52,7 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
         (activity as AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViewsAndEvents()
         createTextListener(edtEnterATMPin)
@@ -123,7 +124,7 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
                         override fun onFatalError(error: VolleyError?) {
                             displayLoginProgress(false)
                             clearPin()
-                            ErrorHandlerView(activity).showToast()
+                            if (error is NoConnectionError) ErrorHandlerView(activity).showToast() else showErrorScreen(ErrorHandlerActivity.COMMON)
                         }
                     })
         }

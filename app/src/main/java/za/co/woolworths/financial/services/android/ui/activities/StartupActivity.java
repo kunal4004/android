@@ -17,6 +17,8 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+
+import com.awfs.coordination.BuildConfig;
 import com.awfs.coordination.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -27,11 +29,13 @@ import com.google.firebase.dynamiclinks.PendingDynamicLinkData;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import io.fabric.sdk.android.services.common.CommonUtils;
 import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.RequestListener;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
+import za.co.woolworths.financial.services.android.models.dto.AbsaBankingOpenApiServices;
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
@@ -41,6 +45,7 @@ import za.co.woolworths.financial.services.android.ui.activities.deep_link.Retri
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WVideoView;
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
@@ -107,7 +112,6 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 		if (bundle != null) {
 			mPushNotificationUpdate = bundle.getString(NotificationUtils.PUSH_NOTIFICATION_INTENT);
 		}
-
 
 		WoolworthsApplication woolworthsApplication = (WoolworthsApplication) StartupActivity.this.getApplication();
 		mWGlobalState = woolworthsApplication.getWGlobalState();
@@ -176,7 +180,8 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
                         WoolworthsApplication.setSsoRedirectURILogout(configResponse.configs.enviroment.getSsoRedirectURILogout());
                         WoolworthsApplication.setSsoUpdateDetailsRedirectUri(configResponse.configs.enviroment.getSsoUpdateDetailsRedirectUri());
                         WoolworthsApplication.setWwTodayURI(configResponse.configs.enviroment.getWwTodayURI());
-                        WoolworthsApplication.setAuthenticVersionStamp(configResponse.configs.enviroment.getAuthenticVersionStamp());
+						WoolworthsApplication.setAuthenticVersionReleaseNote(configResponse.configs.enviroment.getAuthenticVersionReleaseNote());
+						WoolworthsApplication.setAuthenticVersionStamp(configResponse.configs.enviroment.getAuthenticVersionStamp());
                         WoolworthsApplication.setApplyNowLink(configResponse.configs.defaults.getApplyNowLink());
                         WoolworthsApplication.setRegistrationTCLink(configResponse.configs.defaults.getRegisterTCLink());
                         WoolworthsApplication.setFaqLink(configResponse.configs.defaults.getFaqLink());
@@ -185,11 +190,15 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
                         WoolworthsApplication.setHowToSaveLink(configResponse.configs.defaults.getHowtosaveLink());
                         WoolworthsApplication.setWrewardsTCLink(configResponse.configs.defaults.getWrewardsTCLink());
                         WoolworthsApplication.setCartCheckoutLink(configResponse.configs.defaults.getCartCheckoutLink());
-                        WoolworthsApplication.setAbsaBankingOpenApiServices(configResponse.configs.absaBankingOpenApiServices);
+
+						AbsaBankingOpenApiServices absaBankingOpenApiServices = configResponse.configs.absaBankingOpenApiServices;
+						Integer appMinorMajorBuildVersion = Integer.valueOf((BuildConfig.VERSION_NAME + BuildConfig.VERSION_CODE).replace(".", ""));
+						int minimumSupportedAppVersion = TextUtils.isEmpty(absaBankingOpenApiServices.getMinSupportedAppVersion()) ? 0 : Integer.valueOf(absaBankingOpenApiServices.getMinSupportedAppVersion().replace(".", ""));
+						absaBankingOpenApiServices.setEnabled(appMinorMajorBuildVersion >= minimumSupportedAppVersion);
+						WoolworthsApplication.setAbsaBankingOpenApiServices(absaBankingOpenApiServices);
 
                         mWGlobalState.setStartRadius(configResponse.configs.enviroment.getStoreStockLocatorConfigStartRadius());
                         mWGlobalState.setEndRadius(configResponse.configs.enviroment.getStoreStockLocatorConfigEndRadius());
-
 
                         splashScreenText = configResponse.configs.enviroment.splashScreenText;
                         splashScreenDisplay = configResponse.configs.enviroment.splashScreenDisplay;
@@ -240,6 +249,15 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 	@Override
 	protected void onStart() {
 		super.onStart();
+
+		if (CommonUtils.isRooted(this) && getSupportFragmentManager() != null) {
+			if (pBar != null)
+				pBar.setVisibility(View.GONE);
+			RootedDeviceInfoFragment rootedDeviceInfoFragment = RootedDeviceInfoFragment.Companion.newInstance(getString(R.string.rooted_phone_desc));
+			rootedDeviceInfoFragment.show(getSupportFragmentManager(), RootedDeviceInfoFragment.class.getSimpleName());
+			return;
+		}
+
 		FirebaseDynamicLinks.getInstance()
 				.getDynamicLink(getIntent())
 				.addOnSuccessListener(this, new OnSuccessListener<PendingDynamicLinkData>() {
