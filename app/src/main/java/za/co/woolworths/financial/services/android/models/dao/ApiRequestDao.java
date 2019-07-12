@@ -112,10 +112,7 @@ public class ApiRequestDao extends BaseDao {
             this.dateExpires = persistenceLayer.executeReturnableQuery("SELECT DATETIME(datetime(), '+" + this.cacheTime + " seconds') as cacheTime",
                     new String[]{}).get("cacheTime");
 
-            Log.d(TAG, dateExpires);
-
             String currentTime = persistenceLayer.executeReturnableQuery("SELECT datetime('now') as currentTime", new String[]{}).get("currentTime");
-            Log.d(TAG, currentTime);
 
             String headersEncrypted = Base64.encodeToString(SymmetricCipher.Aes256Encrypt(SYMMETRIC_KEY, this.headers), Base64.DEFAULT);
             String parametersEncrypted = Base64.encodeToString(SymmetricCipher.Aes256Encrypt(SYMMETRIC_KEY, this.parameters), Base64.DEFAULT);
