@@ -1,9 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.fragments.account
 
-import android.support.v4.widget.SwipeRefreshLayout
 import android.view.animation.Animation
 import android.view.animation.RotateAnimation
 import android.widget.ImageView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.RequestListener
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse

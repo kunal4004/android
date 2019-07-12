@@ -2,7 +2,7 @@ package za.co.woolworths.financial.services.android.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
 import android.view.MenuItem
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.barcode_scan_activity.*

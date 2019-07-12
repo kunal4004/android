@@ -1,7 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.views.tick_animation;
 
 import android.graphics.Color;
-import android.support.annotation.ColorInt;
+
+import androidx.annotation.ColorInt;
 
 public class ColorUtils {
 

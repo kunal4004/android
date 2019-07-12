@@ -6,10 +6,11 @@ import android.graphics.PorterDuff;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.VisibleForTesting;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+
+import androidx.annotation.VisibleForTesting;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -250,13 +251,13 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 	protected void onStart() {
 		super.onStart();
 
-		if (CommonUtils.isRooted(this) && getSupportFragmentManager() != null) {
-			if (pBar != null)
-				pBar.setVisibility(View.GONE);
-			RootedDeviceInfoFragment rootedDeviceInfoFragment = RootedDeviceInfoFragment.Companion.newInstance(getString(R.string.rooted_phone_desc));
-			rootedDeviceInfoFragment.show(getSupportFragmentManager(), RootedDeviceInfoFragment.class.getSimpleName());
-			return;
-		}
+//		if (CommonUtils.isRooted(this) && getSupportFragmentManager() != null) {
+//			if (pBar != null)
+//				pBar.setVisibility(View.GONE);
+//			RootedDeviceInfoFragment rootedDeviceInfoFragment = RootedDeviceInfoFragment.Companion.newInstance(getString(R.string.rooted_phone_desc));
+//			rootedDeviceInfoFragment.show(getSupportFragmentManager(), RootedDeviceInfoFragment.class.getSimpleName());
+//			return;
+//		}
 
 		FirebaseDynamicLinks.getInstance()
 				.getDynamicLink(getIntent())

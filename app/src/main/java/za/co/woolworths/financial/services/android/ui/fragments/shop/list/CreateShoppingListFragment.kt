@@ -2,7 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.shop.list
 
 import android.graphics.Color
 import android.os.Bundle
-import android.support.v4.app.FragmentActivity
+import androidx.fragment.app.FragmentActivity
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.KeyEvent

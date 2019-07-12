@@ -1,7 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.activities.bpi
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.bpi.BPIOverviewFragment

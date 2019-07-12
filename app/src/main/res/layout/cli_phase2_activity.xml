@@ -8,7 +8,7 @@
               android:orientation="vertical"
               tools:context="za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/mToolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
@@ -83,7 +83,7 @@
 
             </RelativeLayout>
         </RelativeLayout>
-    </android.support.v7.widget.Toolbar>
+    </androidx.appcompat.widget.Toolbar>
 
     <FrameLayout
         android:id="@+id/cliMainFrame"

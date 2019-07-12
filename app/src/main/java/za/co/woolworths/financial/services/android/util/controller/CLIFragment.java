@@ -2,7 +2,7 @@ package za.co.woolworths.financial.services.android.util.controller;
 
 import android.app.Activity;
 import android.content.Context;
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 import android.view.inputmethod.InputMethodManager;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;

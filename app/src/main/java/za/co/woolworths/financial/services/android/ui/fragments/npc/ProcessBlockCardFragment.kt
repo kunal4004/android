@@ -3,7 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.npc
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
@@ -156,7 +156,7 @@ class ProcessBlockCardFragment : BlockMyCardRequestExtension(), IProgressAnimati
         super.onDestroy()
         activity?.supportFragmentManager?.apply {
             if (findFragmentById(R.id.flProgressIndicator) != null) {
-                beginTransaction().remove(findFragmentById(R.id.flProgressIndicator)).commitAllowingStateLoss()
+                findFragmentById(R.id.flProgressIndicator)?.let { beginTransaction().remove(it).commitAllowingStateLoss() }
             }
         }
     }
