@@ -251,13 +251,13 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 	protected void onStart() {
 		super.onStart();
 
-		if (CommonUtils.isRooted(this) && getSupportFragmentManager() != null) {
-			if (pBar != null)
-				pBar.setVisibility(View.GONE);
-			RootedDeviceInfoFragment rootedDeviceInfoFragment = RootedDeviceInfoFragment.Companion.newInstance(getString(R.string.rooted_phone_desc));
-			rootedDeviceInfoFragment.show(getSupportFragmentManager(), RootedDeviceInfoFragment.class.getSimpleName());
-			return;
-		}
+//		if (CommonUtils.isRooted(this) && getSupportFragmentManager() != null) {
+//			if (pBar != null)
+//				pBar.setVisibility(View.GONE);
+//			RootedDeviceInfoFragment rootedDeviceInfoFragment = RootedDeviceInfoFragment.Companion.newInstance(getString(R.string.rooted_phone_desc));
+//			rootedDeviceInfoFragment.show(getSupportFragmentManager(), RootedDeviceInfoFragment.class.getSimpleName());
+//			return;
+//		}
 
 		FirebaseDynamicLinks.getInstance()
 				.getDynamicLink(getIntent())

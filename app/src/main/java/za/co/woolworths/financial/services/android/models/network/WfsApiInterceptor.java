@@ -33,9 +33,10 @@ public class WfsApiInterceptor extends NetworkConfig implements Interceptor {
         Log.d(TAG,"request" + "\n" + requestLog);
 
         String cacheTimeHeaderValue = request.header("cacheTime");
-        final long cacheTime = Integer.parseInt(cacheTimeHeaderValue == null ? "0" : cacheTimeHeaderValue);//cache time in seconds
+        long cacheTime = Integer.parseInt(cacheTimeHeaderValue == null ? "0" : cacheTimeHeaderValue);//cache time in seconds
 
-        if (cacheTime == 0) {
+        // getForceNetworkUpdate() will force the request to update
+        if (cacheTime == 0 && !OneAppService.INSTANCE.getForceNetworkUpdate()) {
             Response originalResponse = chain.proceed(request);
             return originalResponse.newBuilder()
                     .header("Accept-Encoding", "gzip")
@@ -49,7 +50,11 @@ public class WfsApiInterceptor extends NetworkConfig implements Interceptor {
         ApiRequestDao apiRequestDao = new ApiRequestDao(cacheTime).get(request.method(), endpoint, headers, parametersJson);
         ApiResponseDao apiResponseDao = new ApiResponseDao().getByApiRequestId(apiRequestDao.id);
 
-        if (apiResponseDao.id != null) {  //cache exists. return cached response
+        // Override empty request type with current request type
+        apiRequestDao.requestType = request.method();
+
+        //cache exists. return cached response
+        if (apiResponseDao.id != null && !OneAppService.INSTANCE.getForceNetworkUpdate()) {
             return new Response.Builder()
                     .code(apiResponseDao.code)
                     .message(apiResponseDao.message)
@@ -78,7 +83,7 @@ public class WfsApiInterceptor extends NetworkConfig implements Interceptor {
         long t2 = System.nanoTime();
 
         String responseLog = String.format("Received response for %s in %.1fms%n%s", apiResponseDao.body + response.request().url(), (t2 - t1) / 1e6d, apiResponseDao.headers);
-
+        OneAppService.INSTANCE.setForceNetworkUpdate(false);
         return response.newBuilder()
                 .header("Cache-Control", "max-age=60")
                 .body(ResponseBody.create(MediaType.parse(apiResponseDao.contentType), apiResponseDao.body))
