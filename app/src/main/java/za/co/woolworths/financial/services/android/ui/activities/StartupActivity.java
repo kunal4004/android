@@ -1,4 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.activities;
+
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -6,12 +7,10 @@ import android.graphics.PorterDuff;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.VisibleForTesting;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import android.text.TextUtils;
+import android.support.annotation.VisibleForTesting;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -19,41 +18,31 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
-import com.awfs.coordination.BuildConfig;
 import com.awfs.coordination.R;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
-import com.google.firebase.dynamiclinks.PendingDynamicLinkData;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
-import io.fabric.sdk.android.services.common.CommonUtils;
-import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
-import za.co.woolworths.financial.services.android.contracts.RequestListener;
+import za.co.woolworths.financial.services.android.contracts.OnResultListener;
+import za.co.woolworths.financial.services.android.contracts.RootActivityInterface;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.MobileConfigServerDao;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
-import za.co.woolworths.financial.services.android.models.dto.AbsaBankingOpenApiServices;
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
-import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
-import za.co.woolworths.financial.services.android.models.network.OneAppService;
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
-import za.co.woolworths.financial.services.android.ui.activities.deep_link.RetrieveProductDetail;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WVideoView;
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
+import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class StartupActivity extends AppCompatActivity implements MediaPlayer.OnCompletionListener {
+public class StartupActivity extends AppCompatActivity implements MediaPlayer.OnCompletionListener, RootActivityInterface {
 
 	private FirebaseAnalytics mFirebaseAnalytics = null;
 
@@ -83,7 +72,6 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 	private ProgressBar pBar;
 	private WGlobalState mWGlobalState;
 	private String mPushNotificationUpdate;
-    private String mDeepLinkUrl = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -132,6 +120,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 			mFirebaseAnalytics.setUserProperty(APP_VERSION_KEY, StartupActivity.this.appVersion);
 
 			setUpScreen();
+			notifyIfNeeded();
 		} else {
 			showNonVideoViewWithErrorLayout();
 		}
@@ -144,7 +133,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 					mFirebaseAnalytics.setUserProperty(APP_VERSION_KEY, StartupActivity.this.appVersion);
 
 					setUpScreen();
-					executeConfigServer();
+					notifyIfNeeded();
 				} else {
 					showNonVideoViewWithErrorLayout();
 				}
@@ -161,66 +150,67 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 	private void executeConfigServer() {
 		//if app is expired, don't execute MCS.
 
-        Call<ConfigResponse> configResponseCall = OneAppService.INSTANCE.getConfig();
-        configResponseCall.enqueue(new CompletionHandler<>(new RequestListener<ConfigResponse>(){
+		MobileConfigServerDao.Companion.getConfig(WoolworthsApplication.getInstance(), new OnResultListener<ConfigResponse>() {
+			@Override
+			public void success(ConfigResponse configResponse) {
+				switch (configResponse.httpCode) {
+					case 200:
+						try {
+							StartupActivity.this.mVideoPlayerShouldPlay = false;
 
-            @Override
-            public void onSuccess(ConfigResponse configResponse) {
-                if (configResponse.httpCode == 200) {
-                    try {
-                        StartupActivity.this.mVideoPlayerShouldPlay = false;
+							if (configResponse.configs.enviroment.stsURI == null || configResponse.configs.enviroment.stsURI.isEmpty()) {
+								showNonVideoViewWithErrorLayout();
+								return;
+							}
 
-                        if (configResponse.configs.enviroment.stsURI == null || configResponse.configs.enviroment.stsURI.isEmpty()) {
-                            showNonVideoViewWithErrorLayout();
-                            return;
-                        }
+							WoolworthsApplication.setStoreCardBlockReasons(configResponse.configs.enviroment.storeCardBlockReasons);
+							WoolworthsApplication.setSsoRedirectURI(configResponse.configs.enviroment.getSsoRedirectURI());
+							WoolworthsApplication.setStsURI(configResponse.configs.enviroment.getStsURI());
+							WoolworthsApplication.setSsoRedirectURILogout(configResponse.configs.enviroment.getSsoRedirectURILogout());
+							WoolworthsApplication.setSsoUpdateDetailsRedirectUri(configResponse.configs.enviroment.getSsoUpdateDetailsRedirectUri());
+							WoolworthsApplication.setWwTodayURI(configResponse.configs.enviroment.getWwTodayURI());
+							WoolworthsApplication.setAuthenticVersionStamp(configResponse.configs.enviroment.getAuthenticVersionStamp());
+							WoolworthsApplication.setApplyNowLink(configResponse.configs.defaults.getApplyNowLink());
+							WoolworthsApplication.setRegistrationTCLink(configResponse.configs.defaults.getRegisterTCLink());
+							WoolworthsApplication.setFaqLink(configResponse.configs.defaults.getFaqLink());
+							WoolworthsApplication.setWrewardsLink(configResponse.configs.defaults.getWrewardsLink());
+							WoolworthsApplication.setRewardingLink(configResponse.configs.defaults.getRewardingLink());
+							WoolworthsApplication.setHowToSaveLink(configResponse.configs.defaults.getHowtosaveLink());
+							WoolworthsApplication.setWrewardsTCLink(configResponse.configs.defaults.getWrewardsTCLink());
+							WoolworthsApplication.setCartCheckoutLink(configResponse.configs.defaults.getCartCheckoutLink());
+							WoolworthsApplication.setAbsaBankingOpenApiServices(configResponse.configs.absaBankingOpenApiServices);
 
-                        WoolworthsApplication.setStoreCardBlockReasons(configResponse.configs.enviroment.storeCardBlockReasons);
-                        WoolworthsApplication.setSsoRedirectURI(configResponse.configs.enviroment.getSsoRedirectURI());
-                        WoolworthsApplication.setStsURI(configResponse.configs.enviroment.getStsURI());
-                        WoolworthsApplication.setSsoRedirectURILogout(configResponse.configs.enviroment.getSsoRedirectURILogout());
-                        WoolworthsApplication.setSsoUpdateDetailsRedirectUri(configResponse.configs.enviroment.getSsoUpdateDetailsRedirectUri());
-                        WoolworthsApplication.setWwTodayURI(configResponse.configs.enviroment.getWwTodayURI());
-						WoolworthsApplication.setAuthenticVersionReleaseNote(configResponse.configs.enviroment.getAuthenticVersionReleaseNote());
-						WoolworthsApplication.setAuthenticVersionStamp(configResponse.configs.enviroment.getAuthenticVersionStamp());
-                        WoolworthsApplication.setApplyNowLink(configResponse.configs.defaults.getApplyNowLink());
-                        WoolworthsApplication.setRegistrationTCLink(configResponse.configs.defaults.getRegisterTCLink());
-                        WoolworthsApplication.setFaqLink(configResponse.configs.defaults.getFaqLink());
-                        WoolworthsApplication.setWrewardsLink(configResponse.configs.defaults.getWrewardsLink());
-                        WoolworthsApplication.setRewardingLink(configResponse.configs.defaults.getRewardingLink());
-                        WoolworthsApplication.setHowToSaveLink(configResponse.configs.defaults.getHowtosaveLink());
-                        WoolworthsApplication.setWrewardsTCLink(configResponse.configs.defaults.getWrewardsTCLink());
-                        WoolworthsApplication.setCartCheckoutLink(configResponse.configs.defaults.getCartCheckoutLink());
+							mWGlobalState.setStartRadius(configResponse.configs.enviroment.getStoreStockLocatorConfigStartRadius());
+							mWGlobalState.setEndRadius(configResponse.configs.enviroment.getStoreStockLocatorConfigEndRadius());
 
-						AbsaBankingOpenApiServices absaBankingOpenApiServices = configResponse.configs.absaBankingOpenApiServices;
-						Integer appMinorMajorBuildVersion = Integer.valueOf((BuildConfig.VERSION_NAME + BuildConfig.VERSION_CODE).replace(".", ""));
-						int minimumSupportedAppVersion = TextUtils.isEmpty(absaBankingOpenApiServices.getMinSupportedAppVersion()) ? 0 : Integer.valueOf(absaBankingOpenApiServices.getMinSupportedAppVersion().replace(".", ""));
-						absaBankingOpenApiServices.setEnabled(appMinorMajorBuildVersion >= minimumSupportedAppVersion);
-						WoolworthsApplication.setAbsaBankingOpenApiServices(absaBankingOpenApiServices);
 
-                        mWGlobalState.setStartRadius(configResponse.configs.enviroment.getStoreStockLocatorConfigStartRadius());
-                        mWGlobalState.setEndRadius(configResponse.configs.enviroment.getStoreStockLocatorConfigEndRadius());
+							splashScreenText = configResponse.configs.enviroment.splashScreenText;
+							splashScreenDisplay = configResponse.configs.enviroment.splashScreenDisplay;
+							splashScreenPersist = configResponse.configs.enviroment.splashScreenPersist;
 
-                        splashScreenText = configResponse.configs.enviroment.splashScreenText;
-                        splashScreenDisplay = configResponse.configs.enviroment.splashScreenDisplay;
-                        splashScreenPersist = configResponse.configs.enviroment.splashScreenPersist;
+							if (!isVideoPlaying) {
+								presentNextScreenOrServerMessage();
+							}
 
-                        if (!isVideoPlaying) {
-                            presentNextScreenOrServerMessage();
-                        }
+						} catch (NullPointerException ex) {
+							showNonVideoViewWithErrorLayout();
+						}
+						break;
+					default:
+						break;
+				}
+			}
 
-                    } catch (NullPointerException ex) {
-                        showNonVideoViewWithErrorLayout();
-                    }
-                }
-            }
+			@Override
+			public void failure(String errorMessage, HttpAsyncTask.HttpErrorCode httpErrorCode) {
+				showNonVideoViewWithErrorLayout();
+			}
 
-            @Override
-            public void onFailure(Throwable error) {
-                showNonVideoViewWithErrorLayout();
+			@Override
+			public void complete() {
 
-            }
-        },ConfigResponse.class));
+			}
+		});
 	}
 
 
@@ -250,32 +240,6 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 	@Override
 	protected void onStart() {
 		super.onStart();
-
-		if (CommonUtils.isRooted(this) && getSupportFragmentManager() != null) {
-			if (pBar != null)
-				pBar.setVisibility(View.GONE);
-			RootedDeviceInfoFragment rootedDeviceInfoFragment = RootedDeviceInfoFragment.Companion.newInstance(getString(R.string.rooted_phone_desc));
-			rootedDeviceInfoFragment.show(getSupportFragmentManager(), RootedDeviceInfoFragment.class.getSimpleName());
-			return;
-		}
-
-		FirebaseDynamicLinks.getInstance()
-				.getDynamicLink(getIntent())
-				.addOnSuccessListener(this, new OnSuccessListener<PendingDynamicLinkData>() {
-					@Override
-					public void onSuccess(PendingDynamicLinkData pendingDynamicLinkData) {
-						// Get deep link from result (may be null if no link is found)
-						if (pendingDynamicLinkData!=null && pendingDynamicLinkData.getLink() !=null) {
-							mDeepLinkUrl = pendingDynamicLinkData.getLink().toString();
-						}
-					}
-				})
-				.addOnFailureListener(this, new OnFailureListener() {
-					@Override
-					public void onFailure(Exception e) {
-						Log.w(TAG, "getDynamicLink:onFailure", e);
-					}
-				});
 		if (isMinimized) {
 			isMinimized = false;
 			if (isServerMessageShown) {
@@ -385,6 +349,18 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 		}
 	}
 
+	private void presentNextScreen() {
+		try {
+			String isFirstTime = Utils.getSessionDaoValue(StartupActivity.this, SessionDao.KEY.ON_BOARDING_SCREEN);
+			if (isFirstTime == null || isAppUpdated())
+				ScreenManager.presentOnboarding(StartupActivity.this);
+			else {
+				ScreenManager.presentMain(StartupActivity.this, mPushNotificationUpdate);
+			}
+		} catch (NullPointerException ignored) {
+		}
+	}
+
 	private boolean isAppUpdated() {
 		String appVersionFromDB = Utils.getSessionDaoValue(StartupActivity.this, SessionDao.KEY.APP_VERSION);
 		String appLatestVersion = null;
@@ -406,6 +382,10 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 		NotificationUtils.clearNotifications(StartupActivity.this);
 	}
 
+	@Override
+	public void notifyIfNeeded() {
+	}
+
 	@VisibleForTesting
 	public boolean testIsFirstTime(){
 		return this.isFirstTime();
@@ -415,51 +395,4 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 	public String testGetRandomVideos(){
 		return getRandomVideos();
 	}
-
-    private void presentNextScreen() {
-        try {
-            showNonVideoViewWithOutErrorLayout();
-            String isFirstTime = Utils.getSessionDaoValue(StartupActivity.this, SessionDao.KEY.ON_BOARDING_SCREEN);
-            // DeepLinking redirection
-            if (!TextUtils.isEmpty(mDeepLinkUrl)) {
-                if (mDeepLinkUrl.endsWith("/barcode/")) {// land on barcode activity
-                    openDeepLinkBackgroundActivity(isFirstTime);
-                    Intent openBarcodeActivity = new Intent(this, BarcodeScanActivity.class);
-                    startActivity(openBarcodeActivity);
-                    overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
-                } else if (mDeepLinkUrl.endsWith("/")) { // land on wToday
-                    ScreenManager.presentMain(StartupActivity.this, mPushNotificationUpdate);
-                    finish();
-                } else if ((mDeepLinkUrl.contains("/help/"))) { // land on tips and trick activity
-                    openDeepLinkBackgroundActivity(isFirstTime);
-                    Intent openTipsAndTrickActivity = new Intent(this, TipsAndTricksViewPagerActivity.class);
-                    startActivity(openTipsAndTrickActivity);
-                    overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
-                    finish();
-                } else if ((mDeepLinkUrl.contains("/products/"))) { // land on product detail activity
-                    String productIdAndSkuId = mDeepLinkUrl.substring(mDeepLinkUrl.lastIndexOf('/') + 1);
-                    String[] arrayOfProductAndSKuId = productIdAndSkuId.split("&sku=");
-                    new RetrieveProductDetail(this, arrayOfProductAndSKuId[0], arrayOfProductAndSKuId[1], isFirstTime == null || isAppUpdated()).retrieveProduct();
-                }
-            }else if (isFirstTime == null || isAppUpdated())
-                ScreenManager.presentOnboarding(StartupActivity.this);
-            else {
-                ScreenManager.presentMain(StartupActivity.this, mPushNotificationUpdate);
-            }
-        } catch (NullPointerException ex) {
-            if (ex.getMessage() != null)
-                Log.e(TAG, ex.getMessage());
-        }
-    }
-
-    private void openDeepLinkBackgroundActivity(String isFirstTime) {
-        if (isFirstTime == null || isAppUpdated()) {
-            ScreenManager.presentOnboarding(StartupActivity.this);
-        } else {
-            Intent openBottomActivity = new Intent(this, BottomNavigationActivity.class);
-            openBottomActivity.putExtra(NotificationUtils.PUSH_NOTIFICATION_INTENT, "");
-            startActivity(openBottomActivity);
-            overridePendingTransition(0, 0);
-        }
-    }
 }

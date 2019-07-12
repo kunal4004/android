@@ -8,7 +8,7 @@ android {
 
     def major = "5"
     def minor = "12"
-    def fix = "0"
+    def fix = "1"
 
     def jobNumber = 326
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
@@ -48,6 +48,18 @@ android {
 
     lintOptions {
         abortOnError false
+    }
+
+    defaultConfig {
+        minSdkVersion 19 //kitkat 4.4
+        targetSdkVersion 27
+        multiDexEnabled true
+        versionName(major + "." + minor + "." + fix)
+        vectorDrawables.useSupportLibrary = true
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        versionCode BUILD_NUMBER.toInteger()
+        buildConfigField("String", "HOST", '"https://wfs-appserver.wigroup.co/wfs/app/v4"')
+        buildConfigField("String", "SHA1", '"c3cd271cb06f2af6d538b1308c1f3d4139cf8b09"')
     }
 
     compileSdkVersion 28
