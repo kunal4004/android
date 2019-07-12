@@ -25,6 +25,7 @@ import androidx.multidex.MultiDex;
 import com.awfs.coordination.BuildConfig;
 import com.awfs.coordination.R;
 import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.core.CrashlyticsCore;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.drawee.backends.pipeline.Fresco;
@@ -222,7 +223,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
 		ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
 		StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
 		StrictMode.setVmPolicy(builder.build());
-		Fabric.with(WoolworthsApplication.this, new Crashlytics());
+		Fabric.with(this,new Crashlytics.Builder().core(new CrashlyticsCore()).build());
 		AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 
 		ImagePipelineConfig config = ImagePipelineConfig.newBuilder(context)
