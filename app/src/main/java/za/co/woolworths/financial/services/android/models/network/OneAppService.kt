@@ -1,10 +1,12 @@
 package za.co.woolworths.financial.services.android.models.network
 
+import io.reactivex.Observable
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Response
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.models.dto.chat.AgentsAvailableResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.BlockCardRequestBody
 import za.co.woolworths.financial.services.android.models.dto.npc.BlockMyCardResponse
 import za.co.woolworths.financial.services.android.models.dto.statement.*
@@ -268,6 +270,10 @@ object OneAppService : RetrofitConfig() {
 
     fun postBlockMyCard(blockCardRequestBody: BlockCardRequestBody, productOfferingId: String): Call<BlockMyCardResponse> {
         return mApiInterface.blockStoreCard(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getOsVersion(), "", getSessionToken(), productOfferingId, blockCardRequestBody)
+    }
+
+    fun pollAgentsAvailable(): Observable<AgentsAvailableResponse> {
+        return mApiInterface.pollAgentsAvailable(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken())
     }
 
 }

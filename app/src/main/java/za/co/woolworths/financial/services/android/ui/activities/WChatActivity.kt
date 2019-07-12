@@ -6,12 +6,18 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.MenuItem
 import android.view.inputmethod.EditorInfo
 import com.awfs.coordination.R
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import za.co.woolworths.financial.services.android.util.Utils
 import kotlinx.android.synthetic.main.chat_activity.*
 import za.co.woolworths.financial.services.android.models.dto.ChatMessage
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.adapters.WChatAdapter
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.onAction
+import java.util.concurrent.TimeUnit
 
 
 class WChatActivity : AppCompatActivity() {
@@ -84,5 +90,14 @@ class WChatActivity : AppCompatActivity() {
             updateMessageList(ChatMessage(if (message.contains("R:")) ChatMessage.Type.RECEIVED else ChatMessage.Type.SENT, if (message.contains("R:")) message.replace("R:", "") else message))
             edittext_chatbox.text.clear()
         }
+    }
+
+    private fun checkAgentAvailable(){
+        val disposables = CompositeDisposable()
+            disposables.add( Observable.interval(0,5,TimeUnit.SECONDS)
+                    .flatMap { OneAppService.pollAgentsAvailable().takeUntil(Observable.timer(5,TimeUnit.SECONDS))}
+                    .observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).subscribe { result->
+                        result.agentsAvailable
+                    })
     }
 }
