@@ -14,7 +14,7 @@ import za.co.woolworths.financial.services.android.models.dto.statement.Statemen
 
 interface ApiInterface {
 
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:28800")
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:7200")
     @GET("user/accounts")
     fun getAccounts(
             @Header("apiId") apiId: String,

@@ -240,6 +240,32 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 	@Override
 	protected void onStart() {
 		super.onStart();
+
+//		if (CommonUtils.isRooted(this) && getSupportFragmentManager() != null) {
+//			if (pBar != null)
+//				pBar.setVisibility(View.GONE);
+//			RootedDeviceInfoFragment rootedDeviceInfoFragment = RootedDeviceInfoFragment.Companion.newInstance(getString(R.string.rooted_phone_desc));
+//			rootedDeviceInfoFragment.show(getSupportFragmentManager(), RootedDeviceInfoFragment.class.getSimpleName());
+//			return;
+//		}
+
+		FirebaseDynamicLinks.getInstance()
+				.getDynamicLink(getIntent())
+				.addOnSuccessListener(this, new OnSuccessListener<PendingDynamicLinkData>() {
+					@Override
+					public void onSuccess(PendingDynamicLinkData pendingDynamicLinkData) {
+						// Get deep link from result (may be null if no link is found)
+						if (pendingDynamicLinkData!=null && pendingDynamicLinkData.getLink() !=null) {
+							mDeepLinkUrl = pendingDynamicLinkData.getLink().toString();
+						}
+					}
+				})
+				.addOnFailureListener(this, new OnFailureListener() {
+					@Override
+					public void onFailure(Exception e) {
+						Log.w(TAG, "getDynamicLink:onFailure", e);
+					}
+				});
 		if (isMinimized) {
 			isMinimized = false;
 			if (isServerMessageShown) {

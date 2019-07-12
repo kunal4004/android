@@ -1,8 +1,13 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    android:id="@+id/swipeToRefreshAccount"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+<FrameLayout
              android:layout_width="match_parent"
              android:layout_height="match_parent">
-
     <LinearLayout
         android:id="@+id/llRootLayout"
         android:layout_width="match_parent"
@@ -48,6 +53,14 @@
                             android:textSize="12sp"
                             app:WTextView_font="medium_bold"/>
 
+                        <ImageView
+                            android:id="@+id/imRefreshAccount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end|center"
+                            android:layout_marginEnd="@dimen/sixteen_dp"
+                            app:srcCompat="@drawable/refresh_account_white_drawable_icon" />
+
                     </androidx.appcompat.widget.Toolbar>
 
                     <za.co.woolworths.financial.services.android.ui.views.WViewPager
@@ -85,3 +98,4 @@
 
     <include layout="@layout/no_connection_handler"/>
 </FrameLayout>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
