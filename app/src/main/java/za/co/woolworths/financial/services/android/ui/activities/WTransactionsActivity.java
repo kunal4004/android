@@ -41,6 +41,7 @@ public class WTransactionsActivity extends AppCompatActivity implements View.OnC
 	private ProgressBar pbTransaction;
 	private Call<TransactionHistoryResponse> mExecuteTransactionRequest;
 	private FloatingActionButtonExpandable chatIcon;
+	private String accountNumber;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +65,7 @@ public class WTransactionsActivity extends AppCompatActivity implements View.OnC
 		pbTransaction = findViewById(R.id.pbTransaction);
 		chatIcon = findViewById(R.id.chatIcon);
 		productOfferingId = getIntent().getStringExtra("productOfferingId");
+		accountNumber = getIntent().getStringExtra("accountNumber");
 		loadTransactionHistory(productOfferingId);
 		findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -208,7 +210,10 @@ public class WTransactionsActivity extends AppCompatActivity implements View.OnC
 	public void onClick(View view) {
 		switch (view.getId()) {
 			case R.id.chatIcon:
-				startActivity(new Intent(this, WChatActivity.class));
+				Intent intent = new Intent(this, WChatActivity.class);
+				intent.putExtra("productOfferingId", productOfferingId);
+				intent.putExtra("accountNumber", accountNumber);
+				startActivity(intent);
 				break;
 			default:
 				break;

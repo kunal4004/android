@@ -6,7 +6,7 @@ import retrofit2.Call
 import retrofit2.Response
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
-import za.co.woolworths.financial.services.android.models.dto.chat.AgentsAvailableResponse
+import za.co.woolworths.financial.services.android.models.dto.chat.*
 import za.co.woolworths.financial.services.android.models.dto.npc.BlockCardRequestBody
 import za.co.woolworths.financial.services.android.models.dto.npc.BlockMyCardResponse
 import za.co.woolworths.financial.services.android.models.dto.statement.*
@@ -274,6 +274,18 @@ object OneAppService : RetrofitConfig() {
 
     fun pollAgentsAvailable(): Observable<AgentsAvailableResponse> {
         return mApiInterface.pollAgentsAvailable(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken())
+    }
+
+    fun createChatSession(requestBody: CreateChatSession): Call<CreateChatSessionResponse> {
+        return mApiInterface.createChatSession(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), requestBody)
+    }
+
+    fun pollChatSessionState(chatId: String): Observable<PollChatSessionStateResponse> {
+        return mApiInterface.pollChatSessionState(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), chatId)
+    }
+
+    fun sendChatMessage(chatId: String, requestBody: SendChatMessage): Call<SendChatMessageResponse> {
+        return mApiInterface.sendChatMessage(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), chatId, requestBody)
     }
 
 }

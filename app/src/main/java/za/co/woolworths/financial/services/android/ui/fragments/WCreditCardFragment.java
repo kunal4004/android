@@ -303,6 +303,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
             case R.id.tvViewTransaction:
                 Intent intent = new Intent(getActivity(), WTransactionsActivity.class);
                 intent.putExtra("productOfferingId", productOfferingId);
+                intent.putExtra("accountNumber", Utils.getAccountNumber(accountsResponse,"CC"));
                 startActivity(intent);
                 activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
                 break;

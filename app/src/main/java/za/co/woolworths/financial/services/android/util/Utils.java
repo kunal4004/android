@@ -1443,4 +1443,18 @@ public class Utils {
         return sessionDao.value;
     }
 
+	public static String getAccountNumber(AccountsResponse accountResponse, String productGroupCode) {
+		String accountNumber = "";
+		List<Account> accountList = accountResponse.accountList;
+		if (accountList != null) {
+			for (Account account : accountList) {
+				if (account.productGroupCode.equalsIgnoreCase(productGroupCode)) {
+					accountNumber = account.accountNumber;
+					break;
+				}
+			}
+		}
+		return TextUtils.isEmpty(accountNumber) ? "" : accountNumber;
+	}
+
 }

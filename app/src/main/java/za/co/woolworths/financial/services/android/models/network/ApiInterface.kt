@@ -1014,7 +1014,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
-            @Path("chatId") chatId: String): Call<Observable<PollChatSessionStateResponse>>
+            @Path("chatId") chatId: String): Observable<PollChatSessionStateResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("chat/sendChatMessage/{chatId}")
