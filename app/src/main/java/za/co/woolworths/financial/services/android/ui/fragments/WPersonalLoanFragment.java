@@ -149,8 +149,6 @@ private static AsyncTask<Void, Void, Void> async;
                                 } else if (busStation.makeApiCall()) {
                                     hideCLIView();
                                     personalWasAlreadyRunOnce = false;
-                                    retryConnect();
-                                } else {
                                 }
                             }
                         }
