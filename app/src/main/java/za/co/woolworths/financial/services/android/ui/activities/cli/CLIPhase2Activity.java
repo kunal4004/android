@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -21,6 +22,8 @@ import com.awfs.coordination.R;
 
 import java.util.HashMap;
 
+import za.co.woolworths.financial.services.android.contracts.ICreditLimitDecrease;
+import za.co.woolworths.financial.services.android.contracts.IEditAmountSlider;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
@@ -30,6 +33,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.cli.CLIEligibili
 import za.co.woolworths.financial.services.android.ui.fragments.cli.CLIPOIProblemFragment;
 
 import za.co.woolworths.financial.services.android.ui.fragments.cli.DocumentFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.cli.EditSlideAmountFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.cli.OfferCalculationFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.SupplyIncomeDetailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.cli.ProcessCompleteNoPOIFragment;
@@ -41,7 +45,7 @@ import za.co.woolworths.financial.services.android.util.controller.CLIStepIndica
 import za.co.woolworths.financial.services.android.util.controller.EventStatus;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
 
-public class CLIPhase2Activity extends AppCompatActivity implements View.OnClickListener, DeclineOfferInterface {
+public class CLIPhase2Activity extends AppCompatActivity implements View.OnClickListener, ICreditLimitDecrease, DeclineOfferInterface, IEditAmountSlider {
 
 	private WTextView tvDeclineOffer;
 	private ProgressBar pbDecline;
@@ -375,5 +379,24 @@ public class CLIPhase2Activity extends AppCompatActivity implements View.OnClick
 	@Override
 	public void onLoadComplete() {
 		onDeclineComplete();
+	}
+
+	@Override
+	public void onCreditDecreaseProceedWithMaximum() {
+		OfferCalculationFragment offerCalculationFragment = (OfferCalculationFragment)
+				getSupportFragmentManager().findFragmentById(R.id.cli_steps_container);
+		offerCalculationFragment.animSeekBarToMaximum();
+	}
+
+	@Override
+	public void slideAmount(Integer amount, Integer drawnDownAmount) {
+		// TODO:: Remove EventBus
+
+		FragmentManager fm = getSupportFragmentManager();
+		fm.popBackStack(EditSlideAmountFragment.class.getSimpleName(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
+		((WoolworthsApplication) getApplication())
+				.bus()
+				.send(new BusStation(amount,drawnDownAmount));
 	}
 }

@@ -5,6 +5,7 @@ import android.util.Base64;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.crashlytics.android.Crashlytics;
 
 import java.io.UnsupportedEncodingException;
 import java.net.HttpCookie;
@@ -36,7 +37,7 @@ public class AbsaRegisterCredentialRequest {
 			this.sessionKey = SessionKey.generate();
 			this.deviceId = Utils.getAbsaUniqueDeviceID();
 		} catch (KeyGenerationFailureException | AsymmetricCryptoHelper.AsymmetricEncryptionFailureException | AsymmetricCryptoHelper.AsymmetricKeyGenerationFailureException e) {
-			e.printStackTrace();
+			Crashlytics.logException(e);
 		}
 	}
 
@@ -59,6 +60,7 @@ public class AbsaRegisterCredentialRequest {
 
 			 credentialVOs[0] = new RegisterCredentialRequest.CredentialVO(encryptedAlias, "MOBILEAPP_5DIGIT_PIN", base64EncodedEncryptedDerivedKey);
 		} catch (DecryptionFailureException | UnsupportedEncodingException | KeyGenerationFailureException e) {
+			Crashlytics.logException(e);
 			throw new RuntimeException(e);
 		}
 

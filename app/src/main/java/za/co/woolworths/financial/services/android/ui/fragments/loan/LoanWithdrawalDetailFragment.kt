@@ -7,24 +7,26 @@ import android.view.View.VISIBLE
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.loan_withdrawal_confirmation.*
+import retrofit2.Call
+import za.co.woolworths.financial.services.android.contracts.RequestListener
 import za.co.woolworths.financial.services.android.models.dto.IssueLoan
-import za.co.woolworths.financial.services.android.models.rest.loan.AuthoriseLoan
 import za.co.woolworths.financial.services.android.ui.activities.loan.LoanWithdrawalActivity
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.AuthoriseLoanRequest
 import za.co.woolworths.financial.services.android.models.dto.AuthoriseLoanResponse
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.util.DialogManager
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
-import za.co.woolworths.financial.services.android.util.OnEventListener
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 
 class LoanWithdrawalDetailFragment : LoanBaseFragment() {
 
     private var mIssueLoan: IssueLoan? = null
     private var mInstallmentAmount = 0
-    private var mAuthoriseLoan: AuthoriseLoan? = null
+    private var mAuthoriseLoan: Call<AuthoriseLoanResponse>? = null
     private var autoIssueLoanConnectIsActivated: Boolean = false
     private var mErrorHandlerView: ErrorHandlerView? = null
 
@@ -46,11 +48,11 @@ class LoanWithdrawalDetailFragment : LoanBaseFragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater?.inflate(R.layout.loan_confirmation_layout, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activity?.let {
             mErrorHandlerView = ErrorHandlerView(it)
@@ -69,10 +71,11 @@ class LoanWithdrawalDetailFragment : LoanBaseFragment() {
     private fun authoriseLoanRequest() {
         progressBarVisibility(true)
 
-        mAuthoriseLoan = AuthoriseLoan(AuthoriseLoanRequest(mIssueLoan!!.productOfferingId,
+        mAuthoriseLoan =  OneAppService.authoriseLoan(AuthoriseLoanRequest(mIssueLoan!!.productOfferingId,
                 mIssueLoan!!.drawDownAmount,mIssueLoan!!.repaymentPeriod, mInstallmentAmount,
-                mIssueLoan!!.creditLimit), object : OnEventListener<AuthoriseLoanResponse> {
+                mIssueLoan!!.creditLimit))
 
+        mAuthoriseLoan?.enqueue(CompletionHandler(object : RequestListener<AuthoriseLoanResponse> {
             override fun onSuccess(authoriseLoanResponse: AuthoriseLoanResponse?) {
                 activity?.let { fragmentActivity ->
                     progressBarVisibility(false)
@@ -103,15 +106,13 @@ class LoanWithdrawalDetailFragment : LoanBaseFragment() {
                 }
             }
 
-            override fun onFailure(e: String?) {
+            override fun onFailure(error: Throwable?) {
                 activity?.apply {
                     progressBarVisibility(false)
                     autoIssueLoanConnectIsActivated = true
                 }
             }
-        })
-
-        mAuthoriseLoan?.execute()
+        },AuthoriseLoanResponse::class.java))
     }
 
     private fun progressBarVisibility(visible: Boolean) {
@@ -133,8 +134,8 @@ class LoanWithdrawalDetailFragment : LoanBaseFragment() {
     override fun onDestroy() {
         super.onDestroy()
         mAuthoriseLoan?.let {
-            if (!it.isCancelled)
-                it.cancel(true)
+            if (!it.isCanceled)
+                it.cancel()
         }
     }
 

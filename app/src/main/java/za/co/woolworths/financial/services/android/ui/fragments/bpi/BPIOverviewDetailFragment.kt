@@ -32,21 +32,24 @@ class BPIOverviewDetailFragment : BPIFragment(), View.OnClickListener {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater!!.inflate(R.layout.bpi_overview_detail_fragment, container, false)
     }
 
     @SuppressLint("SetTextI18n")
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (arguments.containsKey("bpiOverview")) {
-            val strOverview: String = arguments.getString("bpiOverview")
-            val bpiOverview = Gson().fromJson(strOverview, BPIOverview::class.java)
-            setBenefitDetail(bpiOverview)
-            val insuranceType: InsuranceType = bpiOverview.insuranceType!!
-            claimVisibility(insuranceType)
-            setBenefitTitle(bpiOverview)
-            imBackgroundHeader.setImageResource(bpiOverview.benefitHeaderDrawable!!)
+        arguments?.let {
+
+            if (it.containsKey("bpiOverview")) {
+                val strOverview: String = it.getString("bpiOverview")
+                val bpiOverview = Gson().fromJson(strOverview, BPIOverview::class.java)
+                setBenefitDetail(bpiOverview)
+                val insuranceType: InsuranceType = bpiOverview.insuranceType!!
+                claimVisibility(insuranceType)
+                setBenefitTitle(bpiOverview)
+                imBackgroundHeader.setImageResource(bpiOverview.benefitHeaderDrawable!!)
+            }
         }
 
         btnHowToClaim.setOnClickListener(this)
@@ -95,8 +98,7 @@ class BPIOverviewDetailFragment : BPIFragment(), View.OnClickListener {
             }
 
             R.id.imNavigateBack -> {
-                if (activity == null) return
-                activity.supportFragmentManager.popBackStack()
+                activity?.apply {supportFragmentManager.popBackStack()  }
             }
         }
     }

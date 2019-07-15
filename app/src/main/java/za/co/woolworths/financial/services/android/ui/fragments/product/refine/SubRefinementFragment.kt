@@ -38,12 +38,12 @@ class SubRefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (arguments != null) {
-            refinement = Utils.jsonStringToObject(arguments.getString(ARG_PARAM), Refinement::class.java) as Refinement
+        arguments?.let{
+            refinement = Utils.jsonStringToObject(it.getString(ARG_PARAM), Refinement::class.java) as Refinement
         }
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
     }
@@ -54,10 +54,13 @@ class SubRefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     }
 
     private fun initViews() {
-        backButton = activity.findViewById(R.id.btnClose)
+
+        activity?.let {
+            backButton = it.findViewById(R.id.btnClose)
+            clearRefinement = it.findViewById(R.id.resetRefinement)
+            pageTitle = it.findViewById(R.id.toolbarText)
+        }
         backButton?.setImageResource(R.drawable.back24)
-        clearRefinement = activity.findViewById(R.id.resetRefinement)
-        pageTitle = activity.findViewById(R.id.toolbarText)
         pageTitle?.text = refinement?.label
         clearRefinement?.text = getString(R.string.refinement_clear)
         clearRefinement?.setOnClickListener { subRefinementAdapter?.clearRefinement() }
@@ -70,7 +73,7 @@ class SubRefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
 
     private fun loadData() {
         dataList = getSubRefinementSelectableItems(refinement!!.subRefinements)
-        subRefinementAdapter = SubRefinementAdapter(activity, this, listener, dataList)
+        subRefinementAdapter = activity?.let { SubRefinementAdapter(it, this, listener, dataList) }
         refinementList.adapter = subRefinementAdapter
     }
 

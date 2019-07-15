@@ -22,15 +22,17 @@ import com.awfs.coordination.R;
 
 import java.util.List;
 
+import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
+import za.co.woolworths.financial.services.android.contracts.RequestListener;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.ProvincesResponse;
-import za.co.woolworths.financial.services.android.models.rest.shop.GetProvinces;
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
+import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.ui.adapters.ProvinceSelectionAdapter;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
-import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -46,7 +48,7 @@ public class ProvinceSelectionFragment extends Fragment implements ProvinceSelec
 	private ProgressBar loadingProgressBar;
 	private RecyclerView provinceList;
 	private ProvinceSelectionAdapter provinceAdapter;
-	private GetProvinces getProvincesAsync;
+	private Call<ProvincesResponse> getProvincesAsync;
 
 	public ProvinceSelectionFragment() {
 		// Required empty public constructor
@@ -91,21 +93,21 @@ public class ProvinceSelectionFragment extends Fragment implements ProvinceSelec
 		toggleLoading(true);
 		mErrorHandlerView.hideErrorHandler();
 		getProvincesAsync = getProvinces();
-		getProvincesAsync.execute();
 	}
 
-	private GetProvinces getProvinces() {
-		return new GetProvinces(new OnEventListener() {
+	private Call<ProvincesResponse> getProvinces() {
+		Call<ProvincesResponse> provincesResponseCall = OneAppService.INSTANCE.getProvinces();
+		provincesResponseCall.enqueue(new CompletionHandler<>(new RequestListener<ProvincesResponse>() {
 			@Override
-			public void onSuccess(Object object) {
+			public void onSuccess(ProvincesResponse provincesResponse) {
 				Log.i("ProvinceSelection", "getRegions Succeeded");
-				handleProvincesResponse(((ProvincesResponse) object));
+				handleProvincesResponse(provincesResponse);
 			}
 
 			@Override
-			public void onFailure(final String errorMessage) {
-				Log.e("SuburbSelectionFragment", "getRegions Error: " + errorMessage);
-
+			public void onFailure(final Throwable error) {
+				if (error == null) return;
+				Log.e("SuburbSelectionFragment", "getRegions Error: " + error.getMessage());
 				getActivity().runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
@@ -120,11 +122,13 @@ public class ProvinceSelectionFragment extends Fragment implements ProvinceSelec
 							}
 
 						});
-						mErrorHandlerView.networkFailureHandler(errorMessage);
+						mErrorHandlerView.networkFailureHandler(error.getMessage());
 					}
 				});
 			}
-		});
+		},ProvincesResponse.class));
+
+		return provincesResponseCall;
 	}
 
 	public void handleProvincesResponse(ProvincesResponse response) {
@@ -216,5 +220,13 @@ public class ProvinceSelectionFragment extends Fragment implements ProvinceSelec
 		super.onResume();
 		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.DELIVERY_LOCATION_PROVINCE);
 		deliveryLocationSelectionFragmentChange.onFragmentChanged(getActivity().getResources().getString(R.string.select_your_province), true);
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		if (getProvincesAsync != null && !getProvincesAsync.isCanceled()) {
+			getProvincesAsync.cancel();
+		}
 	}
 }

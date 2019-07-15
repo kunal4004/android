@@ -14,7 +14,7 @@ public class LoginResponse {
 	private String nonce;
 
 	@SerializedName("esessionid")
-	private String esessionid;
+	public String esessionid;
 
 	@SerializedName("timestamp")
 	private String timestamp;

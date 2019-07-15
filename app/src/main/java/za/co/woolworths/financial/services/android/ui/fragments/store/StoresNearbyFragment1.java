@@ -55,12 +55,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider;
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.contracts.RequestListener;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.StoreOfferings;
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
+import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.ui.activities.SearchStoresActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator;
 import za.co.woolworths.financial.services.android.ui.adapters.CardsOnMapAdapter;
@@ -70,7 +73,6 @@ import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton;
-import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -136,6 +138,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 	public boolean isLocationServiceButtonClicked = false;
 	private BottomNavigator mBottomNavigator;
 	private FuseLocationAPISingleton mFuseLocationAPISingleton;
+	private Call<LocationResponse> mLocationAPIRequest;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -385,7 +388,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 	private void locationAPIRequest(Location location) {
 		if (getActivity() != null) {
 			Utils.saveLastLocation(location, getActivity());
-			init(location).execute();
+			mLocationAPIRequest = init(location);
 			getActivity().invalidateOptionsMenu();
 		}
 	}
@@ -515,42 +518,12 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 	}
 
 
-	public HttpAsyncTask<String, String, LocationResponse> init(final Location location) {
-		return new HttpAsyncTask<String, String, LocationResponse>() {
+	public Call<LocationResponse> init(final Location location) {
+		onLocationLoadStart();
+		Call<LocationResponse> locationResponseCall = OneAppService.INSTANCE.getLocations(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()), "", "50000");
+		locationResponseCall.enqueue(new CompletionHandler<>(new RequestListener<LocationResponse>() {
 			@Override
-			protected void onPreExecute() {
-				super.onPreExecute();
-				onLocationLoadStart();
-			}
-
-			@Override
-			protected LocationResponse httpDoInBackground(String... params) {
-				return ((WoolworthsApplication) getActivity().getApplication()).getApi().getLocations(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()), "", "50000");
-			}
-
-			@Override
-			protected Class<LocationResponse> httpDoInBackgroundReturnType() {
-				return LocationResponse.class;
-			}
-
-			@Override
-			protected LocationResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-				getActivity().runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						enableSearchMenu();
-						hideProgressBar();
-						Log.d(TAG, "mProgress");
-					}
-				});
-
-				mErrorHandlerView.networkFailureHandler(errorMessage);
-				return new LocationResponse();
-			}
-
-			@Override
-			protected void onPostExecute(LocationResponse locationResponse) {
-				super.onPostExecute(locationResponse);
+			public void onSuccess(LocationResponse locationResponse) {
 				enableSearchMenu();
 				hideProgressBar();
 				storeDetailsList = new ArrayList<>();
@@ -559,7 +532,25 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 					bindDataWithUI(storeDetailsList);
 				}
 			}
-		};
+
+			@Override
+			public void onFailure(final Throwable error) {
+
+				Activity activity = getActivity();
+				activity.runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+								enableSearchMenu();
+								hideProgressBar();
+								Log.d(TAG, "mProgress");
+						mErrorHandlerView.networkFailureHandler(error.getMessage());
+					}
+				});
+
+			}
+		},LocationResponse.class));
+
+		return locationResponseCall;
 	}
 
 	public List<StoreOfferings> getOfferingByType(List<StoreOfferings> offerings, String type) {
@@ -787,6 +778,10 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 	public void onDestroy() {
 		super.onDestroy();
 		unregisterReceiver();
+
+		if (mLocationAPIRequest!=null && !mLocationAPIRequest.isCanceled()){
+			mLocationAPIRequest.cancel();
+		}
 	}
 
 	@Override
@@ -895,4 +890,5 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 	public void onPopUpLocationDialogMethod() {
 		hideProgressBar();
 	}
+
 }

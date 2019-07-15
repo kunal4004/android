@@ -13,6 +13,7 @@ import android.view.View.*
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
+import com.android.volley.NoConnectionError
 import com.android.volley.VolleyError
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_pin_atm_fragment.*
@@ -51,12 +52,12 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         alwaysShowWindowSoftInputMode()
         return inflater!!.inflate(R.layout.absa_pin_atm_fragment, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViewsAndEvents()
         createTextListener(edtEnterATMPin)
@@ -88,7 +89,7 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
     }
 
     private fun navigateToFiveDigitCodeFragment() {
-        if ((edtEnterATMPin.length() - 1) == AbsaEnterAtmPinCodeFragment.MAXIMUM_PIN_ALLOWED && pbEnterAtmPin.visibility != VISIBLE) {
+        if ((edtEnterATMPin.length() - 1) >= AbsaEnterAtmPinCodeFragment.MAXIMUM_PIN_ALLOWED && pbEnterAtmPin.visibility != VISIBLE) {
             activity?.let {
                 val pinCode = edtEnterATMPin.text.toString()
                 progressIndicator(VISIBLE)
@@ -124,8 +125,9 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
     }
 
     private fun updateEnteredPin(pinEnteredLength: Int) {
+        //Submit button will be enabled when the pin length is 4 & above(at most 5 : As EditText maxLength="5" )
         if (pinEnteredLength > -1) {
-            if (pinEnteredLength == MAXIMUM_PIN_ALLOWED) {
+            if (pinEnteredLength >= MAXIMUM_PIN_ALLOWED) {
                 ivNavigateToDigitFragment.alpha = 1.0f
                 ivNavigateToDigitFragment.isEnabled = true
             }
@@ -203,7 +205,7 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
     override fun onFatalError(error: VolleyError?) {
         progressIndicator(GONE)
         clearPin()
-        ErrorHandlerView(activity).showToast()
+        if (error is NoConnectionError) ErrorHandlerView(activity).showToast() else showErrorScreen(ErrorHandlerActivity.COMMON)
     }
 
     override fun onResume() {

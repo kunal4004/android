@@ -5,6 +5,7 @@ import android.util.Base64;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.crashlytics.android.Crashlytics;
 
 import java.net.HttpCookie;
 import java.nio.charset.StandardCharsets;
@@ -32,7 +33,7 @@ public class AbsaCreateAliasRequest {
 		try {
 			this.sessionKey = SessionKey.generate();
 		} catch (KeyGenerationFailureException | AsymmetricCryptoHelper.AsymmetricEncryptionFailureException | AsymmetricCryptoHelper.AsymmetricKeyGenerationFailureException e) {
-			e.printStackTrace();
+			Crashlytics.logException(e);
 		}
 	}
 
@@ -60,6 +61,7 @@ public class AbsaCreateAliasRequest {
 						response.setAliasId(decryptedAlias);
 					}catch (DecryptionFailureException e){
 						//TODO: Handle decryption issue
+						Crashlytics.logException(e);
 						throw new RuntimeException(e);
 					}
 

@@ -38,6 +38,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import io.reactivex.functions.Consumer;
+import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -48,8 +49,10 @@ import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.FormException;
+import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
+import za.co.woolworths.financial.services.android.models.dto.ProductRequest;
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
@@ -60,9 +63,6 @@ import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
-import za.co.woolworths.financial.services.android.models.rest.product.GetCartSummary;
-import za.co.woolworths.financial.services.android.models.rest.product.PostAddItemToCart;
-import za.co.woolworths.financial.services.android.models.rest.product.ProductRequest;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
@@ -80,11 +80,9 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.Navig
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
-import za.co.woolworths.financial.services.android.util.CancelableCallback;
 import za.co.woolworths.financial.services.android.util.DrawImage;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton;
-import za.co.woolworths.financial.services.android.util.LocationItemTask;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
@@ -128,7 +126,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
     private String TAG = this.getClass().getSimpleName();
 
     private ImageView[] ivArrayDotsPager;
-    private LocationItemTask mLocationItemTask;
+    private Call<LocationResponse> mLocationItemTask;
 
     private boolean mProductHasColour;
     private boolean mProductHasSize;
@@ -140,9 +138,9 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
     private ErrorHandlerView mErrorHandlerView;
     private boolean mFetchFromJson;
     private String mDefaultProductResponse;
-    private GetCartSummary mGetCartSummary;
+    private Call<CartSummaryResponse> mGetCartSummary;
     private AddItemToCart mApiAddItemToCart;
-    private PostAddItemToCart mPostAddItemToCart;
+    private Call<AddItemToCartResponse> mPostAddItemToCart;
     private ArrayList<OtherSkus> mSizeSkuList;
     private ArrayList<OtherSkus> mSkuColorList;
     private boolean activate_location_popup = false;
@@ -412,7 +410,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
             //onSuccessResponse(Utils.stringToJson(getActivity(), mDefaultProductResponse)); =================
             onLoadComplete();
         } else {
-            getViewModel().productDetail(new ProductRequest(mDefaultProduct.productId, mDefaultProduct.sku)).execute();
+            getViewModel().productDetail(new ProductRequest(mDefaultProduct.productId, mDefaultProduct.sku));
         }
     }
 
@@ -955,7 +953,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
         getGlobalState().setColorPickerSku(null);
         getGlobalState().setSizeWasPopup(false);
         getGlobalState().setSizePickerSku(null);
-        CancelableCallback.cancelAll();
         cancelRequest(mLocationItemTask);
         cancelRequest(mPostAddItemToCart);
         cancelRequest(mGetCartSummary);
@@ -965,7 +962,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
 
     private void executeLocationItemTask() {
         mLocationItemTask = getViewModel().locationItemTask(getActivity());
-        mLocationItemTask.execute();
     }
 
     @Override
@@ -1591,7 +1587,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
             return;
         }
         mGetCartSummary = getViewModel().getCartSummary();
-        mGetCartSummary.execute();
     }
 
     @Override
@@ -1657,7 +1652,6 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
         List<AddItemToCart> addItemToCarts = new ArrayList<>();
         addItemToCarts.add(mApiAddItemToCart);
         mPostAddItemToCart = getViewModel().postAddItemToCart(addItemToCarts);
-        mPostAddItemToCart.execute();
     }
 
     @Override

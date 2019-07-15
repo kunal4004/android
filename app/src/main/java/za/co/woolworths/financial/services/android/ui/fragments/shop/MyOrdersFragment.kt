@@ -11,8 +11,11 @@ import kotlinx.android.synthetic.main.empty_state_template.*
 import za.co.woolworths.financial.services.android.models.dto.OrderItem
 import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
 import kotlinx.android.synthetic.main.fragment_shop_my_orders.*
+import retrofit2.Call
+import za.co.woolworths.financial.services.android.contracts.RequestListener
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
-import za.co.woolworths.financial.services.android.models.rest.product.GetOrdersRequest
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.adapters.OrdersAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
@@ -25,7 +28,7 @@ class MyOrdersFragment : Fragment() {
     private var mErrorHandlerView: ErrorHandlerView? = null
     private var listner: OnChildFragmentEvents? = null
     private var isFragmentVisible: Boolean = false
-    private var requestOrders: GetOrdersRequest? = null
+    private var requestOrders: Call<OrdersResponse>? = null
     private var parentFragment: ShopFragment? = null
 
     companion object {
@@ -45,12 +48,12 @@ class MyOrdersFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (arguments != null) {
-            listner = arguments.getSerializable(ARG_PARAM) as OnChildFragmentEvents
+        arguments?.let {
+            listner = it.getSerializable(ARG_PARAM) as OnChildFragmentEvents
         }
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (isFragmentVisible)
             initViews()
@@ -69,7 +72,6 @@ class MyOrdersFragment : Fragment() {
     }
 
     fun configureUI(isNewSession: Boolean) {
-
         if (SessionUtilities.getInstance().isUserAuthenticated) {
             val orderResponse = parentFragment?.getOrdersResponseData()
             if (orderResponse != null && !isNewSession && !parentFragment?.isDifferentUser()!!) showSignInView(orderResponse) else {
@@ -119,7 +121,7 @@ class MyOrdersFragment : Fragment() {
         dataList = buildDataToDisplayOrders(ordersResponse)
             if (dataList.size > 0) {
             mErrorHandlerView?.hideEmpyState()
-            myOrdersList.adapter = OrdersAdapter(activity, dataList)
+            myOrdersList.adapter = activity?.let { OrdersAdapter(it, dataList) }
             myOrdersList.visibility = View.VISIBLE
             swipeToRefresh.isEnabled = true
         } else
@@ -130,9 +132,28 @@ class MyOrdersFragment : Fragment() {
     private fun executeOrdersRequest(isPullToRefresh: Boolean) {
         mErrorHandlerView?.hideEmpyState()
         if (!isPullToRefresh) showLoading()
-        requestOrders = requestOrders(isPullToRefresh)
-        requestOrders?.execute()
+        requestOrders = OneAppService.getOrders().apply {
+            enqueue(CompletionHandler(object: RequestListener<OrdersResponse> {
+                override fun onSuccess(ordersResponse: OrdersResponse?) {
+                    if (isAdded) {
+                        if (isPullToRefresh) swipeToRefresh?.isRefreshing = false
+                        parentFragment?.setOrdersResponseData(ordersResponse)
+                        updateUI()
+                    }
+                }
 
+                override fun onFailure(error: Throwable?) {
+                    if (isAdded) {
+                        activity?.apply {
+                            runOnUiThread {
+                                loadingBar?.visibility = View.GONE
+                                showErrorView()
+                            }
+                        }
+                    }
+                }
+            },OrdersResponse::class.java))
+        }
     }
 
 
@@ -148,31 +169,6 @@ class MyOrdersFragment : Fragment() {
             }
         }
         return dataList
-    }
-
-    private fun requestOrders(isPullToRefresh: Boolean): GetOrdersRequest {
-        return GetOrdersRequest(context, object : OnEventListener<OrdersResponse> {
-            override fun onSuccess(ordersResponse: OrdersResponse) {
-                if (isAdded) {
-                    if (isPullToRefresh) swipeToRefresh?.isRefreshing = false
-                    parentFragment?.setOrdersResponseData(ordersResponse)
-                    updateUI()
-                }
-            }
-
-            override fun onFailure(e: String?) {
-                if (isAdded) {
-                    activity?.apply {
-                        runOnUiThread {
-                            loadingBar?.visibility = View.GONE
-                            showErrorView()
-                        }
-                    }
-                }
-            }
-
-        })
-
     }
 
     fun updateUI() {
@@ -213,9 +209,9 @@ class MyOrdersFragment : Fragment() {
     }
 
     fun cancelRequest() {
-        requestOrders?.let {
-            if (!it.isCancelled)
-                it.cancel(true)
+        requestOrders?.apply {
+            if (!isCanceled)
+                cancel()
         }
     }
 }

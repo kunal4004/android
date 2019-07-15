@@ -96,7 +96,7 @@ class ProductsRefineActivity : AppCompatActivity(), OnRefinementOptionSelected, 
         showProgressBar()
         updatedProductsRequestParams = ProductsRequestParams(productsRequestParams?.searchTerm!!, productsRequestParams?.searchType!!, productsRequestParams?.responseType!!, productsRequestParams?.pageOffset!!)
         setRefinedNavigationState(refinement)
-        refineProducts(this, updatedProductsRequestParams!!).execute()
+        refineProducts(this, updatedProductsRequestParams!!)
     }
 
     override fun onProductRefineSuccess(productView: ProductView, navigationState: String) {

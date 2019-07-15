@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.fragment_shop.*
 import kotlinx.android.synthetic.main.shop_custom_tab.view.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dto.OrdersResponse
 import za.co.woolworths.financial.services.android.models.dto.RootCategories
@@ -27,6 +28,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChi
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList.Companion.DISPLAY_TOAST_RESULT_CODE
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback
 import za.co.woolworths.financial.services.android.util.PermissionUtils
+import za.co.woolworths.financial.services.android.util.Utils
 import java.util.*
 
 
@@ -61,7 +63,7 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
         return inflater.inflate(R.layout.fragment_shop, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activity?.apply {
             permissionUtils = PermissionUtils(this, this@ShopFragment)
@@ -83,6 +85,10 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
             override fun onPageSelected(position: Int) {
                 shopPagerAdapter?.notifyDataSetChanged()
                 updateTabIconUI(position)
+                when(position){
+                    1->Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYLISTS)
+                    2->Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPMYORDERS)
+                }
             }
         })
         tabs_main?.setupWithViewPager(viewpager_main)
@@ -90,6 +96,7 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
     }
 
     private fun checkCameraPermission() {
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPBARCODE)
         permissionUtils?.check_permission(permissions, "Explain here why the app needs permissions", 1)
     }
 
@@ -103,13 +110,14 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
     }
 
     private fun prepareTabView(pos: Int, tabTitle: MutableList<String>?): View {
-        val view = activity.layoutInflater.inflate(R.layout.shop_custom_tab, null)
+        val view = activity?.layoutInflater!!.inflate(R.layout.shop_custom_tab, null)
         view.tvTitle.text = tabTitle!![pos]
         return view
     }
 
     private fun navigateToProductSearch() {
         activity?.apply {
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPSEARCHBAR)
             val openProductSearch = Intent(this, ProductSearchActivity::class.java)
             startActivity(openProductSearch)
             overridePendingTransition(0, 0)

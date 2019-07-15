@@ -2,9 +2,11 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.detail;
 
 import android.text.TextUtils;
 
+import retrofit2.Call;
+import za.co.woolworths.financial.services.android.contracts.RequestListener;
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
-import za.co.woolworths.financial.services.android.models.rest.product.GetInventorySkusForStore;
-import za.co.woolworths.financial.services.android.util.OnEventListener;
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
+import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public abstract class InventoryForStore {
@@ -15,7 +17,7 @@ public abstract class InventoryForStore {
 
 	protected abstract void onNoMatchFoundForStoreId();
 
-	private GetInventorySkusForStore getInventorySkusForStore;
+	private Call<SkusInventoryForStoreResponse> getInventorySkusForStore;
 
 	private boolean onConnectivityFailure;
 
@@ -30,29 +32,33 @@ public abstract class InventoryForStore {
 
 	private void executeGetInventoryTask(String storeId, String multiSku) {
 		getInventorySkusForStore = getInventoryStockForStore(storeId, multiSku);
-		getInventorySkusForStore.execute();
 	}
 
-	private GetInventorySkusForStore getInventoryStockForStore(String storeId, String multiSku) {
+	private Call<SkusInventoryForStoreResponse> getInventoryStockForStore(String storeId, String multiSku) {
 		setOnConnectFailure(false);
-		return new GetInventorySkusForStore(storeId, multiSku, new OnEventListener() {
+
+	Call<SkusInventoryForStoreResponse> skusInventoryForStoreRequestCall =  OneAppService.INSTANCE.getInventorySkuForStore(storeId, multiSku);
+		skusInventoryForStoreRequestCall.enqueue(new CompletionHandler<>(new RequestListener<SkusInventoryForStoreResponse>() {
 			@Override
-			public void onSuccess(Object object) {
-				onInventoryForStoreSuccess((SkusInventoryForStoreResponse) object);
+			public void onSuccess(SkusInventoryForStoreResponse skusInventoryForStoreResponse) {
+				onInventoryForStoreSuccess(skusInventoryForStoreResponse);
 			}
 
 			@Override
-			public void onFailure(String errorMessage) {
-				onInventoryForStoreFailure(errorMessage);
-				setOnConnectFailure(true);
+			public void onFailure(Throwable error) {
+				if (error !=null) {
+					onInventoryForStoreFailure(error.getMessage());
+					setOnConnectFailure(true);
+				}
 			}
-		});
+		},SkusInventoryForStoreResponse.class));
+
+		return skusInventoryForStoreRequestCall;
 	}
 
 	public void cancelInventoryForStoreCall() {
-		if (getInventorySkusForStore == null) return;
-		if (!getInventorySkusForStore.isCancelled())
-			getInventorySkusForStore.cancel(true);
+		if (getInventorySkusForStore != null && !getInventorySkusForStore.isCanceled())
+			getInventorySkusForStore.cancel();
 	}
 
 	private void setOnConnectFailure(boolean isConnected) {

@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -28,7 +27,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
+import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
+import za.co.woolworths.financial.services.android.contracts.RequestListener;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest;
@@ -36,6 +37,7 @@ import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.PagingResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
+import za.co.woolworths.financial.services.android.models.dto.ProductRequest;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
 import za.co.woolworths.financial.services.android.models.dto.Response;
@@ -43,10 +45,8 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsR
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
-import za.co.woolworths.financial.services.android.models.rest.product.GetProductDetail;
-import za.co.woolworths.financial.services.android.models.rest.product.GetProductsRequest;
-import za.co.woolworths.financial.services.android.models.rest.product.ProductRequest;
-import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostAddToList;
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
+import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.adapters.SearchResultShopAdapter;
@@ -56,7 +56,6 @@ import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
-import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -79,10 +78,10 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
     private int lastVisibleItem;
     private boolean isLoading;
     private String mListId;
-    private GetProductDetail mGetProductDetail;
+    private Call<ProductDetailResponse> mGetProductDetail;
     private ProductList mSelectedProduct;
     private int mAddToListSize = 0;
-    private PostAddToList mPostAddToList;
+    private Call<ShoppingListItemsResponse> mPostAddToList;
     private BroadcastReceiver connectionBroadcast;
     private boolean addToListLoadFail = false;
     private int mNumItemsInTotal;
@@ -92,7 +91,7 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
     private ArrayList<OtherSkus> otherSkus;
     private boolean productIsLoading;
     private ProductsRequestParams productsRequestParams;
-    private GetProductsRequest mGetProductsRequest;
+    private Call<ProductView> mGetProductsRequest;
     private WButton btnCheckOut;
     private RelativeLayout relNoConnectionLayout;
     private WButton btnRetry;
@@ -374,7 +373,6 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
 
     private void postAddToList(List<AddToListRequest> addToListRequests) {
         mPostAddToList = addToList(addToListRequests, mListId);
-        mPostAddToList.execute();
     }
 
 
@@ -635,7 +633,6 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
 
     private void productDetailRequest(ProductRequest productRequest) {
         mGetProductDetail = getProductDetail(productRequest);
-        mGetProductDetail.execute();
     }
 
     public void toggleAddToListBtn(boolean enable) {
@@ -662,9 +659,9 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
         cancelRequest(mPostAddToList);
     }
 
-    private void cancelRequest(AsyncTask asyncTask) {
-        if (asyncTask != null && !asyncTask.isCancelled()) {
-            asyncTask.cancel(true);
+    private void cancelRequest(Call call) {
+        if (call != null && !call.isCanceled()) {
+            call.cancel();
         }
     }
 
@@ -707,17 +704,19 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
         }
     }
 
-    GetProductsRequest searchProduct(final Context context, final ProductsRequestParams requestParams) {
+    Call<ProductView> searchProduct(final Context context, final ProductsRequestParams requestParams) {
         onLoadStart(getLoadMoreData());
         setProductIsLoading(true);
-        return new GetProductsRequest(context, requestParams, new OnEventListener<ProductView>() {
+
+        Call<ProductView> productListCall =  OneAppService.INSTANCE.getProducts(requestParams);
+        productListCall.enqueue(new CompletionHandler<>(new RequestListener<ProductView>() {
             @Override
-            public void onSuccess(ProductView object) {
-                switch (object.httpCode) {
+            public void onSuccess(ProductView productView) {
+                switch (productView.httpCode) {
                     case 200:
-                        List<ProductList> productLists = object.products;
+                        List<ProductList> productLists = productView.products;
                         if (productLists != null) {
-                            numItemsInTotal(object);
+                            numItemsInTotal(productView);
                             calculatePageOffset();
                             onLoadProductSuccess(productLists, getLoadMoreData());
                             onLoadComplete(getLoadMoreData());
@@ -726,9 +725,9 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
                         break;
 
                     default:
-                        if (object.response != null) {
+                        if (productView.response != null) {
                             onLoadComplete(getLoadMoreData());
-                            unhandledResponseCode(object.response);
+                            unhandledResponseCode(productView.response);
                         }
                         break;
                 }
@@ -736,49 +735,56 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
             }
 
             @Override
-            public void onFailure(final String e) {
+            public void onFailure(final Throwable error) {
+                if (error == null) return;
                 if (context != null) {
                     Activity activity = (Activity) context;
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             setProductIsLoading(false);
-                            failureResponseHandler(e);
+                            failureResponseHandler(error.getMessage());
                             onLoadComplete(getLoadMoreData());
                         }
                     });
                 }
             }
-        });
+        },ProductView.class));
+
+        return productListCall;
     }
 
-    public PostAddToList addToList(List<AddToListRequest> addToListRequest, String listId) {
+    public Call<ShoppingListItemsResponse> addToList(List<AddToListRequest> addToListRequest, String listId) {
         onAddToListLoad(true);
-        return new PostAddToList(new OnEventListener() {
+
+        Call<ShoppingListItemsResponse> shoppingListItemsResponseCall = OneAppService.INSTANCE.addToList(addToListRequest,listId);
+        shoppingListItemsResponseCall.enqueue(new CompletionHandler<>(new RequestListener<ShoppingListItemsResponse>() {
             @Override
-            public void onSuccess(Object object) {
-                ShoppingListItemsResponse shoppingCartResponse = (ShoppingListItemsResponse) object;
-                switch (shoppingCartResponse.httpCode) {
+            public void onSuccess(ShoppingListItemsResponse shoppingListItemsResponse) {
+                switch (shoppingListItemsResponse.httpCode) {
                     case 200:
                         onAddToListLoadComplete();
                         break;
 
                     case 440:
-                        accountExpired(shoppingCartResponse);
+                        accountExpired(shoppingListItemsResponse);
                         onAddToListLoad(false);
                         break;
 
                     default:
-                        unknownErrorMessage(shoppingCartResponse);
+                        unknownErrorMessage(shoppingListItemsResponse);
                         break;
                 }
             }
 
             @Override
-            public void onFailure(String e) {
-                onAddToListFailure(e);
+            public void onFailure(Throwable error) {
+                if (error == null) return;
+                onAddToListFailure(error.getMessage());
             }
-        }, addToListRequest, listId);
+        },ShoppingListItemsResponse.class));
+
+            return shoppingListItemsResponseCall;
     }
 
     public boolean getLoadMoreData() {
@@ -803,7 +809,6 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
 
     public void executeSearchProduct(Context context, ProductsRequestParams lp) {
         this.mGetProductsRequest = searchProduct(context, lp);
-        this.mGetProductsRequest.execute();
     }
 
 
@@ -924,33 +929,33 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
         return productIsLoading;
     }
 
-    public GetProductDetail getProductDetail(ProductRequest productRequest) {
-        return new GetProductDetail(productRequest, new OnEventListener() {
+    public Call<ProductDetailResponse> getProductDetail(ProductRequest productRequest) {
+       Call<ProductDetailResponse> productDetailRequest = OneAppService.INSTANCE.productDetail(productRequest.getProductId(), productRequest.getSkuId());
+        productDetailRequest.enqueue(new CompletionHandler<>(new RequestListener<ProductDetailResponse>() {
             @Override
-            public void onSuccess(Object object) {
-                ProductDetailResponse productDetail = (ProductDetailResponse) object;
-                String detailProduct = Utils.objectToJson(productDetail);
-                switch (productDetail.httpCode) {
-                    case 200:
-                        if (productDetail.product != null) {
-                            setOtherSkus(productDetail.product.otherSkus);
-                        }
-                        WProduct product = (WProduct) Utils.strToJson(detailProduct, WProduct.class);
-                        onSuccessResponse(product);
-                        break;
-                    default:
-                        if (productDetail.response != null) {
-                            responseFailureHandler(productDetail.response);
-                        }
-                        break;
+            public void onSuccess(ProductDetailResponse productDetailResponse) {
+                String detailProduct = Utils.objectToJson(productDetailResponse);
+                if (productDetailResponse.httpCode == 200) {
+                    if (productDetailResponse.product != null) {
+                        setOtherSkus(productDetailResponse.product.otherSkus);
+                    }
+                    WProduct product = (WProduct) Utils.strToJson(detailProduct, WProduct.class);
+                    onSuccessResponse(product);
+                } else {
+                    if (productDetailResponse.response != null) {
+                        responseFailureHandler(productDetailResponse.response);
+                    }
                 }
             }
 
             @Override
-            public void onFailure(String e) {
-                onLoadDetailFailure(e);
+            public void onFailure(Throwable error) {
+                if (error== null) return;
+                onLoadDetailFailure(error.getMessage());
             }
-        });
+        },ProductDetailResponse.class));
+
+       return productDetailRequest;
     }
 
     @Override

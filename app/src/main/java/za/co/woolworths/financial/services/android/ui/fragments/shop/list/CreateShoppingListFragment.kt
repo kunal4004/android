@@ -12,15 +12,14 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.widget.TextView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.create_new_list.*
-import za.co.woolworths.financial.services.android.contracts.AsyncAPIResponse
+import retrofit2.Call
+import za.co.woolworths.financial.services.android.contracts.RequestListener
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
-import za.co.woolworths.financial.services.android.models.rest.shoppinglist.CreateShoppingList
-import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostAddToShoppingList
-import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostOrderToShoppingList
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.Companion.ADD_TO_SHOPPING_LIST_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity
@@ -32,8 +31,8 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
 
     private var mShoppingListGroup: HashMap<String, ShoppingList>? = null
     private var mAddToListRequest: MutableList<AddToListRequest>? = null
-    private var mPostShoppingList: HttpAsyncTask<String, String, ShoppingListItemsResponse>? = null
-    private var mCreateShoppingList: HttpAsyncTask<String, String, ShoppingListsResponse>? = null
+    private var mPostShoppingList: Call<ShoppingListItemsResponse>? = null
+    private var mCreateShoppingList: Call<ShoppingListsResponse>? = null
     private var mShouldDisplayCreateListOnly: Boolean = false
     private var mOrderId: String? = null
     private var isOrderIdNullOrEmpty: Boolean = false
@@ -75,16 +74,16 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         getBundleArguments()
         return if (mShouldDisplayCreateListOnly)
-            inflater!!.inflate(R.layout.create_list_from_shopping_list_view, container, false)
+            inflater?.inflate(R.layout.create_list_from_shopping_list_view, container, false)
         else
-            inflater!!.inflate(R.layout.create_new_list, container, false)
+            inflater?.inflate(R.layout.create_new_list, container, false)
 
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         toolbarIconVisibility()
         clickListener()
@@ -125,7 +124,7 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
 
     private fun getBundleArguments() {
         mAddToListRequest = mutableListOf()
-        arguments.apply {
+        arguments?.apply {
 
             if (this.containsKey(SHOPPING_LIST_SELECTED_LIST_ID)) {
                 mShoppingListGroup = this.getSerializable(SHOPPING_LIST_SELECTED_LIST_ID) as HashMap<String, ShoppingList>?
@@ -153,14 +152,12 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
         imBack.setOnClickListener(this)
         imCloseIcon.setOnClickListener(this)
         btnCancel.setOnClickListener(this)
-        etNewList.setOnEditorActionListener(object : TextView.OnEditorActionListener {
-            override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
-                if ((actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_DONE || event?.action == KeyEvent.ACTION_DOWN && event.keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    activity?.beginCreateListExecution()
-                }
-                return true
+        etNewList.setOnEditorActionListener { v, actionId, event ->
+            if ((actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_DONE || event?.action == KeyEvent.ACTION_DOWN && event.keyCode == KeyEvent.KEYCODE_ENTER)) {
+                activity?.beginCreateListExecution()
             }
-        })
+            true
+        }
     }
 
     private fun textChangeListener() {
@@ -249,10 +246,12 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
         val listName = etNewList.text.toString()
         if (listName.isNotEmpty()) {
             showKeyboard(etNewList)
-            if (networkConnectionAvailable(activity)) {
-                createShoppingListRequest()
-            } else {
-                ErrorHandlerView(activity).showToast()
+            activity?.let {
+                if (networkConnectionAvailable(it)) {
+                    createShoppingListRequest()
+                } else {
+                    ErrorHandlerView(it).showToast()
+                }
             }
         } else {
             onBackPressed()
@@ -262,9 +261,10 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
     private fun createShoppingListRequest() {
         val listName = etNewList?.text?.toString()
         val createListRequest = buildFirstRequest(listName)
-        mCreateShoppingList = CreateShoppingList(createListRequest, object : AsyncAPIResponse.ResponseDelegate<ShoppingListsResponse> {
-            override fun onSuccess(response: ShoppingListsResponse) {
-                response.apply {
+        mCreateShoppingList = OneAppService.createList(createListRequest)
+        mCreateShoppingList?.enqueue(CompletionHandler(object:RequestListener<ShoppingListsResponse>{
+            override fun onSuccess(response: ShoppingListsResponse?) {
+                response?.apply {
                     when (httpCode) {
                         200 -> {
                             // Add to List from MyListFragment
@@ -312,7 +312,7 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
                 }
             }
 
-            override fun onFailure(errorMessage: String) {
+            override fun onFailure(error: Throwable?) {
                 activity?.let {
                     it.runOnUiThread {
                         if (!networkConnectionAvailable(it)) {
@@ -323,7 +323,7 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
                     }
                 }
             }
-        }).execute() as HttpAsyncTask<String, String, ShoppingListsResponse>
+        },ShoppingListsResponse::class.java))
     }
 
     private fun addProductToShoppingList(listId: String?) {
@@ -332,18 +332,21 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
             item.giftListId = listId
             item.listId = null // remove list id from request body
         }
-        mPostShoppingList = PostAddToShoppingList(listId, mAddToListRequest, object : AsyncAPIResponse.ResponseDelegate<ShoppingListItemsResponse> {
-            override fun onSuccess(response: ShoppingListItemsResponse) {
-                response.apply {
+
+        mPostShoppingList = listId?.let {listID -> mAddToListRequest?.let { listItem -> OneAppService.addToList(listItem, listID) } }
+
+        mPostShoppingList?.enqueue(CompletionHandler(object:RequestListener<ShoppingListItemsResponse>{
+            override fun onSuccess(shoppingListsResponse: ShoppingListItemsResponse?) {
+                shoppingListsResponse?.apply {
                     when (httpCode) {
                         200 -> addToListWasSendSuccessfully(listId)
                         440 -> sessionExpiredHandler()
-                        else -> response.response?.let { otherHttpCodeHandler(it) }
+                        else -> response?.let { otherHttpCodeHandler(it) }
                     }
                 }
             }
 
-            override fun onFailure(errorMessage: String) {
+            override fun onFailure(error: Throwable?) {
                 activity?.let {
                     it.runOnUiThread {
                         mAutoConnect = AutoConnect.ADD_PRODUCT_TO_LIST
@@ -353,7 +356,7 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
                 }
             }
 
-        }).execute() as HttpAsyncTask<String, String, ShoppingListItemsResponse>
+        },ShoppingListItemsResponse::class.java))
     }
 
     private fun addToListWasSendSuccessfully(listId: String?) {
@@ -411,31 +414,37 @@ class CreateShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLi
     private fun addOrderToShoppingList(orderId: String?, shoppingList: ShoppingList) {
         shoppingListPostProgress(true)
         val orderRequestList = OrderToShoppingListRequestBody(shoppingList.listId, shoppingList.listName)
-        PostOrderToShoppingList(orderId, orderRequestList, object : AsyncAPIResponse.ResponseDelegate<OrderToListReponse> {
-            override fun onSuccess(response: OrderToListReponse) {
-                response.apply {
-                    response.apply {
-                        when (httpCode) {
-                            0 -> addToListWasSendSuccessfully(orderRequestList.shoppingListId)
-                            440 -> sessionExpiredHandler()
-                            else -> response.response?.let { otherHttpCodeHandler(it) }
-                        }
-                    }
-                }
-            }
 
-            override fun onFailure(errorMessage: String) {
-                activity?.let {
-                    it.runOnUiThread {
-                        if (!networkConnectionAvailable(it)) {
-                            mAutoConnect = AutoConnect.ADD_ORDER_TO_LIST
-                            shoppingListPostProgress(false)
-                            ErrorHandlerView(it).showToast()
+        orderId?.let {
+             orderID ->
+           val addOrderToListRequest =  OneAppService.addOrderToList(orderID, orderRequestList)
+            addOrderToListRequest.enqueue(CompletionHandler(object:RequestListener<OrderToListReponse>{
+                override fun onSuccess(orderToListReponse: OrderToListReponse?) {
+                    orderToListReponse?.apply {
+                        response.apply {
+                            when (httpCode) {
+                                0 -> addToListWasSendSuccessfully(orderRequestList.shoppingListId)
+                                440 -> sessionExpiredHandler()
+                                else -> response?.let { otherHttpCodeHandler(it) }
+                            }
                         }
                     }
                 }
-            }
-        }).execute()
+
+                override fun onFailure(error: Throwable?) {
+                    activity?.let { activity ->
+                        activity.runOnUiThread {
+                            if (!networkConnectionAvailable(activity)) {
+                                mAutoConnect = AutoConnect.ADD_ORDER_TO_LIST
+                                shoppingListPostProgress(false)
+                                ErrorHandlerView(activity).showToast()
+                            }
+                        }
+                    }
+                }
+
+            },OrderToListReponse::class.java))
+        }
     }
 
     private fun otherHttpCodeHandler(response: Response) {

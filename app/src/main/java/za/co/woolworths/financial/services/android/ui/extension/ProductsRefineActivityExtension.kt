@@ -1,28 +1,34 @@
 package za.co.woolworths.financial.services.android.ui.extension
 
 import android.content.Context
+import retrofit2.Call
+import za.co.woolworths.financial.services.android.contracts.RequestListener
 import za.co.woolworths.financial.services.android.models.dto.ProductView
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
-import za.co.woolworths.financial.services.android.models.rest.product.GetProductsRequest
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.OnRefineProductsResult
-import za.co.woolworths.financial.services.android.util.OnEventListener
 
-fun refineProducts(context: Context, productsRequestParams: ProductsRequestParams): GetProductsRequest {
-    var resultListner: OnRefineProductsResult = context as OnRefineProductsResult
+fun refineProducts(context: Context, productsRequestParams: ProductsRequestParams): Call<ProductView> {
+    val resultListener: OnRefineProductsResult? = context as? OnRefineProductsResult
     productsRequestParams.responseType = ProductsRequestParams.ResponseType.SUMMARY
-    return GetProductsRequest(context, productsRequestParams, object : OnEventListener<ProductView> {
+    val productRequest = OneAppService.getProducts(productsRequestParams)
+    productRequest.enqueue(CompletionHandler(object : RequestListener<ProductView> {
         override fun onSuccess(productView: ProductView?) {
-            if (productView?.httpCode == 200) {
-                resultListner.onProductRefineSuccess(productView!!, productsRequestParams.refinement)
-            } else {
-                resultListner.onProductRefineFailure(productView?.response?.desc!!)
+            productView?.apply {
+                if (httpCode == 200) {
+                    resultListener?.onProductRefineSuccess(this, productsRequestParams.refinement)
+                } else {
+                    response?.desc?.let {  desc -> resultListener?.onProductRefineFailure(desc)}
+                }
             }
         }
 
-        override fun onFailure(e: String?) {
-            resultListner.onProductRefineFailure(e!!)
+        override fun onFailure(error: Throwable?) {
+            error?.message?.let { message -> resultListener?.onProductRefineFailure(message)}
         }
 
-    })
+    },ProductView::class.java))
+   return productRequest
 
 }

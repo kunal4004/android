@@ -26,8 +26,8 @@ import java.util.Locale;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity;
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
+import za.co.woolworths.financial.services.android.util.KeyboardUtil;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 import za.co.woolworths.financial.services.android.util.controller.CLIFragment;
@@ -89,8 +89,8 @@ public class EditSlideAmountFragment extends CLIFragment {
 				new WLoanEditTextView.OnKeyPreImeListener() {
 					@Override
 					public void onBackPressed() {
-						hideKeyboard();
 						Activity activity = getActivity();
+						KeyboardUtil.hideSoftKeyboard(activity);
 						if (activity instanceof CLIPhase2Activity) {
 							activity.onBackPressed();
 						}
@@ -103,29 +103,37 @@ public class EditSlideAmountFragment extends CLIFragment {
 	private void retrieveNumber(String slideAmount) {
 		int newAmount = Utils.numericFieldOnly(slideAmount);
 		if (newAmount < currentCredit) {
-			minAmountMessage();
+			minAmountMessage(drawnDownAmount(newAmount),newAmount);
 		} else if (newAmount > creditRequestMax) {
-			maxAmountMessage();
-		} else {
+			maxAmountMessage(drawnDownAmount(newAmount),newAmount);
+		}else {
+            setDrawnDownOnSlider(newAmount);
+        }
+    }
 
-			//round down to the nearest hundred
-			newAmount -= newAmount % 100;
-			int progressValue = newAmount - currentCredit;
-			Activity activity = getActivity();
-			if (activity != null) {
-				if (activity instanceof CLIPhase2Activity) {
-					CLIPhase2Activity cliPhase2Activity = ((CLIPhase2Activity) activity);
-					((WoolworthsApplication) activity.getApplication())
-							.bus()
-							.send(new BusStation(progressValue));
-					FragmentManager fm = cliPhase2Activity.getSupportFragmentManager();
-					fm.popBackStack(EditSlideAmountFragment.class.getSimpleName(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
-				}
-			}
+	/**
+	 * TODO :: Replace event bus by onActivityForResult()
+	 */
+	private void setDrawnDownOnSlider(int newAmount) {
+		int progressValue = drawnDownAmount(newAmount);
+		Activity activity = getActivity();
+		if (activity instanceof CLIPhase2Activity) {
+			CLIPhase2Activity cliPhase2Activity = ((CLIPhase2Activity) activity);
+			((WoolworthsApplication) activity.getApplication())
+					.bus()
+					.send(new BusStation(progressValue,newAmount));
+			FragmentManager fm = cliPhase2Activity.getSupportFragmentManager();
+			fm.popBackStack(EditSlideAmountFragment.class.getSimpleName(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
 		}
 	}
 
-	private void init() {
+	private int drawnDownAmount(int amount){
+		//round down to the nearest hundred
+		amount -= amount % 100;
+		return amount - currentCredit;
+	}
+
+    private void init() {
 		etAmount = (WLoanEditTextView) view.findViewById(R.id.etAmount);
 		etAmount.requestFocus();
 		etAmount.addTextChangedListener(onTextChangedListener());
@@ -180,12 +188,14 @@ public class EditSlideAmountFragment extends CLIFragment {
 			etAmount.requestFocus();
 	}
 
-	private void minAmountMessage() {
-		Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.AMOUNT_STOCK, title, getString(R.string.amount_too_low_modal_desc).replaceAll("#R", WFormatter.escapeDecimalFormat(currentCredit)));
+	private void minAmountMessage(int progressValue, int drawnDownAmount) {
+		EnterAmountToSlideFragment minAmountDialog = EnterAmountToSlideFragment.Companion.newInstance(progressValue,drawnDownAmount,title, getString(R.string.amount_too_low_modal_desc).replaceAll("#R", WFormatter.escapeDecimalFormat(currentCredit)));
+		minAmountDialog.show(getFragmentManager(),EnterAmountToSlideFragment.class.getSimpleName());
 	}
 
-	private void maxAmountMessage() {
-		Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.AMOUNT_STOCK, title, getString(R.string.amount_too_high_modal_desc).replaceAll("#R", WFormatter.escapeDecimalFormat(creditRequestMax)));
+	private void maxAmountMessage(int progressValue, int drawnDownAmount) {
+		EnterAmountToSlideFragment minAmountDialog = EnterAmountToSlideFragment.Companion.newInstance(progressValue,drawnDownAmount,title, getString(R.string.amount_too_high_modal_desc).replaceAll("#R", WFormatter.escapeDecimalFormat(creditRequestMax)));
+		minAmountDialog.show(getFragmentManager(),EnterAmountToSlideFragment.class.getSimpleName());
 	}
 
 	@Override
@@ -239,4 +249,11 @@ public class EditSlideAmountFragment extends CLIFragment {
 			}
 		};
 	}
+
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+	}
+
 }

@@ -28,14 +28,17 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import retrofit2.Call;
 import za.co.wigroup.logger.lib.WiGroupLogger;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
+import za.co.woolworths.financial.services.android.contracts.RequestListener;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
-import za.co.woolworths.financial.services.android.models.rest.cli.CLIGetOfferActive;
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
+import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.DebitOrderActivity;
@@ -52,7 +55,6 @@ import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.MyAccountHelper;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
-import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -97,7 +99,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
     private boolean viewWasCreated = false;
     private RelativeLayout rlViewTransactions, relBalanceProtection, mRelFindOutMore;
     private WTextView tvBPIProtectInsurance;
-    private CLIGetOfferActive cliGetOfferActive;
+    private Call<OfferActive> cliGetOfferActive;
     private final CompositeDisposable disposables = new CompositeDisposable();
     private RelativeLayout rlViewStatement;
     private AccountsResponse accountsResponse;
@@ -445,29 +447,30 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
             return;
 
         onLoad();
-        cliGetOfferActive = new CLIGetOfferActive(getActivity(), productOfferingId, new OnEventListener() {
-            @Override
-            public void onSuccess(Object object) {
-                if (getActivity() != null && mStoreCardFragmentIsVisible) {
-                    offerActive = ((OfferActive) object);
-                    bindUI(offerActive);
-                }
-            }
 
-            @Override
-            public void onFailure(String e) {
-                Activity activity = getActivity();
-                if (activity != null && mStoreCardFragmentIsVisible) {
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            networkFailureHandler();
-                        }
-                    });
-                }
-            }
-        });
-        cliGetOfferActive.execute();
+       cliGetOfferActive = OneAppService.INSTANCE.getActiveOfferRequest(productOfferingId);
+       cliGetOfferActive.enqueue(new CompletionHandler<>(new RequestListener<OfferActive>() {
+           @Override
+           public void onSuccess(OfferActive response) {
+               offerActive  = response;
+               if (getActivity() != null && mStoreCardFragmentIsVisible) {
+                   bindUI(offerActive);
+               }
+           }
+
+           @Override
+           public void onFailure(Throwable error) {
+               Activity activity = getActivity();
+               if (activity != null && mStoreCardFragmentIsVisible) {
+                   activity.runOnUiThread(new Runnable() {
+                       @Override
+                       public void run() {
+                           networkFailureHandler();
+                       }
+                   });
+               }
+           }
+       },OfferActive.class));
     }
 
     private void bindUI(OfferActive offerActive) {
@@ -616,8 +619,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
         if (!disposables.isDisposed()) {
             disposables.clear();
         }
-        if (cliGetOfferActive != null && !cliGetOfferActive.isCancelled()) {
-            cliGetOfferActive.cancel(true);
+        if (cliGetOfferActive != null && !cliGetOfferActive.isCanceled()) {
+            cliGetOfferActive.cancel();
         }
     }
 

@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.ui.fragments.shop
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
-import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
@@ -13,20 +12,22 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import com.awfs.coordination.R
-import za.co.woolworths.financial.services.android.contracts.AsyncAPIResponse
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListsResponse
-import za.co.woolworths.financial.services.android.models.rest.shoppinglist.GetShoppingList
 import za.co.woolworths.financial.services.android.ui.adapters.ViewShoppingListAdapter
 import android.support.v7.widget.DividerItemDecoration
 import kotlinx.android.synthetic.main.no_connection_handler.*
 import kotlinx.android.synthetic.main.sign_out_template.*
 import kotlinx.android.synthetic.main.shopping_list_fragment.*
+import retrofit2.Call
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity
 import za.co.woolworths.financial.services.android.contracts.IShoppingList
+import za.co.woolworths.financial.services.android.contracts.RequestListener
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.AddToListRequest
-import za.co.woolworths.financial.services.android.models.rest.shoppinglist.DeleteShoppingLists
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.DepartmentExtensionFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList
@@ -35,7 +36,7 @@ import za.co.woolworths.financial.services.android.util.*
 class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, IShoppingList {
 
     private var mAddToShoppingListAdapter: ViewShoppingListAdapter? = null
-    private var mGetShoppingListRequest: HttpAsyncTask<String, String, ShoppingListsResponse>? = null
+    private var mGetShoppingListRequest: Call<ShoppingListsResponse>? = null
     private var mSuburbName: String? = null
     private var mProvinceName: String? = null
     private var isMyListsFragmentVisible: Boolean = false
@@ -47,7 +48,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
         return inflater.inflate(R.layout.shopping_list_fragment, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (isFragmentVisible) {
             initUI()
@@ -59,7 +60,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
     private fun initUI() {
         activity?.let {
             val itemDecorator = DividerItemDecoration(it, DividerItemDecoration.VERTICAL)
-            itemDecorator.setDrawable(ContextCompat.getDrawable(it, R.drawable.divider))
+            ContextCompat.getDrawable(it, R.drawable.divider)?.let { it1 -> itemDecorator.setDrawable(it1) }
             rcvShoppingLists.addItemDecoration(itemDecorator)
             rcvShoppingLists.layoutManager = LinearLayoutManager(it, LinearLayout.VERTICAL, false)
             mAddToShoppingListAdapter = ViewShoppingListAdapter(mutableListOf(), this)
@@ -73,56 +74,54 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
         rlCreateAList.setOnClickListener(this)
         btnRetry.setOnClickListener(this)
         rlDeliveryLocationLayout.setOnClickListener(this)
-        swipeToRefresh.setOnRefreshListener(object : SwipeRefreshLayout.OnRefreshListener {
-            override fun onRefresh() {
-                getShoppingList(true)
-            }
-        })
+        swipeToRefresh.setOnRefreshListener { getShoppingList(true) }
     }
 
     private fun getShoppingList(isPullToRefresh: Boolean) {
         if (isPullToRefresh) swipeToRefresh.isRefreshing = true else loadShoppingList(true)
         noNetworkConnectionLayout(false)
-        mGetShoppingListRequest = GetShoppingList(object : AsyncAPIResponse.ResponseDelegate<ShoppingListsResponse> {
-            override fun onSuccess(response: ShoppingListsResponse) {
-                activity?.let {
-                    response.apply {
-                        when (httpCode) {
-                            200 -> {
-                                parentFragment?.setShoppingListResponseData(response)
-                                bindShoppingListToUI()
+        mGetShoppingListRequest = OneAppService.getShoppingLists().apply {
+            enqueue(CompletionHandler(object : RequestListener<ShoppingListsResponse> {
+                override fun onSuccess(response: ShoppingListsResponse?) {
+                    activity?.let {
+                        response?.apply {
+                            when (httpCode) {
+                                200 -> {
+                                    parentFragment?.setShoppingListResponseData(response)
+                                    bindShoppingListToUI()
+                                }
+                                440 -> {
+                                    SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
+                                    showSignOutView()
+                                    QueryBadgeCounter.getInstance().clearBadge()
+                                    if (isFragmentVisible)
+                                        activity?.let { SessionExpiredUtilities.getInstance().showSessionExpireDialog(it as? AppCompatActivity?) }
+                                }
+                                else -> {
+                                    loadShoppingList(false)
+                                    showErrorDialog(this.response?.desc!!)
+                                }
                             }
-                            440 -> {
-                                SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
-                                showSignOutView()
-                                QueryBadgeCounter.getInstance().clearBadge()
-                                if (isFragmentVisible)
-                                    activity?.let { SessionExpiredUtilities.getInstance().showSessionExpireDialog(it as? AppCompatActivity?) }
-                            }
-                            else -> {
-                                loadShoppingList(false)
-                                showErrorDialog(this.response?.desc!!)
-                            }
+                            if (isPullToRefresh) swipeToRefresh.isRefreshing = false else loadShoppingList(false)
                         }
-                        if (isPullToRefresh) swipeToRefresh.isRefreshing = false else loadShoppingList(false)
                     }
                 }
-            }
 
-            override fun onFailure(errorMessage: String) {
-                activity?.let {
-                    it.runOnUiThread {
-                        if (isPullToRefresh) swipeToRefresh.isRefreshing = false else loadShoppingList(false)
-                        loadShoppingList(false)
-                        noNetworkConnectionLayout(true)
+                override fun onFailure(error: Throwable?) {
+                    activity?.let {
+                        it.runOnUiThread {
+                            if (isPullToRefresh) swipeToRefresh.isRefreshing = false else loadShoppingList(false)
+                            loadShoppingList(false)
+                            noNetworkConnectionLayout(true)
+                        }
                     }
                 }
-            }
-        }).execute() as HttpAsyncTask<String, String, ShoppingListsResponse>
+            },ShoppingListsResponse::class.java))
+        }
     }
 
     private fun bindShoppingListToUI() {
-        var shoppingList: MutableList<ShoppingList>? = parentFragment?.getShoppingListResponseData()?.lists ?: mutableListOf()
+        val shoppingList: MutableList<ShoppingList>? = parentFragment?.getShoppingListResponseData()?.lists ?: mutableListOf()
         shoppingList.let {
             when (it?.size) {
                 0 -> showEmptyShoppingListView() //no list found
@@ -183,6 +182,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
             }
 
             R.id.rlCreateAList -> {
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPNEWLIST)
                 navigateToCreateListFragment(mutableListOf())
             }
         }
@@ -257,22 +257,25 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
     }
 
     private fun deleteShoppingListItem(shoppingList: ShoppingList) {
-        DeleteShoppingLists(shoppingList.listId, object : AsyncAPIResponse.ResponseDelegate<ShoppingListsResponse> {
-            override fun onSuccess(response: ShoppingListsResponse) {
-                when (response.httpCode) {
-                    200 -> {
-                        parentFragment?.setShoppingListResponseData(response)
-                        if (mAddToShoppingListAdapter?.getShoppingList()?.size == 0)
-                            showEmptyShoppingListView()
+        val deleteShoppingList =  OneAppService.deleteShoppingList(shoppingList.listId)
+        deleteShoppingList.enqueue(CompletionHandler(object: RequestListener<ShoppingListsResponse>{
+            override fun onSuccess(shoppingListsResponse: ShoppingListsResponse?) {
+                shoppingListsResponse?.apply {
+                    when (httpCode) {
+                        200 -> {
+                            parentFragment?.setShoppingListResponseData(this)
+                            if (mAddToShoppingListAdapter?.getShoppingList()?.size == 0)
+                                showEmptyShoppingListView()
+                        }
                     }
                 }
             }
 
-            override fun onFailure(errorMessage: String) {
+            override fun onFailure(error: Throwable?) {
                 activity?.let { it.runOnUiThread { ErrorHandlerView(it).showToast() } }
             }
 
-        }).execute()
+        },ShoppingListsResponse::class.java))
     }
 
     override fun onShoppingListItemDeleted(shoppingList: ShoppingList, position: Int) {

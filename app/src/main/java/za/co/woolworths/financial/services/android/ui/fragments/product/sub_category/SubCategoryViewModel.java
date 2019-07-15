@@ -1,24 +1,21 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.sub_category;
 
-import android.content.Context;
 import android.databinding.ObservableBoolean;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
 
+import retrofit2.Call;
+import za.co.woolworths.financial.services.android.contracts.RequestListener;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.SubCategories;
-import za.co.woolworths.financial.services.android.models.dto.SubCategory;
-import za.co.woolworths.financial.services.android.models.rest.product.ProductSubCategoryRequest;
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
+import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.ui.base.BaseViewModel;
-import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
-import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.rx.SchedulerProvider;
 
 public class SubCategoryViewModel extends BaseViewModel<SubCategoryNavigator> {
 
 	private boolean childItem;
 
-	private ProductSubCategoryRequest mProductSubCategoryRequest;
+	private Call<SubCategories> mProductSubCategoryRequest;
 
 	public SubCategoryViewModel() {
 		super();
@@ -28,17 +25,11 @@ public class SubCategoryViewModel extends BaseViewModel<SubCategoryNavigator> {
 		super(schedulerProvider);
 	}
 
-	public void executeSubCategory(Context context, String category_id) {
-		mProductSubCategoryRequest = subCategoryRequest(context, category_id);
-		mProductSubCategoryRequest.execute();
-	}
-
-	private ProductSubCategoryRequest subCategoryRequest(Context context, String category_id) {
-		getNavigator().onLoad();
-		return new ProductSubCategoryRequest(context, category_id, new OnEventListener() {
+	public void executeSubCategory(String category_id) {
+		mProductSubCategoryRequest = OneAppService.INSTANCE.getSubCategory(category_id);
+		mProductSubCategoryRequest.enqueue(new CompletionHandler<>(new RequestListener<SubCategories>() {
 			@Override
-			public void onSuccess(Object object) {
-				SubCategories subCategories = (SubCategories) object;
+			public void onSuccess(SubCategories subCategories) {
 				switch (subCategories.httpCode) {
 					case 200:
 						getNavigator().bindSubCategoryResult(subCategories.subCategories);
@@ -54,11 +45,11 @@ public class SubCategoryViewModel extends BaseViewModel<SubCategoryNavigator> {
 			}
 
 			@Override
-			public void onFailure(String e) {
+			public void onFailure(Throwable error) {
 				getNavigator().onLoadComplete();
-				getNavigator().onFailureResponse(e);
+				getNavigator().onFailureResponse(error.toString());
 			}
-		});
+		},SubCategories.class));
 	}
 
 	public ObservableBoolean getLoading() {
@@ -66,26 +57,8 @@ public class SubCategoryViewModel extends BaseViewModel<SubCategoryNavigator> {
 	}
 
 	public void cancelRequest() {
-		cancelRequest(mProductSubCategoryRequest);
-	}
-
-	public Fragment enterNextFragment(SubCategory subCategory) {
-		if (subCategory.hasChildren) {
-			// drill down of categories
-			SubCategoryFragment subCategoryFragment = new SubCategoryFragment();
-			Bundle bundle = new Bundle();
-			bundle.putString("root_category_id", subCategory.categoryId);
-			bundle.putString("root_category_name", subCategory.categoryName);
-			bundle.putInt("catStep", 0);
-			subCategoryFragment.setArguments(bundle);
-			return subCategoryFragment;
-		} else {
-			GridFragment gridFragment = new GridFragment();
-			Bundle bundle = new Bundle();
-			bundle.putString("sub_category_id", subCategory.categoryId);
-			bundle.putString("sub_category_name", subCategory.categoryName);
-			gridFragment.setArguments(bundle);
-			return gridFragment;
+		if (mProductSubCategoryRequest!=null && mProductSubCategoryRequest.isCanceled()){
+			mProductSubCategoryRequest.cancel();
 		}
 	}
 

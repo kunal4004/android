@@ -16,6 +16,8 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Base64;
 
+import com.crashlytics.android.Crashlytics;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.InvalidKeyException;
@@ -52,6 +54,7 @@ public class AsymmetricCryptoHelper {
             return keyFactory.generatePublic(keySpec);
 
         } catch (NoSuchAlgorithmException | InvalidKeySpecException | NullPointerException e) {
+            Crashlytics.logException(e);
             throw new AsymmetricKeyGenerationFailureException(e);
         }
     }
@@ -69,6 +72,7 @@ public class AsymmetricCryptoHelper {
             return cipherData;
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException |
                 IllegalBlockSizeException | BadPaddingException e) {
+            Crashlytics.logException(e);
             throw new AsymmetricEncryptionFailureException(e);
         }
     }

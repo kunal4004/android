@@ -2,20 +2,16 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.github.triplet.play'
 apply plugin: 'kotlin-android'
 apply plugin: 'io.fabric'
+apply plugin: 'com.google.firebase.firebase-perf'
 
 android {
 
     def major = "5"
     def minor = "12"
-    def fix = "1"
+    def fix = "0"
 
-    //placeholder will be temporarily updated by build server during a build.
-    //check appcenter-pre-build.sh
-    def BUILD_NUMBER = "{BUILD_NUMBER}"
-
-    if (!BUILD_NUMBER.isNumber()){
-        BUILD_NUMBER = "107"
-    }
+    def jobNumber = 326
+    def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
 
     dataBinding {
         enabled = true
@@ -50,20 +46,11 @@ android {
         }
     }
 
-    defaultConfig {
-        minSdkVersion 19 //kitkat 4.4
-        targetSdkVersion 27
-        multiDexEnabled true
-        versionName(major + "." + minor + "." + fix)
-        vectorDrawables.useSupportLibrary = true
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        versionCode BUILD_NUMBER.toInteger()
-        buildConfigField("String", "HOST", '"https://wfs-appserver.wigroup.co/wfs/app/v4"')
-        buildConfigField("String", "SHA1", '"c3cd271cb06f2af6d538b1308c1f3d4139cf8b09"')
+    lintOptions {
+        abortOnError false
     }
 
     compileSdkVersion 27
-    buildToolsVersion '27.0.3'
     buildTypes {
         debug {
             debuggable true
@@ -76,36 +63,70 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', 'proguard-fresco.pro'
         }
     }
-    productFlavors {
-        dev {
-            applicationId "com.awfs.coordination.dev"
-            signingConfig signingConfigs.woneappDev
-            buildConfigField("String", "HOST", '"http://wfs-appserver-dev.wigroup.co:8080/wfs/app/v4"')
-            buildConfigField("String", "SHA1", '"2f8f87cbf5933ea469c0e9c9d0793de4d8fe3744"')
-            buildConfigField("String", "ENV", '"DEV"')
-        }
 
-        qa {
-            applicationId "com.awfs.coordination.qa"
-            signingConfig signingConfigs.woneappQa
-            buildConfigField("String", "HOST", '"http://wfs-appserver-qa.wigroup.co:8080/wfs/app/v4"')
-            buildConfigField("String", "SHA1", '"ecd631798df6d366535c3a501908cce136d40087"')
-            buildConfigField("String", "ENV", '"QA"')
-        }
+    defaultConfig {
+        minSdkVersion 19 //kitkat 4.4
+        targetSdkVersion 27
+        multiDexEnabled true
+        versionName(major + "." + minor + "." + fix)
+        vectorDrawables.useSupportLibrary = true
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        versionCode jobNumber
+        applicationId "com.awfs.coordination"
+        signingConfig signingConfigs.woolworths
+        buildConfigField("String", "HOST", '"https://wfs-appserver.wigroup.co/wfs/app/v4"')
+        buildConfigField("String", "SHA1", '"e636af4f626cad1b8126a769e5d33c09345b41fe"')
+        buildConfigField("String", "ENV", '""')
 
-        staging {
-            applicationId "com.awfs.coordination.staging"
-            signingConfig signingConfigs.woneappStaging
-            buildConfigField("String", "ENV", '"STAGING"')
-        }
-
-        production {
-            applicationId "com.awfs.coordination"
-            signingConfig signingConfigs.woolworths
-            buildConfigField("String", "ENV", '""')
-        }
         dexOptions {
             javaMaxHeapSize "2560M"
+        }
+    }
+
+    // configs for MS App Center goes here...
+    // MS App Center doesn't currently support productFlavors, only supports release/debug.
+    if (isAppCenter) {
+
+        def appServerEnv = System.getenv("APP_SERVER_ENV")
+        if (appServerEnv == null){
+            appServerEnv = "qa"
+        }
+
+        if (appServerEnv.equalsIgnoreCase("qa")){
+            defaultConfig {
+                applicationId "com.awfs.coordination.qa"
+                signingConfig signingConfigs.woneappQa
+                buildConfigField("String", "HOST", '"https://wfs-appserver-qa.wigroup.co/wfs/app/v4"')
+                buildConfigField("String", "SHA1", '"ecd631798df6d366535c3a501908cce136d40087"')
+                buildConfigField("String", "ENV", '"QA"')
+            }
+        }
+    }
+
+    else{
+
+        productFlavors {
+            dev {
+                applicationId "com.awfs.coordination.dev"
+                signingConfig signingConfigs.woneappDev
+                buildConfigField("String", "HOST", '"https://wfs-appserver-dev.wigroup.co/wfs/app/v4"')
+                buildConfigField("String", "SHA1", '"2f8f87cbf5933ea469c0e9c9d0793de4d8fe3744"')
+                buildConfigField("String", "ENV", '"DEV"')
+            }
+
+            qa {
+                applicationId "com.awfs.coordination.qa"
+                signingConfig signingConfigs.woneappQa
+                buildConfigField("String", "HOST", '"https://wfs-appserver-qa.wigroup.co/wfs/app/v4"')
+                buildConfigField("String", "SHA1", '"ecd631798df6d366535c3a501908cce136d40087"')
+                buildConfigField("String", "ENV", '"QA"')
+            }
+
+            staging {
+                applicationId "com.awfs.coordination.staging"
+                signingConfig signingConfigs.woneappStaging
+                buildConfigField("String", "ENV", '"STAGING"')
+            }
         }
     }
 
@@ -139,14 +160,18 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.google.android.gms:play-services-maps:11.8.0'
-    implementation 'com.google.android.gms:play-services-location:11.8.0'
-    implementation 'com.google.android.gms:play-services-gcm:11.8.0'
-    implementation 'com.google.android.gms:play-services-tagmanager:11.8.0'
-    implementation 'com.google.android.gms:play-services-analytics:11.8.0'
-    implementation 'com.google.firebase:firebase-messaging:11.8.0'
-    implementation 'com.google.firebase:firebase-core:11.8.0'
-    implementation 'com.google.firebase:firebase-config:11.8.0'
+    implementation 'com.google.android.gms:play-services-maps:16.0.0'
+    implementation 'com.google.android.gms:play-services-location:16.0.0'
+    implementation 'com.google.android.gms:play-services-gcm:16.1.0'
+    implementation 'com.google.android.gms:play-services-tagmanager:16.0.8'
+    implementation 'com.google.android.gms:play-services-analytics:16.0.8'
+    implementation 'com.google.firebase:firebase-messaging:18.0.0'
+    implementation 'com.google.firebase:firebase-core:16.0.9'
+    implementation 'com.google.firebase:firebase-config:17.0.0'
+    implementation 'com.google.firebase:firebase-dynamic-links:17.0.0'
+    implementation 'com.google.firebase:firebase-invites:17.0.0'
+    implementation 'com.google.firebase:firebase-perf:17.0.2'
+
     implementation 'com.google.android:flexbox:0.2.5'
     //noinspection GradleCompatible
     implementation 'com.android.support:design:26.1.0'
@@ -156,37 +181,43 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:26.1.0'
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+
     implementation 'android.arch.lifecycle:extensions:1.1.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.facebook.fresco:fresco:1.12.1'
     implementation 'com.facebook.fresco:animated-gif:1.12.1'
-    implementation 'com.facebook.android:facebook-android-sdk:4.26.0'
+    implementation 'com.facebook.android:facebook-android-sdk:5.0.3'
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
     implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
-    implementation 'com.squareup.retrofit:retrofit:1.9.0'
-    implementation 'com.squareup.okhttp3:okhttp:3.9.1'
-    implementation 'com.jakewharton.retrofit:retrofit1-okhttp3-client:1.1.0'
 
-    implementation(name:'utils-1.1.8', ext:'aar')
-    implementation(name:'Logger-1', ext:'aar')
+    implementation(name: 'utils-1.1.8', ext: 'aar')
+    implementation(name: 'Logger-1', ext: 'aar')
 
     implementation 'io.jsonwebtoken:jjwt:0.7.0'
     implementation 'uk.co.chrisjenx:calligraphy:2.2.0'
     implementation 'me.leolin:ShortcutBadger:1.1.22@aar'
     implementation 'com.daimajia.swipelayout:library:1.2.0'
-    compile 'com.github.barteksc:android-pdf-viewer:2.8.2'
-    api 'com.google.zxing:core:3.3.2'
+    implementation 'com.github.barteksc:android-pdf-viewer:2.8.2'
+    api 'com.google.zxing:core:3.3.3'
+
     api 'com.google.zxing:android-core:3.3.0'
     annotationProcessor "android.arch.lifecycle:compiler:1.1.1"
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'me.relex:circleindicator:1.2.2@aar'
+
+    implementation 'com.squareup.retrofit2:retrofit:2.5.0'
+    implementation 'com.google.code.gson:gson:2.8.2'
+    implementation 'com.squareup.okhttp3:okhttp:3.12.1'
+    implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.12.1'
+
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
     compile 'com.github.deano2390:MaterialShowcaseView:1.2.0'
     compile 'com.daasuu:BubbleLayout:1.2.0'
-    implementation 'com.google.code.gson:gson:2.8.0'
 
-    compile 'com.android.volley:volley:1.1.1'
+    implementation 'com.google.code.gson:gson:2.8.2'
 
+    implementation 'com.android.volley:volley:1.1.1'
     //
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:2.4.0'

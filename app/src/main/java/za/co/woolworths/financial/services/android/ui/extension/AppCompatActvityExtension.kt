@@ -7,6 +7,8 @@ import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 
 /**
@@ -120,4 +122,7 @@ fun EditText.hideKeyboard(activity: AppCompatActivity) {
             inputManager?.hideSoftInputFromWindow(currentFocusedView.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
         }
     }
+
 }
+
+inline fun <reified T> Gson.fromJson(json: String): T = this.fromJson<T>(json, object: TypeToken<T>() {}.type)

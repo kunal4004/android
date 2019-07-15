@@ -32,6 +32,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import retrofit2.Call;
+import za.co.woolworths.financial.services.android.contracts.RequestListener;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -44,7 +46,8 @@ import za.co.woolworths.financial.services.android.models.dto.statement.EmailSta
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementResponse;
 import za.co.woolworths.financial.services.android.models.dto.statement.USDocuments;
-import za.co.woolworths.financial.services.android.models.rest.statement.SendUserStatement;
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
+import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.models.service.event.AuthenticationState;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
@@ -58,7 +61,6 @@ import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
-import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.StatementUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -79,7 +81,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
     private WButton mBtnConfirmEmail;
     private WTextView tvAlternativeEmail;
     private StatementUtils mStatementUtils;
-    private SendUserStatement sendUserStatement;
+    private Call<SendUserStatementResponse> sendUserStatement;
     private BroadcastReceiver mConnectionBroadcast;
     private LoadState loadState;
     private SendUserStatementRequest mSendUserStatementRequest;
@@ -138,8 +140,8 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mStatementUtils != null) {
-            mStatementUtils.cancelRequest(sendUserStatement);
+        if (sendUserStatement != null && !sendUserStatement.isCanceled()) {
+            sendUserStatement.cancel();
         }
     }
 
@@ -1043,10 +1045,10 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
     public void sendStatement() {
         onLoad();
-        sendUserStatement = new SendUserStatement(CustomPopUpWindow.this, mSendUserStatementRequest, new OnEventListener() {
+        sendUserStatement = OneAppService.INSTANCE.sendStatementRequest(mSendUserStatementRequest);
+        sendUserStatement.enqueue(new CompletionHandler<>(new RequestListener<SendUserStatementResponse>() {
             @Override
-            public void onSuccess(Object object) {
-                SendUserStatementResponse statementResponse = (SendUserStatementResponse) object;
+            public void onSuccess(SendUserStatementResponse statementResponse) {
                 if (statementResponse != null) {
                     Response response = statementResponse.response;
                     switch (statementResponse.httpCode) {
@@ -1062,12 +1064,13 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
                             break;
                     }
                 }
+
                 loadSuccess();
                 onLoadComplete();
             }
 
             @Override
-            public void onFailure(String e) {
+            public void onFailure(Throwable error) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -1078,9 +1081,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
                     }
                 });
             }
-        });
-
-        sendUserStatement.execute();
+        },SendUserStatementResponse.class));
     }
 
     public void onLoad() {

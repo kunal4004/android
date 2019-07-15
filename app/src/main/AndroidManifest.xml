@@ -105,7 +105,8 @@
         android:theme="@style/AppTheme"
         android:allowBackup="false"
         android:fullBackupOnly="false"
-        tools:replace="android:label">
+        tools:replace="android:label"
+        tools:ignore="GoogleAppIndexingWarning">
         <meta-data android:name="android.webkit.WebView.EnableSafeBrowsing"
             android:value="true" />
         <meta-data
@@ -130,8 +131,20 @@
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter
+                android:autoVerify="true"
+                tools:targetApi="m">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="www.woolworths.co.za"
+                    android:pathPrefix="/"
+                    android:scheme="https" />
             </intent-filter>
         </activity>
         <activity
@@ -286,10 +299,6 @@
             android:theme="@style/bottomNavigationStyle"
             android:windowSoftInputMode="adjustNothing" />
         <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListActivity"
-            android:label="@string/title_activity_main"
-            android:theme="@style/bottomNavigationStyle" />
-        <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.CartActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Cart" />
@@ -362,7 +371,7 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity"
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.OrdersTaxInvoiceActivity"
+        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.WPdfViewerActivity"
             android:screenOrientation="portrait"
             android:theme="@style/TaxInvoiceActivityStyle"/>
 
@@ -409,6 +418,22 @@
             android:screenOrientation="portrait"
             android:theme="@style/BarcodeScanActivityStyle"
             />
+
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.AbsaStatementsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/FaqStyle" />
+
+        <provider
+            android:name="za.co.woolworths.financial.services.android.util.WFileProvider"
+            android:authorities="za.co.woolworths.financial.services.android.util.WFileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/fileprovider" />
+        </provider>
 
     </application>
 
