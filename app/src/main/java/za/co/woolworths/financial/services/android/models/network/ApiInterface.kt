@@ -1030,7 +1030,7 @@ interface ApiInterface {
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
             @Path("chatId") chatId: String,
-            @Body sendChatMessage: SendChatMessage): Call<SendChatMessageResponse>
+            @Body sendChatMessage: SendMessageRequestBody): Call<SendChatMessageResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("chat/userTyping/{chatId}")
@@ -1047,5 +1047,20 @@ interface ApiInterface {
             @Header("sessionToken") sessionToken: String,
             @Path("chatId") chatId: String,
             @Body emptyBody: Objects): Call<UserTypingResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @DELETE("chat/endChatSession/{chatId}")
+    fun endChatSession(
+            @Header("apiId") apiId: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("network") network: String,
+            @Header("os") os: String,
+            @Header("osVersion") osVersion: String,
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String,
+            @Path("chatId") chatId: String): Call<EndChatSessionResponse>
 
 }

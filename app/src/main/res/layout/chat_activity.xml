@@ -27,19 +27,50 @@
             android:background="@drawable/appbar_background"
             android:gravity="center"
             android:minHeight="?attr/actionBarSize"
+            android:paddingRight="@dimen/sixteen_dp"
             app:layout_scrollFlags="scroll|enterAlways">
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/toolbarText"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center|center_vertical"
-                android:letterSpacing="0.2"
-                android:text="chat"
+                android:orientation="vertical">
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:id="@+id/toolbarText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:letterSpacing="0.2"
+                    android:text="chat"
+                    android:textAllCaps="true"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    app:WTextView_font="medium_bold" />
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:id="@+id/agentState"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/indicator_online"
+                    android:drawablePadding="@dimen/five_dp"
+                    android:text="Active Now"
+                    android:textColor="@color/black_50"
+                    android:textSize="12sp"
+                    app:WTextView_font="myriadpro_regular" />
+            </LinearLayout>
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/endSession"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center_vertical"
+                android:letterSpacing="0.15"
+                android:text="@string/chat_end_session"
                 android:textAllCaps="true"
                 android:textColor="@color/black"
                 android:textSize="12sp"
-                app:WTextView_font="medium_bold" />
+                app:WTextView_font="medium" />
 
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>

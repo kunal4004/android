@@ -992,4 +992,9 @@
     <string name="credit_limit_decrease_max_button">proceed with the maximum</string>
     <string name="chat_button_text">Chat With Us</string>
     <string name="start_typing">Start typing...</string>
+    <string name="chat_end_session">END</string>
+    <string name="chat_end_session_dialog_title">End Session</string>
+    <string name="chat_end_session_dialog_desc">Are you sure you want to end the conversation?</string>
+    <string name="chat_end_session_dialog_cancel_text">No, continue session</string>
+    <string name="chat_end_session_dialog_action_text">yes, end session</string>
 </resources>

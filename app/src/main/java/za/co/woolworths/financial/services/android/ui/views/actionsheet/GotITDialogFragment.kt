@@ -12,7 +12,7 @@ class GotITDialogFragment : ActionSheetDialogFragment(), View.OnClickListener {
 
     companion object {
         private var mOnDialogDismiss: IDialogListener? = null
-        fun newInstance(title: String, desc: String, dismissDialogText: String, onDialogDismissListener: IDialogListener, actionButtonText: String = ""): GotITDialogFragment {
+        fun newInstance(title: String, desc: String, dismissDialogText: String, onDialogDismissListener: IDialogListener, actionButtonText: String = "", isIconAvailable:Boolean=false, icon:Int=R.drawable.appicon): GotITDialogFragment {
             mOnDialogDismiss = onDialogDismissListener
             val gotITDialogFragment = GotITDialogFragment()
             val bundle = Bundle()
@@ -20,6 +20,8 @@ class GotITDialogFragment : ActionSheetDialogFragment(), View.OnClickListener {
             bundle.putString("desc", desc)
             bundle.putString("dismissDialogText", dismissDialogText)
             bundle.putString("actionButtonText", actionButtonText)
+            bundle.putBoolean("isIconAvailable",isIconAvailable)
+            bundle.putInt("icon",icon)
             gotITDialogFragment.arguments = bundle
             return gotITDialogFragment
         }
@@ -34,6 +36,8 @@ class GotITDialogFragment : ActionSheetDialogFragment(), View.OnClickListener {
         val mResponseDesc = bundleArguments?.getString("desc")
         val dismissDialogText = bundleArguments?.getString("dismissDialogText")
         val actionButtonText = bundleArguments?.getString("actionButtonText")
+        val isIconAvailable = bundleArguments?.getBoolean("isIconAvailable")
+        val icon = bundleArguments?.getInt("icon")
 
         if (!TextUtils.isEmpty(mResponseTitle))
             tvTitle.setText(mResponseTitle)
@@ -49,6 +53,10 @@ class GotITDialogFragment : ActionSheetDialogFragment(), View.OnClickListener {
 
         actionButton.visibility = if (TextUtils.isEmpty(actionButtonText)) View.INVISIBLE else View.VISIBLE
         vHorizontalDivider.visibility = if (TextUtils.isEmpty(actionButtonText)) View.VISIBLE else View.INVISIBLE
+        if (isIconAvailable!!) {
+            icon?.let { imageIcon.setBackgroundResource(it) }
+            imageIcon.visibility = View.VISIBLE
+        }
 
         btnGotIt.setOnClickListener(this)
 

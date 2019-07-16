@@ -12,33 +12,35 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import za.co.woolworths.financial.services.android.util.Utils
 import kotlinx.android.synthetic.main.chat_activity.*
+import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.contracts.RequestListener
-import za.co.woolworths.financial.services.android.models.JWTDecodedModel
 import za.co.woolworths.financial.services.android.models.dto.ChatMessage
-import za.co.woolworths.financial.services.android.models.dto.chat.AgentsAvailableResponse
-import za.co.woolworths.financial.services.android.models.dto.chat.CreateChatSession
-import za.co.woolworths.financial.services.android.models.dto.chat.CreateChatSessionResponse
-import za.co.woolworths.financial.services.android.models.dto.chat.PollChatSessionStateResponse
+import za.co.woolworths.financial.services.android.models.dto.chat.*
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.adapters.WChatAdapter
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
 import za.co.woolworths.financial.services.android.ui.extension.onAction
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.GotITDialogFragment
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import java.util.concurrent.TimeUnit
 
 
-class WChatActivity : AppCompatActivity() {
+class WChatActivity : AppCompatActivity(), IDialogListener {
 
     private var adapter: WChatAdapter? = null
     var productOfferingId: String? = null
     var accountNumber: String? = null
-    var disposablesAgentsAvailable: CompositeDisposable? = null
-    var disposablesChatSessionState: CompositeDisposable? = null
+    private var disposablesAgentsAvailable: CompositeDisposable? = null
+    private var disposablesChatSessionState: CompositeDisposable? = null
     var chatId: String? = null
+    var usersOfflineMessage: ChatMessage = ChatMessage(ChatMessage.Type.SENT, "")
+    var isAgentOnline: Boolean = false
 
 
     companion object {
+        private const val POLLING_INTERVAL_AGENT_AVAILABLE: Long = 5  //seconds
+        private const val POLLING_INTERVAL_CHAT_SESSION_STATE: Long = 5 //seconds
         private const val PRODUCT_OFFERING_ID = "productOfferingId"
         private const val ACCOUNT_NUMBER = "accountNumber"
         private const val STATUS_UNKNOWN = 0
@@ -84,13 +86,16 @@ class WChatActivity : AppCompatActivity() {
         reyclerview_message_list.layoutManager = LinearLayoutManager(this)
         adapter = WChatAdapter()
         reyclerview_message_list.adapter = adapter
-        button_send.setOnClickListener { checkAgentAvailable() }
+        button_send.setOnClickListener { onSendMessage() }
         edittext_chatbox.afterTextChanged { button_send.isEnabled = it.isNotEmpty() }
-        edittext_chatbox.onAction(EditorInfo.IME_ACTION_DONE) { sendMessage() }
+        edittext_chatbox.onAction(EditorInfo.IME_ACTION_DONE) { onSendMessage() }
+        endSession.setOnClickListener { confirmToEndChatSession() }
+        checkAgentAvailable()
 
     }
 
     override fun onBackPressed() {
+        stopAllPolling()
         finish()
         overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
     }
@@ -114,17 +119,29 @@ class WChatActivity : AppCompatActivity() {
         }
     }
 
-    private fun sendMessage() {
+    private fun onSendMessage() {
         if (edittext_chatbox.text.isNotEmpty()) {
-            val message = edittext_chatbox.text.toString().trim()
-            updateMessageList(ChatMessage(if (message.contains("R:")) ChatMessage.Type.RECEIVED else ChatMessage.Type.SENT, if (message.contains("R:")) message.replace("R:", "") else message))
+            val userMessage = edittext_chatbox.text.toString().trim()
+            val chatMessage = ChatMessage(ChatMessage.Type.SENT, userMessage)
+            updateMessageList(chatMessage)
             edittext_chatbox.text.clear()
+
+            if (isAgentOnline)
+                sendMessage(chatMessage)
+            else {
+                //update offline message
+                usersOfflineMessage.let {
+                    if (!it.isMessageSent)
+                        it.message = if (it.message.isNotEmpty()) "${it.message},$userMessage" else userMessage
+                }
+            }
+
         }
     }
 
     private fun checkAgentAvailable() {
         disposablesAgentsAvailable = CompositeDisposable()
-        disposablesAgentsAvailable?.add(Observable.interval(0, 5, TimeUnit.SECONDS)
+        disposablesAgentsAvailable?.add(Observable.interval(0, POLLING_INTERVAL_AGENT_AVAILABLE, TimeUnit.SECONDS)
                 .flatMap { OneAppService.pollAgentsAvailable().takeUntil(Observable.timer(5, TimeUnit.SECONDS)) }
                 .observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).subscribe(this::handleAgentAvailableSuccessResponse, this::handleErrorResponses))
     }
@@ -135,8 +152,8 @@ class WChatActivity : AppCompatActivity() {
             OneAppService.createChatSession(it).enqueue(CompletionHandler(object : RequestListener<CreateChatSessionResponse> {
                 override fun onSuccess(response: CreateChatSessionResponse?) {
                     when (response?.httpCode) {
-                        200 -> response.chatId?.let {
-                            chatId = it
+                        200 -> response.chatId?.let { id ->
+                            chatId = id
                             pollChatSessionState(chatId)
                         }
                     }
@@ -153,11 +170,31 @@ class WChatActivity : AppCompatActivity() {
     private fun pollChatSessionState(chatId: String?) {
         chatId?.let {
             disposablesChatSessionState = CompositeDisposable()
-            disposablesChatSessionState?.add(Observable.interval(0, 10, TimeUnit.SECONDS)
+            disposablesChatSessionState?.add(Observable.interval(0, POLLING_INTERVAL_CHAT_SESSION_STATE, TimeUnit.SECONDS)
                     .flatMap { OneAppService.pollChatSessionState(chatId).takeUntil(Observable.timer(5, TimeUnit.SECONDS)) }
                     .observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).subscribe(this::handleChatSessionStateSuccessResponse, this::handleErrorResponses))
 
         }
+    }
+
+    private fun sendMessage(chatMessage: ChatMessage) {
+        chatId?.let {
+            OneAppService.sendChatMessage(it, SendMessageRequestBody(chatMessage.message)).enqueue(CompletionHandler(object : RequestListener<SendChatMessageResponse> {
+                override fun onSuccess(response: SendChatMessageResponse?) {
+                    when (response?.httpCode) {
+                        200 -> chatMessage.isMessageSent = true
+                        else -> sendMessage(chatMessage)
+                    }
+
+                }
+
+                override fun onFailure(error: Throwable?) {
+
+                }
+
+            }, SendChatMessageResponse::class.java))
+        }
+
     }
 
     private fun handleAgentAvailableSuccessResponse(result: AgentsAvailableResponse?) {
@@ -185,9 +222,22 @@ class WChatActivity : AppCompatActivity() {
         result?.let {
             when (it.httpCode) {
                 200 -> {
-                    when(it.chatState?.state){
-                        STATUS_ONLINE->{
+                    it.chatState?.let { chatState ->
+                        when (chatState.state) {
+                            STATUS_ONLINE -> {
 
+                                isAgentOnline = true
+
+                                // Update received message with UI
+                                if (chatState.text?.isNotEmpty()!!)
+                                    updateUIWithReceivedMessages(chatState.text)
+
+                                //Send offline messages
+                                usersOfflineMessage.let { it ->
+                                    if (!it.isMessageSent && it.message.isNotEmpty())
+                                        sendMessage(it)
+                                }
+                            }
                         }
                     }
                 }
@@ -204,6 +254,38 @@ class WChatActivity : AppCompatActivity() {
     }
 
     private fun stopChatSessionStatePolling() {
-        disposablesAgentsAvailable?.clear()
+        disposablesChatSessionState?.clear()
     }
+
+    private fun updateUIWithReceivedMessages(messageList: List<String>?) {
+        messageList?.forEach {
+            this.updateMessageList(ChatMessage(ChatMessage.Type.RECEIVED, it))
+        }
+    }
+
+    private fun stopAllPolling() {
+        stopAgentAvailablePolling()
+        stopChatSessionStatePolling()
+    }
+
+    private fun confirmToEndChatSession() {
+        val openDialogFragment =
+                GotITDialogFragment.newInstance(getString(R.string.chat_end_session_dialog_title),
+                        getString(R.string.chat_end_session_dialog_desc), getString(R.string.chat_end_session_dialog_cancel_text),
+                        this, getString(R.string.chat_end_session_dialog_action_text), true, R.drawable.ic_end_session)
+        openDialogFragment.show(this.supportFragmentManager, GotITDialogFragment::class.java.simpleName)
+    }
+
+    private fun endChatSession() {
+        chatId?.let { OneAppService.endChatSession(it) }
+        onBackPressed()
+    }
+
+    override fun onDialogDismissed() {
+    }
+
+    override fun onDialogButtonAction() {
+        endChatSession()
+    }
+
 }

@@ -284,8 +284,12 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.pollChatSessionState(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), chatId)
     }
 
-    fun sendChatMessage(chatId: String, requestBody: SendChatMessage): Call<SendChatMessageResponse> {
+    fun sendChatMessage(chatId: String, requestBody: SendMessageRequestBody): Call<SendChatMessageResponse> {
         return mApiInterface.sendChatMessage(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), chatId, requestBody)
+    }
+
+    fun endChatSession(chatId: String): Call<EndChatSessionResponse> {
+        return mApiInterface.endChatSession(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), chatId)
     }
 
 }
