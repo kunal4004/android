@@ -19,33 +19,6 @@ android {
 
     flavorDimensions "default"
 
-    signingConfigs {
-        woneappDev {
-            keyAlias 'woneapp_dev'
-            keyPassword 'woneapp_dev'
-            storeFile file('key/woneapp_dev-release-key.keystore')
-            storePassword 'woneapp_dev'
-        }
-        woneappQa {
-            keyAlias 'woneapp_qa'
-            keyPassword 'woneapp_qa'
-            storeFile file('key/woneapp_qa-release-key.keystore')
-            storePassword 'woneapp_qa'
-        }
-        woneappStaging {
-            keyAlias 'woneapp_staging'
-            keyPassword 'woneapp_staging'
-            storeFile file('key/woneapp_staging-release-key.keystore')
-            storePassword 'woneapp_staging'
-        }
-        woolworths {
-            keyAlias 'woolworths'
-            keyPassword 'H]|{0*[\'C[Y\\jze'
-            storeFile file('key/Woolworths.keystore.jks')
-            storePassword 'H]|{0*[\'C[Y\\jze'
-        }
-    }
-
     lintOptions {
         abortOnError false
     }
@@ -63,8 +36,6 @@ android {
         }
     }
 
-
-
     defaultConfig {
         minSdkVersion 19 //kitkat 4.4
         targetSdkVersion 28
@@ -75,8 +46,6 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         versionCode jobNumber
         ndk.abiFilters 'armeabi-v7a','arm64-v8a','x86','x86_64'
-        buildConfigField("String", "HOST", '"https://wfs-appserver.wigroup.co/wfs/app/v4"')
-        buildConfigField("String", "SHA1", '"c3cd271cb06f2af6d538b1308c1f3d4139cf8b09"')
         dexOptions {
             javaMaxHeapSize "2560M"
         }
@@ -86,45 +55,65 @@ android {
     // MS App Center doesn't currently support productFlavors, only supports release/debug.
     if (isAppCenter) {
 
-        def appServerEnv = System.getenv("APP_SERVER_ENV")
-        if (appServerEnv == null){
-            appServerEnv = "qa"
+        def appId = "com.awfs.coordination"
+        def host = System.getenv("WigroupServer_API_URL").toString()
+        def hash = System.getenv("WigroupServer_API_HASH").toString()
+
+        def env = ""
+
+        if (host.contains("-qa")){
+            appId = "com.awfs.coordination.qa"
+            env = "QA"
         }
 
-        if (appServerEnv.equalsIgnoreCase("qa")){
-            defaultConfig {
-                applicationId "com.awfs.coordination.qa"
-                signingConfig signingConfigs.woneappQa
-                buildConfigField("String", "HOST", '"https://wfs-appserver-qa.wigroup.co/wfs/app/v4"')
-                buildConfigField("String", "SHA1", '"ecd631798df6d366535c3a501908cce136d40087"')
-                buildConfigField("String", "ENV", '"QA"')
-            }
+        defaultConfig {
+            applicationId appId
+            buildConfigField("String", "HOST", '"' + host + '"')
+            buildConfigField("String", "SHA1", '"' + hash + '"')
+            buildConfigField("String", "ENV", '"' + env + '"')
         }
     }
+    else {
 
-    else{
+        signingConfigs {
+            woneappDev {
+                keyAlias 'woneapp_dev'
+                keyPassword 'woneapp_dev'
+                storeFile file('key/woneapp_dev-release-key.keystore')
+                storePassword 'woneapp_dev'
+            }
+            woneappQa {
+                keyAlias 'woneapp_qa'
+                keyPassword 'woneapp_qa'
+                storeFile file('key/woneapp_qa-release-key.keystore')
+                storePassword 'woneapp_qa'
+            }
+            woneappStaging {
+                keyAlias 'woneapp_staging'
+                keyPassword 'woneapp_staging'
+                storeFile file('key/woneapp_staging-release-key.keystore')
+                storePassword 'woneapp_staging'
+            }
+        }
+
+        def apiKey = "ANDROID_V" + major + "." + minor
+        def props = new Properties()
+        file("WigroupServices.properties").withInputStream { props.load(it) }
 
         productFlavors {
-            dev {
-                applicationId "com.awfs.coordination.dev"
-                signingConfig signingConfigs.woneappDev
-                buildConfigField("String", "HOST", '"https://wfs-appserver-dev.wigroup.co/wfs/app/v4"')
-                buildConfigField("String", "SHA1", '"2f8f87cbf5933ea469c0e9c9d0793de4d8fe3744"')
-                buildConfigField("String", "ENV", '"DEV"')
-            }
-
             qa {
                 applicationId "com.awfs.coordination.qa"
-                signingConfig signingConfigs.woneappQa
-                buildConfigField("String", "HOST", '"https://wfs-appserver-qa.wigroup.co/wfs/app/v4"')
-                buildConfigField("String", "SHA1", '"ecd631798df6d366535c3a501908cce136d40087"')
+                buildConfigField("String", "HOST", '"' +  props.getProperty("URL_QA_" + apiKey) + '"')
+                buildConfigField("String", "SHA1", '"' +  props.getProperty("HASH_QA_" + apiKey) + '"')
                 buildConfigField("String", "ENV", '"QA"')
+                signingConfig signingConfigs.woneappQa
             }
 
-            staging {
-                applicationId "com.awfs.coordination.staging"
-                signingConfig signingConfigs.woneappStaging
-                buildConfigField("String", "ENV", '"STAGING"')
+            production {
+                applicationId "com.awfs.coordination"
+                buildConfigField("String", "HOST", '"' +  props.getProperty("URL_PROD_" + apiKey) + '"')
+                buildConfigField("String", "SHA1", '"' +  props.getProperty("HASH_PROD_" + apiKey) + '"')
+                buildConfigField("String", "ENV", '""')
             }
         }
     }
@@ -138,14 +127,6 @@ android {
         exclude 'META-INF/NOTICE.txt'
         exclude 'META-INF/notice.txt'
         exclude 'META-INF/ASL2.0'
-    }
-
-    play {
-        serviceAccountEmail = 'gradle-play-publisher@api-8582057611245189702-23971.iam.gserviceaccount.com'
-        pk12File = file('api-8582057611245189702-23971-38821af8cacd.p12')
-
-        // ...
-        track = 'internal' // Or any of 'rollout', 'beta', 'alpha' or 'internal'
     }
 
     sourceSets {
