@@ -7,11 +7,11 @@ apply plugin: 'com.google.firebase.firebase-perf'
 android {
 
     def major = "5"
-    def minor = "12"
+    def minor = "13"
     def fix = "0"
 
-    def jobNumber = 326
-    def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
+    def isAppCenter = true//System.getenv("IS_APP_CENTER").asBoolean()
+    def jobNumber = 108
 
     dataBinding {
         enabled = true
@@ -75,7 +75,7 @@ android {
         applicationId "com.awfs.coordination"
         signingConfig signingConfigs.woolworths
         buildConfigField("String", "HOST", '"https://wfs-appserver.wigroup.co/wfs/app/v4"')
-        buildConfigField("String", "SHA1", '"e636af4f626cad1b8126a769e5d33c09345b41fe"')
+        buildConfigField("String", "SHA1", '"a263f4366bc826387438867377d5b48d2e824b7b"')
         buildConfigField("String", "ENV", '""')
 
         dexOptions {
@@ -87,7 +87,7 @@ android {
     // MS App Center doesn't currently support productFlavors, only supports release/debug.
     if (isAppCenter) {
 
-        def appServerEnv = System.getenv("APP_SERVER_ENV")
+        def appServerEnv = ""//System.getenv("APP_SERVER_ENV")
         if (appServerEnv == null){
             appServerEnv = "qa"
         }
