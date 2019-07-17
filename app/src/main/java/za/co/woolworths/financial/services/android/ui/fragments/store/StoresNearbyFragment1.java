@@ -34,6 +34,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
+
 import androidx.appcompat.widget.Toolbar;
 
 import com.awfs.coordination.R;
@@ -113,7 +115,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 	WTextView storeName;
 	WTextView storeOfferings;
 	WTextView storeAddress;
-	WTextView storeDistance;
+	TextView storeDistance;
 	WTextView storeNumber;
 
 	ProgressBar progressBar;
@@ -160,7 +162,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 		close = (ImageView) v.findViewById(R.id.close);
 		storeName = (WTextView) v.findViewById(R.id.storeName);
 		storeOfferings = (WTextView) v.findViewById(R.id.offerings);
-		storeDistance = (WTextView) v.findViewById(R.id.distance);
+		storeDistance = v.findViewById(R.id.distance);
 		storeAddress = (WTextView) v.findViewById(R.id.storeAddress);
 		storeNumber = (WTextView) v.findViewById(R.id.storeNumber);
 		timeingsLayout = (LinearLayout) v.findViewById(R.id.timeingsLayout);
@@ -449,12 +451,14 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 	}
 
 	public void initStoreDetailsView(final StoreDetails storeDetail) {
+		if (getActivity() == null) return;
+
 		timeingsLayout.removeAllViews();
 		brandsLayout.removeAllViews();
 		storeName.setText(storeDetail.name);
 		storeAddress.setText(TextUtils.isEmpty(storeDetail.address) ? "" : storeDetail.address);
 		storeNumber.setText(TextUtils.isEmpty(storeDetail.phoneNumber) ? "" : storeDetail.phoneNumber);
-		storeDistance.setText(WFormatter.formatMeter(storeDetail.distance) + getActivity().getResources().getString(R.string.distance_in_km));
+		storeDistance.setText(getActivity().getResources().getString(R.string.distance_per_km, WFormatter.formatMeter(storeDetail.distance)));
 		if (storeDetail.offerings != null) {
 			storeOfferings.setText(WFormatter.formatOfferingString(getOfferingByType(storeDetail.offerings, "Department")));
 			List<StoreOfferings> brandslist = getOfferingByType(storeDetail.offerings, "Brand");
@@ -464,7 +468,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 					relBrandLayout.setVisibility(View.VISIBLE);
 					for (int i = 0; i < brandslist.size(); i++) {
 						View v = getActivity().getLayoutInflater().inflate(R.layout.opening_hours_textview, null);
-						textView = (WTextView) v.findViewById(R.id.openingHours);
+						textView =  v.findViewById(R.id.openingHours);
 						textView.setText(brandslist.get(i).offering);
 						brandsLayout.addView(textView);
 					}
