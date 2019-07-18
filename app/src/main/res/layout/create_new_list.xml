@@ -61,7 +61,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/close_24" />
 
-        <android.support.constraint.Guideline
+        <androidx.constraintlayout.widget.Guideline
             android:id="@+id/toolbarGuideLine"
             android:layout_width="wrap_content"
             android:layout_height="?attr/actionBarSize"
