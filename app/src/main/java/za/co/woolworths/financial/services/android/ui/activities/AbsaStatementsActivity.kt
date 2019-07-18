@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.MenuItem
 import android.view.View
+import androidx.lifecycle.Lifecycle
 import com.android.volley.NetworkResponse
 import com.android.volley.VolleyError
 import com.awfs.coordination.R
@@ -66,6 +67,10 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
         mErrorHandlerView = ErrorHandlerView(this, relEmptyStateHandler, imgEmpyStateIcon, txtEmptyStateTitle, txtEmptyStateDesc, btnGoToProduct)
         btnGoToProduct?.setOnClickListener { onActionClick() }
         loadStatements()
+
+        imgEmpyStateIcon?.setImageResource(R.drawable.statement_icon)
+        txtEmptyStateTitle?.text = getString(R.string.no_statements_title)
+        txtEmptyStateDesc?.text = getString(R.string.absa_no_statement_desc)
     }
 
     private fun loadStatements() {
@@ -150,6 +155,7 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
     }
 
     private fun hideProgress() {
+       if (this@AbsaStatementsActivity.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED))
         pbCircular.visibility = View.GONE
     }
 
@@ -179,24 +185,26 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
 
     override fun onViewStatement(item: ArchivedStatement) {
         if (pbCircular.visibility != View.VISIBLE)
-            getIndivisualStatement(item)
+            getIndividualStatement(item)
     }
 
-    private fun getIndivisualStatement(archivedStatement: ArchivedStatement) {
+    private fun getIndividualStatement(archivedStatement: ArchivedStatement) {
         showProgress()
         AbsaGetIndividualStatementRequest().make(archivedStatement, object : AbsaBankingOpenApiResponse.ResponseDelegate<NetworkResponse> {
             override fun onSuccess(response: NetworkResponse?, cookies: MutableList<HttpCookie>?) {
-                hideProgress()
-                response?.apply {
-                    allHeaders?.apply {
-                        forEach {
-                            if (it.value.equals("application/pdf", true)) {
-                                showTAxInvoice(data, archivedStatement.documentWorkingDate)
-                                return
+                if (!this@AbsaStatementsActivity.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) return
+                    hideProgress()
+                    response?.apply {
+                        allHeaders?.apply {
+                            forEach {
+                                //activity is at least partially visible
+                                if (it.value.equals("application/pdf", true)) {
+                                    showTAxInvoice(data, archivedStatement.documentWorkingDate)
+                                    return
+                                }
                             }
                         }
                     }
-                }
             }
 
             override fun onFailure(errorMessage: String?) {
