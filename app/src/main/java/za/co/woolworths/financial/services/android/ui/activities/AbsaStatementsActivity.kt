@@ -192,12 +192,13 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
         showProgress()
         AbsaGetIndividualStatementRequest().make(archivedStatement, object : AbsaBankingOpenApiResponse.ResponseDelegate<NetworkResponse> {
             override fun onSuccess(response: NetworkResponse?, cookies: MutableList<HttpCookie>?) {
+                if (!this@AbsaStatementsActivity.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) return
                     hideProgress()
                     response?.apply {
                         allHeaders?.apply {
                             forEach {
                                 //activity is at least partially visible
-                                if (it.value.equals("application/pdf", true)&& this@AbsaStatementsActivity.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+                                if (it.value.equals("application/pdf", true)) {
                                     showTAxInvoice(data, archivedStatement.documentWorkingDate)
                                     return
                                 }
