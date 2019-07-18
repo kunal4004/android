@@ -367,8 +367,10 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 	@Override
 	public void onResume() {
 		super.onResume();
-		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.DELIVERY_LOCATION_SUBURB);
-		deliveryLocationSelectionFragmentChange.onFragmentChanged(getActivity().getResources().getString(R.string.select_your_suburb), true);
+		Activity activity = getActivity();
+		if (activity==null)return;
+		Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.DELIVERY_LOCATION_SUBURB);
+		deliveryLocationSelectionFragmentChange.onFragmentChanged(activity.getResources().getString(R.string.select_your_suburb), true);
 	}
 
 	private class SuburbAdapterAsyncTask extends AsyncTask<List<Suburb>, Void, SuburbSelectionAdapter> {
