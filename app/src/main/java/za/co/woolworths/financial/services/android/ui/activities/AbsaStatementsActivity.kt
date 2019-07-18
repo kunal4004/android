@@ -155,7 +155,7 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
     }
 
     private fun hideProgress() {
-       if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED))
+       if (this@AbsaStatementsActivity.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED))
         pbCircular.visibility = View.GONE
     }
 
@@ -197,7 +197,7 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
                         allHeaders?.apply {
                             forEach {
                                 //activity is at least partially visible
-                                if (it.value.equals("application/pdf", true)&& lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+                                if (it.value.equals("application/pdf", true)&& this@AbsaStatementsActivity.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
                                     showTAxInvoice(data, archivedStatement.documentWorkingDate)
                                     return
                                 }
