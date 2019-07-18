@@ -14,6 +14,8 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 object OneAppService : RetrofitConfig() {
 
+    var forceNetworkUpdate: Boolean = false
+
     fun getConfig(): Call<ConfigResponse> = mApiInterface.getConfig(
             WoolworthsApplication.getApiId(),
             getSha1Password(),

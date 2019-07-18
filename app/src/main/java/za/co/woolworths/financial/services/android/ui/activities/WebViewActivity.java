@@ -1,15 +1,15 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -29,7 +29,6 @@ import java.util.Map;
 
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
-import za.co.woolworths.financial.services.android.util.SessionUtilities;
 
 public class WebViewActivity extends AppCompatActivity {
 
@@ -141,7 +140,7 @@ public class WebViewActivity extends AppCompatActivity {
 
 	private Map<String, String> getExtraHeader() {
 		Map<String, String> extraHeaders = new HashMap<>();
-		extraHeaders.put("bearer", SessionUtilities.getInstance().getSessionToken());
+		//extraHeaders.put("bearer", SessionUtilities.getInstance().getSessionToken());
 		return extraHeaders;
 	}
 }

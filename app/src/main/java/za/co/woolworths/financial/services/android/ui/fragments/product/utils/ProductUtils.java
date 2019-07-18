@@ -3,7 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.utils;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.View;
 

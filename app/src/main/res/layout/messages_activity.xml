@@ -13,14 +13,14 @@
         android:orientation="vertical"
         tools:context="za.co.woolworths.financial.services.android.ui.activities.MessagesActivity">
 
-        <android.support.design.widget.AppBarLayout
+        <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:elevation="0dp"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:elevation="0dp">
 
-            <android.support.v7.widget.Toolbar
+            <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -42,8 +42,8 @@
                     android:textColor="@color/black"
                     android:textSize="12sp"
                     app:WTextView_font="medium_bold"/>
-            </android.support.v7.widget.Toolbar>
-        </android.support.design.widget.AppBarLayout>
+            </androidx.appcompat.widget.Toolbar>
+        </com.google.android.material.appbar.AppBarLayout >
 
         <View
             android:id="@+id/view_toolbar"
@@ -56,18 +56,18 @@
             android:layout_height="match_parent"
             android:background="#efefef">
 
-            <android.support.v4.widget.SwipeRefreshLayout
+            <androidx.core.widget.SwipeRefreshLayout
                 android:id="@+id/swipeToRefresh"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <android.support.v7.widget.RecyclerView
+                <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/messsageListView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clipToPadding="false"
                     android:paddingTop="12dp"/>
-            </android.support.v4.widget.SwipeRefreshLayout>
+            </androidx.core.widget.SwipeRefreshLayout>
 
             <ProgressBar
                 android:id="@+id/loadingBar"

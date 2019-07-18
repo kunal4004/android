@@ -1,14 +1,14 @@
 package za.co.woolworths.financial.services.android.ui.extension
 
 import android.content.Context.INPUT_METHOD_SERVICE
-import android.support.annotation.AnimRes
-import android.support.annotation.IdRes
-import android.support.v4.app.Fragment
-import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
+import androidx.fragment.app.Fragment
+import androidx.appcompat.app.AppCompatActivity
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import androidx.annotation.AnimRes
+import androidx.annotation.IdRes
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
@@ -31,7 +31,7 @@ fun <T : Fragment> AppCompatActivity.addFragment(fragment: T?,
     if (!existsFragmentByTag(tag)) {
         val ft = supportFragmentManager.beginTransaction()
         ft.setCustomAnimations(enterAnimation, exitAnimation, popEnterAnimation, popExitAnimation)
-        ft.add(containerViewId, fragment, tag)
+        fragment?.let { ft.add(containerViewId, it, tag) }
         if (!supportFragmentManager.isStateSaved) {
             ft.commit()
         } else if (allowStateLoss) {

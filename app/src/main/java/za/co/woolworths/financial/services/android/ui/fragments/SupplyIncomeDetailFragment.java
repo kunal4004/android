@@ -1,8 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -48,10 +48,7 @@ public class SupplyIncomeDetailFragment extends CLIFragment implements View.OnCl
 	private IncreaseLimitController mIncreaseLimitController;
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		if (rootView == null) {
-			rootView = inflater.inflate(R.layout.supply_income_detail_fragment, container, false);
-		}
-		return rootView;
+		return inflater.inflate(R.layout.supply_income_detail_fragment, container, false);
 	}
 
 	@Override

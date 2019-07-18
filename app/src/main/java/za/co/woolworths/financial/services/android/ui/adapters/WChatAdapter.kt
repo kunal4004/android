@@ -1,9 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.adapters
 
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.dto.ChatMessage
 import kotlinx.android.synthetic.main.received_message_item.view.*
@@ -21,11 +21,11 @@ class WChatAdapter : RecyclerView.Adapter<MessageViewHolder>() {
         notifyDataSetChanged()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): MessageViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
         return if (viewType == VIEW_TYPE_RECEIVED_MESSAGE) {
-            ReceivedMessageViewHolder(LayoutInflater.from(parent?.context).inflate(R.layout.received_message_item, parent, false))
+            ReceivedMessageViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.received_message_item, parent, false))
         } else {
-            SentMessageViewHolder(LayoutInflater.from(parent?.context).inflate(R.layout.sent_message_item, parent, false))
+            SentMessageViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.sent_message_item, parent, false))
         }
     }
 
@@ -33,8 +33,8 @@ class WChatAdapter : RecyclerView.Adapter<MessageViewHolder>() {
         return messages.size
     }
 
-    override fun onBindViewHolder(holder: MessageViewHolder?, position: Int) {
-        holder?.bind(messages[position])
+    override fun onBindViewHolder(holder: MessageViewHolder, position: Int) {
+        holder.bind(messages[position])
     }
 
     override fun getItemViewType(position: Int): Int {

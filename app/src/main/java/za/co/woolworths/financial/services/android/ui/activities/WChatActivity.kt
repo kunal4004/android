@@ -1,10 +1,10 @@
 package za.co.woolworths.financial.services.android.ui.activities
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
+import androidx.appcompat.app.AppCompatActivity
 import android.view.MenuItem
 import android.view.inputmethod.EditorInfo
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers

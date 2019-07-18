@@ -88,12 +88,7 @@ public class WTabIndicator extends View {
             switch (mAnimation) {
                 case SLIDE:
                     if (i == mCurrentPosition) {
-                        int sc = canvas.saveLayer(0, 0, width, height, null,
-                                Canvas.MATRIX_SAVE_FLAG |
-                                        Canvas.CLIP_SAVE_FLAG |
-                                        Canvas.HAS_ALPHA_LAYER_SAVE_FLAG |
-                                        Canvas.FULL_COLOR_LAYER_SAVE_FLAG |
-                                        Canvas.CLIP_TO_LAYER_SAVE_FLAG);
+                        int sc = canvas.saveLayer(0, 0, width, height, null, Canvas.ALL_SAVE_FLAG);
                         canvas.translate(0, 0);
                         canvas.drawCircle(cx, cy, radius, selectedPaint);
                         if (mOffset != 0) {
@@ -109,12 +104,7 @@ public class WTabIndicator extends View {
                         canvas.restoreToCount(sc);
 
                     } else {
-                        int sc = canvas.saveLayer(0, 0, width, height, null,
-                                Canvas.MATRIX_SAVE_FLAG |
-                                        Canvas.CLIP_SAVE_FLAG |
-                                        Canvas.HAS_ALPHA_LAYER_SAVE_FLAG |
-                                        Canvas.FULL_COLOR_LAYER_SAVE_FLAG |
-                                        Canvas.CLIP_TO_LAYER_SAVE_FLAG);
+                        int sc = canvas.saveLayer(0, 0, width, height, null, Canvas.ALL_SAVE_FLAG);
                         canvas.translate(0, 0);
                         canvas.drawCircle(cx, cy, radius, unSelectedPaint);
                         if (mOffset > 0 && i + 1 <= mIndicatorCount && i == mCurrentPosition + 1) {

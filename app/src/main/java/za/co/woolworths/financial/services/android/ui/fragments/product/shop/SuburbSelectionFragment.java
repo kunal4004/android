@@ -7,11 +7,11 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -367,8 +367,10 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 	@Override
 	public void onResume() {
 		super.onResume();
-		Utils.setScreenName(getActivity(), FirebaseManagerAnalyticsProperties.ScreenNames.DELIVERY_LOCATION_SUBURB);
-		deliveryLocationSelectionFragmentChange.onFragmentChanged(getActivity().getResources().getString(R.string.select_your_suburb), true);
+		Activity activity = getActivity();
+		if (activity==null)return;
+		Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.DELIVERY_LOCATION_SUBURB);
+		deliveryLocationSelectionFragmentChange.onFragmentChanged(activity.getResources().getString(R.string.select_your_suburb), true);
 	}
 
 	private class SuburbAdapterAsyncTask extends AsyncTask<List<Suburb>, Void, SuburbSelectionAdapter> {

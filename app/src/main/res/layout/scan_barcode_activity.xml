@@ -7,14 +7,14 @@
     android:layout_height="match_parent"
     android:background="@color/white">
 
-    <android.support.design.widget.AppBarLayout
+    <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
         app:elevation="0dp">
 
-        <android.support.v7.widget.Toolbar
+        <androidx.appcompat.widget.Toolbar
             android:id="@+id/tlBarcodeScan"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -41,8 +41,8 @@
                 android:layout_height="24dp"
                 android:src="@drawable/close_white" />
 
-        </android.support.v7.widget.Toolbar>
-    </android.support.design.widget.AppBarLayout>
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout >
 
     <FrameLayout
         android:id="@+id/flScanBarcodeContainer"

@@ -6,8 +6,6 @@ import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.os.Parcel
 import android.os.Parcelable
-import android.support.v4.content.ContextCompat
-import android.support.v7.widget.CardView
 import android.transition.Transition
 import android.transition.TransitionInflater
 import android.transition.TransitionManager
@@ -21,7 +19,8 @@ import android.view.ViewTreeObserver
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.TextView
+import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import com.awfs.coordination.R
 
 class FloatingActionButtonExpandable @JvmOverloads constructor(

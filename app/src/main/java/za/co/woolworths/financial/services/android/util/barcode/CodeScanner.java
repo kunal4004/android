@@ -6,9 +6,10 @@ import android.content.Context;
 import android.hardware.Camera;
 import android.os.Handler;
 import android.os.Process;
-import android.support.annotation.MainThread;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.MainThread;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.view.SurfaceHolder;
 
 import com.google.zxing.BarcodeFormat;

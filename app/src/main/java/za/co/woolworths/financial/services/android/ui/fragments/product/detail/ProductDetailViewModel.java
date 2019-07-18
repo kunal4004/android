@@ -43,7 +43,7 @@ import za.co.woolworths.financial.services.android.util.rx.SchedulerProvider;
 
 public class ProductDetailViewModel extends BaseViewModel<ProductDetailNavigator> {
 
-	private String TAG = this.getClass().getSimpleName();
+	private String TAG = ProductDetailViewModel.class.getSimpleName();
 	private final String EMPTY = " ";
 	private final String INGREDIENTS = "ingredients";
 	private final String PRODUCT = "product";
