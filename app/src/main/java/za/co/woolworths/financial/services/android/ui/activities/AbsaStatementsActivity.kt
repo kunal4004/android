@@ -68,7 +68,7 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
         btnGoToProduct?.setOnClickListener { onActionClick() }
         loadStatements()
 
-        imgEmpyStateIcon?.setImageResource(R.drawable.statement_line_drawable)
+        imgEmpyStateIcon?.setImageResource(R.drawable.statement_icon)
         txtEmptyStateTitle?.text = getString(R.string.no_statements_title)
         txtEmptyStateDesc?.text = getString(R.string.absa_no_statement_desc)
     }
