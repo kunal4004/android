@@ -149,8 +149,6 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
                                 } else if (busStation.makeApiCall()) {
                                     hideCLIView();
                                     creditWasAlreadyRunOnce = false;
-                                    retryConnect();
-                                } else {
                                 }
                             }
                         }
