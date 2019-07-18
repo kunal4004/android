@@ -82,7 +82,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
-import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
+import za.co.absa.openbankingapi.woolworths.integration.AbsaSecureCredentials;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -98,7 +98,6 @@ import za.co.woolworths.financial.services.android.models.dto.TransactionParentO
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
-import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
@@ -1418,13 +1417,15 @@ public class Utils {
 
     public static String getAbsaUniqueDeviceID() {
 
-        String deviceID = getSessionDaoValue(SessionDao.KEY.ABSA_DEVICEID);
+		AbsaSecureCredentials absaSecureCredentials = new AbsaSecureCredentials();
+
+        String deviceID = absaSecureCredentials.getDeviceId();
         if (TextUtils.isEmpty(deviceID)) {
-            deviceID = UUID.randomUUID().toString().replace("-", "");
-            sessionDaoSave(SessionDao.KEY.ABSA_DEVICEID, deviceID);
+			absaSecureCredentials.setDeviceId(UUID.randomUUID().toString().replace("-", ""));
+			absaSecureCredentials.save();
         }
 
-        return deviceID;
+        return absaSecureCredentials.getDeviceId();
     }
 
     private static void sessionDaoSave(SessionDao.KEY key, String value) {

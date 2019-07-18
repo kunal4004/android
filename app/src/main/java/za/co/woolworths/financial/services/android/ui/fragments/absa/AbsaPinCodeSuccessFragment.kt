@@ -12,9 +12,9 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_pin_code_complete_fragment.*
 import za.co.absa.openbankingapi.woolworths.integration.AbsaContentEncryptionRequest
 import za.co.absa.openbankingapi.woolworths.integration.AbsaRegisterCredentialRequest
+import za.co.absa.openbankingapi.woolworths.integration.AbsaSecureCredentials
 import za.co.absa.openbankingapi.woolworths.integration.dto.RegisterCredentialResponse
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse
-import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity.Companion.ERROR_PAGE_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
@@ -37,11 +37,11 @@ class AbsaPinCodeSuccessFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater?.inflate(R.layout.absa_pin_code_complete_fragment, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
     }
@@ -79,9 +79,9 @@ class AbsaPinCodeSuccessFragment : Fragment() {
                             Log.d("onSuccess", "onSuccess")
                             response.apply {
                                 if (header?.resultMessages?.size == 0 || aliasId != null) {
-                                    val sessionDao = SessionDao.getByKey(SessionDao.KEY.ABSA_ALIASID)
-                                    sessionDao?.value = aliasId
-                                    sessionDao?.save()
+                                    val absaSecureCredentials = AbsaSecureCredentials();
+                                    absaSecureCredentials.aliasId = aliasId
+                                    absaSecureCredentials.save()
                                     onRegistrationSuccess()
                                 } else {
                                     showErrorScreen(ErrorHandlerActivity.WITH_NO_ACTION)
@@ -131,7 +131,7 @@ class AbsaPinCodeSuccessFragment : Fragment() {
     }*/
 
     private fun showErrorScreen(errorType: Int) {
-        activity.let {
+        activity?.let {
             val intent: Intent = Intent(it, ErrorHandlerActivity::class.java)
             intent.putExtra("errorType", errorType)
             it.startActivityForResult(intent, ERROR_PAGE_REQUEST_CODE)

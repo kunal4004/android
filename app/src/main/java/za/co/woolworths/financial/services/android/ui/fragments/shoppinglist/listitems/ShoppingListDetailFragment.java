@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -32,8 +31,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IToastInterface;
+import za.co.woolworths.financial.services.android.contracts.RequestListener;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
@@ -46,10 +47,8 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsR
 import za.co.woolworths.financial.services.android.models.dto.SkuInventory;
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
-import za.co.woolworths.financial.services.android.models.rest.product.GetInventorySkusForStore;
-import za.co.woolworths.financial.services.android.models.rest.product.PostAddItemToCart;
-import za.co.woolworths.financial.services.android.models.rest.shoppinglist.DeleteShoppingListItem;
-import za.co.woolworths.financial.services.android.models.rest.shoppinglist.GetShoppingListItems;
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
+import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
@@ -64,7 +63,7 @@ import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.MultiMap;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
-import za.co.woolworths.financial.services.android.util.OnEventListener;
+import za.co.woolworths.financial.services.android.util.PostItemToCart;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
@@ -96,8 +95,8 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     private WTextView tvMenuSelectAll;
     private ErrorHandlerView mErrorHandlerView;
     private BroadcastReceiver mConnectionBroadcast;
-    private PostAddItemToCart mPostAddToCart;
-    private GetInventorySkusForStore mGetInventorySkusForStore;
+    private Call<AddItemToCartResponse> mPostAddToCart;
+    private  Call<SkusInventoryForStoreResponse> mGetInventorySkusForStore;
     private Map<String, String> mMapStoreFulFillmentKeyValue;
     private boolean errorMessageWasPopUp;
     private ShoppingListItem mOpenShoppingListItem;
@@ -362,8 +361,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
 
     @Override
     public void onItemDeleteClick(String id, String productId, String catalogRefId) {
-        DeleteShoppingListItem deleteShoppingListItem = deleteShoppingListItem(listId, id, productId, catalogRefId);
-        deleteShoppingListItem.execute();
+       deleteShoppingListItem(listId, id, productId, catalogRefId);
     }
 
     @Override
@@ -495,8 +493,19 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         rlEmptyView.setVisibility(GONE);
         rcvShoppingListItems.setVisibility(GONE);
         loadingBar.setVisibility(VISIBLE);
-        GetShoppingListItems getShoppingListItems = getShoppingListItems(listId);
-        getShoppingListItems.execute();
+
+       Call<ShoppingListItemsResponse> shoppingListItemsResponseCall =  OneAppService.INSTANCE.getShoppingListItems(listId);
+        shoppingListItemsResponseCall.enqueue(new CompletionHandler<>(new RequestListener<ShoppingListItemsResponse>() {
+            @Override
+            public void onSuccess(ShoppingListItemsResponse shoppingListItemsResponse) {
+                onShoppingListItemsResponse(shoppingListItemsResponse);
+            }
+
+            @Override
+            public void onFailure(Throwable error) {
+
+            }
+        },ShoppingListItemsResponse.class));
     }
 
     @Override
@@ -506,9 +515,9 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         cancelRequest(mGetInventorySkusForStore);
     }
 
-    private void cancelRequest(AsyncTask request) {
-        if (request != null && !request.isCancelled()) {
-            request.cancel(true);
+    private void cancelRequest(Call call) {
+        if (call != null && !call.isCanceled()) {
+            call.cancel();
         }
     }
 
@@ -601,7 +610,6 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         }
 
         mPostAddToCart = postAddItemToCart(selectedItems);
-        mPostAddToCart.execute();
     }
 
     public void manageSelectAllMenuVisibility() {
@@ -689,7 +697,6 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     public void executeGetInventoryForStore(String storeId, String multiSku) {
         selectAllTextVisibility(false);
         mGetInventorySkusForStore = getInventoryStockForStore(storeId, multiSku);
-        mGetInventorySkusForStore.execute();
     }
 
     private void selectAllTextVisibility(boolean visible) {
@@ -698,81 +705,78 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     }
 
     public void getInventoryForStoreSuccess(SkusInventoryForStoreResponse skusInventoryForStoreResponse) {
-        switch (skusInventoryForStoreResponse.httpCode) {
-            case 200:
-                String fulFillmentType = null;
-                String storeId = skusInventoryForStoreResponse.storeId;
-                for (Map.Entry<String, String> mapFulfillmentStore : mMapStoreFulFillmentKeyValue.entrySet()) {
-                    if (storeId.equalsIgnoreCase(mapFulfillmentStore.getValue())) {
-                        fulFillmentType = mapFulfillmentStore.getKey();
+        if (skusInventoryForStoreResponse.httpCode == 200) {
+            String fulFillmentType = null;
+            String storeId = skusInventoryForStoreResponse.storeId;
+            for (Map.Entry<String, String> mapFulfillmentStore : mMapStoreFulFillmentKeyValue.entrySet()) {
+                if (storeId.equalsIgnoreCase(mapFulfillmentStore.getValue())) {
+                    fulFillmentType = mapFulfillmentStore.getKey();
+                }
+            }
+            List<SkuInventory> skuInventory = skusInventoryForStoreResponse.skuInventory;
+            // skuInventory is empty or null
+            if (skuInventory.isEmpty()) {
+                for (ShoppingListItem inventoryItems : mShoppingListItems) {
+                    if (TextUtils.isEmpty(inventoryItems.fulfillmentType)) continue;
+                    if (inventoryItems.fulfillmentType.equalsIgnoreCase(fulFillmentType)) {
+                        inventoryItems.inventoryCallCompleted = true;
+                        inventoryItems.quantityInStock = -1;
                     }
                 }
-                List<SkuInventory> skuInventory = skusInventoryForStoreResponse.skuInventory;
-                // skuInventory is empty or null
-                if (skuInventory.isEmpty()) {
-                    for (ShoppingListItem inventoryItems : mShoppingListItems) {
-                        if (TextUtils.isEmpty(inventoryItems.fulfillmentType)) continue;
-                        if (inventoryItems.fulfillmentType.equalsIgnoreCase(fulFillmentType)) {
-                            inventoryItems.inventoryCallCompleted = true;
-                            inventoryItems.quantityInStock = -1;
-                        }
-                    }
-                }
+            }
 
-                if (skuInventory.size() > 0) {
-                    for (ShoppingListItem shoppingListItem : mShoppingListItems) {
-                        if (shoppingListItem.fulfillmentType.equalsIgnoreCase(fulFillmentType)) {
-                            String otherSkuId = shoppingListItem.catalogRefId;
-                            shoppingListItem.inventoryCallCompleted = true;
-                            shoppingListItem.quantityInStock = -1;
-                            for (SkuInventory inventorySku : skusInventoryForStoreResponse.skuInventory) {
-                                if (otherSkuId.equalsIgnoreCase(inventorySku.sku)) {
-                                    shoppingListItem.quantityInStock = inventorySku.quantity;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                updateShoppingList();
-
-                if (getLastValueInMap().equalsIgnoreCase(storeId)) {
-
-                    /***
-                     * Triggered when "SELECT ALL" is selected from toolbar
-                     * and no deliverable location found
-                     * @params: allItemsAreOutOfStock returns true if one or more item
-                     * is available
-                     * tvMenuSelectAll.performClick() checked all available items
-                     */
-                    if (getDeliveryResultCode() != null) {
-                        setResultCode(null);
-                        boolean allItemsAreOutOfStock = true;
-                        for (ShoppingListItem shoppingListItem : shoppingListItemsAdapter.getShoppingListItems()) {
-                            if (shoppingListItem.quantityInStock > 0) {
-                                allItemsAreOutOfStock = false;
+            if (skuInventory.size() > 0) {
+                for (ShoppingListItem shoppingListItem : mShoppingListItems) {
+                    if (shoppingListItem.fulfillmentType.equalsIgnoreCase(fulFillmentType)) {
+                        String otherSkuId = shoppingListItem.catalogRefId;
+                        shoppingListItem.inventoryCallCompleted = true;
+                        shoppingListItem.quantityInStock = -1;
+                        for (SkuInventory inventorySku : skusInventoryForStoreResponse.skuInventory) {
+                            if (otherSkuId.equalsIgnoreCase(inventorySku.sku)) {
+                                shoppingListItem.quantityInStock = inventorySku.quantity;
                                 break;
                             }
                         }
-                        if (!allItemsAreOutOfStock)
-                            tvMenuSelectAll.performClick();
-                        return;
                     }
+                }
+            }
 
+            updateShoppingList();
+
+            if (getLastValueInMap().equalsIgnoreCase(storeId)) {
+
+                /***
+                 * Triggered when "SELECT ALL" is selected from toolbar
+                 * and no deliverable location found
+                 * @params: allItemsAreOutOfStock returns true if one or more item
+                 * is available
+                 * tvMenuSelectAll.performClick() checked all available items
+                 */
+                if (getDeliveryResultCode() != null) {
+                    setResultCode(null);
+                    boolean allItemsAreOutOfStock = true;
+                    for (ShoppingListItem shoppingListItem : shoppingListItemsAdapter.getShoppingListItems()) {
+                        if (shoppingListItem.quantityInStock > 0) {
+                            allItemsAreOutOfStock = false;
+                            break;
+                        }
+                    }
+                    if (!allItemsAreOutOfStock)
+                        tvMenuSelectAll.performClick();
+                    return;
                 }
-                break;
-            default:
-                updateList();
-                if (!errorMessageWasPopUp) {
-                    Activity activity = getActivity();
-                    if (activity == null) return;
-                    if (skusInventoryForStoreResponse.response == null) return;
-                    if (TextUtils.isEmpty(skusInventoryForStoreResponse.response.desc)) return;
-                    Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, skusInventoryForStoreResponse.response.desc);
-                    errorMessageWasPopUp = true;
-                }
-                break;
+
+            }
+        } else {
+            updateList();
+            if (!errorMessageWasPopUp) {
+                Activity activity = getActivity();
+                if (activity == null) return;
+                if (skusInventoryForStoreResponse.response == null) return;
+                if (TextUtils.isEmpty(skusInventoryForStoreResponse.response.desc)) return;
+                Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, skusInventoryForStoreResponse.response.desc);
+                errorMessageWasPopUp = true;
+            }
         }
     }
 
@@ -909,72 +913,60 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         return mDeliveryResultCode;
     }
 
-    public GetShoppingListItems getShoppingListItems(String listId) {
-        return new GetShoppingListItems(new OnEventListener() {
-            @Override
-            public void onSuccess(Object object) {
-                ShoppingListItemsResponse shoppingListItemsResponse = (ShoppingListItemsResponse) object;
-                onShoppingListItemsResponse(shoppingListItemsResponse);
-            }
 
-            @Override
-            public void onFailure(String e) {
-                onGetListFailure(e);
-            }
-        }, listId);
-    }
+    public Call<ShoppingListItemsResponse> deleteShoppingListItem(String listId, String id, String productId, String catalogRefId) {
 
-    public DeleteShoppingListItem deleteShoppingListItem(String listId, String id, String productId, String catalogRefId) {
-        return new DeleteShoppingListItem(new OnEventListener() {
+       Call<ShoppingListItemsResponse> shoppingListItemsResponseCall =  OneAppService.INSTANCE.deleteShoppingListItem(listId,id,productId,catalogRefId);
+        shoppingListItemsResponseCall.enqueue(new CompletionHandler<>(new RequestListener<ShoppingListItemsResponse>() {
             @Override
-            public void onSuccess(Object object) {
-                ShoppingListItemsResponse shoppingListItemsResponse = (ShoppingListItemsResponse) object;
+            public void onSuccess(ShoppingListItemsResponse shoppingListItemsResponse) {
                 onShoppingListItemDelete(shoppingListItemsResponse);
             }
 
             @Override
-            public void onFailure(String e) {
+            public void onFailure(Throwable error) {
                 onDeleteItemFailed();
             }
-        }, listId, id, productId, catalogRefId);
+        },ShoppingListItemsResponse.class));
+
+        return shoppingListItemsResponseCall;
     }
 
-    protected PostAddItemToCart postAddItemToCart(List<AddItemToCart> addItemToCart) {
+    protected Call<AddItemToCartResponse> postAddItemToCart(List<AddItemToCart> addItemToCart) {
         onAddToCartPreExecute();
         addedToCartFail(false);
-        return new PostAddItemToCart(addItemToCart, new OnEventListener() {
+
+        PostItemToCart postItemToCart  = new PostItemToCart();
+        return postItemToCart.make(addItemToCart, new RequestListener<AddItemToCartResponse>() {
             @Override
-            public void onSuccess(Object object) {
-                if (object != null) {
-                    AddItemToCartResponse addItemToCartResponse = (AddItemToCartResponse) object;
-                    switch (addItemToCartResponse.httpCode) {
-                        case 200:
-                            onAddToCartSuccess(addItemToCartResponse);
-                            break;
+            public void onSuccess(AddItemToCartResponse addItemToCartResponse) {
+                switch (addItemToCartResponse.httpCode) {
+                    case 200:
+                        onAddToCartSuccess(addItemToCartResponse);
+                        break;
 
-                        case 417:
-                            // Preferred Delivery Location has been reset on server
-                            // As such, we give the user the ability to set their location again
-                            if (addItemToCartResponse.response != null)
-                                requestDeliveryLocation(addItemToCartResponse.response.desc);
-                            break;
+                    case 417:
+                        // Preferred Delivery Location has been reset on server
+                        // As such, we give the user the ability to set their location again
+                        if (addItemToCartResponse.response != null)
+                            requestDeliveryLocation(addItemToCartResponse.response.desc);
+                        break;
 
-                        case 440:
-                            if (addItemToCartResponse.response != null)
-                                onSessionTokenExpired(addItemToCartResponse.response);
-                            break;
+                    case 440:
+                        if (addItemToCartResponse.response != null)
+                            onSessionTokenExpired(addItemToCartResponse.response);
+                        break;
 
-                        default:
-                            if (addItemToCartResponse.response != null)
-                                otherHttpCode(addItemToCartResponse.response);
-                            break;
-                    }
-                    addedToCartFail(false);
+                    default:
+                        if (addItemToCartResponse.response != null)
+                            otherHttpCode(addItemToCartResponse.response);
+                        break;
                 }
+                addedToCartFail(false);
             }
 
             @Override
-            public void onFailure(String e) {
+            public void onFailure(Throwable error) {
                 addedToCartFail(true);
             }
         });
@@ -989,21 +981,25 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     }
 
 
-    public GetInventorySkusForStore getInventoryStockForStore(String storeId, String multiSku) {
+    public  Call<SkusInventoryForStoreResponse> getInventoryStockForStore(String storeId, String multiSku) {
         setInternetConnectionWasLost(false);
-        return new GetInventorySkusForStore(storeId, multiSku, new OnEventListener() {
+
+        Call<SkusInventoryForStoreResponse> skusInventoryForStoreResponseCall  = OneAppService.INSTANCE.getInventorySkuForStore(storeId, multiSku);
+        skusInventoryForStoreResponseCall.enqueue(new CompletionHandler<>(new RequestListener<SkusInventoryForStoreResponse>() {
             @Override
-            public void onSuccess(Object object) {
-                SkusInventoryForStoreResponse skusInventoryForStoreResponse = (SkusInventoryForStoreResponse) object;
+            public void onSuccess(SkusInventoryForStoreResponse skusInventoryForStoreResponse) {
                 getInventoryForStoreSuccess(skusInventoryForStoreResponse);
             }
 
             @Override
-            public void onFailure(String e) {
+            public void onFailure(Throwable error) {
+                if (error == null) return;
                 setInternetConnectionWasLost(true);
-                geInventoryForStoreFailure(e);
+                geInventoryForStoreFailure(error.getMessage());
             }
-        });
+        },SkusInventoryForStoreResponse.class));
+
+       return skusInventoryForStoreResponseCall;
     }
 
     public void setInternetConnectionWasLost(boolean internetConnectionWasLost) {

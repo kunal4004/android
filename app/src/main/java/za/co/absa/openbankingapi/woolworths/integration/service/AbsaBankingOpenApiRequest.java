@@ -5,12 +5,14 @@ import android.util.Base64;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Header;
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
+import com.crashlytics.android.Crashlytics;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
@@ -20,7 +22,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpCookie;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -71,22 +72,20 @@ public class AbsaBankingOpenApiRequest<T> extends Request<T> {
 
                     @Override
                     public void onFailure(String errorMessage) {
-
+                        errorListener.onErrorResponse(new VolleyError(TextUtils.isEmpty(errorMessage) ? "" : errorMessage));
                     }
 
                     @Override
                     public void onFatalError(VolleyError error) {
-
+                        errorListener.onErrorResponse(error);
                     }
 
                 });
 
                 return;
             }
-
-            List<String> cookies = new ArrayList<>();
-            cookies.add(AbsaContentEncryptionRequest.jSession.getCookie().toString());
-            this.setCookies(cookies);
+            
+            this.setCookies();
 
             this.headers.put("x-encrypted", body.length() + "|" + AbsaContentEncryptionRequest.keyId);
             body = getEncryptedBody(body);
@@ -122,17 +121,18 @@ public class AbsaBankingOpenApiRequest<T> extends Request<T> {
     }
 
 
-    public void setCookies(List<String> cookies) {
-        StringBuilder sb = new StringBuilder();
+    public void setCookies() {
 
-        
-        //if (!TextUtils.isEmpty(headers.get("Cookie")))
-           // sb.append("; ").append(headers.get("Cookie")).append("; ");
+        //1. if Header's contain Cookie, check for JSESSION.
+        //1.1 If JSESSION is not found, use the JSESSION from Content Encryption Response (JSESSION Cookie) + whatever Cookies was included in #1 above
+        //2. If Headers do not contain Cookies, set the Cookie header with the Content Encryption JSESSIONID
 
-        for (String cookie : cookies) {
-            sb.append(cookie).append("; ");
+        if (headers.containsKey("Cookie")) {
+            if (!headers.get("Cookie").contains("JSESSIONID"))
+                headers.put("Cookie", AbsaContentEncryptionRequest.jSession.getCookie().toString() + headers.get("Cookie"));
+        } else {
+            headers.put("Cookie", AbsaContentEncryptionRequest.jSession.getCookie().toString());
         }
-        headers.put("Cookie", sb.toString());
     }
 
     @Override
@@ -160,20 +160,35 @@ public class AbsaBankingOpenApiRequest<T> extends Request<T> {
     @Override
     protected Response<T> parseNetworkResponse(NetworkResponse response) {
         try {
+            if (clazz == NetworkResponse.class) {
+
+                if (isBodyEncryptionRequired) {
+                    byte[] decryptedData = getDecryptedResponseInByteArray(new String(response.data));
+                    NetworkResponse decryptedResponse = new NetworkResponse(response.statusCode, decryptedData, response.notModified, response.networkTimeMs, response.allHeaders);
+                    return Response.success(clazz.cast(decryptedResponse), HttpHeaderParser.parseCacheHeaders(response));
+                } else {
+                    return Response.success(clazz.cast(response), HttpHeaderParser.parseCacheHeaders(response));
+                }
+
+            }
+
             String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
 
-            final String cookies = response.headers.get("Set-Cookie");
-            if (cookies != null && !cookies.isEmpty()) {
-                mCookies = HttpCookie.parse(cookies);
+
+            for (Header header : response.allHeaders) {
+                if (header.getName().equalsIgnoreCase("set-cookie"))
+                    if (mCookies == null)
+                        mCookies = HttpCookie.parse(header.getValue());
+                    else
+                        mCookies.add(HttpCookie.parse(header.getValue()).get(0));
             }
 
             if (isBodyEncryptionRequired)
                 json = getDecryptedResponse(json);
 
             return Response.success(gson.fromJson(json, clazz), HttpHeaderParser.parseCacheHeaders(response));
-        } catch (UnsupportedEncodingException e) {
-            return Response.error(new ParseError(e));
-        } catch (JsonSyntaxException e) {
+        } catch (UnsupportedEncodingException | JsonSyntaxException e) {
+            Crashlytics.logException(e);
             return Response.error(new ParseError(e));
         }
     }
@@ -184,6 +199,7 @@ public class AbsaBankingOpenApiRequest<T> extends Request<T> {
             outputStream.write(this.iv);
             outputStream.write(body.getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
+            Crashlytics.logException(e);
             e.printStackTrace();
         }
 
@@ -192,6 +208,7 @@ public class AbsaBankingOpenApiRequest<T> extends Request<T> {
         try {
             encryptionResult = Base64.encodeToString(SymmetricCipher.Aes256Encrypt(AbsaContentEncryptionRequest.derivedSeed, outputStream.toByteArray(), this.iv), Base64.NO_WRAP);
         } catch (DecryptionFailureException e) {
+            Crashlytics.logException(e);
             e.printStackTrace();
         }
 
@@ -209,6 +226,25 @@ public class AbsaBankingOpenApiRequest<T> extends Request<T> {
         try {
             decryptedResponse = new String(SymmetricCipher.Aes256Decrypt(AbsaContentEncryptionRequest.derivedSeed, encryptedResponse, ivForDecrypt), StandardCharsets.UTF_8);
         } catch (DecryptionFailureException e) {
+            Crashlytics.logException(e);
+            e.printStackTrace();
+        }
+
+        return decryptedResponse;
+    }
+
+    private byte[] getDecryptedResponseInByteArray(String json) {
+
+        byte[] response = Base64.decode(json, Base64.DEFAULT);
+        byte[] ivForDecrypt = Arrays.copyOfRange(response, 0, 16);
+        byte[] encryptedResponse = Arrays.copyOfRange(response, 16, response.length);
+
+        byte[] decryptedResponse = null;
+
+        try {
+            decryptedResponse = SymmetricCipher.Aes256Decrypt(AbsaContentEncryptionRequest.derivedSeed, encryptedResponse, ivForDecrypt);
+        } catch (DecryptionFailureException e) {
+            Crashlytics.logException(e);
             e.printStackTrace();
         }
 

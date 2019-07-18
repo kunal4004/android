@@ -34,9 +34,13 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
+import za.co.woolworths.financial.services.android.contracts.RequestListener;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.rest.shop.PostCheckoutSuccess;
+import za.co.woolworths.financial.services.android.models.dto.CheckoutSuccess;
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
+import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter;
@@ -281,6 +285,16 @@ public class CheckOutFragment extends Fragment {
 	public void initPostCheckout()
 	{
 		QueryBadgeCounter.getInstance().setCartCount(0, INDEX_CART);
-		new PostCheckoutSuccess().execute();
+		Call<Void> checkoutSuccess = OneAppService.INSTANCE.postCheckoutSuccess(new CheckoutSuccess(Utils.getPreferredDeliveryLocation().suburb.id));
+		checkoutSuccess.enqueue(new CompletionHandler<>(new RequestListener<Void>() {
+			@Override
+			public void onSuccess(Void response) {
+			}
+
+			@Override
+			public void onFailure(Throwable error) {
+
+			}
+		},Void.class));
 	}
 }

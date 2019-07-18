@@ -1,7 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.annotation.SuppressLint;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -15,17 +13,18 @@ import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
-import java.util.ArrayList;
-
+import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
+import za.co.woolworths.financial.services.android.contracts.RequestListener;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.TransactionHistoryResponse;
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
+import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.ui.adapters.WTransactionsAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
-import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -37,14 +36,14 @@ public class WTransactionsActivity extends AppCompatActivity {
 	public String productOfferingId;
 	private ErrorHandlerView mErrorHandlerView;
 	private ProgressBar pbTransaction;
-	private AsyncTask<String, String, TransactionHistoryResponse> mExecuteTransactionRequest;
+	private Call<TransactionHistoryResponse> mExecuteTransactionRequest;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.wtransactions_activity);
 		Utils.updateStatusBarBackground(this);
-		toolbar = (Toolbar) findViewById(R.id.toolbar);
+		toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		WoolworthsApplication woolworthsApplication = (WoolworthsApplication) WTransactionsActivity.this.getApplication();
 		mErrorHandlerView = new ErrorHandlerView(this, woolworthsApplication,
@@ -57,7 +56,7 @@ public class WTransactionsActivity extends AppCompatActivity {
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setTitle(null);
 		getSupportActionBar().setElevation(0);
-		transactionListview = (ExpandableListView) findViewById(R.id.transactionListView);
+		transactionListview = findViewById(R.id.transactionListView);
 		pbTransaction = findViewById(R.id.pbTransaction);
 		productOfferingId = getIntent().getStringExtra("productOfferingId");
 		loadTransactionHistory(productOfferingId);
@@ -80,40 +79,16 @@ public class WTransactionsActivity extends AppCompatActivity {
 
 	public void loadTransactionHistory(final String prOfferId) {
 			pbTransaction.setVisibility(View.VISIBLE);
-			mExecuteTransactionRequest = transactionAsyncAPI(prOfferId).execute();
+			mExecuteTransactionRequest = transactionAsyncAPI(prOfferId);
 	}
 
-	@SuppressLint("StaticFieldLeak")
-	private HttpAsyncTask<String, String, TransactionHistoryResponse> transactionAsyncAPI(final String prOfferId) {
-		return new HttpAsyncTask<String, String, TransactionHistoryResponse>() {
-			@Override
-			protected void onPreExecute() {
-				super.onPreExecute();
-				mErrorHandlerView.hideErrorHandlerLayout();
-			}
+	private Call<TransactionHistoryResponse> transactionAsyncAPI(final String productOfferingId) {
 
+		Call<TransactionHistoryResponse> transactionHistoryRequestCall = OneAppService.INSTANCE.getAccountTransactionHistory(productOfferingId);
+		transactionHistoryRequestCall.enqueue(new CompletionHandler<>(new RequestListener<TransactionHistoryResponse>() {
 			@Override
-			protected TransactionHistoryResponse httpDoInBackground(String... params) {
-				return ((WoolworthsApplication) WTransactionsActivity.this.getApplication())
-						.getApi()
-						.getAccountTransactionHistory(prOfferId);
-			}
-
-			@Override
-			protected Class<TransactionHistoryResponse> httpDoInBackgroundReturnType() {
-				return TransactionHistoryResponse.class;
-			}
-
-			@Override
-			protected TransactionHistoryResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-				networkFailureHandler(errorMessage);
-				return new TransactionHistoryResponse();
-			}
-
-			@Override
-			protected void onPostExecute(TransactionHistoryResponse transactionHistoryResponse) {
-				super.onPostExecute(transactionHistoryResponse);
-				if (WTransactionsActivity.this != null && getSupportFragmentManager() != null) {
+			public void onSuccess(TransactionHistoryResponse transactionHistoryResponse) {
+				if (getSupportFragmentManager() != null) {
 					dismissProgress();
 					switch (transactionHistoryResponse.httpCode) {
 						case 200:
@@ -141,17 +116,24 @@ public class WTransactionsActivity extends AppCompatActivity {
 							}
 							break;
 					}
-				}
+
 			}
-		};
+			}
+
+			@Override
+			public void onFailure(Throwable error) {
+					if(error != null)
+						networkFailureHandler(error.getMessage());
+			}
+		},TransactionHistoryResponse.class));
+		return transactionHistoryRequestCall;
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-			case android.R.id.home:
-				onBackPressed();
-				return true;
+		if (item.getItemId() == android.R.id.home) {
+			onBackPressed();
+			return true;
 		}
 		return false;
 	}
@@ -182,8 +164,8 @@ public class WTransactionsActivity extends AppCompatActivity {
 	protected void onDestroy() {
 		super.onDestroy();
 
-		if (mExecuteTransactionRequest != null && !mExecuteTransactionRequest.isCancelled()) {
-			mExecuteTransactionRequest.cancel(true);
+		if (mExecuteTransactionRequest != null && !mExecuteTransactionRequest.isCanceled()) {
+			mExecuteTransactionRequest.cancel();
 		}
 	}
 }

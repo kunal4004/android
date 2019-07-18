@@ -42,13 +42,13 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (arguments != null) {
-            refinementNavigation = Utils.jsonStringToObject(arguments.getString(ARG_PARAM), RefinementNavigation::class.java) as RefinementNavigation
-            refinedNavigateState = arguments.getString(REFINED_NAVIGATION_STATE, "")
+        arguments?.let{
+            refinementNavigation = Utils.jsonStringToObject(it.getString(ARG_PARAM), RefinementNavigation::class.java) as RefinementNavigation
+            refinedNavigateState = it.getString(REFINED_NAVIGATION_STATE, "")
         }
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
     }
@@ -59,10 +59,12 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
     }
 
     private fun initViews() {
-        backButton = activity.findViewById(R.id.btnClose)
+        activity?.let {
+            backButton = it.findViewById(R.id.btnClose)
+            clearRefinement = it.findViewById(R.id.resetRefinement)
+            pageTitle = it.findViewById(R.id.toolbarText)
+        }
         backButton?.setImageResource(R.drawable.back24)
-        clearRefinement = activity.findViewById(R.id.resetRefinement)
-        pageTitle = activity.findViewById(R.id.toolbarText)
         pageTitle?.text = refinementNavigation?.displayName
         clearRefinement?.text = getString(R.string.refinement_clear)
         clearRefinement?.setOnClickListener { refinementAdapter?.clearRefinement() }
@@ -75,7 +77,7 @@ class RefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
 
     private fun loadData() {
         dataList = getRefinementSelectableItems(refinementNavigation!!)
-        refinementAdapter = RefinementAdapter(activity, this, listener, dataList, refinementNavigation!!)
+        refinementAdapter = activity?.let { RefinementAdapter(it, this, listener, dataList, refinementNavigation!!) }
         refinementList.adapter = refinementAdapter
     }
 

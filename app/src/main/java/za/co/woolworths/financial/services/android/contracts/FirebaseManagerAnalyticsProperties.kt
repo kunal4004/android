@@ -51,6 +51,10 @@ class FirebaseManagerAnalyticsProperties {
         const val REFINE_EVENT_BACK_BUTTON: String = "GA_Event_ONE_SORTSFILTERS_SEERSBB"
 
         const val CRASH_CAUTION: String = "GA_Event_ONE_CRASH_CAUTION"
+        const val SHOPMYLISTS: String = "GA_Event_ONE_SHOP_MYLISTS"
+        const val SHOPMYORDERS: String = "GA_Event_ONE_SHOP_MYORDERS"
+        const val BLOCK_CARD_CONFIRM: String = "GA_Event_ONE_MYACCOUNTSBLOCKCARDCONFIRM"
+        const val BLOCK_CARD_CANCEL: String = "GA_Event_ONE_MYACCOUNTSBLOCKCARDCANCEL"
 
     }
 

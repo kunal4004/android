@@ -155,6 +155,94 @@ public class Header {
 		return resultMessages;
 	}
 
+	public void setStatusCode(String statusCode) {
+		this.statusCode = statusCode;
+	}
+
+	public void setUserAgent(String userAgent) {
+		this.userAgent = userAgent;
+	}
+
+	public void setWfpt(String wfpt) {
+		this.wfpt = wfpt;
+	}
+
+	public void setJsessionId(String jsessionId) {
+		this.jsessionId = jsessionId;
+	}
+
+	public void setEsessionId(String esessionId) {
+		this.esessionId = esessionId;
+	}
+
+	public void setXfpt(String xfpt) {
+		this.xfpt = xfpt;
+	}
+
+	public void setService(String service) {
+		this.service = service;
+	}
+
+	public void setOperation(String operation) {
+		this.operation = operation;
+	}
+
+	public void setChannel(String channel) {
+		this.channel = channel;
+	}
+
+	public void setTimestamp(String timestamp) {
+		this.timestamp = timestamp;
+	}
+
+	public void setSourceIp(String sourceIp) {
+		this.sourceIp = sourceIp;
+	}
+
+	public void setAccessAccount(String accessAccount) {
+		this.accessAccount = accessAccount;
+	}
+
+	public void setUserNumber(String userNumber) {
+		this.userNumber = userNumber;
+	}
+
+	public void setNonce(String nonce) {
+		this.nonce = nonce;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language;
+	}
+
+	public void setOrganization(String organization) {
+		this.organization = organization;
+	}
+
+	public void setBrand(String brand) {
+		this.brand = brand;
+	}
+
+	public void setApplicationId(String applicationId) {
+		this.applicationId = applicationId;
+	}
+
+	public void setApplicationKeyId(String applicationKeyId) {
+		this.applicationKeyId = applicationKeyId;
+	}
+
+	public void setRequestToken(String requestToken) {
+		this.requestToken = requestToken;
+	}
+
+	public void setResultMessages(ResultMessage[] resultMessages) {
+		this.resultMessages = resultMessages;
+	}
+
+	public void setPaginationContext(String paginationContext) {
+		this.paginationContext = paginationContext;
+	}
+
 	public String getPaginationContext() {
 		return paginationContext;
 	}
@@ -178,5 +266,9 @@ public class Header {
 
 	public Header(){
 		applicationId = "WCOBMOBAPP";
+		language = "en";
+		brand = "WCOBMOBAPP";
+		organization = "WCOBMOBAPP";
+		channel = "I";
 	}
 }

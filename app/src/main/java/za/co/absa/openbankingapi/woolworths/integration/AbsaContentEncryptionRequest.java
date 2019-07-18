@@ -5,6 +5,7 @@ import android.util.Base64;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.crashlytics.android.Crashlytics;
 
 import java.io.UnsupportedEncodingException;
 import java.net.HttpCookie;
@@ -41,7 +42,7 @@ public class AbsaContentEncryptionRequest {
             this.contentEncryptionSeed = new AsymmetricCryptoHelper().encryptSymmetricKey(seed, WoolworthsApplication.getAbsaBankingOpenApiServices().getContentEncryptionPublicKey());
             derivedSeed = Cryptography.PasswordBasedKeyDerivationFunction2(deviceId, seed, 1000, 256);
         } catch (UnsupportedEncodingException | KeyGenerationFailureException | AsymmetricCryptoHelper.AsymmetricEncryptionFailureException | AsymmetricCryptoHelper.AsymmetricKeyGenerationFailureException e) {
-            e.printStackTrace();
+            Crashlytics.logException(e);
         }
     }
 
@@ -54,7 +55,7 @@ public class AbsaContentEncryptionRequest {
         try {
             body = new CEKDRequest(deviceId, Base64.encodeToString(contentEncryptionSeed, Base64.NO_WRAP)).getJson();
         } catch (Exception e) {
-            e.printStackTrace();
+            Crashlytics.logException(e);
         }
 
         new AbsaBankingOpenApiRequest<>(WoolworthsApplication.getAbsaBankingOpenApiServices().getBaseURL() + "/wcob/cekd", CEKDResponse.class, headers, body, false, new AbsaBankingOpenApiResponse.Listener<CEKDResponse>() {
@@ -63,8 +64,7 @@ public class AbsaContentEncryptionRequest {
             public void onResponse(CEKDResponse response, List<HttpCookie> cookies) {
                 for (HttpCookie cookie : cookies) {
                     if (cookie.getName().equalsIgnoreCase("jsessionid")) {
-                        jSession = new JSession();
-                        jSession.setCookie(cookie);
+                        jSession = new JSession(cookie.getName(),cookie);
                     }
                 }
                 keyId = response.keyId;

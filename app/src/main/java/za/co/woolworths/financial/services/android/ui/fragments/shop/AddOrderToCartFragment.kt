@@ -17,17 +17,19 @@ import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_add_order_to_cart.*
 import org.json.JSONObject
+import retrofit2.Call
+import za.co.woolworths.financial.services.android.contracts.RequestListener
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
-import za.co.woolworths.financial.services.android.models.rest.product.GetInventorySkusForStore
-import za.co.woolworths.financial.services.android.models.rest.product.PostAddItemToCart
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity
 import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity
 import za.co.woolworths.financial.services.android.ui.adapters.AddOrderToCartAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.FragmentsEventsListner
 import za.co.woolworths.financial.services.android.util.MultiMap
-import za.co.woolworths.financial.services.android.util.OnEventListener
+import za.co.woolworths.financial.services.android.util.PostItemToCart
 import za.co.woolworths.financial.services.android.util.Utils
 
 
@@ -64,19 +66,19 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (arguments != null) {
-            orderDetailsResponse = Utils.jsonStringToObject(arguments.getString(ARG_PARAM), OrderDetailsResponse::class.java) as OrderDetailsResponse
+        arguments?.let{
+            orderDetailsResponse = Utils.jsonStringToObject(it.getString(ARG_PARAM), OrderDetailsResponse::class.java) as OrderDetailsResponse
         }
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mWoolWorthsApplication = activity.application as WoolworthsApplication
+        mWoolWorthsApplication = activity?.application as WoolworthsApplication
         initViews()
     }
 
     private fun initViews() {
-        tvSelectAll = activity.findViewById(R.id.tvSelectAll)
+        tvSelectAll = activity?.findViewById(R.id.tvSelectAll)
         rvItemsToCart.layoutManager = LinearLayoutManager(activity) as RecyclerView.LayoutManager?
         addToCartButton.isEnabled = isAnyItemSelected
         tvSelectAll?.setOnClickListener { onSelectAll() }
@@ -88,7 +90,7 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
 
     fun bindData() {
         dataList = buildDataForOrderDetailsView(orderDetailsResponse!!)
-        addOrderToCartAdapter = AddOrderToCartAdapter(activity, this, dataList)
+        addOrderToCartAdapter = activity?.let { AddOrderToCartAdapter(it, this, dataList) }
         rvItemsToCart.adapter = addOrderToCartAdapter
         makeInventoryCall()
     }
@@ -117,12 +119,12 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
     override fun onQuantityUpdate(position: Int, item: OrderHistoryCommerceItem) {
         updateQuantityPosition = position
         navigateFromQuantity()
-        if (activity != null) {
-            val editQuantityIntent = Intent(activity, ConfirmColorSizeActivity::class.java)
+        activity?.apply {
+            val editQuantityIntent = Intent(this, ConfirmColorSizeActivity::class.java)
             editQuantityIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, ConfirmColorSizeActivity.QUANTITY)
             editQuantityIntent.putExtra("ORDER_QUANTITY_IN_STOCK", item.quantityInStock)
-            activity.startActivityForResult(editQuantityIntent, QUANTITY_CHANGED)
-            activity.overridePendingTransition(0, 0)
+            startActivityForResult(editQuantityIntent, QUANTITY_CHANGED)
+            overridePendingTransition(0, 0)
         }
     }
 
@@ -227,7 +229,7 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
 
     private fun executeGetInventoryForStore(storeId: String, multiSku: String) {
         setSelectAllTextVisibility(false)
-        getInventoryStockForStore(storeId, multiSku)?.execute()
+        getInventoryStockForStore(storeId, multiSku)
 
     }
 
@@ -283,8 +285,9 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
         addOrderToCartAdapter?.updateList(dataList)
     }
 
-    fun getInventoryStockForStore(storeId: String, multiSku: String): GetInventorySkusForStore {
-        return GetInventorySkusForStore(storeId, multiSku, object : OnEventListener<SkusInventoryForStoreResponse> {
+    private fun getInventoryStockForStore(storeId: String, multiSku: String): Call<SkusInventoryForStoreResponse> {
+      val skusInventoryForStoreRequest =    OneAppService.getInventorySkuForStore(storeId, multiSku)
+        skusInventoryForStoreRequest.enqueue(CompletionHandler(object: RequestListener<SkusInventoryForStoreResponse>{
             override fun onSuccess(skusInventoryForStoreResponse: SkusInventoryForStoreResponse?) {
                 when (skusInventoryForStoreResponse?.httpCode) {
                     200 -> {
@@ -333,13 +336,14 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
 
                     }
                 }
-
             }
 
-            override fun onFailure(e: String?) {
+            override fun onFailure(error: Throwable?) {
             }
 
-        })
+        },SkusInventoryForStoreResponse::class.java))
+
+        return skusInventoryForStoreRequest
     }
 
     private fun setSelectAllTextVisibility(state: Boolean) {
@@ -372,7 +376,7 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
         }
     }
 
-    fun addItemsToCart() {
+    private fun addItemsToCart() {
         executeAddToCart(dataList)
     }
 
@@ -387,7 +391,7 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
             }
         }
 
-        postAddItemToCart(selectedItems).execute()
+        postAddItemToCart(selectedItems)
     }
 
     private fun onAddToCartPreExecute() {
@@ -395,14 +399,16 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
         loadingBar.visibility = View.VISIBLE
     }
 
-    private fun postAddItemToCart(addItemToCart: List<AddItemToCart>): PostAddItemToCart {
-        return PostAddItemToCart(addItemToCart, object : OnEventListener<AddItemToCartResponse> {
+    private fun postAddItemToCart(addItemToCart: MutableList<AddItemToCart>): Call<AddItemToCartResponse> {
+        val postItemToCart = PostItemToCart()
+        return postItemToCart.make(addItemToCart, object : RequestListener<AddItemToCartResponse> {
             override fun onSuccess(addItemToCartResponse: AddItemToCartResponse?) {
-                onAddToCartSuccess(addItemToCartResponse!!)
+                addItemToCartResponse?.let { onAddToCartSuccess(it) }
             }
 
-            override fun onFailure(e: String?) {
+            override fun onFailure(error: Throwable?) {
             }
+
         })
     }
 
@@ -420,9 +426,11 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
     }
 
     override fun openSetSuburbProcess() {
-        val openDeliveryLocationSelectionActivity = Intent(activity, DeliveryLocationSelectionActivity::class.java)
-        startActivityForResult(openDeliveryLocationSelectionActivity, REQUEST_SUBURB_CHANGE)
-        activity.overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay)
+        activity?.apply {
+            val openDeliveryLocationSelectionActivity = Intent(this, DeliveryLocationSelectionActivity::class.java)
+            startActivityForResult(openDeliveryLocationSelectionActivity, REQUEST_SUBURB_CHANGE)
+            overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay)
+        }
     }
 
 }

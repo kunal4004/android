@@ -1,17 +1,17 @@
 package za.co.woolworths.financial.services.android.ui.fragments.barcode
 
-import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import com.google.gson.Gson
-import za.co.woolworths.financial.services.android.contracts.AsyncAPIResponse
+import retrofit2.Call
+import za.co.woolworths.financial.services.android.contracts.RequestListener
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse
+import za.co.woolworths.financial.services.android.models.dto.ProductRequest
 import za.co.woolworths.financial.services.android.models.dto.ProductView
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
-import za.co.woolworths.financial.services.android.models.rest.product.GetProductDetails
-import za.co.woolworths.financial.services.android.models.rest.product.ProductRequest
-import za.co.woolworths.financial.services.android.models.rest.product.RetrieveProductIdAndSkuId
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.util.ConnectionBroadcastReceiver
 import za.co.woolworths.financial.services.android.util.ScreenManager
@@ -20,8 +20,8 @@ import za.co.woolworths.financial.services.android.util.Utils
 abstract class BarcodeScanExtension : Fragment() {
 
     private var productsRequestParams: ProductsRequestParams? = null
-    private var mProductDetailRequest: AsyncTask<String, String, ProductDetailResponse>? = null
-    var mRetrieveProductDetail: AsyncTask<String, String, ProductView>? = null
+    private var mProductDetailRequest: Call<ProductDetailResponse>? = null
+    var mRetrieveProductDetail: Call<ProductView>? = null
     var networkNotAvailable: Boolean = true
     var getProductDetailAsyncTaskIsRunning = false
 
@@ -29,11 +29,12 @@ abstract class BarcodeScanExtension : Fragment() {
     internal abstract fun networkConnectionState(isConnected: Boolean)
     abstract fun progressBarVisibility(progressBarIsVisible: Boolean)
 
-    fun retrieveProductDetail(): AsyncTask<String, String, ProductView>? {
+    fun retrieveProductDetail(): Call<ProductView>? {
         progressBarVisibility(true)
         networkConnectivityStatus()
         asyncTaskIsRunning(true)
-        return RetrieveProductIdAndSkuId(getProductRequestBody(), object : AsyncAPIResponse.ResponseDelegate<ProductView> {
+        mRetrieveProductDetail = getProductRequestBody()?.let { OneAppService.getProducts(it) }
+        mRetrieveProductDetail?.enqueue(CompletionHandler(object : RequestListener<ProductView> {
             override fun onSuccess(response: ProductView) {
                 if (isAdded && WoolworthsApplication.isApplicationInForeground()) {
                     when (response.httpCode) {
@@ -62,21 +63,29 @@ abstract class BarcodeScanExtension : Fragment() {
                 }
             }
 
-            override fun onFailure(errorMessage: String) {
-                apiFailure(errorMessage)
+            override fun onFailure(error: Throwable?) {
+                error?.message?.let {
+                    apiFailure(it)
+                }
             }
-        }).execute()
+
+        },ProductView::class.java))
+
+        return mRetrieveProductDetail
     }
 
     private fun asyncTaskIsRunning(status: Boolean) {
         getProductDetailAsyncTaskIsRunning = status
     }
 
-    private fun retrieveProductDetail(productRequest: ProductRequest): AsyncTask<String, String, ProductDetailResponse>? {
-        return GetProductDetails(productRequest.productId, productRequest.skuId, object : AsyncAPIResponse.ResponseDelegate<ProductDetailResponse> {
-            override fun onSuccess(response: ProductDetailResponse) {
+    private fun retrieveProductDetail(productRequest: ProductRequest): Call<ProductDetailResponse>? {
+
+        val productDetailRequestCall = OneAppService.productDetail(productRequest.productId, productRequest.skuId)
+
+        productDetailRequestCall.enqueue(CompletionHandler(object : RequestListener<ProductDetailResponse> {
+            override fun onSuccess(response: ProductDetailResponse?) {
                 if (isAdded && WoolworthsApplication.isApplicationInForeground()) {
-                    when (response.httpCode) {
+                    when (response?.httpCode) {
                         200 -> {
                             response.product?.apply {
                                 productId?.let {
@@ -91,7 +100,7 @@ abstract class BarcodeScanExtension : Fragment() {
                                 }
                             }
                         }
-                        else -> response.response?.desc?.let { activity?.apply { Utils.displayValidationMessage(this, CustomPopUpWindow.MODAL_LAYOUT.ERROR, it) } }
+                        else -> response?.response?.desc?.let { activity?.apply { Utils.displayValidationMessage(this, CustomPopUpWindow.MODAL_LAYOUT.ERROR, it) } }
                     }
                 }
                 progressBarVisibility(false)
@@ -99,10 +108,14 @@ abstract class BarcodeScanExtension : Fragment() {
                 asyncTaskIsRunning(false)
             }
 
-            override fun onFailure(errorMessage: String) {
-                apiFailure(errorMessage)
+            override fun onFailure(error: Throwable?) {
+                error?.message?.let {
+                    apiFailure(it)
+                }
             }
-        }).execute()
+        },ProductDetailResponse::class.java))
+
+        return productDetailRequestCall
     }
 
     fun setProductRequestBody(searchType: ProductsRequestParams.SearchType, searchTerm: String) {
@@ -124,13 +137,13 @@ abstract class BarcodeScanExtension : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         mRetrieveProductDetail?.apply {
-            if (!isCancelled) {
-                cancel(true)
+            if (!isCanceled) {
+                cancel()
             }
         }
         mProductDetailRequest?.apply {
-            if (!isCancelled) {
-                cancel(true)
+            if (!isCanceled) {
+                cancel()
             }
         }
     }

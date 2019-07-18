@@ -25,15 +25,15 @@ class GotITDialogFragment : ActionSheetDialogFragment(), View.OnClickListener {
         }
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         addContentView(R.layout.got_it_dialog_fragment)
 
         val bundleArguments = arguments
-        val mResponseTitle = bundleArguments.getString("title")
-        val mResponseDesc = bundleArguments.getString("desc")
-        val dismissDialogText = bundleArguments.getString("dismissDialogText")
-        val actionButtonText = bundleArguments.getString("actionButtonText")
+        val mResponseTitle = bundleArguments?.getString("title")
+        val mResponseDesc = bundleArguments?.getString("desc")
+        val dismissDialogText = bundleArguments?.getString("dismissDialogText")
+        val actionButtonText = bundleArguments?.getString("actionButtonText")
 
         if (!TextUtils.isEmpty(mResponseTitle))
             tvTitle.setText(mResponseTitle)

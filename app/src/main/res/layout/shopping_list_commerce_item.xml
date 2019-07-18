@@ -147,36 +147,48 @@
                                     android:visibility="gone"
                                     app:WTextView_font="myriadpro_semibold"/>
 
-                                <RelativeLayout
-                                    android:id="@+id/llQuantity"
+                                <FrameLayout
+                                    android:id="@+id/flQuantityLoader"
                                     android:layout_width="40dp"
-                                    android:layout_height="32dp"
-                                    android:layout_alignParentBottom="true"
                                     android:layout_alignParentStart="true"
-                                    android:background="@drawable/border_quantity_dropdown"
-                                    android:gravity="center"
-                                    android:padding="4dp"
-                                    >
+                                    android:layout_alignParentBottom="true"
+                                    android:layout_height="32dp">
 
-                                    <za.co.woolworths.financial.services.android.ui.views.WTextView
-                                        android:id="@+id/tvQuantity"
-                                        style="@style/style_cart_item_quantity_value"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_alignParentStart="true"
-                                        android:layout_centerVertical="true"
-                                        android:text="1"/>
+                                    <RelativeLayout
+                                        android:id="@+id/llQuantity"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:background="@drawable/border_quantity_dropdown"
+                                        android:gravity="center"
+                                        android:padding="4dp">
 
-                                    <ImageView
-                                        android:id="@+id/imPrice"
-                                        android:layout_width="@dimen/ten_dp"
-                                        android:layout_height="@dimen/ten_dp"
-                                        android:layout_toEndOf="@+id/tvQuantity"
-                                        android:paddingStart="@dimen/two_dp"
-                                        android:layout_centerVertical="true"
-                                        app:srcCompat="@drawable/vector_drawable_down_arrow"/>
+                                        <za.co.woolworths.financial.services.android.ui.views.WTextView
+                                            android:id="@+id/tvQuantity"
+                                            style="@style/style_cart_item_quantity_value"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_alignParentStart="true"
+                                            android:layout_centerVertical="true"
+                                            android:text="1" />
 
-                                </RelativeLayout>
+                                        <ImageView
+                                            android:id="@+id/imPrice"
+                                            android:layout_width="@dimen/ten_dp"
+                                            android:layout_height="@dimen/ten_dp"
+                                            android:layout_centerVertical="true"
+                                            android:layout_toEndOf="@+id/tvQuantity"
+                                            android:paddingStart="@dimen/two_dp"
+                                            app:srcCompat="@drawable/vector_drawable_down_arrow" />
+                                    </RelativeLayout>
+
+                                    <ProgressBar
+                                        android:id="@+id/pbQuantityLoader"
+                                        android:layout_width="24dp"
+                                        android:visibility="gone"
+                                        android:layout_gravity="center"
+                                        android:layout_height="24dp" />
+                                </FrameLayout>
+
 
                                 <LinearLayout
                                     android:id="@+id/llPriceLayout"

@@ -986,4 +986,10 @@
     <string name="certified_id_deceased">Certified ID Deceased</string>
     <string name="claimant_bank_statement">Claimant\'s Bank Statement</string>
     <string name="npc_block_card_desc">There was a problem blocking your card</string>
+    <string name="credit_limit_decrease">Credit Limit Decrease</string>
+    <string name="credit_limit_decrease_desc_part_1">You will only be able to apply for a limit increase 6 month after this application has been concluded. You will need to go through a credit and affordability assessment at the time.</string>
+    <string name="credit_limit_decrease_desc_part_2">Do you still want to reduce your limit to %1$s, or would you like to proceed with the maximum credit limit you have qualified for?</string>
+    <string name="credit_limit_decrease_max_button">proceed with the maximum</string>
+    <string name="rooted_phone_desc">Your phone is rooted. Unauthorised access.</string>
+    <string name="rooted_phone_title">Access Restricted</string>
 </resources>

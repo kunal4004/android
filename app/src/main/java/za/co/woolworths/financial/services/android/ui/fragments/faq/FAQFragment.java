@@ -14,10 +14,11 @@ import com.awfs.coordination.databinding.FaqFragmentBinding;
 
 import java.util.List;
 
+import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
+import za.co.woolworths.financial.services.android.models.dto.FAQ;
 import za.co.woolworths.financial.services.android.models.dto.FAQDetail;
 import za.co.woolworths.financial.services.android.models.dto.Response;
-import za.co.woolworths.financial.services.android.models.rest.faq.FAQRequest;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.adapters.FAQAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
@@ -28,7 +29,7 @@ import za.co.woolworths.financial.services.android.util.Utils;
 public class FAQFragment extends BaseFragment<FaqFragmentBinding, FAQViewModel> implements FAQNavigator, FAQAdapter.SelectedQuestion {
 
 	private FAQViewModel faqViewModel;
-	private FAQRequest mFAQRequest;
+	private Call<FAQ> mFAQRequest;
 	private ErrorHandlerView mErrorHandlerView;
 	private ProgressBar mProgressBar;
 	private FAQAdapter mFAQAdapter;
@@ -90,7 +91,6 @@ public class FAQFragment extends BaseFragment<FaqFragmentBinding, FAQViewModel> 
 		mErrorHandlerView.hideErrorHandler();
 		mProgressBar.setVisibility(View.VISIBLE);
 		mFAQRequest = getViewModel().faqRequest();
-		mFAQRequest.execute();
 	}
 
 	@Override

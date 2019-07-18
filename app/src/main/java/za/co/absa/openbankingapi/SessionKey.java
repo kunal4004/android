@@ -14,6 +14,8 @@ package za.co.absa.openbankingapi;
 
 import android.util.Base64;
 
+import com.crashlytics.android.Crashlytics;
+
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
@@ -70,6 +72,7 @@ public class SessionKey {
             keyGenerator.init(keySize, secureRandom);
             return keyGenerator.generateKey();
         } catch (NoSuchAlgorithmException e) {
+            Crashlytics.logException(e);
             throw new KeyGenerationFailureException(e);
         }
     }

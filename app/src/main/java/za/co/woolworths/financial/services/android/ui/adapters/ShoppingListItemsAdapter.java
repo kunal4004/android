@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.adapters;
 
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -103,7 +105,7 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 				holder.productName.setText(shoppingListItem.displayName);
 				holder.tvQuantity.setText(String.valueOf(shoppingListItem.userQuantity));
 				holder.price.setText(WFormatter.formatAmount(shoppingListItem.price));
-				holder.select.setChecked(shoppingListItem.isSelected);
+				holder.cbxSelectShoppingListItem.setChecked(shoppingListItem.isSelected);
 				holder.delete.setVisibility(View.VISIBLE);
 				holder.progressBar.setVisibility(View.INVISIBLE);
 
@@ -129,48 +131,52 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 				holder.tvColorSize.setText(sizeColor);
 				holder.tvColorSize.setVisibility(View.VISIBLE);
 				/****
-				 * shoppingListItem.userShouldSetSuburb - is set to true when user did not select any suburb
+				 * shoppingListItem.userShouldSetSuburb - is set to true when user did not cbxSelectShoppingListItem any suburb
 				 */
 
 				if (userShouldSetSuburb()) {
 					holder.tvProductAvailability.setVisibility(View.GONE);
 					holder.llQuantity.setVisibility(View.VISIBLE);
 					holder.llQuantity.setAlpha(1.0f);
-					holder.select.setEnabled(true);
+					holder.cbxSelectShoppingListItem.setEnabled(true);
 					adapterClickable(true);
-					holder.select.setAlpha(1.0f);
+					holder.cbxSelectShoppingListItem.setAlpha(1.0f);
 					holder.llQuantity.setEnabled(true);
 				} else {
-					if (shoppingListItem != null) {
-						boolean productInStock = shoppingListItem.quantityInStock != 0;
-						holder.llQuantity.setAlpha(productInStock ? 1.0f : 0.5f);
-						holder.tvQuantity.setAlpha(productInStock ? 1.0f : 0.5f);
-						holder.select.setEnabled(productInStock);
-						holder.imPrice.setAlpha(productInStock ? 1.0f : 0.5f);
-						if (shoppingListItem.inventoryCallCompleted) {
-							int inventoryQueryStatus = shoppingListItem.quantityInStock;
-							if (inventoryQueryStatus == -1) {
-								holder.llQuantity.setVisibility(View.GONE);
-								holder.select.setVisibility(View.GONE);
-								holder.imPrice.setAlpha(0.5f);
-								holder.tvColorSize.setVisibility(View.GONE);
-								holder.tvProductAvailability.setVisibility(View.VISIBLE);
-								holder.price.setAlpha(0f);
-                                holder.price.setVisibility(View.GONE);
-                                Utils.setBackgroundColor(holder.tvProductAvailability, R.drawable.round_amber_corner, R.string.out_of_stock);
-							} else {
-								holder.llQuantity.setVisibility((shoppingListItem.quantityInStock == 0) ? View.GONE : View.VISIBLE);
-								holder.tvProductAvailability.setVisibility((shoppingListItem.quantityInStock == 0) ? View.VISIBLE : View.GONE);
-								holder.select.setVisibility((shoppingListItem.quantityInStock == 0) ? View.GONE : View.VISIBLE);
-                                holder.price.setVisibility((shoppingListItem.quantityInStock == 0) ? View.GONE : View.VISIBLE);
-                                holder.price.setAlpha(1f);
-								holder.tvColorSize.setVisibility(View.VISIBLE);
-								Utils.setBackgroundColor(holder.tvProductAvailability, R.drawable.round_amber_corner, R.string.out_of_stock);
-							}
+					boolean productInStock = shoppingListItem.quantityInStock != 0;
+					holder.llQuantity.setAlpha(productInStock ? 1.0f : 0.5f);
+					holder.tvQuantity.setAlpha(productInStock ? 1.0f : 0.5f);
+					holder.cbxSelectShoppingListItem.setEnabled(productInStock);
+					holder.imPrice.setAlpha(productInStock ? 1.0f : 0.5f);
+					holder.pbQuantityLoader.setVisibility(View.VISIBLE);
+					holder.cbxSelectShoppingListItem.setEnabled(false);
+					holder.pbQuantityLoader.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
+					if (shoppingListItem.inventoryCallCompleted) {
+						int inventoryQueryStatus = shoppingListItem.quantityInStock;
+						holder.pbQuantityLoader.setVisibility(View.GONE);
+						holder.cbxSelectShoppingListItem.setEnabled(true);
+						if (inventoryQueryStatus == -1) {
+							holder.llQuantity.setVisibility(View.GONE);
+							holder.cbxSelectShoppingListItem.setVisibility(View.GONE);
+							holder.imPrice.setAlpha(0.5f);
+							holder.tvColorSize.setVisibility(View.GONE);
+							holder.tvProductAvailability.setVisibility(View.VISIBLE);
+							holder.price.setAlpha(0f);
+holder.price.setVisibility(View.GONE);
+Utils.setBackgroundColor(holder.tvProductAvailability, R.drawable.round_amber_corner, R.string.out_of_stock);
 						} else {
-							holder.llQuantity.setVisibility(View.VISIBLE);
-							holder.tvProductAvailability.setVisibility(View.GONE);
+							holder.llQuantity.setVisibility((shoppingListItem.quantityInStock == 0) ? View.GONE : View.VISIBLE);
+							holder.tvProductAvailability.setVisibility((shoppingListItem.quantityInStock == 0) ? View.VISIBLE : View.GONE);
+							holder.cbxSelectShoppingListItem.setVisibility((shoppingListItem.quantityInStock == 0) ? View.GONE : View.VISIBLE);
+holder.price.setVisibility((shoppingListItem.quantityInStock == 0) ? View.GONE : View.VISIBLE);
+holder.price.setAlpha(1f);
+							holder.tvColorSize.setVisibility(View.VISIBLE);
+							Utils.setBackgroundColor(holder.tvProductAvailability, R.drawable.round_amber_corner, R.string.out_of_stock);
 						}
+					} else {
+						holder.llQuantity.setVisibility(View.VISIBLE);
+						holder.tvProductAvailability.setVisibility(View.GONE);
+						holder.cbxSelectShoppingListItem.setEnabled(false);
 					}
 				}
 
@@ -182,7 +188,7 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 					}
 
 				// Set Color and Size END
-				holder.select.setOnClickListener(new View.OnClickListener() {
+				holder.cbxSelectShoppingListItem.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View view) {
 						ShoppingListItem shoppingListItem = getItem(position);
@@ -281,10 +287,11 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 		private WTextView tvColorSize;
 		private WTextView tvQuantity;
 		private WTextView price;
-		private CheckBox select;
+		private CheckBox cbxSelectShoppingListItem;
 		private WrapContentDraweeView cartProductImage;
 		private WTextView delete;
 		private ProgressBar progressBar;
+		private ProgressBar pbQuantityLoader;
 		private RelativeLayout llQuantity;
 		private LinearLayout llShopList;
 		private ImageView imPrice;
@@ -295,7 +302,8 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 			productName = itemView.findViewById(R.id.tvTitle);
 			tvQuantity = itemView.findViewById(R.id.tvQuantity);
 			price = itemView.findViewById(R.id.tvPrice);
-			select = itemView.findViewById(R.id.btnDeleteRow);
+			cbxSelectShoppingListItem = itemView.findViewById(R.id.btnDeleteRow);
+			pbQuantityLoader = itemView.findViewById(R.id.pbQuantityLoader);
 			cartProductImage = itemView.findViewById(R.id.cartProductImage);
 			tvProductAvailability = itemView.findViewById(R.id.tvProductAvailability);
 			delete = itemView.findViewById(R.id.tvDelete);

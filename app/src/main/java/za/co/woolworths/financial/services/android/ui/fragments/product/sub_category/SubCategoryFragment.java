@@ -237,7 +237,7 @@ public class SubCategoryFragment extends BaseFragment<ExpandableSubCategoryFragm
 			mErrorHandlerView.hideErrorHandler();
 			//ChildItem params determine whether to perform header or child operation
 			getViewModel().setChildItem(childItem);
-			getViewModel().executeSubCategory(getActivity(), categoryId);
+			getViewModel().executeSubCategory(categoryId);
 		} else {
 			if (!getViewModel().childItem()) {
 				connectionFailureUI("e");

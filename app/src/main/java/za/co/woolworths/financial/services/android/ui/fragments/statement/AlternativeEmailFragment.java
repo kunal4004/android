@@ -26,12 +26,15 @@ import com.google.gson.Gson;
 
 import java.util.List;
 
+import retrofit2.Call;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
+import za.co.woolworths.financial.services.android.contracts.RequestListener;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.statement.EmailStatementResponse;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementResponse;
-import za.co.woolworths.financial.services.android.models.rest.statement.SendUserStatement;
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
+import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
@@ -41,7 +44,6 @@ import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FragmentUtils;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
-import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.StatementUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -54,7 +56,7 @@ public class AlternativeEmailFragment extends Fragment implements View.OnClickLi
 	private StatementUtils mStatementUtils;
 	private BroadcastReceiver mConnectionBroadcast;
 	private LoadState loadState;
-	private SendUserStatement sendUserStatement;
+	private Call<SendUserStatementResponse>  sendUserStatement;
 	private ProgressBar mWoolworthsProgressBar;
 	private SendUserStatementRequest mSendUserStatementRequest;
 	private String mUserStatement;
@@ -251,14 +253,15 @@ public class AlternativeEmailFragment extends Fragment implements View.OnClickLi
 
 	public void sendStatement() {
 		onLoad();
-		sendUserStatement = new SendUserStatement(getActivity(), mSendUserStatementRequest, new OnEventListener() {
+
+		sendUserStatement = OneAppService.INSTANCE.sendStatementRequest(mSendUserStatementRequest);
+		sendUserStatement.enqueue(new CompletionHandler<>(new RequestListener<SendUserStatementResponse>() {
 			@Override
-			public void onSuccess(Object object) {
-				SendUserStatementResponse statementResponse = (SendUserStatementResponse) object;
-				if (statementResponse != null) {
-					switch (statementResponse.httpCode) {
+			public void onSuccess(SendUserStatementResponse sendUserStatementResponse) {
+				if (sendUserStatementResponse != null) {
+					switch (sendUserStatementResponse.httpCode) {
 						case 200:
-							List<EmailStatementResponse> data = statementResponse.data;
+							List<EmailStatementResponse> data = sendUserStatementResponse.data;
 							EmailStatementResponse emailResponse = data.get(0);
 							if (emailResponse.sent) {
 								hideKeyboard();
@@ -274,7 +277,7 @@ public class AlternativeEmailFragment extends Fragment implements View.OnClickLi
 							}
 							break;
 						case 440:
-							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, statementResponse.response.stsParams, getActivity());
+							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, sendUserStatementResponse.response.stsParams, getActivity());
 							break;
 						default:
 							break;
@@ -285,7 +288,7 @@ public class AlternativeEmailFragment extends Fragment implements View.OnClickLi
 			}
 
 			@Override
-			public void onFailure(String e) {
+			public void onFailure(Throwable error) {
 				final Activity activity = getActivity();
 				if (activity != null) {
 					activity.runOnUiThread(new Runnable() {
@@ -299,9 +302,7 @@ public class AlternativeEmailFragment extends Fragment implements View.OnClickLi
 					});
 				}
 			}
-		});
-
-		sendUserStatement.execute();
+		},SendUserStatementResponse.class));
 	}
 
 	public void onLoad() {

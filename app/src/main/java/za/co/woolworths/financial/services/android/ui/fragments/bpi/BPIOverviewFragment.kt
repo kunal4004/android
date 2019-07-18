@@ -34,11 +34,11 @@ class BPIOverviewFragment : BPIFragment(), BPIOverviewAdapter.OnBPIAdapterClickL
     private var mBPIOverviewAdapter: BPIOverviewAdapter? = null
     private var mLayoutManager: RecyclerView.LayoutManager? = null
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater?.inflate(R.layout.bpi_overview_fragment, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initialize()
         setupList()

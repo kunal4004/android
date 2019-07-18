@@ -14,14 +14,13 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.add_to_list_content.*
-import za.co.woolworths.financial.services.android.contracts.AsyncAPIResponse
+import za.co.woolworths.financial.services.android.contracts.RequestListener
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.*
-import za.co.woolworths.financial.services.android.models.rest.shoppinglist.GetShoppingList
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.adapters.AddToShoppingListAdapter
 import java.util.*
-import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostAddToShoppingList
-import za.co.woolworths.financial.services.android.models.rest.shoppinglist.PostOrderToShoppingList
 import za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity
 import za.co.woolworths.financial.services.android.ui.activities.OrderDetailsActivity.Companion.ORDER_ID
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
@@ -55,11 +54,11 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater!!.inflate(R.layout.add_to_list_content, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         getBundleArguments()
         initAndConfigureUI()
@@ -108,10 +107,11 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
 
     private fun retrieveShoppingList() {
         loadShoppingList(true)
-        GetShoppingList(object : AsyncAPIResponse.ResponseDelegate<ShoppingListsResponse> {
-            override fun onSuccess(response: ShoppingListsResponse) {
+        val shoppingListRequest = OneAppService.getShoppingLists()
+        shoppingListRequest.enqueue(CompletionHandler(object : RequestListener<ShoppingListsResponse> {
+            override fun onSuccess(shoppingListResponse: ShoppingListsResponse?) {
                 activity?.let {
-                    response.apply {
+                    shoppingListResponse?.apply {
                         when (httpCode) {
 
                             200 -> bindShoppingListToUI(lists)
@@ -122,7 +122,7 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
                             else -> {
                                 if (!mErrorDialogDidAppear) {
                                     mErrorDialogDidAppear = true
-                                    response.response?.desc?.let { showErrorDialog(it) }
+                                    response?.desc?.let { showErrorDialog(it) }
                                 }
                             }
                         }
@@ -131,7 +131,7 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
                 }
             }
 
-            override fun onFailure(errorMessage: String) {
+            override fun onFailure(error: Throwable?) {
                 activity?.let {
                     it.runOnUiThread {
                         loadShoppingList(false)
@@ -141,7 +141,8 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
                     }
                 }
             }
-        }).execute()
+
+        },ShoppingListsResponse::class.java))
     }
 
     private fun bindShoppingListToUI(shoppingList: MutableList<ShoppingList>) {
@@ -221,7 +222,7 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
         mShoppingListGroup = shoppingListSelectedItemGroup()
         mShoppingListGroup?.forEach { (_, shoppingList) ->
             if (!shoppingList.wasSentToServer)
-                addOrderToShoppingList(mOrderId, shoppingList)
+                mOrderId?.let { addOrderToShoppingList(it, shoppingList) }
         }
     }
 
@@ -273,16 +274,17 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
         imCreateList.alpha = if (state) 0.5f else 1.0f
     }
 
-    private fun addProductToShoppingList(addToListRequest: MutableList<AddToListRequest>?, listId: String?) {
+    private fun addProductToShoppingList(addToListRequest: MutableList<AddToListRequest>, listId: String) {
         shoppingListPostProgress(true)
-        PostAddToShoppingList(listId, addToListRequest, object : AsyncAPIResponse.ResponseDelegate<ShoppingListItemsResponse> {
-            override fun onSuccess(response: ShoppingListItemsResponse) {
-                response.apply {
-                    addProductResponseHandler(listId, response)
+       val shoppingListResponseCall =  OneAppService.addToList(addToListRequest, listId)
+        shoppingListResponseCall.enqueue(CompletionHandler(object :RequestListener<ShoppingListItemsResponse>{
+            override fun onSuccess(shoppingListResponse: ShoppingListItemsResponse?) {
+                shoppingListResponse?.apply {
+                    addProductResponseHandler(listId, this)
                 }
             }
 
-            override fun onFailure(errorMessage: String) {
+            override fun onFailure(error: Throwable?) {
                 activity?.let {
                     it.runOnUiThread {
                         mAutoConnect = AutoConnect.ADD_PRODUCT_TO_LIST
@@ -293,20 +295,21 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
                 }
             }
 
-        }).execute()
+        },ShoppingListItemsResponse::class.java))
     }
 
-    private fun addOrderToShoppingList(orderId: String?, shoppingList: ShoppingList) {
+    private fun addOrderToShoppingList(orderId: String, shoppingList: ShoppingList) {
         shoppingListPostProgress(true)
         val orderRequestList = OrderToShoppingListRequestBody(shoppingList.listId, shoppingList.listName)
-        PostOrderToShoppingList(orderId, orderRequestList, object : AsyncAPIResponse.ResponseDelegate<OrderToListReponse> {
-            override fun onSuccess(response: OrderToListReponse) {
-                response.apply {
-                    addOrderResponseHandler(orderRequestList.shoppingListId, response)
+        val orderRequest =  OneAppService.addOrderToList(orderId,orderRequestList)
+        orderRequest.enqueue(CompletionHandler(object:RequestListener<OrderToListReponse>{
+            override fun onSuccess(orderDetailsResponse: OrderToListReponse?) {
+                orderDetailsResponse?.apply {
+                    addOrderResponseHandler(orderRequestList.shoppingListId, this)
                 }
             }
 
-            override fun onFailure(errorMessage: String) {
+            override fun onFailure(error: Throwable?) {
                 activity?.let {
                     it.runOnUiThread {
                         mAutoConnect = AutoConnect.ADD_ORDER_TO_LIST
@@ -316,7 +319,7 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
                     }
                 }
             }
-        }).execute()
+        },OrderToListReponse::class.java))
     }
 
     private fun addOrderResponseHandler(listId: String, ordersResponse: OrderToListReponse) {
@@ -450,7 +453,7 @@ class AddToShoppingListFragment : DepartmentExtensionFragment(), View.OnClickLis
 
     private fun displayListItem() {
         if (getLatestShoppingList() == null) {
-            if (networkConnectionAvailable(activity)) retrieveShoppingList() else noNetworkConnection(true)
+            activity?.let { if (networkConnectionAvailable(it)) retrieveShoppingList() else noNetworkConnection(true) }
         } else {
             val cachedShoppingList = getLatestShoppingList()
             var atLeastOneShoppingListItemSelected = false

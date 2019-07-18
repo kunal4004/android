@@ -19,21 +19,22 @@ import com.awfs.coordination.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import za.co.woolworths.financial.services.android.contracts.RequestListener;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem;
 import za.co.woolworths.financial.services.android.models.dto.SkuInventory;
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse;
-import za.co.woolworths.financial.services.android.models.rest.product.GetInventorySkusForStore;
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
+import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CustomSizePickerAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.StockFinderSizeColorAdapter;
 import za.co.woolworths.financial.services.android.util.CenterLayoutManager;
 import za.co.woolworths.financial.services.android.util.ColorInterface;
-import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
-import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -48,7 +49,7 @@ public class SizeFragmentList extends Fragment implements StockFinderSizeColorAd
 	private CustomSizePickerAdapter mStockFinderSizeColorAdapter;
 	private ArrayList<OtherSkus> mOtherSKUList;
 	private boolean mShouldShowPrice;
-	private GetInventorySkusForStore mGetInventorySkusForStore;
+	private Call<SkusInventoryForStoreResponse> mGetInventorySkusForStore;
 	private ProgressBar pbLoadInventory;
 
 	@Override
@@ -140,16 +141,14 @@ public class SizeFragmentList extends Fragment implements StockFinderSizeColorAd
 	private void executeGetInventoryForStore(String storeId, String multiSku) {
 		showInventoryProgressBar(true);
 		mGetInventorySkusForStore = getInventoryStockForStore(storeId, multiSku);
-		mGetInventorySkusForStore.execute();
 	}
 
-	private GetInventorySkusForStore getInventoryStockForStore(String storeId, String multiSku) {
-		return new GetInventorySkusForStore(storeId, multiSku, new OnEventListener() {
+	private Call<SkusInventoryForStoreResponse> getInventoryStockForStore(String storeId, String multiSku) {
+		Call<SkusInventoryForStoreResponse> skusInventoryForStoreRequestCall = OneAppService.INSTANCE.getInventorySkuForStore(storeId, multiSku);
+		skusInventoryForStoreRequestCall.enqueue(new CompletionHandler<>(new RequestListener<SkusInventoryForStoreResponse>() {
 			@Override
-			public void onSuccess(Object object) {
-				SkusInventoryForStoreResponse skusInventoryForStoreResponse = (SkusInventoryForStoreResponse) object;
+			public void onSuccess(SkusInventoryForStoreResponse skusInventoryForStoreResponse) {
 				switch (skusInventoryForStoreResponse.httpCode) {
-
 					case 200:
 						for (SkuInventory skuInventory : skusInventoryForStoreResponse.skuInventory) {
 
@@ -172,7 +171,6 @@ public class SizeFragmentList extends Fragment implements StockFinderSizeColorAd
 						Activity activity = getActivity();
 						if (activity != null) {
 							ConfirmColorSizeActivity confirmColorSizeActivity = (ConfirmColorSizeActivity) activity;
-							if (skusInventoryForStoreResponse == null) return;
 							if (skusInventoryForStoreResponse.response == null) return;
 							Intent intent = new Intent();
 							intent.putExtra("response", Utils.toJson(skusInventoryForStoreResponse.response));
@@ -184,23 +182,19 @@ public class SizeFragmentList extends Fragment implements StockFinderSizeColorAd
 			}
 
 			@Override
-			public void onFailure(String e) {
+			public void onFailure(Throwable error) {
 				showInventoryProgressBar(false);
 			}
-		});
+		},SkusInventoryForStoreResponse.class));
+
+		return skusInventoryForStoreRequestCall;
 	}
 
 	@Override
 	public void onDetach() {
 		super.onDetach();
-		cancelRequest(mGetInventorySkusForStore);
-	}
-
-	public void cancelRequest(HttpAsyncTask httpAsyncTask) {
-		if (httpAsyncTask != null) {
-			if (!httpAsyncTask.isCancelled()) {
-				httpAsyncTask.cancel(true);
-			}
+		if (mGetInventorySkusForStore != null && !mGetInventorySkusForStore.isCanceled()) {
+			mGetInventorySkusForStore.cancel();
 		}
 	}
 
