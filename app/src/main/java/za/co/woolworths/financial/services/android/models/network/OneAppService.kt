@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.models.network
 
+import com.google.gson.JsonElement
+import com.google.gson.JsonObject
 import io.reactivex.Observable
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -11,6 +13,7 @@ import za.co.woolworths.financial.services.android.models.dto.npc.BlockCardReque
 import za.co.woolworths.financial.services.android.models.dto.npc.BlockMyCardResponse
 import za.co.woolworths.financial.services.android.models.dto.statement.*
 import za.co.woolworths.financial.services.android.util.Utils
+import java.util.*
 
 object OneAppService : RetrofitConfig() {
 
@@ -292,6 +295,14 @@ object OneAppService : RetrofitConfig() {
 
     fun endChatSession(chatId: String): Call<EndChatSessionResponse> {
         return mApiInterface.endChatSession(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), chatId)
+    }
+
+    fun userTyping(chatId: String): Call<UserTypingResponse> {
+        return mApiInterface.userTyping(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), chatId, JsonObject())
+    }
+
+    fun userStoppedTyping(chatId: String): Call<UserTypingResponse> {
+        return mApiInterface.userStoppedTyping(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), chatId, JsonObject())
     }
 
 }

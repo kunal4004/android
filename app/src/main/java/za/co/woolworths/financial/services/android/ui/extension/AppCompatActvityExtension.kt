@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.extension
 
 import android.content.Context.INPUT_METHOD_SERVICE
+import android.os.CountDownTimer
 import android.text.Editable
 import android.text.TextWatcher
 import androidx.fragment.app.Fragment
@@ -153,4 +154,31 @@ fun EditText.onAction(action: Int, runAction: () -> Unit) {
             else -> false
         }
     }
+}
+
+fun EditText.afterTypingStateChanged(countDownInterval: Long, millisInFuture: Long = 10000, afterTypingStateChanged: (Boolean) -> Unit) {
+    this.addTextChangedListener(object : TextWatcher {
+        var timer: CountDownTimer? = null
+        var isTyping: Boolean = false
+
+        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+        override fun afterTextChanged(editable: Editable?) {
+            if (!isTyping) {
+                isTyping = true
+                afterTypingStateChanged.invoke(isTyping)
+            }
+
+            timer?.cancel()
+            timer = object : CountDownTimer(countDownInterval, millisInFuture) {
+                override fun onTick(millisUntilFinished: Long) {}
+                override fun onFinish() {
+                    isTyping = false
+                    afterTypingStateChanged.invoke(isTyping)
+                }
+            }.start()
+        }
+    })
 }

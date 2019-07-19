@@ -20,6 +20,7 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.adapters.WChatAdapter
 import za.co.woolworths.financial.services.android.ui.extension.afterTextChanged
+import za.co.woolworths.financial.services.android.ui.extension.afterTypingStateChanged
 import za.co.woolworths.financial.services.android.ui.extension.onAction
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GotITDialogFragment
 import za.co.woolworths.financial.services.android.util.SessionUtilities
@@ -41,6 +42,7 @@ class WChatActivity : AppCompatActivity(), IDialogListener {
     companion object {
         private const val POLLING_INTERVAL_AGENT_AVAILABLE: Long = 5  //seconds
         private const val POLLING_INTERVAL_CHAT_SESSION_STATE: Long = 5 //seconds
+        private const val TYPING_INTERVAL: Long = 30000
         private const val PRODUCT_OFFERING_ID = "productOfferingId"
         private const val ACCOUNT_NUMBER = "accountNumber"
         private const val STATUS_UNKNOWN = 0
@@ -87,10 +89,16 @@ class WChatActivity : AppCompatActivity(), IDialogListener {
         adapter = WChatAdapter()
         reyclerview_message_list.adapter = adapter
         button_send.setOnClickListener { onSendMessage() }
-        edittext_chatbox.afterTextChanged { button_send.isEnabled = it.isNotEmpty() }
+        edittext_chatbox.afterTextChanged { onEditTextValueChanged(it) }
         edittext_chatbox.onAction(EditorInfo.IME_ACTION_DONE) { onSendMessage() }
+        edittext_chatbox.afterTypingStateChanged(TYPING_INTERVAL) { if (it) userStartedTyping() else userStoppedTyping() }
         endSession.setOnClickListener { confirmToEndChatSession() }
         checkAgentAvailable()
+
+    }
+
+    private fun onEditTextValueChanged(text: String) {
+        button_send.isEnabled = text.isNotEmpty()
 
     }
 
@@ -286,6 +294,17 @@ class WChatActivity : AppCompatActivity(), IDialogListener {
 
     override fun onDialogButtonAction() {
         endChatSession()
+    }
+
+    private fun userStoppedTyping() {
+        if (isAgentOnline)
+            chatId?.let { OneAppService.userStoppedTyping(it) }
+
+    }
+
+    private fun userStartedTyping() {
+        if (isAgentOnline)
+            chatId?.let { OneAppService.userTyping(it) }
     }
 
 }
