@@ -156,7 +156,7 @@ fun EditText.onAction(action: Int, runAction: () -> Unit) {
     }
 }
 
-fun EditText.afterTypingStateChanged(countDownInterval: Long, millisInFuture: Long = 10000, afterTypingStateChanged: (Boolean) -> Unit) {
+fun EditText.afterTypingStateChanged(millisInFuture: Long, countDownInterval: Long = 10000, afterTypingStateChanged: (Boolean) -> Unit) {
     this.addTextChangedListener(object : TextWatcher {
         var timer: CountDownTimer? = null
         var isTyping: Boolean = false
@@ -172,7 +172,7 @@ fun EditText.afterTypingStateChanged(countDownInterval: Long, millisInFuture: Lo
             }
 
             timer?.cancel()
-            timer = object : CountDownTimer(countDownInterval, millisInFuture) {
+            timer = object : CountDownTimer(millisInFuture, countDownInterval) {
                 override fun onTick(millisUntilFinished: Long) {}
                 override fun onFinish() {
                     isTyping = false
