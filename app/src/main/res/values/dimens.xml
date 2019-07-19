@@ -145,5 +145,7 @@
     <dimen name="thirty_seven_dp">37dp</dimen>
 
     <dimen name="common_circle_width">3dp</dimen>
+    <item name="chat_bubble_text_line_spacing" type="dimen" format="float">1.25dp</item>
+    <item name="chat_bubble_text_size" type="dimen" format="float">25.6sp</item>
 </resources>
 

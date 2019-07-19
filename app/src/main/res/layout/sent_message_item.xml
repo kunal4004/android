@@ -13,16 +13,10 @@
 
     <TextView
         android:id="@+id/sent_message_text"
-        android:text="Hi there,I’m having an issue with my credit limit increase."
+        style="@style/chat_text_style"
         android:background="@drawable/sent_message_bubble_bg"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:maxWidth="240dp"
-        android:minHeight="@dimen/fourty_five_dp"
-        android:padding="8dp"
-        android:textColor="@color/black"
+        android:textColor="@color/chat_sent_message_text_color"
         android:layout_marginRight="@dimen/sixteen_dp"
-        android:gravity="center_vertical"
         android:elevation="4dp"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

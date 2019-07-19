@@ -18,18 +18,13 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/received_message_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/chat_text_style"
         android:layout_marginLeft="@dimen/sixteen_dp"
         android:background="@drawable/received_message_bubble_bg"
-        android:gravity="center_vertical"
-        android:maxWidth="240dp"
-        android:minHeight="@dimen/fourty_five_dp"
-        android:padding="8dp"
-        android:text="hi man, how are you?"
         android:textColor="@color/white"
+        app:WTextView_font="myriadpro_regular"
         app:layout_constraintLeft_toRightOf="@+id/image_message_profile"
         app:layout_constraintTop_toTopOf="parent" />
 

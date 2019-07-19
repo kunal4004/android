@@ -89,4 +89,5 @@
     <color name="trans_success_stroke_color">#307A4183</color>
     <color name="gray">#FF7F7F7F</color>
     <color name="chat_hint">#FFBCBCBC</color>
+    <color name="chat_sent_message_text_color">#353535</color>
 </resources>
