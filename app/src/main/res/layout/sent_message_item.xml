@@ -11,13 +11,11 @@
     android:paddingTop="4dp"
     android:paddingBottom="4dp">
 
-    <TextView
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/sent_message_text"
         style="@style/chat_text_style"
         android:background="@drawable/sent_message_bubble_bg"
         android:textColor="@color/chat_sent_message_text_color"
-        android:layout_marginRight="@dimen/sixteen_dp"
-        android:elevation="4dp"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
