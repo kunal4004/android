@@ -408,9 +408,9 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 		initStoreDetailsView(storeDetailsList.get(position));
 		hideMarkers(markers, position);
 		double center = googleMap.getCameraPosition().target.latitude;
-		double northmap = googleMap.getProjection().getVisibleRegion().latLngBounds.northeast.latitude;
-		double diff = (center - northmap);
-		double newLat = markers.get(position).getPosition().latitude + diff / 2.4;
+		double northMap = googleMap.getProjection().getVisibleRegion().latLngBounds.northeast.latitude;
+		double diff = (center - northMap);
+		double newLat = markers.get(position).getPosition().latitude + diff / 1.5;
 		CameraUpdate centerCam = CameraUpdateFactory.newLatLng(new LatLng(newLat, markers.get(position).getPosition().longitude));
 		googleMap.animateCamera(centerCam, CAMERA_ANIMATION_SPEED, null);
 		googleMap.getUiSettings().setScrollGesturesEnabled(false);
