@@ -2,12 +2,14 @@ package za.co.woolworths.financial.services.android.ui.views.actionsheet
 
 import android.os.Bundle
 import android.text.TextUtils
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.got_it_dialog_fragment.*
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 
-class GotITDialogFragment : ActionSheetDialogFragment(), View.OnClickListener {
+class GotITDialogFragment : WBottomSheetDialogFragment(), View.OnClickListener {
 
 
     companion object {
@@ -27,9 +29,12 @@ class GotITDialogFragment : ActionSheetDialogFragment(), View.OnClickListener {
         }
     }
 
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.got_it_dialog_fragment, container, false)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        addContentView(R.layout.got_it_dialog_fragment)
 
         val bundleArguments = arguments
         val mResponseTitle = bundleArguments?.getString("title")
@@ -60,19 +65,17 @@ class GotITDialogFragment : ActionSheetDialogFragment(), View.OnClickListener {
 
         btnGotIt.setOnClickListener(this)
 
-        mRootActionSheetConstraint.setOnClickListener(this)
-
         actionButton.setOnClickListener(this)
     }
 
     override fun onClick(view: View) {
         when (view.id) {
-            R.id.btnGotIt, R.id.rootActionSheetConstraint -> {
-                shouldAnimateViewOnCancel(true)
+            R.id.btnGotIt -> {
+                dismissAllowingStateLoss()
                 mOnDialogDismiss?.onDialogDismissed()
             }
             R.id.actionButton -> {
-                shouldAnimateViewOnCancel(true)
+                dismissAllowingStateLoss()
                 mOnDialogDismiss?.onDialogButtonAction()
             }
 

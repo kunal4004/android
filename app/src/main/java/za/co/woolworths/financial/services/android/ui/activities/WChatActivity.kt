@@ -1,8 +1,10 @@
 package za.co.woolworths.financial.services.android.ui.activities
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import android.view.MenuItem
+import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
@@ -35,8 +37,8 @@ class WChatActivity : AppCompatActivity(), IDialogListener {
     private var disposablesAgentsAvailable: CompositeDisposable? = null
     private var disposablesChatSessionState: CompositeDisposable? = null
     var chatId: String? = null
-    var usersOfflineMessage: ChatMessage = ChatMessage(ChatMessage.Type.SENT, "")
-    var isAgentOnline: Boolean = false
+    private var usersOfflineMessage: ChatMessage = ChatMessage(ChatMessage.Type.SENT, "")
+    private var isAgentOnline: Boolean = false
 
 
     companion object {
@@ -94,6 +96,7 @@ class WChatActivity : AppCompatActivity(), IDialogListener {
         edittext_chatbox.afterTypingStateChanged(TYPING_INTERVAL) { if (it) userStartedTyping() else userStoppedTyping() }
         endSession.setOnClickListener { confirmToEndChatSession() }
         checkAgentAvailable()
+        //setChatAvailableState(false)
 
     }
 
@@ -233,8 +236,10 @@ class WChatActivity : AppCompatActivity(), IDialogListener {
                     it.chatState?.let { chatState ->
                         when (chatState.state) {
                             STATUS_ONLINE -> {
-
                                 isAgentOnline = true
+                                setEndSessionAvailable(isAgentOnline)
+                                setAgentName(chatState.agentNickName)
+                                setChatAvailableState(isAgentOnline)
 
                                 // Update received message with UI
                                 if (chatState.text?.isNotEmpty()!!)
@@ -297,14 +302,72 @@ class WChatActivity : AppCompatActivity(), IDialogListener {
     }
 
     private fun userStoppedTyping() {
-        if (isAgentOnline)
-            chatId?.let { OneAppService.userStoppedTyping(it) }
+        if (isAgentOnline) {
+            chatId?.let {
+                OneAppService.userStoppedTyping(it).enqueue(CompletionHandler(object : RequestListener<UserTypingResponse> {
+                    override fun onSuccess(response: UserTypingResponse?) {
+                    }
+
+                    override fun onFailure(error: Throwable?) {
+                    }
+
+                }, UserTypingResponse::class.java))
+            }
+        }
 
     }
 
     private fun userStartedTyping() {
-        if (isAgentOnline)
-            chatId?.let { OneAppService.userTyping(it) }
+        if (isAgentOnline) {
+            chatId?.let {
+                OneAppService.userTyping(it).enqueue(CompletionHandler(object : RequestListener<UserTypingResponse> {
+                    override fun onSuccess(response: UserTypingResponse?) {
+                    }
+
+                    override fun onFailure(error: Throwable?) {
+                    }
+
+                }, UserTypingResponse::class.java))
+            }
+        }
     }
+
+    private fun setIsChatEditTextEditable(isEditable: Boolean) {
+        edittext_chatbox.isEnabled = isEditable
+    }
+
+    private fun setChatAvailableState(isOnline: Boolean) {
+        isOnline.apply {
+            setIsChatEditTextEditable(this)
+            chatState.let {
+                it.visibility = View.VISIBLE
+                it.isEnabled = this
+                it.text = if (this) getString(R.string.chat_state_online) else getString(R.string.chat_state_offline)
+            }
+            offlineBanner.visibility = if (this) View.GONE else View.VISIBLE
+            setEndSessionAvailable(this)
+            if (!this) edittext_chatbox.text.clear()
+            if (!this) loadDefaultOfflineMessage()
+        }
+    }
+
+    private fun setEndSessionAvailable(isAvailable: Boolean) {
+        endSession.visibility = if (isAvailable) View.VISIBLE else View.GONE
+    }
+
+    private fun loadDefaultOnlineMessage() {
+        updateMessageList(ChatMessage(ChatMessage.Type.RECEIVED, "Hey Matt."))
+    }
+
+    private fun loadDefaultOfflineMessage() {
+        updateMessageList(ChatMessage(ChatMessage.Type.RECEIVED, "Our live chat service will be back online at 8:30am. \n" +
+                "\n" +
+                "If you have an urgent matter, contact us on +27 62 5960 496 or mail us at cards@woolworths.com."))
+    }
+
+    private fun setAgentName(name: String?) {
+        agentName.text = name
+    }
+
 
 }

@@ -13,8 +13,7 @@ private const val VIEW_TYPE_RECEIVED_MESSAGE = 1
 private const val VIEW_TYPE_SENT_MESSAGE = 2
 
 class WChatAdapter : RecyclerView.Adapter<MessageViewHolder>() {
-    private val messages: ArrayList<ChatMessage> = arrayListOf(ChatMessage(ChatMessage.Type.RECEIVED, "Hey Matt.")
-            , ChatMessage(ChatMessage.Type.SENT, "Hi there I’m having an issue with my credit limit increase."))
+    private val messages: ArrayList<ChatMessage> = arrayListOf()
 
     fun addMessage(message: ChatMessage) {
         messages.add(message)

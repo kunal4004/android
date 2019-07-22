@@ -1002,4 +1002,6 @@
     <string name="no_statements_title">No Statements Available</string>
     <string name="absa_no_statement_desc">You have no statements available.  If this incorrect please call us.</string>
     <string name="distance_per_km"> %1$s km</string>
+    <string name="chat_state_offline">Offline</string>
+    <string name="chat_state_online">Active now</string>
 </resources>

@@ -90,4 +90,5 @@
     <color name="gray">#FF7F7F7F</color>
     <color name="chat_hint">#FFBCBCBC</color>
     <color name="chat_sent_message_text_color">#353535</color>
+    <color name="chat_offline_banner_bg_color">#F7747474</color>
 </resources>

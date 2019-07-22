@@ -1050,7 +1050,7 @@ interface ApiInterface {
             @Body emptyBody: JsonElement): Call<UserTypingResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @DELETE("chat/userTyping/{chatId}")
+    @HTTP(method = "DELETE", path = "chat/userStoppedTyping/{chatId}", hasBody = true)
     fun userStoppedTyping(
             @Header("apiId") apiId: String,
             @Header("sha1Password") sha1Password: String,
