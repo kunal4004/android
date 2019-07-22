@@ -10,7 +10,7 @@ android {
     def minor = "13"
     def fix = "0"
 
-    def jobNumber = 328
+    def jobNumber = 329
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
 
     dataBinding {
@@ -64,10 +64,14 @@ android {
         if (host.contains("-qa")){
             appId = "com.awfs.coordination.qa"
             env = "QA"
+        }else{
+            //assume prod
+            jobNumber = 108
         }
 
         defaultConfig {
             applicationId appId
+            versionCode jobNumber
             buildConfigField("String", "HOST", '"' + host + '"')
             buildConfigField("String", "SHA1", '"' + hash + '"')
             buildConfigField("String", "ENV", '"' + env + '"')
