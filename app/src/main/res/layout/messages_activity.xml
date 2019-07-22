@@ -56,7 +56,7 @@
             android:layout_height="match_parent"
             android:background="#efefef">
 
-            <androidx.core.widget.SwipeRefreshLayout
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
                 android:id="@+id/swipeToRefresh"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -67,7 +67,7 @@
                     android:layout_height="wrap_content"
                     android:clipToPadding="false"
                     android:paddingTop="12dp"/>
-            </androidx.core.widget.SwipeRefreshLayout>
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
             <ProgressBar
                 android:id="@+id/loadingBar"
