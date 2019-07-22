@@ -1,5 +1,7 @@
 package za.co.absa.openbankingapi.woolworths.integration;
 
+import android.text.TextUtils;
+
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.crashlytics.android.Crashlytics;
@@ -11,6 +13,7 @@ import java.util.Map;
 
 import za.co.absa.openbankingapi.woolworths.integration.dto.AbsaBalanceEnquiryRequest;
 import za.co.absa.openbankingapi.woolworths.integration.dto.AbsaBalanceEnquiryResponse;
+import za.co.absa.openbankingapi.woolworths.integration.dto.ErrorCodeList;
 import za.co.absa.openbankingapi.woolworths.integration.dto.Header;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiRequest;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse;
@@ -41,9 +44,13 @@ public class AbsaBalanceEnquiryFacadeGetAllBalances {
             public void onResponse(AbsaBalanceEnquiryResponse response, List<HttpCookie> cookies) {
                 if (response.accountList != null && response.accountList.size() > 0)
                     responseDelegate.onSuccess(response, cookies);
-                else
-                    responseDelegate.onFailure(response.header.getResultMessages()[0].getResponseMessage());
-
+                else {
+                    String errorDescription = new ErrorCodeList().checkResult(response.header.getStatusCode());
+                    if (TextUtils.isEmpty(errorDescription))
+                        responseDelegate.onFailure(response.header.getResultMessages()[0].getResponseMessage());
+                    else
+                        responseDelegate.onFailure(errorDescription);
+                }
             }
         }, new Response.ErrorListener() {
             @Override
