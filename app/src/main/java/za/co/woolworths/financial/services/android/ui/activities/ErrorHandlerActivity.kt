@@ -13,9 +13,10 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class ErrorHandlerActivity : AppCompatActivity() {
 
-    var errorType: Int = 0
-
     companion object {
+      private var errorType: Int = 0
+      private lateinit var errorMessage: String
+
         // Error Types
         const val COMMON: Int = 0
         const val ATM_PIN_LOCKED: Int = 1
@@ -37,7 +38,7 @@ class ErrorHandlerActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             getBundleArgument()
             addFragment(
-                    fragment = ErrorHandlerFragment.newInstance(errorType),
+                    fragment = ErrorHandlerFragment.newInstance(errorMessage,errorType),
                     tag = ErrorHandlerFragment::class.java.simpleName,
                     containerViewId = R.id.container)
         }
@@ -54,6 +55,7 @@ class ErrorHandlerActivity : AppCompatActivity() {
     private fun getBundleArgument() {
         intent?.extras?.apply {
             errorType = getInt("errorType", 0)
+            errorMessage = getString("errorMessage","")
         }
     }
 
@@ -65,7 +67,7 @@ class ErrorHandlerActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.itmIconClose -> {
-                onBackPressed();
+                onBackPressed()
                 return true
             }
 
