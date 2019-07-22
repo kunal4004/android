@@ -91,7 +91,7 @@ public class AbsaLoginRequest {
 				}
 
 				else {
-					String errorDescription = new ErrorCodeList().checkResult(loginResponse.getHeader().getStatusCode());
+					String errorDescription = ErrorCodeList.Companion.checkResult(loginResponse.getHeader().getStatusCode());
 					if (TextUtils.isEmpty(errorDescription))
 						responseDelegate.onFailure(resultMessage);
 					else

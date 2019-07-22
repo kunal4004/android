@@ -1,6 +1,5 @@
 package za.co.absa.openbankingapi.woolworths.integration;
 
-import android.content.Context;
 import android.text.TextUtils;
 import android.util.Base64;
 
@@ -79,7 +78,7 @@ public class AbsaRegisterCredentialRequest {
 				}
 
 				else{
-					String errorDescription = new ErrorCodeList().checkResult(response.getHeader().getStatusCode());
+					String errorDescription = ErrorCodeList.Companion.checkResult(response.getHeader().getStatusCode());
 					if (TextUtils.isEmpty(errorDescription))
 						responseDelegate.onFailure(resultMessages[0].getResponseMessage());
 					else

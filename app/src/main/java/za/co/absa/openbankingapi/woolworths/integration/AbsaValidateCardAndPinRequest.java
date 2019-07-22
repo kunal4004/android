@@ -63,7 +63,7 @@ public class AbsaValidateCardAndPinRequest {
 				if (resultMessages == null || resultMessages.length == 0) {
 					responseDelegate.onSuccess(response, cookies);
 				}else {
-					String errorDescription = new ErrorCodeList().checkResult(response.getHeader().getStatusCode());
+					String errorDescription = ErrorCodeList.Companion.checkResult(response.getHeader().getStatusCode());
 					if (TextUtils.isEmpty(errorDescription))
 						responseDelegate.onFailure(resultMessages[0].getResponseMessage());
 					else

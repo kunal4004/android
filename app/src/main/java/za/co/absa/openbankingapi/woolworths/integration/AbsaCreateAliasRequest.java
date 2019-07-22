@@ -70,7 +70,7 @@ public class AbsaCreateAliasRequest {
 				}
 
 				else {
-					String errorDescription = new ErrorCodeList().checkResult(response.getHeader().getStatusCode());
+					String errorDescription = ErrorCodeList.Companion.checkResult(response.getHeader().getStatusCode());
 					if (TextUtils.isEmpty(errorDescription))
 						responseDelegate.onFailure(resultMessages[0].getResponseMessage());
 					else

@@ -45,7 +45,7 @@ public class AbsaBalanceEnquiryFacadeGetAllBalances {
                 if (response.accountList != null && response.accountList.size() > 0)
                     responseDelegate.onSuccess(response, cookies);
                 else {
-                    String errorDescription = new ErrorCodeList().checkResult(response.header.getStatusCode());
+                    String errorDescription = ErrorCodeList.Companion.checkResult(response.header.getStatusCode());
                     if (TextUtils.isEmpty(errorDescription))
                         responseDelegate.onFailure(response.header.getResultMessages()[0].getResponseMessage());
                     else
