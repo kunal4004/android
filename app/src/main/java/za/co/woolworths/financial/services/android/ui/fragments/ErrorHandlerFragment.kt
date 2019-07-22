@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments
 import android.app.Activity
 import android.graphics.Paint
 import android.os.Bundle
+import android.text.TextUtils
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -19,16 +20,19 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
 
     }
 
-    var errorType: Int = 0
 
     companion object {
-        fun newInstance(errorType: Int) = ErrorHandlerFragment().withArgs {
+        var errorType: Int = 0
+        var errorMessage: String? = null
+
+        fun newInstance(errorMessage: String, errorType: Int) = ErrorHandlerFragment().withArgs {
                 putInt("errorType", errorType)
+                putString("errorMessage",errorMessage)
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.error_handler_fragment, container, false)
+        return inflater.inflate(R.layout.error_handler_fragment, container, false)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,6 +40,10 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
         arguments?.apply {
             if (containsKey("errorType")) {
                 errorType = arguments?.getInt("errorType", 0)!!
+            }
+
+            if (containsKey("errorMessage")) {
+                errorMessage = getString("errorMessage", "")
             }
         }
     }
@@ -72,6 +80,7 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
             ErrorHandlerActivity.COMMON -> {
                 errorLogo.setImageResource(R.drawable.ic_error_icon)
                 errorTitle.text = getString(R.string.unsuccessful_request)
+                errorDescription?.text = if (TextUtils.isEmpty(errorMessage)) getString(R.string.unsuccessful_request_desc) else errorMessage
                 actionButton.text = getString(R.string.retry)
             }
             ErrorHandlerActivity.WITH_NO_ACTION -> {
