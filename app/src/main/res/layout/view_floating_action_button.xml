@@ -1,43 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/cardView"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:foreground="?android:selectableItemBackground"
-    app:cardBackgroundColor="@android:color/transparent"
-    app:cardElevation="@dimen/two_dp"
-    app:cardUseCompatPadding="true"
-    app:cardPreventCornerOverlap="false"
-    app:contentPadding="0dp">
+    android:layout_height="wrap_content">
 
-    <LinearLayout
-        android:id="@+id/buttonLayout"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:padding="@dimen/sixteen_dp"
-        tools:ignore="UseCompoundDrawables">
+        android:foreground="?android:selectableItemBackground"
+        app:cardBackgroundColor="@android:color/transparent"
+        app:cardElevation="@dimen/two_dp"
+        app:cardPreventCornerOverlap="false"
+        app:cardUseCompatPadding="true"
+        app:contentPadding="0dp">
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:id="@+id/content"
-            android:paddingLeft="8dp"
-            android:paddingStart="8dp"
-            android:textColor="@android:color/white"
+        <LinearLayout
+            android:id="@+id/buttonLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:WTextView_font="bold"
-            tools:ignore="RtlHardcoded,RtlSymmetry"/>
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="@dimen/sixteen_dp"
+            tools:ignore="UseCompoundDrawables">
 
-        <ImageView
-            android:id="@+id/icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:ignore="ContentDescription"/>
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="8dp"
+                android:paddingLeft="8dp"
+                android:textColor="@android:color/white"
+                app:WTextView_font="bold"
+                tools:ignore="RtlHardcoded,RtlSymmetry" />
 
-    </LinearLayout>
+            <ImageView
+                android:id="@+id/icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:ignore="ContentDescription" />
 
-</androidx.cardview.widget.CardView>
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <ImageView
+        android:id="@+id/statusIndicator"
+        android:layout_width="@dimen/sixteen_dp"
+        android:layout_height="@dimen/sixteen_dp"
+        android:layout_gravity="end"
+        android:elevation="2dp" />
+
+</FrameLayout>

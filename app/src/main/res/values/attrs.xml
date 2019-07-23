@@ -289,6 +289,8 @@
         <attr name="fab_expanded" format="boolean"/>
         <attr name="fab_padding" format="dimension"/>
         <attr name="fab_typeface" format="string"/>
+        <attr name="fab_status_indicator" format="boolean"/>
+        <attr name="fab_status_indicator_icon" format="reference"/>
     </declare-styleable>
 
 </resources>

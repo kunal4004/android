@@ -75,10 +75,14 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/sixteen_dp"
+        android:visibility="invisible"
         app:fab_content="@string/chat_button_text"
         app:fab_duration="@integer/chat_button_animation_duration"
         app:fab_icon="@drawable/ic_chat_icon"
         app:fab_padding="@dimen/fourteen_dp"
         app:fab_padding_text_icon="@dimen/twenty_four_dp"
-        app:fab_text_size="@dimen/fourteen_sp" />
+        app:fab_text_size="@dimen/fourteen_sp"
+        app:fab_status_indicator="true"
+        app:fab_status_indicator_icon="@drawable/chat_state_indicator_bg"
+        />
 </FrameLayout>

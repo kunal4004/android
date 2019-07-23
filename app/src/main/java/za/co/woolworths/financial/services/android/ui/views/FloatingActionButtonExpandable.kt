@@ -42,6 +42,7 @@ class FloatingActionButtonExpandable @JvmOverloads constructor(
     private val tvContent: WTextView
     private val toggle: Transition
     private var duration = 0L
+    private val ivStatusIndicator: ImageView
 
     init {
         val arr = context.obtainStyledAttributes(
@@ -94,12 +95,15 @@ class FloatingActionButtonExpandable @JvmOverloads constructor(
                 }
             }
         }
+        val statusIndicator=arr.getBoolean(R.styleable.FloatingActionButtonExpandable_fab_status_indicator, false)
+        val statusIndicatorIcon=arr.getDrawable(R.styleable.FloatingActionButtonExpandable_fab_status_indicator_icon)
         arr.recycle()
 
         ivIcon = root.findViewById(R.id.icon)
         tvContent = root.findViewById(R.id.content)
         cardView = root.findViewById(R.id.cardView)
         buttonLayout = root.findViewById(R.id.buttonLayout)
+        ivStatusIndicator = root.findViewById(R.id.statusIndicator)
 
         cardView.setCardBackgroundColor(bgColor)
 
@@ -114,6 +118,8 @@ class FloatingActionButtonExpandable @JvmOverloads constructor(
         typeface?.let {
             tvContent.typeface = it
         }
+        ivStatusIndicator.visibility = if (statusIndicator) View.VISIBLE else View.GONE
+        ivStatusIndicator.setImageDrawable(statusIndicatorIcon)
 
         toggle = TransitionInflater.from(context)
                 .inflateTransition(R.transition.float_action_button_toggle)
@@ -180,6 +186,11 @@ class FloatingActionButtonExpandable @JvmOverloads constructor(
 
     fun setTypeface(typeface: Typeface) {
         tvContent.typeface = typeface
+        calculateRadius()
+    }
+
+    fun setStatusIndicatorIcon(drawable: Drawable) {
+        ivStatusIndicator.setImageDrawable(drawable)
         calculateRadius()
     }
 

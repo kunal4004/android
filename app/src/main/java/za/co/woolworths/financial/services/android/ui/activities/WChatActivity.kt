@@ -38,7 +38,7 @@ class WChatActivity : AppCompatActivity(), IDialogListener {
     private var disposablesChatSessionState: CompositeDisposable? = null
     var chatId: String? = null
     private var usersOfflineMessage: ChatMessage = ChatMessage(ChatMessage.Type.SENT, "")
-    private var isAgentOnline: Boolean = false
+    private var isAgentOnline: Boolean = false // This becomes "true" when a agent picks the call -> (ChatStatus.state=STATUS_ONLINE)
 
 
     companion object {
@@ -95,8 +95,7 @@ class WChatActivity : AppCompatActivity(), IDialogListener {
         edittext_chatbox.onAction(EditorInfo.IME_ACTION_DONE) { onSendMessage() }
         edittext_chatbox.afterTypingStateChanged(TYPING_INTERVAL) { if (it) userStartedTyping() else userStoppedTyping() }
         endSession.setOnClickListener { confirmToEndChatSession() }
-        checkAgentAvailable()
-        //setChatAvailableState(false)
+        if (Utils.chatOpeningHours()) checkAgentAvailable() else setChatAvailableState(false)
 
     }
 
@@ -151,6 +150,9 @@ class WChatActivity : AppCompatActivity(), IDialogListener {
     }
 
     private fun checkAgentAvailable() {
+        //load default message
+        updateMessageList(ChatMessage(ChatMessage.Type.RECEIVED, "Hey Matt, How can i help you"))
+
         disposablesAgentsAvailable = CompositeDisposable()
         disposablesAgentsAvailable?.add(Observable.interval(0, POLLING_INTERVAL_AGENT_AVAILABLE, TimeUnit.SECONDS)
                 .flatMap { OneAppService.pollAgentsAvailable().takeUntil(Observable.timer(5, TimeUnit.SECONDS)) }
@@ -172,6 +174,7 @@ class WChatActivity : AppCompatActivity(), IDialogListener {
                 }
 
                 override fun onFailure(error: Throwable?) {
+                    showErrorMessage()
                 }
 
             }, CreateChatSessionResponse::class.java))
@@ -200,7 +203,7 @@ class WChatActivity : AppCompatActivity(), IDialogListener {
                 }
 
                 override fun onFailure(error: Throwable?) {
-
+                    showErrorMessage()
                 }
 
             }, SendChatMessageResponse::class.java))
@@ -218,7 +221,7 @@ class WChatActivity : AppCompatActivity(), IDialogListener {
                     }
                 }
                 else -> {
-
+                    showErrorMessage()
                 }
             }
         }
@@ -226,7 +229,7 @@ class WChatActivity : AppCompatActivity(), IDialogListener {
     }
 
     private fun handleErrorResponses(error: Throwable) {
-
+        showErrorMessage()
     }
 
     private fun handleChatSessionStateSuccessResponse(result: PollChatSessionStateResponse?) {
@@ -367,6 +370,10 @@ class WChatActivity : AppCompatActivity(), IDialogListener {
 
     private fun setAgentName(name: String?) {
         agentName.text = name
+    }
+
+    private fun showErrorMessage() {
+        updateMessageList(ChatMessage(ChatMessage.Type.RECEIVED, "Currently We are facing some issues with our systems"))
     }
 
 

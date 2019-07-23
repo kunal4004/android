@@ -77,6 +77,7 @@ public class WTransactionsActivity extends AppCompatActivity implements View.OnC
 
 		});
 		chatIcon.expand(true);
+		chatIcon.setStatusIndicatorIcon(getResources().getDrawable(Utils.chatOpeningHours() ? R.drawable.indicator_online : R.drawable.indicator_offline, getTheme()));
 		transactionListview.setOnScrollListener(new AbsListView.OnScrollListener(){
 			private int lastPosition = -1;
 			@Override
@@ -137,6 +138,7 @@ public class WTransactionsActivity extends AppCompatActivity implements View.OnC
 								transactionListview.setVisibility(View.GONE);
 								mErrorHandlerView.showEmptyState(3);
 							}
+                            chatIcon.setVisibility(View.VISIBLE);
 							break;
 						case 440:
 							if (!(WTransactionsActivity.this.isFinishing())) {
