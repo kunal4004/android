@@ -240,7 +240,7 @@ object OneAppService : RetrofitConfig() {
 
     }
 
-    fun getPDFResponse(getStatement: GetStatement): Call<Response<ResponseBody>> {
+    fun getPDFResponse(getStatement: GetStatement): Call<ResponseBody> {
         return mApiInterface.getStatement(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), getStatement.docId, getStatement.productOfferingId, getStatement.docDesc)
     }
 
