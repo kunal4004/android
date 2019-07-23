@@ -8,7 +8,7 @@ android {
 
     def major = "5"
     def minor = "13"
-    def fix = "0"
+    def fix = "1"
 
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
     def jobNumber = 327

@@ -76,7 +76,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
     private boolean viewWasCreated = false;
     private final String TAG = StatementFragment.this.getClass().getSimpleName();
     View view;
-    private Call<retrofit2.Response<ResponseBody>> mGetPdfFile;
+    private Call<ResponseBody> mGetPdfFile;
 
     public StatementFragment() {
     }
@@ -308,38 +308,38 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
         final FragmentActivity activity = getActivity();
         if (activity == null) return;
         mGetPdfFile = OneAppService.INSTANCE.getPDFResponse(mGetStatementFile);
-        mGetPdfFile.enqueue(new Callback<Response<ResponseBody>>() {
+        mGetPdfFile.enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Call<Response<ResponseBody>> call, Response<Response<ResponseBody>> response) {
-                if (getActivity() != null) {
-                    loadSuccess();
-                    hideViewProgress();
-                    if (response.code() == 200) {
-                        try {
-                            StatementUtils statementUtils = new StatementUtils(activity);
-                            if (response.body() != null) {
-                                if (response.body().body() != null) {
-                                    statementUtils.savePDF(response.body().body().byteStream());
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    if (getActivity() != null) {
+                        loadSuccess();
+                        hideViewProgress();
+                        if (response.code() == 200) {
+                            try {
+                                StatementUtils statementUtils = new StatementUtils(activity);
+                                if (response.body() != null) {
+                                    statementUtils.savePDF(response.body().byteStream());
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                        PreviewStatement previewStatement = new PreviewStatement();
+                                        FragmentUtils fragmentUtils = new FragmentUtils(activity);
+                                        FragmentManager fragmentManager = activity.getSupportFragmentManager();
+                                        fragmentUtils.openFragment(fragmentManager, previewStatement, R.id.flAccountStatement);
+                                        showSlideUpPanel();
+                                    } else {
+                                        launchOpenPDFIntent();
+                                    }
                                 }
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                    PreviewStatement previewStatement = new PreviewStatement();
-                                    FragmentUtils fragmentUtils = new FragmentUtils(activity);
-                                    FragmentManager fragmentManager = activity.getSupportFragmentManager();
-                                    fragmentUtils.openFragment(fragmentManager, previewStatement, R.id.flAccountStatement);
-                                    showSlideUpPanel();
-                                } else {
-                                    launchOpenPDFIntent();
-                                }
+                            } catch (Exception ex) {
+                                Log.d(TAG, ex.getMessage());
                             }
-                        } catch (Exception ex) {
-                            Log.d(TAG, ex.getMessage());
                         }
                     }
                 }
             }
 
             @Override
-            public void onFailure(Call<Response<ResponseBody>> call, Throwable t) {
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Activity activity = getActivity();
                 if (activity != null) {
                     activity.runOnUiThread(new Runnable() {
