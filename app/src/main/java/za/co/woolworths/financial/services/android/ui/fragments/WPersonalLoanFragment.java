@@ -149,6 +149,7 @@ private static AsyncTask<Void, Void, Void> async;
                                 } else if (busStation.makeApiCall()) {
                                     hideCLIView();
                                     personalWasAlreadyRunOnce = false;
+                                    retryConnect();
                                 }
                             }
                         }
@@ -576,6 +577,7 @@ private static AsyncTask<Void, Void, Void> async;
 
     private void retryConnect() {
         if (!personalWasAlreadyRunOnce) {
+            personalWasAlreadyRunOnce = true;
             if (NetworkManager.getInstance().isConnectedToNetwork(getActivity()))
                 getActiveOffer();
             else {
