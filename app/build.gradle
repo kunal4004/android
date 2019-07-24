@@ -8,7 +8,7 @@ android {
 
     def major = "5"
     def minor = "13"
-    def fix = "1"
+    def fix = "2"
 
     def jobNumber = 330
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
@@ -66,7 +66,7 @@ android {
             env = "QA"
         }else{
             //assume prod
-            jobNumber = 108
+            jobNumber = 110
         }
 
         defaultConfig {
