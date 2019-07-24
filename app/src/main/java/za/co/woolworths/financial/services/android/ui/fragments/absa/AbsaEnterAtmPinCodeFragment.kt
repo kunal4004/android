@@ -3,7 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.absa
 import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.KeyEvent
@@ -186,7 +186,7 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
     override fun onFailureHandler(responseMessage: String, dismissActivity: Boolean) {
         // Navigate back to credit card screen when resultMessage is failed or rejected.
         cancelRequest()
-        progressIndicator(View.INVISIBLE)
+        progressIndicator(INVISIBLE)
         clearPin()
         when {
             responseMessage.trim().contains("card number and pin validation failed!", true) -> {
@@ -196,7 +196,7 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
                 showErrorScreen(ErrorHandlerActivity.ATM_PIN_LOCKED)
             }
             else -> {
-                showErrorScreen(ErrorHandlerActivity.COMMON)
+                showErrorScreen(ErrorHandlerActivity.COMMON, responseMessage)
             }
         }
 
@@ -231,10 +231,11 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
         cancelVolleyRequest(AbsaCreateAliasRequest::class.java.simpleName)
     }
 
-    private fun showErrorScreen(errorType: Int) {
+    private fun showErrorScreen(errorType: Int, errorMessage: String = "") {
         activity?.let {
-            val intent: Intent = Intent(it, ErrorHandlerActivity::class.java)
+            val intent = Intent(it, ErrorHandlerActivity::class.java)
             intent.putExtra("errorType", errorType)
+            intent.putExtra("errorMessage",errorMessage)
             it.startActivityForResult(intent, ERROR_PAGE_REQUEST_CODE)
         }
     }

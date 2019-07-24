@@ -1,7 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.activities.maintenance
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.util.Utils

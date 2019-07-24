@@ -3,8 +3,8 @@ package za.co.woolworths.financial.services.android.ui.fragments.absa
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.*
 import com.android.volley.VolleyError
@@ -79,7 +79,7 @@ class AbsaPinCodeSuccessFragment : Fragment() {
                             Log.d("onSuccess", "onSuccess")
                             response.apply {
                                 if (header?.resultMessages?.size == 0 || aliasId != null) {
-                                    val absaSecureCredentials = AbsaSecureCredentials();
+                                    val absaSecureCredentials = AbsaSecureCredentials()
                                     absaSecureCredentials.aliasId = aliasId
                                     absaSecureCredentials.save()
                                     onRegistrationSuccess()
@@ -130,10 +130,11 @@ class AbsaPinCodeSuccessFragment : Fragment() {
         view?.postDelayed({ message?.let { tapAndDismissErrorDialog(it) } }, 200)
     }*/
 
-    private fun showErrorScreen(errorType: Int) {
+    private fun showErrorScreen(errorType: Int,errorMessage:String = "") {
         activity?.let {
-            val intent: Intent = Intent(it, ErrorHandlerActivity::class.java)
+            val intent = Intent(it, ErrorHandlerActivity::class.java)
             intent.putExtra("errorType", errorType)
+            intent.putExtra("errorMessage", errorMessage)
             it.startActivityForResult(intent, ERROR_PAGE_REQUEST_CODE)
         }
     }

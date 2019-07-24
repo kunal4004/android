@@ -1,7 +1,7 @@
 package za.co.woolworths.financial.services.android.util.nav.tabhistory
 
 import android.os.Bundle
-import android.support.annotation.IntDef
+import androidx.annotation.IntDef
 import za.co.woolworths.financial.services.android.util.nav.FragNavTransactionOptions
 
 interface FragNavTabHistoryController {

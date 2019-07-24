@@ -1,8 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.activities.dashboard;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.NestedScrollView;
-import android.support.v7.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.core.widget.NestedScrollView;
+import androidx.appcompat.widget.Toolbar;
 
 import java.util.ArrayList;
 

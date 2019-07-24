@@ -1,6 +1,6 @@
 package za.co.absa.openbankingapi.woolworths.integration.service
 
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.*
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment

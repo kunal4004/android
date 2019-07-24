@@ -2,7 +2,7 @@ package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.content.Intent;
 import android.provider.Settings;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;

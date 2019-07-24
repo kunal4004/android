@@ -1,7 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.adapters
 
 import android.content.Context
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
@@ -18,11 +18,11 @@ import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeVie
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
 
-class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var dataList: ArrayList<OrderDetailsItem>) : RecyclerView.Adapter<OrdersBaseViewHolder>() {
+class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var dataList: ArrayList<OrderDetailsItem>) :  RecyclerView.Adapter<OrdersBaseViewHolder>() {
 
     var isTaxInvoiceViewExist: Boolean = false
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): OrdersBaseViewHolder? {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OrdersBaseViewHolder {
         when (viewType) {
             OrderDetailsItem.ViewType.HEADER.value -> {
                 return HeaderViewHolder(LayoutInflater.from(context).inflate(R.layout.my_orders_past_orders_header, parent, false))
@@ -41,15 +41,15 @@ class OrderDetailsAdapter(val context: Context, val listner: OnItemClick, var da
                 return ViewTaxInvoiceViewHolder(LayoutInflater.from(context).inflate(R.layout.order_details_view_tax_invoice_layout, parent, false))
             }
         }
-        return null
+        return HeaderViewHolder(LayoutInflater.from(context).inflate(R.layout.my_orders_past_orders_header, parent, false))
+    }
+
+    override fun onBindViewHolder(holder: OrdersBaseViewHolder, position: Int) {
+        holder?.bind(position)
     }
 
     override fun getItemCount(): Int {
         return dataList.size
-    }
-
-    override fun onBindViewHolder(holder: OrdersBaseViewHolder?, position: Int) {
-        holder?.bind(position)
     }
 
     inner class OrderStatusViewHolder(itemView: View) : OrdersBaseViewHolder(itemView) {

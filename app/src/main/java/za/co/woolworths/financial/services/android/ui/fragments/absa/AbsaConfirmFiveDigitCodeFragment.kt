@@ -8,7 +8,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_five_digit_code_fragment.*
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.view.*
 import za.co.absa.openbankingapi.woolworths.integration.AbsaRegisterCredentialRequest
 import za.co.woolworths.financial.services.android.contracts.IVibrateComplete

@@ -14,12 +14,12 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewPager;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+import androidx.core.content.ContextCompat;
+import androidx.viewpager.widget.ViewPager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -34,7 +34,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.support.v7.widget.Toolbar;
+import android.widget.TextView;
+
+import androidx.appcompat.widget.Toolbar;
 
 import com.awfs.coordination.R;
 import com.google.android.gms.maps.CameraUpdate;
@@ -113,7 +115,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 	WTextView storeName;
 	WTextView storeOfferings;
 	WTextView storeAddress;
-	WTextView storeDistance;
+	TextView storeDistance;
 	WTextView storeNumber;
 
 	ProgressBar progressBar;
@@ -160,7 +162,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 		close = (ImageView) v.findViewById(R.id.close);
 		storeName = (WTextView) v.findViewById(R.id.storeName);
 		storeOfferings = (WTextView) v.findViewById(R.id.offerings);
-		storeDistance = (WTextView) v.findViewById(R.id.distance);
+		storeDistance = v.findViewById(R.id.distance);
 		storeAddress = (WTextView) v.findViewById(R.id.storeAddress);
 		storeNumber = (WTextView) v.findViewById(R.id.storeNumber);
 		timeingsLayout = (LinearLayout) v.findViewById(R.id.timeingsLayout);
@@ -406,9 +408,9 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 		initStoreDetailsView(storeDetailsList.get(position));
 		hideMarkers(markers, position);
 		double center = googleMap.getCameraPosition().target.latitude;
-		double northmap = googleMap.getProjection().getVisibleRegion().latLngBounds.northeast.latitude;
-		double diff = (center - northmap);
-		double newLat = markers.get(position).getPosition().latitude + diff / 2.4;
+		double northMap = googleMap.getProjection().getVisibleRegion().latLngBounds.northeast.latitude;
+		double diff = (center - northMap);
+		double newLat = markers.get(position).getPosition().latitude + diff / 1.5;
 		CameraUpdate centerCam = CameraUpdateFactory.newLatLng(new LatLng(newLat, markers.get(position).getPosition().longitude));
 		googleMap.animateCamera(centerCam, CAMERA_ANIMATION_SPEED, null);
 		googleMap.getUiSettings().setScrollGesturesEnabled(false);
@@ -449,12 +451,14 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 	}
 
 	public void initStoreDetailsView(final StoreDetails storeDetail) {
+		if (getActivity() == null) return;
+
 		timeingsLayout.removeAllViews();
 		brandsLayout.removeAllViews();
 		storeName.setText(storeDetail.name);
 		storeAddress.setText(TextUtils.isEmpty(storeDetail.address) ? "" : storeDetail.address);
 		storeNumber.setText(TextUtils.isEmpty(storeDetail.phoneNumber) ? "" : storeDetail.phoneNumber);
-		storeDistance.setText(WFormatter.formatMeter(storeDetail.distance) + getActivity().getResources().getString(R.string.distance_in_km));
+		storeDistance.setText(getActivity().getResources().getString(R.string.distance_per_km, WFormatter.formatMeter(storeDetail.distance)));
 		if (storeDetail.offerings != null) {
 			storeOfferings.setText(WFormatter.formatOfferingString(getOfferingByType(storeDetail.offerings, "Department")));
 			List<StoreOfferings> brandslist = getOfferingByType(storeDetail.offerings, "Brand");
@@ -464,7 +468,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 					relBrandLayout.setVisibility(View.VISIBLE);
 					for (int i = 0; i < brandslist.size(); i++) {
 						View v = getActivity().getLayoutInflater().inflate(R.layout.opening_hours_textview, null);
-						textView = (WTextView) v.findViewById(R.id.openingHours);
+						textView =  v.findViewById(R.id.openingHours);
 						textView.setText(brandslist.get(i).offering);
 						brandsLayout.addView(textView);
 					}

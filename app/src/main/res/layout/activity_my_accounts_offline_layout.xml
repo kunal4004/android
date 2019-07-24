@@ -1,8 +1,13 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    android:id="@+id/swipeToRefreshAccount"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+<FrameLayout
              android:layout_width="match_parent"
              android:layout_height="match_parent">
-
     <LinearLayout
         android:id="@+id/llRootLayout"
         android:layout_width="match_parent"
@@ -17,7 +22,7 @@
             android:layout_gravity="fill_vertical"
             android:clipToPadding="false">
 
-            <android.support.v4.widget.NestedScrollView
+            <androidx.core.widget.NestedScrollView
                 android:id="@+id/nest_scrollview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -30,7 +35,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <android.support.v7.widget.Toolbar
+                    <androidx.appcompat.widget.Toolbar
                         android:id="@+id/toolbar"
                         android:layout_width="match_parent"
                         android:layout_height="?attr/actionBarSize"
@@ -48,7 +53,15 @@
                             android:textSize="12sp"
                             app:WTextView_font="medium_bold"/>
 
-                    </android.support.v7.widget.Toolbar>
+                        <ImageView
+                            android:id="@+id/imRefreshAccount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end|center"
+                            android:layout_marginEnd="@dimen/sixteen_dp"
+                            app:srcCompat="@drawable/refresh_account_white_drawable_icon" />
+
+                    </androidx.appcompat.widget.Toolbar>
 
                     <za.co.woolworths.financial.services.android.ui.views.WViewPager
                         android:id="@+id/myAccountsCardPager"
@@ -70,7 +83,7 @@
                         app:layout_collapseMode="pin"/>
 
                 </LinearLayout>
-            </android.support.v4.widget.NestedScrollView>
+            </androidx.core.widget.NestedScrollView>
 
             <za.co.woolworths.financial.services.android.ui.views.WButton
                 android:id="@+id/btnApplyNow"
@@ -85,3 +98,4 @@
 
     <include layout="@layout/no_connection_handler"/>
 </FrameLayout>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
