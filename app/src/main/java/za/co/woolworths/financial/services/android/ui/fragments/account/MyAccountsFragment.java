@@ -271,7 +271,8 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		this.unavailableAccounts.clear();
 		this.unavailableAccounts.addAll(Arrays.asList("SC", "CC", "PL"));
 		this.mScrollView.scrollTo(0, 0);
-		mUpdateMyAccount.setRefreshType(UpdateMyAccount.RefreshAccountType.NONE);
+		this.mUpdateMyAccount.setRefreshType(UpdateMyAccount.RefreshAccountType.NONE);
+		this.mUpdateMyAccount.swipeToRefreshAccount(false);
 		if (SessionUtilities.getInstance().isUserAuthenticated()) {
 			mUpdateMyAccount.enableSwipeToRefreshAccount(true);
 			if (SessionUtilities.getInstance().isC2User())
@@ -712,6 +713,10 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			getBottomNavigationActivity().walkThroughPromtView.removeFromWindow();
 		}
 
+		if (mUpdateMyAccount!=null){
+			this.mUpdateMyAccount.swipeToRefreshAccount(false);
+		}
+
 	}
 
 	//	public int getAvailableFundsPercentage(int availableFund, int creditLimit) {
@@ -983,4 +988,5 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		super.onPause();
 		isActivityInForeground = false;
 	}
+
 }

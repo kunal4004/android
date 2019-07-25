@@ -8,7 +8,6 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.fragment.app.Fragment;
 import androidx.core.content.ContextCompat;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager.widget.ViewPager;
 import androidx.core.widget.NestedScrollView;
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,6 +34,7 @@ import java.util.List;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.RequestListener;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
+import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.ui.fragments.account.UpdateMyAccount;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.util.FragmentLifecycle;
@@ -70,6 +70,7 @@ public class MyAccountCardsActivity extends AppCompatActivity
     ArrayList<Integer> cards;
     private Toolbar mToolbar;
     private Button mBtnApplyNow;
+    private final int defaultValue = 0;
 
     private boolean cardsHasAccount = false;
     private boolean containsStoreCard = false, containsCreditCard = false, containsPersonalLoan = false;
@@ -89,7 +90,7 @@ public class MyAccountCardsActivity extends AppCompatActivity
         setActionBar();
         init();
         retryConnect();
-        currentPosition = getIntent().getIntExtra("position", 0);
+        currentPosition = getIntent().getIntExtra("position", defaultValue);
         fragmentPager =  findViewById(R.id.fragmentpager);
         llRootLayout =  findViewById(R.id.llRootLayout);
         fragmentPager.setViewPagerIsScrollable(false);
@@ -101,9 +102,9 @@ public class MyAccountCardsActivity extends AppCompatActivity
         changeButtonColor(currentPosition);
         getScreenResolution();
 
-        SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.swipeToRefreshAccount);
+
         ImageView imRefreshAccount = findViewById(R.id.imRefreshAccount);
-        updateMyAccount(swipeRefreshLayout, imRefreshAccount);
+        updateMyAccount(imRefreshAccount);
 
         imRefreshAccount.setOnClickListener(this);
         cardsHasAccount = getIntent().hasExtra("accounts");
@@ -124,7 +125,7 @@ public class MyAccountCardsActivity extends AppCompatActivity
             fragmentsAdapter.addFrag(new WCreditCardEmptyFragment());
             fragmentsAdapter.addFrag(new WPersonalLoanEmptyFragment());
             fragmentPager.setAdapter(fragmentsAdapter);
-            fragmentPager.setCurrentItem(getIntent().getIntExtra("position", 0));
+            fragmentPager.setCurrentItem(getIntent().getIntExtra("position", defaultValue));
 
             cards.add(R.drawable.w_store_card);
             cards.add(R.drawable.creditcardbenfits);
@@ -140,6 +141,10 @@ public class MyAccountCardsActivity extends AppCompatActivity
             // You can also record the flags in advance so that you can turn UI back completely if
             // you have set other flags before, such as translucent or full screen.
             //  decor.setSystemUiVisibility(0);
+
+            // enable deactivate pull to refreshing
+
+                imRefreshAccount.setVisibility(SessionUtilities.getInstance().isUserAuthenticated() ? View.VISIBLE : View.GONE);
         }
 
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -180,15 +185,8 @@ public class MyAccountCardsActivity extends AppCompatActivity
         });
     }
 
-    private void updateMyAccount(SwipeRefreshLayout swipeRefreshLayout, ImageView imRefreshAccount) {
-        mUpdateMyAccount = new UpdateMyAccount(swipeRefreshLayout,imRefreshAccount);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mUpdateMyAccount.setRefreshType(UpdateMyAccount.RefreshAccountType.SWIPE_TO_REFRESH);
-                loadAccounts();
-            }
-        });
+    private void updateMyAccount(ImageView imRefreshAccount) {
+        mUpdateMyAccount = new UpdateMyAccount(null,imRefreshAccount);
     }
 
     @Override
@@ -210,7 +208,7 @@ public class MyAccountCardsActivity extends AppCompatActivity
                         openAccount.putExtra("accounts", Utils.objectToJson(accountsResponse));
                     }
                     startActivity(openAccount);
-                    overridePendingTransition(0, 0);
+                    overridePendingTransition(defaultValue, defaultValue);
                     finish();
                 }
             }
@@ -297,6 +295,10 @@ public class MyAccountCardsActivity extends AppCompatActivity
     }
 
     private void handleAccountsResponse(AccountsResponse accountsResponse) {
+        Window window = getWindow();
+        pager.setCurrentItem(currentPosition);
+        if (window != null)
+            window.getDecorView().findViewById(android.R.id.content).invalidate();
         switch (accountsResponse.httpCode) {
             case 200:
                 ((WoolworthsApplication) MyAccountCardsActivity.this.getApplication())
@@ -453,7 +455,7 @@ public class MyAccountCardsActivity extends AppCompatActivity
 
     public void setUpAdapter(ArrayList<Integer> cardsList) {
         pager.setAdapter(new MyAccountsCardsAdapter(MyAccountCardsActivity.this, cardsList));
-        pager.setCurrentItem(getIntent().getIntExtra("position", 0));
+        pager.setCurrentItem(currentPosition);
     }
 
     public void changeButtonColor(int position) {
@@ -596,6 +598,7 @@ public class MyAccountCardsActivity extends AppCompatActivity
             public void onSuccess(AccountsResponse accountsResponse) {
                     switch ( accountsResponse.httpCode) {
                         case 200:
+                            mUpdateMyAccount.swipeToRefreshAccount(false);
                             handleAccountsResponse(accountsResponse);
                             break;
                         case 440:

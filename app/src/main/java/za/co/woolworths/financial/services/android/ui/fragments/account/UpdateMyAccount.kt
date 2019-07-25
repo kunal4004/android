@@ -64,6 +64,7 @@ class UpdateMyAccount(private val swipeRefreshLayout: SwipeRefreshLayout?, priva
         when (mRefreshAccountType) {
             RefreshAccountType.CLICK_TO_REFRESH -> {
                 swipeRefreshLayout?.isRefreshing = false
+                swipeRefreshLayout?.isEnabled = false
                 if (shouldRefreshMyAccount) {
                     mRotateAnimation = RotateAnimation(0f, 360f,
                             Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f)
@@ -74,6 +75,7 @@ class UpdateMyAccount(private val swipeRefreshLayout: SwipeRefreshLayout?, priva
                     }
                     imRefreshAccount?.startAnimation(mRotateAnimation)
                 } else {
+                    swipeRefreshLayout?.isEnabled = true
                     mRefreshAccountType = RefreshAccountType.NONE
                     mRotateAnimation?.cancel()
                 }
@@ -94,4 +96,5 @@ class UpdateMyAccount(private val swipeRefreshLayout: SwipeRefreshLayout?, priva
             }
         }
     }
+
 }
