@@ -3,9 +3,6 @@ package za.co.woolworths.financial.services.android.models.dao;
 import android.util.Base64;
 import android.util.Log;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,12 +24,8 @@ public class ApiResponseDao extends BaseDao {
     public String headers;
     public String contentType;
 
-    private Gson gson;
-
     public ApiResponseDao() {
         super();
-
-        this.gson = new GsonBuilder().create();
     }
 
     @Override
@@ -41,7 +34,7 @@ public class ApiResponseDao extends BaseDao {
     }
 
     public ApiResponseDao getByApiRequestId(String apiRequestId) {
-        String query = "SELECT * FROM ApiResponse WHERE apiRequestId=? AND code=? ORDER BY id ASC LIMIT 1;";
+        String query = "SELECT * FROM ApiResponse WHERE apiRequestId=? AND code=? ORDER BY id DESC LIMIT 1;";
         Map<String, String> result = new HashMap<>();
         try {
             result = PersistenceLayer.getInstance().executeReturnableQuery(query, new String[]{
@@ -70,15 +63,13 @@ public class ApiResponseDao extends BaseDao {
                 this.message = entry.getValue();
             } else if (entry.getKey().equals("body")) {
                 try {
-                    String bodyDecrypted = new String(SymmetricCipher.Aes256Decrypt(ApiRequestDao.SYMMETRIC_KEY, Base64.decode(entry.getValue(), Base64.DEFAULT)), StandardCharsets.UTF_8);
-                    this.body = bodyDecrypted;
+                    this.body = new String(SymmetricCipher.Aes256Decrypt(ApiRequestDao.SYMMETRIC_KEY, Base64.decode(entry.getValue(), Base64.DEFAULT)), StandardCharsets.UTF_8);
                 } catch (Exception e) {
                     Log.d(TAG, e.getMessage());
                 }
             } else if (entry.getKey().equals("headers")) {
                 try {
-                    String headersDecrypted = new String(SymmetricCipher.Aes256Decrypt(ApiRequestDao.SYMMETRIC_KEY, Base64.decode(entry.getValue(), Base64.DEFAULT)), StandardCharsets.UTF_8);
-                    this.headers = headersDecrypted;
+                    this.headers = new String(SymmetricCipher.Aes256Decrypt(ApiRequestDao.SYMMETRIC_KEY, Base64.decode(entry.getValue(), Base64.DEFAULT)), StandardCharsets.UTF_8);
                 } catch (Exception e) {
                     Log.d(TAG, e.getMessage());
                 }
@@ -108,13 +99,9 @@ public class ApiResponseDao extends BaseDao {
             arguments.put("headers", headersEncrypted);
             arguments.put("body", bodyEncrypted);
 
-            long rowid;
-            if (persistenceLayer.requestQueryExist(getTableName(), persistenceLayer.RESPONSE_REQUEST_ID + " =?", new String[]{apiRequestId})) {
-                persistenceLayer.executeUpdateQuery(getTableName(), arguments, persistenceLayer.RESPONSE_REQUEST_ID + " =?", new String[]{"%" + this.apiRequestId});
-            } else {
-                rowid = persistenceLayer.executeInsertQuery(getTableName(), arguments);
-                this.id = "" + rowid;
-            }
+            long rowId = persistenceLayer.executeInsertQuery(getTableName(), arguments);
+            this.id = "" + rowId;
+
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
