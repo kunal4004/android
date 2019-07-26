@@ -24,7 +24,7 @@ import android.view.View;
 public interface IAttacher {
 
     float DEFAULT_MAX_SCALE = 3.0f;
-    float DEFAULT_MID_SCALE = 1.75f;
+    float DEFAULT_MID_SCALE = 2.4f;
     float DEFAULT_MIN_SCALE = 1.0f;
     long ZOOM_DURATION = 200L;
 

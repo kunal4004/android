@@ -45,7 +45,7 @@ public class MultipleImageActivity extends AppCompatActivity implements View.OnC
 
 
 	private void setImage() {
-		mProductImage.setPhotoUri(Uri.parse(mAuxiliaryImages), mProductImage);
+		mProductImage.setPhotoUri(Uri.parse(mAuxiliaryImages));
 	}
 
 	private void initView() {
