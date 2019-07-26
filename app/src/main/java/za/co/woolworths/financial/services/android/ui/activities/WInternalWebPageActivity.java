@@ -287,6 +287,7 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 		request.setDescription("Downloading file...");
 		request.setTitle(URLUtil.guessFileName(url, contentDisposition, mimeType));
 		request.allowScanningByMediaScanner();
+		request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);// Visibility of the download Notification
 		request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 		request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, URLUtil.guessFileName(url, contentDisposition, mimeType));
 		DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
