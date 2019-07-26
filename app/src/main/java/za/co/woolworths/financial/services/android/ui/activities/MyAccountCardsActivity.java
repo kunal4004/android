@@ -34,7 +34,6 @@ import java.util.List;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.RequestListener;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
-import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.ui.fragments.account.UpdateMyAccount;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
@@ -95,14 +94,13 @@ public class MyAccountCardsActivity extends AppCompatActivity
         fragmentPager =  findViewById(R.id.fragmentpager);
         llRootLayout =  findViewById(R.id.llRootLayout);
         fragmentPager.setViewPagerIsScrollable(false);
-        pager.setOffscreenPageLimit(1);
-        fragmentPager.setOffscreenPageLimit(1);
+        pager.setOffscreenPageLimit(0);
+        fragmentPager.setOffscreenPageLimit(0);
         cards = new ArrayList<>();
         changeViewPagerAndActionBarBackground(currentPosition);
         mBtnApplyNow.setVisibility(View.GONE);
         changeButtonColor(currentPosition);
         getScreenResolution();
-
 
         ImageView imRefreshAccount = findViewById(R.id.imRefreshAccount);
         updateMyAccount(imRefreshAccount);
@@ -120,7 +118,6 @@ public class MyAccountCardsActivity extends AppCompatActivity
 
                     return POSITION_NONE;
                 }
-
             };
             fragmentsAdapter.addFrag(new WStoreCardEmptyFragment());
             fragmentsAdapter.addFrag(new WCreditCardEmptyFragment());
@@ -296,10 +293,7 @@ public class MyAccountCardsActivity extends AppCompatActivity
     }
 
     private void handleAccountsResponse(AccountsResponse accountsResponse) {
-        Window window = getWindow();
         pager.setCurrentItem(currentPosition);
-        if (window != null)
-            window.getDecorView().findViewById(android.R.id.content).invalidate();
         switch (accountsResponse.httpCode) {
             case 200:
                 ((WoolworthsApplication) MyAccountCardsActivity.this.getApplication())
@@ -566,10 +560,8 @@ public class MyAccountCardsActivity extends AppCompatActivity
     }
 
     private void fragmentInterfaceListener(int position) {
-
             FragmentLifecycle fragmentToShow = (FragmentLifecycle) fragmentsAdapter.getItem(position);
             fragmentToShow.onResumeFragment();
-
             FragmentLifecycle fragmentToHide = (FragmentLifecycle) fragmentsAdapter.getItem(position);
             fragmentToHide.onPauseFragment();
     }
@@ -599,12 +591,12 @@ public class MyAccountCardsActivity extends AppCompatActivity
             public void onSuccess(AccountsResponse accountsResponse) {
                     switch ( accountsResponse.httpCode) {
                         case 200:
-                            //TODO:: Remove EventBus()
                             mUpdateMyAccount.swipeToRefreshAccount(false);
                             handleAccountsResponse(accountsResponse);
-                            WoolworthsApplication.getInstance()
-                                    .bus()
-                                    .send(new BusStation(true));
+
+                         //TODO:: Find a proper way to refresh viewpager content, remove eventBus
+
+                            WoolworthsApplication.getInstance().bus().send(new BusStation(true));
                             break;
                         case 440:
                             SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, accountsResponse.response.stsParams);

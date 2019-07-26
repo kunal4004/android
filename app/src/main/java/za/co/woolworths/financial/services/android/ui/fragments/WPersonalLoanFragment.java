@@ -147,9 +147,10 @@ private static AsyncTask<Void, Void, Void> async;
                                     hideCLIView();
                                     cliOfferStatus(offerActive);
                                 } else if (busStation.makeApiCall()) {
-                                    hideCLIView();
-                                    personalWasAlreadyRunOnce = false;
-                                    retryConnect();
+                                    if (!mPersonalLoanFragmentIsVisible) return;
+                                        hideCLIView();
+                                        personalWasAlreadyRunOnce = false;
+                                        retryConnect();
                                 }
                             }
                         }

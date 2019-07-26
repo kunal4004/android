@@ -147,6 +147,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
                                     hideCLIView();
                                     cliOfferStatus(offerActive);
                                 } else if (busStation.makeApiCall()) {
+                                    if (!mCreditCardFragmentIsVisible) return;
                                     hideCLIView();
                                     creditWasAlreadyRunOnce = false;
                                     retryConnect();

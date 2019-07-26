@@ -160,6 +160,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
                                     hideCLIView();
                                     cliOfferStatus(offerActive);
                                 } else if (busStation.makeApiCall()) {
+                                    if (!mStoreCardFragmentIsVisible) return;
                                     hideCLIView();
                                     storeWasAlreadyRunOnce = false;
                                     retryConnect();
