@@ -35,6 +35,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.RequestListener;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
+import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.ui.fragments.account.UpdateMyAccount;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.util.FragmentLifecycle;
@@ -94,8 +95,8 @@ public class MyAccountCardsActivity extends AppCompatActivity
         fragmentPager =  findViewById(R.id.fragmentpager);
         llRootLayout =  findViewById(R.id.llRootLayout);
         fragmentPager.setViewPagerIsScrollable(false);
-        pager.setOffscreenPageLimit(0);
-        fragmentPager.setOffscreenPageLimit(0);
+        pager.setOffscreenPageLimit(1);
+        fragmentPager.setOffscreenPageLimit(1);
         cards = new ArrayList<>();
         changeViewPagerAndActionBarBackground(currentPosition);
         mBtnApplyNow.setVisibility(View.GONE);
@@ -125,7 +126,7 @@ public class MyAccountCardsActivity extends AppCompatActivity
             fragmentsAdapter.addFrag(new WCreditCardEmptyFragment());
             fragmentsAdapter.addFrag(new WPersonalLoanEmptyFragment());
             fragmentPager.setAdapter(fragmentsAdapter);
-            fragmentPager.setCurrentItem(getIntent().getIntExtra("position", defaultValue));
+            fragmentPager.setCurrentItem(currentPosition);
 
             cards.add(R.drawable.w_store_card);
             cards.add(R.drawable.creditcardbenfits);
@@ -358,7 +359,7 @@ public class MyAccountCardsActivity extends AppCompatActivity
                     fragmentsAdapter.addFrag(new WPersonalLoanEmptyFragment());
                 }
                 fragmentPager.setAdapter(fragmentsAdapter);
-                fragmentPager.setCurrentItem(getIntent().getIntExtra("position", currentPosition));
+                fragmentPager.setCurrentItem(currentPosition);
 
                 changeButtonColor(currentPosition);
 
@@ -598,8 +599,12 @@ public class MyAccountCardsActivity extends AppCompatActivity
             public void onSuccess(AccountsResponse accountsResponse) {
                     switch ( accountsResponse.httpCode) {
                         case 200:
+                            //TODO:: Remove EventBus()
                             mUpdateMyAccount.swipeToRefreshAccount(false);
                             handleAccountsResponse(accountsResponse);
+                            WoolworthsApplication.getInstance()
+                                    .bus()
+                                    .send(new BusStation(true));
                             break;
                         case 440:
                             SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, accountsResponse.response.stsParams);
