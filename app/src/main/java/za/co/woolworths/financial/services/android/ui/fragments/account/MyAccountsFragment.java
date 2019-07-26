@@ -831,6 +831,9 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			//Fixes WOP-3407
 			BottomNavigationActivity bottomNavigationActivity = (BottomNavigationActivity) getActivity();
 			bottomNavigationActivity.showBottomNavigationMenu();
+		} else {
+			if (mUpdateMyAccount != null)
+				mUpdateMyAccount.swipeToRefreshAccount(false);
 		}
 	}
 
