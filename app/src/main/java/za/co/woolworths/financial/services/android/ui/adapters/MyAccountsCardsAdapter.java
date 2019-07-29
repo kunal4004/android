@@ -63,5 +63,4 @@ public class MyAccountsCardsAdapter extends PagerAdapter {
         return null;
     }
 
-
 }

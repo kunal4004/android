@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Parcelable;
 import androidx.viewpager.widget.PagerAdapter;
+
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -16,7 +18,6 @@ import za.co.woolworths.financial.services.android.ui.activities.dashboard.Botto
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
-import za.co.woolworths.financial.services.android.util.DrawImage;
 
 public class FeaturedPromotionsAdapter extends PagerAdapter {
 	public Activity mContext;
@@ -43,16 +44,17 @@ public class FeaturedPromotionsAdapter extends PagerAdapter {
 	@Override
 	public Object instantiateItem(ViewGroup container, final int position) {
 		View cView = mContext.getLayoutInflater().inflate(R.layout.featured_prmotion_list_item, container, false);
-		final WrapContentDraweeView image = cView.findViewById(R.id.promotionImage);
-		DrawImage drawImage = new DrawImage(container.getContext());
-		drawImage.displayImage(image, promotions.get(position).image);
+		final WrapContentDraweeView promotionImage = cView.findViewById(R.id.promotionImage);
 		container.addView(cView);
-		cView.setOnClickListener(new View.OnClickListener() {
+		if (TextUtils.isEmpty(promotions.get(position).image)) return cView;
+		String promoImage = android.net.Uri.encode(promotions.get(position).image, "@#&=*+-_.,:!?()/~'%");
+		promotionImage.setImageURI(promoImage);
+			cView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				GridFragment gridFragment = new GridFragment();
 				Bundle bundle = new Bundle();
-				bundle.putString("sub_category_name", image.getContext().getResources().getString(R.string.featured_promotions));
+				bundle.putString("sub_category_name", promotionImage.getContext().getResources().getString(R.string.featured_promotions));
 				bundle.putString("sub_category_id", promotions.get(position).path);
 				gridFragment.setArguments(bundle);
 				mBottomNavigator.setSelectedIconPosition(BottomNavigationActivity.INDEX_ACCOUNT);

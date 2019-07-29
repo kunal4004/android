@@ -16,7 +16,7 @@ public class Offer {
 	public String status;
 	@SerializedName("currCredit")
 	@Expose
-	public Integer currCredit;
+	public Integer currCredit = 0;
 	@SerializedName("creditReqestMin")
 	@Expose
 	public Integer creditReqestMin;

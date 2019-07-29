@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
 
@@ -27,7 +28,7 @@ public class StoreSearchListAdapter extends RecyclerView.Adapter<StoreSearchList
 	public class SearchViewHolder extends RecyclerView.ViewHolder {
 		WTextView storeName;
 		WTextView storeOfferings;
-		WTextView storeDistance;
+		TextView storeDistance;
 		WTextView storeAddress;
 		WTextView storeTimeing;
 
@@ -35,7 +36,7 @@ public class StoreSearchListAdapter extends RecyclerView.Adapter<StoreSearchList
 			super(cView);
 			storeName = (WTextView) cView.findViewById(R.id.storeName);
 			storeOfferings = (WTextView) cView.findViewById(R.id.offerings);
-			storeDistance = (WTextView) cView.findViewById(R.id.distance);
+			storeDistance =  cView.findViewById(R.id.distance);
 			storeAddress = (WTextView) cView.findViewById(R.id.storeAddress);
 			storeTimeing = (WTextView) cView.findViewById(R.id.timeing);
 		}

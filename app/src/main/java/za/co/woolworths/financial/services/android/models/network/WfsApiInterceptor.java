@@ -36,7 +36,7 @@ public class WfsApiInterceptor extends NetworkConfig implements Interceptor {
         long cacheTime = Integer.parseInt(cacheTimeHeaderValue == null ? "0" : cacheTimeHeaderValue);//cache time in seconds
 
         // getForceNetworkUpdate() will force the request to update
-        if (cacheTime == 0 && !OneAppService.INSTANCE.getForceNetworkUpdate()) {
+        if (cacheTime == 0) {
             Response originalResponse = chain.proceed(request);
             return originalResponse.newBuilder()
                     .header("Accept-Encoding", "gzip")
@@ -70,6 +70,8 @@ public class WfsApiInterceptor extends NetworkConfig implements Interceptor {
         //save the newly created apiRequestDao
         apiRequestDao.save();
 
+        OneAppService.INSTANCE.setForceNetworkUpdate(false);
+
         apiResponseDao.apiRequestId = apiRequestDao.id;
         apiResponseDao.message = response.message();
         apiResponseDao.code = response.code();
@@ -83,7 +85,6 @@ public class WfsApiInterceptor extends NetworkConfig implements Interceptor {
         long t2 = System.nanoTime();
 
         String responseLog = String.format("Received response for %s in %.1fms%n%s", apiResponseDao.body + response.request().url(), (t2 - t1) / 1e6d, apiResponseDao.headers);
-        OneAppService.INSTANCE.setForceNetworkUpdate(false);
         return response.newBuilder()
                 .header("Cache-Control", "max-age=60")
                 .body(ResponseBody.create(MediaType.parse(apiResponseDao.contentType), apiResponseDao.body))
