@@ -1,8 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities
 
 import android.os.Bundle
-import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -17,6 +15,7 @@ import kotlinx.android.synthetic.main.chat_activity.*
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.contracts.RequestListener
 import za.co.woolworths.financial.services.android.models.dto.ChatMessage
+import za.co.woolworths.financial.services.android.models.dto.ChatState
 import za.co.woolworths.financial.services.android.models.dto.chat.*
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
@@ -26,38 +25,12 @@ import za.co.woolworths.financial.services.android.ui.extension.afterTypingState
 import za.co.woolworths.financial.services.android.ui.extension.onAction
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.GotITDialogFragment
 import za.co.woolworths.financial.services.android.util.SessionUtilities
+import za.co.woolworths.financial.services.android.util.WCountDownTimer
 import java.util.concurrent.TimeUnit
 
 
-class WChatActivity : AppCompatActivity(), IDialogListener {
+class WChatActivity : WChatActivityExtension(), IDialogListener {
 
-    private var adapter: WChatAdapter? = null
-    var productOfferingId: String? = null
-    var accountNumber: String? = null
-    private var disposablesAgentsAvailable: CompositeDisposable? = null
-    private var disposablesChatSessionState: CompositeDisposable? = null
-    var chatId: String? = null
-    private var usersOfflineMessage: ChatMessage = ChatMessage(ChatMessage.Type.SENT, "")
-    private var isAgentOnline: Boolean = false // This becomes "true" when a agent picks the call -> (ChatStatus.state=STATUS_ONLINE)
-
-
-    companion object {
-        private const val POLLING_INTERVAL_AGENT_AVAILABLE: Long = 5  //seconds
-        private const val POLLING_INTERVAL_CHAT_SESSION_STATE: Long = 5 //seconds
-        private const val TYPING_INTERVAL: Long = 30000
-        private const val PRODUCT_OFFERING_ID = "productOfferingId"
-        private const val ACCOUNT_NUMBER = "accountNumber"
-        private const val STATUS_UNKNOWN = 0
-        private const val STATUS_ONLINE = 1
-        private const val STATUS_WAIT = 2
-        private const val STATUS_CLOSED = 3
-        private const val STATUS_CLEARED = 4
-        private const val STATUS_PNET_CLOSED = 5
-        private const val STATUS_DISCONNECT = 6
-        private const val STATUS_CLOSED_FORCED = 7
-        private const val STATUS_CLOSED_TIMEOUT = 8
-        private const val STATUS_RELOCATED = 9
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,18 +39,9 @@ class WChatActivity : AppCompatActivity(), IDialogListener {
         actionBar()
         if (savedInstanceState == null)
             getBundleArgument()
-        initViews()
+        initViewsAndListener()
     }
 
-    private fun actionBar() {
-        setSupportActionBar(mToolbar)
-        supportActionBar?.apply {
-            setDisplayHomeAsUpEnabled(true)
-            setDisplayShowTitleEnabled(false)
-            setDisplayUseLogoEnabled(false)
-            setHomeAsUpIndicator(R.drawable.back24)
-        }
-    }
 
     private fun getBundleArgument() {
         intent?.extras?.apply {
@@ -86,16 +50,21 @@ class WChatActivity : AppCompatActivity(), IDialogListener {
         }
     }
 
-    fun initViews() {
+    private fun initViewsAndListener() {
+        pollingTimer = WCountDownTimer(COUNTDOWN_TIMER, 1000, this)
         reyclerview_message_list.layoutManager = LinearLayoutManager(this)
         adapter = WChatAdapter()
         reyclerview_message_list.adapter = adapter
         button_send.setOnClickListener { onSendMessage() }
-        edittext_chatbox.afterTextChanged { onEditTextValueChanged(it) }
-        edittext_chatbox.onAction(EditorInfo.IME_ACTION_DONE) { onSendMessage() }
-        edittext_chatbox.afterTypingStateChanged(TYPING_INTERVAL) { if (it) userStartedTyping() else userStoppedTyping() }
+        edittext_chatbox.apply {
+            afterTextChanged { onEditTextValueChanged(it) }
+            onAction(EditorInfo.IME_ACTION_DONE) { onSendMessage() }
+            afterTypingStateChanged(TYPING_INTERVAL) { if (it) userStartedTyping() else userStoppedTyping() }
+        }
         endSession.setOnClickListener { confirmToEndChatSession() }
-        if (Utils.chatOpeningHours()) checkAgentAvailable() else setChatAvailableState(false)
+        setAgentAvailableState(Utils.isOperatingHoursForInAppChat())
+        if (Utils.isOperatingHoursForInAppChat())
+            checkAgentAvailable()
 
     }
 
@@ -120,14 +89,6 @@ class WChatActivity : AppCompatActivity(), IDialogListener {
         return false
     }
 
-    private fun updateMessageList(message: ChatMessage) {
-        runOnUiThread {
-            adapter?.let {
-                it.addMessage(message)
-                reyclerview_message_list.scrollToPosition(it.itemCount - 1)
-            }
-        }
-    }
 
     private fun onSendMessage() {
         if (edittext_chatbox.text.isNotEmpty()) {
@@ -150,9 +111,7 @@ class WChatActivity : AppCompatActivity(), IDialogListener {
     }
 
     private fun checkAgentAvailable() {
-        //load default message
-        updateMessageList(ChatMessage(ChatMessage.Type.RECEIVED, "Hey Matt, How can i help you"))
-
+        startPollingTimer()
         disposablesAgentsAvailable = CompositeDisposable()
         disposablesAgentsAvailable?.add(Observable.interval(0, POLLING_INTERVAL_AGENT_AVAILABLE, TimeUnit.SECONDS)
                 .flatMap { OneAppService.pollAgentsAvailable().takeUntil(Observable.timer(5, TimeUnit.SECONDS)) }
@@ -169,6 +128,7 @@ class WChatActivity : AppCompatActivity(), IDialogListener {
                             chatId = id
                             pollChatSessionState(chatId)
                         }
+                        else -> showErrorMessage()
                     }
 
                 }
@@ -182,6 +142,7 @@ class WChatActivity : AppCompatActivity(), IDialogListener {
     }
 
     private fun pollChatSessionState(chatId: String?) {
+        startPollingTimer()
         chatId?.let {
             disposablesChatSessionState = CompositeDisposable()
             disposablesChatSessionState?.add(Observable.interval(0, POLLING_INTERVAL_CHAT_SESSION_STATE, TimeUnit.SECONDS)
@@ -217,6 +178,7 @@ class WChatActivity : AppCompatActivity(), IDialogListener {
                 200 -> {
                     if (it.agentsAvailable) {
                         stopAgentAvailablePolling()
+                        showAgentsMessage(AgentDefaultMessage.CONNECTING_AGENT)
                         createChatSession()
                     }
                 }
@@ -233,44 +195,26 @@ class WChatActivity : AppCompatActivity(), IDialogListener {
     }
 
     private fun handleChatSessionStateSuccessResponse(result: PollChatSessionStateResponse?) {
-        result?.let {
-            when (it.httpCode) {
+        result?.let { response ->
+            when (response.httpCode) {
                 200 -> {
-                    it.chatState?.let { chatState ->
-                        when (chatState.state) {
+                    response.chatState?.let {
+                        when (it.state) {
                             STATUS_ONLINE -> {
-                                isAgentOnline = true
-                                setEndSessionAvailable(isAgentOnline)
-                                setAgentName(chatState.agentNickName)
-                                setChatAvailableState(isAgentOnline)
-
-                                // Update received message with UI
-                                if (chatState.text?.isNotEmpty()!!)
-                                    updateUIWithReceivedMessages(chatState.text)
-
-                                //Send offline messages
-                                usersOfflineMessage.let { it ->
-                                    if (!it.isMessageSent && it.message.isNotEmpty())
-                                        sendMessage(it)
-                                }
+                                handleAgentOnlineState(it)
                             }
+                            STATUS_WAIT -> {
+                            }
+                            else -> showSessionEndedMessage()
                         }
                     }
                 }
                 else -> {
-
+                    showErrorMessage()
                 }
             }
         }
 
-    }
-
-    private fun stopAgentAvailablePolling() {
-        disposablesAgentsAvailable?.clear()
-    }
-
-    private fun stopChatSessionStatePolling() {
-        disposablesChatSessionState?.clear()
     }
 
     private fun updateUIWithReceivedMessages(messageList: List<String>?) {
@@ -304,53 +248,42 @@ class WChatActivity : AppCompatActivity(), IDialogListener {
         endChatSession()
     }
 
-    private fun userStoppedTyping() {
-        if (isAgentOnline) {
-            chatId?.let {
-                OneAppService.userStoppedTyping(it).enqueue(CompletionHandler(object : RequestListener<UserTypingResponse> {
-                    override fun onSuccess(response: UserTypingResponse?) {
-                    }
-
-                    override fun onFailure(error: Throwable?) {
-                    }
-
-                }, UserTypingResponse::class.java))
-            }
-        }
-
-    }
-
-    private fun userStartedTyping() {
-        if (isAgentOnline) {
-            chatId?.let {
-                OneAppService.userTyping(it).enqueue(CompletionHandler(object : RequestListener<UserTypingResponse> {
-                    override fun onSuccess(response: UserTypingResponse?) {
-                    }
-
-                    override fun onFailure(error: Throwable?) {
-                    }
-
-                }, UserTypingResponse::class.java))
-            }
-        }
-    }
 
     private fun setIsChatEditTextEditable(isEditable: Boolean) {
         edittext_chatbox.isEnabled = isEditable
     }
 
-    private fun setChatAvailableState(isOnline: Boolean) {
+    private fun handleAgentOnlineState(chatState: ChatState) {
+        if (!isAgentOnline) {
+            isAgentOnline = true
+            setEndSessionAvailable(isAgentOnline)
+            chatState.agentNickName?.let { name ->
+                setPageTitleWithAgentName(name)
+                showAgentsMessage(AgentDefaultMessage.AGENT_PICKED, name)
+            }
+        }
+        // Update received message with UI
+        if (chatState.text?.isNotEmpty()!!)
+            updateUIWithReceivedMessages(chatState.text)
+
+        //Send offline messages
+        usersOfflineMessage.let { it ->
+            if (!it.isMessageSent && it.message.isNotEmpty())
+                sendMessage(it)
+        }
+    }
+
+    private fun setAgentAvailableState(isOnline: Boolean) {
         isOnline.apply {
             setIsChatEditTextEditable(this)
             chatState.let {
-                it.visibility = View.VISIBLE
-                it.isEnabled = this
-                it.text = if (this) getString(R.string.chat_state_online) else getString(R.string.chat_state_offline)
+                it.isEnabled = isOnline
+                it.text = if (isOnline) getString(R.string.chat_state_online) else getString(R.string.chat_state_offline)
             }
             offlineBanner.visibility = if (this) View.GONE else View.VISIBLE
             setEndSessionAvailable(this)
             if (!this) edittext_chatbox.text.clear()
-            if (!this) loadDefaultOfflineMessage()
+            showAgentsMessage(if (this) AgentDefaultMessage.AGENT_ONLINE else AgentDefaultMessage.AGENT_OFFLINE)
         }
     }
 
@@ -358,22 +291,8 @@ class WChatActivity : AppCompatActivity(), IDialogListener {
         endSession.visibility = if (isAvailable) View.VISIBLE else View.GONE
     }
 
-    private fun loadDefaultOnlineMessage() {
-        updateMessageList(ChatMessage(ChatMessage.Type.RECEIVED, "Hey Matt."))
-    }
-
-    private fun loadDefaultOfflineMessage() {
-        updateMessageList(ChatMessage(ChatMessage.Type.RECEIVED, "Our live chat service will be back online at 8:30am. \n" +
-                "\n" +
-                "If you have an urgent matter, contact us on +27 62 5960 496 or mail us at cards@woolworths.com."))
-    }
-
-    private fun setAgentName(name: String?) {
+    private fun setPageTitleWithAgentName(name: String?) {
         agentName.text = name
-    }
-
-    private fun showErrorMessage() {
-        updateMessageList(ChatMessage(ChatMessage.Type.RECEIVED, "Currently We are facing some issues with our systems"))
     }
 
 

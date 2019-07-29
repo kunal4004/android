@@ -54,10 +54,8 @@
                     android:layout_height="wrap_content"
                     android:drawableStart="@drawable/chat_state_indicator_bg"
                     android:drawablePadding="@dimen/five_dp"
-                    android:text="Active Now"
                     android:textColor="@color/black_50"
                     android:textSize="12sp"
-                    android:visibility="gone"
                     app:WTextView_font="myriadpro_regular" />
             </LinearLayout>
 

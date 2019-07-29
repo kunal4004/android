@@ -77,7 +77,7 @@ public class WTransactionsActivity extends AppCompatActivity implements View.OnC
 
 		});
 		chatIcon.expand(true);
-		chatIcon.setStatusIndicatorIcon(Utils.chatOpeningHours() ? R.drawable.indicator_online : R.drawable.indicator_offline);
+		chatIcon.setStatusIndicatorIcon(Utils.isOperatingHoursForInAppChat() ? R.drawable.indicator_online : R.drawable.indicator_offline);
 		transactionListview.setOnScrollListener(new AbsListView.OnScrollListener(){
 			private int lastPosition = -1;
 			@Override

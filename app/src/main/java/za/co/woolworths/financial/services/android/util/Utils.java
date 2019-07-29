@@ -1457,9 +1457,22 @@ public class Utils {
 		return TextUtils.isEmpty(accountNumber) ? "" : accountNumber;
 	}
 
-	public static Boolean chatOpeningHours() {
-		int day = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
-		return day >= Calendar.MONDAY && day <= Calendar.FRIDAY;
+	public static Boolean isOperatingHoursForInAppChat() {
+
+		Calendar d = Calendar.getInstance();
+		Calendar begin = Calendar.getInstance();
+		Calendar end = Calendar.getInstance();
+
+		begin.set(Calendar.HOUR, 8);
+		begin.set(Calendar.MINUTE, 30);
+		begin.set(Calendar.AM_PM, Calendar.AM);
+
+		end.set(Calendar.HOUR, 5);
+		end.set(Calendar.MINUTE, 30);
+		end.set(Calendar.AM_PM, Calendar.PM);
+		int day = d.get(Calendar.DAY_OF_WEEK);
+
+		return day >= Calendar.MONDAY && day <= Calendar.FRIDAY && (d.after(begin) && d.before(end));
 	}
 
 }
