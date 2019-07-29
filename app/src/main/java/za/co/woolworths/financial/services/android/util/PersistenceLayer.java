@@ -105,7 +105,7 @@ public class PersistenceLayer extends SQLiteOpenHelper {
     {
         SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READWRITE);
         db.execSQL(query);
-        db.close();;
+        db.close();
     }
 
     public Map<String, String> executeReturnableQuery(String query, String[] arguments) throws Exception {

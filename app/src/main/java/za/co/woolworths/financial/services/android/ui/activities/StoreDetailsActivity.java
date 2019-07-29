@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -61,7 +62,7 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
 	WTextView storeName;
 	WTextView storeOfferings;
 	WTextView storeAddress;
-	WTextView storeDistance;
+	TextView storeDistance;
 	WTextView storeNumber;
 	WTextView nativeMap;
 	WTextView cancel;
@@ -84,7 +85,7 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
 		toolbar = (Toolbar) findViewById(R.id.toolbar);
 		storeName = (WTextView) findViewById(R.id.storeName);
 		storeOfferings = (WTextView) findViewById(R.id.offerings);
-		storeDistance = (WTextView) findViewById(R.id.distance);
+		storeDistance =  findViewById(R.id.distance);
 		storeAddress = (WTextView) findViewById(R.id.storeAddress);
 		timeingsLayout = (LinearLayout) findViewById(R.id.timeingsLayout);
 		storeTimingView = (RelativeLayout) findViewById(R.id.storeTimingView);
