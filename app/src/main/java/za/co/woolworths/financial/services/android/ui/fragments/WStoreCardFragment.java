@@ -160,8 +160,10 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
                                     hideCLIView();
                                     cliOfferStatus(offerActive);
                                 } else if (busStation.makeApiCall()) {
+                                    if (!mStoreCardFragmentIsVisible) return;
                                     hideCLIView();
                                     storeWasAlreadyRunOnce = false;
+                                    retryConnect();
                                 }
                             }
                         }
@@ -599,6 +601,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 
     private void retryConnect() {
         if (!storeWasAlreadyRunOnce) {
+            storeWasAlreadyRunOnce = true;
             if (NetworkManager.getInstance().isConnectedToNetwork(getActivity()))
                 getActiveOffer();
             else {

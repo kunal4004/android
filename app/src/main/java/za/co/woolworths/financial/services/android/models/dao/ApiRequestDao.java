@@ -3,9 +3,6 @@ package za.co.woolworths.financial.services.android.models.dao;
 import android.util.Base64;
 import android.util.Log;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,18 +19,16 @@ public class ApiRequestDao extends BaseDao {
     public static final byte[] SYMMETRIC_KEY = "K7MZpM6owN0VIjRbwfN3Xw==".getBytes();
 
     public String requestType = "";
-    String endpoint = "";
-    String headers;
-    String parameters;
-    String dateExpires = "";
+    private String endpoint = "";
+    private String headers;
+    private String parameters;
+    private String dateExpires = "";
 
-    private Gson gson;
     private final long cacheTime;
 
     public ApiRequestDao(long cacheTime) {
         super();
 
-        this.gson = new GsonBuilder().create();
         this.cacheTime = cacheTime;
     }
 
@@ -44,7 +39,7 @@ public class ApiRequestDao extends BaseDao {
 
     public ApiRequestDao get(String _requestType, String _endpoint, String _headers, String _parameters) {
 
-        String query = "SELECT * FROM ApiRequest WHERE endpoint=? AND requestType=? AND headers=? AND parameters=? AND dateExpires > datetime() ORDER BY id ASC LIMIT 1;";
+        String query = "SELECT * FROM ApiRequest WHERE endpoint=? AND requestType=? AND headers=? AND parameters=? AND dateExpires > datetime() ORDER BY id DESC LIMIT 1;";
         Map<String, String> result = new HashMap<>();
         try {
             String headersEncrypted = Base64.encodeToString(SymmetricCipher.Aes256Encrypt(SYMMETRIC_KEY, _headers), Base64.DEFAULT);
@@ -72,26 +67,29 @@ public class ApiRequestDao extends BaseDao {
 
         for (Map.Entry<String, String> entry : result.entrySet()) {
 
-            if (entry.getKey().equals("id")) {
-                this.id = entry.getValue();
-            } else if (entry.getKey().equals("endpoint")) {
-                this.endpoint = entry.getValue();
-            } else if (entry.getKey().equals("headers")) {
-                try {
-                    String headersDecrypted = new String(SymmetricCipher.Aes256Decrypt(SYMMETRIC_KEY, Base64.decode(entry.getValue(), Base64.DEFAULT)), StandardCharsets.UTF_8);
-                    this.headers = headersDecrypted;
-                } catch (Exception e) {
-                    Log.d(TAG, e.getMessage());
-                    this.headers = _headers;
-                }
-            } else if (entry.getKey().equals("parameters")) {
-                try {
-                    String parametersDecrypted = new String(SymmetricCipher.Aes256Decrypt(SYMMETRIC_KEY, Base64.decode(entry.getValue(), Base64.DEFAULT)), StandardCharsets.UTF_8);
-                    this.parameters = parametersDecrypted;
-                } catch (Exception e) {
-                    Log.d(TAG, e.getMessage());
-                    this.parameters = _parameters;
-                }
+            switch (entry.getKey()) {
+                case "id":
+                    this.id = entry.getValue();
+                    break;
+                case "endpoint":
+                    this.endpoint = entry.getValue();
+                    break;
+                case "headers":
+                    try {
+                        this.headers = new String(SymmetricCipher.Aes256Decrypt(SYMMETRIC_KEY, Base64.decode(entry.getValue(), Base64.DEFAULT)), StandardCharsets.UTF_8);
+                    } catch (Exception e) {
+                        Log.d(TAG, e.getMessage());
+                        this.headers = _headers;
+                    }
+                    break;
+                case "parameters":
+                    try {
+                        this.parameters = new String(SymmetricCipher.Aes256Decrypt(SYMMETRIC_KEY, Base64.decode(entry.getValue(), Base64.DEFAULT)), StandardCharsets.UTF_8);
+                    } catch (Exception e) {
+                        Log.d(TAG, e.getMessage());
+                        this.parameters = _parameters;
+                    }
+                    break;
             }
         }
         return this;
@@ -109,10 +107,7 @@ public class ApiRequestDao extends BaseDao {
 
         //ApiRequest will never be updated, only new records will be inserted.
         try {
-            this.dateExpires = persistenceLayer.executeReturnableQuery("SELECT DATETIME(datetime(), '+" + this.cacheTime + " seconds') as cacheTime",
-                    new String[]{}).get("cacheTime");
-
-            String currentTime = persistenceLayer.executeReturnableQuery("SELECT datetime('now') as currentTime", new String[]{}).get("currentTime");
+            this.dateExpires = persistenceLayer.executeReturnableQuery("SELECT DATETIME(datetime(), '+" + this.cacheTime + " seconds') as cacheTime", new String[]{}).get("cacheTime");
 
             String headersEncrypted = Base64.encodeToString(SymmetricCipher.Aes256Encrypt(SYMMETRIC_KEY, this.headers), Base64.DEFAULT);
             String parametersEncrypted = Base64.encodeToString(SymmetricCipher.Aes256Encrypt(SYMMETRIC_KEY, this.parameters), Base64.DEFAULT);
@@ -123,15 +118,11 @@ public class ApiRequestDao extends BaseDao {
             arguments.put("headers", headersEncrypted);
             arguments.put("parameters", parametersEncrypted);
             arguments.put("dateExpires", this.dateExpires);
-            arguments.put("dateUpdated", currentTime);
 
-            long rowId;
-            if (persistenceLayer.requestQueryExist(getTableName(), persistenceLayer.REQUEST_ENDPOINT + " LIKE ?", new String[]{"%" + endpoint})) {
-                rowId = persistenceLayer.executeUpdateQuery(getTableName(), arguments, persistenceLayer.REQUEST_ENDPOINT + " LIKE ?", new String[]{"%" + endpoint});
-            } else {
-                rowId = persistenceLayer.executeInsertQuery(getTableName(), arguments);
-            }
+
+            long rowId = persistenceLayer.executeInsertQuery(getTableName(), arguments);
             this.id = "" + rowId;
+
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
