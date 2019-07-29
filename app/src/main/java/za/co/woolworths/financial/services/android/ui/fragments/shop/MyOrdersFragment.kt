@@ -1,8 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -64,6 +64,7 @@ class MyOrdersFragment : Fragment() {
         mErrorHandlerView = ErrorHandlerView(activity, relEmptyStateHandler, imgEmpyStateIcon, txtEmptyStateTitle, txtEmptyStateDesc, btnGoToProduct)
         myOrdersList.layoutManager = LinearLayoutManager(activity)
         btnGoToProduct.setOnClickListener { onActionClick() }
+
         swipeToRefresh.setOnRefreshListener {
             swipeToRefresh.isRefreshing = true
             executeOrdersRequest(true)

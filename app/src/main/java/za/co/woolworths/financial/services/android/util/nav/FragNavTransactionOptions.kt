@@ -1,10 +1,10 @@
 package za.co.woolworths.financial.services.android.util.nav
 
-import android.support.annotation.AnimRes
-import android.support.annotation.StyleRes
-import android.support.v4.app.FragmentTransaction
-import android.support.v4.util.Pair
+import androidx.fragment.app.FragmentTransaction
+import androidx.core.util.Pair
 import android.view.View
+import androidx.annotation.AnimRes
+import androidx.annotation.StyleRes
 
 class FragNavTransactionOptions private constructor(builder: Builder) {
     val sharedElements: List<Pair<View, String>> = builder.sharedElements

@@ -1,14 +1,14 @@
 package za.co.woolworths.financial.services.android.ui.activities
 
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.activity_oreder_tax_invoice.*
 import za.co.woolworths.financial.services.android.util.Utils
 import java.io.File
 import android.content.Intent
-import android.support.v4.content.FileProvider
-import android.support.v4.app.ShareCompat
+import androidx.core.content.FileProvider
+import androidx.core.app.ShareCompat
 import android.util.Log
 import com.crashlytics.android.Crashlytics
 import java.io.FileOutputStream

@@ -1,6 +1,6 @@
 package za.co.absa.openbankingapi.woolworths.integration;
 
-import android.content.Context;
+import android.text.TextUtils;
 import android.util.Base64;
 
 import com.android.volley.Response;
@@ -19,6 +19,7 @@ import za.co.absa.openbankingapi.DecryptionFailureException;
 import za.co.absa.openbankingapi.KeyGenerationFailureException;
 import za.co.absa.openbankingapi.SessionKey;
 import za.co.absa.openbankingapi.SymmetricCipher;
+import za.co.absa.openbankingapi.woolworths.integration.dto.ErrorCodeList;
 import za.co.absa.openbankingapi.woolworths.integration.dto.Header;
 import za.co.absa.openbankingapi.woolworths.integration.dto.RegisterCredentialRequest;
 import za.co.absa.openbankingapi.woolworths.integration.dto.RegisterCredentialResponse;
@@ -76,8 +77,13 @@ public class AbsaRegisterCredentialRequest {
 					responseDelegate.onSuccess(response, cookies);
 				}
 
-				else
-					responseDelegate.onFailure(resultMessages[0].getResponseMessage());
+				else{
+					String errorDescription = ErrorCodeList.Companion.checkResult(response.getHeader().getStatusCode());
+					if (TextUtils.isEmpty(errorDescription))
+						responseDelegate.onFailure(resultMessages[0].getResponseMessage());
+					else
+						responseDelegate.onFailure(errorDescription);
+				}
 			}
 		}, new Response.ErrorListener() {
 			@Override

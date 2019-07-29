@@ -21,7 +21,7 @@ public class ApiRequestDao extends BaseDao {
     public static final String TAG = "ApiRequestDao";
     public static final byte[] SYMMETRIC_KEY = "K7MZpM6owN0VIjRbwfN3Xw==".getBytes();
 
-    String requestType = "";
+    public String requestType = "";
     String endpoint = "";
     String headers;
     String parameters;
@@ -99,19 +99,20 @@ public class ApiRequestDao extends BaseDao {
 
     public void save() {
         //Delete expired Cache data
+        PersistenceLayer persistenceLayer = PersistenceLayer.getInstance();
         try {
-            PersistenceLayer.getInstance().executeDeleteQuery("DELETE FROM ApiResponse where apiRequestId in ( SELECT id FROM ApiRequest WHERE dateExpires < CURRENT_TIMESTAMP);");
-            PersistenceLayer.getInstance().executeDeleteQuery("DELETE FROM ApiRequest WHERE dateExpires < CURRENT_TIMESTAMP;");
-        }catch (Exception e)
-        {
-            Log.e(TAG,e.getMessage());
+           persistenceLayer.executeDeleteQuery("DELETE FROM ApiResponse where apiRequestId in ( SELECT id FROM ApiRequest WHERE dateExpires < CURRENT_TIMESTAMP);");
+           persistenceLayer.executeDeleteQuery("DELETE FROM ApiRequest WHERE dateExpires < CURRENT_TIMESTAMP;");
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
         }
+
         //ApiRequest will never be updated, only new records will be inserted.
         try {
-            this.dateExpires = PersistenceLayer.getInstance().executeReturnableQuery("SELECT DATETIME(datetime(), '+" + this.cacheTime + " seconds') as cacheTime",
+            this.dateExpires = persistenceLayer.executeReturnableQuery("SELECT DATETIME(datetime(), '+" + this.cacheTime + " seconds') as cacheTime",
                     new String[]{}).get("cacheTime");
 
-            Log.d(TAG, dateExpires);
+            String currentTime = persistenceLayer.executeReturnableQuery("SELECT datetime('now') as currentTime", new String[]{}).get("currentTime");
 
             String headersEncrypted = Base64.encodeToString(SymmetricCipher.Aes256Encrypt(SYMMETRIC_KEY, this.headers), Base64.DEFAULT);
             String parametersEncrypted = Base64.encodeToString(SymmetricCipher.Aes256Encrypt(SYMMETRIC_KEY, this.parameters), Base64.DEFAULT);
@@ -122,15 +123,20 @@ public class ApiRequestDao extends BaseDao {
             arguments.put("headers", headersEncrypted);
             arguments.put("parameters", parametersEncrypted);
             arguments.put("dateExpires", this.dateExpires);
+            arguments.put("dateUpdated", currentTime);
 
-            long rowid = PersistenceLayer.getInstance().executeInsertQuery(getTableName(), arguments);
-            this.id = "" + rowid;
+            long rowId;
+            if (persistenceLayer.requestQueryExist(getTableName(), persistenceLayer.REQUEST_ENDPOINT + " LIKE ?", new String[]{"%" + endpoint})) {
+                rowId = persistenceLayer.executeUpdateQuery(getTableName(), arguments, persistenceLayer.REQUEST_ENDPOINT + " LIKE ?", new String[]{"%" + endpoint});
+            } else {
+                rowId = persistenceLayer.executeInsertQuery(getTableName(), arguments);
+            }
+            this.id = "" + rowId;
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
     }
 }
-
 class CacheEmptyException extends Exception {
     public CacheEmptyException(String message) {
         super(message);

@@ -2,14 +2,14 @@ package za.co.woolworths.financial.services.android.ui.fragments.barcode
 
 import android.os.Build
 import android.os.Bundle
-import android.support.annotation.RequiresApi
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.inputmethod.EditorInfo
+import androidx.annotation.RequiresApi
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.barcode_manual_scan_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties

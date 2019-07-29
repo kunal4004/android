@@ -1,7 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.adapters
 
 import android.content.Context
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
@@ -23,19 +23,19 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class RefinementNavigationAdapter(val context: Context, val listner: OnRefinementOptionSelected, var dataList: ArrayList<RefinementSelectableItem>, var history: RefinementHistory) : RecyclerView.Adapter<RefinementBaseViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RefinementBaseViewHolder? {
-        when (viewType) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RefinementBaseViewHolder {
+        return when (viewType) {
             RefinementSelectableItem.ViewType.SECTION_HEADER.value -> {
-                return SectionHeaderHolder(LayoutInflater.from(context).inflate(R.layout.refinements_section_header_layout, parent, false))
+                SectionHeaderHolder(LayoutInflater.from(context).inflate(R.layout.refinements_section_header_layout, parent, false))
             }
             RefinementSelectableItem.ViewType.PROMOTION.value -> {
-                return PromotionHolder(LayoutInflater.from(context).inflate(R.layout.refinements_on_promotion_layout, parent, false))
+                PromotionHolder(LayoutInflater.from(context).inflate(R.layout.refinements_on_promotion_layout, parent, false))
             }
             RefinementSelectableItem.ViewType.OPTIONS.value -> {
-                return OptionsHolder(LayoutInflater.from(context).inflate(R.layout.refinements_options_layout, parent, false))
+                OptionsHolder(LayoutInflater.from(context).inflate(R.layout.refinements_options_layout, parent, false))
             }
+            else -> SectionHeaderHolder(LayoutInflater.from(context).inflate(R.layout.refinements_section_header_layout, parent, false))
         }
-        return null
     }
 
     override fun getItemCount(): Int {

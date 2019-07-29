@@ -1,13 +1,13 @@
 package za.co.woolworths.financial.services.android.ui.fragments.bpi
 
 import android.os.Bundle
-import android.support.annotation.VisibleForTesting
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.annotation.VisibleForTesting
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.bpi_overview_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties

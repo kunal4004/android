@@ -2,13 +2,13 @@ package za.co.woolworths.financial.services.android.util.nav
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.support.annotation.CheckResult
-import android.support.annotation.IdRes
-import android.support.annotation.IntDef
-import android.support.v4.app.DialogFragment
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentTransaction
+import androidx.annotation.CheckResult
+import androidx.annotation.IdRes
+import androidx.annotation.IntDef
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import org.json.JSONArray
 import za.co.woolworths.financial.services.android.util.nav.tabhistory.*
 import java.util.*
@@ -621,7 +621,7 @@ class FragNavController internal constructor(builder: Builder, savedInstanceStat
 
 
             for (sharedElement in transactionOptions.sharedElements) {
-                ft.addSharedElement(sharedElement.first, sharedElement.second)
+                sharedElement.first?.let { sharedElement.second?.let { it1 -> ft.addSharedElement(it, it1) } }
             }
 
             if (transactionOptions.breadCrumbTitle != null) {

@@ -19,6 +19,11 @@
             type="za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsViewModel" />
     </data>
 
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeToRefreshAccount"
+        android:layout_width="match_parent"
+        android:enabled = "false"
+        android:layout_height="wrap_content">
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -28,7 +33,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <android.support.v4.widget.NestedScrollView
+            <androidx.core.widget.NestedScrollView
                 android:id="@+id/nest_scrollview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -53,7 +58,7 @@
                         android:orientation="vertical"
                         android:visibility="visible">
 
-                        <android.support.v4.view.ViewPager
+                        <androidx.viewpager.widget.ViewPager
                             android:id="@+id/pager"
                             android:layout_width="match_parent"
                             android:layout_height="360dp"
@@ -351,7 +356,7 @@
                     </RelativeLayout>
                 </LinearLayout>
 
-            </android.support.v4.widget.NestedScrollView>
+            </androidx.core.widget.NestedScrollView>
         </RelativeLayout>
 
         <ProgressBar
@@ -365,4 +370,5 @@
 
         <include layout="@layout/no_connection_handler" />
     </FrameLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </layout>

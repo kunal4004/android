@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.os.Parcelable;
-import android.support.v4.view.PagerAdapter;
+import androidx.viewpager.widget.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;

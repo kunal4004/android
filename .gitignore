@@ -4,3 +4,4 @@ build/*
 .idea/*
 app.iml
 library/*
+WigroupServices.properties

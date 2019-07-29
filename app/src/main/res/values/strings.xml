@@ -992,4 +992,7 @@
     <string name="credit_limit_decrease_max_button">proceed with the maximum</string>
     <string name="rooted_phone_desc">Your phone is rooted. Unauthorised access.</string>
     <string name="rooted_phone_title">Access Restricted</string>
+    <string name="no_statements_title">No Statements Available</string>
+    <string name="absa_no_statement_desc">You have no statements available.  If this incorrect please call us.</string>
+    <string name="distance_per_km"> %1$s km</string>
 </resources>
