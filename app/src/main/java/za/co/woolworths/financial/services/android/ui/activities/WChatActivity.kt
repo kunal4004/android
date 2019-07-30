@@ -83,7 +83,7 @@ class WChatActivity : WChatActivityExtension(), IDialogListener {
 
         when (item?.itemId) {
             android.R.id.home -> {
-                onBackPressed()
+                if (isAgentOnline) confirmToEndChatSession() else onBackPressed()
             }
         }
         return false

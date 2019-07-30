@@ -309,6 +309,7 @@ private static AsyncTask<Void, Void, Void> async;
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANTRANSACTIONS);
                 Intent intent = new Intent(getActivity(), WTransactionsActivity.class);
                 intent.putExtra("productOfferingId", productOfferingId);
+                intent.putExtra("cardType","PL");
                 startActivity(intent);
                 activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
                 break;

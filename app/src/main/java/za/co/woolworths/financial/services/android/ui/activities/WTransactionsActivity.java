@@ -32,7 +32,7 @@ import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class WTransactionsActivity extends AppCompatActivity implements View.OnClickListener {
+public class WTransactionsActivity extends AppCompatActivity implements View.OnClickListener, AbsListView.OnScrollListener {
 
 	public Toolbar toolbar;
 	public ExpandableListView transactionListview;
@@ -42,6 +42,8 @@ public class WTransactionsActivity extends AppCompatActivity implements View.OnC
 	private Call<TransactionHistoryResponse> mExecuteTransactionRequest;
 	private FloatingActionButtonExpandable chatIcon;
 	private String accountNumber;
+	private int lastPosition = -1;
+	private String cardType;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +68,7 @@ public class WTransactionsActivity extends AppCompatActivity implements View.OnC
 		chatIcon = findViewById(R.id.chatIcon);
 		productOfferingId = getIntent().getStringExtra("productOfferingId");
 		accountNumber = getIntent().getStringExtra("accountNumber");
+		cardType = getIntent().getStringExtra("cardType");
 		loadTransactionHistory(productOfferingId);
 		findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -76,37 +79,7 @@ public class WTransactionsActivity extends AppCompatActivity implements View.OnC
 			}
 
 		});
-		chatIcon.expand(true);
-		chatIcon.setStatusIndicatorIcon(Utils.isOperatingHoursForInAppChat() ? R.drawable.indicator_online : R.drawable.indicator_offline);
-		transactionListview.setOnScrollListener(new AbsListView.OnScrollListener(){
-			private int lastPosition = -1;
-			@Override
-			public void onScrollStateChanged(AbsListView absListView, int i) {
-
-			}
-
-			@Override
-			public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-				if(lastPosition == firstVisibleItem)
-				{
-					return;
-				}
-
-				if(firstVisibleItem > lastPosition)
-				{
-					if (transactionListview.getVisibility() == View.VISIBLE)
-						chatIcon.collapse(true);
-				}
-				else
-				{
-					if (transactionListview.getVisibility() == View.VISIBLE)
-						chatIcon.expand(true);
-				}
-
-				lastPosition = firstVisibleItem;
-			}
-		});
-		chatIcon.setOnClickListener(this);
+		initInAppChat();
 	}
 
 	@Override
@@ -138,7 +111,7 @@ public class WTransactionsActivity extends AppCompatActivity implements View.OnC
 								transactionListview.setVisibility(View.GONE);
 								mErrorHandlerView.showEmptyState(3);
 							}
-                            chatIcon.setVisibility(View.VISIBLE);
+							showChatBubble();
 							break;
 						case 440:
 							if (!(WTransactionsActivity.this.isFinishing())) {
@@ -220,5 +193,42 @@ public class WTransactionsActivity extends AppCompatActivity implements View.OnC
 			default:
 				break;
 		}
+	}
+
+	@Override
+	public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+	}
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        if (lastPosition == firstVisibleItem) {
+            return;
+        }
+
+        if (firstVisibleItem > lastPosition) {
+            if (transactionListview.getVisibility() == View.VISIBLE)
+                chatIcon.collapse(true);
+        } else {
+            if (transactionListview.getVisibility() == View.VISIBLE)
+                chatIcon.expand(true);
+        }
+
+        lastPosition = firstVisibleItem;
+
+    }
+
+	private void initInAppChat() {
+		if (cardType.equalsIgnoreCase("CC")) {
+			chatIcon.expand(true);
+			chatIcon.setStatusIndicatorIcon(Utils.isOperatingHoursForInAppChat() ? R.drawable.indicator_online : R.drawable.indicator_offline);
+			transactionListview.setOnScrollListener(this);
+			chatIcon.setOnClickListener(this);
+		}
+	}
+
+	private void showChatBubble() {
+		if (cardType.equalsIgnoreCase("CC"))
+			chatIcon.setVisibility(View.VISIBLE);
 	}
 }

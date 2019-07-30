@@ -318,6 +318,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDTRANSACTIONS);
                 Intent intent = new Intent(getActivity(), WTransactionsActivity.class);
                 intent.putExtra("productOfferingId", productOfferingId);
+                intent.putExtra("cardType","SC");
                 startActivityForResult(intent, 0);
                 activity.overridePendingTransition(R.anim.slide_up_anim, R.anim
                         .stay);
