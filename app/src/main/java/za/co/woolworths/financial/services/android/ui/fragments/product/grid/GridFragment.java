@@ -2,6 +2,8 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.grid;
 
 import android.app.Activity;
 import android.app.Dialog;
+
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
@@ -189,7 +191,7 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 		if (activity == null) return;
 		if (response.desc == null) return;
 		hideFooterView();
-		FragmentManager fm = ((AppCompatActivity) activity).getSupportFragmentManager();
+		FragmentTransaction fm = ((AppCompatActivity) activity).getSupportFragmentManager().beginTransaction();
 		// check if sortOptionDialog is being displayed
 		if (hasOpenedDialogs((AppCompatActivity) activity)) return;
 
