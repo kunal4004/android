@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities
 
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
 import io.reactivex.disposables.CompositeDisposable
@@ -32,7 +33,7 @@ open class WChatActivityExtension : AppCompatActivity(), WCountDownTimer.TimerFi
                 "                \"If you have an urgent matter, contact us on +27 62 5960 496 or mail us at cards@woolworths.com."),
         GENERAL_ERROR("We are facing issues, please come back later"),
         AGENT_PICKED("You are now chatting to "),
-        CONNECTING_AGENT("Please be patient whilst we connect you to an  agent"),
+        CONNECTING_AGENT("Please be patient while we connect you to an agent"),
         CHAT_ENDED_WITH_ANY_REASON("Unfortunately, your chat session has ended"),
         NO_AGENTS("Unfortunately there are no agents available, please try again later or call the call centre.")
     }
@@ -120,11 +121,11 @@ open class WChatActivityExtension : AppCompatActivity(), WCountDownTimer.TimerFi
         pollingTimer?.start()
     }
 
-    fun cancelPollingTimer() {
+    private fun cancelPollingTimer() {
         pollingTimer?.cancel()
     }
 
-    fun stopAllOngoingPolling() {
+    private fun stopAllOngoingPolling() {
         disposablesAgentsAvailable?.clear()
         disposablesChatSessionState?.clear()
     }
@@ -137,11 +138,13 @@ open class WChatActivityExtension : AppCompatActivity(), WCountDownTimer.TimerFi
         stopAllOngoingPolling()
         showAgentsMessage(AgentDefaultMessage.GENERAL_ERROR)
         cancelPollingTimer()
+        clearSessionValues()
     }
 
     fun showSessionEndedMessage() {
         showAgentsMessage(AgentDefaultMessage.CHAT_ENDED_WITH_ANY_REASON)
         stopChatSessionStatePolling()
+        clearSessionValues()
     }
 
     override fun onTimerFinished() {
@@ -151,5 +154,14 @@ open class WChatActivityExtension : AppCompatActivity(), WCountDownTimer.TimerFi
         }
     }
 
+    private fun clearSessionValues() {
+        isAgentOnline = false
+        chatId = null
+        setEndSessionAvailable(false)
+    }
+
+    fun setEndSessionAvailable(isAvailable: Boolean) {
+        endSession.visibility = if (isAvailable) View.VISIBLE else View.GONE
+    }
 
 }

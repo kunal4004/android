@@ -287,10 +287,6 @@ class WChatActivity : WChatActivityExtension(), IDialogListener {
         }
     }
 
-    private fun setEndSessionAvailable(isAvailable: Boolean) {
-        endSession.visibility = if (isAvailable) View.VISIBLE else View.GONE
-    }
-
     private fun setPageTitleWithAgentName(name: String?) {
         agentName.text = name
     }
