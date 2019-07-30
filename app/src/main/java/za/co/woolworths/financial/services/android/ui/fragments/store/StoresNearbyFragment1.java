@@ -541,16 +541,15 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 			public void onFailure(final Throwable error) {
 
 				Activity activity = getActivity();
+				if (activity == null) return;
 				activity.runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-								enableSearchMenu();
-								hideProgressBar();
-								Log.d(TAG, "mProgress");
+						enableSearchMenu();
+						hideProgressBar();
 						mErrorHandlerView.networkFailureHandler(error.getMessage());
 					}
 				});
-
 			}
 		},LocationResponse.class));
 

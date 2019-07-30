@@ -60,7 +60,11 @@
                 android:textSize="14sp"
                 app:WTextView_font="medium_bold"/>
 
-            <include layout="@layout/progress_bar_view"/>
+            <include
+                layout="@layout/progress_bar_view"
+                android:layout_width="14dp"
+                android:visibility="gone"
+                android:layout_height="12dp" />
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/textView3"
