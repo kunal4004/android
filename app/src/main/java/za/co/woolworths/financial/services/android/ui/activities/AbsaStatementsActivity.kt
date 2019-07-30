@@ -67,10 +67,6 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
         mErrorHandlerView = ErrorHandlerView(this, relEmptyStateHandler, imgEmpyStateIcon, txtEmptyStateTitle, txtEmptyStateDesc, btnGoToProduct)
         btnGoToProduct?.setOnClickListener { onActionClick() }
         loadStatements()
-
-        imgEmpyStateIcon?.setImageResource(R.drawable.statement_icon)
-        txtEmptyStateTitle?.text = getString(R.string.no_statements_title)
-        txtEmptyStateDesc?.text = getString(R.string.absa_no_statement_desc)
     }
 
     private fun loadStatements() {
@@ -168,7 +164,7 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
     private fun showEmptyView() {
         rcvStatements.visibility = View.GONE
         hideProgress()
-        mErrorHandlerView?.setEmptyStateWithAction(3, R.string.call_now, ErrorHandlerView.ACTION_TYPE.CALL_NOW)
+        mErrorHandlerView?.setEmptyStateWithAction(9, R.string.call_now, ErrorHandlerView.ACTION_TYPE.CALL_NOW)
     }
 
     fun onActionClick() {
