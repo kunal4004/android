@@ -1004,4 +1004,5 @@
     <string name="distance_per_km"> %1$s km</string>
     <string name="chat_state_offline">Offline</string>
     <string name="chat_state_online">Active now</string>
+    <string name="chat_activity_title">chat</string>
 </resources>

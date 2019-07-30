@@ -42,7 +42,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:letterSpacing="0.2"
-                    android:text="chat"
+                    android:text="@string/chat_activity_title"
                     android:textAllCaps="true"
                     android:textColor="@color/black"
                     android:textSize="12sp"

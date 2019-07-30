@@ -158,10 +158,16 @@ open class WChatActivityExtension : AppCompatActivity(), WCountDownTimer.TimerFi
         isAgentOnline = false
         chatId = null
         setEndSessionAvailable(false)
+        setPageTitle(getString(R.string.chat_activity_title))
     }
 
     fun setEndSessionAvailable(isAvailable: Boolean) {
         endSession.visibility = if (isAvailable) View.VISIBLE else View.GONE
+    }
+
+    fun setPageTitle(name: String?) {
+        if (name.isNullOrEmpty())
+            agentName.text = name
     }
 
 }

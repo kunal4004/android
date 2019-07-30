@@ -258,7 +258,7 @@ class WChatActivity : WChatActivityExtension(), IDialogListener {
             isAgentOnline = true
             setEndSessionAvailable(isAgentOnline)
             chatState.agentNickName?.let { name ->
-                setPageTitleWithAgentName(name)
+                setPageTitle(name)
                 showAgentsMessage(AgentDefaultMessage.AGENT_PICKED, name)
             }
         }
@@ -281,15 +281,11 @@ class WChatActivity : WChatActivityExtension(), IDialogListener {
                 it.text = if (isOnline) getString(R.string.chat_state_online) else getString(R.string.chat_state_offline)
             }
             offlineBanner.visibility = if (this) View.GONE else View.VISIBLE
-            setEndSessionAvailable(this)
             if (!this) edittext_chatbox.text.clear()
             showAgentsMessage(if (this) AgentDefaultMessage.AGENT_ONLINE else AgentDefaultMessage.AGENT_OFFLINE)
         }
     }
 
-    private fun setPageTitleWithAgentName(name: String?) {
-        agentName.text = name
-    }
 
 
 }
