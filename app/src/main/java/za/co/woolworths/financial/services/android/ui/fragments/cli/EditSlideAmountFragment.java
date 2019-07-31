@@ -229,21 +229,10 @@ public class EditSlideAmountFragment extends CLIFragment {
 			@Override
 			public void afterTextChanged(Editable s) {
 				etAmount.removeTextChangedListener(this);
-
-				String retrieveDrawnDownAmount = s.toString();
-				long convertedDrawnDownAmountToLong;
-				if (retrieveDrawnDownAmount.contains(" ")) {
-					retrieveDrawnDownAmount = retrieveDrawnDownAmount.replaceAll(" ", "");
-				}
-				convertedDrawnDownAmountToLong = Long.parseLong(TextUtils.isEmpty(retrieveDrawnDownAmount) ? "0" : retrieveDrawnDownAmount);
-				DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.US);
-				formatter.applyPattern("#,###,###,###");
-				String formattedString = formatter.format(convertedDrawnDownAmountToLong).replace(",", " ");
-				//setting text after format to EditText
-				etAmount.setText(formattedString);
+				String retrieveDrawnDownAmount = s.toString().replaceAll("\\s+","");
+				etAmount.setText(Utils.convertToCurrencyWithoutCent(Long.parseLong(TextUtils.isEmpty(retrieveDrawnDownAmount) ? "0" : retrieveDrawnDownAmount)));
 				etAmount.setTextColor((etAmount.getText().toString().equalsIgnoreCase("0")) ? Color.TRANSPARENT : Color.BLACK);
 				setFocusToEditText(etAmount.getText().length());
-
 				etAmount.addTextChangedListener(this);
 			}
 		};
