@@ -91,7 +91,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:drawableStart="@drawable/ic_time24"
+            android:drawableStart="@drawable/ic_time_white"
             android:drawablePadding="@dimen/five_dp"
             android:gravity="center_vertical"
             android:text="Check back during working hours."

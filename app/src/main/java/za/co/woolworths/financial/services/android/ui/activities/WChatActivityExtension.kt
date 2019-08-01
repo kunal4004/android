@@ -6,12 +6,15 @@ import com.awfs.coordination.R
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.chat_activity.*
 import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ChatMessage
+import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours
 import za.co.woolworths.financial.services.android.models.dto.chat.UserTypingResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.adapters.WChatAdapter
 import za.co.woolworths.financial.services.android.util.SessionUtilities
+import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WCountDownTimer
 
 open class WChatActivityExtension : AppCompatActivity(), WCountDownTimer.TimerFinishListener {
@@ -55,6 +58,22 @@ open class WChatActivityExtension : AppCompatActivity(), WCountDownTimer.TimerFi
         const val STATUS_CLOSED_FORCED = 7
         const val STATUS_CLOSED_TIMEOUT = 8
         const val STATUS_RELOCATED = 9
+
+         fun getInAppTradingHoursForToday(): TradingHours {
+
+            var tradingHoursForToday: TradingHours? = null
+            WoolworthsApplication.getPresenceInAppChat()?.tradingHours?.let {
+                it.forEach { tradingHours ->
+                    if (tradingHours.day.equals(Utils.getCurrentDay(), true)) {
+                        tradingHoursForToday = tradingHours
+                        return tradingHours
+                    }
+                }
+            }
+
+            return tradingHoursForToday ?: TradingHours("sunday", "00:00", "00:00")
+        }
+
     }
 
     fun actionBar() {
