@@ -75,7 +75,7 @@
                 android:orientation="vertical"
                 android:paddingTop="16dp">
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                <TextView
                     android:id="@+id/distance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -83,7 +83,7 @@
                     android:gravity="center"
                     android:textColor="@color/black"
                     android:textSize="20sp"
-                    app:WTextView_font="medium" />
+                    android:fontFamily="@font/futura_medium_ttf" />
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     android:layout_width="wrap_content"

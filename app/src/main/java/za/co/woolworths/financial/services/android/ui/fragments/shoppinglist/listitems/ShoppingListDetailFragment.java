@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -110,6 +111,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     private WButton btnCheckOut;
     private LinearLayout rlEmptyView;
     private boolean openFromMyList;
+    private List<String> matchesFullFillmentTypeKey;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -242,7 +244,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             collectOtherSkuId.put(fulFillmentTypeIdCollection, multiSKUS);
             String fulFillmentStoreId = Utils.retrieveStoreId(fulFillmentTypeIdCollection);
             if (!TextUtils.isEmpty(fulFillmentStoreId)) {
-                fulFillmentStoreId = fulFillmentStoreId.replaceAll("\"", "");
+                fulFillmentStoreId = fulFillmentStoreId.replace("\"", "");
                 mMapStoreFulFillmentKeyValue.put(fulFillmentTypeIdCollection, fulFillmentStoreId);
                 executeGetInventoryForStore(fulFillmentStoreId, multiSKUS);
             } else {
@@ -267,6 +269,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
 
     private void initList(RecyclerView rcvShoppingListItems) {
         mShoppingListItems = new ArrayList<>();
+        matchesFullFillmentTypeKey = new ArrayList<>();
         shoppingListItemsAdapter = new ShoppingListItemsAdapter(mShoppingListItems, this);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -708,11 +711,12 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         if (skusInventoryForStoreResponse.httpCode == 200) {
             String fulFillmentType = null;
             String storeId = skusInventoryForStoreResponse.storeId;
-            for (Map.Entry<String, String> mapFulfillmentStore : mMapStoreFulFillmentKeyValue.entrySet()) {
-                if (storeId.equalsIgnoreCase(mapFulfillmentStore.getValue())) {
-                    fulFillmentType = mapFulfillmentStore.getKey();
+            for (Map.Entry<String, String> map : mMapStoreFulFillmentKeyValue.entrySet()) {
+                if (storeId.equalsIgnoreCase(map.getValue()) && !matchesFullFillmentTypeKey.contains(map.getKey())) {
+                    fulFillmentType = map.getKey();
                 }
             }
+            matchesFullFillmentTypeKey.add(fulFillmentType);
             List<SkuInventory> skuInventory = skusInventoryForStoreResponse.skuInventory;
             // skuInventory is empty or null
             if (skuInventory.isEmpty()) {
@@ -763,7 +767,6 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
                     }
                     if (!allItemsAreOutOfStock)
                         tvMenuSelectAll.performClick();
-                    return;
                 }
 
             }

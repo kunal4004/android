@@ -147,8 +147,10 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
                                     hideCLIView();
                                     cliOfferStatus(offerActive);
                                 } else if (busStation.makeApiCall()) {
+                                    if (!mCreditCardFragmentIsVisible) return;
                                     hideCLIView();
                                     creditWasAlreadyRunOnce = false;
+                                    retryConnect();
                                 }
                             }
                         }
@@ -527,6 +529,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 
     private void retryConnect() {
         if (!creditWasAlreadyRunOnce) {
+            creditWasAlreadyRunOnce = true;
             if (NetworkManager.getInstance().isConnectedToNetwork(getActivity()))
                 getActiveOffer();
             else {

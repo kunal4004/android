@@ -543,7 +543,7 @@ interface ApiInterface {
             @Header("sessionToken") sessionToken: String,
             @Path("docId") docId: String,
             @Query("productOfferingId") productOfferingId: String,
-            @Query("docDesc") docDesc: String): Call<retrofit2.Response<ResponseBody>>
+            @Query("docDesc") docDesc: String): Call<ResponseBody>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("user/statements")

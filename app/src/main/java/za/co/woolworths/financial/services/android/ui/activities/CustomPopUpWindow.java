@@ -573,7 +573,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
     }
 
     public void startExitAnimation() {
-        startExitAnimation(Activity.RESULT_OK);
+        startExitAnimation(Activity.RESULT_CANCELED);
     }
 
     public void startExitAnimation(final int result) {

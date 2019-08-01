@@ -67,6 +67,8 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -1475,5 +1477,11 @@ public class Utils {
 
 	public static String getCurrentDay() {
 		return new SimpleDateFormat("EEEE").format(new Date());
+	}
+
+	public static String convertToCurrencyWithoutCent(Long amount) {
+		DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.US);
+		formatter.applyPattern("#,###,###,###");
+		return formatter.format(amount).replace(",", " ");
 	}
 }

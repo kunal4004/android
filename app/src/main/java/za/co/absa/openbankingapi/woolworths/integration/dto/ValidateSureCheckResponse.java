@@ -11,7 +11,7 @@ public class ValidateSureCheckResponse {
 	private String result;
 
 	@SerializedName("securityNotificationType")
-	private String securityNotificationType;
+	private SecurityNotificationType securityNotificationType;
 
 	@SerializedName("cellNumber")
 	private String cellNumber;

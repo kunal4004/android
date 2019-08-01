@@ -29,6 +29,7 @@ import java.util.Map;
 
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.SessionUtilities;
 
 public class WebViewActivity extends AppCompatActivity {
 
@@ -140,7 +141,7 @@ public class WebViewActivity extends AppCompatActivity {
 
 	private Map<String, String> getExtraHeader() {
 		Map<String, String> extraHeaders = new HashMap<>();
-		//extraHeaders.put("bearer", SessionUtilities.getInstance().getSessionToken());
+		extraHeaders.put("bearer", SessionUtilities.getInstance().getSessionToken());
 		return extraHeaders;
 	}
 }

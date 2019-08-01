@@ -371,6 +371,7 @@
         <item>@string/empty_order_view_title</item>
         <item>@string/sign_out_order_view_title</item>
         <item>@string/no_internet_title</item>
+        <item>@string/no_statements_title</item>
     </string-array>
 
     <string-array name="empty_state_desc">
@@ -383,6 +384,7 @@
         <item>@string/empty_order_view_desc</item>
         <item>@string/sign_out_order_view_desc</item>
         <item>@string/no_connection_desc_1</item>
+        <item>@string/absa_no_statement_desc</item>
     </string-array>
 
     <string name="on_boarding_title_1">WELCOME</string>
@@ -1000,7 +1002,7 @@
     <string name="rooted_phone_desc">Your phone is rooted. Unauthorised access.</string>
     <string name="rooted_phone_title">Access Restricted</string>
     <string name="no_statements_title">No Statements Available</string>
-    <string name="absa_no_statement_desc">You have no statements available.  If this incorrect please call us.</string>
+    <string name="absa_no_statement_desc">You have no statements available. If this is \n incorrect please call us.</string>
     <string name="distance_per_km"> %1$s km</string>
     <string name="chat_state_offline">Offline</string>
     <string name="chat_state_online">Active now</string>

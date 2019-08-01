@@ -147,8 +147,10 @@ private static AsyncTask<Void, Void, Void> async;
                                     hideCLIView();
                                     cliOfferStatus(offerActive);
                                 } else if (busStation.makeApiCall()) {
-                                    hideCLIView();
-                                    personalWasAlreadyRunOnce = false;
+                                    if (!mPersonalLoanFragmentIsVisible) return;
+                                        hideCLIView();
+                                        personalWasAlreadyRunOnce = false;
+                                        retryConnect();
                                 }
                             }
                         }
@@ -577,6 +579,7 @@ private static AsyncTask<Void, Void, Void> async;
 
     private void retryConnect() {
         if (!personalWasAlreadyRunOnce) {
+            personalWasAlreadyRunOnce = true;
             if (NetworkManager.getInstance().isConnectedToNetwork(getActivity()))
                 getActiveOffer();
             else {

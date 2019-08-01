@@ -79,7 +79,7 @@ class AbsaPinCodeSuccessFragment : Fragment() {
                             Log.d("onSuccess", "onSuccess")
                             response.apply {
                                 if (header?.resultMessages?.size == 0 || aliasId != null) {
-                                    val absaSecureCredentials = AbsaSecureCredentials();
+                                    val absaSecureCredentials = AbsaSecureCredentials()
                                     absaSecureCredentials.aliasId = aliasId
                                     absaSecureCredentials.save()
                                     onRegistrationSuccess()
@@ -130,10 +130,11 @@ class AbsaPinCodeSuccessFragment : Fragment() {
         view?.postDelayed({ message?.let { tapAndDismissErrorDialog(it) } }, 200)
     }*/
 
-    private fun showErrorScreen(errorType: Int) {
+    private fun showErrorScreen(errorType: Int,errorMessage:String = "") {
         activity?.let {
-            val intent: Intent = Intent(it, ErrorHandlerActivity::class.java)
+            val intent = Intent(it, ErrorHandlerActivity::class.java)
             intent.putExtra("errorType", errorType)
+            intent.putExtra("errorMessage", errorMessage)
             it.startActivityForResult(intent, ERROR_PAGE_REQUEST_CODE)
         }
     }
