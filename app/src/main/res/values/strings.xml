@@ -855,7 +855,7 @@
     <string name="tips_tricks_desc_navigation_sign_in">Tap the cart icon in the bottom menu to see the items you’ve added.</string>
     <string name="refinement_see_result_button_text">All\u0020</string>
     <string name="absa_link_banking_to_device_title">Link Online Banking to this Device</string>
-    <string name="absa_biometric_please_enter_your_pin">Enter Your Credit Card ATM PIN</string>
+    <string name="absa_biometric_please_enter_your_pin">Enter Woolies Credit Card PIN</string>
     <string name="absa_biometric_please_card_number">Card number %1$s</string>
     <string name="absa_biometric_forgot_atm_pin_code">Forgot ATM PIN</string>
     <string name="absa_forgot_atm_pin_code_title">Forgot ATM PIN</string>
@@ -958,9 +958,9 @@
     <string name="ok_got_it">ok, got it</string>
     <string name="absa_registration_in_progress_desc">This may take a few seconds</string>
     <string name="absa_registration_success_desc">Almost there. Complete the final step to \n set up your passcode.</string>
-    <string name="setup_passcode">SETUP PASSCODE</string>
-    <string name="absa_on_boarding_desc">For your security and to access secure features in our app, you will need to set up a Passcode</string>
-    <string name="absa_on_boarding_title">We\'ve added some secure features.</string>
+    <string name="setup_passcode">set up passcode</string>
+    <string name="absa_on_boarding_desc">For your security and to access some features in our app, you will need to set up a Passcode. You will only need to do this set up process once per device.</string>
+    <string name="absa_on_boarding_title">We have added some additional features that require setup.</string>
     <string name="setup_later">SETUP LATER</string>
     <string name="unsuccessful_request">Unsuccessful Request</string>
     <string name="unsuccessful_request_desc">Your request was unsuccessful. Please click retry to try again.</string>
@@ -997,4 +997,6 @@
     <string name="no_statements_title">No Statements Available</string>
     <string name="absa_no_statement_desc">You have no statements available. If this is \n incorrect please call us.</string>
     <string name="distance_per_km"> %1$s km</string>
+    <string name="secured_by_absa_surecheck">Secured by ABSA SureCheck</string>
+    <string name="absa_biometric_please_enter_your_pin_desc">This is the pin number used at the ATM or when paying at any retailer. If you have more than one woolies card, please use the pin for latest Card you received from Woolworths.</string>
 </resources>
