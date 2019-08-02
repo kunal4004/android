@@ -88,4 +88,5 @@
     <color name="success_stroke_color"> #CC196A</color>
     <color name="trans_success_stroke_color">#307A4183</color>
     <color name="gray">#FF7F7F7F</color>
+    <color name="button_disabled">#B2B2B2</color>
 </resources>

@@ -30,7 +30,7 @@
         android:lineSpacingMultiplier="1.40"
         android:text="@string/absa_enter_five_digit_code_desc"
         android:textColor="@color/offer_title"
-        android:textSize="@dimen/fifteen_sp"
+        android:textSize="@dimen/sixteen_sp"
         app:WTextView_font="myriadpro_regular" />
 
 
@@ -106,6 +106,23 @@
         android:alpha="0.5"
         android:contentDescription="@string/app_label"
         app:srcCompat="@drawable/next_button_icon" />
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/completeSetup"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/fifty_dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/twenty_four_dp"
+        android:background="@drawable/submit_button_background"
+        android:enabled="false"
+        android:gravity="center"
+        android:letterSpacing="0.2"
+        android:text="@string/complete_setup"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:visibility="gone"
+        app:WTextView_font="bold" />
 
     <za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView
         android:id="@+id/edtEnterATMPin"
