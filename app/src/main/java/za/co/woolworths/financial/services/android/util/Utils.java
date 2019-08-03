@@ -97,10 +97,12 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLo
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.Transaction;
 import za.co.woolworths.financial.services.android.models.dto.TransactionParentObj;
+import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
+import za.co.woolworths.financial.services.android.ui.activities.WChatActivityExtension;
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
@@ -1444,6 +1446,38 @@ public class Utils {
         SessionDao sessionDao = SessionDao.getByKey(key);
         return sessionDao.value;
     }
+
+	public static String getAccountNumber(AccountsResponse accountResponse, String productGroupCode) {
+		String accountNumber = "";
+		List<Account> accountList = accountResponse.accountList;
+		if (accountList != null) {
+			for (Account account : accountList) {
+				if (account.productGroupCode.equalsIgnoreCase(productGroupCode)) {
+					accountNumber = account.accountNumber;
+					break;
+				}
+			}
+		}
+		return TextUtils.isEmpty(accountNumber) ? "" : accountNumber;
+	}
+
+	public static Boolean isOperatingHoursForInAppChat() {
+
+		TradingHours tradingHours = WChatActivityExtension.Companion.getInAppTradingHoursForToday();
+		Calendar now = Calendar.getInstance();
+		int hour = now.get(Calendar.HOUR_OF_DAY); // Get hour in 24 hour format
+		int minute = now.get(Calendar.MINUTE);
+
+		Date currentTime = WFormatter.parseDate(hour + ":" + minute);
+		Date openingTime = WFormatter.parseDate(tradingHours.getOpens());
+		Date closingTime = WFormatter.parseDate(tradingHours.getCloses());
+
+		return (currentTime.after(openingTime) && currentTime.before(closingTime));
+	}
+
+	public static String getCurrentDay() {
+		return new SimpleDateFormat("EEEE").format(new Date());
+	}
 
 	public static String convertToCurrencyWithoutCent(Long amount) {
 		DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.US);

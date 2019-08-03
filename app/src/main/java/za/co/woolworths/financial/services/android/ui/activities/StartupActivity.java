@@ -200,6 +200,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 						int minimumSupportedAppVersion = TextUtils.isEmpty(absaBankingOpenApiServices.getMinSupportedAppVersion()) ? 0 : Integer.valueOf(absaBankingOpenApiServices.getMinSupportedAppVersion().replace(".", ""));
 						absaBankingOpenApiServices.setEnabled(appMinorMajorBuildVersion >= minimumSupportedAppVersion);
 						WoolworthsApplication.setAbsaBankingOpenApiServices(absaBankingOpenApiServices);
+						WoolworthsApplication.setPresenceInAppChat(configResponse.configs.presenceInAppChat);
 
 						mWGlobalState.setStartRadius(configResponse.configs.enviroment.getStoreStockLocatorConfigStartRadius());
 						mWGlobalState.setEndRadius(configResponse.configs.enviroment.getStoreStockLocatorConfigEndRadius());
