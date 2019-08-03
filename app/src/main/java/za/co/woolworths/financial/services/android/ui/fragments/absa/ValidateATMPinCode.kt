@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.absa
 
 import com.android.volley.VolleyError
+import za.co.absa.openbankingapi.woolworths.integration.AbsaContentEncryptionRequest
 import za.co.absa.openbankingapi.woolworths.integration.AbsaCreateAliasRequest
 import za.co.absa.openbankingapi.woolworths.integration.AbsaValidateCardAndPinRequest
 import za.co.absa.openbankingapi.woolworths.integration.AbsaValidateSureCheckRequest
@@ -35,6 +36,10 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
     }
 
     private fun validateCardAndPin(cardToken: String, pin: String) {
+
+        //Clear content encryption data if any, before making new registration process.
+        AbsaContentEncryptionRequest.clearContentEncryptionData()
+
         AbsaValidateCardAndPinRequest().make(cardToken,pin,
                 object : AbsaBankingOpenApiResponse.ResponseDelegate<ValidateCardAndPinResponse> {
                     override fun onSuccess(response: ValidateCardAndPinResponse?, cookies: MutableList<HttpCookie>?) {
