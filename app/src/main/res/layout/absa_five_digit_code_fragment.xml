@@ -8,30 +8,30 @@
     android:paddingStart="@dimen/thirty_two_dp"
     android:paddingEnd="@dimen/thirty_two_dp">
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
+    <TextView
         android:id="@+id/tvEnterYourPin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/thirty_two_dp"
         android:layout_marginBottom="@dimen/eight_dp"
+        android:fontFamily="@font/futura_bold"
         android:text="@string/absa_enter_five_digit_code_title"
         android:textColor="@color/black"
-        android:textSize="@dimen/nineteen_sp"
-        app:WTextView_font="bold" />
+        android:textSize="@dimen/nineteen_sp" />
 
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
+    <TextView
         android:id="@+id/tvABSACardNumber"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tvEnterYourPin"
         android:alpha="0.5"
+        android:fontFamily="@font/myriad_pro_regular"
         android:lineSpacingExtra="0.14sp"
         android:lineSpacingMultiplier="1.40"
         android:text="@string/absa_enter_five_digit_code_desc"
         android:textColor="@color/offer_title"
-        android:textSize="@dimen/sixteen_sp"
-        app:WTextView_font="myriadpro_regular" />
+        android:textSize="@dimen/sixteen_sp" />
 
 
         <LinearLayout
@@ -107,7 +107,7 @@
         android:contentDescription="@string/app_label"
         app:srcCompat="@drawable/next_button_icon" />
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
+    <TextView
         android:id="@+id/completeSetup"
         android:layout_width="match_parent"
         android:layout_height="@dimen/fifty_dp"
@@ -115,14 +115,14 @@
         android:layout_marginBottom="@dimen/twenty_four_dp"
         android:background="@drawable/submit_button_background"
         android:enabled="false"
+        android:fontFamily="@font/futura_bold"
         android:gravity="center"
         android:letterSpacing="0.2"
         android:text="@string/complete_setup"
         android:textAllCaps="true"
         android:textColor="@color/white"
         android:textSize="12sp"
-        android:visibility="gone"
-        app:WTextView_font="bold" />
+        android:visibility="gone" />
 
     <za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView
         android:id="@+id/edtEnterATMPin"
