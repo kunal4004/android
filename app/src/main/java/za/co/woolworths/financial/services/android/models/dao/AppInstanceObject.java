@@ -73,6 +73,8 @@ public class AppInstanceObject {
 		public ArrayList<ShoppingDeliveryLocation> shoppingDeliveryLocationHistory;
 		public SessionDao.BIOMETRIC_AUTHENTICATION_STATE biometricAuthenticationState;
 		public boolean kmsi;
+		public String absaLoginAliasID;
+		public String absaDeviceID;
 
 		public User() {
 			id = AppInstanceObject.getCurrentUsersID();

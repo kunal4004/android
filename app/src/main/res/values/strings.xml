@@ -992,6 +992,13 @@
     <string name="credit_limit_decrease_desc_part_1">You will only be able to apply for a limit increase 6 month after this application has been concluded. You will need to go through a credit and affordability assessment at the time.</string>
     <string name="credit_limit_decrease_desc_part_2">Do you still want to reduce your limit to %1$s, or would you like to proceed with the maximum credit limit you have qualified for?</string>
     <string name="credit_limit_decrease_max_button">proceed with the maximum</string>
+    <string name="chat_button_text">Chat With Us</string>
+    <string name="start_typing">Start typing...</string>
+    <string name="chat_end_session">END</string>
+    <string name="chat_end_session_dialog_title">End Session</string>
+    <string name="chat_end_session_dialog_desc">Are you sure you want to end the conversation?</string>
+    <string name="chat_end_session_dialog_cancel_text">No, continue session</string>
+    <string name="chat_end_session_dialog_action_text">yes, end session</string>
     <string name="rooted_phone_desc">Your phone is rooted. Unauthorised access.</string>
     <string name="rooted_phone_title">Access Restricted</string>
     <string name="no_statements_title">No Statements Available</string>
@@ -1004,4 +1011,7 @@
     <string name="absa_registration_title_step_3">step 3 of 3</string>
     <string name="complete_setup">complete setup</string>
     <string name="login_with_passcode">LOGIN WITH NEW PASSCODE</string>
+    <string name="chat_state_offline">Offline</string>
+    <string name="chat_state_online">Active now</string>
+    <string name="chat_activity_title">chat</string>
 </resources>

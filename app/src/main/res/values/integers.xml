@@ -6,4 +6,5 @@
     <integer name="transition_duration">1000</integer>
     <integer name="anim_length">1000</integer>
     <integer name="anim_length_half">500</integer>
+    <integer name="chat_button_animation_duration">200</integer>
 </resources>

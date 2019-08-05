@@ -26,6 +26,7 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.security.auth.x500.X500Principal;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 
 public class AbsaSecureCredentials {
@@ -42,8 +43,8 @@ public class AbsaSecureCredentials {
 
 		initializeKeyStore();
 
-		aliasId = SessionDao.getByKey(SessionDao.KEY.ABSA_ALIASID).value;
-		deviceId = SessionDao.getByKey(SessionDao.KEY.ABSA_DEVICEID).value;
+		aliasId = AppInstanceObject.get().getCurrentUserObject().absaLoginAliasID;
+		deviceId = AppInstanceObject.get().getCurrentUserObject().absaDeviceID;
 
 		final Context context = WoolworthsApplication.getAppContext();
 
@@ -104,9 +105,9 @@ public class AbsaSecureCredentials {
 			return;
 
 		final String encryptedAlias = encrypt(context, this.aliasId.getBytes());
-		SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.ABSA_ALIASID);
-		sessionDao.value = encryptedAlias;
-		sessionDao.save();
+		AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+		currentUserObject.absaLoginAliasID = encryptedAlias;
+		currentUserObject.save();
 	}
 
 	private void saveDeviceIdToSqlite(final Context context) throws Exception{
@@ -114,9 +115,9 @@ public class AbsaSecureCredentials {
 			return;
 
 		final String encryptedDeviceId = encrypt(context, this.deviceId.getBytes());
-		SessionDao sessionDao = SessionDao.getByKey(SessionDao.KEY.ABSA_DEVICEID);
-		sessionDao.value = encryptedDeviceId;
-		sessionDao.save();
+		AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+		currentUserObject.absaDeviceID = encryptedDeviceId;
+		currentUserObject.save();
 	}
 
 	private void initializeKeyStore(){

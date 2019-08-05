@@ -8,6 +8,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import za.co.woolworths.financial.services.android.models.dto.StoreOfferings;
 
@@ -217,5 +218,16 @@ public class WFormatter {
         DateFormat m_ISO8601Local = new SimpleDateFormat("yyyy-MM-dd");
         return new SimpleDateFormat("MMMM yyyy").format(m_ISO8601Local.parse(validFromDate));
     }
+
+    public static Date parseDate(String date) {
+
+        SimpleDateFormat inputParser = new SimpleDateFormat("HH:mm");
+        try {
+            return inputParser.parse(date);
+        } catch (java.text.ParseException e) {
+            return new Date(0);
+        }
+    }
+
 
 }

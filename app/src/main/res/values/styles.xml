@@ -1600,4 +1600,29 @@
     <item name="android:layout_width">0dp</item>
     <item name="android:layout_height">0dp</item>
     </style>
+
+    <style name="ChatActivityStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowActionBarOverlay">false</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:selectableItemBackground">@android:color/transparent</item>
+        <item name="android:actionBarItemBackground">@null</item>
+        <item name="actionBarItemBackground">@null</item>
+    </style>
+
+    <style name="chat_text_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:lineSpacingExtra">@dimen/chat_bubble_text_line_spacing</item>
+        <item name="android:maxWidth">240dp</item>
+        <item name="android:minHeight">@dimen/fourty_five_dp</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:textSize">@dimen/chat_bubble_text_size</item>
+        <item name="WTextView_font">myriadpro_regular</item>
+    </style>
 </resources>
