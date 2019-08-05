@@ -149,4 +149,12 @@ class ABSAOnlineBankingRegistrationActivity : AppCompatActivity(), IDialogListen
                 tag = AbsaEnterAtmPinCodeFragment::class.java.simpleName, allowStateLoss = false, allowBackStack = false,
                 containerViewId = R.id.flAbsaOnlineBankingToDevice)
     }
+
+    fun setPageTitle(title: String) {
+        toolbarText.text = title
+    }
+
+    fun clearPageTitle(){
+        toolbarText.text = ""
+    }
 }

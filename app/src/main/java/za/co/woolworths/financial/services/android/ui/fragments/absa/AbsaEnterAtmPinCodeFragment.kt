@@ -23,6 +23,7 @@ import za.co.absa.openbankingapi.woolworths.integration.AbsaValidateSureCheckReq
 import za.co.absa.openbankingapi.woolworths.integration.dao.JSession
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.contracts.IValidatePinCodeDialogInterface
+import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity.Companion.ERROR_PAGE_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
@@ -65,6 +66,7 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
 
 
     private fun initViewsAndEvents() {
+        activity?.apply { (this as ABSAOnlineBankingRegistrationActivity).setPageTitle(getString(R.string.absa_registration_title_step_1))  }
         tvForgotPin.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         tvForgotPin.setOnClickListener(this)
         ivNavigateToDigitFragment.setOnClickListener(this)

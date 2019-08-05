@@ -15,6 +15,7 @@ import za.co.absa.openbankingapi.woolworths.integration.AbsaRegisterCredentialRe
 import za.co.absa.openbankingapi.woolworths.integration.AbsaSecureCredentials
 import za.co.absa.openbankingapi.woolworths.integration.dto.RegisterCredentialResponse
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse
+import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity.Companion.ERROR_PAGE_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
@@ -66,6 +67,7 @@ class AbsaPinCodeSuccessFragment : Fragment() {
     }
 
     private fun initView() {
+        activity?.apply { (this as ABSAOnlineBankingRegistrationActivity).clearPageTitle()  }
         gotItButton.setOnClickListener { navigateToAbsaLoginFragment() }
         registerCredentials(mAliasId,fiveDigitPin!!)
     }
