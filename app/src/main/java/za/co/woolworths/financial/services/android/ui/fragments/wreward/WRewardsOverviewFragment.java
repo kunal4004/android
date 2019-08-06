@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.wreward;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
@@ -31,6 +33,7 @@ import za.co.woolworths.financial.services.android.models.dto.TierInfo;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
+import za.co.woolworths.financial.services.android.ui.activities.WRewardBenefitActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WRewardsMembersInfoActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.FeaturedPromotionsAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -47,7 +50,6 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
 
 public class WRewardsOverviewFragment extends Fragment implements View.OnClickListener {
 	public ImageView infoImage;
-	public WTextView tireStatus;
 	public WTextView savings;
 	public WTextView toNextTire;
 	public RelativeLayout toNextTireLayout;
@@ -69,6 +71,7 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 	public CardDetailsResponse cardDetailsResponse;
 	;
 	private ScrollView scrollWRewardsOverview;
+	private TextView tvMoreInfo;
 
 	@Nullable
 	@Override
@@ -78,8 +81,8 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 		noTireHistory = (WTextView) view.findViewById(R.id.noTireHistory);
 		overviewLayout = (LinearLayout) view.findViewById(R.id.overviewLayout);
 		infoImage = (ImageView) view.findViewById(R.id.infoImage);
+		tvMoreInfo = (TextView)view.findViewById(R.id.tvMoreInfo);
 		scrollWRewardsOverview = view.findViewById(R.id.scrollWRewardsOverview);
-		tireStatus = (WTextView) view.findViewById(R.id.tireStatus);
 		savings = (WTextView) view.findViewById(R.id.savings);
 		mRlConnect = (RelativeLayout) view.findViewById(R.id.no_connection_layout);
 		mErrorHandlerView = new ErrorHandlerView(getActivity(), mRlConnect);
@@ -91,6 +94,7 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 		bardCodeImage = (ImageView) view.findViewById(R.id.barCodeImage);
 		flipCardFrontLayout = view.findViewById(R.id.flipCardFrontLayout);
 		flipCardBackLayout = view.findViewById(R.id.flipCardBackLayout);
+		tvMoreInfo.setOnClickListener(this);
 		loadDefaultCardType();
 		Bundle bundle = getArguments();
 		voucherResponse = new Gson().fromJson(bundle.getString("WREWARDS"), VoucherResponse.class);
@@ -166,7 +170,6 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 		overviewLayout.setVisibility(View.VISIBLE);
 		noTireHistory.setVisibility(View.GONE);
 		currentStatus = tireInfo.currentTier.toUpperCase();
-		tireStatus.setText(tireInfo.currentTier);
 		savings.setText(WFormatter.formatAmount(tireInfo.earned));
 		infoImage.setOnClickListener(this);
 		flipCardFrontLayout.setOnClickListener(this);
@@ -174,26 +177,26 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 		if (currentStatus.equals(getString(R.string.valued)) || currentStatus.equals(getString(R.string.loyal))) {
 			toNextTireLayout.setVisibility(View.VISIBLE);
 			toNextTire.setText(WFormatter.formatAmount(tireInfo.toSpend));
+		} else if (currentStatus.equalsIgnoreCase(getString(R.string.vip))) {
+
 		}
 		loadPromotionsAPI();
 
 	}
 
 	@Override
-	public void onClick(View v) {
-		if (v.getId() == R.id.infoImage) {
-			if (currentStatus.equals(getString(R.string.valued))) {
-				redirectToWRewardsMemberActivity(0);
-			} else if (currentStatus.equals(getString(R.string.loyal))) {
-				redirectToWRewardsMemberActivity(1);
-			} else if (currentStatus.equals(getString(R.string.vip))) {
-				redirectToWRewardsMemberActivity(2);
-			}
+	public void onClick(View view) {
+		switch (view.getId()) {
+			case R.id.tvMoreInfo:
+			case R.id.infoImage:
+				Activity activity = getActivity();
+				if (activity == null) return;
+				startActivity(new Intent(getActivity(), WRewardBenefitActivity.class));
+				activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+				break;
+				default:
+					break;
 		}
-		/*else if(v.getId() == R.id.flipCardBackLayout || v.getId()==R.id.flipCardFrontLayout)
-		{
-			flipCard();
-		}*/
 	}
 
 	private void changeCameraDistance() {
