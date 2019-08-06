@@ -416,12 +416,12 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
         listener.onItemsAddedToCart(addItemToCartResponse)
     }
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is FragmentsEventsListner) {
             listener = context
         } else {
-            throw ClassCastException(context.toString() + " must implement FragmentsEventsListner.")
+            throw ClassCastException("$context must implement FragmentsEventsListner.")
         }
     }
 

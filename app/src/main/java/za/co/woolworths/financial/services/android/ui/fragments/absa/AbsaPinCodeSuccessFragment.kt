@@ -139,8 +139,8 @@ class AbsaPinCodeSuccessFragment : Fragment() {
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        menu?.getItem(0)?.isVisible = false
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menu.getItem(0)?.isVisible = false
         super.onCreateOptionsMenu(menu, inflater)
     }
 

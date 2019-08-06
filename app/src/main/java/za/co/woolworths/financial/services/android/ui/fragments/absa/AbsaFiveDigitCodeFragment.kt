@@ -143,8 +143,8 @@ class AbsaFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener 
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        menu?.getItem(0)?.isVisible = true
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menu.getItem(0)?.isVisible = true
         super.onCreateOptionsMenu(menu, inflater)
     }
 }
