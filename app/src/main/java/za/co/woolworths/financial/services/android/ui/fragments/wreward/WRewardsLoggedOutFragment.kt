@@ -6,6 +6,7 @@ import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.util.Utils
 import android.animation.ObjectAnimator
+import android.graphics.Color
 import kotlinx.android.synthetic.main.wreward_logout_fragment.*
 import kotlinx.android.synthetic.main.wreward_sign_out_content.*
 import android.graphics.Paint.UNDERLINE_TEXT_FLAG
@@ -70,15 +71,17 @@ class WRewardsLoggedOutFragment : Fragment(), View.OnClickListener {
     }
 
     override fun onClick(view: View?) {
-        when (view?.id) {
-            R.id.applyForWRewards -> activity?.let { Utils.openExternalLink(it, WoolworthsApplication.getWrewardsLink()) }
-            R.id.tvSignIn -> {
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSSIGNIN)
-                ScreenManager.presentSSOSignin(activity)
-            }
-            R.id.tvRegister -> {
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSREGISTER)
-                ScreenManager.presentSSORegister(activity)
+        activity?.apply {
+            when (view?.id) {
+                R.id.applyForWRewards -> Utils.openExternalLink(this, WoolworthsApplication.getWrewardsLink())
+                R.id.tvSignIn -> {
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSSIGNIN)
+                    ScreenManager.presentSSOSignin(this)
+                }
+                R.id.tvRegister -> {
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSREGISTER)
+                    ScreenManager.presentSSORegister(this)
+                }
             }
         }
     }
