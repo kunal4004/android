@@ -2,6 +2,7 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -23,23 +24,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:visibility="gone"
+                android:visibility="visible"
                 >
 
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/rewardsoverviewcardbg"
-                    android:paddingTop="40dp"
-                    >
+                    android:paddingTop="40dp">
 
                     <FrameLayout
                         android:id="@+id/flipCardBackLayout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:paddingTop="30dp"
-                        >
+                        android:paddingTop="30dp">
 
                         <LinearLayout
                             android:layout_width="wrap_content"
@@ -47,11 +46,10 @@
                             android:layout_gravity="center_horizontal"
                             android:background="@drawable/wrewards_barcode_white_background"
                             android:orientation="vertical"
-                            android:paddingBottom="16dp"
                             android:paddingLeft="20dp"
-                            android:paddingRight="20dp"
                             android:paddingTop="16dp"
-                            >
+                            android:paddingRight="20dp"
+                            android:paddingBottom="16dp">
 
                             <ImageView
                                 android:id="@+id/barCodeImage"
@@ -59,8 +57,7 @@
                                 android:layout_height="57dp"
                                 android:layout_gravity="center_horizontal"
                                 android:adjustViewBounds="true"
-                                android:scaleType="fitXY"
-                                />
+                                android:scaleType="fitXY" />
 
                             <za.co.woolworths.financial.services.android.ui.views.WTextView
                                 android:id="@+id/barCodeNumber"
@@ -71,63 +68,69 @@
                                 android:letterSpacing="0.08"
                                 android:textColor="@color/black"
                                 android:textSize="15sp"
-                                app:WTextView_font="medium"
-                                />
+                                app:WTextView_font="medium" />
                         </LinearLayout>
                     </FrameLayout>
 
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:id="@+id/flipCardFrontLayout"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal" />
+
+                        <ImageView
+                            android:id="@+id/vipMemberIcon"
+                            android:layout_width="48dp"
+                            android:layout_marginEnd="50dp"
+                            android:layout_height="48dp"
+                            android:visibility="gone"
+                            android:layout_gravity="top|end"
+                            app:srcCompat="@drawable/vip_flash" />
+
+                    </FrameLayout>
+
                     <ImageView
-                        android:id="@+id/flipCardFrontLayout"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        />
+                        android:id="@+id/vipMember"
+                        android:layout_width="48dp"
+                        android:layout_marginEnd="40dp"
+                        android:layout_height="48dp"
+                        android:translationZ="10dp"
+                        android:layout_gravity="top|end"
+                        app:srcCompat="@drawable/vip_flash" />
                 </FrameLayout>
-
                 <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/white"
-                    android:minHeight="56dp"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp"
-                    >
+                    style="@style/reward_benefit_container_style">
 
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_centerVertical="true"
-                        android:letterSpacing="0.1"
-                        android:text="@string/tier_status"
-                        android:textAllCaps="true"
-                        android:textColor="#4d000000"
-                        android:textSize="12sp"
-                        app:WTextView_font="medium"
-                        />
+                    <TextView
+                        android:id="@+id/tvBenefitReward"
+                        style="@style/reward_benefit_title"
+                        android:text="@string/reward_benefits_title" />
 
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        android:id="@+id/tireStatus"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginRight="16dp"
-                        android:layout_toLeftOf="@+id/infoImage"
-                        android:textAllCaps="true"
-                        android:textColor="@color/green"
-                        android:textSize="15sp"
-                        app:WTextView_font="medium_bold"
-                        />
+                        <ImageView
+                            android:id="@+id/infoImage"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:background="@drawable/ic_caret_black" />
 
-                    <ImageView
-                        android:id="@+id/infoImage"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:alpha="0.3"
-                        android:background="@drawable/icon_info"
-                        />
+                        <TextView
+                            android:id="@+id/tvMoreInfo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_toStartOf="@+id/infoImage"
+                            android:fontFamily="@font/futura_semi_bold_ttf"
+                            android:letterSpacing="0.1"
+                            android:text="@string/reward_more_info"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/twelve_sp"
+                            tools:targetApi="lollipop"
+                            tools:text="@string/reward_more_info" />
                 </RelativeLayout>
 
                 <View
@@ -135,27 +138,11 @@
                     android:layout_height="0.5dp"
                     android:background="#0a000000"/>
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/white"
-                    android:minHeight="56dp"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp"
-                    >
+                <RelativeLayout style="@style/reward_benefit_container_style">
 
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_centerVertical="true"
-                        android:letterSpacing="0.1"
-                        android:text="@string/savings"
-                        android:textAllCaps="true"
-                        android:textColor="#4d000000"
-                        android:textSize="12sp"
-                        app:WTextView_font="medium"
-                        />
+                    <TextView
+                        style="@style/reward_benefit_title"
+                        android:text="@string/savings" />
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         android:id="@+id/savings"
@@ -176,27 +163,12 @@
 
                 <RelativeLayout
                     android:id="@+id/toNextTireLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/white"
-                    android:minHeight="56dp"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp"
-                    android:visibility="gone"
-                    >
+                    style="@style/reward_benefit_container_style"
+                    android:visibility="gone">
 
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_centerVertical="true"
-                        android:letterSpacing="0.1"
-                        android:text="@string/to_next_tier"
-                        android:textAllCaps="true"
-                        android:textColor="#4d000000"
-                        android:textSize="12sp"
-                        app:WTextView_font="medium"
-                        />
+                    <TextView
+                        style="@style/reward_benefit_title"
+                        android:text="@string/reward_to_get_to_vip" />
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         android:id="@+id/toNextTire"
