@@ -6,7 +6,6 @@ import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.util.Utils
 import android.animation.ObjectAnimator
-import android.graphics.Color
 import kotlinx.android.synthetic.main.wreward_logout_fragment.*
 import kotlinx.android.synthetic.main.wreward_sign_out_content.*
 import android.graphics.Paint.UNDERLINE_TEXT_FLAG
