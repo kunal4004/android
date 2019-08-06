@@ -76,6 +76,7 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
             }
         }
 
+        infoImage.setOnClickListener(this)
         tvMoreInfo.setOnClickListener(this)
         btnRetry.setOnClickListener(this)
     }
@@ -92,7 +93,6 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
         noTireHistory.visibility = GONE
         currentStatus = tireInfo.currentTier.toUpperCase(Locale.UK)
         savings.setText(WFormatter.formatAmount(tireInfo.earned))
-        infoImage.setOnClickListener(this)
         flipCardFrontLayout.setOnClickListener(this)
         flipCardBackLayout.setOnClickListener(this)
         if (currentStatus == getString(R.string.valued) || currentStatus == getString(R.string.loyal)) {
@@ -104,23 +104,27 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
     }
 
     private fun handleCard(cardDetailsResponse: CardDetailsResponse?) {
-        if (cardDetailsResponse?.cardType != null && cardDetailsResponse.cardNumber != null) {
-            when {
-                cardDetailsResponse.cardType.equals(CardType.WREWARDS.type, ignoreCase = true) -> {
-                    flipCardFrontLayout.setBackgroundResource(R.drawable.wrewards_card)
-                    flipCardBackLayout.setBackgroundResource(R.drawable.wrewards_card_flipped)
+        cardDetailsResponse?.apply {
+            if (cardType != null && cardNumber != null) {
+                when {
+                    cardDetailsResponse.cardType.equals(CardType.WREWARDS.type, ignoreCase = true) -> {
+                        flipCardFrontLayout.setBackgroundResource(R.drawable.wrewards_card)
+                        flipCardBackLayout.setBackgroundResource(R.drawable.wrewards_card_flipped)
+                        if (mIsBackVisible)
+                            showVIPLogo()
+                    }
+                    cardType.equals(CardType.MYSCHOOL.type, ignoreCase = true) -> {
+                        flipCardFrontLayout.setBackgroundResource(R.drawable.myschool_card)
+                        flipCardBackLayout.setBackgroundResource(R.drawable.myschool_card_flipped)
+                    }
+                    else -> return
                 }
-                cardDetailsResponse.cardType.equals(CardType.MYSCHOOL.type, ignoreCase = true) -> {
-                    flipCardFrontLayout.setBackgroundResource(R.drawable.myschool_card)
-                    flipCardBackLayout.setBackgroundResource(R.drawable.myschool_card_flipped)
+                barCodeNumber.setText(WFormatter.formatVoucher(cardNumber))
+                try {
+                    barCodeImage.setImageBitmap(Utils.encodeAsBitmap(cardNumber, BarcodeFormat.CODE_128, barCodeImage.width, 60))
+                } catch (e: WriterException) {
+                   Log.d(TAGREWARD,e.message ?: "")
                 }
-                else -> return
-            }
-            barCodeNumber.setText(WFormatter.formatVoucher(cardDetailsResponse.cardNumber))
-            try {
-                barCodeImage.setImageBitmap(Utils.encodeAsBitmap(cardDetailsResponse.cardNumber, BarcodeFormat.CODE_128, barCodeImage.width, 60))
-            } catch (e: WriterException) {
-                e.printStackTrace()
             }
 
             loadAnimations()
@@ -135,15 +139,19 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
             mSetRightOut = AnimatorInflater.loadAnimator(this, R.animator.card_flip_out) as? AnimatorSet
             mSetLeftIn = AnimatorInflater.loadAnimator(this, R.animator.card_flip_in) as? AnimatorSet
         }
-        
+
         mSetLeftIn?.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator?) {
                 super.onAnimationEnd(animation)
-                if (currentStatus.equals(getString(R.string.vip), ignoreCase = true)) {
-                    vipLogo.visibility = VISIBLE
-                }
+                showVIPLogo()
             }
         })
+    }
+
+    private fun showVIPLogo() {
+        if (currentStatus.equals(getString(R.string.vip), ignoreCase = true)) {
+            vipLogo.visibility = VISIBLE
+        }
     }
 
     private fun flipCard() {

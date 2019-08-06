@@ -7,241 +7,236 @@
     android:nestedScrollingEnabled="true"
     tools:targetApi="lollipop">
 
-    <androidx.appcompat.widget.LinearLayoutCompat
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/tvBirthdayVoucher3"
+            style="@style/BenefitSubDescTextViewStyle"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_marginStart="18dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="32dp"
+            android:text="@string/vip_exclusive_welcome_voucher4"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/imWelcomeVoucher4"
+            app:layout_constraintTop_toBottomOf="@+id/tvBirthdayVoucher2" />
 
-            <TextView
-                android:id="@+id/tvBirthdayVoucher3"
-                style="@style/BenefitSubDescTextViewStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="18dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="32dp"
-                android:text="@string/vip_exclusive_welcome_voucher4"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/imWelcomeVoucher4"
-                app:layout_constraintTop_toBottomOf="@+id/tvBirthdayVoucher2" />
+        <ImageView
+            android:id="@+id/imWelcomeVoucher4"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imWelcomeVoucher3"
+            app:srcCompat="@drawable/cli_step_indicator_active"
+            tools:ignore="ContentDescription" />
 
-            <ImageView
-                android:id="@+id/imWelcomeVoucher4"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginStart="32dp"
-                android:layout_marginTop="20dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imWelcomeVoucher3"
-                app:srcCompat="@drawable/cli_step_indicator_active"
-                tools:ignore="ContentDescription" />
+        <TextView
+            android:id="@+id/tvBirthdayVoucher2"
+            style="@style/BenefitSubDescTextViewStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="18dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="32dp"
+            android:text="@string/vip_exclusive_welcome_voucher3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/imWelcomeVoucher3"
+            app:layout_constraintTop_toBottomOf="@+id/tvBirthdayVoucher" />
 
-            <TextView
-                android:id="@+id/tvBirthdayVoucher2"
-                style="@style/BenefitSubDescTextViewStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="18dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="32dp"
-                android:text="@string/vip_exclusive_welcome_voucher3"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toEndOf="@+id/imWelcomeVoucher3"
-                app:layout_constraintTop_toBottomOf="@+id/tvBirthdayVoucher" />
+        <ImageView
+            android:id="@+id/imWelcomeVoucher3"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imWelcomeVoucher2"
+            app:srcCompat="@drawable/cli_step_indicator_active"
+            tools:ignore="ContentDescription" />
 
-            <ImageView
-                android:id="@+id/imWelcomeVoucher3"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginStart="32dp"
-                android:layout_marginTop="20dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imWelcomeVoucher2"
-                app:srcCompat="@drawable/cli_step_indicator_active"
-                tools:ignore="ContentDescription" />
+        <TextView
+            android:id="@+id/tvBirthdayVoucher"
+            style="@style/BenefitSubDescTextViewStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="18dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="32dp"
+            android:text="@string/vip_exclusive_welcome_voucher2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/imWelcomeVoucher2"
+            app:layout_constraintTop_toBottomOf="@+id/tvVIPFlash" />
 
-            <TextView
-                android:id="@+id/tvBirthdayVoucher"
-                style="@style/BenefitSubDescTextViewStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="18dp"
-                android:layout_marginTop="32dp"
-                android:layout_marginEnd="32dp"
-                android:text="@string/vip_exclusive_welcome_voucher2"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/imWelcomeVoucher2"
-                app:layout_constraintTop_toBottomOf="@+id/tvVIPFlash" />
+        <ImageView
+            android:id="@+id/imWelcomeVoucher2"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="39dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imWelcomeVoucher"
+            app:srcCompat="@drawable/cli_step_indicator_active"
+            tools:ignore="ContentDescription" />
 
-            <ImageView
-                android:id="@+id/imWelcomeVoucher2"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginStart="32dp"
-                android:layout_marginTop="39dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imWelcomeVoucher"
-                app:srcCompat="@drawable/cli_step_indicator_active"
-                tools:ignore="ContentDescription" />
+        <TextView
+            android:id="@+id/tvVIPFlashDesc"
+            style="@style/BenefitSubDescTextViewStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="48dp"
+            android:text="@string/vip_exclusive_all_the_reason_to_be_a_vip_desc"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/imVIPFlash"
+            app:layout_constraintTop_toBottomOf="@+id/tvVipExclusiveTitle" />
 
-            <TextView
-                android:id="@+id/tvVIPFlashDesc"
-                style="@style/BenefitSubDescTextViewStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="24dp"
-                android:layout_marginEnd="48dp"
-                android:text="@string/vip_exclusive_all_the_reason_to_be_a_vip_desc"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/imVIPFlash"
-                app:layout_constraintTop_toBottomOf="@+id/tvVipExclusiveTitle" />
+        <TextView
+            android:id="@+id/tvVipExclusiveTitle"
+            style="@style/BenefitSubTitleTextViewStyle"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="43dp"
+            android:layout_marginEnd="32dp"
+            android:letterSpacing="0.25"
+            android:lineSpacingExtra="6dp"
+            android:text="@string/vip_exclusive_all_the_reason_to_be_a_vip_title"
+            android:textAllCaps="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="UnusedAttribute" />
 
-            <TextView
-                android:id="@+id/tvVipExclusiveTitle"
-                style="@style/BenefitSubTitleTextViewStyle"
-                android:layout_marginStart="32dp"
-                android:layout_marginTop="43dp"
-                android:layout_marginEnd="32dp"
-                android:letterSpacing="0.25"
-                android:lineSpacingExtra="6dp"
-                android:text="@string/vip_exclusive_all_the_reason_to_be_a_vip_title"
-                android:textAllCaps="true"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:ignore="UnusedAttribute" />
+        <ImageView
+            android:id="@+id/imVIPFlash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/thirty_two_dp"
+            android:layout_marginTop="27dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvVipExclusiveTitle"
+            app:srcCompat="@drawable/vip_flash"
+            tools:ignore="ContentDescription" />
 
-            <ImageView
-                android:id="@+id/imVIPFlash"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/thirty_two_dp"
-                android:layout_marginTop="27dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvVipExclusiveTitle"
-                app:srcCompat="@drawable/vip_flash"
-                tools:ignore="ContentDescription" />
+        <TextView
+            android:id="@+id/tvVIPFlash"
+            style="@style/BenefitSubDescTextViewStyle"
+            android:layout_width="0dp"
+            android:layout_marginStart="18dp"
+            android:layout_marginTop="26dp"
+            android:layout_marginEnd="32dp"
+            android:text="@string/vip_exclusive_welcome_voucher1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/imWelcomeVoucher"
+            app:layout_constraintTop_toBottomOf="@+id/tvVIPFlashDesc" />
 
-            <TextView
-                android:id="@+id/tvVIPFlash"
-                style="@style/BenefitSubDescTextViewStyle"
-                android:layout_width="0dp"
-                android:layout_marginStart="18dp"
-                android:layout_marginTop="26dp"
-                android:layout_marginEnd="32dp"
-                android:text="@string/vip_exclusive_welcome_voucher1"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/imWelcomeVoucher"
-                app:layout_constraintTop_toBottomOf="@+id/tvVIPFlashDesc" />
+        <ImageView
+            android:id="@+id/imWelcomeVoucher"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="34dp"
+            android:layout_marginTop="29dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imVIPFlash"
+            app:srcCompat="@drawable/cli_step_indicator_active"
+            tools:ignore="ContentDescription" />
 
-            <ImageView
-                android:id="@+id/imWelcomeVoucher"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginStart="34dp"
-                android:layout_marginTop="29dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imVIPFlash"
-                app:srcCompat="@drawable/cli_step_indicator_active"
-                tools:ignore="ContentDescription" />
+        <TextView
+            android:id="@+id/tvGetToVIP"
+            style="@style/BenefitSubDescTextViewStyle"
+            android:layout_width="0dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="32dp"
+            android:text="@string/vip_exclusive_get_to_vip_status"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvBirthdayVoucher3" />
 
-            <TextView
-                android:id="@+id/tvGetToVIP"
-                style="@style/BenefitSubDescTextViewStyle"
-                android:layout_width="0dp"
-                android:layout_marginStart="32dp"
-                android:layout_marginTop="32dp"
-                android:layout_marginEnd="32dp"
-                android:text="@string/vip_exclusive_get_to_vip_status"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvBirthdayVoucher3" />
-
-            <TextView
-                android:id="@+id/tvTermsCondition"
-                style="@style/BenefitLinkTextViewStyle"
-                android:layout_marginStart="32dp"
-                android:layout_marginTop="24dp"
-                android:layout_marginEnd="32dp"
-                android:text="@string/benefits_term_and_condition_link"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvGetToVIP" />
+        <TextView
+            android:id="@+id/tvTermsCondition"
+            style="@style/BenefitLinkTextViewStyle"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="32dp"
+            android:linksClickable="true"
+            android:text="@string/benefits_term_and_condition_link"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvGetToVIP" />
 
 
-            <View
-                android:id="@+id/horizontalDivider"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="31dp"
-                android:background="@color/bpi_background_divider"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvTermsCondition" />
+        <View
+            android:id="@+id/horizontalDivider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="31dp"
+            android:background="@color/bpi_background_divider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvTermsCondition" />
 
 
-            <TextView
-                android:id="@+id/tvCalculateStatusLevel"
-                style="@style/BenefitLinkTextViewStyle"
-                android:layout_marginStart="32dp"
-                android:layout_marginTop="24dp"
-                android:layout_marginEnd="32dp"
-                android:fontFamily="@font/myriad_pro_semi_bold_otf"
-                android:text="@string/calculation_status_level_title"
-                android:textAllCaps="true"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/horizontalDivider" />
+        <TextView
+            android:id="@+id/tvCalculateStatusLevel"
+            style="@style/BenefitLinkTextViewStyle"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="32dp"
+            android:fontFamily="@font/myriad_pro_semi_bold_otf"
+            android:text="@string/calculation_status_level_title"
+            android:textAllCaps="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/horizontalDivider" />
 
 
-            <TextView
-                android:id="@+id/tvCalculateStatusLevelPara1"
-                style="@style/BenefitLinkTextViewStyle"
-                android:layout_marginStart="32dp"
-                android:layout_marginTop="32dp"
-                android:layout_marginEnd="32dp"
-                android:text="@string/calculation_status_level_paragraph1"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvCalculateStatusLevel" />
+        <TextView
+            android:id="@+id/tvCalculateStatusLevelPara1"
+            style="@style/BenefitLinkTextViewStyle"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="32dp"
+            android:text="@string/calculation_status_level_paragraph1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvCalculateStatusLevel" />
 
-            <TextView
-                android:id="@+id/tvCalculateStatusLevelPara2"
-                style="@style/BenefitLinkTextViewStyle"
-                android:layout_marginStart="32dp"
-                android:layout_marginTop="32dp"
-                android:layout_marginEnd="32dp"
-                android:text="@string/calculation_status_level_paragraph2"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvCalculateStatusLevelPara1" />
+        <TextView
+            android:id="@+id/tvCalculateStatusLevelPara2"
+            style="@style/BenefitLinkTextViewStyle"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="32dp"
+            android:text="@string/calculation_status_level_paragraph2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvCalculateStatusLevelPara1" />
 
-            <TextView
-                android:id="@+id/tvCalculateStatusLevelPara3"
-                style="@style/BenefitLinkTextViewStyle"
-                android:layout_marginStart="32dp"
-                android:layout_marginTop="32dp"
-                android:layout_marginEnd="32dp"
-                android:layout_marginBottom="@dimen/thirty_two_dp"
-                android:text="@string/calculation_status_level_paragraph3"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvCalculateStatusLevelPara2" />
+        <TextView
+            android:id="@+id/tvCalculateStatusLevelPara3"
+            style="@style/BenefitLinkTextViewStyle"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="@dimen/thirty_two_dp"
+            android:text="@string/calculation_status_level_paragraph3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvCalculateStatusLevelPara2" />
 
-            <View
-                android:id="@+id/bottomSpace"
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvCalculateStatusLevelPara3" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.appcompat.widget.LinearLayoutCompat>
+        <View
+            android:id="@+id/bottomSpace"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvCalculateStatusLevelPara3" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
