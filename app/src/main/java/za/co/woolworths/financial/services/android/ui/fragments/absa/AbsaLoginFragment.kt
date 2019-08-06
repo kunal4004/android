@@ -60,6 +60,7 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
     }
 
     private fun initViewsAndEvents() {
+        activity?.apply { (this as ABSAOnlineBankingRegistrationActivity).clearPageTitle()  }
         tvForgotPasscode.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         tvForgotPasscode.setOnClickListener {
 

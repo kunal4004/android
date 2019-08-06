@@ -1,17 +1,16 @@
 package za.co.absa.openbankingapi.woolworths.integration;
 
 
-import android.text.TextUtils;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.crashlytics.android.Crashlytics;
 
 import java.net.HttpCookie;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import za.co.absa.openbankingapi.woolworths.integration.dto.ErrorCodeList;
 import za.co.absa.openbankingapi.woolworths.integration.dto.Header;
 import za.co.absa.openbankingapi.woolworths.integration.dto.SecurityNotificationType;
 import za.co.absa.openbankingapi.woolworths.integration.dto.ValidateSureCheckRequest;
@@ -36,14 +35,18 @@ public class AbsaValidateSureCheckRequest {
             @Override
             public void onResponse(ValidateSureCheckResponse response, List<HttpCookie> cookies) {
                 Header.ResultMessage[] resultMessages = response.getHeader().getResultMessages();
-                if (resultMessages == null || resultMessages.length == 0)
+                String statusCode = "0";
+                try {
+                    statusCode = response.getHeader().getStatusCode();
+                } catch (Exception e) {
+                    Crashlytics.logException(e);
+                }
+
+                if (resultMessages == null || resultMessages.length == 0 && statusCode.equalsIgnoreCase("0"))
                     responseDelegate.onSuccess(response, cookies);
                 else {
-                    String errorDescription = ErrorCodeList.Companion.checkResult(response.getHeader().getStatusCode());
-                    if (TextUtils.isEmpty(errorDescription))
-                        responseDelegate.onFailure(resultMessages[0].getResponseMessage());
-                    else
-                        responseDelegate.onFailure(errorDescription);
+                    String resultMessage = resultMessages[0].getResponseMessage();
+                    responseDelegate.onFailure(resultMessage);
                 }
             }
         }, new Response.ErrorListener() {

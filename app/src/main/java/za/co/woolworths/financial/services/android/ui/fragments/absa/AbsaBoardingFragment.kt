@@ -40,6 +40,7 @@ class AbsaBoardingFragment : AbsaFragmentExtension(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        activity?.apply { (this as ABSAOnlineBankingRegistrationActivity).clearPageTitle()  }
         setupLater.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         setupPasscode.setOnClickListener(this)
         setupLater.setOnClickListener(this)

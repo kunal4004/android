@@ -1,6 +1,5 @@
 package za.co.absa.openbankingapi.woolworths.integration;
 
-import android.text.TextUtils;
 import android.util.Base64;
 
 import com.android.volley.Response;
@@ -20,7 +19,6 @@ import za.co.absa.openbankingapi.KeyGenerationFailureException;
 import za.co.absa.openbankingapi.SessionKey;
 import za.co.absa.openbankingapi.SymmetricCipher;
 import za.co.absa.openbankingapi.woolworths.integration.dao.JSession;
-import za.co.absa.openbankingapi.woolworths.integration.dto.ErrorCodeList;
 import za.co.absa.openbankingapi.woolworths.integration.dto.LoginRequest;
 import za.co.absa.openbankingapi.woolworths.integration.dto.LoginResponse;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiRequest;
@@ -77,8 +75,14 @@ public class AbsaLoginRequest {
 			public void onResponse(LoginResponse loginResponse, List<HttpCookie> cookies) {
 				final String nonce = loginResponse.getNonce();
 				final String resultMessage = loginResponse.getResultMessage();
+				String statusCode = "0";
+				try {
+					statusCode = loginResponse.getHeader().getStatusCode();
+				} catch (Exception e) {
+					Crashlytics.logException(e);
+				}
 
-				if (resultMessage == null && nonce != null && !nonce.isEmpty() && cookies != null) {
+				if (resultMessage == null && nonce != null && !nonce.isEmpty() && cookies != null && statusCode.equalsIgnoreCase("0")) {
 					for (HttpCookie cookie : cookies) {
 						if (cookie.getName().equalsIgnoreCase("jsessionid"))
 							jsessionCookie = new JSession(cookie.getName(), cookie);
@@ -91,11 +95,7 @@ public class AbsaLoginRequest {
 				}
 
 				else {
-					String errorDescription = ErrorCodeList.Companion.checkResult(loginResponse.getHeader().getStatusCode());
-					if (TextUtils.isEmpty(errorDescription))
-						responseDelegate.onFailure(resultMessage);
-					else
-						responseDelegate.onFailure(errorDescription);
+					responseDelegate.onFailure(resultMessage);
 				}
 			}
 		}, new Response.ErrorListener() {
