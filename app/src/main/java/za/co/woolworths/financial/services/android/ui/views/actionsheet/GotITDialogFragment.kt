@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.views.actionsheet
 
+import android.graphics.Paint
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -62,7 +63,7 @@ class GotITDialogFragment : WBottomSheetDialogFragment(), View.OnClickListener {
             icon?.let { imageIcon.setBackgroundResource(it) }
             imageIcon.visibility = View.VISIBLE
         }
-
+        btnGotIt.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         btnGotIt.setOnClickListener(this)
 
         actionButton.setOnClickListener(this)

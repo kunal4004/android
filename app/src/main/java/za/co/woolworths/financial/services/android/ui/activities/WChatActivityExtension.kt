@@ -28,6 +28,7 @@ open class WChatActivityExtension : AppCompatActivity(), WCountDownTimer.TimerFi
     var usersOfflineMessage: ChatMessage = ChatMessage(ChatMessage.Type.SENT, "")
     var isAgentOnline: Boolean = false // This becomes "true" when a agent picks the call -> (ChatStatus.state=STATUS_ONLINE)
     var pollingTimer: WCountDownTimer? = null
+    var sendMessageRetryCounter = 0
 
     enum class AgentDefaultMessage(val message: String) {
         AGENT_ONLINE("Hi " + SessionUtilities.getInstance().jwt?.name?.get(0) + ". How can we help you"),
@@ -58,6 +59,7 @@ open class WChatActivityExtension : AppCompatActivity(), WCountDownTimer.TimerFi
         const val STATUS_CLOSED_FORCED = 7
         const val STATUS_CLOSED_TIMEOUT = 8
         const val STATUS_RELOCATED = 9
+        const val MAX_RETRY_FOR_SEND_MESSAGE = 3
 
          fun getInAppTradingHoursForToday(): TradingHours {
 
@@ -185,7 +187,7 @@ open class WChatActivityExtension : AppCompatActivity(), WCountDownTimer.TimerFi
     }
 
     fun setPageTitle(name: String?) {
-        if (name.isNullOrEmpty())
+        if (!name.isNullOrEmpty())
             agentName.text = name
     }
 
