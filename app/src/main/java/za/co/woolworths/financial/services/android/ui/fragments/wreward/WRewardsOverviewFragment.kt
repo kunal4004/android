@@ -1,14 +1,14 @@
 package za.co.woolworths.financial.services.android.ui.fragments.wreward
 
-import android.animation.AnimatorInflater
-import android.animation.AnimatorSet
-import android.animation.ObjectAnimator
+import android.animation.*
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
@@ -76,6 +76,7 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
             }
         }
 
+        tvMoreInfo.setOnClickListener(this)
         btnRetry.setOnClickListener(this)
     }
 
@@ -87,18 +88,17 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
     fun scrollToTop() = scrollWRewardsOverview?.let { ObjectAnimator.ofInt(it, "scrollY", it.scrollY, 0).setDuration(500).start() }
 
     private fun handleTireHistoryView(tireInfo: TierInfo) {
-        overviewLayout.visibility = View.VISIBLE
-        noTireHistory.visibility = View.GONE
+        overviewLayout.visibility = VISIBLE
+        noTireHistory.visibility = GONE
         currentStatus = tireInfo.currentTier.toUpperCase(Locale.UK)
         savings.setText(WFormatter.formatAmount(tireInfo.earned))
         infoImage.setOnClickListener(this)
         flipCardFrontLayout.setOnClickListener(this)
         flipCardBackLayout.setOnClickListener(this)
         if (currentStatus == getString(R.string.valued) || currentStatus == getString(R.string.loyal)) {
-            toNextTireLayout.visibility = View.VISIBLE
+            toNextTireLayout.visibility = VISIBLE
+            vipLogo.visibility = GONE
             toNextTire.setText(WFormatter.formatAmount(tireInfo.toSpend))
-        } else if (currentStatus.equals(getString(R.string.vip), ignoreCase = true)) {
-
         }
         loadPromotionsAPI()
     }
@@ -135,6 +135,15 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
             mSetRightOut = AnimatorInflater.loadAnimator(this, R.animator.card_flip_out) as? AnimatorSet
             mSetLeftIn = AnimatorInflater.loadAnimator(this, R.animator.card_flip_in) as? AnimatorSet
         }
+        
+        mSetLeftIn?.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator?) {
+                super.onAnimationEnd(animation)
+                if (currentStatus.equals(getString(R.string.vip), ignoreCase = true)) {
+                    vipLogo.visibility = VISIBLE
+                }
+            }
+        })
     }
 
     private fun flipCard() {
@@ -182,8 +191,8 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
     }
 
     private fun handleNoTireHistoryView() {
-        overviewLayout?.visibility = View.GONE
-        noTireHistory?.visibility = View.VISIBLE
+        overviewLayout?.visibility = GONE
+        noTireHistory?.visibility = VISIBLE
     }
 
 
@@ -216,5 +225,10 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
         } catch (npe: NullPointerException) {
             Log.d(TAGREWARD, npe.message ?: "")
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        activity?.apply { Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.WREWARDS_OVERVIEW) }
     }
 }
