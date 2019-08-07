@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
@@ -22,7 +23,6 @@ import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.adapters.WRewardsSavingsHorizontalScrollAdapter;
 import za.co.woolworths.financial.services.android.ui.views.ScrollingLinearLayoutManager;
-import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.RecycleViewClickListner;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
@@ -36,15 +36,14 @@ public class WRewardsSavingsFragment extends Fragment implements View.OnClickLis
 	private WRewardsSavingsHorizontalScrollAdapter mAdapter;
 	private RecyclerView recyclerView;
 	public VoucherResponse voucherResponse;
-	public WTextView tireStatus;
-	public WTextView wRewardsInstantSaving;
-	public WTextView wRewardsGreenEarned;
-	public WTextView quarterlyVoucherEarned;
-	public WTextView yearToDateSpend;
-	public WTextView yearToDateSpendText;
+	public TextView wRewardsInstantSaving;
+	public TextView wRewardsGreenEarned;
+	public TextView quarterlyVoucherEarned;
+	public TextView yearToDateSpend;
+	public TextView yearToDateSpendText;
 	public RelativeLayout noSavingsView;
 	public LinearLayout savingSinceLayout;
-	public WTextView savingSince;
+	public TextView savingSince;
 	public ImageView savingSinceInfo;
 	public ImageView yearToDateSpendInfo;
 
@@ -54,16 +53,15 @@ public class WRewardsSavingsFragment extends Fragment implements View.OnClickLis
 		View view = inflater.inflate(R.layout.wrewards_savings_fragment, container, false);
 		Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSSAVINGS);
 		recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-		tireStatus = (WTextView) view.findViewById(R.id.tireStatus);
-		wRewardsInstantSaving = (WTextView) view.findViewById(R.id.wrewardsInstantSavings);
-		wRewardsGreenEarned = (WTextView) view.findViewById(R.id.wrewardsGreenEarned);
-		quarterlyVoucherEarned = (WTextView) view.findViewById(R.id.quarterlyVouchersEarned);
-		yearToDateSpend = (WTextView) view.findViewById(R.id.yearToDateSpend);
-		yearToDateSpendText = (WTextView) view.findViewById(R.id.yearToDateSpendText);
+		wRewardsInstantSaving = (TextView) view.findViewById(R.id.wrewardsInstantSavings);
+		wRewardsGreenEarned = (TextView) view.findViewById(R.id.wrewardsGreenEarned);
+		quarterlyVoucherEarned = (TextView) view.findViewById(R.id.quarterlyVouchersEarned);
+		yearToDateSpend = (TextView) view.findViewById(R.id.yearToDateSpend);
+		yearToDateSpendText = (TextView) view.findViewById(R.id.yearToDateSpendText);
 		yearToDateSpendInfo = (ImageView) view.findViewById(R.id.yearToDateSpendInfo);
 		noSavingsView = (RelativeLayout) view.findViewById(R.id.noSavingsView);
 		savingSinceLayout = (LinearLayout) view.findViewById(R.id.savingSinceLayout);
-		savingSince = (WTextView) view.findViewById(R.id.savingSince);
+		savingSince = (TextView) view.findViewById(R.id.savingSince);
 		savingSinceInfo = (ImageView) view.findViewById(R.id.savingSinceInfo);
 		mLayoutManager = new ScrollingLinearLayoutManager(
 				getActivity(),
@@ -91,7 +89,6 @@ public class WRewardsSavingsFragment extends Fragment implements View.OnClickLis
 					yearToDateSpendInfo.setVisibility(View.GONE);
 					yearToDateSpendText.setText(getString(R.string.wrewards_monthly_spend));
 					//Get data on Position-1 from Array List. And bind to UI
-					tireStatus.setText(voucherResponse.tierHistoryList.get(position - 1).tier);
 					wRewardsInstantSaving.setText(WFormatter.formatAmount(voucherResponse.tierHistoryList.get(position - 1).monthlySavings));
 					wRewardsGreenEarned.setText(WFormatter.formatAmount(voucherResponse.tierHistoryList.get(position - 1).monthlyGreenValueEarned));
 					quarterlyVoucherEarned.setText(WFormatter.formatAmount(voucherResponse.tierHistoryList.get(position - 1).wVouchers));
@@ -120,7 +117,6 @@ public class WRewardsSavingsFragment extends Fragment implements View.OnClickLis
 		savingSinceLayout.setVisibility(View.VISIBLE);
 		yearToDateSpendInfo.setVisibility(View.VISIBLE);
 		yearToDateSpendText.setText(getString(R.string.year_to_date_spend));
-		tireStatus.setText(voucherResponse.tierInfo.currentTier);
 		try {
 			savingSince.setText(WFormatter.formatDate(voucherResponse.tierInfo.earnedSince));
 		} catch (ParseException e) {
@@ -138,7 +134,6 @@ public class WRewardsSavingsFragment extends Fragment implements View.OnClickLis
 		noSavingsView.setVisibility(View.VISIBLE);
 		savingSinceLayout.setVisibility(View.GONE);
 		yearToDateSpendText.setText(getString(R.string.year_to_date_spend));
-		//tireStatus.setText(voucherResponse.tierInfo.currentTier);
 		wRewardsInstantSaving.setText(WFormatter.formatAmount(0));
 		wRewardsGreenEarned.setText(WFormatter.formatAmount(0));
 		quarterlyVoucherEarned.setText(WFormatter.formatAmount(0));
