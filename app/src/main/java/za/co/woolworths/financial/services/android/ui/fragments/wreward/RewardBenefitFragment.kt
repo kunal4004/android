@@ -1,8 +1,10 @@
 package za.co.woolworths.financial.services.android.ui.fragments.wreward
 
+import android.content.Intent
+import android.graphics.Paint
+import android.net.Uri
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
-import android.text.util.Linkify
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +16,7 @@ import za.co.woolworths.financial.services.android.ui.activities.WRewardBenefitA
 class RewardBenefitFragment : Fragment() {
 
     companion object {
+        private const val REWARD_URL = "https://www.woolworths.co.za/corporate/cmp205288"
         fun newInstance() = RewardBenefitFragment()
     }
 
@@ -25,7 +28,14 @@ class RewardBenefitFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         tvTermsCondition?.apply {
             text = (activity as? WRewardBenefitActivity)?.convertWRewardCharacter(getString(R.string.benefits_term_and_condition_link))
-            Linkify.addLinks(tvTermsCondition, Linkify.ALL)
+            movementMethod = LinkMovementMethod.getInstance()
+            tvTermsCondition?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+            setOnClickListener {
+                with(Intent(Intent.ACTION_VIEW)) {
+                    data = Uri.parse(REWARD_URL)
+                    startActivity(this)
+                }
+            }
         }
     }
 }

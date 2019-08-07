@@ -1036,7 +1036,7 @@
     <string name="benefits_extra_savings_sub_desc">You may get something extra on promos - be it early access to promos, additional savings or complimentary vouchers. Best of all, some promos will be exclusive to WRewards members.</string>
     <string name="benefits_exclusive_voucher_sub_title">3. Exclusive Vouchers Just for You</string>
     <string name="benefits_exclusive_voucher_sub_desc">Keep an eye out for vouchers that give you discounts on items we think you’ll enjoy.</string>
-    <string name="benefits_term_and_condition_link"><a href="https://www.woolworths.co.za/corporate/cmp205288">WRewards Terms and Conditions apply.</a></string>
+    <string name="benefits_term_and_condition_link">WRewards Terms and Conditions apply.</string>
     <string name="vip_exclusive_all_the_reason_to_be_a_vip_title">All The More Reason To Be A Vip</string>
     <string name="vip_exclusive_all_the_reason_to_be_a_vip_desc">The more you shop, the more you are rewarded. Our VIPs get:</string>
     <string name="vip_exclusive_welcome_voucher1">A welcome voucher of R75 off R350 on your next shop</string>
