@@ -123,7 +123,7 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
                 try {
                     barCodeImage.setImageBitmap(Utils.encodeAsBitmap(cardNumber, BarcodeFormat.CODE_128, barCodeImage.width, 60))
                 } catch (e: WriterException) {
-                   Log.d(TAGREWARD,e.message ?: "")
+                    Log.d(TAGREWARD, e.message ?: "")
                 }
             }
 
@@ -203,7 +203,6 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
         noTireHistory?.visibility = VISIBLE
     }
 
-
     private fun loadPromotionsAPI() {
         mErrorHandlerView?.hideErrorHandlerLayout()
         val promotionsResponseCall = OneAppService.getPromotions()
@@ -219,7 +218,6 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
         }, PromotionsResponse::class.java))
 
     }
-
 
     fun handlePromotionResponse(promotionsResponse: PromotionsResponse) {
         try {

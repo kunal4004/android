@@ -32,10 +32,10 @@ import za.co.woolworths.financial.services.android.ui.activities.WRewardsErrorFr
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.WRewardsFragmentPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsOverviewFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsSavingsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.wreward.base.WRewardsFragment;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
