@@ -42,6 +42,7 @@ import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -1483,5 +1484,14 @@ public class Utils {
 		DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.US);
 		formatter.applyPattern("#,###,###,###");
 		return formatter.format(amount).replace(",", " ");
+	}
+
+	public static void hideSoftKeyboard(Activity activity) {
+		final InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+		if (inputMethodManager.isActive()) {
+			if (activity.getCurrentFocus() != null) {
+				inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+			}
+		}
 	}
 }

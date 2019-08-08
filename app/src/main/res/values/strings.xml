@@ -965,7 +965,7 @@
     <string name="unsuccessful_request">Unsuccessful Request</string>
     <string name="unsuccessful_request_desc">Your request was unsuccessful. Please click retry to try again.</string>
     <string name="incorrect_pin_alert">Incorrect PIN. Please note on your third failed attempt your profile will be blocked.</string>
-    <string name="error_atm_pin_locked_title">Credit Card ATM PIn Locked</string>
+    <string name="error_atm_pin_locked_title">Credit Card ATM PIN Locked</string>
     <string name="passcode_not_match_alert">Your Passcode does not match. Please try again.</string>
     <string name="error_action_later">later</string>
     <string name="reset_passcode">RESET PASSCODE</string>
@@ -983,7 +983,7 @@
     <string name="error_passcode_locked_title">Passcode Locked</string>
     <string name="error_passcode_locked_desc">You have entered your Passcode incorrectly 3 times. To log in, please reset your Passcode using your Credit Card ATM PIN.</string>
     <string name="forgot_passcode">Forgot Passcode</string>
-    <string name="forgot_passcode_dialog_desc">You can reset you passcode for this device using your Woolies Credit Card Pin.</string>
+    <string name="forgot_passcode_dialog_desc">You can reset your passcode for this device using your Woolies Credit Card Pin.</string>
     <string name="police_report">Police Report</string>
     <string name="certified_id_deceased">Certified ID Deceased</string>
     <string name="claimant_bank_statement">Claimant\'s Bank Statement</string>

@@ -95,6 +95,10 @@ class ABSAOnlineBankingRegistrationActivity : AppCompatActivity(), IDialogListen
             return
         }
 
+        if ((getCurrentFragment() is AbsaEnterAtmPinCodeFragment)) {
+            Utils.hideSoftKeyboard(this)
+        }
+
         val fragmentManager = supportFragmentManager
         if (fragmentManager.backStackEntryCount > 0) {
             fragmentManager.popBackStack()
