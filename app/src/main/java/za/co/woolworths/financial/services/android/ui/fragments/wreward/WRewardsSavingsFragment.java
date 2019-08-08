@@ -67,11 +67,7 @@ public class WRewardsSavingsFragment extends Fragment implements View.OnClickLis
 		savingSince = (TextView) view.findViewById(R.id.savingSince);
 		savingSinceInfo = (ImageView) view.findViewById(R.id.savingSinceInfo);
 		tvWRewardInstantSaving = (TextView) view.findViewById(R.id.tvWRewardInstantSaving);
-		mLayoutManager = new ScrollingLinearLayoutManager(
-				getActivity(),
-				LinearLayoutManager.HORIZONTAL,
-				false, 1500
-		);
+		mLayoutManager = new ScrollingLinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false, 1500);
 
 		Activity activity = getActivity();
 		if (activity!=null){
