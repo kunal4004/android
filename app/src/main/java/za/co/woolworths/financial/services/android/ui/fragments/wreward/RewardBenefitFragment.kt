@@ -27,7 +27,7 @@ class RewardBenefitFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         tvTermsCondition?.apply {
-            text = (activity as? WRewardBenefitActivity)?.convertWRewardCharacter(getString(R.string.benefits_term_and_condition_link))
+            text = WRewardBenefitActivity.convertWRewardCharacter(getString(R.string.benefits_term_and_condition_link))
             movementMethod = LinkMovementMethod.getInstance()
             tvTermsCondition?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
             setOnClickListener {

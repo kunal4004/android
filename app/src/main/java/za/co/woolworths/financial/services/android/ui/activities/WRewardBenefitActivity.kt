@@ -9,7 +9,6 @@ import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.res.ResourcesCompat
@@ -25,6 +24,21 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 
 class WRewardBenefitActivity : AppCompatActivity() {
+
+    companion object {
+        fun convertWRewardCharacter(description: String): SpannableStringBuilder {
+            val spanBuilder = SpannableStringBuilder(description)
+            with(spanBuilder) {
+                if (contains("WRe")) {
+                    val rewardTextPosition = indexOf("WRewards")
+                    val updateWCharacterPosition = rewardTextPosition + 1
+                    setSpan(StyleSpan(Typeface.BOLD), rewardTextPosition, updateWCharacterPosition, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    setSpan(ForegroundColorSpan(Color.GRAY), rewardTextPosition, updateWCharacterPosition, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                }
+            }
+            return spanBuilder
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,18 +96,5 @@ class WRewardBenefitActivity : AppCompatActivity() {
     override fun onBackPressed() {
         finish()
         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
-    }
-
-    fun convertWRewardCharacter(description: String): SpannableStringBuilder {
-        val spanBuilder = SpannableStringBuilder(description)
-        with(spanBuilder) {
-            if (contains("WRe")) {
-                val rewardTextPosition = indexOf("WRewards")
-                val updateWCharacterPosition = rewardTextPosition + 1
-                setSpan(StyleSpan(Typeface.BOLD), rewardTextPosition, updateWCharacterPosition, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                setSpan(ForegroundColorSpan(Color.GRAY), rewardTextPosition, updateWCharacterPosition, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            }
-        }
-        return spanBuilder
     }
 }

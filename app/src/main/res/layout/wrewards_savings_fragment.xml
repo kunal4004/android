@@ -74,6 +74,7 @@
             android:paddingRight="16dp">
 
             <TextView
+                android:id="@+id/tvWRewardInstantSaving"
                 style="@style/WRewardsInstantSavingsStyle"
                 android:text="@string/wrewards_instant_savings" />
 

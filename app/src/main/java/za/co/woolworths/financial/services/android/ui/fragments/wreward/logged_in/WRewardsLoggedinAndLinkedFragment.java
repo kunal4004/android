@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -69,6 +70,14 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	public void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		wRewardViewModel = ViewModelProviders.of(this).get(WRewardLoggedInViewModel.class);
+	}
+
+	@Nullable
+	@Override
+	public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
+			Animation a = new Animation() {};
+			a.setDuration(0);
+			return a;
 	}
 
 	@Override

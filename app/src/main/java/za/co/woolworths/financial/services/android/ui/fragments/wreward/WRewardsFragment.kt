@@ -51,10 +51,11 @@ class WRewardsFragment : Fragment() {
 
     private fun removeAllChildFragments() {
         activity?.supportFragmentManager?.apply {
-            val count = backStackEntryCount
-            if (count > 0) {
-                for (i in 0 until count) {
-                    popBackStack()
+            if (backStackEntryCount > 0) {
+                for (fragment in fragments) {
+                    beginTransaction()
+                            .remove(fragment)
+                            .commitAllowingStateLoss()
                 }
             }
         }

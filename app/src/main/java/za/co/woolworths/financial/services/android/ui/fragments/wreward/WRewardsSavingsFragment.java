@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.wreward;
 
+import android.app.Activity;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -21,6 +22,7 @@ import java.text.ParseException;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
+import za.co.woolworths.financial.services.android.ui.activities.WRewardBenefitActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.WRewardsSavingsHorizontalScrollAdapter;
 import za.co.woolworths.financial.services.android.ui.views.ScrollingLinearLayoutManager;
 import za.co.woolworths.financial.services.android.util.RecycleViewClickListner;
@@ -46,6 +48,7 @@ public class WRewardsSavingsFragment extends Fragment implements View.OnClickLis
 	public TextView savingSince;
 	public ImageView savingSinceInfo;
 	public ImageView yearToDateSpendInfo;
+	private TextView tvWRewardInstantSaving;
 
 	@Nullable
 	@Override
@@ -63,11 +66,17 @@ public class WRewardsSavingsFragment extends Fragment implements View.OnClickLis
 		savingSinceLayout = (LinearLayout) view.findViewById(R.id.savingSinceLayout);
 		savingSince = (TextView) view.findViewById(R.id.savingSince);
 		savingSinceInfo = (ImageView) view.findViewById(R.id.savingSinceInfo);
+		tvWRewardInstantSaving = (TextView) view.findViewById(R.id.tvWRewardInstantSaving);
 		mLayoutManager = new ScrollingLinearLayoutManager(
 				getActivity(),
 				LinearLayoutManager.HORIZONTAL,
 				false, 1500
 		);
+
+		Activity activity = getActivity();
+		if (activity!=null){
+			tvWRewardInstantSaving.setText(WRewardBenefitActivity.Companion.convertWRewardCharacter(getString(R.string.benefits_term_and_condition_link)));
+		}
 		savingSinceInfo.setOnClickListener(this);
 		yearToDateSpendInfo.setOnClickListener(this);
 		recyclerView.setLayoutManager(mLayoutManager);

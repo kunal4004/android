@@ -28,7 +28,7 @@ class VIPExclusiveFragment : Fragment() {
     ) {
         super.onViewCreated(view, savedInstanceState)
         tvTermsCondition?.apply {
-            text = (activity as? WRewardBenefitActivity)?.convertWRewardCharacter(getString(R.string.benefits_term_and_condition_link))
+            text = WRewardBenefitActivity.convertWRewardCharacter(getString(R.string.benefits_term_and_condition_link))
             tvTermsCondition?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
             setOnClickListener {
                 with(Intent(Intent.ACTION_VIEW)) {

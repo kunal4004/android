@@ -10,6 +10,7 @@ import kotlinx.android.synthetic.main.wreward_logout_fragment.*
 import kotlinx.android.synthetic.main.wreward_sign_out_content.*
 import android.graphics.Paint.UNDERLINE_TEXT_FLAG
 import android.view.*
+import android.view.animation.Animation
 import za.co.woolworths.financial.services.android.ui.adapters.JoinRewardAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
@@ -42,6 +43,13 @@ class WRewardsLoggedOutFragment : Fragment(), View.OnClickListener {
         applyForWRewards.setOnClickListener(this)
         tvSignIn.setOnClickListener(this)
         tvRegister.setOnClickListener(this)
+    }
+
+    override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
+        val a = object : Animation() {
+        }
+        a.duration = 0
+        return a
     }
 
     private fun setUpPager() {
