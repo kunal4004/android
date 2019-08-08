@@ -70,7 +70,7 @@ public class WRewardsSavingsFragment extends Fragment implements View.OnClickLis
 		mLayoutManager = new ScrollingLinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false, 1500);
 
 		Activity activity = getActivity();
-		if (activity!=null){
+		if (activity!=null) {
 			tvWRewardInstantSaving.setText(WRewardBenefitActivity.Companion.convertWRewardCharacter(getString(R.string.benefits_term_and_condition_link)));
 		}
 		savingSinceInfo.setOnClickListener(this);
