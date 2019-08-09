@@ -11,10 +11,12 @@ import kotlinx.android.synthetic.main.absa_five_digit_code_fragment.*
 import androidx.appcompat.app.AppCompatActivity
 import android.view.*
 import za.co.absa.openbankingapi.woolworths.integration.AbsaRegisterCredentialRequest
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IVibrateComplete
 import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
+import za.co.woolworths.financial.services.android.util.Utils
 
 class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener, IVibrateComplete {
 
@@ -87,6 +89,7 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
     }
 
     private fun navigateToAbsaPinCodeSuccessFragment(aliasId: String?, fiveDigitPin: String) {
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ABSA_CC_COMPLETE_SETUP)
         hideKeyboard()
         replaceFragment(
                 fragment = AbsaPinCodeSuccessFragment.newInstance(aliasId, fiveDigitPin),

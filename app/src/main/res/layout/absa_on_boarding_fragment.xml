@@ -2,19 +2,85 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingTop="@dimen/thirty_two_dp"
-    android:paddingBottom="@dimen/thirty_two_dp">
+    android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/onBoardingImage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/absa_onboarding"
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="parent">
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/thirty_two_dp"
+            android:paddingBottom="@dimen/hundred_dp">
+
+            <ImageView
+                android:id="@+id/onBoardingImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/absa_onboarding"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/description"
+                style="@style/absa_page_description_text_style"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/absa_on_boarding_desc"
+                app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                app:layout_constraintStart_toStartOf="@+id/guideline1"
+                app:layout_constraintTop_toBottomOf="@+id/title" />
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/securedByAbsa"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/twenty_four_dp"
+                android:drawableLeft="@drawable/absa_logo"
+                android:drawablePadding="@dimen/twelve_dp"
+                android:gravity="center_vertical"
+                android:text="@string/secured_by_absa_surecheck"
+                android:textColor="#1C1C1C"
+                android:textSize="@dimen/fifteen_sp"
+                app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                app:layout_constraintStart_toStartOf="@+id/guideline1"
+                app:layout_constraintTop_toBottomOf="@+id/description" />
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/title"
+                style="@style/absa_page_title_text_style"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:text="@string/absa_on_boarding_title"
+                app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                app:layout_constraintStart_toStartOf="@+id/guideline1"
+                app:layout_constraintTop_toBottomOf="@+id/onBoardingImage" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="@dimen/thirty_two_dp" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_end="@dimen/thirty_two_dp" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 
     <za.co.woolworths.financial.services.android.ui.views.WButton
         android:id="@+id/setupPasscode"
@@ -23,71 +89,35 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginBottom="@dimen/thirty_two_dp"
         android:text="@string/setup_passcode"
         app:layout_constraintBottom_toTopOf="@+id/setupLater"
-        app:layout_constraintEnd_toStartOf="@+id/guideline2"
-        app:layout_constraintStart_toStartOf="@+id/guideline1" />
+        app:layout_constraintEnd_toStartOf="@+id/guideline4"
+        app:layout_constraintStart_toStartOf="@+id/guideline3" />
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/setupLater"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/setup_later"
-        android:textSize="12sp"
-        app:WTextView_font="light"
-        android:textColor="@color/gray"
         android:letterSpacing="0.1"
+        android:text="@string/setup_later"
+        android:textColor="@color/gray"
+        android:textSize="12sp"
         android:visibility="gone"
+        app:WTextView_font="light"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
-        android:id="@+id/description"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        style="@style/absa_page_description_text_style"
-        android:text="@string/absa_on_boarding_desc"
-        app:layout_constraintEnd_toStartOf="@+id/guideline2"
-        app:layout_constraintStart_toStartOf="@+id/guideline1"
-        app:layout_constraintTop_toBottomOf="@+id/title" />
-
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
-        android:id="@+id/securedByAbsa"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/twenty_four_dp"
-        android:textSize="@dimen/fifteen_sp"
-        android:textColor="#1C1C1C"
-        android:drawableLeft="@drawable/absa_logo"
-        android:drawablePadding="@dimen/twelve_dp"
-        android:gravity="center_vertical"
-        android:text="@string/secured_by_absa_surecheck"
-        app:layout_constraintEnd_toStartOf="@+id/guideline2"
-        app:layout_constraintStart_toStartOf="@+id/guideline1"
-        app:layout_constraintTop_toBottomOf="@+id/description" />
-
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
-        android:id="@+id/title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        style="@style/absa_page_title_text_style"
-        android:text="@string/absa_on_boarding_title"
-        app:layout_constraintEnd_toStartOf="@+id/guideline2"
-        app:layout_constraintStart_toStartOf="@+id/guideline1"
-        app:layout_constraintTop_toBottomOf="@+id/onBoardingImage" />
-
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline1"
+        android:id="@+id/guideline3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_begin="@dimen/thirty_two_dp" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline2"
+        android:id="@+id/guideline4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
