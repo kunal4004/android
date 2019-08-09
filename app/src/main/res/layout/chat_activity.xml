@@ -70,6 +70,9 @@
                 android:textColor="@color/black"
                 android:textSize="12sp"
                 android:visibility="gone"
+                android:paddingBottom="@dimen/eight_dp"
+                android:paddingTop="@dimen/eight_dp"
+                android:paddingLeft="@dimen/eight_dp"
                 app:WTextView_font="medium" />
 
         </androidx.appcompat.widget.Toolbar>
@@ -127,7 +130,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent">
 
-        <za.co.woolworths.financial.services.android.ui.views.WEditTextView
+        <za.co.woolworths.financial.services.android.ui.views.EmojiExcludeEditText
             android:id="@+id/edittext_chatbox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

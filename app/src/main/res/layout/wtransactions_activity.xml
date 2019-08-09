@@ -52,7 +52,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="gone"
-            android:groupIndicator="@null"/>
+            android:groupIndicator="@null"
+            android:paddingBottom="@dimen/eighty_dp"
+            android:clipToPadding="false"
+            />
 
         <include layout="@layout/empty_state_template"/>
 

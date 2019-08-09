@@ -69,11 +69,15 @@ class WChatActivity : WChatActivityExtension(), IDialogListener {
     }
 
     private fun onEditTextValueChanged(text: String) {
-        button_send.isEnabled = text.isNotEmpty()
+        button_send.isEnabled = text.trim().isNotEmpty()
 
     }
 
     override fun onBackPressed() {
+        confirmToEndChatSession()
+    }
+
+    private fun closePage() {
         stopAllPolling()
         finish()
         overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
@@ -83,7 +87,7 @@ class WChatActivity : WChatActivityExtension(), IDialogListener {
 
         when (item?.itemId) {
             android.R.id.home -> {
-                if (isAgentOnline) confirmToEndChatSession() else onBackPressed()
+                onBackPressed()
             }
         }
         return false
@@ -157,8 +161,14 @@ class WChatActivity : WChatActivityExtension(), IDialogListener {
             OneAppService.sendChatMessage(it, SendMessageRequestBody(chatMessage.message)).enqueue(CompletionHandler(object : RequestListener<SendChatMessageResponse> {
                 override fun onSuccess(response: SendChatMessageResponse?) {
                     when (response?.httpCode) {
-                        200 -> chatMessage.isMessageSent = true
-                        else -> sendMessage(chatMessage)
+                        200 -> {
+                            sendMessageRetryCounter = 0
+                            chatMessage.isMessageSent = true
+                        }
+                        else -> {
+                            sendMessageRetryCounter++
+                            if (sendMessageRetryCounter < MAX_RETRY_FOR_SEND_MESSAGE) sendMessage(chatMessage) else showErrorMessage()
+                        }
                     }
 
                 }
@@ -229,16 +239,20 @@ class WChatActivity : WChatActivityExtension(), IDialogListener {
     }
 
     private fun confirmToEndChatSession() {
-        val openDialogFragment =
-                GotITDialogFragment.newInstance(getString(R.string.chat_end_session_dialog_title),
-                        getString(R.string.chat_end_session_dialog_desc), getString(R.string.chat_end_session_dialog_cancel_text),
-                        this, getString(R.string.chat_end_session_dialog_action_text), true, R.drawable.ic_end_session)
-        openDialogFragment.show(this.supportFragmentManager, GotITDialogFragment::class.java.simpleName)
+        if (isAgentOnline) {
+            val openDialogFragment =
+                    GotITDialogFragment.newInstance(getString(R.string.chat_end_session_dialog_title),
+                            getString(R.string.chat_end_session_dialog_desc), getString(R.string.chat_end_session_dialog_cancel_text),
+                            this, getString(R.string.chat_end_session_dialog_action_text), true, R.drawable.ic_end_session)
+            openDialogFragment.show(this.supportFragmentManager, GotITDialogFragment::class.java.simpleName)
+        } else {
+            closePage()
+        }
     }
 
     private fun endChatSession() {
         chatId?.let { OneAppService.endChatSession(it) }
-        onBackPressed()
+        closePage()
     }
 
     override fun onDialogDismissed() {
