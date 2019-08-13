@@ -47,6 +47,7 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.awfs.coordination.BuildConfig;
 import com.awfs.coordination.R;
 import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -1493,5 +1494,17 @@ public class Utils {
 				inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
 			}
 		}
+	}
+
+	public static int getMinSupportedAppVersion(String minSupportedAppVersion) {
+		return TextUtils.isEmpty(minSupportedAppVersion) ? 0 : Integer.valueOf(minSupportedAppVersion.replace(".", ""));
+	}
+
+	public static Integer getAppMinorMajorBuildVersion() {
+		return Integer.valueOf((BuildConfig.VERSION_NAME + BuildConfig.VERSION_CODE).replace(".", ""));
+	}
+
+	public static Boolean isFeatureEnabled(String minSupportedAppVersion) {
+		return (getAppMinorMajorBuildVersion() >= getMinSupportedAppVersion(minSupportedAppVersion));
 	}
 }
