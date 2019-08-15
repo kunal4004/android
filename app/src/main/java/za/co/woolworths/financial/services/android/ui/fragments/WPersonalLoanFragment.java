@@ -669,7 +669,7 @@ private static AsyncTask<Void, Void, Void> async;
             Resources resources = activity.getResources();
             if (resources == null) return;
 
-            Crashlytics.setString(resources.getString(R.string.crashlytics_materialshowcase_key), this.getClass().getCanonicalName());
+            /*Crashlytics.setString(resources.getString(R.string.crashlytics_materialshowcase_key), this.getClass().getCanonicalName());
             WMaterialShowcaseView walkThroughPromptView = new WMaterialShowcaseView.Builder(activity, WMaterialShowcaseView.Feature.STATEMENTS)
                     .setTarget(activity.getWindow().getDecorView().findViewById(R.id.imViewStatementLogo))
                     .setTitle(R.string.walkthrough_statement_title)
@@ -680,7 +680,7 @@ private static AsyncTask<Void, Void, Void> async;
                     .setShapePadding(48)
                     .setArrowPosition(WMaterialShowcaseView.Arrow.BOTTOM_LEFT)
                     .setMaskColour(ContextCompat.getColor(activity, R.color.semi_transparent_black)).build();
-            walkThroughPromptView.show(activity);
+            walkThroughPromptView.show(activity);*/
         }
     }
 
