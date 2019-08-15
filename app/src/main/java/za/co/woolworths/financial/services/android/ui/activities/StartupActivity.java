@@ -42,6 +42,7 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AbsaBankingOpenApiServices;
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.models.dto.chat.PresenceInAppChat;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
@@ -196,10 +197,11 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 						WoolworthsApplication.setCartCheckoutLink(configResponse.configs.defaults.getCartCheckoutLink());
 
 						AbsaBankingOpenApiServices absaBankingOpenApiServices = configResponse.configs.absaBankingOpenApiServices;
-						Integer appMinorMajorBuildVersion = Integer.valueOf((BuildConfig.VERSION_NAME + BuildConfig.VERSION_CODE).replace(".", ""));
-						int minimumSupportedAppVersion = TextUtils.isEmpty(absaBankingOpenApiServices.getMinSupportedAppVersion()) ? 0 : Integer.valueOf(absaBankingOpenApiServices.getMinSupportedAppVersion().replace(".", ""));
-						absaBankingOpenApiServices.setEnabled(appMinorMajorBuildVersion >= minimumSupportedAppVersion);
+						PresenceInAppChat presenceInAppChat = configResponse.configs.presenceInAppChat;
+						absaBankingOpenApiServices.setEnabled(Utils.isFeatureEnabled(absaBankingOpenApiServices.getMinSupportedAppVersion()));
+						presenceInAppChat.setEnabled(Utils.isFeatureEnabled(presenceInAppChat.getMinSupportedAppVersion()));
 						WoolworthsApplication.setAbsaBankingOpenApiServices(absaBankingOpenApiServices);
+						WoolworthsApplication.setPresenceInAppChat(presenceInAppChat);
 
 						mWGlobalState.setStartRadius(configResponse.configs.enviroment.getStoreStockLocatorConfigStartRadius());
 						mWGlobalState.setEndRadius(configResponse.configs.enviroment.getStoreStockLocatorConfigEndRadius());

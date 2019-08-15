@@ -7,10 +7,10 @@ apply plugin: 'io.fabric'
 android {
 
     def major = "5"
-    def minor = "13"
-    def fix = "2"
+    def minor = "14"
+    def fix = "0"
 
-    def jobNumber = 332
+    def jobNumber = 338
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
 
     dataBinding {
@@ -193,6 +193,7 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.12.1'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.12.1'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
 
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
     implementation 'com.github.deano2390:MaterialShowcaseView:1.2.0'

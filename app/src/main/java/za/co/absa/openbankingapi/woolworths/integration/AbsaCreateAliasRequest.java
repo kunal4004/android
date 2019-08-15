@@ -1,6 +1,5 @@
 package za.co.absa.openbankingapi.woolworths.integration;
 
-import android.text.TextUtils;
 import android.util.Base64;
 
 import com.android.volley.Response;
@@ -20,7 +19,6 @@ import za.co.absa.openbankingapi.SessionKey;
 import za.co.absa.openbankingapi.SymmetricCipher;
 import za.co.absa.openbankingapi.woolworths.integration.dto.CreateAliasRequest;
 import za.co.absa.openbankingapi.woolworths.integration.dto.CreateAliasResponse;
-import za.co.absa.openbankingapi.woolworths.integration.dto.ErrorCodeList;
 import za.co.absa.openbankingapi.woolworths.integration.dto.Header;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiRequest;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse;
@@ -50,7 +48,14 @@ public class AbsaCreateAliasRequest {
 			@Override
 			public void onResponse(CreateAliasResponse response, List<HttpCookie> cookies) {
 				Header.ResultMessage[] resultMessages = response.getHeader().getResultMessages();
-				if (resultMessages == null || resultMessages.length == 0){
+				String statusCode = "0";
+				try {
+					statusCode = response.getHeader().getStatusCode();
+				} catch (Exception e) {
+					Crashlytics.logException(e);
+				}
+
+				if (resultMessages == null || resultMessages.length == 0 && statusCode.equalsIgnoreCase("0")){
 					try{
 						byte[] encryptedAliasBytes = response.getAliasId().getBytes(StandardCharsets.UTF_8);
 						byte[] encryptedAliasBase64DecodedBytes = Base64.decode(encryptedAliasBytes, Base64.NO_WRAP);
@@ -70,11 +75,7 @@ public class AbsaCreateAliasRequest {
 				}
 
 				else {
-					String errorDescription = ErrorCodeList.Companion.checkResult(response.getHeader().getStatusCode());
-					if (TextUtils.isEmpty(errorDescription))
 						responseDelegate.onFailure(resultMessages[0].getResponseMessage());
-					else
-						responseDelegate.onFailure(errorDescription);
 				}
 			}
 		}, new Response.ErrorListener() {

@@ -303,6 +303,8 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
             case R.id.tvViewTransaction:
                 Intent intent = new Intent(getActivity(), WTransactionsActivity.class);
                 intent.putExtra("productOfferingId", productOfferingId);
+                intent.putExtra("accountNumber", Utils.getAccountNumber(accountsResponse,"CC"));
+                intent.putExtra("cardType","CC");
                 startActivity(intent);
                 activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
                 break;
@@ -585,6 +587,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
     }
 
     public Call<CreditCardTokenResponse>  getCreditCardToken(final Activity activity) {
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_STATEMENTS);
         showGetCreditCardTokenProgressBar(VISIBLE);
        Call<CreditCardTokenResponse> creditCardTokenResponseCall =  OneAppService.INSTANCE.getCreditCardToken();
         creditCardTokenResponseCall.enqueue(new CompletionHandler<>(new RequestListener<CreditCardTokenResponse>() {

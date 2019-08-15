@@ -293,6 +293,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 							default:
 								if (getGlobalState().getSaveButtonClick() == INDEX_SEARCH_FROM_LIST) {
 									Utils.sendBus(new ProductState(ProductState.INDEX_SEARCH_FROM_LIST));
+									setResult(SELECTED_SHOPPING_LIST_ITEM_RESULT_CODE,intent);
 									dismissLayout();
 									return;
 								}

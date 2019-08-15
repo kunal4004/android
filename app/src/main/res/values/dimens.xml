@@ -143,7 +143,8 @@
     <dimen name="sixty_three_dp">63dp</dimen>
     <dimen name="sixty_six_dp">66dp</dimen>
     <dimen name="thirty_seven_dp">37dp</dimen>
-
     <dimen name="common_circle_width">3dp</dimen>
+    <dimen name="chat_bubble_text_line_spacing">1.31dp</dimen>
+    <dimen name="chat_bubble_text_size">16sp</dimen>
 </resources>
 
