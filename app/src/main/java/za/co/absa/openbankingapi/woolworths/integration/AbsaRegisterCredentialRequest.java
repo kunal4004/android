@@ -1,6 +1,5 @@
 package za.co.absa.openbankingapi.woolworths.integration;
 
-import android.text.TextUtils;
 import android.util.Base64;
 
 import com.android.volley.Response;
@@ -19,7 +18,6 @@ import za.co.absa.openbankingapi.DecryptionFailureException;
 import za.co.absa.openbankingapi.KeyGenerationFailureException;
 import za.co.absa.openbankingapi.SessionKey;
 import za.co.absa.openbankingapi.SymmetricCipher;
-import za.co.absa.openbankingapi.woolworths.integration.dto.ErrorCodeList;
 import za.co.absa.openbankingapi.woolworths.integration.dto.Header;
 import za.co.absa.openbankingapi.woolworths.integration.dto.RegisterCredentialRequest;
 import za.co.absa.openbankingapi.woolworths.integration.dto.RegisterCredentialResponse;
@@ -73,16 +71,20 @@ public class AbsaRegisterCredentialRequest {
 			@Override
 			public void onResponse(RegisterCredentialResponse response, List<HttpCookie> cookies) {
 				Header.ResultMessage[] resultMessages = response.getHeader().getResultMessages();
-				if (resultMessages == null || resultMessages.length == 0){
+
+				String statusCode = "0";
+				try {
+					statusCode = response.getHeader().getStatusCode();
+				} catch (Exception e) {
+					Crashlytics.logException(e);
+				}
+
+				if (resultMessages == null || resultMessages.length == 0 && statusCode.equalsIgnoreCase("0")){
 					responseDelegate.onSuccess(response, cookies);
 				}
 
 				else{
-					String errorDescription = ErrorCodeList.Companion.checkResult(response.getHeader().getStatusCode());
-					if (TextUtils.isEmpty(errorDescription))
-						responseDelegate.onFailure(resultMessages[0].getResponseMessage());
-					else
-						responseDelegate.onFailure(errorDescription);
+					responseDelegate.onFailure(resultMessages[0].getResponseMessage());
 				}
 			}
 		}, new Response.ErrorListener() {

@@ -18,6 +18,7 @@ import za.co.absa.openbankingapi.woolworths.integration.AbsaGetArchivedStatement
 import za.co.absa.openbankingapi.woolworths.integration.AbsaGetIndividualStatementRequest
 import za.co.absa.openbankingapi.woolworths.integration.dto.*
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.ui.adapters.AbsaStatementsAdapter
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.WFormatter
@@ -67,10 +68,6 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
         mErrorHandlerView = ErrorHandlerView(this, relEmptyStateHandler, imgEmpyStateIcon, txtEmptyStateTitle, txtEmptyStateDesc, btnGoToProduct)
         btnGoToProduct?.setOnClickListener { onActionClick() }
         loadStatements()
-
-        imgEmpyStateIcon?.setImageResource(R.drawable.statement_icon)
-        txtEmptyStateTitle?.text = getString(R.string.no_statements_title)
-        txtEmptyStateDesc?.text = getString(R.string.absa_no_statement_desc)
     }
 
     private fun loadStatements() {
@@ -168,7 +165,7 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
     private fun showEmptyView() {
         rcvStatements.visibility = View.GONE
         hideProgress()
-        mErrorHandlerView?.setEmptyStateWithAction(3, R.string.call_now, ErrorHandlerView.ACTION_TYPE.CALL_NOW)
+        mErrorHandlerView?.setEmptyStateWithAction(9, R.string.call_now, ErrorHandlerView.ACTION_TYPE.CALL_NOW)
     }
 
     fun onActionClick() {
@@ -184,8 +181,10 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
     }
 
     override fun onViewStatement(item: ArchivedStatement) {
-        if (pbCircular.visibility != View.VISIBLE)
+        if (pbCircular.visibility != View.VISIBLE) {
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ABSA_CC_VIEW_INDIVIDUAL_STATEMENT)
             getIndividualStatement(item)
+        }
     }
 
     private fun getIndividualStatement(archivedStatement: ArchivedStatement) {
@@ -223,6 +222,7 @@ class AbsaStatementsActivity : AppCompatActivity(), AbsaStatementsAdapter.Action
             putExtra(WPdfViewerActivity.FILE_NAME, fileName)
             putExtra(WPdfViewerActivity.FILE_VALUE, data)
             putExtra(WPdfViewerActivity.PAGE_TITLE, WFormatter.formatStatementsDate(fileName))
+            putExtra(WPdfViewerActivity.GTM_TAG, FirebaseManagerAnalyticsProperties.ABSA_CC_SHARE_STATEMENT)
             startActivity(this)
         }
     }

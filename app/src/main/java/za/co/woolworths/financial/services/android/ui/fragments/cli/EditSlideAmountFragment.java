@@ -2,12 +2,14 @@ package za.co.woolworths.financial.services.android.ui.fragments.cli;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentManager;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,7 +40,8 @@ public class EditSlideAmountFragment extends CLIFragment {
 	private WLoanEditTextView etAmount;
 	private int currentCredit = 0;
 	private int creditRequestMax = 0;
-	String title;
+	private String TAG = EditSlideAmountFragment.class.getSimpleName();
+	private String title;
 
 	public EditSlideAmountFragment() {
 		// Required empty public constructor
@@ -137,6 +140,7 @@ public class EditSlideAmountFragment extends CLIFragment {
 		etAmount = (WLoanEditTextView) view.findViewById(R.id.etAmount);
 		etAmount.requestFocus();
 		etAmount.addTextChangedListener(onTextChangedListener());
+
 		forceKeyboard(etAmount);
 	}
 
@@ -162,7 +166,8 @@ public class EditSlideAmountFragment extends CLIFragment {
 					imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
 				}
 			}
-		} catch (Exception ignored) {
+		} catch (Exception e) {
+			Log.d(TAG,e.getMessage());
 		}
 	}
 
@@ -224,36 +229,27 @@ public class EditSlideAmountFragment extends CLIFragment {
 			@Override
 			public void afterTextChanged(Editable s) {
 				etAmount.removeTextChangedListener(this);
-
-				try {
-					String originalString = s.toString();
-
-					Long longval;
-					if (originalString.contains(" ")) {
-						originalString = originalString.replaceAll(" ", "");
-					}
-					longval = Long.parseLong(originalString);
-
-					DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.US);
-					formatter.applyPattern("#,###,###,###");
-					String formattedString = formatter.format(longval).replace(",", " ");
-
-					//setting text after format to EditText
-					etAmount.setText(formattedString);
-					etAmount.setSelection(etAmount.getText().length());
-				} catch (NumberFormatException nfe) {
-					nfe.printStackTrace();
-				}
-
+				String retrieveDrawnDownAmount = s.toString().replaceAll("\\s+","");
+				etAmount.setText(Utils.convertToCurrencyWithoutCent(Long.parseLong(TextUtils.isEmpty(retrieveDrawnDownAmount) ? "0" : retrieveDrawnDownAmount)));
+				etAmount.setTextColor((etAmount.getText().toString().equalsIgnoreCase("0")) ? Color.TRANSPARENT : Color.BLACK);
+				setFocusToEditText(etAmount.getText().length());
 				etAmount.addTextChangedListener(this);
 			}
 		};
 	}
 
+	private void setFocusToEditText(int atPosition) {
+		etAmount.setSelection(atPosition);
+		etAmount.requestFocus();
+		etAmount.setFocusable(true);
+		forceKeyboard(etAmount);
+	}
+
 	@Override
 	public void onDetach() {
 		super.onDetach();
-		getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+		if (getActivity() != null) {
+				getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+		}
 	}
-
 }

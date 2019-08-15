@@ -11,9 +11,12 @@ import kotlinx.android.synthetic.main.absa_five_digit_code_fragment.*
 import androidx.appcompat.app.AppCompatActivity
 import android.view.*
 import za.co.absa.openbankingapi.woolworths.integration.AbsaRegisterCredentialRequest
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IVibrateComplete
+import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
+import za.co.woolworths.financial.services.android.util.Utils
 
 class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener, IVibrateComplete {
 
@@ -56,9 +59,12 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
     }
 
     private fun initViewsAndEvents() {
+        activity?.apply { (this as ABSAOnlineBankingRegistrationActivity).setPageTitle(getString(R.string.absa_registration_title_step_3))  }
         tvEnterYourPin.setText(getString(R.string.absa_confirm_five_digit_code_title))
         mPinImageViewList = mutableListOf(ivPin1, ivPin2, ivPin3, ivPin4, ivPin5)
-        ivEnterFiveDigitCode.setOnClickListener(this)
+        ivEnterFiveDigitCode.visibility = View.GONE
+        completeSetup.visibility = View.VISIBLE
+        completeSetup.setOnClickListener(this)
         edtEnterATMPin.setOnKeyPreImeListener { activity?.onBackPressed() }
         edtEnterATMPin.setOnEditorActionListener { _, actionId, _ ->
             var handled = false
@@ -83,6 +89,7 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
     }
 
     private fun navigateToAbsaPinCodeSuccessFragment(aliasId: String?, fiveDigitPin: String) {
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ABSA_CC_COMPLETE_SETUP)
         hideKeyboard()
         replaceFragment(
                 fragment = AbsaPinCodeSuccessFragment.newInstance(aliasId, fiveDigitPin),
@@ -122,8 +129,7 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
         if (pinEnteredLength > -1) {
             listOfPin[pinEnteredLength].setImageResource(R.drawable.pin_fill)
             if (pinEnteredLength == MAXIMUM_PIN_ALLOWED) {
-                ivEnterFiveDigitCode.alpha = 1.0f
-                ivEnterFiveDigitCode.isEnabled = true
+                completeSetup.isEnabled = true
             }
         }
     }
@@ -132,8 +138,7 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
         if (pinEnteredLength > -1) {
             listOfPin[pinEnteredLength].setImageResource(R.drawable.pin_empty)
             if (pinEnteredLength <= MAXIMUM_PIN_ALLOWED) {
-                ivEnterFiveDigitCode.alpha = 0.5f
-                ivEnterFiveDigitCode.isEnabled = false
+                completeSetup.isEnabled = false
             }
         }
     }
@@ -146,7 +151,7 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
 
     override fun onClick(view: View?) {
         when (view?.id) {
-            R.id.ivEnterFiveDigitCode -> {
+            R.id.completeSetup -> {
                 navigateToAbsaPinCodeSuccessScreen()
             }
         }

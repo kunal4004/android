@@ -29,6 +29,7 @@ import java.util.Map;
 
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.SessionUtilities;
 
 public class WebViewActivity extends AppCompatActivity {
 

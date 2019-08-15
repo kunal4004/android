@@ -75,7 +75,6 @@
     <color name="bpi_background_divider">#BEBEB9</color>
     <color name="bpi_background">#D8D8D8</color>
     <color name="in_app_msg_color_desc">#7C7C7C</color>
-
     <color name="swatch_border_color">#E5E5E5</color>
     <color name="black40">#40000000</color>
     <color name="orders_bg">#F0F0F0</color>
@@ -88,4 +87,8 @@
     <color name="success_stroke_color"> #CC196A</color>
     <color name="trans_success_stroke_color">#307A4183</color>
     <color name="gray">#FF7F7F7F</color>
+    <color name="button_disabled">#B2B2B2</color>
+    <color name="chat_hint">#FFBCBCBC</color>
+    <color name="chat_sent_message_text_color">#353535</color>
+    <color name="chat_offline_banner_bg_color">#F7747474</color>
 </resources>

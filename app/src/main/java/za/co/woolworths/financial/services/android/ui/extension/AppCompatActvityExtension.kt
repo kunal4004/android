@@ -1,7 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.extension
 
 import android.content.Context.INPUT_METHOD_SERVICE
-
+import android.os.CountDownTimer
+import android.text.Editable
+import android.text.TextWatcher
 import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatActivity
 import android.view.inputmethod.InputMethodManager
@@ -127,3 +129,56 @@ fun EditText.hideKeyboard(activity: AppCompatActivity) {
 }
 
 inline fun <reified T> Gson.fromJson(json: String): T = this.fromJson<T>(json, object: TypeToken<T>() {}.type)
+
+fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
+    this.addTextChangedListener(object : TextWatcher {
+        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+        }
+
+        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+        }
+
+        override fun afterTextChanged(editable: Editable?) {
+            afterTextChanged.invoke(editable.toString())
+        }
+    })
+}
+
+fun EditText.onAction(action: Int, runAction: () -> Unit) {
+    this.setOnEditorActionListener { v, actionId, event ->
+        return@setOnEditorActionListener when (actionId) {
+            action -> {
+                runAction.invoke()
+                true
+            }
+            else -> false
+        }
+    }
+}
+
+fun EditText.afterTypingStateChanged(millisInFuture: Long, countDownInterval: Long = 10000, afterTypingStateChanged: (Boolean) -> Unit) {
+    this.addTextChangedListener(object : TextWatcher {
+        var timer: CountDownTimer? = null
+        var isTyping: Boolean = false
+
+        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+        override fun afterTextChanged(editable: Editable?) {
+            if (!isTyping) {
+                isTyping = true
+                afterTypingStateChanged.invoke(isTyping)
+            }
+
+            timer?.cancel()
+            timer = object : CountDownTimer(millisInFuture, countDownInterval) {
+                override fun onTick(millisUntilFinished: Long) {}
+                override fun onFinish() {
+                    isTyping = false
+                    afterTypingStateChanged.invoke(isTyping)
+                }
+            }.start()
+        }
+    })
+}

@@ -42,10 +42,12 @@ import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.awfs.coordination.BuildConfig;
 import com.awfs.coordination.R;
 import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -67,6 +69,8 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -95,10 +99,12 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLo
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.Transaction;
 import za.co.woolworths.financial.services.android.models.dto.TransactionParentObj;
+import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
+import za.co.woolworths.financial.services.android.ui.activities.WChatActivityExtension;
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
@@ -1443,4 +1449,62 @@ public class Utils {
         return sessionDao.value;
     }
 
+	public static String getAccountNumber(AccountsResponse accountResponse, String productGroupCode) {
+		String accountNumber = "";
+		List<Account> accountList = accountResponse.accountList;
+		if (accountList != null) {
+			for (Account account : accountList) {
+				if (account.productGroupCode.equalsIgnoreCase(productGroupCode)) {
+					accountNumber = account.accountNumber;
+					break;
+				}
+			}
+		}
+		return TextUtils.isEmpty(accountNumber) ? "" : accountNumber;
+	}
+
+	public static Boolean isOperatingHoursForInAppChat() {
+
+		TradingHours tradingHours = WChatActivityExtension.Companion.getInAppTradingHoursForToday();
+		Calendar now = Calendar.getInstance();
+		int hour = now.get(Calendar.HOUR_OF_DAY); // Get hour in 24 hour format
+		int minute = now.get(Calendar.MINUTE);
+
+		Date currentTime = WFormatter.parseDate(hour + ":" + minute);
+		Date openingTime = WFormatter.parseDate(tradingHours.getOpens());
+		Date closingTime = WFormatter.parseDate(tradingHours.getCloses());
+
+		return (currentTime.after(openingTime) && currentTime.before(closingTime));
+	}
+
+	public static String getCurrentDay() {
+		return new SimpleDateFormat("EEEE").format(new Date());
+	}
+
+	public static String convertToCurrencyWithoutCent(Long amount) {
+		DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.US);
+		formatter.applyPattern("#,###,###,###");
+		return formatter.format(amount).replace(",", " ");
+	}
+
+	public static void hideSoftKeyboard(Activity activity) {
+		final InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+		if (inputMethodManager.isActive()) {
+			if (activity.getCurrentFocus() != null) {
+				inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+			}
+		}
+	}
+
+	public static int getMinSupportedAppVersion(String minSupportedAppVersion) {
+		return TextUtils.isEmpty(minSupportedAppVersion) ? 0 : Integer.valueOf(minSupportedAppVersion.replace(".", ""));
+	}
+
+	public static Integer getAppMinorMajorBuildVersion() {
+		return Integer.valueOf((BuildConfig.VERSION_NAME + BuildConfig.VERSION_CODE).replace(".", ""));
+	}
+
+	public static Boolean isFeatureEnabled(String minSupportedAppVersion) {
+		return (getAppMinorMajorBuildVersion() >= getMinSupportedAppVersion(minSupportedAppVersion));
+	}
 }

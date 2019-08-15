@@ -54,7 +54,7 @@
         android:layout_marginLeft="@dimen/twenty_four_dp"
         android:layout_marginRight="@dimen/twenty_four_dp"
         android:layout_marginBottom="@dimen/twenty_four_dp"
-        android:text="@string/ok_got_it"
+        android:text="@string/login_with_passcode"
         android:visibility="invisible" />
 
 </RelativeLayout>

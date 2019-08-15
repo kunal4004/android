@@ -52,6 +52,7 @@
         <item>@drawable/ic_order_history_truck</item>
         <item>@drawable/ic_order_history_truck</item>
         <item>@drawable/emptyoopssomethingwentwrong</item>
+        <item>@drawable/statement_icon</item>
     </integer-array>
 
     <string-array name="on_boarding_walkthrough_descriptions">
