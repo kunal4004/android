@@ -181,6 +181,11 @@ public class MyAccountCardsActivity extends AppCompatActivity
                 }
             }
         });
+
+        // Disable refresh icon if user is not a C2User
+        if (!SessionUtilities.getInstance().isC2User()){
+            imRefreshAccount.setEnabled(false);
+        }
     }
 
     private void updateMyAccount(ImageView imRefreshAccount) {
