@@ -1,11 +1,13 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -22,6 +24,7 @@ import za.co.woolworths.financial.services.android.models.dto.TransactionHistory
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.ui.adapters.WTransactionsAdapter;
+import za.co.woolworths.financial.services.android.ui.views.FloatingActionButtonExpandable;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -29,7 +32,7 @@ import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class WTransactionsActivity extends AppCompatActivity {
+public class WTransactionsActivity extends AppCompatActivity implements View.OnClickListener, AbsListView.OnScrollListener {
 
 	public Toolbar toolbar;
 	public ExpandableListView transactionListview;
@@ -37,6 +40,10 @@ public class WTransactionsActivity extends AppCompatActivity {
 	private ErrorHandlerView mErrorHandlerView;
 	private ProgressBar pbTransaction;
 	private Call<TransactionHistoryResponse> mExecuteTransactionRequest;
+	private FloatingActionButtonExpandable chatIcon;
+	private String accountNumber;
+	private int lastPosition = -1;
+	private String cardType;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +65,10 @@ public class WTransactionsActivity extends AppCompatActivity {
 		getSupportActionBar().setElevation(0);
 		transactionListview = findViewById(R.id.transactionListView);
 		pbTransaction = findViewById(R.id.pbTransaction);
+		chatIcon = findViewById(R.id.chatIcon);
 		productOfferingId = getIntent().getStringExtra("productOfferingId");
+		accountNumber = getIntent().getStringExtra("accountNumber");
+		cardType = getIntent().getStringExtra("cardType");
 		loadTransactionHistory(productOfferingId);
 		findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -69,6 +79,7 @@ public class WTransactionsActivity extends AppCompatActivity {
 			}
 
 		});
+		initInAppChat();
 	}
 
 	@Override
@@ -93,13 +104,14 @@ public class WTransactionsActivity extends AppCompatActivity {
 					switch (transactionHistoryResponse.httpCode) {
 						case 200:
 							if (transactionHistoryResponse.transactions.size() > 0) {
-								transactionListview.setVisibility(View.VISIBLE);
 								mErrorHandlerView.hideEmpyState();
 								transactionListview.setAdapter(new WTransactionsAdapter(WTransactionsActivity.this, Utils.getdata(transactionHistoryResponse.transactions)));
+								transactionListview.setVisibility(View.VISIBLE);
 							} else {
 								transactionListview.setVisibility(View.GONE);
 								mErrorHandlerView.showEmptyState(3);
 							}
+							showChatBubble();
 							break;
 						case 440:
 							if (!(WTransactionsActivity.this.isFinishing())) {
@@ -167,5 +179,56 @@ public class WTransactionsActivity extends AppCompatActivity {
 		if (mExecuteTransactionRequest != null && !mExecuteTransactionRequest.isCanceled()) {
 			mExecuteTransactionRequest.cancel();
 		}
+	}
+
+	@Override
+	public void onClick(View view) {
+		switch (view.getId()) {
+			case R.id.chatIcon:
+				Intent intent = new Intent(this, WChatActivity.class);
+				intent.putExtra("productOfferingId", productOfferingId);
+				intent.putExtra("accountNumber", accountNumber);
+				startActivity(intent);
+				break;
+			default:
+				break;
+		}
+	}
+
+	@Override
+	public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+	}
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        if (lastPosition == firstVisibleItem) {
+            return;
+        }
+
+        if (firstVisibleItem > lastPosition) {
+            if (transactionListview.getVisibility() == View.VISIBLE)
+                chatIcon.collapse(true);
+        } else {
+            if (transactionListview.getVisibility() == View.VISIBLE)
+                chatIcon.expand(true);
+        }
+
+        lastPosition = firstVisibleItem;
+
+    }
+
+	private void initInAppChat() {
+		if (cardType.equalsIgnoreCase("CC") && WoolworthsApplication.getPresenceInAppChat().isEnabled()) {
+			chatIcon.expand(true);
+			chatIcon.setStatusIndicatorIcon(Utils.isOperatingHoursForInAppChat() ? R.drawable.indicator_online : R.drawable.indicator_offline);
+			transactionListview.setOnScrollListener(this);
+			chatIcon.setOnClickListener(this);
+		}
+	}
+
+	private void showChatBubble() {
+		if (cardType.equalsIgnoreCase("CC") && WoolworthsApplication.getPresenceInAppChat().isEnabled())
+			chatIcon.setVisibility(View.VISIBLE);
 	}
 }

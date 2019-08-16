@@ -1,9 +1,10 @@
 package za.co.woolworths.financial.services.android.ui.fragments.faq.web;
 
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProviders;
+
 import android.view.View;
 
 import com.awfs.coordination.BR;

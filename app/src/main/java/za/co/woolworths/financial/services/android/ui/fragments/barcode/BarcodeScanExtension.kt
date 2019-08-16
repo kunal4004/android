@@ -1,7 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.barcode
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import com.google.gson.Gson
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.RequestListener

@@ -1,7 +1,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:app="http://schemas.android.com/apk/res-auto"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/swipeToRefreshAccount"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:id="@+id/llRootLayout"
@@ -17,7 +18,7 @@
             android:layout_gravity="fill_vertical"
             android:clipToPadding="false">
 
-            <android.support.v4.widget.NestedScrollView
+            <androidx.core.widget.NestedScrollView
                 android:id="@+id/nest_scrollview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -30,7 +31,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <android.support.v7.widget.Toolbar
+                    <androidx.appcompat.widget.Toolbar
                         android:id="@+id/toolbar"
                         android:layout_width="match_parent"
                         android:layout_height="?attr/actionBarSize"
@@ -46,9 +47,17 @@
                             android:textAllCaps="true"
                             android:textColor="@color/white"
                             android:textSize="12sp"
-                            app:WTextView_font="medium_bold"/>
+                            app:WTextView_font="medium_bold" />
 
-                    </android.support.v7.widget.Toolbar>
+                        <ImageView
+                            android:id="@+id/imRefreshAccount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end|center"
+                            android:layout_marginEnd="@dimen/sixteen_dp"
+                            app:srcCompat="@drawable/refresh_account_white_drawable_icon" />
+
+                    </androidx.appcompat.widget.Toolbar>
 
                     <za.co.woolworths.financial.services.android.ui.views.WViewPager
                         android:id="@+id/myAccountsCardPager"
@@ -59,7 +68,7 @@
                         android:nestedScrollingEnabled="false"
                         android:paddingLeft="30dp"
                         android:paddingRight="30dp"
-                        app:layout_collapseMode="pin"/>
+                        app:layout_collapseMode="pin" />
 
                     <za.co.woolworths.financial.services.android.ui.views.WCustomPager
                         android:id="@+id/fragmentpager"
@@ -67,21 +76,21 @@
                         android:layout_height="match_parent"
                         android:background="@color/white"
                         android:focusable="false"
-                        app:layout_collapseMode="pin"/>
+                        app:layout_collapseMode="pin" />
 
                 </LinearLayout>
-            </android.support.v4.widget.NestedScrollView>
+            </androidx.core.widget.NestedScrollView>
 
             <za.co.woolworths.financial.services.android.ui.views.WButton
                 android:id="@+id/btnApplyNow"
                 style="@style/apply_now_btn"
-                android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
                 android:background="@color/purple"
                 android:focusable="false"
-                android:text="@string/apply_now"/>
+                android:text="@string/apply_now" />
         </RelativeLayout>
     </LinearLayout>
 
-    <include layout="@layout/no_connection_handler"/>
+    <include layout="@layout/no_connection_handler" />
 </FrameLayout>

@@ -1,7 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.absa
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
@@ -10,6 +10,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_five_digit_code_fragment.*
+import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 
 class AbsaFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener {
@@ -49,6 +50,7 @@ class AbsaFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickListener 
     }
 
     private fun initViewsAndEvents() {
+        activity?.apply { (this as ABSAOnlineBankingRegistrationActivity).setPageTitle(getString(R.string.absa_registration_title_step_2))  }
         mPinImageViewList = mutableListOf(ivPin1, ivPin2, ivPin3, ivPin4, ivPin5)
         ivEnterFiveDigitCode.setOnClickListener(this)
         edtEnterATMPin.setOnKeyPreImeListener { activity?.onBackPressed() }

@@ -1,6 +1,7 @@
 package za.co.absa.openbankingapi.woolworths.integration;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -58,9 +59,15 @@ public class AbsaValidateCardAndPinRequest {
 			@Override
 			public void onResponse(ValidateCardAndPinResponse response, List<HttpCookie> cookies) {
 				Header.ResultMessage[] resultMessages = response.getHeader().getResultMessages();
-				if (resultMessages == null || resultMessages.length == 0) {
+				String statusCode = "0";
+				try {
+					statusCode = response.getHeader().getStatusCode();
+				} catch (Exception e) {
+					Crashlytics.logException(e);
+				}
+				if (resultMessages == null || resultMessages.length == 0 && statusCode.equalsIgnoreCase("0")) {
 					responseDelegate.onSuccess(response, cookies);
-				}else {
+				} else {
 					responseDelegate.onFailure(resultMessages[0].getResponseMessage());
 				}
 			}

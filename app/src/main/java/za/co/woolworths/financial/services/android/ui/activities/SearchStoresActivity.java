@@ -5,12 +5,13 @@ import android.graphics.Typeface;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
+
+import androidx.appcompat.widget.SearchView;
+import androidx.core.view.MenuItemCompat;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -174,7 +175,7 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
 		// ImageView searchCloseIcon = (ImageView)searchView.findViewById(android.support.v7.appcompat.R.id.search_close_btn);
 		// searchCloseIcon.setImageResource(R.drawable.close_24);
 		final TextView searchText = (TextView)
-				searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+				searchView.findViewById(R.id.search_src_text);
 		Typeface font = Typeface.createFromAsset(getAssets(), "fonts/MyriadPro-Regular.otf");
 		searchText.setTypeface(font);
 		mCloseButton.setOnClickListener(new View.OnClickListener() {
@@ -251,7 +252,7 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
 				if (storeDetailsList != null && storeDetailsList.size() != 0) {
 					searchAdapter = new StoreSearchListAdapter(SearchStoresActivity.this, storeDetailsList);
 					recyclerView.setAdapter(searchAdapter);
-					final TextView searchText = searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+					final TextView searchText = searchView.findViewById(R.id.search_src_text);
 					searchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 						@Override
 						public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -264,7 +265,7 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
 						}
 					});
 				} else {
-					final TextView searchText = searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+					final TextView searchText = searchView.findViewById(R.id.search_src_text);
 					searchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 						@Override
 						public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {

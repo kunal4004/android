@@ -4,10 +4,10 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.support.v4.app.Fragment
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.absa_online_banking_to_device_activity.*
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
@@ -95,6 +95,10 @@ class ABSAOnlineBankingRegistrationActivity : AppCompatActivity(), IDialogListen
             return
         }
 
+        if ((getCurrentFragment() is AbsaEnterAtmPinCodeFragment)) {
+            Utils.hideSoftKeyboard(this)
+        }
+
         val fragmentManager = supportFragmentManager
         if (fragmentManager.backStackEntryCount > 0) {
             fragmentManager.popBackStack()
@@ -148,5 +152,13 @@ class ABSAOnlineBankingRegistrationActivity : AppCompatActivity(), IDialogListen
                 fragment = AbsaEnterAtmPinCodeFragment.newInstance(mCreditAccountInfo),
                 tag = AbsaEnterAtmPinCodeFragment::class.java.simpleName, allowStateLoss = false, allowBackStack = false,
                 containerViewId = R.id.flAbsaOnlineBankingToDevice)
+    }
+
+    fun setPageTitle(title: String) {
+        toolbarText.text = title
+    }
+
+    fun clearPageTitle(){
+        toolbarText.text = ""
     }
 }

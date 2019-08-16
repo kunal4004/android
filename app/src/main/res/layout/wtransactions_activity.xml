@@ -11,14 +11,14 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <android.support.design.widget.AppBarLayout
+        <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:elevation="0dp"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:elevation="0dp">
 
-            <android.support.v7.widget.Toolbar
+            <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -36,10 +36,10 @@
                     android:textColor="@color/black"
                     android:textSize="12sp"
                     app:WTextView_font="medium_bold"/>
-            </android.support.v7.widget.Toolbar>
+            </androidx.appcompat.widget.Toolbar>
 
 
-        </android.support.design.widget.AppBarLayout>
+        </com.google.android.material.appbar.AppBarLayout >
 
         <View
             android:id="@+id/view_toolbar"
@@ -51,7 +51,11 @@
             android:id="@+id/transactionListView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:groupIndicator="@null"/>
+            android:visibility="gone"
+            android:groupIndicator="@null"
+            android:paddingBottom="@dimen/eighty_dp"
+            android:clipToPadding="false"
+            />
 
         <include layout="@layout/empty_state_template"/>
 
@@ -67,4 +71,21 @@
         android:visibility="gone"/>
 
     <include layout="@layout/no_connection_handler"/>
+
+    <za.co.woolworths.financial.services.android.ui.views.FloatingActionButtonExpandable
+        android:id="@+id/chatIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/sixteen_dp"
+        android:visibility="invisible"
+        app:fab_content="@string/chat_button_text"
+        app:fab_duration="@integer/chat_button_animation_duration"
+        app:fab_icon="@drawable/ic_chat_icon"
+        app:fab_padding="@dimen/fourteen_dp"
+        app:fab_padding_text_icon="@dimen/twenty_four_dp"
+        app:fab_text_size="@dimen/fourteen_sp"
+        app:fab_status_indicator="true"
+        app:fab_status_indicator_icon="@drawable/chat_state_indicator_bg"
+        />
 </FrameLayout>

@@ -27,7 +27,7 @@
         android:background="@color/white"
         android:orientation="vertical">
 
-        <android.support.v4.widget.NestedScrollView
+        <androidx.core.widget.NestedScrollView
             android:id="@+id/nest_scrollview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -68,6 +68,6 @@
                     app:WTextView_font="myriadpro_regular"/>
 
             </LinearLayout>
-        </android.support.v4.widget.NestedScrollView>
+        </androidx.core.widget.NestedScrollView>
     </LinearLayout>
 </layout>

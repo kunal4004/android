@@ -11,8 +11,8 @@ import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -147,10 +147,10 @@ private static AsyncTask<Void, Void, Void> async;
                                     hideCLIView();
                                     cliOfferStatus(offerActive);
                                 } else if (busStation.makeApiCall()) {
-                                    hideCLIView();
-                                    personalWasAlreadyRunOnce = false;
-                                    retryConnect();
-                                } else {
+                                    if (!mPersonalLoanFragmentIsVisible) return;
+                                        hideCLIView();
+                                        personalWasAlreadyRunOnce = false;
+                                        retryConnect();
                                 }
                             }
                         }
@@ -311,6 +311,7 @@ private static AsyncTask<Void, Void, Void> async;
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSPERSONALLOANTRANSACTIONS);
                 Intent intent = new Intent(getActivity(), WTransactionsActivity.class);
                 intent.putExtra("productOfferingId", productOfferingId);
+                intent.putExtra("cardType","PL");
                 startActivity(intent);
                 activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
                 break;
@@ -578,6 +579,7 @@ private static AsyncTask<Void, Void, Void> async;
 
     private void retryConnect() {
         if (!personalWasAlreadyRunOnce) {
+            personalWasAlreadyRunOnce = true;
             if (NetworkManager.getInstance().isConnectedToNetwork(getActivity()))
                 getActiveOffer();
             else {
@@ -667,7 +669,7 @@ private static AsyncTask<Void, Void, Void> async;
             Resources resources = activity.getResources();
             if (resources == null) return;
 
-            Crashlytics.setString(resources.getString(R.string.crashlytics_materialshowcase_key), this.getClass().getCanonicalName());
+            /*Crashlytics.setString(resources.getString(R.string.crashlytics_materialshowcase_key), this.getClass().getCanonicalName());
             WMaterialShowcaseView walkThroughPromptView = new WMaterialShowcaseView.Builder(activity, WMaterialShowcaseView.Feature.STATEMENTS)
                     .setTarget(activity.getWindow().getDecorView().findViewById(R.id.imViewStatementLogo))
                     .setTitle(R.string.walkthrough_statement_title)
@@ -678,7 +680,7 @@ private static AsyncTask<Void, Void, Void> async;
                     .setShapePadding(48)
                     .setArrowPosition(WMaterialShowcaseView.Arrow.BOTTOM_LEFT)
                     .setMaskColour(ContextCompat.getColor(activity, R.color.semi_transparent_black)).build();
-            walkThroughPromptView.show(activity);
+            walkThroughPromptView.show(activity);*/
         }
     }
 

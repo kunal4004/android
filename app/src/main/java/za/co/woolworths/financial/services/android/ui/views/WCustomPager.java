@@ -1,8 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.views;
 
 import android.content.Context;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;

@@ -55,6 +55,12 @@ class FirebaseManagerAnalyticsProperties {
         const val SHOPMYORDERS: String = "GA_Event_ONE_SHOP_MYORDERS"
         const val BLOCK_CARD_CONFIRM: String = "GA_Event_ONE_MYACCOUNTSBLOCKCARDCONFIRM"
         const val BLOCK_CARD_CANCEL: String = "GA_Event_ONE_MYACCOUNTSBLOCKCARDCANCEL"
+        const val ABSA_CC_SET_UP_PASSOCDE: String = "GA_Event_ONE_ABSA_CC_SETUP_PASSOCDE"
+        const val ABSA_CC_COMPLETE_SETUP: String = "GA_Event_ONE_ABSA_CC_COMPLETE_SETUP"
+        const val ABSA_CC_LOGIN_WITH_NEW_PASSCODE: String = "GA_Event_ONE_CC_LOGIN_WITH_NEW_PASSCODE"
+        const val ABSA_CC_VIEW_STATEMENTS: String = "GA_Event_ONE_ABSA_CC_VIEW_STATEMENTS"
+        const val ABSA_CC_SHARE_STATEMENT: String = "GA_Event_ONE_ABSA_CC_SHARE_STATEMENT"
+        const val ABSA_CC_VIEW_INDIVIDUAL_STATEMENT: String = "GA_Event_ONE_ABSA_CC_VIEW_IND_STATEMENT"
 
     }
 

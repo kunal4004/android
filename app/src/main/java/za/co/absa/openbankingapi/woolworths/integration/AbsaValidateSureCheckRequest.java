@@ -1,8 +1,10 @@
 package za.co.absa.openbankingapi.woolworths.integration;
 
 
+
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.crashlytics.android.Crashlytics;
 
 import java.net.HttpCookie;
 import java.util.HashMap;
@@ -10,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import za.co.absa.openbankingapi.woolworths.integration.dto.Header;
+import za.co.absa.openbankingapi.woolworths.integration.dto.SecurityNotificationType;
 import za.co.absa.openbankingapi.woolworths.integration.dto.ValidateSureCheckRequest;
 import za.co.absa.openbankingapi.woolworths.integration.dto.ValidateSureCheckResponse;
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiRequest;
@@ -21,22 +24,30 @@ public class AbsaValidateSureCheckRequest {
     public AbsaValidateSureCheckRequest() {
     }
 
-    public void make(final AbsaBankingOpenApiResponse.ResponseDelegate<ValidateSureCheckResponse> responseDelegate) {
+    public void make(SecurityNotificationType securityNotificationType, final AbsaBankingOpenApiResponse.ResponseDelegate<ValidateSureCheckResponse> responseDelegate) {
         Map<String, String> headers = new HashMap<>();
         headers.put("Accept", "application/json");
         headers.put("action", "validateSurecheck");
 
-        final String body = new ValidateSureCheckRequest().getJson();
+        final String body = new ValidateSureCheckRequest(securityNotificationType).getJson();
         new AbsaBankingOpenApiRequest<>(ValidateSureCheckResponse.class, headers, body, true, new AbsaBankingOpenApiResponse.Listener<ValidateSureCheckResponse>() {
 
             @Override
             public void onResponse(ValidateSureCheckResponse response, List<HttpCookie> cookies) {
                 Header.ResultMessage[] resultMessages = response.getHeader().getResultMessages();
-                if (resultMessages == null || resultMessages.length == 0)
-                    responseDelegate.onSuccess(response, cookies);
+                String statusCode = "0";
+                try {
+                    statusCode = response.getHeader().getStatusCode();
+                } catch (Exception e) {
+                    Crashlytics.logException(e);
+                }
 
-                else
-                    responseDelegate.onFailure(resultMessages[0].getResponseMessage());
+                if (resultMessages == null || resultMessages.length == 0 && statusCode.equalsIgnoreCase("0"))
+                    responseDelegate.onSuccess(response, cookies);
+                else {
+                    String resultMessage = resultMessages[0].getResponseMessage();
+                    responseDelegate.onFailure(resultMessage);
+                }
             }
         }, new Response.ErrorListener() {
             @Override

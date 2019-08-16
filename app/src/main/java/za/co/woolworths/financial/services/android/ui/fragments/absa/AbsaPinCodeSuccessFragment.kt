@@ -3,8 +3,8 @@ package za.co.woolworths.financial.services.android.ui.fragments.absa
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.*
 import com.android.volley.VolleyError
@@ -15,13 +15,16 @@ import za.co.absa.openbankingapi.woolworths.integration.AbsaRegisterCredentialRe
 import za.co.absa.openbankingapi.woolworths.integration.AbsaSecureCredentials
 import za.co.absa.openbankingapi.woolworths.integration.dto.RegisterCredentialResponse
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
+import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity
 import za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity.Companion.ERROR_PAGE_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.util.SessionUtilities
+import za.co.woolworths.financial.services.android.util.Utils
 import java.net.HttpCookie
 
-class AbsaPinCodeSuccessFragment : Fragment() {
+class AbsaPinCodeSuccessFragment : AbsaFragmentExtension() {
 
     private var mAliasId: String? = null
     private var fiveDigitPin: String? = null
@@ -49,6 +52,7 @@ class AbsaPinCodeSuccessFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+        alwaysHideWindowSoftInputMode()
         (activity as AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
         arguments?.apply {
             getString(FIVE_DIGIT_PIN_CODE)?.apply { fiveDigitPin = this }
@@ -66,11 +70,13 @@ class AbsaPinCodeSuccessFragment : Fragment() {
     }
 
     private fun initView() {
+        activity?.apply { (this as ABSAOnlineBankingRegistrationActivity).clearPageTitle()  }
         gotItButton.setOnClickListener { navigateToAbsaLoginFragment() }
         registerCredentials(mAliasId,fiveDigitPin!!)
     }
 
     private fun registerCredentials(aliasId: String?, fiveDigitPin: String) {
+        showProgress()
         activity?.let {
             AbsaRegisterCredentialRequest().make(aliasId, fiveDigitPin,
                     object : AbsaBankingOpenApiResponse.ResponseDelegate<RegisterCredentialResponse> {
@@ -79,12 +85,12 @@ class AbsaPinCodeSuccessFragment : Fragment() {
                             Log.d("onSuccess", "onSuccess")
                             response.apply {
                                 if (header?.resultMessages?.size == 0 || aliasId != null) {
-                                    val absaSecureCredentials = AbsaSecureCredentials();
+                                    val absaSecureCredentials = AbsaSecureCredentials()
                                     absaSecureCredentials.aliasId = aliasId
                                     absaSecureCredentials.save()
                                     onRegistrationSuccess()
                                 } else {
-                                    showErrorScreen(ErrorHandlerActivity.WITH_NO_ACTION)
+                                    showErrorScreen(ErrorHandlerActivity.COMMON)
                                 }
                             }
 
@@ -92,11 +98,11 @@ class AbsaPinCodeSuccessFragment : Fragment() {
 
                         override fun onFailure(errorMessage: String) {
                             Log.d("onSuccess", "onFailure")
-                            showErrorScreen(ErrorHandlerActivity.WITH_NO_ACTION)
+                            showErrorScreen(ErrorHandlerActivity.COMMON)
                         }
 
                         override fun onFatalError(error: VolleyError?) {
-                            showErrorScreen(ErrorHandlerActivity.WITH_NO_ACTION)
+                            showErrorScreen(ErrorHandlerActivity.COMMON)
                         }
                     })
         }
@@ -113,6 +119,7 @@ class AbsaPinCodeSuccessFragment : Fragment() {
     }
 
     private fun navigateToAbsaLoginFragment() {
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ABSA_CC_LOGIN_WITH_NEW_PASSCODE)
         replaceFragment(
                 fragment = AbsaLoginFragment.newInstance(),
                 tag = AbsaLoginFragment::class.java.simpleName,
@@ -130,10 +137,11 @@ class AbsaPinCodeSuccessFragment : Fragment() {
         view?.postDelayed({ message?.let { tapAndDismissErrorDialog(it) } }, 200)
     }*/
 
-    private fun showErrorScreen(errorType: Int) {
+    private fun showErrorScreen(errorType: Int,errorMessage:String = "") {
         activity?.let {
-            val intent: Intent = Intent(it, ErrorHandlerActivity::class.java)
+            val intent = Intent(it, ErrorHandlerActivity::class.java)
             intent.putExtra("errorType", errorType)
+            intent.putExtra("errorMessage", errorMessage)
             it.startActivityForResult(intent, ERROR_PAGE_REQUEST_CODE)
         }
     }
@@ -141,6 +149,23 @@ class AbsaPinCodeSuccessFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         menu?.getItem(0)?.isVisible = false
         super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    private fun showProgress(){
+        tvTitle.text = resources.getString(R.string.processing_your_request)
+        tvDescription.text = resources.getString(R.string.absa_registration_in_progress_desc)
+        progressBar.visibility = View.VISIBLE
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE) {
+            when (resultCode) {
+                ErrorHandlerActivity.RESULT_RETRY -> {
+                    registerCredentials(mAliasId,fiveDigitPin!!)
+                }
+            }
+        }
     }
 
 }

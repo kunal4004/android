@@ -1,6 +1,5 @@
 package za.co.absa.openbankingapi.woolworths.integration;
 
-import android.content.Context;
 import android.util.Base64;
 
 import com.android.volley.Response;
@@ -76,8 +75,14 @@ public class AbsaLoginRequest {
 			public void onResponse(LoginResponse loginResponse, List<HttpCookie> cookies) {
 				final String nonce = loginResponse.getNonce();
 				final String resultMessage = loginResponse.getResultMessage();
+				String statusCode = "0";
+				try {
+					statusCode = loginResponse.getHeader().getStatusCode();
+				} catch (Exception e) {
+					Crashlytics.logException(e);
+				}
 
-				if (resultMessage == null && nonce != null && !nonce.isEmpty() && cookies != null) {
+				if (resultMessage == null && nonce != null && !nonce.isEmpty() && cookies != null && statusCode.equalsIgnoreCase("0")) {
 					for (HttpCookie cookie : cookies) {
 						if (cookie.getName().equalsIgnoreCase("jsessionid"))
 							jsessionCookie = new JSession(cookie.getName(), cookie);
@@ -89,8 +94,9 @@ public class AbsaLoginRequest {
 					responseDelegate.onSuccess(loginResponse, cookies);
 				}
 
-				else
+				else {
 					responseDelegate.onFailure(resultMessage);
+				}
 			}
 		}, new Response.ErrorListener() {
 			@Override

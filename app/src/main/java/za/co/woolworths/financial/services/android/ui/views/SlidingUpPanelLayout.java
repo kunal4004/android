@@ -10,8 +10,8 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v4.view.MotionEventCompat;
-import android.support.v4.view.ViewCompat;
+import androidx.core.view.MotionEventCompat;
+import androidx.core.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
@@ -237,14 +237,14 @@ public class SlidingUpPanelLayout extends ViewGroup {
 		 * @param panel       The child view that was moved
 		 * @param slideOffset The new offset of this sliding pane within its range, from 0-1
 		 */
-		public void onPanelSlide(View panel, float slideOffset);
+		void onPanelSlide(View panel, float slideOffset);
 
 		/**
 		 * Called when a sliding panel state changes
 		 *
 		 * @param panel The child view that was slid to an collapsed position
 		 */
-		public void onPanelStateChanged(View panel, PanelState previousState, PanelState newState);
+		void onPanelStateChanged(View panel, PanelState previousState, PanelState newState);
 	}
 
 	/**
@@ -553,7 +553,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
 					}
 				}
 			});
-			;
 		}
 	}
 
@@ -1175,7 +1174,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 	@Override
 	protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
 		boolean result;
-		final int save = canvas.save(Canvas.CLIP_SAVE_FLAG);
+		final int save = canvas.save();
 
 		if (mSlideableView != null && mSlideableView != child) { // if main view
 			// Clip against the slider; no sense drawing what will immediately be covered,

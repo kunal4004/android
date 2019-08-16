@@ -39,7 +39,7 @@ public class PersistenceLayer extends SQLiteOpenHelper {
 
     //======API_REQUEST Table Columns names=====
     private static final String REQUEST_ID="id";
-    private static final String REQUEST_ENDPOINT="endpoint";
+    public  final String REQUEST_ENDPOINT="endpoint";
     private static final String REQUEST_TYPE="requestType";
     private static final String REQUEST_HEADERS="headers";
     private static final String REQUEST_PARAMETERS="parameters";
@@ -49,7 +49,7 @@ public class PersistenceLayer extends SQLiteOpenHelper {
 
     //======API_RESPONSE Table Columns names=====
     private static final String RESPONSE_ID="id";
-    private static final String RESPONSE_REQUEST_ID="apiRequestId";
+    public final String RESPONSE_REQUEST_ID="apiRequestId";
     private static final String RESPONSE_HANDLER="responseHandler";
     private static final String RESPONSE_OBJECT="responseObject";
     private static final String RESPONSE_DATE_CREATED="dateCreated";
@@ -64,6 +64,7 @@ public class PersistenceLayer extends SQLiteOpenHelper {
     private static final String SESSION_DATE_UPDATED="dateUpdated";
 
     private static PersistenceLayer instance;
+    private String pathToSaveDBFile;
 
     public static PersistenceLayer getInstance(Context context){
         if (instance == null){
@@ -104,7 +105,7 @@ public class PersistenceLayer extends SQLiteOpenHelper {
     {
         SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READWRITE);
         db.execSQL(query);
-        db.close();;
+        db.close();
     }
 
     public Map<String, String> executeReturnableQuery(String query, String[] arguments) throws Exception {
@@ -143,7 +144,7 @@ public class PersistenceLayer extends SQLiteOpenHelper {
         }
         long rowid=-1;
         try {
-             rowid = db.insert(tableName ,null, row);
+            rowid = db.insert(tableName, null, row);
         }catch (SQLiteException e)
         {
             Log.e(TAG,e.getMessage());
@@ -153,7 +154,37 @@ public class PersistenceLayer extends SQLiteOpenHelper {
         return rowid;
     }
 
-    private String pathToSaveDBFile;
+
+    public long executeUpdateQuery(String tableName, Map<String, String> contentValue, String whereClause, String[] argument) {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READWRITE);
+
+        ContentValues row = new ContentValues();
+
+        for (Map.Entry<String, String> entry : contentValue.entrySet()) {
+            row.put(entry.getKey(), entry.getValue());
+        }
+        long rowid = -1;
+        try {
+            rowid = db.update(tableName, row, whereClause, argument);
+        } catch (SQLiteException e) {
+            Log.e(TAG, e.getMessage());
+        } finally {
+            db.close();
+        }
+        return rowid;
+    }
+
+    public boolean requestQueryExist(String tableName, String whereClause, String[] argument) {
+        Map<String, String> result = null;
+        String query = "SELECT EXISTS(SELECT * FROM " + tableName +" WHERE "+ whereClause + " )";
+        try {
+            result = PersistenceLayer.getInstance().executeReturnableQuery(query, argument);
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
+        return result != null && result.containsValue("1");
+    }
+
     private PersistenceLayer(Context context, String filePath) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.myContext = context;

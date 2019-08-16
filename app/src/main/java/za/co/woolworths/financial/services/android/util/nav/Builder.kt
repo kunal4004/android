@@ -1,8 +1,8 @@
 package za.co.woolworths.financial.services.android.util.nav
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import za.co.woolworths.financial.services.android.util.nav.tabhistory.FragNavTabHistoryController
 import za.co.woolworths.financial.services.android.util.nav.tabhistory.FragNavTabHistoryController.Companion.UNIQUE_TAB_HISTORY
 import za.co.woolworths.financial.services.android.util.nav.tabhistory.FragNavTabHistoryController.Companion.UNLIMITED_TAB_HISTORY

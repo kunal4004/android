@@ -2,8 +2,8 @@ package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
+import androidx.appcompat.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.animation.Animation;
@@ -293,6 +293,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 							default:
 								if (getGlobalState().getSaveButtonClick() == INDEX_SEARCH_FROM_LIST) {
 									Utils.sendBus(new ProductState(ProductState.INDEX_SEARCH_FROM_LIST));
+									setResult(SELECTED_SHOPPING_LIST_ITEM_RESULT_CODE,intent);
 									dismissLayout();
 									return;
 								}

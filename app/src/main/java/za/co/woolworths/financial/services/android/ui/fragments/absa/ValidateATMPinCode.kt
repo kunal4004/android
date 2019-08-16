@@ -1,15 +1,16 @@
 package za.co.woolworths.financial.services.android.ui.fragments.absa
 
 import com.android.volley.VolleyError
+import za.co.absa.openbankingapi.woolworths.integration.AbsaContentEncryptionRequest
 import za.co.absa.openbankingapi.woolworths.integration.AbsaCreateAliasRequest
 import za.co.absa.openbankingapi.woolworths.integration.AbsaValidateCardAndPinRequest
 import za.co.absa.openbankingapi.woolworths.integration.AbsaValidateSureCheckRequest
 import za.co.absa.openbankingapi.woolworths.integration.dto.CreateAliasResponse
+import za.co.absa.openbankingapi.woolworths.integration.dto.SecurityNotificationType
 import za.co.absa.openbankingapi.woolworths.integration.dto.ValidateCardAndPinResponse
 import za.co.absa.openbankingapi.woolworths.integration.dto.ValidateSureCheckResponse
 import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenApiResponse
 import za.co.woolworths.financial.services.android.contracts.IValidatePinCodeDialogInterface
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.util.Utils
 import java.net.HttpCookie
 import java.util.concurrent.Executors
@@ -35,6 +36,10 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
     }
 
     private fun validateCardAndPin(cardToken: String, pin: String) {
+
+        //Clear content encryption data if any, before making new registration process.
+        AbsaContentEncryptionRequest.clearContentEncryptionData()
+
         AbsaValidateCardAndPinRequest().make(cardToken,pin,
                 object : AbsaBankingOpenApiResponse.ResponseDelegate<ValidateCardAndPinResponse> {
                     override fun onSuccess(response: ValidateCardAndPinResponse?, cookies: MutableList<HttpCookie>?) {
@@ -42,7 +47,7 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
 
                             result?.toLowerCase().apply {
                                 if (this in acceptedResultMessages) { // in == contains
-                                    validateSureCheck()
+                                    validateSureCheck(if (response.securityNotificationType == null) SecurityNotificationType.SureCheck else response.securityNotificationType)
                                     return
                                 }
                             }
@@ -70,9 +75,9 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
                 ?: "Technical error occured", shouldDismissActivity)
     }
 
-    private fun validateSureCheck() {
+    private fun validateSureCheck(securityNotificationType: SecurityNotificationType) {
         mScheduleValidateSureCheck = Executors.newSingleThreadScheduledExecutor().scheduleWithFixedDelay({
-            AbsaValidateSureCheckRequest().make(
+            AbsaValidateSureCheckRequest().make(securityNotificationType,
                     object : AbsaBankingOpenApiResponse.ResponseDelegate<ValidateSureCheckResponse> {
                         override fun onSuccess(response: ValidateSureCheckResponse?, cookies: MutableList<HttpCookie>?) {
 

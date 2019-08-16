@@ -278,4 +278,19 @@
         <attr name="numberkeyboard_rightAuxBtnBackground" format="reference"/>
     </declare-styleable>
 
+    <declare-styleable name="FloatingActionButtonExpandable">
+        <attr name="fab_content" format="string"/>
+        <attr name="fab_icon" format="reference"/>
+        <attr name="fab_text_color" format="color"/>
+        <attr name="fab_bg_color" format="color"/>
+        <attr name="fab_padding_text_icon" format="dimension"/>
+        <attr name="fab_duration" format="integer"/>
+        <attr name="fab_text_size" format="dimension"/>
+        <attr name="fab_expanded" format="boolean"/>
+        <attr name="fab_padding" format="dimension"/>
+        <attr name="fab_typeface" format="string"/>
+        <attr name="fab_status_indicator" format="boolean"/>
+        <attr name="fab_status_indicator_icon" format="reference"/>
+    </declare-styleable>
+
 </resources>

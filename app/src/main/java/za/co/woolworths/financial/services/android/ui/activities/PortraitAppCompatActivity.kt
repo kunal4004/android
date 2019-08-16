@@ -2,7 +2,7 @@ package za.co.woolworths.financial.services.android.ui.activities
 
 import android.content.pm.ActivityInfo
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 
 open class PortraitAppCompatActivity : AppCompatActivity() {
 

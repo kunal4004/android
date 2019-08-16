@@ -2,26 +2,30 @@ package za.co.woolworths.financial.services.android.models;
 
 import android.app.Activity;
 import android.app.Application;
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.LifecycleObserver;
-import android.arch.lifecycle.OnLifecycleEvent;
-import android.arch.lifecycle.ProcessLifecycleOwner;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.support.multidex.MultiDex;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatDelegate;
+
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.OnLifecycleEvent;
+import androidx.lifecycle.ProcessLifecycleOwner;
+import androidx.multidex.MultiDex;
+
 import com.awfs.coordination.BuildConfig;
 import com.awfs.coordination.R;
 import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.core.CrashlyticsCore;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.drawee.backends.pipeline.Fresco;
@@ -41,6 +45,7 @@ import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.dto.AbsaBankingOpenApiServices;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.models.dto.chat.PresenceInAppChat;
 import za.co.woolworths.financial.services.android.models.service.RxBus;
 import za.co.woolworths.financial.services.android.ui.activities.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
@@ -83,6 +88,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
 	private RxBus bus;
 	private static boolean isApplicationInForeground = false;
 	private static AbsaBankingOpenApiServices absaBankingOpenApiServices;
+	private static PresenceInAppChat presenceInAppChat;
 
 	public static String getApiId() {
 		PackageInfo packageInfo = null;
@@ -219,7 +225,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
 		ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
 		StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
 		StrictMode.setVmPolicy(builder.build());
-		Fabric.with(WoolworthsApplication.this, new Crashlytics());
+		Fabric.with(this,new Crashlytics.Builder().core(new CrashlyticsCore()).build());
 		AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 
 		ImagePipelineConfig config = ImagePipelineConfig.newBuilder(context)
@@ -442,5 +448,13 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
 	public static String getAuthenticVersionReleaseNote() {
 		return authenticVersionReleaseNote;
+	}
+
+	public static PresenceInAppChat getPresenceInAppChat() {
+		return presenceInAppChat;
+	}
+
+	public static void setPresenceInAppChat(PresenceInAppChat presenceInAppChat) {
+		WoolworthsApplication.presenceInAppChat = presenceInAppChat;
 	}
 }

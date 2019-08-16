@@ -1,16 +1,17 @@
 package za.co.woolworths.financial.services.android.ui.activities
 
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.activity_oreder_tax_invoice.*
 import za.co.woolworths.financial.services.android.util.Utils
 import java.io.File
 import android.content.Intent
-import android.support.v4.content.FileProvider
-import android.support.v4.app.ShareCompat
+import androidx.core.content.FileProvider
+import androidx.core.app.ShareCompat
 import android.util.Log
 import com.crashlytics.android.Crashlytics
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import java.io.FileOutputStream
 import java.lang.Exception
 
@@ -22,11 +23,13 @@ class WPdfViewerActivity : AppCompatActivity() {
     var fileData: ByteArray? = null
     private val TAG = this.javaClass.simpleName
     var cacheFile: File? = null
+    var gtmTag: String? = null
 
     companion object {
         const val FILE_NAME = "FILE_NAME"
         const val FILE_VALUE = "FILE_VALUE"
         const val PAGE_TITLE = "PAGE_TITLE"
+        const val GTM_TAG = "GTM_TAG"
         const val REQUEST_CODE_SHARE = 111
     }
 
@@ -43,6 +46,7 @@ class WPdfViewerActivity : AppCompatActivity() {
             pageTitle = getString(PAGE_TITLE)
             fileName = getString(FILE_NAME)
             fileData = getByteArray(FILE_VALUE)
+            gtmTag = getString(GTM_TAG)
         }
     }
 
@@ -65,7 +69,7 @@ class WPdfViewerActivity : AppCompatActivity() {
     }
 
     private fun shareInvoice() {
-
+        gtmTag?.let { Utils.triggerFireBaseEvents(it) }
         try {
             cacheFile = File(cacheDir, "$fileName.pdf")
 

@@ -2,7 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.absa
 
 import android.graphics.Paint
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +12,9 @@ import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBanki
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.view.inputmethod.InputMethodManager
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.util.Utils
 
 
 class AbsaBoardingFragment : AbsaFragmentExtension(), View.OnClickListener {
@@ -40,6 +42,8 @@ class AbsaBoardingFragment : AbsaFragmentExtension(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        activity?.apply { (this as ABSAOnlineBankingRegistrationActivity).clearPageTitle()  }
+        scrollView.post { scrollView.scrollTo(0,scrollView.bottom) }
         setupLater.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         setupPasscode.setOnClickListener(this)
         setupLater.setOnClickListener(this)
@@ -48,6 +52,7 @@ class AbsaBoardingFragment : AbsaFragmentExtension(), View.OnClickListener {
     override fun onClick(p0: View?) {
         when (p0?.id) {
             R.id.setupPasscode -> {
+                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.ABSA_CC_SET_UP_PASSOCDE)
                 replaceFragment(
                         fragment = AbsaEnterAtmPinCodeFragment.newInstance(mCreditCardNumber),
                         tag = AbsaEnterAtmPinCodeFragment::class.java.simpleName,

@@ -11,11 +11,10 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -34,6 +33,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.awfs.coordination.R;
+import com.google.android.material.appbar.AppBarLayout;
 
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
@@ -287,6 +287,7 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 		request.setDescription("Downloading file...");
 		request.setTitle(URLUtil.guessFileName(url, contentDisposition, mimeType));
 		request.allowScanningByMediaScanner();
+		request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);// Visibility of the download Notification
 		request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 		request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, URLUtil.guessFileName(url, contentDisposition, mimeType));
 		DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);

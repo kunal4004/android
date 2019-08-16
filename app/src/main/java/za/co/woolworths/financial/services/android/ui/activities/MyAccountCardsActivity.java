@@ -3,14 +3,16 @@ package za.co.woolworths.financial.services.android.ui.activities;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.NestedScrollView;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.ActionBar;
+import androidx.fragment.app.Fragment;
+import androidx.core.content.ContextCompat;
+import androidx.viewpager.widget.ViewPager;
+import androidx.core.widget.NestedScrollView;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -20,6 +22,7 @@ import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.awfs.coordination.R;
@@ -29,6 +32,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
+import za.co.woolworths.financial.services.android.contracts.RequestListener;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
+import za.co.woolworths.financial.services.android.models.service.event.BusStation;
+import za.co.woolworths.financial.services.android.ui.fragments.account.UpdateMyAccount;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.util.FragmentLifecycle;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
@@ -47,6 +54,7 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WViewPager;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.PersonalLoanAmount;
+import za.co.woolworths.financial.services.android.util.SessionUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 import static za.co.woolworths.financial.services.android.ui.fragments.WStoreCardFragment.REQUEST_CODE_BLOCK_MY_STORE_CARD;
@@ -62,16 +70,17 @@ public class MyAccountCardsActivity extends AppCompatActivity
     ArrayList<Integer> cards;
     private Toolbar mToolbar;
     private Button mBtnApplyNow;
+    private final int defaultValue = 0;
 
     private boolean cardsHasAccount = false;
     private boolean containsStoreCard = false, containsCreditCard = false, containsPersonalLoan = false;
-    private int wMinDrawnDownAmount;
     private LinearLayout llRootLayout;
     private AccountsResponse accountsResponse;
     private NestedScrollView mScrollAccountCard;
     int currentPosition = 0;
     public static WMaterialShowcaseView walkThroughPromtView = null;
     public static final int ABSA_ONLINE_BANKING_REGISTRATION_REQUEST_CODE = 2111;
+    private UpdateMyAccount mUpdateMyAccount;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -81,9 +90,9 @@ public class MyAccountCardsActivity extends AppCompatActivity
         setActionBar();
         init();
         retryConnect();
-        currentPosition = getIntent().getIntExtra("position", 0);
-        fragmentPager = (WCustomPager) findViewById(R.id.fragmentpager);
-        llRootLayout = (LinearLayout) findViewById(R.id.llRootLayout);
+        currentPosition = getIntent().getIntExtra("position", defaultValue);
+        fragmentPager =  findViewById(R.id.fragmentpager);
+        llRootLayout =  findViewById(R.id.llRootLayout);
         fragmentPager.setViewPagerIsScrollable(false);
         pager.setOffscreenPageLimit(0);
         fragmentPager.setOffscreenPageLimit(0);
@@ -93,7 +102,10 @@ public class MyAccountCardsActivity extends AppCompatActivity
         changeButtonColor(currentPosition);
         getScreenResolution();
 
+        ImageView imRefreshAccount = findViewById(R.id.imRefreshAccount);
+        updateMyAccount(imRefreshAccount);
 
+        imRefreshAccount.setOnClickListener(this);
         cardsHasAccount = getIntent().hasExtra("accounts");
         if (cardsHasAccount) {
             accountsResponse = new Gson().fromJson(getIntent().getExtras().getString("accounts"), AccountsResponse.class);
@@ -106,13 +118,12 @@ public class MyAccountCardsActivity extends AppCompatActivity
 
                     return POSITION_NONE;
                 }
-
             };
             fragmentsAdapter.addFrag(new WStoreCardEmptyFragment());
             fragmentsAdapter.addFrag(new WCreditCardEmptyFragment());
             fragmentsAdapter.addFrag(new WPersonalLoanEmptyFragment());
             fragmentPager.setAdapter(fragmentsAdapter);
-            fragmentPager.setCurrentItem(getIntent().getIntExtra("position", 0));
+            fragmentPager.setCurrentItem(currentPosition);
 
             cards.add(R.drawable.w_store_card);
             cards.add(R.drawable.creditcardbenfits);
@@ -128,6 +139,10 @@ public class MyAccountCardsActivity extends AppCompatActivity
             // You can also record the flags in advance so that you can turn UI back completely if
             // you have set other flags before, such as translucent or full screen.
             //  decor.setSystemUiVisibility(0);
+
+            // enable deactivate pull to refreshing
+
+                imRefreshAccount.setVisibility(SessionUtilities.getInstance().isUserAuthenticated() ? View.VISIBLE : View.GONE);
         }
 
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -166,6 +181,15 @@ public class MyAccountCardsActivity extends AppCompatActivity
                 }
             }
         });
+
+        // Disable refresh icon if user is not a C2User
+        if (!SessionUtilities.getInstance().isC2User()){
+            imRefreshAccount.setEnabled(false);
+        }
+    }
+
+    private void updateMyAccount(ImageView imRefreshAccount) {
+        mUpdateMyAccount = new UpdateMyAccount(null,imRefreshAccount);
     }
 
     @Override
@@ -187,7 +211,7 @@ public class MyAccountCardsActivity extends AppCompatActivity
                         openAccount.putExtra("accounts", Utils.objectToJson(accountsResponse));
                     }
                     startActivity(openAccount);
-                    overridePendingTransition(0, 0);
+                    overridePendingTransition(defaultValue, defaultValue);
                     finish();
                 }
             }
@@ -205,7 +229,7 @@ public class MyAccountCardsActivity extends AppCompatActivity
     }
 
     public void setActionBar() {
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar =  findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -216,12 +240,12 @@ public class MyAccountCardsActivity extends AppCompatActivity
     }
 
     private void init() {
-        toolbarTextView = (WTextView) findViewById(R.id.toolbarText);
-        pager = (WViewPager) findViewById(R.id.myAccountsCardPager);
+        toolbarTextView =  findViewById(R.id.toolbarText);
+        pager =  findViewById(R.id.myAccountsCardPager);
 
 
-        mBtnApplyNow = (Button) findViewById(R.id.btnApplyNow);
-        mScrollAccountCard = (NestedScrollView) findViewById(R.id.nest_scrollview);
+        mBtnApplyNow =  findViewById(R.id.btnApplyNow);
+        mScrollAccountCard =  findViewById(R.id.nest_scrollview);
         mBtnApplyNow.setOnClickListener(this);
     }
 
@@ -253,6 +277,7 @@ public class MyAccountCardsActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mUpdateMyAccount.cancelRequest();
     }
 
     @Override
@@ -273,9 +298,9 @@ public class MyAccountCardsActivity extends AppCompatActivity
     }
 
     private void handleAccountsResponse(AccountsResponse accountsResponse) {
+        pager.setCurrentItem(currentPosition);
         switch (accountsResponse.httpCode) {
             case 200:
-
                 ((WoolworthsApplication) MyAccountCardsActivity.this.getApplication())
                         .getUserManager
                                 ().setAccounts
@@ -333,10 +358,11 @@ public class MyAccountCardsActivity extends AppCompatActivity
                     fragmentsAdapter.addFrag(new WPersonalLoanEmptyFragment());
                 }
                 fragmentPager.setAdapter(fragmentsAdapter);
-                fragmentPager.setCurrentItem(getIntent().getIntExtra("position", 0));
+                fragmentPager.setCurrentItem(currentPosition);
 
                 changeButtonColor(currentPosition);
 
+                fragmentsAdapter.notifyDataSetChanged();
                 break;
             case 400:
                 if ("0619".equals(accountsResponse.response.code) || "0618".equals(accountsResponse.response.code)) {
@@ -354,7 +380,13 @@ public class MyAccountCardsActivity extends AppCompatActivity
 
     @Override
     public void onClick(View v) {
+        if (mUpdateMyAccount.accountUpdateActive()) return;
         switch (v.getId()) {
+            case R.id.imRefreshAccount:
+                mUpdateMyAccount.setRefreshType(UpdateMyAccount.RefreshAccountType.CLICK_TO_REFRESH);
+                loadAccounts();
+                break;
+
             case R.id.btnApplyNow:
 
                 if (!cardsHasAccount) { //not logged in
@@ -408,7 +440,7 @@ public class MyAccountCardsActivity extends AppCompatActivity
 
     @Override
     public void minDrawnAmount(int amount) {
-        this.wMinDrawnDownAmount = amount;
+        int wMinDrawnDownAmount = amount;
 
     }
 
@@ -423,7 +455,7 @@ public class MyAccountCardsActivity extends AppCompatActivity
 
     public void setUpAdapter(ArrayList<Integer> cardsList) {
         pager.setAdapter(new MyAccountsCardsAdapter(MyAccountCardsActivity.this, cardsList));
-        pager.setCurrentItem(getIntent().getIntExtra("position", 0));
+        pager.setCurrentItem(currentPosition);
     }
 
     public void changeButtonColor(int position) {
@@ -533,10 +565,8 @@ public class MyAccountCardsActivity extends AppCompatActivity
     }
 
     private void fragmentInterfaceListener(int position) {
-
             FragmentLifecycle fragmentToShow = (FragmentLifecycle) fragmentsAdapter.getItem(position);
             fragmentToShow.onResumeFragment();
-
             FragmentLifecycle fragmentToHide = (FragmentLifecycle) fragmentsAdapter.getItem(position);
             fragmentToHide.onPauseFragment();
     }
@@ -558,4 +588,44 @@ public class MyAccountCardsActivity extends AppCompatActivity
             fragment.onActivityResult(requestCode,resultCode,data);
         }
     }
+
+    private void loadAccounts(){
+        mUpdateMyAccount.swipeToRefreshAccount(true);
+        mUpdateMyAccount.make(true, new RequestListener<AccountsResponse>() {
+            @Override
+            public void onSuccess(AccountsResponse accountsResponse) {
+                    switch ( accountsResponse.httpCode) {
+                        case 200:
+                            mUpdateMyAccount.swipeToRefreshAccount(false);
+                            handleAccountsResponse(accountsResponse);
+
+                         //TODO:: Find a proper way to refresh viewpager content, remove eventBus
+
+                            WoolworthsApplication.getInstance().bus().send(new BusStation(true));
+                            break;
+                        case 440:
+                            SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, accountsResponse.response.stsParams);
+                            break;
+                        default:
+                            if (accountsResponse.response != null) {
+                                Utils.alertErrorMessage(MyAccountCardsActivity.this, accountsResponse.response.desc);
+                            }
+
+                            break;
+                    }
+                mUpdateMyAccount.swipeToRefreshAccount(false);
+            }
+
+            @Override
+            public void onFailure(Throwable error) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mUpdateMyAccount.swipeToRefreshAccount(false);
+                    }
+                });
+            }
+        });
+    }
+
 }

@@ -2,17 +2,19 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.grid;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.arch.lifecycle.ViewModelProviders;
+
+import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -189,7 +191,7 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 		if (activity == null) return;
 		if (response.desc == null) return;
 		hideFooterView();
-		FragmentManager fm = ((AppCompatActivity) activity).getSupportFragmentManager();
+		FragmentTransaction fm = ((AppCompatActivity) activity).getSupportFragmentManager().beginTransaction();
 		// check if sortOptionDialog is being displayed
 		if (hasOpenedDialogs((AppCompatActivity) activity)) return;
 

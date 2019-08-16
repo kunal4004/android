@@ -4,6 +4,7 @@ import com.awfs.coordination.BuildConfig
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import za.co.wigroup.androidutils.Util
 import java.util.concurrent.TimeUnit
@@ -21,7 +22,7 @@ abstract class RetrofitConfig : NetworkConfig() {
 
         logging.level = if (Util.isDebug(appContext())) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
 
-        httpBuilder.apply {
+        httpBuilder.run {
             addInterceptor(WfsApiInterceptor())
             readTimeout(READ_CONNECT_TIMEOUT_UNIT, TimeUnit.SECONDS)
             connectTimeout(READ_CONNECT_TIMEOUT_UNIT, TimeUnit.SECONDS)
@@ -31,6 +32,7 @@ abstract class RetrofitConfig : NetworkConfig() {
         mApiInterface = Retrofit.Builder()
                 .baseUrl(BuildConfig.HOST + "/")
                 .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(httpBuilder.build())
                 .build()
                 .create(ApiInterface::class.java)

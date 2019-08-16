@@ -29,8 +29,7 @@
             android:id="@+id/etAmount"
             style="@style/edit_cursor_style"
             android:layout_width="wrap_content"
-            android:maxLength="11"
-            android:text="1000"/>
+            android:maxLength="11" />
     </LinearLayout>
 
 </LinearLayout>

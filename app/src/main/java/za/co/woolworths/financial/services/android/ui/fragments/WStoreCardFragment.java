@@ -7,7 +7,7 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -160,6 +160,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
                                     hideCLIView();
                                     cliOfferStatus(offerActive);
                                 } else if (busStation.makeApiCall()) {
+                                    if (!mStoreCardFragmentIsVisible) return;
                                     hideCLIView();
                                     storeWasAlreadyRunOnce = false;
                                     retryConnect();
@@ -319,6 +320,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYACCOUNTSSTORECARDTRANSACTIONS);
                 Intent intent = new Intent(getActivity(), WTransactionsActivity.class);
                 intent.putExtra("productOfferingId", productOfferingId);
+                intent.putExtra("cardType","SC");
                 startActivityForResult(intent, 0);
                 activity.overridePendingTransition(R.anim.slide_up_anim, R.anim
                         .stay);
@@ -600,6 +602,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 
     private void retryConnect() {
         if (!storeWasAlreadyRunOnce) {
+            storeWasAlreadyRunOnce = true;
             if (NetworkManager.getInstance().isConnectedToNetwork(getActivity()))
                 getActiveOffer();
             else {

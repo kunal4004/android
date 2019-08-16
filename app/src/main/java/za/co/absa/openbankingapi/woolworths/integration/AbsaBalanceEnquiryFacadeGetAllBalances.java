@@ -1,5 +1,6 @@
 package za.co.absa.openbankingapi.woolworths.integration;
 
+
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.crashlytics.android.Crashlytics;
@@ -39,11 +40,19 @@ public class AbsaBalanceEnquiryFacadeGetAllBalances {
         new AbsaBankingOpenApiRequest<>(WoolworthsApplication.getAbsaBankingOpenApiServices().getBaseURL() + "/wcob/BalanceEnquiryFacadeGetAllBalances.exp", AbsaBalanceEnquiryResponse.class, headers, body, true, new AbsaBankingOpenApiResponse.Listener<AbsaBalanceEnquiryResponse>() {
             @Override
             public void onResponse(AbsaBalanceEnquiryResponse response, List<HttpCookie> cookies) {
-                if (response.accountList != null && response.accountList.size() > 0)
-                    responseDelegate.onSuccess(response, cookies);
-                else
-                    responseDelegate.onFailure(response.header.getResultMessages()[0].getResponseMessage());
 
+                String statusCode = "0";
+                try {
+                    statusCode = response.header.getStatusCode();
+                } catch (Exception e) {
+                    Crashlytics.logException(e);
+                }
+
+                if (response.accountList != null && response.accountList.size() > 0 && statusCode.equalsIgnoreCase("0"))
+                    responseDelegate.onSuccess(response, cookies);
+                else {
+                    responseDelegate.onFailure(response.header.getResultMessages()[0].getResponseMessage());
+                }
             }
         }, new Response.ErrorListener() {
             @Override

@@ -371,6 +371,7 @@
         <item>@string/empty_order_view_title</item>
         <item>@string/sign_out_order_view_title</item>
         <item>@string/no_internet_title</item>
+        <item>@string/no_statements_title</item>
     </string-array>
 
     <string-array name="empty_state_desc">
@@ -383,6 +384,7 @@
         <item>@string/empty_order_view_desc</item>
         <item>@string/sign_out_order_view_desc</item>
         <item>@string/no_connection_desc_1</item>
+        <item>@string/absa_no_statement_desc</item>
     </string-array>
 
     <string name="on_boarding_title_1">WELCOME</string>
@@ -853,19 +855,19 @@
     <string name="tips_tricks_desc_navigation_sign_in">Tap the cart icon in the bottom menu to see the items you’ve added.</string>
     <string name="refinement_see_result_button_text">All\u0020</string>
     <string name="absa_link_banking_to_device_title">Link Online Banking to this Device</string>
-    <string name="absa_biometric_please_enter_your_pin">Enter Your Credit Card ATM PIN</string>
+    <string name="absa_biometric_please_enter_your_pin">Enter Woolies Credit Card PIN</string>
     <string name="absa_biometric_please_card_number">Card number %1$s</string>
     <string name="absa_biometric_forgot_atm_pin_code">Forgot ATM PIN</string>
     <string name="absa_forgot_atm_pin_code_title">Forgot ATM PIN</string>
     <string name="absa_forgot_atm_pin_code_desc"> Please call on 0861 50 20 20 or  email queries@wfs.co.za for assistance</string>
-    <string name="absa_enter_five_digit_code_title">Please Enter a 5 Digit Code. </string>
-    <string name="absa_enter_five_digit_code_desc">This will be used for your online banking login credentials </string>
-    <string name="absa_confirm_five_digit_code_title">Confirm 5 Digit Code.</string>
+    <string name="absa_enter_five_digit_code_title">Setup Your 5 Digit Passcode</string>
+    <string name="absa_enter_five_digit_code_desc">We need to set up your woolies app with a secure 5 digit passcode for future access to additional features</string>
+    <string name="absa_confirm_five_digit_code_title">Confirm Your 5 Digit Passcode</string>
     <string name="absa_biometric_title">Would you like to enable Biometrics for Online banking.</string>
     <string name="absa_biometric_desc">You can now easily access secure features in the app by using the biometrics reader on your device.</string>
     <string name="absa_biometric_skip_step">Skip this Step</string>
     <string name="absa_enable_biometric">Enable Biometrics</string>
-    <string name="absa_success_title">Thanks, %1$s</string>
+    <string name="absa_success_title">Thanks %1$s</string>
     <string name="absa_success_desc">Your Online Banking has been successfully linked</string>
     <string name="online_banking">Online Banking</string>
     <string name="absa_passcode">Enter Passcode</string>
@@ -955,15 +957,15 @@
     <string name="call_now">Call Now</string>
     <string name="ok_got_it">ok, got it</string>
     <string name="absa_registration_in_progress_desc">This may take a few seconds</string>
-    <string name="absa_registration_success_desc">Almost there. Complete the final step to \n set up your passcode.</string>
-    <string name="setup_passcode">SETUP PASSCODE</string>
-    <string name="absa_on_boarding_desc">For your security and to access secure features in our app, you will need to set up a Passcode</string>
-    <string name="absa_on_boarding_title">We\'ve added some secure features.</string>
+    <string name="absa_registration_success_desc">Passcode Setup complete. Login using your new passcode to access this feature.</string>
+    <string name="setup_passcode">set up passcode</string>
+    <string name="absa_on_boarding_desc">For your security and to access some features in our app, you will need to set up a Passcode. You will only need to do this set up process once per device.</string>
+    <string name="absa_on_boarding_title">We have added some additional features that require setup.</string>
     <string name="setup_later">SETUP LATER</string>
     <string name="unsuccessful_request">Unsuccessful Request</string>
     <string name="unsuccessful_request_desc">Your request was unsuccessful. Please click retry to try again.</string>
     <string name="incorrect_pin_alert">Incorrect PIN. Please note on your third failed attempt your profile will be blocked.</string>
-    <string name="error_atm_pin_locked_title">Credit Card ATM PIn Locked</string>
+    <string name="error_atm_pin_locked_title">Credit Card ATM PIN Locked</string>
     <string name="passcode_not_match_alert">Your Passcode does not match. Please try again.</string>
     <string name="error_action_later">later</string>
     <string name="reset_passcode">RESET PASSCODE</string>
@@ -981,7 +983,7 @@
     <string name="error_passcode_locked_title">Passcode Locked</string>
     <string name="error_passcode_locked_desc">You have entered your Passcode incorrectly 3 times. To log in, please reset your Passcode using your Credit Card ATM PIN.</string>
     <string name="forgot_passcode">Forgot Passcode</string>
-    <string name="forgot_passcode_dialog_desc">Please select RESET PASSCODE and follow the steps to reset your Passcode</string>
+    <string name="forgot_passcode_dialog_desc">You can reset your passcode for this device using your Woolies Credit Card Pin.</string>
     <string name="police_report">Police Report</string>
     <string name="certified_id_deceased">Certified ID Deceased</string>
     <string name="claimant_bank_statement">Claimant\'s Bank Statement</string>
@@ -990,6 +992,26 @@
     <string name="credit_limit_decrease_desc_part_1">You will only be able to apply for a limit increase 6 month after this application has been concluded. You will need to go through a credit and affordability assessment at the time.</string>
     <string name="credit_limit_decrease_desc_part_2">Do you still want to reduce your limit to %1$s, or would you like to proceed with the maximum credit limit you have qualified for?</string>
     <string name="credit_limit_decrease_max_button">proceed with the maximum</string>
+    <string name="chat_button_text">Chat With Us</string>
+    <string name="start_typing">Start typing...</string>
+    <string name="chat_end_session">END</string>
+    <string name="chat_end_session_dialog_title">End Session</string>
+    <string name="chat_end_session_dialog_desc">Are you sure you want to end the conversation?</string>
+    <string name="chat_end_session_dialog_cancel_text">No, continue session</string>
+    <string name="chat_end_session_dialog_action_text">yes, end session</string>
     <string name="rooted_phone_desc">Your phone is rooted. Unauthorised access.</string>
     <string name="rooted_phone_title">Access Restricted</string>
+    <string name="no_statements_title">No Statements Available</string>
+    <string name="absa_no_statement_desc">You have no statements available. If this is \n incorrect please call us.</string>
+    <string name="distance_per_km"> %1$s km</string>
+    <string name="secured_by_absa_surecheck">Secured by ABSA SureCheck</string>
+    <string name="absa_biometric_please_enter_your_pin_desc">This is the pin number used at the ATM or when paying at any retailer. If you have more than one woolies card, please use the pin for latest Card you received from Woolworths.</string>
+    <string name="absa_registration_title_step_2">step 2 of 3</string>
+    <string name="absa_registration_title_step_1">step 1 of 3</string>
+    <string name="absa_registration_title_step_3">step 3 of 3</string>
+    <string name="complete_setup">complete setup</string>
+    <string name="login_with_passcode">LOGIN WITH NEW PASSCODE</string>
+    <string name="chat_state_offline">Offline</string>
+    <string name="chat_state_online">Active now</string>
+    <string name="chat_activity_title">chat</string>
 </resources>

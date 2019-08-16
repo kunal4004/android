@@ -7,7 +7,7 @@
               android:background="@color/recent_search_bg"
               android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -32,7 +32,7 @@
             android:textCursorDrawable="@drawable/cursor_custom_color"
             android:textSize="16sp"
             app:WEditTextView_font="myriadpro_regular"/>
-    </android.support.v7.widget.Toolbar>
+    </androidx.appcompat.widget.Toolbar>
 
     <LinearLayout
         android:id="@+id/linProductSearch"

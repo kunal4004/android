@@ -3,7 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.absa
 import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
@@ -60,6 +60,7 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
     }
 
     private fun initViewsAndEvents() {
+        activity?.apply { (this as ABSAOnlineBankingRegistrationActivity).clearPageTitle()  }
         tvForgotPasscode.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         tvForgotPasscode.setOnClickListener {
 
@@ -156,7 +157,7 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
                 showErrorScreen(ErrorHandlerActivity.PASSCODE_LOCKED)
             }
             else -> {
-                showErrorScreen(ErrorHandlerActivity.COMMON)
+                showErrorScreen(ErrorHandlerActivity.COMMON, message)
             }
         }
     }
@@ -239,6 +240,15 @@ class AbsaLoginFragment : AbsaFragmentExtension(), NumberKeyboardListener, IDial
         activity?.let {
             val intent: Intent = Intent(it, ErrorHandlerActivity::class.java)
             intent.putExtra("errorType", errorType)
+            it.startActivityForResult(intent, ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE)
+        }
+    }
+
+    private fun showErrorScreen(errorType: Int, errorMessage: String?) {
+        activity?.let {
+            val intent: Intent = Intent(it, ErrorHandlerActivity::class.java)
+            intent.putExtra("errorType", errorType)
+            intent.putExtra("errorMessage",errorMessage)
             it.startActivityForResult(intent, ErrorHandlerActivity.ERROR_PAGE_REQUEST_CODE)
         }
     }
