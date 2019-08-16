@@ -1508,7 +1508,7 @@ public class Utils {
 		return (getAppMinorMajorBuildVersion() >= getMinSupportedAppVersion(minSupportedAppVersion));
 	}
 
-	public static boolean suCheckExist() {
+	public static boolean checkForBinarySu() {
 		boolean found = false;
 		String[] places = {
 				"/sbin/",
