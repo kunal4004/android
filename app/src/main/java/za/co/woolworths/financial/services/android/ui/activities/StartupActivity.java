@@ -31,6 +31,8 @@ import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+import io.fabric.sdk.android.services.common.CommonUtils;
 import retrofit2.Call;
 import za.co.absa.openbankingapi.DecryptionFailureException;
 import za.co.absa.openbankingapi.SymmetricCipher;
@@ -50,6 +52,7 @@ import za.co.woolworths.financial.services.android.ui.activities.deep_link.Retri
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WVideoView;
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
@@ -255,14 +258,13 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 	@Override
 	protected void onStart() {
 		super.onStart();
-
-//		if (CommonUtils.isRooted(this) && getSupportFragmentManager() != null) {
-//			if (pBar != null)
-//				pBar.setVisibility(View.GONE);
-//			RootedDeviceInfoFragment rootedDeviceInfoFragment = RootedDeviceInfoFragment.Companion.newInstance(getString(R.string.rooted_phone_desc));
-//			rootedDeviceInfoFragment.show(getSupportFragmentManager(), RootedDeviceInfoFragment.class.getSimpleName());
-//			return;
-//		}
+		if (Utils.suCheckExist() && CommonUtils.isRooted(this) && getSupportFragmentManager() != null) {
+			if (pBar != null)
+				pBar.setVisibility(View.GONE);
+			RootedDeviceInfoFragment rootedDeviceInfoFragment = RootedDeviceInfoFragment.Companion.newInstance(getString(R.string.rooted_phone_desc));
+			rootedDeviceInfoFragment.show(getSupportFragmentManager(), RootedDeviceInfoFragment.class.getSimpleName());
+			return;
+		}
 
 		FirebaseDynamicLinks.getInstance()
 				.getDynamicLink(getIntent())
