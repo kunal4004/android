@@ -23,6 +23,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
 import com.google.android.gms.maps.CameraUpdate;
@@ -107,7 +108,7 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 	WTextView storeName;
 	WTextView storeOfferings;
 	WTextView storeAddress;
-	WTextView storeDistance;
+	TextView storeDistance;
 	WTextView storeNumber;
 
 	RelativeLayout layoutLocationServiceOn;
@@ -161,7 +162,7 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 		close = (ImageView) v.findViewById(R.id.close);
 		storeName = (WTextView) v.findViewById(R.id.storeName);
 		storeOfferings = (WTextView) v.findViewById(R.id.offerings);
-		storeDistance = (WTextView) v.findViewById(R.id.distance);
+		storeDistance = v.findViewById(R.id.distance);
 		storeAddress = (WTextView) v.findViewById(R.id.storeAddress);
 		storeNumber = (WTextView) v.findViewById(R.id.storeNumber);
 		timeingsLayout = (LinearLayout) v.findViewById(R.id.timeingsLayout);
