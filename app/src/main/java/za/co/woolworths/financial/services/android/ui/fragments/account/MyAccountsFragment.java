@@ -126,6 +126,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	boolean isAccountsCallMade;
     private RelativeLayout mUpdatePasswordBtn;
 	private UpdateMyAccount mUpdateMyAccount;
+	private ImageView imRefreshAccount;
 
 	public MyAccountsFragment() {
 		// Required empty public constructor
@@ -232,11 +233,10 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			viewPager.addOnPageChangeListener(this);
 			setUiPageViewController();
 
-			ImageView imRefreshAccount = view.findViewById(R.id.imRefreshAccount);
+			imRefreshAccount = view.findViewById(R.id.imRefreshAccount);
 			imRefreshAccount.setOnClickListener(this);
 
 			mUpdateMyAccount = new UpdateMyAccount(mSwipeToRefreshAccount,imRefreshAccount);
-
 
 			view.findViewById(R.id.loginAccount).setOnClickListener(this.btnSignin_onClick);
 			view.findViewById(R.id.registerAccount).setOnClickListener(this.btnRegister_onClick);
@@ -277,8 +277,9 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			mUpdateMyAccount.enableSwipeToRefreshAccount(true);
 			if (SessionUtilities.getInstance().isC2User())
 				this.loadAccounts(false);
-			else
+			else {
 				this.configureSignInNoC2ID();
+			}
 		} else {
 			if (getActivity() == null) return;
 			mUpdateMyAccount.enableSwipeToRefreshAccount(false);
@@ -368,6 +369,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 
 		if (!sc && !cc && !pl) {
 			hideView(linkedAccountsLayout);
+			disableRefresh();
 		}
 
 		if (unavailableAccounts.size() == 0) {
@@ -381,6 +383,12 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		viewPager.setAdapter(adapter);
 		viewPager.setCurrentItem(0);
 		showFeatureWalkthroughPrompts();
+	}
+
+	private void disableRefresh() {
+		if (mUpdateMyAccount != null)
+			mUpdateMyAccount.enableSwipeToRefreshAccount(false);
+		imRefreshAccount.setEnabled(false);
 	}
 
 	private void configureSignInNoC2ID() {
@@ -441,6 +449,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			hideView(applyNowAccountsLayout);
 		} else {
 			showView(applyNowAccountsLayout);
+			disableRefresh();
 		}
 
 		showView(allUserOptionsLayout);
@@ -667,13 +676,14 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
                             configureView();
                             break;
                         case 440:
-                            SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, accountsResponse.response.stsParams);
+							mUpdateMyAccount.swipeToRefreshAccount(false);
+							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, accountsResponse.response.stsParams);
                             onSessionExpired(getActivity());
-                            initialize();
+							initialize();
                             break;
                         default:
                             if (accountsResponse.response != null) {
-                                Utils.alertErrorMessage(getActivity(), accountsResponse.response.desc);
+								Utils.alertErrorMessage(getActivity(), accountsResponse.response.desc);
                             }
 
                             break;
@@ -868,7 +878,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	private void onSessionExpired(Activity activity) {
 		Utils.setBadgeCounter(0);
 		removeAllBottomNavigationIconBadgeCount();
-		SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
+//		SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
 		SessionExpiredUtilities.getInstance().showSessionExpireDialog((AppCompatActivity) activity);
 		initialize();
 	}

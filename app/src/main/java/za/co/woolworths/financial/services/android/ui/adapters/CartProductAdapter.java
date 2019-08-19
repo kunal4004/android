@@ -133,7 +133,6 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                 productHolder.quantity.setVisibility(quantityIsLoading ? View.GONE : View.VISIBLE);
                 productHolder.imPrice.setVisibility(quantityIsLoading ? View.GONE : View.VISIBLE);
 
-                productHolder.swipeLayout.setRightSwipeEnabled(false);
                 //Set Promotion Text START
                 if (commerceItem.getPriceInfo().getDiscountedAmount() > 0) {
                     productHolder.promotionalText.setText(" " + WFormatter.formatAmount(commerceItem.getPriceInfo().getDiscountedAmount()));

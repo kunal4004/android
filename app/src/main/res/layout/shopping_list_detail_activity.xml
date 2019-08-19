@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white">
@@ -41,9 +42,25 @@
                 android:id="@+id/btnBack"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
                 android:src="@drawable/back24" />
+
+            <TextView
+                android:id="@+id/tvEditShoppingListItem"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textColor="@color/black"
+                android:textSize="@dimen/twelve_sp"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="@dimen/four_dp"
+                android:fontFamily="@font/futura_medium_ttf"
+                android:letterSpacing="0.2"
+                android:paddingStart="@dimen/four_dp"
+                android:paddingEnd="@dimen/four_dp"
+                android:text="@string/edit"
+                android:textAllCaps="true"
+                tools:ignore="UnusedAttribute" />
 
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout >

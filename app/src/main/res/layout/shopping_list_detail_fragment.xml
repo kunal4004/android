@@ -16,7 +16,6 @@
             android:id="@+id/rcvShoppingListItems"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/rlCheckOut"
             android:animateLayoutChanges="false"
             android:overScrollMode="never" />
 
@@ -24,8 +23,6 @@
             android:id="@+id/rlEmptyListView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/rlCheckOut"
-            android:layout_below="@+id/headerLayout"
             android:orientation="vertical">
 
             <LinearLayout

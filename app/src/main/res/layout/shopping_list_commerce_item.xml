@@ -1,22 +1,38 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              xmlns:fresco="http://schemas.android.com/apk/res-auto"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:background="@drawable/bottom_divider_list">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    xmlns:swipe="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bottom_divider_list"
+    android:paddingStart="@dimen/twenty_one_dp"
+    android:paddingEnd="0dp">
 
     <com.daimajia.swipe.SwipeLayout
         android:id="@+id/swipe"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        swipe:drag_edge="left|right"
+        swipe:leftEdgeSwipeOffset="0dp"
+        swipe:rightEdgeSwipeOffset="0dp">
 
         <RelativeLayout
+            android:id="@+id/swipeTop"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/delete_red_bg"
+            android:gravity="center"
+            android:visibility="gone"
+            android:tag="bottom4" />
+
+        <RelativeLayout
+            android:id="@+id/swipeRight"
             android:layout_width="200dp"
             android:layout_height="match_parent"
             android:background="@color/delete_red_bg"
             android:gravity="center"
-            android:tag="Bottom2">
+            android:tag="Bottom3">
 
             <ProgressBar
                 android:id="@+id/pbDeleteIndicator"
@@ -24,21 +40,23 @@
                 android:layout_height="32dp"
                 android:layout_centerInParent="true"
                 android:indeterminateTint="@color/white"
-                android:visibility="invisible"/>
+                android:visibility="invisible" />
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/tvDelete"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
+                android:drawableEnd="@drawable/close_white"
                 android:drawablePadding="@dimen/four_dp"
-                android:drawableRight="@drawable/close_white"
                 android:gravity="center_horizontal|center_vertical"
+                android:paddingStart="0dp"
+                android:paddingEnd="@dimen/sixteen_dp"
                 android:text="@string/delete"
                 android:textAllCaps="true"
                 android:textColor="@color/white"
                 android:textSize="@dimen/twenty_sp"
-                app:WTextView_font="medium"/>
+                app:WTextView_font="medium" />
         </RelativeLayout>
 
         <LinearLayout
@@ -46,9 +64,30 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/recent_search_bg"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingEnd="0dp"
+            swipe:tag="hover">
+
+            <RelativeLayout
+                android:id="@+id/swipeLeft"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@color/white"
+                android:orientation="horizontal"
+                android:tag="Bottom1">
+
+                <ImageView
+                    android:id="@+id/deleteButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="@dimen/sixteen_dp"
+                    android:src="@drawable/delete" />
+            </RelativeLayout>
 
             <LinearLayout
+                android:id="@+id/llHoverContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -59,10 +98,9 @@
                     android:layout_height="wrap_content"
                     android:background="@color/white"
                     android:orientation="horizontal"
-                    android:paddingBottom="32dp"
+                    android:paddingTop="32dp"
                     android:paddingEnd="24dp"
-                    android:paddingStart="21dp"
-                    android:paddingTop="32dp">
+                    android:paddingBottom="32dp">
 
                     <RelativeLayout
                         android:id="@+id/llSelectedCheckBox"
@@ -75,7 +113,7 @@
                             android:layout_height="@dimen/twenty_four_dp"
                             android:layout_centerVertical="true"
                             android:indeterminateTint="@color/black"
-                            android:visibility="gone"/>
+                            android:visibility="gone" />
 
                         <CheckBox
                             android:id="@+id/btnDeleteRow"
@@ -87,7 +125,7 @@
                             android:checked="false"
                             android:paddingRight="21dp"
                             android:saveEnabled="false"
-                            android:visibility="visible"/>
+                            android:visibility="visible" />
 
                     </RelativeLayout>
 
@@ -105,7 +143,7 @@
                             android:contentDescription="@string/app_name"
                             android:minHeight="84dp"
                             fresco:fadeDuration="10"
-                            fresco:failureImage="@drawable/woolworth_logo_icon"/>
+                            fresco:failureImage="@drawable/woolworth_logo_icon" />
 
                         <LinearLayout
                             android:id="@+id/llProductInfo"
@@ -118,13 +156,13 @@
                                 android:id="@+id/tvTitle"
                                 style="@style/style_cart_item_title"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"/>
+                                android:layout_height="wrap_content" />
 
                             <za.co.woolworths.financial.services.android.ui.views.WTextView
                                 android:id="@+id/tvColorSize"
                                 style="@style/style_cart_item_details"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"/>
+                                android:layout_height="wrap_content" />
 
                             <RelativeLayout
                                 android:id="@+id/llQuantityContainer"
@@ -135,8 +173,8 @@
                                     android:id="@+id/tvProductAvailability"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_alignParentBottom="true"
                                     android:layout_alignParentStart="true"
+                                    android:layout_alignParentBottom="true"
                                     android:layout_marginTop="@dimen/eight_dp"
                                     android:background="@drawable/round_amber_corner"
                                     android:letterSpacing="0.08"
@@ -145,14 +183,14 @@
                                     android:textColor="@color/white"
                                     android:textSize="@dimen/twelve_sp"
                                     android:visibility="gone"
-                                    app:WTextView_font="myriadpro_semibold"/>
+                                    app:WTextView_font="myriadpro_semibold" />
 
                                 <FrameLayout
                                     android:id="@+id/flQuantityLoader"
                                     android:layout_width="40dp"
+                                    android:layout_height="32dp"
                                     android:layout_alignParentStart="true"
-                                    android:layout_alignParentBottom="true"
-                                    android:layout_height="32dp">
+                                    android:layout_alignParentBottom="true">
 
                                     <RelativeLayout
                                         android:id="@+id/llQuantity"
@@ -184,9 +222,9 @@
                                     <ProgressBar
                                         android:id="@+id/pbQuantityLoader"
                                         android:layout_width="24dp"
-                                        android:visibility="gone"
+                                        android:layout_height="24dp"
                                         android:layout_gravity="center"
-                                        android:layout_height="24dp" />
+                                        android:visibility="gone" />
                                 </FrameLayout>
 
 
@@ -204,7 +242,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:gravity="end"
-                                        android:textColor="@color/was_price_color"/>
+                                        android:textColor="@color/was_price_color" />
 
                                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                                         android:id="@+id/tvPrice"
@@ -212,8 +250,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:gravity="end"
-                                        android:textColor="@color/black"
-                                        />
+                                        android:textColor="@color/black" />
 
                                 </LinearLayout>
 
@@ -226,7 +263,7 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="0.2dp"
-                    android:background="@color/outside_border"/>
+                    android:background="@color/outside_border" />
             </LinearLayout>
 
         </LinearLayout>

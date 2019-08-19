@@ -109,7 +109,13 @@ public class MyAccountCardsActivity extends AppCompatActivity
         cardsHasAccount = getIntent().hasExtra("accounts");
         if (cardsHasAccount) {
             accountsResponse = new Gson().fromJson(getIntent().getExtras().getString("accounts"), AccountsResponse.class);
-            handleAccountsResponse(accountsResponse);
+
+            if (accountsResponse != null) {
+
+                handleAccountsResponse(accountsResponse);
+
+
+            }
         } else {
             fragmentsAdapter = new CardsFragmentPagerAdapter(getSupportFragmentManager()) {
 
