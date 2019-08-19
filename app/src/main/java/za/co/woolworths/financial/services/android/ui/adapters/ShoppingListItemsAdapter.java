@@ -448,8 +448,4 @@ holder.price.setAlpha(1f);
 		activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
 		return dm.widthPixels / 10;
 	}
-
-	public List<ShoppingListItem> getShoppingListItem() {
-		return mShoppingListItem;
-	}
 }

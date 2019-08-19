@@ -59,6 +59,7 @@
                 android:paddingStart="@dimen/four_dp"
                 android:paddingEnd="@dimen/four_dp"
                 android:text="@string/edit"
+                android:visibility="gone"
                 android:textAllCaps="true"
                 tools:ignore="UnusedAttribute" />
 

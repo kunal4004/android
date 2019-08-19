@@ -129,4 +129,8 @@ public class ShoppingListDetailActivity extends AppCompatActivity implements Vie
     public void editButtonVisibility(boolean isVisible) {
         tvEditShoppingListItem.setVisibility(isVisible ? View.VISIBLE : View.GONE);
     }
+
+    public void setToolbarText(String name){
+        tvEditShoppingListItem.setText(name);
+    }
 }

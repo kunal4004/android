@@ -368,10 +368,19 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
 
     @Override
     public void onItemDeleteClick(String id, String productId, String catalogRefId, final boolean shouldUpdateShoppingList) {
-        //
-        if (shoppingListItemsAdapter.getShoppingListItem().size() == 0) {
-            if (shouldUpdateShoppingList)
-                setUpView();
+        int listSize = shoppingListItemsAdapter.getShoppingListItems().size();
+        if (listSize == 1) {
+            if (!shouldUpdateShoppingList){
+                rlEmptyView.setVisibility(VISIBLE);
+                rcvShoppingListItems.setVisibility(GONE);
+                hideEditShoppingListMode();
+                isMenuItemReadyToShow = false;
+                Activity activity = getActivity();
+                if (activity != null) {
+                    activity.invalidateOptionsMenu();
+                    ((ShoppingListDetailActivity)activity).setToolbarText(getString(R.string.edit));
+                }
+            }
         }
         editButtonVisibility();
         Call<ShoppingListItemsResponse> shoppingListItemsResponseCall = OneAppService.INSTANCE.deleteShoppingListItem(listId, id, productId, catalogRefId);
@@ -475,20 +484,6 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         }
     }
 
-    public void onGetListFailure(final String errorMessage) {
-        Activity activity = getActivity();
-        if (activity != null) {
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    loadingBar.setVisibility(GONE);
-                    mErrorHandlerView.showErrorHandler();
-                    mErrorHandlerView.networkFailureHandler(errorMessage);
-                }
-            });
-        }
-    }
-
     @Override
     public void onDeleteItemFailed() {
         final Activity activity = getActivity();
@@ -514,7 +509,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     }
 
 
-    public void initGetShoppingListItems() {
+    private void initGetShoppingListItems() {
         mErrorHandlerView.hideErrorHandler();
         mShoppingListItems = new ArrayList<>();
         rlEmptyView.setVisibility(GONE);
@@ -1053,6 +1048,9 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             showEditShoppingListSetting();
             shoppingListItemsAdapter.editButtonEnabled(true);
         }
+        manageSelectAllMenuVisibility();
+        getSelectAllMenuVisibility(shoppingListItemsAdapter.getShoppingListItems());
+        rlCheckOut.setVisibility(getButtonStatus(shoppingListItemsAdapter.getShoppingListItems()) ? VISIBLE : GONE);
     }
 
     private void hideEditShoppingListMode() {
