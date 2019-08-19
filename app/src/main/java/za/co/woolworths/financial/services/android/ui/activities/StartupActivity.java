@@ -199,13 +199,17 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 						WoolworthsApplication.setCartCheckoutLink(configResponse.configs.defaults.getCartCheckoutLink());
 
 						AbsaBankingOpenApiServices absaBankingOpenApiServices = configResponse.configs.absaBankingOpenApiServices;
-						if (absaBankingOpenApiServices == null)
+						if (absaBankingOpenApiServices == null) {
 							absaBankingOpenApiServices = new AbsaBankingOpenApiServices(false, "", "", "", "");
+						} else {
+							absaBankingOpenApiServices.setEnabled(Utils.isFeatureEnabled(absaBankingOpenApiServices.getMinSupportedAppVersion()));
+						}
 						PresenceInAppChat presenceInAppChat = configResponse.configs.presenceInAppChat;
-						if (presenceInAppChat == null)
+						if (presenceInAppChat == null) {
 							presenceInAppChat = new PresenceInAppChat(new ArrayList<TradingHours>(), "", false);
-						absaBankingOpenApiServices.setEnabled(Utils.isFeatureEnabled(absaBankingOpenApiServices.getMinSupportedAppVersion()));
-						presenceInAppChat.setEnabled(Utils.isFeatureEnabled(presenceInAppChat.getMinSupportedAppVersion()));
+						} else {
+							presenceInAppChat.setEnabled(Utils.isFeatureEnabled(presenceInAppChat.getMinSupportedAppVersion()));
+						}
 						WoolworthsApplication.setAbsaBankingOpenApiServices(absaBankingOpenApiServices);
 						WoolworthsApplication.setPresenceInAppChat(presenceInAppChat);
 
