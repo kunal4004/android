@@ -121,7 +121,7 @@ public class ShoppingListDetailActivity extends AppCompatActivity implements Vie
             tvEditShoppingListItem.setText(editButtonText);
             Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.flShoppingListDetailFragment);
             if (currentFragment instanceof ShoppingListDetailFragment) {
-                ((ShoppingListDetailFragment) currentFragment).toogleEditButton(editButtonText);
+                ((ShoppingListDetailFragment) currentFragment).toggleEditButton(editButtonText);
             }
         }
     }

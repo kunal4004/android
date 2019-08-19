@@ -29,7 +29,6 @@ import com.google.gson.JsonElement;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +41,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
+import za.co.woolworths.financial.services.android.models.dto.FulfillmentStoreMap;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
@@ -101,7 +101,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     private BroadcastReceiver mConnectionBroadcast;
     private Call<AddItemToCartResponse> mPostAddToCart;
     private Call<SkusInventoryForStoreResponse> mGetInventorySkusForStore;
-    private Map<String, String> mMapStoreFulFillmentKeyValue;
+    private ArrayList<FulfillmentStoreMap> fulfillmentStoreMapArrayList;
     private boolean errorMessageWasPopUp;
     private ShoppingListItem mOpenShoppingListItem;
     private Integer mDeliveryResultCode;
@@ -141,7 +141,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     }
 
     private void initViewAndEvent(View view) {
-        mMapStoreFulFillmentKeyValue = new HashMap<>();
+        fulfillmentStoreMapArrayList = new ArrayList<>();
         RelativeLayout rlNoConnectionLayout = view.findViewById(R.id.no_connection_layout);
         rcvShoppingListItems = view.findViewById(R.id.rcvShoppingListItems);
         WTextView textProductSearch = view.findViewById(R.id.textProductSearch);
@@ -248,7 +248,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             String fulFillmentStoreId = Utils.retrieveStoreId(fulFillmentTypeIdCollection);
             if (!TextUtils.isEmpty(fulFillmentStoreId)) {
                 fulFillmentStoreId = fulFillmentStoreId.replace("\"", "");
-                mMapStoreFulFillmentKeyValue.put(fulFillmentTypeIdCollection, fulFillmentStoreId);
+                fulfillmentStoreMapArrayList.add(new FulfillmentStoreMap(fulFillmentTypeIdCollection, fulFillmentStoreId, false));
                 executeGetInventoryForStore(fulFillmentStoreId, multiSKUS);
             } else {
                 for (String sku : skuIds) {
@@ -370,7 +370,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     public void onItemDeleteClick(String id, String productId, String catalogRefId, final boolean shouldUpdateShoppingList) {
         int listSize = shoppingListItemsAdapter.getShoppingListItems().size();
         if (listSize == 1) {
-            if (!shouldUpdateShoppingList){
+            if (!shouldUpdateShoppingList) {
                 rlEmptyView.setVisibility(VISIBLE);
                 rcvShoppingListItems.setVisibility(GONE);
                 hideEditShoppingListMode();
@@ -378,8 +378,9 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
                 Activity activity = getActivity();
                 if (activity != null) {
                     activity.invalidateOptionsMenu();
-                    ((ShoppingListDetailActivity)activity).setToolbarText(getString(R.string.edit));
+                    ((ShoppingListDetailActivity) activity).setToolbarText(getString(R.string.edit));
                 }
+                rlCheckOut.setVisibility(GONE);
             }
         }
         editButtonVisibility();
@@ -563,7 +564,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     public void onCreateOptionsMenu(final Menu menu, MenuInflater inflater) {
         Activity activity = getActivity();
         if (activity == null) return;
-        ShoppingListDetailActivity shoppingListActivity =  ((ShoppingListDetailActivity) activity);
+        ShoppingListDetailActivity shoppingListActivity = ((ShoppingListDetailActivity) activity);
         inflater.inflate(R.menu.shopping_list_more, menu);
         mMenuActionSearch = menu.findItem(R.id.action_search);
         mMenuActionSelectAll = menu.findItem(R.id.selectAll);
@@ -736,12 +737,14 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     public void getInventoryForStoreSuccess(SkusInventoryForStoreResponse skusInventoryForStoreResponse) {
         if (skusInventoryForStoreResponse.httpCode == 200) {
             String fulFillmentType = null;
-            String storeId = skusInventoryForStoreResponse.storeId;
-            for (Map.Entry<String, String> map : mMapStoreFulFillmentKeyValue.entrySet()) {
-                if (storeId.equalsIgnoreCase(map.getValue()) && !matchesFullFillmentTypeKey.contains(map.getKey())) {
-                    fulFillmentType = map.getKey();
+            for (FulfillmentStoreMap mapId : fulfillmentStoreMapArrayList) {
+                if (mapId.getStoreID().equalsIgnoreCase(skusInventoryForStoreResponse.storeId) && !mapId.getInventoryCompletedForStore()) {
+                    fulFillmentType = mapId.getTypeID();
+                    mapId.setInventoryCompletedForStore(true);
+                    break;
                 }
             }
+
             matchesFullFillmentTypeKey.add(fulFillmentType);
             List<SkuInventory> skuInventory = skusInventoryForStoreResponse.skuInventory;
             // skuInventory is empty or null
@@ -773,7 +776,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
 
             updateShoppingList();
 
-            if (getLastValueInMap().equalsIgnoreCase(storeId)) {
+            if (getLastValueInMap().equalsIgnoreCase(skusInventoryForStoreResponse.storeId)) {
 
                 /***
                  * Triggered when "SELECT ALL" is selected from toolbar
@@ -929,9 +932,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     }
 
     private String getLastValueInMap() {
-        if (mMapStoreFulFillmentKeyValue == null) return null;
-        List<String> listOfFulfillmentValue = Collections.list(Collections.enumeration(mMapStoreFulFillmentKeyValue.values()));
-        return listOfFulfillmentValue.get(listOfFulfillmentValue.size() - 1);
+        return  (fulfillmentStoreMapArrayList == null) ? null : fulfillmentStoreMapArrayList.get(fulfillmentStoreMapArrayList.size() - 1).getStoreID();
     }
 
     private void setResultCode(Integer resultCode) {
@@ -1037,20 +1038,24 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         return shoppingDeliveryLocation.suburb == null;
     }
 
-    public void toogleEditButton(String name) {
+    public void toggleEditButton(String name) {
         Activity activity = getActivity();
         if (activity == null || activity.getResources() == null) return;
         Resources resources = activity.getResources();
+        mShoppingListItems = shoppingListItemsAdapter.getShoppingListItems();
         if (name.equalsIgnoreCase(resources.getString(R.string.edit))) {
             hideEditShoppingListMode();
             shoppingListItemsAdapter.editButtonEnabled(false);
+            tvMenuSelectAll.setEnabled(true);
         } else {
             showEditShoppingListSetting();
             shoppingListItemsAdapter.editButtonEnabled(true);
+            tvMenuSelectAll.setEnabled(false);
         }
-        manageSelectAllMenuVisibility();
-        getSelectAllMenuVisibility(shoppingListItemsAdapter.getShoppingListItems());
-        rlCheckOut.setVisibility(getButtonStatus(shoppingListItemsAdapter.getShoppingListItems()) ? VISIBLE : GONE);
+
+        tvMenuSelectAll.setText(getString(getSelectAllMenuVisibility(mShoppingListItems) ? R.string.deselect_all : R.string.select_all));
+        tvMenuSelectAll.setVisibility(getButtonStatus(mShoppingListItems) ? VISIBLE : GONE);
+        rlCheckOut.setVisibility(getButtonStatus(mShoppingListItems) ? VISIBLE : GONE);
     }
 
     private void hideEditShoppingListMode() {
@@ -1071,10 +1076,10 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     private void editButtonVisibility() {
         Activity activity = getActivity();
         if (activity == null) return;
-        ShoppingListDetailActivity  shoppingListDetailActivity = (ShoppingListDetailActivity) activity;
+        ShoppingListDetailActivity shoppingListDetailActivity = (ShoppingListDetailActivity) activity;
         if (shoppingListItemsAdapter.getItemCount() >= 2) {
             shoppingListDetailActivity.editButtonVisibility(true);
-        }else {
+        } else {
             shoppingListDetailActivity.editButtonVisibility(false);
         }
     }
