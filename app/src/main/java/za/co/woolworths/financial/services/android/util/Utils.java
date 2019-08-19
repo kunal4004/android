@@ -1507,4 +1507,26 @@ public class Utils {
 	public static Boolean isFeatureEnabled(String minSupportedAppVersion) {
 		return (getAppMinorMajorBuildVersion() >= getMinSupportedAppVersion(minSupportedAppVersion));
 	}
+
+	public static boolean checkForBinarySu() {
+		boolean found = false;
+		String[] places = {
+				"/sbin/",
+				"/system/bin/",
+				"/system/xbin/",
+				"/data/local/xbin/",
+				"/data/local/bin/",
+				"/system/sd/xbin/",
+				"/system/bin/which",
+				"/system/bin/failsafe/",
+				"/data/local/"};
+		for (String where : places) {
+			if (new File(where + "su").exists()) {
+				found = true;
+
+				break;
+			}
+		}
+		return found;
+	}
 }
