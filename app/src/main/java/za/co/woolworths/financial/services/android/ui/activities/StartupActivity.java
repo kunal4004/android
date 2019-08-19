@@ -26,6 +26,7 @@ import com.google.firebase.dynamiclinks.PendingDynamicLinkData;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.ActionBar;
@@ -43,6 +44,7 @@ import za.co.woolworths.financial.services.android.models.dto.AbsaBankingOpenApi
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.chat.PresenceInAppChat;
+import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
@@ -197,7 +199,11 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 						WoolworthsApplication.setCartCheckoutLink(configResponse.configs.defaults.getCartCheckoutLink());
 
 						AbsaBankingOpenApiServices absaBankingOpenApiServices = configResponse.configs.absaBankingOpenApiServices;
+						if (absaBankingOpenApiServices == null)
+							absaBankingOpenApiServices = new AbsaBankingOpenApiServices(false, "", "", "", "");
 						PresenceInAppChat presenceInAppChat = configResponse.configs.presenceInAppChat;
+						if (presenceInAppChat == null)
+							presenceInAppChat = new PresenceInAppChat(new ArrayList<TradingHours>(), "", false);
 						absaBankingOpenApiServices.setEnabled(Utils.isFeatureEnabled(absaBankingOpenApiServices.getMinSupportedAppVersion()));
 						presenceInAppChat.setEnabled(Utils.isFeatureEnabled(presenceInAppChat.getMinSupportedAppVersion()));
 						WoolworthsApplication.setAbsaBankingOpenApiServices(absaBankingOpenApiServices);
