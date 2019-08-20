@@ -223,10 +223,7 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/WTransaction" />
-        <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.WRewardsMembersInfoActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/WRewardsInfo" />
+
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WRewardsVoucherDetailsActivity"
             android:theme="@style/WRewardsVoucherDetails" />
