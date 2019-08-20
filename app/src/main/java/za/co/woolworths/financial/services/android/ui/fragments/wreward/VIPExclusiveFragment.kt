@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.reward_vip_exclusive_fragment.tvTermsCondition
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.activities.WRewardBenefitActivity
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -15,7 +16,6 @@ import za.co.woolworths.financial.services.android.util.Utils
 class VIPExclusiveFragment : Fragment() {
 
     companion object {
-        private const val REWARD_URL = "https://www.woolworths.co.za/corporate/cmp205288"
         fun newInstance() = VIPExclusiveFragment()
     }
 
@@ -31,7 +31,7 @@ class VIPExclusiveFragment : Fragment() {
             activity?.apply {
                 text = WRewardBenefitActivity.convertWRewardCharacter(getString(R.string.benefits_term_and_condition_link))
                 setOnClickListener {
-                    Utils.openExternalLink(this, REWARD_URL)
+                    Utils.openExternalLink(this, WoolworthsApplication.getWrewardsTCLink())
                 }
             }
         }
