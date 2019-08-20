@@ -125,12 +125,13 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
                 } catch (e: WriterException) {
                     Log.d(TAGREWARD, e.message ?: "")
                 }
-            }
-
             loadAnimations()
             changeCameraDistance()
             val handler = Handler()
             handler.postDelayed({ flipCard() }, 1000)
+        }else {
+                showVIPLogo()
+            }
         }
     }
 

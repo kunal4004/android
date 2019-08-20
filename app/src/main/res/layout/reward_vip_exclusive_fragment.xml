@@ -104,7 +104,7 @@
             android:layout_marginStart="32dp"
             android:layout_marginTop="43dp"
             android:layout_marginEnd="32dp"
-            android:letterSpacing="0.25"
+            android:letterSpacing="0.1"
             android:lineSpacingExtra="6dp"
             android:text="@string/vip_exclusive_all_the_reason_to_be_a_vip_title"
             android:textAllCaps="true"
