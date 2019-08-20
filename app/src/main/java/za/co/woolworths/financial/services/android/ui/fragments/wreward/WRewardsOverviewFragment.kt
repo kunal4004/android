@@ -4,6 +4,7 @@ import android.animation.*
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.os.SystemClock
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -42,6 +43,8 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
     private var bundle: Bundle? = null
     private var voucherResponse: VoucherResponse? = null
     private var mErrorHandlerView: ErrorHandlerView? = null
+    // variable to track event time
+    private var mLastClickTime : Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -125,12 +128,13 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
                 } catch (e: WriterException) {
                     Log.d(TAGREWARD, e.message ?: "")
                 }
-            }
-
             loadAnimations()
             changeCameraDistance()
             val handler = Handler()
             handler.postDelayed({ flipCard() }, 1000)
+        }else {
+                showVIPLogo()
+            }
         }
     }
 
@@ -179,6 +183,11 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
     }
 
     override fun onClick(view: View?) {
+        if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
+            return
+        }
+        mLastClickTime = SystemClock.elapsedRealtime()
+
         when (view?.id) {
             R.id.infoImage, R.id.tvMoreInfo -> {
                 activity?.apply {

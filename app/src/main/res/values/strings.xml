@@ -232,7 +232,7 @@
     <string name="value">VALUE</string>
     <string name="minimum_spend">Minimum Spend</string>
     <string name="view_terms_conditions">TERMS &amp; CONDITIONS</string>
-    <string name="expires">"Expires: "</string>
+    <string name="expires">"Expired: "</string>
     <string name="register">REGISTER</string>
     <string name="featured_promotions">featured promotions</string>
     <string name="sign_out_desc">Are you sure you want to sign out? You will need to re-enter your username and password to sign in again.</string>
@@ -1048,4 +1048,5 @@
     <string name="calculation_status_level_paragraph1">Your annual spend will be calculated from the first Monday of each Woolworths financial year. This commences at the end of June or beginning of July and comes to an end on the last Sunday of the Woolworths financial year 12 months later.</string>
     <string name="calculation_status_level_paragraph2"> You will be eligible for an upgrade in status level every month of the year. Downgrades only take place once, annually at the beginning of July, and are based on your spend during the previous 12 months.</string>
     <string name="calculation_status_level_paragraph3">We are entitled to adjust the spend thresholds (they are adjusted annually), the number of status levels or the rewards at any stage without notification.</string>
+    <string name="link_reward_account">link account</string>
 </resources>

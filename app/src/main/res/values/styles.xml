@@ -1643,7 +1643,7 @@
         <item name="android:layout_width">0dp</item>
         <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
         <item name="android:textColor">#000000</item>
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">20sp</item>
         <item name="android:letterSpacing" tools:ignore="NewApi">0.15</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:gravity">center</item>
