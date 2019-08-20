@@ -47,6 +47,7 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.awfs.coordination.BuildConfig;
 import com.awfs.coordination.R;
 import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -1493,5 +1494,39 @@ public class Utils {
 				inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
 			}
 		}
+	}
+
+	public static int getMinSupportedAppVersion(String minSupportedAppVersion) {
+		return TextUtils.isEmpty(minSupportedAppVersion) ? 0 : Integer.valueOf(minSupportedAppVersion.replace(".", ""));
+	}
+
+	public static Integer getAppMinorMajorBuildVersion() {
+		return Integer.valueOf((BuildConfig.VERSION_NAME + BuildConfig.VERSION_CODE).replace(".", ""));
+	}
+
+	public static Boolean isFeatureEnabled(String minSupportedAppVersion) {
+		return (getAppMinorMajorBuildVersion() >= getMinSupportedAppVersion(minSupportedAppVersion));
+	}
+
+	public static boolean checkForBinarySu() {
+		boolean found = false;
+		String[] places = {
+				"/sbin/",
+				"/system/bin/",
+				"/system/xbin/",
+				"/data/local/xbin/",
+				"/data/local/bin/",
+				"/system/sd/xbin/",
+				"/system/bin/which",
+				"/system/bin/failsafe/",
+				"/data/local/"};
+		for (String where : places) {
+			if (new File(where + "su").exists()) {
+				found = true;
+
+				break;
+			}
+		}
+		return found;
 	}
 }

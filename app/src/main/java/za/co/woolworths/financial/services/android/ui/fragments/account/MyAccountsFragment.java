@@ -262,6 +262,16 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			});
 		}
 
+		// disable refresh icon or pull to refresh if user is not a C2User
+		if (!SessionUtilities.getInstance().isC2User()) {
+			if (mUpdateMyAccount != null) {
+				mUpdateMyAccount.enableSwipeToRefreshAccount(false);
+				mUpdateMyAccount.swipeToRefreshAccount(false);
+				imRefreshAccount.setEnabled(false);
+			} else {
+				imRefreshAccount.setEnabled(true);
+			}
+		}
 	}
 
 	private void initialize() {
@@ -274,10 +284,10 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		this.mUpdateMyAccount.setRefreshType(UpdateMyAccount.RefreshAccountType.NONE);
 		this.mUpdateMyAccount.swipeToRefreshAccount(false);
 		if (SessionUtilities.getInstance().isUserAuthenticated()) {
-			mUpdateMyAccount.enableSwipeToRefreshAccount(true);
-			if (SessionUtilities.getInstance().isC2User())
+			if (SessionUtilities.getInstance().isC2User()) {
+				mUpdateMyAccount.enableSwipeToRefreshAccount(true);
 				this.loadAccounts(false);
-			else {
+			}else {
 				this.configureSignInNoC2ID();
 			}
 		} else {
@@ -646,7 +656,8 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	}
 
     private void loadAccounts(boolean forceNetworkUpdate) {
-		mErrorHandlerView.hideErrorHandlerLayout();
+		if (!SessionUtilities.getInstance().isC2User()) return;
+			mErrorHandlerView.hideErrorHandlerLayout();
 		mScrollView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.recent_search_bg));
 		if (forceNetworkUpdate)
 			mUpdateMyAccount.swipeToRefreshAccount(true);
@@ -683,6 +694,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
                             break;
                         default:
                             if (accountsResponse.response != null) {
+								mUpdateMyAccount.swipeToRefreshAccount(false);
 								Utils.alertErrorMessage(getActivity(), accountsResponse.response.desc);
                             }
 
@@ -878,7 +890,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	private void onSessionExpired(Activity activity) {
 		Utils.setBadgeCounter(0);
 		removeAllBottomNavigationIconBadgeCount();
-//		SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE);
 		SessionExpiredUtilities.getInstance().showSessionExpireDialog((AppCompatActivity) activity);
 		initialize();
 	}
