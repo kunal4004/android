@@ -75,7 +75,7 @@ class WRewardsFragment : Fragment() {
         bottomNav?.hideToolbar()
         childFragmentManager.apply {
             with(beginTransaction()) {
-                add(R.id.content_frame, WRewardsLoggedinAndNotLinkedFragment())
+                add(R.id.content_frame, WRewardsLoggedInAndNotLinkedFragment())
                 commitAllowingStateLoss()
             }
         }
