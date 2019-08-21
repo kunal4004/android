@@ -117,7 +117,6 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 				holder.swipeLayout.setTopSwipeEnabled(false);
 
 				holder.swipeLayout.addDrag(SwipeLayout.DragEdge.Right, holder.swipeRight);
-				holder.swipeLayout.addDrag(SwipeLayout.DragEdge.Bottom, holder.swipeTop);
 
 				// show/hide delete button on edit item click from toolbar
 				holder.swipeLayout.close(true,!shoppingListItem.editButtonIsEnabled);
@@ -329,7 +328,7 @@ holder.price.setAlpha(1f);
 		private LinearLayout llShopList;
 		private ImageView imPrice;
 		private WTextView tvProductAvailability;
-		private RelativeLayout swipeRight,swipeTop;
+		private RelativeLayout swipeRight;
 		private final ImageView deleteButton;
 
 
@@ -351,7 +350,6 @@ holder.price.setAlpha(1f);
 			swipeLayout = itemView.findViewById(R.id.swipe);
 			swipeRight = itemView.findViewById(R.id.swipeRight);
 			deleteButton = itemView.findViewById(R.id.deleteButton);
-			swipeTop = itemView.findViewById(R.id.swipeTop);
 		}
 	}
 
