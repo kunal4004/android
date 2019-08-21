@@ -1031,12 +1031,12 @@
     <string name="vip_exclusive">vip exclusive</string>
     <string name="benefits_best_saving_title">The best savings at Woolies every day:</string>
     <string name="benefits_best_saving_sub_title">1. Savings on Woolies Favourites</string>
-    <string name="benefits_best_saving_sub_desc">Get instant savings on quality staples and best-loved products. Look out for the green WRewards icon on the Woolies app, in store, online or in the Daily Difference.</string>
+    <string name="benefits_best_saving_sub_desc">Get instant savings on quality staples and best-loved products. Look out for the green <b>W</b>Rewards icon on the Woolies app, in store, online or in the Daily Difference.</string>
     <string name="benefits_extra_savings_sub_title">2. Extra Savings, Promos &amp; Events</string>
-    <string name="benefits_extra_savings_sub_desc">You may get something extra on promos - be it early access to promos, additional savings or complimentary vouchers. Best of all, some promos will be exclusive to WRewards members.</string>
+    <string name="benefits_extra_savings_sub_desc">You may get something extra on promos - be it early access to promos, additional savings or complimentary vouchers. Best of all, some promos will be exclusive to <b>W</b>Rewards members.</string>
     <string name="benefits_exclusive_voucher_sub_title">3. Exclusive Vouchers Just for You</string>
     <string name="benefits_exclusive_voucher_sub_desc">Keep an eye out for vouchers that give you discounts on items we think you’ll enjoy.</string>
-    <string name="benefits_term_and_condition_link">WRewards Terms and Conditions apply.</string>
+    <string name="benefits_term_and_condition_link"><b>W</b>Rewards Terms and Conditions apply.</string>
     <string name="vip_exclusive_all_the_reason_to_be_a_vip_title">All The More Reason To Be A Vip</string>
     <string name="vip_exclusive_all_the_reason_to_be_a_vip_desc">The more you shop, the more you are rewarded. Our VIPs get:</string>
     <string name="vip_exclusive_welcome_voucher1">A welcome voucher of R75 off R350 on your next shop</string>
