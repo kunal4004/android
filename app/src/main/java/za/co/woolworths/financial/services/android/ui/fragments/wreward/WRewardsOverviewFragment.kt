@@ -94,14 +94,16 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
     private fun handleTireHistoryView(tireInfo: TierInfo) {
         overviewLayout.visibility = VISIBLE
         noTireHistory.visibility = GONE
-        currentStatus = tireInfo.currentTier.toUpperCase(Locale.UK)
+        currentStatus = tireInfo.currentTier
         savings.setText(WFormatter.formatAmount(tireInfo.earned))
         flipCardFrontLayout.setOnClickListener(this)
         flipCardBackLayout.setOnClickListener(this)
-        if (currentStatus == getString(R.string.valued) || currentStatus == getString(R.string.loyal)) {
-            toNextTireLayout.visibility = VISIBLE
-            vipLogo.visibility = GONE
-            toNextTire.setText(WFormatter.formatAmount(tireInfo.toSpend))
+        currentStatus?.let {
+            if (!it.contains(getString(R.string.vip), true)) {
+                toNextTireLayout.visibility = VISIBLE
+                vipLogo.visibility = GONE
+                toNextTire.setText(WFormatter.formatAmount(tireInfo.toSpend))
+            }
         }
         loadPromotionsAPI()
     }
@@ -153,8 +155,10 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
     }
 
     private fun showVIPLogo() {
-        if (currentStatus.equals(getString(R.string.vip), ignoreCase = true)) {
-            vipLogo.visibility = VISIBLE
+        currentStatus?.let {
+            if (it?.contains(getString(R.string.vip), ignoreCase = true)) {
+                vipLogo.visibility = VISIBLE
+            }
         }
     }
 
@@ -191,8 +195,13 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
         when (view?.id) {
             R.id.infoImage, R.id.tvMoreInfo -> {
                 activity?.apply {
-                    startActivity(Intent(this, WRewardBenefitActivity::class.java))
-                    overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+
+                    currentStatus?.let {
+                        val intent = Intent(this, WRewardBenefitActivity::class.java)
+                        intent.putExtra("benefitTabPosition", if (it.contains(getString(R.string.vip), true)) 1 else 0)
+                        startActivity(intent)
+                        overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+                    }
                 }
             }
 

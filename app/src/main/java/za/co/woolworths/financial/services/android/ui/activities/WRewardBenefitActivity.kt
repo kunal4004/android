@@ -25,6 +25,8 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class WRewardBenefitActivity : AppCompatActivity() {
 
+    var benefitTabPosition: Int = 0
+
     companion object {
         fun convertWRewardCharacter(description: String): SpannableStringBuilder {
             val spanBuilder = SpannableStringBuilder(description)
@@ -45,6 +47,7 @@ class WRewardBenefitActivity : AppCompatActivity() {
         setContentView(R.layout.reward_benefit_activity)
         Utils.updateStatusBarBackground(this, android.R.color.transparent)
         window?.decorView?.systemUiVisibility = 0
+        benefitTabPosition = intent.getIntExtra("benefitTabPosition", 0)
         init()
         closeIcon.setOnClickListener { onBackPressed() }
     }
@@ -69,8 +72,8 @@ class WRewardBenefitActivity : AppCompatActivity() {
                 else -> getString(R.string.vip_exclusive)
             }
         }.attach()
-
-        updateTabFont(0, true)
+        vpRewardBenefit.currentItem = benefitTabPosition
+        updateTabFont(benefitTabPosition, true)
 
         tabs?.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabUnselected(tab: TabLayout.Tab?) {
