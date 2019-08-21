@@ -45,6 +45,7 @@ import za.co.woolworths.financial.services.android.models.dto.FulfillmentStoreMa
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
 import za.co.woolworths.financial.services.android.models.dto.SkuInventory;
@@ -511,11 +512,15 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
 
 
     private void initGetShoppingListItems() {
+        Activity activity = getActivity();
+        if (activity == null) return;
         mErrorHandlerView.hideErrorHandler();
         mShoppingListItems = new ArrayList<>();
         rlEmptyView.setVisibility(GONE);
         rcvShoppingListItems.setVisibility(GONE);
         loadingBar.setVisibility(VISIBLE);
+        ((ShoppingListDetailActivity) activity).setToolbarText(getString(R.string.edit));
+
 
         Call<ShoppingListItemsResponse> shoppingListItemsResponseCall = OneAppService.INSTANCE.getShoppingListItems(listId);
         shoppingListItemsResponseCall.enqueue(new CompletionHandler<>(new RequestListener<ShoppingListItemsResponse>() {
@@ -932,7 +937,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     }
 
     private String getLastValueInMap() {
-        return  (fulfillmentStoreMapArrayList == null) ? null : fulfillmentStoreMapArrayList.get(fulfillmentStoreMapArrayList.size() - 1).getStoreID();
+        return (fulfillmentStoreMapArrayList == null) ? null : fulfillmentStoreMapArrayList.get(fulfillmentStoreMapArrayList.size() - 1).getStoreID();
     }
 
     private void setResultCode(Integer resultCode) {
@@ -1047,15 +1052,30 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             hideEditShoppingListMode();
             shoppingListItemsAdapter.editButtonEnabled(false);
             tvMenuSelectAll.setEnabled(true);
+            tvMenuSelectAll.setVisibility(VISIBLE);
         } else {
             showEditShoppingListSetting();
             shoppingListItemsAdapter.editButtonEnabled(true);
             tvMenuSelectAll.setEnabled(false);
+            tvMenuSelectAll.setVisibility(GONE);
         }
 
+        resetSelectAll();
         tvMenuSelectAll.setText(getString(getSelectAllMenuVisibility(mShoppingListItems) ? R.string.deselect_all : R.string.select_all));
-        tvMenuSelectAll.setVisibility(getButtonStatus(mShoppingListItems) ? VISIBLE : GONE);
         rlCheckOut.setVisibility(getButtonStatus(mShoppingListItems) ? VISIBLE : GONE);
+    }
+
+    private void resetSelectAll() {
+        isMenuItemReadyToShow = false;
+        for (ShoppingListItem shoppingListItem : mShoppingListItems) {
+            if (shoppingListItem.quantityInStock > 0) {
+                isMenuItemReadyToShow = true;
+                break;
+            }
+        }
+        if (!isMenuItemReadyToShow) {
+            tvMenuSelectAll.setVisibility(GONE);
+        }
     }
 
     private void hideEditShoppingListMode() {
@@ -1083,4 +1103,6 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             shoppingListDetailActivity.editButtonVisibility(false);
         }
     }
+
+
 }
