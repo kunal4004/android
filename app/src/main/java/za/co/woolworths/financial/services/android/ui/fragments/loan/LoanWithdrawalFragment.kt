@@ -87,8 +87,8 @@ class LoanWithdrawalFragment : LoanBaseFragment() {
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        inflater!!.inflate(R.menu.loan_withdrawal_menu, menu)
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.loan_withdrawal_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
