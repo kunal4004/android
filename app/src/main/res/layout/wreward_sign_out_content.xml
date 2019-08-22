@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/thirty_two_dp"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/applyForWRewards"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:background="@drawable/join_reward_selector_bg"
+        android:fontFamily="@font/futura_semi_bold"
+        android:gravity="center"
+        android:letterSpacing="0.2"
+        android:minHeight="48dp"
+        android:text="@string/apply_for_wrewards"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="UnusedAttribute" />
+
+
+    <TextView
+        android:id="@+id/tvOr"
+        style="@style/SignInRegisterLinkStyle"
+        android:text="@string/or"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/applyForWRewards" />
+
+    <TextView
+        android:id="@+id/tvSignIn"
+        style="@style/SignInRegisterLinkStyle"
+        android:layout_marginEnd="6dp"
+        android:autoLink="all"
+        app:autoSizeTextType="uniform"
+        android:linksClickable="true"
+        android:text="@string/sign_in"
+        app:layout_constraintEnd_toStartOf="@+id/tvOr"
+        app:layout_constraintTop_toBottomOf="@+id/applyForWRewards" />
+
+    <TextView
+        android:id="@+id/tvRegister"
+        style="@style/SignInRegisterLinkStyle"
+        android:layout_marginStart="6dp"
+        android:autoLink="all"
+        app:autoSizeTextType="uniform"
+        android:linksClickable="true"
+        android:text="@string/register"
+        app:layout_constraintStart_toEndOf="@+id/tvOr"
+        app:layout_constraintTop_toBottomOf="@+id/applyForWRewards"
+       />
+
+
+    <View
+        android:id="@+id/empty"
+        android:layout_width="0dp"
+        android:layout_height="24dp"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvOr"
+         />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

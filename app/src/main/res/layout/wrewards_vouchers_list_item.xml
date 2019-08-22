@@ -1,81 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:background="@color/grey_bg"
-              android:orientation="vertical"
-              android:paddingLeft="10dp"
-              android:paddingRight="10dp"
-    >
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/grey_bg"
+    android:orientation="vertical"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
         android:background="@drawable/voucher_shadow"
-        >
+        android:orientation="horizontal">
 
         <LinearLayout
             android:id="@+id/leftpart"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="16dp"
             android:background="@drawable/voucherspart_left_part"
-            >
+            android:orientation="vertical"
+            android:padding="16dp">
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/futura_medium_ttf"
+                android:letterSpacing="0.1"
                 android:text="@string/value"
                 android:textColor="#40000000"
                 android:textSize="12sp"
-                android:letterSpacing="0.1"
-                app:WTextView_font="medium"
-                />
+                tools:ignore="UnusedAttribute" />
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
+            <TextView
+                android:id="@+id/voucherValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/voucherValue"
+                android:fontFamily="@font/futura_bold_ttf"
+                android:letterSpacing="-0.02"
                 android:textColor="@color/green"
                 android:textSize="24sp"
-                app:WTextView_font="bold"
-                android:letterSpacing="-0.02"
-                />
+                tools:ignore="UnusedAttribute" />
         </LinearLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_toRightOf="@+id/leftpart"
             android:background="@color/white"
-            android:paddingLeft="12dp"
-            android:paddingRight="16dp"
-            android:paddingBottom="16dp"
+            android:paddingStart="12dp"
             android:paddingTop="16dp"
-            >
+            android:paddingEnd="16dp"
+            android:paddingBottom="16dp">
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
+            <TextView
                 android:id="@+id/voucherMessage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                android:textColor="@color/black"
-                android:maxLines="4"
                 android:ellipsize="end"
-                android:textSize="14sp"
-                app:WTextView_font="medium_bold"
-                />
+                android:fontFamily="@font/futura_semi_bold_ttf"
+                android:maxLines="4"
+                android:textColor="@color/black"
+                android:textSize="14sp" />
 
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/voucherMessage"
+                android:layout_alignParentStart="true"
                 android:layout_alignParentBottom="true"
-                android:layout_alignParentLeft="true"
                 android:layout_marginTop="10dp">
 
                 <LinearLayout
@@ -92,17 +86,15 @@
                         android:background="@drawable/vouchers_badge"
                         />
 
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    <TextView
                         android:id="@+id/voucherExpireDate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="5dp"
+                        android:layout_marginStart="5dp"
+                        android:fontFamily="@font/myriad_pro_regular_otf"
                         android:textColor="#80000000"
-                        android:textSize="12sp"
-                        app:WTextView_font="myriadpro_regular"
-
-                        />
+                        android:textSize="12sp" />
                 </LinearLayout>
 
             </RelativeLayout>

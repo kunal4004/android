@@ -7,7 +7,6 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -15,7 +14,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
-import com.awfs.coordination.BuildConfig;
 import com.awfs.coordination.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -23,26 +21,26 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import com.google.firebase.dynamiclinks.PendingDynamicLinkData;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+import io.fabric.sdk.android.services.common.CommonUtils;
 import retrofit2.Call;
-import za.co.absa.openbankingapi.DecryptionFailureException;
-import za.co.absa.openbankingapi.SymmetricCipher;
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.RequestListener;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.dao.ApiRequestDao;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AbsaBankingOpenApiServices;
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.chat.PresenceInAppChat;
+import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
@@ -50,6 +48,7 @@ import za.co.woolworths.financial.services.android.ui.activities.deep_link.Retri
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WVideoView;
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.RootedDeviceInfoFragment;
 import za.co.woolworths.financial.services.android.util.AuthenticateUtils;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
@@ -197,9 +196,17 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 						WoolworthsApplication.setCartCheckoutLink(configResponse.configs.defaults.getCartCheckoutLink());
 
 						AbsaBankingOpenApiServices absaBankingOpenApiServices = configResponse.configs.absaBankingOpenApiServices;
+						if (absaBankingOpenApiServices == null) {
+							absaBankingOpenApiServices = new AbsaBankingOpenApiServices(false, "", "", "", "");
+						} else {
+							absaBankingOpenApiServices.setEnabled(Utils.isFeatureEnabled(absaBankingOpenApiServices.getMinSupportedAppVersion()));
+						}
 						PresenceInAppChat presenceInAppChat = configResponse.configs.presenceInAppChat;
-						absaBankingOpenApiServices.setEnabled(Utils.isFeatureEnabled(absaBankingOpenApiServices.getMinSupportedAppVersion()));
-						presenceInAppChat.setEnabled(Utils.isFeatureEnabled(presenceInAppChat.getMinSupportedAppVersion()));
+						if (presenceInAppChat == null) {
+							presenceInAppChat = new PresenceInAppChat(new ArrayList<TradingHours>(), "", false);
+						} else {
+							presenceInAppChat.setEnabled(Utils.isFeatureEnabled(presenceInAppChat.getMinSupportedAppVersion()));
+						}
 						WoolworthsApplication.setAbsaBankingOpenApiServices(absaBankingOpenApiServices);
 						WoolworthsApplication.setPresenceInAppChat(presenceInAppChat);
 
@@ -255,14 +262,13 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 	@Override
 	protected void onStart() {
 		super.onStart();
-
-//		if (CommonUtils.isRooted(this) && getSupportFragmentManager() != null) {
-//			if (pBar != null)
-//				pBar.setVisibility(View.GONE);
-//			RootedDeviceInfoFragment rootedDeviceInfoFragment = RootedDeviceInfoFragment.Companion.newInstance(getString(R.string.rooted_phone_desc));
-//			rootedDeviceInfoFragment.show(getSupportFragmentManager(), RootedDeviceInfoFragment.class.getSimpleName());
-//			return;
-//		}
+		if (Utils.checkForBinarySu() && CommonUtils.isRooted(this) && getSupportFragmentManager() != null) {
+			if (pBar != null)
+				pBar.setVisibility(View.GONE);
+			RootedDeviceInfoFragment rootedDeviceInfoFragment = RootedDeviceInfoFragment.Companion.newInstance(getString(R.string.rooted_phone_desc));
+			rootedDeviceInfoFragment.show(getSupportFragmentManager(), RootedDeviceInfoFragment.class.getSimpleName());
+			return;
+		}
 
 		FirebaseDynamicLinks.getInstance()
 				.getDynamicLink(getIntent())

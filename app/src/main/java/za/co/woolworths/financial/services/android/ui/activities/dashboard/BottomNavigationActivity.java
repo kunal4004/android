@@ -59,10 +59,10 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.sub_cate
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList;
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsLoggedOutFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsLoggedinAndNotLinkedFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsLoggedInAndNotLinkedFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.wreward.base.WRewardsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.logged_in.WRewardsLoggedinAndLinkedFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wtoday.WTodayFragment;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
@@ -578,8 +578,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                     Fragment currentChildFragment = wRewardsFragment.getWRewardContentFrame();
                     if (currentChildFragment instanceof WRewardsLoggedinAndLinkedFragment) {
                         ((WRewardsLoggedinAndLinkedFragment) currentChildFragment).scrollToTop();
-                    } else if (currentChildFragment instanceof WRewardsLoggedinAndNotLinkedFragment) {
-                        ((WRewardsLoggedinAndNotLinkedFragment) currentChildFragment).scrollToTop();
+                    } else if (currentChildFragment instanceof WRewardsLoggedInAndNotLinkedFragment) {
+                        ((WRewardsLoggedInAndNotLinkedFragment) currentChildFragment).scrollToTop();
                     } else {
                         ((WRewardsLoggedOutFragment) currentChildFragment).scrollToTop();
                     }

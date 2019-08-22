@@ -7,14 +7,19 @@ apply plugin: 'io.fabric'
 android {
 
     def major = "5"
-    def minor = "14"
-    def fix = "1"
+    def minor = "15"
+    def fix = "0"
 
-    def jobNumber = 339
+    def jobNumber = 343
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
 
     dataBinding {
         enabled = true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     flavorDimensions "default"
@@ -66,7 +71,7 @@ android {
             env = "QA"
         }else{
             //assume prod
-            jobNumber = 113
+            jobNumber = 114
         }
 
         defaultConfig {
@@ -158,12 +163,12 @@ dependencies {
 
     implementation 'com.google.android:flexbox:0.2.5'
     //noinspection GradleCompatible
-    implementation 'com.google.android.material:material:1.0.0'
-    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'androidx.viewpager2:viewpager2:1.0.0-beta02'
+    implementation 'com.google.android.material:material:1.1.0-alpha08'
     implementation 'androidx.vectordrawable:vectordrawable:1.0.1'
     implementation 'androidx.annotation:annotation:1.1.0'
-    implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+
 
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
