@@ -45,6 +45,7 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
     private var mErrorHandlerView: ErrorHandlerView? = null
     // variable to track event time
     private var mLastClickTime: Long = 0
+    private var tireStatusVIP = "vip"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -99,7 +100,7 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
         flipCardFrontLayout.setOnClickListener(this)
         flipCardBackLayout.setOnClickListener(this)
         currentStatus?.let {
-            if (!it.contains(getString(R.string.vip), true)) {
+            if (!it.contains(tireStatusVIP, true)) {
                 toNextTireLayout.visibility = VISIBLE
                 vipLogo.visibility = GONE
                 toNextTire.setText(WFormatter.formatAmount(tireInfo.toSpend))
@@ -109,6 +110,7 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
     }
 
     private fun handleCard(cardDetailsResponse: CardDetailsResponse?) {
+        if (activity == null) return
         cardDetailsResponse?.apply {
             if (cardType != null && cardNumber != null) {
                 when {
@@ -142,26 +144,26 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
 
     private fun loadAnimations() {
         activity?.apply {
+
             mSetRightOut = AnimatorInflater.loadAnimator(this, R.animator.card_flip_out) as? AnimatorSet
             mSetLeftIn = AnimatorInflater.loadAnimator(this, R.animator.card_flip_in) as? AnimatorSet
-        }
 
-        mSetLeftIn?.addListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator?) {
-                super.onAnimationEnd(animation)
-                showVIPLogo()
-            }
-        })
+            mSetLeftIn?.addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator?) {
+                    super.onAnimationEnd(animation)
+                    showVIPLogo()
+                }
+            })
+
+        }
     }
 
     private fun showVIPLogo() {
-        activity?.apply {
             currentStatus?.let { state ->
-                if (state.contains(getString(R.string.vip), ignoreCase = true)) {
+                if (state.contains(tireStatusVIP, ignoreCase = true)) {
                     vipLogo.visibility = VISIBLE
                 }
             }
-        }
     }
 
     private fun flipCard() {
@@ -200,7 +202,7 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
 
                     currentStatus?.let {
                         val intent = Intent(this, WRewardBenefitActivity::class.java)
-                        intent.putExtra("benefitTabPosition", if (it.contains(getString(R.string.vip), true)) 1 else 0)
+                        intent.putExtra("benefitTabPosition", if (it.contains(tireStatusVIP, true)) 1 else 0)
                         startActivity(intent)
                         overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
                     }
