@@ -427,7 +427,6 @@
             android:theme="@style/ChatActivityStyle" />
 
         <activity android:name="za.co.woolworths.financial.services.android.ui.activities.WRewardBenefitActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/RewardBenefitDetailStyle" />
 
         <provider
