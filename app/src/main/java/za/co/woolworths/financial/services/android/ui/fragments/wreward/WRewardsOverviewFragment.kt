@@ -44,7 +44,7 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
     private var voucherResponse: VoucherResponse? = null
     private var mErrorHandlerView: ErrorHandlerView? = null
     // variable to track event time
-    private var mLastClickTime : Long = 0
+    private var mLastClickTime: Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -130,11 +130,11 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
                 } catch (e: WriterException) {
                     Log.d(TAGREWARD, e.message ?: "")
                 }
-            loadAnimations()
-            changeCameraDistance()
-            val handler = Handler()
-            handler.postDelayed({ flipCard() }, 1000)
-        }else {
+                loadAnimations()
+                changeCameraDistance()
+                val handler = Handler()
+                handler.postDelayed({ flipCard() }, 1000)
+            } else {
                 showVIPLogo()
             }
         }
@@ -155,9 +155,11 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
     }
 
     private fun showVIPLogo() {
-        currentStatus?.let {
-            if (it?.contains(getString(R.string.vip), ignoreCase = true)) {
-                vipLogo.visibility = VISIBLE
+        activity?.apply {
+            currentStatus?.let { state ->
+                if (state.contains(getString(R.string.vip), ignoreCase = true)) {
+                    vipLogo.visibility = VISIBLE
+                }
             }
         }
     }
