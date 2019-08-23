@@ -1,14 +1,17 @@
 package za.co.woolworths.financial.services.android.ui.adapters;
 
 import android.app.Activity;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
 
@@ -93,13 +96,7 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             productImage(vh.imProductImage, externalImageRef);
             promoImages(vh, promo);
 
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mGridNavigator.onGridItemSelected(mProductList.get(holder.getAdapterPosition()));
-                }
-            });
-
+            holder.itemView.setOnClickListener(v -> mGridNavigator.onGridItemSelected(mProductList.get(holder.getAdapterPosition())));
         }
     }
 
@@ -124,14 +121,12 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     @NonNull
     private ProgressViewHolder getProgressViewHolder(ViewGroup parent) {
-        return new ProgressViewHolder(LayoutInflater.from(parent.getContext()).inflate(
-                R.layout.bottom_progress_bar, parent, false));
+        return new ProgressViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.bottom_progress_bar, parent, false));
     }
 
     @NonNull
     private SimpleViewHolder getSimpleViewHolder(ViewGroup parent) {
-        return new SimpleViewHolder(LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_grid_product, parent, false));
+        return new SimpleViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_grid_product, parent, false));
     }
 
     @NonNull
@@ -179,7 +174,7 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     private class HeaderViewHolder extends RecyclerView.ViewHolder {
-        private WTextView tvNumberOfItem;
+        private TextView tvNumberOfItem;
 
         private HeaderViewHolder(View v) {
             super(v);

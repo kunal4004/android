@@ -10,7 +10,6 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -49,6 +48,7 @@ import za.co.woolworths.financial.services.android.models.dto.SortOption;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.refine.ProductsRefineActivity;
+import za.co.woolworths.financial.services.android.ui.adapters.ProductListingAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewListAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.SortOptionsAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
@@ -64,7 +64,7 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 	private String mSubCategoryId;
 	private String mSubCategoryName;
 	private String mSearchProduct;
-	private ProductViewListAdapter mProductAdapter;
+	private ProductListingAdapter mProductAdapter;
 	private List<ProductList> mProductList;
 	private ProgressBar mProgressLimitStart;
 	private GridLayoutManager mRecyclerViewLayoutManager;
@@ -249,7 +249,7 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 			mProductList.add(0, headerProduct);
 		}
 
-		mProductAdapter = new ProductViewListAdapter(getActivity(), mProductList, this);
+		mProductAdapter = new ProductListingAdapter(this, mProductList);
 
 		mRecyclerViewLayoutManager = new GridLayoutManager(getActivity(), 2);
 		// Set up a GridLayoutManager to change the SpanSize of the header and footer

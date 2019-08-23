@@ -153,28 +153,6 @@
 
             <TextView
                 style="@style/WRewardsInstantSavingsStyle"
-                android:text="@string/wrewards_green_earned" />
-
-            <TextView
-                android:id="@+id/wrewardsGreenEarned"
-                style="@style/WRewardsInstantSavingsValueStyle" />
-        </RelativeLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:background="#0a000000" />
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:minHeight="48dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp">
-
-            <TextView
-                style="@style/WRewardsInstantSavingsStyle"
                 android:text="@string/quarterly_voucher_earned" />
 
             <TextView

@@ -1049,4 +1049,5 @@
     <string name="calculation_status_level_paragraph2"> You will be eligible for an upgrade in status level every month of the year. Downgrades only take place once, annually at the beginning of July, and are based on your spend during the previous 12 months.</string>
     <string name="calculation_status_level_paragraph3">We are entitled to adjust the spend thresholds (they are adjusted annually), the number of status levels or the rewards at any stage without notification.</string>
     <string name="link_reward_account">link account</string>
+    <string name="food_product_type">foodProducts</string>
 </resources>
