@@ -65,6 +65,7 @@
                 android:layout_marginTop="24dp"
                 android:autoLink="all"
                 android:gravity="center"
+                android:layout_marginBottom="32dp"
                 android:linksClickable="true"
                 android:text="@string/link_reward_account"
                 app:autoSizeTextType="uniform"
