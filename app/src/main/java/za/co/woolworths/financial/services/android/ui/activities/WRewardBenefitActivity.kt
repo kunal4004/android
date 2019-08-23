@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities
 
+import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
@@ -25,7 +26,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class WRewardBenefitActivity : AppCompatActivity() {
 
-    var benefitTabPosition: Int = 0
+    private var benefitTabPosition: Int = 0
 
     companion object {
         fun convertWRewardCharacter(description: String): SpannableStringBuilder {
@@ -44,6 +45,7 @@ class WRewardBenefitActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         setContentView(R.layout.reward_benefit_activity)
         Utils.updateStatusBarBackground(this, android.R.color.transparent)
         window?.decorView?.systemUiVisibility = 0
