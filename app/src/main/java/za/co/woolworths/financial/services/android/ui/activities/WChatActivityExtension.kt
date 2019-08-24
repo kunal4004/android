@@ -31,15 +31,14 @@ open class WChatActivityExtension : AppCompatActivity(), WCountDownTimer.TimerFi
     var sendMessageRetryCounter = 0
 
     enum class AgentDefaultMessage(val message: String) {
-        AGENT_ONLINE("Hi " + SessionUtilities.getInstance().jwt?.name?.get(0) + ". How can we help you"),
-        AGENT_OFFLINE("Our live chat service will be back online at 8:30am. \\n\" +\n" +
-                "                \"\\n\" +\n" +
-                "                \"If you have an urgent matter, contact us on +27 62 5960 496 or mail us at cards@woolworths.com."),
-        GENERAL_ERROR("We are facing issues, please come back later"),
-        AGENT_PICKED("You are now chatting to "),
-        CONNECTING_AGENT("Please be patient while we connect you to an agent"),
-        CHAT_ENDED_WITH_ANY_REASON("Unfortunately, your chat session has ended"),
-        NO_AGENTS("Unfortunately there are no agents available, please try again later or call the call centre.")
+        AGENT_ONLINE("Hi " + SessionUtilities.getInstance().jwt?.name?.get(0) + ". How can I help you today?"),
+        AGENT_OFFLINE("You have reached us outside of our business hours. Please contact us between 7:30am and 9pm."),
+        GENERAL_ERROR("We’re currently experiencing technical issues, please try again later or call us on 0861 50 20 20."),
+        AGENT_PICKED(" will be assisting you further, enjoy the rest of your day."),
+        CONNECTING_AGENT("Please stay online for the next available consultant."),
+        CHAT_ENDED_WITH_ANY_REASON("Your chat session has ended."),
+        NO_AGENTS("There are no consultants available at the moment, please try again later" +
+                " or call us on 0861 50 20 20.")
     }
 
     companion object {
@@ -152,7 +151,7 @@ open class WChatActivityExtension : AppCompatActivity(), WCountDownTimer.TimerFi
     }
 
     fun showAgentsMessage(agentDefaultMessage: AgentDefaultMessage, moreMessage: String = "") {
-        updateMessageList(ChatMessage(ChatMessage.Type.RECEIVED, agentDefaultMessage.message + moreMessage))
+        updateMessageList(ChatMessage(ChatMessage.Type.RECEIVED, moreMessage + agentDefaultMessage.message))
     }
 
     fun showErrorMessage() {

@@ -77,12 +77,12 @@ class SubRefinementFragment : BaseRefinementFragment(), BaseFragmentListner {
         refinementList.adapter = subRefinementAdapter
     }
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is OnRefinementOptionSelected) {
             listener = context
         } else {
-            throw ClassCastException(context.toString() + " must implement OnRefinementOptionSelected.")
+            throw ClassCastException("$context must implement OnRefinementOptionSelected.")
         }
     }
 

@@ -68,7 +68,7 @@ class EnterAmountToSlideFragment : WBottomSheetDialogFragment() {
         }
     }
 
-    override fun onDismiss(dialog: DialogInterface?) {
+    override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
         mEditAmountSlider?.slideAmount(mProgressValue,mDrawnDownAmount)
     }

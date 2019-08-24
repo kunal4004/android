@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:nestedScrollingEnabled="true"
+    tools:targetApi="lollipop">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tvTitle"
+            style="@style/BenefitSubTitleTextViewStyle"
+            android:layout_width="0dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="37dp"
+            android:layout_marginEnd="32dp"
+            android:letterSpacing="0.1"
+            android:lineSpacingExtra="6dp"
+            android:text="@string/benefits_best_saving_title"
+            android:textAllCaps="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:targetApi="lollipop" />
+
+        <TextView
+            android:id="@+id/tvBenefitSubTitle1"
+            style="@style/BenefitSubTitleTextViewStyle"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            android:text="@string/benefits_best_saving_sub_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
+
+        <TextView
+            android:id="@+id/tvBenefitSubDesc1"
+            style="@style/BenefitSubDescTextViewStyle"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            android:text="@string/benefits_best_saving_sub_desc"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvBenefitSubTitle1" />
+
+        <TextView
+            android:id="@+id/tvBenefitSubTitle2"
+            style="@style/BenefitSubTitleTextViewStyle"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            android:text="@string/benefits_extra_savings_sub_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvBenefitSubDesc1" />
+
+        <TextView
+            android:id="@+id/tvBenefitSubDesc2"
+            style="@style/BenefitSubDescTextViewStyle"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            android:text="@string/benefits_extra_savings_sub_desc"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvBenefitSubTitle2" />
+
+
+        <TextView
+            android:id="@+id/tvBenefitSubTitle3"
+            style="@style/BenefitSubTitleTextViewStyle"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            android:text="@string/benefits_exclusive_voucher_sub_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvBenefitSubDesc2" />
+
+
+        <TextView
+            android:id="@+id/tvBenefitSubDesc3"
+            style="@style/BenefitSubDescTextViewStyle"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            android:text="@string/benefits_exclusive_voucher_sub_desc"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvBenefitSubTitle3" />
+
+
+        <TextView
+            android:id="@+id/tvTermsCondition"
+            style="@style/BenefitLinkTextViewStyle"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            android:linksClickable="true"
+            android:text="@string/benefits_term_and_condition_link"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvBenefitSubDesc3" />
+
+
+        <View
+            android:id="@+id/vEmptySpace"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvTermsCondition" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

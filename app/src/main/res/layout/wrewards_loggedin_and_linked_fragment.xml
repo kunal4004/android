@@ -78,6 +78,7 @@
                         app:tabIndicatorColor="@color/black"
                         app:tabMode="fixed"
                         app:tabPaddingEnd="2dp"
+                        app:tabRippleColor="@android:color/transparent"
                         app:tabPaddingStart="2dp"
                         app:tabSelectedTextColor="@color/black"
                         app:tabTextColor="#40000000"

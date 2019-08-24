@@ -86,7 +86,10 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 wasPrice = String.valueOf(Collections.max(priceList));
             }
 
-            String fromPrice = String.valueOf(productList.fromPrice);
+            String fromPrice = "";
+            if (productList.fromPrice != null )
+                fromPrice = String.valueOf(productList.fromPrice);
+
             ProductUtils.displayPrice(vh.tvAmount, vh.tvWasPrice,
                     fromPrice, wasPrice);
 

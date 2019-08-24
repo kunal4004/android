@@ -701,7 +701,15 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 
             @Override
             public void onFailure(Throwable error) {
-                networkFailureHandler();
+            	Activity activity = getActivity();
+            	if (activity == null) return;
+				activity.runOnUiThread(() -> {
+					try {
+						mUpdateMyAccount.swipeToRefreshAccount(false);
+						hideProgressBar();
+					} catch (Exception ignored) {
+					}
+				});
                 if (error != null)
                     mErrorHandlerView.networkFailureHandler(error.getMessage());
 
@@ -741,19 +749,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 //		else
 //			return percentage;
 //	}
-
-	public void networkFailureHandler() {
-		getActivity().runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					mUpdateMyAccount.swipeToRefreshAccount(false);
-					hideProgressBar();
-				} catch (Exception ignored) {
-				}
-			}
-		});
-	}
 
 
 	@SuppressLint("StaticFieldLeak")

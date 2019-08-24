@@ -1,15 +1,19 @@
 package za.co.woolworths.financial.services.android.ui.extension
 
 import android.content.Context.INPUT_METHOD_SERVICE
+import android.graphics.Typeface
 import android.os.CountDownTimer
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatActivity
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.TextView
 import androidx.annotation.AnimRes
 import androidx.annotation.IdRes
+import com.google.android.material.tabs.TabLayout
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
@@ -181,4 +185,19 @@ fun EditText.afterTypingStateChanged(millisInFuture: Long, countDownInterval: Lo
             }.start()
         }
     })
+
+    fun TabLayout.applyFont(typeface: Typeface) {
+        val viewGroup = getChildAt(0) as ViewGroup
+        val tabsCount = viewGroup.childCount
+        for (j in 0 until tabsCount) {
+            val viewGroupChildAt = viewGroup.getChildAt(j) as ViewGroup
+            val tabChildCount = viewGroupChildAt.childCount
+            for (i in 0 until tabChildCount) {
+                val tabViewChild = viewGroupChildAt.getChildAt(i)
+                if (tabViewChild is TextView) {
+                    tabViewChild.typeface = typeface
+                }
+            }
+        }
+    }
 }
