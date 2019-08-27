@@ -146,7 +146,7 @@
 
                     <TextView
                         style="@style/reward_benefit_title"
-                        android:text="@string/savings" /> O
+                        android:text="@string/savings" />
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         android:id="@+id/savings"
