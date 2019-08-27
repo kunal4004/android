@@ -219,13 +219,7 @@ public class WTransactionsActivity extends AppCompatActivity implements View.OnC
     }
 
     private void initInAppChat() {
-        boolean chatIsEnabled;
-        try {
-            chatIsEnabled = WoolworthsApplication.getPresenceInAppChat().isEnabled();
-        } catch (NullPointerException npe) {
-            chatIsEnabled = false;
-        }
-        if (cardType.equalsIgnoreCase("CC") && chatIsEnabled) {
+        if (cardType.equalsIgnoreCase("CC") && chatIsEnabled()) {
             chatIcon.expand(true);
             chatIcon.setStatusIndicatorIcon(Utils.isOperatingHoursForInAppChat() ? R.drawable.indicator_online : R.drawable.indicator_offline);
             transactionListview.setOnScrollListener(this);
@@ -234,13 +228,17 @@ public class WTransactionsActivity extends AppCompatActivity implements View.OnC
     }
 
     private void showChatBubble() {
-        boolean chatIsEnabled;
-        try {
-            chatIsEnabled = WoolworthsApplication.getPresenceInAppChat().isEnabled();
-        } catch (NullPointerException npe) {
-            chatIsEnabled = false;
-        }
-        if (cardType.equalsIgnoreCase("CC") && chatIsEnabled)
+        if (cardType.equalsIgnoreCase("CC") && chatIsEnabled())
             chatIcon.setVisibility(View.VISIBLE);
     }
+
+	private boolean chatIsEnabled() {
+		boolean chatIsEnabled;
+		try {
+			chatIsEnabled = WoolworthsApplication.getPresenceInAppChat().isEnabled();
+		} catch (NullPointerException npe) {
+			chatIsEnabled = false;
+		}
+		return chatIsEnabled;
+	}
 }
