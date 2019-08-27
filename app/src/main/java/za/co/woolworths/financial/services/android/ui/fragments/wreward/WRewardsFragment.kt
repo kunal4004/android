@@ -98,7 +98,7 @@ class WRewardsFragment : Fragment() {
         }
         if (resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue()) {
             if (data != null) {
-                val stsParams = data.getStringExtra("stsParams")
+                val stsParams : String = data.getStringExtra("stsParams") ?: ""
                 onSessionExpired(activity, stsParams)
             }
         } else if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
