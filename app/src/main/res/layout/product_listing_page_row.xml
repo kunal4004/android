@@ -11,8 +11,8 @@
 
     <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
         android:id="@+id/imProductImage"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/product_image_height"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginStart="24dp"
         android:layout_marginTop="44dp"
@@ -22,9 +22,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/icon_maintenance_message"
-        fresco:fadeDuration="50"
+        fresco:fadeDuration="0"
         fresco:placeholderImage="@drawable/woolworth_logo_icon"
-        fresco:viewAspectRatio="0.6" />
+        fresco:viewAspectRatio="1.33" />
 
     <View
         android:id="@+id/horizontalProductSeparator"
@@ -111,16 +111,32 @@
         app:layout_constraintTop_toBottomOf="@+id/tvSaveText"
         tools:ignore="UnusedAttribute" />
 
-    <ImageView
-        android:id="@+id/imQuickShopAddToCartIcon"
+    <ViewSwitcher
+        android:id="@+id/vsQuickShoAddToCart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="6dp"
-        android:layout_marginEnd="9dp"
+        android:inAnimation="@anim/stay"
+        android:outAnimation="@anim/stay"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvSaveText"
-        app:srcCompat="@drawable/quick_shop_add_to_cart_icon" />
+        app:layout_constraintTop_toBottomOf="@+id/tvSaveText">
+
+        <ImageView
+            android:id="@+id/imQuickShopAddToCartIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:layout_marginEnd="9dp"
+            app:srcCompat="@drawable/quick_shop_add_to_cart_button_state" />
+
+        <ProgressBar
+            android:id="@+id/pbQueryInventory"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginEnd="9dp" />
+
+    </ViewSwitcher>
 
 
     <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView

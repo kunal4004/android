@@ -144,7 +144,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
     PermissionUtils permissionUtils;
     private OtherSkus otherSKUForFindInStore;
     CircleIndicator circleindicator;
-    private final int SET_DELIVERY_LOCATION_REQUEST_CODE = 180;
+    public static final int SET_DELIVERY_LOCATION_REQUEST_CODE = 180;
     private ToastUtils mToastUtils;
     private FuseLocationAPISingleton mFuseLocationAPISingleton;
     private Call<SkusInventoryForStoreResponse> mExecuteInventoryForSku;

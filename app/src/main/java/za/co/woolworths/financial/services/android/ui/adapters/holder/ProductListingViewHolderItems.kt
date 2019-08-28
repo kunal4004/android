@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.adapters.holder
 
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.PorterDuff
 import android.view.LayoutInflater
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -9,10 +10,10 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.product_listing_page_row.view.*
+import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages
-import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridNavigator
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
 import za.co.woolworths.financial.services.android.util.DrawImage
 import za.co.woolworths.financial.services.android.util.Utils
@@ -21,21 +22,20 @@ import java.util.*
 
 class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.product_listing_page_row, parent, false)) {
 
-    fun setProductItem(productList: ProductList, navigator: GridNavigator) {
+    fun setProductItem(productList: ProductList, navigator: IProductListing) {
         with(productList) {
             setProductImage(this)
             setPromotionalImage(promotionImages)
             setProductName(this)
             setSaveText(this)
             setPrice(this)
-            addToCartButton(this)
+            quickShopAddToCartSwitch(this)
             setOnClickListener(navigator, this)
         }
     }
 
-    private fun setOnClickListener(navigator: GridNavigator, productList: ProductList) {
-        itemView.setOnClickListener { navigator.onGridItemSelected(productList) }
-
+    private fun setOnClickListener(navigator: IProductListing, productList: ProductList) {
+        itemView.setOnClickListener { navigator.openProductDetailView(productList) }
     }
 
     private fun setProductName(productList: ProductList?) = with(itemView) {
@@ -59,10 +59,13 @@ class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolde
         drawImage.displayImage(image, if (url.isEmpty()) Utils.getExternalImageRef() else url)
     }
 
-    private fun setProductImage(productList: ProductList) = with(productList.externalImageRef) {
-        if (isNotEmpty()) {
-            itemView.imProductImage.setResizeImage(true)
-            itemView.imProductImage.setImageURI(this + if (indexOf("?") > 0) "w=300&q=85" else "?w=300&q=85")
+    private fun setProductImage(productList: ProductList) {
+        val productImageUrl = productList.externalImageRef ?: ""
+        if (productImageUrl.isNotEmpty()) {
+            itemView.imProductImage?.apply {
+                setResizeImage(true)
+                setImageURI(productImageUrl + if (productImageUrl.indexOf("?") > 0) "w=300&q=85" else "?w=300&q=85")
+            }
         }
     }
 
@@ -73,16 +76,16 @@ class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolde
 
         val wasPrice: String? = if (wasPriceList.isNullOrEmpty()) "" else Collections.max(wasPriceList)?.toString()
                 ?: ""
-        val fromPrice = productList?.fromPrice.toString()
+        val fromPrice: String? = productList?.fromPrice?.toString() ?: ""
 
         with(itemView) {
             if (wasPrice.isNullOrEmpty()) {
-                tvFromPrice.text = if (fromPrice.isEmpty()) "" else WFormatter.formatAmount(fromPrice)
+                tvFromPrice.text = if (fromPrice!!.isEmpty()) "" else WFormatter.formatAmount(fromPrice)
                 tvFromPrice.setTextColor(Color.BLACK)
                 tvWasPrice.text = ""
             } else {
                 if (wasPrice.equals(fromPrice, ignoreCase = true)) {
-                    tvFromPrice.text = if (fromPrice.isEmpty()) WFormatter.formatAmount(wasPrice) else WFormatter.formatAmount(fromPrice)
+                    tvFromPrice.text = if (fromPrice!!.isEmpty()) WFormatter.formatAmount(wasPrice) else WFormatter.formatAmount(fromPrice)
                     tvFromPrice.setTextColor(Color.BLACK)
                     tvWasPrice.text = ""
                 } else {
@@ -96,11 +99,14 @@ class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolde
         }
     }
 
-    private fun addToCartButton(productList: ProductList?) {
+    private fun quickShopAddToCartSwitch(productList: ProductList?) {
+        itemView.pbQueryInventory?.indeterminateDrawable?.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY)
         with(itemView) {
             context?.apply {
                 productList?.apply {
-                    imQuickShopAddToCartIcon.visibility = if (productType.equals(getString(R.string.food_product_type), ignoreCase = true)) VISIBLE else GONE
+                    with(vsQuickShoAddToCart) {
+                        visibility = if (productType.equals(getString(R.string.food_product_type), ignoreCase = true)) VISIBLE else GONE
+                    }
                 }
             }
         }
