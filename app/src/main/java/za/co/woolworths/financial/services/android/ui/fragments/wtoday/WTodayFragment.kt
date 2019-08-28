@@ -123,12 +123,7 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface {
     }
 
     override fun onShowProductListing(categoryId: String, categoryName: String) {
-        val gridFragment = ProductListingFragment().withArgs {
-            putString("sub_category_id", categoryId)
-            putString("sub_category_name", categoryName)
-            putString("str_search_product", "")
-        }
-        (activity as? BottomNavigationActivity)?.pushFragment(gridFragment)
+        (activity as? BottomNavigationActivity)?.pushFragment(ProductListingFragment.newInstance(categoryId,categoryName,""))
     }
 
     override fun onAddIngredientsToShoppingList(ingredients: String) {

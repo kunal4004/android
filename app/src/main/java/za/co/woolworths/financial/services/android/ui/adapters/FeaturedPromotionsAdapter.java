@@ -52,13 +52,8 @@ public class FeaturedPromotionsAdapter extends PagerAdapter {
 			cView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				ProductListingFragment productListingFragment = new ProductListingFragment();
-				Bundle bundle = new Bundle();
-				bundle.putString("sub_category_name", promotionImage.getContext().getResources().getString(R.string.featured_promotions));
-				bundle.putString("sub_category_id", promotions.get(position).path);
-				productListingFragment.setArguments(bundle);
 				mBottomNavigator.setSelectedIconPosition(BottomNavigationActivity.INDEX_ACCOUNT);
-				mBottomNavigator.pushFragment(productListingFragment);
+				mBottomNavigator.pushFragment(ProductListingFragment.Companion.newInstance(promotions.get(position).path, promotionImage.getContext().getResources().getString(R.string.featured_promotions),""));
 			}
 		});
 		return cView;

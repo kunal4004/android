@@ -57,6 +57,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.ProductListingAda
 import za.co.woolworths.financial.services.android.ui.adapters.SortOptionsAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductListingViewType
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment
+import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.ProductListingProgressBar
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductListingFindInStoreNoQuantityFragment
@@ -93,11 +94,10 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
         return mGridViewModel
     }
 
-    override fun getBindingVariable(): Int  = BR.viewModel
+    override fun getBindingVariable(): Int = BR.viewModel
 
 
     override fun getLayoutId(): Int = R.layout.grid_layout
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -107,9 +107,9 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
             mGridViewModel?.navigator = this@ProductListingFragment
 
             arguments?.apply {
-                mSubCategoryId = getString("sub_category_id")
-                mSubCategoryName = getString("sub_category_name")
-                mSearchProduct = getString("str_search_product")
+                mSubCategoryId = getString(SUB_CATEGORY_ID)
+                mSubCategoryName = getString(SUB_CATEGORY_NAME)
+                mSearchProduct = getString(SEARCH_PRODUCT_TERMS)
             }
             setProductBody()
         }
@@ -145,7 +145,8 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
         activity.let { activity -> Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_SEARCH_RESULTS) }
     }
 
-    private fun setTitle() = setTitle(if (mSearchProduct?.isEmpty() == true) mSubCategoryName else mSearchProduct)
+    private fun setTitle() = setTitle(if (mSearchProduct?.isEmpty() == true) mSubCategoryName
+            ?: "" else mSearchProduct ?: "")
 
 
     override fun onLoadProductSuccess(response: ProductView, loadMoreData: Boolean) {
@@ -659,8 +660,18 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
     companion object {
         const val REFINEMENT_DATA = "REFINEMENT_DATA"
         const val PRODUCTS_REQUEST_PARAMS = "PRODUCTS_REQUEST_PARAMS"
+        private const val SUB_CATEGORY_ID = "SUB_CATEGORY_ID"
+        private const val SUB_CATEGORY_NAME = "SUB_CATEGORY_NAME"
+        private const val SEARCH_PRODUCT_TERMS = "SEARCH_PRODUCT_TERMS"
+
         const val REFINE_REQUEST_CODE = 77
         private const val QUERY_INVENTORY_FOR_STORE_REQUEST_CODE = 3343
+
+        fun newInstance(sub_category_id: String?, sub_category_name: String?, search_product_term: String?) = ProductListingFragment().withArgs {
+            putString(SUB_CATEGORY_ID, sub_category_id)
+            putString(SUB_CATEGORY_NAME, sub_category_name)
+            putString(SEARCH_PRODUCT_TERMS, search_product_term)
+        }
     }
 
 }

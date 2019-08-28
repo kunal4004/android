@@ -182,12 +182,7 @@ public class SubCategoryFragment extends BaseFragment<ExpandableSubCategoryFragm
 	@Override
 	public void onChildItemClicked(SubCategory subCategory) {
 		//Navigate to product grid
-		ProductListingFragment productListingFragment = new ProductListingFragment();
-		Bundle bundle = new Bundle();
-		bundle.putString("sub_category_id", subCategory.dimValId);
-		bundle.putString("sub_category_name", subCategory.categoryName);
-		productListingFragment.setArguments(bundle);
-		pushFragment(productListingFragment);
+		pushFragment(ProductListingFragment.Companion.newInstance(subCategory.dimValId,subCategory.categoryName,""));
 	}
 
 	@Override

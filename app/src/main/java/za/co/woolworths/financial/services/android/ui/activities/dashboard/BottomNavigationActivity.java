@@ -193,13 +193,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 if (object instanceof LoadState) {
                     String searchProduct = ((LoadState) object).getSearchProduct();
                     if (!TextUtils.isEmpty((searchProduct))) {
-                        ProductListingFragment productListingFragment = new ProductListingFragment();
-                        Bundle bundle = new Bundle();
-                        bundle.putString("sub_category_id", "categoryId");
-                        bundle.putString("sub_category_name", "categoryName");
-                        bundle.putString("str_search_product", searchProduct);
-                        productListingFragment.setArguments(bundle);
-                        pushFragment(productListingFragment);
+                        pushFragment(ProductListingFragment.Companion.newInstance("categoryId","categoryName",searchProduct));
                     }
                 } else if (object instanceof AuthenticationState) {
                     AuthenticationState auth = ((AuthenticationState) object);

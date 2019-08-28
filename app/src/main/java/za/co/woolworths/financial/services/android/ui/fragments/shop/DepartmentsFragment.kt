@@ -108,21 +108,14 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
     private fun openNextFragment(rootCategory: RootCategory): Fragment {
         val drillDownCategoryFragment = SubCategoryFragment()
         val bundle = Bundle()
-        when (rootCategory.hasChildren) {
+        return when (rootCategory.hasChildren) {
             // navigate to drill down of categories
             true -> {
                 bundle.putString("ROOT_CATEGORY", Utils.toJson(rootCategory))
                 drillDownCategoryFragment.arguments = bundle
                 return drillDownCategoryFragment
             }
-            else -> {
-                // navigate to product listing
-                val gridFragment = ProductListingFragment()
-                bundle.putString("sub_category_id", rootCategory.dimValId)
-                bundle.putString("sub_category_name", rootCategory.categoryName)
-                gridFragment.arguments = bundle
-                return gridFragment
-            }
+            else -> ProductListingFragment.newInstance(rootCategory.dimValId, rootCategory.categoryName, "")
         }
     }
 
