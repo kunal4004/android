@@ -1674,7 +1674,6 @@
     <style name="RewardBenefitDetailStyle" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
-        <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowTranslucentNavigation">true</item>
         <item name="statusBarBackground">@android:color/transparent</item>
         <item name="android:colorBackgroundCacheHint">@null</item>

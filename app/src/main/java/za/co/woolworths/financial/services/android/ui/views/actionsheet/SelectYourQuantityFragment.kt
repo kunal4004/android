@@ -13,8 +13,9 @@ import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
 import za.co.woolworths.financial.services.android.ui.adapters.SelectQuantityAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.ui.views.ProductSnackbar
 
-class SelectYourQuantityFragment (private val productListing: IProductListing?) : WBottomSheetDialogFragment() {
+class SelectYourQuantityFragment(private val productListing: IProductListing?) : WBottomSheetDialogFragment() {
 
     private var mAddItemToCart: AddItemToCart? = null
 
@@ -47,6 +48,7 @@ class SelectYourQuantityFragment (private val productListing: IProductListing?) 
             adapter = selectQuantityAdapter
         }
         selectQuantityAdapter.setItem(mAddItemToCart?.quantity ?: 0)
+
     }
 
     private fun quantityItemClicked(quantity: Int) {

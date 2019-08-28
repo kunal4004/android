@@ -54,7 +54,7 @@ import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragmentNew;
-import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList;
@@ -193,13 +193,13 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 if (object instanceof LoadState) {
                     String searchProduct = ((LoadState) object).getSearchProduct();
                     if (!TextUtils.isEmpty((searchProduct))) {
-                        GridFragment gridFragment = new GridFragment();
+                        ProductListingFragment productListingFragment = new ProductListingFragment();
                         Bundle bundle = new Bundle();
                         bundle.putString("sub_category_id", "categoryId");
                         bundle.putString("sub_category_name", "categoryName");
                         bundle.putString("str_search_product", searchProduct);
-                        gridFragment.setArguments(bundle);
-                        pushFragment(gridFragment);
+                        productListingFragment.setArguments(bundle);
+                        pushFragment(productListingFragment);
                     }
                 } else if (object instanceof AuthenticationState) {
                     AuthenticationState auth = ((AuthenticationState) object);

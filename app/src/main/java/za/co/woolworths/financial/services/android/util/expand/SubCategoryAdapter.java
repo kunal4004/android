@@ -94,7 +94,7 @@ public class SubCategoryAdapter extends ExpandableRecyclerAdapter<HeaderViewHold
 				} else
 
 				{
-					//Open GridFragment when hasChildren = false;
+					//Open ProductListingFragment when hasChildren = false;
 					mSubCategoryNavigator.onChildItemClicked(subCategory);
 				}
 			}
