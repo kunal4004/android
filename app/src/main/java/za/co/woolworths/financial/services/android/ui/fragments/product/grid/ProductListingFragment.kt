@@ -23,8 +23,8 @@ import android.view.Window
 import android.view.WindowManager
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentTransaction
-
 import com.awfs.coordination.BR
+
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.GridLayoutBinding
 import com.crashlytics.android.Crashlytics
@@ -93,7 +93,9 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
         return mGridViewModel
     }
 
-    override fun getBindingVariable(): Int = BR.viewModel
+    override fun getBindingVariable(): Int  = BR.viewModel
+
+
     override fun getLayoutId(): Int = R.layout.grid_layout
 
 
@@ -440,8 +442,8 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
     }
 
     override fun onSortOptionSelected(sortOption: SortOption) {
-        if (sortOptionDialog != null && sortOptionDialog!!.isShowing) {
-            sortOptionDialog!!.dismiss()
+        if (sortOptionDialog != null && sortOptionDialog?.isShowing == true) {
+            sortOptionDialog?.dismiss()
             val arguments = HashMap<String, String>()
             arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SORT_OPTION_NAME] = sortOption.label
             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SORTBY_EVENT_APPLIED, arguments)
