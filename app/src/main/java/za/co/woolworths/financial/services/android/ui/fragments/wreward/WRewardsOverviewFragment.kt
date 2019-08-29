@@ -161,7 +161,7 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
     private fun showVIPLogo() {
             currentStatus?.let { state ->
                 if (state.contains(tireStatusVIP, ignoreCase = true)) {
-                    vipLogo.visibility = VISIBLE
+                    vipLogo?.visibility = VISIBLE
                 }
             }
     }
@@ -246,7 +246,7 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
             with(promotionsResponse) {
                 if (httpCode == 200) {
                     if (promotions.size > 0) {
-                        promotionViewPager.adapter = activity?.let { FeaturedPromotionsAdapter(it, promotions) }
+                        promotionViewPager?.adapter = activity?.let { FeaturedPromotionsAdapter(it, promotions) }
                     }
                 }
             }

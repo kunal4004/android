@@ -96,7 +96,7 @@ class WChatActivity : WChatActivityExtension(), IDialogListener {
 
     private fun onSendMessage() {
         if (edittext_chatbox.text.isNotEmpty()) {
-            val userMessage = edittext_chatbox.text.toString().trim()
+            val userMessage = edittext_chatbox.text.toString().trim().replace("\n", " ", true)
             val chatMessage = ChatMessage(ChatMessage.Type.SENT, userMessage)
             updateMessageList(chatMessage)
             edittext_chatbox.text.clear()
@@ -239,7 +239,7 @@ class WChatActivity : WChatActivityExtension(), IDialogListener {
     }
 
     private fun confirmToEndChatSession() {
-        if (isAgentOnline) {
+        if (!chatId.isNullOrEmpty()) {
             val openDialogFragment =
                     GotITDialogFragment.newInstance(getString(R.string.chat_end_session_dialog_title),
                             getString(R.string.chat_end_session_dialog_desc), getString(R.string.chat_end_session_dialog_cancel_text),
@@ -251,8 +251,19 @@ class WChatActivity : WChatActivityExtension(), IDialogListener {
     }
 
     private fun endChatSession() {
-        chatId?.let { OneAppService.endChatSession(it) }
-        closePage()
+        stopAllPolling()
+        chatId?.let {
+            OneAppService.endChatSession(it).enqueue(CompletionHandler(object : RequestListener<EndChatSessionResponse> {
+                override fun onSuccess(response: EndChatSessionResponse?) {
+                    closePage()
+                }
+
+                override fun onFailure(error: Throwable?) {
+                    closePage()
+                }
+
+            }, EndChatSessionResponse::class.java))
+        }
     }
 
     override fun onDialogDismissed() {

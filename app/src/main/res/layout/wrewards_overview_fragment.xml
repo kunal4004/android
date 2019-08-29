@@ -98,7 +98,7 @@
                             android:layout_height="@dimen/email_bottom_margin_48"
                             android:layout_gravity="end"
                             android:visibility="gone"
-                            android:background="@drawable/vip_flash" />
+                            app:srcCompat="@drawable/vip_flash" />
                     </FrameLayout>
 
                 </FrameLayout>
