@@ -7,7 +7,6 @@ import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.ui.adapters.holder.*
-import za.co.woolworths.financial.services.android.util.Utils
 
 class ProductListingAdapter(private val navigator: IProductListing, private val mProductListItems: List<ProductList>?) : RecyclerView.Adapter<ProductListingViewHolder>() {
 
@@ -28,12 +27,8 @@ class ProductListingAdapter(private val navigator: IProductListing, private val 
                     (holder as? ProductListingViewHolderItems)?.let { view ->
                         view.setProductItem(this, navigator)
                         view.itemView.imQuickShopAddToCartIcon.setOnClickListener {
-                            // Extract the fulfilmentStoreId for the "fulfillmentType" = "01"
-                            val fulfillmentType = fulfillmentType ?: "01"
-                            val storeId = Utils.retrieveStoreId(fulfillmentType) ?: "3501"
-                            val skuId = sku ?: productId
-                            navigator.queryInventoryForStore(if (storeId.isEmpty()) "3501" else storeId, AddItemToCart(productId,skuId,0))
-                            notifyDataSetChanged()
+                            val storeId = view.getFulfillmentTypeId(this)
+                            navigator.queryInventoryForStore(storeId!!, AddItemToCart(productId, sku, 0))
                         }
                     }
                 }

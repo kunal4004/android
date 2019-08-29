@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProviders
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import androidx.fragment.app.DialogFragment
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
@@ -21,6 +22,8 @@ import android.view.MenuItem
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
+import android.widget.Button
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentTransaction
 import com.awfs.coordination.BR
@@ -28,7 +31,7 @@ import com.awfs.coordination.BR
 import com.awfs.coordination.R
 import com.awfs.coordination.databinding.GridLayoutBinding
 import com.crashlytics.android.Crashlytics
-
+import com.skydoves.balloon.balloon
 import java.util.ArrayList
 import java.util.HashMap
 
@@ -48,9 +51,11 @@ import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForSt
 import za.co.woolworths.financial.services.android.models.dto.SortOption
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.activities.CartActivity
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.OPEN_CART_REQUEST
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
 import za.co.woolworths.financial.services.android.ui.activities.product.refine.ProductsRefineActivity
 import za.co.woolworths.financial.services.android.ui.adapters.ProductListingAdapter
@@ -70,9 +75,11 @@ import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragmentNew.SET_DELIVERY_LOCATION_REQUEST_CODE
+import za.co.woolworths.financial.services.android.ui.views.AddedToCartBalloonFactory
 
 open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewModel>(), GridNavigator, IProductListing, View.OnClickListener, SortOptionsAdapter.OnSortOptionSelected, WMaterialShowcaseView.IWalkthroughActionListener {
 
+    private var mAddItemsToCart: MutableList<AddItemToCart>? = null
     private var mGridViewModel: GridViewModel? = null
     private var mErrorHandlerView: ErrorHandlerView? = null
     private var mSubCategoryId: String? = null
@@ -89,7 +96,6 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
     private val mProgressListingProgressBar = ProductListingProgressBar()
     private var mStoreId: String? = null
     private var mAddItemToCart: AddItemToCart? = null
-
     override fun getViewModel(): GridViewModel? {
         return mGridViewModel
     }
@@ -107,9 +113,9 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
             mGridViewModel?.navigator = this@ProductListingFragment
 
             arguments?.apply {
-                mSubCategoryId = getString(SUB_CATEGORY_ID)
-                mSubCategoryName = getString(SUB_CATEGORY_NAME)
-                mSearchProduct = getString(SEARCH_PRODUCT_TERMS)
+                mSubCategoryId = getString(SUB_CATEGORY_ID, "")
+                mSubCategoryName = getString(SUB_CATEGORY_NAME, "")
+                mSearchProduct = getString(SEARCH_PRODUCT_TERMS, "")
             }
             setProductBody()
         }
@@ -138,6 +144,7 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
             sortAndRefineLayout.refineProducts.setOnClickListener(this@ProductListingFragment)
             sortAndRefineLayout.sortProducts.setOnClickListener(this@ProductListingFragment)
         }
+
     }
 
     override fun onResume() {
@@ -145,9 +152,7 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
         activity.let { activity -> Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_SEARCH_RESULTS) }
     }
 
-    private fun setTitle() = setTitle(if (mSearchProduct?.isEmpty() == true) mSubCategoryName
-            ?: "" else mSearchProduct ?: "")
-
+    private fun setTitle() = setTitle(if (mSearchProduct?.isEmpty() == true) mSubCategoryName else mSearchProduct)
 
     override fun onLoadProductSuccess(response: ProductView, loadMoreData: Boolean) {
         val productLists = response.products
@@ -238,7 +243,6 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
                     //the IndexOutOfBoundsException
                     return 1
                 }
-
 
                 var isHeader = false
                 var isFooter = false
@@ -421,9 +425,9 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.REFINE_EVENT_APPEARED)
                 val intent = Intent(activity, ProductsRefineActivity::class.java)
                 intent.putExtra(REFINEMENT_DATA, Utils.toJson(productView))
-                intent.putExtra(PRODUCTS_REQUEST_PARAMS, Utils.toJson(viewModel!!.productRequestBody))
+                intent.putExtra(PRODUCTS_REQUEST_PARAMS, Utils.toJson(viewModel?.productRequestBody))
                 startActivityForResult(intent, REFINE_REQUEST_CODE)
-                activity!!.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+                activity?.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
             }
             R.id.sortProducts -> {
                 Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SORTBY_EVENT_APPEARED)
@@ -448,7 +452,7 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
             val arguments = HashMap<String, String>()
             arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SORT_OPTION_NAME] = sortOption.label
             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SORTBY_EVENT_APPLIED, arguments)
-            viewModel!!.updateProductRequestBodyForSort(sortOption.sortOption)
+            viewModel?.updateProductRequestBodyForSort(sortOption.sortOption)
             reloadProductsWithSortAndFilter()
         }
     }
@@ -471,7 +475,6 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
             setTitle(null)
             setCancelable(true)
             show()
-
         }
 
     }
@@ -487,8 +490,14 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
                 viewModel?.updateProductRequestBodyForRefinement(navigationState)
                 reloadProductsWithSortAndFilter()
             }
-            else -> {
+
+            SSOActivity.SSOActivityResult.LAUNCH.rawValue() -> {
+                if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
+                    addFoodProductTypeToCart(mAddItemsToCart?.get(0))
+                }
             }
+
+            else -> return
         }
     }
 
@@ -529,7 +538,7 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
 
     }
 
-    fun getRefinementViewState(navigationList: ArrayList<RefinementNavigation>): Boolean {
+    private fun getRefinementViewState(navigationList: ArrayList<RefinementNavigation>): Boolean {
         if (navigationList.size == 0)
             return false
         for ((displayName, _, refinementCrumbs, refinements) in navigationList) {
@@ -568,25 +577,27 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
         OneAppService.getInventorySkuForStore(storeId, addItemToCart?.catalogRefId
                 ?: "").enqueue(CompletionHandler(object : RequestListener<SkusInventoryForStoreResponse> {
             override fun onSuccess(skusInventoryForStoreResponse: SkusInventoryForStoreResponse) {
+                if (!isAdded) return
                 dismissProgressBar()
-                when (skusInventoryForStoreResponse.httpCode) {
-                    200 -> {
-                        val skuInventory = skusInventoryForStoreResponse.skuInventory
-                        if (skuInventory.size == 0 || skuInventory[0].quantity == 0) {
-                            val productListingFindInStoreNoQuantityFragment = ProductListingFindInStoreNoQuantityFragment.newInstance()
-                            productListingFindInStoreNoQuantityFragment.show(activity.supportFragmentManager.beginTransaction(), SelectYourQuantityFragment::class.java.simpleName)
-                        } else {
-                            val cartItem = AddItemToCart(addItemToCart?.productId
-                                    ?: "", addItemToCart?.catalogRefId
-                                    ?: "", skuInventory[0].quantity)
-                            val selectYourQuantityFragment = SelectYourQuantityFragment.newInstance(cartItem, this@ProductListingFragment)
-                            selectYourQuantityFragment.show(activity.supportFragmentManager.beginTransaction(), SelectYourQuantityFragment::class.java.simpleName)
+                with(activity.supportFragmentManager.beginTransaction()) {
+                    when (skusInventoryForStoreResponse.httpCode) {
+                        200 -> {
+                            val skuInventoryList = skusInventoryForStoreResponse.skuInventory
+                            if (skuInventoryList.size == 0 || skuInventoryList[0].quantity == 0) {
+                                productOutOfStockErrorMessage()
+                            } else if (skuInventoryList[0].quantity == 1) {
+                                addFoodProductTypeToCart(AddItemToCart(addItemToCart?.productId, addItemToCart?.catalogRefId, 1))
+                            } else {
+                                val cartItem = AddItemToCart(addItemToCart?.productId
+                                        ?: "", addItemToCart?.catalogRefId
+                                        ?: "", skuInventoryList[0].quantity)
+                                val selectYourQuantityFragment = SelectYourQuantityFragment.newInstance(cartItem, this@ProductListingFragment)
+                                selectYourQuantityFragment.show(this, SelectYourQuantityFragment::class.java.simpleName)
+                            }
                         }
-                    }
 
-                    440 -> {
-                    }
-                    else -> {
+
+                        else -> return
                     }
                 }
             }
@@ -599,7 +610,7 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
 
     private fun showProgressBar() {
         // Show progress bar
-        mProgressListingProgressBar.show(activity)
+        activity?.let { activity -> mProgressListingProgressBar.show(activity) }
     }
 
     private fun dismissProgressBar() {
@@ -609,52 +620,84 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
 
     override fun addFoodProductTypeToCart(addItemToCart: AddItemToCart?) {
         showProgressBar()
-        val addItemToCarts = ArrayList<AddItemToCart>()
-        addItemToCart?.let { addItemToCarts.add(it) }
-        val postItemToCart = PostItemToCart()
-        postItemToCart.make(addItemToCarts, object : RequestListener<AddItemToCartResponse> {
+        mAddItemsToCart = mutableListOf()
+        addItemToCart?.let { cartItem -> mAddItemsToCart?.add(cartItem) }
+        PostItemToCart().make(mAddItemsToCart
+                ?: mutableListOf(), object : RequestListener<AddItemToCartResponse> {
             override fun onSuccess(addItemToCartResponse: AddItemToCartResponse) {
-                if (!isAdded || activity == null) return
-                dismissProgressBar()
-                when (addItemToCartResponse.httpCode) {
-                    200 -> {
-                        // Preferred Delivery Location has been reset on server
-                        // As such, we give the user the ability to set their location again
-                        val addToCartList = addItemToCartResponse.data
-                        if (addToCartList != null && addToCartList.size > 0 && addToCartList[0].formexceptions != null) {
-                            val formException = addToCartList[0].formexceptions[0]
-                            if (formException != null) {
-                                if (formException.message.toLowerCase().contains("some of the products chosen are out of stock")) {
-                                    addItemToCartResponse.response.desc = "Unfortunately this item is currently out of stock."
-                                } else {
-                                    addItemToCartResponse.response.desc = formException.message
+                if (!isAdded) return
+                activity?.apply {
+                    dismissProgressBar()
+                    when (addItemToCartResponse.httpCode) {
+                        200 -> {
+                            // Preferred Delivery Location has been reset on server
+                            // As such, we give the user the ability to set their location again
+                            val addToCartList = addItemToCartResponse.data
+                            if (addToCartList != null && addToCartList.size > 0 && addToCartList[0].formexceptions != null) {
+                                val formException = addToCartList[0].formexceptions[0]
+                                if (formException != null) {
+                                    if (formException.message.toLowerCase().contains("unfortunately this product is now out of stock, please try again tomorrow")) {
+                                        productOutOfStockErrorMessage()
+                                    } else {
+                                        addItemToCartResponse.response.desc = formException.message
+                                        Utils.displayValidationMessage(this, CustomPopUpWindow.MODAL_LAYOUT.ERROR, addItemToCartResponse.response.desc)
+                                    }
+                                    return
                                 }
-                                Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, addItemToCartResponse.response.desc)
-                                return
-
                             }
+
+                            val addToCartBalloon by balloon(AddedToCartBalloonFactory::class)
+                            val bottomView = (activity as? BottomNavigationActivity)?.bottomNavigationById
+                            val buttonView: Button = addToCartBalloon.getContentView().findViewById(R.id.btnView)
+                            val tvAddedItem: TextView = addToCartBalloon.getContentView().findViewById(R.id.tvAddedItem)
+                            val quantityAdded = addItemToCart?.quantity?.toString()
+                            val quantityDesc = "$quantityAdded ITEM${if (addItemToCart?.quantity == 0) "" else "s"}"
+                            tvAddedItem.text = quantityDesc
+
+                            buttonView.setOnClickListener {
+                                openCartActivity()
+                                addToCartBalloon.dismiss()
+                            }
+
+                            bottomView?.let { bottomNavigationView -> addToCartBalloon.showAlignBottom(bottomNavigationView, 0, 16) }
+                            Handler().postDelayed({
+                                addToCartBalloon.dismiss()
+                            },3000)
                         }
+
+                        417 -> Utils.displayValidationMessageForResult(this@ProductListingFragment,
+                                this,
+                                CustomPopUpWindow.MODAL_LAYOUT.ERROR, null,
+                                addItemToCartResponse.response.desc, resources.getString(R.string.set_delivery_location_button), SET_DELIVERY_LOCATION_REQUEST_CODE)
+
+                        440 -> {
+                            SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
+                            ScreenManager.presentSSOSignin(this)
+                        }
+
+                        else -> Utils.displayValidationMessage(this, CustomPopUpWindow.MODAL_LAYOUT.ERROR, addItemToCartResponse.response.desc)
                     }
-
-                    417 -> Utils.displayValidationMessageForResult(this@ProductListingFragment,
-                            activity,
-                            CustomPopUpWindow.MODAL_LAYOUT.ERROR, null,
-                            addItemToCartResponse.response.desc, resources.getString(R.string.set_delivery_location_button), SET_DELIVERY_LOCATION_REQUEST_CODE)
-
-                    440 -> {
-                        SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
-                        ScreenManager.presentSSOSignin(activity)
-                    }
-
-                    else -> Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, addItemToCartResponse.response.desc)
                 }
             }
 
             override fun onFailure(error: Throwable) {
-                val activity = activity ?: return
-                activity.runOnUiThread { dismissProgressBar() }
+                activity?.runOnUiThread { dismissProgressBar() }
             }
         })
+    }
+
+    private fun productOutOfStockErrorMessage() {
+        activity?.supportFragmentManager?.beginTransaction()?.apply {
+            val productListingFindInStoreNoQuantityFragment = ProductListingFindInStoreNoQuantityFragment.newInstance()
+            productListingFindInStoreNoQuantityFragment.show(this, SelectYourQuantityFragment::class.java.simpleName)
+        }
+    }
+
+    private fun openCartActivity() {
+        activity?.apply {
+            startActivityForResult(Intent(this, CartActivity::class.java), OPEN_CART_REQUEST)
+            overridePendingTransition(R.anim.anim_accelerate_in, R.anim.stay)
+        }
     }
 
     companion object {

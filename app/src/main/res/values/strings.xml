@@ -1053,4 +1053,6 @@
     <string name="select_your_quantity">Select Your Quantity</string>
     <string name="no_stock_available">No Stock Available Online</string>
     <string name="no_stock_available_desc">Use our find in-store feature to see if there is stock available at a Woolies store near you.</string>
+    <string name="no_of_items_added">%1$Item%2$</string>
+
 </resources>

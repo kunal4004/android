@@ -13,7 +13,6 @@ import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
 import za.co.woolworths.financial.services.android.ui.adapters.SelectQuantityAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import za.co.woolworths.financial.services.android.ui.views.ProductSnackbar
 
 class SelectYourQuantityFragment(private val productListing: IProductListing?) : WBottomSheetDialogFragment() {
 
@@ -30,7 +29,6 @@ class SelectYourQuantityFragment(private val productListing: IProductListing?) :
         super.onCreate(savedInstanceState)
         val addItemToCart = arguments?.getString(QUANTITY_IN_STOCK, "")
         mAddItemToCart = Gson().fromJson(addItemToCart, AddItemToCart::class.java)
-
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? = inflater.inflate(R.layout.select_your_quantity_fragment, container, false)
@@ -42,13 +40,16 @@ class SelectYourQuantityFragment(private val productListing: IProductListing?) :
 
     private fun initQuantityItem() {
         val selectQuantityAdapter = SelectQuantityAdapter { selectedQuantity: Int -> quantityItemClicked(selectedQuantity) }
+        val quantityInStock = mAddItemToCart?.quantity ?: 0
         rclSelectYourQuantity?.apply {
             layoutManager = activity?.let { activity -> LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false) }
-            layoutParams?.height = (Resources.getSystem()?.displayMetrics?.heightPixels ?: 0) / 3
+            layoutParams?.height = (Resources.getSystem()?.displayMetrics?.heightPixels
+                    ?: 0) / (if (quantityInStock <= 2) 4 else 3)
             adapter = selectQuantityAdapter
         }
-        selectQuantityAdapter.setItem(mAddItemToCart?.quantity ?: 0)
+        selectQuantityAdapter.setItem(quantityInStock)
 
+        btnCancelQuantity?.setOnClickListener { dismiss() }
     }
 
     private fun quantityItemClicked(quantity: Int) {

@@ -29,7 +29,7 @@
     </style>
 
     <style name="CustomProgressBarTheme">
-        <item name="android:windowLightStatusBar" tools:ignore="NewApi">false</item>
+        <item name="android:windowLightStatusBar" tools:ignore="NewApi">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
     </style>
 

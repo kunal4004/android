@@ -233,7 +233,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         mQueryBadgeCounter.addObserver(this);
     }
 
-    private void setToast(String message, String cartText) {
+    public void setToast(String message, String cartText) {
         mToastUtils = new ToastUtils(BottomNavigationActivity.this);
         mToastUtils.setActivity(BottomNavigationActivity.this);
         mToastUtils.setView(getBottomNavigationById());
@@ -592,7 +592,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         }
     };
 
-    private void openCartActivity() {
+    public void openCartActivity() {
         Intent openCartActivity = new Intent(this, CartActivity.class);
         startActivityForResult(openCartActivity, OPEN_CART_REQUEST);
         overridePendingTransition(R.anim.anim_accelerate_in, R.anim.stay);

@@ -1777,7 +1777,7 @@
     </style>
 
     <style name="CustomProgressBarTheme">
-        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
     </style>
 
