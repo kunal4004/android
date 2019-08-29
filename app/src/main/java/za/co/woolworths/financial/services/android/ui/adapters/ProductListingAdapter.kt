@@ -19,17 +19,15 @@ class ProductListingAdapter(private val navigator: IProductListing, private val 
     }
 
     override fun onBindViewHolder(holder: ProductListingViewHolder, position: Int) {
-        mProductListItems?.get(position)?.apply {
-            when (rowType) {
-                ProductListingViewType.HEADER -> (holder as? ProductListingViewHolderHeader)?.setNumberOfItems(this)
+        mProductListItems?.get(position)?.let { productList ->
+            when (productList.rowType) {
+                ProductListingViewType.HEADER -> (holder as? ProductListingViewHolderHeader)?.setNumberOfItems(productList)
                 ProductListingViewType.FOOTER -> (holder as? ProductListingViewHolderFooter)?.loadMoreProductProgressBarVisibility()
-                else -> {
-                    (holder as? ProductListingViewHolderItems)?.let { view ->
-                        view.setProductItem(this, navigator)
-                        view.itemView.imQuickShopAddToCartIcon.setOnClickListener {
-                            val storeId = view.getFulfillmentTypeId(this)
-                            navigator.queryInventoryForStore(storeId!!, AddItemToCart(productId, sku, 0))
-                        }
+                else -> (holder as? ProductListingViewHolderItems)?.let { view ->
+                    view.setProductItem(productList, navigator)
+                    view.itemView.imQuickShopAddToCartIcon.setOnClickListener {
+                        val storeId = view.getFulfillmentTypeId(productList)
+                        navigator.queryInventoryForStore(storeId!!, AddItemToCart(productList.productId, productList.sku, 0),productList)
                     }
                 }
             }

@@ -117,7 +117,7 @@ class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolde
         val quickShopDefaultValues = WoolworthsApplication.getQuickShopDefaultValues()
         var defaultStoreId: String? = quickShopDefaultValues?.suburb?.id?.toString() ?: ""
         productList?.apply {
-            val foodFulfilmentTypeId = quickShopDefaultValues.foodFulfilmentTypeId
+            val foodFulfilmentTypeId = quickShopDefaultValues?.foodFulfilmentTypeId ?:0
             val fulfillmentTypeId: String? = fulfillmentType ?: foodFulfilmentTypeId.toString()
             quickShopDefaultValues.suburb.fulfilmentTypes.forEach { fulfillmentType ->
                 if (fulfillmentType.fulfilmentTypeId.toString().equals(fulfillmentTypeId, ignoreCase = true)) {

@@ -6,6 +6,7 @@ import android.app.Dialog
 import androidx.lifecycle.ViewModelProviders
 
 import android.content.Intent
+import android.location.Location
 import android.os.Bundle
 import android.os.Handler
 import androidx.fragment.app.DialogFragment
@@ -38,22 +39,16 @@ import java.util.HashMap
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
-import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
-import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse
-import za.co.woolworths.financial.services.android.models.dto.ProductList
-import za.co.woolworths.financial.services.android.models.dto.ProductView
-import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
-import za.co.woolworths.financial.services.android.models.dto.RefinementNavigation
-import za.co.woolworths.financial.services.android.models.dto.Response
-import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
-import za.co.woolworths.financial.services.android.models.dto.SortOption
+import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity
+import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.OPEN_CART_REQUEST
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity
@@ -96,6 +91,7 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
     private val mProgressListingProgressBar = ProductListingProgressBar()
     private var mStoreId: String? = null
     private var mAddItemToCart: AddItemToCart? = null
+    private var mSelectedProductList: ProductList? = null
     override fun getViewModel(): GridViewModel? {
         return mGridViewModel
     }
@@ -482,13 +478,21 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            QUERY_INVENTORY_FOR_STORE_REQUEST_CODE -> if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue())
-                mStoreId?.let { storeId -> queryInventoryForStore(storeId, mAddItemToCart) }
-
-            REFINE_REQUEST_CODE -> if (resultCode == Activity.RESULT_OK) {
-                val navigationState = data?.getStringExtra(ProductsRefineActivity.NAVIGATION_STATE)
-                viewModel?.updateProductRequestBodyForRefinement(navigationState)
-                reloadProductsWithSortAndFilter()
+            QUERY_INVENTORY_FOR_STORE_REQUEST_CODE -> {
+                if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue())
+                    mStoreId?.let { storeId -> mSelectedProductList?.let { productList -> queryInventoryForStore(storeId, mAddItemToCart, productList) } }
+            }
+            QUERY_LOCATION_ITEM_REQUEST_CODE -> {
+                if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
+                    queryStoreFinderProductSpecificLocation(null)
+                }
+            }
+            REFINE_REQUEST_CODE -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    val navigationState = data?.getStringExtra(ProductsRefineActivity.NAVIGATION_STATE)
+                    viewModel?.updateProductRequestBodyForRefinement(navigationState)
+                    reloadProductsWithSortAndFilter()
+                }
             }
 
             SSOActivity.SSOActivityResult.LAUNCH.rawValue() -> {
@@ -502,8 +506,10 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
     }
 
     private fun reloadProductsWithSortAndFilter() {
-        viewDataBinding.productList.visibility = View.INVISIBLE
-        viewDataBinding.sortAndRefineLayout.parentLayout.visibility = View.GONE
+        with(viewDataBinding) {
+            productList.visibility = View.INVISIBLE
+            sortAndRefineLayout.parentLayout.visibility = View.GONE
+        }
         startProductRequest()
     }
 
@@ -564,9 +570,10 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
         bottomNavigator.openProductDetailFragment(mSubCategoryName, productList)
     }
 
-    override fun queryInventoryForStore(storeId: String, addItemToCart: AddItemToCart?) {
-        mStoreId = storeId
-        mAddItemToCart = addItemToCart
+    override fun queryInventoryForStore(storeId: String, addItemToCart: AddItemToCart?, productList: ProductList) {
+        this.mStoreId = storeId
+        this.mAddItemToCart = addItemToCart
+        this.mSelectedProductList = productList
         val activity = activity ?: return
         if (!SessionUtilities.getInstance().isUserAuthenticated) {
             ScreenManager.presentSSOSignin(activity, QUERY_INVENTORY_FOR_STORE_REQUEST_CODE)
@@ -584,7 +591,7 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
                         200 -> {
                             val skuInventoryList = skusInventoryForStoreResponse.skuInventory
                             if (skuInventoryList.size == 0 || skuInventoryList[0].quantity == 0) {
-                                productOutOfStockErrorMessage()
+                                addItemToCart?.catalogRefId?.let { skuId -> productOutOfStockErrorMessage(skuId) }
                             } else if (skuInventoryList[0].quantity == 1) {
                                 addFoodProductTypeToCart(AddItemToCart(addItemToCart?.productId, addItemToCart?.catalogRefId, 1))
                             } else {
@@ -637,7 +644,7 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
                                 val formException = addToCartList[0].formexceptions[0]
                                 if (formException != null) {
                                     if (formException.message.toLowerCase().contains("unfortunately this product is now out of stock, please try again tomorrow")) {
-                                        productOutOfStockErrorMessage()
+                                        addItemToCart?.catalogRefId?.let { catalogRefId -> productOutOfStockErrorMessage(catalogRefId) }
                                     } else {
                                         addItemToCartResponse.response.desc = formException.message
                                         Utils.displayValidationMessage(this, CustomPopUpWindow.MODAL_LAYOUT.ERROR, addItemToCartResponse.response.desc)
@@ -662,8 +669,9 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
                             bottomView?.let { bottomNavigationView -> addToCartBalloon.showAlignBottom(bottomNavigationView, 0, 16) }
                             Handler().postDelayed({
                                 addToCartBalloon.dismiss()
-                            },3000)
+                            }, 3000)
                         }
+
 
                         417 -> Utils.displayValidationMessageForResult(this@ProductListingFragment,
                                 this,
@@ -686,9 +694,9 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
         })
     }
 
-    private fun productOutOfStockErrorMessage() {
+    private fun productOutOfStockErrorMessage(skuId: String) {
         activity?.supportFragmentManager?.beginTransaction()?.apply {
-            val productListingFindInStoreNoQuantityFragment = ProductListingFindInStoreNoQuantityFragment.newInstance()
+            val productListingFindInStoreNoQuantityFragment = ProductListingFindInStoreNoQuantityFragment.newInstance(skuId, this@ProductListingFragment)
             productListingFindInStoreNoQuantityFragment.show(this, SelectYourQuantityFragment::class.java.simpleName)
         }
     }
@@ -697,6 +705,49 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
         activity?.apply {
             startActivityForResult(Intent(this, CartActivity::class.java), OPEN_CART_REQUEST)
             overridePendingTransition(R.anim.anim_accelerate_in, R.anim.stay)
+        }
+    }
+
+    override fun queryStoreFinderProductSpecificLocation(location: Location?) {
+        showProgressBar()
+        val globalState = WoolworthsApplication.getInstance().wGlobalState
+        with(globalState) {
+            OneAppService.getLocationsItem(mSelectedProductList?.sku
+                    ?: "", startRadius.toString(), endRadius.toString()).enqueue(CompletionHandler(object : RequestListener<LocationResponse> {
+                override fun onSuccess(locationResponse: LocationResponse) {
+                    if (!isAdded) return
+                    dismissProgressBar()
+                    activity?.apply {
+                        with(locationResponse) {
+                            when (httpCode) {
+                                200 -> {
+                                    if (Locations != null && Locations.size > 0) {
+                                        getGlobalState().storeDetailsArrayList = Locations
+                                        val openStoreFinder = Intent(this@apply, WStockFinderActivity::class.java)
+                                        openStoreFinder.putExtra("PRODUCT_NAME", mSelectedProductList?.productName)
+                                        openStoreFinder.putExtra("CONTACT_INFO", "")
+                                        startActivity(openStoreFinder)
+                                        overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+                                    } else {
+                                        activity?.let { activity -> Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.NO_STOCK, "") }
+                                    }
+                                }
+                                440 -> {
+                                    SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
+                                    ScreenManager.presentSSOSignin(this@apply, QUERY_LOCATION_ITEM_REQUEST_CODE)
+                                }
+                                else -> response?.desc?.let { desc -> Utils.displayValidationMessage(this@apply, CustomPopUpWindow.MODAL_LAYOUT.ERROR, desc) }
+                            }
+                        }
+                    }
+                }
+
+                override fun onFailure(error: Throwable) {
+                    activity?.runOnUiThread {
+                        dismissProgressBar()
+                    }
+                }
+            }, LocationResponse::class.java))
         }
     }
 
@@ -709,6 +760,7 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
 
         const val REFINE_REQUEST_CODE = 77
         private const val QUERY_INVENTORY_FOR_STORE_REQUEST_CODE = 3343
+        private const val QUERY_LOCATION_ITEM_REQUEST_CODE = 3344
 
         fun newInstance(sub_category_id: String?, sub_category_name: String?, search_product_term: String?) = ProductListingFragment().withArgs {
             putString(SUB_CATEGORY_ID, sub_category_id)
@@ -716,5 +768,4 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
             putString(SEARCH_PRODUCT_TERMS, search_product_term)
         }
     }
-
 }
