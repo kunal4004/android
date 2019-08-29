@@ -39,9 +39,6 @@ class ProductListingFindInStoreNoQuantityFragment(private val mProductListing: I
 
         FuseLocationAPISingleton.addLocationChangeListener(object : ILocationProvider {
             override fun onLocationChange(location: Location) {
-               val location = Location("provider")
-                location.latitude = -33.8883
-                location.longitude = 18.5050
                 activity?.let { activity -> Utils.saveLastLocation(location, activity) }
                 FuseLocationAPISingleton.stopLocationUpdate()
                 mProductListing?.queryStoreFinderProductSpecificLocation(location)
