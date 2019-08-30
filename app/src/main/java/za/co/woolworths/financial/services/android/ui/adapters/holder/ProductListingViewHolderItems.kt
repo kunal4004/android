@@ -1,8 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.adapters.holder
 
 import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.PorterDuff
 import android.view.LayoutInflater
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -92,7 +90,7 @@ class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolde
                     tvFromPrice.text = WFormatter.formatAmount(fromPrice)
                     tvFromPrice.setTextColor(ContextCompat.getColor(WoolworthsApplication.getAppContext(), R.color.was_price_color))
                     tvWasPrice.text = WFormatter.formatAmount(wasPrice)
-                    tvWasPrice.paintFlags = tvWasPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                    fromPriceStrikeThrough.visibility = VISIBLE
                     tvWasPrice.setTextColor(Color.BLACK)
                 }
             }
@@ -100,13 +98,10 @@ class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolde
     }
 
     private fun quickShopAddToCartSwitch(productList: ProductList?) {
-        itemView.pbQueryInventory?.indeterminateDrawable?.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY)
         with(itemView) {
             context?.apply {
                 productList?.apply {
-                    with(vsQuickShoAddToCart) {
-                        visibility = if (productType.equals(getString(R.string.food_product_type), ignoreCase = true)) VISIBLE else GONE
-                    }
+                    imQuickShopAddToCartIcon?.visibility = if (productType.equals(getString(R.string.food_product_type), ignoreCase = true)) VISIBLE else GONE
                 }
             }
         }
@@ -117,7 +112,7 @@ class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolde
         val quickShopDefaultValues = WoolworthsApplication.getQuickShopDefaultValues()
         var defaultStoreId: String? = quickShopDefaultValues?.suburb?.id?.toString() ?: ""
         productList?.apply {
-            val foodFulfilmentTypeId = quickShopDefaultValues?.foodFulfilmentTypeId ?:0
+            val foodFulfilmentTypeId = quickShopDefaultValues?.foodFulfilmentTypeId ?: 0
             val fulfillmentTypeId: String? = fulfillmentType ?: foodFulfilmentTypeId.toString()
             quickShopDefaultValues.suburb.fulfilmentTypes.forEach { fulfillmentType ->
                 if (fulfillmentType.fulfilmentTypeId.toString().equals(fulfillmentTypeId, ignoreCase = true)) {

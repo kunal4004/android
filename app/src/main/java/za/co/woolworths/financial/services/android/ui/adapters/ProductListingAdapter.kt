@@ -34,8 +34,7 @@ class ProductListingAdapter(private val navigator: IProductListing, private val 
         }
     }
 
-    override fun getItemViewType(position: Int): Int = mProductListItems?.get(position)?.rowType?.ordinal
-            ?: 0
+    override fun getItemViewType(position: Int): Int = mProductListItems?.get(position)?.rowType?.ordinal ?: 0
 
     override fun getItemCount(): Int = mProductListItems?.size ?: 0
 
