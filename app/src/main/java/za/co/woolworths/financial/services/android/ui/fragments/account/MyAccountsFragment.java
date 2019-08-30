@@ -60,6 +60,7 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
+import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
@@ -862,10 +863,23 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			ScreenManager.presentBiometricWalkthrough(getActivity());
 		} else if (resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue()) {
 			onSignOut();
+			clearActivityStoryStack();
 			initialize();
 		} else {
 			initialize();
 		}
+	}
+
+	// To clean up all activities
+	private void clearActivityStoryStack() {
+		Activity activity = getActivity();
+		if (activity == null) return;
+		Intent intent = new Intent(activity, BottomNavigationActivity.class);
+		intent.putExtra(NotificationUtils.PUSH_NOTIFICATION_INTENT, String.valueOf(INDEX_ACCOUNT));
+		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		activity.startActivity(intent);
+		activity.finish();
+		activity.overridePendingTransition(0, 0);
 	}
 
 	private void removeAllBottomNavigationIconBadgeCount() {
