@@ -1,8 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.views.actionsheet
 
+import android.Manifest
 import android.location.Location
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +15,8 @@ import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton
 import za.co.woolworths.financial.services.android.util.PermissionHelper
 import za.co.woolworths.financial.services.android.util.Utils
+import androidx.annotation.NonNull
+
 
 class ProductListingFindInStoreNoQuantityFragment(private val mProductListing: IProductListing?) : WBottomSheetDialogFragment() {
     private var mSkuId: String? = null
@@ -42,7 +44,6 @@ class ProductListingFindInStoreNoQuantityFragment(private val mProductListing: I
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         FuseLocationAPISingleton.addLocationChangeListener(object : ILocationProvider {
             override fun onLocationChange(location: Location) {
                 activity?.let { activity -> Utils.saveLastLocation(location, activity) }
@@ -62,33 +63,32 @@ class ProductListingFindInStoreNoQuantityFragment(private val mProductListing: I
                     return@apply
                 }
             }
+            permissionHelper = PermissionHelper(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 100)
             permissionHelper?.apply {
                 denied {
                     if (it) {
-                        Log.e(TAG, "onPermissionDeniedBySystem() called")
                         permissionHelper?.openAppDetailsActivity()
-                    } else {
-                        Log.e(TAG, "onPermissionDenied() called")
                     }
                 }
 
                 requestIndividual {
-                    Log.e(TAG, "Individual Permission Granted")
                     startLocationUpdate()
                 }
-
 
                 requestAll {
-                    Log.d(TAG, "All permission granted")
                     startLocationUpdate()
                 }
-
             }
         }
     }
 
     private fun startLocationUpdate() {
-        activity?.let { activity -> FuseLocationAPISingleton.startLocationUpdate(activity) }
         dismiss()
+        activity?.let { activity -> FuseLocationAPISingleton.startLocationUpdate(activity) }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, @NonNull permissions: Array<String>, @NonNull grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        permissionHelper?.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 }
