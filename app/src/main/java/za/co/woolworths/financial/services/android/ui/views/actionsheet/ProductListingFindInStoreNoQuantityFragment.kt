@@ -13,18 +13,17 @@ import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton
-import za.co.woolworths.financial.services.android.util.PermissionHelper
 import za.co.woolworths.financial.services.android.util.Utils
 import androidx.annotation.NonNull
+import android.content.pm.PackageManager
 
 
 class ProductListingFindInStoreNoQuantityFragment(private val mProductListing: IProductListing?) : WBottomSheetDialogFragment() {
     private var mSkuId: String? = null
-    private var permissionHelper: PermissionHelper? = null
-    private var TAG = ProductListingFindInStoreNoQuantityFragment::class.java.simpleName
 
     companion object {
         private const val SKU_ID = "SKU_ID"
+        private const val REQUEST_PERMISSION_LOCATION = 100
         fun newInstance(sku_id: String, mProductListing: IProductListing?) = ProductListingFindInStoreNoQuantityFragment(mProductListing).withArgs {
             putString(SKU_ID, sku_id)
         }
@@ -63,32 +62,21 @@ class ProductListingFindInStoreNoQuantityFragment(private val mProductListing: I
                     return@apply
                 }
             }
-            permissionHelper = PermissionHelper(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 100)
-            permissionHelper?.apply {
-                denied {
-                    if (it) {
-                        permissionHelper?.openAppDetailsActivity()
-                    }
-                }
-
-                requestIndividual {
-                    startLocationUpdate()
-                }
-
-                requestAll {
-                    startLocationUpdate()
-                }
-            }
+            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_PERMISSION_LOCATION)
         }
     }
 
-    private fun startLocationUpdate() {
-        dismiss()
-        activity?.let { activity -> FuseLocationAPISingleton.startLocationUpdate(activity) }
-    }
+    private fun startLocationUpdate() = activity?.let { activity -> FuseLocationAPISingleton.startLocationUpdate(activity) }
 
     override fun onRequestPermissionsResult(requestCode: Int, @NonNull permissions: Array<String>, @NonNull grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        permissionHelper?.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            REQUEST_PERMISSION_LOCATION -> if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startLocationUpdate()
+            } else {
+                dismiss()
+            }
+
+            else -> return
+        }
     }
 }

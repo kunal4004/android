@@ -805,8 +805,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
     }
 
-    @Override
+
+        @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         Fragment fragment = getCurrentFragment();
         if (fragment instanceof StoresNearbyFragment1) {
