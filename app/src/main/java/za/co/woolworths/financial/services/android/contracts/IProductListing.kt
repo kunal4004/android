@@ -8,5 +8,5 @@ interface IProductListing {
     fun openProductDetailView(productList: ProductList)
     fun queryInventoryForStore(storeId: String, addItemToCart: AddItemToCart?, productList: ProductList)
     fun addFoodProductTypeToCart(addItemToCart: AddItemToCart?)
-    fun queryStoreFinderProductSpecificLocation(location: Location?)
+    fun queryStoreFinderProductByFusedLocation(location: Location?)
 }

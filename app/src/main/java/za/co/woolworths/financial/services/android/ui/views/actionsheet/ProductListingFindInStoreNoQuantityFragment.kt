@@ -47,7 +47,7 @@ class ProductListingFindInStoreNoQuantityFragment(private val mProductListing: I
             override fun onLocationChange(location: Location) {
                 activity?.let { activity -> Utils.saveLastLocation(location, activity) }
                 FuseLocationAPISingleton.stopLocationUpdate()
-                mProductListing?.queryStoreFinderProductSpecificLocation(location)
+                mProductListing?.queryStoreFinderProductByFusedLocation(location)
                 dismiss()
             }
 

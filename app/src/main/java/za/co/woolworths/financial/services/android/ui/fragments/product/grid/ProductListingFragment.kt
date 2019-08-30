@@ -484,7 +484,7 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
             }
             QUERY_LOCATION_ITEM_REQUEST_CODE -> {
                 if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
-                    queryStoreFinderProductSpecificLocation(null)
+                    queryStoreFinderProductByFusedLocation(null)
                 }
             }
             REFINE_REQUEST_CODE -> {
@@ -708,7 +708,7 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
         }
     }
 
-    override fun queryStoreFinderProductSpecificLocation(location: Location?) {
+    override fun queryStoreFinderProductByFusedLocation(location: Location?) {
         showProgressBar()
         val globalState = WoolworthsApplication.getInstance().wGlobalState
         with(globalState) {
