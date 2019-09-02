@@ -24,7 +24,7 @@ import za.co.woolworths.financial.services.android.contracts.IWTodayInterface
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.isConnectedToNetwork
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
 @Suppress("DEPRECATION")
@@ -123,12 +123,7 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface {
     }
 
     override fun onShowProductListing(categoryId: String, categoryName: String) {
-        val gridFragment = GridFragment().withArgs {
-            putString("sub_category_id", categoryId)
-            putString("sub_category_name", categoryName)
-            putString("str_search_product", "")
-        }
-        (activity as? BottomNavigationActivity)?.pushFragment(gridFragment)
+        (activity as? BottomNavigationActivity)?.pushFragment(ProductListingFragment.newInstance(categoryId,categoryName,""))
     }
 
     override fun onAddIngredientsToShoppingList(ingredients: String) {

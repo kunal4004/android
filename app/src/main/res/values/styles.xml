@@ -1776,4 +1776,9 @@
         <item name="android:textAllCaps">true</item>
     </style>
 
+    <style name="CustomProgressBarTheme">
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
 </resources>

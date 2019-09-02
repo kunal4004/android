@@ -12,7 +12,7 @@
 
         <variable
             name="handlers"
-            type="za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment"/>
+            type="za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment"/>
 
         <variable
             name="viewModel"

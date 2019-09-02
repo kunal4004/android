@@ -17,8 +17,6 @@ public interface GridNavigator {
 
 	void bindRecyclerViewWithUI(List<ProductList> productList);
 
-	void onGridItemSelected(ProductList productList);
-
 	void startProductRequest();
 
 	void loadMoreData(List<ProductList> productLists);

@@ -22,6 +22,7 @@ import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
+import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductListingViewType;
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ProductUtils;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultNavigator;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -90,10 +91,10 @@ public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.V
 	@Override
 	public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 		final ProductList productList = mProductList.get(position);
-		if (productList.viewTypeHeader) {
+		if (productList.rowType == ProductListingViewType.HEADER) {
 			HeaderViewHolder hvh = (HeaderViewHolder) holder;
 			hvh.setTotalItem(productList);
-		} else if (productList.viewTypeFooter) {
+		} else if (productList.rowType == ProductListingViewType.FOOTER) {
 			ProgressViewHolder pvh = ((ProgressViewHolder) holder);
 			if (!value) {
 				pvh.pbFooterProgress.setVisibility(View.VISIBLE);
@@ -313,15 +314,7 @@ public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.V
 
 	@Override
 	public int getItemViewType(int position) {
-		if (mProductList.get(position).viewTypeHeader) {
-			return ITEM_VIEW_TYPE_HEADER;
-		} else if (mProductList.get(position).viewTypeFooter) {
-			return ITEM_VIEW_TYPE_FOOTER;
-		} else if (!mProductList.get(position).viewTypeFooter && !mProductList.get(position).viewTypeHeader) {
-			return ITEM_VIEW_TYPE_BASIC;
-		} else {
-			return ITEM_VIEW_TYPE_BASIC;
-		}
+		return mProductList.get(position).rowType.ordinal();
 	}
 
 	public void refreshAdapter(boolean value, List<ProductList> tempProductList) {

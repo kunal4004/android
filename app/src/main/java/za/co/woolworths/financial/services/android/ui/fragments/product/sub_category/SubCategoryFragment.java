@@ -25,7 +25,7 @@ import za.co.woolworths.financial.services.android.models.dto.RootCategory;
 import za.co.woolworths.financial.services.android.models.dto.SubCategory;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.expand.ExpandableRecyclerAdapter;
@@ -182,12 +182,7 @@ public class SubCategoryFragment extends BaseFragment<ExpandableSubCategoryFragm
 	@Override
 	public void onChildItemClicked(SubCategory subCategory) {
 		//Navigate to product grid
-		GridFragment gridFragment = new GridFragment();
-		Bundle bundle = new Bundle();
-		bundle.putString("sub_category_id", subCategory.dimValId);
-		bundle.putString("sub_category_name", subCategory.categoryName);
-		gridFragment.setArguments(bundle);
-		pushFragment(gridFragment);
+		pushFragment(ProductListingFragment.Companion.newInstance(subCategory.dimValId,subCategory.categoryName,""));
 	}
 
 	@Override

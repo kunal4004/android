@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/eight_dp"
+    android:background="@drawable/card_shadow">
+
+    <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
+        android:id="@+id/imProductImage"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="44dp"
+        android:layout_marginEnd="17dp"
+        android:contentDescription="@string/app_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/icon_maintenance_message"
+        fresco:fadeDuration="0"
+        fresco:placeholderImage="@drawable/woolworth_logo_icon"
+        fresco:viewAspectRatio="1.33" />
+
+    <View
+        android:id="@+id/horizontalProductSeparator"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="34dp"
+        android:background="@color/horizontal_line"
+        app:layout_constraintTop_toBottomOf="@+id/imProductImage"
+        tools:layout_editor_absoluteX="6dp" />
+
+    <TextView
+        android:id="@+id/tvProductName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="17dp"
+        android:alpha="0.9"
+        android:ellipsize="end"
+        android:fontFamily="@font/myriad_pro_regular_otf"
+        android:gravity="top|start"
+        android:letterSpacing="0.02"
+        android:lineSpacingExtra="1.6dp"
+        android:maxLines="3"
+        android:minLines="3"
+        android:text="Original Free Range Venison Droëwors Nibbles 25g"
+        android:textColor="@color/black"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/horizontalProductSeparator"
+        tools:targetApi="lollipop" />
+
+    <TextView
+        android:id="@+id/tvSaveText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginEnd="12dp"
+        android:ellipsize="end"
+        android:fontFamily="@font/futura_medium_ttf"
+        android:gravity="bottom|start"
+        android:letterSpacing="0.08"
+        android:lines="2"
+        android:maxLines="2"
+        android:text="BUY 6 AND SAVE 10% ONLINE ONLY"
+        android:textColor="@color/promo_text_color"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvProductName"
+        tools:ignore="UnusedAttribute" />
+
+    <com.google.android.flexbox.FlexboxLayout
+        android:id="@+id/flexboxPrice"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="12dp"
+        android:orientation="horizontal"
+        app:alignContent="stretch"
+        app:alignItems="stretch"
+        app:flexWrap="wrap"
+        app:layout_constraintBottom_toBottomOf="@+id/imQuickShopAddToCartIcon"
+        app:layout_constraintEnd_toStartOf="@+id/imQuickShopAddToCartIcon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvSaveText">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_alignSelf="flex_end">
+
+            <TextView
+                android:id="@+id/tvWasPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/futura_semi_bold_ttf"
+                android:gravity="bottom|start"
+                android:paddingStart="0dp"
+                android:paddingEnd="2dp"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="UnusedAttribute"
+                tools:text="R55.99" />
+
+            <View
+                android:id="@+id/fromPriceStrikeThrough"
+                android:layout_width="0dp"
+                android:layout_height="1.5dp"
+                android:layout_gravity="center"
+                android:background="@color/black"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/tvWasPrice"
+                app:layout_constraintStart_toStartOf="@+id/tvWasPrice"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/tvFromPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:fontFamily="@font/futura_semi_bold_ttf"
+            android:gravity="bottom|start"
+            android:text="R40.00"
+            android:textColor="@color/red"
+            android:textSize="14sp"
+            app:layout_alignSelf="flex_start"
+            tools:ignore="UnusedAttribute" />
+
+    </com.google.android.flexbox.FlexboxLayout>
+
+
+    <ImageView
+        android:id="@+id/imQuickShopAddToCartIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="9dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvSaveText"
+        app:srcCompat="@drawable/quick_shop_add_to_cart_button_state" />
+
+
+    <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
+        android:id="@+id/imNewImage"
+        android:layout_width="24dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        fresco:viewAspectRatio="1.0" />
+
+    <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
+        android:id="@+id/imSave"
+        android:layout_width="24dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imNewImage"
+        fresco:viewAspectRatio="1.0" />
+
+    <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
+        android:id="@+id/imReward"
+        android:layout_width="24dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imSave"
+        fresco:viewAspectRatio="1.0" />
+
+    <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
+        android:id="@+id/imVitality"
+        android:layout_width="24dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imReward"
+        fresco:viewAspectRatio="1.0" />
+
+    <View
+        android:id="@+id/bottomView"
+        android:layout_width="match_parent"
+        android:layout_height="15dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginEnd="6dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/flexboxPrice" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

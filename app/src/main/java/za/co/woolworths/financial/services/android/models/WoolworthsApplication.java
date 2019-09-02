@@ -46,6 +46,7 @@ import za.co.woolworths.financial.services.android.models.dto.AbsaBankingOpenApi
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.chat.PresenceInAppChat;
+import za.co.woolworths.financial.services.android.models.dto.quick_shop.QuickShopDefaultValues;
 import za.co.woolworths.financial.services.android.models.service.RxBus;
 import za.co.woolworths.financial.services.android.ui.activities.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
@@ -89,6 +90,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
 	private static boolean isApplicationInForeground = false;
 	private static AbsaBankingOpenApiServices absaBankingOpenApiServices;
 	private static PresenceInAppChat presenceInAppChat;
+	private static QuickShopDefaultValues quickShopDefaultValues;
 
 	public static String getApiId() {
 		PackageInfo packageInfo = null;
@@ -216,7 +218,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
 	private static WoolworthsApplication mInstance;
 
-	@Override
+    @Override
 	public void onCreate() {
 		super.onCreate();
 		mInstance = this;
@@ -456,5 +458,13 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
 	public static void setPresenceInAppChat(PresenceInAppChat presenceInAppChat) {
 		WoolworthsApplication.presenceInAppChat = presenceInAppChat;
+	}
+
+	public static void setQuickShopDefaultValues(QuickShopDefaultValues quickShopDefaultValues) {
+		WoolworthsApplication.quickShopDefaultValues = quickShopDefaultValues;
+	}
+
+	public static QuickShopDefaultValues getQuickShopDefaultValues() {
+		return quickShopDefaultValues;
 	}
 }

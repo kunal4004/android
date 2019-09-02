@@ -20,7 +20,7 @@ import za.co.woolworths.financial.services.android.contracts.RequestListener
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
-import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment
+import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment
 import za.co.woolworths.financial.services.android.ui.fragments.shop.list.DepartmentExtensionFragment
 import za.co.woolworths.financial.services.android.util.NetworkManager
@@ -108,21 +108,14 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
     private fun openNextFragment(rootCategory: RootCategory): Fragment {
         val drillDownCategoryFragment = SubCategoryFragment()
         val bundle = Bundle()
-        when (rootCategory.hasChildren) {
+        return when (rootCategory.hasChildren) {
             // navigate to drill down of categories
             true -> {
                 bundle.putString("ROOT_CATEGORY", Utils.toJson(rootCategory))
                 drillDownCategoryFragment.arguments = bundle
                 return drillDownCategoryFragment
             }
-            else -> {
-                // navigate to product listing
-                val gridFragment = GridFragment()
-                bundle.putString("sub_category_id", rootCategory.dimValId)
-                bundle.putString("sub_category_name", rootCategory.categoryName)
-                gridFragment.arguments = bundle
-                return gridFragment
-            }
+            else -> ProductListingFragment.newInstance(rootCategory.dimValId, rootCategory.categoryName, "")
         }
     }
 

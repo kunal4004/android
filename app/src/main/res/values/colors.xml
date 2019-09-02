@@ -61,7 +61,7 @@
     <color name="view_statement_black">#1F1F1F</color>
     <color name="promotional_text_red">#FFD0021B</color>
     <color name="delete_red_bg">#D10B23</color>
-    <color name="toast_background">#dd030303</color>
+    <color name="toast_background">#CC030303</color>
     <color name="was_price_color">#D0021B</color>
     <color name="unavailable_color">#F9F9F9</color>
     <color name="disabled_text">#212B36</color>
