@@ -10,7 +10,6 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.awfs.coordination.R
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList
@@ -62,7 +61,7 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
             val itemDecorator = DividerItemDecoration(it, DividerItemDecoration.VERTICAL)
             ContextCompat.getDrawable(it, R.drawable.divider)?.let { it1 -> itemDecorator.setDrawable(it1) }
             rcvShoppingLists.addItemDecoration(itemDecorator)
-            rcvShoppingLists.layoutManager = LinearLayoutManager(it, LinearLayout.VERTICAL, false)
+            rcvShoppingLists.layoutManager = LinearLayoutManager(it, LinearLayoutManager.VERTICAL, false)
             mAddToShoppingListAdapter = ViewShoppingListAdapter(mutableListOf(), this)
             rcvShoppingLists.adapter = mAddToShoppingListAdapter
         }
@@ -91,6 +90,8 @@ class MyListsFragment : DepartmentExtensionFragment(), View.OnClickListener, ISh
                                     bindShoppingListToUI()
                                 }
                                 440 -> {
+                                    parentFragment?.clearCachedData()
+                                    mAddToShoppingListAdapter?.notifyDataSetChanged()
                                     SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
                                     showSignOutView()
                                     QueryBadgeCounter.getInstance().clearBadge()
