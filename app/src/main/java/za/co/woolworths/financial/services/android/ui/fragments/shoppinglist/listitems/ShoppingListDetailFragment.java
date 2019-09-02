@@ -4,13 +4,15 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Resources;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,7 +29,6 @@ import com.google.gson.JsonElement;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,9 +41,11 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
+import za.co.woolworths.financial.services.android.models.dto.FulfillmentStoreMap;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingDeliveryLocation;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItem;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingListItemsResponse;
 import za.co.woolworths.financial.services.android.models.dto.SkuInventory;
@@ -55,6 +58,7 @@ import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSiz
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity;
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
+import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListDetailActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.ShoppingListItemsAdapter;
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
@@ -97,8 +101,8 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     private ErrorHandlerView mErrorHandlerView;
     private BroadcastReceiver mConnectionBroadcast;
     private Call<AddItemToCartResponse> mPostAddToCart;
-    private  Call<SkusInventoryForStoreResponse> mGetInventorySkusForStore;
-    private Map<String, String> mMapStoreFulFillmentKeyValue;
+    private Call<SkusInventoryForStoreResponse> mGetInventorySkusForStore;
+    private ArrayList<FulfillmentStoreMap> fulfillmentStoreMapArrayList;
     private boolean errorMessageWasPopUp;
     private ShoppingListItem mOpenShoppingListItem;
     private Integer mDeliveryResultCode;
@@ -138,7 +142,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     }
 
     private void initViewAndEvent(View view) {
-        mMapStoreFulFillmentKeyValue = new HashMap<>();
+        fulfillmentStoreMapArrayList = new ArrayList<>();
         RelativeLayout rlNoConnectionLayout = view.findViewById(R.id.no_connection_layout);
         rcvShoppingListItems = view.findViewById(R.id.rcvShoppingListItems);
         WTextView textProductSearch = view.findViewById(R.id.textProductSearch);
@@ -245,7 +249,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             String fulFillmentStoreId = Utils.retrieveStoreId(fulFillmentTypeIdCollection);
             if (!TextUtils.isEmpty(fulFillmentStoreId)) {
                 fulFillmentStoreId = fulFillmentStoreId.replace("\"", "");
-                mMapStoreFulFillmentKeyValue.put(fulFillmentTypeIdCollection, fulFillmentStoreId);
+                fulfillmentStoreMapArrayList.add(new FulfillmentStoreMap(fulFillmentTypeIdCollection, fulFillmentStoreId, false));
                 executeGetInventoryForStore(fulFillmentStoreId, multiSKUS);
             } else {
                 for (String sku : skuIds) {
@@ -292,6 +296,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             case R.id.btnCheckOut:
                 addItemsToCart();
                 break;
+
             default:
                 break;
         }
@@ -363,8 +368,38 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     }
 
     @Override
-    public void onItemDeleteClick(String id, String productId, String catalogRefId) {
-       deleteShoppingListItem(listId, id, productId, catalogRefId);
+    public void onItemDeleteClick(String id, String productId, String catalogRefId, final boolean shouldUpdateShoppingList) {
+        int listSize = shoppingListItemsAdapter.getShoppingListItems().size();
+        if (listSize == 1) {
+            if (!shouldUpdateShoppingList) {
+                rlEmptyView.setVisibility(VISIBLE);
+                rcvShoppingListItems.setVisibility(GONE);
+                hideEditShoppingListMode();
+                isMenuItemReadyToShow = false;
+                Activity activity = getActivity();
+                if (activity != null) {
+                    activity.invalidateOptionsMenu();
+                    ((ShoppingListDetailActivity) activity).setToolbarText(getString(R.string.edit));
+                }
+                rlCheckOut.setVisibility(GONE);
+            }
+        }
+        editButtonVisibility();
+        Call<ShoppingListItemsResponse> shoppingListItemsResponseCall = OneAppService.INSTANCE.deleteShoppingListItem(listId, id, productId, catalogRefId);
+        shoppingListItemsResponseCall.enqueue(new CompletionHandler<>(new RequestListener<ShoppingListItemsResponse>() {
+            @Override
+            public void onSuccess(ShoppingListItemsResponse shoppingListItemsResponse) {
+                if (shouldUpdateShoppingList)
+                    onShoppingListItemDelete(shoppingListItemsResponse);
+            }
+
+            @Override
+            public void onFailure(Throwable error) {
+                if (shouldUpdateShoppingList)
+                    onDeleteItemFailed();
+            }
+        }, ShoppingListItemsResponse.class));
+
     }
 
     @Override
@@ -390,13 +425,13 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         if (shoppingListItemsAdapter != null) {
             shoppingListItemsAdapter.resetSelection();
         }
-        
+
         pbLoadingIndicator.setVisibility(GONE);
         btnCheckOut.setVisibility(VISIBLE);
 
         // Present toast on BottomNavigationMenu if shopping list detail was opened from my list
         if (openFromMyList) {
-            activity.setResult(RESULT_OK,resultIntent);
+            activity.setResult(RESULT_OK, resultIntent);
             activity.finish();
             activity.overridePendingTransition(0, 0);
         } else {
@@ -451,20 +486,6 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         }
     }
 
-    public void onGetListFailure(final String errorMessage) {
-        Activity activity = getActivity();
-        if (activity != null) {
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    loadingBar.setVisibility(GONE);
-                    mErrorHandlerView.showErrorHandler();
-                    mErrorHandlerView.networkFailureHandler(errorMessage);
-                }
-            });
-        }
-    }
-
     @Override
     public void onDeleteItemFailed() {
         final Activity activity = getActivity();
@@ -490,14 +511,18 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     }
 
 
-    public void initGetShoppingListItems() {
+    private void initGetShoppingListItems() {
+        Activity activity = getActivity();
+        if (activity == null) return;
         mErrorHandlerView.hideErrorHandler();
         mShoppingListItems = new ArrayList<>();
         rlEmptyView.setVisibility(GONE);
         rcvShoppingListItems.setVisibility(GONE);
         loadingBar.setVisibility(VISIBLE);
+        ((ShoppingListDetailActivity) activity).setToolbarText(getString(R.string.edit));
 
-       Call<ShoppingListItemsResponse> shoppingListItemsResponseCall =  OneAppService.INSTANCE.getShoppingListItems(listId);
+
+        Call<ShoppingListItemsResponse> shoppingListItemsResponseCall = OneAppService.INSTANCE.getShoppingListItems(listId);
         shoppingListItemsResponseCall.enqueue(new CompletionHandler<>(new RequestListener<ShoppingListItemsResponse>() {
             @Override
             public void onSuccess(ShoppingListItemsResponse shoppingListItemsResponse) {
@@ -508,7 +533,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             public void onFailure(Throwable error) {
 
             }
-        },ShoppingListItemsResponse.class));
+        }, ShoppingListItemsResponse.class));
     }
 
     @Override
@@ -542,14 +567,21 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
 
     @Override
     public void onCreateOptionsMenu(final Menu menu, MenuInflater inflater) {
+        Activity activity = getActivity();
+        if (activity == null) return;
+        ShoppingListDetailActivity shoppingListActivity = ((ShoppingListDetailActivity) activity);
         inflater.inflate(R.menu.shopping_list_more, menu);
         mMenuActionSearch = menu.findItem(R.id.action_search);
         mMenuActionSelectAll = menu.findItem(R.id.selectAll);
         actionSearchVisibility(false);
-        if (isMenuItemReadyToShow)
+
+        if (isMenuItemReadyToShow) {
             mMenuActionSelectAll.setVisible(true);
-        else
+            shoppingListActivity.editButtonVisibility(true);
+        } else {
             mMenuActionSelectAll.setVisible(false);
+            editButtonVisibility();
+        }
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -710,12 +742,14 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     public void getInventoryForStoreSuccess(SkusInventoryForStoreResponse skusInventoryForStoreResponse) {
         if (skusInventoryForStoreResponse.httpCode == 200) {
             String fulFillmentType = null;
-            String storeId = skusInventoryForStoreResponse.storeId;
-            for (Map.Entry<String, String> map : mMapStoreFulFillmentKeyValue.entrySet()) {
-                if (storeId.equalsIgnoreCase(map.getValue()) && !matchesFullFillmentTypeKey.contains(map.getKey())) {
-                    fulFillmentType = map.getKey();
+            for (FulfillmentStoreMap mapId : fulfillmentStoreMapArrayList) {
+                if (mapId.getStoreID().equalsIgnoreCase(skusInventoryForStoreResponse.storeId) && !mapId.getInventoryCompletedForStore()) {
+                    fulFillmentType = mapId.getTypeID();
+                    mapId.setInventoryCompletedForStore(true);
+                    break;
                 }
             }
+
             matchesFullFillmentTypeKey.add(fulFillmentType);
             List<SkuInventory> skuInventory = skusInventoryForStoreResponse.skuInventory;
             // skuInventory is empty or null
@@ -747,7 +781,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
 
             updateShoppingList();
 
-            if (getLastValueInMap().equalsIgnoreCase(storeId)) {
+            if (getLastValueInMap().equalsIgnoreCase(skusInventoryForStoreResponse.storeId)) {
 
                 /***
                  * Triggered when "SELECT ALL" is selected from toolbar
@@ -836,8 +870,8 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
             return;
         }
 
-        if (requestCode == DELIVERY_LOCATION_REQUEST  && resultCode == RESULT_OK) { // on suburb selection successful
-                makeInventoryCall();
+        if (requestCode == DELIVERY_LOCATION_REQUEST && resultCode == RESULT_OK) { // on suburb selection successful
+            makeInventoryCall();
         }
 
         if (requestCode == REQUEST_SUBURB_CHANGE) {
@@ -903,9 +937,7 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     }
 
     private String getLastValueInMap() {
-        if (mMapStoreFulFillmentKeyValue == null) return null;
-        List<String> listOfFulfillmentValue = Collections.list(Collections.enumeration(mMapStoreFulFillmentKeyValue.values()));
-        return listOfFulfillmentValue.get(listOfFulfillmentValue.size() - 1);
+        return (fulfillmentStoreMapArrayList == null) ? null : fulfillmentStoreMapArrayList.get(fulfillmentStoreMapArrayList.size() - 1).getStoreID();
     }
 
     private void setResultCode(Integer resultCode) {
@@ -916,30 +948,11 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         return mDeliveryResultCode;
     }
 
-
-    public Call<ShoppingListItemsResponse> deleteShoppingListItem(String listId, String id, String productId, String catalogRefId) {
-
-       Call<ShoppingListItemsResponse> shoppingListItemsResponseCall =  OneAppService.INSTANCE.deleteShoppingListItem(listId,id,productId,catalogRefId);
-        shoppingListItemsResponseCall.enqueue(new CompletionHandler<>(new RequestListener<ShoppingListItemsResponse>() {
-            @Override
-            public void onSuccess(ShoppingListItemsResponse shoppingListItemsResponse) {
-                onShoppingListItemDelete(shoppingListItemsResponse);
-            }
-
-            @Override
-            public void onFailure(Throwable error) {
-                onDeleteItemFailed();
-            }
-        },ShoppingListItemsResponse.class));
-
-        return shoppingListItemsResponseCall;
-    }
-
     protected Call<AddItemToCartResponse> postAddItemToCart(List<AddItemToCart> addItemToCart) {
         onAddToCartPreExecute();
         addedToCartFail(false);
 
-        PostItemToCart postItemToCart  = new PostItemToCart();
+        PostItemToCart postItemToCart = new PostItemToCart();
         return postItemToCart.make(addItemToCart, new RequestListener<AddItemToCartResponse>() {
             @Override
             public void onSuccess(AddItemToCartResponse addItemToCartResponse) {
@@ -984,10 +997,10 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
     }
 
 
-    public  Call<SkusInventoryForStoreResponse> getInventoryStockForStore(String storeId, String multiSku) {
+    public Call<SkusInventoryForStoreResponse> getInventoryStockForStore(String storeId, String multiSku) {
         setInternetConnectionWasLost(false);
 
-        Call<SkusInventoryForStoreResponse> skusInventoryForStoreResponseCall  = OneAppService.INSTANCE.getInventorySkuForStore(storeId, multiSku);
+        Call<SkusInventoryForStoreResponse> skusInventoryForStoreResponseCall = OneAppService.INSTANCE.getInventorySkuForStore(storeId, multiSku);
         skusInventoryForStoreResponseCall.enqueue(new CompletionHandler<>(new RequestListener<SkusInventoryForStoreResponse>() {
             @Override
             public void onSuccess(SkusInventoryForStoreResponse skusInventoryForStoreResponse) {
@@ -1000,9 +1013,9 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
                 setInternetConnectionWasLost(true);
                 geInventoryForStoreFailure(error.getMessage());
             }
-        },SkusInventoryForStoreResponse.class));
+        }, SkusInventoryForStoreResponse.class));
 
-       return skusInventoryForStoreResponseCall;
+        return skusInventoryForStoreResponseCall;
     }
 
     public void setInternetConnectionWasLost(boolean internetConnectionWasLost) {
@@ -1029,4 +1042,67 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
         ShoppingDeliveryLocation shoppingDeliveryLocation = Utils.getPreferredDeliveryLocation();
         return shoppingDeliveryLocation.suburb == null;
     }
+
+    public void toggleEditButton(String name) {
+        Activity activity = getActivity();
+        if (activity == null || activity.getResources() == null) return;
+        Resources resources = activity.getResources();
+        mShoppingListItems = shoppingListItemsAdapter.getShoppingListItems();
+        if (name.equalsIgnoreCase(resources.getString(R.string.edit))) {
+            hideEditShoppingListMode();
+            shoppingListItemsAdapter.editButtonEnabled(false);
+            tvMenuSelectAll.setEnabled(true);
+            tvMenuSelectAll.setVisibility(VISIBLE);
+        } else {
+            showEditShoppingListSetting();
+            shoppingListItemsAdapter.editButtonEnabled(true);
+            tvMenuSelectAll.setEnabled(false);
+            tvMenuSelectAll.setVisibility(GONE);
+        }
+
+        resetSelectAll();
+        tvMenuSelectAll.setText(getString(getSelectAllMenuVisibility(mShoppingListItems) ? R.string.deselect_all : R.string.select_all));
+        rlCheckOut.setVisibility(getButtonStatus(mShoppingListItems) ? VISIBLE : GONE);
+    }
+
+    private void resetSelectAll() {
+        isMenuItemReadyToShow = false;
+        for (ShoppingListItem shoppingListItem : mShoppingListItems) {
+            if (shoppingListItem.quantityInStock > 0) {
+                isMenuItemReadyToShow = true;
+                break;
+            }
+        }
+        if (!isMenuItemReadyToShow) {
+            tvMenuSelectAll.setVisibility(GONE);
+        }
+    }
+
+    private void hideEditShoppingListMode() {
+        mMenuActionSelectAll.setVisible(true);
+        rlCheckOut.setEnabled(true);
+        btnCheckOut.setEnabled(true);
+        rlCheckOut.setAlpha(1.0f);
+    }
+
+    private void showEditShoppingListSetting() {
+        mMenuActionSelectAll.setVisible(false);
+        rlCheckOut.setEnabled(false);
+        btnCheckOut.setEnabled(false);
+        rlCheckOut.setAlpha(0.5f);
+
+    }
+
+    private void editButtonVisibility() {
+        Activity activity = getActivity();
+        if (activity == null) return;
+        ShoppingListDetailActivity shoppingListDetailActivity = (ShoppingListDetailActivity) activity;
+        if (shoppingListItemsAdapter.getItemCount() >= 2) {
+            shoppingListDetailActivity.editButtonVisibility(true);
+        } else {
+            shoppingListDetailActivity.editButtonVisibility(false);
+        }
+    }
+
+
 }

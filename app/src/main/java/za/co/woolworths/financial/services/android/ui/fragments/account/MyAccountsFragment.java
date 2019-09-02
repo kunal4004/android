@@ -238,7 +238,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 
 			mUpdateMyAccount = new UpdateMyAccount(mSwipeToRefreshAccount,imRefreshAccount);
 
-
 			view.findViewById(R.id.loginAccount).setOnClickListener(this.btnSignin_onClick);
 			view.findViewById(R.id.registerAccount).setOnClickListener(this.btnRegister_onClick);
 			view.findViewById(R.id.llUnlinkedAccount).setOnClickListener(this.btnLinkAccounts_onClick);
@@ -288,8 +287,9 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			if (SessionUtilities.getInstance().isC2User()) {
 				mUpdateMyAccount.enableSwipeToRefreshAccount(true);
 				this.loadAccounts(false);
-			}else
+			}else {
 				this.configureSignInNoC2ID();
+			}
 		} else {
 			if (getActivity() == null) return;
 			mUpdateMyAccount.enableSwipeToRefreshAccount(false);
@@ -379,6 +379,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 
 		if (!sc && !cc && !pl) {
 			hideView(linkedAccountsLayout);
+			disableRefresh();
 		}
 
 		if (unavailableAccounts.size() == 0) {
@@ -392,6 +393,12 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		viewPager.setAdapter(adapter);
 		viewPager.setCurrentItem(0);
 		showFeatureWalkthroughPrompts();
+	}
+
+	private void disableRefresh() {
+		if (mUpdateMyAccount != null)
+			mUpdateMyAccount.enableSwipeToRefreshAccount(false);
+		imRefreshAccount.setEnabled(false);
 	}
 
 	private void configureSignInNoC2ID() {
@@ -452,6 +459,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			hideView(applyNowAccountsLayout);
 		} else {
 			showView(applyNowAccountsLayout);
+			disableRefresh();
 		}
 
 		showView(allUserOptionsLayout);
@@ -682,7 +690,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 							mUpdateMyAccount.swipeToRefreshAccount(false);
 							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, accountsResponse.response.stsParams);
                             onSessionExpired(getActivity());
-                            initialize();
+							initialize();
                             break;
                         default:
                             if (accountsResponse.response != null) {
