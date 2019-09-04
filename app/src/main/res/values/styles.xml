@@ -1781,24 +1781,4 @@
         <item name="android:windowBackground">@android:color/transparent</item>
     </style>
 
-    <style name="page_title_text_style">
-        <item name="android:lineSpacingMultiplier">1.29</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:textSize">@dimen/twenty_sp</item>
-        <item name="android:fontFamily">@font/futura_bold</item>
-    </style>
-
-    <style name="page_body_text_style">
-        <item name="android:lineSpacingExtra">1.4dp</item>
-        <item name="android:textColor">@color/permanent_card_block_desc_color</item>
-        <item name="android:textSize">@dimen/fifteen_sp</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular</item>
-    </style>
-
-    <style name="page_footer_text_style">
-        <item name="android:textColor">@color/black</item>
-        <item name="android:textSize">@dimen/fifteen_sp</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular</item>
-    </style>
-
 </resources>
