@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/default_background"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/cardLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/ten_dp"
+        android:paddingBottom="@dimen/sixteen_dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/w_store_card" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/headerLayout"
+        style="@style/card_items_header_layout_style"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardLayout">
+        <TextView
+            style="@style/card_items_header_text_style"
+            android:layout_alignParentStart="true"
+            android:text="card details" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/cardHolderLayout"
+        style="@style/card_item_layout_style"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/headerLayout">
+        <TextView
+            android:id="@+id/tvCardHolder"
+            style="@style/card_item_regular_text_style"
+            android:layout_alignParentStart="true"
+            android:text="Card Holder" />
+
+        <TextView
+            android:id="@+id/tvCardHolderName"
+            style="@style/card_item_semi_bold_text_style"
+            android:layout_alignParentEnd="true"
+            android:text="Thuli Sandile" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/expireDetailsLayout"
+        style="@style/card_item_layout_style"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardHolderLayout">
+        <TextView
+            android:id="@+id/tvExpires"
+            style="@style/card_item_regular_text_style"
+            android:layout_alignParentStart="true"
+            android:text="Temp Card Expires:" />
+
+        <TextView
+            android:id="@+id/tvExpireDate"
+            style="@style/card_item_semi_bold_text_style"
+            android:layout_alignParentEnd="true"
+            android:text="12 June 2019" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/payWithCard"
+        style="@style/clickable_card_item_layout_style"
+        android:layout_marginTop="@dimen/sixteen_dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/expireDetailsLayout">
+
+        <ImageView
+            android:id="@+id/logoPayWithCard"
+            style="@style/card_item_start_icon_style"
+            app:srcCompat="@drawable/icon_card" />
+
+        <TextView
+            android:id="@+id/tvPayWithCard"
+            style="@style/card_item_semi_bold_text_style"
+            android:layout_toEndOf="@+id/logoPayWithCard"
+            android:text="Pay with Card" />
+
+        <ImageView
+            style="@style/card_item_end_icon_style"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/howItWorks"
+        style="@style/clickable_card_item_layout_style"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/payWithCard">
+
+        <ImageView
+            android:id="@+id/logoHowItWorks"
+            style="@style/card_item_start_icon_style"
+            app:srcCompat="@drawable/icon_card" />
+
+        <TextView
+            android:id="@+id/tvHowItWorks"
+            style="@style/card_item_semi_bold_text_style"
+            android:layout_toEndOf="@+id/logoHowItWorks"
+            android:text="How it Works" />
+
+        <ImageView
+            style="@style/card_item_end_icon_style"/>
+
+    </RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

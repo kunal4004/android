@@ -1781,4 +1781,65 @@
         <item name="android:windowBackground">@android:color/transparent</item>
     </style>
 
+    <style name="card_item_layout_style">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">@dimen/seventy_dp</item>
+        <item name="android:paddingLeft">@dimen/twenty_four_dp</item>
+        <item name="android:paddingRight">@dimen/twenty_four_dp</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:layout_marginTop">@dimen/one_dp</item>
+    </style>
+
+    <style name="clickable_card_item_layout_style" parent="card_item_layout_style">
+        <item name="android:paddingRight">@dimen/sixteen_dp</item>
+    </style>
+
+    <style name="card_items_header_layout_style" parent="card_item_layout_style">
+        <item name="android:layout_height">@dimen/fifty_dp</item>
+    </style>
+
+    <style name="card_item_regular_text_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textSize">@dimen/fifteen_sp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular</item>
+    </style>
+
+    <style name="card_item_semi_bold_text_style" parent="card_item_regular_text_style">
+        <item name="android:fontFamily">@font/myriad_pro_semi_bold</item>
+    </style>
+
+    <style name="card_item_start_icon_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:layout_alignParentStart">true</item>
+        <item name="android:alpha">0.3</item>
+        <item name="android:layout_marginRight">@dimen/twenty_four_dp</item>
+    </style>
+
+    <style name="card_item_end_icon_style">
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:layout_alignParentEnd">true</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:src">@drawable/ic_caret_black</item>
+    </style>
+
+    <style name="card_items_header_text_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/twelve_sp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:lineSpacingExtra">0.1sp</item>
+        <item name="android:gravity">center|start</item>
+        <item name="android:fontFamily">@font/futura_semi_bold</item>
+        <item name="android:letterSpacing">0.15</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
 </resources>
