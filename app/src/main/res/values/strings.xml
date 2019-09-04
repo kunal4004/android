@@ -928,7 +928,7 @@
     <string name="processing_your_request_desc">This may take a few seconds</string>
     <string name="blocked">BLOCKED</string>
     <string name="no_active_card">No Active Card</string>
-    <string name="card_block_desc">Your card has been blocked and can no longer be used. Call 0861 50 20 20 to arrange for delivery.</string>
+    <string name="card_block_desc">Your card has been blocked and can no longer be used.</string>
     <string name="link_a_card">link a card</string>
     <string name="get_replacement_card">get replacement card</string>
     <string name="get_a_replacement_card">Get A Replacement Card</string>
@@ -1054,5 +1054,6 @@
     <string name="no_stock_available">No Stock Available Online</string>
     <string name="no_stock_available_desc">Use our find in-store feature to see if there is stock available at a Woolies store near you.</string>
     <string name="no_of_items_added">%1$Item%2$</string>
+    <string name="npc_already_have_your_card_link">ALREADY HAVE your card? SCAN it NOW</string>
 
 </resources>
