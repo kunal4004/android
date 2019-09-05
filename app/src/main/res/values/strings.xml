@@ -1065,5 +1065,6 @@
     <string name="temp_card_expires">Temp Card Expires:</string>
     <string name="pay_with_card">Pay with Card</string>
     <string name="how_it_works">How it Works</string>
+    <string name="how_to_use">how to use</string>
 
 </resources>
