@@ -1842,4 +1842,16 @@
         <item name="android:textAllCaps">true</item>
     </style>
 
+    <style name="how_to_pay_text_style">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:button">@drawable/circle_green_18</item>
+        <item name="android:paddingLeft">@dimen/twenty_dp</item>
+        <item name="android:lineSpacingMultiplier">1.31</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular</item>
+        <item name="android:textSize">@dimen/sixteen_sp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:gravity">top</item>
+    </style>
+
 </resources>
