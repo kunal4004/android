@@ -1058,5 +1058,12 @@
     <string name="temp_card_how_to_use2">You’ll need to bring your ID document  in-store to use your temporary card.</string>
     <string name="temp_card_how_to_use3">Your temp card will not work online and  can only be used in-store.</string>
     <string name="temp_card_how_to_use4">Your temp card will be removed  following the first physical in-store swipe.</string>
+    <string name="dialog_scan_barcode_to_pay_title">Scan Barcode to Pay</string>
+    <string name="dialog_scan_barcode_to_pay_desc">Present your South African I.D. document to the cashier to use your temporary card.</string>
+    <string name="card_details">card details</string>
+    <string name="card_holder">Card Holder</string>
+    <string name="temp_card_expires">Temp Card Expires:</string>
+    <string name="pay_with_card">Pay with Card</string>
+    <string name="how_it_works">How it Works</string>
 
 </resources>

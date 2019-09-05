@@ -1854,4 +1854,30 @@
         <item name="android:gravity">top</item>
     </style>
 
+    <style name="dialog_title_text_style">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:textSize">@dimen/twenty_sp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:gravity">center</item>
+        <item name="android:fontFamily">@font/futura_semi_bold</item>
+    </style>
+
+    <style name="dialog_description_text_style" parent="dialog_title_text_style">
+        <item name="android:textSize">@dimen/sixteen_sp</item>
+        <item name="android:textColor">@color/gray</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular</item>
+        <item name="android:lineSpacingMultiplier">1.13</item>
+    </style>
+
+    <style name="dialog_action_text_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/futura_bold</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:letterSpacing">0.2</item>
+        <item name="android:padding">@dimen/five_dp</item>
+        <item name="android:textSize">@dimen/twelve_sp</item>
+    </style>
+
 </resources>
