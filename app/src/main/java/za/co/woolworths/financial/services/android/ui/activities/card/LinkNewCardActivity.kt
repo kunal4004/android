@@ -7,16 +7,26 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.my_card_activity.*
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.LinkCardFragment
+import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardDetailFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
 
 class LinkNewCardActivity : MyCardActivityExtension() {
+
+    private var mStoreCardDetail: String? = null
+    private var mCard: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.block_my_card_activity)
         Utils.updateStatusBarBackground(this)
         actionBar()
+
+        intent?.extras?.apply {
+            mCard = getString(MyCardDetailFragment.CARD)
+            mStoreCardDetail = getString(MyCardDetailActivity.STORE_CARD_DETAIL)
+        }
+
         if (savedInstanceState == null) {
             addFragment(
                     fragment = LinkCardFragment.newInstance(),
@@ -66,7 +76,7 @@ class LinkNewCardActivity : MyCardActivityExtension() {
     private fun finishActivity() {
         finish()
         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
-        navigateToMyCardActivity("",true) // TODO:: Replace "" by store card object
+        navigateToMyCardActivity(mStoreCardDetail, true)
     }
 
 }

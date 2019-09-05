@@ -30,12 +30,11 @@ class MyCardDetailFragment : MyCardExtension() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         arguments?.apply {
             mStoreCardDetail = getString(STORE_CARD_DETAIL,"")
             // Extract latest openedDate
             activity?.let {
-                mStoreCardDetail.let { cardValue ->
+                mStoreCardDetail?.let { cardValue ->
                     mLatestOpenedDateStoreCard = Gson().fromJson(cardValue, Account::class.java)?.primaryCard?.cards
                             ?.let { cards -> Collections.max(cards) { card, nextCard -> card.openedDate().compareTo(nextCard.openedDate()) } }
                     Utils.updateStatusBarBackground(it, R.color.grey_bg)
