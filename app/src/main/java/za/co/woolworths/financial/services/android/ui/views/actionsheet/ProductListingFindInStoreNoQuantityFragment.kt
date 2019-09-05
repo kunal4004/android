@@ -23,7 +23,7 @@ class ProductListingFindInStoreNoQuantityFragment(private val mProductListing: I
 
     companion object {
         private const val SKU_ID = "SKU_ID"
-        private const val REQUEST_PERMISSION_LOCATION = 100
+        const val REQUEST_PERMISSION_LOCATION = 100
         fun newInstance(sku_id: String, mProductListing: IProductListing?) = ProductListingFindInStoreNoQuantityFragment(mProductListing).withArgs {
             putString(SKU_ID, sku_id)
         }

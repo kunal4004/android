@@ -35,7 +35,7 @@ open class MyCardExtension : Fragment() {
             val openBlockMyCardActivity = Intent(this, BlockMyCardActivity::class.java)
             openBlockMyCardActivity.putExtra(CARD, Gson().toJson(mCardDetail))
             openBlockMyCardActivity.putExtra(STORE_CARD_DETAIL, storeCardDetail)
-            startActivityForResult(openBlockMyCardActivity,REQUEST_CODE_BLOCK_MY_CARD)
+            startActivityForResult(openBlockMyCardActivity, REQUEST_CODE_BLOCK_MY_CARD)
             overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
         }
     }
@@ -55,9 +55,11 @@ open class MyCardExtension : Fragment() {
         }
     }
 
-    internal fun navigateToLinkNewCardActivity(activity: AppCompatActivity?) {
+    internal fun navigateToLinkNewCardActivity(activity: AppCompatActivity?, storeCard: String?) {
         activity?.apply {
-            startActivity(Intent(this, LinkNewCardActivity::class.java))
+            val openLinkNewCardActivity = Intent(this, LinkNewCardActivity::class.java)
+            openLinkNewCardActivity.putExtra(STORE_CARD_DETAIL, storeCard)
+            startActivity(openLinkNewCardActivity)
             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
             finish()
         }
@@ -98,6 +100,7 @@ open class MyCardExtension : Fragment() {
             overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
         }
     }
+
     fun navigateToMyCardActivity(cardIsBlocked: Boolean) {
         activity?.apply {
             startActivity(Intent(this, MyCardDetailActivity::class.java).putExtra(CARD_BLOCKED, cardIsBlocked))

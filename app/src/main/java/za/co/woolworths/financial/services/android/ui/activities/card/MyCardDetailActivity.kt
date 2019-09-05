@@ -18,7 +18,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.npc.GetReplaceme
 import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardBlockedFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardDetailFragment
 import za.co.woolworths.financial.services.android.util.Utils
-import android.net.ParseException as ParseException1
 
 
 class MyCardDetailActivity : AppCompatActivity() {
@@ -50,7 +49,7 @@ class MyCardDetailActivity : AppCompatActivity() {
                 ?: false) {
             true -> {
                 addFragment(
-                        fragment = MyCardBlockedFragment.newInstance(),
+                        fragment = MyCardBlockedFragment.newInstance(mStoreCardDetail),
                         tag = MyCardBlockedFragment::class.java.simpleName,
                         containerViewId = R.id.flMyCard)
             }
@@ -129,6 +128,11 @@ class MyCardDetailActivity : AppCompatActivity() {
             mStoreCardDetail = data?.getStringExtra(STORE_CARD_DETAIL)
             addCardDetailFragment()
         }
+    }
 
+    // Required to delegate permission result to fragment
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        supportFragmentManager.findFragmentById(R.id.flMyCard)?.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 }
