@@ -44,9 +44,11 @@ import za.co.woolworths.financial.services.android.contracts.IToastInterface;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
+import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
 import za.co.woolworths.financial.services.android.models.service.event.AuthenticationState;
 import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
+import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity;
@@ -193,7 +195,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 if (object instanceof LoadState) {
                     String searchProduct = ((LoadState) object).getSearchProduct();
                     if (!TextUtils.isEmpty((searchProduct))) {
-                        pushFragment(ProductListingFragment.Companion.newInstance("categoryId","categoryName",searchProduct));
+                        pushFragment(ProductListingFragment.Companion.newInstance(ProductsRequestParams.SearchType.SEARCH, "", searchProduct));
                     }
                 } else if (object instanceof AuthenticationState) {
                     AuthenticationState auth = ((AuthenticationState) object);
@@ -862,6 +864,13 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
             default:
                 break;
+        }
+
+        if (requestCode == BarcodeScanActivity.BARCODE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
+            ProductsRequestParams.SearchType searchType = ProductsRequestParams.SearchType.valueOf(data.getStringExtra("searchType"));
+            String searchTerm = data.getStringExtra("searchTerm");
+            pushFragment(ProductListingFragment.Companion.newInstance(searchType, "", searchTerm));
+            return;
         }
 
         //Open shopping from Tips and trick activity requestcode

@@ -13,6 +13,7 @@ import com.awfs.coordination.R;
 
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
 import za.co.woolworths.financial.services.android.models.dto.Promotion;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator;
@@ -53,7 +54,7 @@ public class FeaturedPromotionsAdapter extends PagerAdapter {
 			@Override
 			public void onClick(View v) {
 				mBottomNavigator.setSelectedIconPosition(BottomNavigationActivity.INDEX_ACCOUNT);
-				mBottomNavigator.pushFragment(ProductListingFragment.Companion.newInstance(promotions.get(position).path, promotionImage.getContext().getResources().getString(R.string.featured_promotions),""));
+				mBottomNavigator.pushFragment(ProductListingFragment.Companion.newInstance(ProductsRequestParams.SearchType.NAVIGATE, promotionImage.getContext().getResources().getString(R.string.featured_promotions), promotions.get(position).path));
 			}
 		});
 		return cView;

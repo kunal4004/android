@@ -1,15 +1,13 @@
 package za.co.woolworths.financial.services.android.ui.fragments.barcode
 
+import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.google.gson.Gson
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.RequestListener
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse
-import za.co.woolworths.financial.services.android.models.dto.ProductRequest
-import za.co.woolworths.financial.services.android.models.dto.ProductView
-import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
+import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
@@ -156,5 +154,27 @@ abstract class BarcodeScanExtension : Fragment() {
                 }
             })
         }
+    }
+
+    public fun getProductSearchTypeAndSearchTerm(urlString: String): ProductSearchTypeAndTerm {
+        val productSearchTypeAndTerm = ProductSearchTypeAndTerm()
+        with(urlString) {
+            when {
+                contains("/cat") -> {
+                    if (this.indexOf("?") > 0) {
+                        val uri = Uri.parse(this)
+                        val value = uri.getQueryParameter("Ntt")
+                        productSearchTypeAndTerm.searchTerm = value
+                        productSearchTypeAndTerm.searchType = ProductsRequestParams.SearchType.SEARCH
+                    } else {
+                        productSearchTypeAndTerm.searchTerm = this.substring(this.lastIndexOf("/"))
+                        productSearchTypeAndTerm.searchType = ProductsRequestParams.SearchType.NAVIGATE
+                    }
+                }
+                else -> productSearchTypeAndTerm
+            }
+        }
+
+        return productSearchTypeAndTerm
     }
 }

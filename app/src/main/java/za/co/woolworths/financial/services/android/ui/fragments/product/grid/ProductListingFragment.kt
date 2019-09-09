@@ -77,9 +77,7 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
     private var mAddItemsToCart: MutableList<AddItemToCart>? = null
     private var mGridViewModel: GridViewModel? = null
     private var mErrorHandlerView: ErrorHandlerView? = null
-    private var mSubCategoryId: String? = null
     private var mSubCategoryName: String? = null
-    private var mSearchProduct: String? = null
     private var mProductAdapter: ProductListingAdapter? = null
     private var mProductList: MutableList<ProductList>? = null
     private var mRecyclerViewLayoutManager: GridLayoutManager? = null
@@ -92,6 +90,10 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
     private var mStoreId: String? = null
     private var mAddItemToCart: AddItemToCart? = null
     private var mSelectedProductList: ProductList? = null
+
+    private var mSearchType: ProductsRequestParams.SearchType? = null
+    private var mSearchTerm: String? = null
+
     override fun getViewModel(): GridViewModel? {
         return mGridViewModel
     }
@@ -109,9 +111,9 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
             mGridViewModel?.navigator = this@ProductListingFragment
 
             arguments?.apply {
-                mSubCategoryId = getString(SUB_CATEGORY_ID, "")
                 mSubCategoryName = getString(SUB_CATEGORY_NAME, "")
-                mSearchProduct = getString(SEARCH_PRODUCT_TERMS, "")
+                mSearchType = ProductsRequestParams.SearchType.valueOf(getString(SEARCH_TYPE, "SEARCH"))
+                mSearchTerm = getString(SEARCH_TERM, "")
             }
             setProductBody()
         }
@@ -148,7 +150,7 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
         activity.let { activity -> Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_SEARCH_RESULTS) }
     }
 
-    private fun setTitle() = setTitle(if (mSearchProduct?.isEmpty() == true) mSubCategoryName else mSearchProduct)
+    private fun setTitle() = setTitle(if (mSubCategoryName?.isEmpty() == true) mSearchTerm else mSubCategoryName)
 
     override fun onLoadProductSuccess(response: ProductView, loadMoreData: Boolean) {
         val productLists = response.products
@@ -348,7 +350,7 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
     }
 
     override fun startProductRequest() {
-        if (isEmpty(mSearchProduct)) {
+        if (isEmpty(mSearchTerm)) {
             viewModel!!.executeLoadProduct(activity, viewModel!!.productRequestBody)
         } else {
             viewModel!!.executeLoadProduct(activity, viewModel!!.productRequestBody)
@@ -370,11 +372,7 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
     }
 
     override fun setProductBody() {
-        if (isEmpty(mSearchProduct)) {
-            viewModel?.setProductRequestBody(ProductsRequestParams.SearchType.NAVIGATE, mSubCategoryId)
-        } else {
-            viewModel?.setProductRequestBody(ProductsRequestParams.SearchType.SEARCH, mSearchProduct)
-        }
+        viewModel?.setProductRequestBody(mSearchType, mSearchTerm)
     }
 
     override fun onLoadStart(isLoadMore: Boolean) {
@@ -566,7 +564,7 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
     }
 
     override fun openProductDetailView(productList: ProductList) {
-        mSubCategoryName = if (mSearchProduct?.isNotEmpty() == true) mSearchProduct else mSubCategoryName
+        mSubCategoryName = if (mSearchTerm?.isNotEmpty() == true) mSearchTerm else mSubCategoryName
         bottomNavigator.openProductDetailFragment(mSubCategoryName, productList)
     }
 
@@ -754,18 +752,19 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
     companion object {
         const val REFINEMENT_DATA = "REFINEMENT_DATA"
         const val PRODUCTS_REQUEST_PARAMS = "PRODUCTS_REQUEST_PARAMS"
-        private const val SUB_CATEGORY_ID = "SUB_CATEGORY_ID"
         private const val SUB_CATEGORY_NAME = "SUB_CATEGORY_NAME"
-        private const val SEARCH_PRODUCT_TERMS = "SEARCH_PRODUCT_TERMS"
 
         const val REFINE_REQUEST_CODE = 77
         private const val QUERY_INVENTORY_FOR_STORE_REQUEST_CODE = 3343
         private const val QUERY_LOCATION_ITEM_REQUEST_CODE = 3344
 
-        fun newInstance(sub_category_id: String?, sub_category_name: String?, search_product_term: String?) = ProductListingFragment().withArgs {
-            putString(SUB_CATEGORY_ID, sub_category_id)
+        private const val SEARCH_TYPE = "SEARCH_TYPE"
+        private const val SEARCH_TERM = "SEARCH_TERM"
+
+        fun newInstance(searchType: ProductsRequestParams.SearchType?, sub_category_name: String?, searchTerm: String?) = ProductListingFragment().withArgs {
+            putString(SEARCH_TYPE, searchType?.name)
             putString(SUB_CATEGORY_NAME, sub_category_name)
-            putString(SEARCH_PRODUCT_TERMS, search_product_term)
+            putString(SEARCH_TERM, searchTerm)
         }
     }
 }

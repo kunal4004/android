@@ -17,6 +17,7 @@ import android.view.View.VISIBLE
 import kotlinx.android.synthetic.main.no_connection_layout.*
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
@@ -115,7 +116,7 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
                 drillDownCategoryFragment.arguments = bundle
                 return drillDownCategoryFragment
             }
-            else -> ProductListingFragment.newInstance(rootCategory.dimValId, rootCategory.categoryName, "")
+            else -> ProductListingFragment.newInstance(ProductsRequestParams.SearchType.NAVIGATE, rootCategory.categoryName, rootCategory.dimValId)
         }
     }
 

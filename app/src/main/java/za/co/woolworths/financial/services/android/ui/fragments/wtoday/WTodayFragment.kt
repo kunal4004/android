@@ -21,6 +21,7 @@ import kotlinx.android.synthetic.main.add_to_list_content.*
 import kotlinx.android.synthetic.main.wtoday_main_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IWTodayInterface
+import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity
 import za.co.woolworths.financial.services.android.ui.extension.isConnectedToNetwork
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
@@ -123,7 +124,7 @@ class WTodayFragment : WTodayExtension(), IWTodayInterface {
     }
 
     override fun onShowProductListing(categoryId: String, categoryName: String) {
-        (activity as? BottomNavigationActivity)?.pushFragment(ProductListingFragment.newInstance(categoryId,categoryName,""))
+        (activity as? BottomNavigationActivity)?.pushFragment(ProductListingFragment.newInstance(ProductsRequestParams.SearchType.NAVIGATE, categoryName, categoryId))
     }
 
     override fun onAddIngredientsToShoppingList(ingredients: String) {

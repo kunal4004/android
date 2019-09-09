@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.barcode
 
+import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -9,6 +10,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import com.awfs.coordination.R
+import com.google.zxing.BarcodeFormat
 import kotlinx.android.synthetic.main.barcode_scan_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
@@ -45,7 +47,7 @@ open class BarcodeScanFragment : BarcodeScanExtension() {
                 mCodeScanner =
                         codeScannerView?.let {
                             CodeScanner.builder()
-                                    .formats(CodeScanner.ONE_DIMENSIONAL_FORMATS)
+                                    .formats(CodeScanner.ALL_FORMATS)
                                     .autoFocusMode(AutoFocusMode.SAFE)
                                     .autoFocusInterval(2000L)
                                     .flash(false)
@@ -53,8 +55,23 @@ open class BarcodeScanFragment : BarcodeScanExtension() {
                                         runOnUiThread {
                                             result.text?.apply {
                                                 if (!getProductDetailAsyncTaskIsRunning) {
-                                                    setProductRequestBody(ProductsRequestParams.SearchType.BARCODE, this)
-                                                    mRetrieveProductDetail = retrieveProductDetail()
+                                                    when (result.barcodeFormat) {
+                                                        BarcodeFormat.QR_CODE -> {
+                                                            val productSearchTypeAndSearchTerm = getProductSearchTypeAndSearchTerm(this)
+                                                           // setProductRequestBody(productSearchTypeAndSearchTerm.searchType, productSearchTypeAndSearchTerm.searchTerm)
+                                                           // mRetrieveProductDetail = retrieveProductDetail()
+                                                            intent = Intent()
+                                                            intent.putExtra("searchType", productSearchTypeAndSearchTerm.searchType.name)
+                                                            intent.putExtra("searchTerm", productSearchTypeAndSearchTerm.searchTerm)
+                                                            setResult(RESULT_OK, intent)
+                                                            finish()
+                                                            overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+                                                        }
+                                                        else -> {
+                                                            setProductRequestBody(ProductsRequestParams.SearchType.BARCODE, this)
+                                                            mRetrieveProductDetail = retrieveProductDetail()
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }

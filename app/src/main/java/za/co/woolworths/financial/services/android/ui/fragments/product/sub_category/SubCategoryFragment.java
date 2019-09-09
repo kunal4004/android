@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
+import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.RootCategory;
 import za.co.woolworths.financial.services.android.models.dto.SubCategory;
@@ -182,7 +183,7 @@ public class SubCategoryFragment extends BaseFragment<ExpandableSubCategoryFragm
 	@Override
 	public void onChildItemClicked(SubCategory subCategory) {
 		//Navigate to product grid
-		pushFragment(ProductListingFragment.Companion.newInstance(subCategory.dimValId,subCategory.categoryName,""));
+		pushFragment(ProductListingFragment.Companion.newInstance(ProductsRequestParams.SearchType.NAVIGATE,subCategory.categoryName,subCategory.dimValId));
 	}
 
 	@Override
