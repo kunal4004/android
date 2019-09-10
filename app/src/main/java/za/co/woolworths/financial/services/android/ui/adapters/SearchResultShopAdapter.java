@@ -11,6 +11,7 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
 import com.daimajia.swipe.SwipeLayout;
@@ -32,9 +33,6 @@ import static za.co.woolworths.financial.services.android.ui.fragments.product.d
 
 public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHolder> {
 
-	private final int ITEM_VIEW_TYPE_HEADER = 0;
-	private final int ITEM_VIEW_TYPE_BASIC = 1;
-	private final int ITEM_VIEW_TYPE_FOOTER = 2;
 	private boolean value;
 
 	private List<ProductList> mProductList;
@@ -50,19 +48,16 @@ public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.V
 	@Override
 	public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 		RecyclerView.ViewHolder vh;
-		switch (viewType) {
-			case ITEM_VIEW_TYPE_HEADER:
+		switch (ProductListingViewType.values()[viewType]) {
+			case HEADER:
 				vh = getHeaderViewHolder(parent);
 				break;
 
-			case ITEM_VIEW_TYPE_BASIC:
-				vh = getSimpleViewHolder(parent);
-				break;
-
-			case ITEM_VIEW_TYPE_FOOTER:
+			case FOOTER:
 				vh = getProgressViewHolder(parent);
 				break;
 
+			case PRODUCT:
 			default:
 				vh = getSimpleViewHolder(parent);
 				break;
@@ -299,7 +294,7 @@ public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.V
 	}
 
 	private class HeaderViewHolder extends RecyclerView.ViewHolder {
-		private WTextView tvNumberOfItem;
+		private TextView tvNumberOfItem;
 
 		private HeaderViewHolder(View v) {
 			super(v);

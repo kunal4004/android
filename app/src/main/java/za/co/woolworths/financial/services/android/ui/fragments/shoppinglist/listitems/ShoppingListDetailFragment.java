@@ -811,6 +811,15 @@ public class ShoppingListDetailFragment extends Fragment implements View.OnClick
                 if (activity == null) return;
                 if (skusInventoryForStoreResponse.response == null) return;
                 if (TextUtils.isEmpty(skusInventoryForStoreResponse.response.desc)) return;
+
+                // Hide quantity progress bar indicator
+                if (mShoppingListItems.size() > 0) {
+                    for (ShoppingListItem shoppingListItem : mShoppingListItems) {
+                            shoppingListItem.inventoryCallCompleted = true;
+                            shoppingListItem.quantityInStock = -1;
+                    }
+                }
+
                 Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, skusInventoryForStoreResponse.response.desc);
                 errorMessageWasPopUp = true;
             }
