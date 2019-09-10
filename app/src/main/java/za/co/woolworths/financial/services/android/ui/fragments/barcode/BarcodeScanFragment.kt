@@ -57,19 +57,12 @@ open class BarcodeScanFragment : BarcodeScanExtension() {
                                                 if (!getProductDetailAsyncTaskIsRunning) {
                                                     when (result.barcodeFormat) {
                                                         BarcodeFormat.QR_CODE -> {
-                                                            val productSearchTypeAndSearchTerm = getProductSearchTypeAndSearchTerm(this)
-                                                           // setProductRequestBody(productSearchTypeAndSearchTerm.searchType, productSearchTypeAndSearchTerm.searchTerm)
-                                                           // mRetrieveProductDetail = retrieveProductDetail()
-                                                            intent = Intent()
-                                                            intent.putExtra("searchType", productSearchTypeAndSearchTerm.searchType.name)
-                                                            intent.putExtra("searchTerm", productSearchTypeAndSearchTerm.searchTerm)
-                                                            setResult(RESULT_OK, intent)
-                                                            finish()
-                                                            overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+                                                            getProductSearchTypeAndSearchTerm(this).apply {
+                                                                sendResultBack(this.searchType.name, this.searchTerm)
+                                                            }
                                                         }
                                                         else -> {
-                                                            setProductRequestBody(ProductsRequestParams.SearchType.BARCODE, this)
-                                                            mRetrieveProductDetail = retrieveProductDetail()
+                                                            sendResultBack(ProductsRequestParams.SearchType.BARCODE.name, this)
                                                         }
                                                     }
                                                 }
@@ -131,5 +124,16 @@ open class BarcodeScanFragment : BarcodeScanExtension() {
         }
     }
 
+    private fun sendResultBack(searchType: String, searchTerm: String) {
+        activity?.apply {
+            Intent().apply {
+                putExtra("searchType", searchType)
+                putExtra("searchTerm", searchTerm)
+                setResult(RESULT_OK, this)
+                finish()
+                overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+            }
+        }
 
+    }
 }

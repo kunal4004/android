@@ -866,7 +866,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 break;
         }
 
-        if (requestCode == BarcodeScanActivity.BARCODE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
+        if ((requestCode == BarcodeScanActivity.BARCODE_ACTIVITY_REQUEST_CODE || requestCode == TIPS_AND_TRICKS_CTA_REQUEST_CODE) && resultCode == RESULT_OK) {
             ProductsRequestParams.SearchType searchType = ProductsRequestParams.SearchType.valueOf(data.getStringExtra("searchType"));
             String searchTerm = data.getStringExtra("searchTerm");
             pushFragment(ProductListingFragment.Companion.newInstance(searchType, "", searchTerm));
@@ -874,7 +874,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         }
 
         //Open shopping from Tips and trick activity requestcode
-        if (requestCode == TIPS_AND_TRICKS_CTA_REQUEST_CODE && (resultCode == RESULT_OK_ACCOUNTS || resultCode == RESULT_OK_BARCODE_SCAN)) {
+        if (requestCode == TIPS_AND_TRICKS_CTA_REQUEST_CODE && resultCode == RESULT_OK_ACCOUNTS ) {
             getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
             clearStack();
             Fragment fragment = mNavController.getCurrentFrag();
@@ -884,14 +884,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                         ShopFragment shopFragment = (ShopFragment) fragment;
                         shopFragment.navigateToMyListFragment();
                         shopFragment.refreshViewPagerFragment(false);
-                        return;
-                    }
-                    break;
-
-                case RESULT_OK_BARCODE_SCAN:
-                    if (fragment instanceof ShopFragment) {
-                        ShopFragment shopFragment = (ShopFragment) fragment;
-                        shopFragment.openBarcodeScanner();
                         return;
                     }
                     break;
