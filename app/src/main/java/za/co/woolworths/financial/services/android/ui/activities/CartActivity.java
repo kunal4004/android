@@ -256,4 +256,8 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
         if (jsonElement != null)
             navigateTo.navigateToShoppingListOnToastClicked(this, jsonElement);
     }
+
+    public void cancelCartSummaryCall(boolean toastButtonWasClicked) {
+        this.toastButtonWasClicked = toastButtonWasClicked;
+    }
 }

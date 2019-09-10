@@ -401,6 +401,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 			rvCartList.setLayoutManager(mLayoutManager);
 			rvCartList.setAdapter(cartProductAdapter);
+			cancelCartSummaryCall(false);
 		} else {
 			updateCartSummary(0);
 			rvCartList.setVisibility(View.GONE);
@@ -702,6 +703,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 						updateCart(cartResponse, commerceItem);
 						mToggleItemRemoved.onRemoveSuccess();
 						QueryBadgeCounter.getInstance().setCartCount(0, INDEX_CART);
+						cancelCartSummaryCall(true);
 					} else {
 						mToggleItemRemoved.onRemoveItem(false);
 					}
@@ -730,6 +732,13 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		},ShoppingCartResponse.class));
 
 		return shoppingCartResponseCall;
+	}
+
+	private void cancelCartSummaryCall(Boolean state) {
+		Activity activity = getActivity();
+		if (activity !=null ){
+			((CartActivity)activity).cancelCartSummaryCall(state);
+		}
 	}
 
 
