@@ -40,7 +40,7 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-        (activity as AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         arguments?.apply {
             mBundleFiveDigitCodePinCode = getInt(FIVE_DIGIT_PIN_CODE, 0)
             getString(ALIAS_ID)?.apply { mAliasId = this }
@@ -48,7 +48,7 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.absa_five_digit_code_fragment, container, false)
+        return inflater.inflate(R.layout.absa_five_digit_code_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -60,13 +60,14 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
 
     private fun initViewsAndEvents() {
         activity?.apply { (this as ABSAOnlineBankingRegistrationActivity).setPageTitle(getString(R.string.absa_registration_title_step_3))  }
-        tvEnterYourPin.setText(getString(R.string.absa_confirm_five_digit_code_title))
+        tvEnterYourPin?.text = getString(R.string.absa_confirm_five_digit_code_title)
         mPinImageViewList = mutableListOf(ivPin1, ivPin2, ivPin3, ivPin4, ivPin5)
-        ivEnterFiveDigitCode.visibility = View.GONE
-        completeSetup.visibility = View.VISIBLE
-        completeSetup.setOnClickListener(this)
-        edtEnterATMPin.setOnKeyPreImeListener { activity?.onBackPressed() }
-        edtEnterATMPin.setOnEditorActionListener { _, actionId, _ ->
+        ivEnterFiveDigitCode?.visibility = View.GONE
+        completeSetup?.visibility = View.VISIBLE
+        completeSetup?.setOnClickListener(this)
+        edtEnterATMPin?.setOnKeyPreImeListener { activity?.onBackPressed() }
+        edtEnterATMPin?.movementMethod = null
+        edtEnterATMPin?.setOnEditorActionListener { _, actionId, _ ->
             var handled = false
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 handled = true
@@ -112,10 +113,10 @@ class AbsaConfirmFiveDigitCodeFragment : AbsaFragmentExtension(), View.OnClickLi
             }
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                if (previousLength > edtEnterATMPin.length()) { // detect backspace
-                    deletePin((edtEnterATMPin.length()), mPinImageViewList!!)
+                if (previousLength > s.length) { // detect backspace
+                    deletePin((s.length), mPinImageViewList!!)
                 } else {
-                    updateEnteredPin((edtEnterATMPin.length() - 1), mPinImageViewList!!)
+                    updateEnteredPin((s.length - 1), mPinImageViewList!!)
                 }
             }
 
