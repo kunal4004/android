@@ -112,4 +112,17 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/card_npc_isometric" />
 
+    <ProgressBar
+        android:id="@+id/pbParticipatingStore"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/tvAlreadyHaveCard"
+        app:layout_constraintEnd_toEndOf="@+id/btnParticipatingStores"
+        app:layout_constraintStart_toStartOf="@+id/btnParticipatingStores"
+        app:layout_constraintTop_toTopOf="@+id/btnParticipatingStores" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

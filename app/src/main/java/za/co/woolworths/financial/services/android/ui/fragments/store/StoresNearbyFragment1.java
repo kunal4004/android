@@ -524,7 +524,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 
 	public Call<LocationResponse> init(final Location location) {
 		onLocationLoadStart();
-		Call<LocationResponse> locationResponseCall = OneAppService.INSTANCE.getLocations(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()), "", "50000");
+		Call<LocationResponse> locationResponseCall = OneAppService.INSTANCE.getLocations(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()), "", "50000", false);
 		locationResponseCall.enqueue(new CompletionHandler<>(new RequestListener<LocationResponse>() {
 			@Override
 			public void onSuccess(LocationResponse locationResponse) {
@@ -702,7 +702,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
                         == PackageManager.PERMISSION_GRANTED) {
                     onLocationLoadStart();
                     mFuseLocationAPISingleton.addLocationChangeListener(this);
-                    mFuseLocationAPISingleton.startLocationUpdate(getActivity());
+                    mFuseLocationAPISingleton.startLocationUpdate();
                 }
             } else {
                 checkLocationPermission();

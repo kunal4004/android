@@ -50,13 +50,13 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.getVouchers(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken())
     }
 
-    fun getLocations(lat: String, lon: String, searchString: String, radius: String?): Call<LocationResponse> {
+    fun getLocations(lat: String, lon: String, searchString: String, radius: String?,includeDetails: Boolean): Call<LocationResponse> {
         return if (radius != null && radius == "") {
             //This should never happen for now
-            mApiInterface.getStoresLocation(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), lat, lon, searchString, radius)
+            mApiInterface.getStoresLocation(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), lat, lon, searchString, radius,includeDetails)
         } else {
 
-            mApiInterface.getStoresLocation(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), lat, lon, searchString)
+            mApiInterface.getStoresLocation(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), lat, lon, searchString,includeDetails)
         }
     }
 

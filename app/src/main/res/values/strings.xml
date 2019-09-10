@@ -1055,5 +1055,6 @@
     <string name="no_stock_available_desc">Use our find in-store feature to see if there is stock available at a Woolies store near you.</string>
     <string name="no_of_items_added">%1$Item%2$</string>
     <string name="npc_already_have_your_card_link">ALREADY HAVE your card? SCAN it NOW</string>
+    <string name="npc_participating_store">Can\'t find a participating store close to you? Call 0861 50 20 20 to arrange for delivery.</string>
 
 </resources>

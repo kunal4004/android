@@ -243,7 +243,7 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
 
 	public Call<LocationResponse> startSearch(final String query) {
 		Location location = Utils.getLastSavedLocation(SearchStoresActivity.this);
-		Call<LocationResponse> locationRequestCall = (location == null) ? OneAppService.INSTANCE.getLocations(null, null, query, null) : OneAppService.INSTANCE.getLocations(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()), query, "50000");
+		Call<LocationResponse> locationRequestCall = (location == null) ? OneAppService.INSTANCE.getLocations(null, null, query, null,false) : OneAppService.INSTANCE.getLocations(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()), query, "50000",false);
 		locationRequestCall.enqueue(new CompletionHandler<>(new RequestListener<LocationResponse>() {
 			@Override
 			public void onSuccess(LocationResponse locationResponse) {

@@ -122,6 +122,7 @@
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="32dp"
+        android:background="@color/transparent"
         android:fontFamily="@font/futura_medium_ttf"
         android:letterSpacing="0.15"
         android:lineSpacingExtra="4dp"

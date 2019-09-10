@@ -1,0 +1,139 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingEnd="0dp">
+
+    <LinearLayout
+        android:id="@+id/cardItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/card_shadow"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="65dp"
+            android:orientation="horizontal"
+            android:paddingStart="0dp"
+            android:paddingEnd="5dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="5"
+                android:background="@drawable/border_rightside_only"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/storeName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/futura_semi_bold_ttf"
+                    android:letterSpacing="0.01"
+                    android:singleLine="true"
+                    android:textAllCaps="true"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    tools:targetApi="lollipop" />
+
+                <TextView
+                    android:id="@+id/offerings"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_marginTop="4dp"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/futura_medium_ttf"
+                    android:letterSpacing="0.08"
+                    android:singleLine="true"
+                    android:textAllCaps="true"
+                    android:textColor="@color/black"
+                    android:textSize="13sp"
+                    tools:targetApi="lollipop" />
+
+            </LinearLayout>
+
+            <!-- <View
+                 android:layout_width="1dp"
+                 android:layout_height="match_parent"
+                 android:background="#EAEAEA" />-->
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:paddingTop="16dp">
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:id="@+id/distance"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="12.3"
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    app:WTextView_font="medium" />
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center|top"
+                    android:text="@string/km"
+                    android:textColor="@color/black"
+                    android:textSize="12.5sp"
+                    android:visibility="gone"
+                    app:WTextView_font="myriadpro_regular" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#EAEAEA" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="79dp"
+            android:paddingLeft="16dp"
+            android:paddingTop="12dp">
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/storeAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="0dp"
+                android:lineSpacingExtra="4sp"
+                android:maxLines="2"
+                android:paddingStart="0dp"
+                android:paddingEnd="42dp"
+                android:textColor="@color/black"
+
+
+                android:textSize="13sp"
+                app:WTextView_font="myriadpro_regular" />
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/timeing"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:paddingStart="0dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="10dp"
+                android:textColor="#ABABAB"
+                android:textSize="13sp"
+                app:WTextView_font="myriadpro_regular" />
+        </RelativeLayout>
+    </LinearLayout>
+
+</LinearLayout>

@@ -6,7 +6,7 @@ import android.content.IntentSender
 import android.os.Looper
 import android.util.Log
 import android.widget.Toast
-import androidx.fragment.app.Fragment
+import androidx.appcompat.app.AppCompatActivity
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
@@ -78,13 +78,13 @@ object FuseLocationAPISingleton {
     }
 
     @SuppressLint("MissingPermission")
-    fun startLocationUpdate(activity: Activity) {
+    fun startLocationUpdate() {
         // Begin by checking if the device has the necessary location settings.
         mSettingsClient?.checkLocationSettings(mLocationSettingsRequest)
-                ?.addOnSuccessListener(activity) {
+                ?.addOnSuccessListener {
                     mFusedLocationClient?.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper())
                 }
-                ?.addOnFailureListener(activity) { e ->
+                ?.addOnFailureListener { e ->
                     when ((e as? ApiException)?.statusCode) {
                         LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> {
                             Log.i(TAG, "Location settings are not satisfied. Attempting to upgrade " + "location settings ")
@@ -92,8 +92,10 @@ object FuseLocationAPISingleton {
                                 mLocationCompletedProvider.onPopUpLocationDialogMethod()
                                 // Show the dialog by calling startResolutionForResult(), and check the
                                 // result in onActivityResult().
-                                val rae = e as ResolvableApiException
-                                rae.startResolutionForResult(activity, REQUEST_CHECK_SETTINGS)
+
+                                val rae = e as? ResolvableApiException
+                                val activity : AppCompatActivity? = WoolworthsApplication.getInstance() as? AppCompatActivity
+                                activity?.let { activity -> rae?.startResolutionForResult(activity, REQUEST_CHECK_SETTINGS)}
                             } catch (sie: IntentSender.SendIntentException) {
                                 Log.i(TAG, "PendingIntent unable to execute request.")
                             }
@@ -102,7 +104,7 @@ object FuseLocationAPISingleton {
                         LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE -> {
                             val errorMessage = "Location settings are inadequate, and cannot be " + "fixed here. Fix in Settings."
                             Log.e(TAG, errorMessage)
-                            Toast.makeText(activity, errorMessage, Toast.LENGTH_LONG).show()
+                           // Toast.makeText(activity, errorMessage, Toast.LENGTH_LONG).show()
                         }
                     }
                 }

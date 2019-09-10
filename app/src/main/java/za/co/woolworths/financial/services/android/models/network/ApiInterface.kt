@@ -139,7 +139,8 @@ interface ApiInterface {
             @Header("sessionToken") sessionToken: String,
             @Query("lat") lat: String,
             @Query("lon") lon: String,
-            @Query("searchString") searchString: String
+            @Query("searchString") searchString: String,
+            @Query("includeDetails") includeDetails: Boolean
     ): Call<LocationResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
@@ -158,7 +159,8 @@ interface ApiInterface {
             @Query("lat") lat: String,
             @Query("lon") lon: String,
             @Query("searchString") searchString: String,
-            @Query("radius") radius: String
+            @Query("radius") radius: String,
+            @Query("includeDetails") includeDetails: Boolean
     ): Call<LocationResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
