@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.grid
 
 import android.app.Activity
+import android.app.Activity.RESULT_OK
 import android.app.Dialog
 
 import androidx.lifecycle.ViewModelProviders
@@ -60,9 +61,6 @@ import za.co.woolworths.financial.services.android.ui.base.BaseFragment
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.views.ProductListingProgressBar
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductListingFindInStoreNoQuantityFragment
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.SelectYourQuantityFragment
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.PostItemToCart
 import za.co.woolworths.financial.services.android.util.ScreenManager
@@ -71,9 +69,11 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragmentNew.SET_DELIVERY_LOCATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.views.AddedToCartBalloonFactory
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.*
 
 open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewModel>(), GridNavigator, IProductListing, View.OnClickListener, SortOptionsAdapter.OnSortOptionSelected, WMaterialShowcaseView.IWalkthroughActionListener {
 
+    private var oneTimeInventoryErrorDialogDisplay: Boolean = false
     private var mAddItemsToCart: MutableList<AddItemToCart>? = null
     private var mGridViewModel: GridViewModel? = null
     private var mErrorHandlerView: ErrorHandlerView? = null
@@ -88,7 +88,7 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
     private var isLoading: Boolean = false
     private var productView: ProductView? = null
     private var sortOptionDialog: Dialog? = null
-    private val mProgressListingProgressBar = ProductListingProgressBar()
+    private val mProgressListingProgressBar: ProductListingProgressBar? = ProductListingProgressBar()
     private var mStoreId: String? = null
     private var mAddItemToCart: AddItemToCart? = null
     private var mSelectedProductList: ProductList? = null
@@ -145,7 +145,7 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
 
     override fun onResume() {
         super.onResume()
-        activity.let { activity -> Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_SEARCH_RESULTS) }
+        activity?.let { activity -> Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_SEARCH_RESULTS) }
     }
 
     private fun setTitle() = setTitle(if (mSearchProduct?.isEmpty() == true) mSubCategoryName else mSearchProduct)
@@ -365,8 +365,8 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
             Log.e("containFooter", ex.message)
         }
 
-        mProductAdapter!!.notifyItemChanged(actualSize, sizeOfList)
-        viewModel!!.canLoadMore(viewModel!!.numItemsInTotal, sizeOfList)
+        mProductAdapter?.notifyItemChanged(actualSize, sizeOfList)
+        viewModel?.numItemsInTotal?.let { numItemsInTotal -> viewModel?.canLoadMore(numItemsInTotal, sizeOfList) }
     }
 
     override fun setProductBody() {
@@ -495,8 +495,8 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
                 }
             }
 
-            SSOActivity.SSOActivityResult.LAUNCH.rawValue() -> {
-                if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
+            SSOActivity.SSOActivityResult.LAUNCH.rawValue(), SET_DELIVERY_LOCATION_REQUEST_CODE -> {
+                if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue() || resultCode == RESULT_OK) {
                     addFoodProductTypeToCart(mAddItemsToCart?.get(0))
                 }
             }
@@ -586,6 +586,7 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
             override fun onSuccess(skusInventoryForStoreResponse: SkusInventoryForStoreResponse) {
                 if (!isAdded) return
                 dismissProgressBar()
+                oneTimeInventoryErrorDialogDisplay = false
                 with(activity.supportFragmentManager.beginTransaction()) {
                     when (skusInventoryForStoreResponse.httpCode) {
                         200 -> {
@@ -603,26 +604,31 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
                             }
                         }
 
-
-                        else -> return
+                        else -> {
+                            if (!oneTimeInventoryErrorDialogDisplay) {
+                                oneTimeInventoryErrorDialogDisplay = true
+                                skusInventoryForStoreResponse.response?.desc?.let { desc -> Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, desc) }
+                            } else return
+                        }
                     }
                 }
             }
 
             override fun onFailure(error: Throwable) {
                 dismissProgressBar()
+                mErrorHandlerView?.networkFailureHandler(error.message ?: "")
             }
         }, SkusInventoryForStoreResponse::class.java))
     }
 
     private fun showProgressBar() {
         // Show progress bar
-        activity?.let { activity -> mProgressListingProgressBar.show(activity) }
+        activity?.let { activity -> mProgressListingProgressBar?.show(activity) }
     }
 
     private fun dismissProgressBar() {
         // hide progress bar
-        mProgressListingProgressBar.dialog.dismiss()
+        mProgressListingProgressBar?.dialog?.dismiss()
     }
 
     override fun addFoodProductTypeToCart(addItemToCart: AddItemToCart?) {
@@ -672,12 +678,10 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
                             }, 3000)
                         }
 
-
-                        417 -> Utils.displayValidationMessageForResult(this@ProductListingFragment,
-                                this,
-                                CustomPopUpWindow.MODAL_LAYOUT.ERROR, null,
-                                addItemToCartResponse.response.desc, resources.getString(R.string.set_delivery_location_button), SET_DELIVERY_LOCATION_REQUEST_CODE)
-
+                        417 -> resources?.let { resources ->
+                            val errorMessage = addItemToCartResponse.response.desc.let { desc -> ErrorMessageDialogFragment.newInstance(desc, resources.getString(R.string.set_delivery_location_button)) }
+                            activity?.supportFragmentManager?.let { supportManager -> errorMessage.show(supportManager, ErrorMessageDialogFragment::class.java.simpleName) }
+                        }
                         440 -> {
                             SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
                             ScreenManager.presentSSOSignin(this)
@@ -745,6 +749,7 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
                 override fun onFailure(error: Throwable) {
                     activity?.runOnUiThread {
                         dismissProgressBar()
+                        mErrorHandlerView?.networkFailureHandler(error.message ?: "")
                     }
                 }
             }, LocationResponse::class.java))
