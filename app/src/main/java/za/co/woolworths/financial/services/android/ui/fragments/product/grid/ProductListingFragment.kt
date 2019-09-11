@@ -98,7 +98,6 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
 
     override fun getBindingVariable(): Int = BR.viewModel
 
-
     override fun getLayoutId(): Int = R.layout.grid_layout
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -575,6 +574,17 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
         this.mAddItemToCart = addItemToCart
         this.mSelectedProductList = productList
         val activity = activity ?: return
+
+        if (storeId.isEmpty()) {
+            val quickShopDefaultValues = WoolworthsApplication.getQuickShopDefaultValues()
+            val userSelectedDeliveryLocation = Utils.getPreferredDeliveryLocation()
+            val deliveryLocationName = if (userSelectedDeliveryLocation != null) userSelectedDeliveryLocation.suburb?.name
+                    ?: "" else quickShopDefaultValues?.suburb?.name ?: ""
+            val message = "Unfortunately this item is unavailable in $deliveryLocationName. Try changing your delivery location and try again."
+            Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC, getString(R.string.product_unavailable), message)
+            return
+        }
+
         if (!SessionUtilities.getInstance().isUserAuthenticated) {
             ScreenManager.presentSSOSignin(activity, QUERY_INVENTORY_FOR_STORE_REQUEST_CODE)
             return
