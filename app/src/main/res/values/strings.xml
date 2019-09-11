@@ -1054,5 +1054,10 @@
     <string name="no_stock_available">No Stock Available Online</string>
     <string name="no_stock_available_desc">Use our find in-store feature to see if there is stock available at a Woolies store near you.</string>
     <string name="no_of_items_added">%1$Item%2$</string>
+    <string name="cd_store_card_layout">store card layout</string>
+    <string name="cd_store_card_text">store card text</string>
+    <string name="cd_store_card_apply_now_text">store card apply now text</string>
+    <string name="cd_store_card_available_funds_text">store card available funds text</string>
+    <string name="cd_sign_out">sign out</string>
 
 </resources>
