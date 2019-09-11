@@ -158,20 +158,30 @@ abstract class BarcodeScanExtension : Fragment() {
 
     public fun getProductSearchTypeAndSearchTerm(urlString: String): ProductSearchTypeAndTerm {
         val productSearchTypeAndTerm = ProductSearchTypeAndTerm()
-        with(urlString) {
-            when {
-                contains("/cat") -> {
-                    if (this.indexOf("?") > 0) {
-                        val uri = Uri.parse(this)
-                        val value = uri.getQueryParameter("Ntt")
-                        productSearchTypeAndTerm.searchTerm = value
-                        productSearchTypeAndTerm.searchType = ProductsRequestParams.SearchType.SEARCH
-                    } else {
-                        productSearchTypeAndTerm.searchTerm = this.substring(this.lastIndexOf("/"))
-                        productSearchTypeAndTerm.searchType = ProductsRequestParams.SearchType.NAVIGATE
+        val uri = Uri.parse(urlString)
+        uri?.host?.apply {
+            with(this) {
+                when {
+                    contains(BarcodeScanFragment.HOST_WOOLWORTHS, true) -> {
+                        var searchTerm = uri.getQueryParameter("Ntt")
+                        if (searchTerm.isNullOrEmpty())
+                            searchTerm = uri.getQueryParameter("searchTerm")
+
+                        if (!searchTerm.isNullOrEmpty()) {
+                            productSearchTypeAndTerm.searchTerm = searchTerm
+                            productSearchTypeAndTerm.searchType = ProductsRequestParams.SearchType.SEARCH
+                        } else {
+                            searchTerm = uri.pathSegments?.find { it.startsWith("N-") }
+                            if (!searchTerm.isNullOrEmpty()) {
+                                productSearchTypeAndTerm.searchTerm = searchTerm
+                                productSearchTypeAndTerm.searchType = ProductsRequestParams.SearchType.NAVIGATE
+                            }
+                        }
+                    }
+                    contains(BarcodeScanFragment.HOST_YOUTUBE, true) -> {
+                        productSearchTypeAndTerm.searchTerm = BarcodeScanFragment.HOST_YOUTUBE
                     }
                 }
-                else -> productSearchTypeAndTerm
             }
         }
 

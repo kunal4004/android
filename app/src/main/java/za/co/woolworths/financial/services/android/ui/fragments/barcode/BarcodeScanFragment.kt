@@ -20,6 +20,9 @@ import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.barcode.AutoFocusMode
 import za.co.woolworths.financial.services.android.util.barcode.CodeScanner
 import za.co.woolworths.financial.services.android.util.barcode.CodeScannerView
+import android.net.Uri
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView
+
 
 open class BarcodeScanFragment : BarcodeScanExtension() {
     private var mCodeScanner: CodeScanner? = null
@@ -27,6 +30,8 @@ open class BarcodeScanFragment : BarcodeScanExtension() {
     companion object {
         fun newInstance() = BarcodeScanFragment()
         private const val SHOW_CODE_SCAN_AFTER_DELAY: Long = 10
+        const val HOST_WOOLWORTHS = "www.woolworths.co.za"
+        const val HOST_YOUTUBE = "www.youtube.com"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,8 +62,20 @@ open class BarcodeScanFragment : BarcodeScanExtension() {
                                                 if (!getProductDetailAsyncTaskIsRunning) {
                                                     when (result.barcodeFormat) {
                                                         BarcodeFormat.QR_CODE -> {
-                                                            getProductSearchTypeAndSearchTerm(this).apply {
-                                                                sendResultBack(this.searchType.name, this.searchTerm)
+                                                            getProductSearchTypeAndSearchTerm(this).let { it->
+                                                                with(it.searchTerm) {
+                                                                    when {
+                                                                        isEmpty() -> {
+                                                                            ErrorHandlerView(activity).showToast(getString(R.string.invalid_qr_code), R.drawable.alerter_ic_notifications)
+                                                                        }
+                                                                        contains(HOST_YOUTUBE) -> {
+                                                                            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(this@apply)))
+                                                                        }
+                                                                        else -> {
+                                                                            sendResultBack(it.searchType.name, this)
+                                                                        }
+                                                                    }
+                                                                }
                                                             }
                                                         }
                                                         else -> {
