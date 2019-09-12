@@ -27,6 +27,7 @@
 
         <RelativeLayout
             android:id="@+id/applyStoreCard"
+            android:contentDescription="@string/cd_store_card_layout"
             style="@style/accountsCardStyle">
 
             <ImageView
@@ -46,6 +47,7 @@
                 android:focusableInTouchMode="false"
                 android:text="@string/store_card"
                 android:textSize="@dimen/acc_thirteen_sp"
+                android:contentDescription="@string/cd_store_card_text"
                 app:WTextView_font="medium" />
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -61,6 +63,7 @@
                 android:text="@string/apply_now"
                 android:textColor="@color/black_off"
                 android:textSize="@dimen/acc_thirteen_sp"
+                android:contentDescription="@string/cd_store_card_apply_now_text"
                 app:WTextView_font="medium_bold" />
         </RelativeLayout>
 
