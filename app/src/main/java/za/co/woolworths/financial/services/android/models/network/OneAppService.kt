@@ -1,19 +1,15 @@
 package za.co.woolworths.financial.services.android.models.network
 
-import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import io.reactivex.Observable
 import okhttp3.ResponseBody
 import retrofit2.Call
-import retrofit2.Response
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.chat.*
-import za.co.woolworths.financial.services.android.models.dto.npc.BlockCardRequestBody
-import za.co.woolworths.financial.services.android.models.dto.npc.BlockMyCardResponse
+import za.co.woolworths.financial.services.android.models.dto.npc.*
 import za.co.woolworths.financial.services.android.models.dto.statement.*
 import za.co.woolworths.financial.services.android.util.Utils
-import java.util.*
 
 object OneAppService : RetrofitConfig() {
 
@@ -50,13 +46,13 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.getVouchers(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken())
     }
 
-    fun getLocations(lat: String, lon: String, searchString: String, radius: String?,includeDetails: Boolean): Call<LocationResponse> {
+    fun getLocations(lat: String, lon: String, searchString: String, radius: String?, includeDetails: Boolean): Call<LocationResponse> {
         return if (radius != null && radius == "") {
             //This should never happen for now
-            mApiInterface.getStoresLocation(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), lat, lon, searchString, radius,includeDetails)
+            mApiInterface.getStoresLocation(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), lat, lon, searchString, radius, includeDetails)
         } else {
 
-            mApiInterface.getStoresLocation(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), lat, lon, searchString,includeDetails)
+            mApiInterface.getStoresLocation(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), lat, lon, searchString, includeDetails)
         }
     }
 
@@ -173,7 +169,8 @@ object OneAppService : RetrofitConfig() {
     }
 
     fun getStatementResponse(statement: UserStatement): Call<StatementResponse> {
-        return mApiInterface.getUserStatement(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), statement.productOfferingId, statement.accountNumber ?: "" , statement.startDate, statement.endDate)
+        return mApiInterface.getUserStatement(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), statement.productOfferingId, statement.accountNumber
+                ?: "", statement.startDate, statement.endDate)
     }
 
     fun sendStatementRequest(statement: SendUserStatementRequest): Call<SendUserStatementResponse> {
@@ -305,4 +302,15 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.userStoppedTyping(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), chatId, JsonObject())
     }
 
+    fun getLinkNewCardOTP(otpMethodType: OTPMethodType): Call<LinkNewCardOTP> {
+        return mApiInterface.getLinkNewCardOTP(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), otpMethodType.name)
+    }
+
+    fun linkNewCard(linkNewCard: LinkNewCard): Call<LinkNewCardResponse> {
+        return mApiInterface.linkNewCard(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), linkNewCard)
+    }
+
+    fun unblockStoreCard(linkNewCard: LinkNewCard): Call<LinkNewCardResponse> {
+        return mApiInterface.unblockStoreCard(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), linkNewCard.productOfferingId.toString(), linkNewCard)
+    }
 }

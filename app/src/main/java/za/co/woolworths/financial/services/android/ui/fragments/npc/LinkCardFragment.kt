@@ -9,6 +9,7 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.link_card_fragment.*
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.util.CreditCardTextWatcher
+import android.view.inputmethod.EditorInfo
 
 class LinkCardFragment : MyCardExtension() {
 
@@ -43,18 +44,22 @@ class LinkCardFragment : MyCardExtension() {
 
     private fun tappedEvent() {
         imNavigateToOTPFragment?.setOnClickListener {
-            if (imNavigateToOTPFragment?.alpha == 1.0f) {
-                replaceFragment(
-                        fragment = EnterOtpFragment.newInstance(),
-                        tag = EnterOtpFragment::class.java.simpleName,
-                        containerViewId = R.id.flMyCard,
-                        allowStateLoss = true,
-                        enterAnimation = R.anim.slide_in_from_right,
-                        exitAnimation = R.anim.slide_to_left,
-                        popEnterAnimation = R.anim.slide_from_left,
-                        popExitAnimation = R.anim.slide_to_right
-                )
-            }
+            navigateToOTPScreen()
+        }
+    }
+
+    private fun navigateToOTPScreen() {
+        if (imNavigateToOTPFragment?.alpha == 1.0f) {
+            replaceFragment(
+                    fragment = EnterOtpFragment.newInstance(),
+                    tag = EnterOtpFragment::class.java.simpleName,
+                    containerViewId = R.id.flMyCard,
+                    allowStateLoss = true,
+                    enterAnimation = R.anim.slide_in_from_right,
+                    exitAnimation = R.anim.slide_to_left,
+                    popEnterAnimation = R.anim.slide_from_left,
+                    popExitAnimation = R.anim.slide_to_right
+            )
         }
     }
 
@@ -67,6 +72,13 @@ class LinkCardFragment : MyCardExtension() {
                     imNavigateToOTPFragment?.alpha = if (etCardNumber?.length() == 19) 1.0f else 0.5f
                 }
             })
+        }
+
+        etCardNumber?.setOnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                navigateToOTPScreen()
+            }
+            false
         }
     }
 

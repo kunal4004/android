@@ -9,8 +9,16 @@ import android.view.*
 import android.widget.EditText
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.enter_otp_fragment.*
+import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.models.dto.npc.LinkNewCardOTP
+import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler
+import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.card.LinkNewCardActivity
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
+import za.co.woolworths.financial.services.android.util.SessionUtilities
 
 
 class EnterOtpFragment : MyCardExtension() {
@@ -31,12 +39,12 @@ class EnterOtpFragment : MyCardExtension() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         setupInputListeners()
         configureUI()
         clickEvent()
-        getString(R.string.enter_otp_desc)?.apply { tvEnterOtpDesc.htmlText(this) }
+        activity?.resources?.getString(R.string.enter_otp_desc)?.apply { tvEnterOtpDesc.htmlText(this) }
         imNextProcessLinkCard?.isEnabled = false
+        makeOTPCall()
     }
 
     private fun configureUI() {
@@ -104,7 +112,7 @@ class EnterOtpFragment : MyCardExtension() {
 
     private fun linkCardRequest() {
         replaceFragment(
-                fragment = ProcessBlockCardFragment.newInstance(true,0),
+                fragment = ProcessBlockCardFragment.newInstance(true, 0),
                 tag = ProcessBlockCardFragment::class.java.simpleName,
                 containerViewId = R.id.flMyCard,
                 allowStateLoss = true,
@@ -129,6 +137,37 @@ class EnterOtpFragment : MyCardExtension() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun makeOTPCall() {
+        OneAppService.getLinkNewCardOTP(OTPMethodType.SMS).enqueue(
+                CompletionHandler(object : RequestListener<LinkNewCardOTP> {
+                    override fun onSuccess(linkNewCardOTP: LinkNewCardOTP) {
+                        with(linkNewCardOTP) {
+                            when (this.httpCode) {
+                                200 -> {
+                                }
+                                440 -> {
+                                    activity?.let { activity ->
+                                        SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE,
+                                                response?.stsParams ?: "", activity)
+                                    }
+                                }
+                                else -> {
+                                    response?.desc?.let { desc ->
+                                        val dialog = ErrorDialogFragment.newInstance(desc)
+                                        activity?.supportFragmentManager?.beginTransaction()?.let { fragmentTransaction -> dialog.show(fragmentTransaction, ErrorDialogFragment::class.java.simpleName) }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    override fun onFailure(error: Throwable?) {
+
+                    }
+
+                }, LinkNewCardOTP::class.java))
     }
 
     override fun onResume() {

@@ -32,7 +32,7 @@ open class CompletionHandler<ResponseObj>(private val requestListener: RequestLi
     }
 
     override fun onFailure(call: Call<ResponseObj>, t: Throwable) {
-        this.requestListener?.onFailure(t)
+            this.requestListener?.onFailure(t)
     }
 
     private fun displayMaintenanceScreenIfNeeded(response: Response<ResponseObj>): Boolean {
