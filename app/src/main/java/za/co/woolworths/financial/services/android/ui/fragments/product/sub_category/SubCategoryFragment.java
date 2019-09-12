@@ -14,7 +14,6 @@ import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.ExpandableSubCategoryFragmentBinding;
 import com.google.gson.Gson;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +26,7 @@ import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWind
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.ImageManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.expand.ExpandableRecyclerAdapter;
 import za.co.woolworths.financial.services.android.util.expand.ParentSubCategoryViewHolder;
@@ -207,7 +207,7 @@ public class SubCategoryFragment extends BaseFragment<ExpandableSubCategoryFragm
 
 	private void setHeader(RootCategory mRootCategory) {
 		if (mRootCategory != null) {
-			Picasso.get().load(mRootCategory.imgUrl).fit().into(getViewDataBinding().imProductCategory);
+			ImageManager.Companion.setPictureCenterInside(getViewDataBinding().imProductCategory,mRootCategory.imgUrl);
 			getViewDataBinding().tvCategoryName.setText(mRootCategory.categoryName);
 			getViewDataBinding().imClose.setOnClickListener(this);
 		}
