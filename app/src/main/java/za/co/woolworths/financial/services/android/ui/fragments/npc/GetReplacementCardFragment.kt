@@ -18,16 +18,19 @@ import android.view.ViewGroup
 import androidx.annotation.NonNull
 import androidx.annotation.RequiresApi
 import com.awfs.coordination.R
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.replace_card_fragment.*
 import za.co.woolworths.financial.services.android.contracts.ILocationProvider
 import za.co.woolworths.financial.services.android.contracts.RequestListener
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity
+import za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity.Companion.CONTACT_INFO
+import za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity.Companion.MAP_LOCATION
+import za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity.Companion.PRODUCT_NAME
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductListingFindInStoreNoQuantityFragment
 import za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton
@@ -94,26 +97,26 @@ class GetReplacementCardFragment : MyCardExtension() {
         OneAppService.forceNetworkUpdate = true
         progressVisibility(true)
         locationRequestRequest.enqueue(CompletionHandler(object : RequestListener<LocationResponse> {
-            override fun onSuccess(response: LocationResponse?) {
+            override fun onSuccess(locationResponse: LocationResponse?) {
+                if (!isAdded) return
                 activity?.apply {
                     progressVisibility(false)
-                    when (response?.httpCode) {
+                    when (locationResponse?.httpCode) {
                         200 -> {
-                            val npcStores: List<StoreDetails>? = response?.Locations?.filter { stores -> stores.npcAvailable }
+                            val npcStores: List<StoreDetails>? = locationResponse.Locations?.filter { stores -> stores.npcAvailable }
                                     ?: mutableListOf()
-                            WoolworthsApplication.getInstance()?.wGlobalState?.storeDetailsArrayList = npcStores
-                            val intentInStoreFinder = Intent(this, StoreLocatorActivity::class.java)
-                            intentInStoreFinder.putExtra("PRODUCT_NAME", getString(R.string.participating_stores))
-                            intentInStoreFinder.putExtra("CONTACT_INFO", getString(R.string.participating_store_desc))
-                            startActivity(intentInStoreFinder)
-                            overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
+                            if (npcStores?.size ?: 0 > 0) {
+                                val intentInStoreFinder = Intent(this, StoreLocatorActivity::class.java)
+                                intentInStoreFinder.putExtra(PRODUCT_NAME, getString(R.string.participating_stores))
+                                intentInStoreFinder.putExtra(CONTACT_INFO, getString(R.string.participating_store_desc))
+                                intentInStoreFinder.putExtra(MAP_LOCATION, Gson().toJson(npcStores))
+                                startActivity(intentInStoreFinder)
+                                overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
+                            }
                         }
-                        else -> {
-                        }
-
+                        else -> return
                     }
                 }
-
             }
 
             override fun onFailure(error: Throwable?) {
@@ -139,11 +142,9 @@ class GetReplacementCardFragment : MyCardExtension() {
 
     private fun startLocationUpdate() = FuseLocationAPISingleton.startLocationUpdate()
 
-    private fun progressVisibility(state: Boolean) {
-        activity?.runOnUiThread {
-            pbParticipatingStore?.visibility = if (state) VISIBLE else GONE
-            btnParticipatingStores?.setTextColor(if (state) Color.BLACK else Color.WHITE)
-            btnParticipatingStores?.isClickable = !state
-        }
+    private fun progressVisibility(state: Boolean) = activity?.runOnUiThread {
+        pbParticipatingStore?.visibility = if (state) VISIBLE else GONE
+        btnParticipatingStores?.setTextColor(if (state) Color.BLACK else Color.WHITE)
+        btnParticipatingStores?.isClickable = !state
     }
 }

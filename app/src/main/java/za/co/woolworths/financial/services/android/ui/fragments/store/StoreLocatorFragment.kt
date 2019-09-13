@@ -5,8 +5,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
+import androidx.viewpager2.widget.ViewPager2
 import com.awfs.coordination.R
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -14,7 +15,6 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import kotlinx.android.synthetic.main.store_locator_fragment.*
-import za.co.woolworths.financial.services.android.models.dto.StoreDetails
 import za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity
 import za.co.woolworths.financial.services.android.ui.adapters.MapWindowAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.StoreLocatorCardAdapter
@@ -27,7 +27,6 @@ class StoreLocatorFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
     private var mMarkers: HashMap<String, Int> = HashMap()
 
     companion object {
-        const val REQUEST_LOCATION_PERMISSION = 102
         fun newInstance() = StoreLocatorFragment()
     }
 
@@ -41,13 +40,27 @@ class StoreLocatorFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
         val supportMapFragment = this.childFragmentManager.findFragmentById(R.id.map) as? SupportMapFragment
         supportMapFragment?.getMapAsync(this)
 
-        val cardAdapter = StoreLocatorCardAdapter()
-        (activity as? StoreLocatorActivity)?.storeLocatorViewModel?.getStoreLocationResult()?.observe(this, Observer<MutableList<StoreDetails>> { storeDetails ->
-            // populate markers
-            storeDetails?.forEachIndexed { index, storeDetail -> drawMarker(LatLng(storeDetail.latitude, storeDetail.longitude), if (index == 0) getSelectedIcon() else getUnSelectedIcon(), index) }
-            cardViewPager?.adapter = cardAdapter
-            cardAdapter.setItem(storeDetails)
-        })
+        with(cardViewPager) {
+            clipToPadding = false
+            clipChildren = false
+            offscreenPageLimit = 2
+        }
+
+        val pageMarginPx = resources.getDimensionPixelOffset(R.dimen.twenty_dp)
+        val offsetPx = resources.getDimensionPixelOffset(R.dimen.thirty_two_dp)
+        cardViewPager.setPageTransformer { page, position ->
+            val viewPager = page.parent.parent as ViewPager2
+            val offset = position * -(1 * offsetPx + pageMarginPx)
+            if (viewPager.orientation == ViewPager2.ORIENTATION_HORIZONTAL) {
+                if (ViewCompat.getLayoutDirection(viewPager) == ViewCompat.LAYOUT_DIRECTION_RTL) {
+                    page.translationX = -offset
+                } else {
+                    page.translationX = offset
+                }
+            } else {
+                page.translationY = offset
+            }
+        }
     }
 
     private fun drawMarker(point: LatLng, bitmapDescriptor: BitmapDescriptor, position: Int) {
@@ -67,16 +80,21 @@ class StoreLocatorFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
     }
 
     private fun onMapReady() {
-        activity?.apply {
+        (activity as? StoreLocatorActivity)?.apply {
+            val cardAdapter = StoreLocatorCardAdapter()
+            // populate markers
+            val storeDetails = getLocation()
+            storeDetails?.forEachIndexed { index, storeDetail -> drawMarker(LatLng(storeDetail.latitude, storeDetail.longitude), if (index == 0) getSelectedIcon() else getUnSelectedIcon(), index) }
+            cardViewPager?.adapter = cardAdapter
+            storeDetails?.let { storeDetail -> cardAdapter.setItem(storeDetail) }
+
             mGoogleMap.setInfoWindowAdapter(MapWindowAdapter(this))
             mGoogleMap.setOnMarkerClickListener(this@StoreLocatorFragment)
         }
-
     }
 
     override fun onMarkerClick(marker: Marker?): Boolean {
         val markerId = mMarkers[marker?.id]
-
 
         return true
     }

@@ -1,13 +1,12 @@
 package za.co.woolworths.financial.services.android.ui.activities
 
-import android.Manifest
-import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.Spanned
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.awfs.coordination.R
 import com.google.android.material.tabs.TabLayout
@@ -15,27 +14,60 @@ import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.store_locator_activity.*
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoreLocatorFragment
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoreLocatorListFragment
-import za.co.woolworths.financial.services.android.ui.fragments.store.StoreLocatorViewModel
 import za.co.woolworths.financial.services.android.ui.views.WTextView
 import za.co.woolworths.financial.services.android.util.Utils
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import za.co.woolworths.financial.services.android.models.dto.StoreDetails
+import android.text.TextPaint
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
+import android.util.Log
+import android.view.View
+
 
 class StoreLocatorActivity : AppCompatActivity() {
 
-    lateinit var storeLocatorViewModel: StoreLocatorViewModel
+    private var mTitle: String? = null
+    private var mDescription: String? = null
+    private var mLocations: List<StoreDetails>? = null
 
     companion object {
+        const val PRODUCT_NAME = "PRODUCT_NAME"
+        const val CONTACT_INFO = "CONTACT_INFO"
+        const val MAP_LOCATION = "MAP_LOCATION"
         private const val UNSELECTED_TAB_ALPHA_VIEW = 0.3f
         private const val SELECTED_TAB_ALPHA_VIEW = 1.0f
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Utils.updateStatusBarBackground(this, android.R.color.transparent)
         setContentView(R.layout.store_locator_activity)
-        storeLocatorViewModel = ViewModelProviders.of(this)[StoreLocatorViewModel::class.java]
-        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), StoreLocatorFragment.REQUEST_LOCATION_PERMISSION)
+
+        intent?.apply {
+            mTitle = getStringExtra(PRODUCT_NAME)
+            mDescription = getStringExtra(CONTACT_INFO)
+            val mLocationOnMap = getStringExtra(MAP_LOCATION)
+            mLocations = Gson().fromJson(mLocationOnMap, object : TypeToken<List<StoreDetails>>() {}.type)
+        }
+
         initViewPagerWithTabLayout()
+
+        ivNavigateBack?.setOnClickListener { onBackPressed() }
+
+        val spannableTitle = SpannableString(getString(R.string.npc_participating_store))
+        val phoneNumber = "0861 50 20 20"
+        val start = spannableTitle.indexOf(phoneNumber)
+        val end = start + phoneNumber.length
+        spannableTitle.setSpan(clickableSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        tvStoreContactInfo?.text = spannableTitle
+        tvStoreContactInfo?.movementMethod = LinkMovementMethod.getInstance()
+        tvStoreContactInfo?.highlightColor = Color.WHITE
     }
+
+    fun getLocation() = mLocations
 
     private fun initViewPagerWithTabLayout() {
         vpStoreLocator?.adapter = object : FragmentStateAdapter(this) {
@@ -101,24 +133,32 @@ class StoreLocatorActivity : AppCompatActivity() {
                 imMapView?.alpha = SELECTED_TAB_ALPHA_VIEW
                 tvListView?.alpha = UNSELECTED_TAB_ALPHA_VIEW
                 imListView?.alpha = UNSELECTED_TAB_ALPHA_VIEW
+                tvTitle?.text = getString(R.string.participating_stores)
             }
             1 -> {
                 tvMapView?.alpha = UNSELECTED_TAB_ALPHA_VIEW
                 imMapView?.alpha = UNSELECTED_TAB_ALPHA_VIEW
                 tvListView?.alpha = SELECTED_TAB_ALPHA_VIEW
                 imListView?.alpha = SELECTED_TAB_ALPHA_VIEW
+                tvTitle?.text = getString(R.string.nearest_store)
             }
             else -> return
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            StoreLocatorFragment.REQUEST_LOCATION_PERMISSION -> if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                storeLocatorViewModel.requestLocationUpdate()
-            }
-            else -> return
+    override fun onBackPressed() {
+        finish()
+        overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+    }
+
+    var clickableSpan: ClickableSpan = object : ClickableSpan() {
+        override fun onClick(textView: View) {
+            Log.e("tvBlue", "blueARL")
+        }
+
+        override fun updateDrawState(ds: TextPaint) {
+            super.updateDrawState(ds)
+            ds.isUnderlineText = false
         }
     }
 }

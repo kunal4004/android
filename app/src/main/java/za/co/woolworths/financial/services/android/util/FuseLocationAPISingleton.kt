@@ -1,11 +1,9 @@
 package za.co.woolworths.financial.services.android.util
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.IntentSender
 import android.os.Looper
 import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import com.google.android.gms.common.api.ApiException

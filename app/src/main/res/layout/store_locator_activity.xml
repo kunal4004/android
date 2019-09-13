@@ -22,17 +22,21 @@
             android:requiresFadingEdge="none" />
 
         <TextView
-            android:id="@+id/flStockFinderMapHeader"
+            android:id="@+id/tvStoreContactInfo"
             android:layout_width="match_parent"
-            android:layout_height="64dp"
+            android:layout_height="@dimen/sixty_four_dp"
             android:layout_gravity="top"
             android:background="@color/stock_finder_map_header_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:fontFamily="@font/myriad_pro_regular_otf"
             android:gravity="center"
             android:paddingStart="32dp"
             android:paddingEnd="32dp"
             android:text="@string/npc_participating_store"
             android:textColor="@color/white"
+            android:textColorLink="@color/white"
             android:textSize="16sp" />
 
     </FrameLayout>
@@ -59,6 +63,15 @@
                 android:background="@color/white"
                 android:gravity="bottom"
                 app:layout_collapseMode="pin">
+
+                <ImageButton
+                    android:id="@+id/ivNavigateBack"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center|start"
+                    android:layout_marginStart="@dimen/sixteen_dp"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/back24" />
 
                 <TextView
                     android:id="@+id/tvTitle"

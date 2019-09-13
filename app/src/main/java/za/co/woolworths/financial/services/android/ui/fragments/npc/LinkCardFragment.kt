@@ -10,6 +10,14 @@ import kotlinx.android.synthetic.main.link_card_fragment.*
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.util.CreditCardTextWatcher
 import android.view.inputmethod.EditorInfo
+import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.models.dto.npc.LinkNewCardOTP
+import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
+import za.co.woolworths.financial.services.android.models.network.CompletionHandler
+import za.co.woolworths.financial.services.android.models.network.OneAppService
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
+import za.co.woolworths.financial.services.android.util.SessionUtilities
 
 class LinkCardFragment : MyCardExtension() {
 
@@ -50,16 +58,7 @@ class LinkCardFragment : MyCardExtension() {
 
     private fun navigateToOTPScreen() {
         if (imNavigateToOTPFragment?.alpha == 1.0f) {
-            replaceFragment(
-                    fragment = EnterOtpFragment.newInstance(),
-                    tag = EnterOtpFragment::class.java.simpleName,
-                    containerViewId = R.id.flMyCard,
-                    allowStateLoss = true,
-                    enterAnimation = R.anim.slide_in_from_right,
-                    exitAnimation = R.anim.slide_to_left,
-                    popEnterAnimation = R.anim.slide_from_left,
-                    popExitAnimation = R.anim.slide_to_right
-            )
+            makeOTPCall()
         }
     }
 
@@ -91,4 +90,42 @@ class LinkCardFragment : MyCardExtension() {
             }
         }
     }
+
+    private fun makeOTPCall() {
+        OneAppService.getLinkNewCardOTP(OTPMethodType.SMS).enqueue(
+                CompletionHandler(object : RequestListener<LinkNewCardOTP> {
+                    override fun onSuccess(linkNewCardOTP: LinkNewCardOTP) {
+                        with(linkNewCardOTP) {
+                            when (this.httpCode) {
+                                200 -> replaceFragment(
+                                        fragment = EnterOtpFragment.newInstance(),
+                                        tag = EnterOtpFragment::class.java.simpleName,
+                                        containerViewId = R.id.flMyCard,
+                                        allowStateLoss = true,
+                                        enterAnimation = R.anim.slide_in_from_right,
+                                        exitAnimation = R.anim.slide_to_left,
+                                        popEnterAnimation = R.anim.slide_from_left,
+                                        popExitAnimation = R.anim.slide_to_right
+                                )
+
+                                440 -> activity?.let { activity ->
+                                    SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE,
+                                            response?.stsParams ?: "", activity)
+                                }
+
+                                else -> response?.desc?.let { desc ->
+                                    val dialog = ErrorDialogFragment.newInstance(desc)
+                                    activity?.supportFragmentManager?.beginTransaction()?.let { fragmentTransaction -> dialog.show(fragmentTransaction, ErrorDialogFragment::class.java.simpleName) }
+                                }
+                            }
+                        }
+                    }
+
+                    override fun onFailure(error: Throwable?) {
+
+                    }
+
+                }, LinkNewCardOTP::class.java))
+    }
+
 }
