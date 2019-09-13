@@ -83,6 +83,7 @@
                     android:letterSpacing="0.17"
                     android:text="PARTICIPATING stores"
                     android:textAllCaps="true"
+                    android:lineSpacingExtra="4dp"
                     android:textColor="@color/black"
                     android:textFontWeight="300"
                     android:textSize="12sp"

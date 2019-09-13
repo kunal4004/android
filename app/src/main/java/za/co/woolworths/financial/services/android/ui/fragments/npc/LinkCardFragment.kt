@@ -18,10 +18,18 @@ import za.co.woolworths.financial.services.android.models.network.CompletionHand
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
 import za.co.woolworths.financial.services.android.util.SessionUtilities
+import cards.pay.paycardsrecognizer.sdk.ScanCardIntent
+import android.app.Activity
+import android.content.Intent
+import android.util.Log
+
 
 class LinkCardFragment : MyCardExtension() {
 
+    private val TAG = LinkCardFragment::class.java.simpleName
+
     companion object {
+        const val REQUEST_CODE_SCAN_CARD = 1
         fun newInstance() = LinkCardFragment()
     }
 
@@ -53,6 +61,13 @@ class LinkCardFragment : MyCardExtension() {
     private fun tappedEvent() {
         imNavigateToOTPFragment?.setOnClickListener {
             navigateToOTPScreen()
+        }
+
+        imCameraIcon?.setOnClickListener {
+            activity?.apply {
+                val intent = ScanCardIntent.Builder(this).build()
+                startActivityForResult(intent, REQUEST_CODE_SCAN_CARD)
+            }
         }
     }
 
@@ -126,6 +141,23 @@ class LinkCardFragment : MyCardExtension() {
                     }
 
                 }, LinkNewCardOTP::class.java))
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CODE_SCAN_CARD) {
+            when (resultCode) {
+                Activity.RESULT_OK -> {
+//                    val card = data?.getParcelableExtra<Parcelable>(ScanCardIntent.RESULT_PAYCARDS_CARD)
+//                    val cardData = ("Card number: " + card + "\n"
+//                            + "Card holder: " + card.getCardHolderName() + "\n"
+//                            + "Card expiration date: " + card.getExpirationDate())
+                    //     Log.i(TAG, "Card info: $cardData")
+                }
+                Activity.RESULT_CANCELED -> Log.i(TAG, "Scan canceled")
+                else -> Log.i(TAG, "Scan failed")
+            }
+        }
     }
 
 }

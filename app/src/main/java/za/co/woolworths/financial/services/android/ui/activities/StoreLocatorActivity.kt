@@ -1,7 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.activities
 
 import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
+import android.text.Spannable
 import android.text.SpannableString
 import android.text.Spanned
 import android.widget.ImageView
@@ -21,16 +23,18 @@ import com.google.gson.reflect.TypeToken
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails
 import android.text.TextPaint
 import android.text.method.LinkMovementMethod
+import android.text.style.AbsoluteSizeSpan
 import android.text.style.ClickableSpan
-import android.util.Log
+import android.text.style.StyleSpan
 import android.view.View
-
+import androidx.core.content.res.ResourcesCompat
 
 class StoreLocatorActivity : AppCompatActivity() {
 
     private var mTitle: String? = null
     private var mDescription: String? = null
     private var mLocations: List<StoreDetails>? = null
+    private val mPhoneNumber = "0861 50 20 20"
 
     companion object {
         const val PRODUCT_NAME = "PRODUCT_NAME"
@@ -58,13 +62,10 @@ class StoreLocatorActivity : AppCompatActivity() {
         ivNavigateBack?.setOnClickListener { onBackPressed() }
 
         val spannableTitle = SpannableString(getString(R.string.npc_participating_store))
-        val phoneNumber = "0861 50 20 20"
-        val start = spannableTitle.indexOf(phoneNumber)
-        val end = start + phoneNumber.length
-        spannableTitle.setSpan(clickableSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        tvStoreContactInfo?.text = spannableTitle
-        tvStoreContactInfo?.movementMethod = LinkMovementMethod.getInstance()
-        tvStoreContactInfo?.highlightColor = Color.WHITE
+        val start = spannableTitle.indexOf(mPhoneNumber)
+        val end = start + mPhoneNumber.length
+
+        contactCustomerCare(spannableTitle, start, end)
     }
 
     fun getLocation() = mLocations
@@ -146,19 +147,29 @@ class StoreLocatorActivity : AppCompatActivity() {
         }
     }
 
+    private fun contactCustomerCare(spannableTitle: SpannableString, start: Int, end: Int) {
+        val clickableSpan: ClickableSpan = object : ClickableSpan() {
+            override fun onClick(textView: View) {
+                Utils.makeCall(this@StoreLocatorActivity, mPhoneNumber)
+            }
+
+            override fun updateDrawState(ds: TextPaint) {
+                super.updateDrawState(ds)
+                ds.isUnderlineText = false
+            }
+        }
+
+        val typeface: Typeface? = ResourcesCompat.getFont(this@StoreLocatorActivity, R.font.myriad_pro_semi_bold_otf)
+        spannableTitle.setSpan(clickableSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        typeface?.style?.let { style -> spannableTitle.setSpan(StyleSpan(style), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE) }
+        spannableTitle.setSpan(AbsoluteSizeSpan(49), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        tvStoreContactInfo?.text = spannableTitle
+        tvStoreContactInfo?.movementMethod = LinkMovementMethod.getInstance()
+        tvStoreContactInfo?.highlightColor = Color.TRANSPARENT
+    }
+
     override fun onBackPressed() {
         finish()
         overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
-    }
-
-    var clickableSpan: ClickableSpan = object : ClickableSpan() {
-        override fun onClick(textView: View) {
-            Log.e("tvBlue", "blueARL")
-        }
-
-        override fun updateDrawState(ds: TextPaint) {
-            super.updateDrawState(ds)
-            ds.isUnderlineText = false
-        }
     }
 }

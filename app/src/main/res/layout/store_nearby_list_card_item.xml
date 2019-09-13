@@ -8,7 +8,6 @@
         android:id="@+id/cardItem"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/sixteen_dp"
         android:background="@drawable/card_shadow"
         android:orientation="vertical">
 

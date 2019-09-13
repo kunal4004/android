@@ -3,15 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/unavailable">
+    android:background="@color/orders_bg">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvStoreLocator"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/transparent"
+        android:clipToPadding="false"
         android:overScrollMode="never"
-        android:paddingTop="@dimen/sixty_four_dp"
+        android:paddingTop="80dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -83,10 +83,11 @@
         app:layout_constraintEnd_toEndOf="@+id/vInputCardNumberBackground"
         app:layout_constraintTop_toTopOf="@+id/vInputCardNumberBackground" />
 
-    <ImageView
+    <ImageButton
         android:id="@+id/imCameraIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
         android:contentDescription="@string/app_label"
         app:layout_constraintBottom_toBottomOf="@+id/vCameraBgTapped"
         app:layout_constraintEnd_toEndOf="@+id/vCameraBgTapped"
