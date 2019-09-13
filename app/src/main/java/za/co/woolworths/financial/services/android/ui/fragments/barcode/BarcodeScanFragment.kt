@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.barcode
 
-import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -141,16 +140,4 @@ open class BarcodeScanFragment : BarcodeScanExtension() {
         }
     }
 
-    private fun sendResultBack(searchType: String, searchTerm: String) {
-        activity?.apply {
-            Intent().apply {
-                putExtra("searchType", searchType)
-                putExtra("searchTerm", searchTerm)
-                setResult(RESULT_OK, this)
-                finish()
-                overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
-            }
-        }
-
-    }
 }

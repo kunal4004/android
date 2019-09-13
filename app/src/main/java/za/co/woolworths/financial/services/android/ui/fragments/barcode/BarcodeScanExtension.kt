@@ -1,8 +1,11 @@
 package za.co.woolworths.financial.services.android.ui.fragments.barcode
 
+import android.app.Activity
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import com.awfs.coordination.R
 import com.google.gson.Gson
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.RequestListener
@@ -186,5 +189,18 @@ abstract class BarcodeScanExtension : Fragment() {
         }
 
         return productSearchTypeAndTerm
+    }
+
+    fun sendResultBack(searchType: String, searchTerm: String) {
+        activity?.apply {
+            Intent().apply {
+                putExtra("searchType", searchType)
+                putExtra("searchTerm", searchTerm)
+                setResult(Activity.RESULT_OK, this)
+                finish()
+                overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+            }
+        }
+
     }
 }
