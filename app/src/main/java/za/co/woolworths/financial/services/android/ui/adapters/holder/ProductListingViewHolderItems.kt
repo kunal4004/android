@@ -12,8 +12,7 @@ import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages
-import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
-import za.co.woolworths.financial.services.android.util.DrawImage
+import za.co.woolworths.financial.services.android.util.ImageManager
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
 import java.util.*
@@ -45,26 +44,15 @@ class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolde
     }
 
     private fun setPromotionalImage(imPromo: PromotionImages?) {
-        setPromotionalImage(itemView.imSave, imPromo?.save ?: "")
-        setPromotionalImage(itemView.imReward, imPromo?.wRewards ?: "")
-        setPromotionalImage(itemView.imVitality, imPromo?.vitality ?: "")
-        setPromotionalImage(itemView.imNewImage, imPromo?.newImage ?: "")
-    }
-
-    private fun setPromotionalImage(image: WrapContentDraweeView, url: String) {
-        image.visibility = if (url.isEmpty()) GONE else VISIBLE
-        val drawImage = DrawImage(WoolworthsApplication.getAppContext())
-        drawImage.displayImage(image, if (url.isEmpty()) Utils.getExternalImageRef() else url)
+        ImageManager.setPictureWithoutPlaceHolder(itemView.imSave, imPromo?.save ?: "")
+        ImageManager.setPictureWithoutPlaceHolder(itemView.imReward, imPromo?.wRewards ?: "")
+        ImageManager.setPictureWithoutPlaceHolder(itemView.imVitality, imPromo?.vitality ?: "")
+        ImageManager.setPictureWithoutPlaceHolder(itemView.imNewImage, imPromo?.newImage ?: "")
     }
 
     private fun setProductImage(productList: ProductList) {
         val productImageUrl = productList.externalImageRef ?: ""
-        if (productImageUrl.isNotEmpty()) {
-            itemView.imProductImage?.apply {
-                setResizeImage(true)
-                setImageURI(productImageUrl + if (productImageUrl.indexOf("?") > 0) "w=300&q=85" else "?w=300&q=85")
-            }
-        }
+        ImageManager.setPicture(itemView.imProductImage, productImageUrl + if (productImageUrl.indexOf("?") > 0) "w=300&q=85" else "?w=300&q=85")
     }
 
     private fun setPrice(productList: ProductList?) {
@@ -81,10 +69,12 @@ class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolde
                 tvFromPrice.text = if (fromPrice!!.isEmpty()) "" else WFormatter.formatAmount(fromPrice)
                 tvFromPrice.setTextColor(Color.BLACK)
                 tvWasPrice.text = ""
+                fromPriceStrikeThrough.visibility = GONE
             } else {
                 if (wasPrice.equals(fromPrice, ignoreCase = true)) {
                     tvFromPrice.text = if (fromPrice!!.isEmpty()) WFormatter.formatAmount(wasPrice) else WFormatter.formatAmount(fromPrice)
                     tvFromPrice.setTextColor(Color.BLACK)
+                    fromPriceStrikeThrough.visibility = GONE
                     tvWasPrice.text = ""
                 } else {
                     tvFromPrice.text = WFormatter.formatAmount(fromPrice)
@@ -108,21 +98,22 @@ class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolde
     }
 
     // Extracting the fulfilmentStoreId from user location or default MC config
-    fun getFulfillmentTypeId(productList: ProductList?): String? {
+    fun getFulFillmentStoreId(): String? {
         val quickShopDefaultValues = WoolworthsApplication.getQuickShopDefaultValues()
-        var defaultStoreId: String? = quickShopDefaultValues?.suburb?.id?.toString() ?: ""
-        productList?.apply {
-            val foodFulfilmentTypeId = quickShopDefaultValues?.foodFulfilmentTypeId ?: 0
-            val fulfillmentTypeId: String? = fulfillmentType ?: foodFulfilmentTypeId.toString()
-            quickShopDefaultValues.suburb.fulfilmentTypes.forEach { fulfillmentType ->
-                if (fulfillmentType.fulfilmentTypeId.toString().equals(fulfillmentTypeId, ignoreCase = true)) {
+        val userSelectedDeliveryLocation = Utils.getPreferredDeliveryLocation()
+        val foodFulfilmentTypeId = quickShopDefaultValues?.foodFulfilmentTypeId?.toString()
+        var defaultStoreId = ""
+        if (userSelectedDeliveryLocation == null || userSelectedDeliveryLocation.suburb?.fulfillmentStores == null) {
+            quickShopDefaultValues?.suburb?.fulfilmentTypes?.forEach { fulfillmentType ->
+                if (fulfillmentType.fulfilmentTypeId.toString().equals(foodFulfilmentTypeId, ignoreCase = true)) {
                     defaultStoreId = fulfillmentType.fulfilmentStoreId.toString()
                     return@forEach
                 }
             }
-            val userStoreId = Utils.retrieveStoreId(fulfillmentType)
-            return if (userStoreId?.isEmpty() == true) defaultStoreId else userStoreId
+        } else {
+            Utils.retrieveStoreId(foodFulfilmentTypeId)?.let { defaultStoreId = it }
         }
+
         return defaultStoreId
     }
 

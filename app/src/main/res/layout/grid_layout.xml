@@ -1,77 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_marginTop="?attr/actionBarSize"
-        android:clickable="true"
-        android:focusable="true"
-        tools:context="za.co.woolworths.financial.services.android.ui.fragments.CategoryFragment">
-
-    <data>
-
-        <import type="android.view.View"/>
-
-        <variable
-            name="handlers"
-            type="za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment"/>
-
-        <variable
-            name="viewModel"
-            type="za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridViewModel"/>
-    </data>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fragment_mainLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="?attr/actionBarSize"
+    android:background="@color/default_background"
+    android:clickable="true"
+    android:focusable="true">
 
     <RelativeLayout
-        android:id="@+id/fragment_mainLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/default_background">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/default_background"
-            android:orientation="vertical">
-
-            <include
-                android:id="@+id/sortAndRefineLayout"
-                layout="@layout/sort_and_refine_selection_layout"
-                />
-            <include
-                android:id="@+id/incCenteredProgress"
-                layout="@layout/progress_layout"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:gravity="center"
-                android:visibility="gone"/>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/productList"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@+id/sortAndRefineLayout"
-                android:layout_above="@+id/incConfirmButtonLayout"
-                android:layout_alignParentStart="true"
-                android:smoothScrollbar="true"
-                android:animateLayoutChanges="false"
-                android:paddingLeft="4dp"
-                android:paddingRight="4dp"
-                android:scrollbars="vertical"/>
-
-            <include
-                android:id="@+id/incConfirmButtonLayout"
-                layout="@layout/confirm_button_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:background="@color/recent_search_bg"
-                />
-
-        </RelativeLayout>
+        android:background="@color/default_background"
+        android:orientation="vertical">
 
         <include
-            android:id="@+id/incNoConnectionHandler"
-            layout="@layout/no_connection_handler"/>
+            android:id="@+id/sortAndRefineLayout"
+            layout="@layout/sort_and_refine_selection_layout" />
+
+        <include
+            android:id="@+id/incCenteredProgress"
+            layout="@layout/progress_layout"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:visibility="gone" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/productList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/incConfirmButtonLayout"
+            android:layout_below="@+id/sortAndRefineLayout"
+            android:layout_alignParentStart="true"
+            android:animateLayoutChanges="false"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:scrollbars="vertical"
+            android:smoothScrollbar="true" />
+
+        <include
+            android:id="@+id/incConfirmButtonLayout"
+            layout="@layout/confirm_button_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="@color/recent_search_bg" />
 
     </RelativeLayout>
-</layout>
+
+    <include
+        android:id="@+id/incNoConnectionHandler"
+        layout="@layout/no_connection_handler" />
+
+</RelativeLayout>

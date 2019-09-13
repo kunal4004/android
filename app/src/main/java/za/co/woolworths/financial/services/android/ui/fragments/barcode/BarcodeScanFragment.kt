@@ -66,7 +66,7 @@ open class BarcodeScanFragment : BarcodeScanExtension() {
                                                                 with(it.searchTerm) {
                                                                     when {
                                                                         isEmpty() -> {
-                                                                            ErrorHandlerView(activity).showToast(getString(R.string.invalid_qr_code), R.drawable.alerter_ic_notifications)
+                                                                            ErrorHandlerView(activity).showToast(getString(R.string.invalid_qr_code))
                                                                         }
                                                                         contains(HOST_YOUTUBE) -> {
                                                                             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(this@apply)))
