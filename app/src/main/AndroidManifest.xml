@@ -433,6 +433,10 @@
             android:theme="@style/StoreLocatorActivityStyle"
             />
 
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.store_card.ScanStoreCardActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/StoreLocatorActivityStyle" />
         <provider
             android:name="za.co.woolworths.financial.services.android.util.WFileProvider"
             android:authorities="za.co.woolworths.financial.services.android.util.WFileProvider"

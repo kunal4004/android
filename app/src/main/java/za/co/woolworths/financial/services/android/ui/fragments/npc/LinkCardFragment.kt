@@ -19,23 +19,20 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import cards.pay.paycardsrecognizer.sdk.ScanCardIntent
-import android.app.Activity
+import android.app.Activity.RESULT_OK
 import android.content.Intent
-import android.util.Log
+import android.os.Parcelable
+import cards.pay.paycardsrecognizer.sdk.Card
 
 
 class LinkCardFragment : MyCardExtension() {
-
-    private val TAG = LinkCardFragment::class.java.simpleName
 
     companion object {
         const val REQUEST_CODE_SCAN_CARD = 1
         fun newInstance() = LinkCardFragment()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.link_card_fragment, container, false)
-    }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? = inflater.inflate(R.layout.link_card_fragment, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -65,7 +62,12 @@ class LinkCardFragment : MyCardExtension() {
 
         imCameraIcon?.setOnClickListener {
             activity?.apply {
-                val intent = ScanCardIntent.Builder(this).build()
+
+                val builder = ScanCardIntent.Builder(this)
+                builder.setScanCardHolder(true)
+                builder.setSaveCard(false)
+                builder.setSoundEnabled(true)
+                builder.build()
                 startActivityForResult(intent, REQUEST_CODE_SCAN_CARD)
             }
         }
@@ -147,17 +149,13 @@ class LinkCardFragment : MyCardExtension() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE_SCAN_CARD) {
             when (resultCode) {
-                Activity.RESULT_OK -> {
-//                    val card = data?.getParcelableExtra<Parcelable>(ScanCardIntent.RESULT_PAYCARDS_CARD)
-//                    val cardData = ("Card number: " + card + "\n"
-//                            + "Card holder: " + card.getCardHolderName() + "\n"
-//                            + "Card expiration date: " + card.getExpirationDate())
-                    //     Log.i(TAG, "Card info: $cardData")
+                RESULT_OK -> {
+                    val cardNumber = (data?.getParcelableExtra<Parcelable>(ScanCardIntent.RESULT_PAYCARDS_CARD) as? Card)?.cardNumber
+                            ?: ""
+                    etCardNumber?.setText(cardNumber)
                 }
-                Activity.RESULT_CANCELED -> Log.i(TAG, "Scan canceled")
-                else -> Log.i(TAG, "Scan failed")
+                else -> return
             }
         }
     }
-
 }

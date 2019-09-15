@@ -93,7 +93,7 @@
         app:layout_constraintEnd_toEndOf="@+id/vCameraBgTapped"
         app:layout_constraintStart_toStartOf="@+id/vCameraBgTapped"
         app:layout_constraintTop_toTopOf="@+id/vCameraBgTapped"
-        app:srcCompat="@drawable/icon_camera" />
+        app:srcCompat="@drawable/camera_image_bg" />
 
     <EditText
         android:id="@+id/etCardNumber"
@@ -134,7 +134,7 @@
         android:layout_height="0dp"
         android:layout_alignParentStart="true"
         android:layout_centerInParent="true"
-        android:layout_marginEnd="21dp"
+        android:layout_marginEnd="10dp"
         android:fontFamily="@font/futura_medium_ttf"
         android:gravity="start|center"
         android:letterSpacing="0.15"

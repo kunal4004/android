@@ -16,7 +16,7 @@ import za.co.woolworths.financial.services.android.util.WFormatter
 class StoreLocatorCardListViewHolder constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
     constructor(parent: ViewGroup) : this(LayoutInflater.from(parent.context).inflate(R.layout.store_nearby_list_card_item, parent, false))
 
-    fun setItem(storeDetails: StoreDetails) {
+    fun setItem(storeDetails: StoreDetails, clickListener: (StoreDetails) -> Unit) {
         with(storeDetails) {
             name?.let { name -> itemView.storeName?.text = name }
             address?.let { address -> itemView.storeAddress?.text = address }
@@ -27,11 +27,10 @@ class StoreLocatorCardListViewHolder constructor(itemView: View) : RecyclerView.
             itemView.distance?.text = TextUtils.concat(ssDistance, "\n", mSpanKm)
             itemView.offerings?.text = offerings?.let { offering -> WFormatter.formatOfferingString(offering) }
                     ?: ""
-
             val openingHour = times?.get(0)?.hours?.let { openHour -> WFormatter.formatOpenUntilTime(openHour) }
                     ?: ""
             itemView.timeing?.text = if (openingHour.isEmpty()) "" else "Open until $openingHour"
+            itemView.setOnClickListener { clickListener(storeDetails) }
         }
     }
-
 }

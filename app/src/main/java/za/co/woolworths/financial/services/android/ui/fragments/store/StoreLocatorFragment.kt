@@ -1,30 +1,42 @@
 package za.co.woolworths.financial.services.android.ui.fragments.store
 
+import android.content.Intent
 import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
-import androidx.viewpager2.widget.ViewPager2
+import androidx.viewpager.widget.ViewPager
 import com.awfs.coordination.R
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.store_locator_fragment.*
+import za.co.woolworths.financial.services.android.models.dto.StoreDetails
+import za.co.woolworths.financial.services.android.ui.activities.StoreDetailsActivity
 import za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity
+import za.co.woolworths.financial.services.android.ui.adapters.CardsOnMapAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.MapWindowAdapter
-import za.co.woolworths.financial.services.android.ui.adapters.StoreLocatorCardAdapter
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1.CAMERA_ANIMATION_SPEED
+import za.co.woolworths.financial.services.android.util.Utils
+import java.util.ArrayList
 import java.util.HashMap
 
-class StoreLocatorFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+class StoreLocatorFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener, ViewPager.OnPageChangeListener {
 
-    private lateinit var mGoogleMap: GoogleMap
+    private var currentStorePostion: Int = 0
+    private var mGoogleMap: GoogleMap? = null
     private var mMarkers: HashMap<String, Int> = HashMap()
+    private var markers: ArrayList<Marker>? = null
+    private var mapFragment: SupportMapFragment? = null
+    private var previousMarker: Marker? = null
+    private var storeDetailsList: MutableList<StoreDetails>? = null
+    private var unSelectedIcon: BitmapDescriptor? = null
+    private var selectedIcon: BitmapDescriptor? = null
 
     companion object {
         fun newInstance() = StoreLocatorFragment()
@@ -36,41 +48,30 @@ class StoreLocatorFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initCardPager()
+        initMap()
+    }
 
-        val supportMapFragment = this.childFragmentManager.findFragmentById(R.id.map) as? SupportMapFragment
-        supportMapFragment?.getMapAsync(this)
-
-        with(cardViewPager) {
-            clipToPadding = false
-            clipChildren = false
-            offscreenPageLimit = 2
-        }
-
-        val pageMarginPx = resources.getDimensionPixelOffset(R.dimen.twenty_dp)
-        val offsetPx = resources.getDimensionPixelOffset(R.dimen.thirty_two_dp)
-        cardViewPager.setPageTransformer { page, position ->
-            val viewPager = page.parent.parent as ViewPager2
-            val offset = position * -(1 * offsetPx + pageMarginPx)
-            if (viewPager.orientation == ViewPager2.ORIENTATION_HORIZONTAL) {
-                if (ViewCompat.getLayoutDirection(viewPager) == ViewCompat.LAYOUT_DIRECTION_RTL) {
-                    page.translationX = -offset
-                } else {
-                    page.translationX = offset
-                }
-            } else {
-                page.translationY = offset
-            }
+    private fun initCardPager() {
+        cardPager?.addOnPageChangeListener(this)
+        cardPager?.setOnItemClickListener { position ->
+            currentStorePostion = position
+            showStoreDetails(currentStorePostion)
         }
     }
 
-    private fun drawMarker(point: LatLng, bitmapDescriptor: BitmapDescriptor, position: Int) {
+    private fun drawMarker(point: LatLng, bitmapDescriptor: BitmapDescriptor, pos: Int) {
         val markerOptions = MarkerOptions()
         markerOptions.position(point)
         markerOptions.icon(bitmapDescriptor)
-        val marker = mGoogleMap.addMarker(markerOptions)
-        mMarkers[marker.id] = position
-        if (position == 0) {
-            mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.position, 13f), CAMERA_ANIMATION_SPEED, null)
+        val marker: Marker? = mGoogleMap?.addMarker(markerOptions)
+        marker?.let { mark ->
+            mMarkers[mark.id] = pos
+            markers?.add(marker)
+            if (pos == 0) {
+                mGoogleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.position, 13f), CAMERA_ANIMATION_SPEED, null)
+                previousMarker = marker
+            }
         }
     }
 
@@ -81,21 +82,26 @@ class StoreLocatorFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
 
     private fun onMapReady() {
         (activity as? StoreLocatorActivity)?.apply {
-            val cardAdapter = StoreLocatorCardAdapter()
-            // populate markers
-            val storeDetails = getLocation()
-            storeDetails?.forEachIndexed { index, storeDetail -> drawMarker(LatLng(storeDetail.latitude, storeDetail.longitude), if (index == 0) getSelectedIcon() else getUnSelectedIcon(), index) }
-            cardViewPager?.adapter = cardAdapter
-            storeDetails?.let { storeDetail -> cardAdapter.setItem(storeDetail) }
 
-            mGoogleMap.setInfoWindowAdapter(MapWindowAdapter(this))
-            mGoogleMap.setOnMarkerClickListener(this@StoreLocatorFragment)
+            selectedIcon = getSelectedIcon()
+            unSelectedIcon = getUnSelectedIcon()
+
+            mGoogleMap?.setInfoWindowAdapter(MapWindowAdapter(this))
+            mGoogleMap?.setOnMarkerClickListener(this@StoreLocatorFragment)
+
+            storeDetailsList = ArrayList()
+            storeDetailsList = getLocation()
+            storeDetailsList?.let { stores -> bindDataWithUI(stores) }
         }
     }
 
     override fun onMarkerClick(marker: Marker?): Boolean {
         val markerId = mMarkers[marker?.id]
-
+        previousMarker?.setIcon(unSelectedIcon)
+        marker?.setIcon(selectedIcon)
+        mGoogleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(marker?.position, 13F), CAMERA_ANIMATION_SPEED, null)
+        previousMarker = marker
+        markerId?.let { id -> cardPager?.currentItem = id }
         return true
     }
 
@@ -103,18 +109,61 @@ class StoreLocatorFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
 
     private fun getUnSelectedIcon() = BitmapDescriptorFactory.fromResource(R.drawable.unselected_pin)
 
-    private fun zoomToLocation(location: Location) {
-        val mLocation = CameraPosition.Builder().target(LatLng(location.latitude, location
-                .longitude))
-                .zoom(13f)
-                .bearing(0f)
-                .tilt(25f)
-                .build()
+    override fun onPageScrollStateChanged(state: Int) {
+    }
 
-        mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(mLocation), 2000.coerceAtLeast(1), object : GoogleMap.CancelableCallback {
-            override fun onFinish() {}
+    override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+    }
 
-            override fun onCancel() {}
-        })
+    override fun onPageSelected(position: Int) {
+        previousMarker?.apply {
+            setIcon(unSelectedIcon)
+            markers?.get(position)?.setIcon(selectedIcon)
+            mGoogleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(markers?.get(position)?.position, 13f), CAMERA_ANIMATION_SPEED, null)
+            previousMarker = markers?.get(position)
+        }
+    }
+
+    private fun initMap() {
+        if (isAdded) {
+            mapFragment = this.childFragmentManager.findFragmentById(R.id.map) as? SupportMapFragment?
+            mapFragment?.getMapAsync(this)
+            mMarkers = HashMap()
+            markers = ArrayList()
+        }
+    }
+
+    private fun bindDataWithUI(storeDetailsList: MutableList<StoreDetails>) {
+        mGoogleMap.let {
+            if (storeDetailsList.size >= 0) {
+                activity?.let { activity -> updateMyCurrentLocationOnMap(Utils.getLastSavedLocation(activity)) }
+                for (i in storeDetailsList.indices) {
+                    if (i == 0) {
+                        selectedIcon?.let { selectedIcon -> drawMarker(LatLng(storeDetailsList[i].latitude, storeDetailsList[i].longitude), selectedIcon, i) }
+                    } else
+                        unSelectedIcon?.let { unselectedIcon -> drawMarker(LatLng(storeDetailsList[i].latitude, storeDetailsList[i].longitude), unselectedIcon, i) }
+                }
+                activity?.let { activity -> cardPager?.adapter = CardsOnMapAdapter(activity, storeDetailsList) }
+            }
+        }
+    }
+
+    private fun updateMyCurrentLocationOnMap(location: Location?) {
+        location?.apply {
+            mGoogleMap?.addMarker(MarkerOptions().position(LatLng(latitude, longitude))
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.mapcurrentlocation)))
+            mGoogleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(latitude, longitude), 13f), CAMERA_ANIMATION_SPEED, null)
+        }
+    }
+
+    private fun showStoreDetails(position: Int) {
+        activity?.apply {
+            with(Intent(this, StoreDetailsActivity::class.java)) {
+                putExtra("store", Gson().toJson(storeDetailsList?.get(position)))
+                putExtra("FromStockLocator", false)
+                startActivity(this)
+                overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+            }
+        }
     }
 }
