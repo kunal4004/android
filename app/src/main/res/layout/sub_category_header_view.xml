@@ -27,7 +27,7 @@
                     android:layout_height="@dimen/two_hundred_and_twenty_one_dp"
                     android:adjustViewBounds="true"
                     android:clickable="false"
-                    android:scaleType="fitEnd"
+                    android:scaleType="fitXY"
                     />
             </LinearLayout>
 

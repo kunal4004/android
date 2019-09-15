@@ -9,9 +9,9 @@ android {
 
     def major = "5"
     def minor = "16"
-    def fix = "0"
+    def fix = "1"
 
-    def jobNumber = 347
+    def jobNumber = 348
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
 
     dataBinding {
@@ -191,7 +191,6 @@ dependencies {
 
     api 'com.google.zxing:android-core:3.3.0'
     annotationProcessor 'androidx.lifecycle:lifecycle-compiler:2.0.0'
-    implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'me.relex:circleindicator:2.1.0@aar'
 
     implementation 'com.squareup.retrofit2:retrofit:2.6.0'
@@ -202,7 +201,8 @@ dependencies {
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
     implementation "com.github.skydoves:balloon:1.0.4"
     implementation 'cards.pay:paycardsrecognizer:1.1.0'
-
+    implementation 'com.github.bumptech.glide:glide:4.9.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
     implementation 'com.github.deano2390:MaterialShowcaseView:1.2.0'
     implementation 'com.daasuu:BubbleLayout:1.2.0'

@@ -1135,6 +1135,8 @@ public class Utils {
 					}
 				}
 			} else {
+				if (fulFillmentType.length() == 1)
+					fulFillmentType = "0" + fulFillmentType;
 				JsonObject jsSuburbFulfillment = suburbFulfillment.getAsJsonObject();
 				if (jsSuburbFulfillment.has(fulFillmentType))
 					storeId = jsSuburbFulfillment.get(fulFillmentType).getAsString();

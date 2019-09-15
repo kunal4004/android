@@ -40,7 +40,7 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        parentFragment = (activity as BottomNavigationActivity).currentFragment as? ShopFragment
+        parentFragment = (activity as? BottomNavigationActivity)?.currentFragment as? ShopFragment
         setUpRecyclerView(mutableListOf())
         setListener()
         if (isFragmentVisible)
@@ -95,7 +95,7 @@ class DepartmentsFragment : DepartmentExtensionFragment() {
         mDepartmentAdapter = DepartmentAdapter(categories) { rootCategory: RootCategory -> departmentItemClicked(rootCategory) }
         activity?.let {
             rclDepartment?.apply {
-                layoutManager = LinearLayoutManager(it, LinearLayout.VERTICAL, false)
+                layoutManager = LinearLayoutManager(it, LinearLayoutManager.VERTICAL, false)
                 adapter = mDepartmentAdapter
             }
         }
