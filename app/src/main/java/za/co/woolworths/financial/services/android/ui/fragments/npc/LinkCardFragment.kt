@@ -23,9 +23,14 @@ import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Parcelable
 import cards.pay.paycardsrecognizer.sdk.Card
+import za.co.woolworths.financial.services.android.ui.views.ProductListingProgressBar
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView
+import java.io.IOException
 
 
 class LinkCardFragment : MyCardExtension() {
+
+    private val mProgressListingProgressBar: ProductListingProgressBar? = ProductListingProgressBar()
 
     companion object {
         const val REQUEST_CODE_SCAN_CARD = 1
@@ -109,9 +114,11 @@ class LinkCardFragment : MyCardExtension() {
     }
 
     private fun makeOTPCall() {
+        showProgressBar()
         OneAppService.getLinkNewCardOTP(OTPMethodType.SMS).enqueue(
                 CompletionHandler(object : RequestListener<LinkNewCardOTP> {
                     override fun onSuccess(linkNewCardOTP: LinkNewCardOTP) {
+                        hidProgressBar()
                         with(linkNewCardOTP) {
                             when (this.httpCode) {
                                 200 -> replaceFragment(
@@ -139,10 +146,26 @@ class LinkCardFragment : MyCardExtension() {
                     }
 
                     override fun onFailure(error: Throwable?) {
+                        activity?.runOnUiThread {
+                            hidProgressBar()
+                            if (error is IOException) {
 
+                            }
+                        }
                     }
 
                 }, LinkNewCardOTP::class.java))
+    }
+
+
+    private fun showProgressBar() {
+        // Show progress bar
+        activity?.let { activity -> mProgressListingProgressBar?.show(activity) }
+    }
+
+    private fun hidProgressBar() {
+        // hide progress bar
+        mProgressListingProgressBar?.dialog?.dismiss()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

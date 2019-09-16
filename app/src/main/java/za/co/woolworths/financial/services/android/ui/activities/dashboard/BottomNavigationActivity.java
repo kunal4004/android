@@ -49,7 +49,6 @@ import za.co.woolworths.financial.services.android.models.service.event.BadgeSta
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
-import za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
