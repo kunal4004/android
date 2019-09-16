@@ -431,6 +431,7 @@
 
         <activity android:name="za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity"
             android:theme="@style/StoreLocatorActivityStyle"
+            android:screenOrientation="portrait"
             />
 
         <activity

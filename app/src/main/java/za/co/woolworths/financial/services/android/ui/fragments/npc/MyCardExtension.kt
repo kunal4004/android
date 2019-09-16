@@ -48,13 +48,6 @@ open class MyCardExtension : Fragment() {
         }
     }
 
-    fun navigateToResendOTPFragment(activity: AppCompatActivity?) {
-        activity?.supportFragmentManager?.apply {
-            val resendOTPFragment = ResendOTPFragment.newInstance()
-            resendOTPFragment.show((this), ResendOTPFragment::class.java.simpleName)
-        }
-    }
-
     internal fun navigateToLinkNewCardActivity(activity: AppCompatActivity?, storeCard: String?) {
         activity?.apply {
             val openLinkNewCardActivity = Intent(this, LinkNewCardActivity::class.java)

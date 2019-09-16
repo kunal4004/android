@@ -10,27 +10,16 @@ import kotlinx.android.synthetic.main.link_card_fragment.*
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.util.CreditCardTextWatcher
 import android.view.inputmethod.EditorInfo
-import za.co.woolworths.financial.services.android.contracts.RequestListener
-import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.npc.LinkNewCardOTP
-import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
-import za.co.woolworths.financial.services.android.models.network.CompletionHandler
-import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
-import za.co.woolworths.financial.services.android.util.SessionUtilities
 import cards.pay.paycardsrecognizer.sdk.ScanCardIntent
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Parcelable
 import cards.pay.paycardsrecognizer.sdk.Card
-import za.co.woolworths.financial.services.android.ui.views.ProductListingProgressBar
-import za.co.woolworths.financial.services.android.util.ErrorHandlerView
-import java.io.IOException
-
+import za.co.woolworths.financial.services.android.contracts.IStoreCardOTPCallback
+import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 
 class LinkCardFragment : MyCardExtension() {
-
-    private val mProgressListingProgressBar: ProductListingProgressBar? = ProductListingProgressBar()
 
     companion object {
         const val REQUEST_CODE_SCAN_CARD = 1
@@ -114,58 +103,23 @@ class LinkCardFragment : MyCardExtension() {
     }
 
     private fun makeOTPCall() {
-        showProgressBar()
-        OneAppService.getLinkNewCardOTP(OTPMethodType.SMS).enqueue(
-                CompletionHandler(object : RequestListener<LinkNewCardOTP> {
-                    override fun onSuccess(linkNewCardOTP: LinkNewCardOTP) {
-                        hidProgressBar()
-                        with(linkNewCardOTP) {
-                            when (this.httpCode) {
-                                200 -> replaceFragment(
-                                        fragment = EnterOtpFragment.newInstance(),
-                                        tag = EnterOtpFragment::class.java.simpleName,
-                                        containerViewId = R.id.flMyCard,
-                                        allowStateLoss = true,
-                                        enterAnimation = R.anim.slide_in_from_right,
-                                        exitAnimation = R.anim.slide_to_left,
-                                        popEnterAnimation = R.anim.slide_from_left,
-                                        popExitAnimation = R.anim.slide_to_right
-                                )
-
-                                440 -> activity?.let { activity ->
-                                    SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE,
-                                            response?.stsParams ?: "", activity)
-                                }
-
-                                else -> response?.desc?.let { desc ->
-                                    val dialog = ErrorDialogFragment.newInstance(desc)
-                                    activity?.supportFragmentManager?.beginTransaction()?.let { fragmentTransaction -> dialog.show(fragmentTransaction, ErrorDialogFragment::class.java.simpleName) }
-                                }
-                            }
-                        }
-                    }
-
-                    override fun onFailure(error: Throwable?) {
-                        activity?.runOnUiThread {
-                            hidProgressBar()
-                            if (error is IOException) {
-
-                            }
-                        }
-                    }
-
-                }, LinkNewCardOTP::class.java))
-    }
-
-
-    private fun showProgressBar() {
-        // Show progress bar
-        activity?.let { activity -> mProgressListingProgressBar?.show(activity) }
-    }
-
-    private fun hidProgressBar() {
-        // hide progress bar
-        mProgressListingProgressBar?.dialog?.dismiss()
+        activity?.let { activity ->
+            val requestOTP = OTPRequest(activity, OTPMethodType.SMS)
+            requestOTP.make(object : IStoreCardOTPCallback<LinkNewCardOTP> {
+                override fun onSuccess(response: LinkNewCardOTP) {
+                    replaceFragment(
+                            fragment = EnterOtpFragment.newInstance(),
+                            tag = EnterOtpFragment::class.java.simpleName,
+                            containerViewId = R.id.flMyCard,
+                            allowStateLoss = true,
+                            enterAnimation = R.anim.slide_in_from_right,
+                            exitAnimation = R.anim.slide_to_left,
+                            popEnterAnimation = R.anim.slide_from_left,
+                            popExitAnimation = R.anim.slide_to_right
+                    )
+                }
+            })
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

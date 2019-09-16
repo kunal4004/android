@@ -1,11 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.activities
 
-import android.graphics.Color
-import android.graphics.Typeface
 import android.os.Bundle
-import android.text.Spannable
 import android.text.SpannableString
-import android.text.Spanned
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -21,20 +17,13 @@ import za.co.woolworths.financial.services.android.util.Utils
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails
-import android.text.TextPaint
-import android.text.method.LinkMovementMethod
-import android.text.style.AbsoluteSizeSpan
-import android.text.style.ClickableSpan
-import android.text.style.StyleSpan
-import android.view.View
-import androidx.core.content.res.ResourcesCompat
+import za.co.woolworths.financial.services.android.util.KotlinUtils
 
 class StoreLocatorActivity : AppCompatActivity() {
 
     private var mTitle: String? = null
     private var mDescription: String? = null
     private var mLocations: MutableList<StoreDetails>? = null
-    private val mPhoneNumber = "0861 50 20 20"
 
     companion object {
         const val PRODUCT_NAME = "PRODUCT_NAME"
@@ -61,11 +50,7 @@ class StoreLocatorActivity : AppCompatActivity() {
 
         ivNavigateBack?.setOnClickListener { onBackPressed() }
 
-        val spannableTitle = SpannableString(getString(R.string.npc_participating_store))
-        val start = spannableTitle.indexOf(mPhoneNumber)
-        val end = start + mPhoneNumber.length
-
-        contactCustomerCare(spannableTitle, start, end)
+        KotlinUtils.contactCustomerCare(this, SpannableString(getString(R.string.npc_participating_store)), "0861 50 20 20", tvStoreContactInfo)
     }
 
     fun getLocation(): MutableList<StoreDetails>? = mLocations
@@ -145,27 +130,6 @@ class StoreLocatorActivity : AppCompatActivity() {
             }
             else -> return
         }
-    }
-
-    private fun contactCustomerCare(spannableTitle: SpannableString, start: Int, end: Int) {
-        val clickableSpan: ClickableSpan = object : ClickableSpan() {
-            override fun onClick(textView: View) {
-                Utils.makeCall(this@StoreLocatorActivity, mPhoneNumber)
-            }
-
-            override fun updateDrawState(ds: TextPaint) {
-                super.updateDrawState(ds)
-                ds.isUnderlineText = false
-            }
-        }
-
-        val typeface: Typeface? = ResourcesCompat.getFont(this@StoreLocatorActivity, R.font.myriad_pro_semi_bold_otf)
-        spannableTitle.setSpan(clickableSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        typeface?.style?.let { style -> spannableTitle.setSpan(StyleSpan(style), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE) }
-        spannableTitle.setSpan(AbsoluteSizeSpan(50), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        tvStoreContactInfo?.text = spannableTitle
-        tvStoreContactInfo?.movementMethod = LinkMovementMethod.getInstance()
-        tvStoreContactInfo?.highlightColor = Color.TRANSPARENT
     }
 
     override fun onBackPressed() {

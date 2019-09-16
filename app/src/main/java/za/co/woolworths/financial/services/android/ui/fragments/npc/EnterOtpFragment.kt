@@ -2,18 +2,20 @@ package za.co.woolworths.financial.services.android.ui.fragments.npc
 
 import android.graphics.Paint
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
 import android.widget.EditText
+import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.enter_otp_fragment.*
+import za.co.woolworths.financial.services.android.contracts.IStoreCardOTPCallback
+import za.co.woolworths.financial.services.android.models.dto.npc.LinkNewCardOTP
+import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.ui.activities.card.LinkNewCardActivity
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 
-class EnterOtpFragment : MyCardExtension() {
-
+class EnterOtpFragment : MyCardExtension(), IStoreCardOTPCallback<LinkNewCardOTP> {
     companion object {
         fun newInstance() = EnterOtpFragment()
     }
@@ -43,7 +45,12 @@ class EnterOtpFragment : MyCardExtension() {
 
     private fun clickEvent() {
         imNextProcessLinkCard?.setOnClickListener { linkCardRequest() }
-        tvDidNotReceivedOTP?.setOnClickListener { (activity as? AppCompatActivity)?.let { navigateToResendOTPFragment(it) } }
+        tvDidNotReceivedOTP?.setOnClickListener {
+            (activity as? AppCompatActivity)?.apply {
+                val resendOTPFragment = ResendOTPFragment.newInstance(this@EnterOtpFragment)
+                resendOTPFragment.show(supportFragmentManager.beginTransaction(), ResendOTPFragment::class.java.simpleName)
+            }
+        }
     }
 
     private fun setupInputListeners() = arrayOf<EditText>(edtVericationCode1, edtVerificationCode2, edtVerificationCode3, edtVerificationCode4, edtVerificationCode5).apply {
@@ -136,6 +143,16 @@ class EnterOtpFragment : MyCardExtension() {
                 requestFocus()
                 showSoftKeyboard(it, this)
             }
+        }
+    }
+
+    override fun requestOTPApi(otpMethodType: OTPMethodType) {
+        super.requestOTPApi(otpMethodType)
+        activity?.let { activity ->
+            val requestOTP = OTPRequest(activity, OTPMethodType.SMS)
+            requestOTP.make(object : IStoreCardOTPCallback<LinkNewCardOTP> {
+                override fun onSuccess(response: LinkNewCardOTP) {}
+            })
         }
     }
 }
