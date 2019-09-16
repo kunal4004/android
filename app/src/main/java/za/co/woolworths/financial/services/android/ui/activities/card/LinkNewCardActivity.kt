@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities.card
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -77,6 +78,16 @@ class LinkNewCardActivity : MyCardActivityExtension() {
         finish()
         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
         navigateToMyCardActivity(mStoreCardDetail, true)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        val instanceFragment = supportFragmentManager.findFragmentById(R.id.flMyCard)
+        instanceFragment?.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
 }

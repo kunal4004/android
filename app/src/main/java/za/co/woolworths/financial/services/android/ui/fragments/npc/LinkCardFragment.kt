@@ -56,13 +56,11 @@ class LinkCardFragment : MyCardExtension() {
 
         imCameraIcon?.setOnClickListener {
             activity?.apply {
-
                 val builder = ScanCardIntent.Builder(this)
                 builder.setScanCardHolder(true)
                 builder.setSaveCard(false)
                 builder.setSoundEnabled(true)
-                builder.build()
-                startActivityForResult(intent, REQUEST_CODE_SCAN_CARD)
+                startActivityForResult(builder.build(), REQUEST_CODE_SCAN_CARD)
             }
         }
     }
