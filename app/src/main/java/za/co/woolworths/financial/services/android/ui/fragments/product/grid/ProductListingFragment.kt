@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView
 
 import android.util.Log
 import android.view.*
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.Button
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -56,6 +58,9 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.detail.u
 import za.co.woolworths.financial.services.android.ui.views.AddedToCartBalloonFactory
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.*
 import za.co.woolworths.financial.services.android.util.*
+import java.net.ConnectException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 import java.util.*
 
 open class ProductListingFragment : ProductListingExtensionFragment(), GridNavigator, IProductListing, View.OnClickListener, SortOptionsAdapter.OnSortOptionSelected, WMaterialShowcaseView.IWalkthroughActionListener {
@@ -346,20 +351,20 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     override fun setProductBody() {
-       setProductRequestBody(mSearchType, mSearchTerm)
+        setProductRequestBody(mSearchType, mSearchTerm)
     }
 
     override fun onLoadStart(isLoadMore: Boolean) {
         setIsLoading(true)
         if (!isLoadMore) {
-            showProgressBar()
+            incCenteredProgress?.visibility = VISIBLE
         }
     }
 
     override fun onLoadComplete(isLoadMore: Boolean) {
         setIsLoading(false)
         if (!isLoadMore) {
-            dismissProgressBar()
+            incCenteredProgress?.visibility = GONE
         }
     }
 
@@ -604,8 +609,15 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             }
 
             override fun onFailure(error: Throwable) {
-                dismissProgressBar()
-                mErrorHandlerView?.networkFailureHandler(error.message ?: "")
+                if (!isAdded) return
+                activity.runOnUiThread {
+                    dismissProgressBar()
+                    when (error) {
+                        is ConnectException, is UnknownHostException -> {
+                            ErrorHandlerView(activity).showToast(getString(R.string.no_connection))
+                        }
+                    }
+                }
             }
         }, SkusInventoryForStoreResponse::class.java))
     }
