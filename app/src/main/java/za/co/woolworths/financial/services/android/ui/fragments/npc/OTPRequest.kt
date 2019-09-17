@@ -10,7 +10,6 @@ import za.co.woolworths.financial.services.android.models.dto.npc.LinkNewCardOTP
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.ui.views.ProductListingProgressBar
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.SessionUtilities
@@ -20,15 +19,14 @@ import java.net.UnknownHostException
 class OTPRequest(private val activity: Activity?, private val otpMethodType: OTPMethodType) {
 
     private var storeOTPService: Call<LinkNewCardOTP>? = null
-    private val mPbOTP: ProductListingProgressBar? = ProductListingProgressBar()
 
     fun make(requestListener: IStoreCardOTPCallback<LinkNewCardOTP>) {
-        showProgressBar()
+        requestListener.loadStart()
         storeOTPService = OneAppService.getLinkNewCardOTP(otpMethodType)
         storeOTPService?.enqueue(
                 CompletionHandler(object : RequestListener<LinkNewCardOTP> {
                     override fun onSuccess(linkNewCardOTP: LinkNewCardOTP) {
-                        hideProgressBar()
+                        requestListener.loadComplete()
                         with(linkNewCardOTP) {
                             when (this.httpCode) {
                                 200 -> requestListener.onSuccess(linkNewCardOTP)
@@ -49,7 +47,7 @@ class OTPRequest(private val activity: Activity?, private val otpMethodType: OTP
                     override fun onFailure(error: Throwable?) {
                         activity?.apply {
                             runOnUiThread {
-                                hideProgressBar()
+                                requestListener.loadComplete()
                                 if (error is ConnectException || error is UnknownHostException) {
                                     ErrorHandlerView(this).showToast()
                                 }
@@ -59,9 +57,5 @@ class OTPRequest(private val activity: Activity?, private val otpMethodType: OTP
 
                 }, LinkNewCardOTP::class.java))
     }
-
-    private fun showProgressBar() = activity?.let { activity -> mPbOTP?.show(activity) }
-
-    private fun hideProgressBar() = mPbOTP?.dialog?.dismiss()
 }
 

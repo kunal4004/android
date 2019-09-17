@@ -14,26 +14,17 @@ import za.co.woolworths.financial.services.android.models.dto.npc.LinkNewCardOTP
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.ui.activities.card.LinkNewCardActivity
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
-import za.co.woolworths.financial.services.android.ui.extension.withArgs
 
 class EnterOtpFragment : MyCardExtension(), IStoreCardOTPCallback<LinkNewCardOTP> {
 
-    private var mCardNumber: String? = null
-
     companion object {
-        private const val CARD_NUMBER = "CARD_NUMBER"
-        fun newInstance(cardNumber: String?) = EnterOtpFragment().withArgs {
-            putString(CARD_NUMBER, cardNumber)
-        }
+        fun newInstance() = EnterOtpFragment()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         (activity as? LinkNewCardActivity)?.showBackIcon()
-        arguments?.apply {
-            mCardNumber = getString(CARD_NUMBER)
-        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -159,8 +150,18 @@ class EnterOtpFragment : MyCardExtension(), IStoreCardOTPCallback<LinkNewCardOTP
     override fun requestOTPApi(otpMethodType: OTPMethodType) {
         super.requestOTPApi(otpMethodType)
         activity?.let { activity ->
-            val requestOTP = OTPRequest(activity, OTPMethodType.SMS)
-            requestOTP.make(object : IStoreCardOTPCallback<LinkNewCardOTP> {})
+            val requestOTP = OTPRequest(activity, otpMethodType)
+            requestOTP.make(object : IStoreCardOTPCallback<LinkNewCardOTP> {
+                override fun loadStart() {
+                    super.loadStart()
+
+                }
+
+                override fun loadComplete() {
+                    super.loadComplete()
+
+                }
+            })
         }
     }
 }

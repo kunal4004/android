@@ -14,16 +14,23 @@ import za.co.woolworths.financial.services.android.models.dto.npc.LinkNewCardOTP
 import cards.pay.paycardsrecognizer.sdk.ScanCardIntent
 import android.app.Activity.RESULT_OK
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.os.Parcelable
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import cards.pay.paycardsrecognizer.sdk.Card
 import za.co.woolworths.financial.services.android.contracts.IStoreCardOTPCallback
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
+import za.co.woolworths.financial.services.android.ui.extension.withArgs
 
 class LinkCardFragment : MyCardExtension() {
 
     companion object {
         const val REQUEST_CODE_SCAN_CARD = 1
-        fun newInstance() = LinkCardFragment()
+        fun newInstance() = LinkCardFragment().withArgs {
+
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? = inflater.inflate(R.layout.link_card_fragment, container, false)
@@ -47,6 +54,9 @@ class LinkCardFragment : MyCardExtension() {
         }
         inputTextWatcher()
         tappedEvent()
+
+        pbOTPLoader?.indeterminateDrawable?.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY)
+
     }
 
     private fun tappedEvent() {
@@ -102,8 +112,24 @@ class LinkCardFragment : MyCardExtension() {
 
     private fun makeOTPCall() {
         activity?.let { activity ->
-            val requestOTP = OTPRequest(activity, OTPMethodType.SMS)
+            val requestOTP = OTPRequest(activity, OTPMethodType.EMAIL)
             requestOTP.make(object : IStoreCardOTPCallback<LinkNewCardOTP> {
+                override fun loadStart() {
+                    super.loadStart()
+                    pbOTPLoader?.visibility = VISIBLE
+                    imCameraIcon?.isEnabled = false
+                    etCardNumber?.isFocusable = false
+                    etCardNumber?.isFocusableInTouchMode = false
+                }
+
+                override fun loadComplete() {
+                    super.loadComplete()
+                    pbOTPLoader?.visibility = GONE
+                    imCameraIcon?.isEnabled = true
+                    etCardNumber?.isFocusable = true
+                    etCardNumber?.isFocusableInTouchMode = true
+                }
+
                 override fun onSuccess(response: LinkNewCardOTP) {
                     replaceFragment(
                             fragment = EnterOtpFragment.newInstance(),
