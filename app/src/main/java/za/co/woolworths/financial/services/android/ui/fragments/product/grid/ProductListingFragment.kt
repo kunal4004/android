@@ -51,7 +51,6 @@ import za.co.woolworths.financial.services.android.ui.adapters.ProductListingAda
 import za.co.woolworths.financial.services.android.ui.adapters.SortOptionsAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductListingViewType
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import za.co.woolworths.financial.services.android.ui.views.ProductListingProgressBar
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
 
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragmentNew.SET_DELIVERY_LOCATION_REQUEST_CODE
@@ -59,7 +58,6 @@ import za.co.woolworths.financial.services.android.ui.views.AddedToCartBalloonFa
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.*
 import za.co.woolworths.financial.services.android.util.*
 import java.net.ConnectException
-import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.util.*
 
@@ -76,7 +74,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     internal var totalItemCount: Int = 0
     private var productView: ProductView? = null
     private var sortOptionDialog: Dialog? = null
-    private val mProgressListingProgressBar: ProductListingProgressBar? = ProductListingProgressBar()
     private var mStoreId: String? = null
     private var mAddItemToCart: AddItemToCart? = null
     private var mSelectedProductList: ProductList? = null
@@ -135,7 +132,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             mProductList = ArrayList()
 
         if (productLists?.isEmpty() == true) {
-            sortAndRefineLayout?.visibility = View.GONE
+            sortAndRefineLayout?.visibility = GONE
             if (!listContainHeader()) {
                 val headerProduct = ProductList()
                 headerProduct.rowType = ProductListingViewType.HEADER
@@ -624,12 +621,13 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
     private fun showProgressBar() {
         // Show progress bar
-        activity?.let { activity -> mProgressListingProgressBar?.show(activity) }
+        incCenteredProgress?.visibility = VISIBLE
     }
 
     private fun dismissProgressBar() {
         // hide progress bar
-        mProgressListingProgressBar?.dialog?.dismiss()
+        incCenteredProgress?.visibility = GONE
+        mProductAdapter?.resetQuickShopButton()
     }
 
     override fun addFoodProductTypeToCart(addItemToCart: AddItemToCart?) {
@@ -694,6 +692,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             }
 
             override fun onFailure(error: Throwable) {
+                if (!isAdded) return
                 activity?.runOnUiThread { dismissProgressBar() }
             }
         })
