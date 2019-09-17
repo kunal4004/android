@@ -1060,5 +1060,7 @@
     <string name="cd_store_card_apply_now_text">store card apply now text</string>
     <string name="cd_store_card_available_funds_text">store card available funds text</string>
     <string name="cd_sign_out">sign out</string>
+    <string name="oops_err_message">Oops, something went wrong.</string>
+    <string name="oops_err_title">Error</string>
 
 </resources>
