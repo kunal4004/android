@@ -14,7 +14,8 @@ import za.co.woolworths.financial.services.android.ui.views.ProductListingProgre
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.SessionUtilities
-import java.io.IOException
+import java.net.ConnectException
+import java.net.UnknownHostException
 
 class OTPRequest(private val activity: Activity?, private val otpMethodType: OTPMethodType) {
 
@@ -49,7 +50,7 @@ class OTPRequest(private val activity: Activity?, private val otpMethodType: OTP
                         activity?.apply {
                             runOnUiThread {
                                 hideProgressBar()
-                                if (error is IOException) {
+                                if (error is ConnectException || error is UnknownHostException) {
                                     ErrorHandlerView(this).showToast()
                                 }
                             }

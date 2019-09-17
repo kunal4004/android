@@ -1,6 +1,6 @@
 package za.co.woolworths.financial.services.android.util
 
-import android.app.Activity
+import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
 import android.text.Spannable
@@ -18,12 +18,15 @@ import com.awfs.coordination.R
 
 class KotlinUtils {
     companion object {
-        fun contactCustomerCare(activity: Activity?, spannableTitle: SpannableString, phoneNumber: String, tvDesc: TextView?, descIsClickable: Boolean = true) {
-            val start = spannableTitle.indexOf(phoneNumber)
+        fun contactCustomerCare(context: Context?, spannableTitle: SpannableString, phoneNumber: String, tvDesc: TextView?, textIsClickable: Boolean = true) {
+            var start = spannableTitle.indexOf(phoneNumber)
+            if (start == -1) {
+                start = 0
+            }
             val end = start + phoneNumber.length
             val clickableSpan: ClickableSpan = object : ClickableSpan() {
                 override fun onClick(textView: View) {
-                    Utils.makeCall(activity, phoneNumber)
+                    Utils.makeCall(context, phoneNumber)
                 }
 
                 override fun updateDrawState(ds: TextPaint) {
@@ -32,8 +35,8 @@ class KotlinUtils {
                 }
             }
 
-            val typeface: Typeface? = activity?.let { ResourcesCompat.getFont(it, R.font.myriad_pro_semi_bold_otf) }
-            if (descIsClickable)
+            val typeface: Typeface? = context?.let { ResourcesCompat.getFont(it, R.font.myriad_pro_semi_bold_otf) }
+            if (textIsClickable)
                 spannableTitle.setSpan(clickableSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             typeface?.style?.let { style -> spannableTitle.setSpan(StyleSpan(style), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE) }
             spannableTitle.setSpan(AbsoluteSizeSpan(50), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
