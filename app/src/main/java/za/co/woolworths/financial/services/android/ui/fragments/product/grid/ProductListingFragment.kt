@@ -554,6 +554,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     override fun queryInventoryForStore(storeId: String, addItemToCart: AddItemToCart?, productList: ProductList) {
+        activity?.let { activity -> Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.GA_EVENT_ONE_SHOPQS_ADD_TO_CART) }
         this.mStoreId = storeId
         this.mAddItemToCart = addItemToCart
         this.mSelectedProductList = productList
@@ -714,7 +715,6 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     override fun queryStoreFinderProductByFusedLocation(location: Location?) {
-        activity?.let { activity -> Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.GA_Event_ONE_SHOPQS_add_to_cart) }
         showProgressBar()
         val globalState = WoolworthsApplication.getInstance().wGlobalState
         with(globalState) {
