@@ -732,7 +732,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		return shoppingCartResponseCall;
 	}
 
-
 	private void removeItemProgressBar(CommerceItem commerceItem, boolean visibility) {
 		if (commerceItem == null) {
 			mToggleItemRemoved.onRemoveItem(visibility);
@@ -1145,4 +1144,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 	}
 
+	public ArrayList<CartItemGroup> getCartItems() {
+		return cartItems;
+	}
 }

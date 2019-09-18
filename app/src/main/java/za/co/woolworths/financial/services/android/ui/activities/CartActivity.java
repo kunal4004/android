@@ -1,9 +1,12 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.content.Intent;
+
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentTransaction;
+
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -15,8 +18,11 @@ import com.google.gson.JsonElement;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IToastInterface;
+import za.co.woolworths.financial.services.android.models.dto.CartItemGroup;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment;
@@ -46,7 +52,7 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
     public static final int CHECKOUT_SUCCESS = 13134;
     private FrameLayout flContentFrame;
     private boolean toastButtonWasClicked = false;
-
+    public  static  final int  RESULT_PREVENT_CART_SUMMARY_CALL = 121;
     @Override
     protected int getLayoutResourceId() {
         return R.layout.activity_cart;
@@ -130,8 +136,18 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
 
     public void finishActivity() {
         // Check to prevent DISMISS_POP_WINDOW_CLICKED override setResult for toast clicked event
-        if (!toastButtonWasClicked)
-            setResult(DISMISS_POP_WINDOW_CLICKED);
+        if (!toastButtonWasClicked) {
+            this.setResult(DISMISS_POP_WINDOW_CLICKED);
+        }
+
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.content_frame);
+        // Overrides activityResult to prevent cart summary api when shopping list is empty
+        if (currentFragment instanceof CartFragment) {
+            ArrayList<CartItemGroup> cartItem = ((CartFragment) currentFragment).getCartItems();
+            if (cartItem == null || cartItem.size() == 0)
+                this.setResult(RESULT_PREVENT_CART_SUMMARY_CALL);
+        }
+
         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTEXIT);
         finish();
         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
