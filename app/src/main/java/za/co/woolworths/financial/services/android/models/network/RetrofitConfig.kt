@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.models.network
 import com.awfs.coordination.BuildConfig
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
@@ -37,4 +38,6 @@ abstract class RetrofitConfig : NetworkConfig() {
                 .build()
                 .create(ApiInterface::class.java)
     }
+
+    fun cancelRequest(call: Call<*>?) = call?.apply { if (!isCanceled) cancel() }
 }

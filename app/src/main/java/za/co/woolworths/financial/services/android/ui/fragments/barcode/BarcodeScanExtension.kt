@@ -1,15 +1,16 @@
 package za.co.woolworths.financial.services.android.ui.fragments.barcode
 
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import com.awfs.coordination.R
 import com.google.gson.Gson
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.RequestListener
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
-import za.co.woolworths.financial.services.android.models.dto.ProductDetailResponse
-import za.co.woolworths.financial.services.android.models.dto.ProductRequest
-import za.co.woolworths.financial.services.android.models.dto.ProductView
-import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
+import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
@@ -156,5 +157,50 @@ abstract class BarcodeScanExtension : Fragment() {
                 }
             })
         }
+    }
+
+    public fun getProductSearchTypeAndSearchTerm(urlString: String): ProductSearchTypeAndTerm {
+        val productSearchTypeAndTerm = ProductSearchTypeAndTerm()
+        val uri = Uri.parse(urlString)
+        uri?.host?.apply {
+            with(this) {
+                when {
+                    contains(BarcodeScanFragment.HOST_WOOLWORTHS, true) -> {
+                        var searchTerm = uri.getQueryParameter("Ntt")
+                        if (searchTerm.isNullOrEmpty())
+                            searchTerm = uri.getQueryParameter("searchTerm")
+
+                        if (!searchTerm.isNullOrEmpty()) {
+                            productSearchTypeAndTerm.searchTerm = searchTerm
+                            productSearchTypeAndTerm.searchType = ProductsRequestParams.SearchType.SEARCH
+                        } else {
+                            searchTerm = uri.pathSegments?.find { it.startsWith("N-") }
+                            if (!searchTerm.isNullOrEmpty()) {
+                                productSearchTypeAndTerm.searchTerm = searchTerm
+                                productSearchTypeAndTerm.searchType = ProductsRequestParams.SearchType.NAVIGATE
+                            }
+                        }
+                    }
+                    contains(BarcodeScanFragment.HOST_YOUTUBE, true) -> {
+                        productSearchTypeAndTerm.searchTerm = BarcodeScanFragment.HOST_YOUTUBE
+                    }
+                }
+            }
+        }
+
+        return productSearchTypeAndTerm
+    }
+
+    fun sendResultBack(searchType: String, searchTerm: String) {
+        activity?.apply {
+            Intent().apply {
+                putExtra("searchType", searchType)
+                putExtra("searchTerm", searchTerm)
+                setResult(Activity.RESULT_OK, this)
+                finish()
+                overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+            }
+        }
+
     }
 }

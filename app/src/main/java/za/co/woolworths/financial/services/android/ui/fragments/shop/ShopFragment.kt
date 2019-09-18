@@ -159,7 +159,7 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
     private fun navigateToBarcode() {
         activity?.apply {
             val openBarcodeActivity =  Intent(this, BarcodeScanActivity::class.java)
-            startActivity(openBarcodeActivity)
+            startActivityForResult(openBarcodeActivity, BarcodeScanActivity.BARCODE_ACTIVITY_REQUEST_CODE)
             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
         }
     }
