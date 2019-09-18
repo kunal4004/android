@@ -157,6 +157,7 @@ class FirebaseManagerAnalyticsProperties {
             const val WREWARDS_TERMS_CONDITIONS: String = "WRewards Terms and Conditions"
             const val MAINTENANCE_MESSAGE: String = "Maintenance Message"
             const val DEVICE_ROOTED_AT_STARTUP: String = "Block Rooted Device"
+            const val GA_EVENT_ONE_SHOPQS_ADD_TO_CART = "GA_EVENT_ONE_SHOPQS_ADD_TO_CART"
         }
     }
 }
