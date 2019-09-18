@@ -714,6 +714,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     override fun queryStoreFinderProductByFusedLocation(location: Location?) {
+        activity?.let { activity -> Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.GA_Event_ONE_SHOPQS_add_to_cart) }
         showProgressBar()
         val globalState = WoolworthsApplication.getInstance().wGlobalState
         with(globalState) {
