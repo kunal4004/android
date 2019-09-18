@@ -1154,4 +1154,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 	}
 
+	public ArrayList<CartItemGroup> getCartItems() {
+		return cartItems;
+	}
 }
