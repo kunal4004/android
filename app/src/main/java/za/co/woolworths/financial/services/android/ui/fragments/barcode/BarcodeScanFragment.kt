@@ -25,6 +25,7 @@ import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 
 open class BarcodeScanFragment : BarcodeScanExtension() {
     private var mCodeScanner: CodeScanner? = null
+    private var invalidQRCode:String = ""
 
     companion object {
         fun newInstance() = BarcodeScanFragment()
@@ -65,7 +66,11 @@ open class BarcodeScanFragment : BarcodeScanExtension() {
                                                                 with(it.searchTerm) {
                                                                     when {
                                                                         isEmpty() -> {
-                                                                            ErrorHandlerView(activity).showToast(getString(R.string.invalid_qr_code))
+                                                                            if (!this@apply.equals(invalidQRCode, true)) {
+                                                                                ErrorHandlerView(activity).showToast(getString(R.string.invalid_qr_code))
+                                                                                invalidQRCode = this@apply
+                                                                            }
+                                                                            startPreview()
                                                                         }
                                                                         contains(HOST_YOUTUBE) -> {
                                                                             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(this@apply)))
