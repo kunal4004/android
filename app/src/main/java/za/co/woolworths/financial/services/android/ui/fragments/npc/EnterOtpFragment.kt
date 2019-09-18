@@ -3,28 +3,39 @@ package za.co.woolworths.financial.services.android.ui.fragments.npc
 import android.graphics.Paint
 import android.os.Bundle
 import android.text.Editable
+import android.text.SpannableString
 import android.text.TextWatcher
 import android.view.*
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.enter_otp_fragment.*
-import za.co.woolworths.financial.services.android.contracts.IStoreCardOTPCallback
+import za.co.woolworths.financial.services.android.contracts.IOTPLinkStoreCard
 import za.co.woolworths.financial.services.android.models.dto.npc.LinkNewCardOTP
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
-import za.co.woolworths.financial.services.android.ui.activities.card.LinkNewCardActivity
+import za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
+import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.util.KotlinUtils
+import java.util.*
+import android.view.MenuInflater
 
-class EnterOtpFragment : MyCardExtension(), IStoreCardOTPCallback<LinkNewCardOTP> {
+
+class EnterOtpFragment : MyCardExtension(), IOTPLinkStoreCard<LinkNewCardOTP> {
+
+    private var mOtpSentTo: String? = null
 
     companion object {
-        fun newInstance() = EnterOtpFragment()
+        const val OTP_SENT_TO = "OTP_SENT_TO"
+        fun newInstance(otpSentTo: String) = EnterOtpFragment().withArgs {
+            putString(OTP_SENT_TO, otpSentTo)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-        (activity as? LinkNewCardActivity)?.showBackIcon()
+        arguments?.let { bundle -> mOtpSentTo = bundle.getString(OTP_SENT_TO, "") }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -33,28 +44,38 @@ class EnterOtpFragment : MyCardExtension(), IStoreCardOTPCallback<LinkNewCardOTP
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        (activity as? InstantStoreCardReplacementActivity)?.showBackIcon()
         setupInputListeners()
         configureUI()
         clickEvent()
-        activity?.resources?.getString(R.string.enter_otp_desc)?.apply { tvEnterOtpDesc.htmlText(this) }
+        setOTPDescription(mOtpSentTo?.toLowerCase(Locale.getDefault()))
         imNextProcessLinkCard?.isEnabled = false
     }
 
+    private fun setOTPDescription(otpType: String?) {
+        mOtpSentTo = otpType
+        val desc = activity?.resources?.getString(R.string.enter_otp_desc, otpType)
+        activity?.let { activity -> otpType?.let { type -> KotlinUtils.highlightTextInDesc(activity, SpannableString(desc), type, tvEnterOtpDesc, false) } }
+    }
+
     private fun configureUI() {
-        tvDidNotReceivedOTP.paintFlags = Paint.UNDERLINE_TEXT_FLAG
+        tvDidNotReceivedOTP?.paintFlags = tvDidNotReceivedOTP.paintFlags or Paint.UNDERLINE_TEXT_FLAG
     }
 
     private fun clickEvent() {
-        imNextProcessLinkCard?.setOnClickListener { linkCardRequest() }
+        imNextProcessLinkCard?.setOnClickListener {
+            navigateToLinkStoreCard()
+        }
         tvDidNotReceivedOTP?.setOnClickListener {
             (activity as? AppCompatActivity)?.apply {
-                val resendOTPFragment = ResendOTPFragment.newInstance(this@EnterOtpFragment)
+                val resendOTPFragment = ResendOTPFragment.newInstance(this@EnterOtpFragment, mOtpSentTo)
                 resendOTPFragment.show(supportFragmentManager.beginTransaction(), ResendOTPFragment::class.java.simpleName)
             }
         }
     }
 
-    private fun setupInputListeners() = arrayOf<EditText>(edtVericationCode1, edtVerificationCode2, edtVerificationCode3, edtVerificationCode4, edtVerificationCode5).apply {
+    private fun setupInputListeners() = arrayOf<EditText>(edtVericationCode1, edtVerificationCode2,
+            edtVerificationCode3, edtVerificationCode4, edtVerificationCode5).apply {
         val listSize = size - 1
         for ((index, currentEditText) in withIndex()) {
             val nextEditText: EditText? = if (index < listSize) this[index + 1] else null
@@ -108,10 +129,13 @@ class EnterOtpFragment : MyCardExtension(), IStoreCardOTPCallback<LinkNewCardOTP
         }
     }
 
-    private fun linkCardRequest() {
+    private fun navigateToLinkStoreCard() {
+        val otpNumber = getNumberFromEditText(edtVericationCode1).plus(getNumberFromEditText(edtVerificationCode2)).plus(edtVerificationCode3).plus(edtVerificationCode4).plus(edtVerificationCode5)
+        (activity as? InstantStoreCardReplacementActivity)?.setOTPNumber(otpNumber)
+
         replaceFragment(
-                fragment = ProcessBlockCardFragment.newInstance(true, 0),
-                tag = ProcessBlockCardFragment::class.java.simpleName,
+                fragment = LinkStoreCardFragment.newInstance(),
+                tag = AnimatedProgressBarFragment::class.java.simpleName,
                 containerViewId = R.id.flMyCard,
                 allowStateLoss = true,
                 enterAnimation = R.anim.slide_in_from_right,
@@ -121,15 +145,47 @@ class EnterOtpFragment : MyCardExtension(), IStoreCardOTPCallback<LinkNewCardOTP
         )
     }
 
+    override fun onResume() {
+        super.onResume()
+        activity?.let { activity ->
+            edtVericationCode1?.apply {
+                requestFocus()
+                showSoftKeyboard(activity, this)
+            }
+        }
+    }
+
+    override fun navigateToEnterOTPScreen(data: LinkNewCardOTP) {
+        super.navigateToEnterOTPScreen(data)
+        setOTPDescription(data.otpSentTo?.toLowerCase(Locale.getDefault()))
+    }
+
+    override fun requestOTPApi(otpMethodType: OTPMethodType) {
+        super.requestOTPApi(otpMethodType)
+        saveSelectedOTP(otpMethodType)
+        replaceFragment(
+                fragment = ResendOTPLoaderFragment.newInstance(otpMethodType, this),
+                tag = ProcessBlockCardFragment::class.java.simpleName,
+                containerViewId = R.id.flMyCard,
+                allowStateLoss = true,
+                enterAnimation = R.anim.stay,
+                exitAnimation = R.anim.stay,
+                popEnterAnimation = R.anim.stay,
+                popExitAnimation = R.anim.stay)
+    }
+
+    private fun saveSelectedOTP(otpMethodType: OTPMethodType) = (activity as? InstantStoreCardReplacementActivity)?.setOTPType(otpMethodType)
+
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        menu.clear()
         super.onCreateOptionsMenu(menu, inflater)
+        menu.clear()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
-                (activity as? LinkNewCardActivity)?.hideBackIcon()
+                (activity as? InstantStoreCardReplacementActivity)?.hideBackIcon()
                 activity?.onBackPressed()
                 super.onOptionsItemSelected(item)
             }
@@ -137,31 +193,5 @@ class EnterOtpFragment : MyCardExtension(), IStoreCardOTPCallback<LinkNewCardOTP
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        activity?.let {
-            edtVericationCode1?.apply {
-                requestFocus()
-                showSoftKeyboard(it, this)
-            }
-        }
-    }
-
-    override fun requestOTPApi(otpMethodType: OTPMethodType) {
-        super.requestOTPApi(otpMethodType)
-        activity?.let { activity ->
-            val requestOTP = OTPRequest(activity, otpMethodType)
-            requestOTP.make(object : IStoreCardOTPCallback<LinkNewCardOTP> {
-                override fun loadStart() {
-                    super.loadStart()
-
-                }
-
-                override fun loadComplete() {
-                    super.loadComplete()
-
-                }
-            })
-        }
-    }
+    private fun getNumberFromEditText(editText: EditText) = editText?.text?.toString() ?: ""
 }

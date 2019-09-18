@@ -11,4 +11,6 @@ class LinkNewCardResponse {
     @SerializedName("response")
     @Expose
     var response: Response? = null
+
+
 }

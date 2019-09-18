@@ -106,7 +106,7 @@
         android:fontFamily="@font/myriad_pro_regular_otf"
         android:gravity="center|start"
         android:hint="@string/enter_new_card_number"
-        android:inputType="number"
+        android:inputType="number|textNoSuggestions"
         android:maxLength="19"
         android:textColorHint="@color/unavailable"
         android:textSize="15sp"

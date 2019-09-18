@@ -60,6 +60,8 @@
         android:layout_marginTop="@dimen/thirty_two_dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvResendOTP" />
+        app:layout_constraintTop_toBottomOf="@+id/tvResendOTP">
+
+    </androidx.recyclerview.widget.RecyclerView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

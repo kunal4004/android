@@ -50,7 +50,7 @@ class StoreLocatorActivity : AppCompatActivity() {
 
         ivNavigateBack?.setOnClickListener { onBackPressed() }
 
-        KotlinUtils.contactCustomerCare(this, SpannableString(getString(R.string.npc_participating_store)), "0861 50 20 20", tvStoreContactInfo)
+        KotlinUtils.highlightTextInDesc(this, SpannableString(getString(R.string.npc_participating_store)), "0861 50 20 20", tvStoreContactInfo)
     }
 
     fun getLocation(): MutableList<StoreDetails>? = mLocations

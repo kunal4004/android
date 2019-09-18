@@ -3,10 +3,7 @@ package za.co.woolworths.financial.services.android.util
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.Spanned
-import android.text.TextPaint
+import android.text.*
 import android.text.method.LinkMovementMethod
 import android.text.style.AbsoluteSizeSpan
 import android.text.style.ClickableSpan
@@ -16,17 +13,19 @@ import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import com.awfs.coordination.R
 
+
 class KotlinUtils {
     companion object {
-        fun contactCustomerCare(context: Context?, spannableTitle: SpannableString, phoneNumber: String, tvDesc: TextView?, textIsClickable: Boolean = true) {
-            var start = spannableTitle.indexOf(phoneNumber)
+        fun highlightTextInDesc(context: Context?, spannableTitle: SpannableString, searchTerm: String, tvDesc: TextView?, textIsClickable: Boolean = true) {
+            var start = spannableTitle.indexOf(searchTerm)
             if (start == -1) {
                 start = 0
             }
-            val end = start + phoneNumber.length
+
+            val end = start + searchTerm.length
             val clickableSpan: ClickableSpan = object : ClickableSpan() {
                 override fun onClick(textView: View) {
-                    Utils.makeCall(context, phoneNumber)
+                    Utils.makeCall(context, searchTerm)
                 }
 
                 override fun updateDrawState(ds: TextPaint) {

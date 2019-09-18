@@ -22,16 +22,14 @@
         android:layout_width="0dp"
         android:layout_height="20dp"
         android:layout_marginStart="16dp"
-        android:layout_marginEnd="32dp"
         android:fontFamily="@font/myriad_pro_regular_otf"
-        android:text="@string/send_to_your_email_address"
+        android:text="@string/app_label"
         android:textColor="@color/charcoal_grey"
         android:textSize="17sp"
         app:layout_constraintBottom_toBottomOf="@+id/imNextCallIcon"
-        app:layout_constraintEnd_toStartOf="@+id/imNextCallIcon"
         app:layout_constraintStart_toEndOf="@+id/imOTPNextEmail"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="@string/send_to_your_email_address" />
+        tools:text="@string/app_label" />
 
 
     <ImageView
@@ -55,6 +53,21 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tvStoreCardNumber"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:layout_marginEnd="32dp"
+        android:fontFamily="@font/myriad_pro_semi_bold_otf"
+        android:text="TextView"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/imNextCallIcon"
+        app:layout_constraintEnd_toStartOf="@+id/imNextCallIcon"
+        app:layout_constraintStart_toEndOf="@+id/tvOTPEmailTitle"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

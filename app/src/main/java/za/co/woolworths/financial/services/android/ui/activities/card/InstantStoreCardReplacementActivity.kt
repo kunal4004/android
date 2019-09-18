@@ -5,17 +5,24 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import com.awfs.coordination.R
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.my_card_activity.*
+import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
-import za.co.woolworths.financial.services.android.ui.fragments.npc.LinkCardFragment
+import za.co.woolworths.financial.services.android.ui.fragments.npc.InstantStoreCardFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardDetailFragment
 import za.co.woolworths.financial.services.android.util.Utils
+import java.util.*
 
 
-class LinkNewCardActivity : MyCardActivityExtension() {
+class InstantStoreCardReplacementActivity : MyCardActivityExtension() {
 
     private var mStoreCardDetail: String? = null
     private var mCard: String? = null
+    private var otpType: OTPMethodType = OTPMethodType.SMS
+    private var cardNumber: String? = null
+    private var oTPNumber: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,8 +37,8 @@ class LinkNewCardActivity : MyCardActivityExtension() {
 
         if (savedInstanceState == null) {
             addFragment(
-                    fragment = LinkCardFragment.newInstance(),
-                    tag = LinkCardFragment::class.java.simpleName,
+                    fragment = InstantStoreCardFragment.newInstance(),
+                    tag = InstantStoreCardFragment::class.java.simpleName,
                     containerViewId = R.id.flMyCard)
         }
     }
@@ -51,7 +58,7 @@ class LinkNewCardActivity : MyCardActivityExtension() {
     }
 
     private fun navigateBack() {
-        supportFragmentManager?.apply {
+        with(supportFragmentManager) {
             if (backStackEntryCount > 0) {
                 fragments[backStackEntryCount - 1]?.onResume()
                 popBackStack()
@@ -63,7 +70,7 @@ class LinkNewCardActivity : MyCardActivityExtension() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater?.inflate(R.menu.search_item, menu)
+        menuInflater.inflate(R.menu.search_item, menu)
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -90,4 +97,28 @@ class LinkNewCardActivity : MyCardActivityExtension() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
+    fun getStoreCardDetail(): Account = Gson().fromJson(mStoreCardDetail, Account::class.java)
+
+    fun getCard() = mStoreCardDetail?.let { cardValue ->
+        Gson().fromJson(cardValue, Account::class.java)?.primaryCard?.cards
+                ?.let { cards -> Collections.max(cards) { card, nextCard -> card.openedDate().compareTo(nextCard.openedDate()) } }
+    }
+
+    fun getOTPMethodType(): OTPMethodType = this.otpType
+
+    fun setOTPType(otpMethodType: OTPMethodType) {
+        this.otpType = otpMethodType
+    }
+
+    fun setCardNumber(number: String) {
+        this.cardNumber = number
+    }
+
+    fun getCardNumber() = this.cardNumber
+
+    fun setOTPNumber(otp: String) {
+        oTPNumber = otp
+    }
+
+    fun getOtpNumber() :String = oTPNumber ?: ""
 }

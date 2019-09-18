@@ -958,7 +958,7 @@ interface ApiInterface {
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("accounts/npc/blockStoreCard/{productOfferingId}")
+    @POST("accounts/storecard/blockStoreCard/{productOfferingId}")
     fun blockStoreCard(
             @Header("apiId") apiId: String,
             @Header("sha1Password") sha1Password: String,
@@ -1096,8 +1096,8 @@ interface ApiInterface {
             @Query("otpMethod") otpMethod: String): Call<LinkNewCardOTP>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("accounts/storecard/linkStoreCard/request")
-    fun linkNewCard(
+    @POST("accounts/storecard/linkStoreCard")
+    fun linkStoreCard(
             @Header("apiId") apiId: String,
             @Header("sha1Password") sha1Password: String,
             @Header("deviceVersion") deviceVersion: String,
@@ -1108,22 +1108,7 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
-            @Body linkNewCard: LinkNewCard): Call<LinkNewCardResponse>
+            @Body linkStoreCard: LinkStoreCard): Call<LinkNewCardResponse>
 
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("accounts/storecard/unblockStoreCard/{productOfferingId} ")
-    fun unblockStoreCard(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
-            @Header("userAgent") userAgent: String,
-            @Header("userAgentVersion") userAgentVersion: String,
-            @Header("sessionToken") sessionToken: String,
-            @Path("productOfferingId") productOfferingId: String,
-            @Body linkNewCard: LinkNewCard): Call<LinkNewCardResponse>
 
 }

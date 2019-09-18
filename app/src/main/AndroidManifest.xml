@@ -401,7 +401,7 @@
             android:theme="@style/ShoppingListDetailActivityStyle"
             />
 
-        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.card.LinkNewCardActivity"
+        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity"
             android:screenOrientation="portrait"
             android:theme="@style/ShoppingListDetailActivityStyle"
             android:windowSoftInputMode="adjustResize|stateAlwaysVisible"

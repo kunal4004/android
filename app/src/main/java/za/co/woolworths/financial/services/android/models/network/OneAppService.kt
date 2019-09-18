@@ -306,11 +306,7 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.getLinkNewCardOTP(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), otpMethodType.name)
     }
 
-    fun linkNewCard(linkNewCard: LinkNewCard): Call<LinkNewCardResponse> {
-        return mApiInterface.linkNewCard(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), linkNewCard)
-    }
-
-    fun unblockStoreCard(linkNewCard: LinkNewCard): Call<LinkNewCardResponse> {
-        return mApiInterface.unblockStoreCard(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), linkNewCard.productOfferingId.toString(), linkNewCard)
+    fun linkStoreCard(linkStoreCard: LinkStoreCard): Call<LinkNewCardResponse> {
+        return mApiInterface.linkStoreCard(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), linkStoreCard)
     }
 }

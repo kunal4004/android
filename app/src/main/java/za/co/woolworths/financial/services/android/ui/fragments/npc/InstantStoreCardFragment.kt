@@ -20,17 +20,17 @@ import android.os.Parcelable
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import cards.pay.paycardsrecognizer.sdk.Card
-import za.co.woolworths.financial.services.android.contracts.IStoreCardOTPCallback
+import za.co.woolworths.financial.services.android.contracts.IOTPLinkStoreCard
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
-import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity
 
-class LinkCardFragment : MyCardExtension() {
+class InstantStoreCardFragment : MyCardExtension() {
+
+    private var shouldDisableUINavigation = false
 
     companion object {
         const val REQUEST_CODE_SCAN_CARD = 1
-        fun newInstance() = LinkCardFragment().withArgs {
-
-        }
+        fun newInstance() = InstantStoreCardFragment()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? = inflater.inflate(R.layout.link_card_fragment, container, false)
@@ -54,17 +54,19 @@ class LinkCardFragment : MyCardExtension() {
         }
         inputTextWatcher()
         tappedEvent()
-
         pbOTPLoader?.indeterminateDrawable?.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY)
-
     }
 
     private fun tappedEvent() {
         imNavigateToOTPFragment?.setOnClickListener {
+            val cardNumber = etCardNumber?.text?.toString() ?: ""
+            (activity as? InstantStoreCardReplacementActivity)?.setCardNumber(cardNumber)
+            if (shouldDisableUINavigation) return@setOnClickListener
             navigateToOTPScreen()
         }
 
         imCameraIcon?.setOnClickListener {
+            if (shouldDisableUINavigation) return@setOnClickListener
             activity?.apply {
                 val builder = ScanCardIntent.Builder(this)
                 builder.setScanCardHolder(true)
@@ -76,6 +78,7 @@ class LinkCardFragment : MyCardExtension() {
     }
 
     private fun navigateToOTPScreen() {
+        if (shouldDisableUINavigation) return
         if (imNavigateToOTPFragment?.alpha == 1.0f) {
             makeOTPCall()
         }
@@ -112,10 +115,11 @@ class LinkCardFragment : MyCardExtension() {
 
     private fun makeOTPCall() {
         activity?.let { activity ->
-            val requestOTP = OTPRequest(activity, OTPMethodType.EMAIL)
-            requestOTP.make(object : IStoreCardOTPCallback<LinkNewCardOTP> {
-                override fun loadStart() {
-                    super.loadStart()
+            val requestOTP = StoreCardOTPRequest(activity, OTPMethodType.EMAIL)
+            requestOTP.make(object : IOTPLinkStoreCard<LinkNewCardOTP> {
+                override fun startLoading() {
+                    super.startLoading()
+                    shouldDisableUINavigation = true
                     pbOTPLoader?.visibility = VISIBLE
                     imCameraIcon?.isEnabled = false
                     etCardNumber?.isFocusable = false
@@ -124,23 +128,27 @@ class LinkCardFragment : MyCardExtension() {
 
                 override fun loadComplete() {
                     super.loadComplete()
+                    shouldDisableUINavigation = false
                     pbOTPLoader?.visibility = GONE
                     imCameraIcon?.isEnabled = true
                     etCardNumber?.isFocusable = true
                     etCardNumber?.isFocusableInTouchMode = true
                 }
 
-                override fun onSuccess(response: LinkNewCardOTP) {
-                    replaceFragment(
-                            fragment = EnterOtpFragment.newInstance(),
-                            tag = EnterOtpFragment::class.java.simpleName,
-                            containerViewId = R.id.flMyCard,
-                            allowStateLoss = true,
-                            enterAnimation = R.anim.slide_in_from_right,
-                            exitAnimation = R.anim.slide_to_left,
-                            popEnterAnimation = R.anim.slide_from_left,
-                            popExitAnimation = R.anim.slide_to_right
-                    )
+                override fun onSuccessHandler(response: LinkNewCardOTP) {
+                    super.onSuccessHandler(response)
+                    response.otpSentTo?.let { otpSentTo ->
+                        replaceFragment(
+                                fragment = EnterOtpFragment.newInstance(otpSentTo),
+                                tag = EnterOtpFragment::class.java.simpleName,
+                                containerViewId = R.id.flMyCard,
+                                allowStateLoss = true,
+                                enterAnimation = R.anim.slide_in_from_right,
+                                exitAnimation = R.anim.slide_to_left,
+                                popEnterAnimation = R.anim.slide_from_left,
+                                popExitAnimation = R.anim.slide_to_right
+                        )
+                    }
                 }
             })
         }

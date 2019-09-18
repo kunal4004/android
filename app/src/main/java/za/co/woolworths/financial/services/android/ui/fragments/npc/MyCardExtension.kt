@@ -15,7 +15,7 @@ import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.models.dto.npc.Card
 import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity.Companion.REQUEST_CODE_BLOCK_MY_CARD
-import za.co.woolworths.financial.services.android.ui.activities.card.LinkNewCardActivity
+import za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
 import za.co.woolworths.financial.services.android.ui.fragments.WStoreCardFragment.REQUEST_CODE_BLOCK_MY_STORE_CARD
@@ -50,7 +50,7 @@ open class MyCardExtension : Fragment() {
 
     internal fun navigateToLinkNewCardActivity(activity: AppCompatActivity?, storeCard: String?) {
         activity?.apply {
-            val openLinkNewCardActivity = Intent(this, LinkNewCardActivity::class.java)
+            val openLinkNewCardActivity = Intent(this, InstantStoreCardReplacementActivity::class.java)
             openLinkNewCardActivity.putExtra(STORE_CARD_DETAIL, storeCard)
             startActivity(openLinkNewCardActivity)
             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
