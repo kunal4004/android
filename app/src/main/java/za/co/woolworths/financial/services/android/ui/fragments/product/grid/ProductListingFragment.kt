@@ -554,7 +554,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     override fun queryInventoryForStore(storeId: String, addItemToCart: AddItemToCart?, productList: ProductList) {
-        activity?.let { activity -> Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.GA_EVENT_ONE_SHOPQS_ADD_TO_CART) }
+        activity?.let { activity -> Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.SHOPQS_ADD_TO_CART) }
         this.mStoreId = storeId
         this.mAddItemToCart = addItemToCart
         this.mSelectedProductList = productList
