@@ -20,20 +20,28 @@ import za.co.absa.openbankingapi.woolworths.integration.service.AbsaBankingOpenA
 
 public class AbsaValidateSureCheckRequest {
 
-
+    String otpToBeVerified = "";
     public AbsaValidateSureCheckRequest() {
     }
 
-    public void make(SecurityNotificationType securityNotificationType, final AbsaBankingOpenApiResponse.ResponseDelegate<ValidateSureCheckResponse> responseDelegate) {
+    public AbsaValidateSureCheckRequest(String otpToBeVerified) {
+        this.otpToBeVerified = otpToBeVerified;
+    }
+
+    public void make(final SecurityNotificationType securityNotificationType, final AbsaBankingOpenApiResponse.ResponseDelegate<ValidateSureCheckResponse> responseDelegate) {
         Map<String, String> headers = new HashMap<>();
         headers.put("Accept", "application/json");
         headers.put("action", "validateSurecheck");
 
-        final String body = new ValidateSureCheckRequest(securityNotificationType).getJson();
+        final String body = new ValidateSureCheckRequest(securityNotificationType,this.otpToBeVerified).getJson();
         new AbsaBankingOpenApiRequest<>(ValidateSureCheckResponse.class, headers, body, true, new AbsaBankingOpenApiResponse.Listener<ValidateSureCheckResponse>() {
 
             @Override
             public void onResponse(ValidateSureCheckResponse response, List<HttpCookie> cookies) {
+                if(securityNotificationType == SecurityNotificationType.OTP){
+                    responseDelegate.onSuccess(response, cookies);
+                    return;
+                }
                 Header.ResultMessage[] resultMessages = response.getHeader().getResultMessages();
                 String statusCode = "0";
                 try {

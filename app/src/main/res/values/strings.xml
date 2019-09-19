@@ -1048,4 +1048,9 @@
     <string name="calculation_status_level_paragraph1">Your annual spend will be calculated from the first Monday of each Woolworths financial year. This commences at the end of June or beginning of July and comes to an end on the last Sunday of the Woolworths financial year 12 months later.</string>
     <string name="calculation_status_level_paragraph2"> You will be eligible for an upgrade in status level every month of the year. Downgrades only take place once, annually at the beginning of July, and are based on your spend during the previous 12 months.</string>
     <string name="calculation_status_level_paragraph3">We are entitled to adjust the spend thresholds (they are adjusted annually), the number of status levels or the rewards at any stage without notification.</string>
+    <string name="absa_common_error_message">Please try again or contact our call centre on 0861 50 20 10.</string>
+    <string name="absa_otp_screen_description">Please confirm by entering the OTP sent to your cell phone number at\u0020</string>
+    <string name="absa_wrong_otp_entered">Wrong OTP Entered. Please try again.</string>
+    <string name="absa_otp_screen_title">Enter 8 Digit OTP Number</string>
+    <string name="absa_general_error_title">Oops something went wrong</string>
 </resources>
