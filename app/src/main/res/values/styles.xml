@@ -1781,4 +1781,20 @@
         <item name="android:windowBackground">@android:color/transparent</item>
     </style>
 
+    <style name="upSellMessageStyle" parent="android:Widget.TextView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingTop">16dp</item>
+        <item name="android:paddingBottom">16dp</item>
+        <item name="android:paddingStart">32dp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:paddingEnd">32dp</item>
+        <item name="android:maxLines">3</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:background">@color/stock_finder_map_header_bg</item>
+    </style>
+
 </resources>

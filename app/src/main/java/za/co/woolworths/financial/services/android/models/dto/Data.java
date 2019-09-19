@@ -2,8 +2,6 @@ package za.co.woolworths.financial.services.android.models.dto;
 
 import com.google.gson.JsonElement;
 
-import org.json.JSONObject;
-
 /**
  * Created by w7099877 on 2018/02/28.
  */
@@ -18,4 +16,6 @@ public class Data {
 	public OrderSummary orderSummary;
 
 	public String suburbId;
+
+	public GlobalMessages globalMessages;
 }
