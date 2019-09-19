@@ -58,6 +58,7 @@ import za.co.woolworths.financial.services.android.ui.views.AddedToCartBalloonFa
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.*
 import za.co.woolworths.financial.services.android.util.*
 import java.net.ConnectException
+import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.util.*
 
