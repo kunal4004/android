@@ -194,6 +194,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 						WoolworthsApplication.setHowToSaveLink(configResponse.configs.defaults.getHowtosaveLink());
 						WoolworthsApplication.setWrewardsTCLink(configResponse.configs.defaults.getWrewardsTCLink());
 						WoolworthsApplication.setCartCheckoutLink(configResponse.configs.defaults.getCartCheckoutLink());
+						WoolworthsApplication.setQuickShopDefaultValues(configResponse.configs.quickShopDefaultValues);
 
 						AbsaBankingOpenApiServices absaBankingOpenApiServices = configResponse.configs.absaBankingOpenApiServices;
 						if (absaBankingOpenApiServices == null) {
@@ -265,6 +266,7 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 		if (Utils.checkForBinarySu() && CommonUtils.isRooted(this) && getSupportFragmentManager() != null) {
 			if (pBar != null)
 				pBar.setVisibility(View.GONE);
+			Utils.setScreenName(this,FirebaseManagerAnalyticsProperties.ScreenNames.DEVICE_ROOTED_AT_STARTUP);
 			RootedDeviceInfoFragment rootedDeviceInfoFragment = RootedDeviceInfoFragment.Companion.newInstance(getString(R.string.rooted_phone_desc));
 			rootedDeviceInfoFragment.show(getSupportFragmentManager(), RootedDeviceInfoFragment.class.getSimpleName());
 			return;

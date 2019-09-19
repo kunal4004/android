@@ -11,4 +11,16 @@ public class AddItemToCart {
 		this.catalogRefId = catalogRefId;
 		this.quantity = quantity;
 	}
+
+	public int getQuantity() {
+		return quantity;
+	}
+
+	public String getProductId() {
+		return productId;
+	}
+
+	public String getCatalogRefId() {
+		return catalogRefId;
+	}
 }

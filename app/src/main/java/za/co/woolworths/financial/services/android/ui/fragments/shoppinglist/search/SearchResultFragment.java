@@ -50,6 +50,7 @@ import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.adapters.SearchResultShopAdapter;
+import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductListingViewType;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -211,7 +212,7 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
 
         if (!listContainHeader()) {
             ProductList headerProduct = new ProductList();
-            headerProduct.viewTypeHeader = true;
+            headerProduct.rowType = ProductListingViewType.HEADER;
             headerProduct.numberOfItems = getNumItemsInTotal();
             productList.add(0, headerProduct);
         }
@@ -247,7 +248,7 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
             }
             if (!listContainFooter()) {
                 ProductList footerItem = new ProductList();
-                footerItem.viewTypeFooter = true;
+                footerItem.rowType = ProductListingViewType.FOOTER;
                 mProductList.add(footerItem);
                 getProductAdapter().notifyItemInserted(mProductList.size() - 1);
             }
@@ -258,7 +259,7 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
     private boolean listContainFooter() {
         if (mProductList == null) return false;
         for (ProductList pl : mProductList) {
-            if (pl.viewTypeFooter) {
+            if (pl.rowType == ProductListingViewType.FOOTER) {
                 return true;
             }
         }
@@ -268,7 +269,7 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
     private void removeFooter() {
         int index = 0;
         for (ProductList pl : mProductList) {
-            if (pl.viewTypeFooter) {
+            if (pl.rowType == ProductListingViewType.FOOTER) {
                 mProductList.remove(pl);
                 getProductAdapter().notifyItemRemoved(index);
                 return;
@@ -279,7 +280,7 @@ public class SearchResultFragment extends Fragment implements SearchResultNaviga
 
     private boolean listContainHeader() {
         for (ProductList pl : mProductList) {
-            if (pl.viewTypeHeader) {
+            if (pl.rowType == ProductListingViewType.HEADER) {
                 return true;
             }
         }

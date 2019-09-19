@@ -4,6 +4,7 @@ import android.animation.*
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.os.SystemClock
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -42,6 +43,9 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
     private var bundle: Bundle? = null
     private var voucherResponse: VoucherResponse? = null
     private var mErrorHandlerView: ErrorHandlerView? = null
+    // variable to track event time
+    private var mLastClickTime: Long = 0
+    private var tireStatusVIP = "vip"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,19 +95,22 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
     private fun handleTireHistoryView(tireInfo: TierInfo) {
         overviewLayout.visibility = VISIBLE
         noTireHistory.visibility = GONE
-        currentStatus = tireInfo.currentTier.toUpperCase(Locale.UK)
+        currentStatus = tireInfo.currentTier
         savings.setText(WFormatter.formatAmount(tireInfo.earned))
         flipCardFrontLayout.setOnClickListener(this)
         flipCardBackLayout.setOnClickListener(this)
-        if (currentStatus == getString(R.string.valued) || currentStatus == getString(R.string.loyal)) {
-            toNextTireLayout.visibility = VISIBLE
-            vipLogo.visibility = GONE
-            toNextTire.setText(WFormatter.formatAmount(tireInfo.toSpend))
+        currentStatus?.let {
+            if (!it.contains(tireStatusVIP, true)) {
+                toNextTireLayout.visibility = VISIBLE
+                vipLogo.visibility = GONE
+                toNextTire.setText(WFormatter.formatAmount(tireInfo.toSpend))
+            }
         }
         loadPromotionsAPI()
     }
 
     private fun handleCard(cardDetailsResponse: CardDetailsResponse?) {
+        if (activity == null) return
         cardDetailsResponse?.apply {
             if (cardType != null && cardNumber != null) {
                 when {
@@ -125,33 +132,38 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
                 } catch (e: WriterException) {
                     Log.d(TAGREWARD, e.message ?: "")
                 }
+                loadAnimations()
+                changeCameraDistance()
+                val handler = Handler()
+                handler.postDelayed({ flipCard() }, 1000)
+            } else {
+                showVIPLogo()
             }
-
-            loadAnimations()
-            changeCameraDistance()
-            val handler = Handler()
-            handler.postDelayed({ flipCard() }, 1000)
         }
     }
 
     private fun loadAnimations() {
         activity?.apply {
+
             mSetRightOut = AnimatorInflater.loadAnimator(this, R.animator.card_flip_out) as? AnimatorSet
             mSetLeftIn = AnimatorInflater.loadAnimator(this, R.animator.card_flip_in) as? AnimatorSet
-        }
 
-        mSetLeftIn?.addListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator?) {
-                super.onAnimationEnd(animation)
-                showVIPLogo()
-            }
-        })
+            mSetLeftIn?.addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator?) {
+                    super.onAnimationEnd(animation)
+                    showVIPLogo()
+                }
+            })
+
+        }
     }
 
     private fun showVIPLogo() {
-        if (currentStatus.equals(getString(R.string.vip), ignoreCase = true)) {
-            vipLogo.visibility = VISIBLE
-        }
+            currentStatus?.let { state ->
+                if (state.contains(tireStatusVIP, ignoreCase = true)) {
+                    vipLogo?.visibility = VISIBLE
+                }
+            }
     }
 
     private fun flipCard() {
@@ -179,11 +191,21 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
     }
 
     override fun onClick(view: View?) {
+        if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
+            return
+        }
+        mLastClickTime = SystemClock.elapsedRealtime()
+
         when (view?.id) {
             R.id.infoImage, R.id.tvMoreInfo -> {
                 activity?.apply {
-                    startActivity(Intent(this, WRewardBenefitActivity::class.java))
-                    overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+
+                    currentStatus?.let {
+                        val intent = Intent(this, WRewardBenefitActivity::class.java)
+                        intent.putExtra("benefitTabPosition", if (it.contains(tireStatusVIP, true)) 1 else 0)
+                        startActivity(intent)
+                        overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+                    }
                 }
             }
 
@@ -224,7 +246,7 @@ class WRewardsOverviewFragment : Fragment(), View.OnClickListener {
             with(promotionsResponse) {
                 if (httpCode == 200) {
                     if (promotions.size > 0) {
-                        promotionViewPager.adapter = activity?.let { FeaturedPromotionsAdapter(it, promotions) }
+                        promotionViewPager?.adapter = activity?.let { FeaturedPromotionsAdapter(it, promotions) }
                     }
                 }
             }

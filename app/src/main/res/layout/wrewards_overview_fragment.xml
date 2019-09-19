@@ -98,7 +98,7 @@
                             android:layout_height="@dimen/email_bottom_margin_48"
                             android:layout_gravity="end"
                             android:visibility="gone"
-                            android:background="@drawable/vip_flash" />
+                            app:srcCompat="@drawable/vip_flash" />
                     </FrameLayout>
 
                 </FrameLayout>
@@ -132,6 +132,8 @@
                             android:textColor="@color/black"
                             android:textSize="@dimen/twelve_sp"
                             tools:targetApi="lollipop"
+                            android:paddingBottom="@dimen/eight_dp"
+                            android:paddingTop="@dimen/eight_dp"
                             tools:text="@string/reward_more_info" />
                 </RelativeLayout>
 

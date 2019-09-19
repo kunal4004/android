@@ -1,67 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/parentLayout"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/email_height_50"
+    android:background="@color/white"
     android:clickable="true"
-    android:focusable="true">
+    android:focusable="true"
+    android:orientation="horizontal"
+    android:visibility="gone">
 
-    <data>
+    <RelativeLayout
+        android:id="@+id/sortProducts"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:padding="@dimen/sixteen_dp">
 
-        <import type="android.view.View" />
-    </data>
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            style="@style/sort_and_filter_selection_text_style"
+            android:text="@string/sort_by" />
+        />
 
-    <LinearLayout
-        android:id="@+id/parentLayout"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/email_height_50"
-        android:background="@color/white"
-        android:orientation="horizontal"
-        android:visibility="gone">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/path_3" />
+    </RelativeLayout>
 
-        <RelativeLayout
-            android:id="@+id/sortProducts"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:padding="@dimen/sixteen_dp">
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="#e4e4e4" />
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                style="@style/sort_and_filter_selection_text_style"
-                android:text="@string/sort_by" />
-            />
+    <RelativeLayout
+        android:id="@+id/refineProducts"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:padding="@dimen/sixteen_dp">
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:background="@drawable/path_3" />
-        </RelativeLayout>
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/refinementText"
+            style="@style/sort_and_filter_selection_text_style"
+            android:text="@string/refine" />
 
-        <View
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp"
-            android:background="#e4e4e4" />
-
-        <RelativeLayout
-            android:id="@+id/refineProducts"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:padding="@dimen/sixteen_dp">
-
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/refinementText"
-                style="@style/sort_and_filter_selection_text_style"
-                android:text="@string/refine" />
-
-            <ImageView
-                android:id="@+id/refineDownArrow"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:background="@drawable/refinement_down_arrow_selector" />
-        </RelativeLayout>
-    </LinearLayout>
-</layout>
+        <ImageView
+            android:id="@+id/refineDownArrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/refinement_down_arrow_selector" />
+    </RelativeLayout>
+</LinearLayout>

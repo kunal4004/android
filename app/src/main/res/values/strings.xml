@@ -889,7 +889,6 @@
     <string name="view_tax_invoice">View Tax Invoice</string>
     <string name="invoice_number">invoice number</string>
     <string name="tax_invoices">TAX INVOICES</string>
-
     <string name="shop_create_a_list">Create A New List</string>
     <string name="shop_sign_out_order_title">sign in to view\nand create lists</string>
     <string name="shop_sign_out_order_desc">Search for products to start adding items to this list.</string>
@@ -936,7 +935,7 @@
     <string name="participating_stores">participating stores</string>
     <string name="replacement_desc_part_one">Collect your free replacement card at the Financial Services counter at any of the participating Woolworths stores nationwide.</string>
     <string name="replacement_desc_part_two">  Once you have your replacement card, you can link it in a few easy steps.</string>
-<string name="nearest_store">Nearest stores</string>
+    <string name="nearest_store">Nearest stores</string>
     <string name="link_your_new_card">Link Your New Card</string>
     <string name="link_new_card_desc">Enter the card number below, or tap the camera icon to scan your new card information.</string>
     <string name="invalid_card_number">Invalid card number.</string>
@@ -1019,7 +1018,6 @@
     <string name="all_reason_to_join_desc">WRewards is our way of rewarding customers instantly. Get access to exclusive Woolies savings throughout the year!</string>
     <string name="saving_woolies_favorite_every_day_title">Savings on Woolies Favourites Every Day</string>
     <string name="saving_woolies_favorite_every_day_desc">Get instant savings on quality staples and best-loved products. Look out for the WRewards icon in the Daily Difference, in store and online or on the Woolies app.</string>
-
     <string name="extra_saving_promo_event_title">Extra Savings, Promos &amp; Events</string>
     <string name="extra_saving_promo_event_desc">You may get something extra on promos – be it early access to promos, additional savings or complimentary vouchers. Best of all, some promos will be exclusive to WRewards members.</string>
    <string name="exclusive_voucher_just_for_you_title">Exclusive Vouchers Just For You</string>
@@ -1031,12 +1029,12 @@
     <string name="vip_exclusive">vip exclusive</string>
     <string name="benefits_best_saving_title">The best savings at Woolies every day:</string>
     <string name="benefits_best_saving_sub_title">1. Savings on Woolies Favourites</string>
-    <string name="benefits_best_saving_sub_desc">Get instant savings on quality staples and best-loved products. Look out for the green WRewards icon on the Woolies app, in store, online or in the Daily Difference.</string>
+    <string name="benefits_best_saving_sub_desc">Get instant savings on quality staples and best-loved products. Look out for the green <b>W</b>Rewards icon on the Woolies app, in store, online or in the Daily Difference.</string>
     <string name="benefits_extra_savings_sub_title">2. Extra Savings, Promos &amp; Events</string>
-    <string name="benefits_extra_savings_sub_desc">You may get something extra on promos - be it early access to promos, additional savings or complimentary vouchers. Best of all, some promos will be exclusive to WRewards members.</string>
+    <string name="benefits_extra_savings_sub_desc">You may get something extra on promos - be it early access to promos, additional savings or complimentary vouchers. Best of all, some promos will be exclusive to <b>W</b>Rewards members.</string>
     <string name="benefits_exclusive_voucher_sub_title">3. Exclusive Vouchers Just for You</string>
     <string name="benefits_exclusive_voucher_sub_desc">Keep an eye out for vouchers that give you discounts on items we think you’ll enjoy.</string>
-    <string name="benefits_term_and_condition_link">WRewards Terms and Conditions apply.</string>
+    <string name="benefits_term_and_condition_link"><b>W</b>Rewards Terms and Conditions apply.</string>
     <string name="vip_exclusive_all_the_reason_to_be_a_vip_title">All The More Reason To Be A Vip</string>
     <string name="vip_exclusive_all_the_reason_to_be_a_vip_desc">The more you shop, the more you are rewarded. Our VIPs get:</string>
     <string name="vip_exclusive_welcome_voucher1">A welcome voucher of R75 off R350 on your next shop</string>
@@ -1053,4 +1051,19 @@
     <string name="absa_wrong_otp_entered">Wrong OTP Entered. Please try again.</string>
     <string name="absa_otp_screen_title">Enter 8 Digit OTP Number</string>
     <string name="absa_general_error_title">Oops something went wrong</string>
+    <string name="link_reward_account">link account</string>
+    <string name="food_product_type">foodProducts</string>
+    <string name="select_your_quantity">Select Your Quantity</string>
+    <string name="no_stock_available">No Stock Available Online</string>
+    <string name="no_stock_available_desc">Use our find in-store feature to see if there is stock available at a Woolies store near you.</string>
+    <string name="no_of_items_added">%1$Item%2$</string>
+    <string name="invalid_qr_code"><b>OOPS.</b> INVALID QR CODE, PLEASE TRY AGAIN</string>
+    <string name="cd_store_card_layout">store card layout</string>
+    <string name="cd_store_card_text">store card text</string>
+    <string name="cd_store_card_apply_now_text">store card apply now text</string>
+    <string name="cd_store_card_available_funds_text">store card available funds text</string>
+    <string name="cd_sign_out">sign out</string>
+    <string name="oops_err_message">Oops, something went wrong.</string>
+    <string name="oops_err_title">Error</string>
+
 </resources>

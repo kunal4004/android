@@ -1,14 +1,19 @@
 package za.co.woolworths.financial.services.android.ui.adapters;
 
+import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -16,6 +21,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
+import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
 
 import java.util.ArrayList;
@@ -30,6 +36,9 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
+
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 
 /**
  * Created by W7099877 on 2018/03/09.
@@ -61,9 +70,6 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 				break;
 
 			case ITEM_VIEW_TYPE_BASIC:
-				vh = getSimpleViewHolder(parent);
-				break;
-
 			default:
 				vh = getSimpleViewHolder(parent);
 				break;
@@ -98,7 +104,7 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 
 			case ITEM_VIEW_TYPE_BASIC:
 				final ViewHolder holder = (ViewHolder) viewHolder;
-				ShoppingListItem shoppingListItem = getItem(position);
+				final ShoppingListItem shoppingListItem = getItem(position);
 				if (shoppingListItem == null) return;
 				if (shoppingListItem.displayName == null) return;
 				holder.cartProductImage.setImageURI(Utils.getExternalImageRef() + shoppingListItem.externalImageURL + "?w=" + 85 + "&q=" + 85);
@@ -106,13 +112,38 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 				holder.tvQuantity.setText(String.valueOf(shoppingListItem.userQuantity));
 				holder.price.setText(WFormatter.formatAmount(shoppingListItem.price));
 				holder.cbxSelectShoppingListItem.setChecked(shoppingListItem.isSelected);
-				holder.delete.setVisibility(View.VISIBLE);
+				holder.delete.setVisibility(VISIBLE);
 				holder.progressBar.setVisibility(View.INVISIBLE);
+				holder.swipeLayout.setTopSwipeEnabled(false);
+
+				holder.swipeLayout.addDrag(SwipeLayout.DragEdge.Right, holder.swipeRight);
+
+				// show/hide delete button on edit item click from toolbar
+				holder.swipeLayout.close(true,!shoppingListItem.editButtonIsEnabled);
+				holder.deleteButton.setVisibility(shoppingListItem.editButtonIsEnabled  ? VISIBLE : GONE);
+				holder.cbxSelectShoppingListItem.setClickable(!shoppingListItem.editButtonIsEnabled);
+				holder.cbxSelectShoppingListItem.setEnabled(!shoppingListItem.editButtonIsEnabled);
+				holder.cbxSelectShoppingListItem.setAlpha(shoppingListItem.editButtonIsEnabled ? 0.5f : 1.0f);
+				holder.swipeLayout.setSwipeEnabled(!shoppingListItem.editButtonIsEnabled);
+
+				animateOnDeleteButtonVisibility(holder.deleteButton,shoppingListItem.editButtonIsEnabled);
+
+				holder.deleteButton.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View view) {
+						navigator.onItemDeleteClick(shoppingListItem.Id,shoppingListItem.productId, shoppingListItem.catalogRefId, false);
+						mShoppingListItem.remove(shoppingListItem);
+						notifyItemRemoved(position);
+						notifyItemRangeChanged(position, getItemCount() - position);
+					}
+				});
+
+				holder.llQuantity.setEnabled(!shoppingListItem.editButtonIsEnabled);
 
 				holder.llShopList.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View view) {
-						if (!mAdapterIsClickable) return;
+						if (!mAdapterIsClickable || shoppingListItem.editButtonIsEnabled) return;
 						int position = holder.getAdapterPosition();
 						ShoppingListItem shoppingListItem = getItem(position);
 						ProductList productList = createProductList(shoppingListItem);
@@ -129,14 +160,14 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 					sizeColor = sizeColor + ", " + shoppingListItem.size;
 
 				holder.tvColorSize.setText(sizeColor);
-				holder.tvColorSize.setVisibility(View.VISIBLE);
+				holder.tvColorSize.setVisibility(VISIBLE);
 				/****
 				 * shoppingListItem.userShouldSetSuburb - is set to true when user did not cbxSelectShoppingListItem any suburb
 				 */
 
 				if (userShouldSetSuburb()) {
-					holder.tvProductAvailability.setVisibility(View.GONE);
-					holder.llQuantity.setVisibility(View.VISIBLE);
+					holder.tvProductAvailability.setVisibility(GONE);
+					holder.llQuantity.setVisibility(VISIBLE);
 					holder.llQuantity.setAlpha(1.0f);
 					holder.cbxSelectShoppingListItem.setEnabled(true);
 					adapterClickable(true);
@@ -148,34 +179,34 @@ public class ShoppingListItemsAdapter extends RecyclerSwipeAdapter<RecyclerView.
 					holder.tvQuantity.setAlpha(productInStock ? 1.0f : 0.5f);
 					holder.cbxSelectShoppingListItem.setEnabled(productInStock);
 					holder.imPrice.setAlpha(productInStock ? 1.0f : 0.5f);
-					holder.pbQuantityLoader.setVisibility(View.VISIBLE);
+					holder.pbQuantityLoader.setVisibility(VISIBLE);
 					holder.cbxSelectShoppingListItem.setEnabled(false);
 					holder.pbQuantityLoader.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
 					if (shoppingListItem.inventoryCallCompleted) {
 						int inventoryQueryStatus = shoppingListItem.quantityInStock;
-						holder.pbQuantityLoader.setVisibility(View.GONE);
+						holder.pbQuantityLoader.setVisibility(GONE);
 						holder.cbxSelectShoppingListItem.setEnabled(true);
 						if (inventoryQueryStatus == -1) {
-							holder.llQuantity.setVisibility(View.GONE);
-							holder.cbxSelectShoppingListItem.setVisibility(View.GONE);
+							holder.llQuantity.setVisibility(GONE);
+							holder.cbxSelectShoppingListItem.setVisibility(GONE);
 							holder.imPrice.setAlpha(0.5f);
-							holder.tvColorSize.setVisibility(View.GONE);
-							holder.tvProductAvailability.setVisibility(View.VISIBLE);
+							holder.tvColorSize.setVisibility(GONE);
+							holder.tvProductAvailability.setVisibility(VISIBLE);
 							holder.price.setAlpha(0f);
-holder.price.setVisibility(View.GONE);
+holder.price.setVisibility(GONE);
 Utils.setBackgroundColor(holder.tvProductAvailability, R.drawable.round_amber_corner, R.string.out_of_stock);
 						} else {
-							holder.llQuantity.setVisibility((shoppingListItem.quantityInStock == 0) ? View.GONE : View.VISIBLE);
-							holder.tvProductAvailability.setVisibility((shoppingListItem.quantityInStock == 0) ? View.VISIBLE : View.GONE);
-							holder.cbxSelectShoppingListItem.setVisibility((shoppingListItem.quantityInStock == 0) ? View.GONE : View.VISIBLE);
-holder.price.setVisibility((shoppingListItem.quantityInStock == 0) ? View.GONE : View.VISIBLE);
+							holder.llQuantity.setVisibility((shoppingListItem.quantityInStock == 0) ? GONE : VISIBLE);
+							holder.tvProductAvailability.setVisibility((shoppingListItem.quantityInStock == 0) ? VISIBLE : GONE);
+							holder.cbxSelectShoppingListItem.setVisibility((shoppingListItem.quantityInStock == 0) ? GONE : VISIBLE);
+holder.price.setVisibility((shoppingListItem.quantityInStock == 0) ? GONE : VISIBLE);
 holder.price.setAlpha(1f);
-							holder.tvColorSize.setVisibility(View.VISIBLE);
+							holder.tvColorSize.setVisibility(VISIBLE);
 							Utils.setBackgroundColor(holder.tvProductAvailability, R.drawable.round_amber_corner, R.string.out_of_stock);
 						}
 					} else {
-						holder.llQuantity.setVisibility(View.VISIBLE);
-						holder.tvProductAvailability.setVisibility(View.GONE);
+						holder.llQuantity.setVisibility(VISIBLE);
+						holder.tvProductAvailability.setVisibility(GONE);
 						holder.cbxSelectShoppingListItem.setEnabled(false);
 					}
 				}
@@ -193,7 +224,7 @@ holder.price.setAlpha(1f);
 					public void onClick(View view) {
 						ShoppingListItem shoppingListItem = getItem(position);
 						int currentPosition = position - 1;
-						if (enableClickEvent(shoppingListItem)) return;
+						if (enableClickEvent(shoppingListItem)|| shoppingListItem.editButtonIsEnabled) return;
 						if (!mAdapterIsClickable) return;
 						if (!shoppingListItem.isSelected) {
 							if (userShouldSetSuburb()) {
@@ -221,15 +252,15 @@ holder.price.setAlpha(1f);
 					public void onClick(View view) {
 						if (!mAdapterIsClickable) return;
 						holder.delete.setVisibility(View.INVISIBLE);
-						holder.progressBar.setVisibility(View.VISIBLE);
-						navigator.onItemDeleteClick(getItem(position).Id, getItem(position).productId, getItem(position).catalogRefId);
+						holder.progressBar.setVisibility(VISIBLE);
+						navigator.onItemDeleteClick(getItem(position).Id, getItem(position).productId, getItem(position).catalogRefId, true);
 					}
 				});
 				holder.llQuantity.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View view) {
 						ShoppingListItem shoppingListItem = getItem(position);
-						if (enableClickEvent(shoppingListItem)) return;
+						if (shoppingListItem.editButtonIsEnabled || enableClickEvent(shoppingListItem)) return;
 						if (!mAdapterIsClickable) return;
 						if (userShouldSetSuburb()) {
 							navigator.openSetSuburbProcess(shoppingListItem);
@@ -293,9 +324,13 @@ holder.price.setAlpha(1f);
 		private ProgressBar progressBar;
 		private ProgressBar pbQuantityLoader;
 		private RelativeLayout llQuantity;
+		private SwipeLayout swipeLayout;
 		private LinearLayout llShopList;
 		private ImageView imPrice;
 		private WTextView tvProductAvailability;
+		private RelativeLayout swipeRight;
+		private final ImageView deleteButton;
+
 
 		public ViewHolder(View itemView) {
 			super(itemView);
@@ -312,6 +347,9 @@ holder.price.setAlpha(1f);
 			tvColorSize = itemView.findViewById(R.id.tvColorSize);
 			llQuantity = itemView.findViewById(R.id.llQuantity);
 			imPrice = itemView.findViewById(R.id.imPrice);
+			swipeLayout = itemView.findViewById(R.id.swipe);
+			swipeRight = itemView.findViewById(R.id.swipeRight);
+			deleteButton = itemView.findViewById(R.id.deleteButton);
 		}
 	}
 
@@ -386,5 +424,26 @@ holder.price.setAlpha(1f);
 		}
 		notifyDataSetChanged();
 		navigator.onItemSelectionChange(mShoppingListItem);
+	}
+
+	public void editButtonEnabled(boolean isEditMode) {
+		for (ShoppingListItem shoppinglistItem : mShoppingListItem) {
+			shoppinglistItem.editButtonIsEnabled = isEditMode;
+		}
+		notifyDataSetChanged();
+	}
+
+	private void animateOnDeleteButtonVisibility(View view, boolean animate) {
+			int width = getWidthAndHeight((Activity) view.getContext());
+			ObjectAnimator animator = ObjectAnimator.ofFloat(view, "translationX", animate ? -width : width, 1f);
+			animator.setInterpolator(new DecelerateInterpolator());
+			animator.setDuration(300);
+			animator.start();
+	}
+
+	private int getWidthAndHeight(Activity activity) {
+		DisplayMetrics dm = new DisplayMetrics();
+		activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
+		return dm.widthPixels / 10;
 	}
 }

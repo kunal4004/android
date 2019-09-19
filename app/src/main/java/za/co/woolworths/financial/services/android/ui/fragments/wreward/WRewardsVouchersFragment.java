@@ -118,7 +118,8 @@ public class WRewardsVouchersFragment extends Fragment {
 	public void displayVouchers(final VoucherResponse vResponse) {
 		mErrorHandlerView.hideEmpyState();
 		recyclerView.setVisibility(View.VISIBLE);
-		mAdapter = new WRewardsVoucherListAdapter(getActivity(), vResponse.voucherCollection.vouchers);
+		mAdapter = new WRewardsVoucherListAdapter();
+		mAdapter.setItem(vResponse.voucherCollection.vouchers);
 		recyclerView.setAdapter(mAdapter);
 		recyclerView.addOnItemTouchListener(new RecycleViewClickListner(getActivity(), recyclerView, new RecycleViewClickListner.ClickListener() {
 			@Override

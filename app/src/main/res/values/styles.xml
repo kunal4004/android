@@ -1643,7 +1643,7 @@
         <item name="android:layout_width">0dp</item>
         <item name="android:fontFamily">@font/futura_semi_bold_ttf</item>
         <item name="android:textColor">#000000</item>
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">20sp</item>
         <item name="android:letterSpacing" tools:ignore="NewApi">0.15</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:gravity">center</item>
@@ -1674,7 +1674,6 @@
     <style name="RewardBenefitDetailStyle" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
-        <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowTranslucentNavigation">true</item>
         <item name="statusBarBackground">@android:color/transparent</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
@@ -1775,6 +1774,27 @@
         <item name="android:layout_alignParentEnd">true</item>
         <item name="android:layout_marginEnd">10dp</item>
         <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="CustomProgressBarTheme">
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
+    <style name="upSellMessageStyle" parent="android:Widget.TextView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingTop">16dp</item>
+        <item name="android:paddingBottom">16dp</item>
+        <item name="android:paddingStart">32dp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:paddingEnd">32dp</item>
+        <item name="android:maxLines">3</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:background">@color/stock_finder_map_header_bg</item>
     </style>
 
 </resources>

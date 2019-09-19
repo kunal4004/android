@@ -340,6 +340,7 @@
                         android:id="@+id/signOutBtn"
                         style="@style/listStyle"
                         android:background="@drawable/stores_details_background"
+                        android:contentDescription="@string/cd_sign_out"
                         android:visibility="visible">
 
                         <za.co.woolworths.financial.services.android.ui.views.WTextView

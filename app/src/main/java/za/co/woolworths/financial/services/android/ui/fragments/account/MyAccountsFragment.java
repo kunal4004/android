@@ -60,6 +60,7 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.NetworkManager;
+import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionUtilities;
@@ -238,7 +239,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 
 			mUpdateMyAccount = new UpdateMyAccount(mSwipeToRefreshAccount,imRefreshAccount);
 
-
 			view.findViewById(R.id.loginAccount).setOnClickListener(this.btnSignin_onClick);
 			view.findViewById(R.id.registerAccount).setOnClickListener(this.btnRegister_onClick);
 			view.findViewById(R.id.llUnlinkedAccount).setOnClickListener(this.btnLinkAccounts_onClick);
@@ -288,8 +288,9 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			if (SessionUtilities.getInstance().isC2User()) {
 				mUpdateMyAccount.enableSwipeToRefreshAccount(true);
 				this.loadAccounts(false);
-			}else
+			}else {
 				this.configureSignInNoC2ID();
+			}
 		} else {
 			if (getActivity() == null) return;
 			mUpdateMyAccount.enableSwipeToRefreshAccount(false);
@@ -379,6 +380,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 
 		if (!sc && !cc && !pl) {
 			hideView(linkedAccountsLayout);
+			disableRefresh();
 		}
 
 		if (unavailableAccounts.size() == 0) {
@@ -392,6 +394,12 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		viewPager.setAdapter(adapter);
 		viewPager.setCurrentItem(0);
 		showFeatureWalkthroughPrompts();
+	}
+
+	private void disableRefresh() {
+		if (mUpdateMyAccount != null)
+			mUpdateMyAccount.enableSwipeToRefreshAccount(false);
+		imRefreshAccount.setEnabled(false);
 	}
 
 	private void configureSignInNoC2ID() {
@@ -452,6 +460,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			hideView(applyNowAccountsLayout);
 		} else {
 			showView(applyNowAccountsLayout);
+			disableRefresh();
 		}
 
 		showView(allUserOptionsLayout);
@@ -682,7 +691,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 							mUpdateMyAccount.swipeToRefreshAccount(false);
 							SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, accountsResponse.response.stsParams);
                             onSessionExpired(getActivity());
-                            initialize();
+							initialize();
                             break;
                         default:
                             if (accountsResponse.response != null) {
@@ -701,7 +710,15 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 
             @Override
             public void onFailure(Throwable error) {
-                networkFailureHandler();
+            	Activity activity = getActivity();
+            	if (activity == null) return;
+				activity.runOnUiThread(() -> {
+					try {
+						mUpdateMyAccount.swipeToRefreshAccount(false);
+						hideProgressBar();
+					} catch (Exception ignored) {
+					}
+				});
                 if (error != null)
                     mErrorHandlerView.networkFailureHandler(error.getMessage());
 
@@ -741,19 +758,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 //		else
 //			return percentage;
 //	}
-
-	public void networkFailureHandler() {
-		getActivity().runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					mUpdateMyAccount.swipeToRefreshAccount(false);
-					hideProgressBar();
-				} catch (Exception ignored) {
-				}
-			}
-		});
-	}
 
 
 	@SuppressLint("StaticFieldLeak")
@@ -867,10 +871,23 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			ScreenManager.presentBiometricWalkthrough(getActivity());
 		} else if (resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue()) {
 			onSignOut();
+			clearActivityStoryStack();
 			initialize();
 		} else {
 			initialize();
 		}
+	}
+
+	// To clean up all activities
+	private void clearActivityStoryStack() {
+		Activity activity = getActivity();
+		if (activity == null) return;
+		Intent intent = new Intent(activity, BottomNavigationActivity.class);
+		intent.putExtra(NotificationUtils.PUSH_NOTIFICATION_INTENT, String.valueOf(INDEX_ACCOUNT));
+		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		activity.startActivity(intent);
+		activity.finish();
+		activity.overridePendingTransition(0, 0);
 	}
 
 	private void removeAllBottomNavigationIconBadgeCount() {

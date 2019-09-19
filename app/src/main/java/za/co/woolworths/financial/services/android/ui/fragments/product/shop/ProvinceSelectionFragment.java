@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.shop;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -106,24 +107,18 @@ public class ProvinceSelectionFragment extends Fragment implements ProvinceSelec
 
 			@Override
 			public void onFailure(final Throwable error) {
-				if (error == null) return;
+				Activity activity = getActivity();
+				if (error == null || activity == null) return;
 				Log.e("SuburbSelectionFragment", "getRegions Error: " + error.getMessage());
-				getActivity().runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						// hide loading
-						toggleLoading(false);
-						btnRetry.setOnClickListener(new View.OnClickListener() {
-							@Override
-							public void onClick(View v) {
-								if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
-									loadProvinceItems();
-								}
-							}
-
-						});
-						mErrorHandlerView.networkFailureHandler(error.getMessage());
-					}
+				activity.runOnUiThread(() -> {
+					// hide loading
+					toggleLoading(false);
+					btnRetry.setOnClickListener(v -> {
+						if (NetworkManager.getInstance().isConnectedToNetwork(getActivity())) {
+							loadProvinceItems();
+						}
+					});
+					mErrorHandlerView.networkFailureHandler(error.getMessage());
 				});
 			}
 		},ProvincesResponse.class));

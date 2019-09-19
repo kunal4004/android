@@ -39,7 +39,6 @@ public class WRewardsSavingsFragment extends Fragment implements View.OnClickLis
 	private RecyclerView recyclerView;
 	public VoucherResponse voucherResponse;
 	public TextView wRewardsInstantSaving;
-	public TextView wRewardsGreenEarned;
 	public TextView quarterlyVoucherEarned;
 	public TextView yearToDateSpend;
 	public TextView yearToDateSpendText;
@@ -57,7 +56,6 @@ public class WRewardsSavingsFragment extends Fragment implements View.OnClickLis
 		Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.WREWARDSSAVINGS);
 		recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
 		wRewardsInstantSaving = (TextView) view.findViewById(R.id.wrewardsInstantSavings);
-		wRewardsGreenEarned = (TextView) view.findViewById(R.id.wrewardsGreenEarned);
 		quarterlyVoucherEarned = (TextView) view.findViewById(R.id.quarterlyVouchersEarned);
 		yearToDateSpend = (TextView) view.findViewById(R.id.yearToDateSpend);
 		yearToDateSpendText = (TextView) view.findViewById(R.id.yearToDateSpendText);
@@ -71,7 +69,7 @@ public class WRewardsSavingsFragment extends Fragment implements View.OnClickLis
 
 		Activity activity = getActivity();
 		if (activity!=null) {
-			tvWRewardInstantSaving.setText(WRewardBenefitActivity.Companion.convertWRewardCharacter(getString(R.string.benefits_term_and_condition_link)));
+			tvWRewardInstantSaving.setText(WRewardBenefitActivity.Companion.convertWRewardCharacter(getString(R.string.wrewards_instant_savings)));
 		}
 		savingSinceInfo.setOnClickListener(this);
 		yearToDateSpendInfo.setOnClickListener(this);
@@ -95,7 +93,6 @@ public class WRewardsSavingsFragment extends Fragment implements View.OnClickLis
 					yearToDateSpendText.setText(getString(R.string.wrewards_monthly_spend));
 					//Get data on Position-1 from Array List. And bind to UI
 					wRewardsInstantSaving.setText(WFormatter.formatAmount(voucherResponse.tierHistoryList.get(position - 1).monthlySavings));
-					wRewardsGreenEarned.setText(WFormatter.formatAmount(voucherResponse.tierHistoryList.get(position - 1).monthlyGreenValueEarned));
 					quarterlyVoucherEarned.setText(WFormatter.formatAmount(voucherResponse.tierHistoryList.get(position - 1).wVouchers));
 					yearToDateSpend.setText(WFormatter.formatAmount(voucherResponse.tierHistoryList.get(position - 1).monthlySpend));
 				}
@@ -129,7 +126,6 @@ public class WRewardsSavingsFragment extends Fragment implements View.OnClickLis
 			savingSince.setText(voucherResponse.tierInfo.earnedSince);
 		}
 		wRewardsInstantSaving.setText(WFormatter.formatAmount(voucherResponse.tierInfo.earned));
-		wRewardsGreenEarned.setText(WFormatter.formatAmount(voucherResponse.tierInfo.yearToDateGreenValue));
 		quarterlyVoucherEarned.setText(WFormatter.formatAmount(voucherResponse.tierInfo.yearToDateWVouchers));
 		yearToDateSpend.setText(WFormatter.formatAmount(voucherResponse.tierInfo.yearToDateSpend));
 	}
@@ -140,7 +136,6 @@ public class WRewardsSavingsFragment extends Fragment implements View.OnClickLis
 		savingSinceLayout.setVisibility(View.GONE);
 		yearToDateSpendText.setText(getString(R.string.year_to_date_spend));
 		wRewardsInstantSaving.setText(WFormatter.formatAmount(0));
-		wRewardsGreenEarned.setText(WFormatter.formatAmount(0));
 		quarterlyVoucherEarned.setText(WFormatter.formatAmount(0));
 		yearToDateSpend.setText(WFormatter.formatAmount(0));
 

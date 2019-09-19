@@ -27,29 +27,44 @@
                 android:id="@+id/noSavingsView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="31dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginBottom="31.5dp"
                 android:background="@drawable/black_circle"
                 android:visibility="gone">
-
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:orientation="vertical"
                     android:layout_centerInParent="true"
-                    android:orientation="vertical">
-
-                    <TextView
+                    >
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:id="@+id/month"
-                        style="@style/WRewardsInstantSavingsValueStyle"
-                        android:text="@string/year" />
-
-                    <TextView
+                        app:WTextView_font="medium_bold"
+                        android:textSize="16sp"
+                        android:textColor="@color/white"
+                        android:textAllCaps="true"
+                        android:text="@string/year"
+                        android:layout_gravity="center_horizontal"
+                        />
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:id="@+id/year"
-                        style="@style/WRewardsInstantSavingsValueStyle"
-                        android:text="@string/to_date" />
+                        app:WTextView_font="medium"
+                        android:textSize="10sp"
+                        android:textColor="@color/white"
+                        android:textAllCaps="true"
+                        android:text="@string/to_date"
+                        android:letterSpacing="0.1"
+                        android:alpha="0.6"
+                        android:layout_gravity="center_horizontal"
+                        />
                 </LinearLayout>
             </RelativeLayout>
         </RelativeLayout>
@@ -76,11 +91,18 @@
             <TextView
                 android:id="@+id/tvWRewardInstantSaving"
                 style="@style/WRewardsInstantSavingsStyle"
+                android:layout_toStartOf="@+id/wrewardsInstantSavings"
+                android:ellipsize="end"
+                android:layout_marginEnd="@dimen/four_dp"
+                android:singleLine="true"
                 android:text="@string/wrewards_instant_savings" />
+
 
             <TextView
                 android:id="@+id/wrewardsInstantSavings"
-                style="@style/WRewardsInstantSavingsValueStyle" />
+                style="@style/WRewardsInstantSavingsValueStyle"
+                android:layout_marginStart="@dimen/four_dp"
+                android:text="2000" />
         </RelativeLayout>
 
         <LinearLayout
@@ -130,28 +152,6 @@
 
 
         </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:background="#0a000000" />
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:minHeight="48dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp">
-
-            <TextView
-                style="@style/WRewardsInstantSavingsStyle"
-                android:text="@string/wrewards_green_earned" />
-
-            <TextView
-                android:id="@+id/wrewardsGreenEarned"
-                style="@style/WRewardsInstantSavingsValueStyle" />
-        </RelativeLayout>
 
         <View
             android:layout_width="match_parent"

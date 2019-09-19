@@ -20,7 +20,6 @@ import kotlinx.android.synthetic.main.absa_pin_atm_fragment.*
 import za.co.absa.openbankingapi.woolworths.integration.AbsaCreateAliasRequest
 import za.co.absa.openbankingapi.woolworths.integration.AbsaValidateCardAndPinRequest
 import za.co.absa.openbankingapi.woolworths.integration.AbsaValidateSureCheckRequest
-import za.co.absa.openbankingapi.woolworths.integration.dao.JSession
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.contracts.IValidatePinCodeDialogInterface
 import za.co.woolworths.financial.services.android.ui.activities.ABSAOnlineBankingRegistrationActivity
@@ -31,7 +30,7 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.GotITDia
 import za.co.woolworths.financial.services.android.util.AsteriskPasswordTransformationMethod
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 
-class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListener, IValidatePinCodeDialogInterface, IDialogListener {
+class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IValidatePinCodeDialogInterface, IDialogListener {
 
     private var mCreditCardNumber: String? = ""
 
@@ -55,7 +54,7 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         alwaysShowWindowSoftInputMode()
-        return inflater!!.inflate(R.layout.absa_pin_atm_fragment, container, false)
+        return inflater.inflate(R.layout.absa_pin_atm_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -91,12 +90,12 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
     }
 
     private fun navigateToFiveDigitCodeFragment() {
-        if ((edtEnterATMPin.length() - 1) >= AbsaEnterAtmPinCodeFragment.MAXIMUM_PIN_ALLOWED && pbEnterAtmPin.visibility != VISIBLE) {
+        if ((edtEnterATMPin.length() - 1) >= MAXIMUM_PIN_ALLOWED && pbEnterAtmPin.visibility != VISIBLE) {
             activity?.let {
                 val pinCode = edtEnterATMPin.text.toString()
                 progressIndicator(VISIBLE)
                 mCreditCardNumber?.let { creditCardNumber -> ValidateATMPinCode(creditCardNumber, pinCode, this).make() }
-            }
+           }
         }
     }
 
@@ -172,9 +171,9 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), View.OnClickListene
         alwaysShowWindowSoftInputMode()
     }
 
-    override fun onSuccessHandler(aliasId: String) {
+    override fun onSuccessHandler(aliasID: String) {
         replaceFragment(
-                fragment = AbsaFiveDigitCodeFragment.newInstance(aliasId),
+                fragment = AbsaFiveDigitCodeFragment.newInstance(aliasID),
                 tag = AbsaFiveDigitCodeFragment::class.java.simpleName,
                 containerViewId = R.id.flAbsaOnlineBankingToDevice,
                 allowStateLoss = true,
