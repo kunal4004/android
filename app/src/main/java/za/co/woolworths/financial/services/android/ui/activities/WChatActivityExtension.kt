@@ -170,13 +170,18 @@ open class WChatActivityExtension : AppCompatActivity(), WCountDownTimer.TimerFi
     override fun onTimerFinished() {
         if (chatId.isNullOrEmpty() || !isAgentOnline) {
             showAgentsMessage(AgentDefaultMessage.NO_AGENTS)
-            if (chatId.isNullOrEmpty()) stopAgentAvailablePolling() else if (!isAgentOnline) stopChatSessionStatePolling()
+            if (chatId.isNullOrEmpty()) stopAgentAvailablePolling()
+            else
+                if (!isAgentOnline) {
+                    clearChatId()
+                    stopChatSessionStatePolling()
+                }
         }
     }
 
     private fun clearSessionValues() {
         isAgentOnline = false
-        chatId = null
+        clearChatId()
         setEndSessionAvailable(false)
         setPageTitle(getString(R.string.chat_activity_title))
     }
@@ -188,6 +193,10 @@ open class WChatActivityExtension : AppCompatActivity(), WCountDownTimer.TimerFi
     fun setPageTitle(name: String?) {
         if (!name.isNullOrEmpty())
             agentName.text = name
+    }
+
+    fun clearChatId(){
+        chatId = null
     }
 
 }
