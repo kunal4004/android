@@ -160,7 +160,9 @@ public class CheckOutFragment extends Fragment {
 
 			@Override
 			public boolean shouldOverrideUrlLoading(WebView view, String url) {
-				if (url.contains(QueryString.ABANDON.getValue())) {
+				if (url.contains(QueryString.COMPLETE.getValue())) {
+					closeOnNextPage = QueryString.COMPLETE;
+				} else if (url.contains(QueryString.ABANDON.getValue())) {
 					closeOnNextPage = QueryString.ABANDON;
 				}
 				view.loadUrl(url);

@@ -26,17 +26,27 @@ class ProductListingAdapter(private val navigator: IProductListing, private val 
                 else -> (holder as? ProductListingViewHolderItems)?.let { view ->
                     view.setProductItem(productList, navigator)
                     view.itemView.imQuickShopAddToCartIcon.setOnClickListener {
-                        val storeId = view.getFulfillmentTypeId(productList)
-                        navigator.queryInventoryForStore(storeId!!, AddItemToCart(productList.productId, productList.sku, 0),productList)
+                        if (!productList.quickShopButtonWasTapped) {
+                            val storeId = view.getFulFillmentStoreId()
+                            navigator.queryInventoryForStore(storeId!!, AddItemToCart(productList.productId, productList.sku, 0), productList)
+                        }
                     }
                 }
             }
         }
     }
 
-    override fun getItemViewType(position: Int): Int = mProductListItems?.get(position)?.rowType?.ordinal ?: 0
+    override fun getItemViewType(position: Int): Int = mProductListItems?.get(position)?.rowType?.ordinal
+            ?: 0
 
     override fun getItemCount(): Int = mProductListItems?.size ?: 0
 
     override fun getItemId(position: Int): Long = position.toLong()
+
+    fun resetQuickShopButton() {
+        mProductListItems?.forEach { product ->
+            product.quickShopButtonWasTapped = false
+        }
+        notifyDataSetChanged()
+    }
 }

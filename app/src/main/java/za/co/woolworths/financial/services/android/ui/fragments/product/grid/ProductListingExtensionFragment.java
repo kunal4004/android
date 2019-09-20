@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.grid;
 
 import android.app.Activity;
 import android.util.Log;
+import androidx.fragment.app.Fragment;
 
 import java.util.List;
 
@@ -13,52 +14,37 @@ import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
-import za.co.woolworths.financial.services.android.ui.base.BaseViewModel;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.rx.SchedulerProvider;
 
-public class GridViewModel extends BaseViewModel<GridNavigator> {
+public class ProductListingExtensionFragment extends Fragment {
 
     private int mNumItemsInTotal;
     private boolean loadMoreData = false;
     private int pageOffset = 0;
     private boolean mIsLoading = false;
     private boolean mIsLastPage = false;
-    private int mLoadStatus;
     private boolean productIsLoading = false;
+    boolean isLoading = false;
     private ProductsRequestParams productsRequestParams;
-    Call<ProductView> retrieveProduct;
+    private Call<ProductView> retrieveProduct;
 
-    public void setLoadStatus(int status) {
-        this.mLoadStatus = status;
+    private GridNavigator mNavigator;
+
+    public void setNavigator(GridNavigator navigator) {
+        this.mNavigator = navigator;
     }
 
-    public int getLoadStatus() {
-        return mLoadStatus;
+    public GridNavigator getNavigator() {
+        return mNavigator;
     }
 
-    public GridViewModel() {
-        super();
-    }
 
-    public GridViewModel(SchedulerProvider schedulerProvider) {
-        super(schedulerProvider);
-    }
-
-    public void setPageOffset(int pageOffset) {
-        this.pageOffset = pageOffset;
-    }
-
-    public void setIsLastPage(boolean mIsLastPage) {
+    private void setIsLastPage(boolean mIsLastPage) {
         this.mIsLastPage = mIsLastPage;
     }
 
     public void setIsLoading(boolean mIsLoading) {
         this.mIsLoading = mIsLoading;
-    }
-
-    public boolean isLastPage() {
-        return mIsLastPage;
     }
 
     public boolean isLoading() {
@@ -73,7 +59,7 @@ public class GridViewModel extends BaseViewModel<GridNavigator> {
         return productsRequestParams;
     }
 
-    public void executeLoadProduct(final Activity acivity, ProductsRequestParams requestParams) {
+    public void executeLoadProduct(final Activity activity, ProductsRequestParams requestParams) {
         getNavigator().onLoadStart(getLoadMoreData());
         setProductIsLoading(true);
         retrieveProduct =  OneAppService.INSTANCE.getProducts(requestParams);
@@ -100,15 +86,12 @@ public class GridViewModel extends BaseViewModel<GridNavigator> {
 
             @Override
             public void onFailure(final Throwable error) {
-                if (acivity == null) return;
-                acivity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            getNavigator().failureResponseHandler(error.toString());
-                            getNavigator().onLoadComplete(getLoadMoreData());
-                            setProductIsLoading(false);
-                        }
-                    });
+                if (activity == null) return;
+                activity.runOnUiThread(() -> {
+                    getNavigator().failureResponseHandler(error.toString());
+                    getNavigator().onLoadComplete(getLoadMoreData());
+                    setProductIsLoading(false);
+                });
                 }
         },ProductView.class));
     }
@@ -118,15 +101,15 @@ public class GridViewModel extends BaseViewModel<GridNavigator> {
     }
 
 
-    public void setLoadMoreData(boolean loadMoreData) {
+    private void setLoadMoreData(boolean loadMoreData) {
         this.loadMoreData = loadMoreData;
     }
 
-    public boolean getLoadMoreData() {
+    private boolean getLoadMoreData() {
         return loadMoreData;
     }
 
-    private int numItemsInTotal(ProductView productView) {
+    private void numItemsInTotal(ProductView productView) {
         PagingResponse pagingResponse = productView.pagingResponse;
         if (pagingResponse.numItemsInTotal != null && productView.pagingResponse.pageOffset != null) {
             mNumItemsInTotal = pagingResponse.numItemsInTotal;
@@ -134,9 +117,7 @@ public class GridViewModel extends BaseViewModel<GridNavigator> {
             if (productView.pagingResponse.pageOffset > mNumItemsInTotal) {
                 setIsLastPage(true);
             }
-            return mNumItemsInTotal;
         }
-        return 0;
     }
 
     public void canLoadMore(int totalItem, int sizeOfList) {
@@ -154,7 +135,7 @@ public class GridViewModel extends BaseViewModel<GridNavigator> {
         getProductRequestBody().setPageOffset(pageOffset);
     }
 
-    public void setProductIsLoading(boolean productIsLoading) {
+    private void setProductIsLoading(boolean productIsLoading) {
         this.productIsLoading = productIsLoading;
     }
 

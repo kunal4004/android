@@ -5,20 +5,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.awfs.coordination.R
-import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.department_row.view.*
 import za.co.woolworths.financial.services.android.models.dto.RootCategory
+import za.co.woolworths.financial.services.android.util.ImageManager
 
 
 internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootCategory>?, private val clickListener: (RootCategory) -> Unit)
     : RecyclerView.Adapter<DepartmentAdapter.ViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DepartmentAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v: View = LayoutInflater.from(parent.context).inflate(R.layout.department_row, parent, false)
         return ViewHolder(v)
     }
 
-    override fun onBindViewHolder(holder: DepartmentAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val rootCategory: RootCategory? = mlRootCategories?.get(position)
         holder.bindText(rootCategory!!, clickListener)
         holder.loadImage(rootCategory)
@@ -35,7 +35,7 @@ internal class DepartmentAdapter(private var mlRootCategories: MutableList<RootC
         }
 
         fun loadImage(rootCategory: RootCategory) {
-            Picasso.get().load(rootCategory.imgUrl).fit().into(itemView.imProductCategory)
+            ImageManager.setPictureWithoutPlaceHolder(itemView.imProductCategory,rootCategory.imgUrl)
         }
     }
 

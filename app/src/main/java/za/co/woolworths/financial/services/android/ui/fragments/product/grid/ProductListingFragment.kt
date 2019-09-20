@@ -1,10 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.grid
 
-import android.app.Activity
+import android.annotation.SuppressLint
+import android.app.Activity.RESULT_OK
 import android.app.Dialog
-
-import androidx.lifecycle.ViewModelProviders
-
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
@@ -16,25 +14,21 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 import android.util.Log
-import android.view.Gravity
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.Window
-import android.view.WindowManager
+import android.view.*
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.Button
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentTransaction
-import com.awfs.coordination.BR
 
 import com.awfs.coordination.R
-import com.awfs.coordination.databinding.GridLayoutBinding
 import com.crashlytics.android.Crashlytics
 import com.skydoves.balloon.balloon
-import java.util.ArrayList
-import java.util.HashMap
+import kotlinx.android.synthetic.main.grid_layout.*
+import kotlinx.android.synthetic.main.no_connection_handler.*
+import kotlinx.android.synthetic.main.no_connection_handler.view.*
+import kotlinx.android.synthetic.main.sort_and_refine_selection_layout.*
 
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProductListing
@@ -56,124 +50,108 @@ import za.co.woolworths.financial.services.android.ui.activities.product.refine.
 import za.co.woolworths.financial.services.android.ui.adapters.ProductListingAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.SortOptionsAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductListingViewType
-import za.co.woolworths.financial.services.android.ui.base.BaseFragment
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import za.co.woolworths.financial.services.android.ui.views.ProductListingProgressBar
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductListingFindInStoreNoQuantityFragment
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.SelectYourQuantityFragment
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment
-import za.co.woolworths.financial.services.android.util.ErrorHandlerView
-import za.co.woolworths.financial.services.android.util.PostItemToCart
-import za.co.woolworths.financial.services.android.util.ScreenManager
-import za.co.woolworths.financial.services.android.util.SessionUtilities
-import za.co.woolworths.financial.services.android.util.Utils
 
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragmentNew.SET_DELIVERY_LOCATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.views.AddedToCartBalloonFactory
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.*
+import za.co.woolworths.financial.services.android.util.*
+import java.net.ConnectException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
+import java.util.*
 
-open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewModel>(), GridNavigator, IProductListing, View.OnClickListener, SortOptionsAdapter.OnSortOptionSelected, WMaterialShowcaseView.IWalkthroughActionListener {
+open class ProductListingFragment : ProductListingExtensionFragment(), GridNavigator, IProductListing, View.OnClickListener, SortOptionsAdapter.OnSortOptionSelected, WMaterialShowcaseView.IWalkthroughActionListener {
 
+    private var oneTimeInventoryErrorDialogDisplay: Boolean = false
     private var mAddItemsToCart: MutableList<AddItemToCart>? = null
-    private var mGridViewModel: GridViewModel? = null
     private var mErrorHandlerView: ErrorHandlerView? = null
-    private var mSubCategoryId: String? = null
     private var mSubCategoryName: String? = null
-    private var mSearchProduct: String? = null
     private var mProductAdapter: ProductListingAdapter? = null
     private var mProductList: MutableList<ProductList>? = null
     private var mRecyclerViewLayoutManager: GridLayoutManager? = null
     private var lastVisibleItem: Int = 0
     internal var totalItemCount: Int = 0
-    private var isLoading: Boolean = false
     private var productView: ProductView? = null
     private var sortOptionDialog: Dialog? = null
-    private val mProgressListingProgressBar = ProductListingProgressBar()
     private var mStoreId: String? = null
     private var mAddItemToCart: AddItemToCart? = null
     private var mSelectedProductList: ProductList? = null
-    override fun getViewModel(): GridViewModel? {
-        return mGridViewModel
-    }
-
-    override fun getBindingVariable(): Int = BR.viewModel
-
-
-    override fun getLayoutId(): Int = R.layout.grid_layout
+    private var mSearchType: ProductsRequestParams.SearchType? = null
+    private var mSearchTerm: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         activity?.apply {
-            mGridViewModel = ViewModelProviders.of(this).get(GridViewModel::class.java)
-            mGridViewModel?.navigator = this@ProductListingFragment
-
             arguments?.apply {
-                mSubCategoryId = getString(SUB_CATEGORY_ID, "")
                 mSubCategoryName = getString(SUB_CATEGORY_NAME, "")
-                mSearchProduct = getString(SEARCH_PRODUCT_TERMS, "")
+                mSearchType = ProductsRequestParams.SearchType.valueOf(getString(SEARCH_TYPE, "SEARCH"))
+                mSearchTerm = getString(SEARCH_TERM, "")
             }
             setProductBody()
         }
     }
 
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.grid_layout, container, false)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        showToolbar()
-        showBackNavigationIcon(true)
-        setToolbarBackgroundDrawable(R.drawable.appbar_background)
+        navigator = this
+        (activity as? BottomNavigationActivity)?.apply {
+            showToolbar()
+            showBackNavigationIcon(true)
+            setToolbarBackgroundDrawable(R.drawable.appbar_background)
 
+            toolbar?.setNavigationOnClickListener { popFragment() }
 
-        (activity as? BottomNavigationActivity)?.toolbar?.setNavigationOnClickListener { popFragment() }
+            mErrorHandlerView = ErrorHandlerView(this, no_connection_layout)
+            mErrorHandlerView?.setMargin(no_connection_layout, 0, 0, 0, 0)
 
-        val relNoConnectionLayout = viewDataBinding.incNoConnectionHandler.noConnectionLayout
-
-        activity?.let {
-            mErrorHandlerView = ErrorHandlerView(it, relNoConnectionLayout)
-            mErrorHandlerView?.setMargin(relNoConnectionLayout, 0, 0, 0, 0)
+            setTitle()
+            startProductRequest()
+            incNoConnectionHandler?.btnRetry?.setOnClickListener(this@ProductListingFragment)
+            refineProducts?.setOnClickListener(this@ProductListingFragment)
+            sortProducts?.setOnClickListener(this@ProductListingFragment)
         }
-
-        setTitle()
-        startProductRequest()
-        with(viewDataBinding) {
-            incNoConnectionHandler.btnRetry.setOnClickListener(this@ProductListingFragment)
-            sortAndRefineLayout.refineProducts.setOnClickListener(this@ProductListingFragment)
-            sortAndRefineLayout.sortProducts.setOnClickListener(this@ProductListingFragment)
-        }
-
     }
 
     override fun onResume() {
         super.onResume()
-        activity.let { activity -> Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_SEARCH_RESULTS) }
+        activity?.let { activity -> Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_SEARCH_RESULTS) }
     }
 
-    private fun setTitle() = setTitle(if (mSearchProduct?.isEmpty() == true) mSubCategoryName else mSearchProduct)
+    private fun setTitle() = (activity as? BottomNavigationActivity)?.setTitle(if (mSubCategoryName?.isEmpty() == true) mSearchTerm else mSubCategoryName)
 
     override fun onLoadProductSuccess(response: ProductView, loadMoreData: Boolean) {
         val productLists = response.products
 
-        if (mProductList.isNullOrEmpty())
+        if (mProductList?.isNullOrEmpty() == true)
             mProductList = ArrayList()
 
-        if (productLists.isEmpty()) {
-            viewDataBinding?.sortAndRefineLayout?.parentLayout?.visibility = View.GONE
+        if (productLists?.isEmpty() == true) {
+            sortAndRefineLayout?.visibility = GONE
             if (!listContainHeader()) {
                 val headerProduct = ProductList()
                 headerProduct.rowType = ProductListingViewType.HEADER
-                headerProduct.numberOfItems = viewModel?.numItemsInTotal
+                headerProduct.numberOfItems = numItemsInTotal
                 productLists.add(0, headerProduct)
             }
             bindRecyclerViewWithUI(productLists)
         } else if (productLists.size == 1) {
-            bottomNavigator?.popFragmentNoAnim()
-            bottomNavigator?.openProductDetailFragment(mSubCategoryName, productLists[0])
+            (activity as? BottomNavigationActivity)?.apply {
+                popFragmentNoAnim()
+                openProductDetailFragment(mSubCategoryName, productLists[0])
+            }
 
         } else {
             this.productView = response
             hideFooterView()
             if (!loadMoreData) {
-                viewDataBinding?.sortAndRefineLayout?.parentLayout?.visibility = View.VISIBLE
+                sortAndRefineLayout?.visibility = View.VISIBLE
                 setRefinementViewState(productView?.navigation?.let { nav -> getRefinementViewState(nav) }
                         ?: false)
                 bindRecyclerViewWithUI(productLists)
@@ -182,7 +160,6 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
                 loadMoreData(productLists)
             }
         }
-
     }
 
     override fun unhandledResponseCode(response: Response) {
@@ -216,21 +193,21 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
     }
 
     override fun cancelAPIRequest() {
-        mGridViewModel?.cancelRequest(mGridViewModel?.loadProductRequest)
+        OneAppService.cancelRequest(loadProductRequest)
     }
 
-    override fun bindRecyclerViewWithUI(productList: MutableList<ProductList>) {
-        this.mProductList = productList
+    override fun bindRecyclerViewWithUI(productLists: MutableList<ProductList>) {
+        this.mProductList = productLists
         if (!listContainHeader()) {
             val headerProduct = ProductList()
             headerProduct.rowType = ProductListingViewType.HEADER
-            headerProduct.numberOfItems = viewModel!!.numItemsInTotal
+            headerProduct.numberOfItems = numItemsInTotal
             mProductList?.add(0, headerProduct)
         }
 
         mProductAdapter = ProductListingAdapter(this, mProductList)
 
-        mRecyclerViewLayoutManager = GridLayoutManager(activity, 2)
+        activity?.let { activity -> mRecyclerViewLayoutManager = GridLayoutManager(activity, 2) }
         // Set up a GridLayoutManager to change the SpanSize of the header and footer
         mRecyclerViewLayoutManager?.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
@@ -253,7 +230,7 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
             }
         }
 
-        viewDataBinding?.productList?.apply {
+        productList?.apply {
             if (visibility == View.INVISIBLE)
                 visibility = View.VISIBLE
 
@@ -285,17 +262,17 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
     private fun loadData() {
         val visibleThreshold = 5
         if (!isLoading && totalItemCount <= lastVisibleItem + visibleThreshold) {
-            if (viewModel!!.productIsLoading()) return
-            val total = viewModel!!.numItemsInTotal + Utils.PAGE_SIZE
-            val start = mProductList!!.size
+            if (productIsLoading()) return
+            val total = numItemsInTotal + Utils.PAGE_SIZE
+            val start = mProductList?.size ?: 0
             val end = start + Utils.PAGE_SIZE
             isLoading = total < end
             if (isLoading) return
             if (!listContainFooter()) {
                 val footerItem = ProductList()
                 footerItem.rowType = ProductListingViewType.FOOTER
-                mProductList!!.add(footerItem)
-                mProductAdapter!!.notifyItemInserted(mProductList!!.size - 1)
+                mProductList?.add(footerItem)
+                mProductAdapter?.notifyItemInserted(mProductList!!.size - 1)
             }
             startProductRequest()
         }
@@ -303,9 +280,11 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
 
     private fun listContainFooter(): Boolean {
         try {
-            for (pl in mProductList!!) {
-                if (pl.rowType === ProductListingViewType.FOOTER) {
-                    return true
+            mProductList?.let { mProductList ->
+                for (pl in mProductList) {
+                    if (pl.rowType === ProductListingViewType.FOOTER) {
+                        return true
+                    }
                 }
             }
         } catch (ignored: Exception) {
@@ -342,52 +321,48 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
 
     override fun onDetach() {
         super.onDetach()
-        if (bottomNavigationActivity != null && bottomNavigationActivity!!.walkThroughPromtView != null) {
-            bottomNavigationActivity!!.walkThroughPromtView.removeFromWindow()
-        }
+        (activity as? BottomNavigationActivity)?.walkThroughPromtView?.removeFromWindow()
     }
 
     override fun startProductRequest() {
-        if (isEmpty(mSearchProduct)) {
-            viewModel!!.executeLoadProduct(activity, viewModel!!.productRequestBody)
-        } else {
-            viewModel!!.executeLoadProduct(activity, viewModel!!.productRequestBody)
+        activity?.let { activity ->
+            if (mSearchTerm?.isEmpty() == true) {
+                executeLoadProduct(activity, productRequestBody)
+            } else {
+                executeLoadProduct(activity, productRequestBody)
+            }
         }
     }
 
     override fun loadMoreData(productLists: List<ProductList>) {
-        val actualSize = mProductList!!.size + 1
-        mProductList!!.addAll(productLists)
-        val sizeOfList = mProductList!!.size
+        val actualSize = mProductList?.size ?: 0 + 1
+        mProductList?.addAll(productLists)
+        val sizeOfList = mProductList?.size ?: 0
         try {
             hideFooterView()
         } catch (ex: Exception) {
             Log.e("containFooter", ex.message)
         }
 
-        mProductAdapter!!.notifyItemChanged(actualSize, sizeOfList)
-        viewModel!!.canLoadMore(viewModel!!.numItemsInTotal, sizeOfList)
+        mProductAdapter?.notifyItemChanged(actualSize, sizeOfList)
+        canLoadMore(numItemsInTotal, sizeOfList)
     }
 
     override fun setProductBody() {
-        if (isEmpty(mSearchProduct)) {
-            viewModel?.setProductRequestBody(ProductsRequestParams.SearchType.NAVIGATE, mSubCategoryId)
-        } else {
-            viewModel?.setProductRequestBody(ProductsRequestParams.SearchType.SEARCH, mSearchProduct)
-        }
+        setProductRequestBody(mSearchType, mSearchTerm)
     }
 
     override fun onLoadStart(isLoadMore: Boolean) {
-        viewModel!!.setIsLoading(true)
+        setIsLoading(true)
         if (!isLoadMore) {
-            showProgressBar()
+            incCenteredProgress?.visibility = VISIBLE
         }
     }
 
     override fun onLoadComplete(isLoadMore: Boolean) {
-        viewModel!!.setIsLoading(false)
+        setIsLoading(false)
         if (!isLoadMore) {
-            dismissProgressBar()
+            incCenteredProgress?.visibility = GONE
         }
     }
 
@@ -398,36 +373,44 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
+        return when (item.itemId) {
             R.id.action_drill_search -> {
-                val openSearchActivity = Intent(baseActivity, ProductSearchActivity::class.java)
-                startActivity(openSearchActivity)
-                baseActivity.overridePendingTransition(0, 0)
-                return true
+                activity?.apply {
+                    val openSearchActivity = Intent(this, ProductSearchActivity::class.java)
+                    startActivity(openSearchActivity)
+                    overridePendingTransition(0, 0)
+                }
+                true
             }
-            else -> {
-            }
+            else -> false
         }
-        return false
     }
 
     override fun onClick(view: View) {
-        when (view.id) {
-            R.id.btnRetry -> if (isNetworkConnected) {
-                mErrorHandlerView!!.hideErrorHandler()
-                startProductRequest()
-            }
-            R.id.refineProducts -> {
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.REFINE_EVENT_APPEARED)
-                val intent = Intent(activity, ProductsRefineActivity::class.java)
-                intent.putExtra(REFINEMENT_DATA, Utils.toJson(productView))
-                intent.putExtra(PRODUCTS_REQUEST_PARAMS, Utils.toJson(viewModel?.productRequestBody))
-                startActivityForResult(intent, REFINE_REQUEST_CODE)
-                activity?.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
-            }
-            R.id.sortProducts -> {
-                Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SORTBY_EVENT_APPEARED)
-                this.showShortOptions(productView!!.sortOptions)
+        activity?.let { activity ->
+            when (view.id) {
+                R.id.btnRetry -> {
+                    when (NetworkManager.getInstance().isConnectedToNetwork(activity)) {
+                        true -> {
+                            mErrorHandlerView?.hideErrorHandler()
+                            startProductRequest()
+                        }
+                        else -> return
+                    }
+                }
+                R.id.refineProducts -> {
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.REFINE_EVENT_APPEARED)
+                    val intent = Intent(activity, ProductsRefineActivity::class.java)
+                    intent.putExtra(REFINEMENT_DATA, Utils.toJson(productView))
+                    intent.putExtra(PRODUCTS_REQUEST_PARAMS, Utils.toJson(productRequestBody))
+                    activity.startActivityForResult(intent, REFINE_REQUEST_CODE)
+                    activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+                }
+                R.id.sortProducts -> {
+                    Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SORTBY_EVENT_APPEARED)
+                    productView?.sortOptions?.let { sortOption -> this.showShortOptions(sortOption) }
+                }
+                else -> return
             }
         }
     }
@@ -435,10 +418,12 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         if (!hidden) {
-            showToolbar()
-            showBackNavigationIcon(true)
-            setToolbarBackgroundDrawable(R.drawable.appbar_background)
-            setTitle()
+            (activity as? BottomNavigationActivity)?.apply {
+                showToolbar()
+                showBackNavigationIcon(true)
+                setToolbarBackgroundDrawable(R.drawable.appbar_background)
+                setTitle()
+            }
         }
     }
 
@@ -448,19 +433,20 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
             val arguments = HashMap<String, String>()
             arguments[FirebaseManagerAnalyticsProperties.PropertyNames.SORT_OPTION_NAME] = sortOption.label
             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SORTBY_EVENT_APPLIED, arguments)
-            viewModel?.updateProductRequestBodyForSort(sortOption.sortOption)
+            updateProductRequestBodyForSort(sortOption.sortOption)
             reloadProductsWithSortAndFilter()
         }
     }
 
+    @SuppressLint("InflateParams")
     private fun showShortOptions(sortOptions: ArrayList<SortOption>) {
         sortOptionDialog = activity?.let { activity -> Dialog(activity) }
         sortOptionDialog?.apply {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
             val view = layoutInflater.inflate(R.layout.sort_options_view, null)
             val rcvSortOptions = view.findViewById<RecyclerView>(R.id.sortOptionsList)
-            rcvSortOptions.layoutManager = activity?.let { activity -> LinearLayoutManager(activity) }
-            rcvSortOptions.adapter = activity?.let { activity -> SortOptionsAdapter(activity, sortOptions, this@ProductListingFragment) }
+            rcvSortOptions?.layoutManager = activity?.let { activity -> LinearLayoutManager(activity) }
+            rcvSortOptions?.adapter = activity?.let { activity -> SortOptionsAdapter(activity, sortOptions, this@ProductListingFragment) }
             setContentView(view)
             window?.apply {
                 setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
@@ -488,15 +474,15 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
                 }
             }
             REFINE_REQUEST_CODE -> {
-                if (resultCode == Activity.RESULT_OK) {
+                if (resultCode == RESULT_OK) {
                     val navigationState = data?.getStringExtra(ProductsRefineActivity.NAVIGATION_STATE)
-                    viewModel?.updateProductRequestBodyForRefinement(navigationState)
+                    updateProductRequestBodyForRefinement(navigationState)
                     reloadProductsWithSortAndFilter()
                 }
             }
 
-            SSOActivity.SSOActivityResult.LAUNCH.rawValue() -> {
-                if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
+            SSOActivity.SSOActivityResult.LAUNCH.rawValue(), SET_DELIVERY_LOCATION_REQUEST_CODE -> {
+                if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue() || resultCode == RESULT_OK) {
                     addFoodProductTypeToCart(mAddItemsToCart?.get(0))
                 }
             }
@@ -506,38 +492,34 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
     }
 
     private fun reloadProductsWithSortAndFilter() {
-        with(viewDataBinding) {
-            productList.visibility = View.INVISIBLE
-            sortAndRefineLayout.parentLayout.visibility = View.GONE
-        }
+        productList?.visibility = View.INVISIBLE
+        sortAndRefineLayout?.visibility = View.GONE
         startProductRequest()
     }
 
     private fun showFeatureWalkThrough() {
         if (!isAdded || !AppInstanceObject.get().featureWalkThrough.showTutorials || AppInstanceObject.get().featureWalkThrough.refineProducts)
             return
-        activity?.apply {
-            bottomNavigationActivity?.let { nav ->
-                Crashlytics.setString(getString(R.string.crashlytics_materialshowcase_key), this.javaClass.canonicalName)
-                nav.walkThroughPromtView = WMaterialShowcaseView.Builder(this, WMaterialShowcaseView.Feature.REFINE)
-                        .setTarget(viewDataBinding.sortAndRefineLayout.refineDownArrow)
-                        .setTitle(R.string.walkthrough_refine_title)
-                        .setDescription(R.string.walkthrough_refine_desc)
-                        .setActionText(R.string.walkthrough_refine_action)
-                        .setImage(R.drawable.tips_tricks_ic_refine)
-                        .setShapePadding(48)
-                        .setAction(this@ProductListingFragment)
-                        .setAsNewFeature()
-                        .setArrowPosition(WMaterialShowcaseView.Arrow.TOP_RIGHT)
-                        .setMaskColour(ContextCompat.getColor(this, R.color.semi_transparent_black)).build()
-                nav.walkThroughPromtView.show(this)
-            }
+        (activity as? BottomNavigationActivity)?.apply {
+            Crashlytics.setString(getString(R.string.crashlytics_materialshowcase_key), this.javaClass.canonicalName)
+            walkThroughPromtView = WMaterialShowcaseView.Builder(this, WMaterialShowcaseView.Feature.REFINE)
+                    .setTarget(refineDownArrow)
+                    .setTitle(R.string.walkthrough_refine_title)
+                    .setDescription(R.string.walkthrough_refine_desc)
+                    .setActionText(R.string.walkthrough_refine_action)
+                    .setImage(R.drawable.tips_tricks_ic_refine)
+                    .setShapePadding(48)
+                    .setAction(this@ProductListingFragment)
+                    .setAsNewFeature()
+                    .setArrowPosition(WMaterialShowcaseView.Arrow.TOP_RIGHT)
+                    .setMaskColour(ContextCompat.getColor(this, R.color.semi_transparent_black)).build()
+            walkThroughPromtView.show(this)
         }
     }
 
     override fun onWalkthroughActionButtonClick() {
-        if (viewDataBinding.sortAndRefineLayout.refineProducts.isClickable)
-            onClick(viewDataBinding.sortAndRefineLayout.refineProducts)
+        if (refineProducts?.isClickable == true)
+            refineProducts?.let { refineProducts -> onClick(refineProducts) }
     }
 
     override fun onPromptDismiss() {
@@ -558,25 +540,36 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
     }
 
     private fun setRefinementViewState(refinementViewState: Boolean) {
-        with(viewDataBinding.sortAndRefineLayout) {
-            refineProducts.isEnabled = refinementViewState
-            refineDownArrow.isEnabled = refinementViewState
-            refinementText.isEnabled = refinementViewState
-        }
+        refineProducts?.isEnabled = refinementViewState
+        refineDownArrow?.isEnabled = refinementViewState
+        refinementText?.isEnabled = refinementViewState
     }
 
     override fun openProductDetailView(productList: ProductList) {
-        mSubCategoryName = if (mSearchProduct?.isNotEmpty() == true) mSearchProduct else mSubCategoryName
-        bottomNavigator.openProductDetailFragment(mSubCategoryName, productList)
+        mSubCategoryName = if (mSearchTerm?.isNotEmpty() == true) mSearchTerm else mSubCategoryName
+        (activity as? BottomNavigationActivity)?.openProductDetailFragment(mSubCategoryName, productList)
+
     }
 
     override fun queryInventoryForStore(storeId: String, addItemToCart: AddItemToCart?, productList: ProductList) {
+        activity?.let { activity -> Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.SHOPQS_ADD_TO_CART) }
         this.mStoreId = storeId
         this.mAddItemToCart = addItemToCart
         this.mSelectedProductList = productList
         val activity = activity ?: return
+
         if (!SessionUtilities.getInstance().isUserAuthenticated) {
             ScreenManager.presentSSOSignin(activity, QUERY_INVENTORY_FOR_STORE_REQUEST_CODE)
+            return
+        }
+
+        if (storeId.isEmpty()) {
+            val quickShopDefaultValues = WoolworthsApplication.getQuickShopDefaultValues()
+            val userSelectedDeliveryLocation = Utils.getPreferredDeliveryLocation()
+            val deliveryLocationName = if (userSelectedDeliveryLocation != null) userSelectedDeliveryLocation.suburb?.name
+                    ?: "" else quickShopDefaultValues?.suburb?.name ?: ""
+            val message = "Unfortunately this item is unavailable in $deliveryLocationName. Try changing your delivery location and try again."
+            Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC, getString(R.string.product_unavailable), message)
             return
         }
 
@@ -586,6 +579,7 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
             override fun onSuccess(skusInventoryForStoreResponse: SkusInventoryForStoreResponse) {
                 if (!isAdded) return
                 dismissProgressBar()
+                oneTimeInventoryErrorDialogDisplay = false
                 with(activity.supportFragmentManager.beginTransaction()) {
                     when (skusInventoryForStoreResponse.httpCode) {
                         200 -> {
@@ -603,26 +597,52 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
                             }
                         }
 
-
-                        else -> return
+                        else -> {
+                            if (!oneTimeInventoryErrorDialogDisplay) {
+                                oneTimeInventoryErrorDialogDisplay = true
+                                skusInventoryForStoreResponse.response?.desc?.let { desc -> Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, desc) }
+                            } else return
+                        }
                     }
                 }
             }
 
             override fun onFailure(error: Throwable) {
-                dismissProgressBar()
+                if (!isAdded) return
+                activity.runOnUiThread {
+                    dismissProgressBar()
+                    onFailureHandler(error)
+                }
             }
         }, SkusInventoryForStoreResponse::class.java))
     }
 
+    private fun onFailureHandler(error: Throwable) {
+        // TODO:: Move to CompletionHandler class and handle throughout the app for post method whenever required
+        activity?.let { activity ->
+            when (error) {
+                is ConnectException, is UnknownHostException -> {
+                    ErrorHandlerView(activity).showToast(getString(R.string.no_connection))
+                }
+                is SocketTimeoutException -> {
+
+                    val errorMessage = ErrorMessageDialogWithTitleFragment.newInstance()
+                    activity.supportFragmentManager.beginTransaction().let { supportManager -> errorMessage?.show(supportManager, ErrorMessageDialogWithTitleFragment::class.java.simpleName) }
+                }
+                else -> return
+            }
+        }
+    }
+
     private fun showProgressBar() {
         // Show progress bar
-        activity?.let { activity -> mProgressListingProgressBar.show(activity) }
+        incCenteredProgress?.visibility = VISIBLE
     }
 
     private fun dismissProgressBar() {
         // hide progress bar
-        mProgressListingProgressBar.dialog.dismiss()
+        incCenteredProgress?.visibility = GONE
+        mProductAdapter?.resetQuickShopButton()
     }
 
     override fun addFoodProductTypeToCart(addItemToCart: AddItemToCart?) {
@@ -643,7 +663,7 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
                             if (addToCartList != null && addToCartList.size > 0 && addToCartList[0].formexceptions != null) {
                                 val formException = addToCartList[0].formexceptions[0]
                                 if (formException != null) {
-                                    if (formException.message.toLowerCase().contains("unfortunately this product is now out of stock, please try again tomorrow")) {
+                                    if (formException.message.toLowerCase(Locale.getDefault()).contains("unfortunately this product is now out of stock, please try again tomorrow")) {
                                         addItemToCart?.catalogRefId?.let { catalogRefId -> productOutOfStockErrorMessage(catalogRefId) }
                                     } else {
                                         addItemToCartResponse.response.desc = formException.message
@@ -672,23 +692,22 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
                             }, 3000)
                         }
 
-
-                        417 -> Utils.displayValidationMessageForResult(this@ProductListingFragment,
-                                this,
-                                CustomPopUpWindow.MODAL_LAYOUT.ERROR, null,
-                                addItemToCartResponse.response.desc, resources.getString(R.string.set_delivery_location_button), SET_DELIVERY_LOCATION_REQUEST_CODE)
-
+                        417 -> resources?.let { resources ->
+                            val errorMessage = addItemToCartResponse.response?.desc?.let { desc -> ErrorMessageDialogFragment.newInstance(desc, resources.getString(R.string.set_delivery_location_button)) }
+                            activity?.supportFragmentManager?.let { supportManager -> errorMessage?.show(supportManager, ErrorMessageDialogFragment::class.java.simpleName) }
+                        }
                         440 -> {
                             SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE)
                             ScreenManager.presentSSOSignin(this)
                         }
 
-                        else -> Utils.displayValidationMessage(this, CustomPopUpWindow.MODAL_LAYOUT.ERROR, addItemToCartResponse.response.desc)
+                        else -> addItemToCartResponse.response?.desc?.let { desc -> Utils.displayValidationMessage(this, CustomPopUpWindow.MODAL_LAYOUT.ERROR, desc) }
                     }
                 }
             }
 
             override fun onFailure(error: Throwable) {
+                if (!isAdded) return
                 activity?.runOnUiThread { dismissProgressBar() }
             }
         })
@@ -722,7 +741,7 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
                             when (httpCode) {
                                 200 -> {
                                     if (Locations != null && Locations.size > 0) {
-                                        getGlobalState().storeDetailsArrayList = Locations
+                                        WoolworthsApplication.getInstance()?.wGlobalState?.storeDetailsArrayList = Locations
                                         val openStoreFinder = Intent(this@apply, WStockFinderActivity::class.java)
                                         openStoreFinder.putExtra("PRODUCT_NAME", mSelectedProductList?.productName)
                                         openStoreFinder.putExtra("CONTACT_INFO", "")
@@ -745,6 +764,7 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
                 override fun onFailure(error: Throwable) {
                     activity?.runOnUiThread {
                         dismissProgressBar()
+                        onFailureHandler(error)
                     }
                 }
             }, LocationResponse::class.java))
@@ -754,18 +774,19 @@ open class ProductListingFragment : BaseFragment<GridLayoutBinding, GridViewMode
     companion object {
         const val REFINEMENT_DATA = "REFINEMENT_DATA"
         const val PRODUCTS_REQUEST_PARAMS = "PRODUCTS_REQUEST_PARAMS"
-        private const val SUB_CATEGORY_ID = "SUB_CATEGORY_ID"
         private const val SUB_CATEGORY_NAME = "SUB_CATEGORY_NAME"
-        private const val SEARCH_PRODUCT_TERMS = "SEARCH_PRODUCT_TERMS"
 
         const val REFINE_REQUEST_CODE = 77
         private const val QUERY_INVENTORY_FOR_STORE_REQUEST_CODE = 3343
         private const val QUERY_LOCATION_ITEM_REQUEST_CODE = 3344
 
-        fun newInstance(sub_category_id: String?, sub_category_name: String?, search_product_term: String?) = ProductListingFragment().withArgs {
-            putString(SUB_CATEGORY_ID, sub_category_id)
+        private const val SEARCH_TYPE = "SEARCH_TYPE"
+        private const val SEARCH_TERM = "SEARCH_TERM"
+
+        fun newInstance(searchType: ProductsRequestParams.SearchType?, sub_category_name: String?, searchTerm: String?) = ProductListingFragment().withArgs {
+            putString(SEARCH_TYPE, searchType?.name)
             putString(SUB_CATEGORY_NAME, sub_category_name)
-            putString(SEARCH_PRODUCT_TERMS, search_product_term)
+            putString(SEARCH_TERM, searchTerm)
         }
     }
 }

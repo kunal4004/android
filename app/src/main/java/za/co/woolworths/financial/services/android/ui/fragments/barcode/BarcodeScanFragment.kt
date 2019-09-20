@@ -9,6 +9,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import com.awfs.coordination.R
+import com.google.zxing.BarcodeFormat
 import kotlinx.android.synthetic.main.barcode_scan_fragment.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams
@@ -18,13 +19,19 @@ import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.barcode.AutoFocusMode
 import za.co.woolworths.financial.services.android.util.barcode.CodeScanner
 import za.co.woolworths.financial.services.android.util.barcode.CodeScannerView
+import android.net.Uri
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView
+
 
 open class BarcodeScanFragment : BarcodeScanExtension() {
     private var mCodeScanner: CodeScanner? = null
+    private var invalidQRCode:String = ""
 
     companion object {
         fun newInstance() = BarcodeScanFragment()
         private const val SHOW_CODE_SCAN_AFTER_DELAY: Long = 10
+        const val HOST_WOOLWORTHS = "www.woolworths.co.za"
+        const val HOST_YOUTUBE = "www.youtube.com"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,7 +52,7 @@ open class BarcodeScanFragment : BarcodeScanExtension() {
                 mCodeScanner =
                         codeScannerView?.let {
                             CodeScanner.builder()
-                                    .formats(CodeScanner.ONE_DIMENSIONAL_FORMATS)
+                                    .formats(CodeScanner.ALL_FORMATS)
                                     .autoFocusMode(AutoFocusMode.SAFE)
                                     .autoFocusInterval(2000L)
                                     .flash(false)
@@ -53,8 +60,32 @@ open class BarcodeScanFragment : BarcodeScanExtension() {
                                         runOnUiThread {
                                             result.text?.apply {
                                                 if (!getProductDetailAsyncTaskIsRunning) {
-                                                    setProductRequestBody(ProductsRequestParams.SearchType.BARCODE, this)
-                                                    mRetrieveProductDetail = retrieveProductDetail()
+                                                    when (result.barcodeFormat) {
+                                                        BarcodeFormat.QR_CODE -> {
+                                                            getProductSearchTypeAndSearchTerm(this).let { it->
+                                                                with(it.searchTerm) {
+                                                                    when {
+                                                                        isEmpty() -> {
+                                                                            if (!this@apply.equals(invalidQRCode, true)) {
+                                                                                ErrorHandlerView(activity).showToast(getString(R.string.invalid_qr_code))
+                                                                                invalidQRCode = this@apply
+                                                                            }
+                                                                            startPreview()
+                                                                        }
+                                                                        contains(HOST_YOUTUBE) -> {
+                                                                            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(this@apply)))
+                                                                        }
+                                                                        else -> {
+                                                                            sendResultBack(it.searchType.name, this)
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                        else -> {
+                                                            sendResultBack(ProductsRequestParams.SearchType.BARCODE.name, this)
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
@@ -113,6 +144,5 @@ open class BarcodeScanFragment : BarcodeScanExtension() {
             mRetrieveProductDetail = retrieveProductDetail()
         }
     }
-
 
 }

@@ -10,6 +10,8 @@ import androidx.fragment.app.Fragment;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.text.SpannableString;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
 import com.crashlytics.android.Crashlytics;
@@ -50,6 +53,7 @@ import za.co.woolworths.financial.services.android.models.dto.ChangeQuantity;
 import za.co.woolworths.financial.services.android.models.dto.CommerceItem;
 import za.co.woolworths.financial.services.android.models.dto.CommerceItemInfo;
 import za.co.woolworths.financial.services.android.models.dto.Data;
+import za.co.woolworths.financial.services.android.models.dto.GlobalMessages;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails;
 import za.co.woolworths.financial.services.android.models.dto.Province;
@@ -108,6 +112,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	public static final int MOVE_TO_LIST_ON_TOAST_VIEW_CLICKED = 1020;
 	private int mNumberOfListSelected;
 	private List<ChangeQuantity> mChangeQuantityList;
+	private boolean mRemoveAllItemFromCartTapped = false;
 
 	public interface ToggleRemoveItem {
 		void onRemoveItem(boolean visibility);
@@ -138,6 +143,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	private boolean errorMessageWasPopUp = false;
 	private boolean isAllInventoryAPICallSucceed;
 	private ImageView imgDeliveryLocation;
+	private TextView upSellMessageTextView;
 
 	public CartFragment() {
 		// Required empty public constructor
@@ -177,6 +183,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		mConnectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
 		rlLocationSelectedLayout = view.findViewById(R.id.locationSelectedLayout);
 		imgDeliveryLocation = view.findViewById(R.id.truckIcon);
+		upSellMessageTextView = view.findViewById(R.id.upSellMessageTextView);
 		rlLocationSelectedLayout.setOnClickListener(this);
 		mBtnRetry.setOnClickListener(this);
 		btnCheckOut.setOnClickListener(this);
@@ -690,6 +697,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	public Call<ShoppingCartResponse> removeAllCartItem(final CommerceItem commerceItem) {
+		mRemoveAllItemFromCartTapped = true;
 		mToggleItemRemoved.onRemoveItem(true);
 		updateCartSummary(0);
 		Call<ShoppingCartResponse> shoppingCartResponseCall = OneAppService.INSTANCE.removeAllCartItems();
@@ -699,6 +707,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				try {
 					if (shoppingCartResponse.httpCode == 200) {
 						CartResponse cartResponse = convertResponseToCartResponseObject(shoppingCartResponse);
+						mRemoveAllItemFromCartTapped = false;
 						updateCart(cartResponse, commerceItem);
 						mToggleItemRemoved.onRemoveSuccess();
 						QueryBadgeCounter.getInstance().setCartCount(0, INDEX_CART);
@@ -732,7 +741,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		return shoppingCartResponseCall;
 	}
 
-
 	private void removeItemProgressBar(CommerceItem commerceItem, boolean visibility) {
 		if (commerceItem == null) {
 			mToggleItemRemoved.onRemoveItem(visibility);
@@ -751,6 +759,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			return null;
 
 		try {
+
+			displayUpSellMessage(response.data[0]);
+
 			cartResponse = new CartResponse();
 			cartResponse.httpCode = response.httpCode;
 			Data data = response.data[0];
@@ -1145,4 +1156,20 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 	}
 
+	public ArrayList<CartItemGroup> getCartItems() {
+		return cartItems;
+	}
+
+
+	private void displayUpSellMessage(Data data) {
+		if (data == null || data.globalMessages == null || mRemoveAllItemFromCartTapped) return;
+		GlobalMessages globalMessages = data.globalMessages;
+
+		if (TextUtils.isEmpty(globalMessages.getQualifierMessages().get(0))) return;
+
+		String qualifierMessage = globalMessages.getQualifierMessages().get(0);
+
+		upSellMessageTextView.setText(qualifierMessage);
+		upSellMessageTextView.setVisibility(TextUtils.isEmpty(qualifierMessage) ? View.GONE : View.VISIBLE);
+	}
 }

@@ -45,4 +45,5 @@ public class ProductList {
     public boolean viewIsLoading;
     public String displayColorSizeText;
     public String fulfillmentType;
+    public boolean quickShopButtonWasTapped = false;
 }

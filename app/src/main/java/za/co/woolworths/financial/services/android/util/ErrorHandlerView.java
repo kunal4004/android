@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import androidx.core.content.ContextCompat;
 import android.text.TextUtils;
@@ -161,6 +162,19 @@ public class ErrorHandlerView {
 				.setBackgroundColor(R.color.header_red)
 				.setDuration(toastDurationInMilliSeconds)
 				.setIcon(null)
+				.show();
+	}
+
+	public void showToast(String message, int icon) {
+		int toastDurationInMilliSeconds = 3000;
+		Alerter.create((Activity) mContext)
+				.setTitle("")
+				.setText(message)
+				.setContentGravity(Gravity.CENTER)
+				.setBackgroundColor(R.color.header_red)
+				.setDuration(toastDurationInMilliSeconds)
+				.showIcon(true)
+				.setIcon(BitmapFactory.decodeResource(getResources(),icon))
 				.show();
 	}
 

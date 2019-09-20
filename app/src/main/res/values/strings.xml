@@ -1066,5 +1066,13 @@
     <string name="pay_with_card">Pay with Card</string>
     <string name="how_it_works">How it Works</string>
     <string name="how_to_use">how to use</string>
+    <string name="invalid_qr_code"><b>OOPS.</b> INVALID QR CODE, PLEASE TRY AGAIN</string>
+    <string name="cd_store_card_layout">store card layout</string>
+    <string name="cd_store_card_text">store card text</string>
+    <string name="cd_store_card_apply_now_text">store card apply now text</string>
+    <string name="cd_store_card_available_funds_text">store card available funds text</string>
+    <string name="cd_sign_out">sign out</string>
+    <string name="oops_err_message">Oops, something went wrong.</string>
+    <string name="oops_err_title">Error</string>
 
 </resources>

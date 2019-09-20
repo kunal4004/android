@@ -55,7 +55,7 @@ class AddOrderToCartFragment : Fragment(), AddOrderToCartAdapter.OnItemClick {
     }
 
     companion object {
-        private val ARG_PARAM = "orderDetailsResponse"
+        private const val ARG_PARAM = "orderDetailsResponse"
         const val QUANTITY_CHANGED = 2019
         const val REQUEST_SUBURB_CHANGE = 1550
         fun getInstance(orderDetailsResponse: OrderDetailsResponse) = AddOrderToCartFragment().withArgs {
