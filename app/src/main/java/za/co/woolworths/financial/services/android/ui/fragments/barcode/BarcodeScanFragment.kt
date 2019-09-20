@@ -76,6 +76,7 @@ open class BarcodeScanFragment : BarcodeScanExtension() {
                                                                             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(this@apply)))
                                                                         }
                                                                         else -> {
+                                                                            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_SCAN_CODE)
                                                                             sendResultBack(it.searchType.name, this)
                                                                         }
                                                                     }

@@ -63,6 +63,7 @@ class FirebaseManagerAnalyticsProperties {
         const val ABSA_CC_VIEW_INDIVIDUAL_STATEMENT: String = "GA_Event_ONE_ABSA_CC_VIEW_IND_STATEMENT"
 
         const val SHOPQS_ADD_TO_CART = "GA_Event_ONE_SHOPQS_ADD_TO_CART"
+        const val SHOP_SCAN_CODE = "GA_Event_ONE_SHOPSCANCODE"
     }
 
     class PropertyNames {
