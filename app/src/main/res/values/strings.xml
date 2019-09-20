@@ -889,7 +889,6 @@
     <string name="view_tax_invoice">View Tax Invoice</string>
     <string name="invoice_number">invoice number</string>
     <string name="tax_invoices">TAX INVOICES</string>
-
     <string name="shop_create_a_list">Create A New List</string>
     <string name="shop_sign_out_order_title">sign in to view\nand create lists</string>
     <string name="shop_sign_out_order_desc">Search for products to start adding items to this list.</string>
@@ -936,7 +935,7 @@
     <string name="participating_stores">participating stores</string>
     <string name="replacement_desc_part_one">Collect your free replacement card at the Financial Services counter at any of the participating Woolworths stores nationwide.</string>
     <string name="replacement_desc_part_two">  Once you have your replacement card, you can link it in a few easy steps.</string>
-<string name="nearest_store">Nearest stores</string>
+    <string name="nearest_store">Nearest stores</string>
     <string name="link_your_new_card">Link Your New Card</string>
     <string name="link_new_card_desc">Enter the card number below, or tap the camera icon to scan your new card information.</string>
     <string name="invalid_card_number">Invalid card number.</string>
@@ -1019,7 +1018,6 @@
     <string name="all_reason_to_join_desc">WRewards is our way of rewarding customers instantly. Get access to exclusive Woolies savings throughout the year!</string>
     <string name="saving_woolies_favorite_every_day_title">Savings on Woolies Favourites Every Day</string>
     <string name="saving_woolies_favorite_every_day_desc">Get instant savings on quality staples and best-loved products. Look out for the WRewards icon in the Daily Difference, in store and online or on the Woolies app.</string>
-
     <string name="extra_saving_promo_event_title">Extra Savings, Promos &amp; Events</string>
     <string name="extra_saving_promo_event_desc">You may get something extra on promos – be it early access to promos, additional savings or complimentary vouchers. Best of all, some promos will be exclusive to WRewards members.</string>
    <string name="exclusive_voucher_just_for_you_title">Exclusive Vouchers Just For You</string>
@@ -1048,6 +1046,11 @@
     <string name="calculation_status_level_paragraph1">Your annual spend will be calculated from the first Monday of each Woolworths financial year. This commences at the end of June or beginning of July and comes to an end on the last Sunday of the Woolworths financial year 12 months later.</string>
     <string name="calculation_status_level_paragraph2"> You will be eligible for an upgrade in status level every month of the year. Downgrades only take place once, annually at the beginning of July, and are based on your spend during the previous 12 months.</string>
     <string name="calculation_status_level_paragraph3">We are entitled to adjust the spend thresholds (they are adjusted annually), the number of status levels or the rewards at any stage without notification.</string>
+    <string name="absa_common_error_message">Please try again or contact our call centre on 0861 50 20 10.</string>
+    <string name="absa_otp_screen_description">Please confirm by entering the OTP sent to your cell phone number at\u0020</string>
+    <string name="absa_wrong_otp_entered">Wrong OTP Entered. Please try again.</string>
+    <string name="absa_otp_screen_title">Enter 8 Digit OTP Number</string>
+    <string name="absa_general_error_title">Oops something went wrong</string>
     <string name="link_reward_account">link account</string>
     <string name="food_product_type">foodProducts</string>
     <string name="select_your_quantity">Select Your Quantity</string>

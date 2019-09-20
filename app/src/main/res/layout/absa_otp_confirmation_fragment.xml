@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rlAbsaAtmFragmentContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fitsSystemWindows="true"
+    android:paddingStart="@dimen/thirty_two_dp"
+    android:paddingEnd="@dimen/thirty_two_dp"
+    android:paddingBottom="@dimen/twenty_four_dp"
+    >
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/tvEnterYourPin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/thirty_two_dp"
+        android:layout_marginBottom="@dimen/eight_dp"
+        android:text="@string/absa_otp_screen_title"
+        android:textColor="@color/black"
+        android:textSize="@dimen/twenty_sp"
+        app:WTextView_font="bold" />
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/otpDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        style="@style/absa_page_description_text_style"
+        android:layout_below="@id/tvEnterYourPin"
+        />
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/wrongOTP"
+        style="@style/absa_page_description_text_style"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/otpDescription"
+        android:layout_marginTop="10dp"
+        android:text="@string/absa_wrong_otp_entered"
+        android:textColor="@color/was_price_color"
+        android:textSize="@dimen/fifteen_sp"
+        android:visibility="invisible" />
+
+
+    <ProgressBar
+        android:id="@+id/pbEnterAtmPin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvEnterYourPin"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/sixteen_dp"
+        android:visibility="invisible" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/description"
+        >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true">
+
+            <ImageView
+                android:id="@+id/ivNavigateToDigitFragment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:alpha="0.5"
+                android:contentDescription="@string/app_label"
+                app:srcCompat="@drawable/next_button_icon" />
+
+        </RelativeLayout>
+
+        <za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView
+            android:id="@+id/edtEnterATMPin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="@color/white"
+            android:gravity="center"
+            android:inputType="number"
+            android:letterSpacing="0.5"
+            android:maxLength="8"
+            android:minWidth="5dp"
+            android:textColor="@color/black"
+            android:textCursorDrawable="@drawable/color_cursor"
+            android:textSize="@dimen/twenty_eight_sp">
+
+            <requestFocus />
+        </za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView>
+    </RelativeLayout>
+</RelativeLayout>
