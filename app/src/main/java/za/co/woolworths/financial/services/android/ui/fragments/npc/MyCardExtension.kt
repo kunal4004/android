@@ -40,7 +40,6 @@ open class MyCardExtension : Fragment() {
         }
     }
 
-
     fun navigateToPermanentCardBlockFragment(activity: AppCompatActivity?) {
         activity?.supportFragmentManager?.apply {
             val permanentCardBlockDialogFragment = BlockMyCardReasonConfirmationFragment.newInstance()

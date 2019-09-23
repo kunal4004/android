@@ -65,7 +65,7 @@ class ResendOTPFragment : WBottomSheetDialogFragment() {
     }
 
     private fun dismissView(otpMethodType: OTPMethodType) {
-        if (otpMethodType != OTPMethodType.NONE){
+        if (otpMethodType != OTPMethodType.NONE) {
             linkStoreCardOtp?.requestOTPApi(otpMethodType)
         }
         dismissAllowingStateLoss()
@@ -74,7 +74,7 @@ class ResendOTPFragment : WBottomSheetDialogFragment() {
     private fun resendOTPOption(): MutableList<Triple<Int, Int, String>> {
         val resendOptions: MutableList<Triple<Int, Int, String>> = mutableListOf()
         with(resendOptions) {
-            add(Triple(R.drawable.icon_mobile_phone, R.string.resend_sms_to, "1234"))
+            add(Triple(R.drawable.icon_mobile_phone, R.string.resend_sms_to, if (mOtpSentTo.contains("@")) " *** **** 1234" else mOtpSentTo))
             add(Triple(R.drawable.icon_email, R.string.send_to_your_email_address, ""))
             add(Triple(R.drawable.icon_mobile_call, R.string.call_center_desc, PHONE_NUMBER))
         }

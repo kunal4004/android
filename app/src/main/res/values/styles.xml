@@ -1795,4 +1795,36 @@
         <item name="android:windowBackground">@android:color/transparent</item>
     </style>
 
+    <style name="instantStoreCardReplacementEditTextStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">@dimen/thirty_two_dp</item>
+        <item name="android:layout_marginEnd">@dimen/thirty_two_dp</item>
+        <item name="android:layout_marginTop">@dimen/sixteen_dp</item>
+        <item name="android:paddingTop">@dimen/sixteen_dp</item>
+        <item name="android:paddingBottom">@dimen/sixteen_dp</item>
+        <item name="android:background">@drawable/input_box_inactive_bg</item>
+        <item name="android:imeOptions">actionDone</item>
+        <item name="android:maxLength">19</item>
+        <item name="android:paddingStart">24dp</item>
+        <item name="android:paddingEnd">14dp</item>
+        <item name="android:cursorVisible">false</item>
+        <item name="android:textCursorDrawable">@color/black</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textColorHint">@color/unavailable</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:inputType">number|textNoSuggestions</item>
+    </style>
+
+    <style name="instantStoreCardReplacementImageButtonStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:paddingStart">@dimen/ten_dp</item>
+        <item name="android:paddingTop">@dimen/twelve_dp</item>
+        <item name="android:paddingEnd">@dimen/ten_dp</item>
+        <item name="android:paddingBottom">@dimen/twelve_dp</item>
+    </style>
+
 </resources>

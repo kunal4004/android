@@ -48,14 +48,12 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
     }
 
     private fun linkStoreCardRequest() {
-
         (activity as? InstantStoreCardReplacementActivity)?.apply {
-
             otpMethodType = getOTPMethodType()
             storeDetails = getStoreCardDetail()
             linkStoreCard = LinkStoreCard(storeDetails?.productOfferingId
                     ?: 0, storeDetails?.accountNumber
-                    ?: "", getCardNumber(), 1, getOtpNumber(), getOTPMethodType())
+                    ?: "", getCardNumber(), getSequenceNumber(), getOtpNumber(), getOTPMethodType())
             linkStoreCard?.let { request ->
                 val storeCardOTPRequest = otpMethodType?.let { otp -> StoreCardOTPRequest(this, otp) }
                 storeCardOTPRequest?.make(object : IOTPLinkStoreCard<LinkNewCardResponse> {
@@ -67,6 +65,7 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
                     override fun onSuccessHandler(response: LinkNewCardResponse) {
                         super.onSuccessHandler(response)
                         if (!isAdded) return
+                        (activity as? InstantStoreCardReplacementActivity)?.clearFlag()
                         progressState()?.animateSuccessEnd(true)
                         object : CountDownTimer(1500, 100) {
                             override fun onTick(millisUntilFinished: Long) {

@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.npc
 
-import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,15 +13,16 @@ import za.co.woolworths.financial.services.android.models.dto.npc.LinkNewCardOTP
 import cards.pay.paycardsrecognizer.sdk.ScanCardIntent
 import android.app.Activity.RESULT_OK
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.PorterDuff
 import android.os.Parcelable
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import androidx.core.content.ContextCompat
 import cards.pay.paycardsrecognizer.sdk.Card
 import za.co.woolworths.financial.services.android.contracts.IOTPLinkStoreCard
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity
+import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.GotItDialogIconFragment
 
 class InstantStoreCardFragment : MyCardExtension() {
 
@@ -37,76 +37,89 @@ class InstantStoreCardFragment : MyCardExtension() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        tvReplacementCardInfo?.apply {
-            paintFlags = Paint.UNDERLINE_TEXT_FLAG
-            setOnClickListener {
-                replaceFragment(
-                        fragment = GetReplacementCardFragment.newInstance(),
-                        tag = GetReplacementCardFragment::class.java.simpleName,
-                        containerViewId = R.id.flMyCard,
-                        allowStateLoss = true,
-                        enterAnimation = R.anim.slide_in_from_right,
-                        exitAnimation = R.anim.slide_to_left,
-                        popEnterAnimation = R.anim.slide_from_left,
-                        popExitAnimation = R.anim.slide_to_right
-                )
-            }
-        }
         inputTextWatcher()
         tappedEvent()
-        pbOTPLoader?.indeterminateDrawable?.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY)
+        otpProgressBar?.indeterminateDrawable
+        activity?.let { activity -> ContextCompat.getColor(activity, R.color.black) }?.let { color -> otpProgressBar?.indeterminateDrawable?.setColorFilter(color, android.graphics.PorterDuff.Mode.SRC_IN) }
     }
 
     private fun tappedEvent() {
-        imNavigateToOTPFragment?.setOnClickListener {
-            val cardNumber = etCardNumber?.text?.toString() ?: ""
+        navigateToEnterOTPFragmentImageView?.setOnClickListener {
+            if (shouldDisableUINavigation) return@setOnClickListener
+            val cardNumber = cardNumberEditText?.text?.toString() ?: ""
             (activity as? InstantStoreCardReplacementActivity)?.setCardNumber(cardNumber)
-            if (shouldDisableUINavigation) return@setOnClickListener
             navigateToOTPScreen()
-        }
-
-        imCameraIcon?.setOnClickListener {
-            if (shouldDisableUINavigation) return@setOnClickListener
-            activity?.apply {
-                val builder = ScanCardIntent.Builder(this)
-                builder.setScanCardHolder(true)
-                builder.setSaveCard(false)
-                builder.setSoundEnabled(true)
-                startActivityForResult(builder.build(), REQUEST_CODE_SCAN_CARD)
-            }
         }
     }
 
     private fun navigateToOTPScreen() {
         if (shouldDisableUINavigation) return
-        if (imNavigateToOTPFragment?.alpha == 1.0f) {
+        if (navigateToEnterOTPFragmentImageView?.alpha == 1.0f) {
+            (activity as? InstantStoreCardReplacementActivity)?.apply {
+                setSequenceNumber(sequenceNumberEditText?.text?.toString() ?: "")
+                setOTPType(OTPMethodType.EMAIL)
+            }
             makeOTPCall()
         }
     }
 
     private fun inputTextWatcher() {
-        etCardNumber?.apply {
+        cardNumberEditText?.apply {
             addTextChangedListener(object : CreditCardTextWatcher(this) {
 
                 override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                     super.onTextChanged(s, start, before, count)
-                    imNavigateToOTPFragment?.alpha = if (etCardNumber?.length() == 19) 1.0f else 0.5f
+                    navigateToOTPScreenValidator()
                 }
             })
         }
 
-        etCardNumber?.setOnEditorActionListener { v, actionId, event ->
+        sequenceNumberEditText?.apply {
+            addTextChangedListener(object : CreditCardTextWatcher(this) {
+
+                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                    super.onTextChanged(s, start, before, count)
+                    navigateToEnterOTPFragmentImageView?.alpha = if (cardNumberEditText?.length() == 19 && sequenceNumberEditText.length() == 1) 1.0f else 0.5f
+                }
+            })
+        }
+
+        cardNumberEditText?.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 navigateToOTPScreen()
             }
             false
         }
+
+        cardNumberEditText?.setOnFocusChangeListener { v, hasFocus ->
+            cardNumberEditText?.isCursorVisible = hasFocus
+        }
+
+        sequenceNumberEditText?.setOnFocusChangeListener { v, hasFocus ->
+            sequenceNumberEditText?.isCursorVisible = hasFocus
+        }
+
+        infoIconImage?.setOnClickListener {
+            activity?.apply {
+                val gotItDialogIconFragment = GotItDialogIconFragment.newInstance(
+                        title = getString(R.string.sequence_number),
+                        description = getString(R.string.sequence_number_desc))
+                supportFragmentManager.beginTransaction().let { fragmentTransaction -> gotItDialogIconFragment.show(fragmentTransaction, GotItDialogIconFragment::class.java.simpleName) }
+            }
+        }
+
+        cardNumberEditText?.setOnKeyPreImeListener { onKeyPreImeListener }
+        sequenceNumberEditText?.setOnKeyPreImeListener { onKeyPreImeListener }
+    }
+
+    private fun navigateToOTPScreenValidator() {
+        navigateToEnterOTPFragmentImageView?.alpha = if (cardNumberEditText?.length() == 19 && sequenceNumberEditText?.length() == 1) 1.0f else 0.5f
     }
 
     override fun onResume() {
         super.onResume()
         activity?.let {
-            etCardNumber?.apply {
+            cardNumberEditText?.apply {
                 requestFocus()
                 showSoftKeyboard(it, this)
             }
@@ -120,19 +133,21 @@ class InstantStoreCardFragment : MyCardExtension() {
                 override fun startLoading() {
                     super.startLoading()
                     shouldDisableUINavigation = true
-                    pbOTPLoader?.visibility = VISIBLE
-                    imCameraIcon?.isEnabled = false
-                    etCardNumber?.isFocusable = false
-                    etCardNumber?.isFocusableInTouchMode = false
+                    otpProgressBar?.visibility = VISIBLE
+                    cardNumberEditText?.isFocusable = false
+                    cardNumberEditText?.isFocusableInTouchMode = false
+                    sequenceNumberEditText?.isFocusable = false
+                    sequenceNumberEditText?.isFocusableInTouchMode = false
                 }
 
                 override fun loadComplete() {
                     super.loadComplete()
                     shouldDisableUINavigation = false
-                    pbOTPLoader?.visibility = GONE
-                    imCameraIcon?.isEnabled = true
-                    etCardNumber?.isFocusable = true
-                    etCardNumber?.isFocusableInTouchMode = true
+                    otpProgressBar?.visibility = GONE
+                    cardNumberEditText?.isFocusable = true
+                    cardNumberEditText?.isFocusableInTouchMode = true
+                    sequenceNumberEditText?.isFocusable = true
+                    sequenceNumberEditText?.isFocusableInTouchMode = true
                 }
 
                 override fun onSuccessHandler(response: LinkNewCardOTP) {
@@ -154,6 +169,8 @@ class InstantStoreCardFragment : MyCardExtension() {
         }
     }
 
+    private val onKeyPreImeListener = WLoanEditTextView.OnKeyPreImeListener { activity?.onBackPressed() }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE_SCAN_CARD) {
@@ -161,7 +178,7 @@ class InstantStoreCardFragment : MyCardExtension() {
                 RESULT_OK -> {
                     val cardNumber = (data?.getParcelableExtra<Parcelable>(ScanCardIntent.RESULT_PAYCARDS_CARD) as? Card)?.cardNumber
                             ?: ""
-                    etCardNumber?.setText(cardNumber)
+                    cardNumberEditText?.setText(cardNumber)
                 }
                 else -> return
             }

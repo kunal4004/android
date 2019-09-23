@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.WindowManager
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.my_card_activity.*
@@ -13,8 +14,6 @@ import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.InstantStoreCardFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardDetailFragment
 import za.co.woolworths.financial.services.android.util.Utils
-import java.util.*
-
 
 class InstantStoreCardReplacementActivity : MyCardActivityExtension() {
 
@@ -23,6 +22,7 @@ class InstantStoreCardReplacementActivity : MyCardActivityExtension() {
     private var otpType: OTPMethodType = OTPMethodType.SMS
     private var cardNumber: String? = null
     private var oTPNumber: String? = null
+    private var sequenceNumber: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -99,11 +99,6 @@ class InstantStoreCardReplacementActivity : MyCardActivityExtension() {
 
     fun getStoreCardDetail(): Account = Gson().fromJson(mStoreCardDetail, Account::class.java)
 
-    fun getCard() = mStoreCardDetail?.let { cardValue ->
-        Gson().fromJson(cardValue, Account::class.java)?.primaryCard?.cards
-                ?.let { cards -> Collections.max(cards) { card, nextCard -> card.openedDate().compareTo(nextCard.openedDate()) } }
-    }
-
     fun getOTPMethodType(): OTPMethodType = this.otpType
 
     fun setOTPType(otpMethodType: OTPMethodType) {
@@ -120,5 +115,15 @@ class InstantStoreCardReplacementActivity : MyCardActivityExtension() {
         oTPNumber = otp
     }
 
-    fun getOtpNumber() :String = oTPNumber ?: ""
+    fun getOtpNumber(): String = oTPNumber ?: ""
+
+    fun setSequenceNumber(sequenceNumber: String) {
+        this.sequenceNumber = sequenceNumber
+    }
+
+    fun getSequenceNumber() = sequenceNumber?.toInt() ?: 0
+
+
+    fun clearFlag() {window?.clearFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)}
+
 }

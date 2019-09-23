@@ -75,13 +75,11 @@ class StoreCardOTPRequest(private val activity: Activity?, private val otpMethod
         OneAppService.linkStoreCard(linkStoreCard).enqueue(CompletionHandler(object : RequestListener<LinkNewCardResponse> {
             override fun onSuccess(response: LinkNewCardResponse?) {
                 requestListener?.loadComplete()
-                response?.httpCode = 200
                 when (response?.httpCode) {
                     200 -> requestListener?.onSuccessHandler(response)
                     440 -> sessionExpired(response.response)
                     else -> requestListener?.onFailureHandler()
                 }
-
             }
 
             override fun onFailure(error: Throwable?) {

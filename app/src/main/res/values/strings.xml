@@ -947,7 +947,7 @@
     <string name="enter_otp_desc">Your One Time Pin(OTP) has been sent to %1$s. Please enter the OTP below.</string>
     <string name="did_not_receive_title">Did Not Receive otp?</string>
     <string name="resend_otp_title">Resend OTP</string>
-    <string name="resend_sms_to">SMS to *** ****</string>
+    <string name="resend_sms_to">SMS to </string>
     <string name="send_to_your_email_address">Send to your email address</string>
     <string name="call_center_desc"> Call Centre</string>
     <string name="congratulations_title">Congratulations!\nYour New Card Has Successfully Been Linked.</string>
@@ -1063,4 +1063,7 @@
     <string name="cd_sign_out">sign out</string>
     <string name="call_the_call_center">Call the Call Centre (0861 50 20 20)</string>
     <string name="link_card_failure">Try linking your card again, or call the Call Centre (0861 50 20 20) for further assistance.</string>
+    <string name="enter_sequence_number">Enter sequence number</string>
+    <string name="sequence_number">Sequence Number</string>
+    <string name="sequence_number_desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
 </resources>

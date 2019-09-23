@@ -16,69 +16,76 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/tvTitle"
-        android:layout_width="match_parent"
+    <ImageView
+        android:id="@+id/topIcon"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:fontFamily="@font/futura_semi_bold_ttf"
-        android:gravity="center"
-        android:letterSpacing="0.07"
-        android:text="@string/rooted_phone_title"
-        android:textAllCaps="true"
-        android:textColor="@color/black"
-        android:textSize="16sp"
+        android:layout_marginTop="40dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/incSwipeCloseIndicator"
-        tools:ignore="UnusedAttribute" />
+        app:srcCompat="@drawable/sequence_number_icon" />
 
+    <TextView
+        android:id="@+id/titleTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:fontFamily="@font/futura_semi_bold_ttf"
+        android:gravity="center"
+        android:text="@string/sequence_number"
+        android:textColor="@color/black"
+        android:textSize="@dimen/twenty_sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/topIcon" />
 
     <TextView
         android:id="@+id/tvDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="32dp"
         android:fontFamily="@font/myriad_pro_regular_otf"
         android:gravity="center"
         android:lineSpacingExtra="4dp"
-        android:text="@string/loan_request_high_desc"
+        android:text="@string/sequence_number_desc"
         android:textColor="@color/description_color"
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
-
-    <View
-        android:id="@+id/vDescription"
-        android:layout_width="match_parent"
-        android:layout_height="0.4dp"
-        android:layout_marginTop="24dp"
-        android:background="@color/description_color"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvDescription" />
+        app:layout_constraintTop_toBottomOf="@+id/titleTextView" />
 
     <Button
-        android:id="@+id/okButtonTapped"
+        android:id="@+id/gotItButtonTapped"
         style="?android:attr/borderlessButtonStyle"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:background="@color/white"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="32dp"
+        android:background="@drawable/black_button_drawable_state"
         android:fontFamily="@font/futura_semi_bold_ttf"
         android:gravity="center"
-        android:letterSpacing="0.2"
+        android:letterSpacing="0.18"
+        android:lineSpacingExtra="4sp"
         android:text="@string/cli_got_it"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/vDescription"
+        app:layout_constraintTop_toBottomOf="@+id/tvDescription"
         tools:targetApi="lollipop" />
+
+    <View
+        android:id="@+id/bottomSpace"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gotItButtonTapped" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
