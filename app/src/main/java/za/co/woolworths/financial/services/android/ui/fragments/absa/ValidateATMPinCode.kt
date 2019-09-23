@@ -30,7 +30,7 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
     private var mCardToken: String? = cardToken
     private var mPinCode = pinCode
     private var mPollingCount: Int = 0
-    private var userCelleNumber:String? = null
+    private var userCellNumber:String? = null
 
     fun make() {
         mCardToken?.let { validateCardAndPin(it, mPinCode) }
@@ -48,7 +48,7 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
 
                             result?.toLowerCase().apply {
                                 if (this in acceptedResultMessages) { // in == contains
-                                    userCelleNumber = response.cellNumber
+                                    userCellNumber = response.cellNumber
                                     validateSureCheck(if (response.securityNotificationType == null) SecurityNotificationType.SureCheck else response.securityNotificationType)
                                     return
                                 }
@@ -147,7 +147,7 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
         AbsaValidateSureCheckRequest().make(SecurityNotificationType.OTP,
                 object : AbsaBankingOpenApiResponse.ResponseDelegate<ValidateSureCheckResponse> {
                     override fun onSuccess(response: ValidateSureCheckResponse?, cookies: MutableList<HttpCookie>?) {
-                        mValidatePinCodeDialogInterface?.onSuccessOFOTPSureCheck(userCelleNumber)
+                        mValidatePinCodeDialogInterface?.onSuccessOFOTPSureCheck(userCellNumber)
                     }
 
                     override fun onFailure(errorMessage: String) {

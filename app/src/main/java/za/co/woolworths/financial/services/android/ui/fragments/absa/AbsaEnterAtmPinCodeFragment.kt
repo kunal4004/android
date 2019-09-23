@@ -256,9 +256,9 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IV
     override fun onDialogButtonAction() {
     }
 
-    override fun onSuccessOFOTPSureCheck(userCelleNumber: String?) {
+    override fun onSuccessOFOTPSureCheck(userCellNumber: String?) {
         replaceFragment(
-                fragment = AbsaOTPConfirmationFragment.newInstance(userCelleNumber),
+                fragment = AbsaOTPConfirmationFragment.newInstance(userCellNumber),
                 tag = AbsaOTPConfirmationFragment::class.java.simpleName,
                 containerViewId = R.id.flAbsaOnlineBankingToDevice,
                 allowStateLoss = true,
