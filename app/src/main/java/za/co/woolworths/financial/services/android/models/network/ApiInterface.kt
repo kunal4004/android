@@ -14,7 +14,6 @@ import za.co.woolworths.financial.services.android.models.dto.npc.BlockMyCardRes
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementResponse
 import za.co.woolworths.financial.services.android.models.dto.statement.StatementResponse
-import java.util.*
 
 interface ApiInterface {
 

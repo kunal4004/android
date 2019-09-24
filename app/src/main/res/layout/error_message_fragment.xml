@@ -29,7 +29,7 @@
         android:fontFamily="@font/myriad_pro_regular_otf"
         android:gravity="center"
         android:lineSpacingExtra="1.4dp"
-        android:text="@string/oops_err_message"
+        android:text="@string/request_timeout_error"
         android:textColor="@color/semi_transparent_black"
         android:textSize="15sp"
         app:layout_constraintBottom_toTopOf="@+id/view2"

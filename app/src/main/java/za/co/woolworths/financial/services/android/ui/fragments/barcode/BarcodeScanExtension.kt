@@ -129,7 +129,7 @@ abstract class BarcodeScanExtension : Fragment() {
         progressBarVisibility(false)
         asyncTaskIsRunning(false)
         if (isAdded && WoolworthsApplication.isApplicationInForeground()) {
-            if (errorMessage.contains("SocketTimeoutException") || errorMessage.contains("ConnectionException")) {
+            if (errorMessage.contains("ConnectionException")) {
                 networkNotAvailable = false
             }
         }
