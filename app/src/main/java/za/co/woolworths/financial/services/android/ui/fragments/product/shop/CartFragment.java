@@ -710,7 +710,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 						mRemoveAllItemFromCartTapped = false;
 						updateCart(cartResponse, commerceItem);
 						mToggleItemRemoved.onRemoveSuccess();
-						QueryBadgeCounter.getInstance().setCartCount(0, INDEX_CART);
 					} else {
 						mToggleItemRemoved.onRemoveItem(false);
 					}
