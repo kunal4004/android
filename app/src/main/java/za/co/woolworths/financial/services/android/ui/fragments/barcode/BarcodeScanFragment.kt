@@ -74,6 +74,8 @@ open class BarcodeScanFragment : BarcodeScanExtension() {
                                                                         }
                                                                         contains(HOST_YOUTUBE) -> {
                                                                             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(this@apply)))
+                                                                            finish()
+                                                                            overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
                                                                         }
                                                                         else -> {
                                                                             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOP_SCAN_CODE)
