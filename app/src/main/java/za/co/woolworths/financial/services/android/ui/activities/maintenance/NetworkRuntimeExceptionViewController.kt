@@ -6,8 +6,6 @@ import android.os.HandlerThread
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorMessageDialogWithTitleFragment
 import androidx.fragment.app.FragmentActivity
-import android.R
-
 
 open class NetworkRuntimeExceptionViewController : HandlerThread(NetworkRuntimeExceptionViewController::class.java.simpleName) {
 
