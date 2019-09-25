@@ -710,7 +710,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 						mRemoveAllItemFromCartTapped = false;
 						updateCart(cartResponse, commerceItem);
 						mToggleItemRemoved.onRemoveSuccess();
-						QueryBadgeCounter.getInstance().setCartCount(0, INDEX_CART);
 					} else {
 						mToggleItemRemoved.onRemoveItem(false);
 					}
@@ -1165,7 +1164,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		if (data == null || data.globalMessages == null || mRemoveAllItemFromCartTapped) return;
 		GlobalMessages globalMessages = data.globalMessages;
 
-		if (TextUtils.isEmpty(globalMessages.getQualifierMessages().get(0))) return;
+		if (globalMessages.getQualifierMessages() == null) return;
 
 		String qualifierMessage = globalMessages.getQualifierMessages().get(0);
 
