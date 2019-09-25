@@ -45,7 +45,7 @@
 
 
     <ProgressBar
-        android:id="@+id/pbEnterAtmPin"
+        android:id="@+id/enterOTPProgressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tvEnterYourPin"
@@ -75,7 +75,7 @@
         </RelativeLayout>
 
         <za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView
-            android:id="@+id/edtEnterATMPin"
+            android:id="@+id/enterOTPEditText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
