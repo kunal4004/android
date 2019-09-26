@@ -241,9 +241,13 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
 		return super.onCreateOptionsMenu(menu);
 	}
 
-	public Call<LocationResponse> startSearch(final String query) {
+	public Call<LocationResponse> startSearch(final String searchTextField) {
 		Location location = Utils.getLastSavedLocation(SearchStoresActivity.this);
-		Call<LocationResponse> locationRequestCall = (location == null) ? OneAppService.INSTANCE.getLocations(null, null, query, null) : OneAppService.INSTANCE.getLocations(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()), query, "50000");
+
+		double latitude = (location == null) ? 0.0 : location.getLatitude();
+		double longitude = (location == null) ? 0.0 : location.getLongitude();
+
+		Call<LocationResponse> locationRequestCall = OneAppService.INSTANCE.queryServiceGetStore(latitude, longitude, searchTextField, null);
 		locationRequestCall.enqueue(new CompletionHandler<>(new RequestListener<LocationResponse>() {
 			@Override
 			public void onSuccess(LocationResponse locationResponse) {
