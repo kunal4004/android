@@ -58,7 +58,6 @@ import za.co.woolworths.financial.services.android.ui.views.AddedToCartBalloonFa
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.*
 import za.co.woolworths.financial.services.android.util.*
 import java.net.ConnectException
-import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.util.*
 
@@ -618,16 +617,10 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     private fun onFailureHandler(error: Throwable) {
-        // TODO:: Move to CompletionHandler class and handle throughout the app for post method whenever required
         activity?.let { activity ->
             when (error) {
                 is ConnectException, is UnknownHostException -> {
                     ErrorHandlerView(activity).showToast(getString(R.string.no_connection))
-                }
-                is SocketTimeoutException -> {
-
-                    val errorMessage = ErrorMessageDialogWithTitleFragment.newInstance()
-                    activity.supportFragmentManager.beginTransaction().let { supportManager -> errorMessage?.show(supportManager, ErrorMessageDialogWithTitleFragment::class.java.simpleName) }
                 }
                 else -> return
             }
