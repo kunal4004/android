@@ -283,7 +283,7 @@
     <string name="no_product_found">0 ITEMS FOUND</string>
     <string name="scan_product">SCAN PRODUCT</string>
     <string name="set_manually_enter_barcode">Manually enter the barcode</string>
-    <string name="set_info_detail">Place the barcode within the guidelines &amp; remain steady</string>
+    <string name="set_info_detail">Place the barcode or qr code within the guidelines &amp; remain steady</string>
     <string name="enter_barcode">ENTER BARCODE</string>
     <string name="enter_barcode_desc">ENTER THE NUMBER BELOW THE BARCODE</string>
     <string name="no_messages_to_display">No messages to display</string>
