@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import za.co.woolworths.financial.services.android.util.PersistenceLayer;
+import za.co.woolworths.financial.services.android.util.Utils;
 
 /**
  * Created by eesajacobs on 2016/11/29.
@@ -98,7 +99,7 @@ public class SessionDao extends BaseDao {
 		try {
 			String query = "SELECT * FROM Session WHERE [key] = ? ORDER BY id ASC LIMIT 1;";
 			Map<String, String> result = PersistenceLayer.getInstance().executeReturnableQuery(query, new String[]{
-					key.toString()
+                    Utils.encryptCipher(key.toString())
 			});
 
 			String id = null;
@@ -111,7 +112,7 @@ public class SessionDao extends BaseDao {
 				if (entry.getKey().equals("id")) {
 					id = entry.getValue();
 				} else if (entry.getKey().equals("value")) {
-					value = entry.getValue();
+					value = Utils.decryptCipher(entry.getValue());
 				} else if (entry.getKey().equals("dateCreated")) {
 					dateCreated = entry.getValue();
 				} else if (entry.getKey().equals("dateUpdated")) {
@@ -136,7 +137,7 @@ public class SessionDao extends BaseDao {
 				" WHERE [key] = ?";
 
 		PersistenceLayer.getInstance().executeVoidQuery(query, new String[]{
-				this.key.toString()
+                Utils.encryptCipher(this.key.toString())
 		});
 	}
 
@@ -145,8 +146,8 @@ public class SessionDao extends BaseDao {
 		String query = "INSERT INTO Session ([key], value) VALUES (?, ?);";
 
 		Map<String, String> arguments = new HashMap<>();
-		arguments.put("key", this.key.toString());
-		arguments.put("value", this.value);
+		arguments.put("key", Utils.encryptCipher(this.key.toString()));
+		arguments.put("value", Utils.encryptCipher(this.value));
 
 		long rowid = PersistenceLayer.getInstance().executeInsertQuery(this.getTableName(), arguments);
 		if (rowid == 0 || rowid == -1) {
@@ -162,7 +163,7 @@ public class SessionDao extends BaseDao {
 				" WHERE [key] = ?";
 
 		PersistenceLayer.getInstance().executeVoidQuery(query, new String[]{
-				this.value, this.key.toString()
+                Utils.encryptCipher(this.value), Utils.encryptCipher(this.key.toString())
 		});
 	}
 
