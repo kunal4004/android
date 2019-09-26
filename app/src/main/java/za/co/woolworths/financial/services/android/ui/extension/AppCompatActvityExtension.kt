@@ -200,5 +200,4 @@ fun EditText.afterTypingStateChanged(millisInFuture: Long, countDownInterval: Lo
             }
         }
     }
-
 }
