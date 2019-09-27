@@ -2,36 +2,90 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/root_view"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/eight_dp"
+    android:layout_height="345dp"
     android:background="@drawable/card_shadow">
 
     <ImageView
         android:id="@+id/imProductImage"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_gravity="center"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="44dp"
-        android:layout_marginEnd="17dp"
         android:contentDescription="@string/app_name"
         android:gravity="center"
-        android:scaleType="fitCenter"
-        android:minHeight="140dp"
+        android:paddingStart="24dp"
+        android:paddingTop="44dp"
+        android:paddingEnd="17dp"
+        android:paddingBottom="34dp"
+        android:scaleType="centerInside"
+        app:layout_collapseMode="parallax"
+        app:layout_constraintBottom_toTopOf="@+id/imageGuideLine"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/imageGuideLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.60" />
+
+
+    <ImageView
+        android:id="@+id/imNewImage"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/app_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imSave"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="4dp"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/app_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imNewImage" />
+
+    <ImageView
+        android:id="@+id/imReward"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="4dp"
+        android:adjustViewBounds="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imSave"
+        tools:ignore="ContentDescription" />
+
+    <ImageView
+        android:id="@+id/imVitality"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="4dp"
+        android:adjustViewBounds="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imReward"
+        tools:ignore="ContentDescription" />
+
 
     <View
         android:id="@+id/horizontalProductSeparator"
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:layout_marginTop="34dp"
         android:background="@color/horizontal_line"
-        app:layout_constraintTop_toBottomOf="@+id/imProductImage"
-        tools:layout_editor_absoluteX="6dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageGuideLine" />
+
 
     <TextView
         android:id="@+id/tvProductName"
@@ -57,13 +111,14 @@
         tools:ignore="HardcodedText"
         tools:targetApi="lollipop" />
 
+
     <TextView
         android:id="@+id/tvSaveText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="2dp"
-        android:layout_marginEnd="12dp"
+        android:layout_marginEnd="19dp"
         android:ellipsize="end"
         android:fontFamily="@font/futura_medium_ttf"
         android:gravity="bottom|start"
@@ -78,6 +133,19 @@
         app:layout_constraintTop_toBottomOf="@+id/tvProductName"
         tools:ignore="HardcodedText,UnusedAttribute" />
 
+
+    <ImageView
+        android:id="@+id/imQuickShopAddToCartIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="9dp"
+        android:contentDescription="@string/app_label"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvSaveText"
+        app:srcCompat="@drawable/quick_shop_add_to_cart_button_state" />
+
+
     <com.google.android.flexbox.FlexboxLayout
         android:id="@+id/flexboxPrice"
         android:layout_width="0dp"
@@ -89,7 +157,7 @@
         app:alignContent="stretch"
         app:alignItems="stretch"
         app:flexWrap="wrap"
-        app:layout_constraintBottom_toBottomOf="@+id/imQuickShopAddToCartIcon"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/imQuickShopAddToCartIcon"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvSaveText">
@@ -144,71 +212,5 @@
 
     </com.google.android.flexbox.FlexboxLayout>
 
-
-    <ImageView
-        android:id="@+id/imQuickShopAddToCartIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
-        android:layout_marginEnd="9dp"
-        android:contentDescription="@string/app_label"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvSaveText"
-        app:srcCompat="@drawable/quick_shop_add_to_cart_button_state" />
-
-
-    <ImageView
-        android:id="@+id/imNewImage"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="12dp"
-        android:adjustViewBounds="true"
-        android:contentDescription="@string/app_label"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/imSave"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="4dp"
-        android:adjustViewBounds="true"
-        android:contentDescription="@string/app_label"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imNewImage" />
-
-    <ImageView
-        android:id="@+id/imReward"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="4dp"
-        android:adjustViewBounds="true"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imSave"
-        tools:ignore="ContentDescription" />
-
-    <ImageView
-        android:id="@+id/imVitality"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="4dp"
-        android:adjustViewBounds="true"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imReward"
-        tools:ignore="ContentDescription" />
-
-    <View
-        android:id="@+id/bottomView"
-        android:layout_width="match_parent"
-        android:layout_height="15dp"
-        android:layout_marginStart="6dp"
-        android:layout_marginEnd="6dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/flexboxPrice" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
