@@ -20,12 +20,12 @@ import za.co.woolworths.financial.services.android.util.barcode.AutoFocusMode
 import za.co.woolworths.financial.services.android.util.barcode.CodeScanner
 import za.co.woolworths.financial.services.android.util.barcode.CodeScannerView
 import android.net.Uri
+import za.co.woolworths.financial.services.android.ui.views.alert.OnHideAlertListener
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 
 
-open class BarcodeScanFragment : BarcodeScanExtension() {
+open class BarcodeScanFragment : BarcodeScanExtension(), OnHideAlertListener {
     private var mCodeScanner: CodeScanner? = null
-    private var invalidQRCode:String = ""
 
     companion object {
         fun newInstance() = BarcodeScanFragment()
@@ -66,11 +66,7 @@ open class BarcodeScanFragment : BarcodeScanExtension() {
                                                                 with(it.searchTerm) {
                                                                     when {
                                                                         isEmpty() -> {
-                                                                            if (!this@apply.equals(invalidQRCode, true)) {
-                                                                                ErrorHandlerView(activity).showToast(getString(R.string.invalid_qr_code))
-                                                                                invalidQRCode = this@apply
-                                                                            }
-                                                                            startPreview()
+                                                                            ErrorHandlerView(activity).showToast(getString(R.string.invalid_qr_code),this@BarcodeScanFragment)
                                                                         }
                                                                         contains(HOST_YOUTUBE) -> {
                                                                             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(this@apply)))
@@ -146,6 +142,10 @@ open class BarcodeScanFragment : BarcodeScanExtension() {
         if (isConnected && !networkNotAvailable) {
             mRetrieveProductDetail = retrieveProductDetail()
         }
+    }
+
+    override fun onHide() {
+        startPreview()
     }
 
 }
