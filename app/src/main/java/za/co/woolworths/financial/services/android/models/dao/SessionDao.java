@@ -99,7 +99,7 @@ public class SessionDao extends BaseDao {
 		try {
 			String query = "SELECT * FROM Session WHERE [key] = ? ORDER BY id ASC LIMIT 1;";
 			Map<String, String> result = PersistenceLayer.getInstance().executeReturnableQuery(query, new String[]{
-                    Utils.encryptCipher(key.toString())
+                    Utils.aes256EncryptStringAsBase64String(key.toString())
 			});
 
 			String id = null;
@@ -112,7 +112,7 @@ public class SessionDao extends BaseDao {
 				if (entry.getKey().equals("id")) {
 					id = entry.getValue();
 				} else if (entry.getKey().equals("value")) {
-					value = Utils.decryptCipher(entry.getValue());
+					value = Utils.aes256DecryptBase64EncryptedString(entry.getValue());
 				} else if (entry.getKey().equals("dateCreated")) {
 					dateCreated = entry.getValue();
 				} else if (entry.getKey().equals("dateUpdated")) {
@@ -137,7 +137,7 @@ public class SessionDao extends BaseDao {
 				" WHERE [key] = ?";
 
 		PersistenceLayer.getInstance().executeVoidQuery(query, new String[]{
-                Utils.encryptCipher(this.key.toString())
+                Utils.aes256EncryptStringAsBase64String(this.key.toString())
 		});
 	}
 
@@ -146,8 +146,8 @@ public class SessionDao extends BaseDao {
 		String query = "INSERT INTO Session ([key], value) VALUES (?, ?);";
 
 		Map<String, String> arguments = new HashMap<>();
-		arguments.put("key", Utils.encryptCipher(this.key.toString()));
-		arguments.put("value", Utils.encryptCipher(this.value));
+		arguments.put("key", Utils.aes256EncryptStringAsBase64String(this.key.toString()));
+		arguments.put("value", Utils.aes256EncryptStringAsBase64String(this.value));
 
 		long rowid = PersistenceLayer.getInstance().executeInsertQuery(this.getTableName(), arguments);
 		if (rowid == 0 || rowid == -1) {
@@ -163,7 +163,7 @@ public class SessionDao extends BaseDao {
 				" WHERE [key] = ?";
 
 		PersistenceLayer.getInstance().executeVoidQuery(query, new String[]{
-                Utils.encryptCipher(this.value), Utils.encryptCipher(this.key.toString())
+                Utils.aes256EncryptStringAsBase64String(this.value), Utils.aes256EncryptStringAsBase64String(this.key.toString())
 		});
 	}
 

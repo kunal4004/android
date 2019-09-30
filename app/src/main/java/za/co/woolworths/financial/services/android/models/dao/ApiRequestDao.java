@@ -40,10 +40,10 @@ public class ApiRequestDao extends BaseDao {
         String query = "SELECT * FROM ApiRequest WHERE endpoint=? AND requestType=? AND headers=? AND parameters=? AND dateExpires > datetime() ORDER BY id DESC LIMIT 1;";
         Map<String, String> result = new HashMap<>();
         try {
-            String headersEncrypted = Utils.encryptCipher(_headers);
-            String parametersEncrypted = Utils.encryptCipher(_parameters);
-            String endpointEncrypted = Utils.encryptCipher(_endpoint);
-            String requestTypeEncrypted = Utils.encryptCipher("" + _requestType);
+            String headersEncrypted = Utils.aes256EncryptStringAsBase64String(_headers);
+            String parametersEncrypted = Utils.aes256EncryptStringAsBase64String(_parameters);
+            String endpointEncrypted = Utils.aes256EncryptStringAsBase64String(_endpoint);
+            String requestTypeEncrypted = Utils.aes256EncryptStringAsBase64String("" + _requestType);
 
             result = PersistenceLayer.getInstance().executeReturnableQuery(query, new String[]{
                     endpointEncrypted, requestTypeEncrypted, headersEncrypted, parametersEncrypted
@@ -73,7 +73,7 @@ public class ApiRequestDao extends BaseDao {
                     break;
                 case "endpoint":
                     try {
-                    this.endpoint = Utils.decryptCipher(entry.getValue());
+                    this.endpoint = Utils.aes256DecryptBase64EncryptedString(entry.getValue());
                     } catch (Exception e) {
                         Log.d(TAG, e.getMessage());
                         this.endpoint = _endpoint;
@@ -81,7 +81,7 @@ public class ApiRequestDao extends BaseDao {
                     break;
                 case "requestType":
                     try {
-                        this.requestType = Utils.decryptCipher(entry.getValue());
+                        this.requestType = Utils.aes256DecryptBase64EncryptedString(entry.getValue());
                     } catch (Exception e) {
                         Log.d(TAG, e.getMessage());
                         this.requestType = _requestType;
@@ -89,7 +89,7 @@ public class ApiRequestDao extends BaseDao {
                     break;
                 case "headers":
                     try {
-                        this.headers = Utils.decryptCipher(entry.getValue());
+                        this.headers = Utils.aes256DecryptBase64EncryptedString(entry.getValue());
                     } catch (Exception e) {
                         Log.d(TAG, e.getMessage());
                         this.headers = _headers;
@@ -97,7 +97,7 @@ public class ApiRequestDao extends BaseDao {
                     break;
                 case "parameters":
                     try {
-                        this.parameters = Utils.decryptCipher(entry.getValue());
+                        this.parameters = Utils.aes256DecryptBase64EncryptedString(entry.getValue());
                     } catch (Exception e) {
                         Log.d(TAG, e.getMessage());
                         this.parameters = _parameters;
@@ -122,10 +122,10 @@ public class ApiRequestDao extends BaseDao {
         try {
             this.dateExpires = persistenceLayer.executeReturnableQuery("SELECT DATETIME(datetime(), '+" + this.cacheTime + " seconds') as cacheTime", new String[]{}).get("cacheTime");
 
-            String headersEncrypted = Utils.encryptCipher(this.headers);
-            String parametersEncrypted = Utils.encryptCipher(this.parameters);
-            String endpointsEncrypted = Utils.encryptCipher(this.endpoint);
-            String requestTypeEncrypted = Utils.encryptCipher("" + this.requestType);
+            String headersEncrypted = Utils.aes256EncryptStringAsBase64String(this.headers);
+            String parametersEncrypted = Utils.aes256EncryptStringAsBase64String(this.parameters);
+            String endpointsEncrypted = Utils.aes256EncryptStringAsBase64String(this.endpoint);
+            String requestTypeEncrypted = Utils.aes256EncryptStringAsBase64String("" + this.requestType);
 
             Map<String, String> arguments = new HashMap<>();
             arguments.put("endpoint", endpointsEncrypted);

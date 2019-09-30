@@ -1,14 +1,10 @@
 package za.co.woolworths.financial.services.android.models.dao;
 
-import android.util.Base64;
 import android.util.Log;
 
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-import okhttp3.internal.Util;
-import za.co.absa.openbankingapi.SymmetricCipher;
 import za.co.woolworths.financial.services.android.util.PersistenceLayer;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -65,13 +61,13 @@ public class ApiResponseDao extends BaseDao {
                 this.message = entry.getValue();
             } else if (entry.getKey().equals("body")) {
                 try {
-                    this.body = Utils.decryptCipher(entry.getValue());
+                    this.body = Utils.aes256DecryptBase64EncryptedString(entry.getValue());
                 } catch (Exception e) {
                     Log.d(TAG, e.getMessage());
                 }
             } else if (entry.getKey().equals("headers")) {
                 try {
-                    this.headers = Utils.decryptCipher(entry.getValue());
+                    this.headers = Utils.aes256DecryptBase64EncryptedString(entry.getValue());
                 } catch (Exception e) {
                     Log.d(TAG, e.getMessage());
                 }
@@ -89,8 +85,8 @@ public class ApiResponseDao extends BaseDao {
 
             PersistenceLayer persistenceLayer = PersistenceLayer.getInstance();
 
-            String headersEncrypted = Utils.encryptCipher(this.headers);
-            String bodyEncrypted = Utils.encryptCipher(this.body);
+            String headersEncrypted = Utils.aes256EncryptStringAsBase64String(this.headers);
+            String bodyEncrypted = Utils.aes256EncryptStringAsBase64String(this.body);
 
             Map<String, String> arguments = new HashMap<>();
             arguments.put("apiRequestId", this.apiRequestId);

@@ -1539,12 +1539,15 @@ public class Utils {
 		return found;
 	}
 
-	public static String decryptCipher(String entry) throws DecryptionFailureException {
+	public static String aes256DecryptBase64EncryptedString(String entry) throws DecryptionFailureException {
 		return new String(SymmetricCipher.Aes256Decrypt(SYMMETRIC_KEY, Base64.decode(entry, Base64.DEFAULT)), StandardCharsets.UTF_8);
 	}
 
-	public static String encryptCipher(String entry) throws DecryptionFailureException {
+	public static String aes256EncryptStringAsBase64String(String entry) throws DecryptionFailureException {
 		return Base64.encodeToString(SymmetricCipher.Aes256Encrypt(SYMMETRIC_KEY, entry), Base64.DEFAULT);
 	}
+
+
+
 
 }
