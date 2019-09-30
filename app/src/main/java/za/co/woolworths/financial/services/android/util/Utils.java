@@ -31,6 +31,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import android.text.SpannableString;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -68,6 +69,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -86,6 +88,10 @@ import java.util.Map;
 import java.util.UUID;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
+import za.co.absa.openbankingapi.AsymmetricCryptoHelper;
+import za.co.absa.openbankingapi.Cryptography;
+import za.co.absa.openbankingapi.DecryptionFailureException;
+import za.co.absa.openbankingapi.SymmetricCipher;
 import za.co.absa.openbankingapi.woolworths.integration.AbsaSecureCredentials;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.AppInstanceObject;
@@ -119,6 +125,7 @@ import za.co.woolworths.financial.services.android.util.tooltip.ViewTooltip;
 import static android.Manifest.permission_group.STORAGE;
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.WHITE;
+import static za.co.woolworths.financial.services.android.models.dao.ApiRequestDao.SYMMETRIC_KEY;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.REMOVE_ALL_BADGE_COUNTER;
 
 public class Utils {
@@ -1531,4 +1538,16 @@ public class Utils {
 		}
 		return found;
 	}
+
+	public static String aes256DecryptBase64EncryptedString(String entry) throws DecryptionFailureException {
+		return new String(SymmetricCipher.Aes256Decrypt(SYMMETRIC_KEY, Base64.decode(entry, Base64.DEFAULT)), StandardCharsets.UTF_8);
+	}
+
+	public static String aes256EncryptStringAsBase64String(String entry) throws DecryptionFailureException {
+		return Base64.encodeToString(SymmetricCipher.Aes256Encrypt(SYMMETRIC_KEY, entry), Base64.DEFAULT);
+	}
+
+
+
+
 }
