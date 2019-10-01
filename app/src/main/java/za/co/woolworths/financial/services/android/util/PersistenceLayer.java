@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import okhttp3.internal.Util;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 
 /**
@@ -140,7 +141,7 @@ public class PersistenceLayer extends SQLiteOpenHelper {
         ContentValues row = new ContentValues();
 
         for(Map.Entry<String, String> entry : arguments.entrySet()){
-            row.put(entry.getKey(), entry.getValue());
+            row.put(entry.getKey(),entry.getValue());
         }
         long rowid=-1;
         try {

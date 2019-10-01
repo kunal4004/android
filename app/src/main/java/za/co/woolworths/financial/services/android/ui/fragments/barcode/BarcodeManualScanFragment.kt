@@ -89,8 +89,7 @@ class BarcodeManualScanFragment : BarcodeScanExtension() {
         if (edtBarcodeNumber.text.isEmpty()) return
         if (!getProductDetailAsyncTaskIsRunning)
             edtBarcodeNumber?.text?.toString()?.let { barcodeText ->
-                setProductRequestBody(ProductsRequestParams.SearchType.BARCODE, barcodeText)
-                retrieveProductDetail()
+                sendResultBack(ProductsRequestParams.SearchType.BARCODE.name, barcodeText)
             }
     }
 

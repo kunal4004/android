@@ -62,7 +62,9 @@
                             <ImageView
                                 android:id="@+id/imProductCategory"
                                 android:layout_width="match_parent"
+                                android:adjustViewBounds="true"
                                 android:layout_height="match_parent"
+                                android:scaleType="fitXY"
                                 android:clickable="false"
                                 />
                         </LinearLayout>

@@ -13,10 +13,11 @@ import com.awfs.coordination.R;
 
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
 import za.co.woolworths.financial.services.android.models.dto.Promotion;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator;
-import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
 
 public class FeaturedPromotionsAdapter extends PagerAdapter {
@@ -52,13 +53,8 @@ public class FeaturedPromotionsAdapter extends PagerAdapter {
 			cView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				GridFragment gridFragment = new GridFragment();
-				Bundle bundle = new Bundle();
-				bundle.putString("sub_category_name", promotionImage.getContext().getResources().getString(R.string.featured_promotions));
-				bundle.putString("sub_category_id", promotions.get(position).path);
-				gridFragment.setArguments(bundle);
 				mBottomNavigator.setSelectedIconPosition(BottomNavigationActivity.INDEX_ACCOUNT);
-				mBottomNavigator.pushFragment(gridFragment);
+				mBottomNavigator.pushFragment(ProductListingFragment.Companion.newInstance(ProductsRequestParams.SearchType.NAVIGATE, promotionImage.getContext().getResources().getString(R.string.featured_promotions), promotions.get(position).path));
 			}
 		});
 		return cView;

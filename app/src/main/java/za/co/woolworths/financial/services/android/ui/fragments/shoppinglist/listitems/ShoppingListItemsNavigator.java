@@ -16,7 +16,7 @@ public interface ShoppingListItemsNavigator {
 
     void onShoppingListItemDelete(ShoppingListItemsResponse shoppingListItemsResponse);
 
-    void onItemDeleteClick(String id, String productId, String catalogRefId);
+    void onItemDeleteClick(String id, String productId, String catalogRefId, boolean shouldUpdateShoppingList);
 
     void onShoppingSearchClick();
 

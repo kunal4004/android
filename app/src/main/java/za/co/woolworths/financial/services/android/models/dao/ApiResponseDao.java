@@ -1,14 +1,12 @@
 package za.co.woolworths.financial.services.android.models.dao;
 
-import android.util.Base64;
 import android.util.Log;
 
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-import za.co.absa.openbankingapi.SymmetricCipher;
 import za.co.woolworths.financial.services.android.util.PersistenceLayer;
+import za.co.woolworths.financial.services.android.util.Utils;
 
 /**
  * Created by eesajacobs on 2016/12/29.
@@ -63,13 +61,13 @@ public class ApiResponseDao extends BaseDao {
                 this.message = entry.getValue();
             } else if (entry.getKey().equals("body")) {
                 try {
-                    this.body = new String(SymmetricCipher.Aes256Decrypt(ApiRequestDao.SYMMETRIC_KEY, Base64.decode(entry.getValue(), Base64.DEFAULT)), StandardCharsets.UTF_8);
+                    this.body = Utils.aes256DecryptBase64EncryptedString(entry.getValue());
                 } catch (Exception e) {
                     Log.d(TAG, e.getMessage());
                 }
             } else if (entry.getKey().equals("headers")) {
                 try {
-                    this.headers = new String(SymmetricCipher.Aes256Decrypt(ApiRequestDao.SYMMETRIC_KEY, Base64.decode(entry.getValue(), Base64.DEFAULT)), StandardCharsets.UTF_8);
+                    this.headers = Utils.aes256DecryptBase64EncryptedString(entry.getValue());
                 } catch (Exception e) {
                     Log.d(TAG, e.getMessage());
                 }
@@ -87,8 +85,8 @@ public class ApiResponseDao extends BaseDao {
 
             PersistenceLayer persistenceLayer = PersistenceLayer.getInstance();
 
-            String headersEncrypted = Base64.encodeToString(SymmetricCipher.Aes256Encrypt(ApiRequestDao.SYMMETRIC_KEY, this.headers), Base64.DEFAULT);
-            String bodyEncrypted = Base64.encodeToString(SymmetricCipher.Aes256Encrypt(ApiRequestDao.SYMMETRIC_KEY, this.body), Base64.DEFAULT);
+            String headersEncrypted = Utils.aes256EncryptStringAsBase64String(this.headers);
+            String bodyEncrypted = Utils.aes256EncryptStringAsBase64String(this.body);
 
             Map<String, String> arguments = new HashMap<>();
             arguments.put("apiRequestId", this.apiRequestId);

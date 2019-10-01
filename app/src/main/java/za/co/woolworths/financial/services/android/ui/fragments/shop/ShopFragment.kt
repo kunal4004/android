@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop
 
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -28,6 +29,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.OnChi
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList.Companion.DISPLAY_TOAST_RESULT_CODE
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback
 import za.co.woolworths.financial.services.android.util.PermissionUtils
+import za.co.woolworths.financial.services.android.util.ScreenManager.SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.*
 
@@ -157,7 +159,7 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
     private fun navigateToBarcode() {
         activity?.apply {
             val openBarcodeActivity =  Intent(this, BarcodeScanActivity::class.java)
-            startActivity(openBarcodeActivity)
+            startActivityForResult(openBarcodeActivity, BarcodeScanActivity.BARCODE_ACTIVITY_REQUEST_CODE)
             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
         }
     }
@@ -179,6 +181,10 @@ class ShopFragment : Fragment(), PermissionResultCallback, OnChildFragmentEvents
         if (requestCode == PDP_REQUEST_CODE && resultCode == ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE) {
                 navigateToMyListFragment()
                 refreshViewPagerFragment(true)
+        }
+
+        if (requestCode == SHOPPING_LIST_DETAIL_ACTIVITY_REQUEST_CODE) {
+            refreshViewPagerFragment(true)
         }
     }
 

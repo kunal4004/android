@@ -30,6 +30,7 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
     private var mCardToken: String? = cardToken
     private var mPinCode = pinCode
     private var mPollingCount: Int = 0
+    private var userCellNumber:String? = null
 
     fun make() {
         mCardToken?.let { validateCardAndPin(it, mPinCode) }
@@ -47,6 +48,7 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
 
                             result?.toLowerCase().apply {
                                 if (this in acceptedResultMessages) { // in == contains
+                                    userCellNumber = response.cellNumber
                                     validateSureCheck(if (response.securityNotificationType == null) SecurityNotificationType.SureCheck else response.securityNotificationType)
                                     return
                                 }
@@ -76,6 +78,10 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
     }
 
     private fun validateSureCheck(securityNotificationType: SecurityNotificationType) {
+        if (securityNotificationType == SecurityNotificationType.OTP) {
+            validateSureCheckForOTP()
+            return
+        }
         mScheduleValidateSureCheck = Executors.newSingleThreadScheduledExecutor().scheduleWithFixedDelay({
             AbsaValidateSureCheckRequest().make(securityNotificationType,
                     object : AbsaBankingOpenApiResponse.ResponseDelegate<ValidateSureCheckResponse> {
@@ -116,8 +122,9 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
                                         // Present an input screen for the OTP,
                                         // as well as a different request payload.
                                         // #note: consider as rejected for now
-                                        failureHandler("An error has occurred. Please try again later.", true)
+                                       // failureHandler("An error has occurred. Please try again later.", true)
                                         stopPolling()
+                                        validateSureCheckForOTP()
                                     }
                                 }
                             }
@@ -134,6 +141,26 @@ class ValidateATMPinCode(cardToken: String?, pinCode: String, validatePinCodeDia
                         }
                     })
         }, 0, POLLING_INTERVAL, TimeUnit.SECONDS)
+    }
+
+    fun validateSureCheckForOTP() {
+        AbsaValidateSureCheckRequest().make(SecurityNotificationType.OTP,
+                object : AbsaBankingOpenApiResponse.ResponseDelegate<ValidateSureCheckResponse> {
+                    override fun onSuccess(response: ValidateSureCheckResponse?, cookies: MutableList<HttpCookie>?) {
+                        mValidatePinCodeDialogInterface?.onSuccessOFOTPSureCheck(userCellNumber)
+                    }
+
+                    override fun onFailure(errorMessage: String) {
+                        failureHandler(errorMessage, false)
+                        stopPolling()
+                    }
+
+                    override fun onFatalError(error: VolleyError?) {
+                        fatalErrorHandler(error)
+                        stopPolling()
+                    }
+                })
+
     }
 
     fun createAlias() {
