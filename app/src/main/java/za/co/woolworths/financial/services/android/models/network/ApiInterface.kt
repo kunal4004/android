@@ -14,7 +14,6 @@ import za.co.woolworths.financial.services.android.models.dto.npc.BlockMyCardRes
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementResponse
 import za.co.woolworths.financial.services.android.models.dto.statement.StatementResponse
-import java.util.*
 
 interface ApiInterface {
 
@@ -126,7 +125,7 @@ interface ApiInterface {
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @GET("user/locations")
-    fun getStoresLocation(
+    fun queryServiceGetStore(
             @Header("apiId") apiId: String,
             @Header("sha1Password") sha1Password: String,
             @Header("deviceVersion") deviceVersion: String,
@@ -139,26 +138,8 @@ interface ApiInterface {
             @Header("sessionToken") sessionToken: String,
             @Query("lat") lat: String,
             @Query("lon") lon: String,
-            @Query("searchString") searchString: String
-    ): Call<LocationResponse>
-
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @GET("user/locations")
-    fun getStoresLocation(
-            @Header("apiId") apiId: String,
-            @Header("sha1Password") sha1Password: String,
-            @Header("deviceVersion") deviceVersion: String,
-            @Header("deviceModel") deviceModel: String,
-            @Header("network") network: String,
-            @Header("os") os: String,
-            @Header("osVersion") osVersion: String,
-            @Header("userAgent") userAgent: String,
-            @Header("userAgentVersion") userAgentVersion: String,
-            @Header("sessionToken") sessionToken: String,
-            @Query("lat") lat: String,
-            @Query("lon") lon: String,
-            @Query("searchString") searchString: String,
-            @Query("radius") radius: String
+            @Query("searchString") searchString: String?,
+            @Query("radius") radius: String?
     ): Call<LocationResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")

@@ -100,7 +100,7 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 
 	public boolean isNetworkConnected() {
 		Activity activity = getActivity();
-		return (activity == null) ? false : NetworkManager.getInstance().isConnectedToNetwork(activity);
+		return (activity != null) && NetworkManager.getInstance().isConnectedToNetwork(activity);
 	}
 
 	public void hideToolbar() {

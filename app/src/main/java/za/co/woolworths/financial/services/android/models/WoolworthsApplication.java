@@ -46,6 +46,7 @@ import za.co.woolworths.financial.services.android.models.dto.AbsaBankingOpenApi
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.chat.PresenceInAppChat;
+import za.co.woolworths.financial.services.android.models.dto.quick_shop.QuickShopDefaultValues;
 import za.co.woolworths.financial.services.android.models.service.RxBus;
 import za.co.woolworths.financial.services.android.ui.activities.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
@@ -89,6 +90,9 @@ public class WoolworthsApplication extends Application implements Application.Ac
 	private static boolean isApplicationInForeground = false;
 	private static AbsaBankingOpenApiServices absaBankingOpenApiServices;
 	private static PresenceInAppChat presenceInAppChat;
+	private static QuickShopDefaultValues quickShopDefaultValues;
+
+	private Activity mCurrentActivity = null;
 
 	public static String getApiId() {
 		PackageInfo packageInfo = null;
@@ -216,7 +220,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
 	private static WoolworthsApplication mInstance;
 
-	@Override
+    @Override
 	public void onCreate() {
 		super.onCreate();
 		mInstance = this;
@@ -282,6 +286,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
 	//#region ActivityLifeCycleCallBack
 	@Override
 	public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+		setCurrentActivity(activity);
 		if(activity.getClass().equals(OnBoardingActivity.class) || activity.getClass().equals(BottomNavigationActivity.class) && shouldDisplayServerMessage){
 			showServerMessageOrProceed(activity);
 			shouldDisplayServerMessage = false;
@@ -290,17 +295,18 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
 	@Override
 	public void onActivityStarted(Activity activity) {
+    	setCurrentActivity(activity);
 
 	}
 
 	@Override
 	public void onActivityResumed(Activity activity) {
-
+    	setCurrentActivity(activity);
 	}
 
 	@Override
 	public void onActivityPaused(Activity activity) {
-
+		setCurrentActivity(activity);
 	}
 
 	@Override
@@ -456,5 +462,20 @@ public class WoolworthsApplication extends Application implements Application.Ac
 
 	public static void setPresenceInAppChat(PresenceInAppChat presenceInAppChat) {
 		WoolworthsApplication.presenceInAppChat = presenceInAppChat;
+	}
+
+	public static void setQuickShopDefaultValues(QuickShopDefaultValues quickShopDefaultValues) {
+		WoolworthsApplication.quickShopDefaultValues = quickShopDefaultValues;
+	}
+
+	public static QuickShopDefaultValues getQuickShopDefaultValues() {
+		return quickShopDefaultValues;
+	}
+
+	public Activity getCurrentActivity(){
+		return mCurrentActivity;
+	}
+	public void setCurrentActivity(Activity mCurrentActivity){
+		this.mCurrentActivity = mCurrentActivity;
 	}
 }

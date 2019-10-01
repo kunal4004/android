@@ -46,4 +46,6 @@ public class ShoppingListItem {
 	//select your delivery location address
 	public String delivery_location;
 
+	public boolean editButtonIsEnabled = false;
+
 }

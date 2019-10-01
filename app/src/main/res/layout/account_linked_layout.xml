@@ -28,6 +28,7 @@
 
         <RelativeLayout
             android:id="@+id/linkedStoreCard"
+            android:contentDescription="@string/cd_store_card_layout"
             style="@style/accountsCardStyle">
 
             <FrameLayout
@@ -58,6 +59,7 @@
                 android:layout_marginStart="7dp"
                 android:layout_toRightOf="@+id/imgStoreCard"
                 android:text="@string/store_card"
+                android:contentDescription="@string/cd_store_card_text"
                 app:WTextView_font="medium" />
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -68,6 +70,7 @@
                 android:layout_centerVertical="true"
                 android:textColor="@color/black_off"
                 android:textSize="@dimen/acc_thirteen_sp"
+                android:contentDescription="@string/cd_store_card_available_funds_text"
                 app:WTextView_font="medium_bold" />
         </RelativeLayout>
 

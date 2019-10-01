@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.models.dto;
 
 import za.co.woolworths.financial.services.android.models.dto.chat.PresenceInAppChat;
+import za.co.woolworths.financial.services.android.models.dto.quick_shop.QuickShopDefaultValues;
 
 public class Configs {
     public Environment enviroment;
@@ -9,4 +10,5 @@ public class Configs {
     public Defaults defaults;
     public AbsaBankingOpenApiServices absaBankingOpenApiServices;
     public PresenceInAppChat presenceInAppChat;
+    public QuickShopDefaultValues quickShopDefaultValues;
 }

@@ -1,9 +1,12 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.content.Intent;
+
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentTransaction;
+
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -15,8 +18,11 @@ import com.google.gson.JsonElement;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties;
 import za.co.woolworths.financial.services.android.contracts.IToastInterface;
+import za.co.woolworths.financial.services.android.models.dto.CartItemGroup;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CheckOutFragment;
@@ -25,6 +31,7 @@ import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
 import za.co.woolworths.financial.services.android.ui.views.ToastFactory;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.QueryBadgeCounter;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.ToastUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -32,6 +39,7 @@ import za.co.woolworths.financial.services.android.util.Utils;
 import static za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.activities.AddToShoppingListActivity.ADD_TO_SHOPPING_LIST_FROM_PRODUCT_DETAIL_RESULT_CODE;
 import static za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow.DISMISS_POP_WINDOW_CLICKED;
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_CART;
 import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.PDP_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.ProductDetailFragment.RESULT_FROM_ADD_TO_CART_PRODUCT_DETAIL;
 
@@ -46,7 +54,7 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
     public static final int CHECKOUT_SUCCESS = 13134;
     private FrameLayout flContentFrame;
     private boolean toastButtonWasClicked = false;
-
+    public  static  final int  RESULT_PREVENT_CART_SUMMARY_CALL = 121;
     @Override
     protected int getLayoutResourceId() {
         return R.layout.activity_cart;
@@ -130,8 +138,21 @@ public class CartActivity extends BottomActivity implements View.OnClickListener
 
     public void finishActivity() {
         // Check to prevent DISMISS_POP_WINDOW_CLICKED override setResult for toast clicked event
-        if (!toastButtonWasClicked)
-            setResult(DISMISS_POP_WINDOW_CLICKED);
+        if (!toastButtonWasClicked) {
+            this.setResult(DISMISS_POP_WINDOW_CLICKED);
+        }
+
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.content_frame);
+        // Overrides activityResult to prevent cart summary api when shopping list is empty
+        if (currentFragment instanceof CartFragment) {
+            ArrayList<CartItemGroup> cartItem = ((CartFragment) currentFragment).getCartItems();
+            if (cartItem == null || cartItem.isEmpty()) {
+                // No product, hide badge counter
+                QueryBadgeCounter.getInstance().setCartCount(0, INDEX_CART);
+                this.setResult(RESULT_PREVENT_CART_SUMMARY_CALL);
+            }
+        }
+
         Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MYCARTEXIT);
         finish();
         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);

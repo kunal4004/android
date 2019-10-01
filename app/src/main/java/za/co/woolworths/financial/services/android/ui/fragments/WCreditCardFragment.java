@@ -644,10 +644,6 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
                         @Override
                         public void run() {
                             showGetCreditCardTokenProgressBar(GONE);
-                            if (error.getMessage().contains("ConnectException")
-                                    || error.getMessage().contains("SocketTimeoutException")) {
-                                Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, getString(R.string.check_connection_status));
-                            }
                         }
                     });
                 }

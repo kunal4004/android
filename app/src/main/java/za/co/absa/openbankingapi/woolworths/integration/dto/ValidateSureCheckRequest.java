@@ -15,8 +15,9 @@ public class ValidateSureCheckRequest {
 	@SerializedName("otpToBeVerified")
 	private String otpToBeVerified;
 
-    public ValidateSureCheckRequest(SecurityNotificationType securityNotificationType) {
+    public ValidateSureCheckRequest(SecurityNotificationType securityNotificationType,String otpToBeVerified) {
         this.securityNotificationType = securityNotificationType;
+        this.otpToBeVerified = otpToBeVerified;
         this.header = new Header();
     }
 

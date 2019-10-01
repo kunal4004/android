@@ -7,8 +7,10 @@ import androidx.appcompat.app.ActionBar;
 import androidx.fragment.app.Fragment;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
 
@@ -21,7 +23,9 @@ import static za.co.woolworths.financial.services.android.ui.activities.dashboar
 import static za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity.PRODUCT_SEARCH_ACTIVITY_REQUEST_CODE;
 import static za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultFragment.ADDED_TO_SHOPPING_LIST_RESULT_CODE;
 
-public class ShoppingListDetailActivity extends AppCompatActivity {
+public class ShoppingListDetailActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private TextView tvEditShoppingListItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +42,10 @@ public class ShoppingListDetailActivity extends AppCompatActivity {
         }
         retrieveBundle();
         setUpToolbar(listName);
+
+        tvEditShoppingListItem = findViewById(R.id.tvEditShoppingListItem);
+        tvEditShoppingListItem.setOnClickListener(this);
+
         initFragment(listId, listName, openFromMyList);
     }
 
@@ -69,7 +77,7 @@ public class ShoppingListDetailActivity extends AppCompatActivity {
         Bundle bundle = new Bundle();
         bundle.putString("listId", listId);
         bundle.putString("listName", listName);
-        bundle.putBoolean("openFromMyList",openFromMyList);
+        bundle.putBoolean("openFromMyList", openFromMyList);
         shoppingListDetailFragment.setArguments(bundle);
         getSupportFragmentManager()
                 .beginTransaction()
@@ -103,5 +111,26 @@ public class ShoppingListDetailActivity extends AppCompatActivity {
         }
 
         fragment.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onClick(View view) {
+        if (view.getId() == R.id.tvEditShoppingListItem) {
+            if (getSupportFragmentManager() == null) return;
+            String editButtonText = tvEditShoppingListItem.getText().toString().equalsIgnoreCase(getString(R.string.edit)) ? getString(R.string.done) : getString(R.string.edit);
+            tvEditShoppingListItem.setText(editButtonText);
+            Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.flShoppingListDetailFragment);
+            if (currentFragment instanceof ShoppingListDetailFragment) {
+                ((ShoppingListDetailFragment) currentFragment).toggleEditButton(editButtonText);
+            }
+        }
+    }
+
+    public void editButtonVisibility(boolean isVisible) {
+        tvEditShoppingListItem.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+    }
+
+    public void setToolbarText(String name){
+        tvEditShoppingListItem.setText(name);
     }
 }

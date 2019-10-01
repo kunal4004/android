@@ -79,14 +79,15 @@ class ErrorHandlerFragment : Fragment(), View.OnClickListener, IDialogListener {
             }
             ErrorHandlerActivity.COMMON -> {
                 errorLogo.setImageResource(R.drawable.ic_error_icon)
-                errorTitle.text = getString(R.string.unsuccessful_request)
-                errorDescription?.text = if (TextUtils.isEmpty(errorMessage)) getString(R.string.unsuccessful_request_desc) else errorMessage
+                errorTitle.text = getString(R.string.absa_general_error_title)
+                errorDescription?.text = getString(R.string.absa_common_error_message)
                 actionButton.text = getString(R.string.retry)
             }
             ErrorHandlerActivity.WITH_NO_ACTION -> {
                 errorLogo.setImageResource(R.drawable.ic_error_icon)
-                errorTitle.text = getString(R.string.unsuccessful_request)
-                actionsLayout.visibility = View.VISIBLE
+                errorTitle.text = getString(R.string.absa_general_error_title)
+                errorDescription.text = getString(R.string.absa_common_error_message)
+                actionsLayout.visibility = View.INVISIBLE
             }
         }
     }

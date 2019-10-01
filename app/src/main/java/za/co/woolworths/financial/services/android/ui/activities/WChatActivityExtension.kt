@@ -32,7 +32,7 @@ open class WChatActivityExtension : AppCompatActivity(), WCountDownTimer.TimerFi
 
     enum class AgentDefaultMessage(val message: String) {
         AGENT_ONLINE("Hi " + SessionUtilities.getInstance().jwt?.name?.get(0) + ". How can I help you today?"),
-        AGENT_OFFLINE("You have reached us outside of our business hours. Please contact us between 7:30am and 9pm."),
+        AGENT_OFFLINE("You have reached us outside of our business hours. Please contact us between " + getInAppTradingHoursForToday().opens + " and " + getInAppTradingHoursForToday().closes + "."),
         GENERAL_ERROR("We’re currently experiencing technical issues, please try again later or call us on 0861 50 20 20."),
         AGENT_PICKED(" will be assisting you further, enjoy the rest of your day."),
         CONNECTING_AGENT("Please stay online for the next available consultant."),
@@ -170,13 +170,18 @@ open class WChatActivityExtension : AppCompatActivity(), WCountDownTimer.TimerFi
     override fun onTimerFinished() {
         if (chatId.isNullOrEmpty() || !isAgentOnline) {
             showAgentsMessage(AgentDefaultMessage.NO_AGENTS)
-            if (chatId.isNullOrEmpty()) stopAgentAvailablePolling() else if (!isAgentOnline) stopChatSessionStatePolling()
+            if (chatId.isNullOrEmpty()) stopAgentAvailablePolling()
+            else
+                if (!isAgentOnline) {
+                    clearChatId()
+                    stopChatSessionStatePolling()
+                }
         }
     }
 
     private fun clearSessionValues() {
         isAgentOnline = false
-        chatId = null
+        clearChatId()
         setEndSessionAvailable(false)
         setPageTitle(getString(R.string.chat_activity_title))
     }
@@ -188,6 +193,10 @@ open class WChatActivityExtension : AppCompatActivity(), WCountDownTimer.TimerFi
     fun setPageTitle(name: String?) {
         if (!name.isNullOrEmpty())
             agentName.text = name
+    }
+
+    fun clearChatId(){
+        chatId = null
     }
 
 }

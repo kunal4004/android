@@ -50,14 +50,8 @@ object OneAppService : RetrofitConfig() {
         return mApiInterface.getVouchers(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken())
     }
 
-    fun getLocations(lat: String, lon: String, searchString: String, radius: String?): Call<LocationResponse> {
-        return if (radius != null && radius == "") {
-            //This should never happen for now
-            mApiInterface.getStoresLocation(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), lat, lon, searchString, radius)
-        } else {
-
-            mApiInterface.getStoresLocation(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), lat, lon, searchString)
-        }
+    fun queryServiceGetStore(latitude: Double? = 0.0, longitude: Double? = 0.0, searchTextField: String?, radius: String?): Call<LocationResponse> {
+           return mApiInterface.queryServiceGetStore(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), latitude.toString(), longitude.toString(), searchTextField, radius)
     }
 
     fun getLocationsItem(sku: String, startRadius: String, endRadius: String): Call<LocationResponse> {

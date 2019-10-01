@@ -524,7 +524,10 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 
 	public Call<LocationResponse> init(final Location location) {
 		onLocationLoadStart();
-		Call<LocationResponse> locationResponseCall = OneAppService.INSTANCE.getLocations(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()), "", "50000");
+		double latitude = (location == null) ? 0.0 : location.getLatitude();
+		double longitude = (location == null) ? 0.0 : location.getLongitude();
+
+		Call<LocationResponse> locationResponseCall = OneAppService.INSTANCE.queryServiceGetStore(latitude, longitude, null, null);
 		locationResponseCall.enqueue(new CompletionHandler<>(new RequestListener<LocationResponse>() {
 			@Override
 			public void onSuccess(LocationResponse locationResponse) {
