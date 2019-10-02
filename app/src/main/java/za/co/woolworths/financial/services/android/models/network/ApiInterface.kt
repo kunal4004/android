@@ -382,7 +382,7 @@ interface ApiInterface {
             @Header("sessionToken") sessionToken: String): Call<PromotionsResponse>
 
 
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "Accept-Encoding: gzip")
     @GET("categories")
     fun getRootCategories(
             @Header("osVersion") osVersion: String,
@@ -396,7 +396,7 @@ interface ApiInterface {
             @Header("sessionToken") sessionToken: String): Call<RootCategories>
 
 
-    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "Accept-Encoding: gzip")
     @GET("categories/{cat}")
     fun getSubCategory(
             @Header("osVersion") osVersion: String,
