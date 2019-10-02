@@ -668,13 +668,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     }
 
     @Override
-    public void onFragmentTransaction(Fragment fragment, @NonNull FragNavController.TransactionType transactionType) {
-        // If we have a backstack, show the back button
-        if (getSupportActionBar() != null && mNavController != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(!mNavController.isRootFragment());
-            KeyboardUtil.hideSoftKeyboard(BottomNavigationActivity.this);
-        }
-    }
+    public void onFragmentTransaction(Fragment fragment, @NonNull FragNavController.TransactionType transactionType) {}
 
     @NonNull
     @Override
