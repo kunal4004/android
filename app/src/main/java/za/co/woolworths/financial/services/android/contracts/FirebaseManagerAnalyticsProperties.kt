@@ -64,6 +64,10 @@ class FirebaseManagerAnalyticsProperties {
 
         const val SHOPQS_ADD_TO_CART = "GA_Event_ONE_SHOPQS_ADD_TO_CART"
         const val SHOP_SCAN_CODE = "GA_Event_ONE_SHOPSCANCODE"
+        const val MY_ACCOUNTS_CHAT_ONLINE = "MYACCOUNTS_CHAT_ONLINE"
+        const val MY_ACCOUNTS_CHAT_OFFLINE = "MYACCOUNTS_CHAT_OFFLINE"
+        const val MY_ACCOUNTS_CHAT_BREAK = "MYACCOUNTS_CHAT_BREAK"
+        const val MY_ACCOUNTS_CHAT_END = "MYACCOUNTS_CHAT_END"
     }
 
     class PropertyNames {
