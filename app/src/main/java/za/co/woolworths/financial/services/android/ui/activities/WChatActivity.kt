@@ -12,6 +12,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import za.co.woolworths.financial.services.android.util.Utils
 import kotlinx.android.synthetic.main.chat_activity.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.contracts.RequestListener
 import za.co.woolworths.financial.services.android.models.dto.ChatMessage
@@ -246,11 +247,13 @@ class WChatActivity : WChatActivityExtension(), IDialogListener {
                             this, getString(R.string.chat_end_session_dialog_action_text), true, R.drawable.ic_end_session)
             openDialogFragment.show(this.supportFragmentManager, GotITDialogFragment::class.java.simpleName)
         } else {
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_CHAT_BREAK)
             closePage()
         }
     }
 
     private fun endChatSession() {
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_CHAT_END)
         stopAllPolling()
         chatId?.let {
             OneAppService.endChatSession(it).enqueue(CompletionHandler(object : RequestListener<EndChatSessionResponse> {

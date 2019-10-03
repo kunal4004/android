@@ -185,6 +185,7 @@ public class WTransactionsActivity extends AppCompatActivity implements View.OnC
 	public void onClick(View view) {
 		switch (view.getId()) {
 			case R.id.chatIcon:
+				Utils.triggerFireBaseEvents(Utils.isOperatingHoursForInAppChat() ? FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_CHAT_ONLINE : FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_CHAT_OFFLINE);
 				Intent intent = new Intent(this, WChatActivity.class);
 				intent.putExtra("productOfferingId", productOfferingId);
 				intent.putExtra("accountNumber", accountNumber);
