@@ -37,6 +37,7 @@ import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnal
 import za.co.woolworths.financial.services.android.contracts.RequestListener;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
+import za.co.woolworths.financial.services.android.models.dto.AbsaBankingOpenApiServices;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.Card;
@@ -221,8 +222,11 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         infoCurrentBalance.setOnClickListener(this);
         infoCreditLimit.setOnClickListener(this);
 
-        rlViewStatement.setVisibility(WoolworthsApplication.getAbsaBankingOpenApiServices().isEnabled() ? VISIBLE : GONE);
-
+        try {
+            rlViewStatement.setVisibility(WoolworthsApplication.getAbsaBankingOpenApiServices().isEnabled() ? VISIBLE : GONE);
+        } catch (NullPointerException ex) {
+            rlViewStatement.setVisibility(GONE);
+        }
     }
 
     private void addListener() {
@@ -640,10 +644,6 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
                         @Override
                         public void run() {
                             showGetCreditCardTokenProgressBar(GONE);
-                            if (error.getMessage().contains("ConnectException")
-                                    || error.getMessage().contains("SocketTimeoutException")) {
-                                Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, getString(R.string.check_connection_status));
-                            }
                         }
                     });
                 }

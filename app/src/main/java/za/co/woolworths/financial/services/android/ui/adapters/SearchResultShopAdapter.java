@@ -11,6 +11,7 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
 import com.daimajia.swipe.SwipeLayout;
@@ -22,6 +23,7 @@ import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
+import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductListingViewType;
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ProductUtils;
 import za.co.woolworths.financial.services.android.ui.fragments.shoppinglist.search.SearchResultNavigator;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -31,9 +33,6 @@ import static za.co.woolworths.financial.services.android.ui.fragments.product.d
 
 public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHolder> {
 
-	private final int ITEM_VIEW_TYPE_HEADER = 0;
-	private final int ITEM_VIEW_TYPE_BASIC = 1;
-	private final int ITEM_VIEW_TYPE_FOOTER = 2;
 	private boolean value;
 
 	private List<ProductList> mProductList;
@@ -49,19 +48,16 @@ public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.V
 	@Override
 	public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 		RecyclerView.ViewHolder vh;
-		switch (viewType) {
-			case ITEM_VIEW_TYPE_HEADER:
+		switch (ProductListingViewType.values()[viewType]) {
+			case HEADER:
 				vh = getHeaderViewHolder(parent);
 				break;
 
-			case ITEM_VIEW_TYPE_BASIC:
-				vh = getSimpleViewHolder(parent);
-				break;
-
-			case ITEM_VIEW_TYPE_FOOTER:
+			case FOOTER:
 				vh = getProgressViewHolder(parent);
 				break;
 
+			case PRODUCT:
 			default:
 				vh = getSimpleViewHolder(parent);
 				break;
@@ -90,10 +86,10 @@ public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.V
 	@Override
 	public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 		final ProductList productList = mProductList.get(position);
-		if (productList.viewTypeHeader) {
+		if (productList.rowType == ProductListingViewType.HEADER) {
 			HeaderViewHolder hvh = (HeaderViewHolder) holder;
 			hvh.setTotalItem(productList);
-		} else if (productList.viewTypeFooter) {
+		} else if (productList.rowType == ProductListingViewType.FOOTER) {
 			ProgressViewHolder pvh = ((ProgressViewHolder) holder);
 			if (!value) {
 				pvh.pbFooterProgress.setVisibility(View.VISIBLE);
@@ -298,7 +294,7 @@ public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.V
 	}
 
 	private class HeaderViewHolder extends RecyclerView.ViewHolder {
-		private WTextView tvNumberOfItem;
+		private TextView tvNumberOfItem;
 
 		private HeaderViewHolder(View v) {
 			super(v);
@@ -313,15 +309,7 @@ public class SearchResultShopAdapter extends RecyclerSwipeAdapter<RecyclerView.V
 
 	@Override
 	public int getItemViewType(int position) {
-		if (mProductList.get(position).viewTypeHeader) {
-			return ITEM_VIEW_TYPE_HEADER;
-		} else if (mProductList.get(position).viewTypeFooter) {
-			return ITEM_VIEW_TYPE_FOOTER;
-		} else if (!mProductList.get(position).viewTypeFooter && !mProductList.get(position).viewTypeHeader) {
-			return ITEM_VIEW_TYPE_BASIC;
-		} else {
-			return ITEM_VIEW_TYPE_BASIC;
-		}
+		return mProductList.get(position).rowType.ordinal();
 	}
 
 	public void refreshAdapter(boolean value, List<ProductList> tempProductList) {

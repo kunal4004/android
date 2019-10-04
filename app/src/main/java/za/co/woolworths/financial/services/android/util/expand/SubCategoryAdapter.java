@@ -43,7 +43,7 @@ public class SubCategoryAdapter extends ExpandableRecyclerAdapter<HeaderViewHold
 	@Override
 	public HeaderViewHolder onCreateHeaderViewHolder(ViewGroup headerViewGroup) {
 		View headerView = mInflator.inflate(R.layout.sub_category_header_view, headerViewGroup, false);
-		return new HeaderViewHolder(headerView, mContext);
+		return new HeaderViewHolder(headerView);
 	}
 
 	@Override
@@ -94,7 +94,7 @@ public class SubCategoryAdapter extends ExpandableRecyclerAdapter<HeaderViewHold
 				} else
 
 				{
-					//Open GridFragment when hasChildren = false;
+					//Open ProductListingFragment when hasChildren = false;
 					mSubCategoryNavigator.onChildItemClicked(subCategory);
 				}
 			}

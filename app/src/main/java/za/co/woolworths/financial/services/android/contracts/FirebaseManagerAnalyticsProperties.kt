@@ -62,6 +62,12 @@ class FirebaseManagerAnalyticsProperties {
         const val ABSA_CC_SHARE_STATEMENT: String = "GA_Event_ONE_ABSA_CC_SHARE_STATEMENT"
         const val ABSA_CC_VIEW_INDIVIDUAL_STATEMENT: String = "GA_Event_ONE_ABSA_CC_VIEW_IND_STATEMENT"
 
+        const val SHOPQS_ADD_TO_CART = "GA_Event_ONE_SHOPQS_ADD_TO_CART"
+        const val SHOP_SCAN_CODE = "GA_Event_ONE_SHOPSCANCODE"
+        const val MY_ACCOUNTS_CHAT_ONLINE = "MYACCOUNTS_CHAT_ONLINE"
+        const val MY_ACCOUNTS_CHAT_OFFLINE = "MYACCOUNTS_CHAT_OFFLINE"
+        const val MY_ACCOUNTS_CHAT_BREAK = "MYACCOUNTS_CHAT_BREAK"
+        const val MY_ACCOUNTS_CHAT_END = "MYACCOUNTS_CHAT_END"
     }
 
     class PropertyNames {
@@ -156,6 +162,7 @@ class FirebaseManagerAnalyticsProperties {
             const val WREWARDS_VOUCHERS_BARCODE: String = "WRewards Vouchers Barcode"
             const val WREWARDS_TERMS_CONDITIONS: String = "WRewards Terms and Conditions"
             const val MAINTENANCE_MESSAGE: String = "Maintenance Message"
+            const val DEVICE_ROOTED_AT_STARTUP: String = "Block Rooted Device"
         }
     }
 }

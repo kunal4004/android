@@ -185,6 +185,7 @@ public class WTransactionsActivity extends AppCompatActivity implements View.OnC
 	public void onClick(View view) {
 		switch (view.getId()) {
 			case R.id.chatIcon:
+				Utils.triggerFireBaseEvents(Utils.isOperatingHoursForInAppChat() ? FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_CHAT_ONLINE : FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_CHAT_OFFLINE);
 				Intent intent = new Intent(this, WChatActivity.class);
 				intent.putExtra("productOfferingId", productOfferingId);
 				intent.putExtra("accountNumber", accountNumber);
@@ -218,17 +219,27 @@ public class WTransactionsActivity extends AppCompatActivity implements View.OnC
 
     }
 
-	private void initInAppChat() {
-		if (cardType.equalsIgnoreCase("CC") && WoolworthsApplication.getPresenceInAppChat().isEnabled()) {
-			chatIcon.expand(true);
-			chatIcon.setStatusIndicatorIcon(Utils.isOperatingHoursForInAppChat() ? R.drawable.indicator_online : R.drawable.indicator_offline);
-			transactionListview.setOnScrollListener(this);
-			chatIcon.setOnClickListener(this);
-		}
-	}
+    private void initInAppChat() {
+        if (cardType.equalsIgnoreCase("CC") && chatIsEnabled()) {
+            chatIcon.expand(true);
+            chatIcon.setStatusIndicatorIcon(Utils.isOperatingHoursForInAppChat() ? R.drawable.indicator_online : R.drawable.indicator_offline);
+            transactionListview.setOnScrollListener(this);
+            chatIcon.setOnClickListener(this);
+        }
+    }
 
-	private void showChatBubble() {
-		if (cardType.equalsIgnoreCase("CC") && WoolworthsApplication.getPresenceInAppChat().isEnabled())
-			chatIcon.setVisibility(View.VISIBLE);
+    private void showChatBubble() {
+        if (cardType.equalsIgnoreCase("CC") && chatIsEnabled())
+            chatIcon.setVisibility(View.VISIBLE);
+    }
+
+	private boolean chatIsEnabled() {
+		boolean chatIsEnabled;
+		try {
+			chatIsEnabled = WoolworthsApplication.getPresenceInAppChat().isEnabled();
+		} catch (NullPointerException npe) {
+			chatIsEnabled = false;
+		}
+		return chatIsEnabled;
 	}
 }

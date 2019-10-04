@@ -2,6 +2,8 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.detail.
 
 import android.Manifest;
 import android.app.Activity;
+
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
@@ -79,6 +81,7 @@ import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorMessageDialogFragment;
 import za.co.woolworths.financial.services.android.util.DrawImage;
 import za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton;
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
@@ -144,7 +147,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
     PermissionUtils permissionUtils;
     private OtherSkus otherSKUForFindInStore;
     CircleIndicator circleindicator;
-    private final int SET_DELIVERY_LOCATION_REQUEST_CODE = 180;
+    public static final int SET_DELIVERY_LOCATION_REQUEST_CODE = 180;
     private ToastUtils mToastUtils;
     private FuseLocationAPISingleton mFuseLocationAPISingleton;
     private Call<SkusInventoryForStoreResponse> mExecuteInventoryForSku;
@@ -629,14 +632,11 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
     public void requestDeliveryLocation(String requestMessage) {
         enableAddToCartButton(false);
         enableFindInStoreButton(false);
-        if (isAdded())
-            Utils.displayValidationMessageForResult(this,
-                    getActivity(),
-                    CustomPopUpWindow.MODAL_LAYOUT.ERROR,
-                    null,
-                    requestMessage,
-                    getResources().getString(R.string.set_delivery_location_button),
-                    SET_DELIVERY_LOCATION_REQUEST_CODE);
+        Activity activity = getActivity();
+        if (isAdded() && activity != null) {
+            ErrorMessageDialogFragment errorMessageDialogFragment = ErrorMessageDialogFragment.Companion.newInstance(requestMessage, getString(R.string.set_delivery_location_button));
+            errorMessageDialogFragment.show(((AppCompatActivity) activity).getSupportFragmentManager().beginTransaction(), ErrorMessageDialogFragment.class.getSimpleName());
+        }
     }
 
     @Override

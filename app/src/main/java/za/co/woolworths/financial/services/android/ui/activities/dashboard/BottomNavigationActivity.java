@@ -44,9 +44,11 @@ import za.co.woolworths.financial.services.android.contracts.IToastInterface;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
+import za.co.woolworths.financial.services.android.models.dto.ProductsRequestParams;
 import za.co.woolworths.financial.services.android.models.service.event.AuthenticationState;
 import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
+import za.co.woolworths.financial.services.android.ui.activities.BarcodeScanActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TipsAndTricksViewPagerActivity;
@@ -54,7 +56,7 @@ import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragmentNew;
-import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.product.grid.ProductListingFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.sub_category.SubCategoryFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList;
@@ -193,13 +195,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 if (object instanceof LoadState) {
                     String searchProduct = ((LoadState) object).getSearchProduct();
                     if (!TextUtils.isEmpty((searchProduct))) {
-                        GridFragment gridFragment = new GridFragment();
-                        Bundle bundle = new Bundle();
-                        bundle.putString("sub_category_id", "categoryId");
-                        bundle.putString("sub_category_name", "categoryName");
-                        bundle.putString("str_search_product", searchProduct);
-                        gridFragment.setArguments(bundle);
-                        pushFragment(gridFragment);
+                        pushFragment(ProductListingFragment.Companion.newInstance(ProductsRequestParams.SearchType.SEARCH, "", searchProduct));
                     }
                 } else if (object instanceof AuthenticationState) {
                     AuthenticationState auth = ((AuthenticationState) object);
@@ -239,7 +235,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         mQueryBadgeCounter.addObserver(this);
     }
 
-    private void setToast(String message, String cartText) {
+    public void setToast(String message, String cartText) {
         mToastUtils = new ToastUtils(BottomNavigationActivity.this);
         mToastUtils.setActivity(BottomNavigationActivity.this);
         mToastUtils.setView(getBottomNavigationById());
@@ -598,7 +594,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
         }
     };
 
-    private void openCartActivity() {
+    public void openCartActivity() {
         Intent openCartActivity = new Intent(this, CartActivity.class);
         startActivityForResult(openCartActivity, OPEN_CART_REQUEST);
         overridePendingTransition(R.anim.anim_accelerate_in, R.anim.stay);
@@ -672,13 +668,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
     }
 
     @Override
-    public void onFragmentTransaction(Fragment fragment, @NonNull FragNavController.TransactionType transactionType) {
-        // If we have a backstack, show the back button
-        if (getSupportActionBar() != null && mNavController != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(!mNavController.isRootFragment());
-            KeyboardUtil.hideSoftKeyboard(BottomNavigationActivity.this);
-        }
-    }
+    public void onFragmentTransaction(Fragment fragment, @NonNull FragNavController.TransactionType transactionType) {}
 
     @NonNull
     @Override
@@ -811,8 +801,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
     }
 
-    @Override
+
+        @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         Fragment fragment = getCurrentFragment();
         if (fragment instanceof StoresNearbyFragment1) {
@@ -868,8 +860,15 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                 break;
         }
 
+        if ((requestCode == BarcodeScanActivity.BARCODE_ACTIVITY_REQUEST_CODE || requestCode == TIPS_AND_TRICKS_CTA_REQUEST_CODE) && resultCode == RESULT_OK) {
+            ProductsRequestParams.SearchType searchType = ProductsRequestParams.SearchType.valueOf(data.getStringExtra("searchType"));
+            String searchTerm = data.getStringExtra("searchTerm");
+            pushFragment(ProductListingFragment.Companion.newInstance(searchType, "", searchTerm));
+            return;
+        }
+
         //Open shopping from Tips and trick activity requestcode
-        if (requestCode == TIPS_AND_TRICKS_CTA_REQUEST_CODE && (resultCode == RESULT_OK_ACCOUNTS || resultCode == RESULT_OK_BARCODE_SCAN)) {
+        if (requestCode == TIPS_AND_TRICKS_CTA_REQUEST_CODE && resultCode == RESULT_OK_ACCOUNTS ) {
             getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
             clearStack();
             Fragment fragment = mNavController.getCurrentFrag();
@@ -879,14 +878,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
                         ShopFragment shopFragment = (ShopFragment) fragment;
                         shopFragment.navigateToMyListFragment();
                         shopFragment.refreshViewPagerFragment(false);
-                        return;
-                    }
-                    break;
-
-                case RESULT_OK_BARCODE_SCAN:
-                    if (fragment instanceof ShopFragment) {
-                        ShopFragment shopFragment = (ShopFragment) fragment;
-                        shopFragment.openBarcodeScanner();
                         return;
                     }
                     break;

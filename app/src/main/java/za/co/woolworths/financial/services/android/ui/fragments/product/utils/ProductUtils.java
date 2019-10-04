@@ -6,19 +6,19 @@ import android.graphics.Paint;
 import androidx.core.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
 import com.facebook.drawee.view.SimpleDraweeView;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
-import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.DrawImage;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 public class ProductUtils {
 
-	public static void displayPrice(WTextView tvPrice, WTextView tvWasPrice,
+	public static void displayPrice(TextView tvPrice, TextView tvWasPrice,
 									String fromPrice, String wasPrice) throws NumberFormatException, NullPointerException {
 		if (TextUtils.isEmpty(wasPrice)) {
 			tvPrice.setText(TextUtils.isEmpty(fromPrice) ? "" : WFormatter.formatAmount(fromPrice));

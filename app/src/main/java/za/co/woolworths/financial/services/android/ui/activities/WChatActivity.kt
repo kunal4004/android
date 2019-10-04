@@ -12,6 +12,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import za.co.woolworths.financial.services.android.util.Utils
 import kotlinx.android.synthetic.main.chat_activity.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IDialogListener
 import za.co.woolworths.financial.services.android.contracts.RequestListener
 import za.co.woolworths.financial.services.android.models.dto.ChatMessage
@@ -96,7 +97,7 @@ class WChatActivity : WChatActivityExtension(), IDialogListener {
 
     private fun onSendMessage() {
         if (edittext_chatbox.text.isNotEmpty()) {
-            val userMessage = edittext_chatbox.text.toString().trim()
+            val userMessage = edittext_chatbox.text.toString().trim().replace("\n", " ", true)
             val chatMessage = ChatMessage(ChatMessage.Type.SENT, userMessage)
             updateMessageList(chatMessage)
             edittext_chatbox.text.clear()
@@ -239,20 +240,33 @@ class WChatActivity : WChatActivityExtension(), IDialogListener {
     }
 
     private fun confirmToEndChatSession() {
-        if (isAgentOnline) {
+        if (!chatId.isNullOrEmpty()) {
             val openDialogFragment =
                     GotITDialogFragment.newInstance(getString(R.string.chat_end_session_dialog_title),
                             getString(R.string.chat_end_session_dialog_desc), getString(R.string.chat_end_session_dialog_cancel_text),
                             this, getString(R.string.chat_end_session_dialog_action_text), true, R.drawable.ic_end_session)
             openDialogFragment.show(this.supportFragmentManager, GotITDialogFragment::class.java.simpleName)
         } else {
+            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_CHAT_BREAK)
             closePage()
         }
     }
 
     private fun endChatSession() {
-        chatId?.let { OneAppService.endChatSession(it) }
-        closePage()
+        Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.MY_ACCOUNTS_CHAT_END)
+        stopAllPolling()
+        chatId?.let {
+            OneAppService.endChatSession(it).enqueue(CompletionHandler(object : RequestListener<EndChatSessionResponse> {
+                override fun onSuccess(response: EndChatSessionResponse?) {
+                    closePage()
+                }
+
+                override fun onFailure(error: Throwable?) {
+                    closePage()
+                }
+
+            }, EndChatSessionResponse::class.java))
+        }
     }
 
     override fun onDialogDismissed() {

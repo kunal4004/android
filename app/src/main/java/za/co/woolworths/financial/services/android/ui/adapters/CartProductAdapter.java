@@ -111,6 +111,8 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                 final CommerceItem commerceItem = itemRow.commerceItem;
                 CommerceItemInfo commerceItemInfo;
                 if (commerceItem == null) return;
+                productHolder.swipeLayout.setRightSwipeEnabled(false);
+                productHolder.swipeLayout.setLeftSwipeEnabled(false);
                 commerceItemInfo = commerceItem.commerceItemInfo;
                 productHolder.tvTitle.setText((commerceItemInfo == null) ? "" : commerceItemInfo.getProductDisplayName());
                 Utils.truncateMaxLine(productHolder.tvTitle);
@@ -133,7 +135,6 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                 productHolder.quantity.setVisibility(quantityIsLoading ? View.GONE : View.VISIBLE);
                 productHolder.imPrice.setVisibility(quantityIsLoading ? View.GONE : View.VISIBLE);
 
-                productHolder.swipeLayout.setRightSwipeEnabled(false);
                 //Set Promotion Text START
                 if (commerceItem.getPriceInfo().getDiscountedAmount() > 0) {
                     productHolder.promotionalText.setText(" " + WFormatter.formatAmount(commerceItem.getPriceInfo().getDiscountedAmount()));
@@ -196,7 +197,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
                     }
                 });
 
-                productHolder.swipe.setOnClickListener(new View.OnClickListener() {
+                productHolder.swipeLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         onItemClick.onOpenProductDetail(commerceItem);
@@ -392,10 +393,9 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
         private WTextView tvDelete;
         private ProgressBar pbQuantity;
         private ProgressBar pbDeleteProgress;
-        private SwipeLayout swipeLayout;
         private RelativeLayout rlDeleteButton;
         private WTextView tvProductAvailability;
-        private SwipeLayout swipe;
+        private SwipeLayout swipeLayout;
 
         public ProductHolder(View view) {
             super(view);
@@ -412,11 +412,10 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
             llCartItems = view.findViewById(R.id.llCartItems);
             tvDelete = view.findViewById(R.id.tvDelete);
             promotionalText = view.findViewById(R.id.promotionalText);
-            swipeLayout = view.findViewById(R.id.swipe);
             llPromotionalText = view.findViewById(R.id.promotionalTextLayout);
             rlDeleteButton = view.findViewById(R.id.rlDeleteButton);
             tvProductAvailability = view.findViewById(R.id.tvProductAvailability);
-            swipe = view.findViewById(R.id.swipe);
+            swipeLayout = view.findViewById(R.id.swipe);
         }
     }
 
