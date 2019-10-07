@@ -1048,7 +1048,7 @@
     <string name="calculation_status_level_paragraph3">We are entitled to adjust the spend thresholds (they are adjusted annually), the number of status levels or the rewards at any stage without notification.</string>
     <string name="absa_common_error_message">Please try again or contact our call centre on 0861 50 20 10.</string>
     <string name="absa_otp_screen_description">Please confirm by entering the OTP sent to your cell phone number at\u0020</string>
-    <string name="absa_wrong_otp_entered">Wrong OTP Entered. Please try again.</string>
+    <string name="absa_wrong_otp_entered">Wrong OTP entered. Please try again.</string>
     <string name="absa_otp_screen_title">Enter 8 Digit OTP Number</string>
     <string name="absa_general_error_title">Oops something went wrong</string>
     <string name="link_reward_account">link account</string>
