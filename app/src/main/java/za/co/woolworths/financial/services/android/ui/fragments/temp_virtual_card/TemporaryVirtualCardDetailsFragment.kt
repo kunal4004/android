@@ -8,8 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.temporary_virtual_card_fragment.*
-import za.co.woolworths.financial.services.android.ui.activities.temp_virtual_card.HowToUseVirtualCardActivity
-import za.co.woolworths.financial.services.android.ui.fragments.npc.BlockMyCardReasonConfirmationFragment
+import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.HowToUseTemporaryStoreCardActivity
 import za.co.woolworths.financial.services.android.util.Utils
 
 class TemporaryVirtualCardDetailsFragment : Fragment() {
@@ -27,7 +26,7 @@ class TemporaryVirtualCardDetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         howItWorks.setOnClickListener {
             activity?.apply {
-                startActivity(Intent(this, HowToUseVirtualCardActivity::class.java))
+                startActivity(Intent(this, HowToUseTemporaryStoreCardActivity::class.java))
                 overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
             }
         }

@@ -12,6 +12,8 @@ import za.co.woolworths.financial.services.android.models.dto.chat.*
 import za.co.woolworths.financial.services.android.models.dto.npc.BlockCardRequestBody
 import za.co.woolworths.financial.services.android.models.dto.npc.BlockMyCardResponse
 import za.co.woolworths.financial.services.android.models.dto.statement.*
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.*
 
@@ -297,6 +299,10 @@ object OneAppService : RetrofitConfig() {
 
     fun userStoppedTyping(chatId: String): Call<UserTypingResponse> {
         return mApiInterface.userStoppedTyping(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), chatId, JsonObject())
+    }
+
+    fun getStoreCards(storeCardsRequestBody: StoreCardsRequestBody): Call<StoreCardsResponse> {
+        return mApiInterface.getStoreCards(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), storeCardsRequestBody)
     }
 
 }

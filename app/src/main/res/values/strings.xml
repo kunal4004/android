@@ -1079,5 +1079,9 @@
     <string name="oops_err_title">Error</string>
 
     <string name="request_timeout_error">Your request timed out, please try again later</string>
+    <string name="get_temp_sc_title">Your Woolies Store Card is on it\'s on way. Start shopping today with your temporary store card.</string>
+    <string name="get_temp_sc_description">To shop with your temporary card in store, bring along your ID. Your temporary card is valid for 30 days.</string>
+    <string name="get_temp_sc_action">GET TEMP STORE CARD NOW</string>
+    <string name="get_temp_sc_link_how_to_pay">how to use your temporary store card</string>
 
 </resources>

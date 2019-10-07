@@ -14,6 +14,10 @@ import za.co.woolworths.financial.services.android.models.dto.npc.BlockMyCardRes
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementResponse
 import za.co.woolworths.financial.services.android.models.dto.statement.StatementResponse
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.UnblockStoreCardRequestBody
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.UnblockStoreCardResponse
 
 interface ApiInterface {
 
@@ -1060,5 +1064,51 @@ interface ApiInterface {
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
             @Path("chatId") chatId: String): Call<EndChatSessionResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("accounts/storecard/cards")
+    fun getStoreCards(
+            @Header("apiId") apiId: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("network") network: String,
+            @Header("os") os: String,
+            @Header("osVersion") osVersion: String,
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String,
+            @Body getStoreCardsRequestBody: StoreCardsRequestBody): Call<StoreCardsResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("accounts/storecard/unblockStoreCard/{productOfferingId}")
+    fun unblockStoreCard(
+            @Header("apiId") apiId: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("network") network: String,
+            @Header("os") os: String,
+            @Header("osVersion") osVersion: String,
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String,
+            @Path("productOfferingId") productOfferingId: String,
+            @Body requestBody: UnblockStoreCardRequestBody): Call<UnblockStoreCardResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("accounts/storecard/otp")
+    fun getOTPForStoreCard(
+            @Header("apiId") apiId: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("network") network: String,
+            @Header("os") os: String,
+            @Header("osVersion") osVersion: String,
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String,
+            @Query("otpMethod") otpMethod: String): Call<EndChatSessionResponse>
 
 }
