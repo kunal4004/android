@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.npc
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +12,10 @@ import za.co.woolworths.financial.services.android.models.JWTDecodedModel
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.npc.Card
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
+import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.HowToUseTemporaryStoreCardActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
+import za.co.woolworths.financial.services.android.ui.fragments.temporary_store_card.ScanBarcodeToPayDialogFragment
+import za.co.woolworths.financial.services.android.ui.fragments.temporary_store_card.TemporaryStoreCardExpireInfoDialog
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.*
@@ -32,7 +36,7 @@ class MyCardDetailFragment : MyCardExtension() {
         super.onCreate(savedInstanceState)
 
         arguments?.apply {
-            mStoreCardDetail = getString(STORE_CARD_DETAIL,"")
+            mStoreCardDetail = getString(STORE_CARD_DETAIL, "")
             // Extract latest openedDate
             activity?.let {
                 mStoreCardDetail.let { cardValue ->
@@ -57,12 +61,12 @@ class MyCardDetailFragment : MyCardExtension() {
     private fun populateView() {
         mLatestOpenedDateStoreCard?.apply {
             maskedCardNumberWithSpaces(cardNumber?.toString()).also {
-                tvCardNumberValue?.text = it
+                textViewCardNumber?.text = it
                 tvCardNumberHeader?.text = it
             }
 
             toTitleCase(cardName()).also {
-                tvCardHolderValue?.text = it
+                textViewCardHolderName?.text = it
                 tvCardHolderHeader?.text = it
             }
         }
@@ -76,6 +80,24 @@ class MyCardDetailFragment : MyCardExtension() {
     }
 
     private fun onClick() {
-        blockCardView.setOnClickListener { activity?.let { navigateToBlockMyCardActivity(it, mStoreCardDetail, mLatestOpenedDateStoreCard) } }
+        blockCard.setOnClickListener { activity?.let { navigateToBlockMyCardActivity(it, mStoreCardDetail, mLatestOpenedDateStoreCard) } }
+        payWithCard.setOnClickListener {
+            activity?.supportFragmentManager?.apply {
+                ScanBarcodeToPayDialogFragment.newInstance().show((this), ScanBarcodeToPayDialogFragment::class.java.simpleName)
+            }
+        }
+        howItWorks.setOnClickListener {
+            activity?.apply {
+                startActivity(Intent(this, HowToUseTemporaryStoreCardActivity::class.java))
+                overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+
+            }
+        }
+
+        expireInfo.setOnClickListener {
+            activity?.supportFragmentManager?.apply {
+                TemporaryStoreCardExpireInfoDialog.newInstance().show((this), TemporaryStoreCardExpireInfoDialog::class.java.simpleName)
+            }
+        }
     }
 }

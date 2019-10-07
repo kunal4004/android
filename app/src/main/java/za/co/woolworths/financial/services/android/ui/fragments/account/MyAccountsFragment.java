@@ -1041,7 +1041,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	}
 
 	private void displayTemporaryStoreCardPopup(StoreCardsResponse storeCardsResponse) {
-		if (storeCardsResponse.getStoreCardsData() != null && !storeCardsResponse.getStoreCardsData().getGenerateVirtualCard()) {
+		if (storeCardsResponse.getStoreCardsData() != null && storeCardsResponse.getStoreCardsData().getGenerateVirtualCard()) {
 			Activity activity = getActivity();
 			if (activity == null) return;
 			if (getBottomNavigationActivity().getCurrentFragment() instanceof MyAccountsFragment) {

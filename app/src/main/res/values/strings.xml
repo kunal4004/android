@@ -1083,5 +1083,7 @@
     <string name="get_temp_sc_description">To shop with your temporary card in store, bring along your ID. Your temporary card is valid for 30 days.</string>
     <string name="get_temp_sc_action">GET TEMP STORE CARD NOW</string>
     <string name="get_temp_sc_link_how_to_pay">how to use your temporary store card</string>
+    <string name="dialog_temp_store_card_expire_info_title">Temp Card Expires</string>
+    <string name="dialog_temp_store_card_expire_info_desc">Your temporary card is only valid for 30 days and will automatically expire after this time or on your first swipe of your store card, in store.</string>
 
 </resources>

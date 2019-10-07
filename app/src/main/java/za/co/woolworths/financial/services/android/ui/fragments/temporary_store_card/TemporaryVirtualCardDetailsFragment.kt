@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments.temp_virtual_card
+package za.co.woolworths.financial.services.android.ui.fragments.temporary_store_card
 
 import android.content.Intent
 import android.os.Bundle

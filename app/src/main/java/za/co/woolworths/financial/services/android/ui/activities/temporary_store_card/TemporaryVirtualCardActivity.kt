@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.my_card_activity.*
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
-import za.co.woolworths.financial.services.android.ui.fragments.temp_virtual_card.TemporaryVirtualCardDetailsFragment
+import za.co.woolworths.financial.services.android.ui.fragments.temporary_store_card.TemporaryVirtualCardDetailsFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
 class TemporaryVirtualCardActivity : AppCompatActivity() {
