@@ -8,7 +8,7 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.temp_card_how_to_use_layout.*
 import za.co.woolworths.financial.services.android.util.Utils
 
-class HowToUseVirtualCardActivity : AppCompatActivity() {
+class HowToUseTemporaryStoreCardActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
