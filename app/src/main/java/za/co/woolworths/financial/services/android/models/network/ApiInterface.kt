@@ -815,7 +815,7 @@ interface ApiInterface {
             @Path("multipleSku") multipleSku: String): Call<SkusInventoryForStoreResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
-    @GET("searchSortAndFilter")
+    @GET("searchSortAndFilterV2")
     fun getProducts(
             @Header("osVersion") osVersion: String,
             @Header("deviceModel") deviceModel: String,
@@ -838,7 +838,7 @@ interface ApiInterface {
             @Query("refinement") refinement: String): Call<ProductView>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
-    @GET("searchSortAndFilter")
+    @GET("searchSortAndFilterV2")
     fun getProductsWithoutLocation(
             @Header("osVersion") osVersion: String,
             @Header("deviceModel") deviceModel: String,
