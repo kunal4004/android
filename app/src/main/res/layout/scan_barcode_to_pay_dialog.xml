@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+
+    <TextView
+        android:id="@+id/title"
+        style="@style/dialog_title_text_style"
+        android:layout_marginTop="@dimen/fifty_dp"
+        android:text="@string/dialog_scan_barcode_to_pay_title"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/description"
+        style="@style/dialog_description_text_style"
+        android:layout_marginTop="@dimen/sixteen_dp"
+        android:text="@string/dialog_scan_barcode_to_pay_desc"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@id/title" />
+
+    <ImageView
+        android:id="@+id/barCodeImage"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/sixty_six_dp"
+        android:layout_marginTop="@dimen/twenty_four_dp"
+        android:adjustViewBounds="true"
+        android:background="@color/black"
+        android:scaleType="fitXY"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@id/description" />
+
+    <RelativeLayout
+        android:id="@+id/cardHolderLayout"
+        style="@style/card_item_layout_style"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/barCodeImage">
+
+        <TextView
+            android:id="@+id/tvCardHolder"
+            style="@style/card_item_regular_text_style"
+            android:layout_alignParentStart="true"
+            android:text="@string/card_holder" />
+
+        <TextView
+            android:id="@+id/tvCardHolderName"
+            style="@style/card_item_semi_bold_text_style"
+            android:layout_alignParentEnd="true" />
+
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/vHorizontalDivider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@color/recent_search_bg"
+        android:visibility="visible"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@id/cardHolderLayout" />
+
+    <TextView
+        android:id="@+id/done"
+        style="@style/dialog_action_text_style"
+        android:layout_marginTop="@dimen/twenty_four_dp"
+        android:text="@string/done"
+        app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
+        app:layout_constraintRight_toRightOf="@+id/right_guideline"
+        app:layout_constraintTop_toBottomOf="@id/vHorizontalDivider" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/left_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/twenty_four_dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/right_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/twenty_four_dp" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

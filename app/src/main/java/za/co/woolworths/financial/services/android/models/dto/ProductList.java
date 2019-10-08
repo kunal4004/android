@@ -38,6 +38,18 @@ public class ProductList {
     @SerializedName("saveText")
     @Expose
     public String saveText;
+    @SerializedName("priceType")
+    @Expose
+    public String priceType;
+    @SerializedName("kilogramPrice")
+    @Expose
+    public Float kilogramPrice;
+    @SerializedName("price")
+    @Expose
+    public Float price;
+    @SerializedName("wasPrice")
+    @Expose
+    public Float wasPrice;
 
     public ProductListingViewType rowType = ProductListingViewType.PRODUCT;
     public Integer numberOfItems;
@@ -45,4 +57,5 @@ public class ProductList {
     public boolean viewIsLoading;
     public String displayColorSizeText;
     public String fulfillmentType;
+    public boolean quickShopButtonWasTapped = false;
 }

@@ -93,7 +93,7 @@ class GetReplacementCardFragment : MyCardExtension() {
     }
 
     private fun navigateToParticipatingStores(location: Location?) {
-        val locationRequestRequest = if (location == null) OneAppService.getLocations("", "", "", "", true) else OneAppService.getLocations(location.latitude.toString(), location.longitude.toString(), "", "50000", true)
+        val locationRequestRequest = OneAppService.queryServiceGetStore(location?.latitude ?: 0.0, location?.longitude ?: 0.0, "", true)
         OneAppService.forceNetworkUpdate = true
         progressVisibility(true)
         locationRequestRequest.enqueue(CompletionHandler(object : RequestListener<LocationResponse> {

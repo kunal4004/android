@@ -8,10 +8,10 @@ apply plugin: 'io.fabric'
 android {
 
     def major = "5"
-    def minor = "16"
-    def fix = "1"
+    def minor = "17"
+    def fix = "0"
 
-    def jobNumber = 348
+    def jobNumber = 363
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
 
     dataBinding {
@@ -72,7 +72,7 @@ android {
             env = "QA"
         }else{
             //assume prod
-            jobNumber = 115
+            jobNumber = 119
         }
 
         defaultConfig {

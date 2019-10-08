@@ -1826,5 +1826,119 @@
         <item name="android:paddingEnd">@dimen/ten_dp</item>
         <item name="android:paddingBottom">@dimen/twelve_dp</item>
     </style>
+    <style name="card_item_layout_style">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">@dimen/seventy_dp</item>
+        <item name="android:paddingLeft">@dimen/twenty_four_dp</item>
+        <item name="android:paddingRight">@dimen/twenty_four_dp</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:layout_marginTop">@dimen/one_dp</item>
+    </style>
+
+    <style name="clickable_card_item_layout_style" parent="card_item_layout_style">
+        <item name="android:paddingRight">@dimen/sixteen_dp</item>
+    </style>
+
+    <style name="card_items_header_layout_style" parent="card_item_layout_style">
+        <item name="android:layout_height">@dimen/fifty_dp</item>
+    </style>
+
+    <style name="card_item_regular_text_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textSize">@dimen/fifteen_sp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular</item>
+    </style>
+
+    <style name="card_item_semi_bold_text_style" parent="card_item_regular_text_style">
+        <item name="android:fontFamily">@font/myriad_pro_semi_bold</item>
+    </style>
+
+    <style name="card_item_start_icon_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:layout_alignParentStart">true</item>
+        <item name="android:alpha">0.3</item>
+        <item name="android:layout_marginRight">@dimen/twenty_four_dp</item>
+    </style>
+
+    <style name="card_item_end_icon_style">
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:layout_alignParentEnd">true</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:src">@drawable/ic_caret_black</item>
+    </style>
+
+    <style name="card_items_header_text_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/twelve_sp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:lineSpacingExtra">0.1sp</item>
+        <item name="android:gravity">center|start</item>
+        <item name="android:fontFamily">@font/futura_semi_bold</item>
+        <item name="android:letterSpacing">0.15</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="how_to_pay_text_style">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:button">@drawable/circle_green_12</item>
+        <item name="android:paddingLeft">@dimen/twenty_dp</item>
+        <item name="android:lineSpacingMultiplier">1.31</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular</item>
+        <item name="android:textSize">@dimen/sixteen_sp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:gravity">top</item>
+    </style>
+
+    <style name="dialog_title_text_style">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:textSize">@dimen/twenty_sp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:gravity">center</item>
+        <item name="android:fontFamily">@font/futura_semi_bold</item>
+    </style>
+
+    <style name="dialog_description_text_style" parent="dialog_title_text_style">
+        <item name="android:textSize">@dimen/sixteen_sp</item>
+        <item name="android:textColor">@color/gray</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular</item>
+        <item name="android:lineSpacingMultiplier">1.13</item>
+    </style>
+
+    <style name="dialog_action_text_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/futura_bold</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:letterSpacing">0.2</item>
+        <item name="android:padding">@dimen/five_dp</item>
+        <item name="android:textSize">@dimen/twelve_sp</item>
+    </style>
+    <style name="upSellMessageStyle" parent="android:Widget.TextView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingTop">16dp</item>
+        <item name="android:paddingBottom">16dp</item>
+        <item name="android:paddingStart">32dp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:paddingEnd">32dp</item>
+        <item name="android:maxLines">3</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:background">@color/stock_finder_map_header_bg</item>
+    </style>
 
 </resources>

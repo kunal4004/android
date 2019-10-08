@@ -17,10 +17,10 @@ public class ValidateSureCheckResponse {
 	private String cellNumber;
 
 	@SerializedName("resendsRemaining")
-	private int resendsRemaining;
+	public int resendsRemaining;
 
 	@SerializedName("otpRetriesLeft")
-	private int otpRetriesLeft;
+	public int otpRetriesLeft;
 
 	public Header getHeader() {
 		return header;

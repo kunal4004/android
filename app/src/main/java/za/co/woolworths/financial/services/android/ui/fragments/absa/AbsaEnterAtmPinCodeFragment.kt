@@ -65,7 +65,7 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IV
 
 
     private fun initViewsAndEvents() {
-        activity?.apply { (this as ABSAOnlineBankingRegistrationActivity).setPageTitle(getString(R.string.absa_registration_title_step_1))  }
+        activity?.apply { (this as ABSAOnlineBankingRegistrationActivity).clearPageTitle()  }
         tvForgotPin.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         tvForgotPin.setOnClickListener(this)
         ivNavigateToDigitFragment.setOnClickListener(this)
@@ -254,5 +254,18 @@ class AbsaEnterAtmPinCodeFragment : AbsaFragmentExtension(), OnClickListener, IV
     }
 
     override fun onDialogButtonAction() {
+    }
+
+    override fun onSuccessOFOTPSureCheck(userCellNumber: String?) {
+        replaceFragment(
+                fragment = AbsaOTPConfirmationFragment.newInstance(userCellNumber),
+                tag = AbsaOTPConfirmationFragment::class.java.simpleName,
+                containerViewId = R.id.flAbsaOnlineBankingToDevice,
+                allowStateLoss = true,
+                enterAnimation = R.anim.slide_in_from_right,
+                exitAnimation = R.anim.slide_to_left,
+                popEnterAnimation = R.anim.slide_from_left,
+                popExitAnimation = R.anim.slide_to_right
+        )
     }
 }

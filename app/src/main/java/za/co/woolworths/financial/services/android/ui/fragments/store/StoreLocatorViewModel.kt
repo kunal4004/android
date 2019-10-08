@@ -23,7 +23,7 @@ class StoreLocatorViewModel : ViewModel() {
             override fun onLocationChange(location: Location?) {
                 FuseLocationAPISingleton.stopLocationUpdate()
                 WoolworthsApplication.getAppContext()?.let { context -> Utils.saveLastLocation(location, context) }
-                val requestLocationCall = if (location == null) OneAppService.getLocations("", "", "", "", true) else OneAppService.getLocations(location.latitude.toString(), location.longitude.toString(), "", "50000", true)
+                val requestLocationCall =  OneAppService.queryServiceGetStore(location?.latitude ?: 0.0, location?.longitude ?: 0.0, "", true)
                 requestLocationCall.enqueue(CompletionHandler(object : RequestListener<LocationResponse> {
                     override fun onSuccess(locationResponse: LocationResponse?) {
                         locationResult.postValue(locationResponse?.Locations ?: mutableListOf())

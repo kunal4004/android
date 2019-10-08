@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView
 
 import android.util.Log
 import android.view.*
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.Button
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -50,13 +52,14 @@ import za.co.woolworths.financial.services.android.ui.adapters.ProductListingAda
 import za.co.woolworths.financial.services.android.ui.adapters.SortOptionsAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductListingViewType
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import za.co.woolworths.financial.services.android.ui.views.ProductListingProgressBar
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView
 
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsFragmentNew.SET_DELIVERY_LOCATION_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.views.AddedToCartBalloonFactory
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.*
 import za.co.woolworths.financial.services.android.util.*
+import java.net.ConnectException
+import java.net.UnknownHostException
 import java.util.*
 
 open class ProductListingFragment : ProductListingExtensionFragment(), GridNavigator, IProductListing, View.OnClickListener, SortOptionsAdapter.OnSortOptionSelected, WMaterialShowcaseView.IWalkthroughActionListener {
@@ -64,9 +67,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     private var oneTimeInventoryErrorDialogDisplay: Boolean = false
     private var mAddItemsToCart: MutableList<AddItemToCart>? = null
     private var mErrorHandlerView: ErrorHandlerView? = null
-    private var mSubCategoryId: String? = null
     private var mSubCategoryName: String? = null
-    private var mSearchProduct: String? = null
     private var mProductAdapter: ProductListingAdapter? = null
     private var mProductList: MutableList<ProductList>? = null
     private var mRecyclerViewLayoutManager: GridLayoutManager? = null
@@ -74,19 +75,20 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     internal var totalItemCount: Int = 0
     private var productView: ProductView? = null
     private var sortOptionDialog: Dialog? = null
-    private val mProgressListingProgressBar: ProductListingProgressBar? = ProductListingProgressBar()
     private var mStoreId: String? = null
     private var mAddItemToCart: AddItemToCart? = null
     private var mSelectedProductList: ProductList? = null
+    private var mSearchType: ProductsRequestParams.SearchType? = null
+    private var mSearchTerm: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         activity?.apply {
             arguments?.apply {
-                mSubCategoryId = getString(SUB_CATEGORY_ID, "")
                 mSubCategoryName = getString(SUB_CATEGORY_NAME, "")
-                mSearchProduct = getString(SEARCH_PRODUCT_TERMS, "")
+                mSearchType = ProductsRequestParams.SearchType.valueOf(getString(SEARCH_TYPE, "SEARCH"))
+                mSearchTerm = getString(SEARCH_TERM, "")
             }
             setProductBody()
         }
@@ -122,7 +124,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
         activity?.let { activity -> Utils.setScreenName(activity, FirebaseManagerAnalyticsProperties.ScreenNames.PRODUCT_SEARCH_RESULTS) }
     }
 
-    private fun setTitle() = (activity as? BottomNavigationActivity)?.setTitle(if (mSearchProduct?.isEmpty() == true) mSubCategoryName else mSearchProduct)
+    private fun setTitle() = (activity as? BottomNavigationActivity)?.setTitle(if (mSubCategoryName?.isEmpty() == true) mSearchTerm else mSubCategoryName)
 
     override fun onLoadProductSuccess(response: ProductView, loadMoreData: Boolean) {
         val productLists = response.products
@@ -131,7 +133,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             mProductList = ArrayList()
 
         if (productLists?.isEmpty() == true) {
-            sortAndRefineLayout?.visibility = View.GONE
+            sortAndRefineLayout?.visibility = GONE
             if (!listContainHeader()) {
                 val headerProduct = ProductList()
                 headerProduct.rowType = ProductListingViewType.HEADER
@@ -324,7 +326,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
 
     override fun startProductRequest() {
         activity?.let { activity ->
-            if (mSearchProduct?.isEmpty() == true) {
+            if (mSearchTerm?.isEmpty() == true) {
                 executeLoadProduct(activity, productRequestBody)
             } else {
                 executeLoadProduct(activity, productRequestBody)
@@ -347,24 +349,20 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     override fun setProductBody() {
-        if (mSearchProduct?.isEmpty() == true) {
-            setProductRequestBody(ProductsRequestParams.SearchType.NAVIGATE, mSubCategoryId)
-        } else {
-            setProductRequestBody(ProductsRequestParams.SearchType.SEARCH, mSearchProduct)
-        }
+        setProductRequestBody(mSearchType, mSearchTerm)
     }
 
     override fun onLoadStart(isLoadMore: Boolean) {
         setIsLoading(true)
         if (!isLoadMore) {
-            showProgressBar()
+            incCenteredProgress?.visibility = VISIBLE
         }
     }
 
     override fun onLoadComplete(isLoadMore: Boolean) {
         setIsLoading(false)
         if (!isLoadMore) {
-            dismissProgressBar()
+            incCenteredProgress?.visibility = GONE
         }
     }
 
@@ -548,8 +546,9 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
     }
 
     override fun openProductDetailView(productList: ProductList) {
-        mSubCategoryName = if (mSearchProduct?.isNotEmpty() == true) mSearchProduct else mSubCategoryName
+        mSubCategoryName = if (mSearchTerm?.isNotEmpty() == true) mSearchTerm else mSubCategoryName
         (activity as? BottomNavigationActivity)?.openProductDetailFragment(mSubCategoryName, productList)
+
     }
 
     override fun queryInventoryForStore(storeId: String, addItemToCart: AddItemToCart?, productList: ProductList) {
@@ -610,20 +609,35 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             }
 
             override fun onFailure(error: Throwable) {
-                dismissProgressBar()
-                mErrorHandlerView?.networkFailureHandler(error.message ?: "")
+                if (!isAdded) return
+                activity.runOnUiThread {
+                    dismissProgressBar()
+                    onFailureHandler(error)
+                }
             }
         }, SkusInventoryForStoreResponse::class.java))
     }
 
+    private fun onFailureHandler(error: Throwable) {
+        activity?.let { activity ->
+            when (error) {
+                is ConnectException, is UnknownHostException -> {
+                    ErrorHandlerView(activity).showToast(getString(R.string.no_connection))
+                }
+                else -> return
+            }
+        }
+    }
+
     private fun showProgressBar() {
         // Show progress bar
-        activity?.let { activity -> mProgressListingProgressBar?.show(activity) }
+        incCenteredProgress?.visibility = VISIBLE
     }
 
     private fun dismissProgressBar() {
         // hide progress bar
-        mProgressListingProgressBar?.dialog?.dismiss()
+        incCenteredProgress?.visibility = GONE
+        mProductAdapter?.resetQuickShopButton()
     }
 
     override fun addFoodProductTypeToCart(addItemToCart: AddItemToCart?) {
@@ -688,6 +702,7 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
             }
 
             override fun onFailure(error: Throwable) {
+                if (!isAdded) return
                 activity?.runOnUiThread { dismissProgressBar() }
             }
         })
@@ -744,29 +759,29 @@ open class ProductListingFragment : ProductListingExtensionFragment(), GridNavig
                 override fun onFailure(error: Throwable) {
                     activity?.runOnUiThread {
                         dismissProgressBar()
-                        mErrorHandlerView?.networkFailureHandler(error.message ?: "")
+                        onFailureHandler(error)
                     }
                 }
             }, LocationResponse::class.java))
         }
     }
 
-
     companion object {
         const val REFINEMENT_DATA = "REFINEMENT_DATA"
         const val PRODUCTS_REQUEST_PARAMS = "PRODUCTS_REQUEST_PARAMS"
-        private const val SUB_CATEGORY_ID = "SUB_CATEGORY_ID"
         private const val SUB_CATEGORY_NAME = "SUB_CATEGORY_NAME"
-        private const val SEARCH_PRODUCT_TERMS = "SEARCH_PRODUCT_TERMS"
 
         const val REFINE_REQUEST_CODE = 77
         private const val QUERY_INVENTORY_FOR_STORE_REQUEST_CODE = 3343
         private const val QUERY_LOCATION_ITEM_REQUEST_CODE = 3344
 
-        fun newInstance(sub_category_id: String?, sub_category_name: String?, search_product_term: String?) = ProductListingFragment().withArgs {
-            putString(SUB_CATEGORY_ID, sub_category_id)
+        private const val SEARCH_TYPE = "SEARCH_TYPE"
+        private const val SEARCH_TERM = "SEARCH_TERM"
+
+        fun newInstance(searchType: ProductsRequestParams.SearchType?, sub_category_name: String?, searchTerm: String?) = ProductListingFragment().withArgs {
+            putString(SEARCH_TYPE, searchType?.name)
             putString(SUB_CATEGORY_NAME, sub_category_name)
-            putString(SEARCH_PRODUCT_TERMS, search_product_term)
+            putString(SEARCH_TERM, searchTerm)
         }
     }
 }

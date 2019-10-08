@@ -14,7 +14,7 @@ public class ValidateCardAndPinResponse {
 	public SecurityNotificationType securityNotificationType;
 
 	@SerializedName("cellNumber")
-	private String cellNumber;
+	public String cellNumber;
 
 	@SerializedName("resendsRemaining")
 	private int resendsRemaining;

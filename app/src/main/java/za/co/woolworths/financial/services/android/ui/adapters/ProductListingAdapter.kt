@@ -3,10 +3,12 @@ package za.co.woolworths.financial.services.android.ui.adapters
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.product_listing_page_row.view.*
+import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.contracts.IProductListing
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart
 import za.co.woolworths.financial.services.android.models.dto.ProductList
 import za.co.woolworths.financial.services.android.ui.adapters.holder.*
+import za.co.woolworths.financial.services.android.util.Utils
 
 class ProductListingAdapter(private val navigator: IProductListing, private val mProductListItems: List<ProductList>?) : RecyclerView.Adapter<ProductListingViewHolder>() {
 
@@ -26,8 +28,11 @@ class ProductListingAdapter(private val navigator: IProductListing, private val 
                 else -> (holder as? ProductListingViewHolderItems)?.let { view ->
                     view.setProductItem(productList, navigator)
                     view.itemView.imQuickShopAddToCartIcon.setOnClickListener {
-                        val storeId = view.getFulFillmentStoreId()
+                        if (!productList.quickShopButtonWasTapped) {
+                            Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPQS_ADD_TO_CART)
+                            val storeId = view.getFulFillmentStoreId()
                             navigator.queryInventoryForStore(storeId!!, AddItemToCart(productList.productId, productList.sku, 0), productList)
+                        }
                     }
                 }
             }
@@ -40,4 +45,11 @@ class ProductListingAdapter(private val navigator: IProductListing, private val 
     override fun getItemCount(): Int = mProductListItems?.size ?: 0
 
     override fun getItemId(position: Int): Long = position.toLong()
+
+    fun resetQuickShopButton() {
+        mProductListItems?.forEach { product ->
+            product.quickShopButtonWasTapped = false
+        }
+        notifyDataSetChanged()
+    }
 }

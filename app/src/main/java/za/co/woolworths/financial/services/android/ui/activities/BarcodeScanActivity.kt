@@ -102,4 +102,8 @@ class BarcodeScanActivity : RuntimePermissionActivity() {
     }
 
     override fun onRuntimePermissonRequestDenied() = onBackPressed()
+
+    companion object {
+        const val BARCODE_ACTIVITY_REQUEST_CODE = 1947
+    }
 }

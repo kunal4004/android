@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities
 
+import android.app.Activity
 import android.content.Intent
 import android.content.res.TypedArray
 import android.os.Bundle
@@ -12,6 +13,7 @@ import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_tips_and_trics_view_pager.*
 import za.co.woolworths.financial.services.android.contracts.FirebaseManagerAnalyticsProperties
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.TIPS_AND_TRICKS_CTA_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.adapters.TipsAndTricksViewPagerAdapter
 import za.co.woolworths.financial.services.android.util.QueryBadgeCounter
 import za.co.woolworths.financial.services.android.util.ScreenManager
@@ -108,7 +110,7 @@ class TipsAndTricksViewPagerActivity : AppCompatActivity(), View.OnClickListener
                 //BARCODE SCAN
                     1 -> {
                         val openBarcodeActivity = Intent(this, BarcodeScanActivity::class.java)
-                        startActivity(openBarcodeActivity)
+                        startActivityForResult(openBarcodeActivity, BarcodeScanActivity.BARCODE_ACTIVITY_REQUEST_CODE)
                         overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
                     }
                 //DELIVERY LOCATION
@@ -202,6 +204,9 @@ class TipsAndTricksViewPagerActivity : AppCompatActivity(), View.OnClickListener
                     presentShoppingList()
                 }
             }
+        } else if (requestCode == BarcodeScanActivity.BARCODE_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            setResult(Activity.RESULT_OK, data)
+            onBackPressed()
         }
     }
 

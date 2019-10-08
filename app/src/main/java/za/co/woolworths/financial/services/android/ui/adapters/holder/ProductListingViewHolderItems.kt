@@ -56,30 +56,27 @@ class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolde
     }
 
     private fun setPrice(productList: ProductList?) {
-        val wasPriceList: MutableList<Double> = mutableListOf()
+        val wasPrice: String? = productList?.wasPrice?.toString() ?: ""
+        val price: String? = productList?.price?.toString() ?: ""
+        val kilogramPrice: String = productList?.kilogramPrice?.toString() ?: ""
 
-        productList?.otherSkus?.forEach { sku -> sku?.wasPrice?.toDouble()?.apply { wasPriceList.add(this) } }
-
-        val wasPrice: String? = if (wasPriceList.isNullOrEmpty()) "" else Collections.max(wasPriceList)?.toString()
-                ?: ""
-        val fromPrice: String? = productList?.fromPrice?.toString() ?: ""
 
         with(itemView) {
             if (wasPrice.isNullOrEmpty()) {
-                tvFromPrice.text = if (fromPrice!!.isEmpty()) "" else WFormatter.formatAmount(fromPrice)
-                tvFromPrice.setTextColor(Color.BLACK)
+                tvPrice.text = if (price!!.isEmpty()) "" else getMassPrice(price, productList?.priceType, kilogramPrice)
+                tvPrice.setTextColor(Color.BLACK)
                 tvWasPrice.text = ""
                 fromPriceStrikeThrough.visibility = GONE
             } else {
-                if (wasPrice.equals(fromPrice, ignoreCase = true)) {
-                    tvFromPrice.text = if (fromPrice!!.isEmpty()) WFormatter.formatAmount(wasPrice) else WFormatter.formatAmount(fromPrice)
-                    tvFromPrice.setTextColor(Color.BLACK)
+                if (wasPrice.equals(price, ignoreCase = true)) {
+                    tvPrice.text = if (price!!.isEmpty()) WFormatter.formatAmount(wasPrice) else getMassPrice(price, productList?.priceType, kilogramPrice)
+                    tvPrice.setTextColor(Color.BLACK)
                     fromPriceStrikeThrough.visibility = GONE
                     tvWasPrice.text = ""
                 } else {
-                    tvFromPrice.text = WFormatter.formatAmount(fromPrice)
-                    tvFromPrice.setTextColor(ContextCompat.getColor(WoolworthsApplication.getAppContext(), R.color.was_price_color))
-                    tvWasPrice.text = WFormatter.formatAmount(wasPrice)
+                    tvPrice.text = WFormatter.formatAmount(price)
+                    tvPrice.setTextColor(ContextCompat.getColor(WoolworthsApplication.getAppContext(), R.color.was_price_color))
+                    tvWasPrice.text = wasPrice?.let { getMassPrice(it, productList?.priceType, kilogramPrice) }
                     fromPriceStrikeThrough.visibility = VISIBLE
                     tvWasPrice.setTextColor(Color.BLACK)
                 }
@@ -115,6 +112,23 @@ class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolde
         }
 
         return defaultStoreId
+    }
+
+    private fun getMassPrice(price: String, priceType: String?, kilogramPrice: String): String {
+        return with(priceType) {
+            when {
+                isNullOrEmpty() -> {
+                    WFormatter.formatAmount(price)
+                }
+                this!!.contains("from", true) -> {
+                    "From " + WFormatter.formatAmount(price)
+                }
+                this.contains("Kilogram", true) -> {
+                    WFormatter.formatAmount(price)+" ("+WFormatter.formatAmount(kilogramPrice)+"/kg)"
+                }
+                else -> WFormatter.formatAmount(price)
+            }
+        }
     }
 
 }

@@ -147,5 +147,6 @@
     <dimen name="chat_bubble_text_line_spacing">1.31dp</dimen>
     <dimen name="chat_bubble_text_size">16sp</dimen>
     <dimen name="sixty_four_dp">64dp</dimen>
+    <dimen name="one_dp">1dp</dimen>
 </resources>
 
