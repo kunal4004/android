@@ -186,7 +186,9 @@ class AbsaOTPConfirmationFragment : AbsaFragmentExtension(), View.OnClickListene
 
     override fun onResume() {
         super.onResume()
-        clearPin()
+        enterOTPEditText?.apply {
+            showKeyboard(this)
+        }
     }
 
     private fun clearPin() {
