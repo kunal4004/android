@@ -37,7 +37,6 @@ open class WBottomSheetDialogFragment : BottomSheetDialogFragment() {
         }
     }
 
-
     // Override dialog.show() method to prevent IllegalStateException being thrown
     // when running a dialog fragment on a destroyed activity.
     override fun show(manager: FragmentManager, tag: String?) {
@@ -45,8 +44,8 @@ open class WBottomSheetDialogFragment : BottomSheetDialogFragment() {
             val ft = manager.beginTransaction()
             ft.add(this, tag)
             ft.commitAllowingStateLoss()
-        } catch (illegalStateException: IllegalStateException) {
-            Log.i(TAG, "Activity’s state loss")
+        } catch (ex: IllegalStateException) {
+            Log.e(TAG, ex.message ?: "")
         }
     }
 }
