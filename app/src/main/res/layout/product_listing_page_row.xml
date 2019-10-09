@@ -151,16 +151,14 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
-        android:layout_marginTop="10dp"
         android:layout_marginEnd="12dp"
         android:orientation="horizontal"
         app:alignContent="stretch"
         app:alignItems="stretch"
         app:flexWrap="wrap"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/imQuickShopAddToCartIcon"
         app:layout_constraintEnd_toStartOf="@+id/imQuickShopAddToCartIcon"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvSaveText">
+        app:layout_constraintStart_toStartOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
@@ -182,7 +180,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="UnusedAttribute"
-                tools:text="R55.99" />
+                tools:text="R 99.99 (R 99.99/kg)" />
 
             <View
                 android:id="@+id/fromPriceStrikeThrough"
@@ -204,7 +202,7 @@
             android:layout_alignParentTop="true"
             android:fontFamily="@font/futura_semi_bold_ttf"
             android:gravity="bottom|start"
-            android:text="R40.00"
+            android:text="R 99.99 (R 99.99/kg)"
             android:textColor="@color/red"
             android:textSize="14sp"
             app:layout_alignSelf="flex_start"
@@ -212,5 +210,12 @@
 
     </com.google.android.flexbox.FlexboxLayout>
 
+    <View
+        android:id="@+id/bottomSpace"
+        android:layout_width="0dp"
+        android:layout_height="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imQuickShopAddToCartIcon" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
