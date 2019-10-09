@@ -2,15 +2,19 @@ package za.co.woolworths.financial.services.android.ui.views.actionsheet
 
 import android.app.Dialog
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import com.awfs.coordination.R
 import android.widget.FrameLayout
+import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 
 open class WBottomSheetDialogFragment : BottomSheetDialogFragment() {
+
+    private val TAG = WBottomSheetDialogFragment::class.java.simpleName
 
     override fun onActivityCreated(arg0: Bundle?) {
         super.onActivityCreated(arg0)
@@ -30,6 +34,19 @@ open class WBottomSheetDialogFragment : BottomSheetDialogFragment() {
                 BottomSheetBehavior.from(bottomSheet)?.state = BottomSheetBehavior.STATE_EXPANDED
             }
 
+        }
+    }
+
+
+    // Override dialog.show() method to prevent IllegalStateException being thrown
+    // when running a dialog fragment on a destroyed activity.
+    override fun show(manager: FragmentManager, tag: String?) {
+        try {
+            val ft = manager.beginTransaction()
+            ft.add(this, tag)
+            ft.commitAllowingStateLoss()
+        } catch (illegalStateException: IllegalStateException) {
+            Log.i(TAG, "Activity’s state loss")
         }
     }
 }
