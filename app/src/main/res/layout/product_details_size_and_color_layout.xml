@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/twenty_four_dp"
+    android:paddingBottom="@dimen/thirty_two_dp">
+
+    <View
+        android:id="@+id/divider1"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="#1A000000"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/colorPlaceholder"
+        style="@style/futura_medium_black_12_text_style"
+        android:layout_marginTop="@dimen/twelve_dp"
+        android:letterSpacing="0.05"
+        android:text="Colour"
+        android:textAllCaps="true"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/divider1" />
+
+    <TextView
+        android:id="@+id/selectedColor"
+        style="@style/futura_semi_bold_black_12_text_style"
+        android:letterSpacing="0.05"
+        android:text=" -  charcoal"
+        android:textAllCaps="true"
+        app:layout_constraintLeft_toRightOf="@+id/colorPlaceholder"
+        app:layout_constraintTop_toTopOf="@id/colorPlaceholder" />
+
+    <TextView
+        android:id="@+id/moreColor"
+        style="@style/myriad_pro_regular_black_15_text_style"
+        android:text="+ 8 More"
+        app:layout_constraintBottom_toBottomOf="@+id/colorPlaceholder"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/colorPlaceholder" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/colorSelector"
+        android:layout_width="0dp"
+        android:layout_height="36dp"
+        android:layout_marginTop="@dimen/sixteen_dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/moreColor" />
+
+    <View
+        android:id="@+id/divider2"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/thirty_two_dp"
+        android:background="#1A000000"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/colorSelector" />
+
+    <TextView
+        android:id="@+id/selectedSizePlaceholder"
+        style="@style/futura_medium_black_12_text_style"
+        android:layout_marginTop="@dimen/thirty_two_dp"
+        android:letterSpacing="0.05"
+        android:text="Selected Size"
+        android:textAllCaps="true"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/divider2" />
+
+    <TextView
+        android:id="@+id/selectedSize"
+        style="@style/futura_semi_bold_black_12_text_style"
+        android:letterSpacing="0.05"
+        android:text=" - extra small"
+        android:textAllCaps="true"
+        app:layout_constraintLeft_toRightOf="@+id/selectedSizePlaceholder"
+        app:layout_constraintTop_toTopOf="@id/selectedSizePlaceholder" />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/sizeSelector"
+        android:layout_width="0dp"
+        android:layout_height="36dp"
+        android:layout_marginTop="@dimen/sixteen_dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/selectedSizePlaceholder" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

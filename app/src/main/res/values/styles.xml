@@ -1896,4 +1896,60 @@
         <item name="android:background">@color/stock_finder_map_header_bg</item>
     </style>
 
+    <style name="futura_semi_bold">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/futura_semi_bold</item>
+    </style>
+
+    <style name="futura_semi_bold_black" parent="futura_semi_bold">
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="futura_semi_bold_black_12_text_style" parent="futura_semi_bold_black">
+        <item name="android:textSize">@dimen/twelve_sp</item>
+    </style>
+
+    <style name="futura_semi_bold_black_24_text_style" parent="futura_semi_bold_black">
+        <item name="android:textSize">@dimen/twenty_four_sp</item>
+    </style>
+
+    <style name="futura_medium">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/futura_medium</item>
+    </style>
+
+    <style name="futura_medium_black" parent="futura_medium">
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="futura_medium_black_22_text_style" parent="futura_medium_black">
+        <item name="android:textSize">@dimen/twenty_two_sp</item>
+    </style>
+
+
+    <style name="myriad_pro_regular">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular</item>
+    </style>
+
+    <style name="myriad_pro_regular_black" parent="myriad_pro_regular">
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="myriad_pro_regular_black_15_text_style" parent="myriad_pro_regular_black">
+        <item name="android:textSize">@dimen/fifteen_sp</item>
+    </style>
+
+    <style name="futura_medium_black_12_text_style" parent="futura_medium_black">
+        <item name="android:textSize">@dimen/twelve_sp</item>
+    </style>
+
+    <style name="futura_semi_bold_white_12_text_style" parent="futura_semi_bold_black_12_text_style">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+
 </resources>

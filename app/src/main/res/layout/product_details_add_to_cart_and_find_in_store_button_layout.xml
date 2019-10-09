@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/twenty_four_dp"
+    android:paddingRight="@dimen/twenty_four_dp"
+    android:paddingBottom="@dimen/twenty_four_dp">
+
+    <RelativeLayout
+        android:id="@+id/quantitySelector"
+        android:layout_width="@dimen/fifty_dp"
+        android:layout_height="@dimen/fifty_dp"
+        android:background="@drawable/cli_yes_no_button_background"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:drawableRight="@drawable/refinement_down_arrow_selector"
+            android:drawablePadding="5dp"
+            android:text="1" />
+    </RelativeLayout>
+
+    <TextView
+        style="@style/futura_semi_bold_white_12_text_style"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/fifty_dp"
+        android:layout_marginStart="@dimen/eight_dp"
+        android:background="@color/black"
+        android:gravity="center"
+        android:letterSpacing="0.2"
+        android:text="@string/add_to_cart"
+        android:textAllCaps="true"
+        app:layout_constraintLeft_toRightOf="@+id/quantitySelector"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/quantitySelector" />
+
+    <TextView
+        style="@style/futura_semi_bold_white_12_text_style"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/fifty_dp"
+        android:background="@color/black"
+        android:gravity="center"
+        android:letterSpacing="0.2"
+        android:text="@string/stock_finder_btn_label"
+        android:textAllCaps="true"
+        android:visibility="gone"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/quantitySelector" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
