@@ -1546,8 +1546,4 @@ public class Utils {
 	public static String aes256EncryptStringAsBase64String(String entry) throws DecryptionFailureException {
 		return Base64.encodeToString(SymmetricCipher.Aes256Encrypt(SYMMETRIC_KEY, entry), Base64.DEFAULT);
 	}
-
-
-
-
 }

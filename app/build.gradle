@@ -11,7 +11,7 @@ android {
     def minor = "17"
     def fix = "0"
 
-    def jobNumber = 362
+    def jobNumber = 364
     def isAppCenter = System.getenv("IS_APP_CENTER").asBoolean()
 
     dataBinding {
@@ -200,9 +200,9 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:3.12.1'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
     implementation "com.github.skydoves:balloon:1.0.4"
+    implementation 'cards.pay:paycardsrecognizer:1.1.0'
     implementation 'com.github.bumptech.glide:glide:4.9.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
-
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
     implementation 'com.github.deano2390:MaterialShowcaseView:1.2.0'
     implementation 'com.daasuu:BubbleLayout:1.2.0'

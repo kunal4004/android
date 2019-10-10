@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:sothree="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_alignParentTop="true"
+    android:background="@color/white">
+
+    <za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
+        android:id="@+id/sliding_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="bottom"
+        sothree:umanoDragView="@+id/detailsView"
+        sothree:umanoFadeColor="@android:color/transparent"
+        sothree:umanoOverlay="false"
+        sothree:umanoPanelHeight="0dp"
+        sothree:umanoParallaxOffset="0dp"
+        sothree:umanoScrollableView="@+id/list"
+        sothree:umanoShadowHeight="0dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <include
+                layout="@layout/location_service_off_layout"
+                android:visibility="gone"/>
+
+            <RelativeLayout
+                android:id="@+id/layoutLocationServiceOn"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <RelativeLayout
+                    android:id="@+id/mapLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    >
+
+                    <fragment
+                        android:id="@+id/map"
+                        android:name="com.google.android.gms.maps.SupportMapFragment"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerVertical="true"/>
+
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        android:id="@+id/flStockFinderMapHeader"
+                        android:layout_width="match_parent"
+                        android:layout_height="46dp"
+                        android:background="@color/stock_finder_map_header_bg"
+                        android:gravity="center"
+                        android:text="@string/find_in_store_info"
+                        android:textColor="@color/white"
+                        android:textSize="15sp"
+                        android:visibility="gone"
+                        sothree:WTextView_font="myriadpro_regular"/>
+
+                </RelativeLayout>
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:paddingLeft="@dimen/default_margin"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:id="@+id/close"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/ic_closecircle"
+
+                        />
+                </RelativeLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:background="@drawable/storecarousellegradient"
+                    >
+
+                    <za.co.woolworths.financial.services.android.util.WCustomViewPager
+                        android:id="@+id/cardPager"
+                        android:layout_width="match_parent"
+                        android:layout_height="145dp"
+                        android:paddingBottom="2dp"
+                        />
+
+                    <ProgressBar
+                        android:id="@+id/storesProgressBar"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:visibility="gone"
+                        />
+                </FrameLayout>
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/detailsView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:clickable="true"
+            android:focusable="false"
+            android:orientation="vertical">
+
+            <include layout="@layout/store_details_layout_common"/>
+
+        </LinearLayout>
+
+    </za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout>
+
+    <include layout="@layout/no_connection_handler"/>
+</FrameLayout>

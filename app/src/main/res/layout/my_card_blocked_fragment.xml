@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:clickable="true"
-    android:focusable="true"
-    android:background="@color/white">
+    android:focusable="true">
 
     <View
         android:id="@+id/endlessZone"
@@ -61,16 +61,16 @@
         android:layout_height="24dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:background="@drawable/black_corner_bg"
+        android:background="@drawable/white_block_bg"
         android:fontFamily="@font/futura_semi_bold_ttf"
         android:gravity="center"
         android:letterSpacing="0.12"
-        android:paddingStart="4dp"
-        android:paddingTop="4dp"
-        android:paddingEnd="4dp"
-        android:paddingBottom="4dp"
+        android:paddingStart="6dp"
+        android:paddingTop="7dp"
+        android:paddingEnd="6dp"
+        android:paddingBottom="7dp"
         android:text="@string/blocked"
-        android:textColor="@color/white"
+        android:textColor="#424244"
         android:textSize="10sp"
         app:layout_constraintStart_toStartOf="@+id/imStoreCard"
         app:layout_constraintTop_toTopOf="@+id/imStoreCard"
@@ -98,22 +98,19 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginBottom="8dp"
-        android:background="@drawable/white_background_drawable_state"
-        android:fontFamily="@font/futura_medium_ttf"
-        android:letterSpacing="0.13"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/black_button_drawable_state"
+        android:fontFamily="@font/futura_semi_bold_ttf"
+        android:letterSpacing="0.15"
         android:text="@string/get_replacement_card"
         android:textAllCaps="true"
-        android:textColor="@color/selector_white"
+        android:textColor="@color/white"
         android:textSize="12sp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/btnLinkACard"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvNoActiveCardDesc"
         tools:ignore="UnusedAttribute" />
 
 
@@ -125,12 +122,13 @@
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="32dp"
-        android:background="@drawable/black_button_drawable_state"
-        android:fontFamily="@font/futura_semi_bold"
-        android:letterSpacing="0.13"
-        android:text="@string/call_now"
+        android:background="@color/transparent"
+        android:fontFamily="@font/futura_medium_ttf"
+        android:letterSpacing="0.15"
+        android:lineSpacingExtra="4dp"
+        android:text="@string/npc_already_have_your_card_link"
         android:textAllCaps="true"
-        android:textColor="@color/white"
+        android:textColor="#000000"
         android:textSize="@dimen/twelve_sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -138,10 +136,10 @@
         tools:ignore="UnusedAttribute" />
 
     <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/descriptionGuide"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/descriptionGuide"
-        app:layout_constraintGuide_percent="0.45"
-        android:orientation="horizontal"/>
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.45" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

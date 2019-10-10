@@ -401,10 +401,10 @@
             android:theme="@style/ShoppingListDetailActivityStyle"
             />
 
-        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.card.LinkNewCardActivity"
+        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity"
             android:screenOrientation="portrait"
             android:theme="@style/ShoppingListDetailActivityStyle"
-            android:windowSoftInputMode="adjustResize|stateAlwaysVisible"
+            android:windowSoftInputMode="stateAlwaysVisible|adjustResize"
             />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.ErrorHandlerActivity"
@@ -429,6 +429,15 @@
         <activity android:name="za.co.woolworths.financial.services.android.ui.activities.WRewardBenefitActivity"
             android:theme="@style/RewardBenefitDetailStyle" />
 
+        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity"
+            android:theme="@style/StoreLocatorActivityStyle"
+            android:screenOrientation="portrait"
+            />
+
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.store_card.ScanStoreCardActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/StoreLocatorActivityStyle" />
         <provider
             android:name="za.co.woolworths.financial.services.android.util.WFileProvider"
             android:authorities="za.co.woolworths.financial.services.android.util.WFileProvider"

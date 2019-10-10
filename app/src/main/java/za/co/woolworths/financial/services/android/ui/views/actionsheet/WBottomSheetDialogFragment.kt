@@ -12,6 +12,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 open class WBottomSheetDialogFragment : BottomSheetDialogFragment() {
 
+    var bottomSheet: FrameLayout? = null
     override fun onActivityCreated(arg0: Bundle?) {
         super.onActivityCreated(arg0)
         dialog?.window?.attributes?.windowAnimations = R.style.DialogAnimation
@@ -26,7 +27,7 @@ open class WBottomSheetDialogFragment : BottomSheetDialogFragment() {
 
         dialog?.apply {
             setOnShowListener { dialog ->
-                val bottomSheet = (dialog as? BottomSheetDialog)?.findViewById<View>(R.id.design_bottom_sheet) as? FrameLayout?
+                bottomSheet = (dialog as? BottomSheetDialog)?.findViewById<View>(R.id.design_bottom_sheet) as? FrameLayout?
                 BottomSheetBehavior.from(bottomSheet)?.state = BottomSheetBehavior.STATE_EXPANDED
             }
 
