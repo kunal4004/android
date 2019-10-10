@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="345dp"
+    android:layout_height="355dp"
     android:background="@drawable/card_shadow">
 
     <ImageView
@@ -151,14 +151,16 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
+        android:layout_marginTop="2dp"
         android:layout_marginEnd="12dp"
         android:orientation="horizontal"
         app:alignContent="stretch"
         app:alignItems="stretch"
         app:flexWrap="wrap"
-        app:layout_constraintBottom_toBottomOf="@+id/imQuickShopAddToCartIcon"
+        app:layout_constraintBottom_toTopOf="@+id/bottomSpace"
         app:layout_constraintEnd_toStartOf="@+id/imQuickShopAddToCartIcon"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvSaveText">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
@@ -205,7 +207,7 @@
             android:text="R 99.99 (R 99.99/kg)"
             android:textColor="@color/red"
             android:textSize="14sp"
-            app:layout_alignSelf="flex_start"
+            app:layout_alignSelf="flex_end"
             tools:ignore="HardcodedText,UnusedAttribute" />
 
     </com.google.android.flexbox.FlexboxLayout>
