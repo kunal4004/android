@@ -14,6 +14,7 @@ class GetTemporaryStoreCardPopupActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_get_temp_store_card_popup)
         Utils.updateStatusBarBackground(this)
+        Utils.setAsVirtualTemporaryStoreCardPopupShown(true)
         actionBar()
     }
 

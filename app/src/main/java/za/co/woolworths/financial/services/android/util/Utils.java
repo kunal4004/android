@@ -1546,4 +1546,15 @@ public class Utils {
 	public static String aes256EncryptStringAsBase64String(String entry) throws DecryptionFailureException {
 		return Base64.encodeToString(SymmetricCipher.Aes256Encrypt(SYMMETRIC_KEY, entry), Base64.DEFAULT);
 	}
+
+	public static void setAsVirtualTemporaryStoreCardPopupShown(Boolean state) {
+		AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+		currentUserObject.isVirtualTemporaryStoreCardPopupShown = state;
+		currentUserObject.save();
+	}
+
+	public static Boolean isVirtualTemporaryStoreCardPopupShown() {
+		AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
+		return currentUserObject.isVirtualTemporaryStoreCardPopupShown;
+	}
 }

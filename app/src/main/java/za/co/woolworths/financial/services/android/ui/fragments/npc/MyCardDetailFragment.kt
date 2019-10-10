@@ -11,6 +11,8 @@ import kotlinx.android.synthetic.main.my_card_fragment.*
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.npc.Card
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCard
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsData
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
 import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.HowToUseTemporaryStoreCardActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
@@ -22,7 +24,7 @@ import java.util.*
 
 class MyCardDetailFragment : MyCardExtension() {
 
-    private var mLatestOpenedDateStoreCard: Card? = null
+    private var mLatestOpenedDateStoreCard: StoreCard? = null
     private var mStoreCardDetail: String? = null
 
     companion object {
@@ -39,8 +41,7 @@ class MyCardDetailFragment : MyCardExtension() {
             // Extract latest openedDate
             activity?.let {
                 mStoreCardDetail?.let { cardValue ->
-                    mLatestOpenedDateStoreCard = Gson().fromJson(cardValue, Account::class.java)?.primaryCard?.cards
-                            ?.let { cards -> Collections.max(cards) { card, nextCard -> card.openedDate().compareTo(nextCard.openedDate()) } }
+                    mLatestOpenedDateStoreCard = Gson().fromJson(cardValue, StoreCardsData::class.java)?.primaryCards?.get(0)
                     Utils.updateStatusBarBackground(it, R.color.grey_bg)
                 }
             }
@@ -59,7 +60,7 @@ class MyCardDetailFragment : MyCardExtension() {
 
     private fun populateView() {
         mLatestOpenedDateStoreCard?.apply {
-            maskedCardNumberWithSpaces(cardNumber?.toString()).also {
+            maskedCardNumberWithSpaces(number?.toString()).also {
                 textViewCardNumber?.text = it
                 tvCardNumberHeader?.text = it
             }
@@ -79,7 +80,8 @@ class MyCardDetailFragment : MyCardExtension() {
     }
 
     private fun onClick() {
-        blockCard.setOnClickListener { activity?.let { navigateToBlockMyCardActivity(it, mStoreCardDetail, mLatestOpenedDateStoreCard) } }
+        //blockCard.setOnClickListener { activity?.let { navigateToBlockMyCardActivity(it, mStoreCardDetail, mLatestOpenedDateStoreCard) } }
+
         payWithCard.setOnClickListener {
             activity?.supportFragmentManager?.apply {
                 ScanBarcodeToPayDialogFragment.newInstance().show((this), ScanBarcodeToPayDialogFragment::class.java.simpleName)

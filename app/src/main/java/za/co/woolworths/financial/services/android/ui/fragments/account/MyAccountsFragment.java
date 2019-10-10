@@ -327,7 +327,8 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			Account account = item.getValue();
 			switch (account.productGroupCode) {
 				case "SC":
-					getStoreCards(account);
+					if (!Utils.isVirtualTemporaryStoreCardPopupShown())
+						getStoreCards(account);
 					linkedStoreCardView.setVisibility(View.VISIBLE);
 					applyStoreCardView.setVisibility(View.GONE);
 					imgStoreCardStatusIndicator.setVisibility(account.productOfferingGoodStanding ? View.GONE : View.VISIBLE);
