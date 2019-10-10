@@ -74,6 +74,7 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
 	Intent callIntent;
 	private PopWindowValidationMessage mPopWindowValidationMessage;
 	private boolean isFromStockLocator;
+	private boolean mShouldDisplayBackIcon;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -110,7 +111,13 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
 		Gson gson = new Gson();
 		storeDetails = gson.fromJson(getIntent().getStringExtra("store"), StoreDetails.class);
 		isFromStockLocator = getIntent().getBooleanExtra("FromStockLocator", false);
+		mShouldDisplayBackIcon = getIntent().getBooleanExtra("SHOULD_DISPLAY_BACK_ICON",false);
 		initStoreDetailsView(storeDetails);
+
+		if (mShouldDisplayBackIcon){
+			closePage.setImageResource(R.drawable.back_button_circular_icon);
+			closePage.setRotation(180);
+		}
 
 		closePage.setOnClickListener(new View.OnClickListener() {
 			@Override

@@ -41,6 +41,7 @@ class StoreLocatorListFragment : Fragment() {
             with(Intent(this, StoreDetailsActivity::class.java)) {
                 putExtra("store", Gson().toJson(storeDetails))
                 putExtra("FromStockLocator", false)
+                putExtra("SHOULD_DISPLAY_BACK_ICON", true)
                 startActivity(this)
                 overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
             }

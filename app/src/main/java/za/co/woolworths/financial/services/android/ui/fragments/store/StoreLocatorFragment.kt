@@ -161,6 +161,7 @@ class StoreLocatorFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerC
             with(Intent(this, StoreDetailsActivity::class.java)) {
                 putExtra("store", Gson().toJson(storeDetailsList?.get(position)))
                 putExtra("FromStockLocator", false)
+                putExtra("SHOULD_DISPLAY_BACK_ICON", true)
                 startActivity(this)
                 overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
             }
