@@ -148,7 +148,7 @@ object OneAppService : RetrofitConfig() {
     fun getProducts(requestParams: ProductsRequestParams): Call<ProductView> {
         val loc = getMyLocation()
         return if (Utils.isLocationEnabled(appContext())) {
-            mApiInterface.getProducts(getOsVersion(), getDeviceModel(), getDeviceManufacturer(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLatitude(), loc.getLongitude(), getSessionToken(), requestParams.searchTerm, requestParams.searchType.value, requestParams.responseType.value, requestParams.pageOffset, Utils.PAGE_SIZE, requestParams.sortOption, requestParams.refinement)
+            mApiInterface.getProducts(getOsVersion(), getDeviceModel(), getDeviceManufacturer(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), "", "", getSessionToken(), requestParams.searchTerm, requestParams.searchType.value, requestParams.responseType.value, requestParams.pageOffset, Utils.PAGE_SIZE, requestParams.sortOption, requestParams.refinement)
         } else {
             mApiInterface.getProductsWithoutLocation(getOsVersion(), getDeviceModel(), getDeviceManufacturer(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), getSessionToken(), requestParams.searchTerm, requestParams.searchType.value, requestParams.responseType.value, requestParams.pageOffset, Utils.PAGE_SIZE, requestParams.sortOption, requestParams.refinement)
         }

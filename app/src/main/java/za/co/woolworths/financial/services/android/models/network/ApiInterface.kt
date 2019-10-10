@@ -845,8 +845,8 @@ interface ApiInterface {
             @Header("userAgent") userAgent: String,
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sha1Password") sha1Password: String,
-            @Header("longitude") longitude: Double,
-            @Header("latitude") latitude: Double,
+            @Header("longitude") longitude: String,
+            @Header("latitude") latitude: String,
             @Header("sessionToken") sessionToken: String,
             @Query("searchTerm") searchTerm: String,
             @Query("searchType") searchType: String,
@@ -875,7 +875,9 @@ interface ApiInterface {
             @Query("pageOffset") pageOffset: Int,
             @Query("pageSize") pageSize: Int,
             @Query("sortOption") sortOption: String,
-            @Query("refinement") refinement: String): Call<ProductView>
+            @Query("refinement") refinement: String,
+            @Header("longitude") longitude: String = "",
+            @Header("latitude") latitude: String = ""): Call<ProductView>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
     @POST("cart/checkoutComplete")
