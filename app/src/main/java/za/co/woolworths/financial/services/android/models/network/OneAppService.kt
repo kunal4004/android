@@ -11,6 +11,8 @@ import za.co.woolworths.financial.services.android.models.dto.npc.*
 import za.co.woolworths.financial.services.android.models.dto.statement.*
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.UnblockStoreCardRequestBody
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.UnblockStoreCardResponse
 import za.co.woolworths.financial.services.android.util.Utils
 
 object OneAppService : RetrofitConfig() {
@@ -308,6 +310,10 @@ object OneAppService : RetrofitConfig() {
 
     fun linkStoreCard(linkStoreCard: LinkStoreCard): Call<LinkNewCardResponse> {
         return mApiInterface.linkStoreCard(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), linkStoreCard)
+    }
+
+    fun unblockStoreCard(productOfferingId: String, requestBody: UnblockStoreCardRequestBody): Call<UnblockStoreCardResponse> {
+        return mApiInterface.unblockStoreCard(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), productOfferingId, requestBody)
     }
 
 }

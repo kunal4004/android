@@ -8,24 +8,25 @@ import android.view.ViewGroup
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.my_card_fragment.*
+import za.co.woolworths.financial.services.android.contracts.RequestListener
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel
-import za.co.woolworths.financial.services.android.models.dto.Account
-import za.co.woolworths.financial.services.android.models.dto.npc.Card
+import za.co.woolworths.financial.services.android.models.dto.npc.LinkNewCardOTP
+import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCard
-import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsData
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
 import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.HowToUseTemporaryStoreCardActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import za.co.woolworths.financial.services.android.ui.fragments.temporary_store_card.ScanBarcodeToPayDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.temporary_store_card.TemporaryStoreCardExpireInfoDialog
+import za.co.woolworths.financial.services.android.util.StoreCardAPIRequest
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
-import java.util.*
 
 class MyCardDetailFragment : MyCardExtension() {
 
     private var mLatestOpenedDateStoreCard: StoreCard? = null
     private var mStoreCardDetail: String? = null
+    private var mStoreCardsResponse: StoreCardsResponse? = null
 
     companion object {
         const val CARD = "CARD"
@@ -40,9 +41,11 @@ class MyCardDetailFragment : MyCardExtension() {
             mStoreCardDetail = getString(STORE_CARD_DETAIL, "")
             // Extract latest openedDate
             activity?.let {
+                Utils.updateStatusBarBackground(it, R.color.grey_bg)
+
                 mStoreCardDetail?.let { cardValue ->
-                    mLatestOpenedDateStoreCard = Gson().fromJson(cardValue, StoreCardsData::class.java)?.primaryCards?.get(0)
-                    Utils.updateStatusBarBackground(it, R.color.grey_bg)
+                    mStoreCardsResponse = Gson().fromJson(cardValue, StoreCardsResponse::class.java)
+                    mLatestOpenedDateStoreCard = mStoreCardsResponse?.storeCardsData?.primaryCards?.get(0)
                 }
             }
         }
@@ -84,7 +87,8 @@ class MyCardDetailFragment : MyCardExtension() {
 
         payWithCard.setOnClickListener {
             activity?.supportFragmentManager?.apply {
-                ScanBarcodeToPayDialogFragment.newInstance().show((this), ScanBarcodeToPayDialogFragment::class.java.simpleName)
+                //ScanBarcodeToPayDialogFragment.newInstance().show((this), ScanBarcodeToPayDialogFragment::class.java.simpleName)
+                initPayWithCard()
             }
         }
         howItWorks.setOnClickListener {
@@ -100,5 +104,51 @@ class MyCardDetailFragment : MyCardExtension() {
                 TemporaryStoreCardExpireInfoDialog.newInstance().show((this), TemporaryStoreCardExpireInfoDialog::class.java.simpleName)
             }
         }
+    }
+
+
+    private fun initPayWithCard() {
+        when (mStoreCardsResponse?.oneTimePinRequired?.unblockStoreCard) {
+            true -> {
+                requestGetOTP()
+            }
+            else -> {
+                requestUnblockCard()
+            }
+        }
+    }
+
+
+    //OTP value is optional
+    private fun requestUnblockCard(otp: String = "") {
+
+    }
+
+    private fun requestGetOTP() {
+        StoreCardAPIRequest().getOTP(OTPMethodType.SMS, object : RequestListener<LinkNewCardOTP> {
+            override fun onSuccess(response: LinkNewCardOTP?) {
+                when (response?.httpCode) {
+                    200 -> {
+                        loadOTPFragment()
+                    }
+                    440 -> {
+                    }
+                    else -> {
+                    }
+                }
+            }
+
+            override fun onFailure(error: Throwable?) {
+
+            }
+        })
+    }
+
+    private fun loadOTPFragment() {
+        
+    }
+
+    public fun onOTPEntered(otp: String) {
+        requestUnblockCard(otp)
     }
 }

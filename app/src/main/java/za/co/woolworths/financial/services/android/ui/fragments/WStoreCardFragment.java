@@ -696,7 +696,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
             activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
         }else {
             Intent displayStoreCardDetail = new Intent(activity, MyCardDetailActivity.class);
-            displayStoreCardDetail.putExtra(STORE_CARD_DETAIL, mStoreCardAccountDetail);
+            displayStoreCardDetail.putExtra(STORE_CARD_DETAIL, Utils.objectToJson(storeCardsResponse));
             activity.startActivityForResult(displayStoreCardDetail, REQUEST_CODE_BLOCK_MY_STORE_CARD);
             activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
         }

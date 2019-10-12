@@ -3,12 +3,13 @@ package za.co.woolworths.financial.services.android.ui.activities.temporary_stor
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.activity_get_temp_store_card_popup.*
 import za.co.woolworths.financial.services.android.util.Utils
 
-class GetTemporaryStoreCardPopupActivity : AppCompatActivity() {
+class GetTemporaryStoreCardPopupActivity : AppCompatActivity(),View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +42,14 @@ class GetTemporaryStoreCardPopupActivity : AppCompatActivity() {
             R.id.action_search -> onBackPressed()
         }
         return false
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.getTempStoreCardButton -> {
+
+            }
+        }
     }
 }
 
