@@ -449,11 +449,6 @@
                 android:resource="@xml/fileprovider" />
         </provider>
 
-        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.TemporaryVirtualCardActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/ShoppingListDetailActivityStyle"
-            />
-
         <activity android:name="za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.HowToUseTemporaryStoreCardActivity"
             android:screenOrientation="portrait"
             android:theme="@style/ShoppingListDetailActivityStyle"

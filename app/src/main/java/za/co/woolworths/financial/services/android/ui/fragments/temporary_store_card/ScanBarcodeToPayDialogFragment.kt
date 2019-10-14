@@ -11,7 +11,7 @@ import com.google.zxing.BarcodeFormat
 import kotlinx.android.synthetic.main.scan_barcode_to_pay_dialog.*
 import kotlinx.android.synthetic.main.scan_barcode_to_pay_dialog.barCodeImage
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
-import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.TemporaryVirtualCardActivity.Companion.STORE_CARD_DETAIL
+import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardDetailFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
