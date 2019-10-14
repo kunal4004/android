@@ -24,9 +24,14 @@ class MyCardDetailActivity : AppCompatActivity() {
 
     companion object {
         const val STORE_CARD_DETAIL = "STORE_CARD_DETAIL"
+        const val VISION_ACCOUNT_NUMBER = "VISION_ACCOUNT_NUMBER"
+        const val PRODUCT_OFFERING_ID = "PRODUCT_OFFERING_ID"
     }
 
     private var mStoreCardDetail: String? = null
+    private var visionAccountNumber: String? = null
+    private var productOfferingId: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.my_card_activity)
@@ -35,6 +40,8 @@ class MyCardDetailActivity : AppCompatActivity() {
 
         intent?.extras?.apply {
             mStoreCardDetail = getString(STORE_CARD_DETAIL, "")
+            visionAccountNumber = getString(VISION_ACCOUNT_NUMBER, "")
+            productOfferingId = getString(PRODUCT_OFFERING_ID, "")
         }
         addCardDetailFragment()
     }
@@ -55,7 +62,7 @@ class MyCardDetailActivity : AppCompatActivity() {
             }
             else -> {
                 addFragment(
-                        fragment = MyCardDetailFragment.newInstance(mStoreCardDetail),
+                        fragment = MyCardDetailFragment.newInstance(mStoreCardDetail,visionAccountNumber,productOfferingId),
                         tag = MyCardDetailFragment::class.java.simpleName,
                         containerViewId = R.id.flMyCard)
             }
@@ -127,6 +134,8 @@ class MyCardDetailActivity : AppCompatActivity() {
         if (requestCode == REQUEST_CODE_BLOCK_MY_CARD && resultCode == RESULT_OK) {
             mStoreCardDetail = data?.getStringExtra(STORE_CARD_DETAIL)
             addCardDetailFragment()
+        }else{
+            supportFragmentManager.findFragmentById(R.id.flMyCard)?.onActivityResult(requestCode, resultCode, data)
         }
     }
 

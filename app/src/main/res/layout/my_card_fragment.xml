@@ -11,8 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/default_background"
-        android:paddingBottom="@dimen/twenty_four_dp"
-        >
+        android:paddingBottom="@dimen/twenty_four_dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cardLayout"
@@ -44,7 +43,7 @@
                 app:srcCompat="@drawable/w_store_card" />
 
             <TextView
-                android:id="@+id/tvActive"
+                android:id="@+id/cardStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="24dp"
                 android:layout_marginStart="16dp"
@@ -58,9 +57,9 @@
                 android:paddingTop="4dp"
                 android:paddingEnd="4dp"
                 android:paddingBottom="4dp"
-                android:text="@string/active"
                 android:textColor="@color/active_card_color"
                 android:textSize="10sp"
+                android:textAllCaps="true"
                 app:layout_constraintStart_toStartOf="@+id/imStoreCard"
                 app:layout_constraintTop_toTopOf="@+id/imStoreCard"
                 tools:ignore="UnusedAttribute" />
@@ -85,7 +84,7 @@
                 app:layout_constraintBottom_toBottomOf="@+id/imStoreCard"
                 app:layout_constraintEnd_toEndOf="@+id/imStoreCard"
                 app:layout_constraintStart_toStartOf="@+id/imStoreCard"
-                app:layout_constraintTop_toBottomOf="@+id/tvActive"
+                app:layout_constraintTop_toBottomOf="@+id/cardStatus"
                 tools:targetApi="lollipop" />
 
 
@@ -181,16 +180,16 @@
                 android:text="@string/temp_card_expires" />
 
             <TextView
-                android:id="@+id/tvExpireDate"
+                android:id="@+id/cardExpireDate"
                 style="@style/card_item_semi_bold_text_style"
-                android:text="12 June 2019"
                 android:layout_marginRight="@dimen/sixteen_sp"
                 android:layout_toStartOf="@+id/expireInfo"
-                />
-            <ImageView style="@style/card_item_end_icon_style"
-                android:src="@drawable/icon_info"
+                android:text="12 June 2019" />
+
+            <ImageView
                 android:id="@+id/expireInfo"
-                />
+                style="@style/card_item_end_icon_style"
+                android:src="@drawable/icon_info" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -249,7 +248,26 @@
                 android:layout_toEndOf="@+id/logoPayWithCard"
                 android:text="@string/pay_with_card" />
 
-            <ImageView style="@style/card_item_end_icon_style" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerInParent="true"
+                android:gravity="center|end"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/payWithCardNextArrow"
+                    style="@style/style_loan_img" />
+
+                <ProgressBar
+                    android:id="@+id/payWithCardTokenProgressBar"
+                    style="?android:attr/progressBarStyleLarge"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="@dimen/bank_spacing_width"
+                    android:visibility="gone" />
+            </LinearLayout>
 
         </RelativeLayout>
 
@@ -274,6 +292,18 @@
             <ImageView style="@style/card_item_end_icon_style" />
 
         </RelativeLayout>
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/virtualCardViews"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="howItWorks,payWithCard,expireDetailsLayout" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/blockCardViews"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="manageView,blockCard,cardNumberLayout" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

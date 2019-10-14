@@ -1,6 +1,8 @@
 package za.co.woolworths.financial.services.android.util
 
 import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.models.dto.npc.BlockCardRequestBody
+import za.co.woolworths.financial.services.android.models.dto.npc.BlockMyCardResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.LinkNewCardOTP
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.UnblockStoreCardRequestBody
@@ -36,5 +38,19 @@ class StoreCardAPIRequest {
                 response.onFailure(error)
             }
         }, UnblockStoreCardResponse::class.java))
+    }
+
+    fun blockCard(productOfferingId: String, requestBody: BlockCardRequestBody, response: RequestListener<BlockMyCardResponse>) {
+        OneAppService.postBlockMyCard(requestBody, productOfferingId).enqueue(CompletionHandler(object : RequestListener<BlockMyCardResponse> {
+            override fun onSuccess(blockStoreCardResponse: BlockMyCardResponse?) {
+                blockStoreCardResponse?.apply {
+                    response.onSuccess(this)
+                }
+            }
+
+            override fun onFailure(error: Throwable) {
+                response.onFailure(error)
+            }
+        }, BlockMyCardResponse::class.java))
     }
 }

@@ -70,7 +70,9 @@ import za.co.woolworths.financial.services.android.util.controller.IncreaseLimit
 import static android.app.Activity.RESULT_OK;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
+import static za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.PRODUCT_OFFERING_ID;
 import static za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.STORE_CARD_DETAIL;
+import static za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.VISION_ACCOUNT_NUMBER;
 
 public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle, NetworkChangeListener {
 
@@ -697,6 +699,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
         }else {
             Intent displayStoreCardDetail = new Intent(activity, MyCardDetailActivity.class);
             displayStoreCardDetail.putExtra(STORE_CARD_DETAIL, Utils.objectToJson(storeCardsResponse));
+            displayStoreCardDetail.putExtra(VISION_ACCOUNT_NUMBER, account.accountNumber);
+            displayStoreCardDetail.putExtra(PRODUCT_OFFERING_ID, productOfferingId);
             activity.startActivityForResult(displayStoreCardDetail, REQUEST_CODE_BLOCK_MY_STORE_CARD);
             activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
         }

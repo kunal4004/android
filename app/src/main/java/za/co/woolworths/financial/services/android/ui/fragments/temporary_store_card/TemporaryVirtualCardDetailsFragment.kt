@@ -33,7 +33,7 @@ class TemporaryVirtualCardDetailsFragment : Fragment() {
 
         payWithCard.setOnClickListener {
             activity?.supportFragmentManager?.apply {
-                ScanBarcodeToPayDialogFragment.newInstance().show((this), ScanBarcodeToPayDialogFragment::class.java.simpleName)
+                //ScanBarcodeToPayDialogFragment.newInstance().show((this), ScanBarcodeToPayDialogFragment::class.java.simpleName)
             }
         }
     }
