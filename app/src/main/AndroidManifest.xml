@@ -457,6 +457,7 @@
         <activity android:name="za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.GetTemporaryStoreCardPopupActivity"
             android:screenOrientation="portrait"
             android:theme="@style/ShoppingListDetailActivityStyle"
+            android:windowSoftInputMode="stateAlwaysVisible|adjustResize"
             />
 
         <activity android:name="za.co.woolworths.financial.services.android.ui.activities.store_card.RequestOTPActivity"
