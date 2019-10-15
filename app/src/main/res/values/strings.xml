@@ -1092,4 +1092,6 @@
     <string name="dialog_temp_store_card_expire_info_title">Temp Card Expires</string>
     <string name="dialog_temp_store_card_expire_info_desc">Your temporary card is only valid for 30 days and will automatically expire after this time or on your first swipe of your store card, in store.</string>
     <string name="cart_item_not_preserved_until_checkout_info">* Items are not reserved until you checkout</string>
+    <string name="having_problems_generate_new_barcode">having problems? generate new barcode</string>
+    <string name="store_card_status_temporay">temp</string>
 </resources>

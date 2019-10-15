@@ -4,7 +4,7 @@
     android:id="@+id/coordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/grey_bg">
+    android:background="@color/white">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
@@ -16,7 +16,7 @@
             android:id="@+id/tbMyCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/toolbar_transition_drawable"
+            android:background="@color/white"
             app:layout_scrollFlags="snap">
 
             <TextView
@@ -26,16 +26,16 @@
                 android:layout_gravity="center"
                 android:fontFamily="@font/futura_semi_bold_ttf"
                 android:letterSpacing="0.2"
-                android:text="@string/my_card_title"
+                android:text=""
                 android:textAllCaps="true"
                 android:textColor="@color/black"
                 android:textSize="12sp" />
 
         </androidx.appcompat.widget.Toolbar>
-    </com.google.android.material.appbar.AppBarLayout >
+    </com.google.android.material.appbar.AppBarLayout>
 
     <FrameLayout
-        android:id="@+id/flMyCard"
+        android:id="@+id/fragmentContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />

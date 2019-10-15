@@ -1035,7 +1035,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		if(storeCardsResponse!=null){
 			switch (storeCardsResponse.getHttpCode()){
 				case 200:
-					displayTemporaryStoreCardPopup(storeCardsResponse);
+					//displayTemporaryStoreCardPopup(storeCardsResponse);
 					break;
 			}
 		}
