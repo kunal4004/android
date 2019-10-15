@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.activities.card
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.TextUtils
 import androidx.fragment.app.Fragment
 import androidx.core.content.ContextCompat
 import androidx.appcompat.app.AppCompatActivity
@@ -47,18 +48,20 @@ class MyCardDetailActivity : AppCompatActivity() {
     }
 
     private fun addCardDetailFragment() {
+        val blockCode = Gson().fromJson(getMyStoreCardDetail(), StoreCardsResponse::class.java)?.storeCardsData?.primaryCards?.get(0)?.blockCode
 
-        when (Gson().fromJson(getMyStoreCardDetail(), StoreCardsResponse::class.java)?.storeCardsData?.primaryCards?.get(0)?.blockCode != null) {
+        // Determine if card is blocked: if blockCode is not null, card is blocked.
+        when (TextUtils.isEmpty(blockCode)) {
             true -> {
                 addFragment(
-                        fragment = MyCardBlockedFragment.newInstance(mStoreCardDetail),
-                        tag = MyCardBlockedFragment::class.java.simpleName,
+                        fragment = MyCardDetailFragment.newInstance(mStoreCardDetail, visionAccountNumber, productOfferingId),
+                        tag = MyCardDetailFragment::class.java.simpleName,
                         containerViewId = R.id.flMyCard)
             }
             else -> {
                 addFragment(
-                        fragment = MyCardDetailFragment.newInstance(mStoreCardDetail, visionAccountNumber, productOfferingId),
-                        tag = MyCardDetailFragment::class.java.simpleName,
+                        fragment = MyCardBlockedFragment.newInstance(mStoreCardDetail),
+                        tag = MyCardBlockedFragment::class.java.simpleName,
                         containerViewId = R.id.flMyCard)
             }
         }
@@ -129,7 +132,7 @@ class MyCardDetailActivity : AppCompatActivity() {
         if (requestCode == REQUEST_CODE_BLOCK_MY_CARD && resultCode == RESULT_OK) {
             mStoreCardDetail = data?.getStringExtra(STORE_CARD_DETAIL)
             addCardDetailFragment()
-        }else{
+        } else {
             supportFragmentManager.findFragmentById(R.id.flMyCard)?.onActivityResult(requestCode, resultCode, data)
         }
     }

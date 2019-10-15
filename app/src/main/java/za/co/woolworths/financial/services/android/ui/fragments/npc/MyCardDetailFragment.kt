@@ -45,7 +45,6 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
     private var productOfferingId: String = ""
 
     companion object {
-        const val CARD = "CARD"
         fun newInstance(storeCardDetail: String?, visionAccountNumber: String?, productOfferingId: String?) = MyCardDetailFragment().withArgs {
             putString(STORE_CARD_DETAIL, storeCardDetail)
             putString(VISION_ACCOUNT_NUMBER, visionAccountNumber)
