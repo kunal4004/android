@@ -31,6 +31,7 @@ import za.co.woolworths.financial.services.android.ui.activities.StoreLocatorAct
 import za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity.Companion.CONTACT_INFO
 import za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity.Companion.MAP_LOCATION
 import za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity.Companion.PRODUCT_NAME
+import za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ProductListingFindInStoreNoQuantityFragment
 import za.co.woolworths.financial.services.android.util.FuseLocationAPISingleton
@@ -54,7 +55,8 @@ class GetReplacementCardFragment : MyCardExtension() {
         tvAlreadyHaveCard?.paintFlags = Paint.UNDERLINE_TEXT_FLAG
         pbParticipatingStore?.indeterminateDrawable?.setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY)
         requestGPSLocation()
-        tvAlreadyHaveCard?.setOnClickListener { (activity as? AppCompatActivity)?.apply { navigateToLinkNewCardActivity(this, "") } }
+        val storeCard = (activity as? InstantStoreCardReplacementActivity)?.getStoreCardDetail()
+        tvAlreadyHaveCard?.setOnClickListener { (activity as? AppCompatActivity)?.apply { navigateToLinkNewCardActivity(this, Gson().toJson(storeCard)) } }
         btnParticipatingStores?.setOnClickListener { checkForLocationPermission() }
     }
 
@@ -93,7 +95,8 @@ class GetReplacementCardFragment : MyCardExtension() {
     }
 
     private fun navigateToParticipatingStores(location: Location?) {
-        val locationRequestRequest = OneAppService.queryServiceGetStore(location?.latitude ?: 0.0, location?.longitude ?: 0.0, "", true)
+        val locationRequestRequest = OneAppService.queryServiceGetStore(location?.latitude
+                ?: 0.0, location?.longitude ?: 0.0, "", true)
         OneAppService.forceNetworkUpdate = true
         progressVisibility(true)
         locationRequestRequest.enqueue(CompletionHandler(object : RequestListener<LocationResponse> {

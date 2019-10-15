@@ -10,15 +10,11 @@ import kotlinx.android.synthetic.main.block_my_card_activity.*
 import kotlinx.android.synthetic.main.my_card_activity.tbMyCard
 import kotlinx.android.synthetic.main.my_card_activity.toolbarText
 import za.co.woolworths.financial.services.android.contracts.IPermanentCardBlock
-import za.co.woolworths.financial.services.android.models.dto.Account
-import za.co.woolworths.financial.services.android.models.dto.npc.Card
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCard
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsData
-import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.BlockMyCardReasonFragment
-import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardDetailFragment.Companion.CARD
 import za.co.woolworths.financial.services.android.util.Utils
 
 class BlockMyCardActivity : MyCardActivityExtension(), IPermanentCardBlock {

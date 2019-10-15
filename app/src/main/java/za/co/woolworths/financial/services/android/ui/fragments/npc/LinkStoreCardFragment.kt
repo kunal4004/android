@@ -20,6 +20,7 @@ import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.npc.LinkNewCardResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.LinkStoreCard
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsData
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
@@ -32,7 +33,7 @@ import za.co.woolworths.financial.services.android.util.Utils
 class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListener {
 
     private var mStoreCardsResponse: StoreCardsResponse? = null
-    private var storeDetails: Account? = null
+    private var storeDetails: StoreCardsData? = null
     private var otpMethodType: OTPMethodType? = null
     private var linkStoreCard: LinkStoreCard? = null
 
@@ -60,9 +61,9 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
         (activity as? InstantStoreCardReplacementActivity)?.apply {
             otpMethodType = getOTPMethodType()
             storeDetails = getStoreCardDetail()
-            linkStoreCard = LinkStoreCard(storeDetails?.productOfferingId
-                    ?: 0, storeDetails?.accountNumber
-                    ?: "", getCardNumber(), getSequenceNumber(), getOtpNumber(), getOTPMethodType())
+            linkStoreCard = LinkStoreCard(storeDetails?.productOfferingId?.toInt()
+                    ?: 0, storeDetails?.visionAccountNumber
+                    ?: "", storeDetails?.visionAccountNumber, getSequenceNumber(), getOtpNumber(), getOTPMethodType())
             linkStoreCard?.let { request ->
                 val storeCardOTPRequest = otpMethodType?.let { otp -> StoreCardOTPRequest(this, otp) }
                 storeCardOTPRequest?.make(object : IOTPLinkStoreCard<LinkNewCardResponse> {
@@ -76,8 +77,8 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
                         if (!isAdded) return
 
                         val account = Account()
-                        account.accountNumber = storeDetails?.accountNumber
-                        account.productOfferingId = storeDetails?.productOfferingId ?: 0
+                        account.accountNumber = storeDetails?.visionAccountNumber
+                        account.productOfferingId = storeDetails?.productOfferingId?.toInt() ?: 0
 
                         // Make store card call
                         storeCardOTPRequest.getStoreCards(object : IOTPLinkStoreCard<StoreCardsResponse> {
@@ -155,7 +156,9 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
                 R.id.tvCallCenterNumber -> Utils.makeCall(this, "0861 50 20 20")
                 R.id.btnRetryOnFailure -> (this as? AppCompatActivity)?.let { activity -> navigateToLinkNewCardActivity(activity, Gson().toJson(storeDetails)) }
                 R.id.ibBack -> onBackPressed()
-                R.id.okGotItButton -> { mStoreCardsResponse?.let { handleStoreCardResponse(it) } }
+                R.id.okGotItButton -> {
+                    mStoreCardsResponse?.let { handleStoreCardResponse(it) }
+                }
                 R.id.ibClose -> {
                     finish()
                     overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
