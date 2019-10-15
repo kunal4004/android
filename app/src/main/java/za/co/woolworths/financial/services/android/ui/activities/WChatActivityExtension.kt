@@ -31,8 +31,6 @@ open class WChatActivityExtension : AppCompatActivity(), WCountDownTimer.TimerFi
     var sendMessageRetryCounter = 0
 
     enum class AgentDefaultMessage(val message: String) {
-        AGENT_ONLINE("Hi " + SessionUtilities.getInstance().jwt?.name?.get(0) + ". How can I help you today?"),
-        AGENT_OFFLINE("You have reached us outside of our business hours. Please contact us between " + getInAppTradingHoursForToday().opens + " and " + getInAppTradingHoursForToday().closes + "."),
         GENERAL_ERROR("We’re currently experiencing technical issues, please try again later or call us on 0861 50 20 20."),
         AGENT_PICKED(" will be assisting you further, enjoy the rest of your day."),
         CONNECTING_AGENT("Please stay online for the next available consultant."),
@@ -152,6 +150,10 @@ open class WChatActivityExtension : AppCompatActivity(), WCountDownTimer.TimerFi
 
     fun showAgentsMessage(agentDefaultMessage: AgentDefaultMessage, moreMessage: String = "") {
         updateMessageList(ChatMessage(ChatMessage.Type.RECEIVED, moreMessage + agentDefaultMessage.message))
+    }
+
+    fun showAgentsMessage(agentDefaultMessage: String, moreMessage: String = "") {
+        updateMessageList(ChatMessage(ChatMessage.Type.RECEIVED, moreMessage + agentDefaultMessage))
     }
 
     fun showErrorMessage() {
