@@ -30,10 +30,9 @@ open class MyCardExtension : Fragment() {
                 ?: "")
     }
 
-    fun navigateToBlockMyCardActivity(activity: Activity?, storeCardDetail: String?, mCardDetail: Card?) {
+    fun navigateToBlockMyCardActivity(activity: Activity?, storeCardDetail: String?) {
         activity?.apply {
             val openBlockMyCardActivity = Intent(this, BlockMyCardActivity::class.java)
-            openBlockMyCardActivity.putExtra(CARD, Gson().toJson(mCardDetail))
             openBlockMyCardActivity.putExtra(STORE_CARD_DETAIL, storeCardDetail)
             startActivityForResult(openBlockMyCardActivity, REQUEST_CODE_BLOCK_MY_CARD)
             overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)

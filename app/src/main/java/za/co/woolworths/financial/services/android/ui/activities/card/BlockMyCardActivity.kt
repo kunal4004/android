@@ -12,6 +12,9 @@ import kotlinx.android.synthetic.main.my_card_activity.toolbarText
 import za.co.woolworths.financial.services.android.contracts.IPermanentCardBlock
 import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.npc.Card
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCard
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsData
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.BlockMyCardReasonFragment
@@ -21,7 +24,6 @@ import za.co.woolworths.financial.services.android.util.Utils
 class BlockMyCardActivity : MyCardActivityExtension(), IPermanentCardBlock {
 
     private var mStoreCardDetail: String? = null
-    private var mCard: String? = null
 
     companion object {
         const val REQUEST_CODE_BLOCK_MY_CARD = 8073
@@ -34,7 +36,6 @@ class BlockMyCardActivity : MyCardActivityExtension(), IPermanentCardBlock {
         actionBar()
 
         intent?.extras?.apply {
-            mCard = getString(CARD)
             mStoreCardDetail = getString(STORE_CARD_DETAIL)
         }
 
@@ -103,9 +104,9 @@ class BlockMyCardActivity : MyCardActivityExtension(), IPermanentCardBlock {
         }
     }
 
-    fun getCardDetail(): Card = Gson().fromJson(mCard, Card::class.java)
+    fun getCardDetail(): StoreCard? = getStoreCardDetail().primaryCards?.get(0)
 
-    fun getStoreCardDetail(): Account = Gson().fromJson(mStoreCardDetail, Account::class.java)
+    fun getStoreCardDetail(): StoreCardsData = Gson().fromJson(mStoreCardDetail, StoreCardsData::class.java)
 
     fun iconVisibility(state: Int) {
         imCloseIcon?.visibility = state

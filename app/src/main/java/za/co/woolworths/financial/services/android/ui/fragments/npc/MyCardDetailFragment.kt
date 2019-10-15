@@ -125,7 +125,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            // R.id.blockCard -> activity?.let { navigateToBlockMyCardActivity(it, mStoreCardDetail, mStoreCard) }
+             R.id.blockCard -> activity?.let { navigateToBlockMyCardActivity(it, mStoreCardDetail) }
             R.id.howItWorks -> {
                 activity?.apply {
                     startActivity(Intent(this, HowToUseTemporaryStoreCardActivity::class.java))

@@ -693,6 +693,9 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
         StoreCardsData storeCardsData = storeCardsResponse.getStoreCardsData();
         Activity activity = getActivity();
         if (activity == null || storeCardsData == null) return;
+
+        storeCardsResponse.getStoreCardsData().setProductOfferingId(productOfferingId);
+        storeCardsResponse.getStoreCardsData().setVisionAccountNumber(account.accountNumber);
         if(storeCardsData.getGenerateVirtualCard() ) {
             activity.startActivity(new Intent(getActivity(), GetTemporaryStoreCardPopupActivity.class));
             activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
