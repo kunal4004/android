@@ -97,6 +97,7 @@ class InstantStoreCardReplacementActivity : MyCardActivityExtension() {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        supportFragmentManager.findFragmentById(R.id.flMyCard)?.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
     fun getStoreCardDetail(): Account = Gson().fromJson(mStoreCardDetail, Account::class.java)
@@ -124,7 +125,6 @@ class InstantStoreCardReplacementActivity : MyCardActivityExtension() {
     }
 
     fun getSequenceNumber() = sequenceNumber?.toInt() ?: 0
-
 
     fun clearFlag() {
         window?.clearFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)

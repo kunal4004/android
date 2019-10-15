@@ -6,11 +6,14 @@ import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IOTPLinkStoreCard
 import za.co.woolworths.financial.services.android.contracts.RequestListener
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
+import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.Response
 import za.co.woolworths.financial.services.android.models.dto.npc.LinkStoreCard
 import za.co.woolworths.financial.services.android.models.dto.npc.LinkNewCardOTP
 import za.co.woolworths.financial.services.android.models.dto.npc.LinkNewCardResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
@@ -33,7 +36,8 @@ class StoreCardOTPRequest(private val activity: Activity?, private val otpMethod
                             when (this.httpCode) {
                                 200 -> {
                                     requestListener.onSuccessHandler(linkNewCardOTP)
-                                    requestListener.loadComplete() }
+                                    requestListener.loadComplete()
+                                }
                                 440 -> sessionExpired(linkNewCardOTP.response)
                                 else -> {
                                     requestListener.loadComplete()
@@ -60,7 +64,8 @@ class StoreCardOTPRequest(private val activity: Activity?, private val otpMethod
 
     private fun sessionExpired(response: Response?) {
         activity?.let { activity ->
-            SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response?.stsParams ?: "", activity)
+            SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response?.stsParams
+                    ?: "", activity)
         }
     }
 
@@ -75,8 +80,35 @@ class StoreCardOTPRequest(private val activity: Activity?, private val otpMethod
         requestListener?.startLoading()
         OneAppService.linkStoreCard(linkStoreCard).enqueue(CompletionHandler(object : RequestListener<LinkNewCardResponse> {
             override fun onSuccess(response: LinkNewCardResponse?) {
-                requestListener?.loadComplete()
                 when (response?.httpCode) {
+                    200 -> requestListener?.onSuccessHandler(response)
+                    440 -> {
+                        requestListener?.loadComplete()
+                        sessionExpired(response.response)
+                    }
+                    else -> {
+                        requestListener?.loadComplete()
+                        requestListener?.onFailureHandler()
+                    }
+                }
+            }
+
+            override fun onFailure(error: Throwable?) {
+                activity?.runOnUiThread {
+                    requestListener?.loadComplete()
+                    requestListener?.onFailureHandler()
+                }
+            }
+
+        }, LinkNewCardResponse::
+        class.java))
+    }
+
+    fun getStoreCards(requestListener: IOTPLinkStoreCard<StoreCardsResponse>?, account: Account): Call<StoreCardsResponse> {
+        val getStoreCardsRequest = OneAppService.getStoreCards(StoreCardsRequestBody(account.accountNumber, account.productOfferingId))
+        getStoreCardsRequest.enqueue(CompletionHandler(object : RequestListener<StoreCardsResponse> {
+            override fun onSuccess(response: StoreCardsResponse) {
+                when (response.httpCode) {
                     200 -> requestListener?.onSuccessHandler(response)
                     440 -> sessionExpired(response.response)
                     else -> requestListener?.onFailureHandler()
@@ -89,8 +121,9 @@ class StoreCardOTPRequest(private val activity: Activity?, private val otpMethod
                     requestListener?.onFailureHandler()
                 }
             }
-
-        }, LinkNewCardResponse::class.java))
+        }, StoreCardsResponse::class.java))
+        return getStoreCardsRequest
     }
+
 }
 

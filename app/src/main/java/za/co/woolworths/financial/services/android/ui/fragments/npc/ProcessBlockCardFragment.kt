@@ -66,7 +66,7 @@ class ProcessBlockCardFragment : BlockMyCardRequestExtension(), IProgressAnimati
                 containerViewId = R.id.flProgressIndicator
         )
 
-        btn_ok_got_it?.setOnClickListener { navigateToMyCardActivity(false) }
+        okGotItButton?.setOnClickListener { navigateToMyCardActivity(false) }
         hideToolbarIcon()
 
         if (!mCardWasBlocked)
