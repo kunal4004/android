@@ -76,7 +76,9 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
             otpMethodType = getOTPMethodType()
             storeDetails = getStoreCardDetail().storeCardsData
 
-            linkStoreCard = LinkStoreCard(storeDetails?.productOfferingId?.toInt() ?: 0, storeDetails?.visionAccountNumber ?: "", getCardNumber(), getSequenceNumber(), getOtpNumber(), getOTPMethodType(), mLinkCardType!!)
+            linkStoreCard = LinkStoreCard(storeDetails?.productOfferingId?.toInt()
+                    ?: 0, storeDetails?.visionAccountNumber
+                    ?: "", getCardNumber(), getSequenceNumber(), getOtpNumber(), getOTPMethodType(), mLinkCardType!!)
             linkStoreCard?.let { request ->
                 val storeCardOTPRequest = otpMethodType?.let { otp -> StoreCardOTPRequest(this, otp) }
                 storeCardOTPRequest?.make(object : IOTPLinkStoreCard<LinkNewCardResponse> {
@@ -143,15 +145,9 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
 
     private fun getCurrentActivity(): MyCardActivityExtension? {
         return when (activity) {
-            is InstantStoreCardReplacementActivity -> {
-                (activity as? InstantStoreCardReplacementActivity)
-            }
-            is GetTemporaryStoreCardPopupActivity -> {
-                (activity as? GetTemporaryStoreCardPopupActivity)
-            }
-            else -> {
-                null
-            }
+            is InstantStoreCardReplacementActivity -> (activity as? InstantStoreCardReplacementActivity)
+            is GetTemporaryStoreCardPopupActivity -> (activity as? GetTemporaryStoreCardPopupActivity)
+            else -> null
         }
     }
 
@@ -247,7 +243,9 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
 
             storeCardsResponse.storeCardsData?.apply {
                 if (generateVirtualCard) {
-                    activity.startActivity(Intent(activity, GetTemporaryStoreCardPopupActivity::class.java))
+                    val navigateToGetTemporaryStoreCardPopupActivity = Intent(activity, GetTemporaryStoreCardPopupActivity::class.java)
+                    navigateToGetTemporaryStoreCardPopupActivity.putExtra(STORE_CARD_DETAIL, Gson().toJson(storeDetails))
+                    activity.startActivity(navigateToGetTemporaryStoreCardPopupActivity)
                     activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
                 } else {
                     val displayStoreCardDetail = Intent(activity, MyCardDetailActivity::class.java)

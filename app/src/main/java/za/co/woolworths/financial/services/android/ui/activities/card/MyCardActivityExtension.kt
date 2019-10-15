@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ProcessBlockCardFragment
 
 open class MyCardActivityExtension : AppCompatActivity() {
@@ -61,4 +62,6 @@ open class MyCardActivityExtension : AppCompatActivity() {
             setHomeAsUpIndicator(R.drawable.back24)
         }
     }
+
+    fun getStoreCardDetail(): StoreCardsResponse = Gson().fromJson(mStoreCardDetail, StoreCardsResponse::class.java)
 }
