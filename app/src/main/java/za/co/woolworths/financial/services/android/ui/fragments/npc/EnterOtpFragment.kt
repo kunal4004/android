@@ -19,6 +19,7 @@ import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import java.util.*
 import android.view.MenuInflater
+import za.co.woolworths.financial.services.android.ui.activities.card.MyCardActivityExtension
 
 class EnterOtpFragment : MyCardExtension(), IOTPLinkStoreCard<LinkNewCardOTP> {
 
@@ -43,7 +44,7 @@ class EnterOtpFragment : MyCardExtension(), IOTPLinkStoreCard<LinkNewCardOTP> {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (activity as? InstantStoreCardReplacementActivity)?.showBackIcon()
+        (activity as? MyCardActivityExtension)?.showBackIcon()
         setupInputListeners()
         configureUI()
         clickEvent()
@@ -184,7 +185,7 @@ class EnterOtpFragment : MyCardExtension(), IOTPLinkStoreCard<LinkNewCardOTP> {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
-                (activity as? InstantStoreCardReplacementActivity)?.hideBackIcon()
+                (activity as? MyCardActivityExtension)?.hideBackIcon()
                 activity?.onBackPressed()
                 super.onOptionsItemSelected(item)
             }
