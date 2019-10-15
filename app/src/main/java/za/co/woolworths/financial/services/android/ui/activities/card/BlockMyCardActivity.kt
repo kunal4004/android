@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.my_card_activity.tbMyCard
 import kotlinx.android.synthetic.main.my_card_activity.toolbarText
 import za.co.woolworths.financial.services.android.contracts.IPermanentCardBlock
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCard
-import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsData
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.BlockMyCardReasonFragment
@@ -100,9 +100,9 @@ class BlockMyCardActivity : MyCardActivityExtension(), IPermanentCardBlock {
         }
     }
 
-    fun getCardDetail(): StoreCard? = getStoreCardDetail().primaryCards?.get(0)
+    fun getCardDetail(): StoreCard? = getStoreCardDetail().storeCardsData?.primaryCards?.get(0)
 
-    fun getStoreCardDetail(): StoreCardsData = Gson().fromJson(mStoreCardDetail, StoreCardsData::class.java)
+    fun getStoreCardDetail(): StoreCardsResponse = Gson().fromJson(mStoreCardDetail, StoreCardsResponse::class.java)
 
     fun iconVisibility(state: Int) {
         imCloseIcon?.visibility = state

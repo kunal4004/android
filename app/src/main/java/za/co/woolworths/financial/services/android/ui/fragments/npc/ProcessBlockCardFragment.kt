@@ -86,7 +86,7 @@ class ProcessBlockCardFragment : BlockMyCardRequestExtension(), IProgressAnimati
 
     private fun executeBlockCard() {
         val storeCard = (activity as? BlockMyCardActivity)?.getCardDetail()
-        val storeCardDetail = (activity as? BlockMyCardActivity)?.getStoreCardDetail()
+        val storeCardDetail = (activity as? BlockMyCardActivity)?.getStoreCardDetail()?.storeCardsData
         (activity as? BlockMyCardActivity)?.getCardDetail()?.apply {
             storeCardDetail?.productOfferingId?.let {
                 blockMyCardRequest(BlockCardRequestBody(storeCardDetail.visionAccountNumber, storeCard?.number
@@ -140,7 +140,7 @@ class ProcessBlockCardFragment : BlockMyCardRequestExtension(), IProgressAnimati
 
                 override fun onFinish() {
                     activity?.apply {
-                        var storeCard = (this as? BlockMyCardActivity)?.getStoreCardDetail()
+                        var storeCard = (this as? BlockMyCardActivity)?.getStoreCardDetail()?.storeCardsData
                         storeCard?.primaryCards?.get(0)?.blockCode = null
                         PersistenceLayer.getInstance().executeDeleteQuery("DELETE FROM ApiRequest WHERE endpoint LIKE '%user/accounts'")
                         setResult(RESULT_OK, Intent().putExtra(STORE_CARD_DETAIL, Gson().toJson(storeCard)))
