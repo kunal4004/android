@@ -29,12 +29,14 @@ class StoreCardOTPRequest(private val activity: Activity?, private val otpMethod
         storeOTPService?.enqueue(
                 CompletionHandler(object : RequestListener<LinkNewCardOTP> {
                     override fun onSuccess(linkNewCardOTP: LinkNewCardOTP) {
-                        requestListener.loadComplete()
                         with(linkNewCardOTP) {
                             when (this.httpCode) {
-                                200 -> requestListener.onSuccessHandler(linkNewCardOTP)
+                                200 -> {
+                                    requestListener.onSuccessHandler(linkNewCardOTP)
+                                    requestListener.loadComplete() }
                                 440 -> sessionExpired(linkNewCardOTP.response)
                                 else -> {
+                                    requestListener.loadComplete()
                                     requestListener.onFailureHandler()
                                     messageDialog(linkNewCardOTP.response)
                                 }
@@ -58,8 +60,7 @@ class StoreCardOTPRequest(private val activity: Activity?, private val otpMethod
 
     private fun sessionExpired(response: Response?) {
         activity?.let { activity ->
-            SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE,
-                    response?.stsParams ?: "", activity)
+            SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response?.stsParams ?: "", activity)
         }
     }
 

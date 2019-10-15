@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.npc
 
+import android.app.Activity.RESULT_OK
 import android.graphics.Paint
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -10,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.link_store_card_process_fragment.*
+import kotlinx.android.synthetic.main.npc_card_linked_successful_layout.*
 import kotlinx.android.synthetic.main.npc_link_store_card_failure.*
 import kotlinx.android.synthetic.main.process_block_card_fragment.incLinkCardSuccessFulView
 import kotlinx.android.synthetic.main.process_block_card_fragment.incProcessingTextLayout
@@ -45,6 +47,7 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
         btnRetryOnFailure?.setOnClickListener(this)
         ibClose?.setOnClickListener(this)
         ibBack?.setOnClickListener(this)
+        okGotItButton?.setOnClickListener(this)
     }
 
     private fun linkStoreCardRequest() {
@@ -123,11 +126,15 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
                 R.id.tvCallCenterNumber -> Utils.makeCall(this, "0861 50 20 20")
                 R.id.btnRetryOnFailure -> (this as? AppCompatActivity)?.let { activity -> navigateToLinkNewCardActivity(activity, Gson().toJson(storeDetails)) }
                 R.id.ibBack -> onBackPressed()
+                R.id.okGotItButton -> {
+                    setResult(RESULT_OK)
+                    finish()
+                    overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+                }
                 R.id.ibClose -> {
                     finish()
                     overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
                 }
-                else -> return
             }
         }
     }

@@ -1079,7 +1079,7 @@
     <string name="cd_sign_out">sign out</string>
     <string name="call_the_call_center">Call the Call Centre (0861 50 20 20)</string>
     <string name="link_card_failure">Try linking your card again, or call the Call Centre (0861 50 20 20) for further assistance.</string>
-    <string name="enter_sequence_number">Enter sequence number</string>
+    <string name="enter_sequence_number" tools:ignore="ExtraTranslation">Enter sequence number</string>
     <string name="sequence_number">Sequence Number</string>
     <string name="sequence_number_desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
     <string name="oops_err_message">Oops, something went wrong.</string>

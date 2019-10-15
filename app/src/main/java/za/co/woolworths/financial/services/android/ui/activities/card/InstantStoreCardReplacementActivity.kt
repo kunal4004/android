@@ -23,6 +23,8 @@ class InstantStoreCardReplacementActivity : MyCardActivityExtension() {
     private var cardNumber: String? = null
     private var oTPNumber: String? = null
     private var sequenceNumber: String? = null
+    var mDefaultOtpSentTo: String? = null // required to save default phone number
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -124,6 +126,8 @@ class InstantStoreCardReplacementActivity : MyCardActivityExtension() {
     fun getSequenceNumber() = sequenceNumber?.toInt() ?: 0
 
 
-    fun clearFlag() {window?.clearFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)}
+    fun clearFlag() {
+        window?.clearFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+    }
 
 }

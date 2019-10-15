@@ -3,35 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <TextView
-        android:id="@+id/tvInvalidCardNumber"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="32dp"
-        android:fontFamily="@font/myriad_pro_regular_otf"
-        android:gravity="center|start"
-        android:lineSpacingExtra="1.dp"
-        android:lineSpacingMultiplier="1.40"
-        android:text="@string/invalid_card_number"
-        android:textColor="@color/input_error_color_code"
-        android:textSize="14sp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.6"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardNumberEditText"
-        tools:text="@string/invalid_card_number" />
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="false">
 
     <TextView
         android:id="@+id/tvLinkNewCardTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="32dp"
         android:fontFamily="@font/futura_semi_bold_ttf"
         android:gravity="center|start"
@@ -64,10 +44,13 @@
         app:layout_constraintTop_toBottomOf="@+id/tvLinkNewCardTitle"
         tools:text="@string/link_new_card_desc" />
 
-    <za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView
+
+    <EditText
         android:id="@+id/cardNumberEditText"
         style="@style/instantStoreCardReplacementEditTextStyle"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="32dp"
         android:hint="@string/enter_new_card_number"
         android:imeOptions="actionNext"
         android:textColorHint="@color/unavailable"
@@ -85,11 +68,10 @@
         app:layout_constraintTop_toTopOf="@+id/cardNumberEditText"
         app:srcCompat="@drawable/camera_image_bg" />
 
-
-    <za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView
+    <EditText
         android:id="@+id/sequenceNumberEditText"
         style="@style/instantStoreCardReplacementEditTextStyle"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="16dp"
         android:hint="@string/enter_sequence_number"
         android:imeOptions="actionDone"
         android:maxLength="1"
@@ -107,28 +89,17 @@
         app:layout_constraintTop_toTopOf="@+id/sequenceNumberEditText"
         app:srcCompat="@drawable/icon_info" />
 
+
     <ImageView
         android:id="@+id/navigateToEnterOTPFragmentImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="12dp"
         android:layout_marginEnd="32dp"
         android:alpha="0.5"
         android:contentDescription="@string/app_label"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sequenceNumberEditText"
         app:srcCompat="@drawable/next_button_icon" />
-
-    <ProgressBar
-        android:id="@+id/otpProgressBar"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:layout_marginTop="16dp"
-        app:layout_constraintEnd_toStartOf="@+id/navigateToEnterOTPFragmentImageView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sequenceNumberEditText" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

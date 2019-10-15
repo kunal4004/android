@@ -20,7 +20,6 @@ import za.co.woolworths.financial.services.android.util.KotlinUtils
 import java.util.*
 import android.view.MenuInflater
 
-
 class EnterOtpFragment : MyCardExtension(), IOTPLinkStoreCard<LinkNewCardOTP> {
 
     private var mOtpSentTo: String? = null
@@ -67,8 +66,9 @@ class EnterOtpFragment : MyCardExtension(), IOTPLinkStoreCard<LinkNewCardOTP> {
             navigateToLinkStoreCard()
         }
         tvDidNotReceivedOTP?.setOnClickListener {
+            val defaultOtp = (activity as? InstantStoreCardReplacementActivity)?.mDefaultOtpSentTo
             (activity as? AppCompatActivity)?.apply {
-                val resendOTPFragment = ResendOTPFragment.newInstance(this@EnterOtpFragment, mOtpSentTo)
+                val resendOTPFragment = ResendOTPFragment.newInstance(this@EnterOtpFragment, defaultOtp)
                 resendOTPFragment.show(supportFragmentManager.beginTransaction(), ResendOTPFragment::class.java.simpleName)
             }
         }
@@ -130,7 +130,7 @@ class EnterOtpFragment : MyCardExtension(), IOTPLinkStoreCard<LinkNewCardOTP> {
     }
 
     private fun navigateToLinkStoreCard() {
-        val otpNumber = getNumberFromEditText(edtVericationCode1).plus(getNumberFromEditText(edtVerificationCode2)).plus(edtVerificationCode3).plus(edtVerificationCode4).plus(edtVerificationCode5)
+        val otpNumber = getNumberFromEditText(edtVericationCode1).plus(getNumberFromEditText(edtVerificationCode2)).plus(getNumberFromEditText(edtVerificationCode3)).plus(getNumberFromEditText(edtVerificationCode4)).plus(getNumberFromEditText(edtVerificationCode5))
         (activity as? InstantStoreCardReplacementActivity)?.setOTPNumber(otpNumber)
 
         replaceFragment(
@@ -176,7 +176,6 @@ class EnterOtpFragment : MyCardExtension(), IOTPLinkStoreCard<LinkNewCardOTP> {
 
     private fun saveSelectedOTP(otpMethodType: OTPMethodType) = (activity as? InstantStoreCardReplacementActivity)?.setOTPType(otpMethodType)
 
-
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         menu.clear()
@@ -193,5 +192,5 @@ class EnterOtpFragment : MyCardExtension(), IOTPLinkStoreCard<LinkNewCardOTP> {
         }
     }
 
-    private fun getNumberFromEditText(editText: EditText) = editText?.text?.toString() ?: ""
+    private fun getNumberFromEditText(numberEditText: EditText?) = numberEditText?.text?.toString() ?: ""
 }

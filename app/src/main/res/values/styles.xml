@@ -1793,6 +1793,7 @@
     <style name="CustomProgressBarTheme">
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowSoftInputMode">stateUnchanged</item>
     </style>
 
     <style name="instantStoreCardReplacementEditTextStyle">
@@ -1813,8 +1814,10 @@
         <item name="android:singleLine">true</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:textColorHint">@color/unavailable</item>
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">16sp</item>
         <item name="android:inputType">number|textNoSuggestions</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+
     </style>
 
     <style name="instantStoreCardReplacementImageButtonStyle">
