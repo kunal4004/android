@@ -9,8 +9,6 @@ import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.my_card_fragment.*
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel
-import za.co.woolworths.financial.services.android.models.dto.Account
-import za.co.woolworths.financial.services.android.models.dto.npc.Card
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCard
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsData
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
@@ -20,7 +18,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.temporary_store_
 import za.co.woolworths.financial.services.android.ui.fragments.temporary_store_card.TemporaryStoreCardExpireInfoDialog
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
-import java.util.*
 
 class MyCardDetailFragment : MyCardExtension() {
 
@@ -60,7 +57,7 @@ class MyCardDetailFragment : MyCardExtension() {
 
     private fun populateView() {
         mLatestOpenedDateStoreCard?.apply {
-            maskedCardNumberWithSpaces(number?.toString()).also {
+            maskedCardNumberWithSpaces(number).also {
                 textViewCardNumber?.text = it
                 tvCardNumberHeader?.text = it
             }
