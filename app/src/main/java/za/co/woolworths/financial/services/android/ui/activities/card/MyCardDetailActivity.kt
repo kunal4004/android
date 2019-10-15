@@ -12,6 +12,7 @@ import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.my_card_activity.*
 import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity.Companion.REQUEST_CODE_BLOCK_MY_CARD
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.GetReplacementCardFragment
@@ -46,14 +47,9 @@ class MyCardDetailActivity : AppCompatActivity() {
         addCardDetailFragment()
     }
 
-    /**
-    If cardBlocked == TRUE, display generic card blocked screen
-    Else cardBlocked == FALSE , Build the ‘My Card’ Screen using object with latest openedDate
-     */
-
     private fun addCardDetailFragment() {
-        when (Gson().fromJson(getMyStoreCardDetail(), Account::class.java)?.primaryCard?.cardBlocked
-                ?: false) {
+
+        when (Gson().fromJson(getMyStoreCardDetail(), StoreCardsResponse::class.java)?.storeCardsData?.primaryCards?.get(0)?.blockCode != null) {
             true -> {
                 addFragment(
                         fragment = MyCardBlockedFragment.newInstance(mStoreCardDetail),
@@ -62,7 +58,7 @@ class MyCardDetailActivity : AppCompatActivity() {
             }
             else -> {
                 addFragment(
-                        fragment = MyCardDetailFragment.newInstance(mStoreCardDetail,visionAccountNumber,productOfferingId),
+                        fragment = MyCardDetailFragment.newInstance(mStoreCardDetail, visionAccountNumber, productOfferingId),
                         tag = MyCardDetailFragment::class.java.simpleName,
                         containerViewId = R.id.flMyCard)
             }
