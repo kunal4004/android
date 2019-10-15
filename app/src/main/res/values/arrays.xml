@@ -313,4 +313,12 @@
         <item>@string/tips_tricks_titles_statements</item>
         <item>@string/tips_tricks_titles_shopping_list</item>
     </string-array>
+
+    <array name="auto_size_text_sizes">
+        <item>10sp</item>
+        <item>11sp</item>
+        <item>12sp</item>
+        <item>13sp</item>
+        <item>14sp</item>
+    </array>
 </resources>
