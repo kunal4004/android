@@ -60,10 +60,10 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
     private fun linkStoreCardRequest() {
         (activity as? InstantStoreCardReplacementActivity)?.apply {
             otpMethodType = getOTPMethodType()
-            storeDetails = getStoreCardDetail()
+            storeDetails = getStoreCardDetail().storeCardsData
             linkStoreCard = LinkStoreCard(storeDetails?.productOfferingId?.toInt()
                     ?: 0, storeDetails?.visionAccountNumber
-                    ?: "", storeDetails?.visionAccountNumber, getSequenceNumber(), getOtpNumber(), getOTPMethodType())
+                    ?: "", getCardNumber(), getSequenceNumber(), getOtpNumber(), getOTPMethodType())
             linkStoreCard?.let { request ->
                 val storeCardOTPRequest = otpMethodType?.let { otp -> StoreCardOTPRequest(this, otp) }
                 storeCardOTPRequest?.make(object : IOTPLinkStoreCard<LinkNewCardResponse> {

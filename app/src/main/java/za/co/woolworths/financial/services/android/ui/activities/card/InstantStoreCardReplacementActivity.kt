@@ -9,7 +9,7 @@ import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.my_card_activity.*
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
-import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsData
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.InstantStoreCardFragment
 import za.co.woolworths.financial.services.android.util.Utils
@@ -97,7 +97,7 @@ class InstantStoreCardReplacementActivity : MyCardActivityExtension() {
         supportFragmentManager.findFragmentById(R.id.flMyCard)?.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
-    fun getStoreCardDetail(): StoreCardsData = Gson().fromJson(mStoreCardDetail, StoreCardsData::class.java)
+    fun getStoreCardDetail(): StoreCardsResponse = Gson().fromJson(mStoreCardDetail, StoreCardsResponse::class.java)
 
     fun getOTPMethodType(): OTPMethodType = this.otpType
 
