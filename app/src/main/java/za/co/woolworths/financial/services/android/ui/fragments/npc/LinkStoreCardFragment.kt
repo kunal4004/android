@@ -154,7 +154,11 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
         activity?.apply {
             when (view?.id) {
                 R.id.tvCallCenterNumber -> Utils.makeCall(this, "0861 50 20 20")
-                R.id.btnRetryOnFailure -> (this as? AppCompatActivity)?.let { activity -> navigateToLinkNewCardActivity(activity, Gson().toJson(storeDetails)) }
+
+                R.id.btnRetryOnFailure -> {
+                    val storeCardResponse = (this as? InstantStoreCardReplacementActivity)?.getStoreCardDetail()
+                    (this as? AppCompatActivity)?.let { activity -> navigateToLinkNewCardActivity(activity, Gson().toJson(storeCardResponse)) }
+                }
                 R.id.ibBack -> onBackPressed()
                 R.id.okGotItButton -> {
                     mStoreCardsResponse?.let { handleStoreCardResponse(it) }

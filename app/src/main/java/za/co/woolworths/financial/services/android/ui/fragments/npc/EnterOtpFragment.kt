@@ -135,7 +135,7 @@ class EnterOtpFragment : MyCardExtension(), IOTPLinkStoreCard<LinkNewCardOTP> {
 
         replaceFragment(
                 fragment = LinkStoreCardFragment.newInstance(),
-                tag = AnimatedProgressBarFragment::class.java.simpleName,
+                tag = LinkStoreCardFragment::class.java.simpleName,
                 containerViewId = R.id.flMyCard,
                 allowStateLoss = true,
                 enterAnimation = R.anim.slide_in_from_right,
