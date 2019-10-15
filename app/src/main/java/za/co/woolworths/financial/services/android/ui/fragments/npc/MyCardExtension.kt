@@ -19,7 +19,6 @@ import za.co.woolworths.financial.services.android.ui.activities.card.InstantSto
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
 import za.co.woolworths.financial.services.android.ui.fragments.WStoreCardFragment.REQUEST_CODE_BLOCK_MY_STORE_CARD
-import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardDetailFragment.Companion.CARD
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ProcessBlockCardFragment.Companion.CARD_BLOCKED
 import za.co.woolworths.financial.services.android.util.KeyboardUtil
 
