@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import com.awfs.coordination.R
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_get_temp_store_card_popup.*
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardActivityExtension
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
@@ -12,8 +14,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.temporary_store_
 import za.co.woolworths.financial.services.android.util.Utils
 
 class GetTemporaryStoreCardPopupActivity : MyCardActivityExtension() {
-
-    private var mStoreCardDetail: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,7 +30,6 @@ class GetTemporaryStoreCardPopupActivity : MyCardActivityExtension() {
                 fragment = GetTemporaryStoreCardPopupFragment.newInstance(mStoreCardDetail),
                 tag = GetTemporaryStoreCardPopupFragment::class.java.simpleName,
                 containerViewId = R.id.flMyCard)
-
     }
 
     private fun actionBar() {
@@ -42,7 +41,7 @@ class GetTemporaryStoreCardPopupActivity : MyCardActivityExtension() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater?.inflate(R.menu.search_item, menu)
+        menuInflater.inflate(R.menu.search_item, menu)
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -58,5 +57,6 @@ class GetTemporaryStoreCardPopupActivity : MyCardActivityExtension() {
         return false
     }
 
+    fun getStoreCardDetail(): StoreCardsResponse = Gson().fromJson(mStoreCardDetail, StoreCardsResponse::class.java)
 }
 

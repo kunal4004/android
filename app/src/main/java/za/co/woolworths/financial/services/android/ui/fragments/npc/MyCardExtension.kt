@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.npc
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -11,8 +12,6 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
 import com.awfs.coordination.R
-import com.google.gson.Gson
-import za.co.woolworths.financial.services.android.models.dto.npc.Card
 import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity.Companion.REQUEST_CODE_BLOCK_MY_CARD
 import za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity
@@ -55,6 +54,7 @@ open class MyCardExtension : Fragment() {
         }
     }
 
+    @SuppressLint("DefaultLocale")
     fun toTitleCase(name: String?): String {
         val words = name?.toLowerCase()?.trim()?.split(" ")?.toMutableList() ?: mutableListOf()
         var output = ""

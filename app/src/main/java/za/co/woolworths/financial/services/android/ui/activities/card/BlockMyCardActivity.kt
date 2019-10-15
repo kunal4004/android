@@ -19,8 +19,6 @@ import za.co.woolworths.financial.services.android.util.Utils
 
 class BlockMyCardActivity : MyCardActivityExtension(), IPermanentCardBlock {
 
-    private var mStoreCardDetail: String? = null
-
     companion object {
         const val REQUEST_CODE_BLOCK_MY_CARD = 8073
     }
@@ -100,9 +98,9 @@ class BlockMyCardActivity : MyCardActivityExtension(), IPermanentCardBlock {
         }
     }
 
-    fun getCardDetail(): StoreCard? = getStoreCardDetail().storeCardsData?.primaryCards?.get(0)
-
     fun getStoreCardDetail(): StoreCardsResponse = Gson().fromJson(mStoreCardDetail, StoreCardsResponse::class.java)
+
+    fun getCardDetail(): StoreCard? = getStoreCardDetail().storeCardsData?.primaryCards?.get(0)
 
     fun iconVisibility(state: Int) {
         imCloseIcon?.visibility = state

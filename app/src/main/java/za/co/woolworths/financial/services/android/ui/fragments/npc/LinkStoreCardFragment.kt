@@ -4,6 +4,7 @@ import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.os.Handler
 import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -13,22 +14,24 @@ import com.google.gson.Gson
 import kotlinx.android.synthetic.main.link_store_card_process_fragment.*
 import kotlinx.android.synthetic.main.npc_card_linked_successful_layout.*
 import kotlinx.android.synthetic.main.npc_link_store_card_failure.*
+import kotlinx.android.synthetic.main.process_block_card_fragment.*
 import kotlinx.android.synthetic.main.process_block_card_fragment.incLinkCardSuccessFulView
 import kotlinx.android.synthetic.main.process_block_card_fragment.incProcessingTextLayout
 import za.co.woolworths.financial.services.android.contracts.IOTPLinkStoreCard
 import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.models.dto.npc.LinkCardType
 import za.co.woolworths.financial.services.android.models.dto.npc.LinkNewCardResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.LinkStoreCard
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsData
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity
+import za.co.woolworths.financial.services.android.ui.activities.card.MyCardActivityExtension
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
 import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.GetTemporaryStoreCardPopupActivity
 import za.co.woolworths.financial.services.android.ui.fragments.WStoreCardFragment.REQUEST_CODE_BLOCK_MY_STORE_CARD
 import za.co.woolworths.financial.services.android.util.Utils
-
 
 class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListener {
 
@@ -36,6 +39,7 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
     private var storeDetails: StoreCardsData? = null
     private var otpMethodType: OTPMethodType? = null
     private var linkStoreCard: LinkStoreCard? = null
+    private var mLinkCardType: String? = null
 
     companion object {
         fun newInstance() = LinkStoreCardFragment()
@@ -58,12 +62,21 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
     }
 
     private fun linkStoreCardRequest() {
-        (activity as? InstantStoreCardReplacementActivity)?.apply {
+
+        val mCurrentActivity = getCurrentActivity()
+
+        mCurrentActivity?.apply {
+
+            mLinkCardType = if (activity is InstantStoreCardReplacementActivity) {
+                LinkCardType.LINK_NEW_CARD.type
+            } else {
+                LinkCardType.VIRTUAL_TEMP_CARD.type
+            }
+
             otpMethodType = getOTPMethodType()
             storeDetails = getStoreCardDetail().storeCardsData
-            linkStoreCard = LinkStoreCard(storeDetails?.productOfferingId?.toInt()
-                    ?: 0, storeDetails?.visionAccountNumber
-                    ?: "", getCardNumber(), getSequenceNumber(), getOtpNumber(), getOTPMethodType())
+
+            linkStoreCard = LinkStoreCard(storeDetails?.productOfferingId?.toInt() ?: 0, storeDetails?.visionAccountNumber ?: "", getCardNumber(), getSequenceNumber(), getOtpNumber(), getOTPMethodType(), mLinkCardType!!)
             linkStoreCard?.let { request ->
                 val storeCardOTPRequest = otpMethodType?.let { otp -> StoreCardOTPRequest(this, otp) }
                 storeCardOTPRequest?.make(object : IOTPLinkStoreCard<LinkNewCardResponse> {
@@ -87,14 +100,26 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
                                 if (!isAdded) return
                                 super.onSuccessHandler(response)
                                 mStoreCardsResponse = response
-                                (activity as? InstantStoreCardReplacementActivity)?.clearFlag()
-                                progressState()?.animateSuccessEnd(true)
+                                mCurrentActivity?.clearFlag()
                                 object : CountDownTimer(1500, 100) {
                                     override fun onTick(millisUntilFinished: Long) {
                                     }
 
                                     override fun onFinish() {
-                                        linkStoreCardSuccess()
+                                        when (mLinkCardType) {
+                                            LinkCardType.LINK_NEW_CARD.type -> {
+                                                progressState()?.animateSuccessEnd(true)
+                                                linkStoreCardSuccess()
+                                            }
+
+                                            LinkCardType.VIRTUAL_TEMP_CARD.type -> {
+                                                virtualStoreCardSuccess()
+                                                Handler().postDelayed({
+                                                    handleStoreCardResponse(response)
+                                                }, 1000)
+
+                                            }
+                                        }
                                     }
                                 }.start()
                             }
@@ -113,6 +138,29 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
                 }, request)
             }
         }
+
+    }
+
+    private fun getCurrentActivity(): MyCardActivityExtension? {
+        return when (activity) {
+            is InstantStoreCardReplacementActivity -> {
+                (activity as? InstantStoreCardReplacementActivity)
+            }
+            is GetTemporaryStoreCardPopupActivity -> {
+                (activity as? GetTemporaryStoreCardPopupActivity)
+            }
+            else -> {
+                null
+            }
+        }
+    }
+
+    private fun virtualStoreCardSuccess() {
+        progressState()?.animateSuccessEnd(true)
+        ibBack?.visibility = GONE
+        ibClose?.visibility = VISIBLE
+        incProcessingTextLayout?.visibility = GONE
+        includeVirtualTempCardLayout?.visibility = VISIBLE
     }
 
     private fun onFailure() {
@@ -156,7 +204,7 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
                 R.id.tvCallCenterNumber -> Utils.makeCall(this, "0861 50 20 20")
 
                 R.id.btnRetryOnFailure -> {
-                    val storeCardResponse = (this as? InstantStoreCardReplacementActivity)?.getStoreCardDetail()
+                    val storeCardResponse = getCurrentActivity()?.getStoreCardDetail()
                     (this as? AppCompatActivity)?.let { activity -> navigateToLinkNewCardActivity(activity, Gson().toJson(storeCardResponse)) }
                 }
                 R.id.ibBack -> onBackPressed()
@@ -189,6 +237,13 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
     private fun handleStoreCardResponse(storeCardsResponse: StoreCardsResponse) {
         if (!isAdded) return
         activity?.let { activity ->
+
+            val storeCardsData = mStoreCardsResponse?.storeCardsData
+            val visionAccountNumber = storeCardsData?.visionAccountNumber ?: ""
+            val productOfferingId: String? = storeCardsData?.productOfferingId
+
+            storeCardsResponse.storeCardsData?.visionAccountNumber = visionAccountNumber
+            storeCardsResponse.storeCardsData?.productOfferingId = productOfferingId ?: ""
 
             storeCardsResponse.storeCardsData?.apply {
                 if (generateVirtualCard) {

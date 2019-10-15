@@ -193,5 +193,6 @@ class EnterOtpFragment : MyCardExtension(), IOTPLinkStoreCard<LinkNewCardOTP> {
         }
     }
 
-    private fun getNumberFromEditText(numberEditText: EditText?) = numberEditText?.text?.toString() ?: ""
+    private fun getNumberFromEditText(numberEditText: EditText?) = numberEditText?.text?.toString()
+            ?: ""
 }

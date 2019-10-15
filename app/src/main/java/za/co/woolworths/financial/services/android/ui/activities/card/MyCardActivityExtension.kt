@@ -1,13 +1,51 @@
 package za.co.woolworths.financial.services.android.ui.activities.card
 
 import android.content.Intent
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
+import com.google.gson.Gson
+import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ProcessBlockCardFragment
 
 open class MyCardActivityExtension : AppCompatActivity() {
 
-    fun navigateToMyCardActivity(storeCard: String?,cardIsBlocked: Boolean) {
+    var mStoreCardDetail: String? = null
+    private var otpType: OTPMethodType = OTPMethodType.SMS
+    private var cardNumber: String? = null
+    private var oTPNumber: String? = null
+    private var sequenceNumber: String? = null
+    var mDefaultOtpSentTo: String? = null // required to save default phone number
+
+    fun getOTPMethodType(): OTPMethodType = this.otpType
+
+    fun setOTPType(otpMethodType: OTPMethodType) {
+        this.otpType = otpMethodType
+    }
+
+    fun setCardNumber(number: String) {
+        this.cardNumber = number
+    }
+
+    fun getCardNumber() = this.cardNumber
+
+    fun setOTPNumber(otp: String) {
+        oTPNumber = otp
+    }
+
+    fun getOtpNumber(): String = oTPNumber ?: ""
+
+    fun setSequenceNumber(sequenceNumber: String) {
+        this.sequenceNumber = sequenceNumber
+    }
+
+    fun getSequenceNumber() = sequenceNumber?.toInt() ?: 0
+
+    fun clearFlag() {
+        window?.clearFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+    }
+
+    fun navigateToMyCardActivity(storeCard: String?, cardIsBlocked: Boolean) {
         val openCardDetailActivity = Intent(this, MyCardDetailActivity::class.java)
         openCardDetailActivity.putExtra(ProcessBlockCardFragment.CARD_BLOCKED, cardIsBlocked)
         openCardDetailActivity.putExtra(MyCardDetailActivity.STORE_CARD_DETAIL, storeCard)

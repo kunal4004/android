@@ -1094,4 +1094,5 @@
     <string name="cart_item_not_preserved_until_checkout_info">* Items are not reserved until you checkout</string>
     <string name="having_problems_generate_new_barcode">having problems? generate new barcode</string>
     <string name="store_card_status_temporay">temp</string>
+    <string name="virtual_store_card_temp_desc">Congratulations!\nYour Temp Store Card has been activated. Happy Shopping!</string>
 </resources>
