@@ -73,7 +73,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/viewOTPBackground"
         app:layout_constraintEnd_toStartOf="@+id/edtVerificationCode3"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/edtVericationCode1"
+        app:layout_constraintStart_toEndOf="@+id/edtVerificationCode1"
         app:layout_constraintTop_toTopOf="@+id/viewOTPBackground" />
 
     <EditText
@@ -142,7 +142,7 @@
         app:layout_constraintTop_toTopOf="@+id/viewOTPBackground" />
 
     <EditText
-        android:id="@+id/edtVericationCode1"
+        android:id="@+id/edtVerificationCode1"
         android:layout_width="46dp"
         android:layout_height="50dp"
         android:background="@drawable/edit_text_bg_selector_bg"

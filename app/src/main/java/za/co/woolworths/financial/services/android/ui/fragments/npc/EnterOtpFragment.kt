@@ -2,9 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.npc
 
 import android.graphics.Paint
 import android.os.Bundle
-import android.text.Editable
 import android.text.SpannableString
-import android.text.TextWatcher
 import android.view.*
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
@@ -21,7 +19,7 @@ import java.util.*
 import android.view.MenuInflater
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardActivityExtension
 
-class EnterOtpFragment : MyCardExtension(), IOTPLinkStoreCard<LinkNewCardOTP> {
+class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
 
     private var mOtpSentTo: String? = null
 
@@ -75,63 +73,8 @@ class EnterOtpFragment : MyCardExtension(), IOTPLinkStoreCard<LinkNewCardOTP> {
         }
     }
 
-    private fun setupInputListeners() = arrayOf<EditText>(edtVericationCode1, edtVerificationCode2,
-            edtVerificationCode3, edtVerificationCode4, edtVerificationCode5).apply {
-        val listSize = size - 1
-        for ((index, currentEditText) in withIndex()) {
-            val nextEditText: EditText? = if (index < listSize) this[index + 1] else null
-            val previousEditText: EditText? = if (index > 0) this[index - 1] else null
-            currentEditText.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
-                }
-
-                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                    when (index) {
-                        0 -> if (s.length == 1) nextEditText?.requestFocus(View.FOCUS_DOWN) // First EditText
-                        listSize -> if (count == 0) previousEditText?.requestFocus(View.FOCUS_DOWN) // Last EditText
-                        else -> { // Remaining editText
-                            if (count == 0) {
-                                previousEditText?.requestFocus(View.FOCUS_DOWN)
-                            } else {
-                                if (s.length == 1) {
-                                    nextEditText?.requestFocus(View.FOCUS_DOWN)
-                                }
-                            }
-                        }
-                    }
-                }
-
-                override fun afterTextChanged(s: Editable) {
-                    when (index) {
-                        listSize -> currentEditText.apply { isCursorVisible = s.isEmpty() }
-                    }
-                    validateVerificationCode()
-                }
-            })
-        }
-    }
-
-    private fun validateVerificationCode() {
-        when ((edtVericationCode1.length() == 1)
-                && (edtVerificationCode2.length() == 1)
-                && (edtVerificationCode3.length() == 1)
-                && (edtVerificationCode4.length() == 1)
-                && (edtVerificationCode5.length() == 1)) {
-            true -> {
-                imNextProcessLinkCard?.isEnabled = true
-                imNextProcessLinkCard?.alpha = 1.0f
-                imNextProcessLinkCard?.isFocusable = false
-            }
-            false -> {
-                imNextProcessLinkCard?.isEnabled = false
-                imNextProcessLinkCard?.alpha = 0.5f
-                imNextProcessLinkCard?.isFocusable = true
-            }
-        }
-    }
-
     private fun navigateToLinkStoreCard() {
-        val otpNumber = getNumberFromEditText(edtVericationCode1).plus(getNumberFromEditText(edtVerificationCode2)).plus(getNumberFromEditText(edtVerificationCode3)).plus(getNumberFromEditText(edtVerificationCode4)).plus(getNumberFromEditText(edtVerificationCode5))
+        val otpNumber = getNumberFromEditText(edtVerificationCode1).plus(getNumberFromEditText(edtVerificationCode2)).plus(getNumberFromEditText(edtVerificationCode3)).plus(getNumberFromEditText(edtVerificationCode4)).plus(getNumberFromEditText(edtVerificationCode5))
         (activity as? InstantStoreCardReplacementActivity)?.setOTPNumber(otpNumber)
 
         replaceFragment(
@@ -149,7 +92,7 @@ class EnterOtpFragment : MyCardExtension(), IOTPLinkStoreCard<LinkNewCardOTP> {
     override fun onResume() {
         super.onResume()
         activity?.let { activity ->
-            edtVericationCode1?.apply {
+            edtVerificationCode1?.apply {
                 requestFocus()
                 showSoftKeyboard(activity, this)
             }
@@ -195,4 +138,7 @@ class EnterOtpFragment : MyCardExtension(), IOTPLinkStoreCard<LinkNewCardOTP> {
 
     private fun getNumberFromEditText(numberEditText: EditText?) = numberEditText?.text?.toString()
             ?: ""
+
+
+
 }

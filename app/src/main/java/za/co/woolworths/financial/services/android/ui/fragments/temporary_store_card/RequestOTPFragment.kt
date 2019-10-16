@@ -72,7 +72,7 @@ class RequestOTPFragment : Fragment() {
         }*/
     }
 
-    private fun setupInputListeners() = arrayOf<EditText>(edtVericationCode1, edtVerificationCode2,
+    private fun setupInputListeners() = arrayOf<EditText>(edtVerificationCode1, edtVerificationCode2,
             edtVerificationCode3, edtVerificationCode4, edtVerificationCode5).apply {
         val listSize = size - 1
         for ((index, currentEditText) in withIndex()) {
@@ -109,7 +109,7 @@ class RequestOTPFragment : Fragment() {
     }
 
     private fun validateVerificationCode() {
-        when ((edtVericationCode1.length() == 1)
+        when ((edtVerificationCode1.length() == 1)
                 && (edtVerificationCode2.length() == 1)
                 && (edtVerificationCode3.length() == 1)
                 && (edtVerificationCode4.length() == 1)
@@ -128,7 +128,7 @@ class RequestOTPFragment : Fragment() {
     }
 
     private fun sendOTPBAck() {
-        val otpNumber = getNumberFromEditText(edtVericationCode1).plus(getNumberFromEditText(edtVerificationCode2)).plus(getNumberFromEditText(edtVerificationCode3)).plus(getNumberFromEditText(edtVerificationCode4)).plus(getNumberFromEditText(edtVerificationCode5))
+        val otpNumber = getNumberFromEditText(edtVerificationCode1).plus(getNumberFromEditText(edtVerificationCode2)).plus(getNumberFromEditText(edtVerificationCode3)).plus(getNumberFromEditText(edtVerificationCode4)).plus(getNumberFromEditText(edtVerificationCode5))
         activity?.apply {
             setResult(RESULT_OK, Intent().putExtra(OTP_VALUE, otpNumber))
             finish()
@@ -138,7 +138,7 @@ class RequestOTPFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         activity?.let { activity ->
-            edtVericationCode1?.apply {
+            edtVerificationCode1?.apply {
                 requestFocus()
                 showSoftKeyboard(activity, this)
             }
