@@ -11,7 +11,7 @@ import za.co.woolworths.financial.services.android.contracts.IProgressAnimationS
 import za.co.woolworths.financial.services.android.contracts.IOTPLinkStoreCard
 import za.co.woolworths.financial.services.android.models.dto.npc.LinkNewCardOTP
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
-import za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity
+import za.co.woolworths.financial.services.android.ui.activities.card.MyCardActivityExtension
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 
@@ -33,7 +33,7 @@ class ResendOTPLoaderFragment : Fragment(), IProgressAnimationState {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-        (activity as? InstantStoreCardReplacementActivity)?.showBackIcon()
+        (activity as? MyCardActivityExtension)?.showBackIcon()
         arguments?.apply {
             mOtpMethodType = getSerializable(OTP_METHOD_TYPE) as? OTPMethodType
         }
@@ -77,9 +77,7 @@ class ResendOTPLoaderFragment : Fragment(), IProgressAnimationState {
     override fun onDestroy() {
         super.onDestroy()
         activity?.supportFragmentManager?.apply {
-            if (findFragmentById(R.id.flProgressIndicator) != null) {
-                findFragmentById(R.id.flProgressIndicator)?.let { beginTransaction().remove(it).commitAllowingStateLoss() }
-            }
+            findFragmentById(R.id.flProgressIndicator)?.let { beginTransaction().remove(it).commitAllowingStateLoss() }
         }
     }
 
@@ -91,7 +89,7 @@ class ResendOTPLoaderFragment : Fragment(), IProgressAnimationState {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
-                (activity as? InstantStoreCardReplacementActivity)?.hideBackIcon()
+                (activity as? MyCardActivityExtension)?.hideBackIcon()
                 activity?.onBackPressed()
                 super.onOptionsItemSelected(item)
             }

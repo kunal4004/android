@@ -11,7 +11,6 @@ import kotlinx.android.synthetic.main.enter_otp_fragment.*
 import za.co.woolworths.financial.services.android.contracts.IOTPLinkStoreCard
 import za.co.woolworths.financial.services.android.models.dto.npc.LinkNewCardOTP
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
-import za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.util.KotlinUtils
@@ -21,6 +20,7 @@ import za.co.woolworths.financial.services.android.ui.activities.card.MyCardActi
 
 class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
 
+    private var mResendOTPFragment: ResendOTPFragment? = null
     private var mOtpSentTo: String? = null
 
     companion object {
@@ -67,14 +67,18 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
         tvDidNotReceivedOTP?.setOnClickListener {
             val defaultOtp = (activity as? MyCardActivityExtension)?.mDefaultOtpSentTo
             (activity as? AppCompatActivity)?.apply {
-                val resendOTPFragment = ResendOTPFragment.newInstance(this@EnterOtpFragment, defaultOtp)
-                resendOTPFragment.show(supportFragmentManager.beginTransaction(), ResendOTPFragment::class.java.simpleName)
+                mResendOTPFragment = ResendOTPFragment.newInstance(this@EnterOtpFragment, defaultOtp)
+                mResendOTPFragment?.show(supportFragmentManager.beginTransaction(), ResendOTPFragment::class.java.simpleName)
             }
         }
     }
 
     private fun navigateToLinkStoreCard() {
-        val otpNumber = getNumberFromEditText(edtVerificationCode1).plus(getNumberFromEditText(edtVerificationCode2)).plus(getNumberFromEditText(edtVerificationCode3)).plus(getNumberFromEditText(edtVerificationCode4)).plus(getNumberFromEditText(edtVerificationCode5))
+        val otpNumber = getNumberFromEditText(edtVerificationCode1)
+                .plus(getNumberFromEditText(edtVerificationCode2))
+                .plus(getNumberFromEditText(edtVerificationCode3))
+                .plus(getNumberFromEditText(edtVerificationCode4))
+                .plus(getNumberFromEditText(edtVerificationCode5))
         (activity as? MyCardActivityExtension)?.setOTPNumber(otpNumber)
 
         replaceFragment(
@@ -109,13 +113,18 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
         saveSelectedOTP(otpMethodType)
         replaceFragment(
                 fragment = ResendOTPLoaderFragment.newInstance(otpMethodType, this),
-                tag = ProcessBlockCardFragment::class.java.simpleName,
+                tag = ResendOTPLoaderFragment::class.java.simpleName,
                 containerViewId = R.id.flMyCard,
                 allowStateLoss = true,
                 enterAnimation = R.anim.stay,
                 exitAnimation = R.anim.stay,
                 popEnterAnimation = R.anim.stay,
                 popExitAnimation = R.anim.stay)
+
+        // Show resend otp loader before dismissing resend otp dialog to prevent
+        // the gap while transiting from previous fragment to next fragment
+        if (mResendOTPFragment?.isVisible == true)
+            mResendOTPFragment?.dismissAllowingStateLoss()
     }
 
     private fun saveSelectedOTP(otpMethodType: OTPMethodType) = (activity as? MyCardActivityExtension)?.setOTPType(otpMethodType)
@@ -138,7 +147,4 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
 
     private fun getNumberFromEditText(numberEditText: EditText?) = numberEditText?.text?.toString()
             ?: ""
-
-
-
 }
