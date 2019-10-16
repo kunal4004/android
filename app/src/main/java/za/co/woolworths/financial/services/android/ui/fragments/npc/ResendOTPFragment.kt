@@ -68,6 +68,7 @@ class ResendOTPFragment : WBottomSheetDialogFragment() {
         if (otpMethodType != OTPMethodType.NONE) {
             linkStoreCardOtp?.requestOTPApi(otpMethodType)
         }
+        dismissAllowingStateLoss()
     }
 
     private fun resendOTPOption(): MutableList<Triple<Int, Int, String>> {
