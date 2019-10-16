@@ -49,9 +49,9 @@ class MyCardDetailActivity : AppCompatActivity() {
 
     private fun addCardDetailFragment() {
         val blockCode = Gson().fromJson(getMyStoreCardDetail(), StoreCardsResponse::class.java)?.storeCardsData?.primaryCards?.get(0)?.blockCode
-
+        val virtualCard = Gson().fromJson(getMyStoreCardDetail(), StoreCardsResponse::class.java)?.storeCardsData?.virtualCard
         // Determine if card is blocked: if blockCode is not null, card is blocked.
-        when (TextUtils.isEmpty(blockCode)) {
+        when (virtualCard != null || TextUtils.isEmpty(blockCode)) {
             true -> {
                 addFragment(
                         fragment = MyCardDetailFragment.newInstance(mStoreCardDetail, visionAccountNumber, productOfferingId),
@@ -65,6 +65,7 @@ class MyCardDetailActivity : AppCompatActivity() {
                         containerViewId = R.id.flMyCard)
             }
         }
+
     }
 
     private fun actionBar() {
