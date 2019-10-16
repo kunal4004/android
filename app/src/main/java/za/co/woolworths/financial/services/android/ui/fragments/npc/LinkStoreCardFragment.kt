@@ -11,6 +11,7 @@ import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
 import com.awfs.coordination.R
 import com.google.gson.Gson
+import kotlinx.android.synthetic.main.enter_otp_fragment.*
 import kotlinx.android.synthetic.main.link_store_card_process_fragment.*
 import kotlinx.android.synthetic.main.npc_card_linked_successful_layout.*
 import kotlinx.android.synthetic.main.npc_link_store_card_failure.*
@@ -220,8 +221,7 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
 
     override fun onResume() {
         super.onResume()
-        (activity as? AppCompatActivity)?.supportActionBar?.hide()
-    }
+        (activity as? AppCompatActivity)?.supportActionBar?.hide() }
 
     override fun onDestroy() {
         super.onDestroy()
@@ -263,4 +263,6 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
         }
 
     }
+
+
 }

@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.npc_resend_otp_fragment.*
 import za.co.woolworths.financial.services.android.contracts.IOTPLinkStoreCard
 import za.co.woolworths.financial.services.android.models.dto.npc.LinkNewCardOTP
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
-import za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity
+import za.co.woolworths.financial.services.android.ui.activities.card.MyCardActivityExtension
 import za.co.woolworths.financial.services.android.ui.adapters.ResendOTPAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.npc.EnterOtpFragment.Companion.OTP_SENT_TO
@@ -48,7 +48,7 @@ class ResendOTPFragment : WBottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        (activity as? InstantStoreCardReplacementActivity)?.showBackIcon()
+        (activity as? MyCardActivityExtension)?.showBackIcon()
 
         val resendOtpAdapter = ResendOTPAdapter { selectedPosition ->
             when (selectedPosition) {
@@ -68,7 +68,6 @@ class ResendOTPFragment : WBottomSheetDialogFragment() {
         if (otpMethodType != OTPMethodType.NONE) {
             linkStoreCardOtp?.requestOTPApi(otpMethodType)
         }
-        dismissAllowingStateLoss()
     }
 
     private fun resendOTPOption(): MutableList<Triple<Int, Int, String>> {
@@ -84,7 +83,7 @@ class ResendOTPFragment : WBottomSheetDialogFragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
-                (activity as? InstantStoreCardReplacementActivity)?.hideBackIcon()
+                (activity as? MyCardActivityExtension)?.hideBackIcon()
                 activity?.onBackPressed()
                 super.onOptionsItemSelected(item)
             }

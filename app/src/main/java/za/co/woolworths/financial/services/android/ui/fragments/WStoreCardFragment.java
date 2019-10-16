@@ -697,7 +697,9 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
         storeCardsResponse.getStoreCardsData().setProductOfferingId(productOfferingId);
         storeCardsResponse.getStoreCardsData().setVisionAccountNumber(account.accountNumber);
         if(storeCardsData.getGenerateVirtualCard() ) {
-            activity.startActivity(new Intent(getActivity(), GetTemporaryStoreCardPopupActivity.class));
+            Intent intent = new Intent(activity, GetTemporaryStoreCardPopupActivity.class);
+            intent.putExtra(STORE_CARD_DETAIL, Utils.objectToJson(storeCardsResponse));
+            activity.startActivity(intent);
             activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
         }else {
             Intent displayStoreCardDetail = new Intent(activity, MyCardDetailActivity.class);

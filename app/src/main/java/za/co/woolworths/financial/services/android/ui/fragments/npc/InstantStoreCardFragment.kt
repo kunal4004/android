@@ -54,7 +54,7 @@ class InstantStoreCardFragment : MyCardExtension() {
         if (navigateToEnterOTPFragmentImageView?.alpha == 1.0f) {
             (activity as? InstantStoreCardReplacementActivity)?.apply {
                 setSequenceNumber(sequenceNumberEditText?.text?.toString() ?: "")
-                setOTPType(OTPMethodType.SMS)
+                setOTPType(OTPMethodType.EMAIL)
             }
             makeOTPCall()
         }
@@ -170,12 +170,12 @@ class InstantStoreCardFragment : MyCardExtension() {
         if (requestCode == REQUEST_CODE_SCAN_CARD) {
             when (resultCode) {
                 RESULT_OK -> {
-                    val cardNumber = (data?.getParcelableExtra<Parcelable>(ScanCardIntent.RESULT_PAYCARDS_CARD) as? Card)?.cardNumber
-                            ?: ""
+                    val cardNumber = (data?.getParcelableExtra<Parcelable>(ScanCardIntent.RESULT_PAYCARDS_CARD) as? Card)?.cardNumber ?: ""
                     cardNumberEditText?.setText(cardNumber)
                 }
                 else -> return
             }
         }
     }
+
 }

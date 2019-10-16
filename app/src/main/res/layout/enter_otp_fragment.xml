@@ -182,7 +182,6 @@
         android:layout_alignParentStart="true"
         android:layout_centerInParent="true"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
         android:fontFamily="@font/futura_medium_ttf"
         android:gravity="start|center"
         android:letterSpacing="0.15"
