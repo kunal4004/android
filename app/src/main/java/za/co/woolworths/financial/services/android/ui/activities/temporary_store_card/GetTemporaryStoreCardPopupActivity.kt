@@ -16,13 +16,11 @@ class GetTemporaryStoreCardPopupActivity : MyCardActivityExtension() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_get_temp_store_card_popup)
-        Utils.updateStatusBarBackground(this)
+        Utils.updateStatusBarBackground(this, R.color.white)
         Utils.setAsVirtualTemporaryStoreCardPopupShown(true)
         actionBar()
 
-        intent?.extras?.apply {
-            mStoreCardDetail = getString(MyCardDetailActivity.STORE_CARD_DETAIL, "")
-        }
+        intent?.extras?.apply { mStoreCardDetail = getString(MyCardDetailActivity.STORE_CARD_DETAIL, "") }
 
         addFragment(
                 fragment = GetTemporaryStoreCardPopupFragment.newInstance(mStoreCardDetail),

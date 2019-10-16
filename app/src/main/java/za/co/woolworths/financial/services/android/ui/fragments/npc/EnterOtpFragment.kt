@@ -120,11 +120,6 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
                 exitAnimation = R.anim.stay,
                 popEnterAnimation = R.anim.stay,
                 popExitAnimation = R.anim.stay)
-
-        // Show resend otp loader before dismissing resend otp dialog to prevent
-        // the gap while transiting from previous fragment to next fragment
-        if (mResendOTPFragment?.isVisible == true)
-            mResendOTPFragment?.dismissAllowingStateLoss()
     }
 
     private fun saveSelectedOTP(otpMethodType: OTPMethodType) = (activity as? MyCardActivityExtension)?.setOTPType(otpMethodType)
