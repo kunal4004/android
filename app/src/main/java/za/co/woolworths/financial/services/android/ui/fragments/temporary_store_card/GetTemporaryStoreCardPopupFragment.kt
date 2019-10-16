@@ -2,6 +2,8 @@ package za.co.woolworths.financial.services.android.ui.fragments.temporary_store
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -53,6 +55,7 @@ class GetTemporaryStoreCardPopupFragment : Fragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        temporaryCardOTPProgressBar?.indeterminateDrawable?.setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY)
         getTempStoreCardButton.setOnClickListener(this)
     }
 
@@ -65,10 +68,10 @@ class GetTemporaryStoreCardPopupFragment : Fragment(), View.OnClickListener {
     }
 
     private fun requestGetOTP() {
-        //showPayWithCardProgressBar(View.VISIBLE)
+        showPayWithCardProgressBar(View.VISIBLE)
         StoreCardAPIRequest().getOTP(OTPMethodType.SMS, object : RequestListener<LinkNewCardOTP> {
             override fun onSuccess(response: LinkNewCardOTP?) {
-                //showPayWithCardProgressBar(View.GONE)
+                showPayWithCardProgressBar(View.GONE)
                 when (response?.httpCode) {
                     200 -> {
                         navigateToOTPFragment(response.otpSentTo)
@@ -81,9 +84,13 @@ class GetTemporaryStoreCardPopupFragment : Fragment(), View.OnClickListener {
             }
 
             override fun onFailure(error: Throwable?) {
-                // showPayWithCardProgressBar(View.GONE)
+                showPayWithCardProgressBar(View.GONE)
             }
         })
+    }
+
+    private fun showPayWithCardProgressBar(state: Int) {
+        temporaryCardOTPProgressBar?.visibility = state
     }
 
     private fun requestLinkCard(otp: String = "") {
