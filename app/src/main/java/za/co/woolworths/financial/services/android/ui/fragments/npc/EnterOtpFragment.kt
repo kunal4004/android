@@ -65,7 +65,7 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
             navigateToLinkStoreCard()
         }
         tvDidNotReceivedOTP?.setOnClickListener {
-            val defaultOtp = (activity as? InstantStoreCardReplacementActivity)?.mDefaultOtpSentTo
+            val defaultOtp = (activity as? MyCardActivityExtension)?.mDefaultOtpSentTo
             (activity as? AppCompatActivity)?.apply {
                 val resendOTPFragment = ResendOTPFragment.newInstance(this@EnterOtpFragment, defaultOtp)
                 resendOTPFragment.show(supportFragmentManager.beginTransaction(), ResendOTPFragment::class.java.simpleName)
@@ -75,7 +75,7 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
 
     private fun navigateToLinkStoreCard() {
         val otpNumber = getNumberFromEditText(edtVerificationCode1).plus(getNumberFromEditText(edtVerificationCode2)).plus(getNumberFromEditText(edtVerificationCode3)).plus(getNumberFromEditText(edtVerificationCode4)).plus(getNumberFromEditText(edtVerificationCode5))
-        (activity as? InstantStoreCardReplacementActivity)?.setOTPNumber(otpNumber)
+        (activity as? MyCardActivityExtension)?.setOTPNumber(otpNumber)
 
         replaceFragment(
                 fragment = LinkStoreCardFragment.newInstance(),
@@ -118,7 +118,7 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
                 popExitAnimation = R.anim.stay)
     }
 
-    private fun saveSelectedOTP(otpMethodType: OTPMethodType) = (activity as? InstantStoreCardReplacementActivity)?.setOTPType(otpMethodType)
+    private fun saveSelectedOTP(otpMethodType: OTPMethodType) = (activity as? MyCardActivityExtension)?.setOTPType(otpMethodType)
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
