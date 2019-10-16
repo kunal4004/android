@@ -2,12 +2,11 @@ package za.co.woolworths.financial.services.android.ui.fragments.temporary_store
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import com.google.gson.Gson
@@ -55,7 +54,6 @@ class GetTemporaryStoreCardPopupFragment : Fragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        temporaryCardOTPProgressBar?.indeterminateDrawable?.setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY)
         getTempStoreCardButton.setOnClickListener(this)
     }
 
@@ -68,10 +66,10 @@ class GetTemporaryStoreCardPopupFragment : Fragment(), View.OnClickListener {
     }
 
     private fun requestGetOTP() {
-        showPayWithCardProgressBar(View.VISIBLE)
+        showTempStoreCardProgressBar(View.VISIBLE)
         StoreCardAPIRequest().getOTP(OTPMethodType.SMS, object : RequestListener<LinkNewCardOTP> {
             override fun onSuccess(response: LinkNewCardOTP?) {
-                showPayWithCardProgressBar(View.GONE)
+                showTempStoreCardProgressBar(View.GONE)
                 when (response?.httpCode) {
                     200 -> {
                         navigateToOTPFragment(response.otpSentTo)
@@ -84,13 +82,9 @@ class GetTemporaryStoreCardPopupFragment : Fragment(), View.OnClickListener {
             }
 
             override fun onFailure(error: Throwable?) {
-                showPayWithCardProgressBar(View.GONE)
+                showTempStoreCardProgressBar(View.GONE)
             }
         })
-    }
-
-    private fun showPayWithCardProgressBar(state: Int) {
-        temporaryCardOTPProgressBar?.visibility = state
     }
 
     private fun requestLinkCard(otp: String = "") {
@@ -127,6 +121,13 @@ class GetTemporaryStoreCardPopupFragment : Fragment(), View.OnClickListener {
                     popEnterAnimation = R.anim.slide_from_left,
                     popExitAnimation = R.anim.slide_to_right
             )
+        }
+    }
+
+    private fun showTempStoreCardProgressBar(state: Int) {
+        activity?.apply {
+            getTempStoreCardProgressBar.indeterminateDrawable.setColorFilter(ContextCompat.getColor(this, R.color.black), android.graphics.PorterDuff.Mode.SRC_IN)
+            getTempStoreCardProgressBar.visibility = state
         }
     }
 }
