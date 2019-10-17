@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
 import android.webkit.SslErrorHandler;
 import android.webkit.ValueCallback;
@@ -637,6 +638,7 @@ public class SSOActivity extends WebViewActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		final ViewGroup viewGroup = (ViewGroup) ((ViewGroup) this.findViewById(android.R.id.content)).getChildAt(0);
 		if(path == Path.SIGNIN) {
 			Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.SSO_SIGN_IN);
 		} else if(path == Path.REGISTER) {
@@ -645,8 +647,10 @@ public class SSOActivity extends WebViewActivity {
 			Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.SSO_LOGOUT);
 		} else if(path == Path.UPDATE_PASSWORD) {
 			Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.SSO_PASSWORD_CHANGE);
+			viewGroup.setContentDescription(getString(R.string.update_password_layout));
 		} else if(path == Path.UPDATE_PROFILE) {
 			Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.SSO_PROFILE_INFO);
+			viewGroup.setContentDescription(getString(R.string.profile_layout));
 		}
 	}
 

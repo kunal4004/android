@@ -1081,4 +1081,19 @@
     <string name="request_timeout_error">Your request timed out, please try again later</string>
     <string name="cart_item_not_preserved_until_checkout_info">* Items are not reserved until you checkout</string>
 
+    <string name="linked_store_card_layout">Linked Store Card</string>
+    <string name="apply_store_card_layout">Apply Store Card</string>
+    <string name="linked_credit_card_layout"> Linked Credit Card</string>
+    <string name="apply_credit_card_layout"> Apply Credit Card</string>
+    <string name="linked_personal_loan_layout">Linked Personal Loan</string>
+    <string name="apply_personal_loan_layout">Apply Personal Loan</string>
+    <string name="messages_layout">Messages</string>
+    <string name="store_locator_layout">Store Locator</string>
+    <string name="need_help_layout">Need Help</string>
+    <string name="contact_us_layout">Contact Us</string>
+    <string name="profile_layout">Profile</string>
+    <string name="update_password_layout">Update Password</string>
+    <string name="mypreferences_layout">MyPreferences</string>
+    <string name="sign_out_layout">Sign Out</string>
+
 </resources>
