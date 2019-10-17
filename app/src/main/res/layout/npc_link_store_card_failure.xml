@@ -16,7 +16,7 @@
         android:fontFamily="@font/futura_semi_bold_ttf"
         android:gravity="center"
         android:lineSpacingExtra="10sp"
-        android:text="@string/npc_block_card_desc"
+        android:text="@string/link_card_failure_desc"
         android:textColor="@color/offer_title"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"

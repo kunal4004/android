@@ -4,12 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.get_temp_store_card_popup_fragment.*
 import za.co.woolworths.financial.services.android.contracts.RequestListener
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.npc.LinkNewCardOTP
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
@@ -18,6 +20,9 @@ import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.npc.EnterOtpFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.LinkStoreCardFragment
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment
+import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.StoreCardAPIRequest
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -72,18 +77,15 @@ class GetTemporaryStoreCardPopupFragment : Fragment(), View.OnClickListener {
             override fun onSuccess(response: LinkNewCardOTP?) {
                 showTempStoreCardProgressBar(View.GONE)
                 when (response?.httpCode) {
-                    200 -> {
-                        navigateToOTPFragment(response.otpSentTo)
-                    }
-                    440 -> {
-                    }
-                    else -> {
-                    }
+                    200 ->navigateToOTPFragment(response.otpSentTo)
+                    440 -> activity?.let { activity -> response.let { SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.response?.stsParams?: "", activity) } }
+                    else -> showErrorDialog(response?.response?.desc ?: getString(R.string.general_error_desc))
                 }
             }
 
             override fun onFailure(error: Throwable?) {
                 showTempStoreCardProgressBar(View.GONE)
+                showErrorDialog(getString(R.string.general_error_desc))
             }
         })
     }
@@ -121,5 +123,10 @@ class GetTemporaryStoreCardPopupFragment : Fragment(), View.OnClickListener {
             getTempStoreCardProgressBar.indeterminateDrawable.setColorFilter(ContextCompat.getColor(this, R.color.black), android.graphics.PorterDuff.Mode.SRC_IN)
             getTempStoreCardProgressBar.visibility = state
         }
+    }
+
+    fun showErrorDialog(errorMessage: String) {
+        val dialog = ErrorDialogFragment.newInstance(errorMessage)
+        (activity as? AppCompatActivity)?.supportFragmentManager?.beginTransaction()?.let { fragmentTransaction -> dialog.show(fragmentTransaction, ErrorDialogFragment::class.java.simpleName) }
     }
 }

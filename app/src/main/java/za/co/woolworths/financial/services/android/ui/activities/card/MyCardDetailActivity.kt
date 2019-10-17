@@ -25,13 +25,9 @@ class MyCardDetailActivity : AppCompatActivity() {
 
     companion object {
         const val STORE_CARD_DETAIL = "STORE_CARD_DETAIL"
-        const val VISION_ACCOUNT_NUMBER = "VISION_ACCOUNT_NUMBER"
-        const val PRODUCT_OFFERING_ID = "PRODUCT_OFFERING_ID"
     }
 
     private var mStoreCardDetail: String? = null
-    private var visionAccountNumber: String? = null
-    private var productOfferingId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

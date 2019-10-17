@@ -7,12 +7,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.my_card_fragment.*
 import za.co.woolworths.financial.services.android.contracts.RequestListener
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel
+import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.npc.BlockCardRequestBody
 import za.co.woolworths.financial.services.android.models.dto.npc.BlockMyCardResponse
 import za.co.woolworths.financial.services.android.models.dto.npc.LinkNewCardOTP
@@ -21,9 +23,7 @@ import za.co.woolworths.financial.services.android.models.dto.temporary_store_ca
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.UnblockStoreCardRequestBody
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.UnblockStoreCardResponse
-import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.PRODUCT_OFFERING_ID
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
-import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.VISION_ACCOUNT_NUMBER
 import za.co.woolworths.financial.services.android.ui.activities.store_card.RequestOTPActivity
 import za.co.woolworths.financial.services.android.ui.activities.store_card.RequestOTPActivity.Companion.OTP_REQUEST_CODE
 import za.co.woolworths.financial.services.android.ui.activities.store_card.RequestOTPActivity.Companion.OTP_SENT_TO
@@ -32,6 +32,8 @@ import za.co.woolworths.financial.services.android.ui.activities.temporary_store
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.temporary_store_card.ScanBarcodeToPayDialogFragment
 import za.co.woolworths.financial.services.android.ui.fragments.temporary_store_card.TemporaryStoreCardExpireInfoDialog
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment
 import za.co.woolworths.financial.services.android.util.StoreCardAPIRequest
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
@@ -161,18 +163,15 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
                 override fun onSuccess(response: UnblockStoreCardResponse?) {
                     showPayWithCardProgressBar(GONE)
                     when (response?.httpCode) {
-                        200 -> {
-                            displayTemporaryCardToPayDialog()
-                        }
-                        440 -> {
-                        }
-                        else -> {
-                        }
+                        200 -> displayTemporaryCardToPayDialog()
+                        440 -> activity?.let { activity -> response.let { SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.response?.stsParams?: "", activity) } }
+                        else ->showErrorDialog(response?.response?.desc ?: getString(R.string.general_error_desc))
                     }
                 }
 
                 override fun onFailure(error: Throwable?) {
                     showPayWithCardProgressBar(GONE)
+                    showErrorDialog(getString(R.string.general_error_desc))
                 }
             })
         }
@@ -184,18 +183,15 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
             override fun onSuccess(response: LinkNewCardOTP?) {
                 showPayWithCardProgressBar(GONE)
                 when (response?.httpCode) {
-                    200 -> {
-                        navigateToOTPActivity(response.otpSentTo)
-                    }
-                    440 -> {
-                    }
-                    else -> {
-                    }
+                    200 -> navigateToOTPActivity(response.otpSentTo)
+                    440 -> activity?.let { activity -> response.let { SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.response?.stsParams?: "", activity) } }
+                    else -> showErrorDialog(response?.response?.desc ?: getString(R.string.general_error_desc))
                 }
             }
 
             override fun onFailure(error: Throwable?) {
                 showPayWithCardProgressBar(GONE)
+                showErrorDialog(getString(R.string.general_error_desc))
             }
         })
     }
@@ -256,5 +252,10 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
             payWithCardTokenProgressBar.visibility = state
             payWithCardNextArrow.visibility = if (state == VISIBLE) GONE else VISIBLE
         }
+    }
+
+    fun showErrorDialog(errorMessage: String) {
+            val dialog = ErrorDialogFragment.newInstance(errorMessage)
+            (activity as? AppCompatActivity)?.supportFragmentManager?.beginTransaction()?.let { fragmentTransaction -> dialog.show(fragmentTransaction, ErrorDialogFragment::class.java.simpleName) }
     }
 }

@@ -104,7 +104,6 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
                             override fun onSuccessHandler(response: StoreCardsResponse) {
                                 if (!isAdded) return
                                 super.onSuccessHandler(response)
-                                mStoreCardsResponse = response
                                 mCurrentActivity?.clearFlag()
                                 object : CountDownTimer(1500, 100) {
                                     override fun onTick(millisUntilFinished: Long) {
@@ -210,7 +209,7 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
                         }
                         LinkCardType.VIRTUAL_TEMP_CARD.type -> {
                             val intent = Intent(activity, GetTemporaryStoreCardPopupActivity::class.java)
-                            intent.putExtra(STORE_CARD_DETAIL, Gson().toJson(mStoreCardsResponse))
+                            intent.putExtra(STORE_CARD_DETAIL, Gson().toJson(mStoreCardsResponse?.storeCardsData))
                             startActivity(intent)
                             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
                             finish()
