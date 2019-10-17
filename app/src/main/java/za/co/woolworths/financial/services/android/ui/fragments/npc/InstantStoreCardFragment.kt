@@ -54,7 +54,7 @@ class InstantStoreCardFragment : MyCardExtension() {
         if (navigateToEnterOTPFragmentImageView?.alpha == 1.0f) {
             (activity as? InstantStoreCardReplacementActivity)?.apply {
                 setSequenceNumber(sequenceNumberEditText?.text?.toString() ?: "")
-                setOTPType(OTPMethodType.EMAIL)
+                setOTPType(OTPMethodType.SMS)
             }
             makeOTPCall()
         }
@@ -122,7 +122,7 @@ class InstantStoreCardFragment : MyCardExtension() {
 
     private fun makeOTPCall() {
         activity?.let { activity ->
-            val requestOTP = StoreCardOTPRequest(activity, OTPMethodType.EMAIL)
+            val requestOTP = StoreCardOTPRequest(activity, OTPMethodType.SMS)
             requestOTP.make(object : IOTPLinkStoreCard<LinkNewCardOTP> {
                 override fun startLoading() {
                     super.startLoading()

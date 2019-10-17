@@ -24,7 +24,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/incSwipeCloseIndicator"
-        app:srcCompat="@drawable/sequence_number_icon" />
+        app:srcCompat="@drawable/card_sequence_number_indicator_icon" />
 
     <TextView
         android:id="@+id/titleTextView"
