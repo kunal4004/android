@@ -647,10 +647,12 @@ public class SSOActivity extends WebViewActivity {
 			Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.SSO_LOGOUT);
 		} else if(path == Path.UPDATE_PASSWORD) {
 			Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.SSO_PASSWORD_CHANGE);
-			viewGroup.setContentDescription(getString(R.string.update_password_layout));
+			if (viewGroup != null)
+				viewGroup.setContentDescription(getString(R.string.update_password_layout));
 		} else if(path == Path.UPDATE_PROFILE) {
 			Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.SSO_PROFILE_INFO);
-			viewGroup.setContentDescription(getString(R.string.profile_layout));
+			if (viewGroup != null)
+				viewGroup.setContentDescription(getString(R.string.profile_layout));
 		}
 	}
 
