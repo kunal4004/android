@@ -38,6 +38,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
+import za.co.woolworths.financial.services.android.models.dto.InstantCardReplacement;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsData;
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody;
@@ -181,36 +182,42 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
                         }
                     }));
         }
+
+        InstantCardReplacement instantCardReplacement = WoolworthsApplication.getInstantCardReplacement();
+        boolean storeCardIsVisible = false;
+        if (instantCardReplacement != null)
+            storeCardIsVisible = instantCardReplacement.isEnabled();
+        rlMyStoreCard.setVisibility(storeCardIsVisible ? VISIBLE : GONE);
     }
 
     private void initUI(View view) {
         woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
-        availableBalance = (WTextView) view.findViewById(R.id.available_funds);
-        creditLimit = (WTextView) view.findViewById(R.id.creditLimit);
-        rlViewStatement = (RelativeLayout) view.findViewById(R.id.rlViewStatement);
-        dueDate = (WTextView) view.findViewById(R.id.dueDate);
-        minAmountDue = (WTextView) view.findViewById(R.id.minAmountDue);
-        currentBalance = (WTextView) view.findViewById(R.id.currentBalance);
-        tvViewTransaction = (WTextView) view.findViewById(R.id.tvViewTransaction);
-        tvIncreaseLimit = (WTextView) view.findViewById(R.id.tvIncreaseLimit);
-        mProgressCreditLimit = (ProgressBar) view.findViewById(R.id.progressCreditLimit);
-        tvApplyNowIncreaseLimit = (WTextView) view.findViewById(R.id.tvApplyNowIncreaseLimit);
-        tvIncreaseLimitDescription = (WTextView) view.findViewById(R.id.tvIncreaseLimitDescription);
-        relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
+        availableBalance = view.findViewById(R.id.available_funds);
+        creditLimit = view.findViewById(R.id.creditLimit);
+        rlViewStatement = view.findViewById(R.id.rlViewStatement);
+        dueDate = view.findViewById(R.id.dueDate);
+        minAmountDue = view.findViewById(R.id.minAmountDue);
+        currentBalance = view.findViewById(R.id.currentBalance);
+        tvViewTransaction = view.findViewById(R.id.tvViewTransaction);
+        tvIncreaseLimit = view.findViewById(R.id.tvIncreaseLimit);
+        mProgressCreditLimit = view.findViewById(R.id.progressCreditLimit);
+        tvApplyNowIncreaseLimit = view.findViewById(R.id.tvApplyNowIncreaseLimit);
+        tvIncreaseLimitDescription = view.findViewById(R.id.tvIncreaseLimitDescription);
+        relBalanceProtection = view.findViewById(R.id.relBalanceProtection);
         tvBPIProtectInsurance = view.findViewById(R.id.tvBPIProtectInsurance);
-        rlViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
-        rlMyStoreCard = (RelativeLayout) view.findViewById(R.id.rlMyStoreCard);
+        rlViewTransactions = view.findViewById(R.id.rlViewTransactions);
+        rlMyStoreCard = view.findViewById(R.id.rlMyStoreCard);
         rlMyStoreCard.setOnClickListener(this);
 
         iconAvailableFundsInfo = view.findViewById(R.id.iconAvailableFundsInfo);
         iconAvailableFundsInfo.setOnClickListener(this);
 
-        mRelFindOutMore = (RelativeLayout) view.findViewById(R.id.relFindOutMore);
-        mRelIncreaseMyLimit = (RelativeLayout) view.findViewById(R.id.relIncreaseMyLimit);
-        tvApplyNowIncreaseLimit = (WTextView) view.findViewById(R.id.tvApplyNowIncreaseLimit);
-        llCommonLayer = (LinearLayout) view.findViewById(R.id.llCommonLayer);
-        llIncreaseLimitContainer = (LinearLayout) view.findViewById(R.id.llIncreaseLimitContainer);
-        logoIncreaseLimit = (ImageView) view.findViewById(R.id.logoIncreaseLimit);
+        mRelFindOutMore = view.findViewById(R.id.relFindOutMore);
+        mRelIncreaseMyLimit = view.findViewById(R.id.relIncreaseMyLimit);
+        tvApplyNowIncreaseLimit = view.findViewById(R.id.tvApplyNowIncreaseLimit);
+        llCommonLayer = view.findViewById(R.id.llCommonLayer);
+        llIncreaseLimitContainer = view.findViewById(R.id.llIncreaseLimitContainer);
+        logoIncreaseLimit = view.findViewById(R.id.logoIncreaseLimit);
         accountInArrearsLayout = view.findViewById(R.id.llAccountInArrearsParentContainer);
         tvHowToPayAccountStatus = view.findViewById(R.id.howToPayAccountStatus);
         tvHowToPayArrears = view.findViewById(R.id.howToPayArrears);

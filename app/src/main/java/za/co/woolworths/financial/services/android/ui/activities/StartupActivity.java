@@ -38,6 +38,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AbsaBankingOpenApiServices;
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
+import za.co.woolworths.financial.services.android.models.dto.InstantCardReplacement;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.chat.PresenceInAppChat;
 import za.co.woolworths.financial.services.android.models.dto.chat.TradingHours;
@@ -208,8 +209,16 @@ public class StartupActivity extends AppCompatActivity implements MediaPlayer.On
 						} else {
 							presenceInAppChat.setEnabled(Utils.isFeatureEnabled(presenceInAppChat.getMinSupportedAppVersion()));
 						}
+
+                        InstantCardReplacement instantCardReplacement = configResponse.configs.instantCardReplacement;
+                        if (instantCardReplacement != null) {
+                            instantCardReplacement.setEnabled(Utils.isFeatureEnabled(instantCardReplacement.getMinSupportedAppVersion()));
+                        }
+
 						WoolworthsApplication.setAbsaBankingOpenApiServices(absaBankingOpenApiServices);
 						WoolworthsApplication.setPresenceInAppChat(presenceInAppChat);
+
+						WoolworthsApplication.setInstantCardReplacement(instantCardReplacement);
 
 						mWGlobalState.setStartRadius(configResponse.configs.enviroment.getStoreStockLocatorConfigStartRadius());
 						mWGlobalState.setEndRadius(configResponse.configs.enviroment.getStoreStockLocatorConfigEndRadius());

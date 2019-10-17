@@ -43,6 +43,7 @@ import za.co.absa.openbankingapi.Cryptography;
 import za.co.absa.openbankingapi.KeyGenerationFailureException;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.dto.AbsaBankingOpenApiServices;
+import za.co.woolworths.financial.services.android.models.dto.InstantCardReplacement;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.chat.PresenceInAppChat;
@@ -91,6 +92,7 @@ public class WoolworthsApplication extends Application implements Application.Ac
 	private static AbsaBankingOpenApiServices absaBankingOpenApiServices;
 	private static PresenceInAppChat presenceInAppChat;
 	private static QuickShopDefaultValues quickShopDefaultValues;
+	private static InstantCardReplacement instantCardReplacement;
 
 	private Activity mCurrentActivity = null;
 
@@ -477,5 +479,13 @@ public class WoolworthsApplication extends Application implements Application.Ac
 	}
 	public void setCurrentActivity(Activity mCurrentActivity){
 		this.mCurrentActivity = mCurrentActivity;
+	}
+
+	public static void setInstantCardReplacement(InstantCardReplacement instantCardReplacement) {
+		WoolworthsApplication.instantCardReplacement = instantCardReplacement;
+	}
+
+	public static InstantCardReplacement getInstantCardReplacement() {
+		return instantCardReplacement;
 	}
 }

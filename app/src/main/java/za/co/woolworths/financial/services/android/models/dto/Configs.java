@@ -11,4 +11,5 @@ public class Configs {
     public AbsaBankingOpenApiServices absaBankingOpenApiServices;
     public PresenceInAppChat presenceInAppChat;
     public QuickShopDefaultValues quickShopDefaultValues;
+    public InstantCardReplacement instantCardReplacement;
 }
