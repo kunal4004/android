@@ -17,7 +17,7 @@ class RequestOTPActivity : AppCompatActivity() {
         const val OTP_REQUEST_CODE = 1983
     }
 
-    private var mOtpSentTo: String? = null
+    var mOtpSentTo: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_request_otp)

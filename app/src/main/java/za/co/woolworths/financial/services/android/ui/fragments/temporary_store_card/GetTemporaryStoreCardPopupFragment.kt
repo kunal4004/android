@@ -1,7 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.temporary_store_card
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,10 +14,10 @@ import za.co.woolworths.financial.services.android.models.dto.npc.LinkNewCardOTP
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
-import za.co.woolworths.financial.services.android.ui.activities.store_card.RequestOTPActivity
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.npc.EnterOtpFragment
+import za.co.woolworths.financial.services.android.ui.fragments.npc.LinkStoreCardFragment
 import za.co.woolworths.financial.services.android.util.StoreCardAPIRequest
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -60,7 +58,10 @@ class GetTemporaryStoreCardPopupFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.getTempStoreCardButton -> {
-                requestGetOTP()
+                when (mStoreCardsResponse?.oneTimePinRequired?.linkVirtualStoreCard) {
+                    true -> requestGetOTP()
+                    else -> navigateToLinkCardFragment()
+                }
             }
         }
     }
@@ -87,26 +88,17 @@ class GetTemporaryStoreCardPopupFragment : Fragment(), View.OnClickListener {
         })
     }
 
-    private fun requestLinkCard(otp: String = "") {
-
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK && requestCode == RequestOTPActivity.OTP_REQUEST_CODE) {
-            val otp = data?.getStringExtra(RequestOTPActivity.OTP_VALUE)
-            otp?.let { requestLinkCard(it) }
-        }
-    }
-
-    private fun navigateToOTPActivity(otpSentTo: String?) {
-        otpSentTo?.let { otpSentTo ->
-            activity?.apply {
-                val intent = Intent(this, RequestOTPActivity::class.java)
-                intent.putExtra(RequestOTPActivity.OTP_SENT_TO, otpSentTo)
-                startActivityForResult(intent, RequestOTPActivity.OTP_REQUEST_CODE)
-            }
-        }
+    private fun navigateToLinkCardFragment() {
+        replaceFragment(
+                fragment = LinkStoreCardFragment.newInstance(),
+                tag = LinkStoreCardFragment::class.java.simpleName,
+                containerViewId = R.id.flMyCard,
+                allowStateLoss = true,
+                enterAnimation = R.anim.slide_in_from_right,
+                exitAnimation = R.anim.slide_to_left,
+                popEnterAnimation = R.anim.slide_from_left,
+                popExitAnimation = R.anim.slide_to_right
+        )
     }
 
     fun navigateToOTPFragment(otpSentTo: String?) {

@@ -41,14 +41,10 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
     private var mStoreCard: StoreCard? = null
     private var mStoreCardDetail: String? = null
     private var mStoreCardsResponse: StoreCardsResponse? = null
-    private var visionAccountNumber: String = ""
-    private var productOfferingId: String = ""
 
     companion object {
-        fun newInstance(storeCardDetail: String?, visionAccountNumber: String?, productOfferingId: String?) = MyCardDetailFragment().withArgs {
+        fun newInstance(storeCardDetail: String?) = MyCardDetailFragment().withArgs {
             putString(STORE_CARD_DETAIL, storeCardDetail)
-            putString(VISION_ACCOUNT_NUMBER, visionAccountNumber)
-            putString(PRODUCT_OFFERING_ID, productOfferingId)
         }
 
         fun cardName(): String {
@@ -63,8 +59,6 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
         super.onCreate(savedInstanceState)
         arguments?.apply {
             mStoreCardDetail = getString(STORE_CARD_DETAIL, "")
-            visionAccountNumber = getString(VISION_ACCOUNT_NUMBER, "")
-            productOfferingId = getString(PRODUCT_OFFERING_ID, "")
 
             activity?.let {
                 Utils.updateStatusBarBackground(it, R.color.grey_bg)
@@ -158,10 +152,10 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
     private fun requestUnblockCard(otp: String = "") {
         showPayWithCardProgressBar(VISIBLE)
         val unblockStoreCardRequestBody = mStoreCard?.let {
-            UnblockStoreCardRequestBody(visionAccountNumber, it.number, it.sequence, otp, OTPMethodType.SMS.name)
+            UnblockStoreCardRequestBody(mStoreCardsResponse?.storeCardsData?.visionAccountNumber?:"", it.number, it.sequence, otp, OTPMethodType.SMS.name)
         }
         unblockStoreCardRequestBody?.let {
-            StoreCardAPIRequest().unblockCard(productOfferingId, it, object : RequestListener<UnblockStoreCardResponse> {
+            StoreCardAPIRequest().unblockCard(mStoreCardsResponse?.storeCardsData?.productOfferingId?:"", it, object : RequestListener<UnblockStoreCardResponse> {
                 override fun onSuccess(response: UnblockStoreCardResponse?) {
                     showPayWithCardProgressBar(GONE)
                     when (response?.httpCode) {
@@ -238,9 +232,9 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
     }
 
     private fun requestBlockCard() {
-        val blockStoreCardRequestBody = mStoreCard?.let { BlockCardRequestBody(visionAccountNumber, it.number, it.sequence.toInt(), 6) }
+        val blockStoreCardRequestBody = mStoreCard?.let { BlockCardRequestBody(mStoreCardsResponse?.storeCardsData?.visionAccountNumber?:"", it.number, it.sequence.toInt(), 6) }
         blockStoreCardRequestBody?.let {
-            StoreCardAPIRequest().blockCard(productOfferingId, it, object : RequestListener<BlockMyCardResponse> {
+            StoreCardAPIRequest().blockCard(mStoreCardsResponse?.storeCardsData?.productOfferingId?:"", it, object : RequestListener<BlockMyCardResponse> {
                 override fun onSuccess(response: BlockMyCardResponse?) {
                 }
 

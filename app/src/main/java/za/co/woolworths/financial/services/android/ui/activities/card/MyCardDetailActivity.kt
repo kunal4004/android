@@ -41,8 +41,6 @@ class MyCardDetailActivity : AppCompatActivity() {
 
         intent?.extras?.apply {
             mStoreCardDetail = getString(STORE_CARD_DETAIL, "")
-            visionAccountNumber = getString(VISION_ACCOUNT_NUMBER, "")
-            productOfferingId = getString(PRODUCT_OFFERING_ID, "")
         }
         addCardDetailFragment()
     }
@@ -54,7 +52,7 @@ class MyCardDetailActivity : AppCompatActivity() {
         when (virtualCard != null || TextUtils.isEmpty(blockCode)) {
             true -> {
                 addFragment(
-                        fragment = MyCardDetailFragment.newInstance(mStoreCardDetail, visionAccountNumber, productOfferingId),
+                        fragment = MyCardDetailFragment.newInstance(mStoreCardDetail),
                         tag = MyCardDetailFragment::class.java.simpleName,
                         containerViewId = R.id.flMyCard)
             }

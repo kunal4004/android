@@ -463,6 +463,7 @@
         <activity android:name="za.co.woolworths.financial.services.android.ui.activities.store_card.RequestOTPActivity"
             android:screenOrientation="portrait"
             android:theme="@style/ShoppingListDetailActivityStyle"
+            android:windowSoftInputMode="adjustResize"
             />
     </application>
 
