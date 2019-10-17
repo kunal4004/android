@@ -84,7 +84,7 @@ class RequestOTPFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP>
         val otpNumber = getNumberFromEditText(edtVerificationCode1).plus(getNumberFromEditText(edtVerificationCode2)).plus(getNumberFromEditText(edtVerificationCode3)).plus(getNumberFromEditText(edtVerificationCode4)).plus(getNumberFromEditText(edtVerificationCode5))
         activity?.apply {
             setResult(RESULT_OK, Intent().putExtra(OTP_VALUE, otpNumber))
-            finish()
+            (this as RequestOTPActivity).finishActivity()
         }
     }
 
@@ -111,7 +111,6 @@ class RequestOTPFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP>
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
-                (activity as? MyCardActivityExtension)?.hideBackIcon()
                 activity?.onBackPressed()
                 super.onOptionsItemSelected(item)
             }

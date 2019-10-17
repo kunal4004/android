@@ -118,7 +118,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
 
     override fun onClick(v: View?) {
         when (v?.id) {
-             R.id.blockCard -> activity?.let { navigateToBlockMyCardActivity(it, mStoreCardDetail) }
+            R.id.blockCard -> activity?.let { navigateToBlockMyCardActivity(it, mStoreCardDetail) }
             R.id.howItWorks -> {
                 activity?.apply {
                     startActivity(Intent(this, HowToUseTemporaryStoreCardActivity::class.java))
@@ -152,14 +152,16 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
     private fun requestUnblockCard(otp: String = "") {
         showPayWithCardProgressBar(VISIBLE)
         val unblockStoreCardRequestBody = mStoreCard?.let {
-            UnblockStoreCardRequestBody(mStoreCardsResponse?.storeCardsData?.visionAccountNumber?:"", it.number, it.sequence, otp, OTPMethodType.SMS.name)
+            UnblockStoreCardRequestBody(mStoreCardsResponse?.storeCardsData?.visionAccountNumber
+                    ?: "", it.number, it.sequence, otp, OTPMethodType.SMS.name)
         }
         unblockStoreCardRequestBody?.let {
-            StoreCardAPIRequest().unblockCard(mStoreCardsResponse?.storeCardsData?.productOfferingId?:"", it, object : RequestListener<UnblockStoreCardResponse> {
+            StoreCardAPIRequest().unblockCard(mStoreCardsResponse?.storeCardsData?.productOfferingId
+                    ?: "", it, object : RequestListener<UnblockStoreCardResponse> {
                 override fun onSuccess(response: UnblockStoreCardResponse?) {
                     showPayWithCardProgressBar(GONE)
                     when (response?.httpCode) {
-                        200, 502 -> {
+                        200 -> {
                             displayTemporaryCardToPayDialog()
                         }
                         440 -> {
@@ -232,9 +234,13 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
     }
 
     private fun requestBlockCard() {
-        val blockStoreCardRequestBody = mStoreCard?.let { BlockCardRequestBody(mStoreCardsResponse?.storeCardsData?.visionAccountNumber?:"", it.number, it.sequence.toInt(), 6) }
+        val blockStoreCardRequestBody = mStoreCard?.let {
+            BlockCardRequestBody(mStoreCardsResponse?.storeCardsData?.visionAccountNumber
+                    ?: "", it.number, it.sequence.toInt(), 6)
+        }
         blockStoreCardRequestBody?.let {
-            StoreCardAPIRequest().blockCard(mStoreCardsResponse?.storeCardsData?.productOfferingId?:"", it, object : RequestListener<BlockMyCardResponse> {
+            StoreCardAPIRequest().blockCard(mStoreCardsResponse?.storeCardsData?.productOfferingId
+                    ?: "", it, object : RequestListener<BlockMyCardResponse> {
                 override fun onSuccess(response: BlockMyCardResponse?) {
                 }
 
