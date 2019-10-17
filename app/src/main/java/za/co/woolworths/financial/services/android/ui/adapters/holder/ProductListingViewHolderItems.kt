@@ -94,6 +94,7 @@ class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolde
                         showFromPriceLabel(priceType)
                         fromPriceStrikeThrough.visibility = VISIBLE
                         tvWasPrice.setTextColor(Color.BLACK)
+                        fromPriceLabelTextView?.text = "From " // add space on StrikeThrough only
                     }
                 }
             }
