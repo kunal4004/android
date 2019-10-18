@@ -498,18 +498,10 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		} else {
 			//user is signed out
 			mUpdateMyAccount.swipeToRefreshAccount(false);
-			setContentDescription(R.string.sign_out_layout);
 			showView(loggedOutHeaderLayout);
 			setUiPageViewController();
 		}
 	}
-
-	private void setContentDescription(int stringId) {
-		if (getActivity() != null && getView() != null && getActivity().getResources() != null) {
-			getView().setContentDescription(getString(stringId));
-		}
-	}
-
 
 	private void hideAllLayers() {
 		hideView(loggedInHeaderLayout);

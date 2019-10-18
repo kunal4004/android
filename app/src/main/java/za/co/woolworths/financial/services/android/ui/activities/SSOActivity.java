@@ -638,7 +638,6 @@ public class SSOActivity extends WebViewActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		final ViewGroup viewGroup = (ViewGroup) ((ViewGroup) this.findViewById(android.R.id.content)).getChildAt(0);
 		if(path == Path.SIGNIN) {
 			Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.SSO_SIGN_IN);
 		} else if(path == Path.REGISTER) {
@@ -647,12 +646,8 @@ public class SSOActivity extends WebViewActivity {
 			Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.SSO_LOGOUT);
 		} else if(path == Path.UPDATE_PASSWORD) {
 			Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.SSO_PASSWORD_CHANGE);
-			if (viewGroup != null)
-				viewGroup.setContentDescription(getString(R.string.update_password_layout));
 		} else if(path == Path.UPDATE_PROFILE) {
 			Utils.setScreenName(this, FirebaseManagerAnalyticsProperties.ScreenNames.SSO_PROFILE_INFO);
-			if (viewGroup != null)
-				viewGroup.setContentDescription(getString(R.string.profile_layout));
 		}
 	}
 
