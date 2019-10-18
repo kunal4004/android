@@ -199,6 +199,7 @@
             android:id="@+id/manageView"
             style="@style/card_items_header_layout_style"
             android:layout_marginTop="@dimen/sixteen_dp"
+            android:contentDescription="@string/label_manage_layout"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/expireDetailsLayout">

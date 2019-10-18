@@ -1109,4 +1109,22 @@
     <string name="label_manage_card_details">Manage</string>
     <string name="rlt_BlockCard"> Block Card</string>
 
+    <!-- Block Card -->
+    <string name="label_blockCard">Block Card</string>
+    <string name="label_blockCardDescription">Block card Description</string>
+    <string name="rlt_BlockReason">Block Reason Layout</string>
+    <string name="label_manage_layout">Manage</string>
+    <string name="button_blockCard">Block Card</string>
+
+    <!-- Permanent Block Card Pop up -->
+    <string name="label_permanent_block_card">Permanent Block Card</string>
+    <string name="button__yes_block_card">yes, Block Card	</string>
+    <string name="link_cancel">Cancel</string>
+    <string name="label_permanent_block_card_description">Permanent Block Card Description</string>
+
+
+
+
+
+
 </resources>
