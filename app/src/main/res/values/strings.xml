@@ -1118,13 +1118,28 @@
 
     <!-- Permanent Block Card Pop up -->
     <string name="label_permanent_block_card">Permanent Block Card</string>
-    <string name="button__yes_block_card">yes, Block Card	</string>
+    <string name="button__yes_block_card">yes, Block Card</string>
     <string name="link_cancel">Cancel</string>
     <string name="label_permanent_block_card_description">Permanent Block Card Description</string>
 
+    <!-- My Card (Blocked) -->
+    <string name="label_noActiveCard">No Active Card</string>
+    <string name="label_noActiveCardDescription"> No Active Card Description</string>
+    <string name="button_getReplacementCard">Get Replacement Card</string>
+    <string name="link_alreadyHaveCard">Already Have Card</string>
 
+    <!-- Replacement Card -->
+    <string name="replacement_card_image">Card image</string>
+    <string name="label_getICR">Get ICR Card</string>
+    <string name="label_getICRCardDescription">Get ICR Description</string>
+    <string name="button_getParticipantsStores"> Participants Stores</string>
+    <string name="replacement_card_link_alreadyHaveCard"> Already Have Card</string>
 
-
-
+    <!--  Link New Card -->
+    <string name="label_linkICR"> Link ICR Card</string>
+    <string name="label_linkICRCardDescription"> Link ICR Description</string>
+    <string name="text_carddetails"> Card Number Textbox</string>
+    <string name="text_seqNumber"> Seq Number Textbox</string>
+    <string name="button_next">Next button</string>
 
 </resources>
