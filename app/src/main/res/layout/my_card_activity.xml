@@ -15,6 +15,7 @@
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/tbMyCard"
             android:layout_width="match_parent"
+            android:contentDescription="@string/toolbar_title"
             android:layout_height="wrap_content"
             android:background="@drawable/toolbar_transition_drawable"
             app:layout_scrollFlags="snap">

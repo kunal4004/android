@@ -1098,4 +1098,15 @@
     <string name="store_card_status_temporay">temp</string>
     <string name="virtual_store_card_temp_desc">Congratulations!\nYour Temp Store Card has been activated. Happy Shopping!</string>
     <string name="link_card_failure_desc">There was a problem  linking your card</string>
+
+
+    <!-- My Card Unblocked -->
+    <string name="toolbar_title"> My Card</string>
+    <string name="image_card">Card Image</string>
+    <string name="label_card_details">Card Details</string>
+    <string name="label_cardHolder">Card Holder</string>
+    <string name="text_cardHolderName">Card Holder Name</string>
+    <string name="label_manage_card_details">Manage</string>
+    <string name="rlt_BlockCard"> Block Card</string>
+
 </resources>
