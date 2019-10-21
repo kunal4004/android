@@ -75,6 +75,7 @@ public class AppInstanceObject {
 		public boolean kmsi;
 		public String absaLoginAliasID;
 		public String absaDeviceID;
+		public boolean isVirtualTemporaryStoreCardPopupShown;
 
 		public User() {
 			id = AppInstanceObject.getCurrentUsersID();

@@ -9,11 +9,14 @@ import retrofit2.Callback
 import retrofit2.http.*
 import za.co.woolworths.financial.services.android.models.dto.*
 import za.co.woolworths.financial.services.android.models.dto.chat.*
-import za.co.woolworths.financial.services.android.models.dto.npc.BlockCardRequestBody
-import za.co.woolworths.financial.services.android.models.dto.npc.BlockMyCardResponse
+import za.co.woolworths.financial.services.android.models.dto.npc.*
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementResponse
 import za.co.woolworths.financial.services.android.models.dto.statement.StatementResponse
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.UnblockStoreCardRequestBody
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.UnblockStoreCardResponse
 
 interface ApiInterface {
 
@@ -138,8 +141,28 @@ interface ApiInterface {
             @Header("sessionToken") sessionToken: String,
             @Query("lat") lat: String,
             @Query("lon") lon: String,
-            @Query("searchString") searchString: String?,
-            @Query("radius") radius: String?
+            @Query("searchString") searchString: String,
+            @Query("includeDetails") includeDetails: Boolean
+    ): Call<LocationResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("user/locations")
+    fun getStoresLocation(
+            @Header("apiId") apiId: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("network") network: String,
+            @Header("os") os: String,
+            @Header("osVersion") osVersion: String,
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String,
+            @Query("lat") lat: String,
+            @Query("lon") lon: String,
+            @Query("searchString") searchString: String,
+            @Query("radius") radius: String,
+            @Query("includeDetails") includeDetails: Boolean
     ): Call<LocationResponse>
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
@@ -941,7 +964,7 @@ interface ApiInterface {
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
-    @POST("accounts/npc/blockStoreCard/{productOfferingId}")
+    @POST("accounts/storecard/blockStoreCard/{productOfferingId}")
     fun blockStoreCard(
             @Header("apiId") apiId: String,
             @Header("sha1Password") sha1Password: String,
@@ -1062,5 +1085,66 @@ interface ApiInterface {
             @Header("userAgentVersion") userAgentVersion: String,
             @Header("sessionToken") sessionToken: String,
             @Path("chatId") chatId: String): Call<EndChatSessionResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @GET("accounts/storecard/otp")
+    fun getLinkNewCardOTP(
+            @Header("apiId") apiId: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("network") network: String,
+            @Header("os") os: String,
+            @Header("osVersion") osVersion: String,
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String,
+            @Query("otpMethod") otpMethod: String): Call<LinkNewCardOTP>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("accounts/storecard/linkStoreCard")
+    fun linkStoreCard(
+            @Header("apiId") apiId: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("network") network: String,
+            @Header("os") os: String,
+            @Header("osVersion") osVersion: String,
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String,
+            @Body linkStoreCard: LinkStoreCard): Call<LinkNewCardResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("accounts/storecard/cards")
+    fun getStoreCards(
+            @Header("apiId") apiId: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("network") network: String,
+            @Header("os") os: String,
+            @Header("osVersion") osVersion: String,
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String,
+            @Body getStoreCardsRequestBody: StoreCardsRequestBody): Call<StoreCardsResponse>
+
+    @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json")
+    @POST("accounts/storecard/unblockStoreCard/{productOfferingId}")
+    fun unblockStoreCard(
+            @Header("apiId") apiId: String,
+            @Header("sha1Password") sha1Password: String,
+            @Header("deviceVersion") deviceVersion: String,
+            @Header("deviceModel") deviceModel: String,
+            @Header("network") network: String,
+            @Header("os") os: String,
+            @Header("osVersion") osVersion: String,
+            @Header("userAgent") userAgent: String,
+            @Header("userAgentVersion") userAgentVersion: String,
+            @Header("sessionToken") sessionToken: String,
+            @Path("productOfferingId") productOfferingId: String,
+            @Body requestBody: UnblockStoreCardRequestBody): Call<UnblockStoreCardResponse>
 
 }

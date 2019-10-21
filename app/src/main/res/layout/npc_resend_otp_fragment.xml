@@ -7,17 +7,6 @@
 
 
     <View
-        android:id="@+id/emailHorizontalView"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:background="@color/grey_bg"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sendOTPByEmailView" />
-
-    <View
         android:id="@+id/closeIndicator"
         android:layout_width="56dp"
         android:layout_height="8dp"
@@ -47,171 +36,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/closeIndicator" />
 
-    <View
-        android:id="@+id/sendOTPBySMSview"
-        android:layout_width="0dp"
-        android:layout_height="62dp"
-        android:layout_marginTop="56dp"
-        android:background="@color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvResendOTP" />
-
-    <ImageView
-        android:id="@+id/imOtpNextSms"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="24dp"
-        app:layout_constraintBottom_toBottomOf="@+id/sendOTPBySMSview"
-        app:layout_constraintEnd_toEndOf="@+id/sendOTPBySMSview"
-        app:layout_constraintTop_toTopOf="@+id/sendOTPBySMSview"
-        app:srcCompat="@drawable/ic_caret_black" />
-
-    <TextView
-        android:id="@+id/tvOtpSmsTitle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="16dp"
-        android:fontFamily="@font/myriad_pro_regular_otf"
-        android:text="@string/resend_sms_to"
-        android:textColor="@color/charcoal_grey"
-        android:textSize="17sp"
-        app:layout_constraintBottom_toBottomOf="@+id/sendOTPBySMSview"
-        app:layout_constraintEnd_toStartOf="@+id/imOtpNextSms"
-        app:layout_constraintStart_toEndOf="@+id/imOTPSMS"
-        app:layout_constraintTop_toTopOf="@+id/sendOTPBySMSview"
-        tools:text="@string/resend_sms_to" />
-
-    <ImageView
-        android:id="@+id/imOTPSMS"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="37dp"
-        app:layout_constraintBottom_toBottomOf="@+id/sendOTPBySMSview"
-        app:layout_constraintStart_toStartOf="@+id/sendOTPBySMSview"
-        app:layout_constraintTop_toTopOf="@+id/sendOTPBySMSview"
-        app:srcCompat="@drawable/icon_mobile_phone" />
-
-    <View
-        android:id="@+id/smsHorizontalView"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:background="@color/grey_bg"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sendOTPBySMSview" />
-
-
-    <View
-        android:id="@+id/sendOTPByEmailView"
-        android:layout_width="0dp"
-        android:layout_height="62dp"
-        android:background="@color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/smsHorizontalView" />
-
-
-    <View
-        android:id="@+id/sendToCallCenterView"
-        android:layout_width="0dp"
-        android:layout_height="62dp"
-        android:background="@color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/emailHorizontalView" />
-
-    <ImageView
-        android:id="@+id/imNextCallIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/sendToCallCenterView"
-        app:layout_constraintEnd_toEndOf="@+id/sendToCallCenterView"
-        app:layout_constraintTop_toBottomOf="@+id/emailHorizontalView"
-        app:srcCompat="@drawable/ic_caret_black" />
-
-    <ImageView
-        android:id="@+id/imOTPNextEmailIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="24dp"
-        app:layout_constraintBottom_toBottomOf="@+id/emailHorizontalView"
-        app:layout_constraintEnd_toEndOf="@+id/sendOTPByEmailView"
-        app:layout_constraintTop_toBottomOf="@+id/smsHorizontalView"
-        app:srcCompat="@drawable/ic_caret_black" />
-
-    <TextView
-        android:id="@+id/tvOTPEmailTitle"
-        android:layout_width="0dp"
-        android:layout_height="20dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="8dp"
-        android:fontFamily="@font/myriad_pro_regular_otf"
-        android:text="@string/send_to_your_email_address"
-        android:textColor="@color/charcoal_grey"
-        android:textSize="17sp"
-        app:layout_constraintBottom_toBottomOf="@+id/sendOTPByEmailView"
-        app:layout_constraintEnd_toStartOf="@+id/imOTPNextEmailIcon"
-        app:layout_constraintStart_toEndOf="@+id/imOTPNextEmail"
-        app:layout_constraintTop_toTopOf="@+id/sendOTPByEmailView"
-        tools:text="@string/send_to_your_email_address" />
-
-    <ImageView
-        android:id="@+id/imOTPNextEmail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="37dp"
-        app:layout_constraintBottom_toBottomOf="@+id/sendOTPByEmailView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/smsHorizontalView"
-        app:srcCompat="@drawable/icon_email"
-        tools:srcCompat="@drawable/icon_email" />
-
-    <ImageView
-        android:id="@+id/imCallOtpIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/thirty_seven_dp"
-        app:layout_constraintBottom_toBottomOf="@+id/sendToCallCenterView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/emailHorizontalView"
-        app:srcCompat="@drawable/icon_mobile_call"
-        tools:srcCompat="@drawable/icon_mobile_call" />
-
-    <TextView
-        android:id="@+id/tvCallTitle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="16dp"
-        android:fontFamily="@font/myriad_pro_regular_otf"
-        android:text="@string/call_center_desc"
-        android:textColor="@color/charcoal_grey"
-        android:textSize="17sp"
-        app:layout_constraintBottom_toTopOf="@+id/tvCancel"
-        app:layout_constraintEnd_toStartOf="@+id/imNextCallIcon"
-        app:layout_constraintStart_toEndOf="@+id/imCallOtpIcon"
-        app:layout_constraintTop_toTopOf="@+id/sendToCallCenterView"
-        tools:text="@string/call_center_desc" />
-
-    <View
-        android:id="@+id/callHorizontalView"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:background="@color/grey_bg"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sendToCallCenterView" />
-
     <TextView
         android:id="@+id/tvCancel"
         android:layout_width="match_parent"
@@ -226,7 +50,18 @@
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/callHorizontalView"
+        app:layout_constraintTop_toBottomOf="@+id/rvResendOTPContent"
         tools:targetApi="lollipop" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvResendOTPContent"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/thirty_two_dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvResendOTP">
+
+    </androidx.recyclerview.widget.RecyclerView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

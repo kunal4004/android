@@ -1151,7 +1151,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
         this.enableFindInStoreButton(true);
         mFuseLocationAPISingleton.addLocationChangeListener(this);
-        mFuseLocationAPISingleton.startLocationUpdate(getActivity());
+        mFuseLocationAPISingleton.startLocationUpdate();
     }
 
     @Override

@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:contentDescription="@string/rlt_BlockReason"
     android:layout_height="match_parent"
     android:background="@color/white">
 
@@ -66,6 +67,7 @@
         android:layout_height="50dp"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
+        android:contentDescription="@string/button_blockCard"
         android:layout_marginBottom="24dp"
         android:background="@drawable/black_button_drawable_state"
         android:enabled="false"

@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.activities.card
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.TextUtils
 import androidx.fragment.app.Fragment
 import androidx.core.content.ContextCompat
 import androidx.appcompat.app.AppCompatActivity
@@ -11,14 +12,13 @@ import android.view.View.VISIBLE
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.my_card_activity.*
-import za.co.woolworths.financial.services.android.models.dto.Account
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.activities.card.BlockMyCardActivity.Companion.REQUEST_CODE_BLOCK_MY_CARD
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.GetReplacementCardFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardBlockedFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardDetailFragment
 import za.co.woolworths.financial.services.android.util.Utils
-import android.net.ParseException as ParseException1
 
 
 class MyCardDetailActivity : AppCompatActivity() {
@@ -28,6 +28,7 @@ class MyCardDetailActivity : AppCompatActivity() {
     }
 
     private var mStoreCardDetail: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.my_card_activity)
@@ -40,27 +41,25 @@ class MyCardDetailActivity : AppCompatActivity() {
         addCardDetailFragment()
     }
 
-    /**
-    If cardBlocked == TRUE, display generic card blocked screen
-    Else cardBlocked == FALSE , Build the ‘My Card’ Screen using object with latest openedDate
-     */
-
     private fun addCardDetailFragment() {
-        when (Gson().fromJson(getMyStoreCardDetail(), Account::class.java)?.primaryCard?.cardBlocked
-                ?: false) {
+        val blockCode = Gson().fromJson(getMyStoreCardDetail(), StoreCardsResponse::class.java)?.storeCardsData?.primaryCards?.get(0)?.blockCode
+        val virtualCard = Gson().fromJson(getMyStoreCardDetail(), StoreCardsResponse::class.java)?.storeCardsData?.virtualCard
+        // Determine if card is blocked: if blockCode is not null, card is blocked.
+        when (virtualCard != null || TextUtils.isEmpty(blockCode)) {
             true -> {
-                addFragment(
-                        fragment = MyCardBlockedFragment.newInstance(),
-                        tag = MyCardBlockedFragment::class.java.simpleName,
-                        containerViewId = R.id.flMyCard)
-            }
-            else -> {
                 addFragment(
                         fragment = MyCardDetailFragment.newInstance(mStoreCardDetail),
                         tag = MyCardDetailFragment::class.java.simpleName,
                         containerViewId = R.id.flMyCard)
             }
+            else -> {
+                addFragment(
+                        fragment = MyCardBlockedFragment.newInstance(mStoreCardDetail),
+                        tag = MyCardBlockedFragment::class.java.simpleName,
+                        containerViewId = R.id.flMyCard)
+            }
         }
+
     }
 
     private fun actionBar() {
@@ -128,7 +127,14 @@ class MyCardDetailActivity : AppCompatActivity() {
         if (requestCode == REQUEST_CODE_BLOCK_MY_CARD && resultCode == RESULT_OK) {
             mStoreCardDetail = data?.getStringExtra(STORE_CARD_DETAIL)
             addCardDetailFragment()
+        } else {
+            supportFragmentManager.findFragmentById(R.id.flMyCard)?.onActivityResult(requestCode, resultCode, data)
         }
+    }
 
+    // Required to delegate permission result to fragment
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        supportFragmentManager.findFragmentById(R.id.flMyCard)?.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 }
