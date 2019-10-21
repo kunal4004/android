@@ -74,6 +74,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.AvailableSizePick
 import za.co.woolworths.financial.services.android.ui.adapters.ProductColorPickerAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductSizePickerAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter;
+import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductListingViewHolderItems;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ProductUtils;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.utils.NavigateToShoppingList;
@@ -390,10 +391,15 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
             }
 
             if (this.otherSKUForCart != null)
-              mExecuteInventoryForSku =  getViewModel().queryInventoryForSKUs(storeId, this.otherSKUForCart.sku, false);
+                // mExecuteInventoryForSku =  getViewModel().queryInventoryForSKUs(storeId, this.otherSKUForCart.sku, false);
+                addToCartForSelectedSKU(this.otherSKUForCart);
             else {
-                String multiSKUs = getViewModel().getMultiSKUsStringForInventory(this.otherSKUsByGroupKey.get(this.selectedGroupKey));
-                mExecuteInventoryForSku = getViewModel().queryInventoryForSKUs(storeId, multiSKUs, true);
+                //String multiSKUs = getViewModel().getMultiSKUsStringForInventory(this.otherSKUsByGroupKey.get(this.selectedGroupKey));
+               // mExecuteInventoryForSku = getViewModel().queryInventoryForSKUs(storeId, multiSKUs, true);
+
+                ArrayList<OtherSkus> stockRequestedSkus = this.otherSKUsByGroupKey.get(this.selectedGroupKey);
+
+                openSizePickerWithAvailableQuantity(stockRequestedSkus);
             }
 
         }
@@ -419,8 +425,10 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
     public void onSuccessResponse(ProductDetails productDetails) {
         this.productDetails = productDetails;
         if (this.productDetails.otherSkus != null && this.productDetails.otherSkus.size() > 0) {
-            this.otherSKUsByGroupKey = groupOtherSKUsByColor(productDetails.otherSkus);
-            this.updateDefaultUI();
+            String storeId = ProductListingViewHolderItems.Companion.getFulFillmentStoreId();
+            String multiSKUs = getViewModel().getMultiSKUsStringForInventory(productDetails.otherSkus);
+            mExecuteInventoryForSku = getViewModel().queryInventoryForSKUs(storeId, multiSKUs, true);
+
         } else {
             getViewDataBinding().llLoadingColorSize.setVisibility(View.GONE);
             getViewDataBinding().loadingInfoView.setVisibility(View.GONE);
@@ -780,9 +788,13 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
                 return;
             }
 
-            String multiSKUS = getViewModel().getMultiSKUsStringForInventory(this.otherSKUsByGroupKey.get(this.selectedGroupKey));
+            /*String multiSKUS = getViewModel().getMultiSKUsStringForInventory(this.otherSKUsByGroupKey.get(this.selectedGroupKey));
             String storeId = Utils.retrieveStoreId(productDetails.fulfillmentType);
-            getViewModel().queryInventoryForSKUs(storeId, multiSKUS, true);
+            getViewModel().queryInventoryForSKUs(storeId, multiSKUS, true);*/
+
+            ArrayList<OtherSkus> stockRequestedSkus = this.otherSKUsByGroupKey.get(this.selectedGroupKey);
+
+            openSizePickerWithAvailableQuantity(stockRequestedSkus);
 
         } else {
             openQuantityPicker(quantityInStock, false);
@@ -791,10 +803,10 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
     @Override
     public void onInventoryResponseForAllSKUs(SkusInventoryForStoreResponse inventoryResponse) {
-        if (getActivity() == null || rcvSizePickerForInventory== null) return;
-        ArrayList<OtherSkus> stockRequestedSkus = this.otherSKUsByGroupKey.get(this.selectedGroupKey);
+        //if (getActivity() == null || rcvSizePickerForInventory== null) return;
+       // ArrayList<OtherSkus> stockRequestedSkus = this.otherSKUsByGroupKey.get(this.selectedGroupKey);
 
-        for (OtherSkus otherSkus : stockRequestedSkus) {
+        for (OtherSkus otherSkus : productDetails.otherSkus) {
             for (SkuInventory skuInventory : inventoryResponse.skuInventory) {
                 if (otherSkus.sku.equalsIgnoreCase(skuInventory.sku)) {
                     otherSkus.quantity = skuInventory.quantity;
@@ -802,7 +814,12 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
                 }
             }
         }
-        openSizePickerWithAvailableQuantity(stockRequestedSkus);
+
+        this.otherSKUsByGroupKey = groupOtherSKUsByColor(productDetails.otherSkus);
+        this.updateDefaultUI();
+
+
+        //openSizePickerWithAvailableQuantity(stockRequestedSkus);
 
     }
 
@@ -1309,6 +1326,32 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
         super.onDestroy();
         if (mExecuteInventoryForSku!=null &&  !mExecuteInventoryForSku.isCanceled()){
             mExecuteInventoryForSku.cancel();
+        }
+    }
+
+    public void addToCartForSelectedSKU(OtherSkus selectedOtherSku) {
+        int quantityInStock = selectedOtherSku.quantity;
+        if (quantityInStock == 1) {
+            executeAddToCartRequest(1);
+        } else if (quantityInStock == 0) {
+
+            if (this.otherSKUsByGroupKey.get(this.selectedGroupKey).size() == 1) {
+                //if there is no other skus for that selected group show out of stock
+                this.enableAddToCartButton(false);
+                this.outOfStockDialog();
+                return;
+            }
+
+            /*String multiSKUS = getViewModel().getMultiSKUsStringForInventory(this.otherSKUsByGroupKey.get(this.selectedGroupKey));
+            String storeId = Utils.retrieveStoreId(productDetails.fulfillmentType);
+            getViewModel().queryInventoryForSKUs(storeId, multiSKUS, true);*/
+
+            ArrayList<OtherSkus> stockRequestedSkus = this.otherSKUsByGroupKey.get(this.selectedGroupKey);
+
+            openSizePickerWithAvailableQuantity(stockRequestedSkus);
+
+        } else {
+            openQuantityPicker(quantityInStock, false);
         }
     }
 }

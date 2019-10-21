@@ -94,25 +94,7 @@ class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolde
         }
     }
 
-    // Extracting the fulfilmentStoreId from user location or default MC config
-    fun getFulFillmentStoreId(): String? {
-        val quickShopDefaultValues = WoolworthsApplication.getQuickShopDefaultValues()
-        val userSelectedDeliveryLocation = Utils.getPreferredDeliveryLocation()
-        val foodFulfilmentTypeId = quickShopDefaultValues?.foodFulfilmentTypeId?.toString()
-        var defaultStoreId = ""
-        if (userSelectedDeliveryLocation == null || userSelectedDeliveryLocation.suburb?.fulfillmentStores == null) {
-            quickShopDefaultValues?.suburb?.fulfilmentTypes?.forEach { fulfillmentType ->
-                if (fulfillmentType.fulfilmentTypeId.toString().equals(foodFulfilmentTypeId, ignoreCase = true)) {
-                    defaultStoreId = fulfillmentType.fulfilmentStoreId.toString()
-                    return@forEach
-                }
-            }
-        } else {
-            Utils.retrieveStoreId(foodFulfilmentTypeId)?.let { defaultStoreId = it }
-        }
 
-        return defaultStoreId
-    }
 
     private fun getMassPrice(price: String, priceType: String?, kilogramPrice: String): String {
         return with(priceType) {
@@ -128,6 +110,28 @@ class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolde
                 }
                 else -> WFormatter.formatAmount(price)
             }
+        }
+    }
+
+    companion object {
+        // Extracting the fulfilmentStoreId from user location or default MC config
+        fun getFulFillmentStoreId(): String? {
+            val quickShopDefaultValues = WoolworthsApplication.getQuickShopDefaultValues()
+            val userSelectedDeliveryLocation = Utils.getPreferredDeliveryLocation()
+            val foodFulfilmentTypeId = quickShopDefaultValues?.foodFulfilmentTypeId?.toString()
+            var defaultStoreId = ""
+            if (userSelectedDeliveryLocation == null || userSelectedDeliveryLocation.suburb?.fulfillmentStores == null) {
+                quickShopDefaultValues?.suburb?.fulfilmentTypes?.forEach { fulfillmentType ->
+                    if (fulfillmentType.fulfilmentTypeId.toString().equals(foodFulfilmentTypeId, ignoreCase = true)) {
+                        defaultStoreId = fulfillmentType.fulfilmentStoreId.toString()
+                        return@forEach
+                    }
+                }
+            } else {
+                Utils.retrieveStoreId(foodFulfilmentTypeId)?.let { defaultStoreId = it }
+            }
+
+            return defaultStoreId
         }
     }
 

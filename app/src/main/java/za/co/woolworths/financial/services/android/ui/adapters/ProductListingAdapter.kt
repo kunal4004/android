@@ -30,7 +30,7 @@ class ProductListingAdapter(private val navigator: IProductListing, private val 
                     view.itemView.imQuickShopAddToCartIcon.setOnClickListener {
                         if (!productList.quickShopButtonWasTapped) {
                             Utils.triggerFireBaseEvents(FirebaseManagerAnalyticsProperties.SHOPQS_ADD_TO_CART)
-                            val storeId = view.getFulFillmentStoreId()
+                            val storeId = ProductListingViewHolderItems.getFulFillmentStoreId()
                             navigator.queryInventoryForStore(storeId!!, AddItemToCart(productList.productId, productList.sku, 0), productList)
                         }
                     }
