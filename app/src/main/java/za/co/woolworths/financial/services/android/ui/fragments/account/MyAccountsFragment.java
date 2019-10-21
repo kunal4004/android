@@ -503,7 +503,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		}
 	}
 
-
 	private void hideAllLayers() {
 		hideView(loggedInHeaderLayout);
 		hideView(loggedOutHeaderLayout);

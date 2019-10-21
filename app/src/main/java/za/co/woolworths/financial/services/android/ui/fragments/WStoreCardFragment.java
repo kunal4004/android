@@ -133,7 +133,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if (view == null) {
             view = inflater.inflate(R.layout.card_common_fragment, container, false);
-            mIncreaseLimitController = new IncreaseLimitController(getActivity());
+            view.setContentDescription(getString(R.string.linked_store_card_layout));
         }
         return view;
     }
@@ -141,6 +141,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mIncreaseLimitController = new IncreaseLimitController(getActivity());
         if (savedInstanceState == null & !viewWasCreated) {
             initUI(view);
             addListener();

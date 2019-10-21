@@ -119,7 +119,7 @@ private static AsyncTask<Void, Void, Void> async;
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if (view == null) {
             view = inflater.inflate(R.layout.card_common_fragment, container, false);
-            mIncreaseLimitController = new IncreaseLimitController(getActivity());
+            view.setContentDescription(getString(R.string.linked_personal_loan_layout));
         }
         return view;
     }
@@ -127,6 +127,7 @@ private static AsyncTask<Void, Void, Void> async;
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mIncreaseLimitController = new IncreaseLimitController(getActivity());
         if (savedInstanceState == null & !viewWasCreated) {
             init(view);
             addListener();
