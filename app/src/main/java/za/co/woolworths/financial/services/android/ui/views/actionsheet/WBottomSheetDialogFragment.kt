@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.View
 import com.awfs.coordination.R
 import android.widget.FrameLayout
+import androidx.fragment.app.FragmentManager
+import com.crashlytics.android.Crashlytics
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -31,6 +33,18 @@ open class WBottomSheetDialogFragment : BottomSheetDialogFragment() {
                 BottomSheetBehavior.from(bottomSheet)?.state = BottomSheetBehavior.STATE_EXPANDED
             }
 
+        }
+    }
+
+    // Override dialog.show() method to prevent IllegalStateException being thrown
+    // when running a dialog fragment on a destroyed activity.
+    override fun show(manager: FragmentManager, tag: String?) {
+        try {
+            val ft = manager.beginTransaction()
+            ft.add(this, tag)
+            ft.commitAllowingStateLoss()
+        } catch (ex: IllegalStateException) {
+            Crashlytics.logException(ex)
         }
     }
 }
