@@ -1098,4 +1098,48 @@
     <string name="store_card_status_temporay">temp</string>
     <string name="virtual_store_card_temp_desc">Congratulations!\nYour Temp Store Card has been activated. Happy Shopping!</string>
     <string name="link_card_failure_desc">There was a problem  linking your card</string>
+
+
+    <!-- My Card Unblocked -->
+    <string name="toolbar_title"> My Card</string>
+    <string name="image_card">Card Image</string>
+    <string name="label_card_details">Card Details</string>
+    <string name="label_cardHolder">Card Holder</string>
+    <string name="text_cardHolderName">Card Holder Name</string>
+    <string name="label_manage_card_details">Manage</string>
+    <string name="rlt_BlockCard"> Block Card</string>
+
+    <!-- Block Card -->
+    <string name="label_blockCard">Block Card</string>
+    <string name="label_blockCardDescription">Block card Description</string>
+    <string name="rlt_BlockReason">Block Reason Layout</string>
+    <string name="label_manage_layout">Manage</string>
+    <string name="button_blockCard">Block Card</string>
+
+    <!-- Permanent Block Card Pop up -->
+    <string name="label_permanent_block_card">Permanent Block Card</string>
+    <string name="button__yes_block_card">yes, Block Card</string>
+    <string name="link_cancel">Cancel</string>
+    <string name="label_permanent_block_card_description">Permanent Block Card Description</string>
+
+    <!-- My Card (Blocked) -->
+    <string name="label_noActiveCard">No Active Card</string>
+    <string name="label_noActiveCardDescription"> No Active Card Description</string>
+    <string name="button_getReplacementCard">Get Replacement Card</string>
+    <string name="link_alreadyHaveCard">Already Have Card</string>
+
+    <!-- Replacement Card -->
+    <string name="replacement_card_image">Card image</string>
+    <string name="label_getICR">Get ICR Card</string>
+    <string name="label_getICRCardDescription">Get ICR Description</string>
+    <string name="button_getParticipantsStores"> Participants Stores</string>
+    <string name="replacement_card_link_alreadyHaveCard"> Already Have Card</string>
+
+    <!--  Link New Card -->
+    <string name="label_linkICR"> Link ICR Card</string>
+    <string name="label_linkICRCardDescription"> Link ICR Description</string>
+    <string name="text_carddetails"> Card Number Textbox</string>
+    <string name="text_seqNumber"> Seq Number Textbox</string>
+    <string name="button_next">Next button</string>
+
 </resources>
