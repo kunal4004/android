@@ -152,6 +152,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
     private ToastUtils mToastUtils;
     private FuseLocationAPISingleton mFuseLocationAPISingleton;
     private Call<SkusInventoryForStoreResponse> mExecuteInventoryForSku;
+    private String storeIdForInventory = "";
 
     @Override
     public ProductDetailsViewModelNew getViewModel() {
@@ -375,14 +376,21 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
             return;
         }
 
+        // If user signin's in or updates delivery location this will reload inventory for updated storeId
+        String storeId = Utils.retrieveStoreId(productDetails.fulfillmentType);
+        if (!storeId.equalsIgnoreCase(storeIdForInventory)) {
+            enableAddToCartButton(true);
+            updateStockAvailability(storeId);
+            return;
+        }
+
         if (this.selectedOtherSku != null && this.otherSKUForCart == null) {
             this.otherSKUForCart = this.selectedOtherSku;
             addItemToCart();
             return;
         } else {
             this.enableAddToCartButton(true);
-            String storeId = Utils.retrieveStoreId(productDetails.fulfillmentType);
-            if (TextUtils.isEmpty(storeId)) {
+            if (TextUtils.isEmpty(Utils.retrieveStoreId(productDetails.fulfillmentType))) {
                 this.otherSKUForCart = null;
                 String message = "Unfortunately this item is unavailable in " + deliveryLocation.suburb.name + ". Try changing your delivery location and try again.";
                 Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR_TITLE_DESC, getString(R.string.product_unavailable), message);
@@ -425,9 +433,9 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
     public void onSuccessResponse(ProductDetails productDetails) {
         this.productDetails = productDetails;
         if (this.productDetails.otherSkus != null && this.productDetails.otherSkus.size() > 0) {
-            String storeId = ProductListingViewHolderItems.Companion.getFulFillmentStoreId();
+            storeIdForInventory = ProductListingViewHolderItems.Companion.getFulFillmentStoreId(productDetails.fulfillmentType);
             String multiSKUs = getViewModel().getMultiSKUsStringForInventory(productDetails.otherSkus);
-            mExecuteInventoryForSku = getViewModel().queryInventoryForSKUs(storeId, multiSKUs, true);
+            mExecuteInventoryForSku = getViewModel().queryInventoryForSKUs(storeIdForInventory, multiSKUs, true);
 
         } else {
             getViewDataBinding().llLoadingColorSize.setVisibility(View.GONE);
@@ -769,36 +777,28 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
     }
 
     @Override
-    public void onInventoryResponseForSelectedSKU(SkusInventoryForStoreResponse inventoryResponse) {
-        int quantityInStock = 0;
-        for (SkuInventory skuInventory : inventoryResponse.skuInventory) {
-            if (skuInventory.sku.equalsIgnoreCase(this.otherSKUForCart.sku)) {
-                quantityInStock = skuInventory.quantity;
+    public void onUpdatedInventoryResponse(SkusInventoryForStoreResponse inventoryResponse) {
+
+        for (OtherSkus otherSkus : productDetails.otherSkus) {
+            for (SkuInventory skuInventory : inventoryResponse.skuInventory) {
+                if (otherSkus.sku.equalsIgnoreCase(skuInventory.sku)) {
+                    otherSkus.quantity = skuInventory.quantity;
+                    break;
+                }
             }
         }
 
-        if (quantityInStock == 1) {
-            executeAddToCartRequest(1);
-        } else if (quantityInStock == 0) {
-
-            if (this.otherSKUsByGroupKey.get(this.selectedGroupKey).size() == 1) {
-                //if there is no other skus for that selected group show out of stock
-                this.enableAddToCartButton(false);
-                this.outOfStockDialog();
-                return;
+        //update selected sku with updated quantity
+        if(this.otherSKUForCart!=null){
+            for (OtherSkus otherSkus : productDetails.otherSkus) {
+                    if (otherSkus.sku.equalsIgnoreCase(otherSKUForCart.sku)) {
+                        otherSKUForCart.quantity = otherSkus.quantity;
+                        break;
+                    }
             }
-
-            /*String multiSKUS = getViewModel().getMultiSKUsStringForInventory(this.otherSKUsByGroupKey.get(this.selectedGroupKey));
-            String storeId = Utils.retrieveStoreId(productDetails.fulfillmentType);
-            getViewModel().queryInventoryForSKUs(storeId, multiSKUS, true);*/
-
-            ArrayList<OtherSkus> stockRequestedSkus = this.otherSKUsByGroupKey.get(this.selectedGroupKey);
-
-            openSizePickerWithAvailableQuantity(stockRequestedSkus);
-
-        } else {
-            openQuantityPicker(quantityInStock, false);
         }
+
+        addItemToCart();
     }
 
     @Override
@@ -1329,7 +1329,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
         }
     }
 
-    public void addToCartForSelectedSKU(OtherSkus selectedOtherSku) {
+    private void addToCartForSelectedSKU(OtherSkus selectedOtherSku) {
         int quantityInStock = selectedOtherSku.quantity;
         if (quantityInStock == 1) {
             executeAddToCartRequest(1);
@@ -1353,5 +1353,11 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
         } else {
             openQuantityPicker(quantityInStock, false);
         }
+    }
+
+    private void updateStockAvailability(String storeId){
+        storeIdForInventory = storeId;
+        String multiSKUs = getViewModel().getMultiSKUsStringForInventory(productDetails.otherSkus);
+        mExecuteInventoryForSku = getViewModel().queryInventoryForSKUs(storeIdForInventory, multiSKUs, false);
     }
 }
