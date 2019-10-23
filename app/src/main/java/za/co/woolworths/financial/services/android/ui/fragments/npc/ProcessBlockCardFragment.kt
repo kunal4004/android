@@ -66,7 +66,7 @@ class ProcessBlockCardFragment : BlockMyCardRequestExtension(), IProgressAnimati
                 containerViewId = R.id.flProgressIndicator
         )
 
-        btn_ok_got_it?.setOnClickListener { navigateToMyCardActivity(false) }
+        okGotItButton?.setOnClickListener { navigateToMyCardActivity(false) }
         hideToolbarIcon()
 
         if (!mCardWasBlocked)
@@ -85,9 +85,13 @@ class ProcessBlockCardFragment : BlockMyCardRequestExtension(), IProgressAnimati
     }
 
     private fun executeBlockCard() {
-        val account = (activity as? BlockMyCardActivity)?.getStoreCardDetail()
+        val storeCard = (activity as? BlockMyCardActivity)?.getCardDetail()
+        val storeCardDetail = (activity as? BlockMyCardActivity)?.getStoreCardDetail()?.storeCardsData
         (activity as? BlockMyCardActivity)?.getCardDetail()?.apply {
-            account?.productOfferingId?.let { blockMyCardRequest(BlockCardRequestBody(cardNumber, cardNumber, sequenceNumber, mBlockCardReason), it.toString()) }
+            storeCardDetail?.productOfferingId?.let {
+                blockMyCardRequest(BlockCardRequestBody(storeCardDetail.visionAccountNumber, storeCard?.number
+                        ?: "", storeCard?.sequence?.toInt() ?: 0, mBlockCardReason), it)
+            }
         }
     }
 
@@ -136,10 +140,10 @@ class ProcessBlockCardFragment : BlockMyCardRequestExtension(), IProgressAnimati
 
                 override fun onFinish() {
                     activity?.apply {
-                        val account = (this as? BlockMyCardActivity)?.getStoreCardDetail()
-                        account?.primaryCard?.cardBlocked = true
+                        val storeCard = (this as? BlockMyCardActivity)?.getStoreCardDetail()?.storeCardsData
+                        storeCard?.primaryCards?.get(0)?.blockCode = null
                         PersistenceLayer.getInstance().executeDeleteQuery("DELETE FROM ApiRequest WHERE endpoint LIKE '%user/accounts'")
-                        setResult(RESULT_OK, Intent().putExtra(STORE_CARD_DETAIL, Gson().toJson(account)))
+                        setResult(RESULT_OK, Intent().putExtra(STORE_CARD_DETAIL, Gson().toJson(storeCard)))
                         finish()
                         overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
                     }

@@ -8,6 +8,8 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,7 +38,11 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
+import za.co.woolworths.financial.services.android.models.dto.InstantCardReplacement;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsData;
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsRequestBody;
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse;
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler;
 import za.co.woolworths.financial.services.android.models.network.OneAppService;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
@@ -47,6 +53,7 @@ import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDeta
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.bpi.BPIBalanceProtectionActivity;
+import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.GetTemporaryStoreCardPopupActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
@@ -62,6 +69,8 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
 
 import static android.app.Activity.RESULT_OK;
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.STORE_CARD_DETAIL;
 
 public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle, NetworkChangeListener {
@@ -119,6 +128,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
     private RelativeLayout rlMyStoreCard;
     private MyAccountHelper myAccountHelper;
     private String mStoreCardAccountDetail;
+    private ProgressBar progressBarMyCard;
+    private ImageView myCArdRightArrow;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -133,7 +144,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if (view == null) {
             view = inflater.inflate(R.layout.card_common_fragment, container, false);
-            mIncreaseLimitController = new IncreaseLimitController(getActivity());
+            view.setContentDescription(getString(R.string.linked_store_card_layout));
         }
         return view;
     }
@@ -141,6 +152,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mIncreaseLimitController = new IncreaseLimitController(getActivity());
         if (savedInstanceState == null & !viewWasCreated) {
             initUI(view);
             addListener();
@@ -169,36 +181,42 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
                         }
                     }));
         }
+
+        InstantCardReplacement instantCardReplacement = WoolworthsApplication.getInstantCardReplacement();
+        boolean storeCardIsVisible = false;
+        if (instantCardReplacement != null)
+            storeCardIsVisible = instantCardReplacement.isEnabled();
+        rlMyStoreCard.setVisibility(storeCardIsVisible ? VISIBLE : GONE);
     }
 
     private void initUI(View view) {
         woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
-        availableBalance = (WTextView) view.findViewById(R.id.available_funds);
-        creditLimit = (WTextView) view.findViewById(R.id.creditLimit);
-        rlViewStatement = (RelativeLayout) view.findViewById(R.id.rlViewStatement);
-        dueDate = (WTextView) view.findViewById(R.id.dueDate);
-        minAmountDue = (WTextView) view.findViewById(R.id.minAmountDue);
-        currentBalance = (WTextView) view.findViewById(R.id.currentBalance);
-        tvViewTransaction = (WTextView) view.findViewById(R.id.tvViewTransaction);
-        tvIncreaseLimit = (WTextView) view.findViewById(R.id.tvIncreaseLimit);
-        mProgressCreditLimit = (ProgressBar) view.findViewById(R.id.progressCreditLimit);
-        tvApplyNowIncreaseLimit = (WTextView) view.findViewById(R.id.tvApplyNowIncreaseLimit);
-        tvIncreaseLimitDescription = (WTextView) view.findViewById(R.id.tvIncreaseLimitDescription);
-        relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
+        availableBalance = view.findViewById(R.id.available_funds);
+        creditLimit = view.findViewById(R.id.creditLimit);
+        rlViewStatement = view.findViewById(R.id.rlViewStatement);
+        dueDate = view.findViewById(R.id.dueDate);
+        minAmountDue = view.findViewById(R.id.minAmountDue);
+        currentBalance = view.findViewById(R.id.currentBalance);
+        tvViewTransaction = view.findViewById(R.id.tvViewTransaction);
+        tvIncreaseLimit = view.findViewById(R.id.tvIncreaseLimit);
+        mProgressCreditLimit = view.findViewById(R.id.progressCreditLimit);
+        tvApplyNowIncreaseLimit = view.findViewById(R.id.tvApplyNowIncreaseLimit);
+        tvIncreaseLimitDescription = view.findViewById(R.id.tvIncreaseLimitDescription);
+        relBalanceProtection = view.findViewById(R.id.relBalanceProtection);
         tvBPIProtectInsurance = view.findViewById(R.id.tvBPIProtectInsurance);
-        rlViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
-        rlMyStoreCard = (RelativeLayout) view.findViewById(R.id.rlMyStoreCard);
+        rlViewTransactions = view.findViewById(R.id.rlViewTransactions);
+        rlMyStoreCard = view.findViewById(R.id.rlMyStoreCard);
         rlMyStoreCard.setOnClickListener(this);
 
         iconAvailableFundsInfo = view.findViewById(R.id.iconAvailableFundsInfo);
         iconAvailableFundsInfo.setOnClickListener(this);
 
-        mRelFindOutMore = (RelativeLayout) view.findViewById(R.id.relFindOutMore);
-        mRelIncreaseMyLimit = (RelativeLayout) view.findViewById(R.id.relIncreaseMyLimit);
-        tvApplyNowIncreaseLimit = (WTextView) view.findViewById(R.id.tvApplyNowIncreaseLimit);
-        llCommonLayer = (LinearLayout) view.findViewById(R.id.llCommonLayer);
-        llIncreaseLimitContainer = (LinearLayout) view.findViewById(R.id.llIncreaseLimitContainer);
-        logoIncreaseLimit = (ImageView) view.findViewById(R.id.logoIncreaseLimit);
+        mRelFindOutMore = view.findViewById(R.id.relFindOutMore);
+        mRelIncreaseMyLimit = view.findViewById(R.id.relIncreaseMyLimit);
+        tvApplyNowIncreaseLimit = view.findViewById(R.id.tvApplyNowIncreaseLimit);
+        llCommonLayer = view.findViewById(R.id.llCommonLayer);
+        llIncreaseLimitContainer = view.findViewById(R.id.llIncreaseLimitContainer);
+        logoIncreaseLimit = view.findViewById(R.id.logoIncreaseLimit);
         accountInArrearsLayout = view.findViewById(R.id.llAccountInArrearsParentContainer);
         tvHowToPayAccountStatus = view.findViewById(R.id.howToPayAccountStatus);
         tvHowToPayArrears = view.findViewById(R.id.howToPayArrears);
@@ -215,6 +233,9 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
         infoNextPaymentDue = view.findViewById(R.id.infoNextPaymentDue);
         infoCurrentBalance = view.findViewById(R.id.infoCurrentBalance);
         infoCreditLimit = view.findViewById(R.id.infoCreditLimit);
+
+        progressBarMyCard = view.findViewById(R.id.pbGetCardToken);
+        myCArdRightArrow = view.findViewById(R.id.imMyCardNextArrow);
 
         infoMinimumAmountDue.setOnClickListener(this);
         infoAmountOverdue.setOnClickListener(this);
@@ -433,10 +454,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
                         getActivity().getResources().getString(R.string.cli_got_it));
                 break;
             case R.id.rlMyStoreCard:
-                Intent displayStoreCardDetail = new Intent(activity, MyCardDetailActivity.class);
-                displayStoreCardDetail.putExtra(STORE_CARD_DETAIL, mStoreCardAccountDetail);
-                activity.startActivityForResult(displayStoreCardDetail, REQUEST_CODE_BLOCK_MY_STORE_CARD);
-                activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+                getStoreCards(this.account);
                 break;
             default:
                 break;
@@ -639,5 +657,70 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         mStoreCardFragmentIsVisible = isVisibleToUser;
+    }
+
+    public Call<StoreCardsResponse> getStoreCards(Account account) {
+        showGetCreditCardTokenProgressBar(VISIBLE);
+        Call<StoreCardsResponse> getStoreCardsRequest = OneAppService.INSTANCE.getStoreCards(new StoreCardsRequestBody(account.accountNumber, account.productOfferingId));
+        getStoreCardsRequest.enqueue(new CompletionHandler<>(new RequestListener<StoreCardsResponse>() {
+            @Override
+            public void onSuccess(StoreCardsResponse storeCardsResponse) {
+                showGetCreditCardTokenProgressBar(GONE);
+                switch (storeCardsResponse.getHttpCode()) {
+                    case 200:
+                        handleStoreCardResponse(storeCardsResponse);
+                        break;
+                    case 440:
+                        SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, offerActive.response.stsParams, getActivity());
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable error) {
+                if (error == null)return;
+                final Activity activity = getActivity();
+                if (activity!=null && mStoreCardFragmentIsVisible) {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            showGetCreditCardTokenProgressBar(GONE);
+                        }
+                    });
+                }
+            }
+        }, StoreCardsResponse.class));
+        return getStoreCardsRequest;
+    }
+
+    private void handleStoreCardResponse(StoreCardsResponse storeCardsResponse){
+        StoreCardsData storeCardsData = storeCardsResponse.getStoreCardsData();
+        Activity activity = getActivity();
+        if (activity == null || storeCardsData == null) return;
+
+        storeCardsResponse.getStoreCardsData().setProductOfferingId(productOfferingId);
+        storeCardsResponse.getStoreCardsData().setVisionAccountNumber(account.accountNumber);
+        if(storeCardsData.getGenerateVirtualCard() ) {
+            Intent intent = new Intent(activity, GetTemporaryStoreCardPopupActivity.class);
+            intent.putExtra(STORE_CARD_DETAIL, Utils.objectToJson(storeCardsResponse));
+            activity.startActivity(intent);
+            activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+        }else {
+            Intent displayStoreCardDetail = new Intent(activity, MyCardDetailActivity.class);
+            displayStoreCardDetail.putExtra(STORE_CARD_DETAIL, Utils.objectToJson(storeCardsResponse));
+            activity.startActivityForResult(displayStoreCardDetail, REQUEST_CODE_BLOCK_MY_STORE_CARD);
+            activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+        }
+    }
+
+    private void showGetCreditCardTokenProgressBar(int state) {
+        Activity activity = getActivity();
+        if (activity != null) {
+            progressBarMyCard.getIndeterminateDrawable().setColorFilter(ContextCompat.getColor(activity, R.color.black), android.graphics.PorterDuff.Mode.SRC_IN);
+            progressBarMyCard.setVisibility(state);
+            myCArdRightArrow.setVisibility((state == VISIBLE) ? GONE : VISIBLE);
+        }
     }
 }

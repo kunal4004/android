@@ -1685,6 +1685,20 @@
         <item name="android:statusBarColor" tools:ignore="NewApi">@android:color/transparent</item>
     </style>
 
+    <style name="StoreLocatorActivityStyle" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+        <item name="statusBarBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:selectableItemBackground">@android:color/transparent</item>
+        <item name="android:actionBarItemBackground">@null</item>
+        <item name="actionBarItemBackground">@null</item>
+        <item name="android:windowDrawsSystemBarBackgrounds" tools:targetApi="lollipop">true</item>
+        <item name="android:statusBarColor" tools:ignore="NewApi">@android:color/transparent</item>
+    </style>
+
     <style name="chat_text_style">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -1779,8 +1793,42 @@
     <style name="CustomProgressBarTheme">
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowSoftInputMode">stateUnchanged</item>
     </style>
 
+    <style name="instantStoreCardReplacementEditTextStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">@dimen/thirty_two_dp</item>
+        <item name="android:layout_marginEnd">@dimen/thirty_two_dp</item>
+        <item name="android:layout_marginTop">@dimen/sixteen_dp</item>
+        <item name="android:paddingTop">@dimen/sixteen_dp</item>
+        <item name="android:paddingBottom">@dimen/sixteen_dp</item>
+        <item name="android:background">@drawable/input_box_inactive_bg</item>
+        <item name="android:imeOptions">actionDone</item>
+        <item name="android:maxLength">19</item>
+        <item name="android:paddingStart">24dp</item>
+        <item name="android:paddingEnd">14dp</item>
+        <item name="android:cursorVisible">false</item>
+        <item name="android:textCursorDrawable">@color/black</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textColorHint">@color/unavailable</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:inputType">number|textNoSuggestions</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular_otf</item>
+
+    </style>
+
+    <style name="instantStoreCardReplacementImageButtonStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:paddingStart">@dimen/ten_dp</item>
+        <item name="android:paddingTop">@dimen/twelve_dp</item>
+        <item name="android:paddingEnd">@dimen/ten_dp</item>
+        <item name="android:paddingBottom">@dimen/twelve_dp</item>
+    </style>
     <style name="card_item_layout_style">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">@dimen/seventy_dp</item>
@@ -1842,14 +1890,9 @@
         <item name="android:textAllCaps">true</item>
     </style>
 
-    <style name="how_to_pay_text_style">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">wrap_content</item>
+    <style name="how_to_pay_text_style" parent="body_text_style">
         <item name="android:button">@drawable/circle_green_12</item>
         <item name="android:paddingLeft">@dimen/twenty_dp</item>
-        <item name="android:lineSpacingMultiplier">1.31</item>
-        <item name="android:fontFamily">@font/myriad_pro_regular</item>
-        <item name="android:textSize">@dimen/sixteen_sp</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:gravity">top</item>
     </style>
@@ -1951,5 +1994,46 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
+    <style name="body_text_style">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:lineSpacingMultiplier">1.31</item>
+        <item name="android:fontFamily">@font/myriad_pro_regular</item>
+        <item name="android:textSize">@dimen/sixteen_sp</item>
+        <item name="android:textColor">@color/gray</item>
+    </style>
+
+    <style name="call_to_action_text_style">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:letterSpacing">0.2</item>
+        <item name="android:fontFamily">@font/futura_semi_bold</item>
+        <item name="android:textSize">@dimen/twelve_sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="link_text_style">
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textColor">@color/gray</item>
+        <item name="fontFamily">@font/futura_medium</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:gravity">center</item>
+        <item name="android:letterSpacing" tools:ignore="NewApi">0.1</item>
+    </style>
+
+    <style name="dialog_action_text_style_gray_medium">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/futura_medium</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:textColor">@color/gray</item>
+        <item name="android:letterSpacing">0.2</item>
+        <item name="android:padding">@dimen/five_dp</item>
+        <item name="android:textSize">@dimen/twelve_sp</item>
+    </style>
 
 </resources>

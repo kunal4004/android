@@ -968,7 +968,7 @@ public class ProductDetailFragment extends BaseFragment<ProductDetailViewBinding
     public void startLocationUpdates() {
         showFindInStoreProgress();
         mFuseLocationAPISingleton.addLocationChangeListener(this);
-        mFuseLocationAPISingleton.startLocationUpdate(getActivity());
+        mFuseLocationAPISingleton.startLocationUpdate();
     }
 
     @Override

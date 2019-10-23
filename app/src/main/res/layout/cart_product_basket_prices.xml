@@ -148,13 +148,21 @@
             android:layout_marginRight="1dp"
             android:background="@color/outside_border"/>
 
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            style="@style/style_cart_basket_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/eighteen_dp"
+            android:text="@string/cart_item_not_preserved_until_checkout_info"
+            android:textSize="@dimen/fifteen_sp"
+            app:WTextView_font="myriadpro_regular"/>
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:id="@+id/tvDeliveryCostConfirmationDesc"
             style="@style/style_cart_basket_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/eighteen_dp"
+            android:layout_marginTop="@dimen/twelve_dp"
             android:text="@string/delivery_confirmation_desc"
             android:textSize="@dimen/fifteen_sp"
             app:WTextView_font="myriadpro_regular"/>

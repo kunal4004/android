@@ -1,26 +1,33 @@
 package za.co.woolworths.financial.services.android.ui.activities.card
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import com.awfs.coordination.R
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.my_card_activity.*
+import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.extension.addFragment
-import za.co.woolworths.financial.services.android.ui.fragments.npc.LinkCardFragment
+import za.co.woolworths.financial.services.android.ui.fragments.npc.InstantStoreCardFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
-
-class LinkNewCardActivity : MyCardActivityExtension() {
+class InstantStoreCardReplacementActivity : MyCardActivityExtension() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.block_my_card_activity)
         Utils.updateStatusBarBackground(this)
         actionBar()
+
+        intent?.extras?.apply {
+            mStoreCardDetail = getString(MyCardDetailActivity.STORE_CARD_DETAIL)
+        }
+
         if (savedInstanceState == null) {
             addFragment(
-                    fragment = LinkCardFragment.newInstance(),
-                    tag = LinkCardFragment::class.java.simpleName,
+                    fragment = InstantStoreCardFragment.newInstance(),
+                    tag = InstantStoreCardFragment::class.java.simpleName,
                     containerViewId = R.id.flMyCard)
         }
     }
@@ -40,7 +47,7 @@ class LinkNewCardActivity : MyCardActivityExtension() {
     }
 
     private fun navigateBack() {
-        supportFragmentManager?.apply {
+        with(supportFragmentManager) {
             if (backStackEntryCount > 0) {
                 fragments[backStackEntryCount - 1]?.onResume()
                 popBackStack()
@@ -52,7 +59,7 @@ class LinkNewCardActivity : MyCardActivityExtension() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater?.inflate(R.menu.search_item, menu)
+        menuInflater.inflate(R.menu.search_item, menu)
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -66,7 +73,17 @@ class LinkNewCardActivity : MyCardActivityExtension() {
     private fun finishActivity() {
         finish()
         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
-        navigateToMyCardActivity("",true) // TODO:: Replace "" by store card object
+        navigateToMyCardActivity(mStoreCardDetail, true)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        val instanceFragment = supportFragmentManager.findFragmentById(R.id.flMyCard)
+        instanceFragment?.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        supportFragmentManager.findFragmentById(R.id.flMyCard)?.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
 }

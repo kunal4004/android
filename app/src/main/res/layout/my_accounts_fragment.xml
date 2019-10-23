@@ -22,6 +22,7 @@
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeToRefreshAccount"
         android:layout_width="match_parent"
+        android:contentDescription="@string/sign_out_layout"
         android:enabled = "false"
         android:layout_height="wrap_content">
     <FrameLayout

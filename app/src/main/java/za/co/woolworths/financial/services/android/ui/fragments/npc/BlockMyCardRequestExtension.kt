@@ -27,7 +27,7 @@ abstract class BlockMyCardRequestExtension : MyCardExtension() {
                         }
                     }
                 }
-            },BlockMyCardResponse::class.java))
+            }, BlockMyCardResponse::class.java))
         }
     }
 

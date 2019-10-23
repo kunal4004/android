@@ -33,8 +33,10 @@ open class CompletionHandler<ResponseObj>(private val requestListener: RequestLi
     }
 
     override fun onFailure(call: Call<ResponseObj>, throwable: Throwable) {
-        this.requestListener?.onFailure(throwable)
-        RetrofitException(throwable).show()
+        if (!call.isCanceled) {
+            this.requestListener?.onFailure(throwable)
+            RetrofitException(throwable).show()
+        }
     }
 
     private fun displayMaintenanceScreenIfNeeded(response: Response<ResponseObj>): Boolean = RetrofitException(response.code()).show()

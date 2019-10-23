@@ -43,7 +43,7 @@
 
 
     <Button
-        android:id="@+id/btn_ok_got_it"
+        android:id="@+id/okGotItButton"
         style="?android:attr/borderlessButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="50dp"

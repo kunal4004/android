@@ -310,7 +310,7 @@ class WChatActivity : WChatActivityExtension(), IDialogListener {
             }
             offlineBanner.visibility = if (this) View.GONE else View.VISIBLE
             if (!this) edittext_chatbox.text.clear()
-            showAgentsMessage(if (this) AgentDefaultMessage.AGENT_ONLINE else AgentDefaultMessage.AGENT_OFFLINE)
+            showAgentsMessage(if (this) "Hi " + SessionUtilities.getInstance().jwt?.name?.get(0) + ". How can I help you today?" else "You have reached us outside of our business hours. Please contact us between " + getInAppTradingHoursForToday().opens + " and " + getInAppTradingHoursForToday().closes + ".")
         }
     }
 

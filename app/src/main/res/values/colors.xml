@@ -44,7 +44,7 @@
     <!-- Android standard ICS color -->
     <color name="transparent">#00000000</color>
     <!-- Android standard ICS color -->
-    <color name="stock_finder_map_header_bg">#cc292929</color>
+    <color name="stock_finder_map_header_bg">#CC292929</color>
     <color name="promo_text_color">#eb2e25</color>
     <color name="cli_button_border">#19000000</color>
     <color name="cli_yes_no_button_color">#212b36</color>
@@ -91,4 +91,8 @@
     <color name="chat_hint">#FFBCBCBC</color>
     <color name="chat_sent_message_text_color">#353535</color>
     <color name="chat_offline_banner_bg_color">#F7747474</color>
+    <color name="normal_store_locator_tab_title">#4D212B36</color>
+    <color name="selected_store_locator_tab_title">#212B36</color>
+    <color name="input_error_color_code">#D0021B</color>
+    <color name="input_error_box_color">#59FBEAE5</color>
 </resources>

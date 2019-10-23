@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.adapters.holder
 
 import android.graphics.Color
 import android.view.LayoutInflater
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
@@ -15,7 +16,6 @@ import za.co.woolworths.financial.services.android.models.dto.PromotionImages
 import za.co.woolworths.financial.services.android.util.ImageManager
 import za.co.woolworths.financial.services.android.util.Utils
 import za.co.woolworths.financial.services.android.util.WFormatter
-import java.util.*
 
 class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.product_listing_page_row, parent, false)) {
 
@@ -63,23 +63,48 @@ class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolde
 
         with(itemView) {
             if (wasPrice.isNullOrEmpty()) {
-                tvPrice.text = if (price!!.isEmpty()) "" else getMassPrice(price, productList?.priceType, kilogramPrice)
+                if (price!!.isEmpty()) {
+                    tvPrice.text = ""
+                } else {
+                    val priceType = productList?.priceType
+                    tvPrice.text = getMassPrice(price, priceType, kilogramPrice)
+                    showFromPriceLabel(priceType)
+                }
                 tvPrice.setTextColor(Color.BLACK)
                 tvWasPrice.text = ""
                 fromPriceStrikeThrough.visibility = GONE
             } else {
                 if (wasPrice.equals(price, ignoreCase = true)) {
-                    tvPrice.text = if (price!!.isEmpty()) WFormatter.formatAmount(wasPrice) else getMassPrice(price, productList?.priceType, kilogramPrice)
+                    if (price!!.isEmpty()) {
+                        tvPrice.text = WFormatter.formatAmount(wasPrice)
+                    } else {
+                        val priceType = productList?.priceType
+                        tvPrice.text = getMassPrice(price, priceType, kilogramPrice)
+                        showFromPriceLabel(priceType)
+                    }
                     tvPrice.setTextColor(Color.BLACK)
                     fromPriceStrikeThrough.visibility = GONE
                     tvWasPrice.text = ""
                 } else {
                     tvPrice.text = WFormatter.formatAmount(price)
                     tvPrice.setTextColor(ContextCompat.getColor(WoolworthsApplication.getAppContext(), R.color.was_price_color))
-                    tvWasPrice.text = wasPrice?.let { getMassPrice(it, productList?.priceType, kilogramPrice) }
-                    fromPriceStrikeThrough.visibility = VISIBLE
-                    tvWasPrice.setTextColor(Color.BLACK)
+                    wasPrice?.let {
+                        val priceType = productList?.priceType
+                        tvWasPrice.text = getMassPrice(it, priceType, kilogramPrice)
+                        showFromPriceLabel(priceType)
+                        fromPriceStrikeThrough.visibility = VISIBLE
+                        tvWasPrice.setTextColor(Color.BLACK)
+                        fromPriceLabelTextView?.text = "From " // add space on StrikeThrough only
+                    }
                 }
+            }
+        }
+    }
+
+    private fun View.showFromPriceLabel(priceType: String?) {
+        priceType?.let {
+            if (it.contains("from", true)) {
+                fromPriceLabelTextView?.visibility = VISIBLE
             }
         }
     }
@@ -117,15 +142,9 @@ class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolde
     private fun getMassPrice(price: String, priceType: String?, kilogramPrice: String): String {
         return with(priceType) {
             when {
-                isNullOrEmpty() -> {
-                    WFormatter.formatAmount(price)
-                }
-                this!!.contains("from", true) -> {
-                    "From " + WFormatter.formatAmount(price)
-                }
-                this.contains("Kilogram", true) -> {
-                    WFormatter.formatAmount(price)+" ("+WFormatter.formatAmount(kilogramPrice)+"/kg)"
-                }
+                isNullOrEmpty() -> WFormatter.formatAmount(price)
+                this!!.contains("from", true) -> WFormatter.formatAmount(price)
+                this.contains("Kilogram", true) -> WFormatter.formatAmount(price) + " (" + WFormatter.formatAmount(kilogramPrice) + "/kg)"
                 else -> WFormatter.formatAmount(price)
             }
         }

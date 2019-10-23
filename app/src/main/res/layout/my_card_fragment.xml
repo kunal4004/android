@@ -10,327 +10,307 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white">
+        android:background="@color/default_background"
+        android:paddingBottom="@dimen/twenty_four_dp">
 
-        <TextView
-            android:id="@+id/tvCardDetailTitle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="25dp"
-            android:layout_marginTop="33dp"
-            android:layout_marginEnd="8dp"
-            android:fontFamily="@font/futura_semi_bold_ttf"
-            android:letterSpacing="0.15"
-            android:lineSpacingMultiplier="1.20"
-            android:text="@string/card_detail_title"
-            android:textAllCaps="true"
-            android:textColor="@color/black"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imStoreCard"
-            tools:targetApi="lollipop" />
-
-        <View
-            android:id="@+id/card_detail_title_divider"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="14dp"
-            android:background="@color/grey_bg"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvCardDetailTitle" />
-
-        <TextView
-            android:id="@+id/tvCardNumberTitle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="30dp"
-            android:layout_marginEnd="8dp"
-            android:fontFamily="@font/myriad_pro_regular"
-            android:lineSpacingMultiplier="1.20"
-            android:text="@string/card_number_title"
-            android:textColor="@color/black"
-            android:textSize="15sp"
-            app:layout_constraintEnd_toStartOf="@+id/tvCardNumberValue"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/card_detail_title_divider" />
-
-        <TextView
-            android:id="@+id/tvCardNumberValue"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:layout_marginEnd="24dp"
-            android:fontFamily="@font/myriad_pro_semi_bold_otf"
-            android:gravity="end"
-            android:text="**** **** **** 4012"
-            android:textColor="@color/black"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toBottomOf="@+id/card_detail_title_divider"
-            tools:ignore="HardcodedText" />
-
-        <View
-            android:id="@+id/cardNumberDivider"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="26dp"
-            android:background="@color/grey_bg"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvCardNumberValue" />
-
-        <TextView
-            android:id="@+id/tvCardHolderTitle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="30dp"
-            android:layout_marginEnd="8dp"
-            android:fontFamily="@font/myriad_pro_regular"
-            android:text="@string/card_holder_title"
-            android:textColor="@color/black"
-            android:textSize="15sp"
-            app:layout_constraintEnd_toStartOf="@+id/tvCardHolderValue"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cardNumberDivider" />
-
-        <TextView
-            android:id="@+id/tvCardHolderValue"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="30dp"
-            android:layout_marginEnd="24dp"
-            android:ellipsize="end"
-            android:fontFamily="@font/myriad_pro_semi_bold_otf"
-            android:gravity="end"
-            android:singleLine="true"
-            android:text="Thuli Sandile"
-            android:textColor="@color/black"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toBottomOf="@+id/cardNumberDivider"
-            tools:ignore="HardcodedText" />
-
-
-        <View
-            android:id="@+id/cardHolderDivider"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="25dp"
-            android:background="@color/grey_bg"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvCardHolderTitle" />
-
-        <View
-            android:id="@+id/cardHolderEmptyView"
-            android:layout_width="0dp"
-            android:layout_height="16dp"
-            android:background="@color/grey_bg"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cardHolderDivider" />
-
-        <TextView
-            android:id="@+id/tvManageTitle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="25dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="17dp"
-            android:fontFamily="@font/futura_semi_bold_ttf"
-            android:letterSpacing="0.15"
-            android:text="@string/manage"
-            android:textAllCaps="true"
-            android:textColor="@color/black"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cardHolderEmptyView"
-            tools:ignore="UnusedAttribute" />
-
-        <View
-            android:id="@+id/manageSectionDivider"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="15dp"
-            android:background="@color/grey_bg"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvManageTitle" />
-
-        <View
-            android:id="@+id/blockCardView"
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:background="?android:attr/selectableItemBackground"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/manageSectionDivider" />
-
-
-        <ImageView
-            android:id="@+id/imBlockCardLogo"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginStart="25dp"
-            android:layout_marginTop="8dp"
-            android:alpha="0.5"
-            android:contentDescription="@string/app_label"
-            app:layout_constraintBottom_toBottomOf="@+id/blockCardView"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/manageSectionDivider"
-            app:srcCompat="@drawable/icon_card" />
-
-        <TextView
-            android:id="@+id/tvBlockCardTitle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:fontFamily="@font/myriad_pro_semi_bold_otf"
-            android:gravity="center|start"
-            android:text="@string/block_card_title"
-            android:textColor="@color/black"
-            android:textSize="15sp"
-            app:layout_constraintBottom_toBottomOf="@+id/blockCardView"
-            app:layout_constraintEnd_toStartOf="@+id/imBlockCardNextArrow"
-            app:layout_constraintStart_toEndOf="@+id/imBlockCardLogo"
-            app:layout_constraintTop_toBottomOf="@+id/manageSectionDivider"
-            tools:targetApi="lollipop" />
-
-        <ImageView
-            android:id="@+id/imBlockCardNextArrow"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cardLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="24dp"
-            android:contentDescription="@string/app_label"
-            app:layout_constraintBottom_toBottomOf="@+id/blockCardView"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/manageSectionDivider"
-            app:srcCompat="@drawable/ic_caret_black" />
+            android:background="@color/white"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <View
-            android:id="@+id/cardViewBackground"
+            <View
+                android:id="@+id/cardViewBackground"
+                android:layout_width="wrap_content"
+                android:layout_height="150dp"
+                android:background="@color/grey_bg"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/imStoreCard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:contentDescription="@string/image_card"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/w_store_card" />
+
+            <TextView
+                android:id="@+id/cardStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/textview_rounded_corner"
+                android:fontFamily="@font/futura_semi_bold_ttf"
+                android:gravity="center"
+                android:letterSpacing="0.1"
+                android:lineSpacingExtra="1.1sp"
+                android:paddingStart="4dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="4dp"
+                android:paddingBottom="4dp"
+                android:textColor="@color/active_card_color"
+                android:textSize="10sp"
+                android:textAllCaps="true"
+                app:layout_constraintStart_toStartOf="@+id/imStoreCard"
+                app:layout_constraintTop_toTopOf="@+id/imStoreCard"
+                tools:ignore="UnusedAttribute" />
+
+            <TextView
+                android:id="@+id/tvCardNumberHeader"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="8dp"
+                android:fontFamily="@font/futura_semi_bold_ttf"
+                android:gravity="center"
+                android:letterSpacing="0.1"
+                android:shadowColor="@color/black"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="1"
+                android:text="****  ****  ****  4012"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@+id/imStoreCard"
+                app:layout_constraintEnd_toEndOf="@+id/imStoreCard"
+                app:layout_constraintStart_toStartOf="@+id/imStoreCard"
+                app:layout_constraintTop_toBottomOf="@+id/cardStatus"
+                tools:targetApi="lollipop" />
+
+
+            <TextView
+                android:id="@+id/tvCardHolderHeader"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="24dp"
+                android:fontFamily="@font/myriad_pro_semi_bold_otf"
+                android:shadowColor="@color/black"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="1"
+                android:text="Thuli Sandile"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@+id/imStoreCard"
+                app:layout_constraintEnd_toEndOf="@+id/imStoreCard"
+                app:layout_constraintStart_toStartOf="@+id/imStoreCard"
+                app:layout_constraintTop_toBottomOf="@+id/tvCardNumberHeader"
+                tools:ignore="HardcodedText" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <RelativeLayout
+            android:id="@+id/cardDetailsView"
+            style="@style/card_items_header_layout_style"
+            android:layout_marginTop="0dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cardLayout">
+
+            <TextView
+                style="@style/card_items_header_text_style"
+                android:layout_alignParentStart="true"
+                android:contentDescription="@string/label_card_details"
+                android:text="@string/card_details" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/cardNumberLayout"
+            style="@style/card_item_layout_style"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cardDetailsView">
+
+            <TextView
+                android:id="@+id/cardNumberTitle"
+                style="@style/card_item_regular_text_style"
+                android:layout_alignParentStart="true"
+                android:text="@string/card_number_title" />
+
+            <TextView
+                android:id="@+id/textViewCardNumber"
+                style="@style/card_item_semi_bold_text_style"
+                android:layout_alignParentEnd="true" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/cardHolderLayout"
+            style="@style/card_item_layout_style"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cardNumberLayout">
+
+            <TextView
+                android:id="@+id/tvCardHolder"
+                style="@style/card_item_regular_text_style"
+                android:layout_alignParentStart="true"
+                android:text="@string/card_holder" />
+
+            <TextView
+                android:id="@+id/textViewCardHolderName"
+                style="@style/card_item_semi_bold_text_style"
+                android:contentDescription="@string/text_cardHolderName"
+                android:layout_alignParentEnd="true" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/expireDetailsLayout"
+            style="@style/card_item_layout_style"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cardHolderLayout">
+
+            <TextView
+                android:id="@+id/tvExpires"
+                style="@style/card_item_regular_text_style"
+                android:layout_alignParentStart="true"
+                android:text="@string/temp_card_expires" />
+
+            <TextView
+                android:id="@+id/cardExpireDate"
+                style="@style/card_item_semi_bold_text_style"
+                android:layout_marginRight="@dimen/sixteen_sp"
+                android:layout_toStartOf="@+id/expireInfo"
+                android:text="12 June 2019" />
+
+            <ImageView
+                android:id="@+id/expireInfo"
+                style="@style/card_item_end_icon_style"
+                android:src="@drawable/icon_info" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/manageView"
+            style="@style/card_items_header_layout_style"
+            android:layout_marginTop="@dimen/sixteen_dp"
+            android:contentDescription="@string/label_manage_layout"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/expireDetailsLayout">
+
+            <TextView
+                android:id="@+id/manageCardDetailLabelTextView"
+                style="@style/card_items_header_text_style"
+                android:contentDescription="@string/label_manage_card_details"
+                android:layout_alignParentStart="true"
+                android:text="@string/manage" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/blockCard"
+            style="@style/clickable_card_item_layout_style"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:contentDescription="@string/rlt_BlockCard"
+            app:layout_constraintTop_toBottomOf="@+id/manageView">
+
+            <ImageView
+                android:id="@+id/logoBlockCard"
+                style="@style/card_item_start_icon_style"
+                app:srcCompat="@drawable/icon_card" />
+
+            <TextView
+                android:id="@+id/tvBlockCard"
+                style="@style/card_item_semi_bold_text_style"
+                android:layout_toEndOf="@+id/logoBlockCard"
+                android:text="@string/block_card_title" />
+
+            <ImageView style="@style/card_item_end_icon_style" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/payWithCard"
+            style="@style/clickable_card_item_layout_style"
+            android:layout_marginTop="@dimen/sixteen_dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/blockCard">
+
+            <ImageView
+                android:id="@+id/logoPayWithCard"
+                style="@style/card_item_start_icon_style"
+                app:srcCompat="@drawable/icon_card" />
+
+            <TextView
+                android:id="@+id/tvPayWithCard"
+                style="@style/card_item_semi_bold_text_style"
+                android:layout_toEndOf="@+id/logoPayWithCard"
+                android:text="@string/pay_with_card" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerInParent="true"
+                android:gravity="center|end"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/payWithCardNextArrow"
+                    style="@style/style_loan_img" />
+
+                <ProgressBar
+                    android:id="@+id/payWithCardTokenProgressBar"
+                    style="?android:attr/progressBarStyleLarge"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="@dimen/bank_spacing_width"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/howItWorks"
+            style="@style/clickable_card_item_layout_style"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/payWithCard">
+
+            <ImageView
+                android:id="@+id/logoHowItWorks"
+                style="@style/card_item_start_icon_style"
+                app:srcCompat="@drawable/ic_statements" />
+
+            <TextView
+                android:id="@+id/tvHowItWorks"
+                style="@style/card_item_semi_bold_text_style"
+                android:layout_toEndOf="@+id/logoHowItWorks"
+                android:text="@string/how_it_works" />
+
+            <ImageView style="@style/card_item_end_icon_style" />
+
+        </RelativeLayout>
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/virtualCardViews"
             android:layout_width="wrap_content"
-            android:layout_height="150dp"
-            android:background="@color/grey_bg"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="howItWorks,payWithCard,expireDetailsLayout" />
 
-        <ImageView
-            android:id="@+id/imStoreCard"
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/blockCardViews"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/w_store_card" />
+            app:constraint_referenced_ids="manageView,blockCard,cardNumberLayout" />
 
-        <TextView
-            android:id="@+id/tvActive"
-            android:layout_width="wrap_content"
-            android:layout_height="24dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/textview_rounded_corner"
-            android:fontFamily="@font/futura_semi_bold_ttf"
-            android:gravity="center"
-            android:letterSpacing="0.1"
-            android:lineSpacingExtra="1.1sp"
-            android:paddingStart="4dp"
-            android:paddingTop="4dp"
-            android:paddingEnd="4dp"
-            android:paddingBottom="4dp"
-            android:text="@string/active"
-            android:textColor="@color/active_card_color"
-            android:textSize="10sp"
-            app:layout_constraintStart_toStartOf="@+id/imStoreCard"
-            app:layout_constraintTop_toTopOf="@+id/imStoreCard"
-            tools:ignore="UnusedAttribute" />
-
-        <TextView
-            android:id="@+id/tvCardNumberHeader"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginBottom="8dp"
-            android:fontFamily="@font/futura_semi_bold_ttf"
-            android:gravity="center"
-            android:letterSpacing="0.1"
-            android:shadowColor="@color/black"
-            android:shadowDx="1"
-            android:shadowDy="1"
-            android:shadowRadius="1"
-            android:text="****  ****  ****  4012"
-            android:textColor="@color/white"
-            android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="@+id/imStoreCard"
-            app:layout_constraintEnd_toEndOf="@+id/imStoreCard"
-            app:layout_constraintStart_toStartOf="@+id/imStoreCard"
-            app:layout_constraintTop_toBottomOf="@+id/tvActive"
-            tools:targetApi="lollipop" />
-
-
-        <TextView
-            android:id="@+id/tvCardHolderHeader"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginBottom="24dp"
-            android:fontFamily="@font/myriad_pro_semi_bold_otf"
-            android:shadowColor="@color/black"
-            android:shadowDx="1"
-            android:shadowDy="1"
-            android:shadowRadius="1"
-            android:text="Thuli Sandile"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="@+id/imStoreCard"
-            app:layout_constraintEnd_toEndOf="@+id/imStoreCard"
-            app:layout_constraintStart_toStartOf="@+id/imStoreCard"
-            app:layout_constraintTop_toBottomOf="@+id/tvCardNumberHeader"
-            tools:ignore="HardcodedText" />
-
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline"
-            android:layout_width="1dp"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.45" />
-
-        <View
-            android:id="@+id/vEndlessView"
-            android:layout_width="0dp"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/grey_bg"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/blockCardView" />
-
-        <View
-            android:id="@+id/view3"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@color/grey_bg"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/vEndlessView" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

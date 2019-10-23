@@ -2,8 +2,19 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@color/white">
+
+    <include
+        android:id="@+id/incSwipeCloseIndicator"
+        layout="@layout/popup_close_header_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <TextView
@@ -13,7 +24,7 @@
         android:text="@string/dialog_scan_barcode_to_pay_title"
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
         app:layout_constraintRight_toRightOf="@+id/right_guideline"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/incSwipeCloseIndicator" />
 
     <TextView
         android:id="@+id/description"
@@ -30,7 +41,6 @@
         android:layout_height="@dimen/sixty_six_dp"
         android:layout_marginTop="@dimen/twenty_four_dp"
         android:adjustViewBounds="true"
-        android:background="@color/black"
         android:scaleType="fitXY"
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
         app:layout_constraintRight_toRightOf="@+id/right_guideline"
@@ -50,8 +60,9 @@
             android:text="@string/card_holder" />
 
         <TextView
-            android:id="@+id/tvCardHolderName"
+            android:id="@+id/cardHolderName"
             style="@style/card_item_semi_bold_text_style"
+            android:textAllCaps="false"
             android:layout_alignParentEnd="true" />
 
     </RelativeLayout>
@@ -67,13 +78,15 @@
         app:layout_constraintTop_toBottomOf="@id/cardHolderLayout" />
 
     <TextView
-        android:id="@+id/done"
-        style="@style/dialog_action_text_style"
+        android:id="@+id/regenerateBarcode"
+        style="@style/dialog_action_text_style_gray_medium"
         android:layout_marginTop="@dimen/twenty_four_dp"
-        android:text="@string/done"
+        android:text="@string/having_problems_generate_new_barcode"
+        android:textAllCaps="true"
         app:layout_constraintLeft_toLeftOf="@+id/left_guideline"
         app:layout_constraintRight_toRightOf="@+id/right_guideline"
-        app:layout_constraintTop_toBottomOf="@id/vHorizontalDivider" />
+        app:layout_constraintTop_toBottomOf="@id/vHorizontalDivider"
+        app:layout_constraintBottom_toBottomOf="@id/bottom_guideline"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/left_guideline"
@@ -81,6 +94,13 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_begin="@dimen/twenty_four_dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/bottom_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="@dimen/twenty_four_dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/right_guideline"

@@ -927,7 +927,7 @@
     <string name="processing_your_request_desc">This may take a few seconds</string>
     <string name="blocked">BLOCKED</string>
     <string name="no_active_card">No Active Card</string>
-    <string name="card_block_desc">Your card has been blocked and can no longer be used. Call 0861 50 20 20 to arrange for delivery.</string>
+    <string name="card_block_desc">Your card has been blocked and can no longer be used.</string>
     <string name="link_a_card">link a card</string>
     <string name="get_replacement_card">get replacement card</string>
     <string name="get_a_replacement_card">Get A Replacement Card</string>
@@ -943,12 +943,12 @@
     <string name="enter_new_card_number">Enter new card number</string>
     <string name="participating_store_desc">Can\'t find a participating store close to you? Call <b>0861 50 20 20</b> to arrange for delivery</string>
     <string name="enter_otp_title">Enter OTP</string>
-    <string name="enter_otp_desc"><![CDATA[Your One Time Pin(OTP) has been sent to <b>*** **** 1234</b>. Please enter the OTP below.]]></string>
+    <string name="enter_otp_desc">Your One Time Pin(OTP) has been sent to %1$s. Please enter the OTP below.</string>
     <string name="did_not_receive_title">Did Not Receive otp?</string>
     <string name="resend_otp_title">Resend OTP</string>
-    <string name="resend_sms_to">SMS to *** **** 1234</string>
+    <string name="resend_sms_to">SMS to </string>
     <string name="send_to_your_email_address">Send to your email address</string>
-    <string name="call_center_desc"> Call Centre 0861 50 20 20</string>
+    <string name="call_center_desc"> Call Centre</string>
     <string name="congratulations_title">Congratulations!\nYour New Card Has Successfully Been Linked.</string>
     <string name="congratulations_desc">Please remember to take your SA Identity Document (ID) along for your first purchase with this card.</string>
     <string name="card_block_success">Your card has been</string>
@@ -1020,7 +1020,7 @@
     <string name="saving_woolies_favorite_every_day_desc">Get instant savings on quality staples and best-loved products. Look out for the WRewards icon in the Daily Difference, in store and online or on the Woolies app.</string>
     <string name="extra_saving_promo_event_title">Extra Savings, Promos &amp; Events</string>
     <string name="extra_saving_promo_event_desc">You may get something extra on promos – be it early access to promos, additional savings or complimentary vouchers. Best of all, some promos will be exclusive to WRewards members.</string>
-   <string name="exclusive_voucher_just_for_you_title">Exclusive Vouchers Just For You</string>
+    <string name="exclusive_voucher_just_for_you_title">Exclusive Vouchers Just For You</string>
     <string name="exclusive_voucher_just_for_you_desc">Keep an eye out for vouchers that give you discount on items we think you’ll enjoy.</string>
     <string name="reward_benefits_title">WRewards Benefits</string>
     <string name="reward_more_info">MORE INFO</string>
@@ -1057,10 +1057,14 @@
     <string name="no_stock_available">No Stock Available Online</string>
     <string name="no_stock_available_desc">Use our find in-store feature to see if there is stock available at a Woolies store near you.</string>
     <string name="no_of_items_added">%1$Item%2$</string>
-    <string name="temp_card_how_to_use1">This temp card is valid for 30 days.</string>
-    <string name="temp_card_how_to_use2">You’ll need to bring your ID document  in-store to use your temporary card.</string>
-    <string name="temp_card_how_to_use3">Your temp card will not work online and  can only be used in-store.</string>
-    <string name="temp_card_how_to_use4">Your temp card will be removed  following the first physical in-store swipe.</string>
+    <string name="npc_already_have_your_card_link">ALREADY HAVE your card? SCAN it NOW</string>
+    <string name="npc_participating_store">Can\'t find a participating store close to you? Call 0861 50 20 20 to arrange for delivery.</string>
+    <string name="temp_card_how_to_use1">For WRewards we have provided you with a digital WRewards card, accessible by tapping the WRewards icon.  Scan this upfront, before your shopping and payment, to get great rewards and benefits.</string>
+    <string name="temp_card_how_to_use2">Please let our operator know you will be using your temporary card and when prompted for payment, present the bar code to the scanner in the same way as a voucher.</string>
+    <string name="temp_card_how_to_use3">This temporary card is valid for 30 days.</string>
+    <string name="temp_card_how_to_use4">To use your temp store card in store, please take along your South African ID every time you want to shop with your temp card.</string>
+    <string name="temp_card_how_to_use5">Your temp store card can only be used in store and not online.</string>
+    <string name="temp_card_how_to_use6">Your temp store card will be removed after your first purchase in-store using your plastic store card.</string>
     <string name="dialog_scan_barcode_to_pay_title">Scan Barcode to Pay</string>
     <string name="dialog_scan_barcode_to_pay_desc">Present your South African I.D. document to the cashier to use your temporary card.</string>
     <string name="card_details">card details</string>
@@ -1075,9 +1079,13 @@
     <string name="cd_store_card_apply_now_text">store card apply now text</string>
     <string name="cd_store_card_available_funds_text">store card available funds text</string>
     <string name="cd_sign_out">sign out</string>
+    <string name="call_the_call_center">Call the Call Centre (0861 50 20 20)</string>
+    <string name="link_card_failure">Try linking your card again, or call the Call Centre (0861 50 20 20) for further assistance.</string>
+    <string name="enter_sequence_number" tools:ignore="ExtraTranslation">Enter sequence number</string>
+    <string name="sequence_number">Sequence Number</string>
+    <string name="sequence_number_desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
     <string name="oops_err_message">Oops, something went wrong.</string>
     <string name="oops_err_title">Error</string>
-
     <string name="request_timeout_error">Your request timed out, please try again later</string>
     <string name="product_options">Product Options</string>
     <string name="check_in_store_availablity">Check In-store Availablity</string>
@@ -1086,5 +1094,74 @@
     <string name="product_information">Product Information</string>
     <string name="product_details">Product Details</string>
     <string name="nutritional_information">Nutritional Information</string>
+    <string name="get_temp_sc_title">Your Woolies Store Card is on it\'s on way. Start shopping today with your temporary store card.</string>
+    <string name="get_temp_sc_description">To shop with your temporary card in store, bring along your ID. Your temporary card is valid for 30 days.</string>
+    <string name="get_temp_sc_action">GET TEMP STORE CARD NOW</string>
+    <string name="get_temp_sc_link_how_to_pay">how to use your temporary store card</string>
+    <string name="dialog_temp_store_card_expire_info_title">Temp Card Expires</string>
+    <string name="dialog_temp_store_card_expire_info_desc">Your temporary card is only valid for 30 days and will automatically expire after this time or on your first swipe of your store card, in store.</string>
+    <string name="cart_item_not_preserved_until_checkout_info">* Items are not reserved until you checkout</string>
+    <string name="having_problems_generate_new_barcode">having problems? generate new barcode</string>
+    <string name="store_card_status_temporay">temp</string>
+    <string name="virtual_store_card_temp_desc">Congratulations!\nYour Temp Store Card has been activated. Happy Shopping!</string>
+    <string name="link_card_failure_desc">There was a problem  linking your card</string>
+
+
+    <!-- My Card Unblocked -->
+    <string name="toolbar_title"> My Card</string>
+    <string name="image_card">Card Image</string>
+    <string name="label_card_details">Card Details</string>
+    <string name="label_cardHolder">Card Holder</string>
+    <string name="text_cardHolderName">Card Holder Name</string>
+    <string name="label_manage_card_details">Manage</string>
+    <string name="rlt_BlockCard"> Block Card</string>
+
+    <!-- Block Card -->
+    <string name="label_blockCard">Block Card</string>
+    <string name="label_blockCardDescription">Block card Description</string>
+    <string name="rlt_BlockReason">Block Reason Layout</string>
+    <string name="label_manage_layout">Manage</string>
+    <string name="button_blockCard">Block Card</string>
+
+    <!-- Permanent Block Card Pop up -->
+    <string name="label_permanent_block_card">Permanent Block Card</string>
+    <string name="button__yes_block_card">yes, Block Card</string>
+    <string name="link_cancel">Cancel</string>
+    <string name="label_permanent_block_card_description">Permanent Block Card Description</string>
+
+    <!-- My Card (Blocked) -->
+    <string name="label_noActiveCard">No Active Card</string>
+    <string name="label_noActiveCardDescription"> No Active Card Description</string>
+    <string name="button_getReplacementCard">Get Replacement Card</string>
+    <string name="link_alreadyHaveCard">Already Have Card</string>
+
+    <!-- Replacement Card -->
+    <string name="replacement_card_image">Card image</string>
+    <string name="label_getICR">Get ICR Card</string>
+    <string name="label_getICRCardDescription">Get ICR Description</string>
+    <string name="button_getParticipantsStores"> Participants Stores</string>
+    <string name="replacement_card_link_alreadyHaveCard"> Already Have Card</string>
+
+    <!--  Link New Card -->
+    <string name="label_linkICR"> Link ICR Card</string>
+    <string name="label_linkICRCardDescription"> Link ICR Description</string>
+    <string name="text_carddetails"> Card Number Textbox</string>
+    <string name="text_seqNumber"> Seq Number Textbox</string>
+    <string name="button_next">Next button</string>
+
+    <string name="linked_store_card_layout">Linked Store Card</string>
+    <string name="apply_store_card_layout">Apply Store Card</string>
+    <string name="linked_credit_card_layout"> Linked Credit Card</string>
+    <string name="apply_credit_card_layout"> Apply Credit Card</string>
+    <string name="linked_personal_loan_layout">Linked Personal Loan</string>
+    <string name="apply_personal_loan_layout">Apply Personal Loan</string>
+    <string name="messages_layout">Messages</string>
+    <string name="store_locator_layout">Store Locator</string>
+    <string name="need_help_layout">Need Help</string>
+    <string name="contact_us_layout">Contact Us</string>
+    <string name="profile_layout">Profile</string>
+    <string name="update_password_layout">Update Password</string>
+    <string name="mypreferences_layout">MyPreferences</string>
+    <string name="sign_out_layout">Sign Out</string>
 
 </resources>

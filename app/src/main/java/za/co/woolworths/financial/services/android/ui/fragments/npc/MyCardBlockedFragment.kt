@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.npc
 
+import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,15 +9,28 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.my_card_blocked_fragment.*
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.util.Utils
-import android.content.Intent
-import android.net.Uri
-
+import androidx.appcompat.app.AppCompatActivity
+import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
+import za.co.woolworths.financial.services.android.ui.extension.withArgs
 
 class MyCardBlockedFragment : MyCardExtension() {
 
+    private var mStoreCardDetail: String? = null
+
     companion object {
-        fun newInstance() = MyCardBlockedFragment()
+        fun newInstance(storeCardDetail: String?) = MyCardBlockedFragment().withArgs {
+            putString(MyCardDetailActivity.STORE_CARD_DETAIL, storeCardDetail)
+        }
     }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.apply {
+            mStoreCardDetail = getString(MyCardDetailActivity.STORE_CARD_DETAIL, "")
+            activity?.let { Utils.updateStatusBarBackground(it, R.color.grey_bg) }
+        }
+    }
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         activity?.let { Utils.updateStatusBarBackground(it, R.color.grey_bg) }
@@ -27,10 +41,8 @@ class MyCardBlockedFragment : MyCardExtension() {
         super.onViewCreated(view, savedInstanceState)
 
         btnGetReplacementCard?.setOnClickListener { navigateToReplacementCard() }
-       // btnLinkACard?.setOnClickListener { (activity as? AppCompatActivity)?.apply { navigateToLinkNewCardActivity(this) } }
-        btnLinkACard?.setOnClickListener {
-            val intent = Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", "0861502020", null))
-            startActivity(intent) }
+        btnLinkACard?.setOnClickListener { (activity as? AppCompatActivity)?.apply { navigateToLinkNewCardActivity(this, mStoreCardDetail) } }
+        btnLinkACard?.paintFlags = btnLinkACard.paintFlags or Paint.UNDERLINE_TEXT_FLAG
     }
 
     private fun navigateToReplacementCard() {
