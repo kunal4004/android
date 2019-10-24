@@ -103,6 +103,5 @@ open class MyCardActivityExtension : AppCompatActivity(), IOTPReceiveListener {
 
     override fun onOTPTimeOut() {}
 
-    override fun onOTPReceivedError(error: String) {
-    }
+    override fun onOTPReceivedError(error: String) {}
 }
