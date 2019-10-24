@@ -42,7 +42,10 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (activity as? MyCardActivityExtension)?.showBackIcon()
+        (activity as? MyCardActivityExtension)?.apply {
+            startSMSListener()
+            showBackIcon()
+        }
         setupInputListeners()
         configureUI()
         clickEvent()
@@ -142,4 +145,22 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
 
     private fun getNumberFromEditText(numberEditText: EditText?) = numberEditText?.text?.toString()
             ?: ""
+
+    override fun onDestroy() {
+        super.onDestroy()
+        (activity as? MyCardActivityExtension)?.cancelSMSRetriever()
+    }
+
+    fun onOTPReceived(otp: String?) {
+        displayRetrievedOTP(edtVerificationCode1, otp, 0)
+        displayRetrievedOTP(edtVerificationCode2, otp, 1)
+        displayRetrievedOTP(edtVerificationCode3, otp, 2)
+        displayRetrievedOTP(edtVerificationCode4, otp, 3)
+        displayRetrievedOTP(edtVerificationCode5, otp, 4)
+    }
+
+    private fun displayRetrievedOTP(editText: EditText?, otp: String?, position: Int) {
+        editText?.setText("")
+        editText?.setText(otp?.toCharArray()?.get(position)?.toString())
+    }
 }

@@ -21,10 +21,10 @@ import za.co.woolworths.financial.services.android.ui.activities.card.InstantSto
 import za.co.woolworths.financial.services.android.ui.views.ProgressBarDialog
 
 class InstantStoreCardFragment : MyCardExtension() {
-
     private var shouldDisableUINavigation = false
 
     private var progressBarDialog: ProgressBarDialog? = ProgressBarDialog()
+
 
     companion object {
         const val REQUEST_CODE_SCAN_CARD = 1
