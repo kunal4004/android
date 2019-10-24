@@ -148,7 +148,7 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
 
     override fun onDestroy() {
         super.onDestroy()
-        (activity as? MyCardActivityExtension)?.cancelSMSRetriever()
+        cancelSMSListener()
     }
 
     fun onOTPReceived(otp: String?) {
@@ -157,7 +157,11 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
         displayRetrievedOTP(edtVerificationCode3, otp, 2)
         displayRetrievedOTP(edtVerificationCode4, otp, 3)
         displayRetrievedOTP(edtVerificationCode5, otp, 4)
+
+        cancelSMSListener()
     }
+
+    private fun cancelSMSListener() = (activity as? MyCardActivityExtension)?.cancelSMSRetriever()
 
     private fun displayRetrievedOTP(editText: EditText?, otp: String?, position: Int) {
         editText?.setText("")
