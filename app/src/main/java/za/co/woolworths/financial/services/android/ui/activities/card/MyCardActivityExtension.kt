@@ -15,7 +15,6 @@ open class MyCardActivityExtension : AppCompatActivity() {
     private var otpType: OTPMethodType = OTPMethodType.SMS
     private var cardNumber: String? = null
     private var oTPNumber: String? = null
-    private var sequenceNumber: String? = null
     var mDefaultOtpSentTo: String? = null // required to save default phone number
 
     fun getOTPMethodType(): OTPMethodType = this.otpType
@@ -35,12 +34,6 @@ open class MyCardActivityExtension : AppCompatActivity() {
     }
 
     fun getOtpNumber(): String = oTPNumber ?: ""
-
-    fun setSequenceNumber(sequenceNumber: String) {
-        this.sequenceNumber = sequenceNumber
-    }
-
-    fun getSequenceNumber() = sequenceNumber?.toInt() ?: 0
 
     fun clearFlag() {
         window?.clearFlags(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)

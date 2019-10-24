@@ -71,28 +71,6 @@
         app:layout_constraintTop_toTopOf="@+id/cardNumberEditText"
         app:srcCompat="@drawable/camera_image_bg" />
 
-    <EditText
-        android:id="@+id/sequenceNumberEditText"
-        style="@style/instantStoreCardReplacementEditTextStyle"
-        android:layout_marginTop="16dp"
-        android:contentDescription="@string/text_seqNumber"
-        android:hint="@string/enter_sequence_number"
-        android:imeOptions="actionDone"
-        android:maxLength="1"
-        android:textColorHint="@color/unavailable"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardNumberEditText"
-        tools:ignore="LabelFor" />
-
-    <ImageButton
-        android:id="@+id/infoIconImage"
-        style="@style/instantStoreCardReplacementImageButtonStyle"
-        app:layout_constraintBottom_toBottomOf="@+id/sequenceNumberEditText"
-        app:layout_constraintEnd_toEndOf="@+id/sequenceNumberEditText"
-        app:layout_constraintTop_toTopOf="@+id/sequenceNumberEditText"
-        app:srcCompat="@drawable/icon_info" />
-
 
     <ImageView
         android:id="@+id/navigateToEnterOTPFragmentImageView"
@@ -103,7 +81,7 @@
         android:alpha="0.5"
         android:contentDescription="@string/button_next"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sequenceNumberEditText"
+        app:layout_constraintTop_toBottomOf="@+id/cardNumberEditText"
         app:srcCompat="@drawable/next_button_icon" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -67,13 +67,14 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
 
         mCurrentActivity?.apply {
 
-            var sequenceNumber = getSequenceNumber()
+            val sequenceNumber: Int?
             storeDetails = getStoreCardDetail().storeCardsData
 
             if (activity is InstantStoreCardReplacementActivity) {
                 mLinkCardType = LinkCardType.LINK_NEW_CARD.type
+                sequenceNumber = 1
             } else {
-                sequenceNumber = storeDetails?.primaryCards?.get(0)?.sequence?.toInt() ?: 0
+                sequenceNumber = null
                 mLinkCardType = LinkCardType.VIRTUAL_TEMP_CARD.type
             }
 
@@ -104,7 +105,7 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
                             override fun onSuccessHandler(response: StoreCardsResponse) {
                                 if (!isAdded) return
                                 super.onSuccessHandler(response)
-                                mCurrentActivity?.clearFlag()
+                                clearFlag()
                                 object : CountDownTimer(1500, 100) {
                                     override fun onTick(millisUntilFinished: Long) {
                                     }

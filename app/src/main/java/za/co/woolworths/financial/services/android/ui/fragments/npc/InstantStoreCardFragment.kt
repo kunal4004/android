@@ -19,7 +19,6 @@ import za.co.woolworths.financial.services.android.contracts.IOTPLinkStoreCard
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity
 import za.co.woolworths.financial.services.android.ui.views.ProgressBarDialog
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.GotItDialogIconFragment
 
 class InstantStoreCardFragment : MyCardExtension() {
 
@@ -52,10 +51,7 @@ class InstantStoreCardFragment : MyCardExtension() {
     private fun navigateToOTPScreen() {
         if (shouldDisableUINavigation) return
         if (navigateToEnterOTPFragmentImageView?.alpha == 1.0f) {
-            (activity as? InstantStoreCardReplacementActivity)?.apply {
-                setSequenceNumber(sequenceNumberEditText?.text?.toString() ?: "")
-                setOTPType(OTPMethodType.SMS)
-            }
+            (activity as? InstantStoreCardReplacementActivity)?.setOTPType(OTPMethodType.SMS)
             makeOTPCall()
         }
     }
@@ -71,16 +67,6 @@ class InstantStoreCardFragment : MyCardExtension() {
             })
         }
 
-        sequenceNumberEditText?.apply {
-            addTextChangedListener(object : CreditCardTextWatcher(this) {
-
-                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                    super.onTextChanged(s, start, before, count)
-                    navigateToEnterOTPFragmentImageView?.alpha = if (cardNumberEditText?.length() == 19 && sequenceNumberEditText.length() == 1) 1.0f else 0.5f
-                }
-            })
-        }
-
         cardNumberEditText?.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 navigateToOTPScreen()
@@ -91,23 +77,10 @@ class InstantStoreCardFragment : MyCardExtension() {
         cardNumberEditText?.setOnFocusChangeListener { v, hasFocus ->
             cardNumberEditText?.isCursorVisible = hasFocus
         }
-
-        sequenceNumberEditText?.setOnFocusChangeListener { v, hasFocus ->
-            sequenceNumberEditText?.isCursorVisible = hasFocus
-        }
-
-        infoIconImage?.setOnClickListener {
-            activity?.apply {
-                val gotItDialogIconFragment = GotItDialogIconFragment.newInstance(
-                        title = getString(R.string.sequence_number),
-                        description = getString(R.string.sequence_number_desc))
-                supportFragmentManager.beginTransaction().let { fragmentTransaction -> gotItDialogIconFragment.show(fragmentTransaction, GotItDialogIconFragment::class.java.simpleName) }
-            }
-        }
     }
 
     private fun navigateToOTPScreenValidator() {
-        navigateToEnterOTPFragmentImageView?.alpha = if (cardNumberEditText?.length() == 19 && sequenceNumberEditText?.length() == 1) 1.0f else 0.5f
+        navigateToEnterOTPFragmentImageView?.alpha = if (cardNumberEditText?.length() == 19) 1.0f else 0.5f
     }
 
     override fun onResume() {
@@ -130,8 +103,6 @@ class InstantStoreCardFragment : MyCardExtension() {
                     progressBarDialog?.show(activity)
                     cardNumberEditText?.isFocusable = false
                     cardNumberEditText?.isFocusableInTouchMode = false
-                    sequenceNumberEditText?.isFocusable = false
-                    sequenceNumberEditText?.isFocusableInTouchMode = false
                 }
 
                 override fun loadComplete() {
@@ -140,8 +111,6 @@ class InstantStoreCardFragment : MyCardExtension() {
                     progressBarDialog?.dismissDialog()
                     cardNumberEditText?.isFocusable = true
                     cardNumberEditText?.isFocusableInTouchMode = true
-                    sequenceNumberEditText?.isFocusable = true
-                    sequenceNumberEditText?.isFocusableInTouchMode = true
                 }
 
                 override fun onSuccessHandler(response: LinkNewCardOTP) {
@@ -170,12 +139,12 @@ class InstantStoreCardFragment : MyCardExtension() {
         if (requestCode == REQUEST_CODE_SCAN_CARD) {
             when (resultCode) {
                 RESULT_OK -> {
-                    val cardNumber = (data?.getParcelableExtra<Parcelable>(ScanCardIntent.RESULT_PAYCARDS_CARD) as? Card)?.cardNumber ?: ""
+                    val cardNumber = (data?.getParcelableExtra<Parcelable>(ScanCardIntent.RESULT_PAYCARDS_CARD) as? Card)?.cardNumber
+                            ?: ""
                     cardNumberEditText?.setText(cardNumber)
                 }
                 else -> return
             }
         }
     }
-
 }
