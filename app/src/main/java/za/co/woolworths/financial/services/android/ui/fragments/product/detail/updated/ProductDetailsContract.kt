@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated
 
 import android.content.Context
+import za.co.woolworths.financial.services.android.contracts.RequestListener
 import za.co.woolworths.financial.services.android.models.dto.ProductDetails
 import za.co.woolworths.financial.services.android.models.dto.ProductRequest
 import za.co.woolworths.financial.services.android.models.dto.Response
@@ -17,6 +18,9 @@ interface ProductDetailsContract {
         fun onFailureResponse(error: String)
         fun onStockAvailabilitySuccess(skusInventoryForStoreResponse: SkusInventoryForStoreResponse)
         fun getImageByWidth(imageUrl: String, context: Context): String
+        fun updateDefaultUI()
+        fun updateAuxiliaryImages(imagesList: List<String>)
+        fun setPromotionalText(promotionValue: String)
     }
 
     interface ProductDetailsPresenter {
@@ -28,9 +32,12 @@ interface ProductDetailsContract {
     }
 
     interface ProductDetailsInteractor {
-        fun getProductDetails(productRequest: ProductRequest)
+
+        interface OnFinishListener : RequestListener<Any>
+
+        fun getProductDetails(productRequest: ProductRequest, onFinishListener: OnFinishListener)
         fun getCartSummary()
-        fun getStockAvailability(storeID: String, multiSKU: String)
+        fun getStockAvailability(storeID: String, multiSKU: String, onFinishListener: OnFinishListener)
         fun postAddItemToCart()
         fun getLocationItems()
     }

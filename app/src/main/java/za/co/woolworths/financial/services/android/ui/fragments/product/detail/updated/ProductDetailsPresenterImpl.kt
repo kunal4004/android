@@ -5,7 +5,7 @@ import za.co.woolworths.financial.services.android.models.dto.ProductDetailRespo
 import za.co.woolworths.financial.services.android.models.dto.ProductRequest
 import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
 
-class ProductDetailsPresenterImpl(var mainView: ProductDetailsContract.ProductDetailsView?, var getInteractor: ProductDetailsContract.ProductDetailsInteractor) : ProductDetailsContract.ProductDetailsPresenter, RequestListener<Any> {
+class ProductDetailsPresenterImpl(var mainView: ProductDetailsContract.ProductDetailsView?, var getInteractor: ProductDetailsContract.ProductDetailsInteractor) : ProductDetailsContract.ProductDetailsPresenter, ProductDetailsContract.ProductDetailsInteractor.OnFinishListener {
 
     override fun onDestroy() {
         mainView = null
@@ -14,12 +14,12 @@ class ProductDetailsPresenterImpl(var mainView: ProductDetailsContract.ProductDe
     override fun loadStockAvailability(storeID: String, multiSKU: String) {
         mainView?.apply {
             showProgressBar()
-            getInteractor.getStockAvailability(storeID, multiSKU)
+            getInteractor.getStockAvailability(storeID, multiSKU, this@ProductDetailsPresenterImpl)
         }
     }
 
     override fun loadProductDetails(productRequest: ProductRequest) {
-        getInteractor.getProductDetails(productRequest)
+        getInteractor.getProductDetails(productRequest, this)
     }
 
     override fun onSuccess(response: Any?) {

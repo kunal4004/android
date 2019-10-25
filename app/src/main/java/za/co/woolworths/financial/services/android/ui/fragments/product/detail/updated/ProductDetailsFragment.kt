@@ -12,17 +12,17 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.product_details_fragment.*
-import kotlinx.android.synthetic.main.product_details_size_and_color_layout.*
 import kotlinx.android.synthetic.main.product_details_price_layout.*
-import za.co.woolworths.financial.services.android.models.dto.ProductDetails
-import za.co.woolworths.financial.services.android.models.dto.Response
-import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
+import kotlinx.android.synthetic.main.product_details_size_and_color_layout.*
+import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow
 import za.co.woolworths.financial.services.android.ui.adapters.ProductColorSelectorAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeSelectorAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter
-import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ProductUtils
+import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductListingViewHolderItems
+import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseProductUtils
 import za.co.woolworths.financial.services.android.util.Utils
-import java.util.ArrayList
+import java.util.*
 
 class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView, ProductViewPagerAdapter.MultipleImageInterface {
 
@@ -33,6 +33,15 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var defaultProductResponse: String? = null
     private var auxiliaryImages: MutableList<String> = ArrayList()
     private var productViewPagerAdapter: ProductViewPagerAdapter? = null
+    private var productDetailsPresenter: ProductDetailsContract.ProductDetailsPresenter? = null
+    private var storeIdForInventory: String? = ""
+    private var otherSKUsByGroupKey: HashMap<String, ArrayList<OtherSkus>> = hashMapOf()
+    private var hasColor: Boolean = false
+    private var hasSize: Boolean = false
+    private var defaultSku: OtherSkus? = null
+    private var selectedSku: OtherSkus? = null
+    private var selectedGroupKey: String? = null
+
 
     companion object {
         fun newInstance() = ProductDetailsFragment()
@@ -46,6 +55,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
             defaultProductResponse = getString("productResponse")
             mFetchFromJson = getBoolean("fetchFromJson")
         }
+        productDetailsPresenter = ProductDetailsPresenterImpl(this, ProductDetailsInteractorImpl())
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -62,15 +72,20 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
         productDetails?.let {
             productName.text = it.productName
-            //ProductUtils.displayPrice(textPrice, textActualPrice, it.fromPrice.toString(), it.fromPrice.toString())
+            BaseProductUtils.displayPrice(textPrice, textActualPrice, it.price, it.wasPrice, it.priceType, it.kilogramPrice)
             auxiliaryImages.add(activity?.let { it1 -> getImageByWidth(it.externalImageRef, it1) }.toString())
+            updateAuxiliaryImages(auxiliaryImages)
+            it.saveText?.apply { setPromotionalText(this) }
         }
 
-        productViewPagerAdapter = ProductViewPagerAdapter(activity, auxiliaryImages, this).apply {
-            productImagesViewPager?.let { pager ->
-                pager.adapter = this
-                productImagesViewPagerIndicator.setViewPager(pager)
-            }
+
+
+        if (mFetchFromJson) {
+            val productDetails = Utils.stringToJson(activity, defaultProductResponse)!!.product
+            this.onProductDetailsSuccess(productDetails)
+        } else {
+            //loadProductDetails.
+            productDetailsPresenter?.loadProductDetails(ProductRequest(productDetails?.productId, productDetails?.sku))
         }
 
     }
@@ -85,6 +100,22 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     }
 
     override fun onProductDetailsSuccess(productDetails: ProductDetails) {
+        this.productDetails = productDetails
+        if (!this.productDetails?.otherSkus.isNullOrEmpty()) {
+
+            storeIdForInventory = ProductListingViewHolderItems.getFulFillmentStoreId(productDetails.fulfillmentType)?.apply {
+                val multiSKUs = productDetails.otherSkus.joinToString(separator = "-") { "\'${it.sku}\'" }
+                productDetailsPresenter?.loadStockAvailability(this, multiSKUs)
+            }
+
+
+        } else {
+            // getViewDataBinding().llLoadingColorSize.setVisibility(View.GONE)
+            // getViewDataBinding().loadingInfoView.setVisibility(View.GONE)
+
+            if (isAdded)
+                Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.CLI_ERROR, getString(R.string.statement_send_email_false_desc))
+        }
     }
 
     override fun onProductDetailedFailed(response: Response) {
@@ -95,13 +126,24 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun onStockAvailabilitySuccess(skusInventoryForStoreResponse: SkusInventoryForStoreResponse) {
 
+        productDetails?.otherSkus?.forEach { otherSku ->
+            skusInventoryForStoreResponse.skuInventory.forEach { skuInventory ->
+                if (otherSku.sku.equals(skuInventory.sku, ignoreCase = true)) {
+                    otherSku.quantity = skuInventory.quantity
+                    return@forEach
+                }
+            }
+        }
+
+        otherSKUsByGroupKey = productDetails?.otherSkus?.let { groupOtherSKUsByColor(it) }!!
+        updateDefaultUI()
     }
 
     override fun getImageByWidth(imageUrl: String, context: Context): String {
         (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).apply {
-            val deviceHeight = this.defaultDisplay
+            //val deviceHeight = this.defaultDisplay
             val size = Point()
-            deviceHeight.getSize(size)
+            //deviceHeight.getSize(size)
             val width = size.x
             var imageLink = imageUrl
             if (imageLink.isEmpty()) imageLink = "https://images.woolworthsstatic.co.za/"
@@ -131,6 +173,78 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         layoutManager1.justifyContent = JustifyContent.FLEX_START*/
         sizeSelectorRecycleView.layoutManager = GridLayoutManager(activity, 4)
         sizeSelectorRecycleView.adapter = ProductSizeSelectorAdapter()
+    }
+
+    private fun groupOtherSKUsByColor(otherSKUsList: ArrayList<OtherSkus>): HashMap<String, ArrayList<OtherSkus>> {
+        for (otherSkuObj in otherSKUsList) {
+            var groupKey = ""
+            if (TextUtils.isEmpty(otherSkuObj.colour) && !TextUtils.isEmpty(otherSkuObj.size)) {
+                this.hasSize = !otherSkuObj.size.equals("NO SZ", ignoreCase = true)
+                groupKey = otherSkuObj.size.trim()
+            } else if (!TextUtils.isEmpty(otherSkuObj.colour) && !TextUtils.isEmpty(otherSkuObj.size)) {
+                this.hasColor = !otherSkuObj.colour.equals("N/A", ignoreCase = true)
+                this.hasSize = !otherSkuObj.size.equals("NO SZ", ignoreCase = true)
+                groupKey = otherSkuObj.colour.trim()
+            } else {
+                this.hasColor = true
+                groupKey = otherSkuObj.colour.trim()
+            }
+
+            if (!otherSKUsByGroupKey.containsKey(groupKey)) {
+                this.otherSKUsByGroupKey.put(groupKey, ArrayList<OtherSkus>())
+            }
+            this.otherSKUsByGroupKey.get(groupKey)!!.add(otherSkuObj)
+        }
+        return otherSKUsByGroupKey
+    }
+
+    override fun updateDefaultUI() {
+        this.defaultSku = getDefaultSku(otherSKUsByGroupKey)
+        if (!hasSize)
+            this.selectedSku = this.defaultSku
+        /*getViewDataBinding().llLoadingColorSize.setVisibility(View.GONE);
+        getViewDataBinding().loadingInfoView.setVisibility(View.GONE);
+        this.configureButtonsAndSelectors();*/
+        /*if (hasColor)
+            this.setSelectedColorIcon()*/
+        productDetails?.let {
+            it.saveText?.apply { setPromotionalText(this) }
+            BaseProductUtils.displayPrice(textPrice, textActualPrice, it.price, it.wasPrice, it.priceType, it.kilogramPrice)
+        }
+    }
+
+    private fun getDefaultSku(otherSKUsList: HashMap<String, ArrayList<OtherSkus>>): OtherSkus? {
+        otherSKUsList.keys.forEach { key ->
+            otherSKUsList[key]?.forEach { otherSku ->
+                if (otherSku.sku.equals(this.productDetails?.sku, ignoreCase = true)) {
+                    this.selectedGroupKey = key
+                    return otherSku
+                }
+            }
+        }
+
+        return null
+
+    }
+
+    override fun updateAuxiliaryImages(imagesList: List<String>) {
+        activity?.apply {
+            productViewPagerAdapter = ProductViewPagerAdapter(activity, imagesList, this@ProductDetailsFragment).apply {
+                productImagesViewPager?.let { pager ->
+                    pager.adapter = this
+                    productImagesViewPagerIndicator.setViewPager(pager)
+                }
+            }
+        }
+    }
+
+    override fun setPromotionalText(promotionValue: String) {
+        if (promotionValue.isNotEmpty()) {
+            promotionText.apply {
+                text = promotionValue
+                visibility = View.VISIBLE
+            }
+        }
     }
 
 }

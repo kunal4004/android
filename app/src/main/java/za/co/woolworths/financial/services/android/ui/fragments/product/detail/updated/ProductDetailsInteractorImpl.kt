@@ -6,18 +6,17 @@ import za.co.woolworths.financial.services.android.models.dto.ProductRequest
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
 
-class ProductDetailsInteractorImpl(var requestListener: RequestListener<Any>?) : ProductDetailsContract.ProductDetailsInteractor {
+class ProductDetailsInteractorImpl() : ProductDetailsContract.ProductDetailsInteractor {
 
-
-    override fun getProductDetails(productRequest: ProductRequest) {
-        request(OneAppService.productDetail(productRequest.productId, productRequest.skuId))
+    override fun getProductDetails(productRequest: ProductRequest, onFinishListener: ProductDetailsContract.ProductDetailsInteractor.OnFinishListener) {
+        request(OneAppService.productDetail(productRequest.productId, productRequest.skuId), onFinishListener)
     }
 
     override fun getCartSummary() {
     }
 
-    override fun getStockAvailability(storeID: String, multiSKU: String) {
-        request(OneAppService.getInventorySkuForStore(storeID, multiSKU))
+    override fun getStockAvailability(storeID: String, multiSKU: String, onFinishListener: ProductDetailsContract.ProductDetailsInteractor.OnFinishListener) {
+        request(OneAppService.getInventorySkuForStore(storeID, multiSKU), onFinishListener)
     }
 
     override fun postAddItemToCart() {
@@ -26,7 +25,7 @@ class ProductDetailsInteractorImpl(var requestListener: RequestListener<Any>?) :
     override fun getLocationItems() {
     }
 
-    private inline fun <reified RESPONSE_OBJECT> request(call: Call<RESPONSE_OBJECT>) {
+    private inline fun <reified RESPONSE_OBJECT> request(call: Call<RESPONSE_OBJECT>, requestListener: ProductDetailsContract.ProductDetailsInteractor.OnFinishListener) {
         val classType: Class<RESPONSE_OBJECT> = RESPONSE_OBJECT::class.java
         call.enqueue(CompletionHandler(object : RequestListener<RESPONSE_OBJECT> {
             override fun onSuccess(response: RESPONSE_OBJECT) {
