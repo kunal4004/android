@@ -695,7 +695,7 @@ interface ApiInterface {
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
-    @GET("products/{productId}")
+    @GET("productsV2/{productId}")
     fun productDetail(
             @Header("osVersion") osVersion: String,
             @Header("deviceModel") deviceModel: String,
@@ -712,7 +712,7 @@ interface ApiInterface {
 
 
     @Headers("Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip")
-    @GET("products/{productId}")
+    @GET("productsV2/{productId}")
     fun productDetail(
             @Header("osVersion") osVersion: String,
             @Header("deviceModel") deviceModel: String,
