@@ -139,8 +139,8 @@ class ProcessBlockCardFragment : BlockMyCardRequestExtension(), IProgressAnimati
                 override fun onTick(millisUntilFinished: Long) {}
                 override fun onFinish() {
                     activity?.apply {
-                        val storeCard = (this as? BlockMyCardActivity)?.getStoreCardDetail()?.storeCardsData
-                        storeCard?.primaryCards?.get(0)?.blockCode = "L"
+                        val storeCard = (this as? BlockMyCardActivity)?.getStoreCardDetail()
+                        storeCard?.storeCardsData?.primaryCards?.get(0)?.blockCode = "L"
                         PersistenceLayer.getInstance().executeDeleteQuery("DELETE FROM ApiRequest WHERE endpoint LIKE '%user/accounts'")
                         val displayStoreCardDetail = Intent(this, MyCardDetailActivity::class.java)
                         displayStoreCardDetail.putExtra(STORE_CARD_DETAIL, Utils.objectToJson(storeCard))
