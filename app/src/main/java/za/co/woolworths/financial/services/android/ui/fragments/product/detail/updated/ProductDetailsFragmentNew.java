@@ -242,7 +242,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
         try {
             // set price list
-            ProductUtils.displayPrice(txtFromPrice, txtActualPrice, String.valueOf(productDetails.fromPrice), getViewModel().maxWasPrice(productDetails.otherSkus));
+            ProductUtils.Companion.displayPrice(txtFromPrice, txtActualPrice, productDetails.price, productDetails.wasPrice, productDetails.priceType, productDetails.kilogramPrice);
         } catch (Exception ignored) {
         }
 
@@ -460,7 +460,7 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
         this.setProductCode(productDetails.productId);
         this.loadPromotionalImages(productDetails.promotionImages);
         this.setProductDescription(getViewModel().getProductDescription(getActivity(), productDetails));
-        this.configureUIForOtherSKU(defaultSku);
+        this.configureUIForDefaultSKU(defaultSku);
         this.displayIngredients();
     }
 
@@ -623,7 +623,19 @@ public class ProductDetailsFragmentNew extends BaseFragment<ProductDetailsFragme
 
         try {
             // set price list
-            ProductUtils.displayPrice(txtFromPrice, txtActualPrice, otherSku.price, String.valueOf(otherSku.wasPrice));
+            ProductUtils.Companion.displayPrice(txtFromPrice, txtActualPrice, otherSku.price, otherSku.wasPrice,"",otherSku.kilogramPrice);
+        } catch (Exception ignored) {
+        }
+
+        if (hasColor)
+            this.setSelectedColorIcon();
+    }
+
+    private void configureUIForDefaultSKU(OtherSkus otherSku) {
+
+        try {
+            // set price list
+            ProductUtils.Companion.displayPrice(txtFromPrice, txtActualPrice, productDetails.price, productDetails.wasPrice,productDetails.priceType,otherSku.kilogramPrice);
         } catch (Exception ignored) {
         }
 
