@@ -105,6 +105,7 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
                             override fun onSuccessHandler(response: StoreCardsResponse) {
                                 if (!isAdded) return
                                 super.onSuccessHandler(response)
+                                mStoreCardsResponse = response
                                 clearFlag()
                                 object : CountDownTimer(1500, 100) {
                                     override fun onTick(millisUntilFinished: Long) {
