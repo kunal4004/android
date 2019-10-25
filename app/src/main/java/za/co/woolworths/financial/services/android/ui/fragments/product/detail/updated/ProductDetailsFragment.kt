@@ -11,11 +11,14 @@ import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import kotlinx.android.synthetic.main.product_details_size_and_color_layout.*
+import za.co.woolworths.financial.services.android.models.dto.ProductDetails
+import za.co.woolworths.financial.services.android.models.dto.Response
+import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
 import za.co.woolworths.financial.services.android.ui.adapters.ProductColorSelectorAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeSelectorAdapter
 import za.co.woolworths.financial.services.android.util.Utils
 
-class ProductDetailsFragment : Fragment() {
+class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,10 +30,10 @@ class ProductDetailsFragment : Fragment() {
 
         val spanCount = Utils.calculateNoOfColumns(activity, 50F)
         colorSelectorRecycleView.layoutManager = GridLayoutManager(activity, spanCount)
-       /* val layoutManager = FlexboxLayoutManager(activity)
-        layoutManager.flexDirection = FlexDirection.ROW
-        layoutManager.justifyContent = JustifyContent.FLEX_START
-        colorSelectorRecycleView.layoutManager = layoutManager*/
+        /* val layoutManager = FlexboxLayoutManager(activity)
+         layoutManager.flexDirection = FlexDirection.ROW
+         layoutManager.justifyContent = JustifyContent.FLEX_START
+         colorSelectorRecycleView.layoutManager = layoutManager*/
         colorSelectorRecycleView.adapter = ProductColorSelectorAdapter()
 
         /*val layoutManager1 = FlexboxLayoutManager(activity)
@@ -44,4 +47,31 @@ class ProductDetailsFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.product_details_fragment, container, false)
     }
+
+    override fun showProgressBar() {
+    }
+
+    override fun hideProgressBar() {
+    }
+
+    override fun onSessionTokenExpired() {
+    }
+
+    override fun onProductDetailsSuccess(productDetails: ProductDetails) {
+    }
+
+    override fun onProductDetailedFailed(response: Response) {
+    }
+
+    override fun onFailureResponse(error: String) {
+    }
+
+    override fun onStockAvailabilitySuccess(skusInventoryForStoreResponse: SkusInventoryForStoreResponse) {
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+    }
+
 }
