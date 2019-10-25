@@ -251,14 +251,16 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
         if (!isAdded) return
         activity?.let { activity ->
 
-            val storeCardsData = mStoreCardsResponse?.storeCardsData
-            val visionAccountNumber = storeCardsData?.visionAccountNumber ?: ""
-            val productOfferingId: String? = storeCardsData?.productOfferingId
+            val storeCardData = storeCardsResponse.storeCardsData
 
-            storeCardsResponse.storeCardsData?.visionAccountNumber = visionAccountNumber
-            storeCardsResponse.storeCardsData?.productOfferingId = productOfferingId ?: ""
+            val tempStoreCardData = (activity as? MyCardActivityExtension)?.getStoreCardDetail()?.storeCardsData
+            val tempProductOfferingId = tempStoreCardData?.productOfferingId
+            val tempVisionAccountNumber = tempStoreCardData?.visionAccountNumber
 
-            storeCardsResponse.storeCardsData?.apply {
+            storeCardData?.visionAccountNumber = tempVisionAccountNumber ?: ""
+            storeCardData?.productOfferingId = tempProductOfferingId ?: ""
+
+            storeCardData?.apply {
                 if (generateVirtualCard) {
                     val intent = Intent(activity, GetTemporaryStoreCardPopupActivity::class.java)
                     intent.putExtra(STORE_CARD_DETAIL, Gson().toJson(storeCardsResponse))
