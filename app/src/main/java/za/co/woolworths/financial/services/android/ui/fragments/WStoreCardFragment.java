@@ -182,11 +182,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
                     }));
         }
 
-        InstantCardReplacement instantCardReplacement = WoolworthsApplication.getInstantCardReplacement();
-        boolean storeCardIsVisible = false;
-        if (instantCardReplacement != null)
-            storeCardIsVisible = instantCardReplacement.isEnabled();
-        rlMyStoreCard.setVisibility(storeCardIsVisible ? VISIBLE : GONE);
+
+        rlMyStoreCard.setVisibility(VISIBLE);
     }
 
     private void initUI(View view) {

@@ -4,12 +4,15 @@ import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.my_card_blocked_fragment.*
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.util.Utils
 import androidx.appcompat.app.AppCompatActivity
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 
@@ -43,6 +46,21 @@ class MyCardBlockedFragment : MyCardExtension() {
         btnGetReplacementCard?.setOnClickListener { navigateToReplacementCard() }
         btnLinkACard?.setOnClickListener { (activity as? AppCompatActivity)?.apply { navigateToLinkNewCardActivity(this, mStoreCardDetail) } }
         btnLinkACard?.paintFlags = btnLinkACard.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+
+        // Hide Replacement card if MC config is true
+        if (WoolworthsApplication.getInstantCardReplacement()?.isEnabled != true) {
+            tvNoActiveCardDesc?.text = getString(R.string.card_block_desc)
+            btnGetReplacementCard?.visibility = VISIBLE
+            btnLinkACard?.visibility = VISIBLE
+            callUsNowButton?.visibility = GONE
+        } else {
+            tvNoActiveCardDesc?.text = getString(R.string.card_block_replacement_card_disabled_desc)
+            btnGetReplacementCard?.visibility = GONE
+            btnLinkACard?.visibility = GONE
+            callUsNowButton?.visibility = VISIBLE
+        }
+
+        callUsNowButton?.setOnClickListener { activity?.let { activity -> Utils.makeCall(activity, "0861502020") } }
     }
 
     private fun navigateToReplacementCard() {
