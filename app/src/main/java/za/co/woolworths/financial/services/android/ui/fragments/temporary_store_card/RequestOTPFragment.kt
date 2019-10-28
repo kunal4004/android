@@ -12,11 +12,9 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.enter_otp_fragment.*
 import za.co.woolworths.financial.services.android.contracts.IOTPLinkStoreCard
 import za.co.woolworths.financial.services.android.models.dto.npc.LinkNewCardOTP
-import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardActivityExtension
 import za.co.woolworths.financial.services.android.ui.activities.store_card.RequestOTPActivity
 import za.co.woolworths.financial.services.android.ui.activities.store_card.RequestOTPActivity.Companion.OTP_VALUE
-import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.npc.OTPInputListener
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ResendOTPFragment
@@ -115,20 +113,6 @@ class RequestOTPFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP>
             else -> super.onOptionsItemSelected(item)
         }
     }
-
-    override fun requestOTPApi(otpMethodType: OTPMethodType) {
-        super.requestOTPApi(otpMethodType)
-        replaceFragment(
-                fragment = ResendOTPLoaderFragment.newInstance(otpMethodType, this),
-                tag = ResendOTPLoaderFragment::class.java.simpleName,
-                containerViewId = R.id.fragmentContainer,
-                allowStateLoss = true,
-                enterAnimation = R.anim.stay,
-                exitAnimation = R.anim.stay,
-                popEnterAnimation = R.anim.stay,
-                popExitAnimation = R.anim.stay)
-    }
-
     private fun getNumberFromEditText(numberEditText: EditText?) = numberEditText?.text?.toString()
             ?: ""
 }

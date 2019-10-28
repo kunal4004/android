@@ -114,15 +114,6 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
     override fun requestOTPApi(otpMethodType: OTPMethodType) {
         super.requestOTPApi(otpMethodType)
         saveSelectedOTP(otpMethodType)
-        replaceFragment(
-                fragment = ResendOTPLoaderFragment.newInstance(otpMethodType, this),
-                tag = ResendOTPLoaderFragment::class.java.simpleName,
-                containerViewId = R.id.flMyCard,
-                allowStateLoss = true,
-                enterAnimation = R.anim.stay,
-                exitAnimation = R.anim.stay,
-                popEnterAnimation = R.anim.stay,
-                popExitAnimation = R.anim.stay)
     }
 
     private fun saveSelectedOTP(otpMethodType: OTPMethodType) = (activity as? MyCardActivityExtension)?.setOTPType(otpMethodType)
