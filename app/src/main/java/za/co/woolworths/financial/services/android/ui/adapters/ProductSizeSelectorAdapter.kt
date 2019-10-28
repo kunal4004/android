@@ -23,16 +23,15 @@ class ProductSizeSelectorAdapter : RecyclerView.Adapter<ProductSizeSelectorAdapt
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind()
+        holder.bind(position)
     }
 
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        fun bind() {
-            val rnd = Random()
-            val currentColor = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
-            itemView.size.setBackgroundColor(currentColor)
+        fun bind(position: Int) {
+            if (position == 2)
+                itemView.size.setBackgroundResource(R.drawable.product_available_size_selected_background)
         }
     }
 }

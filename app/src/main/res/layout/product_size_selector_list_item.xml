@@ -9,7 +9,12 @@
         android:id="@+id/size"
         android:layout_width="@dimen/seventy_five_dp"
         android:layout_height="@dimen/fourty_dp"
-        android:background="@color/green"
+        android:background="@drawable/product_available_size_un_selected_background"
+        android:text="X"
+        android:fontFamily="@font/myriad_pro_regular"
+        android:textSize="@dimen/twelve_sp"
+        android:gravity="center"
+        android:textColor="@color/black"
         />
 
 </LinearLayout>

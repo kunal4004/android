@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape
+    android:shape="rectangle"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <stroke
+        android:color="@color/account_amount_color"
+        android:width="@dimen/two_dp" />
+    <solid android:color="@color/grey_bg" />
+</shape>

@@ -24,16 +24,18 @@ class ProductColorSelectorAdapter : RecyclerView.Adapter<ProductColorSelectorAda
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind()
+        holder.bind(position)
     }
 
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        fun bind() {
+        fun bind(position: Int) {
             val rnd = Random()
             val currentColor = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
             itemView.color.setBackgroundColor(currentColor)
+            if(position == 2)
+                itemView.border.visibility = View.VISIBLE
         }
     }
 }
