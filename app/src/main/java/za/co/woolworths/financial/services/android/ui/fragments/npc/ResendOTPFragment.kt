@@ -18,6 +18,7 @@ import za.co.woolworths.financial.services.android.ui.activities.card.MyCardActi
 import za.co.woolworths.financial.services.android.ui.adapters.ResendOTPAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.npc.EnterOtpFragment.Companion.OTP_SENT_TO
+import za.co.woolworths.financial.services.android.ui.views.ProgressBarDialog
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.NetworkManager

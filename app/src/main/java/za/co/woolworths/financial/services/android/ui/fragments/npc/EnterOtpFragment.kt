@@ -16,10 +16,8 @@ import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import java.util.*
 import android.view.MenuInflater
-import android.view.View.GONE
-import android.view.View.VISIBLE
-import androidx.core.content.ContextCompat
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardActivityExtension
+import za.co.woolworths.financial.services.android.ui.views.ProgressBarDialog
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.NetworkManager
 
@@ -27,6 +25,7 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
 
     private var mResendOTPFragment: ResendOTPFragment? = null
     private var mOtpSentTo: String? = null
+    private var mProgressBarDialog: ProgressBarDialog? = ProgressBarDialog()
 
     companion object {
         const val OTP_SENT_TO = "OTP_SENT_TO"
@@ -54,7 +53,6 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
         setupInputListeners()
         configureUI()
         clickEvent()
-        activity?.let { resendOTPProgressBar?.indeterminateDrawable?.setColorFilter(ContextCompat.getColor(it, R.color.black), android.graphics.PorterDuff.Mode.SRC_IN) }
         setOTPDescription(mOtpSentTo?.toLowerCase(Locale.getDefault()))
         imNextProcessLinkCard?.isEnabled = false
     }
@@ -104,6 +102,10 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
 
     override fun onResume() {
         super.onResume()
+        requestEditTextFocus()
+    }
+
+    private fun requestEditTextFocus() {
         activity?.let { activity ->
             edtVerificationCode1?.apply {
                 requestFocus()
@@ -120,19 +122,19 @@ class EnterOtpFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP> {
     override fun requestOTPApi(otpMethodType: OTPMethodType) {
         super.requestOTPApi(otpMethodType)
         saveSelectedOTP(otpMethodType)
+        requestEditTextFocus()
         activity?.let { activity ->
             if (NetworkManager().isConnectedToNetwork(activity)) {
                 StoreCardOTPRequest(activity, otpMethodType).make(object : IOTPLinkStoreCard<LinkNewCardOTP> {
 
                     override fun showProgress() {
                         super.showProgress()
-                        setOTPDescription("***")
-                        resendOTPProgressBar?.visibility = VISIBLE
+                        mProgressBarDialog?.show(activity)
                     }
 
                     override fun hideProgress() {
                         super.hideProgress()
-                        resendOTPProgressBar?.visibility = GONE
+                        mProgressBarDialog?.dismissDialog()
                     }
 
                     override fun onSuccessHandler(response: LinkNewCardOTP) {
