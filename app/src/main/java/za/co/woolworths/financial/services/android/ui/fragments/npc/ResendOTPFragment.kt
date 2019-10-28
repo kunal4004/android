@@ -8,8 +8,10 @@ import android.view.ViewGroup
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.npc_resend_otp_fragment.*
 import za.co.woolworths.financial.services.android.contracts.IOTPLinkStoreCard
+import za.co.woolworths.financial.services.android.models.dto.Account
 import za.co.woolworths.financial.services.android.models.dto.npc.LinkNewCardOTP
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardActivityExtension
@@ -19,6 +21,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.npc.EnterOtpFrag
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.NetworkManager
+import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
 
 class ResendOTPFragment : WBottomSheetDialogFragment() {
@@ -68,14 +71,6 @@ class ResendOTPFragment : WBottomSheetDialogFragment() {
     private fun dismissView(otpMethodType: OTPMethodType) {
         if (otpMethodType != OTPMethodType.NONE) {
             linkStoreCardOtp?.requestOTPApi(otpMethodType)
-            activity?.let { activity ->
-                if (NetworkManager().isConnectedToNetwork(activity)) {
-                    StoreCardOTPRequest(activity, otpMethodType).make(object : IOTPLinkStoreCard<LinkNewCardOTP> {})
-                } else {
-                    ErrorHandlerView(activity).showToast()
-                    return
-                }
-            }
         }
         dismissAllowingStateLoss()
     }

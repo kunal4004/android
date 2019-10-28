@@ -29,7 +29,7 @@ class StoreCardOTPRequest(private val activity: Activity?, private val otpMethod
      var getCardCallHasFailed = false
 
     fun make(requestListener: IOTPLinkStoreCard<LinkNewCardOTP>) {
-        requestListener.startLoading()
+        requestListener.showProgress()
         storeOTPService = OneAppService.getLinkNewCardOTP(otpMethodType)
         storeOTPService?.enqueue(
                 CompletionHandler(object : RequestListener<LinkNewCardOTP> {
@@ -38,11 +38,11 @@ class StoreCardOTPRequest(private val activity: Activity?, private val otpMethod
                             when (this.httpCode) {
                                 200 -> {
                                     requestListener.onSuccessHandler(linkNewCardOTP)
-                                    requestListener.loadComplete()
+                                    requestListener.hideProgress()
                                 }
                                 440 -> sessionExpired(linkNewCardOTP.response)
                                 else -> {
-                                    requestListener.loadComplete()
+                                    requestListener.hideProgress()
                                     requestListener.onFailureHandler()
                                     messageDialog(linkNewCardOTP.response)
                                 }
@@ -53,7 +53,7 @@ class StoreCardOTPRequest(private val activity: Activity?, private val otpMethod
                     override fun onFailure(error: Throwable?) {
                         activity?.apply {
                             runOnUiThread {
-                                requestListener.loadComplete()
+                                requestListener.hideProgress()
                                 if (error is ConnectException || error is UnknownHostException) {
                                     ErrorHandlerView(this).showToast()
                                 }
@@ -79,19 +79,19 @@ class StoreCardOTPRequest(private val activity: Activity?, private val otpMethod
     }
 
     fun make(requestListener: IOTPLinkStoreCard<LinkNewCardResponse>?, linkStoreCard: LinkStoreCard) {
-        requestListener?.startLoading()
+        requestListener?.showProgress()
         OneAppService.linkStoreCard(linkStoreCard).enqueue(CompletionHandler(object : RequestListener<LinkNewCardResponse> {
             override fun onSuccess(response: LinkNewCardResponse?) {
                 linkStoreCardHasFailed = false
                 when (response?.httpCode) {
                     200 -> requestListener?.onSuccessHandler(response)
                     440 -> {
-                        requestListener?.loadComplete()
+                        requestListener?.hideProgress()
                         sessionExpired(response.response)
                     }
                     else -> {
                         linkStoreCardHasFailed = true
-                        requestListener?.loadComplete()
+                        requestListener?.hideProgress()
                         requestListener?.onFailureHandler()
                     }
                 }
@@ -100,7 +100,7 @@ class StoreCardOTPRequest(private val activity: Activity?, private val otpMethod
             override fun onFailure(error: Throwable?) {
                 activity?.runOnUiThread {
                     linkStoreCardHasFailed = true
-                    requestListener?.loadComplete()
+                    requestListener?.hideProgress()
                     requestListener?.onFailureHandler()
                 }
             }
@@ -126,7 +126,7 @@ class StoreCardOTPRequest(private val activity: Activity?, private val otpMethod
 
             override fun onFailure(error: Throwable?) {
                 activity?.runOnUiThread {
-                    requestListener?.loadComplete()
+                    requestListener?.hideProgress()
                     requestListener?.onFailureHandler()
                     getCardCallHasFailed = true
                 }

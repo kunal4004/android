@@ -88,8 +88,8 @@ class LinkStoreCardFragment : AnimatedProgressBarFragment(), View.OnClickListene
             linkStoreCard?.let { request ->
                 mStoreCardRequest = otpMethodType?.let { otp -> StoreCardOTPRequest(this, otp) }
                 mStoreCardRequest?.make(object : IOTPLinkStoreCard<LinkNewCardResponse> {
-                    override fun startLoading() {
-                        super.startLoading()
+                    override fun showProgress() {
+                        super.showProgress()
                         linkStoreCardProgress()
                     }
 

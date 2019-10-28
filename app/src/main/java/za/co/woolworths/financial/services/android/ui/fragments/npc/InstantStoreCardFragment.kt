@@ -97,16 +97,16 @@ class InstantStoreCardFragment : MyCardExtension() {
         activity?.let { activity ->
             val requestOTP = StoreCardOTPRequest(activity, OTPMethodType.SMS)
             requestOTP.make(object : IOTPLinkStoreCard<LinkNewCardOTP> {
-                override fun startLoading() {
-                    super.startLoading()
+                override fun showProgress() {
+                    super.showProgress()
                     shouldDisableUINavigation = true
                     progressBarDialog?.show(activity)
                     cardNumberEditText?.isFocusable = false
                     cardNumberEditText?.isFocusableInTouchMode = false
                 }
 
-                override fun loadComplete() {
-                    super.loadComplete()
+                override fun hideProgress() {
+                    super.hideProgress()
                     shouldDisableUINavigation = false
                     progressBarDialog?.dismissDialog()
                     cardNumberEditText?.isFocusable = true
