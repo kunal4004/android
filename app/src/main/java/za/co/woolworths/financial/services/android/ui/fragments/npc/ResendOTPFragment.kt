@@ -6,7 +6,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 
-
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.npc_resend_otp_fragment.*
@@ -18,6 +17,8 @@ import za.co.woolworths.financial.services.android.ui.adapters.ResendOTPAdapter
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.npc.EnterOtpFragment.Companion.OTP_SENT_TO
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView
+import za.co.woolworths.financial.services.android.util.NetworkManager
 import za.co.woolworths.financial.services.android.util.Utils
 
 class ResendOTPFragment : WBottomSheetDialogFragment() {
@@ -67,6 +68,14 @@ class ResendOTPFragment : WBottomSheetDialogFragment() {
     private fun dismissView(otpMethodType: OTPMethodType) {
         if (otpMethodType != OTPMethodType.NONE) {
             linkStoreCardOtp?.requestOTPApi(otpMethodType)
+            activity?.let { activity ->
+                if (NetworkManager().isConnectedToNetwork(activity)) {
+                    StoreCardOTPRequest(activity, otpMethodType).make(object : IOTPLinkStoreCard<LinkNewCardOTP> {})
+                } else {
+                    ErrorHandlerView(activity).showToast()
+                    return
+                }
+            }
         }
         dismissAllowingStateLoss()
     }

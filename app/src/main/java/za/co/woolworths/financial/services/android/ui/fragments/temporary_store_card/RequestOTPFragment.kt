@@ -18,10 +18,8 @@ import za.co.woolworths.financial.services.android.ui.activities.store_card.Requ
 import za.co.woolworths.financial.services.android.ui.activities.store_card.RequestOTPActivity.Companion.OTP_VALUE
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import za.co.woolworths.financial.services.android.ui.fragments.npc.EnterOtpFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.OTPInputListener
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ResendOTPFragment
-import za.co.woolworths.financial.services.android.ui.fragments.npc.ResendOTPLoaderFragment
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import java.util.*
 
