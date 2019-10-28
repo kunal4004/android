@@ -48,7 +48,7 @@ class MyCardBlockedFragment : MyCardExtension() {
         btnLinkACard?.paintFlags = btnLinkACard.paintFlags or Paint.UNDERLINE_TEXT_FLAG
 
         // Hide Replacement card if MC config is true
-        if (WoolworthsApplication.getInstantCardReplacement()?.isEnabled != true) {
+        if (WoolworthsApplication.getInstantCardReplacement()?.isEnabled == true) {
             tvNoActiveCardDesc?.text = getString(R.string.card_block_desc)
             btnGetReplacementCard?.visibility = VISIBLE
             btnLinkACard?.visibility = VISIBLE

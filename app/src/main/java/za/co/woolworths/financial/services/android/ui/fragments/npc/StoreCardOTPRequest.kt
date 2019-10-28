@@ -25,6 +25,8 @@ import java.net.UnknownHostException
 class StoreCardOTPRequest(private val activity: Activity?, private val otpMethodType: OTPMethodType) {
 
     private var storeOTPService: Call<LinkNewCardOTP>? = null
+     var linkStoreCardHasFailed = false
+     var getCardCallHasFailed = false
 
     fun make(requestListener: IOTPLinkStoreCard<LinkNewCardOTP>) {
         requestListener.startLoading()
@@ -80,6 +82,7 @@ class StoreCardOTPRequest(private val activity: Activity?, private val otpMethod
         requestListener?.startLoading()
         OneAppService.linkStoreCard(linkStoreCard).enqueue(CompletionHandler(object : RequestListener<LinkNewCardResponse> {
             override fun onSuccess(response: LinkNewCardResponse?) {
+                linkStoreCardHasFailed = false
                 when (response?.httpCode) {
                     200 -> requestListener?.onSuccessHandler(response)
                     440 -> {
@@ -87,6 +90,7 @@ class StoreCardOTPRequest(private val activity: Activity?, private val otpMethod
                         sessionExpired(response.response)
                     }
                     else -> {
+                        linkStoreCardHasFailed = true
                         requestListener?.loadComplete()
                         requestListener?.onFailureHandler()
                     }
@@ -95,6 +99,7 @@ class StoreCardOTPRequest(private val activity: Activity?, private val otpMethod
 
             override fun onFailure(error: Throwable?) {
                 activity?.runOnUiThread {
+                    linkStoreCardHasFailed = true
                     requestListener?.loadComplete()
                     requestListener?.onFailureHandler()
                 }
@@ -108,10 +113,14 @@ class StoreCardOTPRequest(private val activity: Activity?, private val otpMethod
         val getStoreCardsRequest = OneAppService.getStoreCards(StoreCardsRequestBody(account.accountNumber, account.productOfferingId))
         getStoreCardsRequest.enqueue(CompletionHandler(object : RequestListener<StoreCardsResponse> {
             override fun onSuccess(response: StoreCardsResponse) {
+                getCardCallHasFailed = false
                 when (response.httpCode) {
                     200 -> requestListener?.onSuccessHandler(response)
                     440 -> sessionExpired(response.response)
-                    else -> requestListener?.onFailureHandler()
+                    else -> {
+                        getCardCallHasFailed = true
+                        requestListener?.onFailureHandler()
+                    }
                 }
             }
 
@@ -119,11 +128,11 @@ class StoreCardOTPRequest(private val activity: Activity?, private val otpMethod
                 activity?.runOnUiThread {
                     requestListener?.loadComplete()
                     requestListener?.onFailureHandler()
+                    getCardCallHasFailed = true
                 }
             }
         }, StoreCardsResponse::class.java))
         return getStoreCardsRequest
     }
-
 }
 
