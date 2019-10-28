@@ -117,6 +117,7 @@
         app:layout_constraintStart_toStartOf="parent"
         tools:ignore="UnusedAttribute" />
 
+
     <Button
         android:id="@+id/callUsNowButton"
         style="?android:attr/borderlessButtonStyle"
@@ -124,21 +125,21 @@
         android:layout_height="50dp"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginBottom="32dp"
-        android:background="@color/transparent"
-        android:contentDescription="@string/call_us_now"
-        android:fontFamily="@font/futura_medium_ttf"
+        android:background="@drawable/black_button_drawable_state"
+        android:contentDescription="@string/button_getReplacementCard"
+        android:fontFamily="@font/futura_semi_bold_ttf"
         android:letterSpacing="0.15"
-        android:lineSpacingExtra="4dp"
         android:text="@string/call_us_now"
         android:textAllCaps="true"
-        android:textColor="#000000"
-        android:textSize="@dimen/twelve_sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/endlessZone"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvNoActiveCardDesc"
         tools:ignore="UnusedAttribute" />
-
 
     <Button
         android:id="@+id/btnLinkACard"
