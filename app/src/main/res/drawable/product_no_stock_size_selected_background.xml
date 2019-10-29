@@ -5,5 +5,5 @@
     <stroke
         android:color="@color/account_amount_color"
         android:width="@dimen/two_dp" />
-    <solid android:color="@color/grey_bg" />
+    <solid android:color="@color/transparent" />
 </shape>

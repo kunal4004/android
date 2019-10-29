@@ -2,10 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.detail.
 
 import android.content.Context
 import za.co.woolworths.financial.services.android.contracts.RequestListener
-import za.co.woolworths.financial.services.android.models.dto.ProductDetails
-import za.co.woolworths.financial.services.android.models.dto.ProductRequest
-import za.co.woolworths.financial.services.android.models.dto.Response
-import za.co.woolworths.financial.services.android.models.dto.SkusInventoryForStoreResponse
+import za.co.woolworths.financial.services.android.models.dto.*
 
 interface ProductDetailsContract {
 
@@ -21,6 +18,11 @@ interface ProductDetailsContract {
         fun updateDefaultUI()
         fun updateAuxiliaryImages(imagesList: List<String>)
         fun setPromotionalText(promotionValue: String)
+        fun onSizeSelection(selectedSku: OtherSkus)
+        fun onColorSelection(selectedColor: String?)
+        fun setSelectedSku(selectedSku: OtherSkus?)
+        fun getSelectedSku(): OtherSkus?
+
     }
 
     interface ProductDetailsPresenter {
@@ -28,7 +30,6 @@ interface ProductDetailsContract {
         fun onDestroy()
         fun loadStockAvailability(storeID: String, multiSKU: String)
         fun loadProductDetails(productRequest: ProductRequest)
-
     }
 
     interface ProductDetailsInteractor {

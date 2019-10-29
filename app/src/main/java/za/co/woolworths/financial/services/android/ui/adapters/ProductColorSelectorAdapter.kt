@@ -1,16 +1,28 @@
 package za.co.woolworths.financial.services.android.ui.adapters
 
-import android.graphics.Color
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.product_color_selector_list_item.view.*
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication
+import za.co.woolworths.financial.services.android.models.dto.OtherSkus
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.updated.ProductDetailsContract
+import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
+import za.co.woolworths.financial.services.android.util.DrawImage
 import java.util.*
 
 
-class ProductColorSelectorAdapter : RecyclerView.Adapter<ProductColorSelectorAdapter.ViewHolder>() {
+class ProductColorSelectorAdapter(val otherSKUsByGroupKey: HashMap<String, ArrayList<OtherSkus>>, var listener: ProductDetailsContract.ProductDetailsView) : RecyclerView.Adapter<ProductColorSelectorAdapter.ViewHolder>() {
+
+    private var selectedColor: String? = null
+    private var colorsList: List<String> = arrayListOf()
+
+    init {
+        colorsList = otherSKUsByGroupKey.keys.toList()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
@@ -20,22 +32,35 @@ class ProductColorSelectorAdapter : RecyclerView.Adapter<ProductColorSelectorAda
     }
 
     override fun getItemCount(): Int {
-        return 10
+        return colorsList.size
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(position)
+        holder.bind(colorsList[position])
     }
 
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        fun bind(position: Int) {
-            val rnd = Random()
-            val currentColor = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
-            itemView.color.setBackgroundColor(currentColor)
-            if(position == 2)
-                itemView.border.visibility = View.VISIBLE
+        fun bind(color: String?) {
+            itemView.setOnClickListener {
+                selectedColor = color
+                listener.onColorSelection(selectedColor)
+                notifyDataSetChanged()
+            }
+
+            color?.let {
+                setSelectedColorIcon(itemView.color, otherSKUsByGroupKey[color]?.get(0)?.externalColourRef)
+                itemView.border.apply {
+                    setBackgroundResource(if (it.equals(selectedColor, true)) R.drawable.product_color_selected_background else R.drawable.product_color_un_selected_background)
+                }
+            }
         }
     }
+}
+
+private fun setSelectedColorIcon(mImSelectedColor: WrapContentDraweeView, imageUrl: String?) {
+    val drawImage = DrawImage(WoolworthsApplication.getAppContext())
+    mImSelectedColor.imageAlpha = if (TextUtils.isEmpty(imageUrl)) 0 else 255
+    drawImage.displayImage(mImSelectedColor, imageUrl)
 }

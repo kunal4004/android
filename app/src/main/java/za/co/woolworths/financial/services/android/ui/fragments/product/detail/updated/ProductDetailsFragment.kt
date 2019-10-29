@@ -27,7 +27,7 @@ import java.util.*
 class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetailsView, ProductViewPagerAdapter.MultipleImageInterface {
 
 
-    var productDetails: ProductDetails? = null
+    private var productDetails: ProductDetails? = null
     private var subCategoryTitle: String? = null
     private var mFetchFromJson: Boolean = false
     private var defaultProductResponse: String? = null
@@ -41,6 +41,8 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     private var defaultSku: OtherSkus? = null
     private var selectedSku: OtherSkus? = null
     private var selectedGroupKey: String? = null
+    private var productSizeSelectorAdapter: ProductSizeSelectorAdapter? = null
+    private var productColorSelectorAdapter: ProductColorSelectorAdapter? = null
 
 
     companion object {
@@ -60,7 +62,6 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        loadSizeAndColor()
         configureDefaultUI()
     }
 
@@ -104,7 +105,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         if (!this.productDetails?.otherSkus.isNullOrEmpty()) {
 
             storeIdForInventory = ProductListingViewHolderItems.getFulFillmentStoreId(productDetails.fulfillmentType)?.apply {
-                val multiSKUs = productDetails.otherSkus.joinToString(separator = "-") { "\'${it.sku}\'" }
+                val multiSKUs = productDetails.otherSkus.joinToString(separator = "-") { it.sku }
                 productDetailsPresenter?.loadStockAvailability(this, multiSKUs)
             }
 
@@ -166,13 +167,15 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
          layoutManager.flexDirection = FlexDirection.ROW
          layoutManager.justifyContent = JustifyContent.FLEX_START
          colorSelectorRecycleView.layoutManager = layoutManager*/
-        colorSelectorRecycleView.adapter = ProductColorSelectorAdapter()
-
+        productColorSelectorAdapter = ProductColorSelectorAdapter(otherSKUsByGroupKey, this)
+        colorSelectorRecycleView.adapter = productColorSelectorAdapter
         /*val layoutManager1 = FlexboxLayoutManager(activity)
         layoutManager1.flexDirection = FlexDirection.ROW
         layoutManager1.justifyContent = JustifyContent.FLEX_START*/
         sizeSelectorRecycleView.layoutManager = GridLayoutManager(activity, 4)
-        sizeSelectorRecycleView.adapter = ProductSizeSelectorAdapter()
+        productSizeSelectorAdapter = ProductSizeSelectorAdapter(otherSKUsByGroupKey[getSelectedGroupKey()]!!, this)
+        sizeSelectorRecycleView.adapter = productSizeSelectorAdapter
+
     }
 
     private fun groupOtherSKUsByColor(otherSKUsList: ArrayList<OtherSkus>): HashMap<String, ArrayList<OtherSkus>> {
@@ -201,23 +204,29 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     override fun updateDefaultUI() {
         this.defaultSku = getDefaultSku(otherSKUsByGroupKey)
         if (!hasSize)
-            this.selectedSku = this.defaultSku
+            setSelectedSku(this.defaultSku)
         /*getViewDataBinding().llLoadingColorSize.setVisibility(View.GONE);
         getViewDataBinding().loadingInfoView.setVisibility(View.GONE);
         this.configureButtonsAndSelectors();*/
         /*if (hasColor)
             this.setSelectedColorIcon()*/
+        loadSizeAndColor()
+        configureActionItems()
         productDetails?.let {
             it.saveText?.apply { setPromotionalText(this) }
             BaseProductUtils.displayPrice(textPrice, textActualPrice, it.price, it.wasPrice, it.priceType, it.kilogramPrice)
         }
     }
 
+    fun configureActionItems() {
+
+    }
+
     private fun getDefaultSku(otherSKUsList: HashMap<String, ArrayList<OtherSkus>>): OtherSkus? {
         otherSKUsList.keys.forEach { key ->
             otherSKUsList[key]?.forEach { otherSku ->
                 if (otherSku.sku.equals(this.productDetails?.sku, ignoreCase = true)) {
-                    this.selectedGroupKey = key
+                    setSelectedGroupKey(key)
                     return otherSku
                 }
             }
@@ -245,6 +254,75 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 visibility = View.VISIBLE
             }
         }
+    }
+
+    override fun onSizeSelection(selectedSku: OtherSkus) {
+        setSelectedSku(selectedSku)
+        updateUIForSelectedSKU(getSelectedSku())
+    }
+
+    override fun onColorSelection(selectedColor: String?) {
+        setSelectedGroupKey(selectedColor)
+        if (hasSize) updateSizesOnColorSelection() else setSelectedSku(otherSKUsByGroupKey[getSelectedGroupKey()]?.get(0))
+        // this.updateViewPagerWithAuxiliaryImages();
+    }
+
+    private fun updateSizesOnColorSelection() {
+        productSizeSelectorAdapter?.updatedSizes(otherSKUsByGroupKey[getSelectedGroupKey()]!!)
+
+        //===== positive flow
+        // if selected size available for the selected color
+        // get the sku for the selected size from the new color group
+        // update the selectedSizeSKU
+
+        //===== negative flow
+        // if selected size not available on the new color group
+        // make selectedSKU to null
+        
+        getSelectedSku()?.let { selected ->
+            var index = -1
+            otherSKUsByGroupKey[getSelectedGroupKey()]?.forEachIndexed { i, it ->
+                if (it.size.equals(selected.size, true)) {
+                    index = i
+                    return@forEachIndexed
+                }
+            }
+            when (index) {
+                -1 -> {
+                    setSelectedSku(null)
+                    productSizeSelectorAdapter?.clearSelection()
+                    defaultSku = otherSKUsByGroupKey[getSelectedGroupKey()]?.get(0)
+                    updateUIForSelectedSKU(defaultSku)
+                }
+                else -> {
+                    setSelectedSku(otherSKUsByGroupKey[getSelectedGroupKey()]?.get(index))
+                    productSizeSelectorAdapter?.setSelection(getSelectedSku())
+                }
+            }
+
+        }
+    }
+
+    private fun updateUIForSelectedSKU(otherSku: OtherSkus?) {
+        otherSku?.let {
+            BaseProductUtils.displayPrice(textPrice, textActualPrice, it.price, it.wasPrice, "", it.kilogramPrice)
+        }
+    }
+
+    override fun setSelectedSku(selectedSku: OtherSkus?) {
+        this.selectedSku = selectedSku
+    }
+
+    override fun getSelectedSku(): OtherSkus? {
+        return this.selectedSku
+    }
+
+    private fun setSelectedGroupKey(selectedGroupKey: String?) {
+        this.selectedGroupKey = selectedGroupKey
+    }
+
+    private fun getSelectedGroupKey(): String? {
+        return this.selectedGroupKey
     }
 
 }
