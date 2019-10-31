@@ -3,10 +3,11 @@ package za.co.woolworths.financial.services.android.ui.fragments.product.detail.
 import android.content.Context
 import za.co.woolworths.financial.services.android.contracts.RequestListener
 import za.co.woolworths.financial.services.android.models.dto.*
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.QuantitySelectorFragment
 
 interface ProductDetailsContract {
 
-    interface ProductDetailsView {
+    interface ProductDetailsView : QuantitySelectorFragment.IQuantitySelector {
         fun showProgressBar()
         fun hideProgressBar()
         fun onSessionTokenExpired()

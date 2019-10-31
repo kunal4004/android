@@ -11,6 +11,7 @@ import android.view.WindowManager
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.awfs.coordination.R
+import kotlinx.android.synthetic.main.product_details_add_to_cart_and_find_in_store_button_layout.*
 import kotlinx.android.synthetic.main.product_details_fragment.*
 import kotlinx.android.synthetic.main.product_details_price_layout.*
 import kotlinx.android.synthetic.main.product_details_size_and_color_layout.*
@@ -21,6 +22,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeSelect
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter
 import za.co.woolworths.financial.services.android.ui.adapters.holder.ProductListingViewHolderItems
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.BaseProductUtils
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.QuantitySelectorFragment
 import za.co.woolworths.financial.services.android.util.Utils
 import java.util.*
 
@@ -62,7 +64,21 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initViews()
+    }
+
+    private fun initViews() {
+        quantitySelector.setOnClickListener { onQuantitySelector() }
         configureDefaultUI()
+    }
+
+    private fun onQuantitySelector() {
+        activity?.supportFragmentManager?.apply {
+            getSelectedSku()?.quantity?.let {
+                if (it > 0)
+                    QuantitySelectorFragment.newInstance(it, this@ProductDetailsFragment).show(this, QuantitySelectorFragment::class.java.simpleName)
+            }
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -154,6 +170,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun onDestroy() {
         super.onDestroy()
+        productDetailsPresenter?.onDestroy()
     }
 
     override fun SelectedImage(otherSkus: String?) {
@@ -278,7 +295,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
         //===== negative flow
         // if selected size not available on the new color group
         // make selectedSKU to null
-        
+
         getSelectedSku()?.let { selected ->
             var index = -1
             otherSKUsByGroupKey[getSelectedGroupKey()]?.forEachIndexed { i, it ->
@@ -297,16 +314,46 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
                 else -> {
                     setSelectedSku(otherSKUsByGroupKey[getSelectedGroupKey()]?.get(index))
                     productSizeSelectorAdapter?.setSelection(getSelectedSku())
+                    updateUIForSelectedSKU(getSelectedSku())
                 }
             }
 
         }
+
+    }
+
+    private fun updateAddToCartButtonForSelectedSKU() {
+
+        when (getSelectedSku()) {
+            null -> showAddToCart()
+            else -> {
+                getSelectedSku()?.quantity.let {
+                    when (it) {
+                        0 -> showFindInStore();
+                        else -> showAddToCart()
+                    }
+                }
+            }
+        }
+
+    }
+
+
+    private fun showFindInStore() {
+        groupAddToCartAction.visibility = View.GONE
+        findInStoreAction.visibility = View.VISIBLE
+    }
+
+    private fun showAddToCart() {
+        groupAddToCartAction.visibility = View.VISIBLE
+        findInStoreAction.visibility = View.GONE
     }
 
     private fun updateUIForSelectedSKU(otherSku: OtherSkus?) {
         otherSku?.let {
             BaseProductUtils.displayPrice(textPrice, textActualPrice, it.price, it.wasPrice, "", it.kilogramPrice)
         }
+        updateAddToCartButtonForSelectedSKU()
     }
 
     override fun setSelectedSku(selectedSku: OtherSkus?) {
@@ -323,6 +370,10 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     private fun getSelectedGroupKey(): String? {
         return this.selectedGroupKey
+    }
+
+    override fun onQuantitySelection(quantity: Int) {
+
     }
 
 }
