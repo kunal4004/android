@@ -13,23 +13,16 @@ import androidx.fragment.app.Fragment
 import com.awfs.coordination.R
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.get_temp_store_card_popup_fragment.*
-import za.co.woolworths.financial.services.android.contracts.RequestListener
-import za.co.woolworths.financial.services.android.models.dao.SessionDao
-import za.co.woolworths.financial.services.android.models.dto.npc.LinkNewCardOTP
-import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.models.dto.npc.Transition
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardActivityExtension
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
-import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.GetTemporaryStoreCardPopupActivity
 import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.HowToUseTemporaryStoreCardActivity
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.npc.EnterOtpFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.LinkStoreCardFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
-import za.co.woolworths.financial.services.android.util.SessionUtilities
-import za.co.woolworths.financial.services.android.util.StoreCardAPIRequest
 import za.co.woolworths.financial.services.android.util.Utils
 
 class GetTemporaryStoreCardPopupFragment : Fragment(), View.OnClickListener {
@@ -78,7 +71,7 @@ class GetTemporaryStoreCardPopupFragment : Fragment(), View.OnClickListener {
         when (v?.id) {
             R.id.getTempStoreCardButton -> {
                 when (mStoreCardsResponse?.oneTimePinRequired?.linkVirtualStoreCard) {
-                    true -> requestGetOTP()
+                    true -> navigateToOTPFragment()
                     else -> navigateToLinkCardFragment()
                 }
             }
@@ -95,25 +88,6 @@ class GetTemporaryStoreCardPopupFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    private fun requestGetOTP() {
-        showTempStoreCardProgressBar(View.VISIBLE)
-        StoreCardAPIRequest().getOTP(OTPMethodType.SMS, object : RequestListener<LinkNewCardOTP> {
-            override fun onSuccess(response: LinkNewCardOTP?) {
-                showTempStoreCardProgressBar(View.GONE)
-                when (response?.httpCode) {
-                    200 ->navigateToOTPFragment(response.otpSentTo)
-                    440 -> activity?.let { activity -> response.let { SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, response.response?.stsParams?: "", activity) } }
-                    else -> showErrorDialog(response?.response?.desc ?: getString(R.string.general_error_desc))
-                }
-            }
-
-            override fun onFailure(error: Throwable?) {
-                showTempStoreCardProgressBar(View.GONE)
-                showErrorDialog(getString(R.string.general_error_desc))
-            }
-        })
-    }
-
     private fun navigateToLinkCardFragment() {
         replaceFragment(
                 fragment = LinkStoreCardFragment.newInstance(),
@@ -127,9 +101,7 @@ class GetTemporaryStoreCardPopupFragment : Fragment(), View.OnClickListener {
         )
     }
 
-    fun navigateToOTPFragment(otpSentTo: String?) {
-        otpSentTo?.let { otp ->
-            (activity as? GetTemporaryStoreCardPopupActivity)?.mDefaultOtpSentTo = otpSentTo
+    fun navigateToOTPFragment() {
             replaceFragment(
                     fragment = EnterOtpFragment.newInstance(),
                     tag = EnterOtpFragment::class.java.simpleName,
@@ -140,7 +112,6 @@ class GetTemporaryStoreCardPopupFragment : Fragment(), View.OnClickListener {
                     popEnterAnimation = R.anim.slide_from_left,
                     popExitAnimation = R.anim.slide_to_right
             )
-        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
