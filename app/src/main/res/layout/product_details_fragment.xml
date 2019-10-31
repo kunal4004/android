@@ -45,8 +45,8 @@
                         android:layout_alignParentBottom="true"
                         android:layout_centerHorizontal="true"
                         android:layout_marginBottom="10dp"
-                        app:ci_drawable="@drawable/page_control_active"
-                        app:ci_drawable_unselected="@drawable/page_control_inactive"
+                        app:ci_drawable="@drawable/selected_dot"
+                        app:ci_drawable_unselected="@drawable/unselected_dot"
                         app:ci_gravity="center_horizontal" />
 
                 </RelativeLayout>
@@ -125,11 +125,21 @@
                     app:layout_constraintTop_toBottomOf="@id/priceLayout" />
 
                 <include
+                    android:id="@+id/deliveryLocationLayout"
+                    layout="@layout/product_deatils_delivery_location_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/twenty_four_dp"
+                    android:layout_marginRight="@dimen/twenty_four_dp"
+                    android:visibility="visible"
+                    app:layout_constraintTop_toBottomOf="@id/sizeColorSelectorLayout" />
+
+                <include
                     android:id="@+id/productDetailOptionsAndInformation"
                     layout="@layout/product_details_options_and_information_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:layout_constraintTop_toBottomOf="@id/sizeColorSelectorLayout" />
+                    app:layout_constraintTop_toBottomOf="@id/deliveryLocationLayout" />
 
 
                 <androidx.constraintlayout.widget.Guideline

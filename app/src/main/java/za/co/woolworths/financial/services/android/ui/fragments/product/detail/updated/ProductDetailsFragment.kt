@@ -11,6 +11,8 @@ import android.view.WindowManager
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.awfs.coordination.R
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.product_details_add_to_cart_and_find_in_store_button_layout.*
 import kotlinx.android.synthetic.main.product_details_fragment.*
 import kotlinx.android.synthetic.main.product_details_price_layout.*
@@ -281,7 +283,7 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
     override fun onColorSelection(selectedColor: String?) {
         setSelectedGroupKey(selectedColor)
         if (hasSize) updateSizesOnColorSelection() else setSelectedSku(otherSKUsByGroupKey[getSelectedGroupKey()]?.get(0))
-        // this.updateViewPagerWithAuxiliaryImages();
+        updateAuxiliaryImages(getAuxiliaryImagesByGroupKey())
     }
 
     private fun updateSizesOnColorSelection() {
@@ -374,6 +376,48 @@ class ProductDetailsFragment : Fragment(), ProductDetailsContract.ProductDetails
 
     override fun onQuantitySelection(quantity: Int) {
 
+    }
+
+    fun getAuxiliaryImagesByGroupKey(): List<String> {
+
+        if (getSelectedGroupKey().isNullOrEmpty())
+            return auxiliaryImages
+
+        val auxiliaryImagesForGroupKey = ArrayList<String>()
+
+        otherSKUsByGroupKey[getSelectedGroupKey()]?.get(0)?.externalImageRef?.let {
+            if (productDetails?.otherSkus?.size!! > 0)
+                auxiliaryImagesForGroupKey.add(it)
+        }
+
+        val allAuxImages = Gson().fromJson<Map<String, AuxiliaryImage>>(this.productDetails?.auxiliaryImages, object : TypeToken<Map<String, AuxiliaryImage>>() {}.type)
+
+        getImageCodeForAuxiliaryImages().let { imageCode ->
+            allAuxImages.entries.forEach { entry ->
+                if (entry.key.contains(imageCode, true))
+                    auxiliaryImagesForGroupKey.add(entry.value.externalImageRef)
+            }
+        }
+
+        return if (auxiliaryImagesForGroupKey.isNotEmpty()) auxiliaryImagesForGroupKey else auxiliaryImages
+    }
+
+    private fun getImageCodeForAuxiliaryImages(): String {
+        var imageCode = ""
+
+        getSelectedGroupKey()?.split("\\s+")?.let {
+            imageCode = when (it.size) {
+                1 -> it[0]
+                else -> {
+                    it.forEachIndexed { i, s ->
+                        imageCode = if (i == 0) s else imageCode.plus(s)
+                    }
+                    imageCode
+                }
+            }
+        }
+
+        return imageCode
     }
 
 }

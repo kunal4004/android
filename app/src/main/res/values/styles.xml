@@ -2036,4 +2036,8 @@
         <item name="android:textSize">@dimen/twelve_sp</item>
     </style>
 
+    <style name="myriad_pro_semi_bold_black_15_text_style" parent="myriad_pro_regular_black_15_text_style">
+        <item name="android:fontFamily">@font/myriad_pro_semi_bold</item>
+    </style>
+
 </resources>
