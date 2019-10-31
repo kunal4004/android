@@ -101,14 +101,6 @@ class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolde
         }
     }
 
-    private fun View.showFromPriceLabel(priceType: String?) {
-        priceType?.let {
-            if (it.contains("from", true)) {
-                fromPriceLabelTextView?.visibility = VISIBLE
-            }
-        }
-    }
-
     private fun quickShopAddToCartSwitch(productList: ProductList?) {
         with(itemView) {
             context?.apply {
@@ -143,9 +135,19 @@ class ProductListingViewHolderItems(parent: ViewGroup) : ProductListingViewHolde
         return with(priceType) {
             when {
                 isNullOrEmpty() -> WFormatter.formatAmount(price)
-                this!!.contains("from", true) -> WFormatter.formatAmount(price)
+                this!!.toLowerCase().contains("from", true) -> WFormatter.formatAmount(price)
                 this.contains("Kilogram", true) -> WFormatter.formatAmount(price) + " (" + WFormatter.formatAmount(kilogramPrice) + "/kg)"
                 else -> WFormatter.formatAmount(price)
+            }
+        }
+    }
+
+    private fun View.showFromPriceLabel(priceType: String?) {
+        priceType?.let {
+            if (it.toLowerCase().contains("from", true)) {
+                fromPriceLabelTextView?.visibility = VISIBLE
+            }else {
+                fromPriceLabelTextView?.visibility = GONE
             }
         }
     }
