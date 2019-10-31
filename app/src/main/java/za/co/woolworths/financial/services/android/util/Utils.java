@@ -116,6 +116,7 @@ import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationVie
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WMaterialShowcaseView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.badgeview.Badge;
 import za.co.woolworths.financial.services.android.ui.views.badgeview.QBadgeView;
@@ -1556,5 +1557,12 @@ public class Utils {
 	public static Boolean isVirtualTemporaryStoreCardPopupShown() {
 		AppInstanceObject.User currentUserObject = AppInstanceObject.get().getCurrentUserObject();
 		return currentUserObject.isVirtualTemporaryStoreCardPopupShown;
+	}
+
+	public static void showGeneralErrorDialog(FragmentManager fragmentManager,String message){
+		ErrorDialogFragment minAmountDialog = ErrorDialogFragment.Companion.newInstance(message);
+		if (fragmentManager != null) {
+			minAmountDialog.show(fragmentManager, ErrorDialogFragment.class.getSimpleName());
+		}
 	}
 }

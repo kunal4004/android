@@ -16,6 +16,7 @@ import za.co.woolworths.financial.services.android.models.dto.npc.LinkNewCardOTP
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
+import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.GetTemporaryStoreCardPopupActivity
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.npc.EnterOtpFragment
@@ -105,6 +106,7 @@ class GetTemporaryStoreCardPopupFragment : Fragment(), View.OnClickListener {
 
     fun navigateToOTPFragment(otpSentTo: String?) {
         otpSentTo?.let { otp ->
+            (activity as? GetTemporaryStoreCardPopupActivity)?.mDefaultOtpSentTo = otpSentTo
             replaceFragment(
                     fragment = EnterOtpFragment.newInstance(otp),
                     tag = EnterOtpFragment::class.java.simpleName,
