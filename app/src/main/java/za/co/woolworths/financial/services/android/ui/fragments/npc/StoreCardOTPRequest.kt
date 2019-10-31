@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.npc
 
 import android.app.Activity
 import androidx.appcompat.app.AppCompatActivity
+import com.awfs.coordination.R
 import retrofit2.Call
 import za.co.woolworths.financial.services.android.contracts.IOTPLinkStoreCard
 import za.co.woolworths.financial.services.android.contracts.RequestListener
@@ -16,7 +17,7 @@ import za.co.woolworths.financial.services.android.models.dto.temporary_store_ca
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.models.network.CompletionHandler
 import za.co.woolworths.financial.services.android.models.network.OneAppService
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorMessageDialogWithTitleFragment
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import java.net.ConnectException
@@ -25,8 +26,8 @@ import java.net.UnknownHostException
 class StoreCardOTPRequest(private val activity: Activity?, private val otpMethodType: OTPMethodType) {
 
     private var storeOTPService: Call<LinkNewCardOTP>? = null
-     var linkStoreCardHasFailed = false
-     var getCardCallHasFailed = false
+    var linkStoreCardHasFailed = false
+    var getCardCallHasFailed = false
 
     fun make(requestListener: IOTPLinkStoreCard<LinkNewCardOTP>) {
         requestListener.showProgress()
@@ -37,14 +38,15 @@ class StoreCardOTPRequest(private val activity: Activity?, private val otpMethod
                         with(linkNewCardOTP) {
                             when (this.httpCode) {
                                 200 -> {
-                                    requestListener.onSuccessHandler(linkNewCardOTP)
                                     requestListener.hideProgress()
+                                    requestListener.onSuccessHandler(linkNewCardOTP)
                                 }
                                 440 -> sessionExpired(linkNewCardOTP.response)
                                 else -> {
                                     requestListener.hideProgress()
                                     requestListener.onFailureHandler()
-                                    messageDialog(linkNewCardOTP.response)
+                                    val errorTitle = activity?.resources?.getString(R.string.absa_general_error_title)
+                                    messageDialog(errorTitle)
                                 }
                             }
                         }
@@ -71,10 +73,10 @@ class StoreCardOTPRequest(private val activity: Activity?, private val otpMethod
         }
     }
 
-    private fun messageDialog(response: Response?) {
-        response?.desc?.let { desc ->
-            val dialog = ErrorDialogFragment.newInstance(desc)
-            (activity as? AppCompatActivity)?.supportFragmentManager?.beginTransaction()?.let { fragmentTransaction -> dialog.show(fragmentTransaction, ErrorDialogFragment::class.java.simpleName) }
+    private fun messageDialog(response: String?) {
+        (activity as? AppCompatActivity)?.apply {
+            val dialog = response?.let { ErrorMessageDialogWithTitleFragment.newInstance(it, true) }
+            dialog?.show(supportFragmentManager.beginTransaction(), ErrorMessageDialogWithTitleFragment::class.java.simpleName)
         }
     }
 

@@ -24,7 +24,7 @@
         tools:text="@string/enter_otp_title" />
 
     <TextView
-        android:id="@+id/tvEnterOtpDesc"
+        android:id="@+id/enterOTPDescriptionScreen"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -37,11 +37,13 @@
         android:text="@string/enter_otp_desc"
         android:textColor="@color/permanent_card_block_desc_color"
         android:textSize="15sp"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.6"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvEnterOtpTitle"
         tools:text="@string/enter_otp_desc" />
+
 
     <View
         android:id="@+id/viewOTPBackground"
@@ -53,10 +55,44 @@
         android:background="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvEnterOtpDesc" />
+        app:layout_constraintTop_toBottomOf="@+id/enterOTPDescriptionScreen" />
+
+
+    <TextView
+        android:id="@+id/loadingDotsText"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/myriad_pro_regular_otf"
+        android:gravity="center|start"
+        android:lineSpacingExtra="1.dp"
+        android:lineSpacingMultiplier="1.40"
+        android:text="@string/sending_otp_text"
+        android:textColor="@color/permanent_card_block_desc_color"
+        android:textSize="15sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvEnterOtpTitle" />
+
+    <za.co.woolworths.financial.services.android.ui.views.LoadingDots
+        android:id="@+id/loadingDotsView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="5dp"
+        app:LoadingDots_dots_color="@color/black_desc_opacity"
+        app:LoadingDots_dots_count="3"
+        app:LoadingDots_dots_size="3dp"
+        app:LoadingDots_dots_space="3dp"
+        app:LoadingDots_jump_height="3dp"
+        app:LoadingDots_loop_start_delay="50"
+        app:layout_constraintBottom_toBottomOf="@+id/loadingDotsText"
+        app:layout_constraintStart_toEndOf="@+id/loadingDotsText"
+        app:layout_constraintTop_toTopOf="@+id/loadingDotsText" />
 
     <EditText
         android:id="@+id/edtVerificationCode2"
+        style="@style/enter_otp_edit_text_style"
         android:layout_width="47dp"
         android:layout_height="50dp"
         android:background="@drawable/edit_text_bg_selector_bg"
@@ -78,6 +114,7 @@
 
     <EditText
         android:id="@+id/edtVerificationCode3"
+        style="@style/enter_otp_edit_text_style"
         android:layout_width="47dp"
         android:layout_height="50dp"
         android:background="@drawable/edit_text_bg_selector_bg"
@@ -100,6 +137,7 @@
 
     <EditText
         android:id="@+id/edtVerificationCode4"
+        style="@style/enter_otp_edit_text_style"
         android:layout_width="47dp"
         android:layout_height="50dp"
         android:background="@drawable/edit_text_bg_selector_bg"
@@ -122,6 +160,7 @@
 
     <EditText
         android:id="@+id/edtVerificationCode5"
+        style="@style/enter_otp_edit_text_style"
         android:layout_width="47dp"
         android:layout_height="50dp"
         android:layout_marginEnd="8dp"
@@ -145,6 +184,7 @@
         android:id="@+id/edtVerificationCode1"
         android:layout_width="46dp"
         android:layout_height="50dp"
+        android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
         android:background="@drawable/edit_text_bg_selector_bg"
         android:clickable="false"
         android:editable="false"
@@ -176,7 +216,7 @@
         app:srcCompat="@drawable/next_button_icon" />
 
     <TextView
-        android:id="@+id/tvDidNotReceivedOTP"
+        android:id="@+id/didNotReceiveEditTextOTP"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_alignParentStart="true"
@@ -206,5 +246,12 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/loadingProgressIndicatorViewGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="loadingDotsView,loadingDotsText" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

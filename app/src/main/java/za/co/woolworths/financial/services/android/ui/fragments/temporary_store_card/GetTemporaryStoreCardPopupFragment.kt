@@ -131,7 +131,7 @@ class GetTemporaryStoreCardPopupFragment : Fragment(), View.OnClickListener {
         otpSentTo?.let { otp ->
             (activity as? GetTemporaryStoreCardPopupActivity)?.mDefaultOtpSentTo = otpSentTo
             replaceFragment(
-                    fragment = EnterOtpFragment.newInstance(otp),
+                    fragment = EnterOtpFragment.newInstance(),
                     tag = EnterOtpFragment::class.java.simpleName,
                     containerViewId = R.id.flMyCard,
                     allowStateLoss = true,

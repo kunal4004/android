@@ -56,18 +56,18 @@ class RequestOTPFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP>
     private fun setOTPDescription(otpType: String?) {
         mOtpSentTo = otpType
         val desc = activity?.resources?.getString(R.string.enter_otp_desc, otpType)
-        activity?.let { activity -> otpType?.let { type -> KotlinUtils.highlightTextInDesc(activity, SpannableString(desc), type, tvEnterOtpDesc, false) } }
+        activity?.let { activity -> otpType?.let { type -> KotlinUtils.highlightTextInDesc(activity, SpannableString(desc), type, enterOTPDescriptionScreen, false) } }
     }
 
     private fun configureUI() {
-        tvDidNotReceivedOTP?.paintFlags = tvDidNotReceivedOTP.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+        didNotReceiveEditTextOTP?.apply { paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG }
     }
 
     private fun clickEvent() {
         imNextProcessLinkCard?.setOnClickListener {
             sendOTBack()
         }
-        tvDidNotReceivedOTP?.setOnClickListener {
+        didNotReceiveEditTextOTP?.setOnClickListener {
             val defaultOtp = (activity as? RequestOTPActivity)?.mOtpSentTo
             (activity as? AppCompatActivity)?.apply {
                 mResendOTPFragment = ResendOTPFragment.newInstance(this@RequestOTPFragment, defaultOtp)
@@ -113,6 +113,7 @@ class RequestOTPFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP>
             else -> super.onOptionsItemSelected(item)
         }
     }
+
     private fun getNumberFromEditText(numberEditText: EditText?) = numberEditText?.text?.toString()
             ?: ""
 }

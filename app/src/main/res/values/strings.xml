@@ -1158,7 +1158,6 @@
     <string name="mypreferences_layout">MyPreferences</string>
     <string name="sign_out_layout">Sign Out</string>
 
-
     <string name="call_us_now">Call us now</string>
-
+    <string name="sending_otp_text">We\'re sending you an OTP</string>
 </resources>

@@ -9,29 +9,24 @@ import kotlinx.android.synthetic.main.link_card_fragment.*
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.util.CreditCardTextWatcher
 import android.view.inputmethod.EditorInfo
-import za.co.woolworths.financial.services.android.models.dto.npc.LinkNewCardOTP
 import cards.pay.paycardsrecognizer.sdk.ScanCardIntent
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Parcelable
 import cards.pay.paycardsrecognizer.sdk.Card
-import za.co.woolworths.financial.services.android.contracts.IOTPLinkStoreCard
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.ui.activities.card.InstantStoreCardReplacementActivity
-import za.co.woolworths.financial.services.android.ui.views.ProgressBarDialog
 
 class InstantStoreCardFragment : MyCardExtension() {
     private var shouldDisableUINavigation = false
-
-    private var progressBarDialog: ProgressBarDialog? = ProgressBarDialog()
-
 
     companion object {
         const val REQUEST_CODE_SCAN_CARD = 1
         fun newInstance() = InstantStoreCardFragment()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? = inflater.inflate(R.layout.link_card_fragment, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
+            = inflater.inflate(R.layout.link_card_fragment, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -52,20 +47,27 @@ class InstantStoreCardFragment : MyCardExtension() {
         if (shouldDisableUINavigation) return
         if (navigateToEnterOTPFragmentImageView?.alpha == 1.0f) {
             (activity as? InstantStoreCardReplacementActivity)?.setOTPType(OTPMethodType.SMS)
-            makeOTPCall()
+            replaceFragment(
+                    fragment = EnterOtpFragment.newInstance(),
+                    tag = EnterOtpFragment::class.java.simpleName,
+                    containerViewId = R.id.flMyCard,
+                    allowStateLoss = true,
+                    enterAnimation = R.anim.slide_in_from_right,
+                    exitAnimation = R.anim.slide_to_left,
+                    popEnterAnimation = R.anim.slide_from_left,
+                    popExitAnimation = R.anim.slide_to_right
+            )
         }
     }
 
-    private fun inputTextWatcher() {
-        cardNumberEditText?.apply {
-            addTextChangedListener(object : CreditCardTextWatcher(this) {
+    private fun inputTextWatcher() = cardNumberEditText?.apply {
+        addTextChangedListener(object : CreditCardTextWatcher(this) {
 
-                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                    super.onTextChanged(s, start, before, count)
-                    navigateToOTPScreenValidator()
-                }
-            })
-        }
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                super.onTextChanged(s, start, before, count)
+                navigateToOTPScreenValidator()
+            }
+        })
 
         cardNumberEditText?.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -87,50 +89,10 @@ class InstantStoreCardFragment : MyCardExtension() {
         super.onResume()
         activity?.let {
             cardNumberEditText?.apply {
+                isFocusable  = true
                 requestFocus()
                 showSoftKeyboard(it, this)
             }
-        }
-    }
-
-    private fun makeOTPCall() {
-        activity?.let { activity ->
-            val requestOTP = StoreCardOTPRequest(activity, OTPMethodType.SMS)
-            requestOTP.make(object : IOTPLinkStoreCard<LinkNewCardOTP> {
-                override fun showProgress() {
-                    super.showProgress()
-                    shouldDisableUINavigation = true
-                    progressBarDialog?.show(activity)
-                    cardNumberEditText?.isFocusable = false
-                    cardNumberEditText?.isFocusableInTouchMode = false
-                }
-
-                override fun hideProgress() {
-                    super.hideProgress()
-                    shouldDisableUINavigation = false
-                    progressBarDialog?.dismissDialog()
-                    cardNumberEditText?.isFocusable = true
-                    cardNumberEditText?.isFocusableInTouchMode = true
-                }
-
-                override fun onSuccessHandler(response: LinkNewCardOTP) {
-                    super.onSuccessHandler(response)
-                    val otpSentTo = response.otpSentTo
-                    (activity as? InstantStoreCardReplacementActivity)?.mDefaultOtpSentTo = otpSentTo
-                    otpSentTo?.let { otp ->
-                        replaceFragment(
-                                fragment = EnterOtpFragment.newInstance(otp),
-                                tag = EnterOtpFragment::class.java.simpleName,
-                                containerViewId = R.id.flMyCard,
-                                allowStateLoss = true,
-                                enterAnimation = R.anim.slide_in_from_right,
-                                exitAnimation = R.anim.slide_to_left,
-                                popEnterAnimation = R.anim.slide_from_left,
-                                popExitAnimation = R.anim.slide_to_right
-                        )
-                    }
-                }
-            })
         }
     }
 
