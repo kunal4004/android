@@ -50,7 +50,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/appbar"
-            app:srcCompat="@drawable/card_npc_isometric" />
+            app:srcCompat="@drawable/store_card_temp" />
 
         <CheckBox
             android:id="@+id/howToUse1"

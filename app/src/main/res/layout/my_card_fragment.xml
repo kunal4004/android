@@ -192,6 +192,7 @@
             <ImageView
                 android:id="@+id/expireInfo"
                 style="@style/card_item_end_icon_style"
+                android:alpha="0.3"
                 android:src="@drawable/icon_info" />
         </RelativeLayout>
 
@@ -224,7 +225,10 @@
             <ImageView
                 android:id="@+id/logoBlockCard"
                 style="@style/card_item_start_icon_style"
-                app:srcCompat="@drawable/icon_card" />
+                app:srcCompat="@drawable/icon_card"
+                android:layout_width="@dimen/twenty_four_dp"
+                android:layout_height="@dimen/twenty_four_dp"
+                />
 
             <TextView
                 android:id="@+id/tvBlockCard"
@@ -247,7 +251,10 @@
             <ImageView
                 android:id="@+id/logoPayWithCard"
                 style="@style/card_item_start_icon_style"
-                app:srcCompat="@drawable/icon_card" />
+                app:srcCompat="@drawable/icon_card"
+                android:layout_width="@dimen/twenty_four_dp"
+                android:layout_height="@dimen/twenty_four_dp"
+                />
 
             <TextView
                 android:id="@+id/tvPayWithCard"
@@ -288,7 +295,7 @@
             <ImageView
                 android:id="@+id/logoHowItWorks"
                 style="@style/card_item_start_icon_style"
-                app:srcCompat="@drawable/ic_statements" />
+                app:srcCompat="@drawable/ic_how_to_pay" />
 
             <TextView
                 android:id="@+id/tvHowItWorks"

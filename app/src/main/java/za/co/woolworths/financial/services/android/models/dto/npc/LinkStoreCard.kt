@@ -6,7 +6,7 @@ data class LinkStoreCard(
         @SerializedName("productOfferingId") val productOfferingId: Int,
         @SerializedName("visionAccountNumber") val visionAccountNumber: String,
         @SerializedName("cardNumber") val cardNumber: String?,
-        @SerializedName("sequenceNumber") val sequenceNumber: Int,
+        @SerializedName("sequenceNumber") val sequenceNumber: Int?,
         @SerializedName("otp") val otp: String,
         @SerializedName("otpMethod") val otpMethod: OTPMethodType?,
         @SerializedName("linkType") var linkType: String = "SC"

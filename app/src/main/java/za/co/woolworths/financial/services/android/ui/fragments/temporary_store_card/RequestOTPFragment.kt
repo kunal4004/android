@@ -12,16 +12,12 @@ import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.enter_otp_fragment.*
 import za.co.woolworths.financial.services.android.contracts.IOTPLinkStoreCard
 import za.co.woolworths.financial.services.android.models.dto.npc.LinkNewCardOTP
-import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardActivityExtension
 import za.co.woolworths.financial.services.android.ui.activities.store_card.RequestOTPActivity
 import za.co.woolworths.financial.services.android.ui.activities.store_card.RequestOTPActivity.Companion.OTP_VALUE
-import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
-import za.co.woolworths.financial.services.android.ui.fragments.npc.EnterOtpFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.OTPInputListener
 import za.co.woolworths.financial.services.android.ui.fragments.npc.ResendOTPFragment
-import za.co.woolworths.financial.services.android.ui.fragments.npc.ResendOTPLoaderFragment
 import za.co.woolworths.financial.services.android.util.KotlinUtils
 import java.util.*
 
@@ -60,18 +56,18 @@ class RequestOTPFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP>
     private fun setOTPDescription(otpType: String?) {
         mOtpSentTo = otpType
         val desc = activity?.resources?.getString(R.string.enter_otp_desc, otpType)
-        activity?.let { activity -> otpType?.let { type -> KotlinUtils.highlightTextInDesc(activity, SpannableString(desc), type, tvEnterOtpDesc, false) } }
+        activity?.let { activity -> otpType?.let { type -> KotlinUtils.highlightTextInDesc(activity, SpannableString(desc), type, enterOTPDescriptionScreen, false) } }
     }
 
     private fun configureUI() {
-        tvDidNotReceivedOTP?.paintFlags = tvDidNotReceivedOTP.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+        didNotReceiveEditTextOTP?.apply { paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG }
     }
 
     private fun clickEvent() {
         imNextProcessLinkCard?.setOnClickListener {
             sendOTBack()
         }
-        tvDidNotReceivedOTP?.setOnClickListener {
+        didNotReceiveEditTextOTP?.setOnClickListener {
             val defaultOtp = (activity as? RequestOTPActivity)?.mOtpSentTo
             (activity as? AppCompatActivity)?.apply {
                 mResendOTPFragment = ResendOTPFragment.newInstance(this@RequestOTPFragment, defaultOtp)
@@ -116,19 +112,6 @@ class RequestOTPFragment : OTPInputListener(), IOTPLinkStoreCard<LinkNewCardOTP>
             }
             else -> super.onOptionsItemSelected(item)
         }
-    }
-
-    override fun requestOTPApi(otpMethodType: OTPMethodType) {
-        super.requestOTPApi(otpMethodType)
-        replaceFragment(
-                fragment = ResendOTPLoaderFragment.newInstance(otpMethodType, this),
-                tag = ResendOTPLoaderFragment::class.java.simpleName,
-                containerViewId = R.id.fragmentContainer,
-                allowStateLoss = true,
-                enterAnimation = R.anim.stay,
-                exitAnimation = R.anim.stay,
-                popEnterAnimation = R.anim.stay,
-                popExitAnimation = R.anim.stay)
     }
 
     private fun getNumberFromEditText(numberEditText: EditText?) = numberEditText?.text?.toString()

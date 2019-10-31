@@ -55,6 +55,7 @@ import za.co.woolworths.financial.services.android.ui.activities.WTransactionsAc
 import za.co.woolworths.financial.services.android.ui.activities.bpi.BPIBalanceProtectionActivity;
 import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.GetTemporaryStoreCardPopupActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.FragmentLifecycle;
@@ -182,11 +183,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
                     }));
         }
 
-        InstantCardReplacement instantCardReplacement = WoolworthsApplication.getInstantCardReplacement();
-        boolean storeCardIsVisible = false;
-        if (instantCardReplacement != null)
-            storeCardIsVisible = instantCardReplacement.isEnabled();
-        rlMyStoreCard.setVisibility(storeCardIsVisible ? VISIBLE : GONE);
+
+        rlMyStoreCard.setVisibility(VISIBLE);
     }
 
     private void initUI(View view) {
@@ -674,6 +672,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
                         SessionUtilities.getInstance().setSessionState(SessionDao.SESSION_STATE.INACTIVE, offerActive.response.stsParams, getActivity());
                         break;
                     default:
+                        String message = (storeCardsResponse.getResponse() != null && storeCardsResponse.getResponse().desc != null) ? storeCardsResponse.getResponse().desc : getString(R.string.general_error_desc);
+                        Utils.showGeneralErrorDialog(getFragmentManager(), message);
                         break;
                 }
             }
@@ -687,6 +687,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
                         @Override
                         public void run() {
                             showGetCreditCardTokenProgressBar(GONE);
+                            Utils.showGeneralErrorDialog(getFragmentManager(), getString(R.string.general_error_desc));
                         }
                     });
                 }
@@ -706,7 +707,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
             Intent intent = new Intent(activity, GetTemporaryStoreCardPopupActivity.class);
             intent.putExtra(STORE_CARD_DETAIL, Utils.objectToJson(storeCardsResponse));
             activity.startActivity(intent);
-            activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+            activity.overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
         }else {
             Intent displayStoreCardDetail = new Intent(activity, MyCardDetailActivity.class);
             displayStoreCardDetail.putExtra(STORE_CARD_DETAIL, Utils.objectToJson(storeCardsResponse));

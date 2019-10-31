@@ -15,10 +15,7 @@ import kotlinx.android.synthetic.main.my_card_fragment.*
 import za.co.woolworths.financial.services.android.contracts.RequestListener
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
-import za.co.woolworths.financial.services.android.models.dto.npc.BlockCardRequestBody
-import za.co.woolworths.financial.services.android.models.dto.npc.BlockMyCardResponse
-import za.co.woolworths.financial.services.android.models.dto.npc.LinkNewCardOTP
-import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
+import za.co.woolworths.financial.services.android.models.dto.npc.*
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCard
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.UnblockStoreCardRequestBody
@@ -37,6 +34,7 @@ import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleBu
 import za.co.woolworths.financial.services.android.util.StoreCardAPIRequest
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.Utils
+import za.co.woolworths.financial.services.android.util.WFormatter
 
 class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.IOnTemporaryStoreCardDialogDismiss, OnClickListener {
 
@@ -93,6 +91,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
 
     private fun populateView() {
         mStoreCard?.apply {
+            tvCardHolderHeader?.text = this.embossedName
             maskedCardNumberWithSpaces(number).also {
                 textViewCardNumber?.text = it
                 tvCardNumberHeader?.text = it
@@ -100,7 +99,6 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
 
             toTitleCase(cardName()).also {
                 textViewCardHolderName?.text = it
-                tvCardHolderHeader?.text = it
             }
         }
         when (mStoreCardsResponse?.storeCardsData?.let { it -> it.virtualCard != null }) {
@@ -108,7 +106,7 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
                 blockCardViews.visibility = GONE
                 tvCardNumberHeader.visibility = INVISIBLE
                 cardStatus.text = getString(R.string.store_card_status_temporay)
-                cardExpireDate.text = mStoreCard?.expiryDate
+                cardExpireDate.text = WFormatter.formatDateTOddMMMMYYYY(mStoreCard?.expiryDate)
             }
             false -> {
                 virtualCardViews.visibility = GONE
@@ -123,8 +121,11 @@ class MyCardDetailFragment : MyCardExtension(), ScanBarcodeToPayDialogFragment.I
             R.id.blockCard -> activity?.let { navigateToBlockMyCardActivity(it, mStoreCardDetail) }
             R.id.howItWorks -> {
                 activity?.apply {
-                    startActivity(Intent(this, HowToUseTemporaryStoreCardActivity::class.java))
-                    overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+                    Intent(this, HowToUseTemporaryStoreCardActivity::class.java).let {
+                        it.putExtra(HowToUseTemporaryStoreCardActivity.TRANSACTION_TYPE, Transition.SLIDE_LEFT)
+                        startActivity(it)
+                    }
+                    overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
                 }
             }
             R.id.payWithCard -> {

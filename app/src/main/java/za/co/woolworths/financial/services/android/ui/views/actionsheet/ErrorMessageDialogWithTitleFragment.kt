@@ -11,12 +11,20 @@ import za.co.woolworths.financial.services.android.ui.extension.withArgs
 class ErrorMessageDialogWithTitleFragment : WBottomSheetDialogFragment(), View.OnClickListener {
 
     private var message: String? = null
+    private var shouldDismissActivity = false
 
     companion object {
         private const val ERR_DESCRIPTION = "ERR_DESCRIPTION"
+        private const val SHOULD_CLOSE_ACTIVITY = "SHOULD_CLOSE_ACTIVITY"
+
         fun newInstance() = ErrorMessageDialogWithTitleFragment()
         fun newInstance(description: String) = ErrorMessageDialogWithTitleFragment().withArgs {
             putString(ERR_DESCRIPTION, description)
+        }
+
+        fun newInstance(description: String, shouldFinishActivity: Boolean) = ErrorMessageDialogWithTitleFragment().withArgs {
+            putString(ERR_DESCRIPTION, description)
+            putBoolean(SHOULD_CLOSE_ACTIVITY, shouldFinishActivity)
         }
     }
 
@@ -24,6 +32,7 @@ class ErrorMessageDialogWithTitleFragment : WBottomSheetDialogFragment(), View.O
         super.onCreate(savedInstanceState)
         arguments?.apply {
             message = getString(ERR_DESCRIPTION)
+            shouldDismissActivity = getBoolean(SHOULD_CLOSE_ACTIVITY, false)
         }
     }
 
@@ -40,5 +49,15 @@ class ErrorMessageDialogWithTitleFragment : WBottomSheetDialogFragment(), View.O
 
     override fun onClick(view: View) {
         dismissAllowingStateLoss()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (shouldDismissActivity) {
+            activity?.apply {
+                finish()
+                overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
+            }
+        }
     }
 }
