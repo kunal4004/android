@@ -1,7 +1,10 @@
 package za.co.woolworths.financial.services.android.ui.fragments.temporary_store_card
 
+import android.content.Intent
+import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
@@ -14,15 +17,17 @@ import za.co.woolworths.financial.services.android.contracts.RequestListener
 import za.co.woolworths.financial.services.android.models.dao.SessionDao
 import za.co.woolworths.financial.services.android.models.dto.npc.LinkNewCardOTP
 import za.co.woolworths.financial.services.android.models.dto.npc.OTPMethodType
+import za.co.woolworths.financial.services.android.models.dto.npc.Transition
 import za.co.woolworths.financial.services.android.models.dto.temporary_store_card.StoreCardsResponse
+import za.co.woolworths.financial.services.android.ui.activities.card.MyCardActivityExtension
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity
 import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.GetTemporaryStoreCardPopupActivity
+import za.co.woolworths.financial.services.android.ui.activities.temporary_store_card.HowToUseTemporaryStoreCardActivity
 import za.co.woolworths.financial.services.android.ui.extension.replaceFragment
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.npc.EnterOtpFragment
 import za.co.woolworths.financial.services.android.ui.fragments.npc.LinkStoreCardFragment
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.ErrorDialogFragment
-import za.co.woolworths.financial.services.android.ui.views.actionsheet.SingleButtonDialogFragment
 import za.co.woolworths.financial.services.android.util.SessionUtilities
 import za.co.woolworths.financial.services.android.util.StoreCardAPIRequest
 import za.co.woolworths.financial.services.android.util.Utils
@@ -40,6 +45,7 @@ class GetTemporaryStoreCardPopupFragment : Fragment(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
         arguments?.apply {
             mStoreCardDetail = getString(MyCardDetailActivity.STORE_CARD_DETAIL, "")
 
@@ -59,6 +65,13 @@ class GetTemporaryStoreCardPopupFragment : Fragment(), View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         getTempStoreCardButton.setOnClickListener(this)
+        (activity as? MyCardActivityExtension)?.apply {
+            showBackIcon()
+        }
+        howItWorks?.apply {
+            paintFlags = Paint.UNDERLINE_TEXT_FLAG
+            setOnClickListener(this@GetTemporaryStoreCardPopupFragment)
+        }
     }
 
     override fun onClick(v: View?) {
@@ -69,6 +82,16 @@ class GetTemporaryStoreCardPopupFragment : Fragment(), View.OnClickListener {
                     else -> navigateToLinkCardFragment()
                 }
             }
+            R.id.howItWorks -> {
+                activity?.apply {
+                    Intent(this, HowToUseTemporaryStoreCardActivity::class.java).let {
+                        it.putExtra(HowToUseTemporaryStoreCardActivity.TRANSACTION_TYPE, Transition.SLIDE_UP)
+                        startActivity(it)
+                    }
+                    overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
+                }
+            }
+
         }
     }
 
@@ -117,6 +140,16 @@ class GetTemporaryStoreCardPopupFragment : Fragment(), View.OnClickListener {
                     popEnterAnimation = R.anim.slide_from_left,
                     popExitAnimation = R.anim.slide_to_right
             )
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                activity?.onBackPressed()
+                super.onOptionsItemSelected(item)
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 

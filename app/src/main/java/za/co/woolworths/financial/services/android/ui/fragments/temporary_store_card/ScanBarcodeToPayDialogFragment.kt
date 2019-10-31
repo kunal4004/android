@@ -14,6 +14,7 @@ import za.co.woolworths.financial.services.android.models.dto.temporary_store_ca
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardDetailActivity.Companion.STORE_CARD_DETAIL
 import za.co.woolworths.financial.services.android.ui.extension.withArgs
 import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardDetailFragment
+import za.co.woolworths.financial.services.android.ui.fragments.npc.MyCardExtension
 import za.co.woolworths.financial.services.android.ui.views.actionsheet.WBottomSheetDialogFragment
 import za.co.woolworths.financial.services.android.util.Utils
 
@@ -67,7 +68,7 @@ class ScanBarcodeToPayDialogFragment : WBottomSheetDialogFragment() {
         mStoreCardsResponse?.storeCardsData?.virtualCard?.let {
             barCodeImage.setImageBitmap(Utils.encodeAsBitmap(it.number.plus(it.sequence), BarcodeFormat.CODE_128, barCodeImage.width, 60))
         }
-        cardHolderName.text = MyCardDetailFragment.cardName()
+        cardHolderName.text = MyCardExtension.toTitleCase(MyCardDetailFragment.cardName())
     }
 
     private fun regenerateBarcode() {

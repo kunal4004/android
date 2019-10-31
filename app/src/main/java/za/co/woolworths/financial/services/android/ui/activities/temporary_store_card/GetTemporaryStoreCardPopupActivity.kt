@@ -1,8 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities.temporary_store_card
 
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
 import com.awfs.coordination.R
 import kotlinx.android.synthetic.main.activity_get_temp_store_card_popup.*
 import za.co.woolworths.financial.services.android.ui.activities.card.MyCardActivityExtension
@@ -36,21 +34,11 @@ class GetTemporaryStoreCardPopupActivity : MyCardActivityExtension() {
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.search_item, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
 
     override fun onBackPressed() {
         this.finish()
         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_search -> onBackPressed()
-        }
-        return false
-    }
 }
 

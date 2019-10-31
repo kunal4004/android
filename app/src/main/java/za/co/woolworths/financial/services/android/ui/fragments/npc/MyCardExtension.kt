@@ -23,6 +23,18 @@ import za.co.woolworths.financial.services.android.util.KeyboardUtil
 
 open class MyCardExtension : Fragment() {
 
+    companion object {
+        @SuppressLint("DefaultLocale")
+        fun toTitleCase(name: String?): String {
+            val words = name?.toLowerCase()?.trim()?.split(" ")?.toMutableList() ?: mutableListOf()
+            var output = ""
+            for (word in words) {
+                output += word.capitalize() + " "
+            }
+            return output.trim()
+        }
+    }
+
     fun maskedCardNumberWithSpaces(cardNumber: String?): String {
         return " **** **** **** ".plus(cardNumber?.let { it.substring(it.length - 4, it.length) }
                 ?: "")
@@ -52,16 +64,6 @@ open class MyCardExtension : Fragment() {
             overridePendingTransition(R.anim.slide_up_anim, R.anim.stay)
             finish()
         }
-    }
-
-    @SuppressLint("DefaultLocale")
-    fun toTitleCase(name: String?): String {
-        val words = name?.toLowerCase()?.trim()?.split(" ")?.toMutableList() ?: mutableListOf()
-        var output = ""
-        for (word in words) {
-            output += word.capitalize() + " "
-        }
-        return output.trim()
     }
 
     fun showSoftKeyboard(activity: Activity, editTextView: EditText) {

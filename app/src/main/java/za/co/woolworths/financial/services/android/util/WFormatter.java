@@ -146,7 +146,7 @@ public class WFormatter {
         if (validFromDate == null) {
             return "N/A";
         }
-        DateFormat m_ISO8601Local = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+        DateFormat m_ISO8601Local = new SimpleDateFormat("yyyy-MM-dd");
         return new SimpleDateFormat("dd MMMM yyyy").format(m_ISO8601Local.parse(validFromDate));
     }
 
