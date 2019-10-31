@@ -938,7 +938,7 @@
     <string name="replacement_desc_part_two">Please bring your ID book in store when collecting. Once you have your replacement card, you can link it in a few easy steps.</string>
     <string name="nearest_store">Nearest stores</string>
     <string name="link_your_new_card">Link Your New Card</string>
-    <string name="link_new_card_desc">Enter the card number below, or tap the camera icon to scan your new card information.</string>
+    <string name="link_new_card_desc">Enter the number in the front of your Store Card in the field below</string>
     <string name="invalid_card_number">Invalid card number.</string>
     <string name="replacement_card_how_to">How to get a replacement card</string>
     <string name="enter_new_card_number">Enter new card number</string>
@@ -1058,7 +1058,7 @@
     <string name="no_stock_available">No Stock Available Online</string>
     <string name="no_stock_available_desc">Use our find in-store feature to see if there is stock available at a Woolies store near you.</string>
     <string name="no_of_items_added">%1$Item%2$</string>
-    <string name="npc_already_have_your_card_link">ALREADY HAVE your card? SCAN it NOW</string>
+    <string name="npc_already_have_your_card_link">ALREADY HAVE your card? LINK it NOW</string>
     <string name="npc_participating_store">Can\'t find a participating store close to you? Call 0861 50 20 20 to arrange for delivery.</string>
     <string name="temp_card_how_to_use1">For WRewards we have provided you with a digital WRewards card, accessible by tapping the WRewards icon.  Scan this upfront, before your shopping and payment, to get great rewards and benefits.</string>
     <string name="temp_card_how_to_use2">Please let our operator know you will be using your temporary card and when prompted for payment, present the bar code to the scanner in the same way as a voucher.</string>
